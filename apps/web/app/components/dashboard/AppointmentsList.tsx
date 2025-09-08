@@ -1,49 +1,49 @@
-"use client";
+'use client'
 
 // import { RiskIndicatorWithTooltip } from "@/components/no-show/risk-indicator";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useEnhancedAppointments } from "@/hooks/use-no-show-prediction";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Skeleton, } from '@/components/ui/skeleton'
+import { useEnhancedAppointments, } from '@/hooks/use-no-show-prediction'
 
-import { AlertTriangle, ArrowRight, Calendar, Clock } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS } from "./constants";
+import { AlertTriangle, ArrowRight, Calendar, Clock, } from 'lucide-react'
+import { useRouter, } from 'next/navigation'
+import { APPOINTMENT_SKELETON_INDEXES, DASHBOARD_CONSTANTS, } from './constants'
 
 interface Appointment {
-  id: string;
+  id: string
   patient?: {
-    name?: string;
-  };
-  time?: string;
-  type?: string;
+    name?: string
+  }
+  time?: string
+  type?: string
 }
 
 interface AppointmentsListProps {
-  appointmentsLoading: boolean;
-  todaysAppointments: Appointment[];
+  appointmentsLoading: boolean
+  todaysAppointments: Appointment[]
 }
 
 export function AppointmentsList({
   appointmentsLoading,
   todaysAppointments: _todaysAppointments,
-}: AppointmentsListProps) {
-  const router = useRouter();
+}: AppointmentsListProps,) {
+  const router = useRouter()
 
   // Enhanced appointments with risk predictions
   const {
     appointments: enhancedAppointments,
     loading: predictionsLoading,
     error: predictionsError,
-  } = useEnhancedAppointments();
+  } = useEnhancedAppointments()
 
   const handleViewAllAppointments = () => {
-    router.push("/appointments");
-  };
+    router.push('/appointments',)
+  }
 
   const renderSkeletonContent = () => (
     <div className="space-y-3">
-      {APPOINTMENT_SKELETON_INDEXES.map((index) => (
+      {APPOINTMENT_SKELETON_INDEXES.map((index,) => (
         <div className="space-y-2 rounded-lg border p-3" key={index}>
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-24" />
@@ -53,43 +53,43 @@ export function AppointmentsList({
         </div>
       ))}
     </div>
-  );
+  )
 
   const renderAppointmentsContent = () => {
     const limitedAppointments = enhancedAppointments.slice(
       DASHBOARD_CONSTANTS.GROWTH_THRESHOLD,
       DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT,
-    );
+    )
 
     return (
       <div className="space-y-3">
-        {limitedAppointments.map((appointment) => {
-          const prediction = appointment.prediction;
-          const hasRiskData = prediction && !predictionsLoading;
+        {limitedAppointments.map((appointment,) => {
+          const prediction = appointment.prediction
+          const hasRiskData = prediction && !predictionsLoading
 
           return (
             <div
               className={`flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/30 ${
-                hasRiskData && prediction.riskLevel === "critical"
-                  ? "border-red-200 bg-red-50/30"
-                  : hasRiskData && prediction.riskLevel === "high"
-                  ? "border-orange-200 bg-orange-50/30"
-                  : ""
+                hasRiskData && prediction.riskLevel === 'critical'
+                  ? 'border-red-200 bg-red-50/30'
+                  : hasRiskData && prediction.riskLevel === 'high'
+                  ? 'border-orange-200 bg-orange-50/30'
+                  : ''
               }`}
               key={appointment.id}
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-medium text-sm">
-                    {appointment.patientId || "Paciente não informado"}
+                    {appointment.patientId || 'Paciente não informado'}
                   </p>
                   {/* Risk indicator not implemented for MVP */}
                   {predictionsLoading && <Skeleton className="h-4 w-12" />}
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  {appointment.type || "Consulta"}
+                  {appointment.type || 'Consulta'}
                 </p>
-                {hasRiskData && ["high", "critical"].includes(prediction.riskLevel) && (
+                {hasRiskData && ['high', 'critical',].includes(prediction.riskLevel,) && (
                   <div className="flex items-center gap-1 mt-1">
                     <AlertTriangle className="h-3 w-3 text-orange-500" />
                     <span className="text-xs text-orange-600">
@@ -103,53 +103,53 @@ export function AppointmentsList({
                 09:00
               </div>
             </div>
-          );
-        })}
+          )
+        },)}
       </div>
-    );
-  };
+    )
+  }
 
   const renderEmptyState = () => (
     <p className="text-center text-muted-foreground text-sm">
       Nenhuma consulta agendada para hoje
     </p>
-  );
+  )
 
   const renderContent = () => {
     if (appointmentsLoading) {
-      return renderSkeletonContent();
+      return renderSkeletonContent()
     }
 
     if (enhancedAppointments.length > DASHBOARD_CONSTANTS.GROWTH_THRESHOLD) {
-      return renderAppointmentsContent();
+      return renderAppointmentsContent()
     }
 
-    return renderEmptyState();
-  };
+    return renderEmptyState()
+  }
 
   // Risk statistics for the header
   const getRiskStats = () => {
     const appointmentsWithRisk = enhancedAppointments.filter(
-      (apt) => apt.prediction,
-    );
+      (apt,) => apt.prediction,
+    )
     const highRiskCount = appointmentsWithRisk.filter(
-      (apt) =>
+      (apt,) =>
         apt.prediction
-        && ["high", "critical"].includes(apt.prediction.riskLevel),
-    ).length;
+        && ['high', 'critical',].includes(apt.prediction.riskLevel,),
+    ).length
 
-    return { total: appointmentsWithRisk.length, highRisk: highRiskCount };
-  };
+    return { total: appointmentsWithRisk.length, highRisk: highRiskCount, }
+  }
 
-  const riskStats = getRiskStats();
+  const riskStats = getRiskStats()
 
   const shouldShowViewAllButton = () => {
     return (
       !appointmentsLoading
       && enhancedAppointments.length
         > DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
-    );
-  };
+    )
+  }
 
   return (
     <Card className="neonpro-card">
@@ -171,7 +171,7 @@ export function AppointmentsList({
         <CardDescription>
           {riskStats.total > 0
             ? `Agenda de hoje • ${riskStats.total} com predição de risco`
-            : "Agenda de hoje"}
+            : 'Agenda de hoje'}
           {predictionsError && <span className="text-red-500">• Erro ao carregar predições</span>}
         </CardDescription>
       </CardHeader>
@@ -189,5 +189,5 @@ export function AppointmentsList({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

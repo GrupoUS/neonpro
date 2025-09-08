@@ -4,66 +4,66 @@
  * Migração do PatientService para usar o Enhanced Service Layer Pattern
  */
 
-import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
-import type { ServiceConfig } from "../base/EnhancedServiceBase";
-import type { ServiceContext } from "../types";
+import { EnhancedServiceBase, } from '../base/EnhancedServiceBase'
+import type { ServiceConfig, } from '../base/EnhancedServiceBase'
+import type { ServiceContext, } from '../types'
 
 // Temporary type definitions for build - will be replaced with proper types
 interface PatientRepository {
-  createPatient(data: unknown): Promise<unknown>;
-  getPatient(id: string): Promise<unknown>;
-  getPatientByEmail(email: string): Promise<unknown>;
-  updatePatient(id: string, data: unknown): Promise<unknown>;
-  getPatients(filters?: unknown): Promise<unknown[]>;
-  updateMedicalHistory(patientId: string, history: unknown): Promise<void>;
-  getPatientStats(): Promise<unknown>;
-  addConsentForm(patientId: string, form: unknown): Promise<void>;
-  getConsentForms(patientId: string): Promise<unknown[]>;
-  searchPatients(query: string): Promise<unknown[]>;
+  createPatient(data: unknown,): Promise<unknown>
+  getPatient(id: string,): Promise<unknown>
+  getPatientByEmail(email: string,): Promise<unknown>
+  updatePatient(id: string, data: unknown,): Promise<unknown>
+  getPatients(filters?: unknown,): Promise<unknown[]>
+  updateMedicalHistory(patientId: string, history: unknown,): Promise<void>
+  getPatientStats(): Promise<unknown>
+  addConsentForm(patientId: string, form: unknown,): Promise<void>
+  getConsentForms(patientId: string,): Promise<unknown[]>
+  searchPatients(query: string,): Promise<unknown[]>
 }
 
 interface PatientFilters {}
 interface Patient {
-  id: string;
-  email: string;
-  dateOfBirth: Date;
+  id: string
+  email: string
+  dateOfBirth: Date
 }
 interface CreatePatientData {
-  email: string;
-  dateOfBirth: Date;
+  email: string
+  dateOfBirth: Date
 }
 interface UpdatePatientData {
-  email?: string;
-  [key: string]: unknown;
+  email?: string
+  [key: string]: unknown
 }
 interface MedicalHistory {}
 interface ConsentForm {
-  treatmentType: string;
-  isActive: boolean;
-  signedDate?: Date;
+  treatmentType: string
+  isActive: boolean
+  signedDate?: Date
 }
 interface PatientStats {
-  total: number;
-  active: number;
-  newThisMonth: number;
-  averageAge: number;
+  total: number
+  active: number
+  newThisMonth: number
+  averageAge: number
 }
 
 // Simple date difference function
-function differenceInYears(end: Date, start: Date): number {
-  return end.getFullYear() - start.getFullYear();
+function differenceInYears(end: Date, start: Date,): number {
+  return end.getFullYear() - start.getFullYear()
 }
 
 /**
  * Enhanced Patient Service with enterprise features
  */
 export class EnhancedPatientService extends EnhancedServiceBase {
-  private readonly repository: PatientRepository;
+  private readonly repository: PatientRepository
 
-  constructor(repository: PatientRepository) {
+  constructor(repository: PatientRepository,) {
     const config: ServiceConfig = {
-      serviceName: "patient-service",
-      version: "2.0.0",
+      serviceName: 'patient-service',
+      version: '2.0.0',
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -77,18 +77,18 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         enableAccessControl: true,
         auditRetentionDays: 2555, // 7 years for medical records
       },
-    };
+    }
 
-    super(config);
-    this.repository = repository;
+    super(config,)
+    this.repository = repository
   }
 
   getServiceName(): string {
-    return "enhanced-patient-service";
+    return 'enhanced-patient-service'
   }
 
   getServiceVersion(): string {
-    return "2.0.0";
+    return '2.0.0'
   }
 
   /**
@@ -99,26 +99,26 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient> {
     return this.executeOperation(
-      "createPatient",
+      'createPatient',
       async () => {
         // Check if patient already exists
         const existingPatient = await this.repository.getPatientByEmail(
           data.email,
-        );
+        )
         if (existingPatient) {
-          throw new Error("Patient with this email already exists");
+          throw new Error('Patient with this email already exists',)
         }
 
         // Validate age (must be 18+ for aesthetic treatments)
-        const age = differenceInYears(new Date(), data.dateOfBirth);
+        const age = differenceInYears(new Date(), data.dateOfBirth,)
         if (age < 18) {
           throw new Error(
-            "Patient must be 18 years or older for aesthetic treatments",
-          );
+            'Patient must be 18 years or older for aesthetic treatments',
+          )
         }
 
-        const patient = await this.repository.createPatient(data);
-        return patient;
+        const patient = await this.repository.createPatient(data,)
+        return patient
       },
       context,
       {
@@ -126,7 +126,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         sensitiveData: true,
         cacheTTL: 300_000, // 5 minutes for new patient
       },
-    ) as Promise<Patient>;
+    ) as Promise<Patient>
   }
 
   /**
@@ -137,9 +137,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient | null> {
     return this.executeOperation(
-      "getPatient",
+      'getPatient',
       async () => {
-        return this.repository.getPatient(id);
+        return this.repository.getPatient(id,)
       },
       context,
       {
@@ -148,7 +148,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         requiresAuth: true,
         sensitiveData: true,
       },
-    ) as Promise<Patient | null>;
+    ) as Promise<Patient | null>
   }
 
   /**
@@ -160,38 +160,38 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient> {
     return this.executeOperation(
-      "updatePatient",
+      'updatePatient',
       async () => {
         const existingPatient = (await this.repository.getPatient(
           id,
-        )) as Patient;
+        )) as Patient
         if (!existingPatient) {
-          throw new Error("Patient not found");
+          throw new Error('Patient not found',)
         }
 
         // If email is being updated, check for duplicates
         if (data.email && data.email !== existingPatient.email) {
           const emailExists = (await this.repository.getPatientByEmail(
             data.email,
-          )) as Patient | null;
+          )) as Patient | null
           if (emailExists && emailExists.id !== id) {
-            throw new Error("Another patient with this email already exists");
+            throw new Error('Another patient with this email already exists',)
           }
         }
 
-        const patient = await this.repository.updatePatient(id, data);
+        const patient = await this.repository.updatePatient(id, data,)
 
         // Invalidate cache after update
-        await this.cache.invalidate(`patient_${id}`);
+        await this.cache.invalidate(`patient_${id}`,)
 
-        return patient;
+        return patient
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    ) as Promise<Patient>;
+    ) as Promise<Patient>
   }
 
   /**
@@ -202,13 +202,13 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient[]> {
     const cacheKey = filters
-      ? `patients_filtered_${JSON.stringify(filters)}`
-      : "patients_all";
+      ? `patients_filtered_${JSON.stringify(filters,)}`
+      : 'patients_all'
 
     return this.executeOperation(
-      "getPatients",
+      'getPatients',
       async () => {
-        return this.repository.getPatients(filters) as Promise<Patient[]>;
+        return this.repository.getPatients(filters,) as Promise<Patient[]>
       },
       context,
       {
@@ -216,7 +216,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         cacheTTL: 300_000, // 5 minutes for lists
         requiresAuth: true,
       },
-    );
+    )
   }
 
   /**
@@ -229,14 +229,14 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     patientConsent = true,
   ): Promise<void> {
     return this.executeOperation(
-      "updateMedicalHistory",
+      'updateMedicalHistory',
       async () => {
-        const patient = await this.repository.getPatient(patientId);
+        const patient = await this.repository.getPatient(patientId,)
         if (!patient) {
-          throw new Error("Patient not found");
+          throw new Error('Patient not found',)
         }
 
-        await this.repository.updateMedicalHistory(patientId, history);
+        await this.repository.updateMedicalHistory(patientId, history,)
 
         // Cache medical history with LGPD compliance
         await this.cacheHealthcareData(
@@ -244,14 +244,14 @@ export class EnhancedPatientService extends EnhancedServiceBase {
           history,
           patientConsent,
           1_800_000, // 30 minutes
-        );
+        )
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -262,35 +262,35 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient[]> {
     return this.executeOperation(
-      "searchPatients",
+      'searchPatients',
       async () => {
-        return this.repository.searchPatients(query) as Promise<Patient[]>;
+        return this.repository.searchPatients(query,) as Promise<Patient[]>
       },
       context,
       {
-        cacheKey: `search_patients_${Buffer.from(query).toString("base64")}`,
+        cacheKey: `search_patients_${Buffer.from(query,).toString('base64',)}`,
         cacheTTL: 600_000, // 10 minutes
         requiresAuth: true,
       },
-    );
+    )
   }
 
   /**
    * Get patient statistics with caching
    */
-  async getPatientStats(context: ServiceContext): Promise<PatientStats> {
+  async getPatientStats(context: ServiceContext,): Promise<PatientStats> {
     return this.executeOperation(
-      "getPatientStats",
+      'getPatientStats',
       async () => {
-        return this.repository.getPatientStats();
+        return this.repository.getPatientStats()
       },
       context,
       {
-        cacheKey: "patient_stats",
+        cacheKey: 'patient_stats',
         cacheTTL: 1_800_000, // 30 minutes
         requiresAuth: true,
       },
-    ) as Promise<PatientStats>;
+    ) as Promise<PatientStats>
   }
 
   /**
@@ -302,24 +302,24 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<void> {
     return this.executeOperation(
-      "addConsentForm",
+      'addConsentForm',
       async () => {
-        const patient = await this.repository.getPatient(patientId);
+        const patient = await this.repository.getPatient(patientId,)
         if (!patient) {
-          throw new Error("Patient not found");
+          throw new Error('Patient not found',)
         }
 
-        await this.repository.addConsentForm(patientId, form);
+        await this.repository.addConsentForm(patientId, form,)
 
         // Invalidate consent cache
-        await this.cache.invalidate(`consent_forms_${patientId}`);
+        await this.cache.invalidate(`consent_forms_${patientId}`,)
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -331,15 +331,15 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      "hasValidConsent",
+      'hasValidConsent',
       async () => {
-        const consentForms = await this.repository.getConsentForms(patientId);
+        const consentForms = await this.repository.getConsentForms(patientId,)
         return consentForms.some(
-          (form: any) =>
+          (form: any,) =>
             form.treatmentType === treatmentType
             && form.isActive
             && form.signedDate,
-        );
+        )
       },
       context,
       {
@@ -348,7 +348,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -359,16 +359,16 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<number | null> {
     return this.executeOperation(
-      "getPatientAge",
+      'getPatientAge',
       async () => {
         const patient = (await this.repository.getPatient(
           patientId,
-        )) as Patient;
+        )) as Patient
         if (!patient) {
-          return null;
+          return null
         }
 
-        return differenceInYears(new Date(), patient.dateOfBirth);
+        return differenceInYears(new Date(), patient.dateOfBirth,)
       },
       context,
       {
@@ -377,17 +377,17 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         requiresAuth: true,
         sensitiveData: true,
       },
-    ) as Promise<number | null>;
+    ) as Promise<number | null>
   }
 
   /**
    * Enhanced service health with patient-specific metrics
    */
   async getServiceHealth(): Promise<unknown> {
-    const baseHealth = (await super.getHealthMetrics()) as Record<string, unknown>;
+    const baseHealth = (await super.getHealthMetrics()) as Record<string, unknown>
 
     // Add patient-specific metrics
-    const patientStats = (await this.repository.getPatientStats()) as PatientStats;
+    const patientStats = (await this.repository.getPatientStats()) as PatientStats
 
     return {
       ...baseHealth,
@@ -399,11 +399,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
       },
       dependencies: [
         {
-          name: "patient-repository",
-          status: "UP", // TODO: Implement real health check
+          name: 'patient-repository',
+          status: 'UP', // TODO: Implement real health check
           responseTime: 0,
         },
       ],
-    };
+    }
   }
 }

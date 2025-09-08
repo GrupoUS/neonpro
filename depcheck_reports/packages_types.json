@@ -1,8 +1,0 @@
-{
-  "dependencies": [],
-  "devDependencies": [],
-  "missing": {},
-  "using": { "typescript": ["/home/vibecoder/neonpro/packages/types/package.json"] },
-  "invalidFiles": {},
-  "invalidDirs": {}
-}

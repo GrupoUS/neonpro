@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { ComplianceMonitor } from "@/components/ui/compliance-monitor";
-import type { QueryResult, UserRole } from "@/components/ui/internal-assistant-panel";
-import { InternalAssistantPanel } from "@/components/ui/internal-assistant-panel";
-import { PerformanceInsights } from "@/components/ui/performance-insights";
+import { ComplianceMonitor, } from '@/components/ui/compliance-monitor'
+import type { QueryResult, UserRole, } from '@/components/ui/internal-assistant-panel'
+import { InternalAssistantPanel, } from '@/components/ui/internal-assistant-panel'
+import { PerformanceInsights, } from '@/components/ui/performance-insights'
 import type {
   ChartData,
   QueryResult as VizQueryResult,
   TableData,
-} from "@/components/ui/results-visualization";
-import { ResultsVisualization } from "@/components/ui/results-visualization";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useState } from "react";
+} from '@/components/ui/results-visualization'
+import { ResultsVisualization, } from '@/components/ui/results-visualization'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import React, { useState, } from 'react'
 
 /**
  * T2.2 - Internal AI Assistant Panel para Equipe Médica
@@ -35,171 +35,171 @@ import React, { useState } from "react";
 
 export function AIAssistantDashboardExample() {
   // Current user state
-  const [userRole] = useState<UserRole>({
-    id: "user-001",
-    name: "Admin",
-    permissions: ["query_all", "export_data", "view_compliance", "manage_users"],
-  });
+  const [userRole,] = useState<UserRole>({
+    id: 'user-001',
+    name: 'Admin',
+    permissions: ['query_all', 'export_data', 'view_compliance', 'manage_users',],
+  },)
 
   // Active patient context
-  const [activePatientId] = useState<string | undefined>("pac-12345678");
+  const [activePatientId,] = useState<string | undefined>('pac-12345678',)
 
   // Performance insights state
-  const [timeRange, setTimeRange] = useState<"today" | "week" | "month" | "quarter">("today");
+  const [timeRange, setTimeRange,] = useState<'today' | 'week' | 'month' | 'quarter'>('today',)
 
   // Results visualization state
-  const [queryResults, setQueryResults] = useState<VizQueryResult[]>([]);
-  const [selectedResult, setSelectedResult] = useState<string | undefined>();
+  const [queryResults, setQueryResults,] = useState<VizQueryResult[]>([],)
+  const [selectedResult, setSelectedResult,] = useState<string | undefined>()
 
   // Generate sample data for demonstration
   const generateSampleChartData = (): ChartData => ({
-    title: "Pacientes Atendidos por Dia",
-    type: "bar",
-    xAxisLabel: "Dias",
-    yAxisLabel: "Número de Pacientes",
+    title: 'Pacientes Atendidos por Dia',
+    type: 'bar',
+    xAxisLabel: 'Dias',
+    yAxisLabel: 'Número de Pacientes',
     data: [
-      { id: "1", label: "Segunda", value: 45, category: "consultas" },
-      { id: "2", label: "Terça", value: 38, category: "consultas" },
-      { id: "3", label: "Quarta", value: 52, category: "consultas" },
-      { id: "4", label: "Quinta", value: 41, category: "consultas" },
-      { id: "5", label: "Sexta", value: 35, category: "consultas" },
-      { id: "6", label: "Sábado", value: 28, category: "consultas" },
+      { id: '1', label: 'Segunda', value: 45, category: 'consultas', },
+      { id: '2', label: 'Terça', value: 38, category: 'consultas', },
+      { id: '3', label: 'Quarta', value: 52, category: 'consultas', },
+      { id: '4', label: 'Quinta', value: 41, category: 'consultas', },
+      { id: '5', label: 'Sexta', value: 35, category: 'consultas', },
+      { id: '6', label: 'Sábado', value: 28, category: 'consultas', },
     ],
-  });
+  })
 
   const generateSampleTableData = (): TableData => ({
-    title: "Relatório de Procedimentos",
-    headers: ["Paciente", "Procedimento", "Data", "Valor", "Status"],
+    title: 'Relatório de Procedimentos',
+    headers: ['Paciente', 'Procedimento', 'Data', 'Valor', 'Status',],
     rows: [
-      ["Maria Silva", "Botox Facial", new Date("2025-01-15"), 1500, "Concluído"],
-      ["João Santos", "Preenchimento Labial", new Date("2025-01-14"), 800, "Concluído"],
-      ["Ana Costa", "Limpeza de Pele", new Date("2025-01-14"), 300, "Concluído"],
-      ["Pedro Lima", "Harmonização Facial", new Date("2025-01-13"), 2200, "Concluído"],
-      ["Carla Souza", "Toxina Botulínica", new Date("2025-01-13"), 1200, "Concluído"],
+      ['Maria Silva', 'Botox Facial', new Date('2025-01-15',), 1500, 'Concluído',],
+      ['João Santos', 'Preenchimento Labial', new Date('2025-01-14',), 800, 'Concluído',],
+      ['Ana Costa', 'Limpeza de Pele', new Date('2025-01-14',), 300, 'Concluído',],
+      ['Pedro Lima', 'Harmonização Facial', new Date('2025-01-13',), 2200, 'Concluído',],
+      ['Carla Souza', 'Toxina Botulínica', new Date('2025-01-13',), 1200, 'Concluído',],
     ],
     totalRows: 5,
     currentPage: 1,
     pageSize: 10,
-  });
+  })
 
   // Handle query submission
-  const handleQuerySubmit = async (query: string): Promise<QueryResult> => {
+  const handleQuerySubmit = async (query: string,): Promise<QueryResult> => {
     // Simulate API processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1500,))
 
     const result: QueryResult = {
       id: `query-${Date.now()}`,
       query,
       response: `Consulta processada: "${query}". Resultados baseados no contexto atual ${
-        activePatientId ? `do paciente ${activePatientId}` : "da clínica"
+        activePatientId ? `do paciente ${activePatientId}` : 'da clínica'
       }.`,
       timestamp: new Date(),
       userId: userRole.id,
-      type: "text",
+      type: 'text',
       confidence: 0.85 + Math.random() * 0.15,
-    };
+    }
 
     // Generate different result types based on query content
     if (
-      query.toLowerCase().includes("gráfico") || query.toLowerCase().includes("chart")
-      || query.toLowerCase().includes("estatística")
+      query.toLowerCase().includes('gráfico',) || query.toLowerCase().includes('chart',)
+      || query.toLowerCase().includes('estatística',)
     ) {
       const vizResult: VizQueryResult = {
         id: result.id,
         query: result.query,
         timestamp: result.timestamp,
-        type: "chart",
+        type: 'chart',
         chart: generateSampleChartData(),
         confidence: result.confidence,
-        executionTime: 1200 + Math.floor(Math.random() * 800),
-      };
+        executionTime: 1200 + Math.floor(Math.random() * 800,),
+      }
 
-      setQueryResults(prev => [vizResult, ...prev.slice(0, 9)]);
-      setSelectedResult(vizResult.id);
+      setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
+      setSelectedResult(vizResult.id,)
 
-      result.type = "chart";
-      result.response = 'Gráfico gerado com sucesso. Visualize na aba "Resultados".';
+      result.type = 'chart'
+      result.response = 'Gráfico gerado com sucesso. Visualize na aba "Resultados".'
     } else if (
-      query.toLowerCase().includes("tabela") || query.toLowerCase().includes("relatório")
-      || query.toLowerCase().includes("lista")
+      query.toLowerCase().includes('tabela',) || query.toLowerCase().includes('relatório',)
+      || query.toLowerCase().includes('lista',)
     ) {
       const vizResult: VizQueryResult = {
         id: result.id,
         query: result.query,
         timestamp: result.timestamp,
-        type: "table",
+        type: 'table',
         table: generateSampleTableData(),
         confidence: result.confidence,
-        executionTime: 800 + Math.floor(Math.random() * 600),
-      };
+        executionTime: 800 + Math.floor(Math.random() * 600,),
+      }
 
-      setQueryResults(prev => [vizResult, ...prev.slice(0, 9)]);
-      setSelectedResult(vizResult.id);
+      setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
+      setSelectedResult(vizResult.id,)
 
-      result.type = "table";
-      result.response = 'Tabela gerada com sucesso. Visualize na aba "Resultados".';
+      result.type = 'table'
+      result.response = 'Tabela gerada com sucesso. Visualize na aba "Resultados".'
     } else if (
-      query.toLowerCase().includes("completo") || query.toLowerCase().includes("dashboard")
+      query.toLowerCase().includes('completo',) || query.toLowerCase().includes('dashboard',)
     ) {
       const vizResult: VizQueryResult = {
         id: result.id,
         query: result.query,
         timestamp: result.timestamp,
-        type: "mixed",
+        type: 'mixed',
         chart: generateSampleChartData(),
         table: generateSampleTableData(),
         textResult:
-          "Dashboard completo gerado incluindo gráficos e tabelas dos principais indicadores da clínica.",
+          'Dashboard completo gerado incluindo gráficos e tabelas dos principais indicadores da clínica.',
         confidence: result.confidence,
-        executionTime: 2000 + Math.floor(Math.random() * 1000),
-      };
+        executionTime: 2000 + Math.floor(Math.random() * 1000,),
+      }
 
-      setQueryResults(prev => [vizResult, ...prev.slice(0, 9)]);
-      setSelectedResult(vizResult.id);
+      setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
+      setSelectedResult(vizResult.id,)
 
-      result.type = "mixed";
-      result.response = 'Dashboard completo gerado. Visualize na aba "Resultados".';
+      result.type = 'mixed'
+      result.response = 'Dashboard completo gerado. Visualize na aba "Resultados".'
     }
 
-    return result;
-  };
+    return result
+  }
 
   // Handle export functions
-  const handleExportAssistantData = (data: unknown, format: "pdf" | "excel" | "csv") => {
-    console.log(`[EXPORT] Assistant data as ${format}:`, data);
-    console.info(`Exportando dados do assistente em formato ${format.toUpperCase()}`);
-  };
+  const handleExportAssistantData = (data: unknown, format: 'pdf' | 'excel' | 'csv',) => {
+    console.log(`[EXPORT] Assistant data as ${format}:`, data,)
+    console.info(`Exportando dados do assistente em formato ${format.toUpperCase()}`,)
+  }
 
   const handleExportPerformanceData = () => {
-    console.log("[EXPORT] Performance data");
-    console.info("Exportando relatório de performance");
-  };
+    console.log('[EXPORT] Performance data',)
+    console.info('Exportando relatório de performance',)
+  }
 
   const handleRefreshPerformanceData = () => {
-    console.log("[REFRESH] Performance data");
-    console.info("Dados de performance atualizados");
-  };
+    console.log('[REFRESH] Performance data',)
+    console.info('Dados de performance atualizados',)
+  }
 
   const handleExportComplianceReport = () => {
-    console.log("[EXPORT] Compliance report");
-    console.info("Exportando relatório de compliance");
-  };
+    console.log('[EXPORT] Compliance report',)
+    console.info('Exportando relatório de compliance',)
+  }
 
   const handleRefreshComplianceData = () => {
-    console.log("[REFRESH] Compliance data");
-    console.info("Dados de compliance verificados");
-  };
+    console.log('[REFRESH] Compliance data',)
+    console.info('Dados de compliance verificados',)
+  }
 
-  const handleViewComplianceDetails = (itemId: string) => {
-    console.log("[VIEW] Compliance item details:", itemId);
-    console.info(`Visualizando detalhes do item de compliance: ${itemId}`);
-  };
+  const handleViewComplianceDetails = (itemId: string,) => {
+    console.log('[VIEW] Compliance item details:', itemId,)
+    console.info(`Visualizando detalhes do item de compliance: ${itemId}`,)
+  }
 
-  const handleExportResults = (resultId: string, format: "pdf" | "excel" | "csv" | "png") => {
-    const result = queryResults.find(r => r.id === resultId);
-    console.log(`[EXPORT] Result ${resultId} as ${format}:`, result);
-    console.info(`Exportando resultado "${result?.query}" em formato ${format.toUpperCase()}`);
-  };
+  const handleExportResults = (resultId: string, format: 'pdf' | 'excel' | 'csv' | 'png',) => {
+    const result = queryResults.find(r => r.id === resultId)
+    console.log(`[EXPORT] Result ${resultId} as ${format}:`, result,)
+    console.info(`Exportando resultado "${result?.query}" em formato ${format.toUpperCase()}`,)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -225,13 +225,13 @@ export function AIAssistantDashboardExample() {
               </div>
             )}
             <div className="bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
-              📊 Período: {timeRange === "today"
-                ? "Hoje"
-                : timeRange === "week"
-                ? "Esta Semana"
-                : timeRange === "month"
-                ? "Este Mês"
-                : "Este Trimestre"}
+              📊 Período: {timeRange === 'today'
+                ? 'Hoje'
+                : timeRange === 'week'
+                ? 'Esta Semana'
+                : timeRange === 'month'
+                ? 'Este Mês'
+                : 'Este Trimestre'}
             </div>
           </div>
         </div>
@@ -268,7 +268,7 @@ export function AIAssistantDashboardExample() {
             <PerformanceInsights
               userRole={userRole.name}
               timeRange={timeRange}
-              onTimeRangeChange={(range) => setTimeRange(range as unknown)}
+              onTimeRangeChange={(range,) => setTimeRange(range as unknown,)}
               onExportData={handleExportPerformanceData}
               onRefreshData={handleRefreshPerformanceData}
             />
@@ -337,5 +337,5 @@ export function AIAssistantDashboardExample() {
         </div>
       </div>
     </div>
-  );
+  )
 }

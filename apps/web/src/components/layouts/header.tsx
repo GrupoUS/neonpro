@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { useAuth } from "@/hooks/use-auth";
-import { cn } from "@/lib/utils";
-import { Menu, Transition } from "@headlessui/react";
-import { Bell, Menu as MenuIcon, Search, User } from "lucide-react";
-import { Fragment } from "react";
+import { useAuth, } from '@/hooks/use-auth'
+import { cn, } from '@/lib/utils'
+import { Menu, Transition, } from '@headlessui/react'
+import { Bell, Menu as MenuIcon, Search, User, } from 'lucide-react'
+import { Fragment, } from 'react'
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  onMenuClick: () => void
 }
 
-export function Header({ onMenuClick }: HeaderProps) {
-  const { user, logout } = useAuth();
+export function Header({ onMenuClick, }: HeaderProps,) {
+  const { user, logout, } = useAuth()
 
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -75,7 +75,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                   className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                   aria-hidden="true"
                 >
-                  {user?.name || "Usuário"}
+                  {user?.name || 'Usuário'}
                 </span>
               </span>
             </Menu.Button>
@@ -90,12 +90,12 @@ export function Header({ onMenuClick }: HeaderProps) {
             >
               <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <Menu.Item>
-                  {({ active }) => (
+                  {({ active, },) => (
                     <a
                       href="/profile"
                       className={cn(
-                        active ? "bg-gray-50" : "",
-                        "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        active ? 'bg-gray-50' : '',
+                        'block px-3 py-1 text-sm leading-6 text-gray-900',
                       )}
                     >
                       Seu perfil
@@ -103,12 +103,12 @@ export function Header({ onMenuClick }: HeaderProps) {
                   )}
                 </Menu.Item>
                 <Menu.Item>
-                  {({ active }) => (
+                  {({ active, },) => (
                     <button
                       onClick={logout}
                       className={cn(
-                        active ? "bg-gray-50" : "",
-                        "block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900",
+                        active ? 'bg-gray-50' : '',
+                        'block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900',
                       )}
                     >
                       Sair
@@ -121,5 +121,5 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

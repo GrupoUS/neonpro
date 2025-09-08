@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * AnalyticsDashboard - Advanced Healthcare Analytics Dashboard
@@ -11,19 +11,19 @@
  */
 
 // import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import type {
   AIInsight,
   AIRecommendation,
@@ -33,7 +33,7 @@ import type {
   CriticalAlert,
   HealthcareAnalytics,
   MetricCard,
-} from "@/types/analytics";
+} from '@/types/analytics'
 import {
   Activity,
   AlertTriangle,
@@ -62,17 +62,17 @@ import {
   Users,
   // XCircle, // Unused import
   Zap,
-} from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+} from 'lucide-react'
+import React, { useCallback, useEffect, useMemo, useState, } from 'react'
 
 // ====== MOCK DATA FOR DEMONSTRATION ======
 const mockAnalyticsData: HealthcareAnalytics = {
-  patientId: "patient-123",
-  clinicId: "clinic-456",
+  patientId: 'patient-123',
+  clinicId: 'clinic-456',
   generatedAt: new Date(),
   analytics: {
     patientOutcomePrediction: {
-      treatmentId: "treatment-789",
+      treatmentId: 'treatment-789',
       outcomeScore: 85,
       predictionAccuracy: 92,
       factors: [],
@@ -83,25 +83,25 @@ const mockAnalyticsData: HealthcareAnalytics = {
         flexibilityScore: 75,
       },
       alternatives: [],
-      riskFactors: ["Diabetes", "Hypertension"],
-      confidenceInterval: [78, 92],
+      riskFactors: ['Diabetes', 'Hypertension',],
+      confidenceInterval: [78, 92,],
     },
     riskAssessment: {
-      patientId: "patient-123",
+      patientId: 'patient-123',
       assessmentDate: new Date(),
-      overallRisk: "medium",
+      overallRisk: 'medium',
       riskFactors: [],
       complicationProbability: 0.15,
       recommendedActions: [],
-      reassessmentDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      reassessmentDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000,),
       escalationTriggers: [],
     },
     treatmentEffectiveness: {
-      treatmentType: "Laser Treatment",
+      treatmentType: 'Laser Treatment',
       successRate: 89,
       patientSatisfaction: 94,
       complicationRate: 3,
-      recoveryTime: { average: 14, median: 12, range: [7, 28] },
+      recoveryTime: { average: 14, median: 12, range: [7, 28,], },
       costEffectiveness: 87,
       professionalPerformance: {} as unknown,
       benchmarkComparison: {} as unknown,
@@ -155,117 +155,117 @@ const mockAnalyticsData: HealthcareAnalytics = {
   },
   insights: [
     {
-      id: "insight-1",
-      type: "trend",
-      priority: "high",
-      title: "Aumento na Taxa de Sucesso",
-      description: "Taxa de sucesso dos tratamentos a laser aumentou 12% no último mês",
+      id: 'insight-1',
+      type: 'trend',
+      priority: 'high',
+      title: 'Aumento na Taxa de Sucesso',
+      description: 'Taxa de sucesso dos tratamentos a laser aumentou 12% no último mês',
       confidence: 0.89,
       actionRequired: false,
-      relatedData: ["laser-treatments"],
+      relatedData: ['laser-treatments',],
       generatedAt: new Date(),
-      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000,),
     },
     {
-      id: "insight-2",
-      type: "anomaly",
-      priority: "critical",
-      title: "Padrão Anômalo de No-Show",
-      description: "Aumento significativo de faltas em consultas às quintas-feiras",
+      id: 'insight-2',
+      type: 'anomaly',
+      priority: 'critical',
+      title: 'Padrão Anômalo de No-Show',
+      description: 'Aumento significativo de faltas em consultas às quintas-feiras',
       confidence: 0.94,
       actionRequired: true,
-      relatedData: ["appointments", "no-show"],
+      relatedData: ['appointments', 'no-show',],
       generatedAt: new Date(),
     },
   ],
   recommendations: [
     {
-      id: "rec-1",
-      category: "optimization",
-      title: "Otimizar Agendamento de Quinta-feira",
-      description: "Implementar lembretes personalizados para reduzir no-show às quintas",
-      expectedOutcome: "Redução de 25% no no-show",
+      id: 'rec-1',
+      category: 'optimization',
+      title: 'Otimizar Agendamento de Quinta-feira',
+      description: 'Implementar lembretes personalizados para reduzir no-show às quintas',
+      expectedOutcome: 'Redução de 25% no no-show',
       confidenceLevel: 0.87,
-      evidenceLevel: "B",
+      evidenceLevel: 'B',
       implementation: {
-        difficulty: "easy",
+        difficulty: 'easy',
         timeRequired: 2,
-        resources: ["SMS API"],
+        resources: ['SMS API',],
         dependencies: [],
       },
-      metrics: { expectedImprovement: 25, costImpact: -500, riskReduction: 15 },
+      metrics: { expectedImprovement: 25, costImpact: -500, riskReduction: 15, },
     },
   ],
   trends: [],
   confidence: 0.91,
-};
+}
 
 const dashboardMetrics: MetricCard[] = [
   {
-    id: "total-patients",
-    title: "Pacientes Ativos",
-    value: "2,347",
-    previousValue: "2,180",
+    id: 'total-patients',
+    title: 'Pacientes Ativos',
+    value: '2,347',
+    previousValue: '2,180',
     change: 7.7,
-    changeDirection: "up",
-    trend: [65, 70, 68, 72, 75, 73, 78, 82, 85, 89],
-    unit: "",
-    format: "number",
-    status: "good",
+    changeDirection: 'up',
+    trend: [65, 70, 68, 72, 75, 73, 78, 82, 85, 89,],
+    unit: '',
+    format: 'number',
+    status: 'good',
     icon: Users,
-    color: "#16a34a",
+    color: '#16a34a',
     target: 2500,
     benchmark: 2200,
   },
   {
-    id: "success-rate",
-    title: "Taxa de Sucesso",
-    value: "89.2",
-    previousValue: "87.1",
+    id: 'success-rate',
+    title: 'Taxa de Sucesso',
+    value: '89.2',
+    previousValue: '87.1',
     change: 2.4,
-    changeDirection: "up",
-    trend: [85, 86, 87, 88, 87, 89, 90, 89, 91, 89],
-    unit: "%",
-    format: "percentage",
-    status: "good",
+    changeDirection: 'up',
+    trend: [85, 86, 87, 88, 87, 89, 90, 89, 91, 89,],
+    unit: '%',
+    format: 'percentage',
+    status: 'good',
     icon: Target,
-    color: "#059669",
+    color: '#059669',
     target: 90,
     benchmark: 85,
   },
   {
-    id: "revenue",
-    title: "Receita Mensal",
-    value: "R$ 245.690",
-    previousValue: "R$ 221.340",
+    id: 'revenue',
+    title: 'Receita Mensal',
+    value: 'R$ 245.690',
+    previousValue: 'R$ 221.340',
     change: 11,
-    changeDirection: "up",
-    trend: [180, 190, 195, 210, 205, 220, 235, 240, 238, 245],
-    unit: "BRL",
-    format: "currency",
-    status: "good",
+    changeDirection: 'up',
+    trend: [180, 190, 195, 210, 205, 220, 235, 240, 238, 245,],
+    unit: 'BRL',
+    format: 'currency',
+    status: 'good',
     icon: TrendingDown,
-    color: "#16a34a",
+    color: '#16a34a',
     target: 250_000,
     benchmark: 230_000,
   },
   {
-    id: "compliance-score",
-    title: "Score de Compliance",
-    value: "91.2",
-    previousValue: "88.7",
+    id: 'compliance-score',
+    title: 'Score de Compliance',
+    value: '91.2',
+    previousValue: '88.7',
     change: 2.8,
-    changeDirection: "up",
-    trend: [85, 87, 86, 88, 89, 90, 91, 90, 92, 91],
-    unit: "%",
-    format: "percentage",
-    status: "good",
+    changeDirection: 'up',
+    trend: [85, 87, 86, 88, 89, 90, 91, 90, 92, 91,],
+    unit: '%',
+    format: 'percentage',
+    status: 'good',
     icon: Shield,
-    color: "#059669",
+    color: '#059669',
     target: 95,
     benchmark: 85,
   },
-];
+]
 
 export default function AnalyticsDashboard({
   clinicId,
@@ -275,52 +275,52 @@ export default function AnalyticsDashboard({
   exportEnabled = true,
   customFilters: _customFilters = [],
   permissions: _permissions = [],
-}: AnalyticsDashboardProps) {
+}: AnalyticsDashboardProps,) {
   // ====== STATE MANAGEMENT ======
-  const [isLoading, setIsLoading] = useState(false);
-  const [analytics] = useState<HealthcareAnalytics>(mockAnalyticsData);
-  const [selectedDateRange] = useState(dateRange);
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [analytics,] = useState<HealthcareAnalytics>(mockAnalyticsData,)
+  const [selectedDateRange,] = useState(dateRange,)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _setRealTimeData = setRealTimeData;
-  const [activeTab, setActiveTab] = useState("overview");
+  const _setRealTimeData = setRealTimeData
+  const [activeTab, setActiveTab,] = useState('overview',)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [alerts] = useState<CriticalAlert[]>([]);
-  const [expandedInsights, setExpandedInsights] = useState<string[]>([]);
-  const [realTimeData] = useState(realTimeEnabled);
-  const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [alerts,] = useState<CriticalAlert[]>([],)
+  const [expandedInsights, setExpandedInsights,] = useState<string[]>([],)
+  const [realTimeData,] = useState(realTimeEnabled,)
+  const [lastRefresh, setLastRefresh,] = useState(new Date(),)
 
   // ====== REAL-TIME DATA SUBSCRIPTION ======
   useEffect(() => {
     if (!realTimeData || !refreshInterval) {
-      return;
+      return
     }
 
     const interval = setInterval(
       () => {
         // Simulate real-time data updates
-        setLastRefresh(new Date());
+        setLastRefresh(new Date(),)
         // In real implementation, fetch fresh data here
       },
       refreshInterval * 60 * 1000,
-    );
+    )
 
-    return () => clearInterval(interval);
-  }, [refreshInterval, realTimeData]);
+    return () => clearInterval(interval,)
+  }, [refreshInterval, realTimeData,],)
 
   // ====== DATA HANDLERS ======
   const handleRefreshData = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true,)
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setLastRefresh(new Date());
+      await new Promise((resolve,) => setTimeout(resolve, 1000,))
+      setLastRefresh(new Date(),)
       // In real implementation, fetch fresh analytics data
     } catch (error) {
-      console.error("Failed to refresh analytics data:", error);
+      console.error('Failed to refresh analytics data:', error,)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, []);
+  }, [],)
 
   const handleExportData = useCallback(() => {
     // Export functionality
@@ -329,56 +329,58 @@ export default function AnalyticsDashboard({
       metrics: dashboardMetrics,
       exportedAt: new Date(),
       dateRange: selectedDateRange,
-    };
+    }
 
-    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `healthcare-analytics-${clinicId}-${new Date().toISOString().split("T")[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [analytics, clinicId, selectedDateRange]);
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2,),], {
+      type: 'application/json',
+    },)
+    const url = URL.createObjectURL(blob,)
+    const a = document.createElement('a',)
+    a.href = url
+    a.download = `healthcare-analytics-${clinicId}-${new Date().toISOString().split('T',)[0]}.json`
+    a.click()
+    URL.revokeObjectURL(url,)
+  }, [analytics, clinicId, selectedDateRange,],)
 
-  const toggleInsightExpansion = useCallback((insightId: string) => {
-    setExpandedInsights((prev) =>
-      prev.includes(insightId)
-        ? prev.filter((id) => id !== insightId)
-        : [...prev, insightId]
-    );
-  }, []);
+  const toggleInsightExpansion = useCallback((insightId: string,) => {
+    setExpandedInsights((prev,) =>
+      prev.includes(insightId,)
+        ? prev.filter((id,) => id !== insightId)
+        : [...prev, insightId,]
+    )
+  }, [],)
 
   // ====== COMPUTED VALUES ======
   const criticalInsights = useMemo(
-    () => analytics.insights.filter((insight) => insight.priority === "critical"),
-    [analytics.insights],
-  );
+    () => analytics.insights.filter((insight,) => insight.priority === 'critical'),
+    [analytics.insights,],
+  )
 
   const overallHealthScore = useMemo(() => {
-    const metrics = dashboardMetrics.map((m) => parseFloat(String(m.value).replace(/[^\d.]/g, "")));
+    const metrics = dashboardMetrics.map((m,) =>
+      parseFloat(String(m.value,).replace(/[^\d.]/g, '',),)
+    )
     return Math.round(
-      metrics.reduce((sum, val) => sum + val, 0) / metrics.length,
-    );
-  }, []);
+      metrics.reduce((sum, val,) => sum + val, 0,) / metrics.length,
+    )
+  }, [],)
 
   const complianceStatus = useMemo(() => {
-    const score = analytics.analytics.complianceMetrics.overallScore;
+    const score = analytics.analytics.complianceMetrics.overallScore
     if (score >= 95) {
-      return { status: "excellent", color: "#059669" };
+      return { status: 'excellent', color: '#059669', }
     }
     if (score >= 85) {
-      return { status: "good", color: "#16a34a" };
+      return { status: 'good', color: '#16a34a', }
     }
     if (score >= 70) {
-      return { status: "warning", color: "#f59e0b" };
+      return { status: 'warning', color: '#f59e0b', }
     }
-    return { status: "critical", color: "#dc2626" };
-  }, [analytics.analytics.complianceMetrics.overallScore]);
+    return { status: 'critical', color: '#dc2626', }
+  }, [analytics.analytics.complianceMetrics.overallScore,],)
 
   // ====== RENDER COMPONENTS ======
-  const renderMetricCard = (metric: MetricCard) => (
+  const renderMetricCard = (metric: MetricCard,) => (
     <Card key={metric.id} className="relative overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -388,10 +390,10 @@ export default function AnalyticsDashboard({
           {metric.icon && <metric.icon className="h-4 w-4 text-muted-foreground" />}
           {metric.status && (
             <Badge
-              variant={metric.status === "good" ? "default" : "destructive"}
+              variant={metric.status === 'good' ? 'default' : 'destructive'}
               className="h-5"
             >
-              {metric.status === "good" ? "Bom" : "Atenção"}
+              {metric.status === 'good' ? 'Bom' : 'Atenção'}
             </Badge>
           )}
         </div>
@@ -400,31 +402,31 @@ export default function AnalyticsDashboard({
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <div className="text-2xl font-bold">
-              {metric.format === "currency"
+              {metric.format === 'currency'
                 ? metric.value
-                : metric.format === "percentage"
+                : metric.format === 'percentage'
                 ? `${metric.value}%`
                 : metric.value}
             </div>
             {metric.change !== undefined && (
               <div className="flex items-center space-x-2 text-sm">
-                {metric.changeDirection === "up"
+                {metric.changeDirection === 'up'
                   ? <TrendingUp className="h-4 w-4 text-green-500" />
-                  : metric.changeDirection === "down"
+                  : metric.changeDirection === 'down'
                   ? <TrendingDown className="h-4 w-4 text-red-500" />
                   : null}
                 <span
                   className={cn(
-                    "font-medium",
-                    metric.changeDirection === "up"
-                      ? "text-green-600"
-                      : metric.changeDirection === "down"
-                      ? "text-red-600"
-                      : "text-muted-foreground",
+                    'font-medium',
+                    metric.changeDirection === 'up'
+                      ? 'text-green-600'
+                      : metric.changeDirection === 'down'
+                      ? 'text-red-600'
+                      : 'text-muted-foreground',
                   )}
                 >
-                  {metric.change > 0 ? "+" : ""}
-                  {metric.change.toFixed(1)}%
+                  {metric.change > 0 ? '+' : ''}
+                  {metric.change.toFixed(1,)}%
                 </span>
                 <span className="text-muted-foreground">vs mês anterior</span>
               </div>
@@ -434,14 +436,14 @@ export default function AnalyticsDashboard({
             <div className="h-16 w-24">
               {/* Simplified sparkline representation */}
               <div className="flex h-full items-end space-x-1">
-                {metric.trend.map((value, index) => (
+                {metric.trend.map((value, index,) => (
                   <div
                     key={index}
                     className="bg-primary/20 rounded-sm"
                     style={{
-                      height: `${(value / Math.max(...(metric.trend ?? [1]))) * 100}%`,
-                      width: "8px",
-                      backgroundColor: metric.color || "#3b82f6",
+                      height: `${(value / Math.max(...(metric.trend ?? [1,]),)) * 100}%`,
+                      width: '8px',
+                      backgroundColor: metric.color || '#3b82f6',
                     }}
                   />
                 ))}
@@ -454,13 +456,13 @@ export default function AnalyticsDashboard({
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Meta</span>
               <span>
-                {metric.format === "currency"
+                {metric.format === 'currency'
                   ? `R$ ${metric.target.toLocaleString()}`
                   : metric.target}
               </span>
             </div>
             <Progress
-              value={(parseFloat(String(metric.value).replace(/[^\d.]/g, ""))
+              value={(parseFloat(String(metric.value,).replace(/[^\d.]/g, '',),)
                 / metric.target)
                 * 100}
               className="h-2"
@@ -469,36 +471,36 @@ export default function AnalyticsDashboard({
         )}
       </CardContent>
     </Card>
-  );
+  )
 
-  const renderInsightCard = (insight: AIInsight) => (
+  const renderInsightCard = (insight: AIInsight,) => (
     <Card
       key={insight.id}
       className="cursor-pointer hover:shadow-md transition-shadow"
     >
       <CardHeader
         className="pb-2"
-        onClick={() => toggleInsightExpansion(insight.id)}
+        onClick={() => toggleInsightExpansion(insight.id,)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div
               className={cn(
-                "p-2 rounded-full",
-                insight.priority === "critical"
-                  ? "bg-red-100 text-red-600"
-                  : insight.priority === "high"
-                  ? "bg-orange-100 text-orange-600"
-                  : insight.priority === "medium"
-                  ? "bg-yellow-100 text-yellow-600"
-                  : "bg-blue-100 text-blue-600",
+                'p-2 rounded-full',
+                insight.priority === 'critical'
+                  ? 'bg-red-100 text-red-600'
+                  : insight.priority === 'high'
+                  ? 'bg-orange-100 text-orange-600'
+                  : insight.priority === 'medium'
+                  ? 'bg-yellow-100 text-yellow-600'
+                  : 'bg-blue-100 text-blue-600',
               )}
             >
-              {insight.type === "trend"
+              {insight.type === 'trend'
                 ? <TrendingUp className="h-4 w-4" />
-                : insight.type === "anomaly"
+                : insight.type === 'anomaly'
                 ? <AlertTriangle className="h-4 w-4" />
-                : insight.type === "prediction"
+                : insight.type === 'prediction'
                 ? <Brain className="h-4 w-4" />
                 : <Target className="h-4 w-4" />}
             </div>
@@ -506,20 +508,20 @@ export default function AnalyticsDashboard({
               <CardTitle className="text-base">{insight.title}</CardTitle>
               <div className="flex items-center space-x-2 mt-1">
                 <Badge
-                  variant={insight.priority === "critical"
-                    ? "destructive"
-                    : "secondary"}
+                  variant={insight.priority === 'critical'
+                    ? 'destructive'
+                    : 'secondary'}
                 >
-                  {insight.priority === "critical"
-                    ? "Crítico"
-                    : insight.priority === "high"
-                    ? "Alto"
-                    : insight.priority === "medium"
-                    ? "Médio"
-                    : "Baixo"}
+                  {insight.priority === 'critical'
+                    ? 'Crítico'
+                    : insight.priority === 'high'
+                    ? 'Alto'
+                    : insight.priority === 'medium'
+                    ? 'Médio'
+                    : 'Baixo'}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
-                  Confiança: {(insight.confidence * 100).toFixed(0)}%
+                  Confiança: {(insight.confidence * 100).toFixed(0,)}%
                 </span>
               </div>
             </div>
@@ -533,33 +535,33 @@ export default function AnalyticsDashboard({
                 Ação Necessária
               </Badge>
             )}
-            {expandedInsights.includes(insight.id)
+            {expandedInsights.includes(insight.id,)
               ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
               : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
           </div>
         </div>
       </CardHeader>
-      {expandedInsights.includes(insight.id) && (
+      {expandedInsights.includes(insight.id,) && (
         <CardContent className="pt-0">
           <p className="text-sm text-muted-foreground mb-3">
             {insight.description}
           </p>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
-              Gerado: {insight.generatedAt.toLocaleDateString("pt-BR")}
+              Gerado: {insight.generatedAt.toLocaleDateString('pt-BR',)}
             </span>
             {insight.validUntil && (
               <span className="text-muted-foreground">
-                Válido até: {insight.validUntil.toLocaleDateString("pt-BR")}
+                Válido até: {insight.validUntil.toLocaleDateString('pt-BR',)}
               </span>
             )}
           </div>
         </CardContent>
       )}
     </Card>
-  );
+  )
 
-  const renderRecommendationCard = (recommendation: AIRecommendation) => (
+  const renderRecommendationCard = (recommendation: AIRecommendation,) => (
     <Card key={recommendation.id} className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
@@ -567,13 +569,13 @@ export default function AnalyticsDashboard({
             <CardTitle className="text-base">{recommendation.title}</CardTitle>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="secondary">
-                {recommendation.category === "treatment"
-                  ? "Tratamento"
-                  : recommendation.category === "prevention"
-                  ? "Prevenção"
-                  : recommendation.category === "optimization"
-                  ? "Otimização"
-                  : "Compliance"}
+                {recommendation.category === 'treatment'
+                  ? 'Tratamento'
+                  : recommendation.category === 'prevention'
+                  ? 'Prevenção'
+                  : recommendation.category === 'optimization'
+                  ? 'Otimização'
+                  : 'Compliance'}
               </Badge>
               <Badge variant="outline">
                 Nível {recommendation.evidenceLevel}
@@ -585,7 +587,7 @@ export default function AnalyticsDashboard({
               +{recommendation.metrics.expectedImprovement}%
             </div>
             <div className="text-xs text-muted-foreground">
-              Confiança: {(recommendation.confidenceLevel * 100).toFixed(0)}%
+              Confiança: {(recommendation.confidenceLevel * 100).toFixed(0,)}%
             </div>
           </div>
         </div>
@@ -604,17 +606,17 @@ export default function AnalyticsDashboard({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Dificuldade:</span>
             <Badge
-              variant={recommendation.implementation.difficulty === "easy"
-                ? "default"
-                : recommendation.implementation.difficulty === "moderate"
-                ? "secondary"
-                : "destructive"}
+              variant={recommendation.implementation.difficulty === 'easy'
+                ? 'default'
+                : recommendation.implementation.difficulty === 'moderate'
+                ? 'secondary'
+                : 'destructive'}
             >
-              {recommendation.implementation.difficulty === "easy"
-                ? "Fácil"
-                : recommendation.implementation.difficulty === "moderate"
-                ? "Moderada"
-                : "Difícil"}
+              {recommendation.implementation.difficulty === 'easy'
+                ? 'Fácil'
+                : recommendation.implementation.difficulty === 'moderate'
+                ? 'Moderada'
+                : 'Difícil'}
             </Badge>
           </div>
           <div className="flex justify-between text-sm">
@@ -625,13 +627,13 @@ export default function AnalyticsDashboard({
             <span className="text-muted-foreground">Impacto no Custo:</span>
             <span
               className={cn(
-                "font-medium",
+                'font-medium',
                 recommendation.metrics.costImpact < 0
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? 'text-green-600'
+                  : 'text-red-600',
               )}
             >
-              R$ {Math.abs(recommendation.metrics.costImpact).toLocaleString()}
+              R$ {Math.abs(recommendation.metrics.costImpact,).toLocaleString()}
             </span>
           </div>
         </div>
@@ -640,7 +642,7 @@ export default function AnalyticsDashboard({
         </Button>
       </CardContent>
     </Card>
-  );
+  )
 
   // ====== MAIN RENDER ======
   return (
@@ -658,9 +660,9 @@ export default function AnalyticsDashboard({
         <div className="flex items-center space-x-3">
           <Select
             value={selectedDateRange.preset}
-            onValueChange={(value) => {
+            onValueChange={(value,) => {
               // Handle date range change
-              console.log("Date range changed:", value);
+              console.log('Date range changed:', value,)
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -682,7 +684,7 @@ export default function AnalyticsDashboard({
             disabled={isLoading}
           >
             <RefreshCw
-              className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")}
+              className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin',)}
             />
             Atualizar
           </Button>
@@ -711,26 +713,26 @@ export default function AnalyticsDashboard({
                 <span className="text-sm font-medium">Sistema Ativo</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                Última atualização: {lastRefresh.toLocaleTimeString("pt-BR")}
+                Última atualização: {lastRefresh.toLocaleTimeString('pt-BR',)}
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm">
-                Score Geral:{" "}
+                Score Geral:{' '}
                 <span className="font-bold text-green-600">
                   {overallHealthScore}/100
                 </span>
               </div>
               <Badge
                 className={cn(
-                  "text-white",
-                  complianceStatus.status === "excellent"
-                    ? "bg-green-600"
-                    : complianceStatus.status === "good"
-                    ? "bg-blue-600"
-                    : complianceStatus.status === "warning"
-                    ? "bg-yellow-600"
-                    : "bg-red-600",
+                  'text-white',
+                  complianceStatus.status === 'excellent'
+                    ? 'bg-green-600'
+                    : complianceStatus.status === 'good'
+                    ? 'bg-blue-600'
+                    : complianceStatus.status === 'warning'
+                    ? 'bg-yellow-600'
+                    : 'bg-red-600',
                 )}
               >
                 Compliance: {analytics.analytics.complianceMetrics.overallScore}
@@ -743,7 +745,7 @@ export default function AnalyticsDashboard({
 
       {/* Main Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {dashboardMetrics.map(renderMetricCard)}
+        {dashboardMetrics.map(renderMetricCard,)}
       </div>
 
       {/* Critical Insights Alert */}
@@ -759,7 +761,7 @@ export default function AnalyticsDashboard({
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {criticalInsights.map((insight) => (
+              {criticalInsights.map((insight,) => (
                 <div
                   key={insight.id}
                   className="flex items-center justify-between p-3 bg-white rounded-lg border"
@@ -852,51 +854,51 @@ export default function AnalyticsDashboard({
               <div className="space-y-4">
                 {[
                   {
-                    time: "14:30",
-                    action: "Nova consulta agendada",
-                    patient: "Maria Silva",
-                    type: "appointment",
+                    time: '14:30',
+                    action: 'Nova consulta agendada',
+                    patient: 'Maria Silva',
+                    type: 'appointment',
                   },
                   {
-                    time: "14:15",
-                    action: "Tratamento finalizado",
-                    patient: "João Santos",
-                    type: "treatment",
+                    time: '14:15',
+                    action: 'Tratamento finalizado',
+                    patient: 'João Santos',
+                    type: 'treatment',
                   },
                   {
-                    time: "13:45",
-                    action: "Resultado de exame disponível",
-                    patient: "Ana Costa",
-                    type: "result",
+                    time: '13:45',
+                    action: 'Resultado de exame disponível',
+                    patient: 'Ana Costa',
+                    type: 'result',
                   },
                   {
-                    time: "13:20",
-                    action: "Pagamento processado",
-                    patient: "Carlos Lima",
-                    type: "payment",
+                    time: '13:20',
+                    action: 'Pagamento processado',
+                    patient: 'Carlos Lima',
+                    type: 'payment',
                   },
-                ].map((activity, index) => (
+                ].map((activity, index,) => (
                   <div
                     key={index}
                     className="flex items-center space-x-4 p-3 rounded-lg hover:bg-muted/50"
                   >
                     <div
                       className={cn(
-                        "p-2 rounded-full",
-                        activity.type === "appointment"
-                          ? "bg-blue-100 text-blue-600"
-                          : activity.type === "treatment"
-                          ? "bg-green-100 text-green-600"
-                          : activity.type === "result"
-                          ? "bg-purple-100 text-purple-600"
-                          : "bg-yellow-100 text-yellow-600",
+                        'p-2 rounded-full',
+                        activity.type === 'appointment'
+                          ? 'bg-blue-100 text-blue-600'
+                          : activity.type === 'treatment'
+                          ? 'bg-green-100 text-green-600'
+                          : activity.type === 'result'
+                          ? 'bg-purple-100 text-purple-600'
+                          : 'bg-yellow-100 text-yellow-600',
                       )}
                     >
-                      {activity.type === "appointment"
+                      {activity.type === 'appointment'
                         ? <Calendar className="h-4 w-4" />
-                        : activity.type === "treatment"
+                        : activity.type === 'treatment'
                         ? <Stethoscope className="h-4 w-4" />
-                        : activity.type === "result"
+                        : activity.type === 'result'
                         ? <Eye className="h-4 w-4" />
                         : <CheckCircle className="h-4 w-4" />}
                     </div>
@@ -1119,7 +1121,7 @@ export default function AnalyticsDashboard({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analytics.insights.map(renderInsightCard)}
+                  {analytics.insights.map(renderInsightCard,)}
                 </div>
               </CardContent>
             </Card>
@@ -1134,7 +1136,7 @@ export default function AnalyticsDashboard({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analytics.recommendations.map(renderRecommendationCard)}
+                  {analytics.recommendations.map(renderRecommendationCard,)}
                 </div>
               </CardContent>
             </Card>
@@ -1142,5 +1144,5 @@ export default function AnalyticsDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

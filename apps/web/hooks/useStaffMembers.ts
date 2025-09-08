@@ -1,129 +1,129 @@
-"use client";
+'use client'
 
-import { createClient } from "@/app/utils/supabase/client";
-import type { Database } from "@/types/supabase";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { createClient, } from '@/app/utils/supabase/client'
+import type { Database, } from '@/types/supabase'
+import { useCallback, useEffect, useMemo, useState, } from 'react'
 
-type StaffMember = Database["public"]["Tables"]["staff_members"]["Row"];
+type StaffMember = Database['public']['Tables']['staff_members']['Row']
 
 interface StaffHook {
-  staffMembers: StaffMember[];
-  activeStaff: StaffMember[];
-  staffById: (id: string) => StaffMember | null;
-  staffBySpecialty: Record<string, StaffMember[]>;
-  totalStaff: number;
-  activeStaffCount: number;
-  loading: boolean;
-  error: Error | null;
-  refreshStaff: () => Promise<void>;
+  staffMembers: StaffMember[]
+  activeStaff: StaffMember[]
+  staffById: (id: string,) => StaffMember | null
+  staffBySpecialty: Record<string, StaffMember[]>
+  totalStaff: number
+  activeStaffCount: number
+  loading: boolean
+  error: Error | null
+  refreshStaff: () => Promise<void>
 }
 
 export function useStaffMembers(): StaffHook {
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  const [staffMembers, setStaffMembers,] = useState<StaffMember[]>([],)
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<Error | null>()
 
-  const supabase = createClient();
+  const supabase = createClient()
 
   const fetchStaffMembers = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(undefined);
+      setLoading(true,)
+      setError(undefined,)
 
-      const { data, error: fetchError } = await supabase
-        .from("staff_members")
-        .select("*")
-        .order("name", { ascending: true });
+      const { data, error: fetchError, } = await supabase
+        .from('staff_members',)
+        .select('*',)
+        .order('name', { ascending: true, },)
 
       if (fetchError) {
-        throw new Error(fetchError.message);
+        throw new Error(fetchError.message,)
       }
 
-      setStaffMembers(data || []);
+      setStaffMembers(data || [],)
     } catch (error) {
-      setError(error as Error);
+      setError(error as Error,)
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, [supabase]);
+  }, [supabase,],)
 
   // Staff ativo
   const activeStaff = useMemo(() => {
-    return staffMembers.filter((staff) => staff.status === "active");
-  }, [staffMembers]);
+    return staffMembers.filter((staff,) => staff.status === 'active')
+  }, [staffMembers,],)
 
   // Função para buscar staff por ID
   const staffById = useCallback(
-    (id: string): StaffMember | null => {
-      return staffMembers.find((staff) => staff.id === id) || undefined;
+    (id: string,): StaffMember | null => {
+      return staffMembers.find((staff,) => staff.id === id) || undefined
     },
-    [staffMembers],
-  );
+    [staffMembers,],
+  )
 
   // Staff agrupado por especialidade
   const staffBySpecialty = useMemo(() => {
-    const grouped: Record<string, StaffMember[]> = {};
+    const grouped: Record<string, StaffMember[]> = {}
 
-    staffMembers.forEach((staff) => {
-      const specialty = staff.specialty || "General";
+    staffMembers.forEach((staff,) => {
+      const specialty = staff.specialty || 'General'
       if (!grouped[specialty]) {
-        grouped[specialty] = [];
+        grouped[specialty] = []
       }
-      grouped[specialty].push(staff);
-    });
+      grouped[specialty].push(staff,)
+    },)
 
-    return grouped;
-  }, [staffMembers]);
+    return grouped
+  }, [staffMembers,],)
 
   // Total de funcionários
-  const { length: totalStaff } = staffMembers;
+  const { length: totalStaff, } = staffMembers
 
   // Total de funcionários ativos
-  const { length: activeStaffCount } = activeStaff;
+  const { length: activeStaffCount, } = activeStaff
 
   // Função para atualizar a lista de staff
   const refreshStaff = useCallback(async () => {
-    await fetchStaffMembers();
-  }, [fetchStaffMembers]);
+    await fetchStaffMembers()
+  }, [fetchStaffMembers,],)
 
   // Effect para buscar staff
   useEffect(() => {
-    fetchStaffMembers();
-  }, [fetchStaffMembers]);
+    fetchStaffMembers()
+  }, [fetchStaffMembers,],)
 
   // Setup real-time subscription para staff
   useEffect(() => {
     const channel = supabase
-      .channel("staff-members-changes")
+      .channel('staff-members-changes',)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "staff_members",
+          event: '*',
+          schema: 'public',
+          table: 'staff_members',
         },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setStaffMembers((prev) => [...prev, payload.new as StaffMember]);
-          } else if (payload.eventType === "UPDATE") {
-            setStaffMembers((prev) =>
-              prev.map((staff) =>
+        (payload,) => {
+          if (payload.eventType === 'INSERT') {
+            setStaffMembers((prev,) => [...prev, payload.new as StaffMember,])
+          } else if (payload.eventType === 'UPDATE') {
+            setStaffMembers((prev,) =>
+              prev.map((staff,) =>
                 staff.id === payload.new.id
                   ? (payload.new as StaffMember)
                   : staff
               )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setStaffMembers((prev) => prev.filter((staff) => staff.id !== payload.old.id));
+            )
+          } else if (payload.eventType === 'DELETE') {
+            setStaffMembers((prev,) => prev.filter((staff,) => staff.id !== payload.old.id))
           }
         },
       )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      channel.unsubscribe();
-    };
-  }, [supabase]);
+      channel.unsubscribe()
+    }
+  }, [supabase,],)
 
   return {
     staffMembers,
@@ -135,5 +135,5 @@ export function useStaffMembers(): StaffHook {
     loading,
     error,
     refreshStaff,
-  };
+  }
 }

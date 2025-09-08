@@ -6,23 +6,23 @@
  * recent activities, and quick actions.
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/contexts/auth-context";
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { useAuth, } from '@/contexts/auth-context'
 // import { useSearch } from "@tanstack/react-router"; // Unused import
-import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
+import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users, } from 'lucide-react'
 
 export function DashboardOverview() {
   // const search = useSearch({ from: "/dashboard" }); // TODO: Use search for filtering
-  const { user } = useAuth();
+  const { user, } = useAuth()
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div>
         <h1 className="font-bold text-3xl">
-          Bem-vindo de volta, {user?.name || "Usuário"}!
+          Bem-vindo de volta, {user?.name || 'Usuário'}!
         </h1>
         <p className="text-muted-foreground">
           Aqui está um resumo da sua clínica hoje
@@ -103,7 +103,7 @@ export function DashboardOverview() {
             <CardDescription>Consultas agendadas para hoje</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3,].map((i,) => (
               <div
                 className="flex items-center justify-between rounded-lg border p-3"
                 key={i}
@@ -117,10 +117,10 @@ export function DashboardOverview() {
                     <p className="text-muted-foreground text-sm">
                       {new Date(
                         Date.now() + i * 60 * 60 * 1000,
-                      ).toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      ).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      },)}
                     </p>
                   </div>
                 </div>
@@ -140,10 +140,10 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-4">
             {[
-              { action: "Novo paciente cadastrado", time: "2 min atrás" },
-              { action: "Consulta reagendada", time: "1h atrás" },
-              { action: "Relatório LGPD gerado", time: "3h atrás" },
-            ].map((activity, i) => (
+              { action: 'Novo paciente cadastrado', time: '2 min atrás', },
+              { action: 'Consulta reagendada', time: '1h atrás', },
+              { action: 'Relatório LGPD gerado', time: '3h atrás', },
+            ].map((activity, i,) => (
               <div
                 className="flex items-center justify-between rounded-lg border p-3"
                 key={i}
@@ -160,5 +160,5 @@ export function DashboardOverview() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

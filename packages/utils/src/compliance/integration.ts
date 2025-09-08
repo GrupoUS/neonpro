@@ -5,27 +5,27 @@
  * @see LGPD + ANVISA + CFM compliance requirements
  */
 
-import { HealthcareRBAC } from "../auth/rbac";
-import { LGPDConsentManager } from "./consent-manager";
-import { LGPDDataSubjectRights } from "./data-subject-rights";
+import { HealthcareRBAC, } from '../auth/rbac'
+import { LGPDConsentManager, } from './consent-manager'
+import { LGPDDataSubjectRights, } from './data-subject-rights'
 
 export class ComplianceIntegration {
-  private static instance: ComplianceIntegration;
-  public rbac: HealthcareRBAC;
-  public consent: LGPDConsentManager;
-  public dataRights: LGPDDataSubjectRights;
+  private static instance: ComplianceIntegration
+  public rbac: HealthcareRBAC
+  public consent: LGPDConsentManager
+  public dataRights: LGPDDataSubjectRights
 
   private constructor() {
-    this.rbac = HealthcareRBAC.getInstance();
-    this.consent = LGPDConsentManager.getInstance();
-    this.dataRights = LGPDDataSubjectRights.getInstance();
+    this.rbac = HealthcareRBAC.getInstance()
+    this.consent = LGPDConsentManager.getInstance()
+    this.dataRights = LGPDDataSubjectRights.getInstance()
   }
 
   static getInstance(): ComplianceIntegration {
     if (!ComplianceIntegration.instance) {
-      ComplianceIntegration.instance = new ComplianceIntegration();
+      ComplianceIntegration.instance = new ComplianceIntegration()
     }
-    return ComplianceIntegration.instance;
+    return ComplianceIntegration.instance
   }
 
   /**
@@ -41,7 +41,7 @@ export class ComplianceIntegration {
     _resource: string,
   ): Promise<boolean> {
     // Simplified check - would use real RBAC logic
-    return true;
+    return true
   }
 
   /**
@@ -51,17 +51,17 @@ export class ComplianceIntegration {
     _userId: string,
     _operation: string,
   ): Promise<boolean> {
-    return true;
+    return true
   }
 
   /**
    * Healthcare data anonymization
    */
-  async anonymizeHealthcareData(data: unknown): Promise<unknown> {
+  async anonymizeHealthcareData(data: unknown,): Promise<unknown> {
     // Simplified anonymization
-    if (typeof data === "object" && data !== null) {
-      return { ...data, anonymized: true };
+    if (typeof data === 'object' && data !== null) {
+      return { ...data, anonymized: true, }
     }
-    return { data, anonymized: true };
+    return { data, anonymized: true, }
   }
 }

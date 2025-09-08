@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "description": "Shared TypeScript and build configurations",
   "main": "./base.json",
+  "exports": {
+    ".": {
+      "import": "./base.json",
+      "require": "./base.json"
+    }
+  },
   "files": ["base.json", "*.json"],
   "scripts": {
-    "build": "echo 'Config package - no build needed' && exit 0"
+    "build": "echo 'Config package - no build needed' && exit 0",
+    "type-check": "echo 'Config package - no type check needed' && exit 0"
   },
   "dependencies": {},
   "devDependencies": {},

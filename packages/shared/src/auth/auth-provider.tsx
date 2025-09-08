@@ -3,48 +3,48 @@
  * Usa o useAuthToken hook e AuthTokenManager para gerenciar estado
  */
 
-"use client";
+'use client'
 
-import { createContext, useContext } from "react";
-import type { ReactNode } from "react";
-import { useAuthToken } from "./use-auth-token";
-import type { AuthUser, LoginCredentials } from "./use-auth-token";
+import { createContext, useContext, } from 'react'
+import type { ReactNode, } from 'react'
+import { useAuthToken, } from './use-auth-token'
+import type { AuthUser, LoginCredentials, } from './use-auth-token'
 
 interface AuthContextType {
   // Estado
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
+  user: AuthUser | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
 
   // Ações
   login: (
     credentials: LoginCredentials,
-  ) => Promise<{ success: boolean; error?: string; }>;
-  logout: () => Promise<void>;
+  ) => Promise<{ success: boolean; error?: string }>
+  logout: () => Promise<void>
 
   // Utilidades
-  getValidToken: () => Promise<string | null>;
-  getAuthHeader: () => Promise<string | null>;
-  refreshToken: () => Promise<boolean>;
+  getValidToken: () => Promise<string | null>
+  getAuthHeader: () => Promise<string | null>
+  refreshToken: () => Promise<boolean>
 
   // Status de tokens
-  hasValidTokens: boolean;
-  willExpireSoon: boolean;
-  timeUntilExpiration: number;
+  hasValidTokens: boolean
+  willExpireSoon: boolean
+  timeUntilExpiration: number
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined,)
 
 export interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 /**
  * Provider de autenticação global
  */
-export function AuthProvider({ children }: AuthProviderProps) {
-  const authHook = useAuthToken();
+export function AuthProvider({ children, }: AuthProviderProps,) {
+  const authHook = useAuthToken()
 
   const contextValue: AuthContextType = {
     // Estado
@@ -66,51 +66,51 @@ export function AuthProvider({ children }: AuthProviderProps) {
     hasValidTokens: authHook.hasValidTokens,
     willExpireSoon: authHook.willExpireSoon,
     timeUntilExpiration: authHook.timeUntilExpiration,
-  };
+  }
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }
 
 /**
  * Hook para usar o contexto de autenticação
  */
 export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext,)
 
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider',)
   }
 
-  return context;
+  return context
 }
 
 /**
  * Hook para verificar se usuário está autenticado
  */
 export function useIsAuthenticated(): boolean {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated;
+  const { isAuthenticated, } = useAuth()
+  return isAuthenticated
 }
 
 /**
  * Hook para obter dados do usuário atual
  */
 export function useCurrentUser(): AuthUser | null {
-  const { user } = useAuth();
-  return user;
+  const { user, } = useAuth()
+  return user
 }
 
 /**
  * Hook para obter token válido com refresh automático
  */
 export function useAuthTokenHelpers(): {
-  getToken: () => Promise<string | null>;
-  getAuthHeader: () => Promise<string | null>;
+  getToken: () => Promise<string | null>
+  getAuthHeader: () => Promise<string | null>
 } {
-  const { getValidToken, getAuthHeader } = useAuth();
+  const { getValidToken, getAuthHeader, } = useAuth()
 
   return {
     getToken: getValidToken,
     getAuthHeader,
-  };
+  }
 }

@@ -6,7 +6,7 @@
  * demonstrando o uso dos hooks TanStack Query com Hono RPC.
  */
 
-"use client";
+'use client'
 
 import {
   useAppointments,
@@ -16,20 +16,20 @@ import {
   useLogin,
   usePatients,
   useProfile,
-} from "@/hooks/api";
-import type { CreateAppointment, CreatePatient, Login } from "@neonpro/shared/schemas";
-import { useState } from "react";
+} from '@/hooks/api'
+import type { CreateAppointment, CreatePatient, Login, } from '@neonpro/shared/schemas'
+import { useState, } from 'react'
 
 export function IntegrationExample() {
-  const [loginData, setLoginData] = useState<Login>({
-    email: "admin@neonpro.com",
-    password: "Admin123!",
-  });
+  const [loginData, setLoginData,] = useState<Login>({
+    email: 'admin@neonpro.com',
+    password: 'Admin123!',
+  },)
 
   // Auth hooks
-  const { isAuthenticated, user, isLoading: authLoading } = useAuthStatus();
-  const loginMutation = useLogin();
-  const { data: profile, refetch: refetchProfile } = useProfile();
+  const { isAuthenticated, user, isLoading: authLoading, } = useAuthStatus()
+  const loginMutation = useLogin()
+  const { data: profile, refetch: refetchProfile, } = useProfile()
 
   // Patient hooks
   const {
@@ -39,81 +39,81 @@ export function IntegrationExample() {
   } = usePatients({
     page: 1,
     limit: 5,
-  });
-  const createPatientMutation = useCreatePatient();
+  },)
+  const createPatientMutation = useCreatePatient()
 
   // Appointment hooks
-  const { data: appointments, isLoading: appointmentsLoading } = useAppointments({
+  const { data: appointments, isLoading: appointmentsLoading, } = useAppointments({
     page: 1,
     limit: 3,
-  });
-  const createAppointmentMutation = useCreateAppointment();
+  },)
+  const createAppointmentMutation = useCreateAppointment()
 
   const handleLogin = async () => {
     try {
-      await loginMutation.mutateAsync(loginData);
-      refetchProfile();
+      await loginMutation.mutateAsync(loginData,)
+      refetchProfile()
     } catch {}
-  };
+  }
 
   const handleCreateTestPatient = async () => {
     const testPatient: CreatePatient = {
-      fullName: "Ana Silva Santos",
-      email: "ana.silva@email.com",
-      phone: "11987654321",
-      cpf: "12345678901",
-      birthDate: "1985-06-15",
-      gender: "female",
+      fullName: 'Ana Silva Santos',
+      email: 'ana.silva@email.com',
+      phone: '11987654321',
+      cpf: '12345678901',
+      birthDate: '1985-06-15',
+      gender: 'female',
       address: {
-        street: "Rua das Flores",
-        number: "123",
-        complement: "Apto 45",
-        neighborhood: "Centro",
-        city: "São Paulo",
-        state: "SP",
-        zipCode: "01234567",
+        street: 'Rua das Flores',
+        number: '123',
+        complement: 'Apto 45',
+        neighborhood: 'Centro',
+        city: 'São Paulo',
+        state: 'SP',
+        zipCode: '01234567',
       },
-      allergies: ["Nenhuma conhecida"],
+      allergies: ['Nenhuma conhecida',],
       chronicConditions: [],
       currentMedications: [],
       consentGiven: true,
       dataProcessingConsent: true,
       marketingConsent: false,
-    };
+    }
 
     try {
-      await createPatientMutation.mutateAsync(testPatient);
+      await createPatientMutation.mutateAsync(testPatient,)
     } catch {}
-  };
+  }
 
   const handleCreateTestAppointment = async () => {
     if (!patients?.data?.[0]) {
-      toast.error("Crie um paciente primeiro!");
-      return;
+      toast.error('Crie um paciente primeiro!',)
+      return
     }
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(14, 0, 0, 0); // 2 PM tomorrow
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1,)
+    tomorrow.setHours(14, 0, 0, 0,) // 2 PM tomorrow
 
     const testAppointment: CreateAppointment = {
       patientId: patients.data[0].id,
-      professionalId: "550e8400-e29b-41d4-a716-446655440002", // Mock professional ID
-      clinicId: "550e8400-e29b-41d4-a716-446655440003", // Mock clinic ID
+      professionalId: '550e8400-e29b-41d4-a716-446655440002', // Mock professional ID
+      clinicId: '550e8400-e29b-41d4-a716-446655440003', // Mock clinic ID
       scheduledAt: tomorrow.toISOString(),
       duration: 60,
-      type: "consultation",
-      priority: "normal",
-      title: "Consulta de Avaliação Estética",
-      description: "Primeira consulta para avaliação de tratamentos faciais",
-      treatmentArea: "Face",
+      type: 'consultation',
+      priority: 'normal',
+      title: 'Consulta de Avaliação Estética',
+      description: 'Primeira consulta para avaliação de tratamentos faciais',
+      treatmentArea: 'Face',
       estimatedCost: 150,
-    };
+    }
 
     try {
-      await createAppointmentMutation.mutateAsync(testAppointment);
+      await createAppointmentMutation.mutateAsync(testAppointment,)
     } catch {}
-  };
+  }
 
   if (authLoading) {
     return (
@@ -123,7 +123,7 @@ export function IntegrationExample() {
           <p className="mt-2">Verificando autenticação...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -166,7 +166,7 @@ export function IntegrationExample() {
                     <strong>Papel:</strong> {user?.role}
                   </p>
                   <p>
-                    <strong>Permissões:</strong> {user?.permissions?.join(", ") || "Nenhuma"}
+                    <strong>Permissões:</strong> {user?.permissions?.join(', ',) || 'Nenhuma'}
                   </p>
                 </div>
               </div>
@@ -183,8 +183,8 @@ export function IntegrationExample() {
                     onClick={handleCreateTestPatient}
                   >
                     {createPatientMutation.isPending
-                      ? "Criando..."
-                      : "Criar Paciente Teste"}
+                      ? 'Criando...'
+                      : 'Criar Paciente Teste'}
                   </button>
                 </div>
 
@@ -195,7 +195,7 @@ export function IntegrationExample() {
                   : patients?.data && patients.data.length > 0
                   ? (
                     <div className="space-y-2">
-                      {patients.data.map((patient) => (
+                      {patients.data.map((patient,) => (
                         <div
                           className="rounded border bg-white p-3"
                           key={patient.id}
@@ -230,8 +230,8 @@ export function IntegrationExample() {
                     onClick={handleCreateTestAppointment}
                   >
                     {createAppointmentMutation.isPending
-                      ? "Agendando..."
-                      : "Criar Agendamento"}
+                      ? 'Agendando...'
+                      : 'Criar Agendamento'}
                   </button>
                 </div>
 
@@ -240,7 +240,7 @@ export function IntegrationExample() {
                   : appointments?.data && appointments.data.length > 0
                   ? (
                     <div className="space-y-2">
-                      {appointments.data.map((appointment) => (
+                      {appointments.data.map((appointment,) => (
                         <div
                           className="rounded border bg-white p-3"
                           key={appointment.id}
@@ -249,8 +249,8 @@ export function IntegrationExample() {
                             <strong>{appointment.title}</strong>
                           </p>
                           <p className="text-gray-600 text-sm">
-                            {new Date(appointment.scheduledAt).toLocaleString(
-                              "pt-BR",
+                            {new Date(appointment.scheduledAt,).toLocaleString(
+                              'pt-BR',
                             )}
                           </p>
                           <p className="text-gray-500 text-xs">
@@ -300,7 +300,8 @@ export function IntegrationExample() {
                   <input
                     id="login-email"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    onChange={(e) => setLoginData((prev) => ({ ...prev, email: e.target.value }))}
+                    onChange={(e,) =>
+                      setLoginData((prev,) => ({ ...prev, email: e.target.value, }))}
                     type="email"
                     value={loginData.email}
                   />
@@ -316,8 +317,8 @@ export function IntegrationExample() {
                   <input
                     id="login-password"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    onChange={(e) =>
-                      setLoginData((prev) => ({
+                    onChange={(e,) =>
+                      setLoginData((prev,) => ({
                         ...prev,
                         password: e.target.value,
                       }))}
@@ -331,7 +332,7 @@ export function IntegrationExample() {
                   disabled={loginMutation.isPending}
                   onClick={handleLogin}
                 >
-                  {loginMutation.isPending ? "Entrando..." : "Fazer Login"}
+                  {loginMutation.isPending ? 'Entrando...' : 'Fazer Login'}
                 </button>
 
                 {loginMutation.error && (
@@ -344,5 +345,5 @@ export function IntegrationExample() {
           )}
       </div>
     </div>
-  );
+  )
 }

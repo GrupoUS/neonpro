@@ -1,96 +1,96 @@
-"use client";
+'use client'
 
 // import { useMFA } from "@neonpro/domain/hooks/auth/use-mfa";
 // Mock MfaMethod enum for MVP
 enum MfaMethod {
-  TOTP = "totp",
-  SMS = "sms",
-  EMAIL = "email",
-  BACKUP_CODES = "backup_codes",
+  TOTP = 'totp',
+  SMS = 'sms',
+  EMAIL = 'email',
+  BACKUP_CODES = 'backup_codes',
 }
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
+import { QRCodeSVG, } from 'qrcode.react'
+import { useState, } from 'react'
 
 // Mock hook for MVP
 const useMFA = () => ({
-  setupMfaMethod: async (_method: unknown, _options?: unknown) => ({
+  setupMfaMethod: async (_method: unknown, _options?: unknown,) => ({
     success: true,
-    secret: "mock-secret",
-    qrCode: "mock-qr",
-    backupCodes: ["123456", "789012", "345678", "456789", "567890"],
+    secret: 'mock-secret',
+    qrCode: 'mock-qr',
+    backupCodes: ['123456', '789012', '345678', '456789', '567890',],
   }),
-  verifyMfaCode: async (_method: unknown, _code: unknown, _sessionId?: unknown) => ({
+  verifyMfaCode: async (_method: unknown, _code: unknown, _sessionId?: unknown,) => ({
     success: true,
   }),
   isLoading: false,
   error: null,
   clearError: () => {},
-});
+})
 
 interface MfaSetupProps {
-  onComplete?: () => void;
-  onCancel?: () => void;
+  onComplete?: () => void
+  onCancel?: () => void
 }
 
-export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
-  const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } = useMFA();
+export function MfaSetup({ onComplete, onCancel, }: MfaSetupProps,) {
+  const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError, } = useMFA()
 
-  const [step, setStep] = useState<"method" | "setup" | "verify">("method");
-  const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [setupResult, setSetupResult] = useState<
+  const [step, setStep,] = useState<'method' | 'setup' | 'verify'>('method',)
+  const [selectedMethod, setSelectedMethod,] = useState<MfaMethod | null>(null,)
+  const [phoneNumber, setPhoneNumber,] = useState('',)
+  const [email, setEmail,] = useState('',)
+  const [verificationCode, setVerificationCode,] = useState('',)
+  const [setupResult, setSetupResult,] = useState<
     {
-      qrCodeUrl?: string;
-      secret?: string;
-      backupCodes?: string[];
+      qrCodeUrl?: string
+      secret?: string
+      backupCodes?: string[]
     } | null
-  >(null);
-  const [sessionId] = useState(() => crypto.randomUUID());
+  >(null,)
+  const [sessionId,] = useState(() => crypto.randomUUID())
 
-  const handleMethodSelect = (method: MfaMethod) => {
-    setSelectedMethod(method);
-    clearError();
+  const handleMethodSelect = (method: MfaMethod,) => {
+    setSelectedMethod(method,)
+    clearError()
 
     if (method === MfaMethod.BACKUP_CODES) {
-      handleSetupMethod(method);
+      handleSetupMethod(method,)
     } else {
-      setStep("setup");
+      setStep('setup',)
     }
-  };
+  }
 
-  const handleSetupMethod = async (method?: MfaMethod) => {
-    const mfaMethod = method || selectedMethod;
+  const handleSetupMethod = async (method?: MfaMethod,) => {
+    const mfaMethod = method || selectedMethod
     if (!mfaMethod) {
-      return;
+      return
     }
 
     try {
-      const options: Record<string, unknown> = {};
+      const options: Record<string, unknown> = {}
       if (mfaMethod === MfaMethod.SMS) {
-        options.phoneNumber = phoneNumber;
+        options.phoneNumber = phoneNumber
       } else if (mfaMethod === MfaMethod.EMAIL) {
-        options.email = email;
+        options.email = email
       }
 
-      const result = await setupMfaMethod(mfaMethod, options);
-      setSetupResult(result);
+      const result = await setupMfaMethod(mfaMethod, options,)
+      setSetupResult(result,)
 
       if (result.success) {
         if (mfaMethod === MfaMethod.BACKUP_CODES) {
           // Backup codes don't need verification, complete immediately
-          onComplete?.();
+          onComplete?.()
         } else {
-          setStep("verify");
+          setStep('verify',)
         }
       }
     } catch {}
-  };
+  }
 
   const handleVerifyCode = async () => {
     if (!selectedMethod) {
-      return;
+      return
     }
 
     try {
@@ -98,13 +98,13 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
         selectedMethod,
         verificationCode,
         sessionId,
-      );
+      )
 
       if (result.success) {
-        onComplete?.();
+        onComplete?.()
       }
     } catch {}
-  };
+  }
 
   const renderMethodSelection = () => (
     <div className="space-y-4">
@@ -113,7 +113,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
       <div className="space-y-2">
         <button
           className="w-full rounded-lg border p-4 text-left hover:bg-gray-50"
-          onClick={() => handleMethodSelect(MfaMethod.TOTP)}
+          onClick={() => handleMethodSelect(MfaMethod.TOTP,)}
         >
           <div className="font-medium">Authenticator App</div>
           <div className="text-gray-600 text-sm">
@@ -123,7 +123,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 
         <button
           className="w-full rounded-lg border p-4 text-left hover:bg-gray-50"
-          onClick={() => handleMethodSelect(MfaMethod.SMS)}
+          onClick={() => handleMethodSelect(MfaMethod.SMS,)}
         >
           <div className="font-medium">SMS</div>
           <div className="text-gray-600 text-sm">
@@ -133,7 +133,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 
         <button
           className="w-full rounded-lg border p-4 text-left hover:bg-gray-50"
-          onClick={() => handleMethodSelect(MfaMethod.EMAIL)}
+          onClick={() => handleMethodSelect(MfaMethod.EMAIL,)}
         >
           <div className="font-medium">Email</div>
           <div className="text-gray-600 text-sm">Receive codes via email</div>
@@ -141,7 +141,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 
         <button
           className="w-full rounded-lg border p-4 text-left hover:bg-gray-50"
-          onClick={() => handleMethodSelect(MfaMethod.BACKUP_CODES)}
+          onClick={() => handleMethodSelect(MfaMethod.BACKUP_CODES,)}
         >
           <div className="font-medium">Backup Codes</div>
           <div className="text-gray-600 text-sm">
@@ -150,11 +150,11 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
         </button>
       </div>
     </div>
-  );
+  )
 
   const renderSetup = () => {
     if (!selectedMethod) {
-      return;
+      return
     }
 
     return (
@@ -185,7 +185,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
               <span className="font-medium text-sm">Phone Number:</span>
               <input
                 className="mt-1 block w-full rounded-md border px-3 py-2"
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e,) => setPhoneNumber(e.target.value,)}
                 placeholder="+1234567890"
                 type="tel"
                 value={phoneNumber}
@@ -200,7 +200,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
               <span className="font-medium text-sm">Email Address:</span>
               <input
                 className="mt-1 block w-full rounded-md border px-3 py-2"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e,) => setEmail(e.target.value,)}
                 placeholder="your@email.com"
                 type="email"
                 value={email}
@@ -215,18 +215,18 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
             disabled={isLoading}
             onClick={() => handleSetupMethod()}
           >
-            {isLoading ? "Setting up..." : "Continue"}
+            {isLoading ? 'Setting up...' : 'Continue'}
           </button>
           <button
             className="rounded border px-4 py-2 hover:bg-gray-50"
-            onClick={() => setStep("method")}
+            onClick={() => setStep('method',)}
           >
             Back
           </button>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderVerification = () => (
     <div className="space-y-4">
@@ -237,7 +237,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
       <input
         className="block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-widest"
         maxLength={6}
-        onChange={(e) => setVerificationCode(e.target.value.replaceAll(/\D/g, "").slice(0, 6))}
+        onChange={(e,) => setVerificationCode(e.target.value.replaceAll(/\D/g, '',).slice(0, 6,),)}
         placeholder="123456"
         type="text"
         value={verificationCode}
@@ -250,7 +250,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
             Save these codes in a safe place. Each can only be used once:
           </p>
           <div className="grid grid-cols-2 gap-2 font-mono text-sm">
-            {setupResult.backupCodes.map((code: string, index: number) => (
+            {setupResult.backupCodes.map((code: string, index: number,) => (
               <div className="rounded border bg-white p-2" key={index}>
                 {code}
               </div>
@@ -265,17 +265,17 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
           disabled={isLoading || verificationCode.length !== 6}
           onClick={handleVerifyCode}
         >
-          {isLoading ? "Verifying..." : "Verify & Enable"}
+          {isLoading ? 'Verifying...' : 'Verify & Enable'}
         </button>
         <button
           className="rounded border px-4 py-2 hover:bg-gray-50"
-          onClick={() => setStep("setup")}
+          onClick={() => setStep('setup',)}
         >
           Back
         </button>
       </div>
     </div>
-  );
+  )
 
   return (
     <div className="mx-auto max-w-md rounded-lg border p-6">
@@ -285,9 +285,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
         </div>
       )}
 
-      {step === "method" && renderMethodSelection()}
-      {step === "setup" && renderSetup()}
-      {step === "verify" && renderVerification()}
+      {step === 'method' && renderMethodSelection()}
+      {step === 'setup' && renderSetup()}
+      {step === 'verify' && renderVerification()}
 
       <div className="mt-6 border-t pt-4">
         <button
@@ -298,5 +298,5 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }

@@ -11,23 +11,23 @@
  */
 
 // Mock the Card components
-import { cleanup, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui";
+import { cleanup, render, screen, } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi, } from 'vitest'
+import { Card, CardContent, CardHeader, CardTitle, } from '../../../components/ui'
 
 // Mock theme provider
-const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
+const ThemeWrapper = ({ children, }: { children: React.ReactNode },) => (
   <div className="neonprov1-theme">{children}</div>
-);
+)
 
-describe("card Component - NeonPro Healthcare UI", () => {
+describe('card Component - NeonPro Healthcare UI', () => {
   afterEach(() => {
-    cleanup();
-  });
+    cleanup()
+  },)
 
-  describe("basic Card Structure", () => {
-    it("should render card with header and content", () => {
+  describe('basic Card Structure', () => {
+    it('should render card with header and content', () => {
       render(
         <ThemeWrapper>
           <Card data-testid="patient-card">
@@ -40,54 +40,54 @@ describe("card Component - NeonPro Healthcare UI", () => {
             </CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      const card = screen.getByTestId("patient-card");
-      expect(card).toBeInTheDocument();
-      expect(screen.getByText("Informações do Paciente")).toBeInTheDocument();
-      expect(screen.getByText("Maria da Silva Santos")).toBeInTheDocument();
-    });
+      const card = screen.getByTestId('patient-card',)
+      expect(card,).toBeInTheDocument()
+      expect(screen.getByText('Informações do Paciente',),).toBeInTheDocument()
+      expect(screen.getByText('Maria da Silva Santos',),).toBeInTheDocument()
+    })
 
-    it("should support healthcare-specific card variants", () => {
+    it('should support healthcare-specific card variants', () => {
       const variants = [
-        "patient",
-        "appointment",
-        "professional",
-        "alert",
-      ] as const;
+        'patient',
+        'appointment',
+        'professional',
+        'alert',
+      ] as const
 
-      variants.forEach((variant) => {
+      variants.forEach((variant,) => {
         render(
           <ThemeWrapper>
             <Card data-testid={`card-${variant}`} variant={variant}>
               <CardContent>{variant} Card Content</CardContent>
             </Card>
           </ThemeWrapper>,
-        );
+        )
 
-        const card = screen.getByTestId(`card-${variant}`);
+        const card = screen.getByTestId(`card-${variant}`,)
         // Check for actual CVA classes that would be applied
-        expect(card).toHaveClass("flex", "flex-col", "rounded-xl", "border");
+        expect(card,).toHaveClass('flex', 'flex-col', 'rounded-xl', 'border',)
         // Check for variant-specific classes
-        if (variant === "patient") {
-          expect(card.className).toContain("border-primary/30");
+        if (variant === 'patient') {
+          expect(card.className,).toContain('border-primary/30',)
         }
 
-        cleanup();
-      });
-    });
-  });
+        cleanup()
+      },)
+    })
+  })
 
-  describe("patient Information Display", () => {
-    it("should display masked sensitive patient data", () => {
+  describe('patient Information Display', () => {
+    it('should display masked sensitive patient data', () => {
       const patientData = {
-        name: "João Santos Silva",
-        cpf: "***.***.***-45",
-        phone: "(**) ****-5678",
-        email: "j***@email.com",
-        bloodType: "O+",
-        emergencyContact: "(**) ****-9999",
-      };
+        name: 'João Santos Silva',
+        cpf: '***.***.***-45',
+        phone: '(**) ****-5678',
+        email: 'j***@email.com',
+        bloodType: 'O+',
+        emergencyContact: '(**) ****-9999',
+      }
 
       render(
         <ThemeWrapper>
@@ -107,18 +107,18 @@ describe("card Component - NeonPro Healthcare UI", () => {
             </CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      expect(screen.getByTestId("patient-cpf")).toHaveTextContent(
-        "***.***.***-45",
-      );
-      expect(screen.getByTestId("patient-phone")).toHaveTextContent(
-        "(**) ****-5678",
-      );
-      expect(screen.getByTestId("patient-blood")).toHaveTextContent("O+");
-    });
+      expect(screen.getByTestId('patient-cpf',),).toHaveTextContent(
+        '***.***.***-45',
+      )
+      expect(screen.getByTestId('patient-phone',),).toHaveTextContent(
+        '(**) ****-5678',
+      )
+      expect(screen.getByTestId('patient-blood',),).toHaveTextContent('O+',)
+    })
 
-    it("should handle emergency patient indicators", () => {
+    it('should handle emergency patient indicators', () => {
       render(
         <ThemeWrapper>
           <Card data-testid="emergency-card" urgency="critical" variant="emergency">
@@ -130,24 +130,24 @@ describe("card Component - NeonPro Healthcare UI", () => {
             <CardContent>
               <p>Paciente: Maria Silva</p>
               <p>Situação: Parada Cardíaca</p>
-              <p>Hora: {new Date().toLocaleTimeString("pt-BR")}</p>
+              <p>Hora: {new Date().toLocaleTimeString('pt-BR',)}</p>
             </CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      const card = screen.getByTestId("emergency-card");
+      const card = screen.getByTestId('emergency-card',)
       // Check for actual CVA classes
-      expect(card.className).toContain("animate-pulse-healthcare");
-      expect(card).toHaveAttribute("data-urgency", "critical");
+      expect(card.className,).toContain('animate-pulse-healthcare',)
+      expect(card,).toHaveAttribute('data-urgency', 'critical',)
       expect(
-        screen.getByText(/EMERGÊNCIA - PRIORIDADE CRÍTICA/),
-      ).toBeInTheDocument();
-    });
-  });
+        screen.getByText(/EMERGÊNCIA - PRIORIDADE CRÍTICA/,),
+      ).toBeInTheDocument()
+    })
+  })
 
-  describe("lGPD Compliance Features", () => {
-    it("should handle data consent indicators", () => {
+  describe('lGPD Compliance Features', () => {
+    it('should handle data consent indicators', () => {
       render(
         <ThemeWrapper>
           <Card data-testid="lgpd-card">
@@ -165,38 +165,38 @@ describe("card Component - NeonPro Healthcare UI", () => {
             </CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      const card = screen.getByTestId("lgpd-card");
-      expect(card).toHaveAttribute("data-slot", "card");
-      expect(screen.getByText("✓ Processamento")).toBeInTheDocument();
-    });
+      const card = screen.getByTestId('lgpd-card',)
+      expect(card,).toHaveAttribute('data-slot', 'card',)
+      expect(screen.getByText('✓ Processamento',),).toBeInTheDocument()
+    })
 
-    it("should handle data retention warnings", () => {
-      const retentionDate = new Date();
-      retentionDate.setMonth(retentionDate.getMonth() + 1);
+    it('should handle data retention warnings', () => {
+      const retentionDate = new Date()
+      retentionDate.setMonth(retentionDate.getMonth() + 1,)
 
       render(
         <ThemeWrapper>
           <Card data-testid="retention-card">
             <CardContent>
               <div className="retention-warning">
-                ⚠️ Dados serão excluídos em {retentionDate.toLocaleDateString("pt-BR")}
+                ⚠️ Dados serão excluídos em {retentionDate.toLocaleDateString('pt-BR',)}
               </div>
             </CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      const warning = screen.getByText(/Dados serão excluídos/);
-      expect(warning).toBeInTheDocument();
-    });
-  });
+      const warning = screen.getByText(/Dados serão excluídos/,)
+      expect(warning,).toBeInTheDocument()
+    })
+  })
 
-  describe("accessibility and Interaction", () => {
-    it("should support keyboard navigation", async () => {
-      const mockClick = vi.fn();
-      const user = userEvent.setup();
+  describe('accessibility and Interaction', () => {
+    it('should support keyboard navigation', async () => {
+      const mockClick = vi.fn()
+      const user = userEvent.setup()
 
       render(
         <ThemeWrapper>
@@ -204,13 +204,13 @@ describe("card Component - NeonPro Healthcare UI", () => {
             <CardContent>Card interativo - pressione Enter</CardContent>
           </Card>
         </ThemeWrapper>,
-      );
+      )
 
-      const card = screen.getByTestId("interactive-card");
-      card.focus();
+      const card = screen.getByTestId('interactive-card',)
+      card.focus()
 
-      await user.keyboard("{Enter}");
-      expect(mockClick).not.toHaveBeenCalled();
-    });
-  });
-});
+      await user.keyboard('{Enter}',)
+      expect(mockClick,).not.toHaveBeenCalled()
+    })
+  })
+})

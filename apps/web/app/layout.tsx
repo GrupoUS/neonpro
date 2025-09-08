@@ -1,38 +1,38 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata, } from 'next'
+import { Inter, JetBrains_Mono, } from 'next/font/google'
+import './globals.css'
 
-import { ClientInit } from "@/components/ClientInit";
-import { HealthcareErrorBoundary } from "@/components/ErrorBoundary";
-import { Toaster } from "@/components/ui/toaster";
-import { RealAuthProvider } from "@/contexts/RealAuthContext";
-import { initializeServer } from "@/lib/init";
-import { QueryProvider } from "@/providers/query-provider";
+import { ClientInit, } from '@/components/ClientInit'
+import { HealthcareErrorBoundary, } from '@/components/ErrorBoundary'
+import { Toaster, } from '@/components/ui/toaster'
+import { RealAuthProvider, } from '@/contexts/RealAuthContext'
+import { initializeServer, } from '@/lib/init'
+import { QueryProvider, } from '@/providers/query-provider'
 
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-inter',
+},)
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
-});
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+},)
 
 export const metadata: Metadata = {
-  title: "NeonPro - Healthcare Management",
-  description: "Professional healthcare management system",
-};
+  title: 'NeonPro - Healthcare Management',
+  description: 'Professional healthcare management system',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
-}) {
+  children: React.ReactNode
+},) {
   // Initialize server-side environment validation on app startup
-  initializeServer();
+  initializeServer()
 
   return (
     <html lang="pt-BR">
@@ -56,5 +56,5 @@ export default function RootLayout({
         </HealthcareErrorBoundary>
       </body>
     </html>
-  );
+  )
 }

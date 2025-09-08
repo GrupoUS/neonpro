@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { Button, } from '@/components/ui/button'
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 import {
   BarChart3,
   Bell,
@@ -22,72 +22,72 @@ import {
   Settings,
   User,
   Users,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type * as React from "react";
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, } from 'next/navigation'
+import type * as React from 'react'
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string; }>;
-  description?: string;
+  title: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  description?: string
 }
 
 const mainNavItems: NavItem[] = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: 'Dashboard',
+    href: '/dashboard',
     icon: Home,
-    description: "Visão geral da clínica",
+    description: 'Visão geral da clínica',
   },
   {
-    title: "Pacientes",
-    href: "/patients",
+    title: 'Pacientes',
+    href: '/patients',
     icon: Users,
-    description: "Gestão de pacientes",
+    description: 'Gestão de pacientes',
   },
   {
-    title: "Agendamentos",
-    href: "/appointments",
+    title: 'Agendamentos',
+    href: '/appointments',
     icon: Calendar,
-    description: "Calendário e agendamentos",
+    description: 'Calendário e agendamentos',
   },
   {
-    title: "Relatórios",
-    href: "/reports",
+    title: 'Relatórios',
+    href: '/reports',
     icon: BarChart3,
-    description: "Relatórios e analytics",
+    description: 'Relatórios e analytics',
   },
   {
-    title: "Prontuários",
-    href: "/records",
+    title: 'Prontuários',
+    href: '/records',
     icon: FileText,
-    description: "Prontuários médicos",
+    description: 'Prontuários médicos',
   },
-];
+]
 
 const settingsNavItems: NavItem[] = [
   {
-    title: "Configurações",
-    href: "/settings",
+    title: 'Configurações',
+    href: '/settings',
     icon: Settings,
-    description: "Configurações da clínica",
+    description: 'Configurações da clínica',
   },
   {
-    title: "Perfil",
-    href: "/profile",
+    title: 'Perfil',
+    href: '/profile',
     icon: User,
-    description: "Meu perfil",
+    description: 'Meu perfil',
   },
-];
+]
 
 function AppSidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <Sidebar>
@@ -107,8 +107,8 @@ function AppSidebar() {
 
       <SidebarContent>
         <SidebarMenu>
-          {mainNavItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          {mainNavItems.map((item,) => {
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`,)
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton asChild isActive={isActive}>
@@ -118,8 +118,8 @@ function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            );
-          })}
+            )
+          },)}
         </SidebarMenu>
 
         <div className="mt-8">
@@ -129,8 +129,8 @@ function AppSidebar() {
             </p>
           </div>
           <SidebarMenu>
-            {settingsNavItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            {settingsNavItems.map((item,) => {
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`,)
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild isActive={isActive}>
@@ -140,8 +140,8 @@ function AppSidebar() {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
-            })}
+              )
+            },)}
           </SidebarMenu>
         </div>
       </SidebarContent>
@@ -159,7 +159,7 @@ function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }
 
 function Header() {
@@ -189,10 +189,10 @@ function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
 
-export function AppLayout({ children }: LayoutProps) {
+export function AppLayout({ children, }: LayoutProps,) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -203,5 +203,5 @@ export function AppLayout({ children }: LayoutProps) {
         </div>
       </div>
     </SidebarProvider>
-  );
+  )
 }

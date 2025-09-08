@@ -4,18 +4,18 @@
  * TweakCN NEONPRO theme integration with healthcare-specific features
  */
 
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import type { HealthcareContext, MessageType } from "@/types/chat";
-import type { KeyboardEvent } from "react";
-import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { cn, } from '@/lib/utils'
+import type { HealthcareContext, MessageType, } from '@/types/chat'
+import type { KeyboardEvent, } from 'react'
+import type React from 'react'
+import { useCallback, useEffect, useRef, useState, } from 'react'
 
 // Icons (would be imported from lucide-react or similar)
-const SendIcon = ({ className }: { className?: string; }) => (
+const SendIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -36,11 +36,11 @@ const SendIcon = ({ className }: { className?: string; }) => (
       points="22,2 15,22 11,13 2,9 22,2"
     />
   </svg>
-);
+)
 
-const SmileIcon = ({ className }: { className?: string; }) => (
+const SmileIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -78,11 +78,11 @@ const SmileIcon = ({ className }: { className?: string; }) => (
       y2={9}
     />
   </svg>
-);
+)
 
-const PaperclipIcon = ({ className }: { className?: string; }) => (
+const PaperclipIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -94,11 +94,11 @@ const PaperclipIcon = ({ className }: { className?: string; }) => (
       d="m21.44,11.05-9.19,9.19a6,6,0,0,1-8.49-8.49l9.19-9.19a4,4,0,0,1,5.66,5.66L9.41,16.41a2,2,0,0,1-2.83-2.83l8.49-8.49"
     />
   </svg>
-);
+)
 
-const MicIcon = ({ className }: { className?: string; }) => (
+const MicIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -134,11 +134,11 @@ const MicIcon = ({ className }: { className?: string; }) => (
       y2={23}
     />
   </svg>
-);
+)
 
-const AlertTriangleIcon = ({ className }: { className?: string; }) => (
+const AlertTriangleIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -168,11 +168,11 @@ const AlertTriangleIcon = ({ className }: { className?: string; }) => (
       y2={17}
     />
   </svg>
-);
+)
 
-const BotIcon = ({ className }: { className?: string; }) => (
+const BotIcon = ({ className, }: { className?: string },) => (
   <svg
-    className={cn("w-4 h-4", className)}
+    className={cn('w-4 h-4', className,)}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -203,92 +203,92 @@ const BotIcon = ({ className }: { className?: string; }) => (
       d="m12,7v4"
     />
   </svg>
-);
+)
 
 export interface ChatInputProps {
-  onSendMessage: (message: string, messageType?: MessageType) => void;
-  disabled?: boolean;
-  placeholder?: string;
-  maxLength?: number;
-  allowFiles?: boolean;
-  allowVoice?: boolean;
-  healthcareContext?: HealthcareContext;
-  emergencyMode?: boolean;
-  aiEnabled?: boolean;
-  onEmergencyDetected?: (message: string) => void;
-  onTypingStart?: () => void;
-  onTypingStop?: () => void;
-  className?: string;
+  onSendMessage: (message: string, messageType?: MessageType,) => void
+  disabled?: boolean
+  placeholder?: string
+  maxLength?: number
+  allowFiles?: boolean
+  allowVoice?: boolean
+  healthcareContext?: HealthcareContext
+  emergencyMode?: boolean
+  aiEnabled?: boolean
+  onEmergencyDetected?: (message: string,) => void
+  onTypingStart?: () => void
+  onTypingStop?: () => void
+  className?: string
 }
 
 // Emergency keywords for Brazilian healthcare context
 const EMERGENCY_KEYWORDS = [
   // Portuguese emergency terms
-  "emergência",
-  "emergencia",
-  "urgente",
-  "urgência",
-  "socorro",
-  "ajuda",
-  "dor forte",
-  "muita dor",
-  "não consegue respirar",
-  "respirar mal",
-  "respiração ruim",
-  "inconsciente",
-  "desmaiou",
-  "desmaio",
-  "sangramento",
-  "sangrando muito",
-  "ataque cardíaco",
-  "infarto",
-  "avc",
-  "derrame",
-  "convulsão",
-  "convulsao",
-  "alergia grave",
-  "choque anafilático",
-  "anafilaxia",
-  "intoxicação",
-  "intoxicacao",
-  "acidente",
-  "queda grave",
-  "ferimento grave",
-  "corte profundo",
-  "overdose",
-  "tentativa suicídio",
-  "suicidio",
-  "automutilação",
-  "violência doméstica",
-  "violencia domestica",
-  "abuso",
+  'emergência',
+  'emergencia',
+  'urgente',
+  'urgência',
+  'socorro',
+  'ajuda',
+  'dor forte',
+  'muita dor',
+  'não consegue respirar',
+  'respirar mal',
+  'respiração ruim',
+  'inconsciente',
+  'desmaiou',
+  'desmaio',
+  'sangramento',
+  'sangrando muito',
+  'ataque cardíaco',
+  'infarto',
+  'avc',
+  'derrame',
+  'convulsão',
+  'convulsao',
+  'alergia grave',
+  'choque anafilático',
+  'anafilaxia',
+  'intoxicação',
+  'intoxicacao',
+  'acidente',
+  'queda grave',
+  'ferimento grave',
+  'corte profundo',
+  'overdose',
+  'tentativa suicídio',
+  'suicidio',
+  'automutilação',
+  'violência doméstica',
+  'violencia domestica',
+  'abuso',
   // Medical emergency symptoms
-  "peito apertado",
-  "falta de ar",
-  "tontura forte",
-  "visão embaçada",
-  "dormência braço",
-  "formigamento",
-  "paralisia",
-  "queimadura grave",
-  "febre muito alta",
-  "temperatura alta",
-  "delírio",
-  "confusão mental",
-];
+  'peito apertado',
+  'falta de ar',
+  'tontura forte',
+  'visão embaçada',
+  'dormência braço',
+  'formigamento',
+  'paralisia',
+  'queimadura grave',
+  'febre muito alta',
+  'temperatura alta',
+  'delírio',
+  'confusão mental',
+]
 
 // Healthcare-specific emoji categories
 const HEALTHCARE_EMOJIS = {
-  medical: ["🏥", "⚕️", "🩺", "💊", "🩹", "🧬", "🦠", "🩸", "🫀", "🧠"],
-  emotions: ["😊", "😔", "😰", "😴", "🤒", "🤕", "🤢", "🤧", "😵", "😷"],
-  body: ["👁️", "👃", "👂", "🦷", "👄", "🫁", "🦴", "🤲", "🦵", "🦶"],
-  emergency: ["🚨", "⚠️", "🆘", "📞", "🚑", "🏃‍♂️", "💨", "🔴", "‼️", "❗"],
-};
+  medical: ['🏥', '⚕️', '🩺', '💊', '🩹', '🧬', '🦠', '🩸', '🫀', '🧠',],
+  emotions: ['😊', '😔', '😰', '😴', '🤒', '🤕', '🤢', '🤧', '😵', '😷',],
+  body: ['👁️', '👃', '👂', '🦷', '👄', '🫁', '🦴', '🤲', '🦵', '🦶',],
+  emergency: ['🚨', '⚠️', '🆘', '📞', '🚑', '🏃‍♂️', '💨', '🔴', '‼️', '❗',],
+}
 
 export default function ChatInput({
   onSendMessage,
   disabled = false,
-  placeholder = "Digite sua mensagem...",
+  placeholder = 'Digite sua mensagem...',
   maxLength = 2000,
   allowFiles = true,
   allowVoice = true,
@@ -299,86 +299,86 @@ export default function ChatInput({
   onTypingStart,
   onTypingStop,
   className,
-}: ChatInputProps) {
-  const [message, setMessage] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [emergencyDetected, setEmergencyDetected] = useState(false);
-  const [aiSuggestion, setAISuggestion] = useState<string>("");
+}: ChatInputProps,) {
+  const [message, setMessage,] = useState('',)
+  const [showEmojiPicker, setShowEmojiPicker,] = useState(false,)
+  const [isTyping, setIsTyping,] = useState(false,)
+  const [isRecording, setIsRecording,] = useState(false,)
+  const [emergencyDetected, setEmergencyDetected,] = useState(false,)
+  const [aiSuggestion, setAISuggestion,] = useState<string>('',)
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
-  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null,)
+  const fileInputRef = useRef<HTMLInputElement>(null,)
+  const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const emojiPickerRef = useRef<HTMLDivElement>(null,)
 
   // Auto-resize textarea
   const adjustTextareaHeight = useCallback(() => {
-    const textarea = textareaRef.current;
+    const textarea = textareaRef.current
     if (textarea) {
-      textarea.style.height = "auto";
-      const newHeight = Math.min(textarea.scrollHeight, 120); // Max 120px height
-      textarea.style.height = `${newHeight}px`;
+      textarea.style.height = 'auto'
+      const newHeight = Math.min(textarea.scrollHeight, 120,) // Max 120px height
+      textarea.style.height = `${newHeight}px`
     }
-  }, []);
+  }, [],)
 
   // Handle message change with emergency detection
   const handleMessageChange = useCallback(
-    (value: string) => {
-      setMessage(value);
-      adjustTextareaHeight();
+    (value: string,) => {
+      setMessage(value,)
+      adjustTextareaHeight()
 
       // Emergency keyword detection
-      const hasEmergencyKeyword = EMERGENCY_KEYWORDS.some((keyword) =>
-        value.toLowerCase().includes(keyword.toLowerCase())
-      );
+      const hasEmergencyKeyword = EMERGENCY_KEYWORDS.some((keyword,) =>
+        value.toLowerCase().includes(keyword.toLowerCase(),)
+      )
 
       if (hasEmergencyKeyword && !emergencyDetected) {
-        setEmergencyDetected(true);
-        onEmergencyDetected?.(value);
+        setEmergencyDetected(true,)
+        onEmergencyDetected?.(value,)
       } else if (!hasEmergencyKeyword && emergencyDetected) {
-        setEmergencyDetected(false);
+        setEmergencyDetected(false,)
       }
 
       // AI suggestion generation (mock implementation)
       if (aiEnabled && value.length > 10) {
         // Simple AI suggestion based on content
-        if (value.toLowerCase().includes("dor")) {
+        if (value.toLowerCase().includes('dor',)) {
           setAISuggestion(
-            "💡 Posso ajudar você a avaliar a intensidade da dor de 1 a 10?",
-          );
+            '💡 Posso ajudar você a avaliar a intensidade da dor de 1 a 10?',
+          )
         } else if (
-          value.toLowerCase().includes("medicamento")
-          || value.toLowerCase().includes("remédio")
+          value.toLowerCase().includes('medicamento',)
+          || value.toLowerCase().includes('remédio',)
         ) {
           setAISuggestion(
-            "💡 Lembre-se de informar sobre alergias e outros medicamentos que está tomando.",
-          );
-        } else if (value.toLowerCase().includes("consulta")) {
+            '💡 Lembre-se de informar sobre alergias e outros medicamentos que está tomando.',
+          )
+        } else if (value.toLowerCase().includes('consulta',)) {
           setAISuggestion(
-            "💡 Posso verificar horários disponíveis para consulta. Que especialidade precisa?",
-          );
+            '💡 Posso verificar horários disponíveis para consulta. Que especialidade precisa?',
+          )
         } else {
-          setAISuggestion("");
+          setAISuggestion('',)
         }
       }
 
       // Typing indicator management
       if (!isTyping && value.trim()) {
-        setIsTyping(true);
-        onTypingStart?.();
+        setIsTyping(true,)
+        onTypingStart?.()
       }
 
       // Clear existing timeout
       if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+        clearTimeout(typingTimeoutRef.current,)
       }
 
       // Set new timeout
       typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false);
-        onTypingStop?.();
-      }, 1000);
+        setIsTyping(false,)
+        onTypingStop?.()
+      }, 1000,)
     },
     [
       adjustTextareaHeight,
@@ -389,132 +389,132 @@ export default function ChatInput({
       onTypingStart,
       onTypingStop,
     ],
-  );
+  )
 
   // Handle form submission
   const handleSubmit = useCallback(
-    (e?: React.FormEvent) => {
-      e?.preventDefault();
+    (e?: React.FormEvent,) => {
+      e?.preventDefault()
 
-      const trimmedMessage = message.trim();
+      const trimmedMessage = message.trim()
       if (!trimmedMessage || disabled) {
-        return;
+        return
       }
 
-      onSendMessage(trimmedMessage);
-      setMessage("");
-      setEmergencyDetected(false);
-      setAISuggestion("");
-      adjustTextareaHeight();
+      onSendMessage(trimmedMessage,)
+      setMessage('',)
+      setEmergencyDetected(false,)
+      setAISuggestion('',)
+      adjustTextareaHeight()
 
       // Clear typing indicator
       if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+        clearTimeout(typingTimeoutRef.current,)
       }
-      setIsTyping(false);
-      onTypingStop?.();
+      setIsTyping(false,)
+      onTypingStop?.()
     },
-    [message, disabled, onSendMessage, adjustTextareaHeight, onTypingStop],
-  );
+    [message, disabled, onSendMessage, adjustTextareaHeight, onTypingStop,],
+  )
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        handleSubmit();
+    (e: KeyboardEvent<HTMLTextAreaElement>,) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        handleSubmit()
       }
     },
-    [handleSubmit],
-  );
+    [handleSubmit,],
+  )
 
   // Handle emoji selection
   const handleEmojiSelect = useCallback(
-    (emoji: string) => {
-      const newMessage = message + emoji;
-      setMessage(newMessage);
-      setShowEmojiPicker(false);
-      textareaRef.current?.focus();
+    (emoji: string,) => {
+      const newMessage = message + emoji
+      setMessage(newMessage,)
+      setShowEmojiPicker(false,)
+      textareaRef.current?.focus()
     },
-    [message],
-  );
+    [message,],
+  )
 
   // Handle file selection
   const handleFileSelect = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
+    fileInputRef.current?.click()
+  }, [],)
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
+    (e: React.ChangeEvent<HTMLInputElement>,) => {
+      const files = e.target.files
       if (files && files[0]) {
         // TODO: Handle file upload
-        console.log("File selected:", files[0]);
+        console.log('File selected:', files[0],)
         // onSendMessage(`[Arquivo: ${files[0].name}]`, 'file');
       }
     },
     [],
-  );
+  )
 
   // Handle voice recording (mock implementation)
   const handleVoiceRecord = useCallback(() => {
     if (isRecording) {
-      setIsRecording(false);
+      setIsRecording(false,)
       // TODO: Stop recording and process audio
-      console.log("Voice recording stopped");
+      console.log('Voice recording stopped',)
     } else {
-      setIsRecording(true);
+      setIsRecording(true,)
       // TODO: Start voice recording
-      console.log("Voice recording started");
+      console.log('Voice recording started',)
 
       // Mock: stop recording after 5 seconds
       setTimeout(() => {
-        setIsRecording(false);
-      }, 5000);
+        setIsRecording(false,)
+      }, 5000,)
     }
-  }, [isRecording]);
+  }, [isRecording,],)
 
   // Handle AI suggestion acceptance
   const handleAcceptAISuggestion = useCallback(() => {
     if (aiSuggestion) {
       // Extract suggestion text without the emoji
-      const suggestionText = aiSuggestion.replace("💡 ", "");
-      onSendMessage(suggestionText);
-      setAISuggestion("");
+      const suggestionText = aiSuggestion.replace('💡 ', '',)
+      onSendMessage(suggestionText,)
+      setAISuggestion('',)
     }
-  }, [aiSuggestion, onSendMessage]);
+  }, [aiSuggestion, onSendMessage,],)
 
   // Close emoji picker on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent,) => {
       if (
         emojiPickerRef.current
-        && !emojiPickerRef.current.contains(event.target as Node)
+        && !emojiPickerRef.current.contains(event.target as Node,)
       ) {
-        setShowEmojiPicker(false);
+        setShowEmojiPicker(false,)
       }
-    };
+    }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener('mousedown', handleClickOutside,)
+    return () => document.removeEventListener('mousedown', handleClickOutside,)
+  }, [],)
 
   // Cleanup typing timeout on unmount
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+        clearTimeout(typingTimeoutRef.current,)
       }
-    };
-  }, []);
+    }
+  }, [],)
 
-  const canSend = message.trim().length > 0 && !disabled;
-  const characterCount = message.length;
-  const isNearLimit = characterCount > maxLength * 0.8;
-  const isOverLimit = characterCount > maxLength;
+  const canSend = message.trim().length > 0 && !disabled
+  const characterCount = message.length
+  const isNearLimit = characterCount > maxLength * 0.8
+  const isOverLimit = characterCount > maxLength
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className,)}>
       {/* AI Suggestion */}
       {aiSuggestion && (
         <div className="mb-2 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
@@ -532,7 +532,7 @@ export default function ChatInput({
               Enviar
             </button>
             <button
-              onClick={() => setAISuggestion("")}
+              onClick={() => setAISuggestion('',)}
               className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
             >
               ✕
@@ -560,22 +560,22 @@ export default function ChatInput({
           className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 z-10 w-64"
         >
           <div className="space-y-3">
-            {Object.entries(HEALTHCARE_EMOJIS).map(([category, emojis]) => (
+            {Object.entries(HEALTHCARE_EMOJIS,).map(([category, emojis,],) => (
               <div key={category}>
                 <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 capitalize">
-                  {category === "medical"
-                    ? "Médico"
-                    : category === "emotions"
-                    ? "Emoções"
-                    : category === "body"
-                    ? "Corpo"
-                    : "Emergência"}
+                  {category === 'medical'
+                    ? 'Médico'
+                    : category === 'emotions'
+                    ? 'Emoções'
+                    : category === 'body'
+                    ? 'Corpo'
+                    : 'Emergência'}
                 </div>
                 <div className="grid grid-cols-5 gap-1">
-                  {emojis.map((emoji) => (
+                  {emojis.map((emoji,) => (
                     <button
                       key={emoji}
-                      onClick={() => handleEmojiSelect(emoji)}
+                      onClick={() => handleEmojiSelect(emoji,)}
                       className="p-2 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                     >
                       {emoji}
@@ -602,32 +602,32 @@ export default function ChatInput({
         {/* Input Container */}
         <div
           className={cn(
-            "flex-1 relative",
-            "bg-white dark:bg-gray-800 border rounded-lg",
+            'flex-1 relative',
+            'bg-white dark:bg-gray-800 border rounded-lg',
             emergencyMode
-              ? "border-red-300 dark:border-red-700"
-              : "border-gray-300 dark:border-gray-600",
+              ? 'border-red-300 dark:border-red-700'
+              : 'border-gray-300 dark:border-gray-600',
             emergencyDetected
-              && "border-red-500 dark:border-red-400 shadow-red-200 dark:shadow-red-900",
-            "focus-within:border-green-500 dark:focus-within:border-green-400",
-            "transition-all duration-200",
+              && 'border-red-500 dark:border-red-400 shadow-red-200 dark:shadow-red-900',
+            'focus-within:border-green-500 dark:focus-within:border-green-400',
+            'transition-all duration-200',
           )}
         >
           {/* Textarea */}
           <textarea
             ref={textareaRef}
             value={message}
-            onChange={(e) => handleMessageChange(e.target.value)}
+            onChange={(e,) => handleMessageChange(e.target.value,)}
             onKeyDown={handleKeyDown}
-            placeholder={emergencyMode ? "Descreva a emergência..." : placeholder}
+            placeholder={emergencyMode ? 'Descreva a emergência...' : placeholder}
             disabled={disabled}
             maxLength={maxLength}
             rows={1}
             className={cn(
-              "w-full p-3 pr-20 resize-none border-none outline-none bg-transparent",
-              "text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400",
-              "min-h-[44px] max-h-[120px]",
-              disabled && "opacity-50 cursor-not-allowed",
+              'w-full p-3 pr-20 resize-none border-none outline-none bg-transparent',
+              'text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400',
+              'min-h-[44px] max-h-[120px]',
+              disabled && 'opacity-50 cursor-not-allowed',
             )}
           />
 
@@ -636,12 +636,12 @@ export default function ChatInput({
             {/* Emoji Picker Button */}
             <button
               type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              onClick={() => setShowEmojiPicker(!showEmojiPicker,)}
               disabled={disabled}
               className={cn(
-                "p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300",
-                "hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors",
-                disabled && "opacity-50 cursor-not-allowed",
+                'p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300',
+                'hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors',
+                disabled && 'opacity-50 cursor-not-allowed',
               )}
             >
               <SmileIcon />
@@ -654,9 +654,9 @@ export default function ChatInput({
                 onClick={handleFileSelect}
                 disabled={disabled}
                 className={cn(
-                  "p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300",
-                  "hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors",
-                  disabled && "opacity-50 cursor-not-allowed",
+                  'p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300',
+                  'hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors',
+                  disabled && 'opacity-50 cursor-not-allowed',
                 )}
               >
                 <PaperclipIcon />
@@ -670,11 +670,11 @@ export default function ChatInput({
                 onClick={handleVoiceRecord}
                 disabled={disabled}
                 className={cn(
-                  "p-1.5 rounded transition-colors",
+                  'p-1.5 rounded transition-colors',
                   isRecording
-                    ? "text-red-600 bg-red-100 dark:bg-red-900 animate-pulse"
-                    : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
-                  disabled && "opacity-50 cursor-not-allowed",
+                    ? 'text-red-600 bg-red-100 dark:bg-red-900 animate-pulse'
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
+                  disabled && 'opacity-50 cursor-not-allowed',
                 )}
               >
                 <MicIcon />
@@ -688,13 +688,13 @@ export default function ChatInput({
           type="submit"
           disabled={!canSend || isOverLimit}
           className={cn(
-            "p-3 rounded-lg font-medium transition-all duration-200",
+            'p-3 rounded-lg font-medium transition-all duration-200',
             canSend && !isOverLimit
               ? emergencyMode || emergencyDetected
-                ? "bg-red-600 hover:bg-red-700 text-white shadow-lg"
-                : "bg-green-600 hover:bg-green-700 text-white shadow-lg"
-              : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed",
-            "min-w-[44px] h-[44px] flex items-center justify-center",
+                ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg'
+                : 'bg-green-600 hover:bg-green-700 text-white shadow-lg'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed',
+            'min-w-[44px] h-[44px] flex items-center justify-center',
           )}
         >
           <SendIcon />
@@ -705,13 +705,13 @@ export default function ChatInput({
       {(isNearLimit || isOverLimit) && (
         <div
           className={cn(
-            "absolute -bottom-6 right-0 text-xs",
-            isOverLimit ? "text-red-500" : "text-yellow-500",
+            'absolute -bottom-6 right-0 text-xs',
+            isOverLimit ? 'text-red-500' : 'text-yellow-500',
           )}
         >
           {characterCount}/{maxLength}
         </div>
       )}
     </div>
-  );
+  )
 }

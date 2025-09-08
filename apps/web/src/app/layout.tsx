@@ -1,83 +1,83 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Lora } from "next/font/google";
-import "./globals.css";
+import type { Metadata, } from 'next'
+import { Inter, JetBrains_Mono, Lora, } from 'next/font/google'
+import './globals.css'
 
-import { PerformanceStatus } from "@/components/performance/performance-status";
-import { Toaster } from "@/components/ui/toaster";
-import { ApiProvider } from "@/contexts/api-context";
-import { AuthProvider } from "@/contexts/auth-context";
-import { HealthcareThemeProvider } from "@/contexts/theme-context";
-import { PerformanceMonitorProvider } from "@/providers/performance-monitor-provider";
+import { PerformanceStatus, } from '@/components/performance/performance-status'
+import { Toaster, } from '@/components/ui/toaster'
+import { ApiProvider, } from '@/contexts/api-context'
+import { AuthProvider, } from '@/contexts/auth-context'
+import { HealthcareThemeProvider, } from '@/contexts/theme-context'
+import { PerformanceMonitorProvider, } from '@/providers/performance-monitor-provider'
 
 // Enhanced font loading for Portuguese medical content
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-inter',
+},)
 
 const lora = Lora({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-lora",
-});
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-lora',
+},)
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
-});
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+},)
 
 export const metadata: Metadata = {
-  title: "NeonPro - Plataforma Healthcare AI",
+  title: 'NeonPro - Plataforma Healthcare AI',
   description:
-    "Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD/ANVISA/CFM",
+    'Plataforma de gestão para clínicas de estética com IA integrada e compliance LGPD/ANVISA/CFM',
   keywords: [
-    "healthcare",
-    "estética",
-    "LGPD",
-    "ANVISA",
-    "CFM",
-    "gestão clínica",
-    "inteligência artificial",
-    "agendamento",
-    "pacientes",
-    "prontuário eletrônico",
-    "compliance médico",
+    'healthcare',
+    'estética',
+    'LGPD',
+    'ANVISA',
+    'CFM',
+    'gestão clínica',
+    'inteligência artificial',
+    'agendamento',
+    'pacientes',
+    'prontuário eletrônico',
+    'compliance médico',
   ],
-  authors: [{ name: "NeonPro Healthcare Team" }],
-  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
-  robots: "index, follow",
+  authors: [{ name: 'NeonPro Healthcare Team', },],
+  viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
+  robots: 'index, follow',
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#72e3ad" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: '(prefers-color-scheme: light)', color: '#72e3ad', },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a', },
   ],
   openGraph: {
-    title: "NeonPro - Healthcare AI Platform",
-    description: "Gestão inteligente para clínicas de estética brasileiras",
-    type: "website",
-    locale: "pt_BR",
-    siteName: "NeonPro Healthcare",
+    title: 'NeonPro - Healthcare AI Platform',
+    description: 'Gestão inteligente para clínicas de estética brasileiras',
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'NeonPro Healthcare',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "NeonPro - Healthcare AI Platform",
-    description: "Gestão inteligente para clínicas de estética brasileiras",
+    card: 'summary_large_image',
+    title: 'NeonPro - Healthcare AI Platform',
+    description: 'Gestão inteligente para clínicas de estética brasileiras',
   },
   // Healthcare-specific metadata
   other: {
-    "mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "format-detection": "telephone=no",
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'format-detection': 'telephone=no',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
-}) {
+  children: React.ReactNode
+},) {
   return (
     <html
       lang="pt-BR"
@@ -187,5 +187,5 @@ export default function RootLayout({
         />
       </body>
     </html>
-  );
+  )
 }

@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalChatWidget } from "@/components/ui/external-chat-widget";
-import { useChatHandoff } from "@/hooks/use-chat-handoff";
-import { useCallback, useState } from "react";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { ExternalChatWidget, } from '@/components/ui/external-chat-widget'
+import { useChatHandoff, } from '@/hooks/use-chat-handoff'
+import { useCallback, useState, } from 'react'
 
 export function ExternalChatExample() {
-  const [apiCalls, setApiCalls] = useState(0);
-  const [responseTime, setResponseTime] = useState(0);
-  const [accuracy, setAccuracy] = useState(0);
+  const [apiCalls, setApiCalls,] = useState(0,)
+  const [responseTime, setResponseTime,] = useState(0,)
+  const [accuracy, setAccuracy,] = useState(0,)
 
   const {
     handoffState,
@@ -22,143 +22,143 @@ export function ExternalChatExample() {
     confidenceThreshold: 85,
     maxRetries: 3,
     handoffDelay: 2000,
-  });
+  },)
 
   // Simular chamada para API da OpenAI/Claude
-  const simulateAIResponse = useCallback(async (message: string): Promise<{
-    response: string;
-    confidence: number;
-    requiresHumanHandoff?: boolean;
+  const simulateAIResponse = useCallback(async (message: string,): Promise<{
+    response: string
+    confidence: number
+    requiresHumanHandoff?: boolean
   }> => {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Simular delay da API
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500,))
 
-    const endTime = Date.now();
-    const responseTime = endTime - startTime;
+    const endTime = Date.now()
+    const responseTime = endTime - startTime
 
-    setApiCalls(prev => prev + 1);
-    setResponseTime(responseTime);
+    setApiCalls(prev => prev + 1)
+    setResponseTime(responseTime,)
 
     // Simular diferentes cenários baseado na mensagem
-    const lowerMessage = message.toLowerCase();
+    const lowerMessage = message.toLowerCase()
 
     // Cenários de baixa confiança
     if (
-      lowerMessage.includes("problema técnico complexo")
-      || lowerMessage.includes("erro específico")
-      || lowerMessage.includes("configuração avançada")
+      lowerMessage.includes('problema técnico complexo',)
+      || lowerMessage.includes('erro específico',)
+      || lowerMessage.includes('configuração avançada',)
     ) {
-      const confidence = Math.random() * 30 + 40; // 40-70%
-      setAccuracy(confidence);
+      const confidence = Math.random() * 30 + 40 // 40-70%
+      setAccuracy(confidence,)
 
       return {
         response:
-          "Entendo que você está enfrentando um problema técnico. Vou tentar ajudá-lo, mas se precisar de assistência mais específica, posso conectá-lo com um especialista.",
-        confidence: Math.round(confidence),
-      };
+          'Entendo que você está enfrentando um problema técnico. Vou tentar ajudá-lo, mas se precisar de assistência mais específica, posso conectá-lo com um especialista.',
+        confidence: Math.round(confidence,),
+      }
     }
 
     // Cenários de média confiança
     if (
-      lowerMessage.includes("como fazer")
-      || lowerMessage.includes("tutorial")
-      || lowerMessage.includes("exemplo")
+      lowerMessage.includes('como fazer',)
+      || lowerMessage.includes('tutorial',)
+      || lowerMessage.includes('exemplo',)
     ) {
-      const confidence = Math.random() * 25 + 60; // 60-85%
-      setAccuracy(confidence);
+      const confidence = Math.random() * 25 + 60 // 60-85%
+      setAccuracy(confidence,)
 
       return {
         response:
           `Aqui está um guia passo a passo para "${message}": \n\n1. Primeiro, acesse o painel principal\n2. Navegue até a seção apropriada\n3. Configure as opções necessárias\n4. Salve as alterações\n\nPrecisa de mais detalhes em algum passo específico?`,
-        confidence: Math.round(confidence),
-      };
+        confidence: Math.round(confidence,),
+      }
     }
 
     // Cenários de alta confiança
-    const confidence = Math.random() * 15 + 85; // 85-100%
-    setAccuracy(confidence);
+    const confidence = Math.random() * 15 + 85 // 85-100%
+    setAccuracy(confidence,)
 
     const responses = [
-      "Posso ajudá-lo com isso! Esta é uma questão comum e tenho informações precisas sobre o assunto.",
-      "Claro! Esta é uma funcionalidade que conheço bem. Deixe-me explicar detalhadamente.",
-      "Perfeito! Tenho todas as informações necessárias para responder sua pergunta.",
+      'Posso ajudá-lo com isso! Esta é uma questão comum e tenho informações precisas sobre o assunto.',
+      'Claro! Esta é uma funcionalidade que conheço bem. Deixe-me explicar detalhadamente.',
+      'Perfeito! Tenho todas as informações necessárias para responder sua pergunta.',
       `Sobre "${message}": Esta é uma excelente pergunta! Aqui está uma resposta completa e precisa.`,
-    ];
+    ]
 
     return {
-      response: responses[Math.floor(Math.random() * responses.length)],
-      confidence: Math.round(confidence),
-    };
-  }, []);
+      response: responses[Math.floor(Math.random() * responses.length,)],
+      confidence: Math.round(confidence,),
+    }
+  }, [],)
 
   // Timeout wrapper for AI response
-  const withTimeout = useCallback(<T,>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+  const withTimeout = useCallback(<T,>(promise: Promise<T>, timeoutMs: number,): Promise<T> => {
     return Promise.race([
       promise,
-      new Promise<never>((_, reject) => {
+      new Promise<never>((_, reject,) => {
         setTimeout(() => {
-          reject(new Error(`AI response timeout after ${timeoutMs}ms`));
-        }, timeoutMs);
-      }),
-    ]);
-  }, []);
+          reject(new Error(`AI response timeout after ${timeoutMs}ms`,),)
+        }, timeoutMs,)
+      },),
+    ],)
+  }, [],)
 
   // Handler principal para mensagens
-  const handleMessage = useCallback(async (message: string) => {
+  const handleMessage = useCallback(async (message: string,) => {
     try {
       // Apply 8-second timeout to AI response
-      const aiResponse = await withTimeout(simulateAIResponse(message), 8000);
-      const processedResponse = processAIResponse(message, aiResponse);
+      const aiResponse = await withTimeout(simulateAIResponse(message,), 8000,)
+      const processedResponse = processAIResponse(message, aiResponse,)
 
       if (processedResponse.shouldHandoff) {
-        const handoffMsg = getHandoffMessage(processedResponse.reason);
+        const handoffMsg = getHandoffMessage(processedResponse.reason,)
         return {
           response: `${processedResponse.response.response}\n\n${handoffMsg}`,
           confidence: processedResponse.response.confidence,
           requiresHumanHandoff: true,
-        };
+        }
       }
 
-      return processedResponse.response;
+      return processedResponse.response
     } catch (error) {
-      console.error("Erro ao processar mensagem:", error);
+      console.error('Erro ao processar mensagem:', error,)
 
       // Check if it's a timeout error
-      if (error instanceof Error && error.message.includes("timeout")) {
-        console.error("AI response timed out, initiating human handoff");
+      if (error instanceof Error && error.message.includes('timeout',)) {
+        console.error('AI response timed out, initiating human handoff',)
         return {
           response:
-            "Desculpe, a resposta está demorando mais que o esperado. Vou conectá-lo com um atendente humano para ajudá-lo melhor.",
+            'Desculpe, a resposta está demorando mais que o esperado. Vou conectá-lo com um atendente humano para ajudá-lo melhor.',
           confidence: 0,
           requiresHumanHandoff: true,
-        };
+        }
       }
 
       return {
-        response: "Desculpe, ocorreu um erro interno. Vou conectá-lo com um atendente humano.",
+        response: 'Desculpe, ocorreu um erro interno. Vou conectá-lo com um atendente humano.',
         confidence: 0,
         requiresHumanHandoff: true,
-      };
+      }
     }
-  }, [withTimeout, simulateAIResponse, processAIResponse, getHandoffMessage]);
+  }, [withTimeout, simulateAIResponse, processAIResponse, getHandoffMessage,],)
 
   // Handler para solicitação de atendimento humano
   const handleHumanHandoff = useCallback(() => {
-    console.log("Handoff solicitado:", {
+    console.log('Handoff solicitado:', {
       timestamp: new Date(),
-      reason: handoffState.handoffReason || "Solicitação manual",
+      reason: handoffState.handoffReason || 'Solicitação manual',
       state: handoffState,
-    });
+    },)
 
     // Aqui você integraria com seu sistema de atendimento (WhatsApp, Zendesk, etc.)
     // Replaced alert with non-blocking UI log to comply with no-alert rule
     console.log(
-      "Atendimento humano solicitado:",
-      handoffState.handoffReason || "Solicitação manual",
-    );
-  }, [handoffState]);
+      'Atendimento humano solicitado:',
+      handoffState.handoffReason || 'Solicitação manual',
+    )
+  }, [handoffState,],)
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -191,7 +191,7 @@ export function ExternalChatExample() {
 
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">{accuracy.toFixed(1)}%</div>
+              <div className="text-2xl font-bold text-purple-600">{accuracy.toFixed(1,)}%</div>
               <div className="text-sm text-gray-600">Confiança</div>
             </CardContent>
           </Card>
@@ -199,10 +199,10 @@ export function ExternalChatExample() {
           <Card>
             <CardContent className="p-4 text-center">
               <Badge
-                variant={handoffState.isHandoffActive ? "destructive" : "default"}
+                variant={handoffState.isHandoffActive ? 'destructive' : 'default'}
                 className="text-sm"
               >
-                {handoffState.isHandoffActive ? "Handoff Ativo" : "IA Ativa"}
+                {handoffState.isHandoffActive ? 'Handoff Ativo' : 'IA Ativa'}
               </Badge>
               <div className="text-sm text-gray-600 mt-1">Status</div>
             </CardContent>
@@ -263,7 +263,7 @@ export function ExternalChatExample() {
           </CardHeader>
           <CardContent className="flex gap-4">
             <Button
-              onClick={() => requestHandoff("Teste manual")}
+              onClick={() => requestHandoff('Teste manual',)}
               variant="outline"
             >
               Forçar Handoff
@@ -278,9 +278,9 @@ export function ExternalChatExample() {
 
             <Button
               onClick={() => {
-                setApiCalls(0);
-                setResponseTime(0);
-                setAccuracy(0);
+                setApiCalls(0,)
+                setResponseTime(0,)
+                setAccuracy(0,)
               }}
               variant="outline"
             >
@@ -298,7 +298,7 @@ export function ExternalChatExample() {
             <CardContent>
               <div className="space-y-2 text-sm">
                 <p>
-                  <strong>Status:</strong> {handoffState.isHandoffActive ? "Ativo" : "Solicitado"}
+                  <strong>Status:</strong> {handoffState.isHandoffActive ? 'Ativo' : 'Solicitado'}
                 </p>
                 <p>
                   <strong>Motivo:</strong> {handoffState.handoffReason}
@@ -308,8 +308,8 @@ export function ExternalChatExample() {
                 </p>
                 {handoffState.handoffTimestamp && (
                   <p>
-                    <strong>Timestamp:</strong>{" "}
-                    {handoffState.handoffTimestamp.toLocaleTimeString("pt-BR")}
+                    <strong>Timestamp:</strong>{' '}
+                    {handoffState.handoffTimestamp.toLocaleTimeString('pt-BR',)}
                   </p>
                 )}
               </div>
@@ -331,5 +331,5 @@ export function ExternalChatExample() {
         maxMessages={50}
       />
     </div>
-  );
+  )
 }

@@ -1,70 +1,70 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icons } from "@/components/ui/icons";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/auth-context";
-import { toastHelpers } from "@/lib/toast-helpers";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Icons, } from '@/components/ui/icons'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { useAuth, } from '@/contexts/auth-context'
+import { toastHelpers, } from '@/lib/toast-helpers'
+import { AlertCircle, Eye, EyeOff, } from 'lucide-react'
+import { useRouter, } from 'next/navigation'
+import { useState, } from 'react'
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail,] = useState('',)
+  const [password, setPassword,] = useState('',)
+  const [showPassword, setShowPassword,] = useState(false,)
+  const [error, setError,] = useState<string | null>()
+  const [isSubmitting, setIsSubmitting,] = useState(false,)
 
-  const { signIn, signInWithGoogle, loading } = useAuth();
-  const router = useRouter();
+  const { signIn, signInWithGoogle, loading, } = useAuth()
+  const router = useRouter()
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(undefined);
-    setIsSubmitting(true);
+  const handleEmailLogin = async (e: React.FormEvent,) => {
+    e.preventDefault()
+    setError(undefined,)
+    setIsSubmitting(true,)
 
     try {
-      const { data, error } = await signIn(email, password);
+      const { data, error, } = await signIn(email, password,)
 
       if (error) {
-        setError(error.message);
-        if (error.message.includes("Invalid")) {
-          toastHelpers.error.validation("Email ou senha incorretos");
+        setError(error.message,)
+        if (error.message.includes('Invalid',)) {
+          toastHelpers.error.validation('Email ou senha incorretos',)
         } else {
-          toastHelpers.error.generic();
+          toastHelpers.error.generic()
         }
       } else if ((data as any)?.user) {
-        toastHelpers.success.login();
+        toastHelpers.success.login()
         // Redirect will be handled by auth context
       }
     } catch {
-      setError("Erro inesperado ao fazer login");
-      toastHelpers.error.network();
+      setError('Erro inesperado ao fazer login',)
+      toastHelpers.error.network()
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false,)
     }
-  };
+  }
 
   const handleGoogleLogin = async () => {
-    setError(undefined);
+    setError(undefined,)
 
     try {
-      const { error } = await signInWithGoogle();
+      const { error, } = await signInWithGoogle()
 
       if (error) {
-        setError(error.message);
-        toastHelpers.error.generic();
+        setError(error.message,)
+        toastHelpers.error.generic()
       }
       // Redirect will be handled by OAuth flow
     } catch {
-      toastHelpers.error.network();
-      setError("Erro inesperado ao fazer login com Google");
+      toastHelpers.error.network()
+      setError('Erro inesperado ao fazer login com Google',)
     }
-  };
+  }
   return (
     <Card className="neonpro-card w-full">
       <CardHeader className="space-y-3 text-center">
@@ -91,7 +91,7 @@ export function LoginForm() {
               className="w-full"
               disabled={loading || isSubmitting}
               id="email"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e,) => setEmail(e.target.value,)}
               placeholder="seu@email.com"
               required
               type="email"
@@ -106,23 +106,23 @@ export function LoginForm() {
                 className="w-full pr-10"
                 disabled={loading || isSubmitting}
                 id="password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e,) => setPassword(e.target.value,)}
                 placeholder="Sua senha"
                 required
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 value={password}
               />
               <Button
                 className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                 disabled={loading || isSubmitting}
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword(!showPassword,)}
                 size="sm"
                 type="button"
                 variant="ghost"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 <span className="sr-only">
-                  {showPassword ? "Hide password" : "Show password"}
+                  {showPassword ? 'Hide password' : 'Show password'}
                 </span>
               </Button>
             </div>
@@ -141,7 +141,7 @@ export function LoginForm() {
                 </>
               )
               : (
-                "Acessar Sistema"
+                'Acessar Sistema'
               )}
           </Button>
         </form>
@@ -179,7 +179,7 @@ export function LoginForm() {
             <Button
               className="h-auto p-0 font-semibold text-primary hover:text-primary/80"
               disabled={loading || isSubmitting}
-              onClick={() => router.push("/signup")}
+              onClick={() => router.push('/signup',)}
               type="button"
               variant="link"
             >
@@ -191,7 +191,7 @@ export function LoginForm() {
             <Button
               className="h-auto p-0 font-medium text-muted-foreground text-sm hover:text-foreground"
               disabled={loading || isSubmitting}
-              onClick={() => router.push("/auth/forgot-password")}
+              onClick={() => router.push('/auth/forgot-password',)}
               type="button"
               variant="link"
             >
@@ -201,5 +201,5 @@ export function LoginForm() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

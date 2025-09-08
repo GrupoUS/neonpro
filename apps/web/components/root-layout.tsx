@@ -6,11 +6,11 @@
  * with Next.js App Router compatibility.
  */
 
-"use client";
+'use client'
 
-import { Toaster } from "@/components/ui/toaster";
-import { Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { Toaster, } from '@/components/ui/toaster'
+import { Outlet, } from '@tanstack/react-router'
+import { TanStackRouterDevtools, } from '@tanstack/router-devtools'
 
 export function RootLayout() {
   return (
@@ -22,7 +22,7 @@ export function RootLayout() {
       <Toaster />
 
       {/* Development tools */}
-      {process.env.NODE_ENV === "development" && <TanStackRouterDevtools />}
+      {process.env.NODE_ENV === 'development' && <TanStackRouterDevtools />}
     </div>
-  );
+  )
 }

@@ -1,11 +1,6 @@
 {
   "compilerOptions": {
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false,
+    "strict": true,
     "target": "es2015",
     "lib": ["dom", "dom.iterable", "es2021"],
     "allowJs": true,
@@ -45,6 +40,8 @@
 
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
       "@neonpro/cache": ["../../packages/cache/src"],
       "@neonpro/cache/*": ["../../packages/cache/src/*"],
 

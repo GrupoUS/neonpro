@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * WhatsApp Conversation List Component for NeonPro Healthcare
@@ -6,54 +6,54 @@
  * Mobile-first design optimized for Brazilian users
  */
 
-import { motion } from "framer-motion";
-import { Archive, Filter, MessageCircle, MoreVertical, Pin, Search } from "lucide-react";
-import type React from "react";
-import { useMemo, useRef, useState } from "react";
+import { motion, } from 'framer-motion'
+import { Archive, Filter, MessageCircle, MoreVertical, Pin, Search, } from 'lucide-react'
+import type React from 'react'
+import { useMemo, useRef, useState, } from 'react'
 
 // UI Components
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
+import { ScrollArea, } from '@/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
 // Hooks and utilities
-import { cn } from "@/lib/utils";
+import { cn, } from '@/lib/utils'
 
 // Types
-import type { WhatsappConversation, WhatsappConversationStatus } from "@neonpro/shared";
+import type { WhatsappConversation, WhatsappConversationStatus, } from '@neonpro/shared'
 
 interface WhatsappConversationListProps {
-  conversations: WhatsappConversation[];
-  selectedConversationId?: string;
-  onSelectConversation: (conversation: WhatsappConversation) => void;
-  onArchiveConversation?: (conversationId: string) => void;
-  onPinConversation?: (conversationId: string) => void;
-  className?: string;
-  isLoading?: boolean;
+  conversations: WhatsappConversation[]
+  selectedConversationId?: string
+  onSelectConversation: (conversation: WhatsappConversation,) => void
+  onArchiveConversation?: (conversationId: string,) => void
+  onPinConversation?: (conversationId: string,) => void
+  className?: string
+  isLoading?: boolean
 }
 
 interface ConversationItemProps {
-  conversation: WhatsappConversation;
-  isSelected: boolean;
-  onClick: () => void;
-  onArchive?: () => void;
-  onPin?: () => void;
+  conversation: WhatsappConversation
+  isSelected: boolean
+  onClick: () => void
+  onArchive?: () => void
+  onPin?: () => void
 }
 
 // Individual conversation item component
@@ -63,66 +63,66 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onClick,
   onArchive,
   onPin,
-}) => {
-  const formatLastMessageTime = (date?: Date) => {
-    if (!date) return "";
+},) => {
+  const formatLastMessageTime = (date?: Date,) => {
+    if (!date) return ''
 
-    const now = new Date();
-    const messageDate = new Date(date);
-    const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+    const now = new Date()
+    const messageDate = new Date(date,)
+    const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60)
 
     if (diffInHours < 24) {
-      return new Intl.DateTimeFormat("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(messageDate);
+      return new Intl.DateTimeFormat('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      },).format(messageDate,)
     } else if (diffInHours < 168) { // 7 days
-      return new Intl.DateTimeFormat("pt-BR", {
-        weekday: "short",
-      }).format(messageDate);
+      return new Intl.DateTimeFormat('pt-BR', {
+        weekday: 'short',
+      },).format(messageDate,)
     } else {
-      return new Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-      }).format(messageDate);
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+      },).format(messageDate,)
     }
-  };
+  }
 
   const getContactDisplayName = () => {
-    return conversation.contactName || `+${conversation.phoneNumber}`;
-  };
+    return conversation.contactName || `+${conversation.phoneNumber}`
+  }
 
-  const getStatusColor = (status: WhatsappConversationStatus) => {
+  const getStatusColor = (status: WhatsappConversationStatus,) => {
     switch (status) {
-      case "active":
-        return "bg-green-500";
-      case "closed":
-        return "bg-gray-400";
-      case "archived":
-        return "bg-yellow-500";
+      case 'active':
+        return 'bg-green-500'
+      case 'closed':
+        return 'bg-gray-400'
+      case 'archived':
+        return 'bg-yellow-500'
       default:
-        return "bg-gray-400";
+        return 'bg-gray-400'
     }
-  };
+  }
 
-  const actionBtnRef = useRef<HTMLButtonElement | null>(null);
+  const actionBtnRef = useRef<HTMLButtonElement | null>(null,)
 
-  const onRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      actionBtnRef.current?.focus();
-      actionBtnRef.current?.click();
+  const onRowKeyDown = (e: React.KeyboardEvent<HTMLDivElement>,) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      actionBtnRef.current?.focus()
+      actionBtnRef.current?.click()
     }
-  };
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
+      initial={{ opacity: 0, y: 10, }}
+      animate={{ opacity: 1, y: 0, }}
+      whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.02)', }}
       className={cn(
-        "group flex items-center gap-3 p-3 cursor-pointer border-b transition-colors",
-        isSelected && "bg-green-50 border-l-4 border-l-green-500",
+        'group flex items-center gap-3 p-3 cursor-pointer border-b transition-colors',
+        isSelected && 'bg-green-50 border-l-4 border-l-green-500',
       )}
       onClick={onClick}
       tabIndex={0}
@@ -132,15 +132,15 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       <div className="relative">
         <Avatar className="h-12 w-12">
           <AvatarFallback className="bg-green-100 text-green-700">
-            {getContactDisplayName().slice(0, 2).toUpperCase()}
+            {getContactDisplayName().slice(0, 2,).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
         {/* Status indicator */}
         <div
           className={cn(
-            "absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white",
-            getStatusColor(conversation.status),
+            'absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white',
+            getStatusColor(conversation.status,),
           )}
         />
       </div>
@@ -154,12 +154,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           <div className="flex items-center gap-1">
             {conversation.lastMessageAt && (
               <span className="text-xs text-muted-foreground">
-                {formatLastMessageTime(conversation.lastMessageAt)}
+                {formatLastMessageTime(conversation.lastMessageAt,)}
               </span>
             )}
             {conversation.unreadCount > 0 && (
               <Badge variant="default" className="h-5 min-w-5 text-xs bg-green-500">
-                {conversation.unreadCount > 99 ? "99+" : conversation.unreadCount}
+                {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
               </Badge>
             )}
           </div>
@@ -179,29 +179,29 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                 ref={actionBtnRef}
                 aria-haspopup="menu"
                 className={cn(
-                  "h-6 w-6 p-0 opacity-0 transition-opacity",
-                  "group-hover:opacity-100 focus:opacity-100",
-                  isSelected && "opacity-100",
+                  'h-6 w-6 p-0 opacity-0 transition-opacity',
+                  'group-hover:opacity-100 focus:opacity-100',
+                  isSelected && 'opacity-100',
                 )}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e,) => e.stopPropagation()}
               >
                 <MoreVertical className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPin?.();
+                onClick={(e,) => {
+                  e.stopPropagation()
+                  onPin?.()
                 }}
               >
                 <Pin className="h-4 w-4 mr-2" />
                 Fixar conversa
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onArchive?.();
+                onClick={(e,) => {
+                  e.stopPropagation()
+                  onArchive?.()
                 }}
               >
                 <Archive className="h-4 w-4 mr-2" />
@@ -214,7 +214,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         {/* Tags */}
         {conversation.tags && conversation.tags.length > 0 && (
           <div className="flex gap-1 mt-1">
-            {conversation.tags.slice(0, 2).map((tag: string) => (
+            {conversation.tags.slice(0, 2,).map((tag: string,) => (
               <Badge key={tag} variant="outline" className="text-xs px-1 py-0">
                 {tag}
               </Badge>
@@ -228,8 +228,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         )}
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
 // Main conversation list component
 export const WhatsappConversationList: React.FC<WhatsappConversationListProps> = ({
@@ -240,51 +240,51 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
   onPinConversation,
   className,
   isLoading = false,
-}) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<WhatsappConversationStatus | "all">("all");
+},) => {
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [statusFilter, setStatusFilter,] = useState<WhatsappConversationStatus | 'all'>('all',)
 
   // Filter and search conversations
   const filteredConversations = useMemo(() => {
-    return conversations.filter((conversation) => {
+    return conversations.filter((conversation,) => {
       // Status filter
-      if (statusFilter !== "all" && conversation.status !== statusFilter) {
-        return false;
+      if (statusFilter !== 'all' && conversation.status !== statusFilter) {
+        return false
       }
 
       // Search filter
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const contactName = conversation.contactName?.toLowerCase() || "";
-        const phoneNumber = conversation.phoneNumber.toLowerCase();
+        const query = searchQuery.toLowerCase()
+        const contactName = conversation.contactName?.toLowerCase() || ''
+        const phoneNumber = conversation.phoneNumber.toLowerCase()
 
-        return contactName.includes(query) || phoneNumber.includes(query);
+        return contactName.includes(query,) || phoneNumber.includes(query,)
       }
 
-      return true;
-    });
-  }, [conversations, searchQuery, statusFilter]);
+      return true
+    },)
+  }, [conversations, searchQuery, statusFilter,],)
 
   // Sort conversations by last message time
   const sortedConversations = useMemo(() => {
-    return [...filteredConversations].sort((a, b) => {
-      if (!a.lastMessageAt && !b.lastMessageAt) return 0;
-      if (!a.lastMessageAt) return 1;
-      if (!b.lastMessageAt) return -1;
-      return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
-    });
-  }, [filteredConversations]);
+    return [...filteredConversations,].sort((a, b,) => {
+      if (!a.lastMessageAt && !b.lastMessageAt) return 0
+      if (!a.lastMessageAt) return 1
+      if (!b.lastMessageAt) return -1
+      return new Date(b.lastMessageAt,).getTime() - new Date(a.lastMessageAt,).getTime()
+    },)
+  }, [filteredConversations,],)
 
-  const handleArchiveConversation = (conversationId: string) => {
-    onArchiveConversation?.(conversationId);
-  };
+  const handleArchiveConversation = (conversationId: string,) => {
+    onArchiveConversation?.(conversationId,)
+  }
 
-  const handlePinConversation = (conversationId: string) => {
-    onPinConversation?.(conversationId);
-  };
+  const handlePinConversation = (conversationId: string,) => {
+    onPinConversation?.(conversationId,)
+  }
 
   return (
-    <Card className={cn("flex flex-col h-full", className)}>
+    <Card className={cn('flex flex-col h-full', className,)}>
       {/* Header */}
       <CardHeader className="p-4 border-b">
         <div className="flex items-center justify-between mb-3">
@@ -300,7 +300,7 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
           <Input
             placeholder="Buscar conversas..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e,) => setSearchQuery(e.target.value,)}
             className="pl-9"
           />
         </div>
@@ -309,8 +309,8 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
         <div className="flex items-center gap-2">
           <Select
             value={statusFilter}
-            onValueChange={(value: string) =>
-              setStatusFilter(value as "all" | WhatsappConversationStatus)}
+            onValueChange={(value: string,) =>
+              setStatusFilter(value as 'all' | WhatsappConversationStatus,)}
           >
             <SelectTrigger className="w-32">
               <SelectValue />
@@ -347,22 +347,22 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
                 <MessageCircle className="h-12 w-12 text-muted-foreground mb-3" />
                 <h3 className="font-medium text-sm mb-1">Nenhuma conversa encontrada</h3>
                 <p className="text-xs text-muted-foreground">
-                  {searchQuery || statusFilter !== "all"
-                    ? "Tente ajustar os filtros de busca"
-                    : "As conversas do WhatsApp aparecerão aqui"}
+                  {searchQuery || statusFilter !== 'all'
+                    ? 'Tente ajustar os filtros de busca'
+                    : 'As conversas do WhatsApp aparecerão aqui'}
                 </p>
               </div>
             )
             : (
               <div>
-                {sortedConversations.map((conversation) => (
+                {sortedConversations.map((conversation,) => (
                   <ConversationItem
                     key={conversation.id}
                     conversation={conversation}
                     isSelected={selectedConversationId === conversation.id}
-                    onClick={() => onSelectConversation(conversation)}
-                    onArchive={() => handleArchiveConversation(conversation.id)}
-                    onPin={() => handlePinConversation(conversation.id)}
+                    onClick={() => onSelectConversation(conversation,)}
+                    onArchive={() => handleArchiveConversation(conversation.id,)}
+                    onPin={() => handlePinConversation(conversation.id,)}
                   />
                 ))}
               </div>
@@ -370,7 +370,7 @@ export const WhatsappConversationList: React.FC<WhatsappConversationListProps> =
         </ScrollArea>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default WhatsappConversationList;
+export default WhatsappConversationList

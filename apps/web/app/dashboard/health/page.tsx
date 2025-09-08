@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Health Monitoring Dashboard Page
@@ -6,15 +6,15 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-import { HealthMonitoringDashboard } from "@/components/dashboard/ai-powered";
+import { HealthMonitoringDashboard, } from '@/components/dashboard/ai-powered'
 
 interface HealthPageProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Record<string, string | string[] | undefined>
 }
 
 export default function HealthPage({
   searchParams: _searchParams,
-}: HealthPageProps) {
+}: HealthPageProps,) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6"
@@ -39,5 +39,5 @@ export default function HealthPage({
         </div>
       </div>
     </main>
-  );
+  )
 }

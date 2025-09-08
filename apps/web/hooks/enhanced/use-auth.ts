@@ -7,8 +7,8 @@
  */
 
 // Import our enhanced API client and schemas
-import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
-import type { ApiResponse } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers, } from '@neonpro/shared/api-client'
+import type { ApiResponse, } from '@neonpro/shared/api-client'
 import {
   ChangePasswordRequestSchema,
   ForgotPasswordRequestSchema,
@@ -22,7 +22,7 @@ import {
   UpdateProfileRequestSchema,
   UpdateProfileResponseSchema,
   UserBaseSchema,
-} from "@neonpro/shared/schemas";
+} from '@neonpro/shared/schemas'
 import type {
   ChangePasswordRequest,
   ChangePasswordResponse,
@@ -40,54 +40,54 @@ import type {
   UserBase,
   UserPermission,
   UserRole,
-} from "@neonpro/shared/schemas";
-import { useRouter } from "next/navigation";
-import { useCallback, useMemo } from "react";
+} from '@neonpro/shared/schemas'
+import { useRouter, } from 'next/navigation'
+import { useCallback, useMemo, } from 'react'
 // Import our enhanced query utilities
-import { QueryKeys, useHealthcareQueryUtils } from "../../lib/query/query-utils";
+import { QueryKeys, useHealthcareQueryUtils, } from '../../lib/query/query-utils'
 
 // Enhanced auth context with healthcare-specific features
 export interface AuthContext {
-  user: UserBase | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: Error | null;
+  user: UserBase | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: Error | null
 
   // Role-based access
-  hasRole: (role: UserRole | UserRole[]) => boolean;
-  hasPermission: (permission: UserPermission | UserPermission[]) => boolean;
-  hasAnyPermission: (permissions: UserPermission[]) => boolean;
-  hasAllPermissions: (permissions: UserPermission[]) => boolean;
+  hasRole: (role: UserRole | UserRole[],) => boolean
+  hasPermission: (permission: UserPermission | UserPermission[],) => boolean
+  hasAnyPermission: (permissions: UserPermission[],) => boolean
+  hasAllPermissions: (permissions: UserPermission[],) => boolean
 
   // Clinic-specific access
-  isClinicOwner: boolean;
-  isClinicManager: boolean;
-  isProfessional: boolean;
-  isPatient: boolean;
-  isAdmin: boolean;
+  isClinicOwner: boolean
+  isClinicManager: boolean
+  isProfessional: boolean
+  isPatient: boolean
+  isAdmin: boolean
 
   // LGPD compliance status
-  hasLgpdConsent: boolean;
-  isConsentExpired: boolean;
-  consentExpiryDate: Date | null;
+  hasLgpdConsent: boolean
+  isConsentExpired: boolean
+  consentExpiryDate: Date | null
 
   // Session information
-  sessionId: string | null;
-  lastActivity: Date | null;
-  tokenExpiry: Date | null;
+  sessionId: string | null
+  lastActivity: Date | null
+  tokenExpiry: Date | null
 }
 
 // 👤 Enhanced profile query with validation and audit logging
 export function useProfile() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
     queryKey: QueryKeys.auth.user(),
     queryFn: async () => {
-      const response = await apiClient.api.v1.auth.profile.$get();
-      return await response.json();
+      const response = await apiClient.api.v1.auth.profile.$get()
+      return await response.json()
     },
-    validator: (data: unknown) => UserBaseSchema.parse(data),
+    validator: (data: unknown,) => UserBaseSchema.parse(data,),
     enableAuditLogging: true,
     sensitiveData: true,
     lgpdCompliant: true,
@@ -96,56 +96,59 @@ export function useProfile() {
     staleTime: 1000 * 60 * 2, // 2 minutes for auth data
     gcTime: 1000 * 60 * 5, // 5 minutes cache
 
-    retry: (failureCount, error) => {
+    retry: (failureCount, error,) => {
       // Don't retry auth errors
-      if (ApiHelpers.isAuthError(error)) {
-        return false;
+      if (ApiHelpers.isAuthError(error,)) {
+        return false
       }
-      return failureCount < 2;
+      return failureCount < 2
     },
 
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-  });
+  },)
 }
 
 // 🚪 Enhanced login mutation with validation and audit logging
 export function useLogin() {
-  const queryUtils = useHealthcareQueryUtils();
-  const router = useRouter();
+  const queryUtils = useHealthcareQueryUtils()
+  const router = useRouter()
 
   return queryUtils.createMutation({
     mutationFn: async (
       loginData: LoginRequest,
-    ): Promise<ApiResponse<LoginResponse["data"]>> => {
+    ): Promise<ApiResponse<LoginResponse['data']>> => {
       // Validate request data
-      const validatedData = LoginRequestSchema.parse(loginData);
+      const validatedData = LoginRequestSchema.parse(loginData,)
 
       const response = await apiClient.api.v1.auth.login.$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) =>
-      LoginResponseSchema.parse({
+    validator: (data: unknown,) => {
+      const parsed = LoginResponseSchema.parse({
         success: true,
         data,
-        message: "Login successful",
-      }).data!,
+        message: 'Login successful',
+      },)
+      if (parsed.data == null) throw new Error('Invalid API response: missing data',)
+      return parsed.data
+    },
 
     enableAuditLogging: true,
     requiresConsent: false, // Login doesn't require consent, but creates it
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Login realizado com sucesso!",
+    successMessage: 'Login realizado com sucesso!',
 
     // Invalidate and refetch related data
-    invalidateQueries: [QueryKeys.auth.user(), QueryKeys.auth.session()],
+    invalidateQueries: [QueryKeys.auth.user(), QueryKeys.auth.session(),],
 
-    onSuccess: (response, _variables) => {
+    onSuccess: (response, _variables,) => {
       // Store tokens securely
       if (response.data) {
         apiClient.auth.setTokens(
@@ -153,175 +156,178 @@ export function useLogin() {
           response.data.refresh_token,
           response.data.expires_in,
           response.data.user,
-        );
+        )
 
         // Log successful login for audit
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: response.data.user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "login",
-          resource_type: "auth",
+          action: 'login',
+          resource_type: 'auth',
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
 
         // Navigate to appropriate dashboard based on role
-        const redirectPath = getRoleBasedRedirect(response.data.user.role);
-        router.push(redirectPath);
+        const redirectPath = getRoleBasedRedirect(response.data.user.role,)
+        router.push(redirectPath,)
       }
     },
 
-    onError: (error, _variables) => {
+    onError: (error, _variables,) => {
       // Clear any partial auth state
-      apiClient.auth.clearTokens();
+      apiClient.auth.clearTokens()
 
       // Log failed login attempt for security
       apiClient.audit.log({
         timestamp: new Date().toISOString(),
-        action: "login",
-        resource_type: "auth",
+        action: 'login',
+        resource_type: 'auth',
         ip_address: apiClient.utils.getClientIP(),
         user_agent: apiClient.utils.getUserAgent(),
         success: false,
-        error_message: ApiHelpers.formatError(error),
-      });
+        error_message: ApiHelpers.formatError(error,),
+      },)
     },
-  });
+  },)
 }
 
 // 📝 Enhanced register mutation with validation and consent management
 export function useRegister() {
-  const queryUtils = useHealthcareQueryUtils();
-  const router = useRouter();
+  const queryUtils = useHealthcareQueryUtils()
+  const router = useRouter()
 
   return queryUtils.createMutation({
     mutationFn: async (
       registerData: RegisterRequest,
-    ): Promise<ApiResponse<RegisterResponse["data"]>> => {
+    ): Promise<ApiResponse<RegisterResponse['data']>> => {
       // Validate request data including LGPD consent
-      const validatedData = RegisterRequestSchema.parse(registerData);
+      const validatedData = RegisterRequestSchema.parse(registerData,)
 
       // Ensure LGPD consent is provided
       if (!validatedData.lgpd_consent) {
         throw new Error(
-          "Consentimento LGPD é obrigatório para criar uma conta",
-        );
+          'Consentimento LGPD é obrigatório para criar uma conta',
+        )
       }
 
       const response = await apiClient.api.v1.auth.register.$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) =>
-      RegisterResponseSchema.parse({
+    validator: (data: unknown,) => {
+      const parsed = RegisterResponseSchema.parse({
         success: true,
         data,
-        message: "Registration successful",
-      }).data!,
+        message: 'Registration successful',
+      },)
+      if (parsed.data == null) throw new Error('Invalid API response: missing data',)
+      return parsed.data
+    },
 
     enableAuditLogging: true,
     requiresConsent: false, // Registration creates consent
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Conta criada com sucesso! Verifique seu email.",
+    successMessage: 'Conta criada com sucesso! Verifique seu email.',
 
-    onSuccess: (response, _variables) => {
+    onSuccess: (response, _variables,) => {
       // Log successful registration
       apiClient.audit.log({
         timestamp: new Date().toISOString(),
         userId: response.data?.user.id,
-        action: "create",
-        resource_type: "user",
+        action: 'create',
+        resource_type: 'user',
         ip_address: apiClient.utils.getClientIP(),
         user_agent: apiClient.utils.getUserAgent(),
         success: true,
-      });
+      },)
 
       // Navigate to email verification or login
       if (response.data?.verification_required) {
-        router.push("/auth/verify-email");
+        router.push('/auth/verify-email',)
       } else {
-        router.push("/auth/login");
+        router.push('/auth/login',)
       }
     },
-  });
+  },)
 }
 
 // 🚪 Enhanced logout mutation with audit logging and cleanup
 export function useLogout() {
-  const queryUtils = useHealthcareQueryUtils();
-  const router = useRouter();
+  const queryUtils = useHealthcareQueryUtils()
+  const router = useRouter()
 
   return queryUtils.createMutation({
     mutationFn: async (): Promise<ApiResponse<void>> => {
-      const refreshToken = apiClient.auth.getRefreshToken();
+      const refreshToken = apiClient.auth.getRefreshToken()
 
       if (refreshToken) {
         const response = await apiClient.api.v1.auth.logout.$post({
-          json: { refresh_token: refreshToken, logout_all_devices: false },
-        });
+          json: { refresh_token: refreshToken, logout_all_devices: false, },
+        },)
 
-        return await response.json();
+        return await response.json()
       }
 
-      return { success: true, message: "Logged out successfully" };
+      return { success: true, message: 'Logged out successfully', }
     },
 
     enableAuditLogging: true,
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: false, // Don't show error toast for logout
-    successMessage: "Logout realizado com sucesso",
+    successMessage: 'Logout realizado com sucesso',
 
     onMutate: async () => {
       // Log logout attempt
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "logout",
-          resource_type: "auth",
+          action: 'logout',
+          resource_type: 'auth',
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
 
     onSettled: () => {
       // Always clear tokens and sensitive data
-      apiClient.auth.clearTokens();
-      queryUtils.clearSensitiveUserData("all");
+      apiClient.auth.clearTokens()
+      queryUtils.clearSensitiveUserData('all',)
 
       // Navigate to login
-      router.push("/auth/login");
+      router.push('/auth/login',)
     },
-  });
+  },)
 }
 
 // 🔒 Enhanced change password mutation with validation
 export function useChangePassword() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       passwordData: ChangePasswordRequest,
-    ): Promise<ApiResponse<ChangePasswordResponse["data"]>> => {
-      const validatedData = ChangePasswordRequestSchema.parse(passwordData);
+    ): Promise<ApiResponse<ChangePasswordResponse['data']>> => {
+      const validatedData = ChangePasswordRequestSchema.parse(passwordData,)
 
-      const response = await apiClient.api.v1.auth["change-password"].$post({
+      const response = await apiClient.api.v1.auth['change-password'].$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
     enableAuditLogging: true,
@@ -329,235 +335,246 @@ export function useChangePassword() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Senha alterada com sucesso",
+    successMessage: 'Senha alterada com sucesso',
 
     onSuccess: () => {
       // Log password change for security
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "password_change",
-          resource_type: "auth",
+          action: 'password_change',
+          resource_type: 'auth',
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // 📧 Enhanced forgot password mutation
 export function useForgotPassword() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       forgotData: ForgotPasswordRequest,
-    ): Promise<ApiResponse<ForgotPasswordResponse["data"]>> => {
-      const validatedData = ForgotPasswordRequestSchema.parse(forgotData);
+    ): Promise<ApiResponse<ForgotPasswordResponse['data']>> => {
+      const validatedData = ForgotPasswordRequestSchema.parse(forgotData,)
 
-      const response = await apiClient.api.v1.auth["forgot-password"].$post({
+      const response = await apiClient.api.v1.auth['forgot-password'].$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
     enableAuditLogging: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Instruções enviadas para seu email",
-  });
+    successMessage: 'Instruções enviadas para seu email',
+  },)
 }
 
 // 🔐 Enhanced reset password mutation
 export function useResetPassword() {
-  const queryUtils = useHealthcareQueryUtils();
-  const router = useRouter();
+  const queryUtils = useHealthcareQueryUtils()
+  const router = useRouter()
 
   return queryUtils.createMutation({
     mutationFn: async (
       resetData: ResetPasswordRequest,
-    ): Promise<ApiResponse<ResetPasswordResponse["data"]>> => {
-      const validatedData = ResetPasswordRequestSchema.parse(resetData);
+    ): Promise<ApiResponse<ResetPasswordResponse['data']>> => {
+      const validatedData = ResetPasswordRequestSchema.parse(resetData,)
 
-      const response = await apiClient.api.v1.auth["reset-password"].$post({
+      const response = await apiClient.api.v1.auth['reset-password'].$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
     enableAuditLogging: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Senha redefinida com sucesso",
+    successMessage: 'Senha redefinida com sucesso',
 
     onSuccess: () => {
       // Navigate to login after successful reset
-      router.push("/auth/login");
+      router.push('/auth/login',)
     },
-  });
+  },)
 }
 
 // ✏️ Enhanced update profile mutation
 export function useUpdateProfile() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       profileData: UpdateProfileRequest,
-    ): Promise<ApiResponse<UpdateProfileResponse["data"]>> => {
-      const validatedData = UpdateProfileRequestSchema.parse(profileData);
+    ): Promise<ApiResponse<UpdateProfileResponse['data']>> => {
+      const validatedData = UpdateProfileRequestSchema.parse(profileData,)
 
       const response = await apiClient.api.v1.auth.profile.$put({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) =>
-      UpdateProfileResponseSchema.parse({
+    validator: (data: unknown,) => {
+      const parsed = UpdateProfileResponseSchema.parse({
         success: true,
         data,
-        message: "Profile updated",
-      }).data!,
+        message: 'Profile updated',
+      },)
+      if (parsed.data == null) throw new Error('Invalid API response: missing data',)
+      return parsed.data
+    },
 
     enableAuditLogging: true,
     requiresConsent: true,
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Perfil atualizado com sucesso",
+    successMessage: 'Perfil atualizado com sucesso',
 
     // Update cached user data
-    invalidateQueries: [QueryKeys.auth.user()],
+    invalidateQueries: [QueryKeys.auth.user(),],
 
-    onSuccess: (response) => {
+    onSuccess: (response,) => {
       // Update stored user data
       if (response.data?.user) {
+        const access = apiClient.auth.getAccessToken()
+        const refresh = apiClient.auth.getRefreshToken()
+        if (!access || !refresh) {
+          throw new Error('Missing auth tokens while updating profile',)
+        }
         apiClient.auth.setTokens(
-          apiClient.auth.getAccessToken()!,
-          apiClient.auth.getRefreshToken()!,
+          access,
+          refresh,
           undefined,
           response.data.user,
-        );
+        )
       }
     },
-  });
+  },)
 }
 
 // 🔄 Enhanced refresh token mutation (automatic)
 export function useRefreshToken() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (): Promise<
-      ApiResponse<RefreshTokenResponse["data"]>
+      ApiResponse<RefreshTokenResponse['data']>
     > => {
-      const refreshToken = apiClient.auth.getRefreshToken();
+      const refreshToken = apiClient.auth.getRefreshToken()
 
       if (!refreshToken) {
-        throw new Error("No refresh token available");
+        throw new Error('No refresh token available',)
       }
 
       const request = RefreshTokenRequestSchema.parse({
         refresh_token: refreshToken,
-      });
+      },)
 
       const response = await apiClient.api.v1.auth.refresh.$post({
         json: request,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) =>
-      RefreshTokenResponseSchema.parse({
+    validator: (data: unknown,) => {
+      const parsed = RefreshTokenResponseSchema.parse({
         success: true,
         data,
-        message: "Token refreshed",
-      }).data!,
+        message: 'Token refreshed',
+      },)
+      if (parsed.data == null) throw new Error('Invalid API response: missing data',)
+      return parsed.data
+    },
 
     enableAuditLogging: false, // Too frequent for audit logs
     showSuccessToast: false,
     showErrorToast: false, // Handled by API client
 
-    onSuccess: (response) => {
+    onSuccess: (response,) => {
       if (response.data) {
         apiClient.auth.setTokens(
           response.data.access_token,
           response.data.refresh_token,
           response.data.expires_in,
-        );
+        )
       }
     },
 
     onError: () => {
       // Clear tokens and redirect to login on refresh failure
-      apiClient.auth.clearTokens();
-      window.location.href = "/auth/login";
+      apiClient.auth.clearTokens()
+      window.location.href = '/auth/login'
     },
-  });
+  },)
 }
 
 // 🛡️ Enhanced authentication status hook with comprehensive context
 export function useAuthStatus(): AuthContext {
-  const { data: user, isLoading, error } = useProfile();
+  const { data: user, isLoading, error, } = useProfile()
 
   const authContext = useMemo<AuthContext>(() => {
-    const isAuthenticated = Boolean(user) && !error;
+    const isAuthenticated = Boolean(user,) && !error
 
     // Role checking functions
-    const hasRole = (roles: UserRole | UserRole[]): boolean => {
+    const hasRole = (roles: UserRole | UserRole[],): boolean => {
       if (!user) {
-        return false;
+        return false
       }
-      const roleArray = Array.isArray(roles) ? roles : [roles];
-      return roleArray.includes(user.role);
-    };
+      const roleArray = Array.isArray(roles,) ? roles : [roles,]
+      return roleArray.includes(user.role,)
+    }
 
     const hasPermission = (
       permissions: UserPermission | UserPermission[],
     ): boolean => {
       if (!user?.permissions) {
-        return false;
+        return false
       }
-      const permArray = Array.isArray(permissions)
+      const permArray = Array.isArray(permissions,)
         ? permissions
-        : [permissions];
-      return permArray.every((perm) => user.permissions.includes(perm));
-    };
+        : [permissions,]
+      return permArray.every((perm,) => user.permissions.includes(perm,))
+    }
 
-    const hasAnyPermission = (permissions: UserPermission[]): boolean => {
+    const hasAnyPermission = (permissions: UserPermission[],): boolean => {
       if (!user?.permissions) {
-        return false;
+        return false
       }
-      return permissions.some((perm) => user.permissions.includes(perm));
-    };
+      return permissions.some((perm,) => user.permissions.includes(perm,))
+    }
 
-    const hasAllPermissions = (permissions: UserPermission[]): boolean => {
+    const hasAllPermissions = (permissions: UserPermission[],): boolean => {
       if (!user?.permissions) {
-        return false;
+        return false
       }
-      return permissions.every((perm) => user.permissions.includes(perm));
-    };
+      return permissions.every((perm,) => user.permissions.includes(perm,))
+    }
 
     // LGPD compliance status
     const consentDate = user?.lgpd_consent_date
-      ? new Date(user.lgpd_consent_date)
-      : undefined;
+      ? new Date(user.lgpd_consent_date,)
+      : undefined
     const consentExpiryDate = consentDate
-      ? new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000)
-      : undefined; // 1 year
+      ? new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000,)
+      : undefined // 1 year
     const isConsentExpired = consentExpiryDate
       ? consentExpiryDate < new Date()
-      : false;
+      : false
 
     return {
       user: user ?? null,
@@ -572,123 +589,123 @@ export function useAuthStatus(): AuthContext {
       hasAllPermissions,
 
       // Convenience role checks
-      isClinicOwner: hasRole("clinic_owner"),
-      isClinicManager: hasRole("clinic_manager"),
-      isProfessional: hasRole("professional"),
-      isPatient: hasRole("patient"),
-      isAdmin: hasRole("admin"),
+      isClinicOwner: hasRole('clinic_owner',),
+      isClinicManager: hasRole('clinic_manager',),
+      isProfessional: hasRole('professional',),
+      isPatient: hasRole('patient',),
+      isAdmin: hasRole('admin',),
 
       // LGPD compliance
-      hasLgpdConsent: Boolean(consentDate),
+      hasLgpdConsent: Boolean(consentDate,),
       isConsentExpired,
       consentExpiryDate,
 
       // Session info
       sessionId: apiClient.auth.getSessionId(),
-      lastActivity: user?.last_login ? new Date(user.last_login) : null,
+      lastActivity: user?.last_login ? new Date(user.last_login,) : null,
       tokenExpiry: null, // Would need to be calculated from token
-    };
-  }, [user, isLoading, error]);
+    }
+  }, [user, isLoading, error,],)
 
-  return authContext;
+  return authContext
 }
 
 // 🔧 Enhanced auth utilities hook
 export function useAuthUtils() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return {
     // Clear all auth-related cache
     clearAuthCache: useCallback(() => {
-      queryUtils.clearSensitiveUserData("all");
-    }, [queryUtils]),
+      queryUtils.clearSensitiveUserData('all',)
+    }, [queryUtils,],),
 
     // Check if token exists and is valid
     hasValidToken: useCallback((): boolean => {
       return (
         apiClient.auth.isAuthenticated() && !apiClient.auth.shouldRefresh()
-      );
-    }, []),
+      )
+    }, [],),
 
     // Force refresh profile
     refreshProfile: useCallback(() => {
       return queryUtils.queryClient.invalidateQueries({
         queryKey: QueryKeys.auth.user(),
-      });
-    }, [queryUtils]),
+      },)
+    }, [queryUtils,],),
 
     // Check LGPD consent status
-    checkConsentStatus: useCallback((user: UserBase | null) => {
+    checkConsentStatus: useCallback((user: UserBase | null,) => {
       if (!user?.lgpd_consent_date) {
-        return { hasConsent: false, isExpired: false };
+        return { hasConsent: false, isExpired: false, }
       }
 
-      const consentDate = new Date(user.lgpd_consent_date);
+      const consentDate = new Date(user.lgpd_consent_date,)
       const expiryDate = new Date(
         consentDate.getTime() + 365 * 24 * 60 * 60 * 1000,
-      );
-      const isExpired = expiryDate < new Date();
+      )
+      const isExpired = expiryDate < new Date()
 
-      return { hasConsent: true, isExpired, expiryDate };
-    }, []),
+      return { hasConsent: true, isExpired, expiryDate, }
+    }, [],),
 
     // Get user permissions for a specific resource
     getResourcePermissions: useCallback(
-      (user: UserBase | null, resourceType: string) => {
+      (user: UserBase | null, resourceType: string,) => {
         if (!user?.permissions) {
-          return [];
+          return []
         }
 
-        return user.permissions.filter((perm) => perm.includes(resourceType));
+        return user.permissions.filter((perm,) => perm.includes(resourceType,))
       },
       [],
     ),
 
     // Export user data for LGPD compliance
     exportUserData: useCallback(
-      async (userId: string) => {
-        return await queryUtils.exportUserData(userId);
+      async (userId: string,) => {
+        return await queryUtils.exportUserData(userId,)
       },
-      [queryUtils],
+      [queryUtils,],
     ),
-  };
+  }
 }
 
 // Helper function to get role-based redirect path
-function getRoleBasedRedirect(role: UserRole): string {
+function getRoleBasedRedirect(role: UserRole,): string {
   switch (role) {
-    case "admin": {
-      return "/admin/dashboard";
+    case 'admin': {
+      return '/admin/dashboard'
     }
-    case "clinic_owner":
-    case "clinic_manager": {
-      return "/clinic/dashboard";
+    case 'clinic_owner':
+    case 'clinic_manager': {
+      return '/clinic/dashboard'
     }
-    case "professional": {
-      return "/professional/dashboard";
+    case 'professional': {
+      return '/professional/dashboard'
     }
-    case "patient": {
-      return "/patient/dashboard";
+    case 'patient': {
+      return '/patient/dashboard'
     }
     default: {
-      return "/dashboard";
+      return '/dashboard'
     }
   }
 }
 
 // 🔧 Main unified auth hook - combines all auth functionality
 export function useAuth() {
-  const authStatus = useAuthStatus();
-  const authUtils = useAuthUtils();
-  const login = useLogin();
-  const logout = useLogout();
-  const register = useRegister();
-  const profile = useProfile();
-  const changePassword = useChangePassword();
-  const forgotPassword = useForgotPassword();
-  const resetPassword = useResetPassword();
-  const updateProfile = useUpdateProfile();
-  const refreshToken = useRefreshToken();
+  const authStatus = useAuthStatus()
+  const authUtils = useAuthUtils()
+  const login = useLogin()
+  const logout = useLogout()
+  const register = useRegister()
+  const profile = useProfile()
+  const changePassword = useChangePassword()
+  const forgotPassword = useForgotPassword()
+  const resetPassword = useResetPassword()
+  const updateProfile = useUpdateProfile()
+  const refreshToken = useRefreshToken()
 
   return {
     // Core authentication state
@@ -741,5 +758,5 @@ export function useAuth() {
     forgotPasswordError: forgotPassword.error ?? null,
     resetPasswordError: resetPassword.error ?? null,
     refreshTokenError: refreshToken.error ?? null,
-  };
+  }
 }

@@ -149,9 +149,9 @@ pnpm test:coverage          # Test coverage report
 
 ```typescript
 // middleware.ts
-export function middleware(request: NextRequest) {
+export function middleware(request: NextRequest,) {
   // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+  if (request.nextUrl.pathname.startsWith('/dashboard',)) {
     // Check authentication status
     // Redirect to login if not authenticated
   }
@@ -164,16 +164,16 @@ export function middleware(request: NextRequest) {
 // contexts/auth-context.tsx
 const AuthContext = createContext({
   user: null,
-  login: async (credentials) => {
+  login: async (credentials,) => {
     /* ... */
   },
   logout: async () => {
     /* ... */
   },
-  register: async (userData) => {
+  register: async (userData,) => {
     /* ... */
   },
-});
+},)
 ```
 
 ## 🌐 API Integration
@@ -182,18 +182,18 @@ const AuthContext = createContext({
 
 ```typescript
 // lib/api-client.ts
-import type { AppType } from "@neonpro/api";
-import { hc } from "hono/client";
+import type { AppType, } from '@neonpro/api'
+import { hc, } from 'hono/client'
 
-const client = hc<AppType>("/api");
+const client = hc<AppType>('/api',)
 
 export class PatientAPI {
   static async getPatients() {
-    return await client.patients.$get();
+    return await client.patients.$get()
   }
 
-  static async createPatient(data: CreatePatientData) {
-    return await client.patients.$post({ json: data });
+  static async createPatient(data: CreatePatientData,) {
+    return await client.patients.$post({ json: data, },)
   }
 }
 ```

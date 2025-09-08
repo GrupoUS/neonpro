@@ -1,25 +1,25 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    environment: "node",
+    environment: 'node',
     globals: true,
-    reporters: ["default", "../../.vitest-reporters/junit.cjs"],
+    reporters: ['default', '../../.vitest-reporters/junit.cjs',],
     include: [
-      "src/**/*.{test,spec}.{ts,tsx}",
-      "tests/**/*.test.{ts,tsx}",
-      "src/test/**/*.test.{ts,tsx}",
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'tests/**/*.test.{ts,tsx}',
+      'src/test/**/*.test.{ts,tsx}',
     ],
     coverage: {
-      provider: "v8",
-      reporter: ["text", "html", "lcov"],
-      reportsDirectory: "coverage",
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov',],
+      reportsDirectory: 'coverage',
       all: true,
       exclude: [
-        "**/node_modules/**",
-        "**/dist/**",
-        "**/coverage/**",
-        "**/*.d.ts",
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/coverage/**',
+        '**/*.d.ts',
       ],
       thresholds: {
         global: {
@@ -33,7 +33,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": "./src",
+      '@': './src',
     },
   },
-});
+},)

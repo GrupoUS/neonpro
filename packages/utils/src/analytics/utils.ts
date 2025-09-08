@@ -12,7 +12,7 @@ export {
   calculateGrowthRate,
   calculateMRR,
   type Subscription,
-} from "./calculations";
+} from './calculations'
 
 // Re-export from formatting utilities
 export {
@@ -23,7 +23,7 @@ export {
   type FilterParams,
   formatAnalyticsPercentage,
   parseAnalyticsFilters,
-} from "./formatting";
+} from './formatting'
 
 // Re-export from aggregation utilities
-export { aggregateByPeriod } from "./aggregation";
+export { aggregateByPeriod, } from './aggregation'

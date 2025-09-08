@@ -4,10 +4,10 @@
  */
 
 export interface ProfessionalPerformanceDashboardProps {
-  professionalId?: string;
-  metrics?: unknown;
-  loading?: boolean;
-  error?: string;
+  professionalId?: string
+  metrics?: unknown
+  loading?: boolean
+  error?: string
 }
 
 export default function ProfessionalPerformanceDashboard({
@@ -15,13 +15,13 @@ export default function ProfessionalPerformanceDashboard({
   metrics: _metrics,
   loading = false,
   error,
-}: ProfessionalPerformanceDashboardProps) {
+}: ProfessionalPerformanceDashboardProps,) {
   if (loading) {
-    return <div>Loading performance metrics...</div>;
+    return <div>Loading performance metrics...</div>
   }
 
   if (error) {
-    return <div>Error loading performance data: {error}</div>;
+    return <div>Error loading performance data: {error}</div>
   }
 
   return (
@@ -33,5 +33,5 @@ export default function ProfessionalPerformanceDashboard({
         <div>Performance data placeholder</div>
       </div>
     </div>
-  );
+  )
 }

@@ -30,7 +30,7 @@ Mobile-first responsive design system optimized for healthcare workflows with co
   <ResponsiveLayout>
     {/* Your app content */}
   </ResponsiveLayout>
-</ResponsiveProvider>;
+</ResponsiveProvider>
 ```
 
 ## Components
@@ -40,7 +40,7 @@ Mobile-first responsive design system optimized for healthcare workflows with co
 Context-aware layout system that adapts to screen size and healthcare context.
 
 ```tsx
-import { ResponsiveLayout, useResponsive } from "@/components/responsive";
+import { ResponsiveLayout, useResponsive, } from '@/components/responsive'
 
 function PatientDashboard() {
   return (
@@ -50,7 +50,7 @@ function PatientDashboard() {
     >
       <PatientList />
     </ResponsiveLayout>
-  );
+  )
 }
 ```
 
@@ -86,10 +86,10 @@ import { TouchButton, TouchInput, TouchSelect } from '@/components/responsive';
 Swipe-based navigation with healthcare context sensitivity:
 
 ```tsx
-import { GestureNavigation, SwipeIndicators } from "@/components/responsive";
+import { GestureNavigation, SwipeIndicators, } from '@/components/responsive'
 
 <GestureNavigation
-  onNavigate={(direction) => handleNavigation(direction)}
+  onNavigate={(direction,) => handleNavigation(direction,)}
   enableSwipe={true}
   enableLongPress={true}
 >
@@ -98,7 +98,7 @@ import { GestureNavigation, SwipeIndicators } from "@/components/responsive";
     showPrevious={canGoBack}
     showNext={canGoForward}
   />
-</GestureNavigation>;
+</GestureNavigation>
 ```
 
 ## Healthcare Context Types
@@ -191,24 +191,24 @@ Dynamic layout adjustments for optimal performance.
 ### Basic Setup
 
 ```tsx
-import { ResponsiveProvider } from "@/components/responsive";
+import { ResponsiveProvider, } from '@/components/responsive'
 
 function App() {
   return (
     <ResponsiveProvider defaultHealthcareContext="normal">
       <YourAppContent />
     </ResponsiveProvider>
-  );
+  )
 }
 ```
 
 ### Emergency Mode
 
 ```tsx
-const { setHealthcareContext } = useResponsive();
+const { setHealthcareContext, } = useResponsive()
 
 // Switch to emergency mode
-setHealthcareContext("emergency");
+setHealthcareContext('emergency',)
 ```
 
 ### Custom Healthcare Context
@@ -216,7 +216,7 @@ setHealthcareContext("emergency");
 ```tsx
 <ResponsiveProvider defaultHealthcareContext="post-procedure">
   <PostSurgeryInterface />
-</ResponsiveProvider>;
+</ResponsiveProvider>
 ```
 
 ## Browser Support

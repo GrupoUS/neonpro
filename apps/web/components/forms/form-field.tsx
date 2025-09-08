@@ -1,60 +1,60 @@
-"use client";
+'use client'
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Checkbox, } from '@/components/ui/checkbox'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { AlertTriangle, CheckCircle, Info } from "lucide-react";
-import type React from "react";
+} from '@/components/ui/select'
+import { Textarea, } from '@/components/ui/textarea'
+import { cn, } from '@/lib/utils'
+import { AlertTriangle, CheckCircle, Info, } from 'lucide-react'
+import type React from 'react'
 
 export interface FormFieldProps {
-  id: string;
-  name: string;
-  label: string;
+  id: string
+  name: string
+  label: string
   type?:
-    | "text"
-    | "email"
-    | "tel"
-    | "date"
-    | "number"
-    | "textarea"
-    | "select"
-    | "checkbox"
-    | "password";
-  value?: unknown;
-  onChange?: (value: unknown) => void;
-  onBlur?: () => void;
-  error?: string;
-  loading?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  placeholder?: string;
-  description?: string;
-  options?: { value: string; label: string; disabled?: boolean; }[];
-  className?: string;
-  inputClassName?: string;
-  rows?: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  pattern?: string;
-  autoComplete?: string;
-  "data-testid"?: string;
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'date'
+    | 'number'
+    | 'textarea'
+    | 'select'
+    | 'checkbox'
+    | 'password'
+  value?: unknown
+  onChange?: (value: unknown,) => void
+  onBlur?: () => void
+  error?: string
+  loading?: boolean
+  disabled?: boolean
+  required?: boolean
+  placeholder?: string
+  description?: string
+  options?: { value: string; label: string; disabled?: boolean }[]
+  className?: string
+  inputClassName?: string
+  rows?: number
+  min?: number
+  max?: number
+  step?: number
+  pattern?: string
+  autoComplete?: string
+  'data-testid'?: string
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
   id,
   name,
   label,
-  type = "text",
+  type = 'text',
   value,
   onChange,
   onBlur,
@@ -73,62 +73,62 @@ export const FormField: React.FC<FormFieldProps> = ({
   step,
   pattern,
   autoComplete,
-  "data-testid": testId,
-}) => {
-  const hasError = Boolean(error);
-  const isValid = !hasError && value && !loading;
+  'data-testid': testId,
+},) => {
+  const hasError = Boolean(error,)
+  const isValid = !hasError && value && !loading
 
   const baseInputProps = {
     id,
     name,
-    value: value || "",
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onChange?.(type === "number" ? parseFloat(e.target.value) : e.target.value);
+    value: value || '',
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,) => {
+      onChange?.(type === 'number' ? parseFloat(e.target.value,) : e.target.value,)
     },
     onBlur,
     disabled: disabled || loading,
     placeholder,
     className: cn(
-      "transition-all duration-200",
-      hasError && "border-red-500 focus:border-red-500 focus:ring-red-200",
-      isValid && "border-green-500 focus:border-green-500 focus:ring-green-200",
-      loading && "opacity-50 cursor-wait",
+      'transition-all duration-200',
+      hasError && 'border-red-500 focus:border-red-500 focus:ring-red-200',
+      isValid && 'border-green-500 focus:border-green-500 focus:ring-green-200',
+      loading && 'opacity-50 cursor-wait',
       inputClassName,
     ),
-    "aria-invalid": hasError,
-    "aria-describedby": `${id}-description ${id}-error`,
-    "data-testid": testId,
+    'aria-invalid': hasError,
+    'aria-describedby': `${id}-description ${id}-error`,
+    'data-testid': testId,
     autoComplete,
     pattern,
     min,
     max,
     step,
-  };
+  }
 
   const renderInput = () => {
     switch (type) {
-      case "textarea":
+      case 'textarea':
         return (
           <Textarea
             {...baseInputProps}
             rows={rows}
-            onChange={(e) => onChange?.(e.target.value)}
+            onChange={(e,) => onChange?.(e.target.value,)}
           />
-        );
+        )
 
-      case "select":
+      case 'select':
         return (
           <Select
-            value={value || ""}
+            value={value || ''}
             onValueChange={onChange}
             disabled={disabled || loading}
           >
             <SelectTrigger
               className={cn(
-                "transition-all duration-200",
-                hasError && "border-red-500 focus:border-red-500 focus:ring-red-200",
-                isValid && "border-green-500 focus:border-green-500 focus:ring-green-200",
-                loading && "opacity-50 cursor-wait",
+                'transition-all duration-200',
+                hasError && 'border-red-500 focus:border-red-500 focus:ring-red-200',
+                isValid && 'border-green-500 focus:border-green-500 focus:ring-green-200',
+                loading && 'opacity-50 cursor-wait',
                 inputClassName,
               )}
               aria-invalid={hasError}
@@ -137,7 +137,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
-              {options?.map((option) => (
+              {options?.map((option,) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}
@@ -148,21 +148,21 @@ export const FormField: React.FC<FormFieldProps> = ({
               ))}
             </SelectContent>
           </Select>
-        );
+        )
 
-      case "checkbox":
+      case 'checkbox':
         return (
           <div className="flex items-start space-x-3">
             <Checkbox
               id={id}
               name={name}
-              checked={Boolean(value)}
+              checked={Boolean(value,)}
               onCheckedChange={onChange}
               disabled={disabled || loading}
               className={cn(
-                "mt-1",
-                hasError && "border-red-500",
-                isValid && "border-green-500",
+                'mt-1',
+                hasError && 'border-red-500',
+                isValid && 'border-green-500',
               )}
               aria-invalid={hasError}
               aria-describedby={`${id}-description ${id}-error`}
@@ -172,9 +172,9 @@ export const FormField: React.FC<FormFieldProps> = ({
               <Label
                 htmlFor={id}
                 className={cn(
-                  "text-sm font-medium leading-5",
-                  hasError && "text-red-600",
-                  disabled && "text-gray-400",
+                  'text-sm font-medium leading-5',
+                  hasError && 'text-red-600',
+                  disabled && 'text-gray-400',
                 )}
               >
                 {label}
@@ -187,7 +187,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               )}
             </div>
           </div>
-        );
+        )
 
       default:
         return (
@@ -195,13 +195,13 @@ export const FormField: React.FC<FormFieldProps> = ({
             {...baseInputProps}
             type={type}
           />
-        );
+        )
     }
-  };
+  }
 
-  if (type === "checkbox") {
+  if (type === 'checkbox') {
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn('space-y-2', className,)}>
         {renderInput()}
         {error && (
           <div id={`${id}-error`} className="flex items-center space-x-2 text-red-600">
@@ -210,17 +210,17 @@ export const FormField: React.FC<FormFieldProps> = ({
           </div>
         )}
       </div>
-    );
+    )
   }
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn('space-y-2', className,)}>
       <Label
         htmlFor={id}
         className={cn(
-          "text-sm font-medium",
-          hasError && "text-red-600",
-          disabled && "text-gray-400",
+          'text-sm font-medium',
+          hasError && 'text-red-600',
+          disabled && 'text-gray-400',
         )}
       >
         {label}
@@ -249,5 +249,5 @@ export const FormField: React.FC<FormFieldProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

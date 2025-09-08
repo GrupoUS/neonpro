@@ -100,7 +100,7 @@ CREATE POLICY "staff_insert_patients" ON patients
 -- Policy: Prevent patient deletion (soft delete only)
 CREATE POLICY "prevent_patient_deletion" ON patients
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Medical records RLS policies
@@ -174,7 +174,7 @@ CREATE POLICY "doctors_update_own_records" ON medical_records
 -- Policy: Prevent medical record deletion
 CREATE POLICY "prevent_record_deletion" ON medical_records
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Procedures RLS policies
@@ -256,7 +256,7 @@ CREATE POLICY "doctors_update_assigned_procedures" ON procedures
 -- Policy: Prevent procedure deletion (soft delete only)
 CREATE POLICY "prevent_procedure_deletion" ON procedures
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Consent management RLS policies
@@ -317,7 +317,7 @@ CREATE POLICY "users_update_own_consent" ON consent_records
 -- Policy: Prevent consent deletion (audit trail required)
 CREATE POLICY "prevent_consent_deletion" ON consent_records
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Audit logs RLS policies
@@ -368,7 +368,7 @@ CREATE POLICY "prevent_audit_updates" ON audit_logs
 -- Policy: Prevent audit log deletion
 CREATE POLICY "prevent_audit_deletion" ON audit_logs
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Staff access RLS policies
@@ -446,7 +446,7 @@ CREATE POLICY "admins_update_staff" ON staff_clinic_assignments
 -- Policy: Prevent staff assignment deletion (soft delete only)
 CREATE POLICY "prevent_staff_deletion" ON staff_clinic_assignments
   FOR DELETE USING (false);
-`;
+`
 
 /**
  * Function to apply all RLS policies
@@ -505,18 +505,18 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Note: RLS violations are automatically blocked by PostgreSQL,
 -- but we can add additional monitoring through application-level logging.
-`;
+`
 
 /**
  * TypeScript interface for RLS policy configuration
  */
 export interface RLSPolicyConfig {
-  tableName: string;
-  policyName: string;
-  operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
-  using?: string;
-  withCheck?: string;
-  description: string;
+  tableName: string
+  policyName: string
+  operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE'
+  using?: string
+  withCheck?: string
+  description: string
 }
 
 /**
@@ -526,40 +526,40 @@ export const rlsUtils = {
   /**
    * Validate RLS policy syntax
    */
-  validatePolicy: (policy: RLSPolicyConfig): boolean => {
+  validatePolicy: (policy: RLSPolicyConfig,): boolean => {
     return Boolean(
       policy.tableName
         && policy.policyName
         && policy.operation
         && policy.description
         && (policy.using || policy.withCheck),
-    );
+    )
   },
 
   /**
    * Generate RLS policy SQL
    */
-  generatePolicySQL: (policy: RLSPolicyConfig): string => {
-    let sql = `CREATE POLICY "${policy.policyName}" ON ${policy.tableName}\n`;
-    sql += `  FOR ${policy.operation}`;
+  generatePolicySQL: (policy: RLSPolicyConfig,): string => {
+    let sql = `CREATE POLICY "${policy.policyName}" ON ${policy.tableName}\n`
+    sql += `  FOR ${policy.operation}`
 
     if (policy.using) {
-      sql += ` USING (\n    ${policy.using}\n  )`;
+      sql += ` USING (\n    ${policy.using}\n  )`
     }
 
     if (policy.withCheck) {
-      sql += ` WITH CHECK (\n    ${policy.withCheck}\n  )`;
+      sql += ` WITH CHECK (\n    ${policy.withCheck}\n  )`
     }
 
-    sql += ";";
+    sql += ';'
 
-    return sql;
+    return sql
   },
 
   /**
    * Test RLS policy effectiveness
    */
-  testPolicySQL: (tableName: string, testUserId: string): string => {
+  testPolicySQL: (tableName: string, testUserId: string,): string => {
     return `
 -- Test RLS policies for ${tableName}
 SET row_security = on;
@@ -574,9 +574,9 @@ EXPLAIN (COSTS FALSE) INSERT INTO ${tableName} (id) VALUES (gen_random_uuid());
 
 -- Reset
 RESET ROLE;
-    `;
+    `
   },
-};
+}
 
 export default {
   PATIENT_RLS_POLICIES,
@@ -587,4 +587,4 @@ export default {
   STAFF_ACCESS_RLS_POLICIES,
   APPLY_ALL_RLS_POLICIES,
   rlsUtils,
-};
+}

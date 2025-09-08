@@ -6,15 +6,15 @@
  * and healthcare-specific context providers.
  */
 
-"use client";
+'use client'
 
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { MainNavigation } from "@/components/main-navigation";
-import { useAuth } from "@/contexts/auth-context";
-import { Outlet } from "@tanstack/react-router";
+import { Breadcrumbs, } from '@/components/breadcrumbs'
+import { MainNavigation, } from '@/components/main-navigation'
+import { useAuth, } from '@/contexts/auth-context'
+import { Outlet, } from '@tanstack/react-router'
 
 export function DashboardLayout() {
-  const { /* user, */ loading } = useAuth();
+  const { /* user, */ loading, } = useAuth()
 
   if (loading) {
     return (
@@ -24,7 +24,7 @@ export function DashboardLayout() {
           <p className="text-muted-foreground">Carregando dashboard...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -49,5 +49,5 @@ export function DashboardLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

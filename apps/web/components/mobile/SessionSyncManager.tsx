@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Session Sync Manager Component
@@ -14,14 +14,14 @@
  * - LGPD compliant session management
  */
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 // import { Progress } from "@/components/ui/progress"; // Unused import
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { createClient } from "@/utils/supabase/client";
+import { Separator, } from '@/components/ui/separator'
+import { cn, } from '@/lib/utils'
+import { createClient, } from '@/utils/supabase/client'
 import {
   Activity,
   AlertTriangle,
@@ -39,247 +39,247 @@ import {
   Wifi,
   WifiOff,
   Zap,
-} from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+} from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState, } from 'react'
 
 // Types
 interface DeviceSession {
-  id: string;
-  deviceType: "mobile" | "tablet" | "desktop";
-  deviceFingerprint: Record<string, unknown>;
-  lastActive: number;
-  isCurrentDevice: boolean;
-  syncStatus: "synced" | "syncing" | "conflict" | "offline";
-  conflictCount: number;
-  location?: string;
+  id: string
+  deviceType: 'mobile' | 'tablet' | 'desktop'
+  deviceFingerprint: Record<string, unknown>
+  lastActive: number
+  isCurrentDevice: boolean
+  syncStatus: 'synced' | 'syncing' | 'conflict' | 'offline'
+  conflictCount: number
+  location?: string
 }
 
 interface SyncActivity {
-  id: string;
-  action: string;
-  deviceId: string;
-  timestamp: number;
-  status: "pending" | "completed" | "failed";
-  progress?: number;
+  id: string
+  action: string
+  deviceId: string
+  timestamp: number
+  status: 'pending' | 'completed' | 'failed'
+  progress?: number
 }
 
 interface SyncStats {
-  totalDevices: number;
-  activeDevices: number;
-  syncedDevices: number;
-  conflictingDevices: number;
-  lastSyncTime: number;
-  networkQuality: "excellent" | "good" | "poor" | "offline";
-  dataTransferred: number;
-  averageLatency: number;
+  totalDevices: number
+  activeDevices: number
+  syncedDevices: number
+  conflictingDevices: number
+  lastSyncTime: number
+  networkQuality: 'excellent' | 'good' | 'poor' | 'offline'
+  dataTransferred: number
+  averageLatency: number
 }
 
 export interface SessionSyncManagerProps {
-  className?: string;
-  emergencyMode?: boolean;
-  userId?: string;
-  onSyncStatusChange?: (status: SyncStats) => void;
-  onConflictDetected?: (conflicts: Record<string, unknown>[]) => void;
-  realTimeEnabled?: boolean;
+  className?: string
+  emergencyMode?: boolean
+  userId?: string
+  onSyncStatusChange?: (status: SyncStats,) => void
+  onConflictDetected?: (conflicts: Record<string, unknown>[],) => void
+  realTimeEnabled?: boolean
 }
 
 // Network Quality Hook
 const useNetworkQuality = () => {
-  const [quality, setQuality] = useState<"excellent" | "good" | "poor" | "offline">("excellent");
-  const [latency, setLatency] = useState(0);
+  const [quality, setQuality,] = useState<'excellent' | 'good' | 'poor' | 'offline'>('excellent',)
+  const [latency, setLatency,] = useState(0,)
 
   useEffect(() => {
     const measureLatency = async () => {
       try {
-        const start = performance.now();
-        await fetch("/api/ping", { method: "HEAD" });
-        const end = performance.now();
-        const pingTime = end - start;
-        setLatency(pingTime);
+        const start = performance.now()
+        await fetch('/api/ping', { method: 'HEAD', },)
+        const end = performance.now()
+        const pingTime = end - start
+        setLatency(pingTime,)
 
-        if (pingTime < 100) setQuality("excellent");
-        else if (pingTime < 300) setQuality("good");
-        else setQuality("poor");
+        if (pingTime < 100) setQuality('excellent',)
+        else if (pingTime < 300) setQuality('good',)
+        else setQuality('poor',)
       } catch {
-        setQuality("offline");
+        setQuality('offline',)
       }
-    };
+    }
 
-    measureLatency();
-    const interval = setInterval(measureLatency, 10_000); // Check every 10 seconds
+    measureLatency()
+    const interval = setInterval(measureLatency, 10_000,) // Check every 10 seconds
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval,)
+  }, [],)
 
-  return { quality, latency };
-};
+  return { quality, latency, }
+}
 
 // Real-time Sync Hook
-const useRealTimeSync = (userId: string, enabled: boolean = true) => {
-  const [devices, setDevices] = useState<DeviceSession[]>([]);
-  const [activities, setActivities] = useState<SyncActivity[]>([]);
-  const [stats, setStats] = useState<SyncStats>({
+const useRealTimeSync = (userId: string, enabled: boolean = true,) => {
+  const [devices, setDevices,] = useState<DeviceSession[]>([],)
+  const [activities, setActivities,] = useState<SyncActivity[]>([],)
+  const [stats, setStats,] = useState<SyncStats>({
     totalDevices: 0,
     activeDevices: 0,
     syncedDevices: 0,
     conflictingDevices: 0,
     lastSyncTime: Date.now(),
-    networkQuality: "excellent",
+    networkQuality: 'excellent',
     dataTransferred: 0,
     averageLatency: 0,
-  });
+  },)
 
-  const supabase = createClient();
-  const channelRef = useRef<any>(null);
+  const supabase = createClient()
+  const channelRef = useRef<any>(null,)
 
   // Initialize real-time subscription
   useEffect(() => {
-    if (!enabled || !userId) return;
+    if (!enabled || !userId) return
 
     const setupRealTimeSync = async () => {
       // Subscribe to session changes
       channelRef.current = supabase
-        .channel(`session-sync-${userId}`)
-        .on("postgres_changes", {
-          event: "*",
-          schema: "public",
-          table: "user_sessions",
+        .channel(`session-sync-${userId}`,)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'user_sessions',
           filter: `user_id=eq.${userId}`,
-        }, (payload) => {
-          handleSessionChange(payload);
-        })
-        .on("postgres_changes", {
-          event: "*",
-          schema: "public",
-          table: "sync_activities",
+        }, (payload,) => {
+          handleSessionChange(payload,)
+        },)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'sync_activities',
           filter: `user_id=eq.${userId}`,
-        }, (payload) => {
-          handleActivityChange(payload);
-        })
-        .subscribe();
+        }, (payload,) => {
+          handleActivityChange(payload,)
+        },)
+        .subscribe()
 
       // Initial data fetch
-      await fetchSessionData();
-    };
+      await fetchSessionData()
+    }
 
-    setupRealTimeSync();
+    setupRealTimeSync()
 
     return () => {
       if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
+        supabase.removeChannel(channelRef.current,)
       }
-    };
-  }, [userId, enabled, supabase]);
+    }
+  }, [userId, enabled, supabase,],)
 
   const fetchSessionData = useCallback(async () => {
     try {
       // Fetch active sessions
-      const { data: sessions } = await supabase
-        .from("user_sessions")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("last_active", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+      const { data: sessions, } = await supabase
+        .from('user_sessions',)
+        .select('*',)
+        .eq('user_id', userId,)
+        .gte('last_active', new Date(Date.now() - 24 * 60 * 60 * 1000,).toISOString(),)
 
       if (sessions) {
         const deviceSessions: DeviceSession[] = sessions.map(session => ({
           id: session.id,
           deviceType: session.device_type,
           deviceFingerprint: session.device_fingerprint,
-          lastActive: new Date(session.last_active).getTime(),
+          lastActive: new Date(session.last_active,).getTime(),
           isCurrentDevice: session.is_current,
           syncStatus: session.sync_status,
           conflictCount: session.conflict_count || 0,
           location: session.location,
-        }));
+        }))
 
-        setDevices(deviceSessions);
-        updateStats(deviceSessions);
+        setDevices(deviceSessions,)
+        updateStats(deviceSessions,)
       }
 
       // Fetch recent activities
-      const { data: recentActivities } = await supabase
-        .from("sync_activities")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(20);
+      const { data: recentActivities, } = await supabase
+        .from('sync_activities',)
+        .select('*',)
+        .eq('user_id', userId,)
+        .order('created_at', { ascending: false, },)
+        .limit(20,)
 
       if (recentActivities) {
         const syncActivities: SyncActivity[] = recentActivities.map(activity => ({
           id: activity.id,
           action: activity.action,
           deviceId: activity.device_id,
-          timestamp: new Date(activity.created_at).getTime(),
+          timestamp: new Date(activity.created_at,).getTime(),
           status: activity.status,
           progress: activity.progress,
-        }));
+        }))
 
-        setActivities(syncActivities);
+        setActivities(syncActivities,)
       }
     } catch (error) {
-      console.error("Error fetching session data:", error);
+      console.error('Error fetching session data:', error,)
     }
-  }, [userId, supabase]);
+  }, [userId, supabase,],)
 
-  const handleSessionChange = (payload: Record<string, unknown>) => {
-    const { eventType, new: newRecord, old: oldRecord } = payload;
+  const handleSessionChange = (payload: Record<string, unknown>,) => {
+    const { eventType, new: newRecord, old: oldRecord, } = payload
 
     setDevices(prev => {
       switch (eventType) {
-        case "INSERT":
+        case 'INSERT':
           return [...prev, {
             id: newRecord.id,
             deviceType: newRecord.device_type,
             deviceFingerprint: newRecord.device_fingerprint,
-            lastActive: new Date(newRecord.last_active).getTime(),
+            lastActive: new Date(newRecord.last_active,).getTime(),
             isCurrentDevice: newRecord.is_current,
             syncStatus: newRecord.sync_status,
             conflictCount: newRecord.conflict_count || 0,
             location: newRecord.location,
-          }];
-        case "UPDATE":
+          },]
+        case 'UPDATE':
           return prev.map(device =>
             device.id === newRecord.id
               ? {
                 ...device,
-                lastActive: new Date(newRecord.last_active).getTime(),
+                lastActive: new Date(newRecord.last_active,).getTime(),
                 syncStatus: newRecord.sync_status,
                 conflictCount: newRecord.conflict_count || 0,
               }
               : device
-          );
-        case "DELETE":
-          return prev.filter(device => device.id !== oldRecord.id);
+          )
+        case 'DELETE':
+          return prev.filter(device => device.id !== oldRecord.id)
         default:
-          return prev;
+          return prev
       }
-    });
-  };
+    },)
+  }
 
-  const handleActivityChange = (payload: Record<string, unknown>) => {
-    const { eventType, new: newRecord } = payload;
+  const handleActivityChange = (payload: Record<string, unknown>,) => {
+    const { eventType, new: newRecord, } = payload
 
-    if (eventType === "INSERT") {
+    if (eventType === 'INSERT') {
       setActivities(prev => [{
         id: newRecord.id,
         action: newRecord.action,
         deviceId: newRecord.device_id,
-        timestamp: new Date(newRecord.created_at).getTime(),
+        timestamp: new Date(newRecord.created_at,).getTime(),
         status: newRecord.status,
         progress: newRecord.progress,
-      }, ...prev.slice(0, 19)]);
+      }, ...prev.slice(0, 19,),])
     }
-  };
+  }
 
-  const updateStats = (deviceSessions: DeviceSession[]) => {
-    const now = Date.now();
-    const activeThreshold = 5 * 60 * 1000; // 5 minutes
+  const updateStats = (deviceSessions: DeviceSession[],) => {
+    const now = Date.now()
+    const activeThreshold = 5 * 60 * 1000 // 5 minutes
 
-    const activeDevices = deviceSessions.filter(d => now - d.lastActive < activeThreshold).length;
+    const activeDevices = deviceSessions.filter(d => now - d.lastActive < activeThreshold).length
 
-    const syncedDevices = deviceSessions.filter(d => d.syncStatus === "synced").length;
+    const syncedDevices = deviceSessions.filter(d => d.syncStatus === 'synced').length
 
-    const conflictingDevices = deviceSessions.filter(d => d.syncStatus === "conflict").length;
+    const conflictingDevices = deviceSessions.filter(d => d.syncStatus === 'conflict').length
 
     setStats(prev => ({
       ...prev,
@@ -287,29 +287,29 @@ const useRealTimeSync = (userId: string, enabled: boolean = true) => {
       activeDevices,
       syncedDevices,
       conflictingDevices,
-      lastSyncTime: Math.max(...deviceSessions.map(d => d.lastActive)),
-    }));
-  };
+      lastSyncTime: Math.max(...deviceSessions.map(d => d.lastActive),),
+    }))
+  }
 
   return {
     devices,
     activities,
     stats,
     refreshData: fetchSessionData,
-  };
-};
+  }
+}
 
 export default function SessionSyncManager({
   className,
   emergencyMode = false,
-  userId = "",
+  userId = '',
   onSyncStatusChange,
   onConflictDetected,
   realTimeEnabled = true,
-}: SessionSyncManagerProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { quality: networkQuality, latency } = useNetworkQuality();
-  const { devices, activities, stats, refreshData } = useRealTimeSync(userId, realTimeEnabled);
+}: SessionSyncManagerProps,) {
+  const [isExpanded, setIsExpanded,] = useState(false,)
+  const { quality: networkQuality, latency, } = useNetworkQuality()
+  const { devices, activities, stats, refreshData, } = useRealTimeSync(userId, realTimeEnabled,)
 
   // Notify parent components of sync status changes
   useEffect(() => {
@@ -317,76 +317,76 @@ export default function SessionSyncManager({
       ...stats,
       networkQuality,
       averageLatency: latency,
-    });
-  }, [stats, networkQuality, latency, onSyncStatusChange]);
+    },)
+  }, [stats, networkQuality, latency, onSyncStatusChange,],)
 
   // Notify parent of conflicts
   useEffect(() => {
-    const conflicts = devices.filter(d => d.syncStatus === "conflict");
+    const conflicts = devices.filter(d => d.syncStatus === 'conflict')
     if (conflicts.length > 0) {
-      onConflictDetected?.(conflicts);
+      onConflictDetected?.(conflicts,)
     }
-  }, [devices, onConflictDetected]);
+  }, [devices, onConflictDetected,],)
 
   // Get device icon
-  const getDeviceIcon = (type: string, size = "h-4 w-4") => {
+  const getDeviceIcon = (type: string, size = 'h-4 w-4',) => {
     switch (type) {
-      case "mobile":
-        return <Smartphone className={size} />;
-      case "tablet":
-        return <Tablet className={size} />;
+      case 'mobile':
+        return <Smartphone className={size} />
+      case 'tablet':
+        return <Tablet className={size} />
       default:
-        return <Monitor className={size} />;
+        return <Monitor className={size} />
     }
-  };
+  }
 
   // Get sync status color and icon
-  const getSyncStatusDisplay = (status: string) => {
+  const getSyncStatusDisplay = (status: string,) => {
     switch (status) {
-      case "synced":
+      case 'synced':
         return {
-          color: "text-green-600",
+          color: 'text-green-600',
           icon: <CheckCircle className="h-4 w-4" />,
-          bg: "bg-green-50",
-        };
-      case "syncing":
+          bg: 'bg-green-50',
+        }
+      case 'syncing':
         return {
-          color: "text-blue-600",
+          color: 'text-blue-600',
           icon: <RefreshCw className="h-4 w-4 animate-spin" />,
-          bg: "bg-blue-50",
-        };
-      case "conflict":
+          bg: 'bg-blue-50',
+        }
+      case 'conflict':
         return {
-          color: "text-amber-600",
+          color: 'text-amber-600',
           icon: <AlertTriangle className="h-4 w-4" />,
-          bg: "bg-amber-50",
-        };
-      case "offline":
-        return { color: "text-gray-600", icon: <CloudOff className="h-4 w-4" />, bg: "bg-gray-50" };
+          bg: 'bg-amber-50',
+        }
+      case 'offline':
+        return { color: 'text-gray-600', icon: <CloudOff className="h-4 w-4" />, bg: 'bg-gray-50', }
       default:
-        return { color: "text-gray-600", icon: <Cloud className="h-4 w-4" />, bg: "bg-gray-50" };
+        return { color: 'text-gray-600', icon: <Cloud className="h-4 w-4" />, bg: 'bg-gray-50', }
     }
-  };
+  }
 
   // Format time ago
-  const formatTimeAgo = (timestamp: number): string => {
-    const diff = Date.now() - timestamp;
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
+  const formatTimeAgo = (timestamp: number,): string => {
+    const diff = Date.now() - timestamp
+    const minutes = Math.floor(diff / (1000 * 60),)
+    const hours = Math.floor(minutes / 60,)
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
-  };
+    if (minutes < 1) return 'Just now'
+    if (minutes < 60) return `${minutes}m ago`
+    if (hours < 24) return `${hours}h ago`
+    return `${Math.floor(hours / 24,)}d ago`
+  }
 
-  const currentDevice = devices.find(d => d.isCurrentDevice);
+  const currentDevice = devices.find(d => d.isCurrentDevice)
 
   return (
     <Card
       className={cn(
-        "w-full",
-        emergencyMode && "border-2 border-blue-500 shadow-lg",
+        'w-full',
+        emergencyMode && 'border-2 border-blue-500 shadow-lg',
         className,
       )}
     >
@@ -398,10 +398,10 @@ export default function SessionSyncManager({
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge
-              variant={networkQuality === "excellent" ? "default" : "secondary"}
+              variant={networkQuality === 'excellent' ? 'default' : 'secondary'}
               className="text-xs"
             >
-              {networkQuality === "offline"
+              {networkQuality === 'offline'
                 ? <WifiOff className="h-3 w-3" />
                 : <Wifi className="h-3 w-3" />}
               <span className="ml-1">{latency}ms</span>
@@ -409,7 +409,7 @@ export default function SessionSyncManager({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => setIsExpanded(!isExpanded,)}
             >
               {isExpanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </Button>
@@ -434,19 +434,19 @@ export default function SessionSyncManager({
         {currentDevice && (
           <div
             className={cn(
-              "p-2 rounded-lg border-2 border-dashed",
-              getSyncStatusDisplay(currentDevice.syncStatus).bg,
+              'p-2 rounded-lg border-2 border-dashed',
+              getSyncStatusDisplay(currentDevice.syncStatus,).bg,
             )}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {getDeviceIcon(currentDevice.deviceType)}
+                {getDeviceIcon(currentDevice.deviceType,)}
                 <span className="text-sm font-medium">This Device</span>
               </div>
               <div className="flex items-center gap-1">
-                {getSyncStatusDisplay(currentDevice.syncStatus).icon}
+                {getSyncStatusDisplay(currentDevice.syncStatus,).icon}
                 <span
-                  className={cn("text-xs", getSyncStatusDisplay(currentDevice.syncStatus).color)}
+                  className={cn('text-xs', getSyncStatusDisplay(currentDevice.syncStatus,).color,)}
                 >
                   {currentDevice.syncStatus}
                 </span>
@@ -460,8 +460,8 @@ export default function SessionSyncManager({
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {stats.conflictingDevices} device{stats.conflictingDevices > 1 ? "s have" : " has"}
-              {" "}
+              {stats.conflictingDevices} device{stats.conflictingDevices > 1 ? 's have' : ' has'}
+              {' '}
               sync conflicts that need resolution.
             </AlertDescription>
           </Alert>
@@ -483,22 +483,22 @@ export default function SessionSyncManager({
                 ? <p className="text-sm text-muted-foreground">No active devices</p>
                 : (
                   <div className="space-y-2">
-                    {devices.map((device) => {
-                      const statusDisplay = getSyncStatusDisplay(device.syncStatus);
+                    {devices.map((device,) => {
+                      const statusDisplay = getSyncStatusDisplay(device.syncStatus,)
                       return (
                         <div
                           key={device.id}
                           className="flex items-center justify-between p-2 rounded-md bg-muted/30"
                         >
                           <div className="flex items-center gap-2">
-                            {getDeviceIcon(device.deviceType)}
+                            {getDeviceIcon(device.deviceType,)}
                             <div>
                               <div className="text-sm font-medium">
                                 {device.deviceType}
-                                {device.isCurrentDevice && " (Current)"}
+                                {device.isCurrentDevice && ' (Current)'}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {formatTimeAgo(device.lastActive)}
+                                {formatTimeAgo(device.lastActive,)}
                                 {device.location && ` • ${device.location}`}
                               </div>
                             </div>
@@ -511,14 +511,14 @@ export default function SessionSyncManager({
                             )}
                             <div className="flex items-center gap-1">
                               {statusDisplay.icon}
-                              <span className={cn("text-xs", statusDisplay.color)}>
+                              <span className={cn('text-xs', statusDisplay.color,)}>
                                 {device.syncStatus}
                               </span>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
+                      )
+                    },)}
                   </div>
                 )}
             </div>
@@ -533,13 +533,13 @@ export default function SessionSyncManager({
                     Recent Activity
                   </h4>
                   <div className="space-y-1 max-h-24 overflow-y-auto">
-                    {activities.slice(0, 5).map((activity) => (
+                    {activities.slice(0, 5,).map((activity,) => (
                       <div key={activity.id} className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground truncate flex-1">
                           {activity.action}
                         </span>
                         <span className="text-muted-foreground ml-2">
-                          {formatTimeAgo(activity.timestamp)}
+                          {formatTimeAgo(activity.timestamp,)}
                         </span>
                       </div>
                     ))}
@@ -556,12 +556,12 @@ export default function SessionSyncManager({
           variant="outline"
           size="sm"
           className="w-full"
-          disabled={networkQuality === "offline"}
+          disabled={networkQuality === 'offline'}
         >
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh Sync Status
         </Button>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -13,19 +13,19 @@
  * - Test conditional ROI goal banner and progress capping logic
  */
 
-import React from "react";
-import "@testing-library/jest-dom";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import React from 'react'
+import '@testing-library/jest-dom'
+import { act, fireEvent, render, screen, within, } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi, } from 'vitest'
 
 // Import the component under test (co-located)
-import type { PerformanceMetrics } from "./PerformanceMonitoringDashboard";
-import PerformanceMonitoringDashboard from "./PerformanceMonitoringDashboard";
+import type { PerformanceMetrics, } from './PerformanceMonitoringDashboard'
+import PerformanceMonitoringDashboard from './PerformanceMonitoringDashboard'
 
 // Utility: deterministic base metrics near thresholds
-const baseMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMetrics => ({
-  period: { startDate: "2025-08-01", endDate: "2025-08-29", periodType: "month" },
+const baseMetrics = (overrides: Partial<PerformanceMetrics> = {},): PerformanceMetrics => ({
+  period: { startDate: '2025-08-01', endDate: '2025-08-29', periodType: 'month', },
   predictions: {
     totalPredictions: 1000,
     accuracy: 0.88, // above 0.87 target
@@ -72,234 +72,238 @@ const baseMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMe
     interventionSuccess: [],
   },
   ...overrides as unknown,
-});
+})
 
 /**
  * Helpers to query KPI cards by their visible titles in Portuguese.
  */
-const getCardByTitle = (title: string) => {
+const getCardByTitle = (title: string,) => {
   // find the card section containing the provided title
-  const titleEl = screen.getAllByText(title, { selector: "p,span,div" }).find(Boolean);
-  expect(titleEl).toBeInTheDocument();
-  return titleEl!.closest(".p-4")?.closest(".border-l-4") || titleEl!.closest(".p-4") || titleEl;
-};
+  const titleEl = screen.getAllByText(title, { selector: 'p,span,div', },).find(Boolean,)
+  expect(titleEl,).toBeInTheDocument()
+  return titleEl!.closest('.p-4',)?.closest('.border-l-4',) || titleEl!.closest('.p-4',) || titleEl
+}
 
-describe("PerformanceMonitoringDashboard - Overview KPIs and thresholds", () => {
-  it("renders KPI values with pt-BR formats and success classes when above targets", () => {
-    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
+describe('PerformanceMonitoringDashboard - Overview KPIs and thresholds', () => {
+  it('renders KPI values with pt-BR formats and success classes when above targets', () => {
+    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />,)
 
     // Precisão do Modelo
-    const accCard = getCardByTitle("Precisão do Modelo");
-    expect(accCard).toHaveClass("border-l-4");
+    const accCard = getCardByTitle('Precisão do Modelo',)
+    expect(accCard,).toHaveClass('border-l-4',)
     // success when >= 0.87
-    expect(accCard).toHaveClass("border-l-green-500");
+    expect(accCard,).toHaveClass('border-l-green-500',)
     // Percent text like "88,0%" in pt-BR
-    expect(screen.getByText(/88[,.]0?%/)).toBeInTheDocument();
+    expect(screen.getByText(/88[,.]0?%/,),).toBeInTheDocument()
 
     // Redução de Faltas
-    const redCard = getCardByTitle("Redução de Faltas");
-    expect(redCard).toHaveClass("border-l-green-500");
-    expect(screen.getByText(/28[,.]0?%/)).toBeInTheDocument();
+    const redCard = getCardByTitle('Redução de Faltas',)
+    expect(redCard,).toHaveClass('border-l-green-500',)
+    expect(screen.getByText(/28[,.]0?%/,),).toBeInTheDocument()
 
     // Taxa de Resposta
-    const respCard = getCardByTitle("Taxa de Resposta");
-    expect(respCard).toHaveClass("border-l-green-500");
-    expect(screen.getByText(/62[,.]0?%/)).toBeInTheDocument();
+    const respCard = getCardByTitle('Taxa de Resposta',)
+    expect(respCard,).toHaveClass('border-l-green-500',)
+    expect(screen.getByText(/62[,.]0?%/,),).toBeInTheDocument()
 
     // ROI Projetado (currency BRL)
-    const roiCard = getCardByTitle("ROI Projetado");
+    const roiCard = getCardByTitle('ROI Projetado',)
     // success class (>= target)
-    expect(roiCard).toHaveClass("border-l-green-500");
+    expect(roiCard,).toHaveClass('border-l-green-500',)
     // "R$" appears (locale)
-    expect(screen.getAllByText(/R\$\s?200\.?000|R\$\s?200\.?000,?00|R\$\s?200\.?000,?0/)[0])
-      .toBeInTheDocument();
+    expect(screen.getAllByText(/R\$\s?200\.?000|R\$\s?200\.?000,?00|R\$\s?200\.?000,?0/,)[0],)
+      .toBeInTheDocument()
 
     // Resposta da Equipe (mins rounded)
-    const staffCard = getCardByTitle("Resposta da Equipe");
-    expect(staffCard).toHaveClass("border-l-green-500");
-    expect(screen.getByText("4min")).toBeInTheDocument();
-  });
+    const staffCard = getCardByTitle('Resposta da Equipe',)
+    expect(staffCard,).toHaveClass('border-l-green-500',)
+    expect(screen.getByText('4min',),).toBeInTheDocument()
+  })
 
-  it("applies warning classes when below targets and verifies values", () => {
+  it('applies warning classes when below targets and verifies values', () => {
     const below = baseMetrics({
-      predictions: { ...baseMetrics().predictions, accuracy: 0.86 },
-      appointments: { ...baseMetrics().appointments, reductionPercentage: 0.2 },
-      interventions: { ...baseMetrics().interventions, responseRate: 0.5 },
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000 },
-      staff: { ...baseMetrics().staff, averageResponseTime: 420 }, // 7 minutes (above target)
-    });
-    render(<PerformanceMonitoringDashboard metrics={below} />);
+      predictions: { ...baseMetrics().predictions, accuracy: 0.86, },
+      appointments: { ...baseMetrics().appointments, reductionPercentage: 0.2, },
+      interventions: { ...baseMetrics().interventions, responseRate: 0.5, },
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000, },
+      staff: { ...baseMetrics().staff, averageResponseTime: 420, }, // 7 minutes (above target)
+    },)
+    render(<PerformanceMonitoringDashboard metrics={below} />,)
 
-    expect(getCardByTitle("Precisão do Modelo")).toHaveClass("border-l-yellow-500");
-    expect(getCardByTitle("Redução de Faltas")).toHaveClass("border-l-yellow-500");
-    expect(getCardByTitle("Taxa de Resposta")).toHaveClass("border-l-yellow-500");
-    expect(getCardByTitle("ROI Projetado")).toHaveClass("border-l-yellow-500");
-    expect(getCardByTitle("Resposta da Equipe")).toHaveClass("border-l-yellow-500");
+    expect(getCardByTitle('Precisão do Modelo',),).toHaveClass('border-l-yellow-500',)
+    expect(getCardByTitle('Redução de Faltas',),).toHaveClass('border-l-yellow-500',)
+    expect(getCardByTitle('Taxa de Resposta',),).toHaveClass('border-l-yellow-500',)
+    expect(getCardByTitle('ROI Projetado',),).toHaveClass('border-l-yellow-500',)
+    expect(getCardByTitle('Resposta da Equipe',),).toHaveClass('border-l-yellow-500',)
     // 7 minutes display
-    expect(screen.getByText("7min")).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('7min',),).toBeInTheDocument()
+  })
+})
 
-describe("PerformanceMonitoringDashboard - Export, Refresh, and Period Change", () => {
-  it("calls onExportReport with correct format and current period", async () => {
-    const onExportReport = vi.fn();
-    const metrics = baseMetrics({ period: { startDate: "x", endDate: "y", periodType: "week" } });
+describe('PerformanceMonitoringDashboard - Export, Refresh, and Period Change', () => {
+  it('calls onExportReport with correct format and current period', async () => {
+    const onExportReport = vi.fn()
+    const metrics = baseMetrics({ period: { startDate: 'x', endDate: 'y', periodType: 'week', }, },)
 
-    render(<PerformanceMonitoringDashboard metrics={metrics} onExportReport={onExportReport} />);
+    render(<PerformanceMonitoringDashboard metrics={metrics} onExportReport={onExportReport} />,)
 
     // Click Excel
-    await userEvent.click(screen.getByRole("button", { name: /Excel/i }));
-    expect(onExportReport).toHaveBeenCalledWith("excel", "week");
+    await userEvent.click(screen.getByRole('button', { name: /Excel/i, },),)
+    expect(onExportReport,).toHaveBeenCalledWith('excel', 'week',)
 
     // Click PDF
-    await userEvent.click(screen.getByRole("button", { name: /PDF/i }));
-    expect(onExportReport).toHaveBeenCalledWith("pdf", "week");
-  });
+    await userEvent.click(screen.getByRole('button', { name: /PDF/i, },),)
+    expect(onExportReport,).toHaveBeenCalledWith('pdf', 'week',)
+  })
 
-  it("calls onRefresh and shows spinner/disabled state while refreshing", async () => {
-    vi.useFakeTimers();
-    const onRefresh = vi.fn().mockResolvedValue(undefined);
-    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} onRefresh={onRefresh} />);
+  it('calls onRefresh and shows spinner/disabled state while refreshing', async () => {
+    vi.useFakeTimers()
+    const onRefresh = vi.fn().mockResolvedValue(undefined,)
+    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} onRefresh={onRefresh} />,)
 
-    const btn = screen.getByRole("button", { name: /Atualizar/i });
-    expect(btn).toBeEnabled();
+    const btn = screen.getByRole('button', { name: /Atualizar/i, },)
+    expect(btn,).toBeEnabled()
 
-    await userEvent.click(btn);
-    expect(onRefresh).toHaveBeenCalledTimes(1);
+    await userEvent.click(btn,)
+    expect(onRefresh,).toHaveBeenCalledTimes(1,)
 
     // During refresh, button should be disabled and icon should have animate-spin
     // Find icon by its role/presentation via svg class
-    expect(btn).toBeDisabled();
-    const spinner = within(btn).queryByRole("img", { hidden: true }) || btn.querySelector("svg");
+    expect(btn,).toBeDisabled()
+    const spinner = within(btn,).queryByRole('img', { hidden: true, },) || btn.querySelector('svg',)
     if (spinner) {
-      expect(spinner).toHaveClass("animate-spin");
+      expect(spinner,).toHaveClass('animate-spin',)
     }
 
     // After 1s timeout, spinner stops (advance timers)
     await act(async () => {
-      vi.advanceTimersByTime(1100);
-    });
-    expect(btn).toBeEnabled();
+      vi.advanceTimersByTime(1100,)
+    },)
+    expect(btn,).toBeEnabled()
 
-    vi.useRealTimers();
-  });
+    vi.useRealTimers()
+  })
 
-  it("invokes onPeriodChange when user selects a different period", async () => {
-    const onPeriodChange = vi.fn();
+  it('invokes onPeriodChange when user selects a different period', async () => {
+    const onPeriodChange = vi.fn()
     render(
       <PerformanceMonitoringDashboard metrics={baseMetrics()} onPeriodChange={onPeriodChange} />,
-    );
+    )
 
     // The Select UI may be custom; interact via the visible trigger "Mês" and open options.
     // Try generic approach: click trigger then choose "Semana"
-    const trigger = screen.getByRole("button", { name: /Mês|Dia|Semana|Trimestre/i });
-    await userEvent.click(trigger);
+    const trigger = screen.getByRole('button', { name: /Mês|Dia|Semana|Trimestre/i, },)
+    await userEvent.click(trigger,)
 
     // Select "Semana"
-    const weekOption = await screen.findByRole("option", { name: /Semana/i }).catch(() => null);
+    const weekOption = await screen.findByRole('option', { name: /Semana/i, },).catch(() => null)
     if (weekOption) {
-      await userEvent.click(weekOption);
+      await userEvent.click(weekOption,)
     } else {
       // Fallback: clickable item by text (custom menu)
-      const weekItem = await screen.findByText(/^Semana$/i);
-      await userEvent.click(weekItem);
+      const weekItem = await screen.findByText(/^Semana$/i,)
+      await userEvent.click(weekItem,)
     }
 
     // Expect callback
-    expect(onPeriodChange).toHaveBeenCalledWith("week");
-  });
-});
+    expect(onPeriodChange,).toHaveBeenCalledWith('week',)
+  })
+})
 
-describe("PerformanceMonitoringDashboard - Tabs and conditional rendering", () => {
-  it("renders Overview by default and can switch to Predictions and Financial", async () => {
-    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
+describe('PerformanceMonitoringDashboard - Tabs and conditional rendering', () => {
+  it('renders Overview by default and can switch to Predictions and Financial', async () => {
+    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />,)
 
     // Default: Overview content has key KPI labels
-    expect(screen.getByText("Precisão do Modelo")).toBeInTheDocument();
+    expect(screen.getByText('Precisão do Modelo',),).toBeInTheDocument()
 
     // Switch to "Predições"
-    await userEvent.click(screen.getByRole("tab", { name: /Predições/i }));
-    expect(screen.getByText(/Métricas do Modelo ML/i)).toBeInTheDocument();
-    expect(screen.getByText(/F1-Score/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: /Predições/i, },),)
+    expect(screen.getByText(/Métricas do Modelo ML/i,),).toBeInTheDocument()
+    expect(screen.getByText(/F1-Score/i,),).toBeInTheDocument()
 
     // Switch to "Financeiro"
-    await userEvent.click(screen.getByRole("tab", { name: /Financeiro/i }));
-    expect(screen.getByText(/Retorno do Investimento \(ROI\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Projeção Anual/i)).toBeInTheDocument();
-  });
+    await userEvent.click(screen.getByRole('tab', { name: /Financeiro/i, },),)
+    expect(screen.getByText(/Retorno do Investimento \(ROI\)/i,),).toBeInTheDocument()
+    expect(screen.getByText(/Projeção Anual/i,),).toBeInTheDocument()
+  })
 
   it('shows "Meta anual atingida!" when projectedAnnualROI >= target and hides otherwise', () => {
     const above = baseMetrics({
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 200_000 },
-    });
-    const { rerender } = render(<PerformanceMonitoringDashboard metrics={above} />);
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 200_000, },
+    },)
+    const { rerender, } = render(<PerformanceMonitoringDashboard metrics={above} />,)
 
     // Navigate to Financeiro tab to see the banner
-    fireEvent.click(screen.getByRole("tab", { name: /Financeiro/i }));
-    expect(screen.getByText(/Meta anual atingida!/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: /Financeiro/i, },),)
+    expect(screen.getByText(/Meta anual atingida!/i,),).toBeInTheDocument()
 
     // Now below target
     const below = baseMetrics({
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000 },
-    });
-    rerender(<PerformanceMonitoringDashboard metrics={below} />);
-    fireEvent.click(screen.getByRole("tab", { name: /Financeiro/i }));
-    expect(screen.queryByText(/Meta anual atingida!/i)).not.toBeInTheDocument();
-  });
-});
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 120_000, },
+    },)
+    rerender(<PerformanceMonitoringDashboard metrics={below} />,)
+    fireEvent.click(screen.getByRole('tab', { name: /Financeiro/i, },),)
+    expect(screen.queryByText(/Meta anual atingida!/i,),).not.toBeInTheDocument()
+  })
+})
 
-describe("PerformanceMonitoringDashboard - Progress capping and calculations", () => {
-  it("caps progress at 100% for projectedAnnualROI progress", async () => {
+describe('PerformanceMonitoringDashboard - Progress capping and calculations', () => {
+  it('caps progress at 100% for projectedAnnualROI progress', async () => {
     const huge = baseMetrics({
-      financial: { ...baseMetrics().financial, projectedAnnualROI: 1_000_000 },
-    });
-    render(<PerformanceMonitoringDashboard metrics={huge} />);
-    await userEvent.click(screen.getByRole("tab", { name: /Financeiro/i }));
+      financial: { ...baseMetrics().financial, projectedAnnualROI: 1_000_000, },
+    },)
+    render(<PerformanceMonitoringDashboard metrics={huge} />,)
+    await userEvent.click(screen.getByRole('tab', { name: /Financeiro/i, },),)
 
     // The displayed percent text should be 100 or 100%
     // Locate the "Progresso para Meta Anual" container and read the percent label next to it
-    const label = screen.getByText(/Progresso para Meta Anual/i);
-    const container = label.closest("div")?.parentElement;
-    const percentText = container ? within(container).getByText(/\d+%/) : screen.getByText(/\d+%/);
-    const val = parseInt(percentText.textContent!.replace("%", ""), 10);
-    expect(val).toBeGreaterThanOrEqual(100);
-  });
+    const label = screen.getByText(/Progresso para Meta Anual/i,)
+    const container = label.closest('div',)?.parentElement
+    const percentText = container
+      ? within(container,).getByText(/\d+%/,)
+      : screen.getByText(/\d+%/,)
+    const val = parseInt(percentText.textContent!.replace('%', '',), 10,)
+    expect(val,).toBeGreaterThanOrEqual(100,)
+  })
 
-  it("staff response progress calculation decreases as response time increases", () => {
+  it('staff response progress calculation decreases as response time increases', () => {
     // At target (300s) progress baseline
-    const atTarget = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 300 } });
-    const faster = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 120 } });
-    const slower = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 600 } });
+    const atTarget = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 300, }, },)
+    const faster = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 120, }, },)
+    const slower = baseMetrics({ staff: { ...baseMetrics().staff, averageResponseTime: 600, }, },)
 
-    const { rerender } = render(<PerformanceMonitoringDashboard metrics={atTarget} />);
-    const bar = screen.getByText("Resposta da Equipe").closest(".p-4")!.querySelector("div .h-2") as
+    const { rerender, } = render(<PerformanceMonitoringDashboard metrics={atTarget} />,)
+    const bar = screen.getByText('Resposta da Equipe',).closest('.p-4',)!.querySelector(
+      'div .h-2',
+    ) as
       | HTMLElement
-      | null;
-    expect(bar).toBeInTheDocument();
+      | null
+    expect(bar,).toBeInTheDocument()
 
-    rerender(<PerformanceMonitoringDashboard metrics={faster} />);
+    rerender(<PerformanceMonitoringDashboard metrics={faster} />,)
     // with faster response, progress value should be higher (hard to read value; assert class exists and text "2min")
-    expect(screen.getByText("2min")).toBeInTheDocument();
+    expect(screen.getByText('2min',),).toBeInTheDocument()
 
-    rerender(<PerformanceMonitoringDashboard metrics={slower} />);
-    expect(screen.getByText("10min")).toBeInTheDocument();
-  });
-});
+    rerender(<PerformanceMonitoringDashboard metrics={slower} />,)
+    expect(screen.getByText('10min',),).toBeInTheDocument()
+  })
+})
 
-describe("PerformanceMonitoringDashboard - Summary stats and counts", () => {
-  it("displays totals with pt-BR thousands separators", () => {
-    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />);
+describe('PerformanceMonitoringDashboard - Summary stats and counts', () => {
+  it('displays totals with pt-BR thousands separators', () => {
+    render(<PerformanceMonitoringDashboard metrics={baseMetrics()} />,)
 
     // Consultas Analisadas
-    expect(screen.getByText(/5\.400|5\.400|5,400|5 400/)).toBeInTheDocument();
+    expect(screen.getByText(/5\.400|5\.400|5,400|5 400/,),).toBeInTheDocument()
 
     // Intervenções Enviadas
-    expect(screen.getByText(/3\.200|3,200|3 200/)).toBeInTheDocument();
+    expect(screen.getByText(/3\.200|3,200|3 200/,),).toBeInTheDocument()
 
     // Faltas Prevenidas
-    expect(screen.getByText(/220/)).toBeInTheDocument();
+    expect(screen.getByText(/220/,),).toBeInTheDocument()
 
     // Alertas da Equipe
-    expect(screen.getByText(/860/)).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText(/860/,),).toBeInTheDocument()
+  })
+})

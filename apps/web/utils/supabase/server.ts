@@ -3,19 +3,19 @@
  * Uses centralized environment management with validation
  */
 
-import { serverEnv, validateServerEnv } from "@/lib/env";
-import { type CookieOptions, createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { serverEnv, validateServerEnv, } from '@/lib/env'
+import { type CookieOptions, createServerClient, } from '@supabase/ssr'
+import { cookies, } from 'next/headers'
 
 // In Next.js 15, cookies() can be async in some runtimes; type accordingly
 // We will always await cookies() before using get/set to avoid TS2339.
 
 // Validate environment on module load (server-side only)
 try {
-  validateServerEnv();
+  validateServerEnv()
 } catch (error) {
-  console.error("🚨 Supabase Server Environment Validation Failed:", error);
-  throw error;
+  console.error('🚨 Supabase Server Environment Validation Failed:', error,)
+  throw error
 }
 
 export function createClient() {
@@ -28,30 +28,30 @@ export function createClient() {
     serverEnv.supabase.anonKey,
     {
       cookies: {
-        get: async (name: string) => {
-          const store = await cookies();
-          const c = store.get(name);
-          return c?.value ?? null;
+        get: async (name: string,) => {
+          const store = await cookies()
+          const c = store.get(name,)
+          return c?.value ?? null
         },
-        set: async (name: string, value: string, options: CookieOptions) => {
+        set: async (name: string, value: string, options: CookieOptions,) => {
           try {
-            const store = await cookies();
-            store.set({ name, value, ...options });
+            const store = await cookies()
+            store.set({ name, value, ...options, },)
           } catch (error) {
             // Called from a Server Component. Safe to ignore if middleware handles session refresh.
           }
         },
-        remove: async (name: string, options: CookieOptions) => {
+        remove: async (name: string, options: CookieOptions,) => {
           try {
-            const store = await cookies();
-            store.set({ name, value: "", ...options });
+            const store = await cookies()
+            store.set({ name, value: '', ...options, },)
           } catch (error) {
             // Called from a Server Component. Safe to ignore if middleware handles session refresh.
           }
         },
       },
     },
-  );
+  )
 }
 
 /**
@@ -61,9 +61,9 @@ export function createClient() {
 export function createAdminClient() {
   if (!serverEnv.supabase.serviceRoleKey) {
     throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY is required for admin operations. "
-        + "Add it to your .env.local file for admin functionality.",
-    );
+      'SUPABASE_SERVICE_ROLE_KEY is required for admin operations. '
+        + 'Add it to your .env.local file for admin functionality.',
+    )
   }
 
   return createServerClient(
@@ -71,26 +71,26 @@ export function createAdminClient() {
     serverEnv.supabase.serviceRoleKey,
     {
       cookies: {
-        get: async (name: string) => {
-          const store = await cookies();
-          const c = store.get(name);
-          return c?.value ?? null;
+        get: async (name: string,) => {
+          const store = await cookies()
+          const c = store.get(name,)
+          return c?.value ?? null
         },
-        set: async (name: string, value: string, options: CookieOptions) => {
+        set: async (name: string, value: string, options: CookieOptions,) => {
           try {
-            const store = await cookies();
-            store.set({ name, value, ...options });
+            const store = await cookies()
+            store.set({ name, value, ...options, },)
           } catch {}
         },
-        remove: async (name: string, options: CookieOptions) => {
+        remove: async (name: string, options: CookieOptions,) => {
           try {
-            const store = await cookies();
-            store.set({ name, value: "", ...options });
+            const store = await cookies()
+            store.set({ name, value: '', ...options, },)
           } catch {}
         },
       },
     },
-  );
+  )
 }
 
-export default createClient;
+export default createClient

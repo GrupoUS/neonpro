@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 // import { useAuth } from "@/contexts/auth-context"; // Commented out - not used
 import {
@@ -37,134 +37,134 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@/components/ui";
-import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui'
+import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2, } from 'lucide-react'
+import { useState, } from 'react'
 
 interface Patient {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: "M" | "F" | "O";
-  address: string;
-  emergencyContact: string;
-  emergencyPhone: string;
-  medicalHistory: string[];
-  allergies: string[];
-  medications: string[];
-  lastVisit?: string;
-  nextAppointment?: string;
-  status: "active" | "inactive";
-  insuranceInfo?: string;
-  createdAt: string;
-  lgpdConsent: boolean;
+  id: string
+  name: string
+  email: string
+  phone: string
+  dateOfBirth: string
+  gender: 'M' | 'F' | 'O'
+  address: string
+  emergencyContact: string
+  emergencyPhone: string
+  medicalHistory: string[]
+  allergies: string[]
+  medications: string[]
+  lastVisit?: string
+  nextAppointment?: string
+  status: 'active' | 'inactive'
+  insuranceInfo?: string
+  createdAt: string
+  lgpdConsent: boolean
 }
 
 const MOCK_PATIENTS: Patient[] = [
   {
-    id: "1",
-    name: "Maria Silva Santos",
-    email: "maria.santos@email.com",
-    phone: "(11) 99999-9999",
-    dateOfBirth: "1985-03-15",
-    gender: "F",
-    address: "Rua das Flores, 123 - São Paulo, SP",
-    emergencyContact: "João Santos",
-    emergencyPhone: "(11) 88888-8888",
-    medicalHistory: ["Hipertensão", "Diabetes tipo 2"],
-    allergies: ["Penicilina"],
-    medications: ["Losartana 50mg", "Metformina 850mg"],
-    lastVisit: "2024-01-15",
-    nextAppointment: "2024-02-15",
-    status: "active",
-    insuranceInfo: "Unimed - 123456789",
-    createdAt: "2023-01-01",
+    id: '1',
+    name: 'Maria Silva Santos',
+    email: 'maria.santos@email.com',
+    phone: '(11) 99999-9999',
+    dateOfBirth: '1985-03-15',
+    gender: 'F',
+    address: 'Rua das Flores, 123 - São Paulo, SP',
+    emergencyContact: 'João Santos',
+    emergencyPhone: '(11) 88888-8888',
+    medicalHistory: ['Hipertensão', 'Diabetes tipo 2',],
+    allergies: ['Penicilina',],
+    medications: ['Losartana 50mg', 'Metformina 850mg',],
+    lastVisit: '2024-01-15',
+    nextAppointment: '2024-02-15',
+    status: 'active',
+    insuranceInfo: 'Unimed - 123456789',
+    createdAt: '2023-01-01',
     lgpdConsent: true,
   },
   {
-    id: "2",
-    name: "José Oliveira Costa",
-    email: "jose.costa@email.com",
-    phone: "(11) 77777-7777",
-    dateOfBirth: "1978-07-22",
-    gender: "M",
-    address: "Av. Paulista, 456 - São Paulo, SP",
-    emergencyContact: "Ana Costa",
-    emergencyPhone: "(11) 66666-6666",
-    medicalHistory: ["Colesterol alto"],
+    id: '2',
+    name: 'José Oliveira Costa',
+    email: 'jose.costa@email.com',
+    phone: '(11) 77777-7777',
+    dateOfBirth: '1978-07-22',
+    gender: 'M',
+    address: 'Av. Paulista, 456 - São Paulo, SP',
+    emergencyContact: 'Ana Costa',
+    emergencyPhone: '(11) 66666-6666',
+    medicalHistory: ['Colesterol alto',],
     allergies: [],
-    medications: ["Sinvastatina 20mg"],
-    lastVisit: "2024-01-10",
-    status: "active",
-    insuranceInfo: "Bradesco Saúde - 987654321",
-    createdAt: "2023-02-15",
+    medications: ['Sinvastatina 20mg',],
+    lastVisit: '2024-01-10',
+    status: 'active',
+    insuranceInfo: 'Bradesco Saúde - 987654321',
+    createdAt: '2023-02-15',
     lgpdConsent: true,
   },
-];
+]
 
 export default function PacientesPage() {
   // const { user: _user } = useAuth(); // Commented out - not used
-  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [patients, setPatients,] = useState<Patient[]>(MOCK_PATIENTS,)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [filterStatus, setFilterStatus,] = useState('all',)
+  const [selectedPatient, setSelectedPatient,] = useState<Patient | null>()
+  const [isDialogOpen, setIsDialogOpen,] = useState(false,)
   // const [_isLoading, _setIsLoading] = useState(false); // Commented out - not used
 
-  const filteredPatients = patients.filter((patient) => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchQuery.toLowerCase())
-      || patient.email.toLowerCase().includes(searchQuery.toLowerCase())
-      || patient.phone.includes(searchQuery);
+  const filteredPatients = patients.filter((patient,) => {
+    const matchesSearch = patient.name.toLowerCase().includes(searchQuery.toLowerCase(),)
+      || patient.email.toLowerCase().includes(searchQuery.toLowerCase(),)
+      || patient.phone.includes(searchQuery,)
 
-    const matchesFilter = filterStatus === "all" || patient.status === filterStatus;
+    const matchesFilter = filterStatus === 'all' || patient.status === filterStatus
 
-    return matchesSearch && matchesFilter;
-  });
+    return matchesSearch && matchesFilter
+  },)
 
   const handleAddPatient = () => {
-    setSelectedPatient(undefined);
-    setIsDialogOpen(true);
-  };
+    setSelectedPatient(undefined,)
+    setIsDialogOpen(true,)
+  }
 
-  const handleEditPatient = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setIsDialogOpen(true);
-  };
+  const handleEditPatient = (patient: Patient,) => {
+    setSelectedPatient(patient,)
+    setIsDialogOpen(true,)
+  }
 
-  const handleDeletePatient = async (patientId: string) => {
+  const handleDeletePatient = async (patientId: string,) => {
     // TODO: Replace with proper confirmation dialog
     // if (confirm("Tem certeza que deseja excluir este paciente?")) {
     console.log(
-      "TODO: Add confirmation dialog for patient deletion:",
+      'TODO: Add confirmation dialog for patient deletion:',
       patientId,
-    );
-    setPatients((prev) => prev.filter((p) => p.id !== patientId));
+    )
+    setPatients((prev,) => prev.filter((p,) => p.id !== patientId))
     // }
-  };
+  }
 
-  const getStatusBadge = (status: string) => {
-    return status === "active"
+  const getStatusBadge = (status: string,) => {
+    return status === 'active'
       ? <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-      : <Badge className="bg-gray-100 text-gray-800">Inativo</Badge>;
-  };
+      : <Badge className="bg-gray-100 text-gray-800">Inativo</Badge>
+  }
 
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birth = new Date(dateOfBirth);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
+  const calculateAge = (dateOfBirth: string,) => {
+    const today = new Date()
+    const birth = new Date(dateOfBirth,)
+    let age = today.getFullYear() - birth.getFullYear()
+    const monthDiff = today.getMonth() - birth.getMonth()
 
     if (
       monthDiff < 0
       || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
-      age--;
+      age--
     }
 
-    return age;
-  };
+    return age
+  }
 
   return (
     <div className="space-y-6">
@@ -194,7 +194,7 @@ export default function PacientesPage() {
                 <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                 <Input
                   className="pl-8"
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e,) => setSearchQuery(e.target.value,)}
                   placeholder="Buscar pacientes..."
                   value={searchQuery}
                 />
@@ -235,27 +235,27 @@ export default function PacientesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPatients.map((patient) => (
+              {filteredPatients.map((patient,) => (
                 <TableRow key={patient.id}>
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <Avatar>
                         <AvatarFallback>
                           {patient.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
+                            .split(' ',)
+                            .map((n,) => n[0])
+                            .join('',)
                             .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">{patient.name}</p>
                         <p className="text-muted-foreground text-sm">
-                          {patient.gender === "M"
-                            ? "Masculino"
-                            : patient.gender === "F"
-                            ? "Feminino"
-                            : "Outro"}
+                          {patient.gender === 'M'
+                            ? 'Masculino'
+                            : patient.gender === 'F'
+                            ? 'Feminino'
+                            : 'Outro'}
                         </p>
                       </div>
                     </div>
@@ -273,15 +273,15 @@ export default function PacientesPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {calculateAge(patient.dateOfBirth)} anos
+                    {calculateAge(patient.dateOfBirth,)} anos
                   </TableCell>
                   <TableCell>
                     {patient.lastVisit
                       ? (
                         <div className="flex items-center text-sm">
                           <Calendar className="mr-1 h-3 w-3" />
-                          {new Date(patient.lastVisit).toLocaleDateString(
-                            "pt-BR",
+                          {new Date(patient.lastVisit,).toLocaleDateString(
+                            'pt-BR',
                           )}
                         </div>
                       )
@@ -291,18 +291,18 @@ export default function PacientesPage() {
                         </span>
                       )}
                   </TableCell>
-                  <TableCell>{getStatusBadge(patient.status)}</TableCell>
+                  <TableCell>{getStatusBadge(patient.status,)}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Button
-                        onClick={() => handleEditPatient(patient)}
+                        onClick={() => handleEditPatient(patient,)}
                         size="sm"
                         variant="ghost"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
-                        onClick={() => handleDeletePatient(patient.id)}
+                        onClick={() => handleDeletePatient(patient.id,)}
                         size="sm"
                         variant="ghost"
                       >
@@ -322,12 +322,12 @@ export default function PacientesPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {selectedPatient ? "Editar Paciente" : "Novo Paciente"}
+              {selectedPatient ? 'Editar Paciente' : 'Novo Paciente'}
             </DialogTitle>
             <DialogDescription>
               {selectedPatient
-                ? "Atualize as informações do paciente"
-                : "Preencha os dados do novo paciente"}
+                ? 'Atualize as informações do paciente'
+                : 'Preencha os dados do novo paciente'}
             </DialogDescription>
           </DialogHeader>
 
@@ -391,7 +391,7 @@ export default function PacientesPage() {
               <div>
                 <Label htmlFor="allergies">Alergias</Label>
                 <Textarea
-                  defaultValue={selectedPatient?.allergies.join(", ")}
+                  defaultValue={selectedPatient?.allergies.join(', ',)}
                   id="allergies"
                   placeholder="Liste as alergias conhecidas"
                 />
@@ -399,7 +399,7 @@ export default function PacientesPage() {
               <div>
                 <Label htmlFor="medications">Medicações Atuais</Label>
                 <Textarea
-                  defaultValue={selectedPatient?.medications.join(", ")}
+                  defaultValue={selectedPatient?.medications.join(', ',)}
                   id="medications"
                   placeholder="Liste as medicações em uso"
                 />
@@ -407,7 +407,7 @@ export default function PacientesPage() {
               <div>
                 <Label htmlFor="history">Histórico Médico</Label>
                 <Textarea
-                  defaultValue={selectedPatient?.medicalHistory.join(", ")}
+                  defaultValue={selectedPatient?.medicalHistory.join(', ',)}
                   id="history"
                   placeholder="Histórico médico relevante"
                 />
@@ -444,7 +444,7 @@ export default function PacientesPage() {
               <Alert>
                 <Heart className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>LGPD:</strong>{" "}
+                  <strong>LGPD:</strong>{' '}
                   Os dados pessoais são tratados conforme a Lei Geral de Proteção de Dados. O
                   paciente deve consentir com o tratamento de seus dados.
                 </AlertDescription>
@@ -453,13 +453,13 @@ export default function PacientesPage() {
           </Tabs>
 
           <DialogFooter>
-            <Button onClick={() => setIsDialogOpen(false)} variant="outline">
+            <Button onClick={() => setIsDialogOpen(false,)} variant="outline">
               Cancelar
             </Button>
-            <Button>{selectedPatient ? "Atualizar" : "Criar"} Paciente</Button>
+            <Button>{selectedPatient ? 'Atualizar' : 'Criar'} Paciente</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

@@ -1,99 +1,98 @@
 // Comprehensive compliance system orchestrator
-import { ComplianceService } from './ComplianceService';
-import { ComplianceTestRunner } from './testing/ComplianceTestRunner';
-import { ComplianceReportGenerator } from './reporting/ComplianceReportGenerator';
-import { ReportScheduler } from './reporting/ReportScheduler';
-import { ViolationDetector } from './workflows/ViolationDetector';
-import { RemediationEngine } from './workflows/RemediationEngine';
-import { WorkflowManager } from './workflows/WorkflowManager';
-import { AuditPreparationEngine } from './audit/AuditPreparationEngine';
-import { EvidenceCollector } from './audit/EvidenceCollector';
-import { FeedbackCollector, ImprovementEngine } from './feedback';
-import type { 
-  ComplianceFramework, 
-  ComplianceScore, 
+import { AuditPreparationEngine, } from './audit/AuditPreparationEngine'
+import { EvidenceCollector, } from './audit/EvidenceCollector'
+import { ComplianceService, } from './ComplianceService'
+import { FeedbackCollector, ImprovementEngine, } from './feedback'
+import { ComplianceReportGenerator, } from './reporting/ComplianceReportGenerator'
+import { ReportScheduler, } from './reporting/ReportScheduler'
+import { ComplianceTestRunner, } from './testing/ComplianceTestRunner'
+import type {
+  ComplianceFramework,
+  ComplianceScore,
+  IntegrationValidation,
   SystemHealthCheck,
-  IntegrationValidation 
-} from './types';
+} from './types'
+import { RemediationEngine, } from './workflows/RemediationEngine'
+import { ViolationDetector, } from './workflows/ViolationDetector'
+import { WorkflowManager, } from './workflows/WorkflowManager'
 
 export interface ComplianceSystemConfig {
-  frameworks: ComplianceFramework[];
+  frameworks: ComplianceFramework[]
   enabledModules: {
-    dashboard: boolean;
-    testing: boolean;
-    reporting: boolean;
-    workflows: boolean;
-    auditPrep: boolean;
-    feedback: boolean;
-  };
+    dashboard: boolean
+    testing: boolean
+    reporting: boolean
+    workflows: boolean
+    auditPrep: boolean
+    feedback: boolean
+  }
   monitoring: {
-    realTimeUpdates: boolean;
-    detectionInterval: number; // minutes
-    reportingSchedule: 'daily' | 'weekly' | 'monthly';
+    realTimeUpdates: boolean
+    detectionInterval: number // minutes
+    reportingSchedule: 'daily' | 'weekly' | 'monthly'
     alertThresholds: {
-      criticalViolations: number;
-      scoreThreshold: number;
-    };
-  };
+      criticalViolations: number
+      scoreThreshold: number
+    }
+  }
   automation: {
-    autoRemediation: boolean;
-    scheduledReports: boolean;
-    feedbackAnalysis: boolean;
-  };
+    autoRemediation: boolean
+    scheduledReports: boolean
+    feedbackAnalysis: boolean
+  }
 }
 
 export class ComplianceOrchestrator {
-  private config: ComplianceSystemConfig;
+  private config: ComplianceSystemConfig
   private services: {
-    compliance: ComplianceService;
-    testRunner: ComplianceTestRunner;
-    reportGenerator: ComplianceReportGenerator;
-    reportScheduler: ReportScheduler;
-    violationDetector: ViolationDetector;
-    remediationEngine: RemediationEngine;
-    workflowManager: WorkflowManager;
-    auditEngine: AuditPreparationEngine;
-    evidenceCollector: EvidenceCollector;
-    feedbackCollector: FeedbackCollector;
-    improvementEngine: ImprovementEngine;
-  };
-  private healthStatus: Map<string, SystemHealthCheck> = new Map();
-  private isInitialized: boolean = false;
-  private integrationValidation: IntegrationValidation | null = null;
+    compliance: ComplianceService
+    testRunner: ComplianceTestRunner
+    reportGenerator: ComplianceReportGenerator
+    reportScheduler: ReportScheduler
+    violationDetector: ViolationDetector
+    remediationEngine: RemediationEngine
+    workflowManager: typeof WorkflowManager
+    auditEngine: AuditPreparationEngine
+    evidenceCollector: EvidenceCollector
+    feedbackCollector: FeedbackCollector
+    improvementEngine: ImprovementEngine
+  }
+  private healthStatus: Map<string, SystemHealthCheck> = new Map()
+  private isInitialized: boolean = false
+  private integrationValidation: IntegrationValidation | null = null
 
-  constructor(config: ComplianceSystemConfig) {
-    this.config = config;
-    this.services = this.initializeServices();
+  constructor(config: ComplianceSystemConfig,) {
+    this.config = config
+    this.services = this.initializeServices()
   }
 
   /**
    * Initialize the complete compliance system
    */
   async initialize(): Promise<void> {
-    console.log('🚀 Initializing Comprehensive Compliance System');
-    
+    console.log('🚀 Initializing Comprehensive Compliance System',)
+
     try {
       // Initialize each service module
-      await this.initializeModules();
+      await this.initializeModules()
 
       // Perform system integration validation
-      this.integrationValidation = await this.validateSystemIntegration();
+      this.integrationValidation = await this.validateSystemIntegration()
 
       // Start monitoring services
-      await this.startMonitoring();
+      await this.startMonitoring()
 
       // Set up automated workflows
-      await this.setupAutomation();
+      await this.setupAutomation()
 
-      this.isInitialized = true;
-      console.log('✅ Compliance system initialized successfully');
-      
+      this.isInitialized = true
+      console.log('✅ Compliance system initialized successfully',)
+
       // Log system status
-      await this.logSystemStatus();
-
+      await this.logSystemStatus()
     } catch (error) {
-      console.error('❌ Failed to initialize compliance system:', error);
-      throw error;
+      console.error('❌ Failed to initialize compliance system:', error,)
+      throw error
     }
   }
 
@@ -101,28 +100,28 @@ export class ComplianceOrchestrator {
    * Get comprehensive system status
    */
   async getSystemStatus(): Promise<{
-    overall: 'healthy' | 'warning' | 'critical';
-    modules: Record<string, SystemHealthCheck>;
-    scores: ComplianceScore[];
-    activeViolations: number;
-    systemUptime: number;
-    lastUpdated: Date;
+    overall: 'healthy' | 'warning' | 'critical'
+    modules: Record<string, SystemHealthCheck>
+    scores: ComplianceScore[]
+    activeViolations: number
+    systemUptime: number
+    lastUpdated: Date
   }> {
-    const scores = await this.services.compliance.fetchComplianceScores();
-    const violations = await this.services.compliance.fetchViolations();
-    const activeViolations = violations.filter(v => v.status === 'open').length;
-    
-    const moduleStatuses = Array.from(this.healthStatus.values());
-    const overallStatus = this.calculateOverallHealth(moduleStatuses, scores, activeViolations);
+    const scores = await this.services.compliance.fetchComplianceScores()
+    const violations = await this.services.compliance.fetchViolations()
+    const activeViolations = violations.filter(v => v.status === 'open').length
+
+    const moduleStatuses = Array.from(this.healthStatus.values(),)
+    const overallStatus = this.calculateOverallHealth(moduleStatuses, scores, activeViolations,)
 
     return {
       overall: overallStatus,
-      modules: Object.fromEntries(this.healthStatus),
+      modules: Object.fromEntries(this.healthStatus,),
       scores,
       activeViolations,
       systemUptime: this.calculateSystemUptime(),
-      lastUpdated: new Date()
-    };
+      lastUpdated: new Date(),
+    }
   }
 
   /**
@@ -130,90 +129,99 @@ export class ComplianceOrchestrator {
    */
   async runComprehensiveCheck(): Promise<{
     summary: {
-      overallScore: number;
-      frameworkScores: Record<ComplianceFramework, number>;
-      totalViolations: number;
-      criticalViolations: number;
-    };
-    recommendations: string[];
+      overallScore: number
+      frameworkScores: Record<ComplianceFramework, number>
+      totalViolations: number
+      criticalViolations: number
+    }
+    recommendations: string[]
     nextActions: {
-      priority: 'high' | 'medium' | 'low';
-      action: string;
-      framework?: ComplianceFramework;
-      estimatedTime: string;
-    }[];
+      priority: 'high' | 'medium' | 'low'
+      action: string
+      framework?: ComplianceFramework
+      estimatedTime: string
+    }[]
   }> {
-    console.log('🔍 Running comprehensive compliance check');
+    console.log('🔍 Running comprehensive compliance check',)
 
     const testConfig = {
       frameworks: this.config.frameworks,
-      testPages: ['/dashboard', '/patients', '/appointments', '/reports'],
+      testPages: ['/dashboard', '/patients', '/appointments', '/reports',],
       concurrency: 3,
+      timeout: 30_000,
+      retries: 2,
+      baseUrl: 'http://localhost:3000',
+      outputFormat: 'json' as const,
+      outputPath: './compliance-reports',
       thresholds: {
         minScore: 80,
         maxViolations: 10,
-        criticalViolationsAllowed: 0
-      }
-    };
+        criticalViolationsAllowed: 0,
+      },
+    }
 
     // Run automated testing suite
-    const testSuite = await this.services.testRunner.runTestSuite(testConfig);
-    
+    const testSuite = await this.services.testRunner.runTestSuite(testConfig,)
+
     // Get current compliance data
-    const scores = await this.services.compliance.fetchComplianceScores();
-    const violations = await this.services.compliance.fetchViolations();
+    const scores = await this.services.compliance.fetchComplianceScores()
+    const violations = await this.services.compliance.fetchViolations()
 
     // Calculate summary
-    const overallScore = scores.length > 0 ? 
-      Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length) : 0;
-    
-    const frameworkScores = this.config.frameworks.reduce((acc, framework) => {
-      const frameworkScores = scores.filter(s => s.framework === framework);
-      acc[framework] = frameworkScores.length > 0 ?
-        Math.round(frameworkScores.reduce((sum, s) => sum + s.score, 0) / frameworkScores.length) : 0;
-      return acc;
-    }, {} as Record<ComplianceFramework, number>);
+    const overallScore = scores.length > 0
+      ? Math.round(scores.reduce((sum, s,) => sum + s.score, 0,) / scores.length,)
+      : 0
 
-    const criticalViolations = violations.filter(v => v.severity === 'critical').length;
+    const frameworkScores = this.config.frameworks.reduce((acc, framework,) => {
+      const frameworkScores = scores.filter(s => s.framework === framework)
+      acc[framework] = frameworkScores.length > 0
+        ? Math.round(
+          frameworkScores.reduce((sum, s,) => sum + s.score, 0,) / frameworkScores.length,
+        )
+        : 0
+      return acc
+    }, {} as Record<ComplianceFramework, number>,)
+
+    const criticalViolations = violations.filter(v => v.severity === 'critical').length
 
     // Generate recommendations and next actions
-    const recommendations = await this.generateSystemRecommendations(testSuite, scores, violations);
-    const nextActions = await this.prioritizeActions(testSuite, violations);
+    const recommendations = await this.generateSystemRecommendations(testSuite, scores, violations,)
+    const nextActions = await this.prioritizeActions(testSuite, violations,)
 
     return {
       summary: {
         overallScore,
         frameworkScores,
         totalViolations: violations.length,
-        criticalViolations
+        criticalViolations,
       },
       recommendations,
-      nextActions
-    };
+      nextActions: nextActions as any,
+    }
   }
 
   /**
    * Execute emergency compliance response
    */
   async executeEmergencyResponse(trigger: {
-    type: 'critical_violation' | 'audit_alert' | 'security_breach' | 'system_failure';
-    details: unknown;
-  }): Promise<void> {
-    console.log(`🚨 Executing emergency compliance response: ${trigger.type}`);
+    type: 'critical_violation' | 'audit_alert' | 'security_breach' | 'system_failure'
+    details: unknown
+  },): Promise<void> {
+    console.log(`🚨 Executing emergency compliance response: ${trigger.type}`,)
 
     switch (trigger.type) {
       case 'critical_violation':
-        await this.handleCriticalViolation(trigger.details);
-        break;
+        await this.handleCriticalViolation(trigger.details,)
+        break
       case 'audit_alert':
-        await this.handleAuditAlert(trigger.details);
-        break;
+        await this.handleAuditAlert(trigger.details,)
+        break
       case 'security_breach':
-        await this.handleSecurityBreach(trigger.details);
-        break;
+        await this.handleSecurityBreach(trigger.details,)
+        break
       case 'system_failure':
-        await this.handleSystemFailure(trigger.details);
-        break;
+        await this.handleSystemFailure(trigger.details,)
+        break
     }
   }
 
@@ -221,16 +229,16 @@ export class ComplianceOrchestrator {
    * Generate comprehensive compliance report
    */
   async generateComprehensiveReport(
-    reportType: 'executive' | 'technical' | 'audit' = 'executive'
+    reportType: 'executive' | 'technical' | 'audit' = 'executive',
   ): Promise<unknown> {
-    console.log(`📊 Generating comprehensive ${reportType} compliance report`);
+    console.log(`📊 Generating comprehensive ${reportType} compliance report`,)
 
     // Collect data from all modules
-    const scores = await this.services.compliance.fetchComplianceScores();
-    const violations = await this.services.compliance.fetchViolations();
+    const scores = await this.services.compliance.fetchComplianceScores()
+    const violations = await this.services.compliance.fetchViolations()
     const trends = await Promise.all(
-      this.config.frameworks.map(f => this.services.compliance.getComplianceTrends(f))
-    );
+      this.config.frameworks.map(f => this.services.compliance.getComplianceTrends(f,)),
+    )
 
     // Aggregate data
     const reportData = {
@@ -239,28 +247,45 @@ export class ComplianceOrchestrator {
       trends,
       testResults: [], // Would get from test history
       summary: {
-        overallScore: scores.length > 0 ? Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length) : 0,
-        frameworkScores: this.config.frameworks.reduce((acc, framework) => {
-          const frameworkScores = scores.filter(s => s.framework === framework);
-          acc[framework] = frameworkScores.length > 0 ?
-            Math.round(frameworkScores.reduce((sum, s) => sum + s.score, 0) / frameworkScores.length) : 0;
-          return acc;
-        }, {} as Record<ComplianceFramework, number>),
+        overallScore: scores.length > 0
+          ? Math.round(scores.reduce((sum, s,) => sum + s.score, 0,) / scores.length,)
+          : 0,
+        frameworkScores: this.config.frameworks.reduce((acc, framework,) => {
+          const frameworkScores = scores.filter(s => s.framework === framework)
+          acc[framework] = frameworkScores.length > 0
+            ? Math.round(
+              frameworkScores.reduce((sum, s,) => sum + s.score, 0,) / frameworkScores.length,
+            )
+            : 0
+          return acc
+        }, {} as Record<ComplianceFramework, number>,),
         totalViolations: violations.length,
-        criticalViolations: violations.filter(v => v.severity === 'critical').length
-      }
-    };
+        criticalViolations: violations.filter(v => v.severity === 'critical').length,
+      },
+    }
 
     // Generate report based on type
     switch (reportType) {
       case 'executive':
-        return this.services.reportGenerator.generateExecutiveSummary(reportData, this.config.frameworks);
+        return this.services.reportGenerator.generateExecutiveSummary(
+          reportData as any,
+          this.config.frameworks,
+        )
       case 'technical':
-        return this.services.reportGenerator.generateTechnicalReport(reportData, this.config.frameworks);
+        return this.services.reportGenerator.generateTechnicalReport(
+          reportData as any,
+          this.config.frameworks,
+        )
       case 'audit':
-        return this.services.reportGenerator.generateAuditReport(reportData, this.config.frameworks);
+        return this.services.reportGenerator.generateAuditReport(
+          reportData as any,
+          this.config.frameworks,
+        )
       default:
-        return this.services.reportGenerator.generateExecutiveSummary(reportData, this.config.frameworks);
+        return this.services.reportGenerator.generateExecutiveSummary(
+          reportData as any,
+          this.config.frameworks,
+        )
     }
   }
 
@@ -275,10 +300,16 @@ export class ComplianceOrchestrator {
         frameworks: this.config.frameworks,
         checkInterval: this.config.monitoring.detectionInterval,
         batchSize: 10,
-        excludeRules: []
-      }),
+        excludeRules: [],
+        enabled: true,
+        realTimeMonitoring: true,
+        thresholds: {
+          maxViolationsPerHour: 10,
+          autoEscalationThreshold: 5,
+        },
+      },),
       remediationEngine: new RemediationEngine(),
-      workflowManager: new WorkflowManager(),
+      workflowManager: WorkflowManager,
       auditEngine: new AuditPreparationEngine(),
       evidenceCollector: new EvidenceCollector(),
       feedbackCollector: new FeedbackCollector({
@@ -287,268 +318,295 @@ export class ComplianceOrchestrator {
           widget: true,
           modal: true,
           notification: false,
-          email: false
+          email: false,
         },
         triggerConditions: {
           errorOccurrence: true,
           taskCompletion: true,
           timeSpent: 15,
           userInactivity: false,
-          sessionEnd: true
+          sessionEnd: true,
         },
         ratingPrompts: {
           afterReportGeneration: true,
           afterWorkflowCompletion: true,
           afterAuditPreparation: true,
-          periodic: { enabled: true, intervalDays: 7 }
+          periodic: { enabled: true, intervalDays: 7, },
         },
-        categories: ['dashboard', 'reporting', 'testing', 'workflows', 'audit_prep', 'general'],
-        severityLevels: ['low', 'medium', 'high', 'critical'],
+        categories: ['dashboard', 'reporting', 'testing', 'workflows', 'audit_prep', 'general',],
+        severityLevels: ['low', 'medium', 'high', 'critical',],
         customFields: [],
         autoTriaging: {
           enabled: true,
           rules: [
-            { condition: 'severity=critical', action: 'escalate', value: 'compliance-team' }
-          ]
-        }
-      }),
-      improvementEngine: new ImprovementEngine()
-    };
+            { condition: 'severity=critical', action: 'escalate', value: 'compliance-team', },
+          ],
+        },
+      },),
+      improvementEngine: new ImprovementEngine(),
+    }
   }
 
   private async initializeModules(): Promise<void> {
-    const initPromises = [];
+    const initPromises = []
 
     if (this.config.enabledModules.testing) {
-      initPromises.push(this.initializeTestingModule());
+      initPromises.push(this.initializeTestingModule(),)
     }
 
     if (this.config.enabledModules.workflows) {
-      initPromises.push(this.initializeWorkflowModule());
+      initPromises.push(this.initializeWorkflowModule(),)
     }
 
     if (this.config.enabledModules.auditPrep) {
-      initPromises.push(this.initializeAuditModule());
+      initPromises.push(this.initializeAuditModule(),)
     }
 
     if (this.config.enabledModules.feedback) {
-      initPromises.push(this.initializeFeedbackModule());
+      initPromises.push(this.initializeFeedbackModule(),)
     }
 
-    await Promise.all(initPromises);
+    await Promise.all(initPromises,)
   }
 
   private async validateSystemIntegration(): Promise<IntegrationValidation> {
-    console.log('🔧 Validating system integration');
+    console.log('🔧 Validating system integration',)
 
-    const validations = [];
+    const validations: Array<{
+      component: string
+      status: 'healthy' | 'warning' | 'error'
+      checks?: unknown
+      error?: string
+    }> = []
 
     // Test service connectivity
-    for (const [serviceName, service] of Object.entries(this.services)) {
+    for (const [serviceName, service,] of Object.entries(this.services,)) {
       try {
         // Each service would have a health check method
-        const health = await this.checkServiceHealth(serviceName, service);
+        const health = await this.checkServiceHealth(serviceName, service,)
         validations.push({
           component: serviceName,
-          status: 'healthy',
-          checks: health
-        });
+          status: 'healthy' as const,
+          checks: health,
+        },)
       } catch (error) {
         validations.push({
           component: serviceName,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        });
+          status: 'error' as const,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },)
       }
     }
 
     // Test inter-service communication
-    const communicationTests = await this.testInterServiceCommunication();
-    validations.push(...communicationTests);
+    const communicationTests = await this.testInterServiceCommunication()
+    validations.push(...communicationTests,)
 
-    const overallStatus = validations.every(v => v.status === 'healthy') ? 'healthy' : 'error';
+    const overallStatus = validations.every(v => v.status === 'healthy') ? 'healthy' : 'error'
 
     return {
       status: overallStatus,
       validations,
-      timestamp: new Date()
-    };
+      timestamp: new Date(),
+    }
   }
 
   private async startMonitoring(): Promise<void> {
     if (this.config.monitoring.realTimeUpdates) {
       // Start real-time violation detection
-      await this.services.violationDetector.startDetection();
+      await this.services.violationDetector.startDetection()
     }
 
     // Start periodic health checks
-    this.startHealthChecks();
+    this.startHealthChecks()
 
-    console.log('📊 Monitoring services started');
+    console.log('📊 Monitoring services started',)
   }
 
   private async setupAutomation(): Promise<void> {
     if (this.config.automation.scheduledReports) {
       // Set up scheduled reporting
-      await this.setupScheduledReporting();
+      await this.setupScheduledReporting()
     }
 
     if (this.config.automation.feedbackAnalysis) {
       // Set up automated feedback analysis
-      await this.setupFeedbackAnalysis();
+      await this.setupFeedbackAnalysis()
     }
 
-    console.log('🤖 Automation configured');
+    console.log('🤖 Automation configured',)
   }
 
   // Health monitoring methods
-  private async checkServiceHealth(_serviceName: string, _service: unknown): Promise<{ connectivity: boolean; responseTime: number; lastUpdate: Date; }> {
+  private async checkServiceHealth(
+    _serviceName: string,
+    _service: unknown,
+  ): Promise<{ connectivity: boolean; responseTime: number; lastUpdate: Date }> {
     // Mock health check - would implement actual service-specific checks
     return {
       connectivity: true,
       responseTime: Math.random() * 100,
-      lastUpdate: new Date()
-    };
+      lastUpdate: new Date(),
+    }
   }
 
-  private async testInterServiceCommunication(): Promise<unknown[]> {
+  private async testInterServiceCommunication(): Promise<
+    Array<{
+      component: string
+      status: 'healthy' | 'warning' | 'error'
+      checks?: unknown
+      error?: string
+    }>
+  > {
     // Test critical service interactions
     const tests = [
       {
         component: 'violation-to-remediation',
-        status: 'healthy',
-        checks: { dataFlow: true, responseTime: 50 }
+        status: 'healthy' as const,
+        checks: { dataFlow: true, responseTime: 50, },
       },
       {
         component: 'compliance-to-reporting',
-        status: 'healthy', 
-        checks: { dataFlow: true, responseTime: 75 }
-      }
-    ];
+        status: 'healthy' as const,
+        checks: { dataFlow: true, responseTime: 75, },
+      },
+    ]
 
-    return tests;
+    return tests
   }
 
   private startHealthChecks(): void {
     setInterval(async () => {
-      for (const [serviceName, service] of Object.entries(this.services)) {
+      for (const [serviceName, service,] of Object.entries(this.services,)) {
         try {
-          const health = await this.checkServiceHealth(serviceName, service);
+          const health = await this.checkServiceHealth(serviceName, service,)
           this.healthStatus.set(serviceName, {
             service: serviceName,
             status: 'healthy',
             lastCheck: new Date(),
-            metrics: health
-          });
+            metrics: health,
+          },)
         } catch (error) {
           this.healthStatus.set(serviceName, {
             service: serviceName,
             status: 'error',
             lastCheck: new Date(),
-            error: error instanceof Error ? error.message : 'Unknown error'
-          });
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },)
         }
       }
-    }, 60_000); // Check every minute
+    }, 60_000,) // Check every minute
   }
 
   private calculateOverallHealth(
-    modules: SystemHealthCheck[], 
-    scores: ComplianceScore[], 
-    activeViolations: number
+    modules: SystemHealthCheck[],
+    scores: ComplianceScore[],
+    activeViolations: number,
   ): 'healthy' | 'warning' | 'critical' {
-    const unhealthyModules = modules.filter(m => m.status === 'error').length;
-    const avgScore = scores.length > 0 ? scores.reduce((sum, s) => sum + s.score, 0) / scores.length : 0;
-    const criticalViolations = activeViolations; // Simplified
+    const unhealthyModules = modules.filter(m => m.status === 'error').length
+    const avgScore = scores.length > 0
+      ? scores.reduce((sum, s,) => sum + s.score, 0,) / scores.length
+      : 0
+    const criticalViolations = activeViolations // Simplified
 
-    if (unhealthyModules > 0 || avgScore < 60 || criticalViolations > this.config.monitoring.alertThresholds.criticalViolations) {
-      return 'critical';
+    if (
+      unhealthyModules > 0 || avgScore < 60
+      || criticalViolations > this.config.monitoring.alertThresholds.criticalViolations
+    ) {
+      return 'critical'
     }
 
     if (avgScore < this.config.monitoring.alertThresholds.scoreThreshold || activeViolations > 5) {
-      return 'warning';
+      return 'warning'
     }
 
-    return 'healthy';
+    return 'healthy'
   }
 
   private calculateSystemUptime(): number {
     // Mock calculation - would track actual uptime
-    return Math.random() * 100;
+    return Math.random() * 100
   }
 
   // Emergency response handlers
-  private async handleCriticalViolation(_details: unknown): Promise<void> {
-    console.log('🚨 Handling critical violation');
+  private async handleCriticalViolation(_details: unknown,): Promise<void> {
+    console.log('🚨 Handling critical violation',)
     // Immediate notification and remediation workflow
   }
 
-  private async handleAuditAlert(_details: unknown): Promise<void> {
-    console.log('⚠️ Handling audit alert');
+  private async handleAuditAlert(_details: unknown,): Promise<void> {
+    console.log('⚠️ Handling audit alert',)
     // Audit preparation acceleration
   }
 
-  private async handleSecurityBreach(_details: unknown): Promise<void> {
-    console.log('🔒 Handling security breach');
+  private async handleSecurityBreach(_details: unknown,): Promise<void> {
+    console.log('🔒 Handling security breach',)
     // Security incident response
   }
 
-  private async handleSystemFailure(_details: unknown): Promise<void> {
-    console.log('💥 Handling system failure');
+  private async handleSystemFailure(_details: unknown,): Promise<void> {
+    console.log('💥 Handling system failure',)
     // System recovery procedures
   }
 
   // Module initialization methods
   private async initializeTestingModule(): Promise<void> {
-    console.log('🧪 Initializing testing module');
+    console.log('🧪 Initializing testing module',)
   }
 
   private async initializeWorkflowModule(): Promise<void> {
-    console.log('🔄 Initializing workflow module');
+    console.log('🔄 Initializing workflow module',)
   }
 
   private async initializeAuditModule(): Promise<void> {
-    console.log('📋 Initializing audit module');
+    console.log('📋 Initializing audit module',)
   }
 
   private async initializeFeedbackModule(): Promise<void> {
-    console.log('💬 Initializing feedback module');
+    console.log('💬 Initializing feedback module',)
   }
 
   private async setupScheduledReporting(): Promise<void> {
-    console.log('📅 Setting up scheduled reporting');
+    console.log('📅 Setting up scheduled reporting',)
   }
 
   private async setupFeedbackAnalysis(): Promise<void> {
-    console.log('📊 Setting up feedback analysis');
+    console.log('📊 Setting up feedback analysis',)
   }
 
-  private async generateSystemRecommendations(_testSuite: unknown, _scores: unknown[], _violations: unknown[]): Promise<string[]> {
+  private async generateSystemRecommendations(
+    _testSuite: unknown,
+    _scores: unknown[],
+    _violations: unknown[],
+  ): Promise<string[]> {
     return [
       'Prioritize resolution of critical violations',
       'Enhance automated testing coverage',
-      'Implement proactive monitoring alerts'
-    ];
+      'Implement proactive monitoring alerts',
+    ]
   }
 
-  private async prioritizeActions(_testSuite: unknown, _violations: unknown[]): Promise<unknown[]> {
+  private async prioritizeActions(
+    _testSuite: unknown,
+    _violations: unknown[],
+  ): Promise<unknown[]> {
     return [
       {
         priority: 'high' as const,
         action: 'Address critical WCAG violations',
         framework: 'WCAG' as ComplianceFramework,
-        estimatedTime: '2-4 hours'
-      }
-    ];
+        estimatedTime: '2-4 hours',
+      },
+    ]
   }
 
   private async logSystemStatus(): Promise<void> {
-    const status = await this.getSystemStatus();
+    const status = await this.getSystemStatus()
     console.log('🏥 Healthcare Compliance System Status:', {
       overall: status.overall,
-      modules: Object.keys(status.modules).length,
+      modules: Object.keys(status.modules,).length,
       scores: status.scores.length,
-      violations: status.activeViolations
-    });
+      violations: status.activeViolations,
+    },)
   }
 }

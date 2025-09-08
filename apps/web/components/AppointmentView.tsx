@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Badge,
@@ -22,7 +22,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui";
+} from '@/components/ui'
 import {
   AlertCircle,
   Calendar as CalendarIcon,
@@ -32,93 +32,128 @@ import {
   Plus,
   User,
   XCircle,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-import type { Appointment, Professional } from "./types/healthcare";
+} from 'lucide-react'
+import { useCallback, useState, } from 'react'
+import type { Appointment, Professional, } from './types/healthcare'
 
 // Extended interfaces for AppointmentView specific needs
-interface AppointmentViewData extends Omit<Appointment, "patientId" | "patient"> {
-  patientName: string;
-  patientEmail: string;
-  patientPhone: string;
-  type: "consultation" | "followup" | "procedure" | "emergency";
-  doctor: string;
-  specialty: string;
+interface AppointmentViewData extends Omit<Appointment, 'patientId' | 'patient'> {
+  patientName: string
+  patientEmail: string
+  patientPhone: string
+  type: 'consultation' | 'followup' | 'procedure' | 'emergency'
+  doctor: string
+  specialty: string
 }
 
 interface Doctor extends Professional {
-  avatar?: string;
+  avatar?: string
   availability: {
-    [key: string]: string[]; // day: available times
-  };
+    [key: string]: string[] // day: available times
+  }
 }
 
 const MOCK_DOCTORS: Doctor[] = [
   {
-    id: "1",
-    name: "Dr. Ana Silva",
-    specialization: "Cardiologia",
+    id: '1',
+    name: 'Dr. Ana Silva',
+    specialization: 'Cardiologia',
     isActive: true,
     availability: {
-      monday: ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
-      tuesday: ["09:00", "10:00", "11:00", "14:00", "15:00"],
-      wednesday: ["09:00", "10:00", "14:00", "15:00", "16:00"],
-      thursday: ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
-      friday: ["09:00", "10:00", "11:00", "14:00", "15:00"],
+      monday: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00',],
+      tuesday: ['09:00', '10:00', '11:00', '14:00', '15:00',],
+      wednesday: ['09:00', '10:00', '14:00', '15:00', '16:00',],
+      thursday: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00',],
+      friday: ['09:00', '10:00', '11:00', '14:00', '15:00',],
     },
   },
   {
-    id: "2",
-    name: "Dr. João Santos",
-    specialization: "Clínica Geral",
+    id: '2',
+    name: 'Dr. João Santos',
+    specialization: 'Clínica Geral',
     isActive: true,
     availability: {
-      monday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00", "17:00"],
-      tuesday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
-      wednesday: ["08:00", "09:00", "14:00", "15:00", "16:00", "17:00"],
-      thursday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
-      friday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
+      monday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00', '17:00',],
+      tuesday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00',],
+      wednesday: ['08:00', '09:00', '14:00', '15:00', '16:00', '17:00',],
+      thursday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00',],
+      friday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00',],
     },
   },
-];
+]
 
 const APPOINTMENT_TYPES = [
-  { value: "consultation", label: "Consulta", duration: 30 },
-  { value: "followup", label: "Retorno", duration: 20 },
-  { value: "procedure", label: "Procedimento", duration: 60 },
-  { value: "emergency", label: "Emergência", duration: 45 },
-];
+  { value: 'consultation', label: 'Consulta', duration: 30, },
+  { value: 'followup', label: 'Retorno', duration: 20, },
+  { value: 'procedure', label: 'Procedimento', duration: 60, },
+  { value: 'emergency', label: 'Emergência', duration: 45, },
+]
+
+// Timezone utility functions
+const normalizeToLocalDate = (date: Date | string,): Date => {
+  const d = typeof date === 'string' ? new Date(date,) : date
+  // Create a new date in local timezone, ignoring time
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(),)
+}
+
+const formatDateForInput = (date: Date,): string => {
+  // Format date for input without timezone conversion
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1,).padStart(2, '0',)
+  const day = String(date.getDate(),).padStart(2, '0',)
+  return `${year}-${month}-${day}`
+}
+
+const isSameLocalDate = (date1: Date | string, date2: Date | string,): boolean => {
+  const d1 = normalizeToLocalDate(date1,)
+  const d2 = normalizeToLocalDate(date2,)
+  return d1.getTime() === d2.getTime()
+}
+
+const getWeekdayName = (date: Date,): string => {
+  // Map to consistent weekday names for availability lookup
+  const dayMapping = {
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
+  }
+  return dayMapping[date.getDay() as keyof typeof dayMapping]
+}
 
 export default function AppointmentView() {
-  const [appointments, setAppointments] = useState<AppointmentViewData[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    patientName: "",
-    patientEmail: "",
-    patientPhone: "",
+  const [appointments, setAppointments,] = useState<AppointmentViewData[]>([],)
+  const [selectedDate, setSelectedDate,] = useState<Date>(new Date(),)
+  const [isDialogOpen, setIsDialogOpen,] = useState(false,)
+  const [formData, setFormData,] = useState({
+    patientName: '',
+    patientEmail: '',
+    patientPhone: '',
     date: new Date(),
-    time: "",
-    type: "consultation" as AppointmentViewData["type"],
-    doctor: "",
-    notes: "",
-  });
+    time: '',
+    type: 'consultation' as AppointmentViewData['type'],
+    doctor: '',
+    notes: '',
+  },)
 
-  const handleDateSelect = useCallback((date: Date | undefined) => {
+  const handleDateSelect = useCallback((date: Date | undefined,) => {
     if (date) {
-      setSelectedDate(date);
-      setFormData((prev) => ({ ...prev, date }));
+      setSelectedDate(date,)
+      setFormData((prev,) => ({ ...prev, date, }))
     }
-  }, []);
+  }, [],)
 
   const handleScheduleAppointment = () => {
-    const selectedDoctor = MOCK_DOCTORS.find((d) => d.id === formData.doctor);
+    const selectedDoctor = MOCK_DOCTORS.find((d,) => d.id === formData.doctor)
     const appointmentType = APPOINTMENT_TYPES.find(
-      (t) => t.value === formData.type,
-    );
+      (t,) => t.value === formData.type,
+    )
 
     if (!(selectedDoctor && appointmentType)) {
-      return;
+      return
     }
 
     const newAppointment: AppointmentViewData = {
@@ -134,90 +169,89 @@ export default function AppointmentView() {
       type: formData.type,
       doctor: selectedDoctor.name,
       specialty: selectedDoctor.specialization,
-      status: "confirmed",
+      status: 'confirmed',
       notes: formData.notes,
-    };
+    }
 
-    setAppointments((prev) => [...prev, newAppointment]);
-    setIsDialogOpen(false);
-    resetForm();
-  };
+    setAppointments((prev,) => [...prev, newAppointment,])
+    setIsDialogOpen(false,)
+    resetForm()
+  }
 
   const resetForm = () => {
     setFormData({
-      patientName: "",
-      patientEmail: "",
-      patientPhone: "",
+      patientName: '',
+      patientEmail: '',
+      patientPhone: '',
       date: new Date(),
-      time: "",
-      type: "consultation",
-      doctor: "",
-      notes: "",
-    });
-  };
+      time: '',
+      type: 'consultation',
+      doctor: '',
+      notes: '',
+    },)
+  }
 
   const handleStatusChange = (
     appointmentId: string,
-    newStatus: AppointmentViewData["status"],
+    newStatus: AppointmentViewData['status'],
   ) => {
-    setAppointments((prev) =>
-      prev.map((apt) => apt.id === appointmentId ? { ...apt, status: newStatus } : apt)
-    );
-  };
+    setAppointments((prev,) =>
+      prev.map((apt,) => apt.id === appointmentId ? { ...apt, status: newStatus, } : apt)
+    )
+  }
 
-  const getStatusBadge = (status: AppointmentViewData["status"]) => {
+  const getStatusBadge = (status: AppointmentViewData['status'],) => {
     const variants = {
-      scheduled: "bg-blue-100 text-blue-800",
-      confirmed: "bg-green-100 text-green-800",
-      completed: "bg-gray-100 text-gray-800",
-      cancelled: "bg-red-100 text-red-800",
-      "no-show": "bg-orange-100 text-orange-800",
-    };
+      scheduled: 'bg-blue-100 text-blue-800',
+      confirmed: 'bg-green-100 text-green-800',
+      completed: 'bg-gray-100 text-gray-800',
+      cancelled: 'bg-red-100 text-red-800',
+      'no-show': 'bg-orange-100 text-orange-800',
+      pending: 'bg-yellow-100 text-yellow-800',
+    }
 
     const labels = {
-      scheduled: "Agendado",
-      confirmed: "Confirmado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      "no-show": "Faltou",
-    };
+      scheduled: 'Agendado',
+      confirmed: 'Confirmado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      'no-show': 'Faltou',
+      pending: 'Pendente',
+    }
 
-    return <Badge className={variants[status]}>{labels[status]}</Badge>;
-  };
+    return <Badge className={variants[status]}>{labels[status]}</Badge>
+  }
 
-  const getStatusIcon = (status: Appointment["status"]) => {
+  const getStatusIcon = (status: Appointment['status'],) => {
     switch (status) {
-      case "confirmed": {
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'confirmed': {
+        return <CheckCircle className="h-4 w-4 text-green-600" />
       }
-      case "cancelled": {
-        return <XCircle className="h-4 w-4 text-red-600" />;
+      case 'cancelled': {
+        return <XCircle className="h-4 w-4 text-red-600" />
       }
-      case "no-show": {
-        return <AlertCircle className="h-4 w-4 text-orange-600" />;
+      case 'no-show': {
+        return <AlertCircle className="h-4 w-4 text-orange-600" />
       }
       default: {
-        return <Clock className="h-4 w-4 text-blue-600" />;
+        return <Clock className="h-4 w-4 text-blue-600" />
       }
     }
-  };
+  }
 
-  const getAvailableTimes = (doctorId: string, date: Date) => {
-    const doctor = MOCK_DOCTORS.find((d) => d.id === doctorId);
+  const getAvailableTimes = (doctorId: string, date: Date,) => {
+    const doctor = MOCK_DOCTORS.find((d,) => d.id === doctorId)
     if (!doctor) {
-      return [];
+      return []
     }
 
-    const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
-    return doctor.availability[dayName] || [];
-  };
+    const dayName = getWeekdayName(date,)
+    return doctor.availability[dayName] || []
+  }
 
   const filteredAppointments = appointments.filter(
-    (apt) => {
-      const aptDate = typeof apt.date === "string" ? new Date(apt.date) : apt.date;
-      return aptDate.toDateString() === selectedDate.toDateString();
-    },
-  );
+    (apt,) => isSameLocalDate(apt.date, selectedDate,),
+  )
 
   return (
     <div className="space-y-6">
@@ -248,8 +282,8 @@ export default function AppointmentView() {
                 <Label htmlFor="patientName">Nome do Paciente</Label>
                 <Input
                   id="patientName"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
+                  onChange={(e,) =>
+                    setFormData((prev,) => ({
                       ...prev,
                       patientName: e.target.value,
                     }))}
@@ -261,8 +295,8 @@ export default function AppointmentView() {
                 <Label htmlFor="patientEmail">Email</Label>
                 <Input
                   id="patientEmail"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
+                  onChange={(e,) =>
+                    setFormData((prev,) => ({
                       ...prev,
                       patientEmail: e.target.value,
                     }))}
@@ -275,8 +309,8 @@ export default function AppointmentView() {
                 <Label htmlFor="patientPhone">Telefone</Label>
                 <Input
                   id="patientPhone"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
+                  onChange={(e,) =>
+                    setFormData((prev,) => ({
                       ...prev,
                       patientPhone: e.target.value,
                     }))}
@@ -287,14 +321,15 @@ export default function AppointmentView() {
               <div className="space-y-2">
                 <Label htmlFor="doctor">Médico</Label>
                 <Select
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, doctor: value }))}
+                  onValueChange={(value: string,) =>
+                    setFormData((prev,) => ({ ...prev, doctor: value, }))}
                   value={formData.doctor}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o médico" />
                   </SelectTrigger>
                   <SelectContent>
-                    {MOCK_DOCTORS.map((doctor) => (
+                    {MOCK_DOCTORS.map((doctor,) => (
                       <SelectItem key={doctor.id} value={doctor.id}>
                         {doctor.name} - {doctor.specialization}
                       </SelectItem>
@@ -305,10 +340,10 @@ export default function AppointmentView() {
               <div className="space-y-2">
                 <Label htmlFor="type">Tipo de Consulta</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({
+                  onValueChange={(value: string,) =>
+                    setFormData((prev,) => ({
                       ...prev,
-                      type: value as AppointmentViewData["type"],
+                      type: value as AppointmentViewData['type'],
                     }))}
                   value={formData.type}
                 >
@@ -316,7 +351,7 @@ export default function AppointmentView() {
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {APPOINTMENT_TYPES.map((type) => (
+                    {APPOINTMENT_TYPES.map((type,) => (
                       <SelectItem key={type.value} value={type.value}>
                         {type.label} ({type.duration} min)
                       </SelectItem>
@@ -327,15 +362,16 @@ export default function AppointmentView() {
               <div className="space-y-2">
                 <Label htmlFor="time">Horário</Label>
                 <Select
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
+                  onValueChange={(value: string,) =>
+                    setFormData((prev,) => ({ ...prev, time: value, }))}
                   value={formData.time}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o horário" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAvailableTimes(formData.doctor, formData.date).map(
-                      (time) => (
+                    {getAvailableTimes(formData.doctor, formData.date,).map(
+                      (time,) => (
                         <SelectItem key={time} value={time}>
                           {time}
                         </SelectItem>
@@ -351,9 +387,9 @@ export default function AppointmentView() {
               <Input
                 type="date"
                 className="rounded-md border"
-                min={new Date().toISOString().split("T")[0]}
-                onChange={(e) => handleDateSelect(new Date(e.target.value))}
-                value={formData.date.toISOString().split("T")[0]}
+                min={formatDateForInput(new Date(),)}
+                onChange={(e,) => handleDateSelect(new Date(e.target.value,),)}
+                value={formatDateForInput(formData.date,)}
               />
             </div>
 
@@ -361,14 +397,14 @@ export default function AppointmentView() {
               <Label htmlFor="notes">Observações</Label>
               <Input
                 id="notes"
-                onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
+                onChange={(e,) => setFormData((prev,) => ({ ...prev, notes: e.target.value, }))}
                 placeholder="Observações adicionais..."
                 value={formData.notes}
               />
             </div>
 
             <DialogFooter>
-              <Button onClick={() => setIsDialogOpen(false)} variant="outline">
+              <Button onClick={() => setIsDialogOpen(false,)} variant="outline">
                 Cancelar
               </Button>
               <Button onClick={handleScheduleAppointment}>Agendar</Button>
@@ -390,8 +426,8 @@ export default function AppointmentView() {
             <Input
               type="date"
               className="rounded-md border"
-              onChange={(e) => handleDateSelect(new Date(e.target.value))}
-              value={selectedDate.toISOString().split("T")[0]}
+              onChange={(e,) => handleDateSelect(new Date(e.target.value,),)}
+              value={formatDateForInput(selectedDate,)}
             />
           </CardContent>
         </Card>
@@ -400,7 +436,7 @@ export default function AppointmentView() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>
-              Agendamentos - {selectedDate.toLocaleDateString("pt-BR")}
+              Agendamentos - {selectedDate.toLocaleDateString('pt-BR',)}
             </CardTitle>
             <CardDescription>
               {filteredAppointments.length} agendamento(s) para esta data
@@ -421,14 +457,14 @@ export default function AppointmentView() {
               )
               : (
                 <div className="space-y-4">
-                  {filteredAppointments.map((appointment) => (
+                  {filteredAppointments.map((appointment,) => (
                     <div
                       className="flex items-center justify-between rounded-lg border p-4"
                       key={appointment.id}
                     >
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                          {getStatusIcon(appointment.status)}
+                          {getStatusIcon(appointment.status,)}
                           <div>
                             <h4 className="font-medium">
                               {appointment.patientName}
@@ -449,12 +485,12 @@ export default function AppointmentView() {
                       </div>
 
                       <div className="flex items-center space-x-2">
-                        {getStatusBadge(appointment.status)}
+                        {getStatusBadge(appointment.status,)}
                         <Select
-                          onValueChange={(value) =>
+                          onValueChange={(value: string,) =>
                             handleStatusChange(
                               appointment.id,
-                              value as Appointment["status"],
+                              value as Appointment['status'],
                             )}
                           value={appointment.status}
                         >
@@ -491,10 +527,7 @@ export default function AppointmentView() {
                 <p className="font-medium text-sm">Hoje</p>
                 <p className="font-bold text-2xl">
                   {appointments.filter(
-                    (apt) => {
-                      const aptDate = typeof apt.date === "string" ? new Date(apt.date) : apt.date;
-                      return aptDate.toDateString() === new Date().toDateString();
-                    },
+                    (apt,) => isSameLocalDate(apt.date, new Date(),),
                   ).length}
                 </p>
               </div>
@@ -509,7 +542,7 @@ export default function AppointmentView() {
               <div>
                 <p className="font-medium text-sm">Confirmados</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "confirmed")
+                  {appointments.filter((apt,) => apt.status === 'confirmed')
                     .length}
                 </p>
               </div>
@@ -524,7 +557,7 @@ export default function AppointmentView() {
               <div>
                 <p className="font-medium text-sm">Cancelados</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "cancelled")
+                  {appointments.filter((apt,) => apt.status === 'cancelled')
                     .length}
                 </p>
               </div>
@@ -539,7 +572,7 @@ export default function AppointmentView() {
               <div>
                 <p className="font-medium text-sm">Faltas</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "no-show")
+                  {appointments.filter((apt,) => apt.status === 'no-show')
                     .length}
                 </p>
               </div>
@@ -548,5 +581,5 @@ export default function AppointmentView() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

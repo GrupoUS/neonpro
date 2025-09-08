@@ -87,7 +87,8 @@
     /* Font Families - Portuguese Medical Content */
     --font-sans: Inter, sans-serif;
     --font-serif: Lora, serif;
-    --font-mono: Libre Baskerville, serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
 
     /* Healthcare Shadows - Professional Medical Interface */
     --shadow-color: hsl(240 4% 60%);
@@ -208,7 +209,8 @@
     --sidebar: oklch(0.2392 0.0388 252.5089);
     --font-sans: Inter, sans-serif;
     --font-serif: Lora, serif;
-    --font-mono: Libre Baskerville, serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
     --shadow-opacity: 0.18;
     --shadow-blur: 10px;
     --shadow-spread: 4px;
@@ -258,7 +260,8 @@
   }
   .theme {
     --font-sans: Inter, sans-serif;
-    --font-mono: Libre Baskerville, serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
     --font-serif: Lora, serif;
     --radius: 1.25rem;
     --tracking-tighter: calc(var(--tracking-normal) - 0.05em);

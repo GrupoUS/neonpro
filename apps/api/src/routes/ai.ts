@@ -4,32 +4,32 @@
  * Inclui ML Pipeline, Monitoring e Chat Healthcare
  */
 
-import { Hono } from "hono";
+import { Hono, } from 'hono'
 // import arSimulatorRoutes from "./ai/_inactive_ar-simulator-endpoints";
-import { batchPredictionRoutes } from "./ai/batch-prediction-endpoints";
-import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
-import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
-import monitoringRoutes from "./ai/monitoring-endpoints";
-import chatEndpoints from "./ai/universal-chat-endpoints";
-import chatHealthRoutes from "./ai/universal-chat-health";
+import { batchPredictionRoutes, } from './ai/batch-prediction-endpoints'
+import healthcareMonitoringRoutes from './ai/healthcare-monitoring-endpoints'
+import mlPipelineRoutes from './ai/ml-pipeline-endpoints'
+import monitoringRoutes from './ai/monitoring-endpoints'
+import chatEndpoints from './ai/universal-chat-endpoints'
+import chatHealthRoutes from './ai/universal-chat-health'
 
-const ai = new Hono();
+const ai = new Hono()
 
 // ML Pipeline Management endpoints
 // /api/v1/ai/ml-pipeline/*
-ai.route("/ml-pipeline", mlPipelineRoutes);
+ai.route('/ml-pipeline', mlPipelineRoutes,)
 
 // AI Monitoring endpoints
 // /api/v1/ai/monitoring/*
-ai.route("/monitoring", monitoringRoutes);
+ai.route('/monitoring', monitoringRoutes,)
 
 // Universal Chat endpoints
 // /api/v1/ai/universal-chat/*
-ai.route("/universal-chat", chatEndpoints);
+ai.route('/universal-chat', chatEndpoints,)
 
 // Universal Chat Health endpoints
 // /api/v1/ai/chat/*
-ai.route("/chat", chatHealthRoutes);
+ai.route('/chat', chatHealthRoutes,)
 
 // AR Simulator endpoints - INACTIVE
 // /api/v1/ai/ar-simulator/*
@@ -37,60 +37,60 @@ ai.route("/chat", chatHealthRoutes);
 
 // Batch Prediction endpoints
 // /api/v1/ai/batch-predictions/*
-ai.route("/batch-predictions", batchPredictionRoutes);
+ai.route('/batch-predictions', batchPredictionRoutes,)
 
 // Healthcare Monitoring endpoints
 // /api/v1/ai/healthcare-monitoring/*
-ai.route("/healthcare-monitoring", healthcareMonitoringRoutes);
+ai.route('/healthcare-monitoring', healthcareMonitoringRoutes,)
 
 // AI Root endpoint
-ai.get("/", (c) => {
+ai.get('/', (c,) => {
   return c.json({
-    service: "NeonPro AI Services",
-    version: "1.0.0",
-    description: "Intelligent healthcare management and analytics",
+    service: 'NeonPro AI Services',
+    version: '1.0.0',
+    description: 'Intelligent healthcare management and analytics',
     endpoints: {
-      ml_pipeline: "/ml-pipeline",
-      monitoring: "/monitoring",
-      chat: "/chat",
-      ar_simulator: "/ar-simulator",
-      batch_predictions: "/batch-predictions",
-      healthcare_monitoring: "/healthcare-monitoring",
+      ml_pipeline: '/ml-pipeline',
+      monitoring: '/monitoring',
+      chat: '/chat',
+      ar_simulator: '/ar-simulator',
+      batch_predictions: '/batch-predictions',
+      healthcare_monitoring: '/healthcare-monitoring',
     },
     features: [
-      "ML Pipeline Management",
-      "A/B Testing",
-      "Drift Detection",
-      "Model Performance Analytics",
-      "Healthcare Chat AI",
-      "Real-time Monitoring",
-      "Behavioral CRM System",
-      "Patient Segmentation",
-      "Personalized Strategies",
-      "AR Treatment Simulation",
-      "3D Facial Modeling",
-      "Outcome Prediction",
-      "Batch ML Predictions",
-      "Proactive Risk Assessment",
-      "Automated Intervention Planning",
+      'ML Pipeline Management',
+      'A/B Testing',
+      'Drift Detection',
+      'Model Performance Analytics',
+      'Healthcare Chat AI',
+      'Real-time Monitoring',
+      'Behavioral CRM System',
+      'Patient Segmentation',
+      'Personalized Strategies',
+      'AR Treatment Simulation',
+      '3D Facial Modeling',
+      'Outcome Prediction',
+      'Batch ML Predictions',
+      'Proactive Risk Assessment',
+      'Automated Intervention Planning',
     ],
     timestamp: new Date().toISOString(),
-  });
-});
+  },)
+},)
 
 // AI Health check
-ai.get("/health", (c) => {
+ai.get('/health', (c,) => {
   return c.json({
-    status: "healthy",
-    service: "AI Services",
+    status: 'healthy',
+    service: 'AI Services',
     components: {
-      ml_pipeline: "operational",
-      monitoring: "operational",
-      chat: "operational",
-      ar_simulator: "operational",
+      ml_pipeline: 'operational',
+      monitoring: 'operational',
+      chat: 'operational',
+      ar_simulator: 'operational',
     },
     timestamp: new Date().toISOString(),
-  });
-});
+  },)
+},)
 
-export { ai as aiRoutes };
+export { ai as aiRoutes, }

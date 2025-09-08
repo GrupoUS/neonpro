@@ -4,7 +4,7 @@
  */
 
 // Hook exports
-export { useTreatments } from "@/hooks/useTreatments";
+export { useTreatments, } from '@/hooks/useTreatments'
 // Type exports for convenience
 export type {
   AestheticTreatmentCategory,
@@ -18,11 +18,11 @@ export type {
   TreatmentProtocol,
   TreatmentSession,
   TreatmentStatus,
-} from "@/types/treatments";
+} from '@/types/treatments'
 // Main treatment components
-export { default as AestheticTreatmentPlan } from "./AestheticTreatmentPlan";
-export { default as BeforeAfterSecureGallery } from "./BeforeAfterSecureGallery";
-export { default as CosmeticConsentBrazilian } from "./CosmeticConsentBrazilian";
+export { default as AestheticTreatmentPlan, } from './AestheticTreatmentPlan'
+export { default as BeforeAfterSecureGallery, } from './BeforeAfterSecureGallery'
+export { default as CosmeticConsentBrazilian, } from './CosmeticConsentBrazilian'
 
 /**
  * Component Usage Examples:

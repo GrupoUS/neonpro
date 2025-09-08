@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import { Dialog, Transition } from "@headlessui/react";
-import { Calendar, Home, Shield, User, Users, X } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Fragment } from "react";
+import { cn, } from '@/lib/utils'
+import { Dialog, Transition, } from '@headlessui/react'
+import { Calendar, Home, Shield, User, Users, X, } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, } from 'next/navigation'
+import { Fragment, } from 'react'
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Pacientes", href: "/patients", icon: Users },
-  { name: "Agendamentos", href: "/appointments", icon: Calendar },
-  { name: "Compliance", href: "/compliance", icon: Shield },
-  { name: "Perfil", href: "/profile", icon: User },
-];
+  { name: 'Dashboard', href: '/dashboard', icon: Home, },
+  { name: 'Pacientes', href: '/patients', icon: Users, },
+  { name: 'Agendamentos', href: '/appointments', icon: Calendar, },
+  { name: 'Compliance', href: '/compliance', icon: Shield, },
+  { name: 'Perfil', href: '/profile', icon: User, },
+]
 
 interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const pathname = usePathname();
+export function Sidebar({ isOpen, onClose, }: SidebarProps,) {
+  const pathname = usePathname()
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
@@ -35,40 +35,40 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
             <ul role="list" className="-mx-2 space-y-1">
-              {navigation.map((item) => {
-                const isActive = pathname === item.href;
+              {navigation.map((item,) => {
+                const isActive = pathname === item.href
                 return (
                   <li key={item.name}>
                     <Link
                       href={item.href}
                       className={cn(
                         isActive
-                          ? "bg-blue-700 text-white"
-                          : "text-blue-200 hover:text-white hover:bg-blue-700",
-                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold mx-2",
+                          ? 'bg-blue-700 text-white'
+                          : 'text-blue-200 hover:text-white hover:bg-blue-700',
+                        'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold mx-2',
                       )}
                       onClick={onClose}
                     >
                       <item.icon
                         className={cn(
                           isActive
-                            ? "text-white"
-                            : "text-blue-200 group-hover:text-white",
-                          "h-6 w-6 shrink-0",
+                            ? 'text-white'
+                            : 'text-blue-200 group-hover:text-white',
+                          'h-6 w-6 shrink-0',
                         )}
                         aria-hidden="true"
                       />
                       {item.name}
                     </Link>
                   </li>
-                );
-              })}
+                )
+              },)}
             </ul>
           </li>
         </ul>
       </nav>
     </div>
-  );
+  )
 
   return (
     <>
@@ -134,5 +134,5 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -4,7 +4,7 @@
  * Integrated with CFM database and audit trail
  */
 
-import { cn } from "@neonpro/utils";
+import { cn, } from '@neonpro/utils'
 import {
   AlertCircle,
   AlertTriangle,
@@ -17,162 +17,162 @@ import {
   Shield,
   User,
   XCircle,
-} from "lucide-react";
-import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+} from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useState, } from 'react'
 
 import type {
   CFMValidationBadgeProps,
   CFMValidationResult,
   ValidationResponse,
-} from "../../types/compliance";
+} from '../../types/compliance'
 // import { CFMLicenseStatus, MedicalSpecialty } from "../../types/compliance"; // Unused imports
 
-import { cfmUtils, cfmValidationService } from "../../lib/compliance/cfm-professional-validation";
+import { cfmUtils, cfmValidationService, } from '../../lib/compliance/cfm-professional-validation'
 
 // Status configuration with NEONPRO theme colors
 const STATUS_CONFIG = {
   active: {
-    label: "Ativo",
+    label: 'Ativo',
     icon: CheckCircle,
-    bg: "bg-green-50",
-    text: "text-green-700",
-    border: "border-green-200",
-    dot: "bg-green-500",
-    description: "Licença válida e ativa",
+    bg: 'bg-green-50',
+    text: 'text-green-700',
+    border: 'border-green-200',
+    dot: 'bg-green-500',
+    description: 'Licença válida e ativa',
   },
   pending: {
-    label: "Pendente",
+    label: 'Pendente',
     icon: Clock,
-    bg: "bg-yellow-50",
-    text: "text-yellow-700",
-    border: "border-yellow-200",
-    dot: "bg-yellow-500",
-    description: "Validação em andamento",
+    bg: 'bg-yellow-50',
+    text: 'text-yellow-700',
+    border: 'border-yellow-200',
+    dot: 'bg-yellow-500',
+    description: 'Validação em andamento',
   },
   expired: {
-    label: "Expirado",
+    label: 'Expirado',
     icon: XCircle,
-    bg: "bg-red-50",
-    text: "text-red-700",
-    border: "border-red-200",
-    dot: "bg-red-500",
-    description: "Licença expirada",
+    bg: 'bg-red-50',
+    text: 'text-red-700',
+    border: 'border-red-200',
+    dot: 'bg-red-500',
+    description: 'Licença expirada',
   },
   suspended: {
-    label: "Suspenso",
+    label: 'Suspenso',
     icon: AlertTriangle,
-    bg: "bg-gray-50",
-    text: "text-gray-700",
-    border: "border-gray-200",
-    dot: "bg-gray-500",
-    description: "Licença suspensa pelo CFM",
+    bg: 'bg-gray-50',
+    text: 'text-gray-700',
+    border: 'border-gray-200',
+    dot: 'bg-gray-500',
+    description: 'Licença suspensa pelo CFM',
   },
   cancelled: {
-    label: "Cancelado",
+    label: 'Cancelado',
     icon: XCircle,
-    bg: "bg-red-50",
-    text: "text-red-700",
-    border: "border-red-200",
-    dot: "bg-red-500",
-    description: "Licença cancelada",
+    bg: 'bg-red-50',
+    text: 'text-red-700',
+    border: 'border-red-200',
+    dot: 'bg-red-500',
+    description: 'Licença cancelada',
   },
-} as const;
+} as const
 
 // Validation input component
 export interface CFMValidationInputProps {
   onValidationComplete?: (
     result: ValidationResponse<CFMValidationResult>,
-  ) => void;
-  autoValidate?: boolean;
-  placeholder?: string;
-  className?: string;
+  ) => void
+  autoValidate?: boolean
+  placeholder?: string
+  className?: string
 }
 
 export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
   onValidationComplete,
   autoValidate = true,
-  placeholder = "Digite o CRM (ex: CRM-SP 123456)",
+  placeholder = 'Digite o CRM (ex: CRM-SP 123456)',
   className,
-}) => {
-  const [crmNumber, setCrmNumber] = useState("");
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<
+},) => {
+  const [crmNumber, setCrmNumber,] = useState('',)
+  const [isValidating, setIsValidating,] = useState(false,)
+  const [validationResult, setValidationResult,] = useState<
     ValidationResponse<CFMValidationResult> | null
-  >(null);
+  >(null,)
 
   const validateCRM = useCallback(
-    async (crm: string) => {
+    async (crm: string,) => {
       if (!crm.trim()) {
-        setValidationResult(null);
-        return;
+        setValidationResult(null,)
+        return
       }
 
-      setIsValidating(true);
+      setIsValidating(true,)
       try {
-        const result = await cfmValidationService.validateLicense(crm);
-        setValidationResult(result);
-        onValidationComplete?.(result);
+        const result = await cfmValidationService.validateLicense(crm,)
+        setValidationResult(result,)
+        onValidationComplete?.(result,)
       } catch (error) {
         const errorResult: ValidationResponse<CFMValidationResult> = {
           isValid: false,
           errors: [
-            "Erro na validação: "
-            + (error instanceof Error ? error.message : "Erro desconhecido"),
+            'Erro na validação: '
+            + (error instanceof Error ? error.message : 'Erro desconhecido'),
           ],
           warnings: [],
           timestamp: new Date(),
-          source: "cfm-validator-component",
-        };
-        setValidationResult(errorResult);
-        onValidationComplete?.(errorResult);
+          source: 'cfm-validator-component',
+        }
+        setValidationResult(errorResult,)
+        onValidationComplete?.(errorResult,)
       } finally {
-        setIsValidating(false);
+        setIsValidating(false,)
       }
     },
-    [onValidationComplete],
-  );
+    [onValidationComplete,],
+  )
 
   useEffect(() => {
     if (autoValidate && crmNumber) {
       const timeoutId = setTimeout(() => {
-        validateCRM(crmNumber);
-      }, 500); // Debounce validation
+        validateCRM(crmNumber,)
+      }, 500,) // Debounce validation
 
-      return () => clearTimeout(timeoutId);
+      return () => clearTimeout(timeoutId,)
     }
-  }, [crmNumber, autoValidate, validateCRM]);
+  }, [crmNumber, autoValidate, validateCRM,],)
 
-  const handleInputChange = (value: string) => {
-    setCrmNumber(value);
+  const handleInputChange = (value: string,) => {
+    setCrmNumber(value,)
     if (!autoValidate) {
-      setValidationResult(null);
+      setValidationResult(null,)
     }
-  };
+  }
 
   const handleManualValidation = () => {
     if (crmNumber.trim()) {
-      validateCRM(crmNumber);
+      validateCRM(crmNumber,)
     }
-  };
+  }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className,)}>
       {/* Input Field */}
       <div className="relative">
         <div className="flex">
           <input
             type="text"
             value={crmNumber}
-            onChange={(e) => handleInputChange(e.target.value.toUpperCase())}
+            onChange={(e,) => handleInputChange(e.target.value.toUpperCase(),)}
             placeholder={placeholder}
             className={cn(
-              "flex-1 px-4 py-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+              'flex-1 px-4 py-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
               validationResult?.isValid === true
-                ? "border-green-300"
+                ? 'border-green-300'
                 : validationResult?.isValid === false
-                ? "border-red-300"
-                : "border-gray-200",
+                ? 'border-red-300'
+                : 'border-gray-200',
             )}
           />
 
@@ -219,7 +219,7 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               <div>
                 <p className="font-medium text-red-800">Erro na validação</p>
                 <ul className="text-sm text-red-600 mt-1">
-                  {validationResult.errors.map((error, index) => <li key={index}>• {error}</li>)}
+                  {validationResult.errors.map((error, index,) => <li key={index}>• {error}</li>)}
                 </ul>
               </div>
             </div>
@@ -232,7 +232,7 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
               <div>
                 <p className="font-medium text-yellow-800">Atenções</p>
                 <ul className="text-sm text-yellow-700 mt-1">
-                  {validationResult.warnings.map((warning, index) => (
+                  {validationResult.warnings.map((warning, index,) => (
                     <li key={index}>• {warning}</li>
                   ))}
                 </ul>
@@ -242,8 +242,8 @@ export const CFMValidationInput: React.FC<CFMValidationInputProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // Main CFM validation badge component
 export const CFMValidationBadge: React.FC<CFMValidationBadgeProps> = ({
@@ -255,45 +255,45 @@ export const CFMValidationBadge: React.FC<CFMValidationBadgeProps> = ({
   onStatusChange,
   showTooltip = false,
   className,
-}) => {
-  const [isExpiringSoon, setIsExpiringSoon] = useState(false);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
+},) => {
+  const [isExpiringSoon, setIsExpiringSoon,] = useState(false,)
+  const [tooltipVisible, setTooltipVisible,] = useState(false,)
 
-  const config = STATUS_CONFIG[status];
-  const Icon = config.icon;
+  const config = STATUS_CONFIG[status]
+  const Icon = config.icon
 
   useEffect(() => {
-    const expiringSoon = cfmUtils.isLicenseExpiringSoon(validUntil, 30);
-    setIsExpiringSoon(expiringSoon);
-  }, [validUntil]);
+    const expiringSoon = cfmUtils.isLicenseExpiringSoon(validUntil, 30,)
+    setIsExpiringSoon(expiringSoon,)
+  }, [validUntil,],)
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
+  const formatDate = (date: Date,) => {
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    },)
+  }
 
-  const specialtyDisplayName = cfmUtils.getSpecialtyDisplayName(specialty);
+  const specialtyDisplayName = cfmUtils.getSpecialtyDisplayName(specialty,)
 
   return (
     <div className="relative">
       <div
         className={cn(
-          "inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+          'inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all',
           config.bg,
           config.text,
           config.border,
-          isExpiringSoon && status === "active" && "ring-2 ring-yellow-300",
+          isExpiringSoon && status === 'active' && 'ring-2 ring-yellow-300',
           className,
         )}
-        onMouseEnter={() => showTooltip && setTooltipVisible(true)}
-        onMouseLeave={() => showTooltip && setTooltipVisible(false)}
+        onMouseEnter={() => showTooltip && setTooltipVisible(true,)}
+        onMouseLeave={() => showTooltip && setTooltipVisible(false,)}
       >
         {/* Status Indicator */}
         <div className="flex items-center gap-2">
-          <div className={cn("w-2 h-2 rounded-full", config.dot)} />
+          <div className={cn('w-2 h-2 rounded-full', config.dot,)} />
           <Icon className="w-4 h-4" />
           <span className="font-semibold">{config.label}</span>
         </div>
@@ -305,7 +305,7 @@ export const CFMValidationBadge: React.FC<CFMValidationBadgeProps> = ({
         </div>
 
         {/* Expiration Warning */}
-        {isExpiringSoon && status === "active" && (
+        {isExpiringSoon && status === 'active' && (
           <div className="flex items-center gap-1 text-yellow-600">
             <AlertCircle className="w-4 h-4" />
             <span className="text-xs font-medium">Expira em breve</span>
@@ -329,9 +329,9 @@ export const CFMValidationBadge: React.FC<CFMValidationBadgeProps> = ({
               <Calendar className="w-4 h-4 text-gray-500" />
               <span className="font-medium">Válido até:</span>
               <span
-                className={isExpiringSoon ? "text-yellow-600 font-medium" : ""}
+                className={isExpiringSoon ? 'text-yellow-600 font-medium' : ''}
               >
-                {formatDate(validUntil)}
+                {formatDate(validUntil,)}
               </span>
             </div>
 
@@ -357,19 +357,19 @@ export const CFMValidationBadge: React.FC<CFMValidationBadgeProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // Professional profile card with validation
 export interface CFMProfessionalCardProps {
-  crmNumber: string;
-  professionalName?: string;
-  showValidation?: boolean;
-  showDetails?: boolean;
+  crmNumber: string
+  professionalName?: string
+  showValidation?: boolean
+  showDetails?: boolean
   onValidationComplete?: (
     result: ValidationResponse<CFMValidationResult>,
-  ) => void;
-  className?: string;
+  ) => void
+  className?: string
 }
 
 export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
@@ -379,37 +379,37 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
   showDetails = true,
   onValidationComplete,
   className,
-}) => {
-  const [validationResult, setValidationResult] = useState<
+},) => {
+  const [validationResult, setValidationResult,] = useState<
     ValidationResponse<CFMValidationResult> | null
-  >(null);
-  const [isLoading, setIsLoading] = useState(false);
+  >(null,)
+  const [isLoading, setIsLoading,] = useState(false,)
 
   useEffect(() => {
     if (showValidation && crmNumber) {
-      validateProfessional();
+      validateProfessional()
     }
-  }, [crmNumber, showValidation, validateProfessional]);
+  }, [crmNumber, showValidation, validateProfessional,],)
 
   const validateProfessional = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true,)
     try {
-      const result = await cfmValidationService.validateLicense(crmNumber);
-      setValidationResult(result);
-      onValidationComplete?.(result);
+      const result = await cfmValidationService.validateLicense(crmNumber,)
+      setValidationResult(result,)
+      onValidationComplete?.(result,)
     } catch (error) {
-      console.error("Error validating professional:", error);
+      console.error('Error validating professional:', error,)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, [crmNumber, onValidationComplete]);
+  }, [crmNumber, onValidationComplete,],)
 
-  const professional = validationResult?.data;
+  const professional = validationResult?.data
 
   return (
     <div
       className={cn(
-        "bg-white rounded-xl border border-gray-200 p-6",
+        'bg-white rounded-xl border border-gray-200 p-6',
         className,
       )}
     >
@@ -419,7 +419,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
           <h3 className="text-lg font-semibold text-gray-900">
             {professionalName
               || professional?.doctorName
-              || "Profissional de Saúde"}
+              || 'Profissional de Saúde'}
           </h3>
           <p className="text-sm text-gray-600">{crmNumber}</p>
         </div>
@@ -448,7 +448,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
             <FileText className="w-4 h-4 text-gray-500" />
             <span className="font-medium">Especialidade:</span>
             <span>
-              {cfmUtils.getSpecialtyDisplayName(professional.specialty)}
+              {cfmUtils.getSpecialtyDisplayName(professional.specialty,)}
             </span>
           </div>
 
@@ -456,7 +456,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4 text-gray-500" />
             <span className="font-medium">Válido até:</span>
-            <span>{professional.validUntil.toLocaleDateString("pt-BR")}</span>
+            <span>{professional.validUntil.toLocaleDateString('pt-BR',)}</span>
           </div>
 
           {/* Restrictions */}
@@ -469,7 +469,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
                     Restrições
                   </p>
                   <ul className="text-xs text-yellow-700 mt-1">
-                    {professional.restrictions.map((restriction, index) => (
+                    {professional.restrictions.map((restriction, index,) => (
                       <li key={index}>• {restriction}</li>
                     ))}
                   </ul>
@@ -481,7 +481,7 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
           {/* Last Verified */}
           <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
             <span>
-              Última verificação: {professional.lastVerified.toLocaleString("pt-BR")}
+              Última verificação: {professional.lastVerified.toLocaleString('pt-BR',)}
             </span>
             <span className="capitalize">
               Fonte: {professional.verificationSource}
@@ -509,57 +509,57 @@ export const CFMProfessionalCard: React.FC<CFMProfessionalCardProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // Batch validation component for multiple professionals
 export interface CFMBatchValidatorProps {
-  crmNumbers: string[];
+  crmNumbers: string[]
   onValidationComplete?: (
     results: ValidationResponse<CFMValidationResult[]>,
-  ) => void;
-  className?: string;
+  ) => void
+  className?: string
 }
 
 export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
   crmNumbers,
   onValidationComplete,
   className,
-}) => {
-  const [results, setResults] = useState<
+},) => {
+  const [results, setResults,] = useState<
     ValidationResponse<
       CFMValidationResult[]
     > | null
-  >(null);
-  const [isValidating, setIsValidating] = useState(false);
+  >(null,)
+  const [isValidating, setIsValidating,] = useState(false,)
 
   useEffect(() => {
     if (crmNumbers.length > 0) {
-      validateBatch();
+      validateBatch()
     }
-  }, [crmNumbers, validateBatch]);
+  }, [crmNumbers, validateBatch,],)
 
   const validateBatch = useCallback(async () => {
-    setIsValidating(true);
+    setIsValidating(true,)
     try {
-      const result = await cfmValidationService.validateMultipleLicenses(crmNumbers);
-      setResults(result);
-      onValidationComplete?.(result);
+      const result = await cfmValidationService.validateMultipleLicenses(crmNumbers,)
+      setResults(result,)
+      onValidationComplete?.(result,)
     } catch (error) {
-      console.error("Error in batch validation:", error);
+      console.error('Error in batch validation:', error,)
     } finally {
-      setIsValidating(false);
+      setIsValidating(false,)
     }
-  }, [crmNumbers, onValidationComplete]);
+  }, [crmNumbers, onValidationComplete,],)
 
   if (!results && !isValidating) {
-    return null;
+    return null
   }
 
   return (
     <div
       className={cn(
-        "bg-white rounded-xl border border-gray-200 p-6",
+        'bg-white rounded-xl border border-gray-200 p-6',
         className,
       )}
     >
@@ -576,19 +576,19 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {results.data?.filter((r) => r.isValid).length || 0}
+                {results.data?.filter((r,) => r.isValid).length || 0}
               </div>
               <div className="text-sm text-gray-600">Válidas</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">
-                {results.data?.filter((r) => !r.isValid).length || 0}
+                {results.data?.filter((r,) => !r.isValid).length || 0}
               </div>
               <div className="text-sm text-gray-600">Inválidas</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-600">
-                {results.data?.filter((r) => cfmUtils.isLicenseExpiringSoon(r.validUntil)).length
+                {results.data?.filter((r,) => cfmUtils.isLicenseExpiringSoon(r.validUntil,)).length
                   || 0}
               </div>
               <div className="text-sm text-gray-600">Expirando</div>
@@ -604,7 +604,7 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
           {/* Results List */}
           {results.data && results.data.length > 0 && (
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {results.data.map((professional, index) => (
+              {results.data.map((professional, index,) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
@@ -627,7 +627,7 @@ export const CFMBatchValidator: React.FC<CFMBatchValidatorProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CFMValidationInput;
+export default CFMValidationInput

@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Checkbox, } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -11,15 +11,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import type { PatientConsent, TreatmentPlan } from "@/types/treatments";
-import { motion } from "framer-motion";
+} from '@/components/ui/dialog'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Progress, } from '@/components/ui/progress'
+import { Separator, } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Textarea, } from '@/components/ui/textarea'
+import type { PatientConsent, TreatmentPlan, } from '@/types/treatments'
+import { motion, } from 'framer-motion'
 import {
   AlertTriangle,
   CheckCircle,
@@ -29,79 +29,79 @@ import {
   Shield,
   Signature,
   X,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 // Visual components maintaining NeonPro design
 interface NeonGradientCardProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 const NeonGradientCard = ({
   children,
-  className = "",
-}: NeonGradientCardProps) => (
+  className = '',
+}: NeonGradientCardProps,) => (
   <motion.div
-    animate={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 1, y: 0, }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10">{children}</div>
   </motion.div>
-);
+)
 
 // Props interface
 interface CosmeticConsentBrazilianProps {
-  treatmentPlan: TreatmentPlan;
-  existingConsent?: PatientConsent;
+  treatmentPlan: TreatmentPlan
+  existingConsent?: PatientConsent
   onConsentGranted?: (
-    consent: Omit<PatientConsent, "id" | "created_at" | "updated_at">,
-  ) => void;
-  onConsentWithdrawn?: (consentId: string, reason: string) => void;
+    consent: Omit<PatientConsent, 'id' | 'created_at' | 'updated_at'>,
+  ) => void
+  onConsentWithdrawn?: (consentId: string, reason: string,) => void
   onConsentUpdated?: (
     consentId: string,
     updates: Partial<PatientConsent>,
-  ) => void;
-  mode?: "new" | "view" | "edit";
-  showProgress?: boolean;
-  className?: string;
+  ) => void
+  mode?: 'new' | 'view' | 'edit'
+  showProgress?: boolean
+  className?: string
 }
 
 // Consent form data structure
 interface ConsentFormData {
   // Treatment consent
-  treatmentConsentGranted: boolean;
-  risksUnderstood: boolean;
-  alternativesDiscussed: boolean;
-  expectationsSet: boolean;
+  treatmentConsentGranted: boolean
+  risksUnderstood: boolean
+  alternativesDiscussed: boolean
+  expectationsSet: boolean
 
   // LGPD data processing consent
-  dataProcessingConsent: boolean;
-  photoDocumentationConsent: boolean;
-  marketingConsent: boolean;
-  researchConsent: boolean;
+  dataProcessingConsent: boolean
+  photoDocumentationConsent: boolean
+  marketingConsent: boolean
+  researchConsent: boolean
 
   // Data retention preferences
-  customRetentionPeriod: number;
-  crossBorderTransferConsent: boolean;
+  customRetentionPeriod: number
+  crossBorderTransferConsent: boolean
 
   // Guardian consent (for minors)
-  isMinor: boolean;
-  guardianName: string;
-  guardianRelationship: string;
-  guardianConsent: boolean;
+  isMinor: boolean
+  guardianName: string
+  guardianRelationship: string
+  guardianConsent: boolean
 
   // Witness information
-  witnessRequired: boolean;
-  witnessName: string;
+  witnessRequired: boolean
+  witnessName: string
 
   // Digital signature
-  patientSignature: string;
+  patientSignature: string
 
   // Additional notes
-  additionalNotes: string;
+  additionalNotes: string
 }
 
 export function CosmeticConsentBrazilian({
@@ -110,13 +110,13 @@ export function CosmeticConsentBrazilian({
   onConsentGranted,
   onConsentWithdrawn,
   onConsentUpdated,
-  mode = "new",
+  mode = 'new',
   showProgress = true,
-  className = "",
-}: CosmeticConsentBrazilianProps) {
+  className = '',
+}: CosmeticConsentBrazilianProps,) {
   // State management
-  const [activeTab, setActiveTab] = useState("treatment");
-  const [formData, setFormData] = useState<ConsentFormData>({
+  const [activeTab, setActiveTab,] = useState('treatment',)
+  const [formData, setFormData,] = useState<ConsentFormData>({
     treatmentConsentGranted: existingConsent?.consent_granted,
     risksUnderstood: existingConsent?.risks_explained,
     alternativesDiscussed: existingConsent?.alternatives_discussed,
@@ -128,18 +128,18 @@ export function CosmeticConsentBrazilian({
     customRetentionPeriod: existingConsent?.retention_period_days || 2555, // 7 years default
     crossBorderTransferConsent: existingConsent?.cross_border_transfer,
     isMinor: existingConsent?.requires_guardian_consent,
-    guardianName: existingConsent?.guardian_name || "",
-    guardianRelationship: existingConsent?.guardian_relationship || "",
+    guardianName: existingConsent?.guardian_name || '',
+    guardianRelationship: existingConsent?.guardian_relationship || '',
     guardianConsent: false,
     witnessRequired: existingConsent?.witness_present,
-    witnessName: existingConsent?.witness_name || "",
-    patientSignature: "",
-    additionalNotes: "",
-  });
+    witnessName: existingConsent?.witness_name || '',
+    patientSignature: '',
+    additionalNotes: '',
+  },)
 
-  const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
-  const [withdrawalReason, setWithdrawalReason] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showWithdrawDialog, setShowWithdrawDialog,] = useState(false,)
+  const [withdrawalReason, setWithdrawalReason,] = useState('',)
+  const [isSubmitting, setIsSubmitting,] = useState(false,)
 
   // Calculate consent completion progress
   const calculateProgress = (): number => {
@@ -149,52 +149,52 @@ export function CosmeticConsentBrazilian({
       formData.alternativesDiscussed,
       formData.expectationsSet,
       formData.dataProcessingConsent,
-    ];
+    ]
 
     const optionalFields = [
       formData.photoDocumentationConsent,
       formData.isMinor ? formData.guardianConsent : true,
-      formData.witnessRequired ? formData.witnessName !== "" : true,
-      formData.patientSignature !== "",
-    ];
+      formData.witnessRequired ? formData.witnessName !== '' : true,
+      formData.patientSignature !== '',
+    ]
 
-    const completed = [...requiredFields, ...optionalFields].filter(
+    const completed = [...requiredFields, ...optionalFields,].filter(
       Boolean,
-    ).length;
-    const total = requiredFields.length + optionalFields.length;
+    ).length
+    const total = requiredFields.length + optionalFields.length
 
-    return (completed / total) * 100;
-  };
+    return (completed / total) * 100
+  }
 
   // Form handlers
-  const updateFormData = (updates: Partial<ConsentFormData>) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
-  };
+  const updateFormData = (updates: Partial<ConsentFormData>,) => {
+    setFormData((prev,) => ({ ...prev, ...updates, }))
+  }
 
   const handleSubmitConsent = async () => {
     if (!onConsentGranted) {
-      return;
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true,)
 
     try {
       const consentData: Omit<
         PatientConsent,
-        "id" | "created_at" | "updated_at"
+        'id' | 'created_at' | 'updated_at'
       > = {
         patient_id: treatmentPlan.patient_id,
         treatment_plan_id: treatmentPlan.id,
-        consent_type: "treatment",
+        consent_type: 'treatment',
         purpose_description:
           `Consentimento para ${treatmentPlan.treatment_name} - ${treatmentPlan.description}`,
         data_categories: [
-          "dados_pessoais",
-          "historico_medico",
+          'dados_pessoais',
+          'historico_medico',
           ...(formData.photoDocumentationConsent
-            ? ["fotografias_clinicas"]
+            ? ['fotografias_clinicas',]
             : []),
-          ...(formData.marketingConsent ? ["dados_marketing"] : []),
+          ...(formData.marketingConsent ? ['dados_marketing',] : []),
         ],
         retention_period_days: formData.customRetentionPeriod,
         sharing_with_third_parties: formData.marketingConsent,
@@ -205,7 +205,7 @@ export function CosmeticConsentBrazilian({
         realistic_expectations_set: formData.expectationsSet,
         consent_granted: formData.treatmentConsentGranted && formData.dataProcessingConsent,
         consent_date: new Date().toISOString(),
-        consent_method: "digital",
+        consent_method: 'digital',
         witness_present: formData.witnessRequired,
         witness_name: formData.witnessName || undefined,
         requires_guardian_consent: formData.isMinor,
@@ -220,33 +220,33 @@ export function CosmeticConsentBrazilian({
         withdrawal_method: undefined,
         patient_signature: formData.patientSignature || undefined,
         professional_signature: undefined, // To be filled by professional
-        electronic_signature_method: "digital_signature",
+        electronic_signature_method: 'digital_signature',
         ip_address: undefined, // Would be captured in real implementation
         device_information: undefined, // Would be captured in real implementation
-        created_by: "patient_portal", // Or professional interface
+        created_by: 'patient_portal', // Or professional interface
         verified_by: undefined,
         verification_date: undefined,
-      };
+      }
 
-      await onConsentGranted(consentData);
+      await onConsentGranted(consentData,)
     } catch {
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false,)
     }
-  };
+  }
 
   const handleWithdrawConsent = async () => {
     if (!(existingConsent && onConsentWithdrawn && withdrawalReason.trim())) {
-      return;
+      return
     }
 
-    await onConsentWithdrawn(existingConsent.id, withdrawalReason);
-    setShowWithdrawDialog(false);
-    setWithdrawalReason("");
-  };
+    await onConsentWithdrawn(existingConsent.id, withdrawalReason,)
+    setShowWithdrawDialog(false,)
+    setWithdrawalReason('',)
+  }
 
   // Render existing consent view
-  if (mode === "view" && existingConsent) {
+  if (mode === 'view' && existingConsent) {
     return (
       <div className={`space-y-6 ${className}`}>
         <NeonGradientCard>
@@ -270,7 +270,7 @@ export function CosmeticConsentBrazilian({
                     ? <CheckCircle className="h-4 w-4 text-green-500" />
                     : <X className="h-4 w-4 text-red-500" />}
                   <span className="text-white">
-                    {existingConsent.consent_granted ? "Concedido" : "Negado"}
+                    {existingConsent.consent_granted ? 'Concedido' : 'Negado'}
                   </span>
                 </div>
               </div>
@@ -278,14 +278,14 @@ export function CosmeticConsentBrazilian({
               <div className="space-y-2">
                 <Label className="text-slate-300">Data do Consentimento</Label>
                 <p className="text-white">
-                  {new Date(existingConsent.consent_date).toLocaleDateString(
-                    "pt-BR",
+                  {new Date(existingConsent.consent_date,).toLocaleDateString(
+                    'pt-BR',
                     {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
                     },
                   )}
                 </p>
@@ -344,8 +344,8 @@ export function CosmeticConsentBrazilian({
                     </span>
                     <span className="text-slate-300 text-sm">
                       {existingConsent.cross_border_transfer
-                        ? "Autorizada"
-                        : "Não autorizada"}
+                        ? 'Autorizada'
+                        : 'Não autorizada'}
                     </span>
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export function CosmeticConsentBrazilian({
               <div className="pt-4">
                 <Button
                   className="w-full"
-                  onClick={() => setShowWithdrawDialog(true)}
+                  onClick={() => setShowWithdrawDialog(true,)}
                   variant="outline"
                 >
                   <X className="mr-2 h-4 w-4" />
@@ -370,9 +370,9 @@ export function CosmeticConsentBrazilian({
               <Alert className="border-red-500/50 bg-red-500/10">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription className="text-red-100">
-                  Consentimento retirado em{" "}
-                  {new Date(existingConsent.withdrawal_date).toLocaleDateString(
-                    "pt-BR",
+                  Consentimento retirado em{' '}
+                  {new Date(existingConsent.withdrawal_date,).toLocaleDateString(
+                    'pt-BR',
                   )}
                   {existingConsent.withdrawal_reason && (
                     <>
@@ -403,7 +403,7 @@ export function CosmeticConsentBrazilian({
                 </Label>
                 <Textarea
                   id="withdrawal-reason"
-                  onChange={(e) => setWithdrawalReason(e.target.value)}
+                  onChange={(e,) => setWithdrawalReason(e.target.value,)}
                   placeholder="Descreva o motivo para a retirada do consentimento..."
                   value={withdrawalReason}
                 />
@@ -411,7 +411,7 @@ export function CosmeticConsentBrazilian({
             </div>
             <DialogFooter>
               <Button
-                onClick={() => setShowWithdrawDialog(false)}
+                onClick={() => setShowWithdrawDialog(false,)}
                 variant="outline"
               >
                 Cancelar
@@ -423,7 +423,7 @@ export function CosmeticConsentBrazilian({
           </DialogContent>
         </Dialog>
       </div>
-    );
+    )
   } // New consent form
   return (
     <div className={`space-y-6 ${className}`}>
@@ -446,7 +446,7 @@ export function CosmeticConsentBrazilian({
                   Progresso do Consentimento
                 </span>
                 <span className="font-medium text-sm text-white">
-                  {Math.round(calculateProgress())}% concluído
+                  {Math.round(calculateProgress(),)}% concluído
                 </span>
               </div>
               <Progress className="h-2" value={calculateProgress()} />
@@ -495,10 +495,10 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="treatment-consent-description"
                     checked={formData.treatmentConsentGranted}
                     id="treatment-consent"
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked,) =>
                       updateFormData({
                         treatmentConsentGranted: checked as boolean,
-                      })}
+                      },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -521,8 +521,8 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="risks-description"
                     checked={formData.risksUnderstood}
                     id="risks-understood"
-                    onCheckedChange={(checked) =>
-                      updateFormData({ risksUnderstood: checked as boolean })}
+                    onCheckedChange={(checked,) =>
+                      updateFormData({ risksUnderstood: checked as boolean, },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -546,10 +546,10 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="alternatives-description"
                     checked={formData.alternativesDiscussed}
                     id="alternatives-discussed"
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked,) =>
                       updateFormData({
                         alternativesDiscussed: checked as boolean,
-                      })}
+                      },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -573,8 +573,8 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="expectations-description"
                     checked={formData.expectationsSet}
                     id="expectations-set"
-                    onCheckedChange={(checked) =>
-                      updateFormData({ expectationsSet: checked as boolean })}
+                    onCheckedChange={(checked,) =>
+                      updateFormData({ expectationsSet: checked as boolean, },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -597,7 +597,7 @@ export function CosmeticConsentBrazilian({
               <Alert className="border-yellow-500/50 bg-yellow-500/10">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Importante:</strong>{" "}
+                  <strong>Importante:</strong>{' '}
                   Este consentimento está em conformidade com as diretrizes do Conselho Federal de
                   Medicina (CFM) para procedimentos estéticos.
                 </AlertDescription>
@@ -621,10 +621,10 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="data-processing-description"
                     checked={formData.dataProcessingConsent}
                     id="data-processing"
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked,) =>
                       updateFormData({
                         dataProcessingConsent: checked as boolean,
-                      })}
+                      },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -648,10 +648,10 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="photo-description"
                     checked={formData.photoDocumentationConsent}
                     id="photo-documentation"
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked,) =>
                       updateFormData({
                         photoDocumentationConsent: checked as boolean,
-                      })}
+                      },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -675,8 +675,8 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="marketing-description"
                     checked={formData.marketingConsent}
                     id="marketing-consent"
-                    onCheckedChange={(checked) =>
-                      updateFormData({ marketingConsent: checked as boolean })}
+                    onCheckedChange={(checked,) =>
+                      updateFormData({ marketingConsent: checked as boolean, },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -699,8 +699,8 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="research-description"
                     checked={formData.researchConsent}
                     id="research-consent"
-                    onCheckedChange={(checked) =>
-                      updateFormData({ researchConsent: checked as boolean })}
+                    onCheckedChange={(checked,) =>
+                      updateFormData({ researchConsent: checked as boolean, },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -723,10 +723,10 @@ export function CosmeticConsentBrazilian({
                     aria-describedby="cross-border-description"
                     checked={formData.crossBorderTransferConsent}
                     id="cross-border"
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked,) =>
                       updateFormData({
                         crossBorderTransferConsent: checked as boolean,
-                      })}
+                      },)}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -756,10 +756,10 @@ export function CosmeticConsentBrazilian({
                     id="retention-period"
                     max="3650"
                     min="365"
-                    onChange={(e) =>
+                    onChange={(e,) =>
                       updateFormData({
-                        customRetentionPeriod: Number.parseInt(e.target.value, 10) || 2555,
-                      })}
+                        customRetentionPeriod: Number.parseInt(e.target.value, 10,) || 2555,
+                      },)}
                     type="number"
                     value={formData.customRetentionPeriod}
                   />
@@ -776,7 +776,7 @@ export function CosmeticConsentBrazilian({
               <Alert className="border-blue-500/50 bg-blue-500/10">
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Seus Direitos LGPD:</strong>{" "}
+                  <strong>Seus Direitos LGPD:</strong>{' '}
                   Você pode a qualquer momento acessar, corrigir, excluir ou portar seus dados, bem
                   como retirar este consentimento através do nosso portal ou solicitação direta.
                 </AlertDescription>
@@ -789,7 +789,7 @@ export function CosmeticConsentBrazilian({
                 <Checkbox
                   checked={formData.isMinor}
                   id="is-minor"
-                  onCheckedChange={(checked) => updateFormData({ isMinor: checked as boolean })}
+                  onCheckedChange={(checked,) => updateFormData({ isMinor: checked as boolean, },)}
                 />
                 <div className="grid gap-1.5 leading-none">
                   <Label
@@ -809,7 +809,7 @@ export function CosmeticConsentBrazilian({
                     </Label>
                     <Input
                       id="guardian-name"
-                      onChange={(e) => updateFormData({ guardianName: e.target.value })}
+                      onChange={(e,) => updateFormData({ guardianName: e.target.value, },)}
                       placeholder="Nome completo do responsável"
                       required
                       value={formData.guardianName}
@@ -822,7 +822,7 @@ export function CosmeticConsentBrazilian({
                     </Label>
                     <Input
                       id="guardian-relationship"
-                      onChange={(e) => updateFormData({ guardianRelationship: e.target.value })}
+                      onChange={(e,) => updateFormData({ guardianRelationship: e.target.value, },)}
                       placeholder="Ex: Pai, Mãe, Tutor legal"
                       required
                       value={formData.guardianRelationship}
@@ -833,8 +833,8 @@ export function CosmeticConsentBrazilian({
                     <Checkbox
                       checked={formData.guardianConsent}
                       id="guardian-consent"
-                      onCheckedChange={(checked) =>
-                        updateFormData({ guardianConsent: checked as boolean })}
+                      onCheckedChange={(checked,) =>
+                        updateFormData({ guardianConsent: checked as boolean, },)}
                     />
                     <div className="grid gap-1.5 leading-none">
                       <Label
@@ -858,8 +858,8 @@ export function CosmeticConsentBrazilian({
                 <Checkbox
                   checked={formData.witnessRequired}
                   id="witness-required"
-                  onCheckedChange={(checked) =>
-                    updateFormData({ witnessRequired: checked as boolean })}
+                  onCheckedChange={(checked,) =>
+                    updateFormData({ witnessRequired: checked as boolean, },)}
                 />
                 <div className="grid gap-1.5 leading-none">
                   <Label
@@ -877,7 +877,7 @@ export function CosmeticConsentBrazilian({
                   <Label htmlFor="witness-name">Nome da Testemunha</Label>
                   <Input
                     id="witness-name"
-                    onChange={(e) => updateFormData({ witnessName: e.target.value })}
+                    onChange={(e,) => updateFormData({ witnessName: e.target.value, },)}
                     placeholder="Nome completo da testemunha"
                     value={formData.witnessName}
                   />
@@ -893,7 +893,7 @@ export function CosmeticConsentBrazilian({
               <Alert>
                 <Signature className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Assinatura Digital:</strong>{" "}
+                  <strong>Assinatura Digital:</strong>{' '}
                   Sua assinatura confirma que leu, compreendeu e concorda com todos os termos do
                   consentimento.
                 </AlertDescription>
@@ -906,7 +906,7 @@ export function CosmeticConsentBrazilian({
                   </Label>
                   <Textarea
                     id="additional-notes"
-                    onChange={(e) => updateFormData({ additionalNotes: e.target.value })}
+                    onChange={(e,) => updateFormData({ additionalNotes: e.target.value, },)}
                     placeholder="Inclua qualquer observação ou solicitação especial..."
                     rows={3}
                     value={formData.additionalNotes}
@@ -919,7 +919,7 @@ export function CosmeticConsentBrazilian({
                   </Label>
                   <Input
                     id="patient-signature"
-                    onChange={(e) => updateFormData({ patientSignature: e.target.value })}
+                    onChange={(e,) => updateFormData({ patientSignature: e.target.value, },)}
                     placeholder="Digite seu nome completo como assinatura"
                     required
                     value={formData.patientSignature}
@@ -1040,7 +1040,7 @@ export function CosmeticConsentBrazilian({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
-export default CosmeticConsentBrazilian;
+export default CosmeticConsentBrazilian

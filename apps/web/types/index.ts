@@ -12,14 +12,14 @@
 // export * from "./patients";       // placeholder
 // export * from "./professionals";  // placeholder
 // export * from "./reports";        // placeholder
-export * from "./appointments";
-export * from "./auth";
-export * from "./billing";
+export * from './appointments'
+export * from './auth'
+export * from './billing'
 // export * from "./common"; // disabled for MVP to avoid ambient conflicts
-export * from "./consultations";
-export * from "./database";
-export * from "./financial";
-export * from "./supabase";
+export * from './consultations'
+export * from './database'
+export * from './financial'
+export * from './supabase'
 
 // Re-export all hook types in one statement to avoid duplication
-export * from "./hooks";
+export * from './hooks'

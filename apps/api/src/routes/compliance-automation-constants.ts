@@ -2,7 +2,7 @@
 export const COMPLIANCE_STANDARDS = {
   MINIMUM_SCORE: 9.9,
   CONSTITUTIONAL_THRESHOLD: 9.9,
-} as const;
+} as const
 
 export const MAGIC_NUMBERS = {
   HUNDRED: 100,
@@ -17,12 +17,12 @@ export const MAGIC_NUMBERS = {
   THIRTY_DAYS: 30,
   HTTP_INTERNAL_ERROR: 500,
   HTTP_UNAUTHORIZED: 401,
-} as const;
+} as const
 
-export const COMPLIANCE_AREAS = ["lgpd", "anvisa", "cfm", "all"] as const;
+export const COMPLIANCE_AREAS = ['lgpd', 'anvisa', 'cfm', 'all',] as const
 
 export const AUTOMATION_STATUS = {
-  ACTIVE: "active",
-  INACTIVE: "inactive",
-  ERROR: "error",
-} as const;
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  ERROR: 'error',
+} as const

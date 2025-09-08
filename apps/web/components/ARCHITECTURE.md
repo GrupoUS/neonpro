@@ -117,30 +117,30 @@ components/
 ### PatientCard
 
 ```tsx
-import { PatientCard } from "../components/PatientCard";
-import type { Patient } from "../components/types/healthcare";
+import { PatientCard, } from '../components/PatientCard'
+import type { Patient, } from '../components/types/healthcare'
 
 <PatientCard
   patient={patientData}
   variant="compact"
-  onViewDetails={(id) => navigate(`/patient/${id}`)}
-  onScheduleAppointment={(id) => openScheduleModal(id)}
-/>;
+  onViewDetails={(id,) => navigate(`/patient/${id}`,)}
+  onScheduleAppointment={(id,) => openScheduleModal(id,)}
+/>
 ```
 
 ### StandardModal
 
 ```tsx
-import { StandardModal } from "../components/StandardModal";
+import { StandardModal, } from '../components/StandardModal'
 
 <StandardModal
   isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
+  onClose={() => setIsModalOpen(false,)}
   title="Confirm Action"
   size="md"
 >
   <p>Are you sure you want to proceed?</p>
-</StandardModal>;
+</StandardModal>
 ```
 
 ## Architecture Health Metrics

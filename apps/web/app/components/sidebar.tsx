@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { Button, } from '@/components/ui/button'
+import { ScrollArea, } from '@/components/ui/scroll-area'
+import { cn, } from '@/lib/utils'
 import {
   BarChart3,
   Calendar,
@@ -13,60 +13,60 @@ import {
   Settings,
   Shield,
   Users,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, } from 'next/navigation'
 
 const sidebarItems = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: 'Dashboard',
+    href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: "Patients",
-    href: "/dashboard/patients",
+    title: 'Patients',
+    href: '/dashboard/patients',
     icon: Users,
   },
   {
-    title: "Appointments",
-    href: "/dashboard/appointments",
+    title: 'Appointments',
+    href: '/dashboard/appointments',
     icon: Calendar,
   },
   {
-    title: "Treatments",
-    href: "/dashboard/treatments",
+    title: 'Treatments',
+    href: '/dashboard/treatments',
     icon: Heart,
   },
   {
-    title: "Analytics",
-    href: "/dashboard/analytics",
+    title: 'Analytics',
+    href: '/dashboard/analytics',
     icon: BarChart3,
   },
   {
-    title: "Financial",
-    href: "/dashboard/financial",
+    title: 'Financial',
+    href: '/dashboard/financial',
     icon: CreditCard,
   },
   {
-    title: "Reports",
-    href: "/dashboard/reports",
+    title: 'Reports',
+    href: '/dashboard/reports',
     icon: FileText,
   },
   {
-    title: "Compliance",
-    href: "/dashboard/compliance",
+    title: 'Compliance',
+    href: '/dashboard/compliance',
     icon: Shield,
   },
   {
-    title: "Settings",
-    href: "/dashboard/settings",
+    title: 'Settings',
+    href: '/dashboard/settings',
     icon: Settings,
   },
-];
+]
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <div className="flex h-full w-64 flex-col border-r bg-background">
@@ -81,29 +81,29 @@ export function Sidebar() {
 
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-2">
-          {sidebarItems.map((item) => {
-            const { icon: Icon } = item;
-            const isActive = pathname === item.href;
+          {sidebarItems.map((item,) => {
+            const { icon: Icon, } = item
+            const isActive = pathname === item.href
 
             return (
               <Button
                 asChild
                 className={cn(
-                  "w-full justify-start",
-                  isActive && "bg-secondary",
+                  'w-full justify-start',
+                  isActive && 'bg-secondary',
                 )}
                 key={item.href}
-                variant={isActive ? "secondary" : "ghost"}
+                variant={isActive ? 'secondary' : 'ghost'}
               >
                 <Link href={item.href}>
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
               </Button>
-            );
-          })}
+            )
+          },)}
         </nav>
       </ScrollArea>
     </div>
-  );
+  )
 }

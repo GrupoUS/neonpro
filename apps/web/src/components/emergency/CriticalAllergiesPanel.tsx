@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { cn, } from '@/lib/utils'
 import {
   AlertTriangle,
   ChevronDown,
@@ -15,72 +15,72 @@ import {
   Phone,
   Shield,
   Zap,
-} from "lucide-react";
-import React, { useState } from "react";
+} from 'lucide-react'
+import React, { useState, } from 'react'
 
 // Critical Allergies Types
 export interface CriticalAllergy {
-  id: string;
-  name: string;
-  severity: "mild" | "moderate" | "severe" | "life-threatening";
-  reactions: string[];
-  treatments: string[];
+  id: string
+  name: string
+  severity: 'mild' | 'moderate' | 'severe' | 'life-threatening'
+  reactions: string[]
+  treatments: string[]
   lastReaction?: {
-    date: string;
-    description: string;
-    treatment: string;
-  };
-  medications?: string[];
-  crossReactivities?: string[];
+    date: string
+    description: string
+    treatment: string
+  }
+  medications?: string[]
+  crossReactivities?: string[]
 }
 
 export interface CriticalAllergiesPanelProps {
-  allergies: CriticalAllergy[];
-  patientName: string;
-  onCallEmergency: () => void;
-  onViewFullHistory: () => void;
-  emergencyMode?: boolean;
-  showMedications?: boolean;
-  className?: string;
+  allergies: CriticalAllergy[]
+  patientName: string
+  onCallEmergency: () => void
+  onViewFullHistory: () => void
+  emergencyMode?: boolean
+  showMedications?: boolean
+  className?: string
 }
 
 // Severity Colors and Styles
-const getSeverityStyles = (severity: CriticalAllergy["severity"]) => {
+const getSeverityStyles = (severity: CriticalAllergy['severity'],) => {
   switch (severity) {
-    case "life-threatening":
+    case 'life-threatening':
       return {
-        badge: "bg-red-600 text-white animate-pulse border-2 border-red-400",
-        card: "border-red-500 bg-red-50 dark:bg-red-950/30 shadow-red-500/30",
-        icon: "text-red-600 animate-bounce",
-        text: "text-red-800 dark:text-red-200",
-        priority: "RISCO DE VIDA",
-      };
-    case "severe":
+        badge: 'bg-red-600 text-white animate-pulse border-2 border-red-400',
+        card: 'border-red-500 bg-red-50 dark:bg-red-950/30 shadow-red-500/30',
+        icon: 'text-red-600 animate-bounce',
+        text: 'text-red-800 dark:text-red-200',
+        priority: 'RISCO DE VIDA',
+      }
+    case 'severe':
       return {
-        badge: "bg-orange-600 text-white border-orange-400",
-        card: "border-orange-500 bg-orange-50 dark:bg-orange-950/20 shadow-orange-500/20",
-        icon: "text-orange-600",
-        text: "text-orange-800 dark:text-orange-200",
-        priority: "GRAVE",
-      };
-    case "moderate":
+        badge: 'bg-orange-600 text-white border-orange-400',
+        card: 'border-orange-500 bg-orange-50 dark:bg-orange-950/20 shadow-orange-500/20',
+        icon: 'text-orange-600',
+        text: 'text-orange-800 dark:text-orange-200',
+        priority: 'GRAVE',
+      }
+    case 'moderate':
       return {
-        badge: "bg-yellow-600 text-white border-yellow-400",
-        card: "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20",
-        icon: "text-yellow-600",
-        text: "text-yellow-800 dark:text-yellow-200",
-        priority: "MODERADA",
-      };
-    case "mild":
+        badge: 'bg-yellow-600 text-white border-yellow-400',
+        card: 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20',
+        icon: 'text-yellow-600',
+        text: 'text-yellow-800 dark:text-yellow-200',
+        priority: 'MODERADA',
+      }
+    case 'mild':
       return {
-        badge: "bg-blue-600 text-white",
-        card: "border-blue-500 bg-blue-50 dark:bg-blue-950/20",
-        icon: "text-blue-600",
-        text: "text-blue-800 dark:text-blue-200",
-        priority: "LEVE",
-      };
+        badge: 'bg-blue-600 text-white',
+        card: 'border-blue-500 bg-blue-50 dark:bg-blue-950/20',
+        icon: 'text-blue-600',
+        text: 'text-blue-800 dark:text-blue-200',
+        priority: 'LEVE',
+      }
   }
-};
+}
 export function CriticalAllergiesPanel({
   allergies,
   patientName,
@@ -89,33 +89,33 @@ export function CriticalAllergiesPanel({
   emergencyMode = false,
   showMedications = true,
   className,
-}: CriticalAllergiesPanelProps) {
-  const [expandedAllergy, setExpandedAllergy] = useState<string | null>(
+}: CriticalAllergiesPanelProps,) {
+  const [expandedAllergy, setExpandedAllergy,] = useState<string | null>(
     emergencyMode ? null : null,
-  );
-  const [isVisible, setIsVisible] = useState(true);
+  )
+  const [isVisible, setIsVisible,] = useState(true,)
 
   // Sort allergies by severity (life-threatening first)
-  const sortedAllergies = [...allergies].sort((a, b) => {
+  const sortedAllergies = [...allergies,].sort((a, b,) => {
     const severityOrder = {
-      "life-threatening": 0,
+      'life-threatening': 0,
       severe: 1,
       moderate: 2,
       mild: 3,
-    };
-    return severityOrder[a.severity] - severityOrder[b.severity];
-  });
+    }
+    return severityOrder[a.severity] - severityOrder[b.severity]
+  },)
 
   const lifeThreatening = allergies.filter(
-    (a) => a.severity === "life-threatening",
-  );
-  const hasLifeThreatening = lifeThreatening.length > 0;
+    (a,) => a.severity === 'life-threatening',
+  )
+  const hasLifeThreatening = lifeThreatening.length > 0
 
   if (!isVisible) {
     return (
       <div className="fixed top-4 right-4 z-50">
         <Button
-          onClick={() => setIsVisible(true)}
+          onClick={() => setIsVisible(true,)}
           variant="destructive"
           size="sm"
           className="shadow-lg"
@@ -125,15 +125,15 @@ export function CriticalAllergiesPanel({
           Alergias ({allergies.length})
         </Button>
       </div>
-    );
+    )
   }
   return (
     <Card
       className={cn(
-        "w-full transition-all duration-200",
+        'w-full transition-all duration-200',
         hasLifeThreatening
-          && "border-2 border-red-500 shadow-red-500/50 shadow-lg",
-        emergencyMode && "shadow-2xl scale-[1.01]",
+          && 'border-2 border-red-500 shadow-red-500/50 shadow-lg',
+        emergencyMode && 'shadow-2xl scale-[1.01]',
         className,
       )}
       role="alert"
@@ -165,10 +165,10 @@ export function CriticalAllergiesPanel({
                 Alergias Críticas
                 <Badge
                   className={cn(
-                    "text-xs",
+                    'text-xs',
                     hasLifeThreatening
-                      ? "bg-red-600 text-white animate-pulse"
-                      : "bg-orange-600 text-white",
+                      ? 'bg-red-600 text-white animate-pulse'
+                      : 'bg-orange-600 text-white',
                   )}
                 >
                   {allergies.length}
@@ -182,7 +182,7 @@ export function CriticalAllergiesPanel({
 
           <div className="flex gap-2">
             <Button
-              onClick={() => setIsVisible(false)}
+              onClick={() => setIsVisible(false,)}
               variant="ghost"
               size="sm"
               className="text-muted-foreground"
@@ -204,7 +204,7 @@ export function CriticalAllergiesPanel({
             )}
           </div>
         </div>
-      </CardHeader>{" "}
+      </CardHeader>{' '}
       <CardContent className="space-y-3">
         {/* Life-threatening Alert */}
         {hasLifeThreatening && (
@@ -218,8 +218,8 @@ export function CriticalAllergiesPanel({
             </div>
             <div className="text-sm text-red-700 dark:text-red-300">
               {lifeThreatening.length} alergia
-              {lifeThreatening.length > 1 ? "s" : ""}
-              pode{lifeThreatening.length === 1 ? "" : "m"}{" "}
+              {lifeThreatening.length > 1 ? 's' : ''}
+              pode{lifeThreatening.length === 1 ? '' : 'm'}{' '}
               causar reação fatal. Verificar medicações e tratamentos antes de qualquer
               procedimento.
             </div>
@@ -228,29 +228,29 @@ export function CriticalAllergiesPanel({
 
         {/* Allergies List */}
         <div className="space-y-3">
-          {sortedAllergies.map((allergy) => {
-            const severityStyles = getSeverityStyles(allergy.severity);
-            const isExpanded = expandedAllergy === allergy.id;
+          {sortedAllergies.map((allergy,) => {
+            const severityStyles = getSeverityStyles(allergy.severity,)
+            const isExpanded = expandedAllergy === allergy.id
 
             return (
               <div
                 key={allergy.id}
                 className={cn(
-                  "border rounded-lg transition-all duration-200",
+                  'border rounded-lg transition-all duration-200',
                   severityStyles.card,
-                  allergy.severity === "life-threatening" && "shadow-lg",
+                  allergy.severity === 'life-threatening' && 'shadow-lg',
                 )}
               >
                 {/* Allergy Header */}
                 <div
                   className="p-3 cursor-pointer"
-                  onClick={() => setExpandedAllergy(isExpanded ? null : allergy.id)}
+                  onClick={() => setExpandedAllergy(isExpanded ? null : allergy.id,)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setExpandedAllergy(isExpanded ? null : allergy.id);
+                  onKeyDown={(e,) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setExpandedAllergy(isExpanded ? null : allergy.id,)
                     }
                   }}
                   aria-expanded={isExpanded}
@@ -259,19 +259,19 @@ export function CriticalAllergiesPanel({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className={severityStyles.icon}>
-                        {allergy.severity === "life-threatening" && (
+                        {allergy.severity === 'life-threatening' && (
                           <Zap className="h-5 w-5" aria-hidden="true" />
                         )}
-                        {allergy.severity === "severe" && (
+                        {allergy.severity === 'severe' && (
                           <AlertTriangle
                             className="h-5 w-5"
                             aria-hidden="true"
                           />
                         )}
-                        {allergy.severity === "moderate" && (
+                        {allergy.severity === 'moderate' && (
                           <Shield className="h-4 w-4" aria-hidden="true" />
                         )}
-                        {allergy.severity === "mild" && (
+                        {allergy.severity === 'mild' && (
                           <Shield className="h-4 w-4" aria-hidden="true" />
                         )}
                       </div>
@@ -286,7 +286,7 @@ export function CriticalAllergiesPanel({
                       {allergy.reactions.length > 0 && (
                         <div className="text-xs text-muted-foreground">
                           {allergy.reactions.length} reação
-                          {allergy.reactions.length > 1 ? "ões" : ""}
+                          {allergy.reactions.length > 1 ? 'ões' : ''}
                         </div>
                       )}
                       {isExpanded
@@ -294,7 +294,7 @@ export function CriticalAllergiesPanel({
                         : <ChevronDown className="h-4 w-4" aria-hidden="true" />}
                     </div>
                   </div>
-                </div>{" "}
+                </div>{' '}
                 {/* Expanded Details */}
                 {isExpanded && (
                   <div
@@ -308,11 +308,11 @@ export function CriticalAllergiesPanel({
                           Reações:
                         </span>
                         <div className="flex flex-wrap gap-1">
-                          {allergy.reactions.map((reaction, index) => (
+                          {allergy.reactions.map((reaction, index,) => (
                             <Badge
                               key={index}
                               variant="outline"
-                              className={cn("text-xs", severityStyles.text)}
+                              className={cn('text-xs', severityStyles.text,)}
                             >
                               {reaction}
                             </Badge>
@@ -327,7 +327,7 @@ export function CriticalAllergiesPanel({
                           Tratamentos:
                         </span>
                         <div className="space-y-1">
-                          {allergy.treatments.map((treatment, index) => (
+                          {allergy.treatments.map((treatment, index,) => (
                             <div
                               key={index}
                               className="text-sm bg-green-50 dark:bg-green-950/20 px-2 py-1 rounded"
@@ -347,7 +347,7 @@ export function CriticalAllergiesPanel({
                           Medicações a Evitar:
                         </span>
                         <div className="flex flex-wrap gap-1">
-                          {allergy.medications.map((medication, index) => (
+                          {allergy.medications.map((medication, index,) => (
                             <Badge
                               key={index}
                               variant="destructive"
@@ -367,7 +367,7 @@ export function CriticalAllergiesPanel({
                           Reatividade Cruzada:
                         </span>
                         <div className="flex flex-wrap gap-1">
-                          {allergy.crossReactivities.map((item, index) => (
+                          {allergy.crossReactivities.map((item, index,) => (
                             <Badge
                               key={index}
                               variant="outline"
@@ -403,8 +403,8 @@ export function CriticalAllergiesPanel({
                   </div>
                 )}
               </div>
-            );
-          })}
+            )
+          },)}
         </div>
 
         {/* Action Buttons */}
@@ -438,16 +438,16 @@ export function CriticalAllergiesPanel({
         <div className="text-xs text-muted-foreground pt-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <span>
-              {allergies.filter((a) => a.severity === "life-threatening")
+              {allergies.filter((a,) => a.severity === 'life-threatening')
                 .length} risco de vida •
-              {allergies.filter((a) => a.severity === "severe").length} graves •
-              {allergies.filter((a) => a.severity === "moderate").length}{" "}
-              moderadas •{allergies.filter((a) => a.severity === "mild").length} leves
+              {allergies.filter((a,) => a.severity === 'severe').length} graves •
+              {allergies.filter((a,) => a.severity === 'moderate').length}{' '}
+              moderadas •{allergies.filter((a,) => a.severity === 'mild').length} leves
             </span>
             <span>LGPD: Dados médicos críticos</span>
           </div>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

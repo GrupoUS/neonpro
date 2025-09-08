@@ -187,11 +187,11 @@ O TweakCN NEONPRO Theme Foundation é um sistema de design abrangente desenvolvi
 
 ```tsx
 interface HealthcareButtonProps {
-  urgency?: "low" | "medium" | "high" | "critical";
-  lgpdCompliant?: boolean;
-  emergencyMode?: boolean;
-  srAnnouncement?: string;
-  isLoading?: boolean;
+  urgency?: 'low' | 'medium' | 'high' | 'critical'
+  lgpdCompliant?: boolean
+  emergencyMode?: boolean
+  srAnnouncement?: string
+  isLoading?: boolean
 }
 ```
 
@@ -211,12 +211,12 @@ interface HealthcareButtonProps {
 
 ```tsx
 interface HealthcareCardProps {
-  urgency?: "low" | "medium" | "high" | "critical";
-  medicalContext?: "patient" | "emergency" | "consultation" | "prescription";
-  patientSafe?: boolean;
-  lgpdSensitive?: boolean;
-  emergencyMode?: boolean;
-  status?: "normal" | "warning" | "critical" | "inactive";
+  urgency?: 'low' | 'medium' | 'high' | 'critical'
+  medicalContext?: 'patient' | 'emergency' | 'consultation' | 'prescription'
+  patientSafe?: boolean
+  lgpdSensitive?: boolean
+  emergencyMode?: boolean
+  status?: 'normal' | 'warning' | 'critical' | 'inactive'
 }
 ```
 
@@ -235,11 +235,11 @@ interface HealthcareCardProps {
 
 ```tsx
 interface HealthcareAlertProps {
-  urgency?: "low" | "medium" | "high" | "critical";
-  vitalStatus?: "normal" | "warning" | "critical" | "urgent";
-  medicationAlert?: "allergy" | "interaction" | "dosage" | "contraindication";
-  clinicalAlert?: boolean;
-  autoDismiss?: number;
+  urgency?: 'low' | 'medium' | 'high' | 'critical'
+  vitalStatus?: 'normal' | 'warning' | 'critical' | 'urgent'
+  medicationAlert?: 'allergy' | 'interaction' | 'dosage' | 'contraindication'
+  clinicalAlert?: boolean
+  autoDismiss?: number
 }
 ```
 
@@ -264,7 +264,7 @@ interface HealthcareAlertProps {
   urgency="critical"
   lgpdSensitive
   validationState="critical"
-/>;
+/>
 ```
 
 ---
@@ -345,7 +345,7 @@ interface HealthcareAlertProps {
 1. **Importar Estilos**
 
 ```tsx
-import "./styles/globals.css";
+import './styles/globals.css'
 // accessibility-tokens.css é importado automaticamente
 ```
 
@@ -362,7 +362,7 @@ document.documentElement.className = theme;
 3. **Usar Componentes**
 
 ```tsx
-import { Alert, Button, Card, Input } from "@/components/ui";
+import { Alert, Button, Card, Input, } from '@/components/ui'
 
 function EmergencyInterface() {
   return (
@@ -374,7 +374,7 @@ function EmergencyInterface() {
         CHAMAR EQUIPE MÉDICA
       </Button>
     </Card>
-  );
+  )
 }
 ```
 
@@ -418,7 +418,7 @@ function PatientForm() {
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }
 ```
 
@@ -461,7 +461,7 @@ function EmergencyInterface() {
         </Button>
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -516,11 +516,11 @@ const customButtonVariants = cva(
       ...buttonVariants.variants,
       variant: {
         ...buttonVariants.variants.variant,
-        "custom-specialty": "bg-specialty-cardiology text-white",
+        'custom-specialty': 'bg-specialty-cardiology text-white',
       },
     },
   },
-);
+)
 ```
 
 ### **Temas Personalizados**

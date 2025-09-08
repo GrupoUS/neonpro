@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import type {
   Quiz,
@@ -8,56 +8,56 @@ import type {
   TrainingProgress,
   TrainingSection,
   UserTrainingProfile,
-} from "@/types/staff-training";
+} from '@/types/staff-training'
 // import { PracticalExerciseResult } from "@/types/staff-training"; // Unused import
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, } from 'react'
 
 interface UseStaffTrainingOptions {
-  userId?: string;
-  role?: string;
-  autoSave?: boolean;
-  offlineMode?: boolean;
+  userId?: string
+  role?: string
+  autoSave?: boolean
+  offlineMode?: boolean
 }
 
 interface UseStaffTrainingReturn {
   // User profile and progress
-  userProfile: UserTrainingProfile | null;
-  trainingModules: TrainingModule[];
-  userProgress: Record<string, TrainingProgress>;
+  userProfile: UserTrainingProfile | null
+  trainingModules: TrainingModule[]
+  userProgress: Record<string, TrainingProgress>
 
   // Current session
-  currentModule: TrainingModule | null;
-  currentSection: TrainingSection | null;
-  isLoading: boolean;
-  error: string | null;
+  currentModule: TrainingModule | null
+  currentSection: TrainingSection | null
+  isLoading: boolean
+  error: string | null
 
   // Module management
-  startModule: (moduleId: string) => Promise<void>;
-  completeSection: (sectionId: string) => Promise<void>;
+  startModule: (moduleId: string,) => Promise<void>
+  completeSection: (sectionId: string,) => Promise<void>
   saveProgress: (
     moduleId: string,
     data: Partial<TrainingProgress>,
-  ) => Promise<void>;
+  ) => Promise<void>
 
   // Quiz functionality
-  startQuiz: (quizId: string) => Promise<void>;
-  submitQuizAnswer: (questionId: string, answer: string | string[]) => void;
-  completeQuiz: () => Promise<QuizAttempt>;
+  startQuiz: (quizId: string,) => Promise<void>
+  submitQuizAnswer: (questionId: string, answer: string | string[],) => void
+  completeQuiz: () => Promise<QuizAttempt>
 
   // Progress tracking
-  getModuleProgress: (moduleId: string) => number; // percentage
-  getOverallProgress: () => number; // percentage
-  getCompletedModules: () => string[];
-  getRequiredModules: () => string[];
+  getModuleProgress: (moduleId: string,) => number // percentage
+  getOverallProgress: () => number // percentage
+  getCompletedModules: () => string[]
+  getRequiredModules: () => string[]
 
   // Certificates and achievements
-  generateCertificate: (moduleId: string) => Promise<string>; // certificate URL
-  checkCertificationEligibility: () => Promise<string[]>; // eligible certification IDs
+  generateCertificate: (moduleId: string,) => Promise<string> // certificate URL
+  checkCertificationEligibility: () => Promise<string[]> // eligible certification IDs
 
   // Offline support
-  syncOfflineData: () => Promise<void>;
-  downloadModuleForOffline: (moduleId: string) => Promise<void>;
-  isOfflineCapable: (moduleId: string) => boolean;
+  syncOfflineData: () => Promise<void>
+  downloadModuleForOffline: (moduleId: string,) => Promise<void>
+  isOfflineCapable: (moduleId: string,) => boolean
 }
 
 /**
@@ -69,212 +69,212 @@ export function useStaffTraining({
   role,
   autoSave = true,
   offlineMode = false,
-}: UseStaffTrainingOptions = {}): UseStaffTrainingReturn {
-  const [userProfile, setUserProfile] = useState<UserTrainingProfile | null>(
+}: UseStaffTrainingOptions = {},): UseStaffTrainingReturn {
+  const [userProfile, setUserProfile,] = useState<UserTrainingProfile | null>(
     null,
-  );
-  const [trainingModules, setTrainingModules] = useState<TrainingModule[]>([]);
-  const [userProgress, setUserProgress] = useState<
+  )
+  const [trainingModules, setTrainingModules,] = useState<TrainingModule[]>([],)
+  const [userProgress, setUserProgress,] = useState<
     Record<string, TrainingProgress>
-  >({});
+  >({},)
 
-  const [currentModule, setCurrentModule] = useState<TrainingModule | null>(
+  const [currentModule, setCurrentModule,] = useState<TrainingModule | null>(
     null,
-  );
-  const [currentSection, setCurrentSection] = useState<TrainingSection | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  )
+  const [currentSection, setCurrentSection,] = useState<TrainingSection | null>(null,)
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [error, setError,] = useState<string | null>(null,)
 
   // Quiz state
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
-  const [currentQuizAnswers, setCurrentQuizAnswers] = useState<QuizAnswer[]>(
+  const [currentQuiz, setCurrentQuiz,] = useState<Quiz | null>(null,)
+  const [currentQuizAnswers, setCurrentQuizAnswers,] = useState<QuizAnswer[]>(
     [],
-  );
-  const [quizStartTime, setQuizStartTime] = useState<Date | null>(null);
+  )
+  const [quizStartTime, setQuizStartTime,] = useState<Date | null>(null,)
 
   const fetchUserProfile = useCallback(async () => {
     if (!userId) {
-      return;
+      return
     }
 
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsLoading(true,)
+      setError(null,)
 
-      const response = await fetch(`/api/staff-training/profile/${userId}`);
+      const response = await fetch(`/api/staff-training/profile/${userId}`,)
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+        throw new Error(`Failed to fetch user profile: ${response.statusText}`,)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success) {
-        setUserProfile(data.profile);
+        setUserProfile(data.profile,)
       } else {
-        throw new Error(data.message || "Failed to fetch user profile");
+        throw new Error(data.message || 'Failed to fetch user profile',)
       }
     } catch (err) {
-      console.error("Error fetching user profile:", err);
+      console.error('Error fetching user profile:', err,)
       setError(
-        err instanceof Error ? err.message : "Failed to fetch user profile",
-      );
+        err instanceof Error ? err.message : 'Failed to fetch user profile',
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, [userId]);
+  }, [userId,],)
 
   const fetchTrainingModules = useCallback(async () => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsLoading(true,)
+      setError(null,)
 
-      const params = new URLSearchParams();
+      const params = new URLSearchParams()
       if (role) {
-        params.append("role", role);
+        params.append('role', role,)
       }
       if (userId) {
-        params.append("userId", userId);
+        params.append('userId', userId,)
       }
 
-      const response = await fetch(`/api/staff-training/modules?${params}`);
+      const response = await fetch(`/api/staff-training/modules?${params}`,)
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch modules: ${response.statusText}`);
+        throw new Error(`Failed to fetch modules: ${response.statusText}`,)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success) {
-        setTrainingModules(data.modules);
+        setTrainingModules(data.modules,)
       } else {
-        throw new Error(data.message || "Failed to fetch training modules");
+        throw new Error(data.message || 'Failed to fetch training modules',)
       }
     } catch (err) {
-      console.error("Error fetching training modules:", err);
+      console.error('Error fetching training modules:', err,)
       setError(
-        err instanceof Error ? err.message : "Failed to fetch training modules",
-      );
+        err instanceof Error ? err.message : 'Failed to fetch training modules',
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, [role, userId]);
+  }, [role, userId,],)
 
   const fetchUserProgress = useCallback(async () => {
     if (!userId) {
-      return;
+      return
     }
 
     try {
-      const response = await fetch(`/api/staff-training/progress/${userId}`);
+      const response = await fetch(`/api/staff-training/progress/${userId}`,)
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch progress: ${response.statusText}`);
+        throw new Error(`Failed to fetch progress: ${response.statusText}`,)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success) {
-        const progressMap: Record<string, TrainingProgress> = {};
-        data.progress.forEach((progress: TrainingProgress) => {
-          progressMap[progress.moduleId] = progress;
-        });
-        setUserProgress(progressMap);
+        const progressMap: Record<string, TrainingProgress> = {}
+        data.progress.forEach((progress: TrainingProgress,) => {
+          progressMap[progress.moduleId] = progress
+        },)
+        setUserProgress(progressMap,)
       }
     } catch (err) {
-      console.error("Error fetching user progress:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch progress");
+      console.error('Error fetching user progress:', err,)
+      setError(err instanceof Error ? err.message : 'Failed to fetch progress',)
     }
-  }, [userId]);
+  }, [userId,],)
 
   const startModule = useCallback(
-    async (moduleId: string) => {
+    async (moduleId: string,) => {
       if (!userId) {
-        return;
+        return
       }
 
       try {
-        setIsLoading(true);
+        setIsLoading(true,)
 
-        const module = trainingModules.find((m) => m.id === moduleId);
+        const module = trainingModules.find((m,) => m.id === moduleId)
         if (!module) {
-          throw new Error("Module not found");
+          throw new Error('Module not found',)
         }
 
         // Check prerequisites
-        const unmetPrerequisites = module.prerequisites.filter((prereqId) => {
-          const progress = userProgress[prereqId];
-          return !progress || progress.status !== "completed";
-        });
+        const unmetPrerequisites = module.prerequisites.filter((prereqId,) => {
+          const progress = userProgress[prereqId]
+          return !progress || progress.status !== 'completed'
+        },)
 
         if (unmetPrerequisites.length > 0) {
           throw new Error(
-            "Prerequisites not met. Please complete required modules first.",
-          );
+            'Prerequisites not met. Please complete required modules first.',
+          )
         }
 
-        const response = await fetch("/api/staff-training/start-module", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, moduleId }),
-        });
+        const response = await fetch('/api/staff-training/start-module', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
+          body: JSON.stringify({ userId, moduleId, },),
+        },)
 
         if (!response.ok) {
-          throw new Error(`Failed to start module: ${response.statusText}`);
+          throw new Error(`Failed to start module: ${response.statusText}`,)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
-          setCurrentModule(module);
-          setCurrentSection(module.sections[0] || null);
+          setCurrentModule(module,)
+          setCurrentSection(module.sections[0] || null,)
 
           // Update progress locally
-          setUserProgress((prev) => ({
+          setUserProgress((prev,) => ({
             ...prev,
             [moduleId]: {
               ...data.progress,
-              startedAt: new Date(data.progress.startedAt),
-              lastAccessedAt: new Date(data.progress.lastAccessedAt),
+              startedAt: new Date(data.progress.startedAt,),
+              lastAccessedAt: new Date(data.progress.lastAccessedAt,),
             },
-          }));
+          }))
         }
       } catch (err) {
-        console.error("Error starting module:", err);
-        setError(err instanceof Error ? err.message : "Failed to start module");
+        console.error('Error starting module:', err,)
+        setError(err instanceof Error ? err.message : 'Failed to start module',)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false,)
       }
     },
-    [userId, trainingModules, userProgress],
-  );
+    [userId, trainingModules, userProgress,],
+  )
 
   const completeSection = useCallback(
-    async (sectionId: string) => {
+    async (sectionId: string,) => {
       if (!userId || !currentModule) {
-        return;
+        return
       }
 
       try {
-        const response = await fetch("/api/staff-training/complete-section", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/staff-training/complete-section', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
             userId,
             moduleId: currentModule.id,
             sectionId,
-          }),
-        });
+          },),
+        },)
 
         if (!response.ok) {
-          throw new Error(`Failed to complete section: ${response.statusText}`);
+          throw new Error(`Failed to complete section: ${response.statusText}`,)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
           // Update progress locally
-          setUserProgress((prev) => ({
+          setUserProgress((prev,) => ({
             ...prev,
             [currentModule.id]: {
               ...prev[currentModule.id],
@@ -283,157 +283,157 @@ export function useStaffTraining({
               timeSpent: data.progress.timeSpent,
               lastAccessedAt: new Date(),
             },
-          }));
+          }))
 
           // Move to next section if available
           const currentIndex = currentModule.sections.findIndex(
-            (s) => s.id === sectionId,
-          );
-          const nextSection = currentModule.sections[currentIndex + 1];
-          setCurrentSection(nextSection || null);
+            (s,) => s.id === sectionId,
+          )
+          const nextSection = currentModule.sections[currentIndex + 1]
+          setCurrentSection(nextSection || null,)
         }
       } catch (err) {
-        console.error("Error completing section:", err);
+        console.error('Error completing section:', err,)
         setError(
-          err instanceof Error ? err.message : "Failed to complete section",
-        );
+          err instanceof Error ? err.message : 'Failed to complete section',
+        )
       }
     },
-    [userId, currentModule],
-  );
+    [userId, currentModule,],
+  )
 
   const saveProgress = useCallback(
-    async (moduleId: string, data: Partial<TrainingProgress>) => {
+    async (moduleId: string, data: Partial<TrainingProgress>,) => {
       if (!userId || !autoSave) {
-        return;
+        return
       }
 
       try {
-        const response = await fetch("/api/staff-training/save-progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/staff-training/save-progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
             userId,
             moduleId,
             progress: data,
-          }),
-        });
+          },),
+        },)
 
         if (!response.ok) {
-          throw new Error(`Failed to save progress: ${response.statusText}`);
+          throw new Error(`Failed to save progress: ${response.statusText}`,)
         }
 
         // Update local state
-        setUserProgress((prev) => ({
+        setUserProgress((prev,) => ({
           ...prev,
           [moduleId]: {
             ...prev[moduleId],
             ...data,
             lastAccessedAt: new Date(),
           },
-        }));
+        }))
       } catch (err) {
-        console.error("Error saving progress:", err);
+        console.error('Error saving progress:', err,)
         // Store in localStorage for offline sync
         if (offlineMode) {
-          const offlineData = localStorage.getItem("training_offline_data") || "{}";
-          const parsed = JSON.parse(offlineData);
-          parsed[`${userId}_${moduleId}`] = data;
-          localStorage.setItem("training_offline_data", JSON.stringify(parsed));
+          const offlineData = localStorage.getItem('training_offline_data',) || '{}'
+          const parsed = JSON.parse(offlineData,)
+          parsed[`${userId}_${moduleId}`] = data
+          localStorage.setItem('training_offline_data', JSON.stringify(parsed,),)
         }
       }
     },
-    [userId, autoSave, offlineMode],
-  );
+    [userId, autoSave, offlineMode,],
+  )
 
   const startQuiz = useCallback(
-    async (quizId: string) => {
+    async (quizId: string,) => {
       if (!userId || !currentModule) {
-        return;
+        return
       }
 
-      const quiz = currentModule.quiz;
+      const quiz = currentModule.quiz
       if (!quiz || quiz.id !== quizId) {
-        setError("Quiz not found");
-        return;
+        setError('Quiz not found',)
+        return
       }
 
-      setCurrentQuiz(quiz);
-      setCurrentQuizAnswers([]);
-      setQuizStartTime(new Date());
+      setCurrentQuiz(quiz,)
+      setCurrentQuizAnswers([],)
+      setQuizStartTime(new Date(),)
     },
-    [userId, currentModule],
-  );
+    [userId, currentModule,],
+  )
 
   const submitQuizAnswer = useCallback(
-    (questionId: string, answer: string | string[]) => {
+    (questionId: string, answer: string | string[],) => {
       if (!currentQuiz) {
-        return;
+        return
       }
 
-      const question = currentQuiz.questions.find((q) => q.id === questionId);
+      const question = currentQuiz.questions.find((q,) => q.id === questionId)
       if (!question) {
-        return;
+        return
       }
 
-      const isCorrect = Array.isArray(answer)
-        ? JSON.stringify(answer.sort())
-          === JSON.stringify((question.correctAnswer as string[]).sort())
-        : answer === question.correctAnswer;
+      const isCorrect = Array.isArray(answer,)
+        ? JSON.stringify(answer.sort(),)
+          === JSON.stringify((question.correctAnswer as string[]).sort(),)
+        : answer === question.correctAnswer
 
       const quizAnswer: QuizAnswer = {
         questionId,
         answer,
         isCorrect,
         timeSpent: 0, // Will be calculated on server
-      };
+      }
 
-      setCurrentQuizAnswers((prev) => {
-        const existing = prev.findIndex((a) => a.questionId === questionId);
+      setCurrentQuizAnswers((prev,) => {
+        const existing = prev.findIndex((a,) => a.questionId === questionId)
         if (existing >= 0) {
-          const updated = [...prev];
-          updated[existing] = quizAnswer;
-          return updated;
+          const updated = [...prev,]
+          updated[existing] = quizAnswer
+          return updated
         }
-        return [...prev, quizAnswer];
-      });
+        return [...prev, quizAnswer,]
+      },)
     },
-    [currentQuiz],
-  );
+    [currentQuiz,],
+  )
 
   const completeQuiz = useCallback(async (): Promise<QuizAttempt> => {
     if (!userId || !currentModule || !currentQuiz || !quizStartTime) {
-      throw new Error("Quiz not properly initialized");
+      throw new Error('Quiz not properly initialized',)
     }
 
     try {
-      const response = await fetch("/api/staff-training/complete-quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/staff-training/complete-quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
         body: JSON.stringify({
           userId,
           moduleId: currentModule.id,
           quizId: currentQuiz.id,
           answers: currentQuizAnswers,
           startedAt: quizStartTime.toISOString(),
-        }),
-      });
+        },),
+      },)
 
       if (!response.ok) {
-        throw new Error(`Failed to complete quiz: ${response.statusText}`);
+        throw new Error(`Failed to complete quiz: ${response.statusText}`,)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success) {
         const attempt: QuizAttempt = {
           ...data.attempt,
-          startedAt: new Date(data.attempt.startedAt),
-          completedAt: new Date(data.attempt.completedAt),
-        };
+          startedAt: new Date(data.attempt.startedAt,),
+          completedAt: new Date(data.attempt.completedAt,),
+        }
 
         // Update progress
-        setUserProgress((prev) => ({
+        setUserProgress((prev,) => ({
           ...prev,
           [currentModule.id]: {
             ...prev[currentModule.id],
@@ -442,211 +442,211 @@ export function useStaffTraining({
               attempt,
             ],
           },
-        }));
+        }))
 
         // Clear quiz state
-        setCurrentQuiz(null);
-        setCurrentQuizAnswers([]);
-        setQuizStartTime(null);
+        setCurrentQuiz(null,)
+        setCurrentQuizAnswers([],)
+        setQuizStartTime(null,)
 
-        return attempt;
+        return attempt
       } else {
-        throw new Error(data.message || "Failed to complete quiz");
+        throw new Error(data.message || 'Failed to complete quiz',)
       }
     } catch (err) {
-      console.error("Error completing quiz:", err);
-      throw err;
+      console.error('Error completing quiz:', err,)
+      throw err
     }
-  }, [userId, currentModule, currentQuiz, currentQuizAnswers, quizStartTime]);
+  }, [userId, currentModule, currentQuiz, currentQuizAnswers, quizStartTime,],)
 
   const getModuleProgress = useCallback(
-    (moduleId: string): number => {
-      const progress = userProgress[moduleId];
+    (moduleId: string,): number => {
+      const progress = userProgress[moduleId]
       if (!progress) {
-        return 0;
+        return 0
       }
 
-      const module = trainingModules.find((m) => m.id === moduleId);
+      const module = trainingModules.find((m,) => m.id === moduleId)
       if (!module) {
-        return 0;
+        return 0
       }
 
-      const totalSections = module.sections.length;
-      const completedSections = progress.sectionsCompleted.length;
+      const totalSections = module.sections.length
+      const completedSections = progress.sectionsCompleted.length
 
-      return totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
+      return totalSections > 0 ? (completedSections / totalSections) * 100 : 0
     },
-    [userProgress, trainingModules],
-  );
+    [userProgress, trainingModules,],
+  )
 
   const getOverallProgress = useCallback((): number => {
     if (!userProfile) {
-      return 0;
+      return 0
     }
 
-    const requiredModules = userProfile.requiredModules;
+    const requiredModules = userProfile.requiredModules
     const completedCount = requiredModules.filter(
-      (moduleId) => userProgress[moduleId]?.status === "completed",
-    ).length;
+      (moduleId,) => userProgress[moduleId]?.status === 'completed',
+    ).length
 
     return requiredModules.length > 0
       ? (completedCount / requiredModules.length) * 100
-      : 0;
-  }, [userProfile, userProgress]);
+      : 0
+  }, [userProfile, userProgress,],)
 
   const getCompletedModules = useCallback((): string[] => {
-    return Object.entries(userProgress)
-      .filter(([_, progress]) => progress.status === "completed")
-      .map(([moduleId, _]) => moduleId);
-  }, [userProgress]);
+    return Object.entries(userProgress,)
+      .filter(([_, progress,],) => progress.status === 'completed')
+      .map(([moduleId, _,],) => moduleId)
+  }, [userProgress,],)
 
   const getRequiredModules = useCallback((): string[] => {
-    return userProfile?.requiredModules || [];
-  }, [userProfile]);
+    return userProfile?.requiredModules || []
+  }, [userProfile,],)
 
   const generateCertificate = useCallback(
-    async (moduleId: string): Promise<string> => {
+    async (moduleId: string,): Promise<string> => {
       if (!userId) {
-        throw new Error("User not identified");
+        throw new Error('User not identified',)
       }
 
-      const response = await fetch("/api/staff-training/generate-certificate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, moduleId }),
-      });
+      const response = await fetch('/api/staff-training/generate-certificate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ userId, moduleId, },),
+      },)
 
       if (!response.ok) {
         throw new Error(
           `Failed to generate certificate: ${response.statusText}`,
-        );
+        )
       }
 
-      const data = await response.json();
-      return data.certificateUrl;
+      const data = await response.json()
+      return data.certificateUrl
     },
-    [userId],
-  );
+    [userId,],
+  )
 
   const checkCertificationEligibility = useCallback(async (): Promise<
     string[]
   > => {
     if (!userId) {
-      return [];
+      return []
     }
 
     const response = await fetch(
       `/api/staff-training/certification-eligibility/${userId}`,
-    );
+    )
 
     if (!response.ok) {
-      return [];
+      return []
     }
 
-    const data = await response.json();
-    return data.eligibleCertifications || [];
-  }, [userId]);
+    const data = await response.json()
+    return data.eligibleCertifications || []
+  }, [userId,],)
 
   const syncOfflineData = useCallback(async () => {
     if (!offlineMode) {
-      return;
+      return
     }
 
-    const offlineData = localStorage.getItem("training_offline_data");
+    const offlineData = localStorage.getItem('training_offline_data',)
     if (!offlineData) {
-      return;
+      return
     }
 
     try {
-      const parsed = JSON.parse(offlineData);
+      const parsed = JSON.parse(offlineData,)
 
-      for (const [key, progressData] of Object.entries(parsed)) {
-        const [userId, moduleId] = key.split("_");
-        await saveProgress(moduleId, progressData as Partial<TrainingProgress>);
+      for (const [key, progressData,] of Object.entries(parsed,)) {
+        const [userId, moduleId,] = key.split('_',)
+        await saveProgress(moduleId, progressData as Partial<TrainingProgress>,)
       }
 
       // Clear offline data after successful sync
-      localStorage.removeItem("training_offline_data");
+      localStorage.removeItem('training_offline_data',)
     } catch (err) {
-      console.error("Error syncing offline data:", err);
+      console.error('Error syncing offline data:', err,)
     }
-  }, [offlineMode, saveProgress]);
+  }, [offlineMode, saveProgress,],)
 
-  const downloadModuleForOffline = useCallback(async (moduleId: string) => {
+  const downloadModuleForOffline = useCallback(async (moduleId: string,) => {
     try {
       const response = await fetch(
         `/api/staff-training/offline-download/${moduleId}`,
-      );
+      )
 
       if (!response.ok) {
-        throw new Error(`Failed to download module: ${response.statusText}`);
+        throw new Error(`Failed to download module: ${response.statusText}`,)
       }
 
-      const moduleData = await response.json();
+      const moduleData = await response.json()
 
       // Store in IndexedDB for offline access
-      if ("indexedDB" in window) {
-        const request = indexedDB.open("TrainingModules", 1);
+      if ('indexedDB' in window) {
+        const request = indexedDB.open('TrainingModules', 1,)
         request.onsuccess = () => {
-          const db = request.result;
-          const transaction = db.transaction(["modules"], "readwrite");
-          const store = transaction.objectStore("modules");
-          store.put(moduleData, moduleId);
-        };
+          const db = request.result
+          const transaction = db.transaction(['modules',], 'readwrite',)
+          const store = transaction.objectStore('modules',)
+          store.put(moduleData, moduleId,)
+        }
       }
     } catch (err) {
-      console.error("Error downloading module for offline:", err);
+      console.error('Error downloading module for offline:', err,)
       setError(
-        err instanceof Error ? err.message : "Failed to download module",
-      );
+        err instanceof Error ? err.message : 'Failed to download module',
+      )
     }
-  }, []);
+  }, [],)
 
   const isOfflineCapable = useCallback(
-    (moduleId: string): boolean => {
-      const module = trainingModules.find((m) => m.id === moduleId);
+    (moduleId: string,): boolean => {
+      const module = trainingModules.find((m,) => m.id === moduleId)
       if (!module) {
-        return false;
+        return false
       }
 
       // Check if module has only offline-compatible content
       return module.sections.every(
-        (section) =>
-          section.type === "text"
-          || section.type === "checklist"
-          || section.type === "case_study",
-      );
+        (section,) =>
+          section.type === 'text'
+          || section.type === 'checklist'
+          || section.type === 'case_study',
+      )
     },
-    [trainingModules],
-  );
+    [trainingModules,],
+  )
 
   // Initialize data
   useEffect(() => {
     if (userId) {
-      fetchUserProfile();
-      fetchUserProgress();
+      fetchUserProfile()
+      fetchUserProgress()
     }
-    fetchTrainingModules();
-  }, [userId, fetchUserProfile, fetchUserProgress, fetchTrainingModules]);
+    fetchTrainingModules()
+  }, [userId, fetchUserProfile, fetchUserProgress, fetchTrainingModules,],)
 
   // Auto-save progress periodically
   useEffect(() => {
     if (!autoSave || !currentModule || !userId) {
-      return;
+      return
     }
 
     const interval = setInterval(() => {
-      const moduleProgress = userProgress[currentModule.id];
+      const moduleProgress = userProgress[currentModule.id]
       if (moduleProgress) {
         saveProgress(currentModule.id, {
           timeSpent: (moduleProgress.timeSpent || 0) + 1, // Increment by 1 minute
           lastAccessedAt: new Date(),
-        });
+        },)
       }
-    }, 60_000); // Save every minute
+    }, 60_000,) // Save every minute
 
-    return () => clearInterval(interval);
-  }, [autoSave, currentModule, userId, userProgress, saveProgress]);
+    return () => clearInterval(interval,)
+  }, [autoSave, currentModule, userId, userProgress, saveProgress,],)
 
   return {
     // User profile and progress
@@ -684,5 +684,5 @@ export function useStaffTraining({
     syncOfflineData,
     downloadModuleForOffline,
     isOfflineCapable,
-  };
+  }
 }

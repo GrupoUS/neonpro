@@ -16,17 +16,17 @@ export const DASHBOARD_CONSTANTS = {
   FIRST_CHAR_INDEX: 0,
 
   // Array generation ranges
-  PATIENT_SKELETON_RANGE: [1, 2, 3, 4, 5] as const,
-  APPOINTMENT_SKELETON_RANGE: [1, 2, 3] as const,
-} as const;
+  PATIENT_SKELETON_RANGE: [1, 2, 3, 4, 5,] as const,
+  APPOINTMENT_SKELETON_RANGE: [1, 2, 3,] as const,
+} as const
 
 // Type-safe array ranges for skeleton loading
 export const PATIENT_SKELETON_INDEXES = Array.from(
-  { length: DASHBOARD_CONSTANTS.SKELETON_ITEMS_PATIENTS },
-  (_, index) => index + 1,
-);
+  { length: DASHBOARD_CONSTANTS.SKELETON_ITEMS_PATIENTS, },
+  (_, index,) => index + 1,
+)
 
 export const APPOINTMENT_SKELETON_INDEXES = Array.from(
-  { length: DASHBOARD_CONSTANTS.SKELETON_ITEMS_APPOINTMENTS },
-  (_, index) => index + 1,
-);
+  { length: DASHBOARD_CONSTANTS.SKELETON_ITEMS_APPOINTMENTS, },
+  (_, index,) => index + 1,
+)

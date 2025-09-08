@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,16 +11,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -28,7 +28,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 import {
   Calendar,
   CheckCircle,
@@ -46,295 +46,295 @@ import {
   UserCheck,
   UserX,
   XCircle,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+} from 'lucide-react'
+import { useMemo, useState, } from 'react'
 
 import type {
   AvailabilityStatus,
   HealthcareProfessional,
   LicenseStatus,
   ProfessionalRole,
-} from "@/app/types/team-coordination"; // Mock data for Brazilian healthcare professionals
+} from '@/app/types/team-coordination' // Mock data for Brazilian healthcare professionals
 
 const mockStaffData: HealthcareProfessional[] = [
   {
-    id: "prof-001",
-    cpf: "***.***.***-**", // Masked for privacy
-    fullName: "Dr. Maria Silva Santos",
-    displayName: "Dra. Maria Silva",
-    email: "maria.silva@neonpro.com.br",
-    phone: "+55 11 99999-0001",
-    role: "medico",
-    department: "Cardiologia",
+    id: 'prof-001',
+    cpf: '***.***.***-**', // Masked for privacy
+    fullName: 'Dr. Maria Silva Santos',
+    displayName: 'Dra. Maria Silva',
+    email: 'maria.silva@neonpro.com.br',
+    phone: '+55 11 99999-0001',
+    role: 'medico',
+    department: 'Cardiologia',
     cfmLicense: {
-      cfmNumber: "123456-SP",
-      state: "SP",
-      issueDate: new Date("2018-03-15"),
-      expiryDate: new Date("2025-03-15"),
-      status: "active",
-      lastRenewalDate: new Date("2023-03-15"),
+      cfmNumber: '123456-SP',
+      state: 'SP',
+      issueDate: new Date('2018-03-15',),
+      expiryDate: new Date('2025-03-15',),
+      status: 'active',
+      lastRenewalDate: new Date('2023-03-15',),
       disciplinaryActions: [],
       telemedicineAuthorized: true,
     },
     rqeRegistrations: [
       {
-        rqeNumber: "RQE-98765",
-        specialty: "Cardiologia",
-        certifyingBody: "SBC - Sociedade Brasileira de Cardiologia",
-        issueDate: new Date("2020-01-10"),
-        expiryDate: new Date("2025-01-10"),
-        status: "active",
+        rqeNumber: 'RQE-98765',
+        specialty: 'Cardiologia',
+        certifyingBody: 'SBC - Sociedade Brasileira de Cardiologia',
+        issueDate: new Date('2020-01-10',),
+        expiryDate: new Date('2025-01-10',),
+        status: 'active',
       },
     ],
-    professionalLicenses: ["CFM-123456-SP"],
-    specializations: ["Cardiologia Intervencionista", "Ecocardiografia"],
-    competencies: ["Cateterismo Cardíaco", "Angioplastia", "Ecocardiograma"],
-    languages: ["Português", "Inglês", "Espanhol"],
+    professionalLicenses: ['CFM-123456-SP',],
+    specializations: ['Cardiologia Intervencionista', 'Ecocardiografia',],
+    competencies: ['Cateterismo Cardíaco', 'Angioplastia', 'Ecocardiograma',],
+    languages: ['Português', 'Inglês', 'Espanhol',],
     cmeCredits: [],
     cmeRequiredHours: 100,
     cmeCompletedHours: 85,
-    educationLevel: "Doutorado",
-    availabilityStatus: "available",
-    currentLocation: "Sala 301 - Cardiologia",
-    shiftStartTime: new Date("2024-08-21T07:00:00"),
-    shiftEndTime: new Date("2024-08-21T19:00:00"),
+    educationLevel: 'Doutorado',
+    availabilityStatus: 'available',
+    currentLocation: 'Sala 301 - Cardiologia',
+    shiftStartTime: new Date('2024-08-21T07:00:00',),
+    shiftEndTime: new Date('2024-08-21T19:00:00',),
     performanceMetrics: [],
     patientSatisfactionScore: 9.2,
     safetyIncidents: 0,
-    employmentStartDate: new Date("2020-05-01"),
-    contractType: "clt",
+    employmentStartDate: new Date('2020-05-01',),
+    contractType: 'clt',
     weeklyHoursLimit: 44,
     currentWeekHours: 32,
     overtimeHours: 0,
     emergencyContact: {
-      name: "João Silva Santos",
-      relationship: "Esposo",
-      phone: "+55 11 99999-0002",
-      email: "joao.santos@email.com",
+      name: 'João Silva Santos',
+      relationship: 'Esposo',
+      phone: '+55 11 99999-0002',
+      email: 'joao.santos@email.com',
     },
     medicalAlerts: [],
     consentGiven: true,
-    consentDate: new Date("2024-01-15"),
-    dataRetentionDate: new Date("2029-01-15"),
-    createdAt: new Date("2020-05-01"),
-    updatedAt: new Date("2024-08-21"),
-    lastLoginAt: new Date("2024-08-21T06:45:00"),
+    consentDate: new Date('2024-01-15',),
+    dataRetentionDate: new Date('2029-01-15',),
+    createdAt: new Date('2020-05-01',),
+    updatedAt: new Date('2024-08-21',),
+    lastLoginAt: new Date('2024-08-21T06:45:00',),
     isActive: true,
   },
   {
-    id: "prof-002",
-    cpf: "***.***.***-**",
-    fullName: "Dr. Roberto Oliveira Costa",
-    displayName: "Dr. Roberto Oliveira",
-    email: "roberto.oliveira@neonpro.com.br",
-    phone: "+55 11 99999-0003",
-    role: "medico",
-    department: "Urgência e Emergência",
+    id: 'prof-002',
+    cpf: '***.***.***-**',
+    fullName: 'Dr. Roberto Oliveira Costa',
+    displayName: 'Dr. Roberto Oliveira',
+    email: 'roberto.oliveira@neonpro.com.br',
+    phone: '+55 11 99999-0003',
+    role: 'medico',
+    department: 'Urgência e Emergência',
     cfmLicense: {
-      cfmNumber: "234567-SP",
-      state: "SP",
-      issueDate: new Date("2015-06-20"),
-      expiryDate: new Date("2024-12-20"), // Expiring soon!
-      status: "pending_renewal",
-      lastRenewalDate: new Date("2019-06-20"),
+      cfmNumber: '234567-SP',
+      state: 'SP',
+      issueDate: new Date('2015-06-20',),
+      expiryDate: new Date('2024-12-20',), // Expiring soon!
+      status: 'pending_renewal',
+      lastRenewalDate: new Date('2019-06-20',),
       disciplinaryActions: [],
       telemedicineAuthorized: false,
     },
     rqeRegistrations: [],
-    professionalLicenses: ["CFM-234567-SP"],
-    specializations: ["Medicina de Emergência", "Clínica Médica"],
-    competencies: ["Trauma", "Reanimação Cardiopulmonar", "ACLS"],
-    languages: ["Português", "Inglês"],
+    professionalLicenses: ['CFM-234567-SP',],
+    specializations: ['Medicina de Emergência', 'Clínica Médica',],
+    competencies: ['Trauma', 'Reanimação Cardiopulmonar', 'ACLS',],
+    languages: ['Português', 'Inglês',],
     cmeCredits: [],
     cmeRequiredHours: 100,
     cmeCompletedHours: 45, // Below requirement
-    educationLevel: "Especialização",
-    availabilityStatus: "emergency",
-    currentLocation: "Pronto Socorro",
-    shiftStartTime: new Date("2024-08-21T19:00:00"),
-    shiftEndTime: new Date("2024-08-22T07:00:00"),
+    educationLevel: 'Especialização',
+    availabilityStatus: 'emergency',
+    currentLocation: 'Pronto Socorro',
+    shiftStartTime: new Date('2024-08-21T19:00:00',),
+    shiftEndTime: new Date('2024-08-22T07:00:00',),
     performanceMetrics: [],
     patientSatisfactionScore: 8.7,
     safetyIncidents: 1,
-    employmentStartDate: new Date("2018-03-01"),
-    contractType: "clt",
+    employmentStartDate: new Date('2018-03-01',),
+    contractType: 'clt',
     weeklyHoursLimit: 44,
     currentWeekHours: 46, // Over CLT limit!
     overtimeHours: 2,
     emergencyContact: {
-      name: "Ana Costa Oliveira",
-      relationship: "Esposa",
-      phone: "+55 11 99999-0004",
+      name: 'Ana Costa Oliveira',
+      relationship: 'Esposa',
+      phone: '+55 11 99999-0004',
     },
     medicalAlerts: [],
     consentGiven: true,
-    consentDate: new Date("2024-01-15"),
-    dataRetentionDate: new Date("2029-01-15"),
-    createdAt: new Date("2018-03-01"),
-    updatedAt: new Date("2024-08-21"),
-    lastLoginAt: new Date("2024-08-21T18:30:00"),
+    consentDate: new Date('2024-01-15',),
+    dataRetentionDate: new Date('2029-01-15',),
+    createdAt: new Date('2018-03-01',),
+    updatedAt: new Date('2024-08-21',),
+    lastLoginAt: new Date('2024-08-21T18:30:00',),
     isActive: true,
   },
   {
-    id: "prof-003",
-    cpf: "***.***.***-**",
-    fullName: "Ana Paula Ferreira Souza",
-    displayName: "Enf. Ana Paula",
-    email: "ana.ferreira@neonpro.com.br",
-    phone: "+55 11 99999-0005",
-    role: "enfermeiro",
-    department: "UTI",
-    cfmLicense: undefined, // Nurses don't have CFM licenses
+    id: 'prof-003',
+    cpf: '***.***.***-**',
+    fullName: 'Ana Paula Ferreira Souza',
+    displayName: 'Enf. Ana Paula',
+    email: 'ana.ferreira@neonpro.com.br',
+    phone: '+55 11 99999-0005',
+    role: 'enfermeiro',
+    department: 'UTI',
+    cfmLicense: null, // Nurses don't have CFM licenses
     rqeRegistrations: [],
-    professionalLicenses: ["COREN-SP-123456"],
-    specializations: ["Enfermagem em UTI", "Cuidados Intensivos"],
+    professionalLicenses: ['COREN-SP-123456',],
+    specializations: ['Enfermagem em UTI', 'Cuidados Intensivos',],
     competencies: [
-      "Ventilação Mecânica",
-      "Monitorização Hemodinâmica",
-      "Medicação EV",
+      'Ventilação Mecânica',
+      'Monitorização Hemodinâmica',
+      'Medicação EV',
     ],
-    languages: ["Português"],
+    languages: ['Português',],
     cmeCredits: [],
     cmeRequiredHours: 60, // Different requirement for nurses
     cmeCompletedHours: 72, // Exceeding requirement
-    educationLevel: "Especialização",
-    availabilityStatus: "busy",
-    currentLocation: "UTI - Leito 05",
-    shiftStartTime: new Date("2024-08-21T07:00:00"),
-    shiftEndTime: new Date("2024-08-21T19:00:00"),
+    educationLevel: 'Especialização',
+    availabilityStatus: 'busy',
+    currentLocation: 'UTI - Leito 05',
+    shiftStartTime: new Date('2024-08-21T07:00:00',),
+    shiftEndTime: new Date('2024-08-21T19:00:00',),
     performanceMetrics: [],
     patientSatisfactionScore: 9.5,
     safetyIncidents: 0,
-    employmentStartDate: new Date("2019-08-15"),
-    contractType: "clt",
+    employmentStartDate: new Date('2019-08-15',),
+    contractType: 'clt',
     weeklyHoursLimit: 44,
     currentWeekHours: 40,
     overtimeHours: 0,
     emergencyContact: {
-      name: "Carlos Souza",
-      relationship: "Esposo",
-      phone: "+55 11 99999-0006",
+      name: 'Carlos Souza',
+      relationship: 'Esposo',
+      phone: '+55 11 99999-0006',
     },
     medicalAlerts: [],
     consentGiven: true,
-    consentDate: new Date("2024-01-15"),
-    dataRetentionDate: new Date("2029-01-15"),
-    createdAt: new Date("2019-08-15"),
-    updatedAt: new Date("2024-08-21"),
-    lastLoginAt: new Date("2024-08-21T06:50:00"),
+    consentDate: new Date('2024-01-15',),
+    dataRetentionDate: new Date('2029-01-15',),
+    createdAt: new Date('2019-08-15',),
+    updatedAt: new Date('2024-08-21',),
+    lastLoginAt: new Date('2024-08-21T06:50:00',),
     isActive: true,
   },
-]; // Helper function to get status colors and icons
-const getStatusInfo = (status: LicenseStatus | AvailabilityStatus) => {
+] // Helper function to get status colors and icons
+const getStatusInfo = (status: LicenseStatus | AvailabilityStatus,) => {
   switch (status) {
-    case "active":
-    case "available": {
-      return { color: "text-green-600", bg: "bg-green-100", icon: CheckCircle };
+    case 'active':
+    case 'available': {
+      return { color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle, }
     }
-    case "expired":
-    case "suspended":
-    case "revoked": {
-      return { color: "text-red-600", bg: "bg-red-100", icon: XCircle };
+    case 'expired':
+    case 'suspended':
+    case 'revoked': {
+      return { color: 'text-red-600', bg: 'bg-red-100', icon: XCircle, }
     }
-    case "pending_renewal": {
-      return { color: "text-yellow-600", bg: "bg-yellow-100", icon: Clock };
+    case 'pending_renewal': {
+      return { color: 'text-yellow-600', bg: 'bg-yellow-100', icon: Clock, }
     }
-    case "busy":
-    case "emergency": {
-      return { color: "text-blue-600", bg: "bg-blue-100", icon: UserCheck };
+    case 'busy':
+    case 'emergency': {
+      return { color: 'text-blue-600', bg: 'bg-blue-100', icon: UserCheck, }
     }
-    case "break":
-    case "off_duty": {
-      return { color: "text-gray-600", bg: "bg-gray-100", icon: Clock };
+    case 'break':
+    case 'off_duty': {
+      return { color: 'text-gray-600', bg: 'bg-gray-100', icon: Clock, }
     }
     default: {
-      return { color: "text-gray-600", bg: "bg-gray-100", icon: User };
+      return { color: 'text-gray-600', bg: 'bg-gray-100', icon: User, }
     }
   }
-};
+}
 
 // Role translations for Brazilian Portuguese
 const roleTranslations: Record<ProfessionalRole, string> = {
-  medico: "Médico",
-  enfermeiro: "Enfermeiro",
-  tecnico: "Técnico",
-  administrativo: "Administrativo",
-  especialista: "Especialista",
-  residente: "Residente",
-  estagiario: "Estagiário",
-};
+  medico: 'Médico',
+  enfermeiro: 'Enfermeiro',
+  tecnico: 'Técnico',
+  administrativo: 'Administrativo',
+  especialista: 'Especialista',
+  residente: 'Residente',
+  estagiario: 'Estagiário',
+}
 
 // Component interface
 interface StaffManagementProps {
-  emergencyMode?: boolean;
+  emergencyMode?: boolean
 }
 
 export function StaffManagement({
   emergencyMode = false,
-}: StaffManagementProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<ProfessionalRole | "all">("all");
-  const [statusFilter, setStatusFilter] = useState<AvailabilityStatus | "all">(
-    "all",
-  );
-  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
-  const [showComplianceOnly, setShowComplianceOnly] = useState(false); // Filter and search logic
+}: StaffManagementProps,) {
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [roleFilter, setRoleFilter,] = useState<ProfessionalRole | 'all'>('all',)
+  const [statusFilter, setStatusFilter,] = useState<AvailabilityStatus | 'all'>(
+    'all',
+  )
+  const [departmentFilter, setDepartmentFilter,] = useState<string>('all',)
+  const [showComplianceOnly, setShowComplianceOnly,] = useState(false,) // Filter and search logic
   const filteredStaff = useMemo(() => {
-    return mockStaffData.filter((staff) => {
+    return mockStaffData.filter((staff,) => {
       // Search filter
       if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = staff.fullName.toLowerCase().includes(searchLower)
-          || staff.displayName.toLowerCase().includes(searchLower)
-          || staff.email.toLowerCase().includes(searchLower)
-          || staff.department.toLowerCase().includes(searchLower)
-          || staff.cfmLicense?.cfmNumber.toLowerCase().includes(searchLower);
+        const searchLower = searchQuery.toLowerCase()
+        const matchesSearch = staff.fullName.toLowerCase().includes(searchLower,)
+          || staff.displayName.toLowerCase().includes(searchLower,)
+          || staff.email.toLowerCase().includes(searchLower,)
+          || staff.department.toLowerCase().includes(searchLower,)
+          || staff.cfmLicense?.cfmNumber.toLowerCase().includes(searchLower,)
 
         if (!matchesSearch) {
-          return false;
+          return false
         }
       }
 
       // Role filter
-      if (roleFilter !== "all" && staff.role !== roleFilter) {
-        return false;
+      if (roleFilter !== 'all' && staff.role !== roleFilter) {
+        return false
       }
 
       // Status filter
-      if (statusFilter !== "all" && staff.availabilityStatus !== statusFilter) {
-        return false;
+      if (statusFilter !== 'all' && staff.availabilityStatus !== statusFilter) {
+        return false
       }
 
       // Department filter
-      if (departmentFilter !== "all" && staff.department !== departmentFilter) {
-        return false;
+      if (departmentFilter !== 'all' && staff.department !== departmentFilter) {
+        return false
       }
 
       // Compliance filter
       if (showComplianceOnly) {
-        const hasComplianceIssues = (staff.cfmLicense && staff.cfmLicense.status !== "active")
+        const hasComplianceIssues = (staff.cfmLicense && staff.cfmLicense.status !== 'active')
           || staff.currentWeekHours > staff.weeklyHoursLimit
-          || staff.cmeCompletedHours < staff.cmeRequiredHours;
+          || staff.cmeCompletedHours < staff.cmeRequiredHours
 
         if (!hasComplianceIssues) {
-          return false;
+          return false
         }
       }
 
-      return true;
-    });
+      return true
+    },)
   }, [
     searchQuery,
     roleFilter,
     statusFilter,
     departmentFilter,
     showComplianceOnly,
-  ]);
+  ],)
 
   // Get unique departments for filter
   const departments = useMemo(() => {
-    return [...new Set(mockStaffData.map((staff) => staff.department))];
-  }, []);
+    return [...new Set(mockStaffData.map((staff,) => staff.department),),]
+  }, [],)
   return (
     <div className="space-y-6">
       {/* Header with Actions */}
@@ -380,15 +380,15 @@ export function StaffManagement({
                 <Input
                   aria-label="Buscar profissionais"
                   className="pl-10"
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e,) => setSearchQuery(e.target.value,)}
                   placeholder="Buscar por nome, CFM, email..."
                   value={searchQuery}
                 />
               </div>
-            </div>{" "}
+            </div>{' '}
             {/* Role Filter */}
             <Select
-              onValueChange={(value) => setRoleFilter(value as ProfessionalRole | "all")}
+              onValueChange={(value: string,) => setRoleFilter(value as ProfessionalRole | 'all',)}
               value={roleFilter}
             >
               <SelectTrigger aria-label="Filtrar por função">
@@ -396,7 +396,7 @@ export function StaffManagement({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as Funções</SelectItem>
-                {Object.entries(roleTranslations).map(([key, label]) => (
+                {Object.entries(roleTranslations,).map(([key, label,],) => (
                   <SelectItem key={key} value={key}>
                     {label}
                   </SelectItem>
@@ -405,7 +405,8 @@ export function StaffManagement({
             </Select>
             {/* Status Filter */}
             <Select
-              onValueChange={(value) => setStatusFilter(value as AvailabilityStatus | "all")}
+              onValueChange={(value: string,) =>
+                setStatusFilter(value as AvailabilityStatus | 'all',)}
               value={statusFilter}
             >
               <SelectTrigger aria-label="Filtrar por status">
@@ -430,7 +431,7 @@ export function StaffManagement({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os Departamentos</SelectItem>
-                {departments.map((dept) => (
+                {departments.map((dept,) => (
                   <SelectItem key={dept} value={dept}>
                     {dept}
                   </SelectItem>
@@ -441,9 +442,9 @@ export function StaffManagement({
             <div className="flex items-center space-x-2">
               <Button
                 className="text-xs"
-                onClick={() => setShowComplianceOnly(!showComplianceOnly)}
+                onClick={() => setShowComplianceOnly(!showComplianceOnly,)}
                 size="sm"
-                variant={showComplianceOnly ? "default" : "outline"}
+                variant={showComplianceOnly ? 'default' : 'outline'}
               >
                 <Filter className="mr-1 h-3 w-3" />
                 Pendências
@@ -451,7 +452,7 @@ export function StaffManagement({
             </div>
           </div>
         </CardContent>
-      </Card>{" "}
+      </Card>{' '}
       {/* Staff Table */}
       <Card>
         <CardHeader>
@@ -477,14 +478,14 @@ export function StaffManagement({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStaff.map((staff) => {
-                  const statusInfo = getStatusInfo(staff.availabilityStatus);
-                  const { icon: StatusIcon } = statusInfo;
+                {filteredStaff.map((staff,) => {
+                  const statusInfo = getStatusInfo(staff.availabilityStatus,)
+                  const { icon: StatusIcon, } = statusInfo
 
                   // Check for compliance issues
-                  const cfmIssue = staff.cfmLicense && staff.cfmLicense.status !== "active";
-                  const cltIssue = staff.currentWeekHours > staff.weeklyHoursLimit;
-                  const cmeIssue = staff.cmeCompletedHours < staff.cmeRequiredHours;
+                  const cfmIssue = staff.cfmLicense && staff.cfmLicense.status !== 'active'
+                  const cltIssue = staff.currentWeekHours > staff.weeklyHoursLimit
+                  const cmeIssue = staff.cmeCompletedHours < staff.cmeRequiredHours
 
                   return (
                     <TableRow className="hover:bg-muted/50" key={staff.id}>
@@ -495,10 +496,10 @@ export function StaffManagement({
                             <AvatarImage alt={staff.displayName} src="" />
                             <AvatarFallback className="bg-blue-100 font-medium text-blue-700 text-xs">
                               {staff.displayName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .slice(0, 2)}
+                                .split(' ',)
+                                .map((n,) => n[0])
+                                .join('',)
+                                .slice(0, 2,)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
@@ -515,7 +516,7 @@ export function StaffManagement({
                             )}
                           </div>
                         </div>
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       {/* Role */}
                       <TableCell>
                         <Badge className="text-xs" variant="secondary">
@@ -537,16 +538,16 @@ export function StaffManagement({
                             />
                           </div>
                           <span className="font-medium text-xs capitalize">
-                            {staff.availabilityStatus === "available"
-                              && "Disponível"}
-                            {staff.availabilityStatus === "busy" && "Ocupado"}
-                            {staff.availabilityStatus === "emergency"
-                              && "Emergência"}
-                            {staff.availabilityStatus === "break" && "Pausa"}
-                            {staff.availabilityStatus === "off_duty"
-                              && "Fora de Serviço"}
-                            {staff.availabilityStatus === "on_call"
-                              && "Sobreaviso"}
+                            {staff.availabilityStatus === 'available'
+                              && 'Disponível'}
+                            {staff.availabilityStatus === 'busy' && 'Ocupado'}
+                            {staff.availabilityStatus === 'emergency'
+                              && 'Emergência'}
+                            {staff.availabilityStatus === 'break' && 'Pausa'}
+                            {staff.availabilityStatus === 'off_duty'
+                              && 'Fora de Serviço'}
+                            {staff.availabilityStatus === 'on_call'
+                              && 'Sobreaviso'}
                           </span>
                         </div>
                       </TableCell>
@@ -563,7 +564,7 @@ export function StaffManagement({
                                   ? <XCircle className="h-3 w-3 text-red-500" />
                                   : <CheckCircle className="h-3 w-3 text-green-500" />}
                               </div>
-                              {staff.cfmLicense.status === "pending_renewal" && (
+                              {staff.cfmLicense.status === 'pending_renewal' && (
                                 <Badge
                                   className="border-yellow-500 text-xs text-yellow-700"
                                   variant="outline"
@@ -576,18 +577,18 @@ export function StaffManagement({
                           : (
                             <div className="flex items-center space-x-1">
                               <span className="text-muted-foreground text-xs">
-                                {staff.professionalLicenses[0] || "N/A"}
+                                {staff.professionalLicenses[0] || 'N/A'}
                               </span>
                               <CheckCircle className="h-3 w-3 text-green-500" />
                             </div>
                           )}
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       {/* Performance Score */}
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Star className="h-3 w-3 text-yellow-500" />
                           <span className="font-medium text-sm">
-                            {staff.patientSatisfactionScore.toFixed(1)}
+                            {staff.patientSatisfactionScore.toFixed(1,)}
                           </span>
                           {staff.safetyIncidents > 0 && (
                             <Badge className="text-xs" variant="destructive">
@@ -642,7 +643,7 @@ export function StaffManagement({
                               * 100}
                           />
                         </div>
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       {/* Actions */}
                       <TableCell>
                         <DropdownMenu>
@@ -685,8 +686,8 @@ export function StaffManagement({
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
+                  )
+                },)}
               </TableBody>
             </Table>
           </div>
@@ -710,5 +711,5 @@ export function StaffManagement({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

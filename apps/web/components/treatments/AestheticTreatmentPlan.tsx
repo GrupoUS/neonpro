@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Separator, } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from '@/components/ui/tooltip'
 import type {
   AestheticTreatmentCategory,
   CFMComplianceStatus,
@@ -15,8 +15,8 @@ import type {
   TreatmentPlan,
   TreatmentSession,
   TreatmentStatus,
-} from "@/types/treatments";
-import { motion } from "framer-motion";
+} from '@/types/treatments'
+import { motion, } from 'framer-motion'
 import {
   Activity,
   AlertTriangle,
@@ -29,39 +29,39 @@ import {
   Shield,
   Star,
   Target,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 // Visual components maintaining NeonPro design
 interface NeonGradientCardProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 const NeonGradientCard = ({
   children,
-  className = "",
-}: NeonGradientCardProps) => (
+  className = '',
+}: NeonGradientCardProps,) => (
   <motion.div
-    animate={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 1, y: 0, }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10">{children}</div>
   </motion.div>
-);
+)
 
 // Props interface for the component
 interface AestheticTreatmentPlanProps {
-  treatmentPlan: TreatmentPlan;
-  sessions?: TreatmentSession[];
-  onEditPlan?: (plan: TreatmentPlan) => void;
-  onScheduleSession?: (planId: string) => void;
-  onViewProgress?: (planId: string) => void;
-  onManageConsent?: (planId: string) => void;
-  variant?: "card" | "detailed" | "summary";
-  className?: string;
+  treatmentPlan: TreatmentPlan
+  sessions?: TreatmentSession[]
+  onEditPlan?: (plan: TreatmentPlan,) => void
+  onScheduleSession?: (planId: string,) => void
+  onViewProgress?: (planId: string,) => void
+  onManageConsent?: (planId: string,) => void
+  variant?: 'card' | 'detailed' | 'summary'
+  className?: string
 }
 
 // Helper functions for Brazilian localization
@@ -69,111 +69,111 @@ const getTreatmentCategoryLabel = (
   category: AestheticTreatmentCategory,
 ): string => {
   const labels: Record<AestheticTreatmentCategory, string> = {
-    facial: "Tratamentos Faciais",
-    body_contouring: "Contorno Corporal",
-    skin_rejuvenation: "Rejuvenescimento Cutâneo",
-    hair_restoration: "Restauração Capilar",
-    intimate_health: "Saúde Íntima",
-    preventive_care: "Cuidados Preventivos",
-    post_surgical: "Pós-Cirúrgico",
-    dermatological: "Dermatológico",
-  };
-  return labels[category];
-};
-const getTreatmentStatusLabel = (status: TreatmentStatus): string => {
+    facial: 'Tratamentos Faciais',
+    body_contouring: 'Contorno Corporal',
+    skin_rejuvenation: 'Rejuvenescimento Cutâneo',
+    hair_restoration: 'Restauração Capilar',
+    intimate_health: 'Saúde Íntima',
+    preventive_care: 'Cuidados Preventivos',
+    post_surgical: 'Pós-Cirúrgico',
+    dermatological: 'Dermatológico',
+  }
+  return labels[category]
+}
+const getTreatmentStatusLabel = (status: TreatmentStatus,): string => {
   const labels: Record<TreatmentStatus, string> = {
-    planned: "Planejado",
-    consent_pending: "Aguardando Consentimento",
-    active: "Em Andamento",
-    paused: "Pausado",
-    completed: "Concluído",
-    cancelled: "Cancelado",
-    under_review: "Em Revisão",
-  };
-  return labels[status];
-};
+    planned: 'Planejado',
+    consent_pending: 'Aguardando Consentimento',
+    active: 'Em Andamento',
+    paused: 'Pausado',
+    completed: 'Concluído',
+    cancelled: 'Cancelado',
+    under_review: 'Em Revisão',
+  }
+  return labels[status]
+}
 
 const getTreatmentStatusVariant = (
   status: TreatmentStatus,
-): "default" | "secondary" | "destructive" | "outline" => {
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
   const variants: Record<
     TreatmentStatus,
-    "default" | "secondary" | "destructive" | "outline"
+    'default' | 'secondary' | 'destructive' | 'outline'
   > = {
-    planned: "outline",
-    consent_pending: "secondary",
-    active: "default",
-    paused: "secondary",
-    completed: "default",
-    cancelled: "destructive",
-    under_review: "secondary",
-  };
-  return variants[status];
-};
+    planned: 'outline',
+    consent_pending: 'secondary',
+    active: 'default',
+    paused: 'secondary',
+    completed: 'default',
+    cancelled: 'destructive',
+    under_review: 'secondary',
+  }
+  return variants[status]
+}
 
-const getCFMComplianceLabel = (status: CFMComplianceStatus): string => {
+const getCFMComplianceLabel = (status: CFMComplianceStatus,): string => {
   const labels: Record<CFMComplianceStatus, string> = {
-    compliant: "Conforme CFM",
-    pending_review: "Aguardando Revisão",
-    requires_attention: "Requer Atenção",
-    non_compliant: "Não Conforme",
-  };
-  return labels[status];
-};
+    compliant: 'Conforme CFM',
+    pending_review: 'Aguardando Revisão',
+    requires_attention: 'Requer Atenção',
+    non_compliant: 'Não Conforme',
+  }
+  return labels[status]
+}
 
-const getCFMComplianceIcon = (status: CFMComplianceStatus) => {
+const getCFMComplianceIcon = (status: CFMComplianceStatus,) => {
   switch (status) {
-    case "compliant": {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'compliant': {
+      return <CheckCircle className="h-4 w-4 text-green-500" />
     }
-    case "pending_review": {
-      return <Clock className="h-4 w-4 text-yellow-500" />;
+    case 'pending_review': {
+      return <Clock className="h-4 w-4 text-yellow-500" />
     }
-    case "requires_attention": {
-      return <AlertTriangle className="h-4 w-4 text-orange-500" />;
+    case 'requires_attention': {
+      return <AlertTriangle className="h-4 w-4 text-orange-500" />
     }
-    case "non_compliant": {
-      return <AlertTriangle className="h-4 w-4 text-red-500" />;
+    case 'non_compliant': {
+      return <AlertTriangle className="h-4 w-4 text-red-500" />
     }
     default: {
-      return <Info className="h-4 w-4 text-gray-500" />;
+      return <Info className="h-4 w-4 text-gray-500" />
     }
   }
-};
+}
 
-const getLGPDConsentLabel = (status: LGPDPhotoConsentStatus): string => {
+const getLGPDConsentLabel = (status: LGPDPhotoConsentStatus,): string => {
   const labels: Record<LGPDPhotoConsentStatus, string> = {
-    granted: "Consentimento Concedido",
-    withdrawn: "Consentimento Retirado",
-    expired: "Consentimento Expirado",
-    pending: "Aguardando Consentimento",
-    refused: "Consentimento Recusado",
-  };
-  return labels[status];
-};
+    granted: 'Consentimento Concedido',
+    withdrawn: 'Consentimento Retirado',
+    expired: 'Consentimento Expirado',
+    pending: 'Aguardando Consentimento',
+    refused: 'Consentimento Recusado',
+  }
+  return labels[status]
+}
 
-const getLGPDConsentIcon = (status: LGPDPhotoConsentStatus) => {
+const getLGPDConsentIcon = (status: LGPDPhotoConsentStatus,) => {
   switch (status) {
-    case "granted": {
-      return <Shield className="h-4 w-4 text-green-500" />;
+    case 'granted': {
+      return <Shield className="h-4 w-4 text-green-500" />
     }
-    case "withdrawn": {
-      return <Shield className="h-4 w-4 text-red-500" />;
+    case 'withdrawn': {
+      return <Shield className="h-4 w-4 text-red-500" />
     }
-    case "expired": {
-      return <Clock className="h-4 w-4 text-orange-500" />;
+    case 'expired': {
+      return <Clock className="h-4 w-4 text-orange-500" />
     }
-    case "pending": {
-      return <Clock className="h-4 w-4 text-yellow-500" />;
+    case 'pending': {
+      return <Clock className="h-4 w-4 text-yellow-500" />
     }
-    case "refused": {
-      return <Shield className="h-4 w-4 text-red-500" />;
+    case 'refused': {
+      return <Shield className="h-4 w-4 text-red-500" />
     }
     default: {
-      return <Info className="h-4 w-4 text-gray-500" />;
+      return <Info className="h-4 w-4 text-gray-500" />
     }
   }
-};
+}
 
 // Progress calculation helper
 const calculateProgress = (
@@ -181,10 +181,10 @@ const calculateProgress = (
   expectedSessions: number,
 ): number => {
   if (expectedSessions === 0) {
-    return 0;
+    return 0
   }
-  return Math.min((completedSessions / expectedSessions) * 100, 100);
-};
+  return Math.min((completedSessions / expectedSessions) * 100, 100,)
+}
 
 // Main component
 export function AestheticTreatmentPlan({
@@ -194,26 +194,26 @@ export function AestheticTreatmentPlan({
   onScheduleSession,
   onViewProgress,
   onManageConsent,
-  variant = "card",
-  className = "",
-}: AestheticTreatmentPlanProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+  variant = 'card',
+  className = '',
+}: AestheticTreatmentPlanProps,) {
+  const [activeTab, setActiveTab,] = useState('overview',)
 
   const progress = calculateProgress(
     treatmentPlan.completed_sessions,
     treatmentPlan.expected_sessions,
-  );
+  )
   const upcomingSessions = sessions.filter(
-    (session) =>
-      session.status === "scheduled"
-      && new Date(session.scheduled_date) > new Date(),
-  );
+    (session,) =>
+      session.status === 'scheduled'
+      && new Date(session.scheduled_date,) > new Date(),
+  )
   const completedSessions = sessions.filter(
-    (session) => session.status === "completed",
-  );
+    (session,) => session.status === 'completed',
+  )
 
   // Summary Card View
-  if (variant === "summary") {
+  if (variant === 'summary') {
     return (
       <Card className={`transition-all hover:shadow-lg ${className}`}>
         <CardHeader className="pb-3">
@@ -223,11 +223,11 @@ export function AestheticTreatmentPlan({
                 {treatmentPlan.treatment_name}
               </CardTitle>
               <CardDescription>
-                {getTreatmentCategoryLabel(treatmentPlan.category)}
+                {getTreatmentCategoryLabel(treatmentPlan.category,)}
               </CardDescription>
             </div>
-            <Badge variant={getTreatmentStatusVariant(treatmentPlan.status)}>
-              {getTreatmentStatusLabel(treatmentPlan.status)}
+            <Badge variant={getTreatmentStatusVariant(treatmentPlan.status,)}>
+              {getTreatmentStatusLabel(treatmentPlan.status,)}
             </Badge>
           </div>
         </CardHeader>
@@ -243,18 +243,18 @@ export function AestheticTreatmentPlan({
               </span>
             </div>
             <Progress
-              aria-label={`Progresso: ${progress.toFixed(1)}%`}
+              aria-label={`Progresso: ${progress.toFixed(1,)}%`}
               className="h-2"
               value={progress}
             />
 
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1">
-                {getCFMComplianceIcon(treatmentPlan.cfm_compliance_status)}
+                {getCFMComplianceIcon(treatmentPlan.cfm_compliance_status,)}
                 <span className="text-muted-foreground">CFM</span>
               </div>
               <div className="flex items-center gap-1">
-                {getLGPDConsentIcon(treatmentPlan.lgpd_photo_consent_status)}
+                {getLGPDConsentIcon(treatmentPlan.lgpd_photo_consent_status,)}
                 <span className="text-muted-foreground">LGPD</span>
               </div>
               {treatmentPlan.next_session_date && (
@@ -263,7 +263,7 @@ export function AestheticTreatmentPlan({
                   <span className="text-muted-foreground">
                     Próxima: {new Date(
                       treatmentPlan.next_session_date,
-                    ).toLocaleDateString("pt-BR")}
+                    ).toLocaleDateString('pt-BR',)}
                   </span>
                 </div>
               )}
@@ -271,11 +271,11 @@ export function AestheticTreatmentPlan({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   // Card View
-  if (variant === "card") {
+  if (variant === 'card') {
     return (
       <NeonGradientCard className={className}>
         <CardHeader>
@@ -285,12 +285,12 @@ export function AestheticTreatmentPlan({
                 {treatmentPlan.treatment_name}
               </CardTitle>
               <CardDescription className="text-slate-300">
-                {getTreatmentCategoryLabel(treatmentPlan.category)}
+                {getTreatmentCategoryLabel(treatmentPlan.category,)}
               </CardDescription>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <Badge variant={getTreatmentStatusVariant(treatmentPlan.status)}>
-                {getTreatmentStatusLabel(treatmentPlan.status)}
+              <Badge variant={getTreatmentStatusVariant(treatmentPlan.status,)}>
+                {getTreatmentStatusLabel(treatmentPlan.status,)}
               </Badge>
               <div className="flex items-center gap-2">
                 <TooltipProvider>
@@ -340,12 +340,12 @@ export function AestheticTreatmentPlan({
               </span>
             </div>
             <Progress
-              aria-label={`Progresso: ${progress.toFixed(1)}%`}
+              aria-label={`Progresso: ${progress.toFixed(1,)}%`}
               className="h-3"
               value={progress}
             />
             <div className="text-slate-400 text-xs">
-              {progress.toFixed(1)}% concluído
+              {progress.toFixed(1,)}% concluído
             </div>
           </div>
 
@@ -357,7 +357,7 @@ export function AestheticTreatmentPlan({
                 <span>Início:</span>
               </div>
               <p className="font-medium text-white">
-                {new Date(treatmentPlan.start_date).toLocaleDateString("pt-BR")}
+                {new Date(treatmentPlan.start_date,).toLocaleDateString('pt-BR',)}
               </p>
             </div>
             <div className="space-y-2">
@@ -368,7 +368,7 @@ export function AestheticTreatmentPlan({
               <p className="font-medium text-white">
                 {new Date(
                   treatmentPlan.estimated_completion_date,
-                ).toLocaleDateString("pt-BR")}
+                ).toLocaleDateString('pt-BR',)}
               </p>
             </div>
           </div>
@@ -378,13 +378,13 @@ export function AestheticTreatmentPlan({
             <Alert className="border-blue-500/50 bg-blue-500/10">
               <Calendar className="h-4 w-4" />
               <AlertDescription className="text-blue-100">
-                Próxima sessão: {new Date(treatmentPlan.next_session_date).toLocaleDateString(
-                  "pt-BR",
+                Próxima sessão: {new Date(treatmentPlan.next_session_date,).toLocaleDateString(
+                  'pt-BR',
                   {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   },
                 )}
               </AlertDescription>
@@ -396,7 +396,7 @@ export function AestheticTreatmentPlan({
             {onViewProgress && (
               <Button
                 className="flex-1"
-                onClick={() => onViewProgress(treatmentPlan.id)}
+                onClick={() => onViewProgress(treatmentPlan.id,)}
                 size="sm"
                 variant="outline"
               >
@@ -404,10 +404,10 @@ export function AestheticTreatmentPlan({
                 Ver Progresso
               </Button>
             )}
-            {onScheduleSession && treatmentPlan.status === "active" && (
+            {onScheduleSession && treatmentPlan.status === 'active' && (
               <Button
                 className="flex-1"
-                onClick={() => onScheduleSession(treatmentPlan.id)}
+                onClick={() => onScheduleSession(treatmentPlan.id,)}
                 size="sm"
               >
                 <Calendar className="mr-1 h-4 w-4" />
@@ -417,7 +417,7 @@ export function AestheticTreatmentPlan({
           </div>
         </CardContent>
       </NeonGradientCard>
-    );
+    )
   } // Detailed View
   return (
     <div className={`space-y-6 ${className}`}>
@@ -432,12 +432,12 @@ export function AestheticTreatmentPlan({
               <div className="flex items-center gap-4">
                 <Badge
                   className="text-sm"
-                  variant={getTreatmentStatusVariant(treatmentPlan.status)}
+                  variant={getTreatmentStatusVariant(treatmentPlan.status,)}
                 >
-                  {getTreatmentStatusLabel(treatmentPlan.status)}
+                  {getTreatmentStatusLabel(treatmentPlan.status,)}
                 </Badge>
                 <span className="text-slate-300">
-                  {getTreatmentCategoryLabel(treatmentPlan.category)}
+                  {getTreatmentCategoryLabel(treatmentPlan.category,)}
                 </span>
               </div>
             </div>
@@ -445,7 +445,7 @@ export function AestheticTreatmentPlan({
               {onEditPlan && (
                 <Button
                   aria-label="Editar plano de tratamento"
-                  onClick={() => onEditPlan(treatmentPlan)}
+                  onClick={() => onEditPlan(treatmentPlan,)}
                   variant="outline"
                 >
                   <FileText className="mr-2 h-4 w-4" />
@@ -455,7 +455,7 @@ export function AestheticTreatmentPlan({
               {onManageConsent && (
                 <Button
                   aria-label="Gerenciar consentimentos"
-                  onClick={() => onManageConsent(treatmentPlan.id)}
+                  onClick={() => onManageConsent(treatmentPlan.id,)}
                   variant="outline"
                 >
                   <Shield className="mr-2 h-4 w-4" />
@@ -499,12 +499,12 @@ export function AestheticTreatmentPlan({
                     </span>
                   </div>
                   <Progress
-                    aria-label={`Progresso: ${progress.toFixed(1)}%`}
+                    aria-label={`Progresso: ${progress.toFixed(1,)}%`}
                     className="h-3"
                     value={progress}
                   />
                   <p className="text-muted-foreground text-xs">
-                    {progress.toFixed(1)}% do tratamento concluído
+                    {progress.toFixed(1,)}% do tratamento concluído
                   </p>
                 </div>
 
@@ -514,14 +514,14 @@ export function AestheticTreatmentPlan({
                   <div>
                     <p className="text-muted-foreground">Tipo de Tratamento</p>
                     <p className="font-medium">
-                      {treatmentPlan.treatment_type === "single_session"
-                        && "Sessão Única"}
-                      {treatmentPlan.treatment_type === "multi_session"
-                        && "Multi-sessão"}
-                      {treatmentPlan.treatment_type === "combination_therapy"
-                        && "Terapia Combinada"}
+                      {treatmentPlan.treatment_type === 'single_session'
+                        && 'Sessão Única'}
+                      {treatmentPlan.treatment_type === 'multi_session'
+                        && 'Multi-sessão'}
+                      {treatmentPlan.treatment_type === 'combination_therapy'
+                        && 'Terapia Combinada'}
                       {treatmentPlan.treatment_type
-                          === "maintenance_protocol" && "Protocolo de Manutenção"}
+                          === 'maintenance_protocol' && 'Protocolo de Manutenção'}
                     </p>
                   </div>
                   <div>
@@ -558,8 +558,8 @@ export function AestheticTreatmentPlan({
                   <div>
                     <p className="text-muted-foreground">Data de Início</p>
                     <p className="font-medium">
-                      {new Date(treatmentPlan.start_date).toLocaleDateString(
-                        "pt-BR",
+                      {new Date(treatmentPlan.start_date,).toLocaleDateString(
+                        'pt-BR',
                       )}
                     </p>
                   </div>
@@ -570,7 +570,7 @@ export function AestheticTreatmentPlan({
                     <p className="font-medium">
                       {new Date(
                         treatmentPlan.estimated_completion_date,
-                      ).toLocaleDateString("pt-BR")}
+                      ).toLocaleDateString('pt-BR',)}
                     </p>
                   </div>
                 </div>
@@ -579,16 +579,16 @@ export function AestheticTreatmentPlan({
                   <Alert>
                     <Calendar className="h-4 w-4" />
                     <AlertDescription>
-                      Próxima sessão agendada para{" "}
+                      Próxima sessão agendada para{' '}
                       <strong>
                         {new Date(
                           treatmentPlan.next_session_date,
-                        ).toLocaleDateString("pt-BR", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        ).toLocaleDateString('pt-BR', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        },)}
                       </strong>
                     </AlertDescription>
                   </Alert>
@@ -613,7 +613,7 @@ export function AestheticTreatmentPlan({
                 {upcomingSessions.length > 0
                   ? (
                     <div className="space-y-3">
-                      {upcomingSessions.slice(0, 3).map((session) => (
+                      {upcomingSessions.slice(0, 3,).map((session,) => (
                         <div
                           className="flex items-center justify-between rounded-lg border p-3"
                           key={session.id}
@@ -625,7 +625,7 @@ export function AestheticTreatmentPlan({
                             <p className="text-muted-foreground text-sm">
                               {new Date(
                                 session.scheduled_date,
-                              ).toLocaleDateString("pt-BR")}
+                              ).toLocaleDateString('pt-BR',)}
                             </p>
                           </div>
                           <Badge variant="outline">
@@ -649,7 +649,7 @@ export function AestheticTreatmentPlan({
                       {onScheduleSession && (
                         <Button
                           className="mt-2"
-                          onClick={() => onScheduleSession(treatmentPlan.id)}
+                          onClick={() => onScheduleSession(treatmentPlan.id,)}
                           size="sm"
                           variant="outline"
                         >
@@ -673,7 +673,7 @@ export function AestheticTreatmentPlan({
                 {completedSessions.length > 0
                   ? (
                     <div className="space-y-3">
-                      {completedSessions.slice(-3).map((session) => (
+                      {completedSessions.slice(-3,).map((session,) => (
                         <div
                           className="flex items-center justify-between rounded-lg border p-3"
                           key={session.id}
@@ -685,7 +685,7 @@ export function AestheticTreatmentPlan({
                             <p className="text-muted-foreground text-sm">
                               {new Date(
                                 session.actual_date || session.scheduled_date,
-                              ).toLocaleDateString("pt-BR")}
+                              ).toLocaleDateString('pt-BR',)}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -728,7 +728,7 @@ export function AestheticTreatmentPlan({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  {getCFMComplianceIcon(treatmentPlan.cfm_compliance_status)}
+                  {getCFMComplianceIcon(treatmentPlan.cfm_compliance_status,)}
                   Conformidade CFM
                 </CardTitle>
               </CardHeader>
@@ -739,9 +739,9 @@ export function AestheticTreatmentPlan({
                       Status
                     </span>
                     <Badge
-                      variant={treatmentPlan.cfm_compliance_status === "compliant"
-                        ? "default"
-                        : "secondary"}
+                      variant={treatmentPlan.cfm_compliance_status === 'compliant'
+                        ? 'default'
+                        : 'secondary'}
                     >
                       {getCFMComplianceLabel(
                         treatmentPlan.cfm_compliance_status,
@@ -768,7 +768,7 @@ export function AestheticTreatmentPlan({
                   </div>
                 </div>
 
-                {treatmentPlan.cfm_compliance_status !== "compliant" && (
+                {treatmentPlan.cfm_compliance_status !== 'compliant' && (
                   <Alert className="border-yellow-500/50 bg-yellow-500/10">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
@@ -783,7 +783,7 @@ export function AestheticTreatmentPlan({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  {getLGPDConsentIcon(treatmentPlan.lgpd_photo_consent_status)}
+                  {getLGPDConsentIcon(treatmentPlan.lgpd_photo_consent_status,)}
                   Conformidade LGPD
                 </CardTitle>
               </CardHeader>
@@ -803,9 +803,9 @@ export function AestheticTreatmentPlan({
                       Consentimento para Fotos
                     </span>
                     <Badge
-                      variant={treatmentPlan.lgpd_photo_consent_status === "granted"
-                        ? "default"
-                        : "secondary"}
+                      variant={treatmentPlan.lgpd_photo_consent_status === 'granted'
+                        ? 'default'
+                        : 'secondary'}
                     >
                       {getLGPDConsentLabel(
                         treatmentPlan.lgpd_photo_consent_status,
@@ -830,7 +830,7 @@ export function AestheticTreatmentPlan({
                       <span className="font-medium text-sm">
                         {new Date(
                           treatmentPlan.lgpd_consent_date,
-                        ).toLocaleDateString("pt-BR")}
+                        ).toLocaleDateString('pt-BR',)}
                       </span>
                     </div>
                   )}
@@ -931,10 +931,10 @@ export function AestheticTreatmentPlan({
                   <div>
                     <p className="text-muted-foreground text-sm">Custo Total</p>
                     <p className="font-semibold text-lg">
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(treatmentPlan.total_cost)}
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      },).format(treatmentPlan.total_cost,)}
                     </p>
                   </div>
                   <div>
@@ -942,10 +942,10 @@ export function AestheticTreatmentPlan({
                       Custo por Sessão
                     </p>
                     <p className="font-semibold text-lg">
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      },).format(
                         treatmentPlan.total_cost
                           / treatmentPlan.expected_sessions,
                       )}
@@ -967,7 +967,7 @@ export function AestheticTreatmentPlan({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
-export default AestheticTreatmentPlan;
+export default AestheticTreatmentPlan

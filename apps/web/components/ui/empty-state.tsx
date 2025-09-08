@@ -1,26 +1,26 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import type React from "react";
-import { cn } from "../../lib/utils";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, } from '@/components/ui/card'
+import type React from 'react'
+import { cn, } from '../../lib/utils'
 
 interface EmptyStateProps {
-  icon?: React.ReactNode;
-  title: string;
-  description: string;
+  icon?: React.ReactNode
+  title: string
+  description: string
   action?: {
-    label: string;
-    onClick: () => void;
+    label: string
+    onClick: () => void
     variant?:
-      | "default"
-      | "outline"
-      | "secondary"
-      | "ghost"
-      | "link"
-      | "destructive";
-  };
-  className?: string;
+      | 'default'
+      | 'outline'
+      | 'secondary'
+      | 'ghost'
+      | 'link'
+      | 'destructive'
+  }
+  className?: string
 }
 
 export function EmptyState({
@@ -29,9 +29,9 @@ export function EmptyState({
   description,
   action,
   className,
-}: EmptyStateProps) {
+}: EmptyStateProps,) {
   return (
-    <Card className={cn("border-dashed", className)}>
+    <Card className={cn('border-dashed', className,)}>
       <CardContent className="flex flex-col items-center justify-center p-8 text-center">
         {icon && (
           <div className="mb-4 rounded-full bg-muted p-3">
@@ -49,12 +49,12 @@ export function EmptyState({
           <Button
             className="mt-2"
             onClick={action.onClick}
-            variant={action.variant || "default"}
+            variant={action.variant || 'default'}
           >
             {action.label}
           </Button>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

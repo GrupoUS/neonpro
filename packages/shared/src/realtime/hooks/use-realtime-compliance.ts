@@ -1,63 +1,63 @@
-import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
-import { getRealtimeManager } from "../connection-manager";
+import type { RealtimePostgresChangesPayload, } from '@supabase/supabase-js'
+import { useQueryClient, } from '@tanstack/react-query'
+import { useCallback, useEffect, useState, } from 'react'
+import { getRealtimeManager, } from '../connection-manager'
 
 // Types for compliance monitoring
 export interface ComplianceLog {
-  id: string;
-  user_id: string;
-  action: string;
-  resource_type: string;
-  resource_id: string | null;
-  metadata: Record<string, unknown> | null;
-  ip_address: string;
-  user_agent: string;
-  clinic_id: string;
-  timestamp: string;
+  id: string
+  user_id: string
+  action: string
+  resource_type: string
+  resource_id: string | null
+  metadata: Record<string, unknown> | null
+  ip_address: string
+  user_agent: string
+  clinic_id: string
+  timestamp: string
 }
 
 export interface RealtimeCompliancePayload {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  complianceType: keyof ComplianceEventType;
-  new?: ComplianceLog;
-  old?: ComplianceLog;
-  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  requiresAction: boolean;
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE'
+  complianceType: keyof ComplianceEventType
+  new?: ComplianceLog
+  old?: ComplianceLog
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  requiresAction: boolean
 }
 
 export interface ComplianceEventType {
-  LGPD_DATA_ACCESS: string;
-  LGPD_CONSENT_GRANTED: string;
-  LGPD_CONSENT_REVOKED: string;
-  LGPD_DATA_DELETION: string;
-  ANVISA_COMPLIANCE_CHECK: string;
-  ANVISA_VIOLATION: string;
-  DATA_BREACH_DETECTED: string;
-  UNAUTHORIZED_ACCESS: string;
+  LGPD_DATA_ACCESS: string
+  LGPD_CONSENT_GRANTED: string
+  LGPD_CONSENT_REVOKED: string
+  LGPD_DATA_DELETION: string
+  ANVISA_COMPLIANCE_CHECK: string
+  ANVISA_VIOLATION: string
+  DATA_BREACH_DETECTED: string
+  UNAUTHORIZED_ACCESS: string
 }
 
 export interface UseRealtimeComplianceOptions {
-  tenantId: string;
-  complianceType?: keyof ComplianceEventType | "ALL";
-  enabled?: boolean;
-  enableAuditLog?: boolean;
-  onComplianceEvent?: (payload: RealtimeCompliancePayload) => void;
-  onCriticalViolation?: (payload: RealtimeCompliancePayload) => void;
-  onError?: (error: Error) => void;
+  tenantId: string
+  complianceType?: keyof ComplianceEventType | 'ALL'
+  enabled?: boolean
+  enableAuditLog?: boolean
+  onComplianceEvent?: (payload: RealtimeCompliancePayload,) => void
+  onCriticalViolation?: (payload: RealtimeCompliancePayload,) => void
+  onError?: (error: Error,) => void
 }
 
 export interface UseRealtimeComplianceReturn {
-  isConnected: boolean;
-  connectionHealth: number;
-  totalEvents: number;
-  criticalEvents: number;
-  lastEvent: ComplianceLog | null;
-  complianceScore: number;
-  subscribe: () => void;
-  unsubscribe: () => void;
-  generateComplianceReport: () => Promise<unknown>;
-  triggerManualAudit: () => void;
+  isConnected: boolean
+  connectionHealth: number
+  totalEvents: number
+  criticalEvents: number
+  lastEvent: ComplianceLog | null
+  complianceScore: number
+  subscribe: () => void
+  unsubscribe: () => void
+  generateComplianceReport: () => Promise<unknown>
+  triggerManualAudit: () => void
 }
 
 /**
@@ -75,133 +75,133 @@ export function useRealtimeCompliance(
     onComplianceEvent,
     onCriticalViolation,
     onError,
-  } = options;
+  } = options
 
-  const queryClient = useQueryClient();
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionHealth, setConnectionHealth] = useState(0);
-  const [totalEvents, setTotalEvents] = useState(0);
-  const [criticalEvents, setCriticalEvents] = useState(0);
-  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>(null);
-  const [complianceScore, setComplianceScore] = useState(100);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
+  const queryClient = useQueryClient()
+  const [isConnected, setIsConnected,] = useState(false,)
+  const [connectionHealth, setConnectionHealth,] = useState(0,)
+  const [totalEvents, setTotalEvents,] = useState(0,)
+  const [criticalEvents, setCriticalEvents,] = useState(0,)
+  const [lastEvent, setLastEvent,] = useState<ComplianceLog | null>(null,)
+  const [complianceScore, setComplianceScore,] = useState(100,)
+  const [unsubscribeFn, setUnsubscribeFn,] = useState<(() => void) | null>(null,)
 
   /**
    * Determine compliance type based on payload
    */
   const determineComplianceType = useCallback(
-    (payload: unknown): keyof ComplianceEventType => {
-      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
-      const eventData = typedPayload.new || typedPayload.old;
+    (payload: unknown,): keyof ComplianceEventType => {
+      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>
+      const eventData = typedPayload.new || typedPayload.old
 
       if (!eventData) {
-        return "LGPD_DATA_ACCESS";
+        return 'LGPD_DATA_ACCESS'
       }
 
       // Type assertion to ensure eventData has the correct type
-      const complianceData = eventData as ComplianceLog;
+      const complianceData = eventData as ComplianceLog
 
       // Map based on action categories
-      if (complianceData.action?.includes("consent")) {
-        return complianceData.action === "consent_granted"
-          ? "LGPD_CONSENT_GRANTED"
-          : "LGPD_CONSENT_REVOKED";
+      if (complianceData.action?.includes('consent',)) {
+        return complianceData.action === 'consent_granted'
+          ? 'LGPD_CONSENT_GRANTED'
+          : 'LGPD_CONSENT_REVOKED'
       }
 
       if (
-        complianceData.action?.includes("deletion")
-        || complianceData.action?.includes("delete")
+        complianceData.action?.includes('deletion',)
+        || complianceData.action?.includes('delete',)
       ) {
-        return "LGPD_DATA_DELETION";
+        return 'LGPD_DATA_DELETION'
       }
 
-      if (complianceData.action?.includes("anvisa")) {
-        const metadata = complianceData.metadata || {};
-        if (metadata.severity === "CRITICAL") {
-          return "ANVISA_VIOLATION";
+      if (complianceData.action?.includes('anvisa',)) {
+        const metadata = complianceData.metadata || {}
+        if (metadata.severity === 'CRITICAL') {
+          return 'ANVISA_VIOLATION'
         }
-        return "ANVISA_COMPLIANCE_CHECK";
+        return 'ANVISA_COMPLIANCE_CHECK'
       }
 
       if (
-        complianceData.action?.includes("breach")
-        || complianceData.action?.includes("vazamento")
+        complianceData.action?.includes('breach',)
+        || complianceData.action?.includes('vazamento',)
       ) {
-        return "DATA_BREACH_DETECTED";
+        return 'DATA_BREACH_DETECTED'
       }
 
       if (
-        complianceData.action?.includes("unauthorized")
-        || complianceData.action?.includes("nao_autorizado")
+        complianceData.action?.includes('unauthorized',)
+        || complianceData.action?.includes('nao_autorizado',)
       ) {
-        return "UNAUTHORIZED_ACCESS";
+        return 'UNAUTHORIZED_ACCESS'
       }
 
-      return "LGPD_DATA_ACCESS";
+      return 'LGPD_DATA_ACCESS'
     },
     [],
-  );
+  )
 
   /**
    * Determine severity level based on compliance event
    */
   const determineSeverity = useCallback(
-    (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
-      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
-      const eventData = typedPayload.new || typedPayload.old;
-      const { eventType } = typedPayload;
+    (payload: unknown,): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' => {
+      const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>
+      const eventData = typedPayload.new || typedPayload.old
+      const { eventType, } = typedPayload
 
       if (!eventData) {
-        return "LOW";
+        return 'LOW'
       }
 
       // Type assertion to ensure eventData has the correct type
-      const complianceData = eventData as ComplianceLog;
+      const complianceData = eventData as ComplianceLog
 
       // Critical severity scenarios
       if (
-        complianceData.action?.includes("breach")
-        || complianceData.action?.includes("unauthorized")
-        || complianceData.action?.includes("violation")
-        || complianceData.action?.includes("vazamento")
-        || complianceData.action?.includes("nao_autorizado")
+        complianceData.action?.includes('breach',)
+        || complianceData.action?.includes('unauthorized',)
+        || complianceData.action?.includes('violation',)
+        || complianceData.action?.includes('vazamento',)
+        || complianceData.action?.includes('nao_autorizado',)
       ) {
-        return "CRITICAL";
+        return 'CRITICAL'
       }
 
       // High severity scenarios
       if (
-        eventType === "DELETE"
-        || complianceData.action?.includes("consent_revoked")
-        || complianceData.action?.includes("data_deletion")
-        || complianceData.action?.includes("anvisa_violation")
+        eventType === 'DELETE'
+        || complianceData.action?.includes('consent_revoked',)
+        || complianceData.action?.includes('data_deletion',)
+        || complianceData.action?.includes('anvisa_violation',)
       ) {
-        return "HIGH";
+        return 'HIGH'
       }
 
       // Medium severity scenarios
       if (
-        complianceData.action?.includes("consent_granted")
-        || complianceData.action?.includes("data_export")
-        || complianceData.action?.includes("anvisa_compliance_check")
+        complianceData.action?.includes('consent_granted',)
+        || complianceData.action?.includes('data_export',)
+        || complianceData.action?.includes('anvisa_compliance_check',)
       ) {
-        return "MEDIUM";
+        return 'MEDIUM'
       }
 
-      return "LOW";
+      return 'LOW'
     },
     [],
-  );
+  )
 
   // Helper functions for compliance processing
   const generateAuditEntry = useCallback(
-    (payload: RealtimeCompliancePayload): ComplianceLog => {
+    (payload: RealtimeCompliancePayload,): ComplianceLog => {
       return {
-        id: `audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        id: `audit_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`,
         clinic_id: tenantId,
         action: `${payload.complianceType}_${payload.eventType}`,
-        user_id: "system",
-        resource_type: "compliance_audit",
+        user_id: 'system',
+        resource_type: 'compliance_audit',
         resource_id: payload.new?.id || payload.old?.id || null,
         metadata: {
           compliance_type: payload.complianceType,
@@ -209,128 +209,128 @@ export function useRealtimeCompliance(
           requires_action: payload.requiresAction,
           event_type: payload.eventType,
         },
-        ip_address: "127.0.0.1",
-        user_agent: "NeonPro-Compliance-System",
+        ip_address: '127.0.0.1',
+        user_agent: 'NeonPro-Compliance-System',
         timestamp: new Date().toISOString(),
-      };
+      }
     },
-    [tenantId],
-  );
+    [tenantId,],
+  )
 
   const updateComplianceCache = useCallback(
-    (payload: RealtimeCompliancePayload) => {
-      const { eventType, new: newData, old: oldData } = payload;
+    (payload: RealtimeCompliancePayload,) => {
+      const { eventType, new: newData, old: oldData, } = payload
 
       // Update compliance logs cache
       queryClient.setQueryData(
-        ["compliance-logs", tenantId],
-        (oldCache: ComplianceLog[] | null) => {
+        ['compliance-logs', tenantId,],
+        (oldCache: ComplianceLog[] | null,) => {
           if (!oldCache) {
-            return oldCache;
+            return oldCache
           }
 
           switch (eventType) {
-            case "INSERT": {
+            case 'INSERT': {
               if (newData && newData.clinic_id === tenantId) {
-                return [newData, ...oldCache].slice(0, 1000); // Keep only last 1000 events
+                return [newData, ...oldCache,].slice(0, 1000,) // Keep only last 1000 events
               }
-              return oldCache;
+              return oldCache
             }
 
-            case "UPDATE": {
+            case 'UPDATE': {
               if (newData) {
-                return oldCache.map((log) => log.id === newData.id ? newData : log);
+                return oldCache.map((log,) => log.id === newData.id ? newData : log)
               }
-              return oldCache;
+              return oldCache
             }
 
-            case "DELETE": {
+            case 'DELETE': {
               if (oldData) {
-                return oldCache.filter((log) => log.id !== oldData.id);
+                return oldCache.filter((log,) => log.id !== oldData.id)
               }
-              return oldCache;
+              return oldCache
             }
 
             default: {
-              return oldCache;
+              return oldCache
             }
           }
         },
-      );
+      )
 
       // Update compliance statistics
       queryClient.invalidateQueries({
-        queryKey: ["compliance-stats", tenantId],
-      });
+        queryKey: ['compliance-stats', tenantId,],
+      },)
       queryClient.invalidateQueries({
-        queryKey: ["compliance-score", tenantId],
-      });
-      queryClient.invalidateQueries({ queryKey: ["audit-trail", tenantId] });
+        queryKey: ['compliance-score', tenantId,],
+      },)
+      queryClient.invalidateQueries({ queryKey: ['audit-trail', tenantId,], },)
     },
-    [queryClient, tenantId],
-  );
+    [queryClient, tenantId,],
+  )
 
   const updateComplianceScore = useCallback(
-    (payload: RealtimeCompliancePayload) => {
-      const { severity, complianceType } = payload;
+    (payload: RealtimeCompliancePayload,) => {
+      const { severity, complianceType, } = payload
 
-      setComplianceScore((prev) => {
-        let scoreDelta = 0;
+      setComplianceScore((prev,) => {
+        let scoreDelta = 0
 
         // Score penalties based on severity
         switch (severity) {
-          case "CRITICAL": {
-            scoreDelta = -15; // Major penalty for critical issues
-            break;
+          case 'CRITICAL': {
+            scoreDelta = -15 // Major penalty for critical issues
+            break
           }
-          case "HIGH": {
-            scoreDelta = -8;
-            break;
+          case 'HIGH': {
+            scoreDelta = -8
+            break
           }
-          case "MEDIUM": {
-            scoreDelta = -3;
-            break;
+          case 'MEDIUM': {
+            scoreDelta = -3
+            break
           }
-          case "LOW": {
-            scoreDelta = -1;
-            break;
+          case 'LOW': {
+            scoreDelta = -1
+            break
           }
         }
 
         // Additional penalties for specific violations
-        if (complianceType === "DATA_BREACH_DETECTED") {
-          scoreDelta -= 20;
+        if (complianceType === 'DATA_BREACH_DETECTED') {
+          scoreDelta -= 20
         }
-        if (complianceType === "UNAUTHORIZED_ACCESS") {
-          scoreDelta -= 10;
+        if (complianceType === 'UNAUTHORIZED_ACCESS') {
+          scoreDelta -= 10
         }
 
         // Positive adjustments for good compliance actions
-        if (complianceType === "LGPD_CONSENT_GRANTED") {
-          scoreDelta = 1; // Small positive for consent
+        if (complianceType === 'LGPD_CONSENT_GRANTED') {
+          scoreDelta = 1 // Small positive for consent
         }
 
         // Ensure score stays within bounds
-        const newScore = Math.max(0, Math.min(100, prev + scoreDelta));
+        const newScore = Math.max(0, Math.min(100, prev + scoreDelta,),)
 
-        return newScore;
-      });
+        return newScore
+      },)
     },
     [],
-  );
+  )
 
   /**
    * Handle realtime compliance changes
    */
   const handleComplianceChange = useCallback(
-    (payload: unknown) => {
+    (payload: unknown,) => {
       try {
         // Determine compliance type and severity
-        const complianceType = determineComplianceType(payload);
-        const severity = determineSeverity(payload);
-        const requiresAction = severity === "HIGH" || severity === "CRITICAL";
+        const complianceType = determineComplianceType(payload,)
+        const severity = determineSeverity(payload,)
+        const requiresAction = severity === 'HIGH' || severity === 'CRITICAL'
 
-        const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>;
+        const typedPayload = payload as RealtimePostgresChangesPayload<ComplianceLog>
         const realtimePayload: RealtimeCompliancePayload = {
           eventType: typedPayload.eventType,
           complianceType,
@@ -338,37 +338,37 @@ export function useRealtimeCompliance(
           old: typedPayload.old as ComplianceLog,
           severity,
           requiresAction,
-        };
+        }
 
         // Update metrics
-        setTotalEvents((prev) => prev + 1);
-        setLastEvent(realtimePayload.new || realtimePayload.old || null);
+        setTotalEvents((prev,) => prev + 1)
+        setLastEvent(realtimePayload.new || realtimePayload.old || null,)
 
-        if (severity === "CRITICAL" || severity === "HIGH") {
-          setCriticalEvents((prev) => prev + 1);
+        if (severity === 'CRITICAL' || severity === 'HIGH') {
+          setCriticalEvents((prev,) => prev + 1)
           if (onCriticalViolation) {
-            onCriticalViolation(realtimePayload);
+            onCriticalViolation(realtimePayload,)
           }
         }
 
         // Update compliance score
-        updateComplianceScore(realtimePayload);
+        updateComplianceScore(realtimePayload,)
 
         // Generate audit log if enabled
         if (enableAuditLog) {
-          generateAuditEntry(realtimePayload);
+          generateAuditEntry(realtimePayload,)
         }
 
         // Update TanStack Query cache
-        updateComplianceCache(realtimePayload);
+        updateComplianceCache(realtimePayload,)
 
         // Call user-provided handler
         if (onComplianceEvent) {
-          onComplianceEvent(realtimePayload);
+          onComplianceEvent(realtimePayload,)
         }
       } catch (error) {
         if (onError) {
-          onError(error as Error);
+          onError(error as Error,)
         }
       }
     },
@@ -383,54 +383,54 @@ export function useRealtimeCompliance(
       updateComplianceCache,
       updateComplianceScore,
     ],
-  );
+  )
 
   /**
    * Subscribe to realtime compliance updates
    */
   const subscribe = useCallback(() => {
     if (!enabled || unsubscribeFn) {
-      return;
+      return
     }
 
-    const realtimeManager = getRealtimeManager();
+    const realtimeManager = getRealtimeManager()
 
-    let filter = `clinic_id=eq.${tenantId}`;
-    if (complianceType && complianceType !== "ALL") {
-      filter += `,action=like.%${complianceType.toLowerCase()}%`;
+    let filter = `clinic_id=eq.${tenantId}`
+    if (complianceType && complianceType !== 'ALL') {
+      filter += `,action=like.%${complianceType.toLowerCase()}%`
     }
 
     const unsubscribe = realtimeManager.subscribe(
       `compliance:${filter}`,
       {
-        table: "compliance_audit_logs",
+        table: 'compliance_audit_logs',
         filter,
       },
       handleComplianceChange,
-    );
+    )
 
-    setUnsubscribeFn(() => unsubscribe);
-    setIsConnected(true);
-    setConnectionHealth(100);
+    setUnsubscribeFn(() => unsubscribe)
+    setIsConnected(true,)
+    setConnectionHealth(100,)
   }, [
     enabled,
     tenantId,
     complianceType,
     unsubscribeFn,
     handleComplianceChange,
-  ]);
+  ],)
 
   /**
    * Unsubscribe from realtime compliance updates
    */
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
-      unsubscribeFn();
-      setUnsubscribeFn(null);
-      setIsConnected(false);
-      setConnectionHealth(0);
+      unsubscribeFn()
+      setUnsubscribeFn(null,)
+      setIsConnected(false,)
+      setConnectionHealth(0,)
     }
-  }, [unsubscribeFn]);
+  }, [unsubscribeFn,],)
 
   /**
    * Generate compliance report
@@ -443,26 +443,26 @@ export function useRealtimeCompliance(
       criticalEvents,
       recommendations: [],
       timeline: [],
-    };
-  }, [complianceScore, totalEvents, criticalEvents]);
+    }
+  }, [complianceScore, totalEvents, criticalEvents,],)
 
   /**
    * Trigger manual audit
    */
-  const triggerManualAudit = useCallback(() => {}, []);
+  const triggerManualAudit = useCallback(() => {}, [],)
 
   // Auto subscribe/unsubscribe
   useEffect(() => {
     if (enabled) {
-      subscribe();
+      subscribe()
     } else {
-      unsubscribe();
+      unsubscribe()
     }
 
     return () => {
-      unsubscribe();
-    };
-  }, [enabled, subscribe, unsubscribe]);
+      unsubscribe()
+    }
+  }, [enabled, subscribe, unsubscribe,],)
 
   return {
     // Connection status
@@ -478,5 +478,5 @@ export function useRealtimeCompliance(
     unsubscribe,
     generateComplianceReport,
     triggerManualAudit,
-  };
+  }
 }

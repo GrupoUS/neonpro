@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import { LoginForm, LoginFormSkeleton } from "./login-form-new";
+import type { Metadata, } from 'next'
+import { Suspense, } from 'react'
+import { LoginForm, LoginFormSkeleton, } from './login-form-new'
 
 export const metadata: Metadata = {
-  title: "Login - NeonPro Healthcare",
-  description: "Acesso seguro ao sistema de gestão médica - Conformidade LGPD",
-  keywords: ["login", "sistema médico", "gestão clínica", "LGPD", "segurança"],
-  robots: "noindex, nofollow", // Don't index login pages
-  viewport: "width=device-width, initial-scale=1",
-};
+  title: 'Login - NeonPro Healthcare',
+  description: 'Acesso seguro ao sistema de gestão médica - Conformidade LGPD',
+  keywords: ['login', 'sistema médico', 'gestão clínica', 'LGPD', 'segurança',],
+  robots: 'noindex, nofollow', // Don't index login pages
+  viewport: 'width=device-width, initial-scale=1',
+}
 
 export default function LoginPage() {
   return (
@@ -128,11 +128,11 @@ export default function LoginPage() {
           {/* Additional Security Notice */}
           <div className="px-8 text-center text-xs text-muted-foreground">
             <p>
-              Ao acessar o sistema, você concorda com nossos{" "}
+              Ao acessar o sistema, você concorda com nossos{' '}
               <a href="/terms" className="underline hover:text-foreground">
                 Termos de Uso
-              </a>{" "}
-              e{" "}
+              </a>{' '}
+              e{' '}
               <a href="/privacy" className="underline hover:text-foreground">
                 Política de Privacidade
               </a>
@@ -173,5 +173,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

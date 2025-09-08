@@ -3,182 +3,182 @@
 // Story 4.3: Patient Portal & Self-Service
 // ===============================================
 
-const CACHE_NAME = "neonpro-portal-v1.0";
-const OFFLINE_URL = "/portal/offline";
+const CACHE_NAME = 'neonpro-portal-v1.0'
+const OFFLINE_URL = '/portal/offline'
 
 // Resources to cache on install
 const STATIC_RESOURCES = [
-  "/portal/",
-  "/portal/login",
-  "/portal/offline",
-  "/portal/manifest.json",
-  "/portal/icons/icon-192x192.png",
-  "/portal/icons/icon-512x512.png",
+  '/portal/',
+  '/portal/login',
+  '/portal/offline',
+  '/portal/manifest.json',
+  '/portal/icons/icon-192x192.png',
+  '/portal/icons/icon-512x512.png',
   // Core CSS and JS will be added automatically by Next.js
-];
+]
 
 // API routes that should be cached
 const API_CACHE_PATTERNS = [
-  "/api/portal/auth/validate",
-  "/api/portal/dashboard/stats",
-  "/api/portal/notifications",
-];
+  '/api/portal/auth/validate',
+  '/api/portal/dashboard/stats',
+  '/api/portal/notifications',
+]
 
 // Install event - cache static resources
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event,) => {
   event.waitUntil(
     caches
-      .open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(STATIC_RESOURCES);
-      })
+      .open(CACHE_NAME,)
+      .then((cache,) => {
+        return cache.addAll(STATIC_RESOURCES,)
+      },)
       .then(() => {
         // Force the new service worker to activate immediately
-        return self.skipWaiting();
-      }),
-  );
-});
+        return self.skipWaiting()
+      },),
+  )
+},)
 
 // Activate event - clean up old caches
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event,) => {
   event.waitUntil(
     caches
       .keys()
-      .then((cacheNames) => {
+      .then((cacheNames,) => {
         return Promise.all(
-          cacheNames.map((cacheName) => {
+          cacheNames.map((cacheName,) => {
             if (cacheName !== CACHE_NAME) {
-              return caches.delete(cacheName);
+              return caches.delete(cacheName,)
             }
-            return Promise.resolve();
-          }),
-        );
-      })
+            return Promise.resolve()
+          },),
+        )
+      },)
       .then(() => {
         // Take control of all pages immediately
-        return self.clients.claim();
-      }),
-  );
-});
+        return self.clients.claim()
+      },),
+  )
+},)
 
 // Fetch event - serve from cache with network fallback
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+self.addEventListener('fetch', (event,) => {
+  const { request, } = event
+  const url = new URL(request.url,)
 
   // Only handle requests for our domain
   if (url.origin !== location.origin) {
-    return;
+    return
   }
 
   // Handle portal routes
-  if (url.pathname.startsWith("/portal/")) {
-    event.respondWith(handlePortalRequest(request));
-    return;
+  if (url.pathname.startsWith('/portal/',)) {
+    event.respondWith(handlePortalRequest(request,),)
+    return
   }
 
   // Handle API requests
-  if (url.pathname.startsWith("/api/portal/")) {
-    event.respondWith(handleAPIRequest(request));
-    return;
+  if (url.pathname.startsWith('/api/portal/',)) {
+    event.respondWith(handleAPIRequest(request,),)
+    return
   }
-});
+},)
 
 // Handle portal page requests
-async function handlePortalRequest(request) {
+async function handlePortalRequest(request,) {
   try {
     // Try network first for HTML pages
-    if (request.mode === "navigate") {
-      const networkResponse = await fetch(request);
+    if (request.mode === 'navigate') {
+      const networkResponse = await fetch(request,)
 
       // Cache successful responses
       if (networkResponse.ok) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(request, networkResponse.clone());
+        const cache = await caches.open(CACHE_NAME,)
+        cache.put(request, networkResponse.clone(),)
       }
 
-      return networkResponse;
+      return networkResponse
     }
 
     // For other resources, try cache first
-    const cachedResponse = await caches.match(request);
+    const cachedResponse = await caches.match(request,)
     if (cachedResponse) {
-      return cachedResponse;
+      return cachedResponse
     }
 
     // Fallback to network
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(request,)
 
     // Cache successful responses
     if (networkResponse.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, networkResponse.clone());
+      const cache = await caches.open(CACHE_NAME,)
+      cache.put(request, networkResponse.clone(),)
     }
 
-    return networkResponse;
+    return networkResponse
   } catch {
     // Try to serve from cache
-    const cachedResponse = await caches.match(request);
+    const cachedResponse = await caches.match(request,)
     if (cachedResponse) {
-      return cachedResponse;
+      return cachedResponse
     }
 
     // If it's a navigation request and we can't serve it, show offline page
-    if (request.mode === "navigate") {
-      const offlineResponse = await caches.match(OFFLINE_URL);
+    if (request.mode === 'navigate') {
+      const offlineResponse = await caches.match(OFFLINE_URL,)
       if (offlineResponse) {
-        return offlineResponse;
+        return offlineResponse
       }
     }
 
     // Return a basic offline response
-    return new Response("Offline - Portal não disponível", {
+    return new Response('Offline - Portal não disponível', {
       status: 503,
-      statusText: "Service Unavailable",
+      statusText: 'Service Unavailable',
       headers: {
-        "Content-Type": "text/plain",
+        'Content-Type': 'text/plain',
       },
-    });
+    },)
   }
 }
 
 // Handle API requests with caching strategy
-async function handleAPIRequest(request) {
-  const url = new URL(request.url);
-  const cacheKey = `api-${url.pathname}`;
+async function handleAPIRequest(request,) {
+  const url = new URL(request.url,)
+  const cacheKey = `api-${url.pathname}`
 
   try {
     // For GET requests to cacheable endpoints
-    if (request.method === "GET" && shouldCacheAPI(url.pathname)) {
+    if (request.method === 'GET' && shouldCacheAPI(url.pathname,)) {
       // Try cache first for faster response
-      const cachedResponse = await caches.match(cacheKey);
+      const cachedResponse = await caches.match(cacheKey,)
 
       // Always fetch from network for fresh data
-      const networkPromise = fetch(request).then((response) => {
+      const networkPromise = fetch(request,).then((response,) => {
         if (response.ok) {
-          const cache = caches.open(CACHE_NAME);
-          cache.then((c) => c.put(cacheKey, response.clone()));
+          const cache = caches.open(CACHE_NAME,)
+          cache.then((c,) => c.put(cacheKey, response.clone(),))
         }
-        return response;
-      });
+        return response
+      },)
 
       // Return cached response immediately if available, otherwise wait for network
       if (cachedResponse) {
         // Update cache in background
-        networkPromise.catch(() => {}); // Ignore network errors when we have cache;
-        return cachedResponse;
+        networkPromise.catch(() => {},) // Ignore network errors when we have cache;
+        return cachedResponse
       }
-      return networkPromise;
+      return networkPromise
     }
 
     // For POST/PUT/DELETE requests, always go to network
-    return fetch(request);
+    return fetch(request,)
   } catch {
     // For GET requests, try to serve from cache
-    if (request.method === "GET") {
-      const cachedResponse = await caches.match(cacheKey);
+    if (request.method === 'GET') {
+      const cachedResponse = await caches.match(cacheKey,)
       if (cachedResponse) {
-        return cachedResponse;
+        return cachedResponse
       }
     }
 
@@ -187,31 +187,31 @@ async function handleAPIRequest(request) {
       JSON.stringify({
         success: false,
         error: {
-          code: "OFFLINE_ERROR",
-          message: "Sem conexão com o servidor",
+          code: 'OFFLINE_ERROR',
+          message: 'Sem conexão com o servidor',
         },
-      }),
+      },),
       {
         status: 503,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       },
-    );
+    )
   }
 }
 
 // Check if API endpoint should be cached
-function shouldCacheAPI(pathname) {
-  return API_CACHE_PATTERNS.some((pattern) => pathname.includes(pattern));
+function shouldCacheAPI(pathname,) {
+  return API_CACHE_PATTERNS.some((pattern,) => pathname.includes(pattern,))
 }
 
 // Background sync for offline actions
-self.addEventListener("sync", (event) => {
-  if (event.tag === "portal-sync") {
-    event.waitUntil(syncOfflineActions());
+self.addEventListener('sync', (event,) => {
+  if (event.tag === 'portal-sync') {
+    event.waitUntil(syncOfflineActions(),)
   }
-});
+},)
 
 async function syncOfflineActions() {
   try {
@@ -222,106 +222,106 @@ async function syncOfflineActions() {
     // 4. Notify the client about sync status
 
     // For now, just send a message to all clients
-    const clients = await self.clients.matchAll();
-    clients.forEach((client) => {
-      const targetOrigin = new URL(client.url).origin;
+    const clients = await self.clients.matchAll()
+    clients.forEach((client,) => {
+      const targetOrigin = new URL(client.url,).origin
       client.postMessage(
         {
-          type: "SYNC_COMPLETE",
-          data: { success: true },
+          type: 'SYNC_COMPLETE',
+          data: { success: true, },
         },
         targetOrigin,
-      );
-    });
+      )
+    },)
   } catch (error) {
-    const clients = await self.clients.matchAll();
-    clients.forEach((client) => {
+    const clients = await self.clients.matchAll()
+    clients.forEach((client,) => {
       client.postMessage(
         {
-          type: "SYNC_FAILED",
-          data: { error: error.message },
+          type: 'SYNC_FAILED',
+          data: { error: error.message, },
         },
         client.location?.origin || self.location.origin,
-      );
-    });
+      )
+    },)
   }
 }
 
 // Push notification handling
-self.addEventListener("push", (event) => {
+self.addEventListener('push', (event,) => {
   if (!event.data) {
-    return;
+    return
   }
 
   try {
-    const data = event.data.json();
+    const data = event.data.json()
 
     const options = {
-      body: data.body || "Nova notificação do portal",
-      icon: "/portal/icons/icon-192x192.png",
-      badge: "/portal/icons/icon-72x72.png",
+      body: data.body || 'Nova notificação do portal',
+      icon: '/portal/icons/icon-192x192.png',
+      badge: '/portal/icons/icon-72x72.png',
       data: data.data || {},
       actions: data.actions || [],
-      tag: data.tag || "portal-notification",
+      tag: data.tag || 'portal-notification',
       requireInteraction: data.requireInteraction,
-    };
+    }
 
     event.waitUntil(
       self.registration.showNotification(
-        data.title || "Portal NeonPro",
+        data.title || 'Portal NeonPro',
         options,
       ),
-    );
+    )
   } catch {}
-});
+},)
 
 // Notification click handling
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
+self.addEventListener('notificationclick', (event,) => {
+  event.notification.close()
 
-  const data = event.notification.data || {};
-  let targetUrl = "/portal/";
+  const data = event.notification.data || {}
+  let targetUrl = '/portal/'
 
   // Handle different notification types
-  if (data.type === "appointment") {
-    targetUrl = "/portal/appointments";
-  } else if (data.type === "message") {
-    targetUrl = "/portal/messages";
+  if (data.type === 'appointment') {
+    targetUrl = '/portal/appointments'
+  } else if (data.type === 'message') {
+    targetUrl = '/portal/messages'
   } else if (data.url) {
-    targetUrl = data.url;
+    targetUrl = data.url
   }
 
   event.waitUntil(
     clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
+      .matchAll({ type: 'window', includeUncontrolled: true, },)
+      .then((clientList,) => {
         // Check if portal is already open
         for (const client of clientList) {
-          const clientUrl = new URL(client.url);
-          if (clientUrl.pathname.startsWith("/portal/") && "focus" in client) {
-            client.focus();
+          const clientUrl = new URL(client.url,)
+          if (clientUrl.pathname.startsWith('/portal/',) && 'focus' in client) {
+            client.focus()
             client.postMessage(
               {
-                type: "NOTIFICATION_CLICK",
-                data: { url: targetUrl },
+                type: 'NOTIFICATION_CLICK',
+                data: { url: targetUrl, },
               },
-              new URL(client.url).origin,
-            );
-            return;
+              new URL(client.url,).origin,
+            )
+            return
           }
         }
 
         // Open new window if portal not open
         if (clients.openWindow) {
-          return clients.openWindow(targetUrl);
+          return clients.openWindow(targetUrl,)
         }
-      }),
-  );
-});
+      },),
+  )
+},)
 
 // Message handling from client
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
+self.addEventListener('message', (event,) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
   }
-});
+},)

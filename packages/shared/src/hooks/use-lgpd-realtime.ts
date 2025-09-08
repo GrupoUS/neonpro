@@ -6,29 +6,29 @@
  * with consent validation and audit logging
  */
 
-import type { RealtimePostgresChangesPayload, SupabaseClient } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
+import type { RealtimePostgresChangesPayload, SupabaseClient, } from '@supabase/supabase-js'
+import { useCallback, useEffect, useState, } from 'react'
 import {
   LGPDConsentStatus,
   LGPDConsentValidator,
   LGPDDataCategory,
   LGPDDataProcessor,
   LGPDProcessingPurpose,
-} from "../compliance/lgpd-realtime";
-import type { LGPDRealtimeConfig } from "../compliance/lgpd-realtime";
-import { useRealtime } from "./use-realtime";
-import type { UseRealtimeConfig } from "./use-realtime";
+} from '../compliance/lgpd-realtime'
+import type { LGPDRealtimeConfig, } from '../compliance/lgpd-realtime'
+import { useRealtime, } from './use-realtime'
+import type { UseRealtimeConfig, } from './use-realtime'
 
 // LGPD-compliant realtime hook configuration
-export interface UseLGPDRealtimeConfig extends Omit<UseRealtimeConfig, "enabled"> {
-  userId: string;
-  enabled?: boolean;
-  dataCategory: LGPDDataCategory;
-  processingPurpose: LGPDProcessingPurpose;
-  lgpdConfig: LGPDRealtimeConfig;
-  onConsentDenied?: (reason: string) => void;
-  onDataProcessed?: (processedData: unknown) => void;
-  validateConsent?: boolean;
+export interface UseLGPDRealtimeConfig extends Omit<UseRealtimeConfig, 'enabled'> {
+  userId: string
+  enabled?: boolean
+  dataCategory: LGPDDataCategory
+  processingPurpose: LGPDProcessingPurpose
+  lgpdConfig: LGPDRealtimeConfig
+  onConsentDenied?: (reason: string,) => void
+  onDataProcessed?: (processedData: unknown,) => void
+  validateConsent?: boolean
 }
 
 // LGPD consent status hook
@@ -37,50 +37,50 @@ export function useLGPDConsentStatus(
   processingPurpose?: LGPDProcessingPurpose,
   dataCategory?: LGPDDataCategory,
 ) {
-  const [consentStatus, setConsentStatus] = useState<LGPDConsentStatus | null>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>();
+  const [consentStatus, setConsentStatus,] = useState<LGPDConsentStatus | null>()
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [error, setError,] = useState<Error | null>()
 
   const validateConsent = useCallback(async () => {
     if (!(userId && processingPurpose && dataCategory)) {
-      setConsentStatus(undefined);
-      return;
+      setConsentStatus(undefined,)
+      return
     }
 
-    setIsLoading(true);
-    setError(undefined);
+    setIsLoading(true,)
+    setError(undefined,)
 
     try {
       const result = await LGPDConsentValidator.validateConsent(
         userId,
         processingPurpose,
         dataCategory,
-      );
+      )
 
-      setConsentStatus(result.status);
+      setConsentStatus(result.status,)
 
       if (!result.valid && result.reason) {
-        setError(new Error(`Consent denied: ${result.reason}`));
+        setError(new Error(`Consent denied: ${result.reason}`,),)
       }
     } catch (error) {
-      const errorInstance = error instanceof Error ? error : new Error("Consent validation failed");
-      setError(errorInstance);
-      setConsentStatus(LGPDConsentStatus.REVOKED);
+      const errorInstance = error instanceof Error ? error : new Error('Consent validation failed',)
+      setError(errorInstance,)
+      setConsentStatus(LGPDConsentStatus.REVOKED,)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, [userId, processingPurpose, dataCategory]);
+  }, [userId, processingPurpose, dataCategory,],)
 
   useEffect(() => {
-    validateConsent();
-  }, [validateConsent]);
+    validateConsent()
+  }, [validateConsent,],)
 
   const refreshConsent = useCallback(() => {
     if (userId) {
-      LGPDConsentValidator.clearConsentCache(userId);
-      validateConsent();
+      LGPDConsentValidator.clearConsentCache(userId,)
+      validateConsent()
     }
-  }, [userId, validateConsent]);
+  }, [userId, validateConsent,],)
 
   return {
     consentStatus,
@@ -89,7 +89,7 @@ export function useLGPDConsentStatus(
     validateConsent,
     refreshConsent,
     hasConsent: consentStatus === LGPDConsentStatus.GRANTED,
-  };
+  }
 }
 
 /**
@@ -97,9 +97,9 @@ export function useLGPDConsentStatus(
  */
 export function useLGPDRealtime<
   T extends Record<string, unknown> = Record<string, unknown>,
->(supabaseClient: SupabaseClient, config: UseLGPDRealtimeConfig) {
-  const [processedData, setProcessedData] = useState<T | null>();
-  const [dataProcessingError, setDataProcessingError] = useState<Error | null>();
+>(supabaseClient: SupabaseClient, config: UseLGPDRealtimeConfig,) {
+  const [processedData, setProcessedData,] = useState<T | null>()
+  const [dataProcessingError, setDataProcessingError,] = useState<Error | null>()
 
   // Get consent status
   const {
@@ -111,21 +111,21 @@ export function useLGPDRealtime<
     config.userId,
     config.processingPurpose,
     config.dataCategory,
-  );
+  )
 
   // Process data according to LGPD config
   const processRealtimeData = useCallback(
-    (payload: RealtimePostgresChangesPayload<T>) => {
+    (payload: RealtimePostgresChangesPayload<T>,) => {
       try {
-        let processedPayload = payload;
+        let processedPayload = payload
 
         // Apply data minimization if configured
         if (config.lgpdConfig.dataMinimization) {
-          const allowedFields = config.lgpdConfig.sensitiveFields || [];
+          const allowedFields = config.lgpdConfig.sensitiveFields || []
           processedPayload = LGPDDataProcessor.minimizeData<T>(
             processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             allowedFields,
-          );
+          )
         }
 
         // Apply anonymization if configured
@@ -133,7 +133,7 @@ export function useLGPDRealtime<
           processedPayload = LGPDDataProcessor.anonymizePayload<T>(
             processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             config.lgpdConfig,
-          );
+          )
         }
 
         // Apply pseudonymization if configured
@@ -141,50 +141,50 @@ export function useLGPDRealtime<
           processedPayload = LGPDDataProcessor.pseudonymizePayload<T>(
             processedPayload as RealtimePostgresChangesPayload<T & Record<string, unknown>>,
             config.lgpdConfig,
-          );
+          )
         }
 
-        setProcessedData(processedPayload.new as T);
-        setDataProcessingError(undefined);
+        setProcessedData(processedPayload.new as T,)
+        setDataProcessingError(undefined,)
 
         // Notify about processed data
-        config.onDataProcessed?.(processedPayload);
+        config.onDataProcessed?.(processedPayload,)
 
-        return processedPayload;
+        return processedPayload
       } catch (error) {
-        const errorInstance = error instanceof Error ? error : new Error("Data processing failed");
-        setDataProcessingError(errorInstance);
-        config.onError?.(errorInstance);
-        return;
+        const errorInstance = error instanceof Error ? error : new Error('Data processing failed',)
+        setDataProcessingError(errorInstance,)
+        config.onError?.(errorInstance,)
+        return
       }
     },
-    [config],
-  );
+    [config,],
+  )
 
   // Enhanced event handlers with LGPD processing
   const createLGPDEventHandler = useCallback(
     (
-      originalHandler?: (payload: RealtimePostgresChangesPayload<T>) => void,
+      originalHandler?: (payload: RealtimePostgresChangesPayload<T>,) => void,
     ) => {
-      return (payload: RealtimePostgresChangesPayload<T>) => {
+      return (payload: RealtimePostgresChangesPayload<T>,) => {
         // Check consent before processing
         if (config.validateConsent !== false && !hasConsent) {
           const reason =
-            `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`;
-          config.onConsentDenied?.(reason);
-          return;
+            `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`
+          config.onConsentDenied?.(reason,)
+          return
         }
 
         // Process data with LGPD compliance
-        const processedPayload = processRealtimeData(payload);
+        const processedPayload = processRealtimeData(payload,)
 
         if (processedPayload && originalHandler) {
-          originalHandler(processedPayload);
+          originalHandler(processedPayload,)
         }
-      };
+      }
     },
-    [hasConsent, config, processRealtimeData],
-  );
+    [hasConsent, config, processRealtimeData,],
+  )
 
   // Enhanced realtime config with LGPD handlers
   const lgpdRealtimeConfig: UseRealtimeConfig<T> = {
@@ -193,17 +193,17 @@ export function useLGPDRealtime<
       && (config.validateConsent === false || hasConsent),
     lgpdCompliance: true,
     auditLogging: config.lgpdConfig.auditLogging,
-    onInsert: createLGPDEventHandler(config.onInsert),
-    onUpdate: createLGPDEventHandler(config.onUpdate),
-    onDelete: createLGPDEventHandler(config.onDelete),
-    onError: (error: Error) => {
-      setDataProcessingError(error);
-      config.onError?.(error);
+    onInsert: createLGPDEventHandler(config.onInsert,),
+    onUpdate: createLGPDEventHandler(config.onUpdate,),
+    onDelete: createLGPDEventHandler(config.onDelete,),
+    onError: (error: Error,) => {
+      setDataProcessingError(error,)
+      config.onError?.(error,)
     },
-  };
+  }
 
   // Use base realtime hook with LGPD config
-  const realtimeResult = useRealtime(supabaseClient, lgpdRealtimeConfig);
+  const realtimeResult = useRealtime(supabaseClient, lgpdRealtimeConfig,)
 
   return {
     ...realtimeResult,
@@ -218,7 +218,7 @@ export function useLGPDRealtime<
     error: realtimeResult.error || consentError || dataProcessingError,
     // Enhanced connection status (requires consent)
     isConnected: realtimeResult.isConnected && hasConsent,
-  };
+  }
 }
 
 /**
@@ -227,13 +227,13 @@ export function useLGPDRealtime<
 export function useLGPDPatientRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    userId?: string;
-    patientId?: string;
-    clinicId?: string;
-    enabled?: boolean;
-    onPatientUpdate?: (patient: unknown) => void;
-    onConsentDenied?: (reason: string) => void;
-    strictMode?: boolean; // More restrictive data processing
+    userId?: string
+    patientId?: string
+    clinicId?: string
+    enabled?: boolean
+    onPatientUpdate?: (patient: unknown,) => void
+    onConsentDenied?: (reason: string,) => void
+    strictMode?: boolean // More restrictive data processing
   },
 ) {
   const lgpdConfig: LGPDRealtimeConfig = {
@@ -245,7 +245,7 @@ export function useLGPDPatientRealtime(
     dataMinimization: options.strictMode ?? false,
     anonymization: false,
     pseudonymization: options.strictMode ?? false,
-    sensitiveFields: ["cpf", "rg", "email", "phone", "address", "birth_date"],
+    sensitiveFields: ['cpf', 'rg', 'email', 'phone', 'address', 'birth_date',],
     dataSubjectRights: {
       accessRight: true,
       rectificationRight: true,
@@ -253,28 +253,28 @@ export function useLGPDPatientRealtime(
       portabilityRight: true,
       objectRight: true,
     },
-  };
+  }
 
   const config: UseLGPDRealtimeConfig = {
-    table: "patients",
+    table: 'patients',
     ...(options.patientId
-      ? { filter: `id=eq.${options.patientId}` }
+      ? { filter: `id=eq.${options.patientId}`, }
       : options.clinicId
-      ? { filter: `clinic_id=eq.${options.clinicId}` }
+      ? { filter: `clinic_id=eq.${options.clinicId}`, }
       : {}),
     enabled: options.enabled ?? true,
-    userId: options.userId ?? "",
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.SENSITIVE,
     processingPurpose: LGPDProcessingPurpose.HEALTHCARE_DELIVERY,
     lgpdConfig,
-    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate }),
+    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate, }),
     ...(options.onConsentDenied && {
       onConsentDenied: options.onConsentDenied,
     }),
     validateConsent: true,
-  };
+  }
 
-  return useLGPDRealtime(supabaseClient, config);
+  return useLGPDRealtime(supabaseClient, config,)
 }
 
 /**
@@ -283,14 +283,14 @@ export function useLGPDPatientRealtime(
 export function useLGPDAppointmentRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    userId?: string;
-    appointmentId?: string;
-    patientId?: string;
-    professionalId?: string;
-    clinicId?: string;
-    enabled?: boolean;
-    onAppointmentUpdate?: (appointment: unknown) => void;
-    onConsentDenied?: (reason: string) => void;
+    userId?: string
+    appointmentId?: string
+    patientId?: string
+    professionalId?: string
+    clinicId?: string
+    enabled?: boolean
+    onAppointmentUpdate?: (appointment: unknown,) => void
+    onConsentDenied?: (reason: string,) => void
   },
 ) {
   const lgpdConfig: LGPDRealtimeConfig = {
@@ -302,7 +302,7 @@ export function useLGPDAppointmentRealtime(
     dataMinimization: false,
     anonymization: false,
     pseudonymization: false,
-    sensitiveFields: ["notes", "diagnosis", "treatment"],
+    sensitiveFields: ['notes', 'diagnosis', 'treatment',],
     dataSubjectRights: {
       accessRight: true,
       rectificationRight: true,
@@ -310,32 +310,32 @@ export function useLGPDAppointmentRealtime(
       portabilityRight: true,
       objectRight: true,
     },
-  };
+  }
 
   const buildFilter = useCallback(() => {
-    const filters = [];
+    const filters = []
 
     if (options.appointmentId) {
-      filters.push(`id=eq.${options.appointmentId}`);
+      filters.push(`id=eq.${options.appointmentId}`,)
     }
     if (options.patientId) {
-      filters.push(`patient_id=eq.${options.patientId}`);
+      filters.push(`patient_id=eq.${options.patientId}`,)
     }
     if (options.professionalId) {
-      filters.push(`professional_id=eq.${options.professionalId}`);
+      filters.push(`professional_id=eq.${options.professionalId}`,)
     }
     if (options.clinicId) {
-      filters.push(`clinic_id=eq.${options.clinicId}`);
+      filters.push(`clinic_id=eq.${options.clinicId}`,)
     }
 
-    return filters.join(",");
-  }, [options]);
+    return filters.join(',',)
+  }, [options,],)
 
   const config: UseLGPDRealtimeConfig = {
-    table: "appointments",
+    table: 'appointments',
     filter: buildFilter(),
     enabled: options.enabled ?? true,
-    userId: options.userId ?? "",
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.PERSONAL,
     processingPurpose: LGPDProcessingPurpose.APPOINTMENT_MANAGEMENT,
     lgpdConfig,
@@ -346,9 +346,9 @@ export function useLGPDAppointmentRealtime(
       onConsentDenied: options.onConsentDenied,
     }),
     validateConsent: true,
-  };
+  }
 
-  return useLGPDRealtime(supabaseClient, config);
+  return useLGPDRealtime(supabaseClient, config,)
 }
 
 /**
@@ -357,10 +357,10 @@ export function useLGPDAppointmentRealtime(
 export function useLGPDAnalytics(
   supabaseClient: SupabaseClient,
   options: {
-    userId?: string;
-    clinicId?: string;
-    enabled?: boolean;
-    onAnalyticsUpdate?: (data: unknown) => void;
+    userId?: string
+    clinicId?: string
+    enabled?: boolean
+    onAnalyticsUpdate?: (data: unknown,) => void
   },
 ) {
   const lgpdConfig: LGPDRealtimeConfig = {
@@ -380,19 +380,19 @@ export function useLGPDAnalytics(
       portabilityRight: false,
       objectRight: true, // Can object to analytics processing
     },
-  };
+  }
 
   const config: UseLGPDRealtimeConfig = {
-    table: "analytics_events",
-    ...(options.clinicId && { filter: `clinic_id=eq.${options.clinicId}` }),
+    table: 'analytics_events',
+    ...(options.clinicId && { filter: `clinic_id=eq.${options.clinicId}`, }),
     enabled: options.enabled ?? true,
-    userId: options.userId ?? "",
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.AGGREGATE,
     processingPurpose: LGPDProcessingPurpose.ANALYTICS,
     lgpdConfig,
-    ...(options.onAnalyticsUpdate && { onInsert: options.onAnalyticsUpdate }),
+    ...(options.onAnalyticsUpdate && { onInsert: options.onAnalyticsUpdate, }),
     validateConsent: false, // Aggregate analytics don't require individual consent
-  };
+  }
 
-  return useLGPDRealtime(supabaseClient, config);
+  return useLGPDRealtime(supabaseClient, config,)
 }

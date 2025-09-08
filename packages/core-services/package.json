@@ -56,7 +56,8 @@
     "coverage": "vitest run --coverage --passWithNoTests",
     "test:coverage": "vitest run --coverage --passWithNoTests",
     "test:ui": "vitest --ui",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",

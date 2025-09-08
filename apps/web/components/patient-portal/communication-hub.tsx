@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { cn } from "@neonpro/utils";
+import { cn, } from '@neonpro/utils'
 import {
   AlertTriangle,
   Bell,
@@ -21,8 +21,8 @@ import {
   Star,
   User,
   Video,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 import {
   Badge,
   Button,
@@ -36,238 +36,238 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../ui";
+} from '../ui'
 
 // Mock data for communications
 const mockCommunications = {
   conversations: [
     {
       id: 1,
-      type: "chat",
+      type: 'chat',
       participant: {
-        name: "Dra. Ana Santos",
-        role: "Dermatologista",
-        avatar: "/doctor-avatar-1.jpg",
+        name: 'Dra. Ana Santos',
+        role: 'Dermatologista',
+        avatar: '/doctor-avatar-1.jpg',
         isOnline: true,
-        clinic: "NeonPro Clínica Ipanema",
+        clinic: 'NeonPro Clínica Ipanema',
       },
       lastMessage: {
-        text: "Como está se sentindo após o procedimento? Algum desconforto?",
-        timestamp: "2024-08-18T14:30:00Z",
-        from: "doctor",
-        type: "text",
+        text: 'Como está se sentindo após o procedimento? Algum desconforto?',
+        timestamp: '2024-08-18T14:30:00Z',
+        from: 'doctor',
+        type: 'text',
       },
       unreadCount: 2,
       isPinned: true,
-      priority: "high",
-      status: "active",
+      priority: 'high',
+      status: 'active',
     },
     {
       id: 2,
-      type: "chat",
+      type: 'chat',
       participant: {
-        name: "Enfermeira Carol",
-        role: "Enfermeira Especialista",
-        avatar: "/nurse-avatar-1.jpg",
+        name: 'Enfermeira Carol',
+        role: 'Enfermeira Especialista',
+        avatar: '/nurse-avatar-1.jpg',
         isOnline: false,
-        clinic: "NeonPro Clínica Ipanema",
+        clinic: 'NeonPro Clínica Ipanema',
       },
       lastMessage: {
-        text: "Lembre-se de aplicar o creme hidratante 2x ao dia",
-        timestamp: "2024-08-17T16:45:00Z",
-        from: "nurse",
-        type: "text",
+        text: 'Lembre-se de aplicar o creme hidratante 2x ao dia',
+        timestamp: '2024-08-17T16:45:00Z',
+        from: 'nurse',
+        type: 'text',
       },
       unreadCount: 0,
       isPinned: false,
-      priority: "medium",
-      status: "active",
+      priority: 'medium',
+      status: 'active',
     },
     {
       id: 3,
-      type: "support",
+      type: 'support',
       participant: {
-        name: "Suporte NeonPro",
-        role: "Atendimento ao Cliente",
-        avatar: "/support-avatar.jpg",
+        name: 'Suporte NeonPro',
+        role: 'Atendimento ao Cliente',
+        avatar: '/support-avatar.jpg',
         isOnline: true,
-        clinic: "NeonPro",
+        clinic: 'NeonPro',
       },
       lastMessage: {
-        text: "Seu agendamento foi confirmado para 25/08 às 14:30",
-        timestamp: "2024-08-17T10:20:00Z",
-        from: "support",
-        type: "appointment",
+        text: 'Seu agendamento foi confirmado para 25/08 às 14:30',
+        timestamp: '2024-08-17T10:20:00Z',
+        from: 'support',
+        type: 'appointment',
       },
       unreadCount: 1,
       isPinned: false,
-      priority: "low",
-      status: "active",
+      priority: 'low',
+      status: 'active',
     },
   ],
   currentConversation: {
     id: 1,
     participant: {
-      name: "Dra. Ana Santos",
-      role: "Dermatologista",
-      avatar: "/doctor-avatar-1.jpg",
+      name: 'Dra. Ana Santos',
+      role: 'Dermatologista',
+      avatar: '/doctor-avatar-1.jpg',
       isOnline: true,
-      clinic: "NeonPro Clínica Ipanema",
-      phone: "+55 (21) 99999-9999",
-      email: "ana.santos@neonpro.com",
+      clinic: 'NeonPro Clínica Ipanema',
+      phone: '+55 (21) 99999-9999',
+      email: 'ana.santos@neonpro.com',
     },
     messages: [
       {
         id: 1,
-        text: "Olá Maria! Como foi sua experiência com o Botox ontem?",
-        timestamp: "2024-08-18T09:00:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+        text: 'Olá Maria! Como foi sua experiência com o Botox ontem?',
+        timestamp: '2024-08-18T09:00:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 2,
-        text: "Oi Doutora! Foi tranquilo, senti apenas um pequeno desconforto durante a aplicação.",
-        timestamp: "2024-08-18T09:15:00Z",
-        from: "patient",
-        type: "text",
-        status: "read",
+        text: 'Oi Doutora! Foi tranquilo, senti apenas um pequeno desconforto durante a aplicação.',
+        timestamp: '2024-08-18T09:15:00Z',
+        from: 'patient',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 3,
-        text: "Que bom! Isso é normal. Está sentindo algum inchaço ou vermelhidão hoje?",
-        timestamp: "2024-08-18T09:20:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+        text: 'Que bom! Isso é normal. Está sentindo algum inchaço ou vermelhidão hoje?',
+        timestamp: '2024-08-18T09:20:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 4,
-        text: "Um pouquinho de inchaço no local das aplicações, mas nada demais.",
-        timestamp: "2024-08-18T13:45:00Z",
-        from: "patient",
-        type: "text",
-        status: "read",
+        text: 'Um pouquinho de inchaço no local das aplicações, mas nada demais.',
+        timestamp: '2024-08-18T13:45:00Z',
+        from: 'patient',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 5,
         text:
-          "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
-        timestamp: "2024-08-18T14:00:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+          'Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.',
+        timestamp: '2024-08-18T14:00:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 6,
-        text: "Como está se sentindo após o procedimento? Algum desconforto?",
-        timestamp: "2024-08-18T14:30:00Z",
-        from: "doctor",
-        type: "text",
-        status: "delivered",
+        text: 'Como está se sentindo após o procedimento? Algum desconforto?',
+        timestamp: '2024-08-18T14:30:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'delivered',
       },
     ],
   },
   emergencyContacts: [
     {
       id: 1,
-      name: "Emergência 24h",
-      phone: "+55 (21) 99999-9999",
-      description: "Para emergências médicas relacionadas aos tratamentos",
-      available: "24/7",
-      type: "emergency",
+      name: 'Emergência 24h',
+      phone: '+55 (21) 99999-9999',
+      description: 'Para emergências médicas relacionadas aos tratamentos',
+      available: '24/7',
+      type: 'emergency',
     },
     {
       id: 2,
-      name: "Plantão Médico",
-      phone: "+55 (21) 98888-8888",
-      description: "Médico de plantão para dúvidas urgentes",
-      available: "Noites e fins de semana",
-      type: "urgent",
+      name: 'Plantão Médico',
+      phone: '+55 (21) 98888-8888',
+      description: 'Médico de plantão para dúvidas urgentes',
+      available: 'Noites e fins de semana',
+      type: 'urgent',
     },
   ],
   notifications: [
     {
       id: 1,
-      title: "Lembrete de Consulta",
-      message: "Sua consulta é amanhã às 14:30 com Dra. Ana Santos",
-      type: "appointment",
-      timestamp: "2024-08-18T08:00:00Z",
+      title: 'Lembrete de Consulta',
+      message: 'Sua consulta é amanhã às 14:30 com Dra. Ana Santos',
+      type: 'appointment',
+      timestamp: '2024-08-18T08:00:00Z',
       read: false,
-      priority: "high",
+      priority: 'high',
     },
     {
       id: 2,
-      title: "Resultado Disponível",
-      message: "Seus resultados da avaliação estão prontos",
-      type: "result",
-      timestamp: "2024-08-17T15:30:00Z",
+      title: 'Resultado Disponível',
+      message: 'Seus resultados da avaliação estão prontos',
+      type: 'result',
+      timestamp: '2024-08-17T15:30:00Z',
       read: false,
-      priority: "medium",
+      priority: 'medium',
     },
     {
       id: 3,
-      title: "Cuidado Pós-Procedimento",
-      message: "Lembre-se: evite exercícios por mais 12 horas",
-      type: "care",
-      timestamp: "2024-08-18T12:00:00Z",
+      title: 'Cuidado Pós-Procedimento',
+      message: 'Lembre-se: evite exercícios por mais 12 horas',
+      type: 'care',
+      timestamp: '2024-08-18T12:00:00Z',
       read: true,
-      priority: "medium",
+      priority: 'medium',
     },
   ],
-};
+}
 
 function ConversationList({
   conversations,
   onSelectConversation,
   selectedId,
-}: unknown) {
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+}: unknown,) {
+  const formatTime = (timestamp: string,) => {
+    const date = new Date(timestamp,)
+    const now = new Date()
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      },)
     }
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-    });
-  };
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+    },)
+  }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority: string,) => {
     switch (priority) {
-      case "high": {
-        return "border-l-red-500";
+      case 'high': {
+        return 'border-l-red-500'
       }
-      case "medium": {
-        return "border-l-yellow-500";
+      case 'medium': {
+        return 'border-l-yellow-500'
       }
-      case "low": {
-        return "border-l-green-500";
+      case 'low': {
+        return 'border-l-green-500'
       }
       default: {
-        return "border-l-gray-300";
+        return 'border-l-gray-300'
       }
     }
-  };
+  }
 
   return (
     <div className="space-y-2">
-      {conversations.map((conversation: unknown) => (
+      {conversations.map((conversation: unknown,) => (
         <Card
           className={cn(
-            "cursor-pointer border-l-4 transition-all hover:shadow-md",
+            'cursor-pointer border-l-4 transition-all hover:shadow-md',
             selectedId === conversation.id
-              ? "border-primary bg-primary/10"
-              : getPriorityColor(conversation.priority),
+              ? 'border-primary bg-primary/10'
+              : getPriorityColor(conversation.priority,),
           )}
           key={conversation.id}
-          onClick={() => onSelectConversation(conversation)}
+          onClick={() => onSelectConversation(conversation,)}
         >
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
@@ -292,7 +292,7 @@ function ConversationList({
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="text-muted-foreground text-xs">
-                      {formatTime(conversation.lastMessage.timestamp)}
+                      {formatTime(conversation.lastMessage.timestamp,)}
                     </span>
                     {conversation.unreadCount > 0 && (
                       <Badge className="flex h-5 w-5 items-center justify-center rounded-full bg-primary p-0 text-white text-xs">
@@ -314,43 +314,43 @@ function ConversationList({
         </Card>
       ))}
     </div>
-  );
+  )
 }
 
-function ChatWindow({ conversation }: unknown) {
-  const [message, setMessage] = useState("");
+function ChatWindow({ conversation, }: unknown,) {
+  const [message, setMessage,] = useState('',)
   // const [_showCallOptions, _setShowCallOptions] = useState(false);
 
-  const formatMessageTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatMessageTime = (timestamp: string,) => {
+    return new Date(timestamp,).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    },)
+  }
 
-  const getMessageStatus = (status: string) => {
+  const getMessageStatus = (status: string,) => {
     switch (status) {
-      case "sent": {
-        return <Clock className="h-3 w-3 text-gray-400" />;
+      case 'sent': {
+        return <Clock className="h-3 w-3 text-gray-400" />
       }
-      case "delivered": {
-        return <CheckCircle className="h-3 w-3 text-gray-400" />;
+      case 'delivered': {
+        return <CheckCircle className="h-3 w-3 text-gray-400" />
       }
-      case "read": {
-        return <CheckCircle className="h-3 w-3 text-primary" />;
+      case 'read': {
+        return <CheckCircle className="h-3 w-3 text-primary" />
       }
       default: {
-        return;
+        return
       }
     }
-  };
+  }
 
   const handleSendMessage = () => {
     if (message.trim()) {
       // Logic to send message would go here
-      setMessage("");
+      setMessage('',)
     }
-  };
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -373,7 +373,7 @@ function ChatWindow({ conversation }: unknown) {
                 {conversation.participant.role} • {conversation.participant.clinic}
               </p>
               <p className="text-green-600 text-xs">
-                {conversation.participant.isOnline ? "Online" : "Offline"}
+                {conversation.participant.isOnline ? 'Online' : 'Offline'}
               </p>
             </div>
           </div>
@@ -394,33 +394,33 @@ function ChatWindow({ conversation }: unknown) {
 
       {/* Messages */}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {conversation.messages.map((msg: unknown) => (
+        {conversation.messages.map((msg: unknown,) => (
           <div
             className={cn(
-              "flex",
-              msg.from === "patient" ? "justify-end" : "justify-start",
+              'flex',
+              msg.from === 'patient' ? 'justify-end' : 'justify-start',
             )}
             key={msg.id}
           >
             <div
               className={cn(
-                "max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md",
-                msg.from === "patient"
-                  ? "bg-primary text-white"
-                  : "bg-gray-100 dark:bg-gray-800",
+                'max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md',
+                msg.from === 'patient'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 dark:bg-gray-800',
               )}
             >
               <p className="text-sm">{msg.text}</p>
               <div
                 className={cn(
-                  "flex items-center justify-end space-x-1 text-xs",
-                  msg.from === "patient"
-                    ? "text-primary-light"
-                    : "text-muted-foreground",
+                  'flex items-center justify-end space-x-1 text-xs',
+                  msg.from === 'patient'
+                    ? 'text-primary-light'
+                    : 'text-muted-foreground',
                 )}
               >
-                <span>{formatMessageTime(msg.timestamp)}</span>
-                {msg.from === "patient" && getMessageStatus(msg.status)}
+                <span>{formatMessageTime(msg.timestamp,)}</span>
+                {msg.from === 'patient' && getMessageStatus(msg.status,)}
               </div>
             </div>
           </div>
@@ -445,8 +445,8 @@ function ChatWindow({ conversation }: unknown) {
           <div className="flex flex-1 space-x-2">
             <Input
               className="flex-1"
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+              onChange={(e,) => setMessage(e.target.value,)}
+              onKeyPress={(e,) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Digite sua mensagem..."
               value={message}
             />
@@ -461,81 +461,81 @@ function ChatWindow({ conversation }: unknown) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-function NotificationsList({ notifications }: unknown) {
-  const getNotificationIcon = (type: string) => {
+function NotificationsList({ notifications, }: unknown,) {
+  const getNotificationIcon = (type: string,) => {
     switch (type) {
-      case "appointment": {
-        return <Calendar className="h-5 w-5 text-blue-600" />;
+      case 'appointment': {
+        return <Calendar className="h-5 w-5 text-blue-600" />
       }
-      case "result": {
-        return <Star className="h-5 w-5 text-accent" />;
+      case 'result': {
+        return <Star className="h-5 w-5 text-accent" />
       }
-      case "care": {
-        return <Heart className="h-5 w-5 text-primary" />;
+      case 'care': {
+        return <Heart className="h-5 w-5 text-primary" />
       }
-      case "emergency": {
-        return <AlertTriangle className="h-5 w-5 text-red-600" />;
+      case 'emergency': {
+        return <AlertTriangle className="h-5 w-5 text-red-600" />
       }
       default: {
-        return <Bell className="h-5 w-5 text-gray-600" />;
+        return <Bell className="h-5 w-5 text-gray-600" />
       }
     }
-  };
+  }
 
-  const formatNotificationTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
+  const formatNotificationTime = (timestamp: string,) => {
+    const date = new Date(timestamp,)
+    const now = new Date()
+    const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60)
 
     if (diffInMinutes < 60) {
-      return `${Math.floor(diffInMinutes)} min atrás`;
+      return `${Math.floor(diffInMinutes,)} min atrás`
     }
     if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)} horas atrás`;
+      return `${Math.floor(diffInMinutes / 60,)} horas atrás`
     }
-    return date.toLocaleDateString("pt-BR");
-  };
+    return date.toLocaleDateString('pt-BR',)
+  }
 
   return (
     <div className="space-y-3">
-      {notifications.map((notification: unknown) => (
+      {notifications.map((notification: unknown,) => (
         <Card
           className={cn(
-            "cursor-pointer transition-all hover:shadow-md",
+            'cursor-pointer transition-all hover:shadow-md',
             notification.read
-              ? ""
-              : "border-l-4 border-l-primary bg-primary/10",
+              ? ''
+              : 'border-l-4 border-l-primary bg-primary/10',
           )}
           key={notification.id}
         >
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                {getNotificationIcon(notification.type)}
+                {getNotificationIcon(notification.type,)}
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
                   <h3
                     className={cn(
-                      "font-medium text-sm",
-                      notification.read ? "" : "font-semibold",
+                      'font-medium text-sm',
+                      notification.read ? '' : 'font-semibold',
                     )}
                   >
                     {notification.title}
                   </h3>
                   <span className="text-muted-foreground text-xs">
-                    {formatNotificationTime(notification.timestamp)}
+                    {formatNotificationTime(notification.timestamp,)}
                   </span>
                 </div>
                 <p className="mt-1 text-muted-foreground text-sm">
                   {notification.message}
                 </p>
 
-                {notification.priority === "high" && (
+                {notification.priority === 'high' && (
                   <Badge
                     className="mt-2 bg-red-100 text-red-800"
                     variant="secondary"
@@ -556,13 +556,13 @@ function NotificationsList({ notifications }: unknown) {
         </Card>
       ))}
     </div>
-  );
+  )
 }
 
-function EmergencyContacts({ contacts }: unknown) {
+function EmergencyContacts({ contacts, }: unknown,) {
   return (
     <div className="space-y-4">
-      {contacts.map((contact: unknown) => (
+      {contacts.map((contact: unknown,) => (
         <Card className="border-l-4 border-l-red-500" key={contact.id}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -594,15 +594,15 @@ function EmergencyContacts({ contacts }: unknown) {
         </Card>
       ))}
     </div>
-  );
+  )
 }
 
 export function CommunicationHub() {
-  const [activeTab, setActiveTab] = useState("messages");
-  const [selectedConversation, setSelectedConversation] = useState(
+  const [activeTab, setActiveTab,] = useState('messages',)
+  const [selectedConversation, setSelectedConversation,] = useState(
     mockCommunications.currentConversation,
-  );
-  const [searchTerm, setSearchTerm] = useState("");
+  )
+  const [searchTerm, setSearchTerm,] = useState('',)
 
   return (
     <div className="space-y-6">
@@ -690,7 +690,7 @@ export function CommunicationHub() {
           </TabsTrigger>
           <TabsTrigger value="notifications">
             Notificações (
-            {mockCommunications.notifications.filter((n) => !n.read).length})
+            {mockCommunications.notifications.filter((n,) => !n.read).length})
           </TabsTrigger>
           <TabsTrigger value="emergency">Emergência</TabsTrigger>
         </TabsList>
@@ -706,7 +706,7 @@ export function CommunicationHub() {
                     <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       className="pl-10"
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={(e,) => setSearchTerm(e.target.value,)}
                       placeholder="Buscar conversas..."
                       value={searchTerm}
                     />
@@ -814,5 +814,5 @@ export function CommunicationHub() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

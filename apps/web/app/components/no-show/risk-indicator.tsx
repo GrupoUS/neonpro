@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import type { RiskIndicatorProps } from "@/types/no-show-prediction";
-import { RISK_COLORS, RISK_LABELS_PT, RISK_THRESHOLDS } from "@/types/no-show-prediction";
-import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { Badge, } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from '@/components/ui/tooltip'
+import { cn, } from '@/lib/utils'
+import type { RiskIndicatorProps, } from '@/types/no-show-prediction'
+import { RISK_COLORS, RISK_LABELS_PT, RISK_THRESHOLDS, } from '@/types/no-show-prediction'
+import { AlertCircle, AlertTriangle, CheckCircle, XCircle, } from 'lucide-react'
 
 /**
  * Risk Indicator Component for No-Show Prediction
@@ -14,82 +14,82 @@ import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 export function RiskIndicator({
   riskScore,
   riskLevel,
-  size = "md",
+  size = 'md',
   showLabel = true,
   className,
-}: RiskIndicatorProps) {
-  const getRiskIcon = (level: string) => {
+}: RiskIndicatorProps,) {
+  const getRiskIcon = (level: string,) => {
     const iconProps = {
       className: cn(
-        "inline-block",
-        size === "sm"
-          ? "h-3 w-3"
-          : size === "md"
-          ? "h-4 w-4"
-          : "h-5 w-5",
+        'inline-block',
+        size === 'sm'
+          ? 'h-3 w-3'
+          : size === 'md'
+          ? 'h-4 w-4'
+          : 'h-5 w-5',
       ),
-    };
+    }
 
     switch (level) {
-      case "low":
-        return <CheckCircle {...iconProps} />;
-      case "medium":
-        return <AlertCircle {...iconProps} />;
-      case "high":
-        return <AlertTriangle {...iconProps} />;
-      case "critical":
-        return <XCircle {...iconProps} />;
+      case 'low':
+        return <CheckCircle {...iconProps} />
+      case 'medium':
+        return <AlertCircle {...iconProps} />
+      case 'high':
+        return <AlertTriangle {...iconProps} />
+      case 'critical':
+        return <XCircle {...iconProps} />
       default:
-        return <AlertCircle {...iconProps} />;
+        return <AlertCircle {...iconProps} />
     }
-  };
+  }
 
   const getRiskPercentageColor = () => {
     if (riskScore <= RISK_THRESHOLDS.LOW) {
-      return "text-green-600";
+      return 'text-green-600'
     }
     if (riskScore <= RISK_THRESHOLDS.MEDIUM) {
-      return "text-yellow-600";
+      return 'text-yellow-600'
     }
     if (riskScore <= RISK_THRESHOLDS.HIGH) {
-      return "text-orange-600";
+      return 'text-orange-600'
     }
-    return "text-red-600";
-  };
+    return 'text-red-600'
+  }
 
   return (
-    <div className={cn("inline-flex items-center gap-1", className)}>
+    <div className={cn('inline-flex items-center gap-1', className,)}>
       <Badge
         variant="outline"
         className={cn(
-          "inline-flex items-center gap-1",
+          'inline-flex items-center gap-1',
           RISK_COLORS[riskLevel],
-          size === "sm"
-            ? "px-1 py-0 text-xs"
-            : size === "md"
-            ? "px-2 py-1 text-sm"
-            : "px-3 py-1 text-base",
+          size === 'sm'
+            ? 'px-1 py-0 text-xs'
+            : size === 'md'
+            ? 'px-2 py-1 text-sm'
+            : 'px-3 py-1 text-base',
         )}
       >
-        {getRiskIcon(riskLevel)}
+        {getRiskIcon(riskLevel,)}
         {showLabel && <span className="font-medium">{RISK_LABELS_PT[riskLevel]}</span>}
       </Badge>
 
       <span
         className={cn(
-          "font-mono font-bold",
+          'font-mono font-bold',
           getRiskPercentageColor(),
-          size === "sm"
-            ? "text-xs"
-            : size === "md"
-            ? "text-sm"
-            : "text-base",
+          size === 'sm'
+            ? 'text-xs'
+            : size === 'md'
+            ? 'text-sm'
+            : 'text-base',
         )}
       >
         {riskScore}%
       </span>
     </div>
-  );
+  )
 }
 
 /**
@@ -98,17 +98,17 @@ export function RiskIndicator({
 export function RiskIndicatorWithTooltip({
   riskScore,
   riskLevel,
-  size = "md",
+  size = 'md',
   showLabel = true,
   className,
   tooltipContent,
 }: RiskIndicatorProps & {
   tooltipContent?: {
-    confidence: number;
-    topFactors: { factor: string; impact: number; description: string; }[];
-    recommendedActions: string[];
-  };
-}) {
+    confidence: number
+    topFactors: { factor: string; impact: number; description: string }[]
+    recommendedActions: string[]
+  }
+},) {
   if (!tooltipContent) {
     return (
       <RiskIndicator
@@ -118,7 +118,7 @@ export function RiskIndicatorWithTooltip({
         showLabel={showLabel}
         className={className}
       />
-    );
+    )
   }
 
   return (
@@ -149,18 +149,18 @@ export function RiskIndicatorWithTooltip({
                 <h5 className="font-medium text-xs">Principais Fatores:</h5>
                 <ul className="mt-1 space-y-1">
                   {tooltipContent.topFactors
-                    .slice(0, 3)
-                    .map((factor, index) => (
+                    .slice(0, 3,)
+                    .map((factor, index,) => (
                       <li key={index} className="text-xs">
                         <span
                           className={cn(
-                            "inline-block w-8 text-center",
+                            'inline-block w-8 text-center',
                             factor.impact > 0
-                              ? "text-red-500"
-                              : "text-green-500",
+                              ? 'text-red-500'
+                              : 'text-green-500',
                           )}
                         >
-                          {factor.impact > 0 ? "+" : ""}
+                          {factor.impact > 0 ? '+' : ''}
                           {factor.impact}
                         </span>
                         {factor.description}
@@ -175,8 +175,8 @@ export function RiskIndicatorWithTooltip({
                 <h5 className="font-medium text-xs">Ações Recomendadas:</h5>
                 <ul className="mt-1 space-y-1">
                   {tooltipContent.recommendedActions
-                    .slice(0, 2)
-                    .map((action, index) => (
+                    .slice(0, 2,)
+                    .map((action, index,) => (
                       <li key={index} className="text-xs text-blue-600">
                         • {action}
                       </li>
@@ -188,5 +188,5 @@ export function RiskIndicatorWithTooltip({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

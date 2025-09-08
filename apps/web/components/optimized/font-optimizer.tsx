@@ -1,99 +1,99 @@
-"use client";
+'use client'
 
-import { Inter, JetBrains_Mono, Lora } from "next/font/google";
-import localFont from "next/font/local";
-import { useEffect, useRef, useState } from "react";
+import { Inter, JetBrains_Mono, Lora, } from 'next/font/google'
+import localFont from 'next/font/local'
+import { useEffect, useRef, useState, } from 'react'
 
 // Optimized Google Fonts with display swap and preload
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-  weight: ["300", "400", "500", "600", "700"],
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-inter',
+  weight: ['300', '400', '500', '600', '700',],
   preload: true,
   fallback: [
-    "ui-sans-serif",
-    "system-ui",
-    "-apple-system",
-    "BlinkMacSystemFont",
-    "Segoe UI",
-    "Roboto",
-    "Arial",
-    "sans-serif",
+    'ui-sans-serif',
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Arial',
+    'sans-serif',
   ],
-});
+},)
 
 const lora = Lora({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-lora",
-  weight: ["400", "500", "600", "700"],
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-lora',
+  weight: ['400', '500', '600', '700',],
   preload: false, // Secondary font - não precisa preload
   fallback: [
-    "ui-serif",
-    "Georgia",
-    "Cambria",
-    "Times New Roman",
-    "Times",
-    "serif",
+    'ui-serif',
+    'Georgia',
+    'Cambria',
+    'Times New Roman',
+    'Times',
+    'serif',
   ],
-});
+},)
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
-  weight: ["400", "500", "600"],
+  subsets: ['latin',],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+  weight: ['400', '500', '600',],
   preload: false, // Usado apenas em códigos
   fallback: [
-    "ui-monospace",
-    "SFMono-Regular",
-    "Monaco",
-    "Consolas",
-    "Liberation Mono",
-    "Courier New",
-    "monospace",
+    'ui-monospace',
+    'SFMono-Regular',
+    'Monaco',
+    'Consolas',
+    'Liberation Mono',
+    'Courier New',
+    'monospace',
   ],
-});
+},)
 
 // Local fonts para healthcare (caso necessário)
 const healthcareFont = localFont({
   src: [
     {
-      path: "../fonts/healthcare-regular.woff2",
-      weight: "400",
-      style: "normal",
+      path: '../fonts/healthcare-regular.woff2',
+      weight: '400',
+      style: 'normal',
     },
     {
-      path: "../fonts/healthcare-medium.woff2",
-      weight: "500",
-      style: "normal",
+      path: '../fonts/healthcare-medium.woff2',
+      weight: '500',
+      style: 'normal',
     },
     {
-      path: "../fonts/healthcare-bold.woff2",
-      weight: "700",
-      style: "normal",
+      path: '../fonts/healthcare-bold.woff2',
+      weight: '700',
+      style: 'normal',
     },
   ],
-  variable: "--font-healthcare",
-  display: "swap",
-  fallback: ["Inter", "system-ui", "sans-serif"],
-});
+  variable: '--font-healthcare',
+  display: 'swap',
+  fallback: ['Inter', 'system-ui', 'sans-serif',],
+},)
 
 // Font loading optimization utilities
 export const FontOptimizer = {
   // Get all font class names for HTML
   getClassNames: () => {
-    return `${inter.className} ${inter.variable} ${lora.variable} ${jetbrainsMono.variable}`;
+    return `${inter.className} ${inter.variable} ${lora.variable} ${jetbrainsMono.variable}`
   },
 
   // Get font variables for Tailwind CSS
   getVariables: () => {
     return {
-      "--font-inter": inter.style.fontFamily,
-      "--font-lora": lora.style.fontFamily,
-      "--font-jetbrains-mono": jetbrainsMono.style.fontFamily,
-    };
+      '--font-inter': inter.style.fontFamily,
+      '--font-lora': lora.style.fontFamily,
+      '--font-jetbrains-mono': jetbrainsMono.style.fontFamily,
+    }
   },
 
   // Generate critical font CSS for inline
@@ -113,7 +113,7 @@ export const FontOptimizer = {
       .font-loading {
         font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       }
-    `;
+    `
   },
 
   // Generate font preload links
@@ -121,38 +121,38 @@ export const FontOptimizer = {
     return [
       // Preload critical Inter weights
       {
-        rel: "preload",
+        rel: 'preload',
         href:
-          "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyeMZhrib2Bg-4.woff2",
-        as: "font",
-        type: "font/woff2",
-        crossOrigin: "anonymous",
+          'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyeMZhrib2Bg-4.woff2',
+        as: 'font',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous',
       },
       {
-        rel: "preload",
+        rel: 'preload',
         href:
-          "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fMZhrib2Bg-4.woff2",
-        as: "font",
-        type: "font/woff2",
-        crossOrigin: "anonymous",
+          'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fMZhrib2Bg-4.woff2',
+        as: 'font',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous',
       },
-    ];
+    ]
   },
 
   // Check if fonts are loaded
   checkFontLoading: async () => {
-    if (typeof window === "undefined" || !("fonts" in document)) {
-      return false;
+    if (typeof window === 'undefined' || !('fonts' in document)) {
+      return false
     }
 
     try {
-      await document.fonts.ready;
-      return document.fonts.check("16px Inter");
+      await document.fonts.ready
+      return document.fonts.check('16px Inter',)
     } catch {
-      return false;
+      return false
     }
   },
-};
+}
 
 // Healthcare-specific font configurations
 export const HealthcareFontConfig = {
@@ -160,26 +160,26 @@ export const HealthcareFontConfig = {
   sizes: {
     // Emergency context - larger, more readable
     emergency: {
-      base: "18px",
-      heading: "32px",
-      body: "18px",
-      caption: "16px",
+      base: '18px',
+      heading: '32px',
+      body: '18px',
+      caption: '16px',
     },
 
     // Standard healthcare interface
     standard: {
-      base: "16px",
-      heading: "24px",
-      body: "16px",
-      caption: "14px",
+      base: '16px',
+      heading: '24px',
+      body: '16px',
+      caption: '14px',
     },
 
     // Compact for tablets/mobile
     compact: {
-      base: "14px",
-      heading: "20px",
-      body: "14px",
-      caption: "12px",
+      base: '14px',
+      heading: '20px',
+      body: '14px',
+      caption: '12px',
     },
   },
 
@@ -192,9 +192,9 @@ export const HealthcareFontConfig = {
 
   // Letter spacing para medical terminology
   letterSpacing: {
-    tight: "-0.01em",
-    normal: "0.01em", // Melhor para termos médicos
-    wide: "0.02em",
+    tight: '-0.01em',
+    normal: '0.01em', // Melhor para termos médicos
+    wide: '0.02em',
   },
 
   // Font weights
@@ -205,14 +205,14 @@ export const HealthcareFontConfig = {
     semibold: 600,
     bold: 700,
   },
-} as const;
+} as const
 
 // Font loading performance component
 interface FontLoadingProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function FontLoadingProvider({ children }: FontLoadingProviderProps) {
+export function FontLoadingProvider({ children, }: FontLoadingProviderProps,) {
   return (
     <div className={FontOptimizer.getClassNames()}>
       <style jsx global>
@@ -254,67 +254,67 @@ export function FontLoadingProvider({ children }: FontLoadingProviderProps) {
       </style>
       {children}
     </div>
-  );
+  )
 }
 
 // Hook para font optimization
 export function useFontOptimization() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [fontLoadTime, setFontLoadTime] = useState<number | null>(null);
-  const fontsLoadedRef = useRef(false);
+  const [fontsLoaded, setFontsLoaded,] = useState(false,)
+  const [fontLoadTime, setFontLoadTime,] = useState<number | null>(null,)
+  const fontsLoadedRef = useRef(false,)
 
   // Keep ref in sync with state
   useEffect(() => {
-    fontsLoadedRef.current = fontsLoaded;
-  }, [fontsLoaded]);
+    fontsLoadedRef.current = fontsLoaded
+  }, [fontsLoaded,],)
 
   useEffect(() => {
-    const startTime = performance.now();
+    const startTime = performance.now()
 
     const checkFonts = async () => {
-      const loaded = await FontOptimizer.checkFontLoading();
+      const loaded = await FontOptimizer.checkFontLoading()
       if (loaded) {
-        const loadTime = performance.now() - startTime;
-        setFontLoadTime(loadTime);
-        setFontsLoaded(true);
+        const loadTime = performance.now() - startTime
+        setFontLoadTime(loadTime,)
+        setFontsLoaded(true,)
 
         // Add loaded class to prevent FOUT
-        document.documentElement.classList.add("fonts-loaded");
-        document.documentElement.classList.remove("font-loading");
+        document.documentElement.classList.add('fonts-loaded',)
+        document.documentElement.classList.remove('font-loading',)
       }
-    };
+    }
 
     // Check immediately and then periodically
-    checkFonts();
-    const interval = setInterval(checkFonts, 100);
+    checkFonts()
+    const interval = setInterval(checkFonts, 100,)
 
     // Cleanup after 5 seconds (fallback)
     const timeout = setTimeout(() => {
-      clearInterval(interval);
+      clearInterval(interval,)
       if (!fontsLoadedRef.current) {
-        setFontsLoaded(true);
-        document.documentElement.classList.add("fonts-loaded");
+        setFontsLoaded(true,)
+        document.documentElement.classList.add('fonts-loaded',)
       }
-    }, 5000);
+    }, 5000,)
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, []); // Remove fontsLoaded from dependency array since we use ref now
+      clearInterval(interval,)
+      clearTimeout(timeout,)
+    }
+  }, [],) // Remove fontsLoaded from dependency array since we use ref now
 
   return {
     fontsLoaded,
     fontLoadTime,
-  };
+  }
 }
 
 // Export font instances
-export { healthcareFont, inter, jetbrainsMono, lora };
+export { healthcareFont, inter, jetbrainsMono, lora, }
 
 // Export CSS classes for Tailwind config
 export const fontClasses = {
-  sans: ["var(--font-inter)", ...inter.style.fontFamily.split(",")],
-  serif: ["var(--font-lora)", ...lora.style.fontFamily.split(",")],
-  mono: ["var(--font-jetbrains-mono)", ...jetbrainsMono.style.fontFamily.split(",")],
-} as const;
+  sans: ['var(--font-inter)', ...inter.style.fontFamily.split(',',),],
+  serif: ['var(--font-lora)', ...lora.style.fontFamily.split(',',),],
+  mono: ['var(--font-jetbrains-mono)', ...jetbrainsMono.style.fontFamily.split(',',),],
+} as const

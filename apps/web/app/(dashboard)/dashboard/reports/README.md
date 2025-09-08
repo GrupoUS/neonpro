@@ -77,7 +77,7 @@ const lgpdComplianceData = {
     complianceScore: 94.2,
     // ... mais métricas
   },
-};
+}
 ```
 
 ### **Financial Data (Brazilian Format)**
@@ -93,7 +93,7 @@ const financialData = {
     csll: 15234.0,
     // Todos os tributos brasileiros
   },
-};
+}
 ```
 
 ### **Clinical Performance Data**
@@ -105,7 +105,7 @@ const clinicalData = {
     complicationRate: 0.8,
     patientSatisfaction: 4.7,
   },
-};
+}
 ```
 
 ## 🎯 Funcionalidades de Exportação
@@ -113,9 +113,9 @@ const clinicalData = {
 ### **PDF Generation**
 
 ```typescript
-const pdfGenerator = new HealthcarePDFGenerator();
-const pdfData = pdfGenerator.generateLGPDReport();
-downloadReport(pdfData, "relatorio-lgpd.pdf", "pdf");
+const pdfGenerator = new HealthcarePDFGenerator()
+const pdfData = pdfGenerator.generateLGPDReport()
+downloadReport(pdfData, 'relatorio-lgpd.pdf', 'pdf',)
 ```
 
 **Características dos PDFs:**
@@ -129,8 +129,8 @@ downloadReport(pdfData, "relatorio-lgpd.pdf", "pdf");
 ### **Excel Export**
 
 ```typescript
-const excelData = HealthcareExcelExporter.generateComprehensiveReport();
-downloadReport(excelData, "relatorio-completo.xlsx", "excel");
+const excelData = HealthcareExcelExporter.generateComprehensiveReport()
+downloadReport(excelData, 'relatorio-completo.xlsx', 'excel',)
 ```
 
 **Planilhas Incluídas:**
@@ -143,8 +143,8 @@ downloadReport(excelData, "relatorio-completo.xlsx", "excel");
 ### **CSV Export**
 
 ```typescript
-const csvData = generateCSVReport("lgpd");
-downloadReport(csvData, "lgpd-compliance.csv", "csv");
+const csvData = generateCSVReport('lgpd',)
+downloadReport(csvData, 'lgpd-compliance.csv', 'csv',)
 ```
 
 ## 📅 Sistema de Agendamento
@@ -163,10 +163,10 @@ downloadReport(csvData, "lgpd-compliance.csv", "csv");
 const scheduleConfig = {
   lgpdCompliant: true,
   retentionDays: 90,
-  recipients: ["compliance@neonpro.com.br"],
-  format: "pdf",
-  deliveryMethod: "email",
-};
+  recipients: ['compliance@neonpro.com.br',],
+  format: 'pdf',
+  deliveryMethod: 'email',
+}
 ```
 
 ## ♿ Acessibilidade (WCAG 2.1 AA)
@@ -191,11 +191,11 @@ const scheduleConfig = {
 
 ```typescript
 const announcements = {
-  REPORT_GENERATING: "Relatório sendo gerado. Por favor aguarde.",
-  REPORT_READY: "Relatório pronto para download.",
-  EXPORT_COMPLETED: "Arquivo exportado com sucesso.",
-  SEARCH_RESULTS_UPDATED: (count) => `${count} relatórios encontrados.`,
-};
+  REPORT_GENERATING: 'Relatório sendo gerado. Por favor aguarde.',
+  REPORT_READY: 'Relatório pronto para download.',
+  EXPORT_COMPLETED: 'Arquivo exportado com sucesso.',
+  SEARCH_RESULTS_UPDATED: (count,) => `${count} relatórios encontrados.`,
+}
 ```
 
 ## 🔒 Conformidade e Segurança
@@ -248,13 +248,13 @@ const announcements = {
 
 ```typescript
 // Gerar relatório
-handleGenerateReport("lgpd-compliance");
+handleGenerateReport('lgpd-compliance',)
 
 // Exportar em PDF
-handleExportReport("lgpd-compliance", "pdf");
+handleExportReport('lgpd-compliance', 'pdf',)
 
 // Agendar automaticamente
-handleScheduleReport("lgpd-compliance");
+handleScheduleReport('lgpd-compliance',)
 ```
 
 ### **4. Agendamento Automático**
@@ -301,14 +301,14 @@ handleScheduleReport("lgpd-compliance");
 
 ```typescript
 // Acessibilidade
-const { announce } = useAnnouncements();
-const { saveFocus, restoreFocus } = useFocusManagement();
-const motionSettings = useReducedMotion();
+const { announce, } = useAnnouncements()
+const { saveFocus, restoreFocus, } = useFocusManagement()
+const motionSettings = useReducedMotion()
 
 // Dados de saúde
-const { recentPatients } = usePatients();
-const { todaysAppointments } = useAppointments();
-const metrics = useDashboardMetrics();
+const { recentPatients, } = usePatients()
+const { todaysAppointments, } = useAppointments()
+const metrics = useDashboardMetrics()
 ```
 
 ## 🚧 Roadmap Futuro

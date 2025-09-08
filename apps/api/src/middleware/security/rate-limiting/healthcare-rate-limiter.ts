@@ -11,27 +11,27 @@
  * - Distributed rate limiting support (Redis-compatible)
  */
 
-import type { Context, MiddlewareHandler } from "hono";
-import { HealthcareRole } from "../auth/jwt-validation";
+import type { Context, MiddlewareHandler, } from 'hono'
+import { HealthcareRole, } from '../auth/jwt-validation'
 
 // Healthcare endpoint categories for rate limiting
 export enum HealthcareEndpointCategory {
-  PATIENT_DATA = "patient_data",
-  MEDICAL_RECORDS = "medical_records",
-  APPOINTMENTS = "appointments",
-  EMERGENCY = "emergency",
-  COMPLIANCE = "compliance",
-  ANALYTICS = "analytics",
-  MARKETING = "marketing",
-  PUBLIC = "public",
+  PATIENT_DATA = 'patient_data',
+  MEDICAL_RECORDS = 'medical_records',
+  APPOINTMENTS = 'appointments',
+  EMERGENCY = 'emergency',
+  COMPLIANCE = 'compliance',
+  ANALYTICS = 'analytics',
+  MARKETING = 'marketing',
+  PUBLIC = 'public',
 }
 
 // Emergency access types
 export enum EmergencyAccessType {
-  MEDICAL = "medical",
-  LIFE_THREATENING = "life_threatening",
-  URGENT_CARE = "urgent_care",
-  MASS_CASUALTY = "mass_casualty",
+  MEDICAL = 'medical',
+  LIFE_THREATENING = 'life_threatening',
+  URGENT_CARE = 'urgent_care',
+  MASS_CASUALTY = 'mass_casualty',
 }
 
 // Rate limit window types
@@ -46,43 +46,43 @@ export enum RateLimitWindow {
 
 // Healthcare-specific rate limit configuration
 interface HealthcareRateLimitConfig {
-  category: HealthcareEndpointCategory;
-  endpoint_pattern: string;
-  description: string;
+  category: HealthcareEndpointCategory
+  endpoint_pattern: string
+  description: string
 
   // Rate limits by user type
   limits: {
-    anonymous: { requests: number; window: RateLimitWindow; };
-    authenticated: { requests: number; window: RateLimitWindow; };
-    healthcare_provider: { requests: number; window: RateLimitWindow; };
-    emergency_physician: { requests: number; window: RateLimitWindow; };
-    admin: { requests: number; window: RateLimitWindow; };
-  };
+    anonymous: { requests: number; window: RateLimitWindow }
+    authenticated: { requests: number; window: RateLimitWindow }
+    healthcare_provider: { requests: number; window: RateLimitWindow }
+    emergency_physician: { requests: number; window: RateLimitWindow }
+    admin: { requests: number; window: RateLimitWindow }
+  }
 
   // Healthcare-specific settings
-  patient_data_access: boolean;
-  requires_license: boolean;
-  emergency_bypass: boolean;
-  emergency_multiplier: number; // Multiplier for emergency access
+  patient_data_access: boolean
+  requires_license: boolean
+  emergency_bypass: boolean
+  emergency_multiplier: number // Multiplier for emergency access
 
   // Compliance settings
-  audit_required: boolean;
-  lgpd_sensitive: boolean;
-  anvisa_regulated: boolean;
+  audit_required: boolean
+  lgpd_sensitive: boolean
+  anvisa_regulated: boolean
 }
 
 // Comprehensive healthcare rate limit configurations
 const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
   {
     category: HealthcareEndpointCategory.PATIENT_DATA,
-    endpoint_pattern: "/api/v1/patients",
-    description: "Patient personal and health data operations",
+    endpoint_pattern: '/api/v1/patients',
+    description: 'Patient personal and health data operations',
     limits: {
-      anonymous: { requests: 0, window: RateLimitWindow.MINUTE }, // No anonymous access
-      authenticated: { requests: 30, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 100, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 500, window: RateLimitWindow.MINUTE },
-      admin: { requests: 1000, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 0, window: RateLimitWindow.MINUTE, }, // No anonymous access
+      authenticated: { requests: 30, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 100, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 500, window: RateLimitWindow.MINUTE, },
+      admin: { requests: 1000, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: true,
     requires_license: true,
@@ -95,14 +95,14 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
 
   {
     category: HealthcareEndpointCategory.MEDICAL_RECORDS,
-    endpoint_pattern: "/api/v1/medical-records",
-    description: "Medical records and treatment history",
+    endpoint_pattern: '/api/v1/medical-records',
+    description: 'Medical records and treatment history',
     limits: {
-      anonymous: { requests: 0, window: RateLimitWindow.MINUTE },
-      authenticated: { requests: 20, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 80, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 300, window: RateLimitWindow.MINUTE },
-      admin: { requests: 500, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 0, window: RateLimitWindow.MINUTE, },
+      authenticated: { requests: 20, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 80, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 300, window: RateLimitWindow.MINUTE, },
+      admin: { requests: 500, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: true,
     requires_license: true,
@@ -115,14 +115,14 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
 
   {
     category: HealthcareEndpointCategory.APPOINTMENTS,
-    endpoint_pattern: "/api/v1/appointments",
-    description: "Appointment scheduling and management",
+    endpoint_pattern: '/api/v1/appointments',
+    description: 'Appointment scheduling and management',
     limits: {
-      anonymous: { requests: 5, window: RateLimitWindow.MINUTE }, // Limited public booking
-      authenticated: { requests: 50, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 200, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 1000, window: RateLimitWindow.MINUTE },
-      admin: { requests: 2000, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 5, window: RateLimitWindow.MINUTE, }, // Limited public booking
+      authenticated: { requests: 50, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 200, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 1000, window: RateLimitWindow.MINUTE, },
+      admin: { requests: 2000, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: false,
     requires_license: false,
@@ -135,14 +135,14 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
 
   {
     category: HealthcareEndpointCategory.EMERGENCY,
-    endpoint_pattern: "/api/v1/emergency",
-    description: "Emergency patient access and procedures",
+    endpoint_pattern: '/api/v1/emergency',
+    description: 'Emergency patient access and procedures',
     limits: {
-      anonymous: { requests: 0, window: RateLimitWindow.MINUTE },
-      authenticated: { requests: 10, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 50, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 2000, window: RateLimitWindow.MINUTE }, // Very high for emergencies
-      admin: { requests: 1000, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 0, window: RateLimitWindow.MINUTE, },
+      authenticated: { requests: 10, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 50, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 2000, window: RateLimitWindow.MINUTE, }, // Very high for emergencies
+      admin: { requests: 1000, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: true,
     requires_license: true,
@@ -155,14 +155,14 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
 
   {
     category: HealthcareEndpointCategory.COMPLIANCE,
-    endpoint_pattern: "/api/v1/compliance",
-    description: "LGPD compliance and audit operations",
+    endpoint_pattern: '/api/v1/compliance',
+    description: 'LGPD compliance and audit operations',
     limits: {
-      anonymous: { requests: 0, window: RateLimitWindow.MINUTE },
-      authenticated: { requests: 10, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 30, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 20, window: RateLimitWindow.MINUTE }, // Limited emergency access
-      admin: { requests: 100, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 0, window: RateLimitWindow.MINUTE, },
+      authenticated: { requests: 10, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 30, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 20, window: RateLimitWindow.MINUTE, }, // Limited emergency access
+      admin: { requests: 100, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: true,
     requires_license: false,
@@ -175,14 +175,14 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
 
   {
     category: HealthcareEndpointCategory.ANALYTICS,
-    endpoint_pattern: "/api/v1/analytics",
-    description: "Healthcare analytics and reporting",
+    endpoint_pattern: '/api/v1/analytics',
+    description: 'Healthcare analytics and reporting',
     limits: {
-      anonymous: { requests: 0, window: RateLimitWindow.MINUTE },
-      authenticated: { requests: 20, window: RateLimitWindow.MINUTE },
-      healthcare_provider: { requests: 100, window: RateLimitWindow.MINUTE },
-      emergency_physician: { requests: 50, window: RateLimitWindow.MINUTE },
-      admin: { requests: 500, window: RateLimitWindow.MINUTE },
+      anonymous: { requests: 0, window: RateLimitWindow.MINUTE, },
+      authenticated: { requests: 20, window: RateLimitWindow.MINUTE, },
+      healthcare_provider: { requests: 100, window: RateLimitWindow.MINUTE, },
+      emergency_physician: { requests: 50, window: RateLimitWindow.MINUTE, },
+      admin: { requests: 500, window: RateLimitWindow.MINUTE, },
     },
     patient_data_access: false,
     requires_license: false,
@@ -192,100 +192,100 @@ const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
     lgpd_sensitive: false,
     anvisa_regulated: false,
   },
-];
+]
 
 // Rate limiting storage interface for different backends
 interface RateLimitStorage {
-  get(key: string): Promise<number | null>;
-  set(key: string, value: number, ttl: number): Promise<void>;
-  increment(key: string, ttl: number): Promise<number>;
-  delete(key: string): Promise<void>;
+  get(key: string,): Promise<number | null>
+  set(key: string, value: number, ttl: number,): Promise<void>
+  increment(key: string, ttl: number,): Promise<number>
+  delete(key: string,): Promise<void>
 }
 
 // In-memory storage implementation (for development/testing)
 class MemoryRateLimitStorage implements RateLimitStorage {
-  private store = new Map<string, { value: number; expires: number; }>();
+  private store = new Map<string, { value: number; expires: number }>()
 
-  async get(key: string): Promise<number | null> {
-    const entry = this.store.get(key);
+  async get(key: string,): Promise<number | null> {
+    const entry = this.store.get(key,)
     if (!entry || entry.expires < Date.now()) {
-      this.store.delete(key);
-      return null;
+      this.store.delete(key,)
+      return null
     }
-    return entry.value;
+    return entry.value
   }
 
-  async set(key: string, value: number, ttl: number): Promise<void> {
+  async set(key: string, value: number, ttl: number,): Promise<void> {
     this.store.set(key, {
       value,
       expires: Date.now() + ttl,
-    });
+    },)
   }
 
-  async increment(key: string, ttl: number): Promise<number> {
-    const current = await this.get(key);
-    const newValue = (current || 0) + 1;
-    await this.set(key, newValue, ttl);
-    return newValue;
+  async increment(key: string, ttl: number,): Promise<number> {
+    const current = await this.get(key,)
+    const newValue = (current || 0) + 1
+    await this.set(key, newValue, ttl,)
+    return newValue
   }
 
-  async delete(key: string): Promise<void> {
-    this.store.delete(key);
+  async delete(key: string,): Promise<void> {
+    this.store.delete(key,)
   }
 }
 
 // Redis storage implementation (for production)
 class RedisRateLimitStorage implements RateLimitStorage {
-  constructor(private redisClient: unknown) {} // Redis client type
+  constructor(private redisClient: unknown,) {} // Redis client type
 
-  async get(key: string): Promise<number | null> {
-    const value = await this.redisClient.get(key);
-    return value ? parseInt(value) : null;
+  async get(key: string,): Promise<number | null> {
+    const value = await this.redisClient.get(key,)
+    return value ? parseInt(value,) : null
   }
 
-  async set(key: string, value: number, ttl: number): Promise<void> {
-    await this.redisClient.setex(key, Math.ceil(ttl / 1000), value);
+  async set(key: string, value: number, ttl: number,): Promise<void> {
+    await this.redisClient.setex(key, Math.ceil(ttl / 1000,), value,)
   }
 
-  async increment(key: string, ttl: number): Promise<number> {
-    const multi = this.redisClient.multi();
-    multi.incr(key);
-    multi.expire(key, Math.ceil(ttl / 1000));
-    const results = await multi.exec();
-    return results[0][1]; // Return the incremented value
+  async increment(key: string, ttl: number,): Promise<number> {
+    const multi = this.redisClient.multi()
+    multi.incr(key,)
+    multi.expire(key, Math.ceil(ttl / 1000,),)
+    const results = await multi.exec()
+    return results[0][1] // Return the incremented value
   }
 
-  async delete(key: string): Promise<void> {
-    await this.redisClient.del(key);
+  async delete(key: string,): Promise<void> {
+    await this.redisClient.del(key,)
   }
 }
 
 // Rate limiting result interface
 interface RateLimitResult {
-  allowed: boolean;
-  remaining: number;
-  resetTime: number;
-  limit: number;
-  emergencyBypass: boolean;
-  bypassReason?: string;
+  allowed: boolean
+  remaining: number
+  resetTime: number
+  limit: number
+  emergencyBypass: boolean
+  bypassReason?: string
 }
 
 // Healthcare rate limiter class
 export class HealthcareRateLimiter {
-  private storage: RateLimitStorage;
-  private monitoringEnabled: boolean;
-  private alertingEnabled: boolean;
+  private storage: RateLimitStorage
+  private monitoringEnabled: boolean
+  private alertingEnabled: boolean
 
   constructor(
     storage?: RateLimitStorage,
     options?: {
-      monitoring?: boolean;
-      alerting?: boolean;
+      monitoring?: boolean
+      alerting?: boolean
     },
   ) {
-    this.storage = storage || new MemoryRateLimitStorage();
-    this.monitoringEnabled = options?.monitoring ?? true;
-    this.alertingEnabled = options?.alerting ?? true;
+    this.storage = storage || new MemoryRateLimitStorage()
+    this.monitoringEnabled = options?.monitoring ?? true
+    this.alertingEnabled = options?.alerting ?? true
   }
 
   /**
@@ -296,13 +296,13 @@ export class HealthcareRateLimiter {
     userRole: HealthcareRole,
     endpoint: string,
     emergencyContext?: {
-      type: EmergencyAccessType;
-      justification: string;
-      patientId?: string;
+      type: EmergencyAccessType
+      justification: string
+      patientId?: string
     },
   ): Promise<RateLimitResult> {
     // Find matching rate limit configuration
-    const config = this.findRateLimitConfig(endpoint);
+    const config = this.findRateLimitConfig(endpoint,)
     if (!config) {
       // No specific rate limit found, allow with default limits
       return {
@@ -311,12 +311,12 @@ export class HealthcareRateLimiter {
         resetTime: Date.now() + RateLimitWindow.HOUR,
         limit: 1000,
         emergencyBypass: false,
-      };
+      }
     }
 
     // Determine user type and limits
-    const userType = this.getUserType(userRole);
-    const limits = config.limits[userType];
+    const userType = this.getUserType(userRole,)
+    const limits = config.limits[userType]
 
     if (!limits) {
       return {
@@ -325,7 +325,7 @@ export class HealthcareRateLimiter {
         resetTime: Date.now() + RateLimitWindow.MINUTE,
         limit: 0,
         emergencyBypass: false,
-      };
+      }
     }
 
     // Check for emergency bypass
@@ -335,28 +335,28 @@ export class HealthcareRateLimiter {
         limits,
         emergencyContext,
         userId,
-      );
+      )
       if (bypassResult.emergencyBypass) {
-        await this.logEmergencyAccess(userId, endpoint, emergencyContext);
-        return bypassResult;
+        await this.logEmergencyAccess(userId, endpoint, emergencyContext,)
+        return bypassResult
       }
     }
 
     // Standard rate limiting check
-    const key = this.generateRateLimitKey(userId, endpoint, limits.window);
-    const currentCount = await this.storage.increment(key, limits.window);
+    const key = this.generateRateLimitKey(userId, endpoint, limits.window,)
+    const currentCount = await this.storage.increment(key, limits.window,)
 
-    const allowed = currentCount <= limits.requests;
-    const remaining = Math.max(0, limits.requests - currentCount);
-    const resetTime = Date.now() + limits.window;
+    const allowed = currentCount <= limits.requests
+    const remaining = Math.max(0, limits.requests - currentCount,)
+    const resetTime = Date.now() + limits.window
 
     // Monitor and alert if needed
     if (this.monitoringEnabled) {
-      await this.recordMetrics(userId, endpoint, config.category, currentCount, limits.requests);
+      await this.recordMetrics(userId, endpoint, config.category, currentCount, limits.requests,)
     }
 
     if (!allowed && this.alertingEnabled) {
-      await this.triggerRateLimitAlert(userId, endpoint, config, currentCount);
+      await this.triggerRateLimitAlert(userId, endpoint, config, currentCount,)
     }
 
     return {
@@ -365,7 +365,7 @@ export class HealthcareRateLimiter {
       resetTime,
       limit: limits.requests,
       emergencyBypass: false,
-    };
+    }
   }
 
   /**
@@ -373,71 +373,71 @@ export class HealthcareRateLimiter {
    */
   private async checkEmergencyBypass(
     config: HealthcareRateLimitConfig,
-    normalLimits: { requests: number; window: RateLimitWindow; },
+    normalLimits: { requests: number; window: RateLimitWindow },
     emergencyContext: {
-      type: EmergencyAccessType;
-      justification: string;
-      patientId?: string;
+      type: EmergencyAccessType
+      justification: string
+      patientId?: string
     },
     userId: string,
   ): Promise<RateLimitResult> {
     // Calculate emergency limits
-    const emergencyLimit = Math.floor(normalLimits.requests * config.emergency_multiplier);
-    const key = this.generateEmergencyKey(userId, emergencyContext.type, normalLimits.window);
+    const emergencyLimit = Math.floor(normalLimits.requests * config.emergency_multiplier,)
+    const key = this.generateEmergencyKey(userId, emergencyContext.type, normalLimits.window,)
 
-    const currentCount = await this.storage.increment(key, normalLimits.window);
-    const allowed = currentCount <= emergencyLimit;
+    const currentCount = await this.storage.increment(key, normalLimits.window,)
+    const allowed = currentCount <= emergencyLimit
 
     return {
       allowed,
-      remaining: Math.max(0, emergencyLimit - currentCount),
+      remaining: Math.max(0, emergencyLimit - currentCount,),
       resetTime: Date.now() + normalLimits.window,
       limit: emergencyLimit,
       emergencyBypass: true,
       bypassReason:
         `Emergency access: ${emergencyContext.type} - ${emergencyContext.justification}`,
-    };
+    }
   }
 
   /**
    * Find rate limit configuration for an endpoint
    */
-  private findRateLimitConfig(endpoint: string): HealthcareRateLimitConfig | null {
+  private findRateLimitConfig(endpoint: string,): HealthcareRateLimitConfig | null {
     for (const config of HEALTHCARE_RATE_LIMITS) {
-      if (endpoint.includes(config.endpoint_pattern.replace("/api/v1", ""))) {
-        return config;
+      if (endpoint.includes(config.endpoint_pattern.replace('/api/v1', '',),)) {
+        return config
       }
     }
-    return null;
+    return null
   }
 
   /**
    * Map healthcare role to user type for rate limiting
    */
-  private getUserType(role: HealthcareRole): keyof HealthcareRateLimitConfig["limits"] {
+  private getUserType(role: HealthcareRole,): keyof HealthcareRateLimitConfig['limits'] {
     switch (role) {
       case HealthcareRole.EMERGENCY_PHYSICIAN:
-        return "emergency_physician";
+        return 'emergency_physician'
       case HealthcareRole.PHYSICIAN:
       case HealthcareRole.NURSE:
       case HealthcareRole.PHARMACIST:
       case HealthcareRole.PHYSIOTHERAPIST:
-        return "healthcare_provider";
+        return 'healthcare_provider'
       case HealthcareRole.ADMIN:
-        return "admin";
+        return 'admin'
       case HealthcareRole.PATIENT:
-        return "authenticated";
+        return 'authenticated'
       default:
-        return "anonymous";
+        return 'anonymous'
     }
   }
 
   /**
    * Generate rate limit key
    */
-  private generateRateLimitKey(userId: string, endpoint: string, window: RateLimitWindow): string {
-    const windowStart = Math.floor(Date.now() / window) * window;
-    return `rate_limit:${userId}:${endpoint}:${windowStart}`;
+  private generateRateLimitKey(userId: string, endpoint: string, window: RateLimitWindow,): string {
+    const windowStart = Math.floor(Date.now() / window,) * window
+    return `rate_limit:${userId}:${endpoint}:${windowStart}`
   }
 
   /**
@@ -448,8 +448,8 @@ export class HealthcareRateLimiter {
     emergencyType: EmergencyAccessType,
     window: RateLimitWindow,
   ): string {
-    const windowStart = Math.floor(Date.now() / window) * window;
-    return `emergency_rate_limit:${userId}:${emergencyType}:${windowStart}`;
+    const windowStart = Math.floor(Date.now() / window,) * window
+    return `emergency_rate_limit:${userId}:${emergencyType}:${windowStart}`
   }
 
   /**
@@ -459,9 +459,9 @@ export class HealthcareRateLimiter {
     userId: string,
     endpoint: string,
     emergencyContext: {
-      type: EmergencyAccessType;
-      justification: string;
-      patientId?: string;
+      type: EmergencyAccessType
+      justification: string
+      patientId?: string
     },
   ): Promise<void> {
     const logEntry = {
@@ -471,11 +471,11 @@ export class HealthcareRateLimiter {
       emergencyType: emergencyContext.type,
       justification: emergencyContext.justification,
       patientId: emergencyContext.patientId,
-      action: "EMERGENCY_RATE_LIMIT_BYPASS",
-    };
+      action: 'EMERGENCY_RATE_LIMIT_BYPASS',
+    }
 
     // Log to audit system (implementation depends on your audit system)
-    console.log("🚨 EMERGENCY ACCESS LOG:", JSON.stringify(logEntry, null, 2));
+    console.log('🚨 EMERGENCY ACCESS LOG:', JSON.stringify(logEntry, null, 2,),)
 
     // Audit logging integration can be added later
     // await auditLogger.logEmergencyAccess(logEntry);
@@ -499,11 +499,11 @@ export class HealthcareRateLimiter {
       requestCount: currentCount,
       limit,
       utilizationPercent: (currentCount / limit) * 100,
-    };
+    }
 
     // Monitoring system integration can be added later
     if (metrics.utilizationPercent > 80) {
-      console.warn("⚠️  High rate limit utilization:", metrics);
+      console.warn('⚠️  High rate limit utilization:', metrics,)
     }
   }
 
@@ -517,8 +517,8 @@ export class HealthcareRateLimiter {
     currentCount: number,
   ): Promise<void> {
     const alert = {
-      level: "WARNING",
-      type: "RATE_LIMIT_EXCEEDED",
+      level: 'WARNING',
+      type: 'RATE_LIMIT_EXCEEDED',
       timestamp: new Date().toISOString(),
       userId,
       endpoint,
@@ -528,9 +528,9 @@ export class HealthcareRateLimiter {
       limit: config.limits,
       patientDataAccess: config.patient_data_access,
       requiresLicense: config.requires_license,
-    };
+    }
 
-    console.warn("🚨 RATE LIMIT ALERT:", JSON.stringify(alert, null, 2));
+    console.warn('🚨 RATE LIMIT ALERT:', JSON.stringify(alert, null, 2,),)
 
     // Alerting system integration can be added later
     // await alertingSystem.sendAlert(alert);
@@ -543,32 +543,32 @@ export class HealthcareRateLimiter {
 export function createHealthcareRateLimiter(
   storage?: RateLimitStorage,
   options?: {
-    monitoring?: boolean;
-    alerting?: boolean;
+    monitoring?: boolean
+    alerting?: boolean
   },
 ): MiddlewareHandler {
-  const rateLimiter = new HealthcareRateLimiter(storage, options);
+  const rateLimiter = new HealthcareRateLimiter(storage, options,)
 
-  return async (c: Context, next) => {
+  return async (c: Context, next,) => {
     try {
       // Extract user information from JWT token (set by auth middleware)
-      const user = c.get("user");
-      const userId = user?.id || "anonymous";
-      const userRole = user?.role || HealthcareRole.PATIENT;
+      const user = c.get('user',)
+      const userId = user?.id || 'anonymous'
+      const userRole = user?.role || HealthcareRole.PATIENT
 
       // Extract emergency context if present
-      const emergencyHeader = c.req.header("X-Emergency-Access");
+      const emergencyHeader = c.req.header('X-Emergency-Access',)
       let emergencyContext: {
-        type: EmergencyAccessType;
-        justification: string;
-        patientId?: string;
-      } | undefined;
+        type: EmergencyAccessType
+        justification: string
+        patientId?: string
+      } | undefined
 
       if (emergencyHeader) {
         try {
-          emergencyContext = JSON.parse(emergencyHeader);
+          emergencyContext = JSON.parse(emergencyHeader,)
         } catch {
-          console.warn("Invalid emergency access header:", emergencyHeader);
+          console.warn('Invalid emergency access header:', emergencyHeader,)
         }
       }
 
@@ -578,39 +578,39 @@ export function createHealthcareRateLimiter(
         userRole,
         c.req.path,
         emergencyContext,
-      );
+      )
 
       // Set rate limit headers
-      c.header("X-RateLimit-Limit", result.limit.toString());
-      c.header("X-RateLimit-Remaining", result.remaining.toString());
-      c.header("X-RateLimit-Reset", Math.ceil(result.resetTime / 1000).toString());
+      c.header('X-RateLimit-Limit', result.limit.toString(),)
+      c.header('X-RateLimit-Remaining', result.remaining.toString(),)
+      c.header('X-RateLimit-Reset', Math.ceil(result.resetTime / 1000,).toString(),)
 
       if (result.emergencyBypass) {
-        c.header("X-Emergency-Bypass", "true");
-        c.header("X-Emergency-Reason", result.bypassReason || "Emergency access granted");
+        c.header('X-Emergency-Bypass', 'true',)
+        c.header('X-Emergency-Reason', result.bypassReason || 'Emergency access granted',)
       }
 
       if (!result.allowed) {
         return c.json({
           success: false,
-          error: "RATE_LIMIT_EXCEEDED",
-          message: "Too many requests. Please try again later.",
+          error: 'RATE_LIMIT_EXCEEDED',
+          message: 'Too many requests. Please try again later.',
           details: {
             limit: result.limit,
             remaining: result.remaining,
-            resetTime: new Date(result.resetTime).toISOString(),
+            resetTime: new Date(result.resetTime,).toISOString(),
             emergencyBypassAvailable: !emergencyContext,
           },
-        }, 429);
+        }, 429,)
       }
 
-      await next();
+      await next()
     } catch (error) {
-      console.error("Healthcare rate limiter error:", error);
+      console.error('Healthcare rate limiter error:', error,)
       // On error, allow the request to proceed (fail open for healthcare)
-      await next();
+      await next()
     }
-  };
+  }
 }
 
 /**
@@ -619,12 +619,12 @@ export function createHealthcareRateLimiter(
 export function createRedisHealthcareRateLimiter(
   redisClient: unknown,
   options?: {
-    monitoring?: boolean;
-    alerting?: boolean;
+    monitoring?: boolean
+    alerting?: boolean
   },
 ): MiddlewareHandler {
-  const storage = new RedisRateLimitStorage(redisClient);
-  return createHealthcareRateLimiter(storage, options);
+  const storage = new RedisRateLimitStorage(redisClient,)
+  return createHealthcareRateLimiter(storage, options,)
 }
 
 /**
@@ -639,5 +639,5 @@ export function createEmergencyBypassHeader(
     type,
     justification,
     patientId,
-  });
+  },)
 }

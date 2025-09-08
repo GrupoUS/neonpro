@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   Activity,
   AlertTriangle,
@@ -16,15 +16,15 @@ import {
   TrendingUp,
   UserCheck,
   Users,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
-import { CommunicationHub } from "./components/communication-hub";
-import { PerformanceAnalytics } from "./components/performance-analytics";
-import { ResourceAllocation } from "./components/resource-allocation";
-import { SchedulingSystem } from "./components/scheduling-system";
+import { CommunicationHub, } from './components/communication-hub'
+import { PerformanceAnalytics, } from './components/performance-analytics'
+import { ResourceAllocation, } from './components/resource-allocation'
+import { SchedulingSystem, } from './components/scheduling-system'
 // Import team components
-import { StaffManagement } from "./components/staff-management";
+import { StaffManagement, } from './components/staff-management'
 
 // Mock data for development - Will be replaced with real API calls
 const mockTeamStats = {
@@ -34,35 +34,35 @@ const mockTeamStats = {
   emergencyAvailable: 6,
   currentShifts: 12,
   overdueCompliance: 2,
-};
+}
 
 const mockAlerts = [
   {
-    id: "1",
-    type: "compliance" as const,
-    message: "Dr. Silva - CFM license expiring in 15 days",
-    severity: "warning" as const,
+    id: '1',
+    type: 'compliance' as const,
+    message: 'Dr. Silva - CFM license expiring in 15 days',
+    severity: 'warning' as const,
     timestamp: new Date(),
   },
   {
-    id: "2",
-    type: "emergency" as const,
-    message: "Emergency team activation requested - Trauma Bay 1",
-    severity: "critical" as const,
+    id: '2',
+    type: 'emergency' as const,
+    message: 'Emergency team activation requested - Trauma Bay 1',
+    severity: 'critical' as const,
     timestamp: new Date(),
   },
   {
-    id: "3",
-    type: "scheduling" as const,
-    message: "CLT compliance alert: João exceeding weekly hour limit",
-    severity: "warning" as const,
+    id: '3',
+    type: 'scheduling' as const,
+    message: 'CLT compliance alert: João exceeding weekly hour limit',
+    severity: 'warning' as const,
     timestamp: new Date(),
   },
-];
+]
 
 export default function TeamCoordinationPage() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [emergencyMode, setEmergencyMode] = useState(false);
+  const [activeTab, setActiveTab,] = useState('overview',)
+  const [emergencyMode, setEmergencyMode,] = useState(false,)
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       {/* Header Section with Emergency Controls */}
@@ -80,15 +80,15 @@ export default function TeamCoordinationPage() {
         <div className="flex items-center space-x-3">
           <Button
             aria-label={emergencyMode
-              ? "Desativar modo de emergência"
-              : "Ativar modo de emergência"}
+              ? 'Desativar modo de emergência'
+              : 'Ativar modo de emergência'}
             className="transition-all duration-200"
-            onClick={() => setEmergencyMode(!emergencyMode)}
+            onClick={() => setEmergencyMode(!emergencyMode,)}
             size="sm"
-            variant={emergencyMode ? "destructive" : "outline"}
+            variant={emergencyMode ? 'destructive' : 'outline'}
           >
             <AlertTriangle className="mr-2 h-4 w-4" />
-            {emergencyMode ? "Modo Emergência Ativo" : "Ativar Emergência"}
+            {emergencyMode ? 'Modo Emergência Ativo' : 'Ativar Emergência'}
           </Button>
 
           <Button size="sm" variant="default">
@@ -96,13 +96,13 @@ export default function TeamCoordinationPage() {
             Configurações
           </Button>
         </div>
-      </div>{" "}
+      </div>{' '}
       {/* Emergency Alert Banner */}
       {emergencyMode && (
         <Alert className="border-red-500 bg-red-50 dark:bg-red-900/20">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700 dark:text-red-300">
-            <strong>Modo de Emergência Ativo:</strong>{" "}
+            <strong>Modo de Emergência Ativo:</strong>{' '}
             Protocolos de emergência em vigor. Acesso prioritário a recursos e comunicação de alta
             prioridade habilitada.
           </AlertDescription>
@@ -137,7 +137,7 @@ export default function TeamCoordinationPage() {
               em serviço ativo
             </p>
           </CardContent>
-        </Card>{" "}
+        </Card>{' '}
         <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="font-medium text-sm">Em Pausa</CardTitle>
@@ -177,7 +177,7 @@ export default function TeamCoordinationPage() {
               turnos em andamento
             </p>
           </CardContent>
-        </Card>{" "}
+        </Card>{' '}
         <Card className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="font-medium text-sm">Compliance</CardTitle>
@@ -198,33 +198,33 @@ export default function TeamCoordinationPage() {
         <div className="space-y-2">
           <h3 className="font-semibold text-lg">Alertas Ativos</h3>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {mockAlerts.map((alert) => (
+            {mockAlerts.map((alert,) => (
               <Alert
                 className={`${
-                  alert.severity === "critical"
-                    ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-                    : "border-accent bg-accent/10 dark:bg-accent/20"
+                  alert.severity === 'critical'
+                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                    : 'border-accent bg-accent/10 dark:bg-accent/20'
                 }`}
                 key={alert.id}
               >
                 <AlertTriangle
                   className={`h-4 w-4 ${
-                    alert.severity === "critical"
-                      ? "text-red-600"
-                      : "text-accent"
+                    alert.severity === 'critical'
+                      ? 'text-red-600'
+                      : 'text-accent'
                   }`}
                 />
                 <AlertDescription
-                  className={alert.severity === "critical"
-                    ? "text-red-700 dark:text-red-300"
-                    : "text-accent dark:text-accent"}
+                  className={alert.severity === 'critical'
+                    ? 'text-red-700 dark:text-red-300'
+                    : 'text-accent dark:text-accent'}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm">{alert.message}</span>
                     <Badge
-                      variant={alert.severity === "critical"
-                        ? "destructive"
-                        : "secondary"}
+                      variant={alert.severity === 'critical'
+                        ? 'destructive'
+                        : 'secondary'}
                     >
                       {alert.type}
                     </Badge>
@@ -288,7 +288,7 @@ export default function TeamCoordinationPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>{" "}
+            </Card>{' '}
             {/* Recent Activity */}
             <Card>
               <CardHeader>
@@ -314,7 +314,7 @@ export default function TeamCoordinationPage() {
         {/* Staff Management Tab */}
         <TabsContent className="space-y-6" value="staff">
           <StaffManagement emergencyMode={emergencyMode} />
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Scheduling Tab */}
         <TabsContent className="space-y-6" value="scheduling">
           <SchedulingSystem emergencyMode={emergencyMode} />
@@ -326,7 +326,7 @@ export default function TeamCoordinationPage() {
         {/* Communication Tab */}
         <TabsContent className="space-y-6" value="communication">
           <CommunicationHub emergencyMode={emergencyMode} />
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Analytics Tab */}
         <TabsContent className="space-y-6" value="analytics">
           <PerformanceAnalytics emergencyMode={emergencyMode} />
@@ -356,5 +356,5 @@ export default function TeamCoordinationPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

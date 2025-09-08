@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -23,8 +23,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui";
-import { useAuth } from "@/contexts/auth-context";
+} from '@/components/ui'
+import { useAuth, } from '@/contexts/auth-context'
 import {
   Activity,
   AlertCircle,
@@ -36,141 +36,154 @@ import {
   MapPin,
   Pill,
   Stethoscope,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 interface Appointment {
-  id: string;
-  date: string;
-  time: string;
-  doctor: string;
-  specialty: string;
-  status: "scheduled" | "completed" | "cancelled";
-  location: string;
-  notes?: string;
+  id: string
+  date: string
+  time: string
+  doctor: string
+  specialty: string
+  status: 'scheduled' | 'completed' | 'cancelled'
+  location: string
+  notes?: string
 }
 
 interface MedicalRecord {
-  id: string;
-  date: string;
-  doctor: string;
-  diagnosis: string;
-  prescription: string[];
-  notes: string;
-  attachments?: string[];
+  id: string
+  date: string
+  doctor: string
+  diagnosis: string
+  prescription: string[]
+  notes: string
+  attachments?: string[]
 }
 
 interface TestResult {
-  id: string;
-  date: string;
-  type: string;
-  result: string;
-  status: "normal" | "abnormal" | "pending";
-  doctor: string;
-  notes?: string;
+  id: string
+  date: string
+  type: string
+  result: string
+  status: 'normal' | 'abnormal' | 'pending'
+  doctor: string
+  notes?: string
 }
 
 const MOCK_APPOINTMENTS: Appointment[] = [
   {
-    id: "1",
-    date: "2024-02-15",
-    time: "14:30",
-    doctor: "Dr. Ana Silva",
-    specialty: "Cardiologia",
-    status: "scheduled",
-    location: "Consultório 201",
-    notes: "Consulta de rotina - retorno",
+    id: '1',
+    date: '2024-02-15',
+    time: '14:30',
+    doctor: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
+    status: 'scheduled',
+    location: 'Consultório 201',
+    notes: 'Consulta de rotina - retorno',
   },
   {
-    id: "2",
-    date: "2024-01-20",
-    time: "09:00",
-    doctor: "Dr. João Santos",
-    specialty: "Clínica Geral",
-    status: "completed",
-    location: "Consultório 105",
+    id: '2',
+    date: '2024-01-20',
+    time: '09:00',
+    doctor: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
+    status: 'completed',
+    location: 'Consultório 105',
   },
-];
+]
 
 const MOCK_RECORDS: MedicalRecord[] = [
   {
-    id: "1",
-    date: "2024-01-20",
-    doctor: "Dr. João Santos",
-    diagnosis: "Hipertensão Arterial Leve",
-    prescription: ["Losartana 50mg - 1x ao dia", "Dieta com redução de sódio"],
+    id: '1',
+    date: '2024-01-20',
+    doctor: 'Dr. João Santos',
+    diagnosis: 'Hipertensão Arterial Leve',
+    prescription: ['Losartana 50mg - 1x ao dia', 'Dieta com redução de sódio',],
     notes:
-      "Paciente apresenta pressão arterial levemente elevada. Iniciar tratamento medicamentoso e mudanças no estilo de vida.",
-    attachments: ["receita_20240120.pdf"],
+      'Paciente apresenta pressão arterial levemente elevada. Iniciar tratamento medicamentoso e mudanças no estilo de vida.',
+    attachments: ['receita_20240120.pdf',],
   },
-];
+]
 
 const MOCK_TEST_RESULTS: TestResult[] = [
   {
-    id: "1",
-    date: "2024-01-18",
-    type: "Hemograma Completo",
-    result: "Normal",
-    status: "normal",
-    doctor: "Dr. João Santos",
+    id: '1',
+    date: '2024-01-18',
+    type: 'Hemograma Completo',
+    result: 'Normal',
+    status: 'normal',
+    doctor: 'Dr. João Santos',
   },
   {
-    id: "2",
-    date: "2024-01-18",
-    type: "Colesterol Total",
-    result: "245 mg/dL",
-    status: "abnormal",
-    doctor: "Dr. João Santos",
-    notes: "Valor acima do recomendado. Orientações dietéticas necessárias.",
+    id: '2',
+    date: '2024-01-18',
+    type: 'Colesterol Total',
+    result: '245 mg/dL',
+    status: 'abnormal',
+    doctor: 'Dr. João Santos',
+    notes: 'Valor acima do recomendado. Orientações dietéticas necessárias.',
   },
-];
+]
 
 export default function PatientPortalPage() {
-  const { user, loading } = useAuth();
-  const [appointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
-  const [records] = useState<MedicalRecord[]>(MOCK_RECORDS);
-  const [testResults] = useState<TestResult[]>(MOCK_TEST_RESULTS);
+  const { user, loading, } = useAuth()
+  const [appointments,] = useState<Appointment[]>(MOCK_APPOINTMENTS,)
+  const [records,] = useState<MedicalRecord[]>(MOCK_RECORDS,)
+  const [testResults,] = useState<TestResult[]>(MOCK_TEST_RESULTS,)
   // const [_selectedDate, _setSelectedDate] = useState<Date>(new Date()); // Commented out - not used
 
-  const getStatusBadge = (status: string) => {
+  // Create typed profile object to avoid repeated any casts
+  const profile = {
+    firstName: (user as any)?.firstName as string | undefined,
+    lastName: (user as any)?.lastName as string | undefined,
+    imageUrl: (user as any)?.imageUrl as string | undefined,
+    email: user?.email as string | undefined,
+  }
+
+  // Compute display name and initials once
+  const displayName = profile.firstName ?? profile.email?.split('@',)[0] ?? 'Paciente'
+  const initials = ((profile.firstName?.[0] || profile.email?.[0] || 'P').toUpperCase()
+    + (profile.lastName?.[0] || '').toUpperCase()).substring(0, 2,)
+
+  const getStatusBadge = (status: string,) => {
     const variants = {
-      scheduled: "bg-blue-100 text-blue-800",
-      completed: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      normal: "bg-green-100 text-green-800",
-      abnormal: "bg-red-100 text-red-800",
-      pending: "bg-accent/10 text-accent",
-    };
+      scheduled: 'bg-blue-100 text-blue-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
+      normal: 'bg-green-100 text-green-800',
+      abnormal: 'bg-red-100 text-red-800',
+      pending: 'bg-accent/10 text-accent',
+    }
 
     const labels = {
-      scheduled: "Agendado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      normal: "Normal",
-      abnormal: "Alterado",
-      pending: "Pendente",
-    };
+      scheduled: 'Agendado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      normal: 'Normal',
+      abnormal: 'Alterado',
+      pending: 'Pendente',
+    }
 
     return (
       <Badge
         className={variants[status as keyof typeof variants]
-          || "bg-gray-100 text-gray-800"}
+          || 'bg-gray-100 text-gray-800'}
       >
         {labels[status as keyof typeof labels] || status}
       </Badge>
-    );
-  };
+    )
+  }
 
   const nextAppointment = appointments.find(
-    (apt) => apt.status === "scheduled",
-  );
+    (apt,) => apt.status === 'scheduled',
+  )
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
       </div>
-    );
+    )
   }
 
   return (
@@ -182,17 +195,12 @@ export default function PatientPortalPage() {
             Portal do Paciente
           </h1>
           <p className="text-muted-foreground">
-            Bem-vindo,{" "}
-            {(user as any)?.firstName || user?.email?.split("@")[0]}! Gerencie sua saúde de forma
-            digital.
+            Bem-vindo, {displayName}! Gerencie sua saúde de forma digital.
           </p>
         </div>
         <Avatar className="h-12 w-12">
-          <AvatarImage src={(user as any)?.imageUrl} />
-          <AvatarFallback>
-            {(user as any)?.firstName?.[0] || user?.email?.[0]?.toUpperCase()}
-            {(user as any)?.lastName?.[0] || ""}
-          </AvatarFallback>
+          <AvatarImage src={profile.imageUrl} />
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </div>
 
@@ -209,11 +217,11 @@ export default function PatientPortalPage() {
                 <p className="text-muted-foreground text-xs">
                   {nextAppointment
                     ? `${
-                      new Date(nextAppointment.date).toLocaleDateString(
-                        "pt-BR",
+                      new Date(nextAppointment.date,).toLocaleDateString(
+                        'pt-BR',
                       )
                     } às ${nextAppointment.time}`
-                    : "Nenhuma agendada"}
+                    : 'Nenhuma agendada'}
                 </p>
               </div>
             </div>
@@ -273,8 +281,8 @@ export default function PatientPortalPage() {
           <CalendarIcon className="h-4 w-4" />
           <AlertDescription>
             <strong>Próxima consulta:</strong> {nextAppointment.doctor} (
-            {nextAppointment.specialty}) -{" "}
-            {new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às {nextAppointment.time}
+            {nextAppointment.specialty}) -{' '}
+            {new Date(nextAppointment.date,).toLocaleDateString('pt-BR',)} às {nextAppointment.time}
             <Button className="ml-2 h-auto p-0" variant="link">
               Ver detalhes
             </Button>
@@ -301,7 +309,7 @@ export default function PatientPortalPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {appointments.map((appointment) => (
+                {appointments.map((appointment,) => (
                   <div
                     className="flex items-center justify-between rounded-lg border p-4"
                     key={appointment.id}
@@ -318,8 +326,8 @@ export default function PatientPortalPage() {
                         <div className="mt-1 flex items-center space-x-4">
                           <div className="flex items-center text-muted-foreground text-xs">
                             <CalendarIcon className="mr-1 h-3 w-3" />
-                            {new Date(appointment.date).toLocaleDateString(
-                              "pt-BR",
+                            {new Date(appointment.date,).toLocaleDateString(
+                              'pt-BR',
                             )}
                           </div>
                           <div className="flex items-center text-muted-foreground text-xs">
@@ -334,7 +342,7 @@ export default function PatientPortalPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {getStatusBadge(appointment.status)}
+                      {getStatusBadge(appointment.status,)}
                       <Button size="sm" variant="outline">
                         <Eye className="mr-1 h-4 w-4" />
                         Detalhes
@@ -358,13 +366,13 @@ export default function PatientPortalPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {records.map((record) => (
+                {records.map((record,) => (
                   <div className="rounded-lg border p-4" key={record.id}>
                     <div className="mb-3 flex items-center justify-between">
                       <div>
                         <h4 className="font-medium">{record.doctor}</h4>
                         <p className="text-muted-foreground text-sm">
-                          {new Date(record.date).toLocaleDateString("pt-BR")}
+                          {new Date(record.date,).toLocaleDateString('pt-BR',)}
                         </p>
                       </div>
                       <Button size="sm" variant="outline">
@@ -384,7 +392,7 @@ export default function PatientPortalPage() {
                       <div>
                         <span className="font-medium text-sm">Prescrição:</span>
                         <ul className="list-inside list-disc text-sm">
-                          {record.prescription.map((item, index) => <li key={index}>{item}</li>)}
+                          {record.prescription.map((item, index,) => <li key={index}>{item}</li>)}
                         </ul>
                       </div>
 
@@ -401,7 +409,7 @@ export default function PatientPortalPage() {
                         <div>
                           <span className="font-medium text-sm">Anexos:</span>
                           <div className="mt-1 flex space-x-2">
-                            {record.attachments.map((attachment, index) => (
+                            {record.attachments.map((attachment, index,) => (
                               <Button key={index} size="sm" variant="outline">
                                 <FileText className="mr-1 h-4 w-4" />
                                 {attachment}
@@ -440,14 +448,14 @@ export default function PatientPortalPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {testResults.map((test) => (
+                  {testResults.map((test,) => (
                     <TableRow key={test.id}>
                       <TableCell>
-                        {new Date(test.date).toLocaleDateString("pt-BR")}
+                        {new Date(test.date,).toLocaleDateString('pt-BR',)}
                       </TableCell>
                       <TableCell className="font-medium">{test.type}</TableCell>
                       <TableCell>{test.result}</TableCell>
-                      <TableCell>{getStatusBadge(test.status)}</TableCell>
+                      <TableCell>{getStatusBadge(test.status,)}</TableCell>
                       <TableCell>{test.doctor}</TableCell>
                       <TableCell>
                         <Button size="sm" variant="outline">
@@ -524,7 +532,7 @@ export default function PatientPortalPage() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembrete:</strong>{" "}
+                  <strong>Lembrete:</strong>{' '}
                   Sempre consulte seu médico antes de alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
@@ -533,5 +541,5 @@ export default function PatientPortalPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { cn } from "@neonpro/utils";
+import { cn, } from '@neonpro/utils'
 import {
   Activity,
   Award,
@@ -15,8 +15,8 @@ import {
   Upload,
   User,
   ZoomIn,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 import {
   Badge,
   Button,
@@ -30,224 +30,224 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../ui";
+} from '../ui'
 
 // Mock data for treatment journey
 const mockTreatmentData = {
   activeTreatments: [
     {
       id: 1,
-      name: "Rejuvenescimento Facial Completo",
-      type: "Botox + Preenchimento + Bioestimulador",
-      startDate: "2024-06-15",
-      expectedEndDate: "2024-10-15",
+      name: 'Rejuvenescimento Facial Completo',
+      type: 'Botox + Preenchimento + Bioestimulador',
+      startDate: '2024-06-15',
+      expectedEndDate: '2024-10-15',
       progress: 75,
-      currentPhase: "Fase de Manutenção",
-      doctor: "Dra. Ana Santos",
-      clinic: "NeonPro Clínica Ipanema",
+      currentPhase: 'Fase de Manutenção',
+      doctor: 'Dra. Ana Santos',
+      clinic: 'NeonPro Clínica Ipanema',
       sessions: {
         completed: 3,
         total: 4,
-        next: "2024-08-25",
+        next: '2024-08-25',
       },
       goals: [
         {
           id: 1,
-          description: "Reduzir rugas de expressão",
+          description: 'Reduzir rugas de expressão',
           achieved: true,
-          date: "2024-07-10",
+          date: '2024-07-10',
         },
         {
           id: 2,
-          description: "Melhorar contorno facial",
+          description: 'Melhorar contorno facial',
           achieved: true,
-          date: "2024-07-25",
+          date: '2024-07-25',
         },
         {
           id: 3,
-          description: "Hidratação e luminosidade",
+          description: 'Hidratação e luminosidade',
           achieved: false,
-          targetDate: "2024-09-01",
+          targetDate: '2024-09-01',
         },
         {
           id: 4,
-          description: "Resultado natural duradouro",
+          description: 'Resultado natural duradouro',
           achieved: false,
-          targetDate: "2024-10-15",
+          targetDate: '2024-10-15',
         },
       ],
       milestones: [
         {
           id: 1,
-          title: "Primeira Aplicação - Botox",
-          date: "2024-06-15",
-          description: "Aplicação inicial de toxina botulínica",
-          status: "completed",
-          photos: ["before-1.jpg", "during-1.jpg"],
-          notes: "Paciente tolerou bem o procedimento. Sem intercorrências.",
+          title: 'Primeira Aplicação - Botox',
+          date: '2024-06-15',
+          description: 'Aplicação inicial de toxina botulínica',
+          status: 'completed',
+          photos: ['before-1.jpg', 'during-1.jpg',],
+          notes: 'Paciente tolerou bem o procedimento. Sem intercorrências.',
         },
         {
           id: 2,
-          title: "Segunda Sessão - Preenchimento",
-          date: "2024-07-10",
-          description: "Preenchimento com ácido hialurônico",
-          status: "completed",
-          photos: ["progress-1.jpg", "progress-2.jpg"],
-          notes: "Excelente evolução. Resultado muito natural.",
+          title: 'Segunda Sessão - Preenchimento',
+          date: '2024-07-10',
+          description: 'Preenchimento com ácido hialurônico',
+          status: 'completed',
+          photos: ['progress-1.jpg', 'progress-2.jpg',],
+          notes: 'Excelente evolução. Resultado muito natural.',
         },
         {
           id: 3,
-          title: "Terceira Sessão - Bioestimulador",
-          date: "2024-08-05",
-          description: "Aplicação de bioestimulador de colágeno",
-          status: "completed",
-          photos: ["progress-3.jpg"],
-          notes: "Pele com melhora significativa na textura e firmeza.",
+          title: 'Terceira Sessão - Bioestimulador',
+          date: '2024-08-05',
+          description: 'Aplicação de bioestimulador de colágeno',
+          status: 'completed',
+          photos: ['progress-3.jpg',],
+          notes: 'Pele com melhora significativa na textura e firmeza.',
         },
         {
           id: 4,
-          title: "Sessão Final - Refinamento",
-          date: "2024-08-25",
-          description: "Ajustes finais e avaliação de resultados",
-          status: "scheduled",
+          title: 'Sessão Final - Refinamento',
+          date: '2024-08-25',
+          description: 'Ajustes finais e avaliação de resultados',
+          status: 'scheduled',
           photos: [],
-          notes: "",
+          notes: '',
         },
       ],
       beforeAfterPhotos: [
         {
           id: 1,
-          date: "2024-06-15",
-          type: "before",
-          angle: "frontal",
-          url: "/placeholder-face-before.jpg",
-          notes: "Foto inicial - frontal",
+          date: '2024-06-15',
+          type: 'before',
+          angle: 'frontal',
+          url: '/placeholder-face-before.jpg',
+          notes: 'Foto inicial - frontal',
         },
         {
           id: 2,
-          date: "2024-06-15",
-          type: "before",
-          angle: "profile-left",
-          url: "/placeholder-face-profile.jpg",
-          notes: "Foto inicial - perfil esquerdo",
+          date: '2024-06-15',
+          type: 'before',
+          angle: 'profile-left',
+          url: '/placeholder-face-profile.jpg',
+          notes: 'Foto inicial - perfil esquerdo',
         },
         {
           id: 3,
-          date: "2024-08-10",
-          type: "progress",
-          angle: "frontal",
-          url: "/placeholder-face-progress.jpg",
-          notes: "Progresso - 8 semanas",
+          date: '2024-08-10',
+          type: 'progress',
+          angle: 'frontal',
+          url: '/placeholder-face-progress.jpg',
+          notes: 'Progresso - 8 semanas',
         },
       ],
       careInstructions: [
         {
-          phase: "Pós-procedimento imediato (24h)",
+          phase: 'Pós-procedimento imediato (24h)',
           instructions: [
-            "Evitar exercícios físicos intensos",
-            "Não deitar de bruços por 4 horas",
-            "Aplicar gelo se houver inchaço",
-            "Evitar manipular a área tratada",
+            'Evitar exercícios físicos intensos',
+            'Não deitar de bruços por 4 horas',
+            'Aplicar gelo se houver inchaço',
+            'Evitar manipular a área tratada',
           ],
         },
         {
-          phase: "Primeiros 7 dias",
+          phase: 'Primeiros 7 dias',
           instructions: [
-            "Usar protetor solar FPS 60+",
-            "Hidratação abundante da pele",
-            "Evitar saunas e ambientes muito quentes",
-            "Não usar produtos com ácidos",
+            'Usar protetor solar FPS 60+',
+            'Hidratação abundante da pele',
+            'Evitar saunas e ambientes muito quentes',
+            'Não usar produtos com ácidos',
           ],
         },
         {
-          phase: "Manutenção (contínua)",
+          phase: 'Manutenção (contínua)',
           instructions: [
-            "Proteção solar diária",
-            "Hidratação com cosmecêuticos",
-            "Avaliações regulares",
-            "Estilo de vida saudável",
+            'Proteção solar diária',
+            'Hidratação com cosmecêuticos',
+            'Avaliações regulares',
+            'Estilo de vida saudável',
           ],
         },
       ],
       results: {
         satisfaction: 9.5,
         effectivenessRating: 9,
-        recoveryTime: "3 dias",
-        sideEffects: "Leve inchaço inicial (resolvido em 24h)",
-        duration: "6-8 meses estimado",
+        recoveryTime: '3 dias',
+        sideEffects: 'Leve inchaço inicial (resolvido em 24h)',
+        duration: '6-8 meses estimado',
       },
     },
     {
       id: 2,
-      name: "Tratamento Corporal - Criolipólise",
-      type: "Criolipólise + Drenagem",
-      startDate: "2024-07-01",
-      expectedEndDate: "2024-11-01",
+      name: 'Tratamento Corporal - Criolipólise',
+      type: 'Criolipólise + Drenagem',
+      startDate: '2024-07-01',
+      expectedEndDate: '2024-11-01',
       progress: 50,
-      currentPhase: "Fase Ativa",
-      doctor: "Dr. Carlos Mendes",
-      clinic: "NeonPro Clínica Barra",
+      currentPhase: 'Fase Ativa',
+      doctor: 'Dr. Carlos Mendes',
+      clinic: 'NeonPro Clínica Barra',
       sessions: {
         completed: 2,
         total: 4,
-        next: "2024-09-05",
+        next: '2024-09-05',
       },
       goals: [
         {
           id: 1,
-          description: "Redução de gordura localizada no abdome",
+          description: 'Redução de gordura localizada no abdome',
           achieved: false,
-          targetDate: "2024-10-01",
+          targetDate: '2024-10-01',
         },
         {
           id: 2,
-          description: "Melhora do contorno corporal",
+          description: 'Melhora do contorno corporal',
           achieved: false,
-          targetDate: "2024-11-01",
+          targetDate: '2024-11-01',
         },
         {
           id: 3,
-          description: "Aumento da autoestima",
+          description: 'Aumento da autoestima',
           achieved: false,
-          targetDate: "2024-11-01",
+          targetDate: '2024-11-01',
         },
       ],
       milestones: [
         {
           id: 1,
-          title: "Primeira Sessão - Abdome Superior",
-          date: "2024-07-01",
-          description: "Criolipólise em região abdominal superior",
-          status: "completed",
-          photos: ["body-before-1.jpg"],
-          notes: "Procedimento bem tolerado. Sensação de frio inicial normal.",
+          title: 'Primeira Sessão - Abdome Superior',
+          date: '2024-07-01',
+          description: 'Criolipólise em região abdominal superior',
+          status: 'completed',
+          photos: ['body-before-1.jpg',],
+          notes: 'Procedimento bem tolerado. Sensação de frio inicial normal.',
         },
         {
           id: 2,
-          title: "Segunda Sessão - Abdome Inferior",
-          date: "2024-08-01",
-          description: "Criolipólise em região abdominal inferior",
-          status: "completed",
-          photos: ["body-progress-1.jpg"],
-          notes: "Evolução positiva. Paciente relatou diminuição de medidas.",
+          title: 'Segunda Sessão - Abdome Inferior',
+          date: '2024-08-01',
+          description: 'Criolipólise em região abdominal inferior',
+          status: 'completed',
+          photos: ['body-progress-1.jpg',],
+          notes: 'Evolução positiva. Paciente relatou diminuição de medidas.',
         },
       ],
       beforeAfterPhotos: [
         {
           id: 1,
-          date: "2024-07-01",
-          type: "before",
-          angle: "frontal",
-          url: "/placeholder-body-before.jpg",
-          notes: "Medidas iniciais - frontal",
+          date: '2024-07-01',
+          type: 'before',
+          angle: 'frontal',
+          url: '/placeholder-body-before.jpg',
+          notes: 'Medidas iniciais - frontal',
         },
         {
           id: 2,
-          date: "2024-08-10",
-          type: "progress",
-          angle: "frontal",
-          url: "/placeholder-body-progress.jpg",
-          notes: "Progresso - 5 semanas",
+          date: '2024-08-10',
+          type: 'progress',
+          angle: 'frontal',
+          url: '/placeholder-body-progress.jpg',
+          notes: 'Progresso - 5 semanas',
         },
       ],
     },
@@ -255,24 +255,24 @@ const mockTreatmentData = {
   completedTreatments: [
     {
       id: 3,
-      name: "Limpeza de Pele Profunda",
-      type: "Hidrafacial + Peeling",
-      startDate: "2024-05-01",
-      endDate: "2024-06-01",
+      name: 'Limpeza de Pele Profunda',
+      type: 'Hidrafacial + Peeling',
+      startDate: '2024-05-01',
+      endDate: '2024-06-01',
       progress: 100,
-      doctor: "Esp. Maria Oliveira",
+      doctor: 'Esp. Maria Oliveira',
       finalRating: 5,
-      results: "Pele mais limpa, hidratada e com textura melhorada",
-      photos: ["skin-before.jpg", "skin-after.jpg"],
+      results: 'Pele mais limpa, hidratada e com textura melhorada',
+      photos: ['skin-before.jpg', 'skin-after.jpg',],
     },
   ],
-};
+}
 
-function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
+function TreatmentProgressCard({ treatment, }: { treatment: unknown },) {
   const completedGoals = treatment.goals.filter(
-    (goal: unknown) => goal.achieved,
-  ).length;
-  const totalGoals = treatment.goals.length;
+    (goal: unknown,) => goal.achieved,
+  ).length
+  const totalGoals = treatment.goals.length
 
   return (
     <Card className="transition-shadow hover:shadow-lg">
@@ -300,7 +300,7 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
               {treatment.sessions.completed} de {treatment.sessions.total} sessões
             </span>
             <span>
-              Próxima: {new Date(treatment.sessions.next).toLocaleDateString("pt-BR")}
+              Próxima: {new Date(treatment.sessions.next,).toLocaleDateString('pt-BR',)}
             </span>
           </div>
         </div>
@@ -314,7 +314,7 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
             </span>
           </div>
           <div className="space-y-1">
-            {treatment.goals.slice(0, 2).map((goal: unknown) => (
+            {treatment.goals.slice(0, 2,).map((goal: unknown,) => (
               <div
                 className="flex items-center space-x-2 text-xs"
                 key={goal.id}
@@ -324,7 +324,7 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
                   : <div className="h-3 w-3 rounded-full border border-gray-300" />}
                 <span
                   className={cn(
-                    goal.achieved ? "text-muted-foreground line-through" : "",
+                    goal.achieved ? 'text-muted-foreground line-through' : '',
                   )}
                 >
                   {goal.description}
@@ -360,16 +360,16 @@ function TreatmentProgressCard({ treatment }: { treatment: unknown; }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function BeforeAfterGallery({ photos }: { photos: unknown[]; }) {
-  const [_selectedPhoto, _setSelectedPhoto] = useState(0);
-  const [_showComparison, _setShowComparison] = useState(false);
+function BeforeAfterGallery({ photos, }: { photos: unknown[] },) {
+  const [_selectedPhoto, _setSelectedPhoto,] = useState(0,)
+  const [_showComparison, _setShowComparison,] = useState(false,)
 
-  const beforePhotos = photos.filter((p) => p.type === "before");
-  const progressPhotos = photos.filter((p) => p.type === "progress");
-  const afterPhotos = photos.filter((p) => p.type === "after");
+  const beforePhotos = photos.filter((p,) => p.type === 'before')
+  const progressPhotos = photos.filter((p,) => p.type === 'progress')
+  const afterPhotos = photos.filter((p,) => p.type === 'after')
 
   return (
     <Card>
@@ -476,13 +476,13 @@ function BeforeAfterGallery({ photos }: { photos: unknown[]; }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function PhotoTimeline({ photos }: { photos: unknown[]; }) {
+function PhotoTimeline({ photos, }: { photos: unknown[] },) {
   return (
     <div className="space-y-4">
-      {photos.map((photo, _index) => (
+      {photos.map((photo, _index,) => (
         <div
           className="flex items-center space-x-4 rounded-lg border p-4"
           key={photo.id}
@@ -496,20 +496,20 @@ function PhotoTimeline({ photos }: { photos: unknown[]; }) {
           <div className="flex-1">
             <div className="flex items-center space-x-2">
               <Badge
-                variant={photo.type === "before"
-                  ? "secondary"
-                  : photo.type === "progress"
-                  ? "default"
-                  : "secondary"}
+                variant={photo.type === 'before'
+                  ? 'secondary'
+                  : photo.type === 'progress'
+                  ? 'default'
+                  : 'secondary'}
               >
-                {photo.type === "before"
-                  ? "Antes"
-                  : photo.type === "progress"
-                  ? "Progresso"
-                  : "Depois"}
+                {photo.type === 'before'
+                  ? 'Antes'
+                  : photo.type === 'progress'
+                  ? 'Progresso'
+                  : 'Depois'}
               </Badge>
               <span className="text-muted-foreground text-sm">
-                {new Date(photo.date).toLocaleDateString("pt-BR")}
+                {new Date(photo.date,).toLocaleDateString('pt-BR',)}
               </span>
             </div>
             <p className="mt-1 font-medium text-sm">{photo.notes}</p>
@@ -532,30 +532,30 @@ function PhotoTimeline({ photos }: { photos: unknown[]; }) {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
-function PhotoGrid({ photos }: { photos: unknown[]; }) {
+function PhotoGrid({ photos, }: { photos: unknown[] },) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {photos.map((photo) => (
+      {photos.map((photo,) => (
         <div className="space-y-2" key={photo.id}>
           <div className="flex aspect-square items-center justify-center rounded-lg bg-gray-200">
             <Camera className="h-8 w-8 text-gray-400" />
           </div>
           <div className="text-center text-xs">
             <p className="font-medium">
-              {new Date(photo.date).toLocaleDateString("pt-BR")}
+              {new Date(photo.date,).toLocaleDateString('pt-BR',)}
             </p>
             <p className="text-muted-foreground">{photo.angle}</p>
           </div>
         </div>
       ))}
     </div>
-  );
+  )
 }
 
-function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
+function TreatmentMilestones({ milestones, }: { milestones: unknown[] },) {
   return (
     <Card>
       <CardHeader>
@@ -569,22 +569,22 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {milestones.map((milestone, index) => (
+          {milestones.map((milestone, index,) => (
             <div className="flex items-start space-x-4" key={milestone.id}>
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full",
-                    milestone.status === "completed"
-                      ? "bg-green-100 text-green-600"
-                      : milestone.status === "scheduled"
-                      ? "bg-blue-100 text-blue-600"
-                      : "bg-gray-100 text-gray-600",
+                    'flex h-8 w-8 items-center justify-center rounded-full',
+                    milestone.status === 'completed'
+                      ? 'bg-green-100 text-green-600'
+                      : milestone.status === 'scheduled'
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'bg-gray-100 text-gray-600',
                   )}
                 >
-                  {milestone.status === "completed"
+                  {milestone.status === 'completed'
                     ? <CheckCircle className="h-4 w-4" />
-                    : milestone.status === "scheduled"
+                    : milestone.status === 'scheduled'
                     ? <Clock className="h-4 w-4" />
                     : <div className="h-2 w-2 rounded-full bg-current" />}
                 </div>
@@ -599,25 +599,25 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
                       {milestone.description}
                     </p>
                     <p className="mt-1 text-muted-foreground text-xs">
-                      {new Date(milestone.date).toLocaleDateString("pt-BR", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                      })}
+                      {new Date(milestone.date,).toLocaleDateString('pt-BR', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                      },)}
                     </p>
                   </div>
                   <Badge
-                    variant={milestone.status === "completed"
-                      ? "secondary"
-                      : milestone.status === "scheduled"
-                      ? "default"
-                      : "outline"}
+                    variant={milestone.status === 'completed'
+                      ? 'secondary'
+                      : milestone.status === 'scheduled'
+                      ? 'default'
+                      : 'outline'}
                   >
-                    {milestone.status === "completed"
-                      ? "Concluído"
-                      : milestone.status === "scheduled"
-                      ? "Agendado"
-                      : "Pendente"}
+                    {milestone.status === 'completed'
+                      ? 'Concluído'
+                      : milestone.status === 'scheduled'
+                      ? 'Agendado'
+                      : 'Pendente'}
                   </Badge>
                 </div>
 
@@ -630,7 +630,7 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
                 {milestone.photos && milestone.photos.length > 0 && (
                   <div className="mt-3 flex space-x-2">
                     {milestone.photos.map(
-                      (_photo: string, photoIndex: number) => (
+                      (_photo: string, photoIndex: number,) => (
                         <div
                           className="flex h-12 w-12 items-center justify-center rounded bg-gray-200"
                           key={photoIndex}
@@ -647,11 +647,11 @@ function TreatmentMilestones({ milestones }: { milestones: unknown[]; }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export function TreatmentJourney() {
-  const [activeTab, setActiveTab] = useState("active");
+  const [activeTab, setActiveTab,] = useState('active',)
 
   return (
     <div className="space-y-6">
@@ -692,7 +692,7 @@ export function TreatmentJourney() {
         <TabsContent className="space-y-6" value="active">
           {/* Active Treatments Overview */}
           <div className="grid gap-6 lg:grid-cols-2">
-            {mockTreatmentData.activeTreatments.map((treatment) => (
+            {mockTreatmentData.activeTreatments.map((treatment,) => (
               <TreatmentProgressCard key={treatment.id} treatment={treatment} />
             ))}
           </div>
@@ -720,7 +720,7 @@ export function TreatmentJourney() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {mockTreatmentData.activeTreatments[0].goals.map(
-                      (goal: unknown) => (
+                      (goal: unknown,) => (
                         <div
                           className="flex items-start space-x-3"
                           key={goal.id}
@@ -733,18 +733,22 @@ export function TreatmentJourney() {
                           <div className="flex-1">
                             <p
                               className={cn(
-                                "font-medium text-sm",
+                                'font-medium text-sm',
                                 goal.achieved
-                                  ? "text-muted-foreground line-through"
-                                  : "",
+                                  ? 'text-muted-foreground line-through'
+                                  : '',
                               )}
                             >
                               {goal.description}
                             </p>
                             <p className="text-muted-foreground text-xs">
                               {goal.achieved
-                                ? `Alcançado em ${new Date(goal.date).toLocaleDateString("pt-BR")}`
-                                : `Meta: ${new Date(goal.targetDate).toLocaleDateString("pt-BR")}`}
+                                ? `Alcançado em ${
+                                  new Date(goal.date,).toLocaleDateString('pt-BR',)
+                                }`
+                                : `Meta: ${
+                                  new Date(goal.targetDate,).toLocaleDateString('pt-BR',)
+                                }`}
                             </p>
                           </div>
                         </div>
@@ -770,14 +774,14 @@ export function TreatmentJourney() {
                 <CardContent>
                   <div className="space-y-6">
                     {mockTreatmentData.activeTreatments[0].careInstructions.map(
-                      (phase: unknown, index: number) => (
+                      (phase: unknown, index: number,) => (
                         <div className="space-y-3" key={index}>
                           <h4 className="font-medium text-pink-700 text-sm">
                             {phase.phase}
                           </h4>
                           <ul className="space-y-2">
                             {phase.instructions.map(
-                              (instruction: string, instIndex: number) => (
+                              (instruction: string, instIndex: number,) => (
                                 <li
                                   className="flex items-start space-x-2 text-sm"
                                   key={instIndex}
@@ -815,7 +819,7 @@ export function TreatmentJourney() {
             )
             : (
               <div className="grid gap-6">
-                {mockTreatmentData.completedTreatments.map((treatment) => (
+                {mockTreatmentData.completedTreatments.map((treatment,) => (
                   <Card key={treatment.id}>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
@@ -827,10 +831,10 @@ export function TreatmentJourney() {
                             {treatment.type}
                           </p>
                           <p className="text-sm">
-                            {new Date(treatment.startDate).toLocaleDateString(
-                              "pt-BR",
-                            )} - {new Date(treatment.endDate).toLocaleDateString(
-                              "pt-BR",
+                            {new Date(treatment.startDate,).toLocaleDateString(
+                              'pt-BR',
+                            )} - {new Date(treatment.endDate,).toLocaleDateString(
+                              'pt-BR',
                             )}
                           </p>
                           <p className="text-sm">{treatment.results}</p>
@@ -838,13 +842,13 @@ export function TreatmentJourney() {
 
                         <div className="space-y-2 text-right">
                           <div className="flex items-center space-x-1">
-                            {Array.from({ length: 5 }).map((_, i) => (
+                            {Array.from({ length: 5, },).map((_, i,) => (
                               <Star
                                 className={cn(
-                                  "h-4 w-4",
+                                  'h-4 w-4',
                                   i < treatment.finalRating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-gray-300",
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-gray-300',
                                 )}
                                 key={i}
                               />
@@ -866,5 +870,5 @@ export function TreatmentJourney() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

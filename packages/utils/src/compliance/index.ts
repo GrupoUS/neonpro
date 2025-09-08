@@ -5,8 +5,8 @@
  * @compliance LGPD + ANVISA + CFM
  */
 
-export * from "./anvisa";
-export * from "./cfm";
-export * from "./consent-manager";
-export * from "./data-subject-rights";
-export * from "./integration";
+export * from './anvisa'
+export * from './cfm'
+export * from './consent-manager'
+export * from './data-subject-rights'
+export * from './integration'

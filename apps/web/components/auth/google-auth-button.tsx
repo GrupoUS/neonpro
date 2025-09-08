@@ -1,42 +1,42 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { Button } from "../ui/button";
+import { useState, } from 'react'
+import { supabase, } from '../../lib/supabase'
+import { Button, } from '../ui/button'
 
 interface GoogleAuthButtonProps {
-  mode?: "signin" | "signup";
-  className?: string;
+  mode?: 'signin' | 'signup'
+  className?: string
 }
 
 export function GoogleAuthButton({
-  mode = "signin",
+  mode = 'signin',
   className,
-}: GoogleAuthButtonProps) {
-  const [isLoading, setIsLoading] = useState(false);
+}: GoogleAuthButtonProps,) {
+  const [isLoading, setIsLoading,] = useState(false,)
 
   const handleGoogleAuth = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(true,)
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+      const { error, } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: {
-            access_type: "offline",
-            prompt: "consent",
+            access_type: 'offline',
+            prompt: 'consent',
           },
         },
-      });
+      },)
 
       if (error) {
       }
     } catch {
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  };
+  }
 
   return (
     <Button
@@ -69,10 +69,10 @@ export function GoogleAuthButton({
         />
       </svg>
       {isLoading
-        ? "Carregando..."
-        : mode === "signin"
-        ? "Entrar com Google"
-        : "Cadastrar com Google"}
+        ? 'Carregando...'
+        : mode === 'signin'
+        ? 'Entrar com Google'
+        : 'Cadastrar com Google'}
     </Button>
-  );
+  )
 }

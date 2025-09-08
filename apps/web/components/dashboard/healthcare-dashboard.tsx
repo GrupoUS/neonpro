@@ -4,19 +4,19 @@
  * Implements ≥9.5/10 quality standards with LGPD compliance
  */
 
-"use client";
+'use client'
 
-import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
+import { AuditEventType, AuditSeverity, UnifiedAuditService, } from '@neonpro/security'
 // ✅ Healthcare domain imports
-import { validateHealthcareAccess } from "@neonpro/security/auth";
-import { useHealthcarePermissions } from "@neonpro/security/hooks";
+import { validateHealthcareAccess, } from '@neonpro/security/auth'
+import { useHealthcarePermissions, } from '@neonpro/security/hooks'
 // ✅ Type imports
-import type { HealthcareDashboardData } from "@neonpro/types/healthcare";
+import type { HealthcareDashboardData, } from '@neonpro/types/healthcare'
 
 // ✅ Organized imports - UI components
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { motion } from "framer-motion";
+import { format, } from 'date-fns'
+import { ptBR, } from 'date-fns/locale'
+import { motion, } from 'framer-motion'
 import {
   Alert,
   AlertDescription,
@@ -36,15 +36,15 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../ui";
+} from '../ui'
 // ✅ Icons - only what we need
-import { Activity, AlertCircle, Calendar, Download, TrendingUp, Users } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { Activity, AlertCircle, Calendar, Download, TrendingUp, Users, } from 'lucide-react'
+import { useCallback, useMemo, useState, } from 'react'
 
 interface HealthcareDashboardProps {
-  initialData?: HealthcareDashboardData;
-  clinicId: string;
-  professionalId: string;
+  initialData?: HealthcareDashboardData
+  clinicId: string
+  professionalId: string
 }
 
 /**
@@ -55,77 +55,77 @@ export function HealthcareDashboard({
   initialData,
   clinicId,
   professionalId,
-}: HealthcareDashboardProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("30d");
-  const [dashboardData, setDashboardData] = useState(initialData);
-  const [isLoading, setIsLoading] = useState(false);
+}: HealthcareDashboardProps,) {
+  const [selectedPeriod, setSelectedPeriod,] = useState<string>('30d',)
+  const [dashboardData, setDashboardData,] = useState(initialData,)
+  const [isLoading, setIsLoading,] = useState(false,)
 
   // ✅ Healthcare permissions validation
-  const { canViewDashboard, canExportData, canViewFinancials } = useHealthcarePermissions();
+  const { canViewDashboard, canExportData, canViewFinancials, } = useHealthcarePermissions()
 
   // ✅ Memoized calculations for performance
   const dashboardMetrics = useMemo(() => {
     if (!dashboardData) {
-      return;
+      return
     }
 
     return {
       totalPatients: dashboardData.patients?.length ?? 0,
       todayAppointments: dashboardData.appointments?.filter(
-        (apt) =>
-          format(new Date(apt.date), "yyyy-MM-dd")
-            === format(new Date(), "yyyy-MM-dd"),
+        (apt,) =>
+          format(new Date(apt.date,), 'yyyy-MM-dd',)
+            === format(new Date(), 'yyyy-MM-dd',),
       ).length ?? 0,
       monthlyRevenue: dashboardData.financials?.monthlyRevenue ?? 0,
       complianceScore: dashboardData.compliance?.overallScore ?? 0,
-    };
-  }, [dashboardData]);
+    }
+  }, [dashboardData,],)
 
   // ✅ Healthcare-compliant data fetching
   const handlePeriodChange = useCallback(
-    async (period: string) => {
-      setIsLoading(true);
+    async (period: string,) => {
+      setIsLoading(true,)
 
       try {
         // Validate healthcare professional access
-        await validateHealthcareAccess();
+        await validateHealthcareAccess()
 
         // Fetch new data for selected period
         const response = await fetch(
           `/api/dashboard/healthcare?period=${period}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           },
-        );
+        )
 
         if (!response.ok) {
-          throw new Error("Falha ao carregar dados do dashboard");
+          throw new Error('Falha ao carregar dados do dashboard',)
         }
 
-        const newData = await response.json();
-        setDashboardData(newData);
-        setSelectedPeriod(period);
+        const newData = await response.json()
+        setDashboardData(newData,)
+        setSelectedPeriod(period,)
 
         // ✅ MANDATORY audit log for healthcare compliance
         await UnifiedAuditService.log({
           eventType: AuditEventType.DATA_ACCESS,
           severity: AuditSeverity.LOW,
           userId: professionalId,
-          resourceType: "healthcare_dashboard",
+          resourceType: 'healthcare_dashboard',
           resourceId: clinicId,
-          action: "VIEW_DASHBOARD_DATA",
-          additionalData: { period, dataType: "healthcare_dashboard" },
-        });
+          action: 'VIEW_DASHBOARD_DATA',
+          additionalData: { period, dataType: 'healthcare_dashboard', },
+        },)
       } catch {
       } finally {
-        setIsLoading(false);
+        setIsLoading(false,)
       }
     },
-    [clinicId, professionalId],
-  );
+    [clinicId, professionalId,],
+  )
 
   // ✅ Access control - return null if no permissions
   if (!canViewDashboard) {
@@ -136,7 +136,7 @@ export function HealthcareDashboard({
           Você não possui permissão para visualizar o dashboard.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
   return (
     <div className="healthcare-dashboard space-y-6">
@@ -149,7 +149,7 @@ export function HealthcareDashboard({
           <p className="text-muted-foreground">
             {format(new Date(), "EEEE, dd 'de' MMMM 'de' yyyy", {
               locale: ptBR,
-            })}
+            },)}
           </p>
         </div>
 
@@ -194,10 +194,10 @@ export function HealthcareDashboard({
       {/* ✅ Dashboard Metrics Cards */}
       {dashboardMetrics && !isLoading && (
         <motion.div
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0, }}
           className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-          initial={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, y: 20, }}
+          transition={{ duration: 0.3, }}
         >
           <MetricCard
             className="healthcare-metric-patients"
@@ -221,10 +221,10 @@ export function HealthcareDashboard({
               icon={<TrendingUp className="h-4 w-4" />}
               title="Receita Mensal"
               trend="+8% vs mês anterior"
-              value={new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(dashboardMetrics.monthlyRevenue)}
+              value={new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              },).format(dashboardMetrics.monthlyRevenue,)}
             />
           )}
 
@@ -263,20 +263,20 @@ export function HealthcareDashboard({
         )}
       </Tabs>
     </div>
-  );
+  )
 } /**
  * MetricCard Component - Healthcare metrics display
  */
 
 interface MetricCardProps {
-  title: string;
-  value: number | string;
-  icon: React.ReactNode;
-  trend?: string;
-  className?: string;
+  title: string
+  value: number | string
+  icon: React.ReactNode
+  trend?: string
+  className?: string
 }
 
-function MetricCard({ title, value, icon, trend, className }: MetricCardProps) {
+function MetricCard({ title, value, icon, trend, className, }: MetricCardProps,) {
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -288,32 +288,32 @@ function MetricCard({ title, value, icon, trend, className }: MetricCardProps) {
         {trend && <p className="mt-1 text-muted-foreground text-xs">{trend}</p>}
       </CardContent>
     </Card>
-  );
+  )
 }
 
 /**
  * ComplianceCard Component - LGPD/ANVISA compliance display
  */
 interface ComplianceCardProps {
-  score: number;
-  className?: string;
+  score: number
+  className?: string
 }
 
-function ComplianceCard({ score, className }: ComplianceCardProps) {
-  const getComplianceStatus = (score: number) => {
+function ComplianceCard({ score, className, }: ComplianceCardProps,) {
+  const getComplianceStatus = (score: number,) => {
     if (score >= 95) {
-      return { label: "Excelente", color: "green" };
+      return { label: 'Excelente', color: 'green', }
     }
     if (score >= 85) {
-      return { label: "Boa", color: "blue" };
+      return { label: 'Boa', color: 'blue', }
     }
     if (score >= 70) {
-      return { label: "Regular", color: "yellow" };
+      return { label: 'Regular', color: 'yellow', }
     }
-    return { label: "Atenção", color: "red" };
-  };
+    return { label: 'Atenção', color: 'red', }
+  }
 
-  const status = getComplianceStatus(score);
+  const status = getComplianceStatus(score,)
 
   return (
     <Card className={className}>
@@ -329,13 +329,13 @@ function ComplianceCard({ score, className }: ComplianceCardProps) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 /**
  * Section Components - Dashboard content areas
  */
-function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
+function OverviewSection({ data, }: { data?: HealthcareDashboardData },) {
   if (!data) {
     return (
       <Card>
@@ -345,7 +345,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
           </p>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -380,7 +380,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {data.topTreatments?.slice(0, 5).map((treatment, _index) => (
+            {data.topTreatments?.slice(0, 5,).map((treatment, _index,) => (
               <div
                 className="flex items-center justify-between"
                 key={treatment.id}
@@ -393,10 +393,10 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData; }) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
-function AppointmentsSection({ data: _data }: { data?: unknown[]; }) {
+function AppointmentsSection({ data: _data, }: { data?: unknown[] },) {
   // ✅ Implementation for appointments section
   return (
     <Card>
@@ -409,10 +409,10 @@ function AppointmentsSection({ data: _data }: { data?: unknown[]; }) {
         </p>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function PatientsSection({ data: _data }: { data?: unknown[]; }) {
+function PatientsSection({ data: _data, }: { data?: unknown[] },) {
   // ✅ Implementation for patients section
   return (
     <Card>
@@ -425,10 +425,10 @@ function PatientsSection({ data: _data }: { data?: unknown[]; }) {
         </p>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function FinancialsSection({ data: _data }: { data?: unknown; }) {
+function FinancialsSection({ data: _data, }: { data?: unknown },) {
   // ✅ Implementation for financials section
   return (
     <Card>
@@ -441,5 +441,5 @@ function FinancialsSection({ data: _data }: { data?: unknown; }) {
         </p>
       </CardContent>
     </Card>
-  );
+  )
 }

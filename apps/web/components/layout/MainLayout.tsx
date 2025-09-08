@@ -4,56 +4,56 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-"use client";
+'use client'
 
 import {
   AccessibilityPanel,
   KeyboardHelper,
   SkipToContentLink,
   StatusAnnouncer,
-} from "@/components/accessibility/AccessibilityComponents";
-import { MobileBottomNavigation, MobileNavigation } from "@/components/mobile/MobileNavigation";
-import { Toaster } from "@/components/ui/toaster";
-import { useEffect, useState } from "react";
+} from '@/components/accessibility/AccessibilityComponents'
+import { MobileBottomNavigation, MobileNavigation, } from '@/components/mobile/MobileNavigation'
+import { Toaster, } from '@/components/ui/toaster'
+import { useEffect, useState, } from 'react'
 
 interface MainLayoutProps {
-  children: React.ReactNode;
-  showMobileNav?: boolean;
-  showAccessibilityPanel?: boolean;
-  className?: string;
+  children: React.ReactNode
+  showMobileNav?: boolean
+  showAccessibilityPanel?: boolean
+  className?: string
 }
 
 export function MainLayout({
   children,
   showMobileNav = true,
   showAccessibilityPanel = true,
-  className = "",
-}: MainLayoutProps) {
-  const [isClient, setIsClient] = useState(false);
+  className = '',
+}: MainLayoutProps,) {
+  const [isClient, setIsClient,] = useState(false,)
 
   useEffect(() => {
-    setIsClient(true);
+    setIsClient(true,)
 
     // Set up global accessibility styles
-    const { documentElement: root } = document;
+    const { documentElement: root, } = document
 
     // Respect user's motion preferences
     const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
+      '(prefers-reduced-motion: reduce)',
+    )
     if (prefersReducedMotion.matches) {
-      root.classList.add("reduce-motion");
+      root.classList.add('reduce-motion',)
     }
 
     // Respect user's contrast preferences
-    const prefersHighContrast = window.matchMedia("(prefers-contrast: high)");
+    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)',)
     if (prefersHighContrast.matches) {
-      root.classList.add("high-contrast");
+      root.classList.add('high-contrast',)
     }
 
     // Set focus-visible for keyboard navigation
-    root.classList.add("focus-visible");
-  }, []);
+    root.classList.add('focus-visible',)
+  }, [],)
 
   if (!isClient) {
     return (
@@ -65,7 +65,7 @@ export function MainLayout({
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -114,7 +114,7 @@ export function MainLayout({
       {/* Toast Notifications */}
       <Toaster />
     </div>
-  );
+  )
 }
 
 // Specialized layout for dashboard pages
@@ -124,11 +124,11 @@ export function DashboardPageLayout({
   description,
   compliance,
 }: {
-  children: React.ReactNode;
-  title: string;
-  description?: string;
-  compliance?: string[];
-}) {
+  children: React.ReactNode
+  title: string
+  description?: string
+  compliance?: string[]
+},) {
   return (
     <MainLayout>
       <div className="space-y-6 p-4 md:p-6">
@@ -140,7 +140,7 @@ export function DashboardPageLayout({
             </h1>
             {compliance && compliance.length > 0 && (
               <div className="hidden md:flex gap-2">
-                {compliance.map((framework) => (
+                {compliance.map((framework,) => (
                   <div
                     key={framework}
                     className="px-2 py-1 bg-secondary text-secondary-foreground rounded text-xs font-medium"
@@ -160,7 +160,7 @@ export function DashboardPageLayout({
 
           {compliance && compliance.length > 0 && (
             <div className="md:hidden flex gap-2 flex-wrap">
-              {compliance.map((framework) => (
+              {compliance.map((framework,) => (
                 <div
                   key={framework}
                   className="px-2 py-1 bg-secondary text-secondary-foreground rounded text-xs font-medium"
@@ -176,11 +176,11 @@ export function DashboardPageLayout({
         <div className="space-y-6">{children}</div>
       </div>
     </MainLayout>
-  );
+  )
 }
 
 // Auth layout for login/signup pages
-export function AuthLayout({ children }: { children: React.ReactNode; }) {
+export function AuthLayout({ children, }: { children: React.ReactNode },) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <SkipToContentLink />
@@ -212,7 +212,7 @@ export function AuthLayout({ children }: { children: React.ReactNode; }) {
       <AccessibilityPanel />
       <Toaster />
     </div>
-  );
+  )
 }
 
 // Error layout for error pages
@@ -220,9 +220,9 @@ export function ErrorLayout({
   children,
   statusCode,
 }: {
-  children: React.ReactNode;
-  statusCode?: number;
-}) {
+  children: React.ReactNode
+  statusCode?: number
+},) {
   return (
     <MainLayout showMobileNav={false}>
       <div className="min-h-[60vh] flex items-center justify-center p-4">
@@ -236,19 +236,19 @@ export function ErrorLayout({
         </div>
       </div>
     </MainLayout>
-  );
+  )
 }
 
 // Print layout for reports
 export function PrintLayout({
   children,
   title,
-  compliance = ["LGPD", "ANVISA", "CFM"],
+  compliance = ['LGPD', 'ANVISA', 'CFM',],
 }: {
-  children: React.ReactNode;
-  title?: string;
-  compliance?: string[];
-}) {
+  children: React.ReactNode
+  title?: string
+  compliance?: string[]
+},) {
   return (
     <div className="print:block hidden">
       <div className="space-y-4">
@@ -264,8 +264,8 @@ export function PrintLayout({
               )}
             </div>
             <div className="text-right text-sm text-muted-foreground">
-              <p>Data: {new Date().toLocaleDateString("pt-BR")}</p>
-              <p>Compliance: {compliance.join(", ")}</p>
+              <p>Data: {new Date().toLocaleDateString('pt-BR',)}</p>
+              <p>Compliance: {compliance.join(', ',)}</p>
             </div>
           </div>
         </div>
@@ -282,5 +282,5 @@ export function PrintLayout({
         </div>
       </div>
     </div>
-  );
+  )
 }

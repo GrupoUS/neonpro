@@ -1,30 +1,30 @@
-"use client";
+'use client'
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui";
-import { useAppointments } from "@/hooks/useAppointments";
-import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import { usePatients } from "@/hooks/usePatients";
-import { Building2, Calendar, Shield, TestTube, User } from "lucide-react";
-import Link from "next/link";
-import { PatientsList } from "../components/PatientsList";
-import { AppointmentsList } from "./components/dashboard/AppointmentsList";
-import { HeroSection } from "./components/dashboard/HeroSection";
-import { MetricsCards } from "./components/dashboard/MetricsCards";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui'
+import { useAppointments, } from '@/hooks/useAppointments'
+import { useDashboardMetrics, } from '@/hooks/useDashboardMetrics'
+import { usePatients, } from '@/hooks/usePatients'
+import { Building2, Calendar, Shield, TestTube, User, } from 'lucide-react'
+import Link from 'next/link'
+import { PatientsList, } from '../components/PatientsList'
+import { AppointmentsList, } from './components/dashboard/AppointmentsList'
+import { HeroSection, } from './components/dashboard/HeroSection'
+import { MetricsCards, } from './components/dashboard/MetricsCards'
 
 interface Patient {
-  id: string;
-  name?: string;
-  status?: string;
-  avatar?: string;
+  id: string
+  name?: string
+  status?: string
+  avatar?: string
 }
 
 interface Appointment {
-  id: string;
+  id: string
   patient?: {
-    name?: string;
-  };
-  time?: string;
-  type?: string;
+    name?: string
+  }
+  time?: string
+  type?: string
 }
 
 const MetricsSection = ({
@@ -34,12 +34,12 @@ const MetricsSection = ({
   totalPatients,
   upcomingAppointments,
 }: {
-  metricsLoading: boolean;
-  monthlyRevenue: number;
-  revenueGrowth: number;
-  totalPatients: number;
-  upcomingAppointments: number;
-}) => (
+  metricsLoading: boolean
+  monthlyRevenue: number
+  revenueGrowth: number
+  totalPatients: number
+  upcomingAppointments: number
+},) => (
   <section className="container mx-auto px-6 pb-20">
     <div className="mb-12 text-center">
       <h2 className="mb-4 font-bold text-3xl text-foreground">
@@ -58,7 +58,7 @@ const MetricsSection = ({
       upcomingAppointments={upcomingAppointments}
     />
   </section>
-);
+)
 
 const QuickAccessSection = ({
   patientsLoading,
@@ -66,11 +66,11 @@ const QuickAccessSection = ({
   appointmentsLoading,
   todaysAppointments,
 }: {
-  patientsLoading: boolean;
-  recentPatients: Patient[];
-  appointmentsLoading: boolean;
-  todaysAppointments: Appointment[];
-}) => (
+  patientsLoading: boolean
+  recentPatients: Patient[]
+  appointmentsLoading: boolean
+  todaysAppointments: Appointment[]
+},) => (
   <section className="container mx-auto px-6 pb-20">
     <div className="mb-12 text-center">
       <h2 className="mb-4 font-bold text-3xl text-foreground">Acesso Rápido</h2>
@@ -82,7 +82,7 @@ const QuickAccessSection = ({
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <PatientsList
         patientsLoading={patientsLoading}
-        recentPatients={recentPatients.map(p => ({ ...p, status: p.status || "active" }))}
+        recentPatients={recentPatients.map(p => ({ ...p, status: p.status || 'active', }))}
       />
 
       <AppointmentsList
@@ -153,33 +153,15 @@ const QuickAccessSection = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Shield className="h-5 w-5 mr-2" />
-            Teste de Autenticação
-          </CardTitle>
-          <CardDescription>
-            Página de desenvolvimento para testar o sistema de autenticação real
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button asChild className="w-full" variant="outline">
-            <Link href="/auth-test">
-              <TestTube className="h-4 w-4 mr-2" />
-              Abrir Teste de Auth
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Card removido: link para página de teste de autenticação (não deve existir em produção) */}
     </div>
   </section>
-);
+)
 
 export default function HomePage() {
-  const metricsData = useDashboardMetrics();
-  const patientsData = usePatients();
-  const appointmentsData = useAppointments();
+  const metricsData = useDashboardMetrics()
+  const patientsData = usePatients()
+  const appointmentsData = useAppointments()
 
   return (
     <div className="min-h-screen bg-background">
@@ -200,5 +182,5 @@ export default function HomePage() {
         todaysAppointments={appointmentsData.todaysAppointments}
       />
     </div>
-  );
+  )
 }

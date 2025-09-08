@@ -2,45 +2,45 @@
   "name": "@neonpro/shared",
   "version": "1.0.0",
   "description": "Shared types and schemas for NeonPro Healthcare Platform",
-  "main": "./dist/src/index.js",
-  "module": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./api-client": {
-      "types": "./dist/src/api-client.d.ts",
-      "import": "./dist/src/api-client.js",
-      "require": "./dist/src/api-client.js"
+      "types": "./dist/api-client.d.ts",
+      "import": "./dist/api-client.js",
+      "require": "./dist/api-client.js"
     },
     "./hooks/use-healthcare-realtime": {
-      "types": "./dist/src/hooks/use-healthcare-realtime.d.ts",
-      "import": "./dist/src/hooks/use-healthcare-realtime.js",
-      "require": "./dist/src/hooks/use-healthcare-realtime.js"
+      "types": "./dist/hooks/use-healthcare-realtime.d.ts",
+      "import": "./dist/hooks/use-healthcare-realtime.js",
+      "require": "./dist/hooks/use-healthcare-realtime.js"
     },
     "./hooks/use-lgpd-realtime": {
-      "types": "./dist/src/hooks/use-lgpd-realtime.d.ts",
-      "import": "./dist/src/hooks/use-lgpd-realtime.js",
-      "require": "./dist/src/hooks/use-lgpd-realtime.js"
+      "types": "./dist/hooks/use-lgpd-realtime.d.ts",
+      "import": "./dist/hooks/use-lgpd-realtime.js",
+      "require": "./dist/hooks/use-lgpd-realtime.js"
     },
     "./hooks/use-realtime": {
-      "types": "./dist/src/hooks/use-realtime.d.ts",
-      "import": "./dist/src/hooks/use-realtime.js",
-      "require": "./dist/src/hooks/use-realtime.js"
+      "types": "./dist/hooks/use-realtime.d.ts",
+      "import": "./dist/hooks/use-realtime.js",
+      "require": "./dist/hooks/use-realtime.js"
     },
     "./schemas": {
-      "types": "./dist/src/schemas/index.d.ts",
-      "import": "./dist/src/schemas/index.js",
-      "require": "./dist/src/schemas/index.js"
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js",
+      "require": "./dist/schemas/index.js"
     },
     "./templates": {
-      "types": "./dist/src/templates/index.d.ts",
-      "import": "./dist/src/templates/index.js",
-      "require": "./dist/src/templates/index.js"
+      "types": "./dist/templates/index.d.ts",
+      "import": "./dist/templates/index.js",
+      "require": "./dist/templates/index.js"
     }
   },
   "files": [
@@ -61,11 +61,13 @@
   "dependencies": {
     "@neonpro/database": "workspace:*",
     "@supabase/supabase-js": "^2.55.0",
-    "@tanstack/react-query": "^5.51.23",
     "hono": "^4.9.6",
     "jsonwebtoken": "^9.0.2",
-    "react": "^19.1.1",
     "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "@tanstack/react-query": "^5.0.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",

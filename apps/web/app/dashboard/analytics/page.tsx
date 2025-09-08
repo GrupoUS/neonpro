@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Analytics Dashboard Page
@@ -6,15 +6,15 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-import { AIAnalyticsDashboard } from "@/components/dashboard/ai-powered";
+import { AIAnalyticsDashboard, } from '@/components/dashboard/ai-powered'
 
 interface AnalyticsPageProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Record<string, string | string[] | undefined>
 }
 
 export default function AnalyticsPage({
   searchParams: _searchParams,
-}: AnalyticsPageProps) {
+}: AnalyticsPageProps,) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6 lg:p-8"
@@ -42,5 +42,5 @@ export default function AnalyticsPage({
         </div>
       </div>
     </main>
-  );
+  )
 }

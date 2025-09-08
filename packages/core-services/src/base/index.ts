@@ -18,5 +18,5 @@ export type {
   ServiceContext,
   ServiceError,
   ServiceHealth,
-} from "../types";
-export { EnhancedServiceBase } from "./EnhancedServiceBase";
+} from '../types'
+export { EnhancedServiceBase, } from './EnhancedServiceBase'

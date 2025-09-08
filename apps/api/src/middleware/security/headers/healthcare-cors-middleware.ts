@@ -12,73 +12,73 @@
  * - Patient portal security policies
  */
 
-import type { Context, MiddlewareHandler } from "hono";
-import { cors } from "hono/cors";
+import type { Context, MiddlewareHandler, } from 'hono'
+import { cors, } from 'hono/cors'
 
 // Healthcare CORS policy types
 export enum HealthcareCORSPolicy {
-  STRICT = "strict", // Medical records, high-security endpoints
-  MEDICAL = "medical", // General medical system integration
-  PATIENT_PORTAL = "patient_portal", // Patient-facing applications
-  TELEMEDICINE = "telemedicine", // Video calls, real-time communication
-  EMERGENCY = "emergency", // Emergency access scenarios
-  DEVELOPMENT = "development", // Development environment
-  INTEROPERABILITY = "interoperability", // HL7 FHIR, healthcare standards
+  STRICT = 'strict', // Medical records, high-security endpoints
+  MEDICAL = 'medical', // General medical system integration
+  PATIENT_PORTAL = 'patient_portal', // Patient-facing applications
+  TELEMEDICINE = 'telemedicine', // Video calls, real-time communication
+  EMERGENCY = 'emergency', // Emergency access scenarios
+  DEVELOPMENT = 'development', // Development environment
+  INTEROPERABILITY = 'interoperability', // HL7 FHIR, healthcare standards
 }
 
 // Brazilian healthcare system types
 export enum BrazilianHealthcareSystem {
-  SUS = "sus", // Sistema Único de Saúde
-  PRIVATE_HOSPITAL = "private_hospital",
-  CLINIC = "clinic",
-  LABORATORY = "laboratory",
-  PHARMACY = "pharmacy",
-  TELEMEDICINE_PLATFORM = "telemedicine_platform",
-  HEALTH_INSURANCE = "health_insurance",
-  REGULATORY_BODY = "regulatory_body", // ANVISA, CFM, CRM, etc.
-  EMERGENCY_SERVICES = "emergency_services",
+  SUS = 'sus', // Sistema Único de Saúde
+  PRIVATE_HOSPITAL = 'private_hospital',
+  CLINIC = 'clinic',
+  LABORATORY = 'laboratory',
+  PHARMACY = 'pharmacy',
+  TELEMEDICINE_PLATFORM = 'telemedicine_platform',
+  HEALTH_INSURANCE = 'health_insurance',
+  REGULATORY_BODY = 'regulatory_body', // ANVISA, CFM, CRM, etc.
+  EMERGENCY_SERVICES = 'emergency_services',
 }
 
 // CORS configuration interface
 interface HealthcareCORSConfig {
-  policy: HealthcareCORSPolicy;
+  policy: HealthcareCORSPolicy
 
   // Origin configuration
   origins: {
-    allowed: string[];
-    blocked: string[];
-    dynamicValidation: boolean;
-  };
+    allowed: string[]
+    blocked: string[]
+    dynamicValidation: boolean
+  }
 
   // Methods and headers
-  methods: string[];
-  allowedHeaders: string[];
-  exposedHeaders: string[];
+  methods: string[]
+  allowedHeaders: string[]
+  exposedHeaders: string[]
 
   // Credentials and timing
-  credentials: boolean;
-  maxAge: number; // Preflight cache duration in seconds
+  credentials: boolean
+  maxAge: number // Preflight cache duration in seconds
 
   // Brazilian healthcare compliance
   lgpdCompliance: {
-    enabled: boolean;
-    dataProcessingConsent: boolean;
-    auditCrossOriginRequests: boolean;
-  };
+    enabled: boolean
+    dataProcessingConsent: boolean
+    auditCrossOriginRequests: boolean
+  }
 
   // Emergency access configuration
   emergencyAccess: {
-    enabled: boolean;
-    emergencyOrigins: string[];
-    bypassRestrictions: boolean;
-  };
+    enabled: boolean
+    emergencyOrigins: string[]
+    bypassRestrictions: boolean
+  }
 
   // Healthcare system integration
   systemIntegration: {
-    healthcareSystemTypes: BrazilianHealthcareSystem[];
-    requiresAuthentication: boolean;
-    apiKeyRequired: boolean;
-  };
+    healthcareSystemTypes: BrazilianHealthcareSystem[]
+    requiresAuthentication: boolean
+    apiKeyRequired: boolean
+  }
 }
 
 /**
@@ -89,29 +89,29 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.STRICT,
     origins: {
       allowed: [
-        "https://medical-records.neonpro.health",
-        "https://admin.neonpro.health",
-        "https://compliance.neonpro.health",
+        'https://medical-records.neonpro.health',
+        'https://admin.neonpro.health',
+        'https://compliance.neonpro.health',
       ],
       blocked: [],
       dynamicValidation: true,
     },
-    methods: ["GET", "POST", "PUT", "PATCH"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH',],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Medical-License",
-      "X-Emergency-Access",
-      "X-LGPD-Consent",
-      "X-Audit-Context",
-      "X-Healthcare-Provider-ID",
+      'Content-Type',
+      'Authorization',
+      'X-Medical-License',
+      'X-Emergency-Access',
+      'X-LGPD-Consent',
+      'X-Audit-Context',
+      'X-Healthcare-Provider-ID',
     ],
     exposedHeaders: [
-      "X-RateLimit-Limit",
-      "X-RateLimit-Remaining",
-      "X-Emergency-Bypass",
-      "X-LGPD-Processing-Status",
-      "X-Audit-ID",
+      'X-RateLimit-Limit',
+      'X-RateLimit-Remaining',
+      'X-Emergency-Bypass',
+      'X-LGPD-Processing-Status',
+      'X-Audit-ID',
     ],
     credentials: true,
     maxAge: 300, // 5 minutes - short for high security
@@ -123,8 +123,8 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     emergencyAccess: {
       enabled: true,
       emergencyOrigins: [
-        "https://emergency.neonpro.health",
-        "https://mobile-emergency.neonpro.health",
+        'https://emergency.neonpro.health',
+        'https://mobile-emergency.neonpro.health',
       ],
       bypassRestrictions: false, // Still maintain some restrictions even in emergency
     },
@@ -142,36 +142,36 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.MEDICAL,
     origins: {
       allowed: [
-        "https://portal.neonpro.health",
-        "https://provider-dashboard.neonpro.health",
-        "https://integration.neonpro.health",
-        "https://*.hospital.gov.br", // Brazilian hospital domains
-        "https://*.sus.gov.br", // SUS system domains
+        'https://portal.neonpro.health',
+        'https://provider-dashboard.neonpro.health',
+        'https://integration.neonpro.health',
+        'https://*.hospital.gov.br', // Brazilian hospital domains
+        'https://*.sus.gov.br', // SUS system domains
       ],
       blocked: [
-        "http://*", // Block all HTTP origins in production
+        'http://*', // Block all HTTP origins in production
       ],
       dynamicValidation: true,
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE',],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Medical-License",
-      "X-Provider-Credentials",
-      "X-Patient-Consent",
-      "X-LGPD-Consent",
-      "X-Healthcare-System-ID",
-      "X-Integration-Token",
-      "X-FHIR-Version", // For HL7 FHIR interoperability
+      'Content-Type',
+      'Authorization',
+      'X-Medical-License',
+      'X-Provider-Credentials',
+      'X-Patient-Consent',
+      'X-LGPD-Consent',
+      'X-Healthcare-System-ID',
+      'X-Integration-Token',
+      'X-FHIR-Version', // For HL7 FHIR interoperability
     ],
     exposedHeaders: [
-      "X-RateLimit-Limit",
-      "X-RateLimit-Remaining",
-      "X-Medical-Record-Version",
-      "X-LGPD-Processing-Status",
-      "X-Healthcare-Compliance",
-      "X-Integration-Status",
+      'X-RateLimit-Limit',
+      'X-RateLimit-Remaining',
+      'X-Medical-Record-Version',
+      'X-LGPD-Processing-Status',
+      'X-Healthcare-Compliance',
+      'X-Integration-Status',
     ],
     credentials: true,
     maxAge: 600, // 10 minutes
@@ -183,8 +183,8 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     emergencyAccess: {
       enabled: true,
       emergencyOrigins: [
-        "https://emergency.neonpro.health",
-        "https://*.emergency.gov.br",
+        'https://emergency.neonpro.health',
+        'https://*.emergency.gov.br',
       ],
       bypassRestrictions: true,
     },
@@ -204,30 +204,30 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.PATIENT_PORTAL,
     origins: {
       allowed: [
-        "https://app.neonpro.health",
-        "https://patient-portal.neonpro.health",
-        "https://mobile.neonpro.health",
-        "https://www.neonpro.health",
+        'https://app.neonpro.health',
+        'https://patient-portal.neonpro.health',
+        'https://mobile.neonpro.health',
+        'https://www.neonpro.health',
       ],
       blocked: [],
       dynamicValidation: false,
     },
-    methods: ["GET", "POST", "PUT", "PATCH"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH',],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Patient-ID",
-      "X-Session-Token",
-      "X-LGPD-Consent",
-      "X-Device-Info",
-      "X-Location-Consent", // For location-based services
+      'Content-Type',
+      'Authorization',
+      'X-Patient-ID',
+      'X-Session-Token',
+      'X-LGPD-Consent',
+      'X-Device-Info',
+      'X-Location-Consent', // For location-based services
     ],
     exposedHeaders: [
-      "X-RateLimit-Limit",
-      "X-RateLimit-Remaining",
-      "X-Session-Expires",
-      "X-LGPD-Rights-Info",
-      "X-Privacy-Settings",
+      'X-RateLimit-Limit',
+      'X-RateLimit-Remaining',
+      'X-Session-Expires',
+      'X-LGPD-Rights-Info',
+      'X-Privacy-Settings',
     ],
     credentials: true,
     maxAge: 3600, // 1 hour
@@ -242,7 +242,7 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
       bypassRestrictions: false,
     },
     systemIntegration: {
-      healthcareSystemTypes: [BrazilianHealthcareSystem.PATIENT_PORTAL],
+      healthcareSystemTypes: [BrazilianHealthcareSystem.PATIENT_PORTAL,],
       requiresAuthentication: true,
       apiKeyRequired: false,
     },
@@ -252,32 +252,32 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.TELEMEDICINE,
     origins: {
       allowed: [
-        "https://telemedicine.neonpro.health",
-        "https://video-call.neonpro.health",
-        "https://webrtc.neonpro.health",
-        "https://*.telehealth.gov.br", // Brazilian telehealth domains
+        'https://telemedicine.neonpro.health',
+        'https://video-call.neonpro.health',
+        'https://webrtc.neonpro.health',
+        'https://*.telehealth.gov.br', // Brazilian telehealth domains
       ],
       blocked: [],
       dynamicValidation: true,
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'OPTIONS',],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Medical-License",
-      "X-Video-Session-ID",
-      "X-Patient-Consent",
-      "X-Recording-Consent",
-      "X-LGPD-Consent",
-      "X-Telemedicine-Platform",
-      "X-WebRTC-Config",
+      'Content-Type',
+      'Authorization',
+      'X-Medical-License',
+      'X-Video-Session-ID',
+      'X-Patient-Consent',
+      'X-Recording-Consent',
+      'X-LGPD-Consent',
+      'X-Telemedicine-Platform',
+      'X-WebRTC-Config',
     ],
     exposedHeaders: [
-      "X-Session-ID",
-      "X-Recording-Status",
-      "X-Consultation-ID",
-      "X-LGPD-Recording-Policy",
-      "X-Telemedicine-Compliance",
+      'X-Session-ID',
+      'X-Recording-Status',
+      'X-Consultation-ID',
+      'X-LGPD-Recording-Policy',
+      'X-Telemedicine-Compliance',
     ],
     credentials: true,
     maxAge: 1800, // 30 minutes
@@ -289,12 +289,12 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     emergencyAccess: {
       enabled: true,
       emergencyOrigins: [
-        "https://emergency-telemedicine.neonpro.health",
+        'https://emergency-telemedicine.neonpro.health',
       ],
       bypassRestrictions: true,
     },
     systemIntegration: {
-      healthcareSystemTypes: [BrazilianHealthcareSystem.TELEMEDICINE_PLATFORM],
+      healthcareSystemTypes: [BrazilianHealthcareSystem.TELEMEDICINE_PLATFORM,],
       requiresAuthentication: true,
       apiKeyRequired: false,
     },
@@ -304,20 +304,20 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.EMERGENCY,
     origins: {
       allowed: [
-        "*", // Allow all origins in emergency situations
+        '*', // Allow all origins in emergency situations
       ],
       blocked: [],
       dynamicValidation: false, // Skip validation for speed
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS',],
     allowedHeaders: [
-      "*", // Allow all headers in emergency
+      '*', // Allow all headers in emergency
     ],
     exposedHeaders: [
-      "X-Emergency-Access-Granted",
-      "X-Emergency-Session-ID",
-      "X-Audit-Required",
-      "X-Emergency-Justification-Required",
+      'X-Emergency-Access-Granted',
+      'X-Emergency-Session-ID',
+      'X-Audit-Required',
+      'X-Emergency-Justification-Required',
     ],
     credentials: true,
     maxAge: 0, // No caching for emergency requests
@@ -328,11 +328,11 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     },
     emergencyAccess: {
       enabled: true,
-      emergencyOrigins: ["*"], // All origins allowed
+      emergencyOrigins: ['*',], // All origins allowed
       bypassRestrictions: true,
     },
     systemIntegration: {
-      healthcareSystemTypes: Object.values(BrazilianHealthcareSystem),
+      healthcareSystemTypes: Object.values(BrazilianHealthcareSystem,),
       requiresAuthentication: false, // Relaxed for emergency
       apiKeyRequired: false,
     },
@@ -342,33 +342,33 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.INTEROPERABILITY,
     origins: {
       allowed: [
-        "https://fhir.neonpro.health",
-        "https://hl7.neonpro.health",
-        "https://interop.neonpro.health",
-        "https://*.datasus.gov.br", // DATASUS integration
-        "https://*.anvisa.gov.br", // ANVISA integration
+        'https://fhir.neonpro.health',
+        'https://hl7.neonpro.health',
+        'https://interop.neonpro.health',
+        'https://*.datasus.gov.br', // DATASUS integration
+        'https://*.anvisa.gov.br', // ANVISA integration
       ],
       blocked: [],
       dynamicValidation: true,
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE',],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-FHIR-Version",
-      "X-HL7-Message-Type",
-      "X-Healthcare-Standard",
-      "X-Interoperability-Token",
-      "X-System-Identifier",
-      "Accept",
-      "Content-Encoding",
+      'Content-Type',
+      'Authorization',
+      'X-FHIR-Version',
+      'X-HL7-Message-Type',
+      'X-Healthcare-Standard',
+      'X-Interoperability-Token',
+      'X-System-Identifier',
+      'Accept',
+      'Content-Encoding',
     ],
     exposedHeaders: [
-      "X-FHIR-Version",
-      "X-Resource-Count",
-      "X-Bundle-Total",
-      "X-Interoperability-Status",
-      "Location", // For resource creation
+      'X-FHIR-Version',
+      'X-Resource-Count',
+      'X-Bundle-Total',
+      'X-Interoperability-Status',
+      'Location', // For resource creation
     ],
     credentials: true,
     maxAge: 7200, // 2 hours
@@ -397,19 +397,19 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
     policy: HealthcareCORSPolicy.DEVELOPMENT,
     origins: {
       allowed: [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:5173", // Vite dev server
-        "http://127.0.0.1:*",
-        "https://*.ngrok.io", // Ngrok tunnels for mobile testing
-        "https://*.vercel.app", // Vercel preview deployments
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5173', // Vite dev server
+        'http://127.0.0.1:*',
+        'https://*.ngrok.io', // Ngrok tunnels for mobile testing
+        'https://*.vercel.app', // Vercel preview deployments
       ],
       blocked: [],
       dynamicValidation: false,
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["*"],
-    exposedHeaders: ["*"],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS',],
+    allowedHeaders: ['*',],
+    exposedHeaders: ['*',],
     credentials: true,
     maxAge: 86_400, // 24 hours
     lgpdCompliance: {
@@ -428,44 +428,44 @@ const HEALTHCARE_CORS_CONFIGURATIONS: Record<HealthcareCORSPolicy, HealthcareCOR
       apiKeyRequired: false,
     },
   },
-};
+}
 
 /**
  * Healthcare CORS Manager Class
  */
 export class HealthcareCORSManager {
-  private config: HealthcareCORSConfig;
+  private config: HealthcareCORSConfig
 
-  constructor(policy: HealthcareCORSPolicy = HealthcareCORSPolicy.DEVELOPMENT) {
-    this.config = HEALTHCARE_CORS_CONFIGURATIONS[policy];
+  constructor(policy: HealthcareCORSPolicy = HealthcareCORSPolicy.DEVELOPMENT,) {
+    this.config = HEALTHCARE_CORS_CONFIGURATIONS[policy]
   }
 
   /**
    * Dynamic origin validation for healthcare systems
    */
-  async validateOrigin(origin: string): Promise<boolean> {
+  async validateOrigin(origin: string,): Promise<boolean> {
     if (!this.config.origins.dynamicValidation) {
-      return this.config.origins.allowed.some(allowed => this.matchOrigin(origin, allowed));
+      return this.config.origins.allowed.some(allowed => this.matchOrigin(origin, allowed,))
     }
 
     // Check blocked origins first
-    if (this.config.origins.blocked.some(blocked => this.matchOrigin(origin, blocked))) {
-      return false;
+    if (this.config.origins.blocked.some(blocked => this.matchOrigin(origin, blocked,))) {
+      return false
     }
 
     // Static allowed origins
-    if (this.config.origins.allowed.some(allowed => this.matchOrigin(origin, allowed))) {
-      return true;
+    if (this.config.origins.allowed.some(allowed => this.matchOrigin(origin, allowed,))) {
+      return true
     }
 
     // Dynamic validation for healthcare systems
-    return await this.validateHealthcareOrigin(origin);
+    return await this.validateHealthcareOrigin(origin,)
   }
 
   /**
    * Validate healthcare system origins dynamically
    */
-  private async validateHealthcareOrigin(origin: string): Promise<boolean> {
+  private async validateHealthcareOrigin(origin: string,): Promise<boolean> {
     try {
       // Check if origin matches known healthcare domain patterns
       const healthcareDomainPatterns = [
@@ -475,43 +475,43 @@ export class HealthcareCORSManager {
         /\.cfm\.org\.br$/, // CFM domains
         /\.telehealth\.gov\.br$/, // Telehealth domains
         /\.neonpro\.health$/, // NeonPro subdomains
-      ];
+      ]
 
-      const urlObj = new URL(origin);
-      const { hostname } = urlObj;
+      const urlObj = new URL(origin,)
+      const { hostname, } = urlObj
 
       // Check against healthcare domain patterns
       for (const pattern of healthcareDomainPatterns) {
-        if (pattern.test(hostname)) {
+        if (pattern.test(hostname,)) {
           // Additional validation could be added here (DNS verification, certificate validation, etc.)
-          return true;
+          return true
         }
       }
 
-      return false;
+      return false
     } catch (error) {
-      console.warn("Healthcare CORS origin validation error:", error);
-      return false;
+      console.warn('Healthcare CORS origin validation error:', error,)
+      return false
     }
   }
 
   /**
    * Match origin against pattern (supports wildcards)
    */
-  private matchOrigin(origin: string, pattern: string): boolean {
-    if (pattern === "*") return true;
-    if (pattern === origin) return true;
+  private matchOrigin(origin: string, pattern: string,): boolean {
+    if (pattern === '*') return true
+    if (pattern === origin) return true
 
     // Handle wildcard patterns like "https://*.example.com"
-    if (pattern.includes("*")) {
+    if (pattern.includes('*',)) {
       const regexPattern = pattern
-        .replace(/\*/g, "[^.]*")
-        .replace(/\./g, "\\.");
-      const regex = new RegExp(`^${regexPattern}$`);
-      return regex.test(origin);
+        .replace(/\*/g, '[^.]*',)
+        .replace(/\./g, '\\.',)
+      const regex = new RegExp(`^${regexPattern}$`,)
+      return regex.test(origin,)
     }
 
-    return false;
+    return false
   }
 
   /**
@@ -519,16 +519,16 @@ export class HealthcareCORSManager {
    */
   getHonoCORSConfig() {
     return {
-      origin: async (origin: string) => {
-        if (!origin) return false; // Reject requests without origin
-        return await this.validateOrigin(origin);
+      origin: async (origin: string,) => {
+        if (!origin) return false // Reject requests without origin
+        return await this.validateOrigin(origin,)
       },
       allowMethods: this.config.methods,
       allowHeaders: this.config.allowedHeaders,
       exposeHeaders: this.config.exposedHeaders,
       credentials: this.config.credentials,
       maxAge: this.config.maxAge,
-    };
+    }
   }
 }
 
@@ -538,101 +538,101 @@ export class HealthcareCORSManager {
 export function createHealthcareCORSMiddleware(
   policy: HealthcareCORSPolicy = HealthcareCORSPolicy.DEVELOPMENT,
   options: {
-    auditLogger?: unknown;
-    emergencyBypass?: boolean;
+    auditLogger?: unknown
+    emergencyBypass?: boolean
   } = {},
 ): MiddlewareHandler {
-  const corsManager = new HealthcareCORSManager(policy);
-  const config = HEALTHCARE_CORS_CONFIGURATIONS[policy];
+  const corsManager = new HealthcareCORSManager(policy,)
+  const config = HEALTHCARE_CORS_CONFIGURATIONS[policy]
 
-  return async (c: Context, next) => {
+  return async (c: Context, next,) => {
     try {
       // Check for emergency bypass
-      const emergencyAccess = c.req.header("X-Emergency-Access");
+      const emergencyAccess = c.req.header('X-Emergency-Access',)
       if (emergencyAccess && config.emergencyAccess.enabled && options.emergencyBypass) {
         // Switch to emergency CORS policy
-        const emergencyCorsManager = new HealthcareCORSManager(HealthcareCORSPolicy.EMERGENCY);
-        const emergencyConfig = emergencyCorsManager.getHonoCORSConfig();
+        const emergencyCorsManager = new HealthcareCORSManager(HealthcareCORSPolicy.EMERGENCY,)
+        const emergencyConfig = emergencyCorsManager.getHonoCORSConfig()
 
         // Log emergency CORS usage
         const emergencyLogEntry = {
           timestamp: new Date().toISOString(),
-          event: "EMERGENCY_CORS_BYPASS",
-          origin: c.req.header("Origin"),
+          event: 'EMERGENCY_CORS_BYPASS',
+          origin: c.req.header('Origin',),
           emergencyContext: emergencyAccess,
-          userAgent: c.req.header("User-Agent"),
-        };
-
-        console.warn("🚨 Emergency CORS Bypass:", JSON.stringify(emergencyLogEntry, null, 2));
-
-        if (options.auditLogger) {
-          await options.auditLogger.log(emergencyLogEntry);
+          userAgent: c.req.header('User-Agent',),
         }
 
-        return cors(emergencyConfig)(c, next);
+        console.warn('🚨 Emergency CORS Bypass:', JSON.stringify(emergencyLogEntry, null, 2,),)
+
+        if (options.auditLogger) {
+          await options.auditLogger.log(emergencyLogEntry,)
+        }
+
+        return cors(emergencyConfig,)(c, next,)
       }
 
       // Standard CORS handling
-      const corsConfig = corsManager.getHonoCORSConfig();
+      const corsConfig = corsManager.getHonoCORSConfig()
 
       // Log LGPD-sensitive cross-origin requests
       if (config.lgpdCompliance.enabled && config.lgpdCompliance.auditCrossOriginRequests) {
-        const origin = c.req.header("Origin");
+        const origin = c.req.header('Origin',)
         if (origin) {
           const lgpdLogEntry = {
             timestamp: new Date().toISOString(),
-            event: "LGPD_CROSS_ORIGIN_REQUEST",
+            event: 'LGPD_CROSS_ORIGIN_REQUEST',
             origin,
             method: c.req.method,
             path: c.req.path,
-            hasConsent: !!c.req.header("X-LGPD-Consent"),
-          };
+            hasConsent: !!c.req.header('X-LGPD-Consent',),
+          }
 
           if (options.auditLogger) {
-            await options.auditLogger.log(lgpdLogEntry);
+            await options.auditLogger.log(lgpdLogEntry,)
           }
         }
       }
 
-      return cors(corsConfig)(c, next);
+      return cors(corsConfig,)(c, next,)
     } catch (error) {
-      console.error("Healthcare CORS middleware error:", error);
+      console.error('Healthcare CORS middleware error:', error,)
       // Fall back to restrictive CORS in case of error
       return cors({
         origin: false,
         credentials: false,
-      })(c, next);
+      },)(c, next,)
     }
-  };
+  }
 }
 
 /**
  * Pre-configured CORS middlewares for different healthcare scenarios
  */
 export const healthcareCORSMiddlewares = {
-  strict: (auditLogger?: unknown) =>
-    createHealthcareCORSMiddleware(HealthcareCORSPolicy.STRICT, { auditLogger }),
+  strict: (auditLogger?: unknown,) =>
+    createHealthcareCORSMiddleware(HealthcareCORSPolicy.STRICT, { auditLogger, },),
 
-  medical: (auditLogger?: unknown) =>
-    createHealthcareCORSMiddleware(HealthcareCORSPolicy.MEDICAL, { auditLogger }),
+  medical: (auditLogger?: unknown,) =>
+    createHealthcareCORSMiddleware(HealthcareCORSPolicy.MEDICAL, { auditLogger, },),
 
-  patientPortal: (auditLogger?: unknown) =>
-    createHealthcareCORSMiddleware(HealthcareCORSPolicy.PATIENT_PORTAL, { auditLogger }),
+  patientPortal: (auditLogger?: unknown,) =>
+    createHealthcareCORSMiddleware(HealthcareCORSPolicy.PATIENT_PORTAL, { auditLogger, },),
 
-  telemedicine: (auditLogger?: unknown) =>
+  telemedicine: (auditLogger?: unknown,) =>
     createHealthcareCORSMiddleware(HealthcareCORSPolicy.TELEMEDICINE, {
       auditLogger,
       emergencyBypass: true,
-    }),
+    },),
 
-  emergency: (auditLogger?: unknown) =>
-    createHealthcareCORSMiddleware(HealthcareCORSPolicy.EMERGENCY, { auditLogger }),
+  emergency: (auditLogger?: unknown,) =>
+    createHealthcareCORSMiddleware(HealthcareCORSPolicy.EMERGENCY, { auditLogger, },),
 
-  interoperability: (auditLogger?: unknown) =>
-    createHealthcareCORSMiddleware(HealthcareCORSPolicy.INTEROPERABILITY, { auditLogger }),
+  interoperability: (auditLogger?: unknown,) =>
+    createHealthcareCORSMiddleware(HealthcareCORSPolicy.INTEROPERABILITY, { auditLogger, },),
 
-  development: () => createHealthcareCORSMiddleware(HealthcareCORSPolicy.DEVELOPMENT),
-};
+  development: () => createHealthcareCORSMiddleware(HealthcareCORSPolicy.DEVELOPMENT,),
+}
 
 /**
  * CORS preflight optimization for healthcare APIs
@@ -640,31 +640,31 @@ export const healthcareCORSMiddlewares = {
 export function createCORSPreflightHandler(
   policy: HealthcareCORSPolicy = HealthcareCORSPolicy.MEDICAL,
 ): MiddlewareHandler {
-  const config = HEALTHCARE_CORS_CONFIGURATIONS[policy];
+  const config = HEALTHCARE_CORS_CONFIGURATIONS[policy]
 
-  return async (c: Context) => {
-    if (c.req.method !== "OPTIONS") {
-      return; // Not a preflight request
+  return async (c: Context,) => {
+    if (c.req.method !== 'OPTIONS') {
+      return // Not a preflight request
     }
 
     // Set preflight response headers
-    c.header("Access-Control-Max-Age", config.maxAge.toString());
-    c.header("Access-Control-Allow-Methods", config.methods.join(", "));
-    c.header("Access-Control-Allow-Headers", config.allowedHeaders.join(", "));
+    c.header('Access-Control-Max-Age', config.maxAge.toString(),)
+    c.header('Access-Control-Allow-Methods', config.methods.join(', ',),)
+    c.header('Access-Control-Allow-Headers', config.allowedHeaders.join(', ',),)
 
     if (config.credentials) {
-      c.header("Access-Control-Allow-Credentials", "true");
+      c.header('Access-Control-Allow-Credentials', 'true',)
     }
 
     // Healthcare-specific preflight headers
     if (config.lgpdCompliance.enabled) {
-      c.header("X-LGPD-Compliance", "required");
+      c.header('X-LGPD-Compliance', 'required',)
     }
 
     if (config.systemIntegration.requiresAuthentication) {
-      c.header("X-Authentication-Required", "true");
+      c.header('X-Authentication-Required', 'true',)
     }
 
-    return c.text("", 204);
-  };
+    return c.text('', 204,)
+  }
 }

@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
 import {
   EmptyState,
   // ErrorBoundary, // Unused import
   LoadingCard,
   StateManager,
-} from "@/components/forms/loading-error-states";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/contexts/auth-context-new";
+} from '@/components/forms/loading-error-states'
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Skeleton, } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { useAuth, } from '@/contexts/auth-context-new'
 import {
   Activity,
   AlertTriangle,
@@ -28,118 +28,118 @@ import {
   TrendingUp,
   UserCheck,
   Users,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+} from 'lucide-react'
+import { useCallback, useEffect, useState, } from 'react'
 
 // API Base URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 // Types
 interface DashboardStats {
   patients: {
-    total: number;
-    active: number;
-    new_this_month: number;
-    lgpd_compliant: number;
-  };
+    total: number
+    active: number
+    new_this_month: number
+    lgpd_compliant: number
+  }
   appointments: {
-    total_today: number;
-    completed_today: number;
-    scheduled_this_week: number;
-    no_show_rate: number;
-  };
+    total_today: number
+    completed_today: number
+    scheduled_this_week: number
+    no_show_rate: number
+  }
   compliance: {
-    lgpd_score: number;
-    anvisa_compliance: boolean;
-    cfm_compliance: boolean;
-    last_audit: string;
-  };
+    lgpd_score: number
+    anvisa_compliance: boolean
+    cfm_compliance: boolean
+    last_audit: string
+  }
   system: {
-    uptime: number;
-    active_sessions: number;
-    last_backup: string;
-    security_alerts: number;
-  };
+    uptime: number
+    active_sessions: number
+    last_backup: string
+    security_alerts: number
+  }
 }
 
 // Custom hook for dashboard data
 function useDashboardData() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const [stats, setStats,] = useState<DashboardStats | null>(null,)
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<string | null>(null,)
+  const { user, } = useAuth()
 
   const fetchDashboardData = useCallback(async () => {
-    if (!user) return;
+    if (!user) return
 
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true,)
+      setError(null,)
 
-      const token = localStorage.getItem("auth_token");
+      const token = localStorage.getItem('auth_token',)
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
 
       // Mock clinic_id - in real implementation, this would come from user context
-      const clinicId = "mock-clinic-id";
+      const clinicId = 'mock-clinic-id'
 
       // Fetch data from our APIs
-      const [patientsRes, appointmentsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/patients?clinic_id=${clinicId}&limit=1000`, { headers }),
-        fetch(`${API_BASE_URL}/appointments?clinic_id=${clinicId}&limit=1000`, { headers }),
-      ]);
+      const [patientsRes, appointmentsRes,] = await Promise.all([
+        fetch(`${API_BASE_URL}/patients?clinic_id=${clinicId}&limit=1000`, { headers, },),
+        fetch(`${API_BASE_URL}/appointments?clinic_id=${clinicId}&limit=1000`, { headers, },),
+      ],)
 
-      const [patientsData, appointmentsData] = await Promise.all([
+      const [patientsData, appointmentsData,] = await Promise.all([
         patientsRes.json(),
         appointmentsRes.json(),
-      ]);
+      ],)
 
       // Process and aggregate data
-      const patients = patientsData.patients || [];
-      const appointments = appointmentsData.appointments || [];
+      const patients = patientsData.patients || []
+      const appointments = appointmentsData.appointments || []
 
       // Calculate stats
-      const today = new Date();
-      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
-      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      const startOfWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const today = new Date()
+      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(),)
+      const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000,)
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1,)
+      const startOfWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000,)
 
-      const todayAppointments = appointments.filter((apt: unknown) => {
-        const aptDate = new Date(apt.start_time);
-        return aptDate >= startOfToday && aptDate < endOfToday;
-      });
+      const todayAppointments = appointments.filter((apt: unknown,) => {
+        const aptDate = new Date(apt.start_time,)
+        return aptDate >= startOfToday && aptDate < endOfToday
+      },)
 
-      const weekAppointments = appointments.filter((apt: unknown) => {
-        const aptDate = new Date(apt.start_time);
-        return aptDate >= startOfWeek;
-      });
+      const weekAppointments = appointments.filter((apt: unknown,) => {
+        const aptDate = new Date(apt.start_time,)
+        return aptDate >= startOfWeek
+      },)
 
-      const completedToday = todayAppointments.filter((apt: unknown) =>
-        apt.status === "completed"
-      ).length;
-      const noShowAppointments = appointments.filter((apt: unknown) =>
-        apt.status === "no_show"
-      ).length;
+      const completedToday = todayAppointments.filter((apt: unknown,) =>
+        apt.status === 'completed'
+      ).length
+      const noShowAppointments = appointments.filter((apt: unknown,) =>
+        apt.status === 'no_show'
+      ).length
       const noShowRate = appointments.length > 0
         ? (noShowAppointments / appointments.length) * 100
-        : 0;
+        : 0
 
-      const newPatientsThisMonth = patients.filter((patient: unknown) => {
-        const createdDate = new Date(patient.created_at);
-        return createdDate >= startOfMonth;
-      }).length;
+      const newPatientsThisMonth = patients.filter((patient: unknown,) => {
+        const createdDate = new Date(patient.created_at,)
+        return createdDate >= startOfMonth
+      },).length
 
-      const lgpdCompliantPatients = patients.filter((patient: unknown) =>
+      const lgpdCompliantPatients = patients.filter((patient: unknown,) =>
         patient.lgpd_consent_given === true
-      ).length;
+      ).length
 
       const dashboardStats: DashboardStats = {
         patients: {
           total: patients.length,
-          active: patients.filter((p: unknown) => p.is_active).length,
+          active: patients.filter((p: unknown,) => p.is_active).length,
           new_this_month: newPatientsThisMonth,
           lgpd_compliant: lgpdCompliantPatients,
         },
@@ -152,11 +152,11 @@ function useDashboardData() {
         compliance: {
           lgpd_score: Math.min(
             100,
-            Math.round((lgpdCompliantPatients / Math.max(patients.length, 1)) * 100),
+            Math.round((lgpdCompliantPatients / Math.max(patients.length, 1,)) * 100,),
           ),
           anvisa_compliance: true,
           cfm_compliance: true,
-          last_audit: "2024-01-15T10:00:00Z",
+          last_audit: '2024-01-15T10:00:00Z',
         },
         system: {
           uptime: 99.9,
@@ -164,26 +164,26 @@ function useDashboardData() {
           last_backup: new Date().toISOString(),
           security_alerts: 0,
         },
-      };
+      }
 
-      setStats(dashboardStats);
+      setStats(dashboardStats,)
     } catch (err) {
-      console.error("Dashboard data fetch error:", err);
-      setError("Falha ao carregar dados do dashboard");
+      console.error('Dashboard data fetch error:', err,)
+      setError('Falha ao carregar dados do dashboard',)
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, [user]);
+  }, [user,],)
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    fetchDashboardData()
+  }, [fetchDashboardData,],)
 
-  return { stats, loading, error, refetch: fetchDashboardData };
+  return { stats, loading, error, refetch: fetchDashboardData, }
 }
 
 // Stats Card Component
-type IconComponent = (props: { className?: string; }) => JSX.Element;
+type IconComponent = (props: { className?: string },) => JSX.Element
 
 function StatsCard({
   title,
@@ -191,25 +191,25 @@ function StatsCard({
   description,
   icon: Icon,
   trend,
-  color = "default",
+  color = 'default',
 }: {
-  title: string;
-  value: string | number;
-  description?: string;
-  icon: IconComponent;
-  trend?: { value: number; label: string; };
-  color?: "default" | "green" | "red" | "blue" | "yellow";
-}) {
+  title: string
+  value: string | number
+  description?: string
+  icon: IconComponent
+  trend?: { value: number; label: string }
+  color?: 'default' | 'green' | 'red' | 'blue' | 'yellow'
+},) {
   const colorClasses = {
-    default: "text-foreground",
-    green: "text-green-600 bg-green-50 border-green-200",
-    red: "text-red-600 bg-red-50 border-red-200",
-    blue: "text-blue-600 bg-blue-50 border-blue-200",
-    yellow: "text-yellow-600 bg-yellow-50 border-yellow-200",
-  };
+    default: 'text-foreground',
+    green: 'text-green-600 bg-green-50 border-green-200',
+    red: 'text-red-600 bg-red-50 border-red-200',
+    blue: 'text-blue-600 bg-blue-50 border-blue-200',
+    yellow: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+  }
 
   return (
-    <Card className={color !== "default" ? colorClasses[color] : ""}>
+    <Card className={color !== 'default' ? colorClasses[color] : ''}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -218,14 +218,14 @@ function StatsCard({
         <div className="text-2xl font-bold">{value}</div>
         {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend && (
-          <p className={`text-xs ${trend.value > 0 ? "text-green-600" : "text-red-600"}`}>
-            {trend.value > 0 ? "+" : ""}
+          <p className={`text-xs ${trend.value > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {trend.value > 0 ? '+' : ''}
             {trend.value}% {trend.label}
           </p>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }
 
 // Loading Skeleton
@@ -238,7 +238,7 @@ function DashboardSkeleton() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 4, },).map((_, i,) => (
           <Card key={i}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-24" />
@@ -271,12 +271,12 @@ function DashboardSkeleton() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
 
 export default function DashboardPage() {
-  const { user, loading: authLoading } = useAuth();
-  const { stats, loading, error, refetch } = useDashboardData();
+  const { user, loading: authLoading, } = useAuth()
+  const { stats, loading, error, refetch, } = useDashboardData()
 
   // Show auth loading
   if (authLoading) {
@@ -292,7 +292,7 @@ export default function DashboardPage() {
       >
         <div />
       </StateManager>
-    );
+    )
   }
 
   // Show unauthorized state
@@ -305,15 +305,15 @@ export default function DashboardPage() {
             title="Acesso Negado"
             description="Você precisa estar logado para acessar o dashboard."
             action={{
-              label: "Fazer Login",
-              onClick: () => window.location.href = "/login",
+              label: 'Fazer Login',
+              onClick: () => window.location.href = '/login',
             }}
           />
         }
       >
         <div />
       </StateManager>
-    );
+    )
   }
 
   return (
@@ -334,7 +334,7 @@ export default function DashboardPage() {
             onClick={refetch}
             disabled={loading}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Atualizar
           </Button>
           <Button size="sm">
@@ -376,10 +376,10 @@ export default function DashboardPage() {
 
               <StatsCard
                 title="Taxa No-Show"
-                value={`${stats.appointments.no_show_rate.toFixed(1)}%`}
+                value={`${stats.appointments.no_show_rate.toFixed(1,)}%`}
                 description="Últimos 30 dias"
                 icon={Activity}
-                color={stats.appointments.no_show_rate > 10 ? "red" : "green"}
+                color={stats.appointments.no_show_rate > 10 ? 'red' : 'green'}
               />
 
               <StatsCard
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                 value={`${stats.compliance.lgpd_score}%`}
                 description="Conformidade de dados"
                 icon={Shield}
-                color={stats.compliance.lgpd_score > 90 ? "green" : "yellow"}
+                color={stats.compliance.lgpd_score > 90 ? 'green' : 'yellow'}
               />
             </div>
 
@@ -517,10 +517,10 @@ export default function DashboardPage() {
 
                   <StatsCard
                     title="Taxa de No-Show"
-                    value={`${stats.appointments.no_show_rate.toFixed(1)}%`}
+                    value={`${stats.appointments.no_show_rate.toFixed(1,)}%`}
                     description="Meta: < 5%"
                     icon={Activity}
-                    color={stats.appointments.no_show_rate > 10 ? "red" : "green"}
+                    color={stats.appointments.no_show_rate > 10 ? 'red' : 'green'}
                   />
                 </div>
               </TabsContent>
@@ -593,5 +593,5 @@ export default function DashboardPage() {
         )
         : null}
     </div>
-  );
+  )
 }

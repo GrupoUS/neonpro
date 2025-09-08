@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { motion } from "framer-motion";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Textarea, } from '@/components/ui/textarea'
+import { motion, } from 'framer-motion'
 import {
   Activity,
   BarChart3,
@@ -20,29 +20,29 @@ import {
   Save,
   Trash2,
   Type,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 // Types for the Report Builder
 interface ReportElement {
-  id: string;
-  type: "chart" | "table" | "metric" | "text" | "image";
-  title: string;
-  config: unknown;
-  position: { x: number; y: number; };
-  size: { width: number; height: number; };
+  id: string
+  type: 'chart' | 'table' | 'metric' | 'text' | 'image'
+  title: string
+  config: unknown
+  position: { x: number; y: number }
+  size: { width: number; height: number }
 }
 
 interface ReportTemplate {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  elements: ReportElement[];
-  thumbnail?: string;
-  isPublic: boolean;
-  usageCount: number;
-  rating: number;
+  id: string
+  name: string
+  description: string
+  category: string
+  elements: ReportElement[]
+  thumbnail?: string
+  isPublic: boolean
+  usageCount: number
+  rating: number
 }
 
 // interface ReportSchedule {
@@ -59,53 +59,53 @@ interface ReportTemplate {
 // Visual components maintaining NeonPro design
 const NeonGradientCard = ({
   children,
-  className = "",
+  className = '',
 }: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
+  children: React.ReactNode
+  className?: string
+},) => (
   <motion.div
-    animate={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 1, y: 0, }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10 p-6">{children}</div>
   </motion.div>
-);
+)
 
 const CosmicGlowButton = ({
   children,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   onClick,
-  className = "",
+  className = '',
   disabled = false,
 }: {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "success" | "warning" | "danger";
-  size?: "sm" | "md" | "lg";
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => {
+  children: React.ReactNode
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  onClick?: () => void
+  className?: string
+  disabled?: boolean
+},) => {
   const variants = {
-    primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+    primary: 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700',
     secondary:
-      "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
+      'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
     success:
-      "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
+      'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
     warning:
-      "bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
+      'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
     danger:
-      "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
-  };
+      'bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary',
+  }
 
   const sizes = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
-  };
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg',
+  }
 
   return (
     <motion.button
@@ -114,66 +114,66 @@ const CosmicGlowButton = ({
       } ${sizes[size]} ${className}`}
       disabled={disabled}
       onClick={onClick}
-      whileHover={{ scale: disabled ? 1 : 1.02 }}
-      whileTap={{ scale: disabled ? 1 : 0.98 }}
+      whileHover={{ scale: disabled ? 1 : 1.02, }}
+      whileTap={{ scale: disabled ? 1 : 0.98, }}
     >
       {children}
     </motion.button>
-  );
-};
+  )
+}
 
 // Element Palette Component
 const ElementPalette = ({
   onAddElement,
 }: {
-  onAddElement: (type: string) => void;
-}) => {
+  onAddElement: (type: string,) => void
+},) => {
   const elementTypes = [
     {
-      type: "chart",
-      label: "Gráfico",
+      type: 'chart',
+      label: 'Gráfico',
       icon: BarChart3,
-      description: "Gráficos de linha, barra, pizza",
+      description: 'Gráficos de linha, barra, pizza',
     },
     {
-      type: "table",
-      label: "Tabela",
+      type: 'table',
+      label: 'Tabela',
       icon: Grid,
-      description: "Tabelas de dados",
+      description: 'Tabelas de dados',
     },
     {
-      type: "metric",
-      label: "Métrica",
+      type: 'metric',
+      label: 'Métrica',
       icon: Activity,
-      description: "KPIs e indicadores",
+      description: 'KPIs e indicadores',
     },
     {
-      type: "text",
-      label: "Texto",
+      type: 'text',
+      label: 'Texto',
       icon: Type,
-      description: "Títulos e parágrafos",
+      description: 'Títulos e parágrafos',
     },
     {
-      type: "image",
-      label: "Imagem",
+      type: 'image',
+      label: 'Imagem',
       icon: Image,
-      description: "Logotipos e gráficos",
+      description: 'Logotipos e gráficos',
     },
-  ];
+  ]
 
   return (
     <div className="space-y-3">
       <h3 className="font-semibold text-lg text-white">Elementos</h3>
       <div className="space-y-2">
-        {elementTypes.map((element) => {
-          const { icon: Icon } = element;
+        {elementTypes.map((element,) => {
+          const { icon: Icon, } = element
           return (
             <motion.div
               className="cursor-pointer rounded-lg border border-slate-700 bg-white/5 p-3 transition-all duration-200 hover:border-blue-400"
               key={element.type}
-              onClick={() => onAddElement(element.type)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              onClick={() => onAddElement(element.type,)}
+              whileHover={{ scale: 1.02, }}
+              whileTap={{ scale: 0.98, }}
             >
               <div className="flex items-center space-x-3">
                 <Icon className="h-5 w-5 text-blue-400" />
@@ -185,79 +185,79 @@ const ElementPalette = ({
                 </div>
               </div>
             </motion.div>
-          );
-        })}
+          )
+        },)}
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Main Custom Report Builder Component
 export default function CustomReportBuilder() {
-  const [activeTab, setActiveTab] = useState("builder");
-  const [elements, setElements] = useState<ReportElement[]>([]);
-  const [selectedElement, setSelectedElement] = useState<string | null>();
-  const [reportName, setReportName] = useState("Novo Relatório");
-  const [reportDescription, setReportDescription] = useState("");
+  const [activeTab, setActiveTab,] = useState('builder',)
+  const [elements, setElements,] = useState<ReportElement[]>([],)
+  const [selectedElement, setSelectedElement,] = useState<string | null>()
+  const [reportName, setReportName,] = useState('Novo Relatório',)
+  const [reportDescription, setReportDescription,] = useState('',)
 
   // Mock data for templates
   const mockTemplates: ReportTemplate[] = [
     {
-      id: "1",
-      name: "Relatório Financeiro Mensal",
-      description: "Análise completa de receitas, custos e lucros mensais",
-      category: "financial",
+      id: '1',
+      name: 'Relatório Financeiro Mensal',
+      description: 'Análise completa de receitas, custos e lucros mensais',
+      category: 'financial',
       elements: [],
       isPublic: true,
       usageCount: 45,
       rating: 4.8,
     },
     {
-      id: "2",
-      name: "Dashboard de Satisfação do Paciente",
-      description: "Métricas de satisfação e feedback dos pacientes",
-      category: "clinical",
+      id: '2',
+      name: 'Dashboard de Satisfação do Paciente',
+      description: 'Métricas de satisfação e feedback dos pacientes',
+      category: 'clinical',
       elements: [],
       isPublic: true,
       usageCount: 32,
       rating: 4.6,
     },
     {
-      id: "3",
-      name: "Relatório de Conformidade LGPD",
-      description: "Status de conformidade e auditoria de dados",
-      category: "compliance",
+      id: '3',
+      name: 'Relatório de Conformidade LGPD',
+      description: 'Status de conformidade e auditoria de dados',
+      category: 'compliance',
       elements: [],
       isPublic: true,
       usageCount: 28,
       rating: 4.9,
     },
-  ];
+  ]
 
-  const addElement = (type: string) => {
+  const addElement = (type: string,) => {
     const newElement: ReportElement = {
       id: Date.now().toString(),
-      type: type as "chart" | "table" | "text" | "image" | "metric",
+      type: type as 'chart' | 'table' | 'text' | 'image' | 'metric',
       title: `Novo ${type}`,
       config: {},
-      position: { x: 50, y: 50 },
-      size: { width: 300, height: 200 },
-    };
-    setElements([...elements, newElement]);
-  };
-
-  const deleteElement = (id: string) => {
-    setElements(elements.filter((el) => el.id !== id));
-    if (selectedElement === id) {
-      setSelectedElement(undefined);
+      position: { x: 50, y: 50, },
+      size: { width: 300, height: 200, },
     }
-  };
+    setElements([...elements, newElement,],)
+  }
 
-  const exportReport = (_format: "pdf" | "excel" | "csv") => {};
+  const deleteElement = (id: string,) => {
+    setElements(elements.filter((el,) => el.id !== id),)
+    if (selectedElement === id) {
+      setSelectedElement(undefined,)
+    }
+  }
 
-  const saveReport = () => {};
+  const exportReport = (_format: 'pdf' | 'excel' | 'csv',) => {}
 
-  const previewReport = () => {};
+  const saveReport = () => {}
+
+  const previewReport = () => {}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
@@ -290,7 +290,7 @@ export default function CustomReportBuilder() {
 
             <div className="flex items-center space-x-1">
               <CosmicGlowButton
-                onClick={() => exportReport("pdf")}
+                onClick={() => exportReport('pdf',)}
                 size="sm"
                 variant="primary"
               >
@@ -298,14 +298,14 @@ export default function CustomReportBuilder() {
                 PDF
               </CosmicGlowButton>
               <CosmicGlowButton
-                onClick={() => exportReport("excel")}
+                onClick={() => exportReport('excel',)}
                 size="sm"
                 variant="primary"
               >
                 Excel
               </CosmicGlowButton>
               <CosmicGlowButton
-                onClick={() => exportReport("csv")}
+                onClick={() => exportReport('csv',)}
                 size="sm"
                 variant="primary"
               >
@@ -357,7 +357,7 @@ export default function CustomReportBuilder() {
                         <Input
                           className="border-slate-600 bg-slate-800 text-white"
                           id="report-name"
-                          onChange={(e) => setReportName(e.target.value)}
+                          onChange={(e,) => setReportName(e.target.value,)}
                           value={reportName}
                         />
                       </div>
@@ -371,7 +371,7 @@ export default function CustomReportBuilder() {
                         <Textarea
                           className="border-slate-600 bg-slate-800 text-white"
                           id="report-description"
-                          onChange={(e) => setReportDescription(e.target.value)}
+                          onChange={(e,) => setReportDescription(e.target.value,)}
                           rows={3}
                           value={reportDescription}
                         />
@@ -389,7 +389,7 @@ export default function CustomReportBuilder() {
                         </h3>
                         <div className="rounded-lg bg-white/5 p-3">
                           <p className="text-slate-300 text-sm">
-                            Elemento selecionado: {elements.find((el) => el.id === selectedElement)
+                            Elemento selecionado: {elements.find((el,) => el.id === selectedElement)
                               ?.title}
                           </p>
                           <div className="mt-2 space-y-2">
@@ -421,7 +421,7 @@ export default function CustomReportBuilder() {
                         </Badge>
                         <Button
                           className="border-slate-600 text-slate-300 hover:bg-red-500/20"
-                          onClick={() => setElements([])}
+                          onClick={() => setElements([],)}
                           size="sm"
                           variant="outline"
                         >
@@ -444,7 +444,7 @@ export default function CustomReportBuilder() {
                         )
                         : (
                           <div className="space-y-2 p-4">
-                            {elements.map((element, _index) => (
+                            {elements.map((element, _index,) => (
                               <div
                                 className="flex items-center justify-between rounded-lg border border-slate-700 bg-white/5 p-3"
                                 key={element.id}
@@ -462,7 +462,7 @@ export default function CustomReportBuilder() {
                                 </div>
                                 <Button
                                   className="h-8 w-8 p-0 hover:bg-red-500/20"
-                                  onClick={() => deleteElement(element.id)}
+                                  onClick={() => deleteElement(element.id,)}
                                   size="sm"
                                   variant="ghost"
                                 >
@@ -519,12 +519,12 @@ export default function CustomReportBuilder() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {mockTemplates.map((template) => (
+                  {mockTemplates.map((template,) => (
                     <motion.div
                       className="cursor-pointer rounded-lg border border-slate-700 bg-white/5 p-4 transition-all duration-200 hover:border-blue-400"
                       key={template.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.02, }}
+                      whileTap={{ scale: 0.98, }}
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -547,7 +547,7 @@ export default function CustomReportBuilder() {
                           <span>{template.usageCount} usos</span>
                           <div className="flex items-center space-x-1">
                             <span>★</span>
-                            <span>{template.rating.toFixed(1)}</span>
+                            <span>{template.rating.toFixed(1,)}</span>
                           </div>
                         </div>
                       </div>
@@ -591,5 +591,5 @@ export default function CustomReportBuilder() {
         </div>
       </div>
     </div>
-  );
+  )
 }

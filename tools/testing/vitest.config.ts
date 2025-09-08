@@ -13,6 +13,10 @@ export default defineConfig({
       "**/node_modules/**",
       "**/dist/**",
       "**/e2e/**",
+      // Disallow tests to run from Next.js app routes; tests must live under tools/tests or package-level tests
+      "apps/*/app/**",
+      "apps/*/pages/**",
+      "standalone-deployment/app/**",
       "**/playwright/**",
     ],
     coverage: {

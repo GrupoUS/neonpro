@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, } from '@/components/ui/card'
+import { cn, } from '@/lib/utils'
 import {
   AlertTriangle,
   // ChevronLeft, // Unused import
@@ -16,235 +16,235 @@ import {
   User,
   X,
   // Zap, // Unused import
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
+} from 'lucide-react'
+import React, { useEffect, useState, } from 'react'
 
 // Import dos componentes criados
-import CriticalInfoDisplay from "./CriticalInfoDisplay";
-import EmergencyPatientLookup from "./EmergencyPatientLookup";
-import OfflineSyncManager from "./OfflineSyncManager";
+import CriticalInfoDisplay from './CriticalInfoDisplay'
+import EmergencyPatientLookup from './EmergencyPatientLookup'
+import OfflineSyncManager from './OfflineSyncManager'
 
 // Types
 interface EmergencyPatient {
-  id: string;
-  name: string;
-  cpf: string;
-  birthDate: string;
-  age: number;
-  bloodType: string;
+  id: string
+  name: string
+  cpf: string
+  birthDate: string
+  age: number
+  bloodType: string
   allergies: {
-    substance: string;
-    severity: "mild" | "moderate" | "severe" | "life-threatening";
-    reaction?: string;
-  }[];
+    substance: string
+    severity: 'mild' | 'moderate' | 'severe' | 'life-threatening'
+    reaction?: string
+  }[]
   medications: {
-    name: string;
-    dosage: string;
-    frequency: string;
-    critical: boolean;
-  }[];
+    name: string
+    dosage: string
+    frequency: string
+    critical: boolean
+  }[]
   medicalConditions: {
-    condition: string;
-    severity: "stable" | "monitoring" | "critical";
-    notes?: string;
-  }[];
+    condition: string
+    severity: 'stable' | 'monitoring' | 'critical'
+    notes?: string
+  }[]
   emergencyContact: {
-    name: string;
-    phone: string;
-    relation: string;
-  };
+    name: string
+    phone: string
+    relation: string
+  }
   lastVitalSigns?: {
-    heartRate?: number;
-    bloodPressure?: string;
-    temperature?: number;
-    timestamp: Date;
-  };
-  emergencyNotes?: string;
+    heartRate?: number
+    bloodPressure?: string
+    temperature?: number
+    timestamp: Date
+  }
+  emergencyNotes?: string
 }
 
 // Input patient type for conversion
 interface InputPatient {
-  id: string;
-  name: string;
-  cpf?: string;
-  birthDate: string;
-  bloodType?: string;
-  allergies?: string[];
-  medications?: string[];
-  criticalConditions?: string[];
+  id: string
+  name: string
+  cpf?: string
+  birthDate: string
+  bloodType?: string
+  allergies?: string[]
+  medications?: string[]
+  criticalConditions?: string[]
   emergencyContact?: string | {
-    name: string;
-    phone: string;
-    relation?: string;
-  };
+    name: string
+    phone: string
+    relation?: string
+  }
 }
 
 interface EmergencyModeInterfaceProps {
-  isOpen: boolean;
-  onClose: () => void;
-  initialPatient?: EmergencyPatient;
+  isOpen: boolean
+  onClose: () => void
+  initialPatient?: EmergencyPatient
 }
 
-type EmergencyView = "lookup" | "patient" | "sync";
+type EmergencyView = 'lookup' | 'patient' | 'sync'
 
 export function EmergencyModeInterface({
   isOpen,
   onClose,
   initialPatient,
-}: EmergencyModeInterfaceProps) {
-  const [currentView, setCurrentView] = useState<EmergencyView>("lookup");
-  const [selectedPatient, setSelectedPatient] = useState<EmergencyPatient | null>(
+}: EmergencyModeInterfaceProps,) {
+  const [currentView, setCurrentView,] = useState<EmergencyView>('lookup',)
+  const [selectedPatient, setSelectedPatient,] = useState<EmergencyPatient | null>(
     initialPatient || null,
-  );
-  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
-  const [emergencyStartTime] = useState(() => new Date());
+  )
+  const [showExitConfirmation, setShowExitConfirmation,] = useState(false,)
+  const [emergencyStartTime,] = useState(() => new Date())
 
   // Convert EmergencyPatient para CriticalPatientInfo
-  const convertToCriticalInfo = (patient: EmergencyPatient) => ({
+  const convertToCriticalInfo = (patient: EmergencyPatient,) => ({
     ...patient,
     allergies: patient.allergies || [],
     medications: patient.medications || [],
     medicalConditions: patient.medicalConditions || [],
-  });
+  })
 
   // Auto-switch para patient view quando patient selecionado
   useEffect(() => {
-    if (selectedPatient && currentView === "lookup") {
-      setCurrentView("patient");
+    if (selectedPatient && currentView === 'lookup') {
+      setCurrentView('patient',)
     }
-  }, [selectedPatient, currentView]);
+  }, [selectedPatient, currentView,],)
 
   // Reset quando fecha
   useEffect(() => {
     if (!isOpen) {
-      setCurrentView("lookup");
-      setSelectedPatient(null);
-      setShowExitConfirmation(false);
+      setCurrentView('lookup',)
+      setSelectedPatient(null,)
+      setShowExitConfirmation(false,)
     }
-  }, [isOpen]);
+  }, [isOpen,],)
 
-  const handlePatientSelect = (patient: InputPatient) => {
+  const handlePatientSelect = (patient: InputPatient,) => {
     // Validate required fields
     if (!patient.id || !patient.name || !patient.birthDate) {
-      throw new Error("Patient data is missing required fields: id, name, or birthDate");
+      throw new Error('Patient data is missing required fields: id, name, or birthDate',)
     }
 
     // Safely calculate age
-    let age = 0;
+    let age = 0
     try {
-      const birthDate = new Date(patient.birthDate);
-      if (!isNaN(birthDate.getTime())) {
-        age = new Date().getFullYear() - birthDate.getFullYear();
+      const birthDate = new Date(patient.birthDate,)
+      if (!isNaN(birthDate.getTime(),)) {
+        age = new Date().getFullYear() - birthDate.getFullYear()
       }
     } catch (error) {
-      console.warn("Invalid birthDate format, using age 0");
+      console.warn('Invalid birthDate format, using age 0',)
     }
 
     // Convert para EmergencyPatient format with safe defaults
     const emergencyPatient: EmergencyPatient = {
-      id: String(patient.id),
-      name: String(patient.name),
-      cpf: patient.cpf || "Não informado",
+      id: String(patient.id,),
+      name: String(patient.name,),
+      cpf: patient.cpf || 'Não informado',
       birthDate: patient.birthDate,
       age,
-      bloodType: patient.bloodType || "Não informado",
-      allergies: Array.isArray(patient.allergies)
-        ? patient.allergies.map((allergy) => ({
-          substance: String(allergy),
-          severity: "moderate" as const,
+      bloodType: patient.bloodType || 'Não informado',
+      allergies: Array.isArray(patient.allergies,)
+        ? patient.allergies.map((allergy,) => ({
+          substance: String(allergy,),
+          severity: 'moderate' as const,
         }))
         : [],
-      medications: Array.isArray(patient.medications)
-        ? patient.medications.map((med) => ({
-          name: String(med),
-          dosage: "1x/dia",
-          frequency: "Diária",
+      medications: Array.isArray(patient.medications,)
+        ? patient.medications.map((med,) => ({
+          name: String(med,),
+          dosage: '1x/dia',
+          frequency: 'Diária',
           critical: true,
         }))
         : [],
-      medicalConditions: Array.isArray(patient.criticalConditions)
-        ? patient.criticalConditions.map((condition) => ({
-          condition: String(condition),
-          severity: "monitoring" as const,
+      medicalConditions: Array.isArray(patient.criticalConditions,)
+        ? patient.criticalConditions.map((condition,) => ({
+          condition: String(condition,),
+          severity: 'monitoring' as const,
         }))
         : [],
       emergencyContact: (() => {
-        if (typeof patient.emergencyContact === "object" && patient.emergencyContact !== null) {
+        if (typeof patient.emergencyContact === 'object' && patient.emergencyContact !== null) {
           return {
-            name: patient.emergencyContact.name || "Não informado",
-            phone: patient.emergencyContact.phone || "",
-            relation: patient.emergencyContact.relation || "Contato",
-          };
+            name: patient.emergencyContact.name || 'Não informado',
+            phone: patient.emergencyContact.phone || '',
+            relation: patient.emergencyContact.relation || 'Contato',
+          }
         }
         return {
-          name: "Não informado",
-          phone: typeof patient.emergencyContact === "string" ? patient.emergencyContact : "",
-          relation: "Contato",
-        };
+          name: 'Não informado',
+          phone: typeof patient.emergencyContact === 'string' ? patient.emergencyContact : '',
+          relation: 'Contato',
+        }
       })(),
       lastVitalSigns: {
         heartRate: 72,
-        bloodPressure: "120/80",
+        bloodPressure: '120/80',
         temperature: 36.5,
         timestamp: new Date(),
       },
       emergencyNotes:
-        Array.isArray(patient.criticalConditions) && patient.criticalConditions.length > 0
-          ? `Condições críticas: ${patient.criticalConditions.join(", ")}`
+        Array.isArray(patient.criticalConditions,) && patient.criticalConditions.length > 0
+          ? `Condições críticas: ${patient.criticalConditions.join(', ',)}`
           : undefined,
-    };
+    }
 
-    setSelectedPatient(emergencyPatient);
-  };
+    setSelectedPatient(emergencyPatient,)
+  }
 
   const handleEmergencyCall = () => {
     // Log without exposing patient PII
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       console.log(
-        "Emergency call initiated for patient:",
-        selectedPatient?.id ? "PATIENT_ID_SANITIZED" : "NO_PATIENT_SELECTED",
-      );
+        'Emergency call initiated for patient:',
+        selectedPatient?.id ? 'PATIENT_ID_SANITIZED' : 'NO_PATIENT_SELECTED',
+      )
     }
     // Haptic feedback simulation
-    if ("vibrate" in navigator) {
-      navigator.vibrate([200, 100, 200]);
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200,],)
     }
-  };
+  }
 
   const handleExit = () => {
-    setShowExitConfirmation(true);
-  };
+    setShowExitConfirmation(true,)
+  }
 
   const confirmExit = () => {
-    setShowExitConfirmation(false);
-    onClose();
-  };
+    setShowExitConfirmation(false,)
+    onClose()
+  }
 
   const cancelExit = () => {
-    setShowExitConfirmation(false);
-  };
+    setShowExitConfirmation(false,)
+  }
 
   const getViewTitle = () => {
     switch (currentView) {
-      case "lookup":
-        return "Busca Emergencial";
-      case "patient":
-        return selectedPatient?.name || "Paciente";
-      case "sync":
-        return "Status do Sistema";
+      case 'lookup':
+        return 'Busca Emergencial'
+      case 'patient':
+        return selectedPatient?.name || 'Paciente'
+      case 'sync':
+        return 'Status do Sistema'
       default:
-        return "Emergência";
+        return 'Emergência'
     }
-  };
+  }
 
   const formatEmergencyTime = () => {
-    const diff = new Date().getTime() - emergencyStartTime.getTime();
-    const minutes = Math.floor(diff / 60_000);
-    const seconds = Math.floor((diff % 60_000) / 1000);
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  };
+    const diff = new Date().getTime() - emergencyStartTime.getTime()
+    const minutes = Math.floor(diff / 60_000,)
+    const seconds = Math.floor((diff % 60_000) / 1000,)
+    return `${minutes.toString().padStart(2, '0',)}:${seconds.toString().padStart(2, '0',)}`
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-red-950 z-50 flex flex-col">
@@ -274,7 +274,7 @@ export function EmergencyModeInterface({
 
       {/* Content Area */}
       <div className="flex-1 overflow-auto bg-gray-50 p-4">
-        {currentView === "lookup" && (
+        {currentView === 'lookup' && (
           <div className="max-w-md mx-auto">
             <EmergencyPatientLookup
               onPatientSelect={handlePatientSelect}
@@ -299,10 +299,10 @@ export function EmergencyModeInterface({
           </div>
         )}
 
-        {currentView === "patient" && selectedPatient && (
+        {currentView === 'patient' && selectedPatient && (
           <div className="max-w-2xl mx-auto">
             <CriticalInfoDisplay
-              patient={convertToCriticalInfo(selectedPatient)}
+              patient={convertToCriticalInfo(selectedPatient,)}
               emergencyMode
               onEmergencyCall={handleEmergencyCall}
               className="mb-6"
@@ -310,7 +310,7 @@ export function EmergencyModeInterface({
           </div>
         )}
 
-        {currentView === "sync" && (
+        {currentView === 'sync' && (
           <div className="max-w-md mx-auto">
             <OfflineSyncManager
               emergencyMode
@@ -325,12 +325,12 @@ export function EmergencyModeInterface({
         <div className="flex justify-center gap-2">
           {/* Search/Lookup */}
           <Button
-            onClick={() => setCurrentView("lookup")}
-            variant={currentView === "lookup" ? "default" : "ghost"}
+            onClick={() => setCurrentView('lookup',)}
+            variant={currentView === 'lookup' ? 'default' : 'ghost'}
             size="lg"
             className={cn(
-              "flex-1 min-h-[56px] text-base",
-              currentView === "lookup" && "bg-red-600 hover:bg-red-700 text-white",
+              'flex-1 min-h-[56px] text-base',
+              currentView === 'lookup' && 'bg-red-600 hover:bg-red-700 text-white',
             )}
           >
             <User className="h-5 w-5 mr-2" />
@@ -339,13 +339,13 @@ export function EmergencyModeInterface({
 
           {/* Patient Info */}
           <Button
-            onClick={() => setCurrentView("patient")}
-            variant={currentView === "patient" ? "default" : "ghost"}
+            onClick={() => setCurrentView('patient',)}
+            variant={currentView === 'patient' ? 'default' : 'ghost'}
             size="lg"
             disabled={!selectedPatient}
             className={cn(
-              "flex-1 min-h-[56px] text-base",
-              currentView === "patient" && "bg-red-600 hover:bg-red-700 text-white",
+              'flex-1 min-h-[56px] text-base',
+              currentView === 'patient' && 'bg-red-600 hover:bg-red-700 text-white',
             )}
           >
             <Heart className="h-5 w-5 mr-2" />
@@ -359,12 +359,12 @@ export function EmergencyModeInterface({
 
           {/* Sync Status */}
           <Button
-            onClick={() => setCurrentView("sync")}
-            variant={currentView === "sync" ? "default" : "ghost"}
+            onClick={() => setCurrentView('sync',)}
+            variant={currentView === 'sync' ? 'default' : 'ghost'}
             size="lg"
             className={cn(
-              "flex-1 min-h-[56px] text-base",
-              currentView === "sync" && "bg-red-600 hover:bg-red-700 text-white",
+              'flex-1 min-h-[56px] text-base',
+              currentView === 'sync' && 'bg-red-600 hover:bg-red-700 text-white',
             )}
           >
             <Database className="h-5 w-5 mr-2" />
@@ -398,7 +398,7 @@ export function EmergencyModeInterface({
                 Sair do Modo Emergencial?
               </h3>
               <p className="text-gray-600 mb-6 text-sm">
-                Você está em atendimento de emergência há{" "}
+                Você está em atendimento de emergência há{' '}
                 {formatEmergencyTime()}. Tem certeza que deseja sair?
               </p>
 
@@ -423,7 +423,7 @@ export function EmergencyModeInterface({
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default EmergencyModeInterface;
+export default EmergencyModeInterface

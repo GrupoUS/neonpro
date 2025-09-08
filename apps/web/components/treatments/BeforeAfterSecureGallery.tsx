@@ -1,39 +1,39 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { LGPDPhotoConsentStatus, TreatmentPhoto, TreatmentSession } from "@/types/treatments";
-import { motion } from "framer-motion";
+} from '@/components/ui/select'
+import { Separator, } from '@/components/ui/separator'
+import { Switch, } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from '@/components/ui/tooltip'
+import type { LGPDPhotoConsentStatus, TreatmentPhoto, TreatmentSession, } from '@/types/treatments'
+import { motion, } from 'framer-motion'
 import {
   Calendar,
   Camera,
@@ -51,60 +51,60 @@ import {
   Upload,
   Zap,
   ZoomIn,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 // Visual components maintaining NeonPro design
 interface NeonGradientCardProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 const NeonGradientCard = ({
   children,
-  className = "",
-}: NeonGradientCardProps) => (
+  className = '',
+}: NeonGradientCardProps,) => (
   <motion.div
-    animate={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 1, y: 0, }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10">{children}</div>
   </motion.div>
-);
+)
 
 // Props interface
 interface BeforeAfterSecureGalleryProps {
-  treatmentSessionId: string;
-  photos: TreatmentPhoto[];
-  sessions?: TreatmentSession[];
-  consentStatus: LGPDPhotoConsentStatus;
+  treatmentSessionId: string
+  photos: TreatmentPhoto[]
+  sessions?: TreatmentSession[]
+  consentStatus: LGPDPhotoConsentStatus
   onPhotoUpload?: (
     file: File,
-    type: "before" | "after" | "during" | "follow_up",
-  ) => void;
-  onPhotoDelete?: (photoId: string) => void;
-  onPhotoShare?: (photoId: string, expiryHours: number) => void;
-  onConsentUpdate?: (newStatus: LGPDPhotoConsentStatus) => void;
-  canEdit?: boolean;
-  canShare?: boolean;
-  showMetadata?: boolean;
-  enableComparison?: boolean;
-  className?: string;
+    type: 'before' | 'after' | 'during' | 'follow_up',
+  ) => void
+  onPhotoDelete?: (photoId: string,) => void
+  onPhotoShare?: (photoId: string, expiryHours: number,) => void
+  onConsentUpdate?: (newStatus: LGPDPhotoConsentStatus,) => void
+  canEdit?: boolean
+  canShare?: boolean
+  showMetadata?: boolean
+  enableComparison?: boolean
+  className?: string
 }
 
 // Filter and view options
-type PhotoFilter = "all" | "before" | "after" | "during" | "follow_up";
-type ViewMode = "grid" | "comparison" | "timeline";
+type PhotoFilter = 'all' | 'before' | 'after' | 'during' | 'follow_up'
+type ViewMode = 'grid' | 'comparison' | 'timeline'
 
 // Photo upload data
 interface PhotoUploadData {
-  file: File | null;
-  type: "before" | "after" | "during" | "follow_up";
-  anatomicalRegion: string;
-  photoAngle: string;
-  lightingConditions: string;
+  file: File | null
+  type: 'before' | 'after' | 'during' | 'follow_up'
+  anatomicalRegion: string
+  photoAngle: string
+  lightingConditions: string
 }
 
 export function BeforeAfterSecureGallery({
@@ -120,130 +120,130 @@ export function BeforeAfterSecureGallery({
   canShare = false,
   showMetadata = true,
   enableComparison = true,
-  className = "",
-}: BeforeAfterSecureGalleryProps) {
+  className = '',
+}: BeforeAfterSecureGalleryProps,) {
   // State management
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [photoFilter, setPhotoFilter] = useState<PhotoFilter>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedPhoto, setSelectedPhoto] = useState<TreatmentPhoto | null>();
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [uploadData, setUploadData] = useState<PhotoUploadData>({
+  const [viewMode, setViewMode,] = useState<ViewMode>('grid',)
+  const [photoFilter, setPhotoFilter,] = useState<PhotoFilter>('all',)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [selectedPhoto, setSelectedPhoto,] = useState<TreatmentPhoto | null>()
+  const [showUploadDialog, setShowUploadDialog,] = useState(false,)
+  const [uploadData, setUploadData,] = useState<PhotoUploadData>({
     file: undefined,
-    type: "before",
-    anatomicalRegion: "",
-    photoAngle: "",
-    lightingConditions: "",
-  });
-  const [privacyBlurred, setPrivacyBlurred] = useState(true);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-  const [shareExpiryHours, setShareExpiryHours] = useState(24);
+    type: 'before',
+    anatomicalRegion: '',
+    photoAngle: '',
+    lightingConditions: '',
+  },)
+  const [privacyBlurred, setPrivacyBlurred,] = useState(true,)
+  const [showShareDialog, setShowShareDialog,] = useState(false,)
+  const [shareExpiryHours, setShareExpiryHours,] = useState(24,)
 
   // Filter photos based on current filters
-  const filteredPhotos = photos.filter((photo) => {
-    const matchesFilter = photoFilter === "all" || photo.photo_type === photoFilter;
-    const matchesSearch = searchQuery === ""
+  const filteredPhotos = photos.filter((photo,) => {
+    const matchesFilter = photoFilter === 'all' || photo.photo_type === photoFilter
+    const matchesSearch = searchQuery === ''
       || photo.anatomical_region
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-      || photo.photo_angle.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+        .includes(searchQuery.toLowerCase(),)
+      || photo.photo_angle.toLowerCase().includes(searchQuery.toLowerCase(),)
+    return matchesFilter && matchesSearch
+  },)
 
   // Group photos for comparison
-  const beforePhotos = photos.filter((p) => p.photo_type === "before");
-  const afterPhotos = photos.filter((p) => p.photo_type === "after");
+  const beforePhotos = photos.filter((p,) => p.photo_type === 'before')
+  const afterPhotos = photos.filter((p,) => p.photo_type === 'after')
 
   // Get consent status information
-  const getConsentStatusInfo = (status: LGPDPhotoConsentStatus) => {
+  const getConsentStatusInfo = (status: LGPDPhotoConsentStatus,) => {
     switch (status) {
-      case "granted": {
+      case 'granted': {
         return {
-          label: "Consentimento Concedido",
-          color: "text-green-500",
+          label: 'Consentimento Concedido',
+          color: 'text-green-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Fotos podem ser capturadas e armazenadas",
-        };
+          description: 'Fotos podem ser capturadas e armazenadas',
+        }
       }
-      case "withdrawn": {
+      case 'withdrawn': {
         return {
-          label: "Consentimento Retirado",
-          color: "text-red-500",
+          label: 'Consentimento Retirado',
+          color: 'text-red-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Fotos existentes serão anonimizadas",
-        };
+          description: 'Fotos existentes serão anonimizadas',
+        }
       }
-      case "expired": {
+      case 'expired': {
         return {
-          label: "Consentimento Expirado",
-          color: "text-orange-500",
+          label: 'Consentimento Expirado',
+          color: 'text-orange-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Renovação de consentimento necessária",
-        };
+          description: 'Renovação de consentimento necessária',
+        }
       }
-      case "pending": {
+      case 'pending': {
         return {
-          label: "Aguardando Consentimento",
-          color: "text-yellow-500",
+          label: 'Aguardando Consentimento',
+          color: 'text-yellow-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Consentimento LGPD ainda não fornecido",
-        };
+          description: 'Consentimento LGPD ainda não fornecido',
+        }
       }
-      case "refused": {
+      case 'refused': {
         return {
-          label: "Consentimento Recusado",
-          color: "text-red-500",
+          label: 'Consentimento Recusado',
+          color: 'text-red-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Paciente não autoriza documentação fotográfica",
-        };
+          description: 'Paciente não autoriza documentação fotográfica',
+        }
       }
       default: {
         return {
-          label: "Status Desconhecido",
-          color: "text-gray-500",
+          label: 'Status Desconhecido',
+          color: 'text-gray-500',
           icon: <Shield className="h-4 w-4" />,
-          description: "Status de consentimento não definido",
-        };
+          description: 'Status de consentimento não definido',
+        }
       }
     }
-  };
+  }
 
-  const consentInfo = getConsentStatusInfo(consentStatus);
+  const consentInfo = getConsentStatusInfo(consentStatus,)
 
   // Photo upload handler
   const handlePhotoUpload = async () => {
     if (!(uploadData.file && onPhotoUpload)) {
-      return;
+      return
     }
 
-    await onPhotoUpload(uploadData.file, uploadData.type);
-    setShowUploadDialog(false);
+    await onPhotoUpload(uploadData.file, uploadData.type,)
+    setShowUploadDialog(false,)
     setUploadData({
       file: undefined,
-      type: "before",
-      anatomicalRegion: "",
-      photoAngle: "",
-      lightingConditions: "",
-    });
-  };
+      type: 'before',
+      anatomicalRegion: '',
+      photoAngle: '',
+      lightingConditions: '',
+    },)
+  }
 
   // Photo share handler
-  const handlePhotoShare = async (photo: TreatmentPhoto) => {
+  const handlePhotoShare = async (photo: TreatmentPhoto,) => {
     if (!onPhotoShare) {
-      return;
+      return
     }
 
-    await onPhotoShare(photo.id, shareExpiryHours);
-    setShowShareDialog(false);
-  };
+    await onPhotoShare(photo.id, shareExpiryHours,)
+    setShowShareDialog(false,)
+  }
 
   // File input handler
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>,) => {
+    const file = event.target.files?.[0]
     if (file) {
-      setUploadData((prev) => ({ ...prev, file }));
+      setUploadData((prev,) => ({ ...prev, file, }))
     }
-  };
+  }
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -265,8 +265,8 @@ export function BeforeAfterSecureGallery({
                 {consentInfo.icon}
                 <span className="font-medium text-sm">{consentInfo.label}</span>
               </div>
-              {canEdit && consentStatus === "granted" && (
-                <Button onClick={() => setShowUploadDialog(true)}>
+              {canEdit && consentStatus === 'granted' && (
+                <Button onClick={() => setShowUploadDialog(true,)}>
                   <Upload className="mr-2 h-4 w-4" />
                   Adicionar Foto
                 </Button>
@@ -279,10 +279,10 @@ export function BeforeAfterSecureGallery({
             <Shield className="h-4 w-4" />
             <AlertDescription className="text-blue-100">
               {consentInfo.description}
-              {consentStatus === "granted" && (
+              {consentStatus === 'granted' && (
                 <>
                   <br />
-                  <strong>Proteções LGPD:</strong>{" "}
+                  <strong>Proteções LGPD:</strong>{' '}
                   Anonimização automática, criptografia de armazenamento, acesso auditado e controle
                   de retenção.
                 </>
@@ -292,7 +292,7 @@ export function BeforeAfterSecureGallery({
         </CardContent>
       </NeonGradientCard>
       {/* Consent Management - Show if not granted */}
-      {consentStatus !== "granted" && (
+      {consentStatus !== 'granted' && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -310,14 +310,14 @@ export function BeforeAfterSecureGallery({
               <div className="flex gap-2">
                 <Button
                   className="flex-1"
-                  onClick={() => onConsentUpdate("granted")}
+                  onClick={() => onConsentUpdate('granted',)}
                 >
                   Solicitar Consentimento
                 </Button>
-                {consentStatus === "expired" && (
+                {consentStatus === 'expired' && (
                   <Button
                     className="flex-1"
-                    onClick={() => onConsentUpdate("granted")}
+                    onClick={() => onConsentUpdate('granted',)}
                     variant="outline"
                   >
                     Renovar Consentimento
@@ -329,7 +329,7 @@ export function BeforeAfterSecureGallery({
         </Card>
       )}
       {/* Gallery Controls - Only show if consent granted */}
-      {consentStatus === "granted" && (
+      {consentStatus === 'granted' && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -338,13 +338,13 @@ export function BeforeAfterSecureGallery({
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
                     className="w-64"
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e,) => setSearchQuery(e.target.value,)}
                     placeholder="Buscar por região anatômica..."
                     value={searchQuery}
                   />
                 </div>
                 <Select
-                  onValueChange={(value) => setPhotoFilter(value as PhotoFilter)}
+                  onValueChange={(value,) => setPhotoFilter(value as PhotoFilter,)}
                   value={photoFilter}
                 >
                   <SelectTrigger className="w-40">
@@ -380,8 +380,8 @@ export function BeforeAfterSecureGallery({
                       <TooltipContent>
                         <p>
                           {privacyBlurred
-                            ? "Fotos com desfoque de privacidade"
-                            : "Fotos sem desfoque"}
+                            ? 'Fotos com desfoque de privacidade'
+                            : 'Fotos sem desfoque'}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -392,25 +392,25 @@ export function BeforeAfterSecureGallery({
 
                 <div className="flex items-center gap-1">
                   <Button
-                    onClick={() => setViewMode("grid")}
+                    onClick={() => setViewMode('grid',)}
                     size="sm"
-                    variant={viewMode === "grid" ? "default" : "outline"}
+                    variant={viewMode === 'grid' ? 'default' : 'outline'}
                   >
                     <Grid className="h-4 w-4" />
                   </Button>
                   {enableComparison && (
                     <Button
-                      onClick={() => setViewMode("comparison")}
+                      onClick={() => setViewMode('comparison',)}
                       size="sm"
-                      variant={viewMode === "comparison" ? "default" : "outline"}
+                      variant={viewMode === 'comparison' ? 'default' : 'outline'}
                     >
                       <ZoomIn className="h-4 w-4" />
                     </Button>
                   )}
                   <Button
-                    onClick={() => setViewMode("timeline")}
+                    onClick={() => setViewMode('timeline',)}
                     size="sm"
-                    variant={viewMode === "timeline" ? "default" : "outline"}
+                    variant={viewMode === 'timeline' ? 'default' : 'outline'}
                   >
                     <Calendar className="h-4 w-4" />
                   </Button>
@@ -421,11 +421,11 @@ export function BeforeAfterSecureGallery({
         </Card>
       )}
       {/* Photo Gallery Content */}
-      {consentStatus === "granted" && (
+      {consentStatus === 'granted' && (
         <div className="space-y-6">
-          {viewMode === "grid" && (
+          {viewMode === 'grid' && (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredPhotos.map((photo) => (
+              {filteredPhotos.map((photo,) => (
                 <Card
                   className="group transition-all hover:shadow-lg"
                   key={photo.id}
@@ -433,10 +433,10 @@ export function BeforeAfterSecureGallery({
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline">
-                        {photo.photo_type === "before" && "Antes"}
-                        {photo.photo_type === "after" && "Depois"}
-                        {photo.photo_type === "during" && "Durante"}
-                        {photo.photo_type === "follow_up" && "Acompanhamento"}
+                        {photo.photo_type === 'before' && 'Antes'}
+                        {photo.photo_type === 'after' && 'Depois'}
+                        {photo.photo_type === 'during' && 'Durante'}
+                        {photo.photo_type === 'follow_up' && 'Acompanhamento'}
                       </Badge>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -446,7 +446,7 @@ export function BeforeAfterSecureGallery({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => setSelectedPhoto(photo)}
+                            onClick={() => setSelectedPhoto(photo,)}
                           >
                             <Eye className="mr-2 h-4 w-4" />
                             Visualizar
@@ -454,8 +454,8 @@ export function BeforeAfterSecureGallery({
                           {canShare && (
                             <DropdownMenuItem
                               onClick={() => {
-                                setSelectedPhoto(photo);
-                                setShowShareDialog(true);
+                                setSelectedPhoto(photo,)
+                                setShowShareDialog(true,)
                               }}
                             >
                               <Share className="mr-2 h-4 w-4" />
@@ -464,7 +464,7 @@ export function BeforeAfterSecureGallery({
                           )}
                           {showMetadata && (
                             <DropdownMenuItem
-                              onClick={() => setSelectedPhoto(photo)}
+                              onClick={() => setSelectedPhoto(photo,)}
                             >
                               <ImageIcon className="mr-2 h-4 w-4" />
                               Metadados
@@ -474,7 +474,7 @@ export function BeforeAfterSecureGallery({
                           {canEdit && onPhotoDelete && (
                             <DropdownMenuItem
                               className="text-red-600"
-                              onClick={() => onPhotoDelete(photo.id)}
+                              onClick={() => onPhotoDelete(photo.id,)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
                               Excluir
@@ -492,8 +492,8 @@ export function BeforeAfterSecureGallery({
                           <ImageIcon className="mx-auto mb-2 h-12 w-12 text-slate-500" />
                           <p className="text-slate-600 text-sm">
                             {privacyBlurred
-                              ? "Foto Protegida"
-                              : "Imagem Médica"}
+                              ? 'Foto Protegida'
+                              : 'Imagem Médica'}
                           </p>
                           {privacyBlurred && (
                             <div className="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-lg">
@@ -531,8 +531,8 @@ export function BeforeAfterSecureGallery({
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Data:</span>
                         <span className="font-medium">
-                          {new Date(photo.uploaded_at).toLocaleDateString(
-                            "pt-BR",
+                          {new Date(photo.uploaded_at,).toLocaleDateString(
+                            'pt-BR',
                           )}
                         </span>
                       </div>
@@ -558,12 +558,12 @@ export function BeforeAfterSecureGallery({
                     Nenhuma foto encontrada
                   </h3>
                   <p className="mb-4 text-muted-foreground">
-                    {photoFilter === "all"
-                      ? "Nenhuma foto foi adicionada ainda."
+                    {photoFilter === 'all'
+                      ? 'Nenhuma foto foi adicionada ainda.'
                       : `Nenhuma foto do tipo "${photoFilter}" encontrada.`}
                   </p>
                   {canEdit && (
-                    <Button onClick={() => setShowUploadDialog(true)}>
+                    <Button onClick={() => setShowUploadDialog(true,)}>
                       <Upload className="mr-2 h-4 w-4" />
                       Adicionar Primeira Foto
                     </Button>
@@ -573,7 +573,7 @@ export function BeforeAfterSecureGallery({
             </div>
           )}
 
-          {viewMode === "comparison" && enableComparison && (
+          {viewMode === 'comparison' && enableComparison && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Before Photos */}
@@ -586,7 +586,7 @@ export function BeforeAfterSecureGallery({
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4">
-                      {beforePhotos.map((photo) => (
+                      {beforePhotos.map((photo,) => (
                         <div
                           className="relative aspect-square overflow-hidden rounded-lg bg-muted"
                           key={photo.id}
@@ -623,7 +623,7 @@ export function BeforeAfterSecureGallery({
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4">
-                      {afterPhotos.map((photo) => (
+                      {afterPhotos.map((photo,) => (
                         <div
                           className="relative aspect-square overflow-hidden rounded-lg bg-muted"
                           key={photo.id}
@@ -696,7 +696,7 @@ export function BeforeAfterSecureGallery({
             </div>
           )}
 
-          {viewMode === "timeline" && (
+          {viewMode === 'timeline' && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -706,10 +706,10 @@ export function BeforeAfterSecureGallery({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {sessions.map((session, _index) => {
+                  {sessions.map((session, _index,) => {
                     const sessionPhotos = photos.filter(
-                      (p) => p.treatment_session_id === session.id,
-                    );
+                      (p,) => p.treatment_session_id === session.id,
+                    )
                     return (
                       <div
                         className="flex gap-4 rounded-lg border p-4"
@@ -722,12 +722,12 @@ export function BeforeAfterSecureGallery({
                           <div className="text-muted-foreground text-xs">
                             {new Date(
                               session.actual_date || session.scheduled_date,
-                            ).toLocaleDateString("pt-BR")}
+                            ).toLocaleDateString('pt-BR',)}
                           </div>
                         </div>
                         <div className="flex-1">
                           <div className="flex gap-2 overflow-x-auto">
-                            {sessionPhotos.map((photo) => (
+                            {sessionPhotos.map((photo,) => (
                               <div
                                 className="h-16 w-16 flex-shrink-0 rounded border bg-muted"
                                 key={photo.id}
@@ -750,8 +750,8 @@ export function BeforeAfterSecureGallery({
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    )
+                  },)}
                   {sessions.length === 0 && (
                     <div className="py-8 text-center">
                       <Calendar className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
@@ -779,7 +779,7 @@ export function BeforeAfterSecureGallery({
             <Alert className="border-blue-500/50 bg-blue-500/10">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                <strong>Proteções Automáticas:</strong>{" "}
+                <strong>Proteções Automáticas:</strong>{' '}
                 Desfoque facial, watermark da clínica, criptografia de armazenamento e audit trail
                 de acesso.
               </AlertDescription>
@@ -800,8 +800,8 @@ export function BeforeAfterSecureGallery({
               <div className="space-y-2">
                 <Label htmlFor="photo-type">Tipo da Foto *</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setUploadData((prev) => ({
+                  onValueChange={(value,) =>
+                    setUploadData((prev,) => ({
                       ...prev,
                       type: value as unknown,
                     }))}
@@ -825,8 +825,8 @@ export function BeforeAfterSecureGallery({
                 <Label htmlFor="anatomical-region">Região Anatômica *</Label>
                 <Input
                   id="anatomical-region"
-                  onChange={(e) =>
-                    setUploadData((prev) => ({
+                  onChange={(e,) =>
+                    setUploadData((prev,) => ({
                       ...prev,
                       anatomicalRegion: e.target.value,
                     }))}
@@ -840,8 +840,8 @@ export function BeforeAfterSecureGallery({
                 <Label htmlFor="photo-angle">Ângulo da Foto *</Label>
                 <Input
                   id="photo-angle"
-                  onChange={(e) =>
-                    setUploadData((prev) => ({
+                  onChange={(e,) =>
+                    setUploadData((prev,) => ({
                       ...prev,
                       photoAngle: e.target.value,
                     }))}
@@ -858,8 +858,8 @@ export function BeforeAfterSecureGallery({
               </Label>
               <Input
                 id="lighting-conditions"
-                onChange={(e) =>
-                  setUploadData((prev) => ({
+                onChange={(e,) =>
+                  setUploadData((prev,) => ({
                     ...prev,
                     lightingConditions: e.target.value,
                   }))}
@@ -871,7 +871,7 @@ export function BeforeAfterSecureGallery({
             <Alert>
               <ImageIcon className="h-4 w-4" />
               <AlertDescription>
-                <strong>Padronização Fotográfica:</strong>{" "}
+                <strong>Padronização Fotográfica:</strong>{' '}
                 Para melhores resultados de comparação, mantenha distância, ângulo e iluminação
                 consistentes entre as sessões.
               </AlertDescription>
@@ -880,7 +880,7 @@ export function BeforeAfterSecureGallery({
             <div className="flex gap-2 pt-4">
               <Button
                 className="flex-1"
-                onClick={() => setShowUploadDialog(false)}
+                onClick={() => setShowUploadDialog(false,)}
                 variant="outline"
               >
                 Cancelar
@@ -915,7 +915,7 @@ export function BeforeAfterSecureGallery({
             <Alert className="border-yellow-500/50 bg-yellow-500/10">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                <strong>Compartilhamento Seguro:</strong>{" "}
+                <strong>Compartilhamento Seguro:</strong>{' '}
                 Link temporário com expiração automática e auditoria de acesso conforme LGPD.
               </AlertDescription>
             </Alert>
@@ -923,7 +923,7 @@ export function BeforeAfterSecureGallery({
             <div className="space-y-2">
               <Label htmlFor="expiry-hours">Tempo de Expiração</Label>
               <Select
-                onValueChange={(value) => setShareExpiryHours(Number.parseInt(value, 10))}
+                onValueChange={(value,) => setShareExpiryHours(Number.parseInt(value, 10,),)}
                 value={shareExpiryHours.toString()}
               >
                 <SelectTrigger>
@@ -953,14 +953,14 @@ export function BeforeAfterSecureGallery({
             <div className="flex gap-2 pt-4">
               <Button
                 className="flex-1"
-                onClick={() => setShowShareDialog(false)}
+                onClick={() => setShowShareDialog(false,)}
                 variant="outline"
               >
                 Cancelar
               </Button>
               <Button
                 className="flex-1"
-                onClick={() => selectedPhoto && handlePhotoShare(selectedPhoto)}
+                onClick={() => selectedPhoto && handlePhotoShare(selectedPhoto,)}
               >
                 <Share className="mr-2 h-4 w-4" />
                 Gerar Link
@@ -971,8 +971,8 @@ export function BeforeAfterSecureGallery({
       </Dialog>
       {/* Photo Detail Dialog */}
       <Dialog
-        onOpenChange={() => setSelectedPhoto(undefined)}
-        open={Boolean(selectedPhoto)}
+        onOpenChange={() => setSelectedPhoto(undefined,)}
+        open={Boolean(selectedPhoto,)}
       >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -992,14 +992,14 @@ export function BeforeAfterSecureGallery({
                       <div className="text-center">
                         <ImageIcon className="mx-auto mb-4 h-16 w-16 text-slate-500" />
                         <p className="font-medium text-lg text-slate-600">
-                          {selectedPhoto.photo_type === "before"
-                            && "Foto Antes"}
-                          {selectedPhoto.photo_type === "after"
-                            && "Foto Depois"}
-                          {selectedPhoto.photo_type === "during"
-                            && "Foto Durante"}
-                          {selectedPhoto.photo_type === "follow_up"
-                            && "Foto Acompanhamento"}
+                          {selectedPhoto.photo_type === 'before'
+                            && 'Foto Antes'}
+                          {selectedPhoto.photo_type === 'after'
+                            && 'Foto Depois'}
+                          {selectedPhoto.photo_type === 'during'
+                            && 'Foto Durante'}
+                          {selectedPhoto.photo_type === 'follow_up'
+                            && 'Foto Acompanhamento'}
                         </p>
                         <p className="text-slate-500 text-sm">
                           {selectedPhoto.anatomical_region}
@@ -1032,7 +1032,7 @@ export function BeforeAfterSecureGallery({
                     {canShare && (
                       <Button
                         className="flex-1"
-                        onClick={() => setShowShareDialog(true)}
+                        onClick={() => setShowShareDialog(true,)}
                         size="sm"
                         variant="outline"
                       >
@@ -1057,14 +1057,14 @@ export function BeforeAfterSecureGallery({
                         <div>
                           <span className="text-muted-foreground">Tipo:</span>
                           <p className="font-medium">
-                            {selectedPhoto.photo_type === "before"
-                              && "Antes do Tratamento"}
-                            {selectedPhoto.photo_type === "after"
-                              && "Após Tratamento"}
-                            {selectedPhoto.photo_type === "during"
-                              && "Durante Tratamento"}
-                            {selectedPhoto.photo_type === "follow_up"
-                              && "Acompanhamento"}
+                            {selectedPhoto.photo_type === 'before'
+                              && 'Antes do Tratamento'}
+                            {selectedPhoto.photo_type === 'after'
+                              && 'Após Tratamento'}
+                            {selectedPhoto.photo_type === 'during'
+                              && 'Durante Tratamento'}
+                            {selectedPhoto.photo_type === 'follow_up'
+                              && 'Acompanhamento'}
                           </p>
                         </div>
                         <div>
@@ -1092,13 +1092,13 @@ export function BeforeAfterSecureGallery({
                           <p className="font-medium">
                             {new Date(
                               selectedPhoto.uploaded_at,
-                            ).toLocaleDateString("pt-BR", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            ).toLocaleDateString('pt-BR', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            },)}
                           </p>
                         </div>
                         <div>
@@ -1129,7 +1129,7 @@ export function BeforeAfterSecureGallery({
                               selectedPhoto.file_size_bytes
                               / 1024
                               / 1024
-                            ).toFixed(2)} MB
+                            ).toFixed(2,)} MB
                           </p>
                         </div>
                         <div>
@@ -1144,7 +1144,7 @@ export function BeforeAfterSecureGallery({
                         <div>
                           <span className="text-muted-foreground">Hash:</span>
                           <p className="font-medium font-mono text-xs">
-                            {selectedPhoto.file_hash.slice(0, 12)}...
+                            {selectedPhoto.file_hash.slice(0, 12,)}...
                           </p>
                         </div>
                       </div>
@@ -1167,11 +1167,11 @@ export function BeforeAfterSecureGallery({
                             </span>
                             <p className="font-medium">
                               {selectedPhoto.consent_scope
-                                  === "clinical_only" && "Apenas Clínico"}
+                                  === 'clinical_only' && 'Apenas Clínico'}
                               {selectedPhoto.consent_scope
-                                  === "marketing_allowed" && "Marketing Permitido"}
+                                  === 'marketing_allowed' && 'Marketing Permitido'}
                               {selectedPhoto.consent_scope
-                                  === "research_allowed" && "Pesquisa Permitida"}
+                                  === 'research_allowed' && 'Pesquisa Permitida'}
                             </p>
                           </div>
                           <div>
@@ -1180,8 +1180,8 @@ export function BeforeAfterSecureGallery({
                             </span>
                             <p className="font-medium">
                               {selectedPhoto.anonymization_applied
-                                ? "Aplicada"
-                                : "Não Aplicada"}
+                                ? 'Aplicada'
+                                : 'Não Aplicada'}
                             </p>
                           </div>
                           <div>
@@ -1189,7 +1189,7 @@ export function BeforeAfterSecureGallery({
                               Desfoque Facial:
                             </span>
                             <p className="font-medium">
-                              {selectedPhoto.face_blurred ? "Ativo" : "Inativo"}
+                              {selectedPhoto.face_blurred ? 'Ativo' : 'Inativo'}
                             </p>
                           </div>
                           <div>
@@ -1208,8 +1208,8 @@ export function BeforeAfterSecureGallery({
                               {selectedPhoto.last_accessed
                                 ? new Date(
                                   selectedPhoto.last_accessed,
-                                ).toLocaleDateString("pt-BR")
-                                : "Nunca"}
+                                ).toLocaleDateString('pt-BR',)
+                                : 'Nunca'}
                             </p>
                           </div>
                         </div>
@@ -1231,7 +1231,7 @@ export function BeforeAfterSecureGallery({
                               <span className="font-medium text-sm">
                                 {new Date(
                                   selectedPhoto.deletion_scheduled_date,
-                                ).toLocaleDateString("pt-BR")}
+                                ).toLocaleDateString('pt-BR',)}
                               </span>
                             </div>
                           )}
@@ -1269,7 +1269,7 @@ export function BeforeAfterSecureGallery({
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }
 
-export default BeforeAfterSecureGallery;
+export default BeforeAfterSecureGallery

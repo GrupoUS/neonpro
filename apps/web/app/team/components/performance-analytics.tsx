@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   Activity,
   AlertTriangle,
@@ -37,40 +37,40 @@ import {
   TrendingUp,
   Users,
   Zap,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+} from 'lucide-react'
+import { useMemo, useState, } from 'react'
 
 // Mock analytics data for Brazilian healthcare context
 const mockTeamKPIs = {
   patientSatisfaction: {
     current: 8.7,
     target: 9,
-    trend: "up",
+    trend: 'up',
     previousPeriod: 8.4,
     change: 0.3,
   },
   averageResponseTime: {
     current: 4.2, // minutes
     target: 5,
-    trend: "down",
+    trend: 'down',
     previousPeriod: 4.8,
     change: -0.6,
   },
   treatmentSuccessRate: {
     current: 92.4, // percentage
     target: 90,
-    trend: "up",
+    trend: 'up',
     previousPeriod: 90.8,
     change: 1.6,
   },
   teamEfficiency: {
     current: 87.3, // percentage
     target: 85,
-    trend: "up",
+    trend: 'up',
     previousPeriod: 84.9,
     change: 2.4,
   },
-};
+}
 
 const mockComplianceData = {
   cfm: {
@@ -79,7 +79,7 @@ const mockComplianceData = {
     expiringWithin30Days: 2,
     expired: 1,
     complianceRate: 94.4,
-    trend: "stable",
+    trend: 'stable',
   },
   clt: {
     totalEmployees: 24,
@@ -87,7 +87,7 @@ const mockComplianceData = {
     overtimeViolations: 1,
     restPeriodViolations: 1,
     complianceRate: 91.7,
-    trend: "up",
+    trend: 'up',
   },
   lgpd: {
     dataProcessingActivities: 15,
@@ -95,7 +95,7 @@ const mockComplianceData = {
     pendingConsents: 3,
     dataBreaches: 0,
     complianceRate: 93.3,
-    trend: "up",
+    trend: 'up',
   },
   anvisa: {
     medicalEquipment: 32,
@@ -103,16 +103,16 @@ const mockComplianceData = {
     maintenanceDue: 2,
     expired: 0,
     complianceRate: 93.8,
-    trend: "stable",
+    trend: 'stable',
   },
-};
+}
 
 const mockIndividualPerformance = [
   {
-    id: "prof-001",
-    name: "Dra. Maria Silva",
-    role: "Cardiologista",
-    cfmLicense: "Válida",
+    id: 'prof-001',
+    name: 'Dra. Maria Silva',
+    role: 'Cardiologista',
+    cfmLicense: 'Válida',
     patientLoad: 12,
     satisfactionScore: 9.2,
     proceduresCompleted: 28,
@@ -123,10 +123,10 @@ const mockIndividualPerformance = [
     cmeRequired: 12,
   },
   {
-    id: "prof-002",
-    name: "Dr. Roberto Oliveira",
-    role: "Emergencista",
-    cfmLicense: "Válida",
+    id: 'prof-002',
+    name: 'Dr. Roberto Oliveira',
+    role: 'Emergencista',
+    cfmLicense: 'Válida',
     patientLoad: 18,
     satisfactionScore: 8.9,
     proceduresCompleted: 45,
@@ -137,10 +137,10 @@ const mockIndividualPerformance = [
     cmeRequired: 12,
   },
   {
-    id: "prof-003",
-    name: "Enf. Ana Paula",
-    role: "Enfermeira UTI",
-    cfmLicense: "N/A",
+    id: 'prof-003',
+    name: 'Enf. Ana Paula',
+    role: 'Enfermeira UTI',
+    cfmLicense: 'N/A',
     patientLoad: 8,
     satisfactionScore: 9.5,
     proceduresCompleted: 67,
@@ -151,10 +151,10 @@ const mockIndividualPerformance = [
     cmeRequired: 15,
   },
   {
-    id: "prof-004",
-    name: "Dr. Carlos Mendes",
-    role: "Anestesista",
-    cfmLicense: "Expira em 15 dias",
+    id: 'prof-004',
+    name: 'Dr. Carlos Mendes',
+    role: 'Anestesista',
+    cfmLicense: 'Expira em 15 dias',
     patientLoad: 10,
     satisfactionScore: 8.7,
     proceduresCompleted: 22,
@@ -164,74 +164,74 @@ const mockIndividualPerformance = [
     cmeCredits: 8,
     cmeRequired: 12,
   },
-];
+]
 // Helper functions
-const getTrendIcon = (trend: "up" | "down" | "stable") => {
+const getTrendIcon = (trend: 'up' | 'down' | 'stable',) => {
   switch (trend) {
-    case "up": {
-      return <TrendingUp className="h-4 w-4 text-green-600" />;
+    case 'up': {
+      return <TrendingUp className="h-4 w-4 text-green-600" />
     }
-    case "down": {
-      return <TrendingDown className="h-4 w-4 text-red-600" />;
+    case 'down': {
+      return <TrendingDown className="h-4 w-4 text-red-600" />
     }
     default: {
-      return <LineChart className="h-4 w-4 text-gray-600" />;
+      return <LineChart className="h-4 w-4 text-gray-600" />
     }
   }
-};
+}
 
-const getComplianceColor = (rate: number) => {
+const getComplianceColor = (rate: number,) => {
   if (rate >= 95) {
-    return "text-green-600";
+    return 'text-green-600'
   }
   if (rate >= 90) {
-    return "text-accent";
+    return 'text-accent'
   }
-  return "text-red-600";
-};
+  return 'text-red-600'
+}
 
-const getComplianceBgColor = (rate: number) => {
+const getComplianceBgColor = (rate: number,) => {
   if (rate >= 95) {
-    return "bg-green-100 border-green-200";
+    return 'bg-green-100 border-green-200'
   }
   if (rate >= 90) {
-    return "bg-accent/10 border-accent/20";
+    return 'bg-accent/10 border-accent/20'
   }
-  return "bg-red-100 border-red-200";
-};
+  return 'bg-red-100 border-red-200'
+}
 
 interface PerformanceAnalyticsProps {
-  emergencyMode?: boolean;
+  emergencyMode?: boolean
 }
 
 export function PerformanceAnalytics({
   emergencyMode = false,
-}: PerformanceAnalyticsProps) {
-  const [activeTab, setActiveTab] = useState("kpis");
-  const [selectedPeriod, setSelectedPeriod] = useState("current-month");
-  const [selectedDepartment, setSelectedDepartment] = useState("all");
-  const [sortBy, setSortBy] = useState("compliance");
+}: PerformanceAnalyticsProps,) {
+  const [activeTab, setActiveTab,] = useState('kpis',)
+  const [selectedPeriod, setSelectedPeriod,] = useState('current-month',)
+  const [selectedDepartment, setSelectedDepartment,] = useState('all',)
+  const [sortBy, setSortBy,] = useState('compliance',)
 
   // Filter and sort individual performance data
   const sortedPerformance = useMemo(() => {
-    const sorted = [...mockIndividualPerformance].sort((a, b) => {
+    const sorted = [...mockIndividualPerformance,].sort((a, b,) => {
       switch (sortBy) {
-        case "satisfaction": {
-          return b.satisfactionScore - a.satisfactionScore;
+        case 'satisfaction': {
+          return b.satisfactionScore - a.satisfactionScore
         }
-        case "procedures": {
-          return b.proceduresCompleted - a.proceduresCompleted;
+        case 'procedures': {
+          return b.proceduresCompleted - a.proceduresCompleted
         }
-        case "compliance": {
-          return b.complianceRate - a.complianceRate;
+        case 'compliance': {
+          return b.complianceRate - a.complianceRate
         }
         default: {
-          return a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name,)
         }
       }
-    });
-    return sorted;
-  }, [sortBy]);
+    },)
+    return sorted
+  }, [sortBy,],)
 
   return (
     <div className="space-y-6">
@@ -309,7 +309,7 @@ export function PerformanceAnalytics({
             <LineChart className="mr-2 h-4 w-4" />
             Tendências
           </TabsTrigger>
-        </TabsList>{" "}
+        </TabsList>{' '}
         {/* KPIs Tab */}
         <TabsContent className="space-y-6" value="kpis">
           {/* Main KPI Cards */}
@@ -327,9 +327,11 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.patientSatisfaction.current}/10
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.patientSatisfaction.trend as "up" | "down" | "stable")}
+                  {getTrendIcon(
+                    mockTeamKPIs.patientSatisfaction.trend as 'up' | 'down' | 'stable',
+                  )}
                   <span>
-                    {mockTeamKPIs.patientSatisfaction.change > 0 ? "+" : ""}
+                    {mockTeamKPIs.patientSatisfaction.change > 0 ? '+' : ''}
                     {mockTeamKPIs.patientSatisfaction.change} vs mês anterior
                   </span>
                 </div>
@@ -356,10 +358,12 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.averageResponseTime.current} min
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.averageResponseTime.trend as "up" | "down" | "stable")}
+                  {getTrendIcon(
+                    mockTeamKPIs.averageResponseTime.trend as 'up' | 'down' | 'stable',
+                  )}
                   <span>
-                    {mockTeamKPIs.averageResponseTime.change > 0 ? "+" : ""}
-                    {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs mês anterior
+                    {mockTeamKPIs.averageResponseTime.change > 0 ? '+' : ''}
+                    {Math.abs(mockTeamKPIs.averageResponseTime.change,)} min vs mês anterior
                   </span>
                 </div>
                 <Progress
@@ -389,7 +393,7 @@ export function PerformanceAnalytics({
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                   {getTrendIcon(
-                    mockTeamKPIs.treatmentSuccessRate.trend as "up" | "down" | "stable",
+                    mockTeamKPIs.treatmentSuccessRate.trend as 'up' | 'down' | 'stable',
                   )}
                   <span>
                     +{mockTeamKPIs.treatmentSuccessRate.change}% vs mês anterior
@@ -418,7 +422,7 @@ export function PerformanceAnalytics({
                   {mockTeamKPIs.teamEfficiency.current}%
                 </div>
                 <div className="flex items-center space-x-2 text-muted-foreground text-xs">
-                  {getTrendIcon(mockTeamKPIs.teamEfficiency.trend as "up" | "down" | "stable")}
+                  {getTrendIcon(mockTeamKPIs.teamEfficiency.trend as 'up' | 'down' | 'stable',)}
                   <span>
                     +{mockTeamKPIs.teamEfficiency.change}% vs mês anterior
                   </span>
@@ -512,36 +516,36 @@ export function PerformanceAnalytics({
                 <div className="space-y-4">
                   {[
                     {
-                      name: "UTI",
+                      name: 'UTI',
                       efficiency: 94,
                       satisfaction: 9.1,
-                      color: "bg-green-500",
+                      color: 'bg-green-500',
                     },
                     {
-                      name: "Emergência",
+                      name: 'Emergência',
                       efficiency: 87,
                       satisfaction: 8.6,
-                      color: "bg-blue-500",
+                      color: 'bg-blue-500',
                     },
                     {
-                      name: "Centro Cirúrgico",
+                      name: 'Centro Cirúrgico',
                       efficiency: 91,
                       satisfaction: 9.3,
-                      color: "bg-purple-500",
+                      color: 'bg-purple-500',
                     },
                     {
-                      name: "Cardiologia",
+                      name: 'Cardiologia',
                       efficiency: 89,
                       satisfaction: 8.9,
-                      color: "bg-orange-500",
+                      color: 'bg-orange-500',
                     },
                     {
-                      name: "Enfermaria",
+                      name: 'Enfermaria',
                       efficiency: 85,
                       satisfaction: 8.4,
-                      color: "bg-accent",
+                      color: 'bg-accent',
                     },
-                  ].map((dept) => (
+                  ].map((dept,) => (
                     <div className="space-y-2" key={dept.name}>
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium">{dept.name}</span>
@@ -571,7 +575,7 @@ export function PerformanceAnalytics({
               </CardContent>
             </Card>
           </div>
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Compliance Tab */}
         <TabsContent className="space-y-6" value="compliance">
           {/* Compliance Overview Cards */}
@@ -940,7 +944,7 @@ export function PerformanceAnalytics({
               </div>
             </CardContent>
           </Card>
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Individual Performance Tab */}
         <TabsContent className="space-y-6" value="individual">
           {/* Performance Filters */}
@@ -1004,7 +1008,7 @@ export function PerformanceAnalytics({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedPerformance.map((professional, _index) => (
+                  {sortedPerformance.map((professional, _index,) => (
                     <TableRow key={professional.id}>
                       <TableCell>
                         <div>
@@ -1017,11 +1021,11 @@ export function PerformanceAnalytics({
                       <TableCell>
                         <Badge
                           className="text-xs"
-                          variant={professional.cfmLicense.includes("Expira")
-                            ? "destructive"
-                            : professional.cfmLicense === "N/A"
-                            ? "secondary"
-                            : "default"}
+                          variant={professional.cfmLicense.includes('Expira',)
+                            ? 'destructive'
+                            : professional.cfmLicense === 'N/A'
+                            ? 'secondary'
+                            : 'default'}
                         >
                           {professional.cfmLicense}
                         </Badge>
@@ -1037,13 +1041,13 @@ export function PerformanceAnalytics({
                             {professional.satisfactionScore}
                           </span>
                           <div className="flex">
-                            {[1, 2, 3, 4, 5].map((star) => (
+                            {[1, 2, 3, 4, 5,].map((star,) => (
                               <Star
                                 className={`h-3 w-3 ${
                                   star
-                                      <= Math.floor(professional.satisfactionScore)
-                                    ? "fill-current text-yellow-400"
-                                    : "text-gray-300"
+                                      <= Math.floor(professional.satisfactionScore,)
+                                    ? 'fill-current text-yellow-400'
+                                    : 'text-gray-300'
                                 }`}
                                 key={star}
                               />
@@ -1091,8 +1095,8 @@ export function PerformanceAnalytics({
                             className={`font-medium text-sm ${
                               professional.cmeCredits
                                   >= professional.cmeRequired
-                                ? "text-green-600"
-                                : "text-red-600"
+                                ? 'text-green-600'
+                                : 'text-red-600'
                             }`}
                           >
                             {professional.cmeCredits}/{professional.cmeRequired}
@@ -1272,5 +1276,5 @@ export function PerformanceAnalytics({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

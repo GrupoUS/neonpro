@@ -4,12 +4,12 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Activity,
   AlertTriangle,
@@ -21,34 +21,34 @@ import {
   TrendingUp,
   Users,
   Zap,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 interface HealthMetrics {
-  systemUptime: number;
-  apiResponseTime: number;
-  databaseHealth: number;
-  activeUsers: number;
-  errorRate: number;
-  complianceStatus: number;
-  securityScore: number;
-  backupStatus: "success" | "warning" | "error";
-  lastBackup: string;
+  systemUptime: number
+  apiResponseTime: number
+  databaseHealth: number
+  activeUsers: number
+  errorRate: number
+  complianceStatus: number
+  securityScore: number
+  backupStatus: 'success' | 'warning' | 'error'
+  lastBackup: string
 }
 
 interface HealthAlert {
-  id: string;
-  type: "error" | "warning" | "info";
-  component: string;
-  message: string;
-  timestamp: string;
-  resolved: boolean;
+  id: string
+  type: 'error' | 'warning' | 'info'
+  component: string
+  message: string
+  timestamp: string
+  resolved: boolean
 }
 
 export function HealthMonitoringDashboard() {
-  const [metrics, setMetrics] = useState<HealthMetrics | null>();
-  const [alerts, setAlerts] = useState<HealthAlert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics,] = useState<HealthMetrics | null>()
+  const [alerts, setAlerts,] = useState<HealthAlert[]>([],)
+  const [loading, setLoading,] = useState(true,)
 
   useEffect(() => {
     // Simulate real-time health monitoring
@@ -61,113 +61,113 @@ export function HealthMonitoringDashboard() {
         errorRate: 0.12,
         complianceStatus: 99.2,
         securityScore: 96.8,
-        backupStatus: "success",
-        lastBackup: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-      });
+        backupStatus: 'success',
+        lastBackup: new Date(Date.now() - 2 * 60 * 60 * 1000,).toISOString(), // 2 hours ago
+      },)
 
       setAlerts([
         {
-          id: "1",
-          type: "warning",
-          component: "Cache Layer",
-          message: "Cache hit rate baixa (78%) - recomendado >85%",
-          timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+          id: '1',
+          type: 'warning',
+          component: 'Cache Layer',
+          message: 'Cache hit rate baixa (78%) - recomendado >85%',
+          timestamp: new Date(Date.now() - 15 * 60 * 1000,).toISOString(),
           resolved: false,
         },
         {
-          id: "2",
-          type: "info",
-          component: "LGPD Monitor",
-          message: "Auditoria LGPD executada com sucesso - 100% compliant",
-          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+          id: '2',
+          type: 'info',
+          component: 'LGPD Monitor',
+          message: 'Auditoria LGPD executada com sucesso - 100% compliant',
+          timestamp: new Date(Date.now() - 30 * 60 * 1000,).toISOString(),
           resolved: true,
         },
         {
-          id: "3",
-          type: "error",
-          component: "API Gateway",
-          message: "Pico de latência detectado no endpoint /api/patients",
-          timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+          id: '3',
+          type: 'error',
+          component: 'API Gateway',
+          message: 'Pico de latência detectado no endpoint /api/patients',
+          timestamp: new Date(Date.now() - 45 * 60 * 1000,).toISOString(),
           resolved: true,
         },
-      ]);
+      ],)
 
-      setLoading(false);
-    };
+      setLoading(false,)
+    }
 
-    loadHealthData();
+    loadHealthData()
 
     // Simulate real-time updates
     const interval = setInterval(() => {
       if (metrics) {
-        setMetrics((prev) => (
+        setMetrics((prev,) => (
           prev
             ? {
               ...prev,
-              apiResponseTime: Math.floor(150 + Math.random() * 100),
-              activeUsers: Math.floor(40 + Math.random() * 20),
+              apiResponseTime: Math.floor(150 + Math.random() * 100,),
+              activeUsers: Math.floor(40 + Math.random() * 20,),
               errorRate: Math.random() * 0.5,
             }
             : prev
-        ));
+        ))
       }
-    }, 5000);
+    }, 5000,)
 
-    return () => clearInterval(interval);
-  }, [metrics]);
+    return () => clearInterval(interval,)
+  }, [metrics,],)
 
   const getHealthStatus = (
     value: number,
-    thresholds: { good: number; warning: number; },
+    thresholds: { good: number; warning: number },
   ) => {
     if (value >= thresholds.good) {
-      return "success";
+      return 'success'
     }
     if (value >= thresholds.warning) {
-      return "warning";
+      return 'warning'
     }
-    return "error";
-  };
+    return 'error'
+  }
 
-  const getHealthColor = (status: string) => {
+  const getHealthColor = (status: string,) => {
     switch (status) {
-      case "success": {
-        return "text-green-600";
+      case 'success': {
+        return 'text-green-600'
       }
-      case "warning": {
-        return "text-yellow-600";
+      case 'warning': {
+        return 'text-yellow-600'
       }
-      case "error": {
-        return "text-red-600";
+      case 'error': {
+        return 'text-red-600'
       }
       default: {
-        return "text-muted-foreground";
+        return 'text-muted-foreground'
       }
     }
-  };
+  }
 
-  const getAlertIcon = (type: string) => {
+  const getAlertIcon = (type: string,) => {
     switch (type) {
-      case "error": {
-        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      case 'error': {
+        return <AlertTriangle className="h-4 w-4 text-red-600" />
       }
-      case "warning": {
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case 'warning': {
+        return <AlertTriangle className="h-4 w-4 text-yellow-600" />
       }
-      case "info": {
-        return <CheckCircle className="h-4 w-4 text-blue-600" />;
+      case 'info': {
+        return <CheckCircle className="h-4 w-4 text-blue-600" />
       }
       default: {
-        return <Activity className="h-4 w-4" />;
+        return <Activity className="h-4 w-4" />
       }
     }
-  };
+  }
 
   if (loading || !metrics) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+          {[1, 2, 3, 4,].map((i,) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-4 bg-muted rounded w-20" />
@@ -180,7 +180,7 @@ export function HealthMonitoringDashboard() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -307,23 +307,23 @@ export function HealthMonitoringDashboard() {
                     getHealthStatus(300 - metrics.apiResponseTime, {
                       good: 150,
                       warning: 100,
-                    }),
+                    },),
                   )
                 }`}
                 role="status"
                 aria-label={`Status: ${
                   metrics.apiResponseTime < 200
-                    ? "Excelente"
+                    ? 'Excelente'
                     : metrics.apiResponseTime < 300
-                    ? "Bom"
-                    : "Atenção"
+                    ? 'Bom'
+                    : 'Atenção'
                 }`}
               >
                 {metrics.apiResponseTime < 200
-                  ? "Excelente"
+                  ? 'Excelente'
                   : metrics.apiResponseTime < 300
-                  ? "Bom"
-                  : "Atenção"}
+                  ? 'Bom'
+                  : 'Atenção'}
               </div>
             </div>
           </CardContent>
@@ -511,7 +511,7 @@ export function HealthMonitoringDashboard() {
                 <span className="text-sm font-medium">Backup Completo</span>
               </div>
               <div className="text-xs text-muted-foreground">
-                Último backup: {new Date(metrics.lastBackup).toLocaleString("pt-BR")}
+                Último backup: {new Date(metrics.lastBackup,).toLocaleString('pt-BR',)}
               </div>
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">
@@ -545,24 +545,24 @@ export function HealthMonitoringDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {alerts.map((alert) => (
+            {alerts.map((alert,) => (
               <div
                 key={alert.id}
                 className={`flex items-start space-x-3 rounded-lg border p-3 ${
-                  alert.resolved ? "opacity-60" : ""
+                  alert.resolved ? 'opacity-60' : ''
                 } transition-opacity`}
               >
-                {getAlertIcon(alert.type)}
+                {getAlertIcon(alert.type,)}
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium text-sm">
                       {alert.component}
                     </span>
                     <Badge variant="outline" className="text-xs">
-                      {new Date(alert.timestamp).toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {new Date(alert.timestamp,).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      },)}
                     </Badge>
                     {alert.resolved && (
                       <Badge
@@ -588,5 +588,5 @@ export function HealthMonitoringDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

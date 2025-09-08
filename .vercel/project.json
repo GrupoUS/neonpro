@@ -1,1 +1,7 @@
-{"projectId":"prj_64FCmux5AJquGaiteZ0h8tbV55iB","orgId":"team_bjVDLqo42Gb3p28RelxJia6x","projectName":"neonpro"}
+{
+  "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
+  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "settings": {
+    "rootDirectory": "apps/web"
+  }
+}

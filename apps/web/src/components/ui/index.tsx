@@ -1,7 +1,7 @@
 // Loading components
-export * from "./loading";
+export * from './loading'
 
 // Error components
-export * from "./error";
+export * from './error'
 
 // TODO: Local UI components only; upstream UI package was removed.

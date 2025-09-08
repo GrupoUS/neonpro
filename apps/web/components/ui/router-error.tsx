@@ -6,30 +6,30 @@
  * with recovery options and error reporting.
  */
 
-"use client";
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
+import { Link, } from '@tanstack/react-router'
+import { AlertTriangle, Home, RefreshCw, } from 'lucide-react'
 
 interface RouterErrorProps {
-  error: Error;
-  reset?: () => void;
+  error: Error
+  reset?: () => void
 }
 
-export function RouterError({ error, reset }: RouterErrorProps) {
+export function RouterError({ error, reset, }: RouterErrorProps,) {
   const handleRefresh = () => {
     if (reset) {
-      reset();
+      reset()
     } else {
-      window.location.reload();
+      window.location.reload()
     }
-  };
+  }
 
   const handleReportError = () => {
     // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -86,5 +86,5 @@ export function RouterError({ error, reset }: RouterErrorProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

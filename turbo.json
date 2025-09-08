@@ -89,7 +89,7 @@
       "outputs": ["dist/**"]
     },
     "@neonpro/utils#build": {
-      "dependsOn": ["@neonpro/types#build"],
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },

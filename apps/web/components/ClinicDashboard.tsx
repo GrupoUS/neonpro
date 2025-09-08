@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -18,7 +18,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui";
+} from '@/components/ui'
 import {
   Activity,
   AlertCircle,
@@ -31,37 +31,37 @@ import {
   Star,
   TrendingUp,
   Users,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 interface ClinicMetrics {
-  totalPatients: number;
-  appointmentsToday: number;
-  pendingResults: number;
-  revenue: number;
-  patientSatisfaction: number;
-  occupancyRate: number;
-  averageWaitTime: number;
-  completedAppointments: number;
+  totalPatients: number
+  appointmentsToday: number
+  pendingResults: number
+  revenue: number
+  patientSatisfaction: number
+  occupancyRate: number
+  averageWaitTime: number
+  completedAppointments: number
 }
 
 interface RecentActivity {
-  id: string;
-  type: "appointment" | "result" | "payment" | "registration";
-  description: string;
-  timestamp: Date;
-  status: "success" | "warning" | "error" | "info";
+  id: string
+  type: 'appointment' | 'result' | 'payment' | 'registration'
+  description: string
+  timestamp: Date
+  status: 'success' | 'warning' | 'error' | 'info'
 }
 
 interface DoctorStats {
-  id: string;
-  name: string;
-  specialty: string;
-  appointmentsToday: number;
-  patientsSeen: number;
-  rating: number;
-  availability: "available" | "busy" | "offline";
-  avatar?: string;
+  id: string
+  name: string
+  specialty: string
+  appointmentsToday: number
+  patientsSeen: number
+  rating: number
+  availability: 'available' | 'busy' | 'offline'
+  avatar?: string
 }
 
 const MOCK_METRICS: ClinicMetrics = {
@@ -73,157 +73,157 @@ const MOCK_METRICS: ClinicMetrics = {
   occupancyRate: 87,
   averageWaitTime: 12,
   completedAppointments: 156,
-};
+}
 
 const MOCK_ACTIVITIES: RecentActivity[] = [
   {
-    id: "1",
-    type: "appointment",
-    description: "Nova consulta agendada - Maria Silva (Cardiologia)",
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    status: "success",
+    id: '1',
+    type: 'appointment',
+    description: 'Nova consulta agendada - Maria Silva (Cardiologia)',
+    timestamp: new Date(Date.now() - 1000 * 60 * 15,),
+    status: 'success',
   },
   {
-    id: "2",
-    type: "result",
-    description: "Resultado de exame disponível - João Santos",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    status: "info",
+    id: '2',
+    type: 'result',
+    description: 'Resultado de exame disponível - João Santos',
+    timestamp: new Date(Date.now() - 1000 * 60 * 30,),
+    status: 'info',
   },
   {
-    id: "3",
-    type: "payment",
-    description: "Pagamento recebido - Consulta #1234",
-    timestamp: new Date(Date.now() - 1000 * 60 * 45),
-    status: "success",
+    id: '3',
+    type: 'payment',
+    description: 'Pagamento recebido - Consulta #1234',
+    timestamp: new Date(Date.now() - 1000 * 60 * 45,),
+    status: 'success',
   },
   {
-    id: "4",
-    type: "appointment",
-    description: "Consulta cancelada - Pedro Costa",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60),
-    status: "warning",
+    id: '4',
+    type: 'appointment',
+    description: 'Consulta cancelada - Pedro Costa',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60,),
+    status: 'warning',
   },
-];
+]
 
 const MOCK_DOCTORS: DoctorStats[] = [
   {
-    id: "1",
-    name: "Dr. Ana Silva",
-    specialty: "Cardiologia",
+    id: '1',
+    name: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
     appointmentsToday: 8,
     patientsSeen: 156,
     rating: 4.9,
-    availability: "available",
+    availability: 'available',
   },
   {
-    id: "2",
-    name: "Dr. João Santos",
-    specialty: "Clínica Geral",
+    id: '2',
+    name: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
     appointmentsToday: 12,
     patientsSeen: 234,
     rating: 4.7,
-    availability: "busy",
+    availability: 'busy',
   },
   {
-    id: "3",
-    name: "Dr. Maria Costa",
-    specialty: "Pediatria",
+    id: '3',
+    name: 'Dr. Maria Costa',
+    specialty: 'Pediatria',
     appointmentsToday: 6,
     patientsSeen: 89,
     rating: 4.8,
-    availability: "available",
+    availability: 'available',
   },
-];
+]
 
 export default function ClinicDashboard() {
-  const [metrics] = useState<ClinicMetrics>(MOCK_METRICS);
-  const [activities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
-  const [doctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
+  const [metrics,] = useState<ClinicMetrics>(MOCK_METRICS,)
+  const [activities,] = useState<RecentActivity[]>(MOCK_ACTIVITIES,)
+  const [doctors,] = useState<DoctorStats[]>(MOCK_DOCTORS,)
 
-  const getActivityIcon = (type: RecentActivity["type"]) => {
+  const getActivityIcon = (type: RecentActivity['type'],) => {
     switch (type) {
-      case "appointment": {
-        return <Calendar className="h-4 w-4" />;
+      case 'appointment': {
+        return <Calendar className="h-4 w-4" />
       }
-      case "result": {
-        return <FileText className="h-4 w-4" />;
+      case 'result': {
+        return <FileText className="h-4 w-4" />
       }
-      case "payment": {
-        return <DollarSign className="h-4 w-4" />;
+      case 'payment': {
+        return <DollarSign className="h-4 w-4" />
       }
-      case "registration": {
-        return <Users className="h-4 w-4" />;
+      case 'registration': {
+        return <Users className="h-4 w-4" />
       }
       default: {
-        return <Activity className="h-4 w-4" />;
+        return <Activity className="h-4 w-4" />
       }
     }
-  };
+  }
 
-  const getActivityStatusColor = (status: RecentActivity["status"]) => {
+  const getActivityStatusColor = (status: RecentActivity['status'],) => {
     switch (status) {
-      case "success": {
-        return "text-green-600";
+      case 'success': {
+        return 'text-green-600'
       }
-      case "warning": {
-        return "text-yellow-600";
+      case 'warning': {
+        return 'text-yellow-600'
       }
-      case "error": {
-        return "text-red-600";
+      case 'error': {
+        return 'text-red-600'
       }
-      case "info": {
-        return "text-blue-600";
+      case 'info': {
+        return 'text-blue-600'
       }
       default: {
-        return "text-gray-600";
+        return 'text-gray-600'
       }
     }
-  };
+  }
 
-  const getAvailabilityBadge = (availability: DoctorStats["availability"]) => {
+  const getAvailabilityBadge = (availability: DoctorStats['availability'],) => {
     const variants = {
-      available: "bg-green-100 text-green-800",
-      busy: "bg-orange-100 text-orange-800",
-      offline: "bg-gray-100 text-gray-800",
-    };
+      available: 'bg-green-100 text-green-800',
+      busy: 'bg-orange-100 text-orange-800',
+      offline: 'bg-gray-100 text-gray-800',
+    }
 
     const labels = {
-      available: "Disponível",
-      busy: "Ocupado",
-      offline: "Offline",
-    };
+      available: 'Disponível',
+      busy: 'Ocupado',
+      offline: 'Offline',
+    }
 
-    return <Badge className={variants[availability]}>{labels[availability]}</Badge>;
-  };
+    return <Badge className={variants[availability]}>{labels[availability]}</Badge>
+  }
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  const formatCurrency = (value: number,) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    },).format(value,)
+  }
 
-  const formatRelativeTime = (date: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / (1000 * 60));
+  const formatRelativeTime = (date: Date,) => {
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / (1000 * 60),)
 
     if (minutes < 1) {
-      return "agora";
+      return 'agora'
     }
     if (minutes < 60) {
-      return `${minutes}m atrás`;
+      return `${minutes}m atrás`
     }
 
-    const hours = Math.floor(minutes / 60);
+    const hours = Math.floor(minutes / 60,)
     if (hours < 24) {
-      return `${hours}h atrás`;
+      return `${hours}h atrás`
     }
 
-    const days = Math.floor(hours / 24);
-    return `${days}d atrás`;
-  };
+    const days = Math.floor(hours / 24,)
+    return `${days}d atrás`
+  }
 
   return (
     <div className="space-y-6">
@@ -289,7 +289,7 @@ export default function ClinicDashboard() {
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">
-              {formatCurrency(metrics.revenue)}
+              {formatCurrency(metrics.revenue,)}
             </div>
             <p className="text-muted-foreground text-xs">
               <TrendingUp className="mr-1 inline h-3 w-3" />
@@ -348,8 +348,8 @@ export default function ClinicDashboard() {
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 {metrics.occupancyRate > 85
-                  ? "Alta ocupação - considere otimizar os agendamentos"
-                  : "Ocupação normal - fluxo de pacientes adequado"}
+                  ? 'Alta ocupação - considere otimizar os agendamentos'
+                  : 'Ocupação normal - fluxo de pacientes adequado'}
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -395,7 +395,7 @@ export default function ClinicDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {doctors.map((doctor) => (
+                {doctors.map((doctor,) => (
                   <div
                     className="flex items-center justify-between rounded-lg border p-4"
                     key={doctor.id}
@@ -405,9 +405,9 @@ export default function ClinicDashboard() {
                         <AvatarImage src={doctor.avatar} />
                         <AvatarFallback>
                           {doctor.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
+                            .split(' ',)
+                            .map((n,) => n[0])
+                            .join('',)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
@@ -430,7 +430,7 @@ export default function ClinicDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {getAvailabilityBadge(doctor.availability)}
+                      {getAvailabilityBadge(doctor.availability,)}
                       <Button size="sm" variant="outline">
                         Ver Agenda
                       </Button>
@@ -453,7 +453,7 @@ export default function ClinicDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {activities.map((activity) => (
+                {activities.map((activity,) => (
                   <div className="flex items-start space-x-4" key={activity.id}>
                     <div
                       className={`rounded-full p-2 ${
@@ -462,12 +462,12 @@ export default function ClinicDashboard() {
                         )
                       } bg-opacity-10`}
                     >
-                      {getActivityIcon(activity.type)}
+                      {getActivityIcon(activity.type,)}
                     </div>
                     <div className="flex-1">
                       <p className="text-sm">{activity.description}</p>
                       <p className="text-muted-foreground text-xs">
-                        {formatRelativeTime(activity.timestamp)}
+                        {formatRelativeTime(activity.timestamp,)}
                       </p>
                     </div>
                   </div>
@@ -509,5 +509,5 @@ export default function ClinicDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

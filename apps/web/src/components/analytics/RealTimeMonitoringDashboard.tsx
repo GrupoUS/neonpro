@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * RealTimeMonitoringDashboard - Live Healthcare Monitoring System
@@ -11,10 +11,10 @@
  */
 
 // import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 // import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -22,8 +22,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { cn, } from '@/lib/utils'
 import type {
   // AlertSeverity,
   // AutomatedAction,
@@ -32,7 +32,7 @@ import type {
   HealthcareMonitoring,
   // VitalSignsMonitoring,
   // WarningAlert,
-} from "@/types/analytics";
+} from '@/types/analytics'
 import {
   Activity,
   AlertCircle,
@@ -70,107 +70,107 @@ import {
   WifiOff,
   XCircle,
   // Zap, // Unused import
-} from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+} from 'lucide-react'
+import React, { useCallback, useEffect, useMemo, useState, } from 'react'
 
 // ====== MOCK MONITORING DATA ======
 const mockMonitoringData: HealthcareMonitoring = {
-  patientId: "patient-monitoring-123",
-  monitoringStart: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  patientId: 'patient-monitoring-123',
+  monitoringStart: new Date(Date.now() - 2 * 60 * 60 * 1000,), // 2 hours ago
   isActive: true,
   monitoringData: {
     vitalSigns: {
       bloodPressure: {
         timestamps: [
-          new Date(Date.now() - 120 * 60 * 1000),
-          new Date(Date.now() - 90 * 60 * 1000),
-          new Date(Date.now() - 60 * 60 * 1000),
-          new Date(Date.now() - 30 * 60 * 1000),
+          new Date(Date.now() - 120 * 60 * 1000,),
+          new Date(Date.now() - 90 * 60 * 1000,),
+          new Date(Date.now() - 60 * 60 * 1000,),
+          new Date(Date.now() - 30 * 60 * 1000,),
           new Date(),
         ],
         values: [
-          { systolic: 128, diastolic: 82 },
-          { systolic: 132, diastolic: 85 },
-          { systolic: 145, diastolic: 92 }, // Elevated
-          { systolic: 138, diastolic: 88 },
-          { systolic: 135, diastolic: 86 },
+          { systolic: 128, diastolic: 82, },
+          { systolic: 132, diastolic: 85, },
+          { systolic: 145, diastolic: 92, }, // Elevated
+          { systolic: 138, diastolic: 88, },
+          { systolic: 135, diastolic: 86, },
         ],
         interpolated: false,
-        confidence: [0.95, 0.96, 0.94, 0.97, 0.98],
+        confidence: [0.95, 0.96, 0.94, 0.97, 0.98,],
       },
       heartRate: {
         timestamps: [
-          new Date(Date.now() - 120 * 60 * 1000),
-          new Date(Date.now() - 90 * 60 * 1000),
-          new Date(Date.now() - 60 * 60 * 1000),
-          new Date(Date.now() - 30 * 60 * 1000),
+          new Date(Date.now() - 120 * 60 * 1000,),
+          new Date(Date.now() - 90 * 60 * 1000,),
+          new Date(Date.now() - 60 * 60 * 1000,),
+          new Date(Date.now() - 30 * 60 * 1000,),
           new Date(),
         ],
-        values: [72, 78, 94, 86, 81], // Spike detected
-        confidence: [0.98, 0.97, 0.95, 0.96, 0.97],
+        values: [72, 78, 94, 86, 81,], // Spike detected
+        confidence: [0.98, 0.97, 0.95, 0.96, 0.97,],
       },
       temperature: {
-        timestamps: [new Date(Date.now() - 30 * 60 * 1000), new Date()],
-        values: [36.8, 37.2], // Slight elevation
-        confidence: [0.96, 0.94],
+        timestamps: [new Date(Date.now() - 30 * 60 * 1000,), new Date(),],
+        values: [36.8, 37.2,], // Slight elevation
+        confidence: [0.96, 0.94,],
       },
       weight: {
-        timestamps: [new Date(Date.now() - 24 * 60 * 60 * 1000)],
-        values: [68.5],
-        confidence: [0.99],
+        timestamps: [new Date(Date.now() - 24 * 60 * 60 * 1000,),],
+        values: [68.5,],
+        confidence: [0.99,],
       },
       oxygenSaturation: {
-        timestamps: [new Date(Date.now() - 30 * 60 * 1000), new Date()],
-        values: [98, 97],
-        confidence: [0.99, 0.98],
+        timestamps: [new Date(Date.now() - 30 * 60 * 1000,), new Date(),],
+        values: [98, 97,],
+        confidence: [0.99, 0.98,],
       },
       abnormalReadings: [
         {
-          type: "blood_pressure",
-          value: "145/92",
-          timestamp: new Date(Date.now() - 60 * 60 * 1000),
-          severity: "warning",
-          threshold: "140/90",
-          description: "Pressão arterial elevada detectada",
+          type: 'blood_pressure',
+          value: '145/92',
+          timestamp: new Date(Date.now() - 60 * 60 * 1000,),
+          severity: 'warning',
+          threshold: '140/90',
+          description: 'Pressão arterial elevada detectada',
         },
         {
-          type: "heart_rate",
-          value: "94 bpm",
-          timestamp: new Date(Date.now() - 60 * 60 * 1000),
-          severity: "info",
-          threshold: "90 bpm",
-          description: "Frequência cardíaca ligeiramente elevada",
+          type: 'heart_rate',
+          value: '94 bpm',
+          timestamp: new Date(Date.now() - 60 * 60 * 1000,),
+          severity: 'info',
+          threshold: '90 bpm',
+          description: 'Frequência cardíaca ligeiramente elevada',
         },
       ],
       trendAnalysis: {
-        bloodPressuretrend: "increasing",
-        heartRateVariability: "moderate",
-        overallStatus: "attention_required",
+        bloodPressuretrend: 'increasing',
+        heartRateVariability: 'moderate',
+        overallStatus: 'attention_required',
         riskScore: 0.35,
       },
     },
     medicationCompliance: {
       currentMedications: [
         {
-          name: "Losartana 50mg",
-          dosage: "1x ao dia",
-          lastTaken: new Date(Date.now() - 8 * 60 * 60 * 1000),
-          nextDue: new Date(Date.now() + 16 * 60 * 60 * 1000),
+          name: 'Losartana 50mg',
+          dosage: '1x ao dia',
+          lastTaken: new Date(Date.now() - 8 * 60 * 60 * 1000,),
+          nextDue: new Date(Date.now() + 16 * 60 * 60 * 1000,),
         },
         {
-          name: "Sinvastatina 20mg",
-          dosage: "1x à noite",
-          lastTaken: new Date(Date.now() - 14 * 60 * 60 * 1000),
-          nextDue: new Date(Date.now() + 10 * 60 * 60 * 1000),
+          name: 'Sinvastatina 20mg',
+          dosage: '1x à noite',
+          lastTaken: new Date(Date.now() - 14 * 60 * 60 * 1000,),
+          nextDue: new Date(Date.now() + 10 * 60 * 60 * 1000,),
         },
       ],
       adherenceRate: 0.92,
       missedDoses: [
         {
-          medication: "Sinvastatina 20mg",
-          scheduledTime: new Date(Date.now() - 38 * 60 * 60 * 1000),
+          medication: 'Sinvastatina 20mg',
+          scheduledTime: new Date(Date.now() - 38 * 60 * 60 * 1000,),
           actualTime: null,
-          reason: "Esqueceu",
+          reason: 'Esqueceu',
         },
       ],
       sideEffects: [],
@@ -187,11 +187,11 @@ const mockMonitoringData: HealthcareMonitoring = {
     },
     healthIndicators: {
       overallHealth: 82,
-      riskFactors: ["Hypertension", "Family history of cardiovascular disease"],
-      improvements: ["Regular exercise routine", "Improved diet compliance"],
+      riskFactors: ['Hypertension', 'Family history of cardiovascular disease',],
+      improvements: ['Regular exercise routine', 'Improved diet compliance',],
       concerns: [
-        "Blood pressure trending upward",
-        "Medication adherence needs improvement",
+        'Blood pressure trending upward',
+        'Medication adherence needs improvement',
       ],
     },
     riskFactors: {
@@ -211,22 +211,22 @@ const mockMonitoringData: HealthcareMonitoring = {
     criticalAlerts: [],
     warningAlerts: [
       {
-        id: "warning-bp-001",
-        type: "medical",
-        severity: "warning",
-        title: "Pressão Arterial Elevada",
-        message: "Pressão arterial de 145/92 mmHg detectada, acima do limite recomendado de 140/90",
-        patientId: "patient-monitoring-123",
-        clinicId: "clinic-001",
-        triggeredAt: new Date(Date.now() - 60 * 60 * 1000),
+        id: 'warning-bp-001',
+        type: 'medical',
+        severity: 'warning',
+        title: 'Pressão Arterial Elevada',
+        message: 'Pressão arterial de 145/92 mmHg detectada, acima do limite recomendado de 140/90',
+        patientId: 'patient-monitoring-123',
+        clinicId: 'clinic-001',
+        triggeredAt: new Date(Date.now() - 60 * 60 * 1000,),
         escalationLevel: 1,
         autoActions: [],
         requiredActions: [
-          "Verificar medicação",
-          "Agendar consulta de seguimento",
+          'Verificar medicação',
+          'Agendar consulta de seguimento',
         ],
         dismissible: true,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000,),
       },
     ],
     complianceAlerts: [],
@@ -234,73 +234,73 @@ const mockMonitoringData: HealthcareMonitoring = {
   },
   automatedActions: [
     {
-      id: "auto-001",
-      type: "notification",
-      triggeredBy: "blood_pressure_alert",
-      executedAt: new Date(Date.now() - 58 * 60 * 1000),
-      status: "completed",
-      parameters: { recipient: "primary_physician", alertType: "bp_elevation" },
-      result: { success: true, notificationSent: true },
+      id: 'auto-001',
+      type: 'notification',
+      triggeredBy: 'blood_pressure_alert',
+      executedAt: new Date(Date.now() - 58 * 60 * 1000,),
+      status: 'completed',
+      parameters: { recipient: 'primary_physician', alertType: 'bp_elevation', },
+      result: { success: true, notificationSent: true, },
       retryCount: 0,
       maxRetries: 3,
     },
   ],
   escalationPaths: [],
   lastUpdate: new Date(),
-};
+}
 
 const activePatientsMonitoring = [
   {
-    id: "patient-001",
-    name: "Maria Silva Santos",
+    id: 'patient-001',
+    name: 'Maria Silva Santos',
     age: 45,
-    condition: "Pós-operatório Blefaroplastia",
-    riskLevel: "low" as const,
-    lastReading: new Date(Date.now() - 5 * 60 * 1000),
-    status: "stable" as const,
+    condition: 'Pós-operatório Blefaroplastia',
+    riskLevel: 'low' as const,
+    lastReading: new Date(Date.now() - 5 * 60 * 1000,),
+    status: 'stable' as const,
     alerts: 0,
-    vitals: { hr: 72, bp: "120/80", temp: 36.5, spo2: 98 },
+    vitals: { hr: 72, bp: '120/80', temp: 36.5, spo2: 98, },
   },
   {
-    id: "patient-002",
-    name: "João Costa Lima",
+    id: 'patient-002',
+    name: 'João Costa Lima',
     age: 52,
-    condition: "Lipoaspiração pós-cirúrgico",
-    riskLevel: "medium" as const,
-    lastReading: new Date(Date.now() - 2 * 60 * 1000),
-    status: "attention" as const,
+    condition: 'Lipoaspiração pós-cirúrgico',
+    riskLevel: 'medium' as const,
+    lastReading: new Date(Date.now() - 2 * 60 * 1000,),
+    status: 'attention' as const,
     alerts: 1,
-    vitals: { hr: 88, bp: "145/92", temp: 36.8, spo2: 97 },
+    vitals: { hr: 88, bp: '145/92', temp: 36.8, spo2: 97, },
   },
   {
-    id: "patient-003",
-    name: "Ana Paula Ferreira",
+    id: 'patient-003',
+    name: 'Ana Paula Ferreira',
     age: 38,
-    condition: "Preenchimento facial - acompanhamento",
-    riskLevel: "low" as const,
-    lastReading: new Date(Date.now() - 1 * 60 * 1000),
-    status: "stable" as const,
+    condition: 'Preenchimento facial - acompanhamento',
+    riskLevel: 'low' as const,
+    lastReading: new Date(Date.now() - 1 * 60 * 1000,),
+    status: 'stable' as const,
     alerts: 0,
-    vitals: { hr: 68, bp: "118/75", temp: 36.4, spo2: 99 },
+    vitals: { hr: 68, bp: '118/75', temp: 36.4, spo2: 99, },
   },
   {
-    id: "patient-004",
-    name: "Carlos Roberto Silva",
+    id: 'patient-004',
+    name: 'Carlos Roberto Silva',
     age: 41,
-    condition: "Rinoplastia - 2º dia pós-cirúrgico",
-    riskLevel: "high" as const,
-    lastReading: new Date(Date.now() - 10 * 60 * 1000),
-    status: "critical" as const,
+    condition: 'Rinoplastia - 2º dia pós-cirúrgico',
+    riskLevel: 'high' as const,
+    lastReading: new Date(Date.now() - 10 * 60 * 1000,),
+    status: 'critical' as const,
     alerts: 3,
-    vitals: { hr: 102, bp: "160/95", temp: 37.8, spo2: 94 },
+    vitals: { hr: 102, bp: '160/95', temp: 37.8, spo2: 94, },
   },
-];
+]
 
 interface MonitoringDashboardProps {
-  clinicId: string;
-  refreshInterval?: number;
-  soundAlertsEnabled?: boolean;
-  autoRefresh?: boolean;
+  clinicId: string
+  refreshInterval?: number
+  soundAlertsEnabled?: boolean
+  autoRefresh?: boolean
 }
 
 export default function RealTimeMonitoringDashboard({
@@ -308,39 +308,39 @@ export default function RealTimeMonitoringDashboard({
   refreshInterval = 30,
   soundAlertsEnabled = true,
   autoRefresh = true,
-}: MonitoringDashboardProps) {
+}: MonitoringDashboardProps,) {
   // ====== STATE MANAGEMENT ======
-  const [isMonitoring, setIsMonitoring] = useState(true);
-  const [selectedPatient, setSelectedPatient] = useState<string>("patient-002");
-  const [monitoringData, setMonitoringData] = useState<HealthcareMonitoring>(mockMonitoringData);
-  const [soundEnabled, setSoundEnabled] = useState(soundAlertsEnabled);
-  const [alertFilter, setAlertFilter] = useState<
-    "all" | "critical" | "warning" | "info"
-  >("all");
-  const [connectionStatus, setConnectionStatus] = useState<
-    "connected" | "disconnected" | "reconnecting"
-  >("connected");
-  const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [isMonitoring, setIsMonitoring,] = useState(true,)
+  const [selectedPatient, setSelectedPatient,] = useState<string>('patient-002',)
+  const [monitoringData, setMonitoringData,] = useState<HealthcareMonitoring>(mockMonitoringData,)
+  const [soundEnabled, setSoundEnabled,] = useState(soundAlertsEnabled,)
+  const [alertFilter, setAlertFilter,] = useState<
+    'all' | 'critical' | 'warning' | 'info'
+  >('all',)
+  const [connectionStatus, setConnectionStatus,] = useState<
+    'connected' | 'disconnected' | 'reconnecting'
+  >('connected',)
+  const [lastRefresh, setLastRefresh,] = useState(new Date(),)
 
   // ====== REAL-TIME DATA SIMULATION ======
   useEffect(() => {
     if (!isMonitoring || !autoRefresh) {
-      return;
+      return
     }
 
     const interval = setInterval(() => {
       // Simulate real-time data updates
-      setLastRefresh(new Date());
+      setLastRefresh(new Date(),)
 
       // Simulate occasional connection issues
       if (Math.random() < 0.02) {
         // 2% chance of connection issue
-        setConnectionStatus("reconnecting");
-        setTimeout(() => setConnectionStatus("connected"), 3000);
+        setConnectionStatus('reconnecting',)
+        setTimeout(() => setConnectionStatus('connected',), 3000,)
       }
 
       // Update monitoring data with new simulated readings
-      setMonitoringData((prev) => ({
+      setMonitoringData((prev,) => ({
         ...prev,
         lastUpdate: new Date(),
         monitoringData: {
@@ -356,35 +356,35 @@ export default function RealTimeMonitoringDashboard({
                 new Date(),
               ],
               values: [
-                ...prev.monitoringData.vitalSigns.heartRate.values.slice(-4),
+                ...prev.monitoringData.vitalSigns.heartRate.values.slice(-4,),
                 75 + Math.random() * 20,
               ],
             },
           },
         },
-      }));
-    }, refreshInterval * 1000);
+      }))
+    }, refreshInterval * 1000,)
 
-    return () => clearInterval(interval);
-  }, [isMonitoring, autoRefresh, refreshInterval]);
+    return () => clearInterval(interval,)
+  }, [isMonitoring, autoRefresh, refreshInterval,],)
 
   // ====== EVENT HANDLERS ======
   const toggleMonitoring = useCallback(() => {
-    setIsMonitoring((prev) => !prev);
-  }, []);
+    setIsMonitoring((prev,) => !prev)
+  }, [],)
 
-  const handlePatientSelect = useCallback((patientId: string) => {
-    setSelectedPatient(patientId);
+  const handlePatientSelect = useCallback((patientId: string,) => {
+    setSelectedPatient(patientId,)
     // In real implementation, fetch patient-specific monitoring data
-  }, []);
+  }, [],)
 
   const handleAlertAction = useCallback(
-    (alertId: string, action: "acknowledge" | "dismiss" | "escalate") => {
-      console.log(`Alert ${alertId} ${action}ed`);
+    (alertId: string, action: 'acknowledge' | 'dismiss' | 'escalate',) => {
+      console.log(`Alert ${alertId} ${action}ed`,)
       // In real implementation, update alert status
     },
     [],
-  );
+  )
 
   // const _playAlertSound = useCallback(() => {
   //   if (soundEnabled && typeof window !== "undefined") {
@@ -395,44 +395,44 @@ export default function RealTimeMonitoringDashboard({
 
   // ====== COMPUTED VALUES ======
   const currentPatient = useMemo(
-    () => activePatientsMonitoring.find((p) => p.id === selectedPatient),
-    [selectedPatient],
-  );
+    () => activePatientsMonitoring.find((p,) => p.id === selectedPatient),
+    [selectedPatient,],
+  )
 
   const totalAlerts = useMemo(
     () =>
       monitoringData.alerts.criticalAlerts.length
       + monitoringData.alerts.warningAlerts.length
       + monitoringData.alerts.complianceAlerts.length,
-    [monitoringData.alerts],
-  );
+    [monitoringData.alerts,],
+  )
 
   const filteredAlerts = useMemo(() => {
     const allAlerts = [
-      ...monitoringData.alerts.criticalAlerts.map((a) => ({
+      ...monitoringData.alerts.criticalAlerts.map((a,) => ({
         ...a,
-        category: "critical" as const,
+        category: 'critical' as const,
       })),
-      ...monitoringData.alerts.warningAlerts.map((a) => ({
+      ...monitoringData.alerts.warningAlerts.map((a,) => ({
         ...a,
-        category: "warning" as const,
+        category: 'warning' as const,
       })),
-      ...monitoringData.alerts.complianceAlerts.map((a) => ({
+      ...monitoringData.alerts.complianceAlerts.map((a,) => ({
         ...a,
-        category: "compliance" as const,
+        category: 'compliance' as const,
       })),
-    ];
+    ]
 
-    if (alertFilter === "all") {
-      return allAlerts;
+    if (alertFilter === 'all') {
+      return allAlerts
     }
-    return allAlerts.filter((alert) => alert.severity === alertFilter);
-  }, [monitoringData.alerts, alertFilter]);
+    return allAlerts.filter((alert,) => alert.severity === alertFilter)
+  }, [monitoringData.alerts, alertFilter,],)
 
   const systemHealth = useMemo(() => {
-    const connectedDevices = activePatientsMonitoring.length;
-    const alertsCount = totalAlerts;
-    const uptime = connectionStatus === "connected" ? 99.8 : 95.2;
+    const connectedDevices = activePatientsMonitoring.length
+    const alertsCount = totalAlerts
+    const uptime = connectionStatus === 'connected' ? 99.8 : 95.2
 
     return {
       connectedDevices,
@@ -440,23 +440,23 @@ export default function RealTimeMonitoringDashboard({
       uptime,
       status: connectionStatus,
       dataQuality: 98.5,
-    };
-  }, [totalAlerts, connectionStatus]);
+    }
+  }, [totalAlerts, connectionStatus,],)
 
   // ====== RENDER COMPONENTS ======
-  const renderPatientCard = (patient: (typeof activePatientsMonitoring)[0]) => (
+  const renderPatientCard = (patient: (typeof activePatientsMonitoring)[0],) => (
     <Card
       key={patient.id}
       className={cn(
-        "cursor-pointer transition-all duration-200 hover:shadow-md",
-        selectedPatient === patient.id ? "ring-2 ring-blue-500 bg-blue-50" : "",
-        patient.status === "critical"
-          ? "border-l-4 border-l-red-500"
-          : patient.status === "attention"
-          ? "border-l-4 border-l-yellow-500"
-          : "border-l-4 border-l-green-500",
+        'cursor-pointer transition-all duration-200 hover:shadow-md',
+        selectedPatient === patient.id ? 'ring-2 ring-blue-500 bg-blue-50' : '',
+        patient.status === 'critical'
+          ? 'border-l-4 border-l-red-500'
+          : patient.status === 'attention'
+          ? 'border-l-4 border-l-yellow-500'
+          : 'border-l-4 border-l-green-500',
       )}
-      onClick={() => handlePatientSelect(patient.id)}
+      onClick={() => handlePatientSelect(patient.id,)}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
@@ -465,10 +465,10 @@ export default function RealTimeMonitoringDashboard({
               <AvatarImage src={`/avatars/${patient.id}.jpg`} />
               <AvatarFallback>
                 {patient.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .slice(0, 2)}
+                  .split(' ',)
+                  .map((n,) => n[0])
+                  .join('',)
+                  .slice(0, 2,)}
               </AvatarFallback>
             </Avatar>
             <div>
@@ -480,25 +480,25 @@ export default function RealTimeMonitoringDashboard({
           </div>
           <div className="flex items-center space-x-2">
             <Badge
-              variant={patient.riskLevel === "critical"
-                ? "destructive"
-                : patient.riskLevel === "high"
-                ? "destructive"
-                : patient.riskLevel === "medium"
-                ? "secondary"
-                : "outline"}
+              variant={patient.riskLevel === 'critical'
+                ? 'destructive'
+                : patient.riskLevel === 'high'
+                ? 'destructive'
+                : patient.riskLevel === 'medium'
+                ? 'secondary'
+                : 'outline'}
             >
-              {patient.riskLevel === "critical"
-                ? "Crítico"
-                : patient.riskLevel === "high"
-                ? "Alto"
-                : patient.riskLevel === "medium"
-                ? "Médio"
-                : "Baixo"}
+              {patient.riskLevel === 'critical'
+                ? 'Crítico'
+                : patient.riskLevel === 'high'
+                ? 'Alto'
+                : patient.riskLevel === 'medium'
+                ? 'Médio'
+                : 'Baixo'}
             </Badge>
             {patient.alerts > 0 && (
               <Badge variant="destructive" className="text-xs">
-                {patient.alerts} alerta{patient.alerts > 1 ? "s" : ""}
+                {patient.alerts} alerta{patient.alerts > 1 ? 's' : ''}
               </Badge>
             )}
           </div>
@@ -513,12 +513,12 @@ export default function RealTimeMonitoringDashboard({
             <span className="text-muted-foreground">FC:</span>
             <span
               className={cn(
-                "font-medium",
+                'font-medium',
                 patient.vitals.hr > 100
-                  ? "text-red-600"
+                  ? 'text-red-600'
                   : patient.vitals.hr > 90
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                  ? 'text-yellow-600'
+                  : 'text-green-600',
               )}
             >
               {patient.vitals.hr} bpm
@@ -532,12 +532,12 @@ export default function RealTimeMonitoringDashboard({
             <span className="text-muted-foreground">Temp:</span>
             <span
               className={cn(
-                "font-medium",
+                'font-medium',
                 patient.vitals.temp > 37.5
-                  ? "text-red-600"
+                  ? 'text-red-600'
                   : patient.vitals.temp > 37
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                  ? 'text-yellow-600'
+                  : 'text-green-600',
               )}
             >
               {patient.vitals.temp}°C
@@ -547,12 +547,12 @@ export default function RealTimeMonitoringDashboard({
             <span className="text-muted-foreground">SpO₂:</span>
             <span
               className={cn(
-                "font-medium",
+                'font-medium',
                 patient.vitals.spo2 < 95
-                  ? "text-red-600"
+                  ? 'text-red-600'
                   : patient.vitals.spo2 < 97
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                  ? 'text-yellow-600'
+                  : 'text-green-600',
               )}
             >
               {patient.vitals.spo2}%
@@ -563,39 +563,39 @@ export default function RealTimeMonitoringDashboard({
         <div className="flex items-center justify-between mt-3">
           <div
             className={cn(
-              "flex items-center space-x-1 text-xs",
-              patient.status === "critical"
-                ? "text-red-600"
-                : patient.status === "attention"
-                ? "text-yellow-600"
-                : "text-green-600",
+              'flex items-center space-x-1 text-xs',
+              patient.status === 'critical'
+                ? 'text-red-600'
+                : patient.status === 'attention'
+                ? 'text-yellow-600'
+                : 'text-green-600',
             )}
           >
             <Activity className="h-3 w-3" />
             <span>
-              {patient.status === "critical"
-                ? "Crítico"
-                : patient.status === "attention"
-                ? "Atenção"
-                : "Estável"}
+              {patient.status === 'critical'
+                ? 'Crítico'
+                : patient.status === 'attention'
+                ? 'Atenção'
+                : 'Estável'}
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
-            {Math.round((Date.now() - patient.lastReading.getTime()) / 60_000)}
+            {Math.round((Date.now() - patient.lastReading.getTime()) / 60_000,)}
             min atrás
           </div>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   const renderVitalSignCard = (
     title: string,
     current: string | number,
     previous: string | number,
     unit: string,
-    trend: "up" | "down" | "stable",
-    status: "normal" | "warning" | "critical",
+    trend: 'up' | 'down' | 'stable',
+    status: 'normal' | 'warning' | 'critical',
   ) => (
     <Card>
       <CardContent className="p-4">
@@ -605,17 +605,17 @@ export default function RealTimeMonitoringDashboard({
           </div>
           <div
             className={cn(
-              "flex items-center space-x-1",
-              trend === "up"
-                ? "text-red-500"
-                : trend === "down"
-                ? "text-green-500"
-                : "text-gray-500",
+              'flex items-center space-x-1',
+              trend === 'up'
+                ? 'text-red-500'
+                : trend === 'down'
+                ? 'text-green-500'
+                : 'text-gray-500',
             )}
           >
-            {trend === "up"
+            {trend === 'up'
               ? <TrendingUp className="h-3 w-3" />
-              : trend === "down"
+              : trend === 'down'
               ? <TrendingDown className="h-3 w-3" />
               : <Activity className="h-3 w-3" />}
           </div>
@@ -623,12 +623,12 @@ export default function RealTimeMonitoringDashboard({
         <div className="space-y-2">
           <div
             className={cn(
-              "text-2xl font-bold",
-              status === "critical"
-                ? "text-red-600"
-                : status === "warning"
-                ? "text-yellow-600"
-                : "text-green-600",
+              'text-2xl font-bold',
+              status === 'critical'
+                ? 'text-red-600'
+                : status === 'warning'
+                ? 'text-yellow-600'
+                : 'text-green-600',
             )}
           >
             {current}
@@ -639,71 +639,71 @@ export default function RealTimeMonitoringDashboard({
             {unit}
           </div>
           <Badge
-            variant={status === "critical"
-              ? "destructive"
-              : status === "warning"
-              ? "secondary"
-              : "outline"}
+            variant={status === 'critical'
+              ? 'destructive'
+              : status === 'warning'
+              ? 'secondary'
+              : 'outline'}
             className="text-xs"
           >
-            {status === "critical"
-              ? "Crítico"
-              : status === "warning"
-              ? "Atenção"
-              : "Normal"}
+            {status === 'critical'
+              ? 'Crítico'
+              : status === 'warning'
+              ? 'Atenção'
+              : 'Normal'}
           </Badge>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
-  const renderAlertCard = (alert: unknown, index: number) => (
+  const renderAlertCard = (alert: unknown, index: number,) => (
     <Card
       key={alert.id || index}
       className={cn(
-        "border-l-4",
-        alert.severity === "critical"
-          ? "border-l-red-500 bg-red-50"
-          : alert.severity === "error"
-          ? "border-l-red-500 bg-red-50"
-          : alert.severity === "warning"
-          ? "border-l-yellow-500 bg-yellow-50"
-          : "border-l-blue-500 bg-blue-50",
+        'border-l-4',
+        alert.severity === 'critical'
+          ? 'border-l-red-500 bg-red-50'
+          : alert.severity === 'error'
+          ? 'border-l-red-500 bg-red-50'
+          : alert.severity === 'warning'
+          ? 'border-l-yellow-500 bg-yellow-50'
+          : 'border-l-blue-500 bg-blue-50',
       )}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            {alert.severity === "critical" || alert.severity === "error"
+            {alert.severity === 'critical' || alert.severity === 'error'
               ? <AlertTriangle className="h-4 w-4 text-red-600" />
-              : alert.severity === "warning"
+              : alert.severity === 'warning'
               ? <AlertCircle className="h-4 w-4 text-yellow-600" />
               : <Info className="h-4 w-4 text-blue-600" />}
             <CardTitle className="text-base">{alert.title}</CardTitle>
           </div>
           <div className="flex items-center space-x-2">
             <Badge
-              variant={alert.severity === "critical" || alert.severity === "error"
-                ? "destructive"
-                : alert.severity === "warning"
-                ? "secondary"
-                : "outline"}
+              variant={alert.severity === 'critical' || alert.severity === 'error'
+                ? 'destructive'
+                : alert.severity === 'warning'
+                ? 'secondary'
+                : 'outline'}
             >
-              {alert.severity === "critical"
-                ? "Crítico"
-                : alert.severity === "error"
-                ? "Erro"
-                : alert.severity === "warning"
-                ? "Aviso"
-                : "Info"}
+              {alert.severity === 'critical'
+                ? 'Crítico'
+                : alert.severity === 'error'
+                ? 'Erro'
+                : alert.severity === 'warning'
+                ? 'Aviso'
+                : 'Info'}
             </Badge>
             <span className="text-xs text-muted-foreground">
               {alert.triggeredAt
-                ? new Date(alert.triggeredAt).toLocaleTimeString("pt-BR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-                : "Agora"}
+                ? new Date(alert.triggeredAt,).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                },)
+                : 'Agora'}
             </span>
           </div>
         </div>
@@ -715,7 +715,7 @@ export default function RealTimeMonitoringDashboard({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => handleAlertAction(alert.id, "acknowledge")}
+              onClick={() => handleAlertAction(alert.id, 'acknowledge',)}
             >
               <CheckCircle className="h-3 w-3 mr-1" />
               Confirmar
@@ -724,7 +724,7 @@ export default function RealTimeMonitoringDashboard({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleAlertAction(alert.id, "dismiss")}
+                onClick={() => handleAlertAction(alert.id, 'dismiss',)}
               >
                 <XCircle className="h-3 w-3 mr-1" />
                 Dispensar
@@ -733,7 +733,7 @@ export default function RealTimeMonitoringDashboard({
             <Button
               size="sm"
               variant="destructive"
-              onClick={() => handleAlertAction(alert.id, "escalate")}
+              onClick={() => handleAlertAction(alert.id, 'escalate',)}
             >
               <Phone className="h-3 w-3 mr-1" />
               Escalar
@@ -742,7 +742,7 @@ export default function RealTimeMonitoringDashboard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   // ====== MAIN RENDER ======
   return (
@@ -762,33 +762,33 @@ export default function RealTimeMonitoringDashboard({
           <div className="flex items-center space-x-2">
             <div
               className={cn(
-                "w-2 h-2 rounded-full",
-                connectionStatus === "connected"
-                  ? "bg-green-500 animate-pulse"
-                  : connectionStatus === "reconnecting"
-                  ? "bg-yellow-500 animate-pulse"
-                  : "bg-red-500",
+                'w-2 h-2 rounded-full',
+                connectionStatus === 'connected'
+                  ? 'bg-green-500 animate-pulse'
+                  : connectionStatus === 'reconnecting'
+                  ? 'bg-yellow-500 animate-pulse'
+                  : 'bg-red-500',
               )}
             />
             <span className="text-sm font-medium">
-              {connectionStatus === "connected"
-                ? "Conectado"
-                : connectionStatus === "reconnecting"
-                ? "Reconectando..."
-                : "Desconectado"}
+              {connectionStatus === 'connected'
+                ? 'Conectado'
+                : connectionStatus === 'reconnecting'
+                ? 'Reconectando...'
+                : 'Desconectado'}
             </span>
           </div>
 
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={() => setSoundEnabled(!soundEnabled,)}
           >
             {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </Button>
 
           <Button
-            variant={isMonitoring ? "destructive" : "default"}
+            variant={isMonitoring ? 'destructive' : 'default'}
             size="sm"
             onClick={toggleMonitoring}
           >
@@ -826,7 +826,7 @@ export default function RealTimeMonitoringDashboard({
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              {connectionStatus === "connected"
+              {connectionStatus === 'connected'
                 ? <Wifi className="h-5 w-5 text-green-600" />
                 : <WifiOff className="h-5 w-5 text-red-600" />}
               <span className="font-medium">
@@ -834,12 +834,12 @@ export default function RealTimeMonitoringDashboard({
               </span>
             </div>
             <div className="text-sm text-muted-foreground">
-              Última atualização: {lastRefresh.toLocaleTimeString("pt-BR")}
+              Última atualização: {lastRefresh.toLocaleTimeString('pt-BR',)}
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm">
-              Qualidade dos Dados:{" "}
+              Qualidade dos Dados:{' '}
               <span className="font-bold text-green-600">
                 {systemHealth.dataQuality}%
               </span>
@@ -863,7 +863,7 @@ export default function RealTimeMonitoringDashboard({
             </CardHeader>
             <CardContent className="p-0">
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                {activePatientsMonitoring.map(renderPatientCard)}
+                {activePatientsMonitoring.map(renderPatientCard,)}
               </div>
             </CardContent>
           </Card>
@@ -881,10 +881,10 @@ export default function RealTimeMonitoringDashboard({
                       <AvatarImage src={`/avatars/${currentPatient.id}.jpg`} />
                       <AvatarFallback className="text-lg">
                         {currentPatient.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .slice(0, 2)}
+                          .split(' ',)
+                          .map((n,) => n[0])
+                          .join('',)
+                          .slice(0, 2,)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -898,18 +898,18 @@ export default function RealTimeMonitoringDashboard({
                   </div>
                   <div className="flex items-center space-x-3">
                     <Badge
-                      variant={currentPatient.status === "critical"
-                        ? "destructive"
-                        : currentPatient.status === "attention"
-                        ? "secondary"
-                        : "outline"}
+                      variant={currentPatient.status === 'critical'
+                        ? 'destructive'
+                        : currentPatient.status === 'attention'
+                        ? 'secondary'
+                        : 'outline'}
                       className="text-base px-3 py-1"
                     >
-                      {currentPatient.status === "critical"
-                        ? "Estado Crítico"
-                        : currentPatient.status === "attention"
-                        ? "Requer Atenção"
-                        : "Estável"}
+                      {currentPatient.status === 'critical'
+                        ? 'Estado Crítico'
+                        : currentPatient.status === 'attention'
+                        ? 'Requer Atenção'
+                        : 'Estável'}
                     </Badge>
                     <Button size="sm">
                       <Stethoscope className="h-4 w-4 mr-2" />
@@ -924,52 +924,52 @@ export default function RealTimeMonitoringDashboard({
           {/* Vital Signs Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {renderVitalSignCard(
-              "Frequência Cardíaca",
+              'Frequência Cardíaca',
               currentPatient?.vitals.hr || 0,
               75,
-              " bpm",
-              "up",
+              ' bpm',
+              'up',
               (currentPatient?.vitals.hr || 0) > 100
-                ? "critical"
+                ? 'critical'
                 : (currentPatient?.vitals.hr || 0) > 90
-                ? "warning"
-                : "normal",
+                ? 'warning'
+                : 'normal',
             )}
             {renderVitalSignCard(
-              "Pressão Arterial",
-              currentPatient?.vitals.bp || "120/80",
-              "115/75",
-              "",
-              "up",
-              currentPatient?.vitals.bp.includes("160")
-                ? "critical"
-                : currentPatient?.vitals.bp.includes("145")
-                ? "warning"
-                : "normal",
+              'Pressão Arterial',
+              currentPatient?.vitals.bp || '120/80',
+              '115/75',
+              '',
+              'up',
+              currentPatient?.vitals.bp.includes('160',)
+                ? 'critical'
+                : currentPatient?.vitals.bp.includes('145',)
+                ? 'warning'
+                : 'normal',
             )}
             {renderVitalSignCard(
-              "Temperatura",
+              'Temperatura',
               currentPatient?.vitals.temp || 36.5,
               36.2,
-              "°C",
-              "up",
+              '°C',
+              'up',
               (currentPatient?.vitals.temp || 0) > 37.5
-                ? "critical"
+                ? 'critical'
                 : (currentPatient?.vitals.temp || 0) > 37
-                ? "warning"
-                : "normal",
+                ? 'warning'
+                : 'normal',
             )}
             {renderVitalSignCard(
-              "Saturação O₂",
+              'Saturação O₂',
               currentPatient?.vitals.spo2 || 98,
               99,
-              "%",
-              "down",
+              '%',
+              'down',
               (currentPatient?.vitals.spo2 || 0) < 95
-                ? "critical"
+                ? 'critical'
                 : (currentPatient?.vitals.spo2 || 0) < 97
-                ? "warning"
-                : "normal",
+                ? 'warning'
+                : 'normal',
             )}
           </div>
 
@@ -1003,7 +1003,7 @@ export default function RealTimeMonitoringDashboard({
                 <div className="flex items-center space-x-2">
                   <Select
                     value={alertFilter}
-                    onValueChange={(value: unknown) => setAlertFilter(value)}
+                    onValueChange={(value: unknown,) => setAlertFilter(value,)}
                   >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue />
@@ -1017,7 +1017,7 @@ export default function RealTimeMonitoringDashboard({
                   </Select>
                   <Badge variant="outline">
                     {filteredAlerts.length} alerta
-                    {filteredAlerts.length !== 1 ? "s" : ""}
+                    {filteredAlerts.length !== 1 ? 's' : ''}
                   </Badge>
                 </div>
               </div>
@@ -1026,7 +1026,7 @@ export default function RealTimeMonitoringDashboard({
               {filteredAlerts.length > 0
                 ? (
                   <div className="space-y-4">
-                    {filteredAlerts.map(renderAlertCard)}
+                    {filteredAlerts.map(renderAlertCard,)}
                   </div>
                 )
                 : (
@@ -1043,5 +1043,5 @@ export default function RealTimeMonitoringDashboard({
         </div>
       </div>
     </div>
-  );
+  )
 }

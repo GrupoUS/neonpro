@@ -1,45 +1,45 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Cloud, Database, Shield, Zap } from "lucide-react";
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Activity, Cloud, Database, Shield, Zap, } from 'lucide-react'
 
 export function SystemStatusSection() {
   const systemStatus = [
     {
-      name: "API Principal",
-      status: "Operacional",
+      name: 'API Principal',
+      status: 'Operacional',
       icon: Activity,
-      color: "bg-green-100 text-green-800",
-      uptime: "99.9%",
+      color: 'bg-green-100 text-green-800',
+      uptime: '99.9%',
     },
     {
-      name: "Banco de Dados",
-      status: "Operacional",
+      name: 'Banco de Dados',
+      status: 'Operacional',
       icon: Database,
-      color: "bg-green-100 text-green-800",
-      uptime: "99.8%",
+      color: 'bg-green-100 text-green-800',
+      uptime: '99.8%',
     },
     {
-      name: "Serviços Cloud",
-      status: "Operacional",
+      name: 'Serviços Cloud',
+      status: 'Operacional',
       icon: Cloud,
-      color: "bg-green-100 text-green-800",
-      uptime: "99.9%",
+      color: 'bg-green-100 text-green-800',
+      uptime: '99.9%',
     },
     {
-      name: "Segurança",
-      status: "Monitorando",
+      name: 'Segurança',
+      status: 'Monitorando',
       icon: Shield,
-      color: "bg-blue-100 text-blue-800",
-      uptime: "100%",
+      color: 'bg-blue-100 text-blue-800',
+      uptime: '100%',
     },
     {
-      name: "AI Services",
-      status: "Operacional",
+      name: 'AI Services',
+      status: 'Operacional',
       icon: Zap,
-      color: "bg-green-100 text-green-800",
-      uptime: "99.7%",
+      color: 'bg-green-100 text-green-800',
+      uptime: '99.7%',
     },
-  ];
+  ]
 
   return (
     <Card className="h-full">
@@ -51,8 +51,8 @@ export function SystemStatusSection() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {systemStatus.map((service, index) => {
-            const { icon: IconComponent } = service;
+          {systemStatus.map((service, index,) => {
+            const { icon: IconComponent, } = service
             return (
               <div
                 className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
@@ -71,10 +71,10 @@ export function SystemStatusSection() {
                 </div>
                 <Badge className={service.color}>{service.status}</Badge>
               </div>
-            );
-          })}
+            )
+          },)}
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 // import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+import { Switch, } from '@/components/ui/switch'
 import {
   Activity,
   AlertTriangle,
@@ -15,99 +15,99 @@ import {
   Settings,
   Target,
   Zap,
-} from "lucide-react";
-import type React from "react";
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+} from 'lucide-react'
+import type React from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, } from 'react'
 
 // ================================================================================
 // TYPES & INTERFACES
 // ================================================================================
 
 export interface TremorPattern {
-  frequency: number; // Hz
-  amplitude: number; // pixels
-  consistency: number; // 0-1, how regular the tremor is
-  dominant_axis: "x" | "y" | "both";
+  frequency: number // Hz
+  amplitude: number // pixels
+  consistency: number // 0-1, how regular the tremor is
+  dominant_axis: 'x' | 'y' | 'both'
   medical_classification:
-    | "essential"
-    | "parkinsonian"
-    | "physiological"
-    | "medication-induced"
-    | "stress-related";
+    | 'essential'
+    | 'parkinsonian'
+    | 'physiological'
+    | 'medication-induced'
+    | 'stress-related'
 }
 
 export interface StabilizationSettings {
-  enabled: boolean;
-  sensitivity: number; // 1-10 scale
-  stabilization_window: number; // milliseconds to average movement
-  movement_threshold: number; // pixels - ignore smaller movements
-  dwell_confirmation: boolean;
-  dwell_time: number; // milliseconds
-  large_targets: boolean;
-  target_size_multiplier: number; // multiply standard sizes
-  hover_expansion: boolean;
-  hover_expansion_factor: number; // expand hover area by factor
-  touch_hold_delay: number; // milliseconds before registering touch
-  double_tap_prevention: boolean;
-  double_tap_window: number; // milliseconds
+  enabled: boolean
+  sensitivity: number // 1-10 scale
+  stabilization_window: number // milliseconds to average movement
+  movement_threshold: number // pixels - ignore smaller movements
+  dwell_confirmation: boolean
+  dwell_time: number // milliseconds
+  large_targets: boolean
+  target_size_multiplier: number // multiply standard sizes
+  hover_expansion: boolean
+  hover_expansion_factor: number // expand hover area by factor
+  touch_hold_delay: number // milliseconds before registering touch
+  double_tap_prevention: boolean
+  double_tap_window: number // milliseconds
 }
 
 export interface TremorFriendlyElement {
-  id: string;
-  element: HTMLElement;
-  original_size: { width: number; height: number; };
-  expanded_area: DOMRect;
-  healthcare_priority: "emergency" | "high" | "normal" | "low";
-  activation_method: "click" | "hover" | "dwell" | "touch";
-  tremor_compensation: boolean;
-  stabilized_position: { x: number; y: number; } | null;
-  interaction_history: InteractionEvent[];
-  metadata?: unknown;
+  id: string
+  element: HTMLElement
+  original_size: { width: number; height: number }
+  expanded_area: DOMRect
+  healthcare_priority: 'emergency' | 'high' | 'normal' | 'low'
+  activation_method: 'click' | 'hover' | 'dwell' | 'touch'
+  tremor_compensation: boolean
+  stabilized_position: { x: number; y: number } | null
+  interaction_history: InteractionEvent[]
+  metadata?: unknown
 }
 
 export interface InteractionEvent {
-  timestamp: number;
-  type: "move" | "click" | "hover" | "touch_start" | "touch_end";
-  position: { x: number; y: number; };
-  stabilized_position: { x: number; y: number; };
-  tremor_detected: boolean;
-  confidence: number; // 0-1
+  timestamp: number
+  type: 'move' | 'click' | 'hover' | 'touch_start' | 'touch_end'
+  position: { x: number; y: number }
+  stabilized_position: { x: number; y: number }
+  tremor_detected: boolean
+  confidence: number // 0-1
 }
 
 export interface TremorDetectionResult {
-  has_tremor: boolean;
-  pattern: TremorPattern | null;
-  confidence: number;
-  recommendations: string[];
+  has_tremor: boolean
+  pattern: TremorPattern | null
+  confidence: number
+  recommendations: string[]
 }
 
 export interface TremorFriendlyContextType {
   // Settings & Configuration
-  settings: StabilizationSettings;
-  updateSettings: (settings: Partial<StabilizationSettings>) => void;
+  settings: StabilizationSettings
+  updateSettings: (settings: Partial<StabilizationSettings>,) => void
 
   // Tremor Detection
-  tremor_detection: TremorDetectionResult | null;
-  detectTremor: () => void;
+  tremor_detection: TremorDetectionResult | null
+  detectTremor: () => void
 
   // Element Management
-  elements: TremorFriendlyElement[];
+  elements: TremorFriendlyElement[]
   registerElement: (
     id: string,
     element: HTMLElement,
     config?: Partial<TremorFriendlyElement>,
-  ) => void;
-  unregisterElement: (id: string) => void;
+  ) => void
+  unregisterElement: (id: string,) => void
 
   // Interaction State
-  active_element: string | null;
-  stabilized_cursor: { x: number; y: number; } | null;
+  active_element: string | null
+  stabilized_cursor: { x: number; y: number } | null
 
   // Healthcare Mode
-  healthcare_mode: boolean;
-  post_procedure_mode: boolean;
-  setHealthcareMode: (mode: boolean) => void;
-  setPostProcedureMode: (mode: boolean) => void;
+  healthcare_mode: boolean
+  post_procedure_mode: boolean
+  setHealthcareMode: (mode: boolean,) => void
+  setPostProcedureMode: (mode: boolean,) => void
 }
 
 // ================================================================================
@@ -115,93 +115,93 @@ export interface TremorFriendlyContextType {
 // ================================================================================
 
 const _HEALTHCARE_TARGET_CONFIGS = {
-  "emergency-button": {
+  'emergency-button': {
     target_size_multiplier: 2,
     dwell_time: 2000,
-    priority: "emergency" as const,
-    background_color: "#ef4444",
-    hover_color: "#dc2626",
+    priority: 'emergency' as const,
+    background_color: '#ef4444',
+    hover_color: '#dc2626',
   },
-  "procedure-action": {
+  'procedure-action': {
     target_size_multiplier: 1.8,
     dwell_time: 1500,
-    priority: "high" as const,
-    background_color: "#f97316",
-    hover_color: "#ea580c",
+    priority: 'high' as const,
+    background_color: '#f97316',
+    hover_color: '#ea580c',
   },
-  "patient-navigation": {
+  'patient-navigation': {
     target_size_multiplier: 1.5,
     dwell_time: 800,
-    priority: "normal" as const,
-    background_color: "#3b82f6",
-    hover_color: "#2563eb",
+    priority: 'normal' as const,
+    background_color: '#3b82f6',
+    hover_color: '#2563eb',
   },
-  "information-display": {
+  'information-display': {
     target_size_multiplier: 1.3,
     dwell_time: 600,
-    priority: "low" as const,
-    background_color: "#6b7280",
-    hover_color: "#4b5563",
+    priority: 'low' as const,
+    background_color: '#6b7280',
+    hover_color: '#4b5563',
   },
-} as const;
+} as const
 
 const TREMOR_CLASSIFICATIONS = {
-  "essential": {
-    name: "Tremor Essencial",
-    description: "Tremor hereditário, piora com movimento",
-    typical_frequency: [4, 12], // Hz range
-    compensation_strategy: "high_stabilization",
+  'essential': {
+    name: 'Tremor Essencial',
+    description: 'Tremor hereditário, piora com movimento',
+    typical_frequency: [4, 12,], // Hz range
+    compensation_strategy: 'high_stabilization',
     recommended_settings: {
       sensitivity: 8,
       stabilization_window: 300,
       dwell_time: 1200,
     },
   },
-  "parkinsonian": {
-    name: "Tremor Parkinsoniano",
-    description: "Tremor de repouso, melhora com movimento",
-    typical_frequency: [3, 6], // Hz range
-    compensation_strategy: "medium_stabilization",
+  'parkinsonian': {
+    name: 'Tremor Parkinsoniano',
+    description: 'Tremor de repouso, melhora com movimento',
+    typical_frequency: [3, 6,], // Hz range
+    compensation_strategy: 'medium_stabilization',
     recommended_settings: {
       sensitivity: 6,
       stabilization_window: 500,
       dwell_time: 1500,
     },
   },
-  "physiological": {
-    name: "Tremor Fisiológico",
-    description: "Tremor normal aumentado por stress/cafeína",
-    typical_frequency: [8, 12], // Hz range
-    compensation_strategy: "low_stabilization",
+  'physiological': {
+    name: 'Tremor Fisiológico',
+    description: 'Tremor normal aumentado por stress/cafeína',
+    typical_frequency: [8, 12,], // Hz range
+    compensation_strategy: 'low_stabilization',
     recommended_settings: {
       sensitivity: 4,
       stabilization_window: 150,
       dwell_time: 800,
     },
   },
-  "medication-induced": {
-    name: "Tremor Medicamentoso",
-    description: "Causado por medicamentos",
-    typical_frequency: [5, 10], // Hz range
-    compensation_strategy: "adaptive_stabilization",
+  'medication-induced': {
+    name: 'Tremor Medicamentoso',
+    description: 'Causado por medicamentos',
+    typical_frequency: [5, 10,], // Hz range
+    compensation_strategy: 'adaptive_stabilization',
     recommended_settings: {
       sensitivity: 7,
       stabilization_window: 250,
       dwell_time: 1000,
     },
   },
-  "stress-related": {
-    name: "Tremor por Ansiedade",
-    description: "Relacionado ao stress do ambiente hospitalar",
-    typical_frequency: [6, 10], // Hz range
-    compensation_strategy: "comfort_stabilization",
+  'stress-related': {
+    name: 'Tremor por Ansiedade',
+    description: 'Relacionado ao stress do ambiente hospitalar',
+    typical_frequency: [6, 10,], // Hz range
+    compensation_strategy: 'comfort_stabilization',
     recommended_settings: {
       sensitivity: 5,
       stabilization_window: 200,
       dwell_time: 900,
     },
   },
-} as const;
+} as const
 
 const DEFAULT_SETTINGS: StabilizationSettings = {
   enabled: false,
@@ -217,29 +217,29 @@ const DEFAULT_SETTINGS: StabilizationSettings = {
   touch_hold_delay: 300,
   double_tap_prevention: true,
   double_tap_window: 500,
-};
+}
 
 // ================================================================================
 // CONTEXT & PROVIDER
 // ================================================================================
 
-const TremorFriendlyContext = createContext<TremorFriendlyContextType | null>(null);
+const TremorFriendlyContext = createContext<TremorFriendlyContextType | null>(null,)
 
-export function TremorFriendlyProvider({ children }: { children: React.ReactNode; }) {
+export function TremorFriendlyProvider({ children, }: { children: React.ReactNode },) {
   // State Management
-  const [settings, setSettings] = useState<StabilizationSettings>(DEFAULT_SETTINGS);
-  const [tremorDetection, setTremorDetection] = useState<TremorDetectionResult | null>(null);
-  const [elements, setElements] = useState<TremorFriendlyElement[]>([]);
-  const [activeElement, setActiveElement] = useState<string | null>(null);
-  const [stabilizedCursor, setStabilizedCursor] = useState<{ x: number; y: number; } | null>(null);
-  const [healthcareMode, setHealthcareMode] = useState(true);
-  const [postProcedureMode, setPostProcedureMode] = useState(false);
+  const [settings, setSettings,] = useState<StabilizationSettings>(DEFAULT_SETTINGS,)
+  const [tremorDetection, setTremorDetection,] = useState<TremorDetectionResult | null>(null,)
+  const [elements, setElements,] = useState<TremorFriendlyElement[]>([],)
+  const [activeElement, setActiveElement,] = useState<string | null>(null,)
+  const [stabilizedCursor, setStabilizedCursor,] = useState<{ x: number; y: number } | null>(null,)
+  const [healthcareMode, setHealthcareMode,] = useState(true,)
+  const [postProcedureMode, setPostProcedureMode,] = useState(false,)
 
   // Refs for tracking
-  const movementHistory = useRef<{ x: number; y: number; timestamp: number; }[]>([]);
-  const lastInteraction = useRef<number>(0);
-  const dwellTimeout = useRef<NodeJS.Timeout | null>(null);
-  const _stabilizationInterval = useRef<NodeJS.Timeout | null>(null);
+  const movementHistory = useRef<{ x: number; y: number; timestamp: number }[]>([],)
+  const lastInteraction = useRef<number>(0,)
+  const dwellTimeout = useRef<NodeJS.Timeout | null>(null,)
+  const _stabilizationInterval = useRef<NodeJS.Timeout | null>(null,)
 
   // ================================================================================
   // MOVEMENT STABILIZATION SYSTEM
@@ -248,215 +248,215 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
   const stabilizePosition = useCallback((
     x: number,
     y: number,
-  ): { x: number; y: number; } => {
-    if (!settings.enabled) return { x, y };
+  ): { x: number; y: number } => {
+    if (!settings.enabled) return { x, y, }
 
-    const now = Date.now();
-    const windowMs = settings.stabilization_window;
+    const now = Date.now()
+    const windowMs = settings.stabilization_window
 
     // Add current position to history
-    movementHistory.current.push({ x, y, timestamp: now });
+    movementHistory.current.push({ x, y, timestamp: now, },)
 
     // Remove old entries outside the window
     movementHistory.current = movementHistory.current.filter(
       entry => now - entry.timestamp <= windowMs,
-    );
+    )
 
     if (movementHistory.current.length < 2) {
-      return { x, y };
+      return { x, y, }
     }
 
     // Apply different stabilization algorithms based on settings
     switch (settings.sensitivity) {
       case 1:
       case 2: // Low sensitivity - minimal stabilization
-        return { x, y };
+        return { x, y, }
 
       case 3:
       case 4: // Low-medium sensitivity - simple average
         const simpleAvg = movementHistory.current.reduce(
-          (acc, entry) => ({ x: acc.x + entry.x, y: acc.y + entry.y }),
-          { x: 0, y: 0 },
-        );
+          (acc, entry,) => ({ x: acc.x + entry.x, y: acc.y + entry.y, }),
+          { x: 0, y: 0, },
+        )
         return {
           x: simpleAvg.x / movementHistory.current.length,
           y: simpleAvg.y / movementHistory.current.length,
-        };
+        }
 
       case 5:
       case 6: // Medium sensitivity - weighted average (recent positions matter more)
-        let totalWeight = 0;
-        const weightedAvg = movementHistory.current.reduce((acc, entry) => {
-          const age = now - entry.timestamp;
-          const weight = Math.exp(-age / (windowMs / 3)); // Exponential decay
-          totalWeight += weight;
+        let totalWeight = 0
+        const weightedAvg = movementHistory.current.reduce((acc, entry,) => {
+          const age = now - entry.timestamp
+          const weight = Math.exp(-age / (windowMs / 3),) // Exponential decay
+          totalWeight += weight
           return {
             x: acc.x + entry.x * weight,
             y: acc.y + entry.y * weight,
-          };
-        }, { x: 0, y: 0 });
+          }
+        }, { x: 0, y: 0, },)
 
         return {
           x: weightedAvg.x / totalWeight,
           y: weightedAvg.y / totalWeight,
-        };
+        }
 
       case 7:
       case 8: // High sensitivity - Kalman-like filtering
         // Simple Kalman filter implementation
-        const positions = movementHistory.current;
-        if (positions.length < 3) return { x, y };
+        const positions = movementHistory.current
+        if (positions.length < 3) return { x, y, }
 
         // Predict next position based on trend
-        const recent = positions.slice(-3);
-        const dt = Math.max(recent[2].timestamp - recent[0].timestamp, 1); // Protect against identical timestamps
-        const velocityX = (recent[2].x - recent[0].x) / dt;
-        const velocityY = (recent[2].y - recent[0].y) / dt;
+        const recent = positions.slice(-3,)
+        const dt = Math.max(recent[2].timestamp - recent[0].timestamp, 1,) // Protect against identical timestamps
+        const velocityX = (recent[2].x - recent[0].x) / dt
+        const velocityY = (recent[2].y - recent[0].y) / dt
 
         // Clamp velocities to reasonable bounds
-        const clampedVelX = Math.max(-1000, Math.min(1000, velocityX));
-        const clampedVelY = Math.max(-1000, Math.min(1000, velocityY));
+        const clampedVelX = Math.max(-1000, Math.min(1000, velocityX,),)
+        const clampedVelY = Math.max(-1000, Math.min(1000, velocityY,),)
 
         const predicted = {
           x: recent[2].x + clampedVelX * 16, // ~1 frame ahead
           y: recent[2].y + clampedVelY * 16,
-        };
+        }
 
         // Blend prediction with measurement
-        const blendFactor = 0.7;
+        const blendFactor = 0.7
         return {
           x: predicted.x * blendFactor + x * (1 - blendFactor),
           y: predicted.y * blendFactor + y * (1 - blendFactor),
-        };
+        }
 
       case 9:
       case 10: // Maximum sensitivity - Heavy smoothing
         // Exponential moving average with strong smoothing
-        if (movementHistory.current.length < 5) return { x, y };
+        if (movementHistory.current.length < 5) return { x, y, }
 
-        const alpha = 0.1; // Very strong smoothing
-        let smoothedX = movementHistory.current[0].x;
-        let smoothedY = movementHistory.current[0].y;
+        const alpha = 0.1 // Very strong smoothing
+        let smoothedX = movementHistory.current[0].x
+        let smoothedY = movementHistory.current[0].y
 
         for (let i = 1; i < movementHistory.current.length; i++) {
-          const entry = movementHistory.current[i];
-          smoothedX = alpha * entry.x + (1 - alpha) * smoothedX;
-          smoothedY = alpha * entry.y + (1 - alpha) * smoothedY;
+          const entry = movementHistory.current[i]
+          smoothedX = alpha * entry.x + (1 - alpha) * smoothedX
+          smoothedY = alpha * entry.y + (1 - alpha) * smoothedY
         }
 
-        return { x: smoothedX, y: smoothedY };
+        return { x: smoothedX, y: smoothedY, }
 
       default:
-        return { x, y };
+        return { x, y, }
     }
-  }, [settings.enabled, settings.stabilization_window, settings.sensitivity]);
+  }, [settings.enabled, settings.stabilization_window, settings.sensitivity,],)
 
   // ================================================================================
   // TREMOR DETECTION ALGORITHM
   // ================================================================================
 
   const detectTremor = useCallback(() => {
-    const movements = movementHistory.current;
+    const movements = movementHistory.current
     if (movements.length < 50) { // Need enough data points
       setTremorDetection({
         has_tremor: false,
         pattern: null,
         confidence: 0,
-        recommendations: ["Coletar mais dados de movimento para análise"],
-      });
-      return;
+        recommendations: ['Coletar mais dados de movimento para análise',],
+      },)
+      return
     }
 
     // Analyze frequency content using simplified FFT approximation
-    const timeWindow = 5000; // 5 seconds
+    const timeWindow = 5000 // 5 seconds
     const recentMovements = movements.filter(
       m => Date.now() - m.timestamp <= timeWindow,
-    );
+    )
 
     if (recentMovements.length < 20) {
       setTremorDetection({
         has_tremor: false,
         pattern: null,
         confidence: 0,
-        recommendations: ["Dados insuficientes para detecção de tremor"],
-      });
-      return;
+        recommendations: ['Dados insuficientes para detecção de tremor',],
+      },)
+      return
     }
 
     // Calculate movement metrics
-    let totalDistance = 0;
-    let xVariance = 0;
-    let yVariance = 0;
-    const meanX = recentMovements.reduce((sum, m) => sum + m.x, 0) / recentMovements.length;
-    const meanY = recentMovements.reduce((sum, m) => sum + m.y, 0) / recentMovements.length;
+    let totalDistance = 0
+    let xVariance = 0
+    let yVariance = 0
+    const meanX = recentMovements.reduce((sum, m,) => sum + m.x, 0,) / recentMovements.length
+    const meanY = recentMovements.reduce((sum, m,) => sum + m.y, 0,) / recentMovements.length
 
     for (let i = 1; i < recentMovements.length; i++) {
-      const prev = recentMovements[i - 1];
-      const curr = recentMovements[i];
+      const prev = recentMovements[i - 1]
+      const curr = recentMovements[i]
       const distance = Math.sqrt(
-        Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2),
-      );
-      totalDistance += distance;
+        Math.pow(curr.x - prev.x, 2,) + Math.pow(curr.y - prev.y, 2,),
+      )
+      totalDistance += distance
 
-      xVariance += Math.pow(curr.x - meanX, 2);
-      yVariance += Math.pow(curr.y - meanY, 2);
+      xVariance += Math.pow(curr.x - meanX, 2,)
+      yVariance += Math.pow(curr.y - meanY, 2,)
     }
 
-    xVariance /= recentMovements.length;
-    yVariance /= recentMovements.length;
+    xVariance /= recentMovements.length
+    yVariance /= recentMovements.length
 
-    const avgMovementPerFrame = totalDistance / (recentMovements.length - 1);
-    const movementVariability = Math.sqrt(xVariance + yVariance);
+    const avgMovementPerFrame = totalDistance / (recentMovements.length - 1)
+    const movementVariability = Math.sqrt(xVariance + yVariance,)
 
     // Simple tremor detection heuristics
-    const hasTremor = avgMovementPerFrame > 3 && movementVariability > 15;
+    const hasTremor = avgMovementPerFrame > 3 && movementVariability > 15
     const confidence = Math.min(
       (avgMovementPerFrame / 10 + movementVariability / 50) / 2,
       1,
-    );
+    )
 
     // Estimate dominant frequency (simplified)
-    let peakCount = 0;
-    let lastDirection = 0;
+    let peakCount = 0
+    let lastDirection = 0
     for (let i = 1; i < recentMovements.length; i++) {
-      const direction = recentMovements[i].x - recentMovements[i - 1].x;
+      const direction = recentMovements[i].x - recentMovements[i - 1].x
       if (direction * lastDirection < 0) { // Direction change
-        peakCount++;
+        peakCount++
       }
-      lastDirection = direction;
+      lastDirection = direction
     }
 
-    const estimatedFrequency = (peakCount / 2) / (timeWindow / 1000); // Hz
+    const estimatedFrequency = (peakCount / 2) / (timeWindow / 1000) // Hz
 
     // Classify tremor type based on frequency and characteristics
-    let classification: keyof typeof TREMOR_CLASSIFICATIONS = "physiological";
+    let classification: keyof typeof TREMOR_CLASSIFICATIONS = 'physiological'
     if (estimatedFrequency >= 3 && estimatedFrequency <= 6) {
-      classification = "parkinsonian";
+      classification = 'parkinsonian'
     } else if (estimatedFrequency >= 4 && estimatedFrequency <= 12) {
-      classification = "essential";
+      classification = 'essential'
     } else if (estimatedFrequency >= 8 && estimatedFrequency <= 12) {
-      classification = "physiological";
+      classification = 'physiological'
     } else if (healthcareMode) {
-      classification = "stress-related";
+      classification = 'stress-related'
     }
 
     const tremorPattern: TremorPattern = {
       frequency: estimatedFrequency,
       amplitude: movementVariability,
       consistency: confidence,
-      dominant_axis: xVariance > yVariance * 1.5 ? "x" : yVariance > xVariance * 1.5 ? "y" : "both",
+      dominant_axis: xVariance > yVariance * 1.5 ? 'x' : yVariance > xVariance * 1.5 ? 'y' : 'both',
       medical_classification: classification,
-    };
+    }
 
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
     if (hasTremor) {
-      const classificationInfo = TREMOR_CLASSIFICATIONS[classification];
-      recommendations.push(`Detectado: ${classificationInfo.name}`);
-      recommendations.push(`Frequência estimada: ${estimatedFrequency.toFixed(1)}Hz`);
-      recommendations.push(`Recomendação: ${classificationInfo.compensation_strategy}`);
+      const classificationInfo = TREMOR_CLASSIFICATIONS[classification]
+      recommendations.push(`Detectado: ${classificationInfo.name}`,)
+      recommendations.push(`Frequência estimada: ${estimatedFrequency.toFixed(1,)}Hz`,)
+      recommendations.push(`Recomendação: ${classificationInfo.compensation_strategy}`,)
 
       if (healthcareMode) {
-        recommendations.push("Modo hospitalar: considere fatores de stress");
+        recommendations.push('Modo hospitalar: considere fatores de stress',)
       }
     }
 
@@ -465,18 +465,18 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       pattern: hasTremor ? tremorPattern : null,
       confidence,
       recommendations,
-    });
+    },)
 
     // Auto-apply recommended settings if tremor detected
     if (hasTremor && classification in TREMOR_CLASSIFICATIONS) {
-      const recommended = TREMOR_CLASSIFICATIONS[classification].recommended_settings;
+      const recommended = TREMOR_CLASSIFICATIONS[classification].recommended_settings
       setSettings(prev => ({
         ...prev,
         ...recommended,
         enabled: true,
-      }));
+      }))
     }
-  }, [healthcareMode]);
+  }, [healthcareMode,],)
 
   // ================================================================================
   // ELEMENT MANAGEMENT
@@ -487,46 +487,46 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
     element: HTMLElement,
     config?: Partial<TremorFriendlyElement>,
   ) => {
-    const rect = element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect()
 
     // Enhance element for tremor-friendly interaction
-    element.setAttribute("data-tremor-friendly", "true");
-    element.setAttribute("data-element-id", id);
+    element.setAttribute('data-tremor-friendly', 'true',)
+    element.setAttribute('data-element-id', id,)
 
     // Apply size multiplier if enabled
     if (settings.large_targets && settings.enabled) {
-      const multiplier = settings.target_size_multiplier;
+      const multiplier = settings.target_size_multiplier
 
       // Store original size
       if (!element.dataset.originalWidth) {
-        element.dataset.originalWidth = element.offsetWidth.toString();
-        element.dataset.originalHeight = element.offsetHeight.toString();
+        element.dataset.originalWidth = element.offsetWidth.toString()
+        element.dataset.originalHeight = element.offsetHeight.toString()
       }
 
       // Apply larger size
-      const newWidth = Math.max(44, element.offsetWidth * multiplier);
-      const newHeight = Math.max(44, element.offsetHeight * multiplier);
+      const newWidth = Math.max(44, element.offsetWidth * multiplier,)
+      const newHeight = Math.max(44, element.offsetHeight * multiplier,)
 
-      element.style.minWidth = `${newWidth}px`;
-      element.style.minHeight = `${newHeight}px`;
-      element.style.padding = `${Math.max(8, 8 * multiplier)}px`;
+      element.style.minWidth = `${newWidth}px`
+      element.style.minHeight = `${newHeight}px`
+      element.style.padding = `${Math.max(8, 8 * multiplier,)}px`
     }
 
     // Healthcare-specific enhancements
     if (healthcareMode) {
-      const priority = config?.healthcare_priority || "normal";
-      element.setAttribute("data-healthcare-priority", priority);
+      const priority = config?.healthcare_priority || 'normal'
+      element.setAttribute('data-healthcare-priority', priority,)
 
-      if (priority === "emergency") {
-        element.style.fontSize = "18px";
-        element.style.fontWeight = "600";
+      if (priority === 'emergency') {
+        element.style.fontSize = '18px'
+        element.style.fontWeight = '600'
       }
 
       // Post-procedure mode adjustments
       if (postProcedureMode) {
-        element.style.minWidth = "56px";
-        element.style.minHeight = "56px";
-        element.style.fontSize = "16px";
+        element.style.minWidth = '56px'
+        element.style.minHeight = '56px'
+        element.style.fontSize = '16px'
       }
     }
 
@@ -534,176 +534,176 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       id,
       element,
       original_size: {
-        width: parseInt(element.dataset.originalWidth || "0") || rect.width,
-        height: parseInt(element.dataset.originalHeight || "0") || rect.height,
+        width: parseInt(element.dataset.originalWidth || '0',) || rect.width,
+        height: parseInt(element.dataset.originalHeight || '0',) || rect.height,
       },
       expanded_area: rect,
-      healthcare_priority: config?.healthcare_priority || "normal",
-      activation_method: config?.activation_method || "click",
+      healthcare_priority: config?.healthcare_priority || 'normal',
+      activation_method: config?.activation_method || 'click',
       tremor_compensation: settings.enabled,
       stabilized_position: null,
       interaction_history: [],
       metadata: config?.metadata,
-    };
+    }
 
-    setElements(prev => [...prev.filter(e => e.id !== id), newElement]);
+    setElements(prev => [...prev.filter(e => e.id !== id), newElement,])
   }, [
     settings.large_targets,
     settings.enabled,
     settings.target_size_multiplier,
     healthcareMode,
     postProcedureMode,
-  ]);
+  ],)
 
-  const unregisterElement = useCallback((id: string) => {
+  const unregisterElement = useCallback((id: string,) => {
     setElements(prev => {
-      const element = prev.find(e => e.id === id);
+      const element = prev.find(e => e.id === id)
       if (element) {
-        element.element.removeAttribute("data-tremor-friendly");
-        element.element.removeAttribute("data-element-id");
+        element.element.removeAttribute('data-tremor-friendly',)
+        element.element.removeAttribute('data-element-id',)
 
         // Restore original size
         if (element.element.dataset.originalWidth) {
-          element.element.style.minWidth = `${element.element.dataset.originalWidth}px`;
-          element.element.style.minHeight = `${element.element.dataset.originalHeight}px`;
+          element.element.style.minWidth = `${element.element.dataset.originalWidth}px`
+          element.element.style.minHeight = `${element.element.dataset.originalHeight}px`
         }
       }
-      return prev.filter(e => e.id !== id);
-    });
-  }, []);
+      return prev.filter(e => e.id !== id)
+    },)
+  }, [],)
 
   // ================================================================================
   // GLOBAL MOUSE TRACKING & STABILIZATION
   // ================================================================================
 
   useEffect(() => {
-    if (!settings.enabled) return;
+    if (!settings.enabled) return
 
-    const handleMouseMove = (event: MouseEvent) => {
-      const stabilized = stabilizePosition(event.clientX, event.clientY);
-      setStabilizedCursor(stabilized);
+    const handleMouseMove = (event: MouseEvent,) => {
+      const stabilized = stabilizePosition(event.clientX, event.clientY,)
+      setStabilizedCursor(stabilized,)
 
       // Check if stabilized position is significantly different
       const originalDistance = Math.sqrt(
-        Math.pow(event.clientX - stabilized.x, 2)
-          + Math.pow(event.clientY - stabilized.y, 2),
-      );
+        Math.pow(event.clientX - stabilized.x, 2,)
+          + Math.pow(event.clientY - stabilized.y, 2,),
+      )
 
       // Update elements with interaction data
       const interactionEvent: InteractionEvent = {
         timestamp: Date.now(),
-        type: "move",
-        position: { x: event.clientX, y: event.clientY },
+        type: 'move',
+        position: { x: event.clientX, y: event.clientY, },
         stabilized_position: stabilized,
         tremor_detected: originalDistance > settings.movement_threshold,
-        confidence: Math.max(0, 1 - originalDistance / 50),
-      };
+        confidence: Math.max(0, 1 - originalDistance / 50,),
+      }
 
       setElements(prev =>
         prev.map(element => {
-          const rect = element.element.getBoundingClientRect();
+          const rect = element.element.getBoundingClientRect()
           const isInside = stabilized.x >= rect.left
             && stabilized.x <= rect.right
             && stabilized.y >= rect.top
-            && stabilized.y <= rect.bottom;
+            && stabilized.y <= rect.bottom
 
           if (isInside) {
             return {
               ...element,
               stabilized_position: stabilized,
-              interaction_history: [...element.interaction_history.slice(-20), interactionEvent],
-            };
+              interaction_history: [...element.interaction_history.slice(-20,), interactionEvent,],
+            }
           }
 
-          return element;
-        })
-      );
-    };
+          return element
+        },)
+      )
+    }
 
     // Dwell activation handler
-    const handleMouseEnter = (event: MouseEvent) => {
-      if (!settings.dwell_confirmation) return;
+    const handleMouseEnter = (event: MouseEvent,) => {
+      if (!settings.dwell_confirmation) return
 
-      const target = event.target as HTMLElement;
-      if (!target.getAttribute("data-tremor-friendly")) return;
+      const target = event.target as HTMLElement
+      if (!target.getAttribute('data-tremor-friendly',)) return
 
-      const elementId = target.getAttribute("data-element-id");
-      if (!elementId) return;
+      const elementId = target.getAttribute('data-element-id',)
+      if (!elementId) return
 
-      setActiveElement(elementId);
+      setActiveElement(elementId,)
 
       // Clear existing dwell timeout
       if (dwellTimeout.current) {
-        clearTimeout(dwellTimeout.current);
+        clearTimeout(dwellTimeout.current,)
       }
 
       // Start dwell timer
       dwellTimeout.current = setTimeout(() => {
-        const element = elements.find(e => e.id === elementId);
+        const element = elements.find(e => e.id === elementId)
         if (element && settings.dwell_confirmation && element.element.isConnected) {
           // Trigger activation only if element is still in DOM
-          element.element.click();
-          setActiveElement(null);
+          element.element.click()
+          setActiveElement(null,)
         } else if (element && !element.element.isConnected) {
           // Clean up stale element reference
-          setElements(prev => prev.filter(e => e.id !== elementId));
+          setElements(prev => prev.filter(e => e.id !== elementId))
         }
-      }, settings.dwell_time);
-    };
+      }, settings.dwell_time,)
+    }
 
     const handleMouseLeave = () => {
       if (dwellTimeout.current) {
-        clearTimeout(dwellTimeout.current);
-        dwellTimeout.current = null;
+        clearTimeout(dwellTimeout.current,)
+        dwellTimeout.current = null
       }
-      setActiveElement(null);
-    };
+      setActiveElement(null,)
+    }
 
     // Enhanced click handling with double-tap prevention
-    const handleClick = (event: MouseEvent) => {
-      const now = Date.now();
+    const handleClick = (event: MouseEvent,) => {
+      const now = Date.now()
 
       if (
         settings.double_tap_prevention
         && now - lastInteraction.current < settings.double_tap_window
       ) {
-        event.preventDefault();
-        return;
+        event.preventDefault()
+        return
       }
 
-      lastInteraction.current = now;
+      lastInteraction.current = now
 
       // Allow the click to proceed normally
-    };
+    }
 
     // Add event listeners
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("click", handleClick, true);
+    document.addEventListener('mousemove', handleMouseMove,)
+    document.addEventListener('click', handleClick, true,)
 
     // Add hover listeners to tremor-friendly elements
     const addHoverListeners = () => {
       elements.forEach(element => {
-        element.element.addEventListener("mouseenter", handleMouseEnter);
-        element.element.addEventListener("mouseleave", handleMouseLeave);
-      });
-    };
+        element.element.addEventListener('mouseenter', handleMouseEnter,)
+        element.element.addEventListener('mouseleave', handleMouseLeave,)
+      },)
+    }
 
-    addHoverListeners();
+    addHoverListeners()
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("click", handleClick, true);
+      document.removeEventListener('mousemove', handleMouseMove,)
+      document.removeEventListener('click', handleClick, true,)
 
       elements.forEach(element => {
-        element.element.removeEventListener("mouseenter", handleMouseEnter);
-        element.element.removeEventListener("mouseleave", handleMouseLeave);
-      });
+        element.element.removeEventListener('mouseenter', handleMouseEnter,)
+        element.element.removeEventListener('mouseleave', handleMouseLeave,)
+      },)
 
       if (dwellTimeout.current) {
-        clearTimeout(dwellTimeout.current);
+        clearTimeout(dwellTimeout.current,)
       }
-    };
-  }, [settings, elements, stabilizePosition]);
+    }
+  }, [settings, elements, stabilizePosition,],)
 
   // ================================================================================
   // AUTO TREMOR DETECTION
@@ -712,11 +712,11 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     if (settings.enabled) {
       // Start automatic tremor detection
-      const detectionInterval = setInterval(detectTremor, 10_000); // Every 10 seconds
+      const detectionInterval = setInterval(detectTremor, 10_000,) // Every 10 seconds
 
-      return () => clearInterval(detectionInterval);
+      return () => clearInterval(detectionInterval,)
     }
-  }, [settings.enabled, detectTremor]);
+  }, [settings.enabled, detectTremor,],)
 
   // ================================================================================
   // ELEMENT CLEANUP
@@ -728,24 +728,24 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
       setElements(prev =>
         prev.filter(element => {
           if (!element.element.isConnected) {
-            console.log(`Cleaning up stale element reference: ${element.id}`);
-            return false;
+            console.log(`Cleaning up stale element reference: ${element.id}`,)
+            return false
           }
-          return true;
-        })
-      );
-    }, 30_000); // Check every 30 seconds
+          return true
+        },)
+      )
+    }, 30_000,) // Check every 30 seconds
 
-    return () => clearInterval(cleanupInterval);
-  }, []);
+    return () => clearInterval(cleanupInterval,)
+  }, [],)
 
   // ================================================================================
   // SETTINGS UPDATE
   // ================================================================================
 
-  const updateSettings = useCallback((newSettings: Partial<StabilizationSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
-  }, []);
+  const updateSettings = useCallback((newSettings: Partial<StabilizationSettings>,) => {
+    setSettings(prev => ({ ...prev, ...newSettings, }))
+  }, [],)
 
   // ================================================================================
   // CONTEXT VALUE
@@ -765,13 +765,13 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
     post_procedure_mode: postProcedureMode,
     setHealthcareMode,
     setPostProcedureMode,
-  };
+  }
 
   return (
     <TremorFriendlyContext.Provider value={contextValue}>
       {children}
     </TremorFriendlyContext.Provider>
-  );
+  )
 }
 
 // ================================================================================
@@ -779,33 +779,33 @@ export function TremorFriendlyProvider({ children }: { children: React.ReactNode
 // ================================================================================
 
 export function useTremorFriendly() {
-  const context = useContext(TremorFriendlyContext);
+  const context = useContext(TremorFriendlyContext,)
   if (!context) {
-    throw new Error("useTremorFriendly must be used within TremorFriendlyProvider");
+    throw new Error('useTremorFriendly must be used within TremorFriendlyProvider',)
   }
-  return context;
+  return context
 }
 
 export function useTremorFriendlyElement(
   id: string,
   config?: Partial<TremorFriendlyElement>,
 ) {
-  const { registerElement, unregisterElement, settings } = useTremorFriendly();
-  const elementRef = useRef<HTMLElement | null>(null);
+  const { registerElement, unregisterElement, settings, } = useTremorFriendly()
+  const elementRef = useRef<HTMLElement | null>(null,)
 
   useEffect(() => {
     if (elementRef.current && settings.enabled) {
-      registerElement(id, elementRef.current, config);
+      registerElement(id, elementRef.current, config,)
     }
 
     return () => {
       if (settings.enabled) {
-        unregisterElement(id);
+        unregisterElement(id,)
       }
-    };
-  }, [id, config, registerElement, unregisterElement, settings.enabled]);
+    }
+  }, [id, config, registerElement, unregisterElement, settings.enabled,],)
 
-  return elementRef;
+  return elementRef
 }
 
 // ================================================================================
@@ -816,27 +816,27 @@ function StabilizedCursorOverlay({
   position,
   originalPosition,
 }: {
-  position: { x: number; y: number; } | null;
-  originalPosition: { x: number; y: number; } | null;
-}) {
-  if (!position) return null;
+  position: { x: number; y: number } | null
+  originalPosition: { x: number; y: number } | null
+},) {
+  if (!position) return null
 
   return (
     <>
       {/* Stabilized cursor */}
       <div
         style={{
-          position: "fixed",
+          position: 'fixed',
           left: position.x - 8,
           top: position.y - 8,
           width: 16,
           height: 16,
-          borderRadius: "50%",
-          backgroundColor: "rgba(34, 197, 94, 0.8)",
-          border: "2px solid #22c55e",
-          pointerEvents: "none",
+          borderRadius: '50%',
+          backgroundColor: 'rgba(34, 197, 94, 0.8)',
+          border: '2px solid #22c55e',
+          pointerEvents: 'none',
           zIndex: 9999,
-          transition: "all 0.1s ease",
+          transition: 'all 0.1s ease',
         }}
       />
 
@@ -844,12 +844,12 @@ function StabilizedCursorOverlay({
       {originalPosition && (
         <svg
           style={{
-            position: "fixed",
+            position: 'fixed',
             left: 0,
             top: 0,
-            width: "100vw",
-            height: "100vh",
-            pointerEvents: "none",
+            width: '100vw',
+            height: '100vh',
+            pointerEvents: 'none',
             zIndex: 9998,
           }}
         >
@@ -865,7 +865,7 @@ function StabilizedCursorOverlay({
         </svg>
       )}
     </>
-  );
+  )
 }
 
 // ================================================================================
@@ -873,11 +873,11 @@ function StabilizedCursorOverlay({
 // ================================================================================
 
 export interface TremorFriendlyControlsProps {
-  className?: string;
-  onSettingsChange?: (settings: StabilizationSettings) => void;
-  healthcareMode?: boolean;
-  postProcedureMode?: boolean;
-  initialSettings?: Partial<StabilizationSettings>;
+  className?: string
+  onSettingsChange?: (settings: StabilizationSettings,) => void
+  healthcareMode?: boolean
+  postProcedureMode?: boolean
+  initialSettings?: Partial<StabilizationSettings>
 }
 
 export function TremorFriendlyControls({
@@ -886,7 +886,7 @@ export function TremorFriendlyControls({
   healthcareMode = true,
   postProcedureMode = false,
   initialSettings,
-}: TremorFriendlyControlsProps) {
+}: TremorFriendlyControlsProps,) {
   const {
     settings,
     updateSettings,
@@ -897,17 +897,17 @@ export function TremorFriendlyControls({
     stabilized_cursor,
     setHealthcareMode,
     setPostProcedureMode,
-  } = useTremorFriendly();
+  } = useTremorFriendly()
 
-  const [originalCursor, setOriginalCursor] = useState<{ x: number; y: number; } | null>(null);
+  const [originalCursor, setOriginalCursor,] = useState<{ x: number; y: number } | null>(null,)
 
   // Initialize settings and modes
   useEffect(() => {
     if (initialSettings) {
-      updateSettings(initialSettings);
+      updateSettings(initialSettings,)
     }
-    setHealthcareMode(healthcareMode);
-    setPostProcedureMode(postProcedureMode);
+    setHealthcareMode(healthcareMode,)
+    setPostProcedureMode(postProcedureMode,)
   }, [
     initialSettings,
     healthcareMode,
@@ -915,29 +915,29 @@ export function TremorFriendlyControls({
     updateSettings,
     setHealthcareMode,
     setPostProcedureMode,
-  ]);
+  ],)
 
   // Notify parent of settings changes
   useEffect(() => {
     if (onSettingsChange) {
-      onSettingsChange(settings);
+      onSettingsChange(settings,)
     }
-  }, [settings, onSettingsChange]);
+  }, [settings, onSettingsChange,],)
 
   // Track original cursor position for overlay
   useEffect(() => {
-    if (!settings.enabled) return;
+    if (!settings.enabled) return
 
-    const handleMouseMove = (event: MouseEvent) => {
-      setOriginalCursor({ x: event.clientX, y: event.clientY });
-    };
+    const handleMouseMove = (event: MouseEvent,) => {
+      setOriginalCursor({ x: event.clientX, y: event.clientY, },)
+    }
 
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => document.removeEventListener("mousemove", handleMouseMove);
-  }, [settings.enabled]);
+    document.addEventListener('mousemove', handleMouseMove,)
+    return () => document.removeEventListener('mousemove', handleMouseMove,)
+  }, [settings.enabled,],)
 
-  const activeElements = elements.filter(e => e.stabilized_position !== null);
-  const currentClassification = tremor_detection?.pattern?.medical_classification;
+  const activeElements = elements.filter(e => e.stabilized_position !== null)
+  const currentClassification = tremor_detection?.pattern?.medical_classification
 
   return (
     <>
@@ -964,8 +964,8 @@ export function TremorFriendlyControls({
             </div>
 
             <div className="flex items-center space-x-2">
-              <Badge variant={settings.enabled ? "default" : "secondary"}>
-                {settings.enabled ? "Ativo" : "Inativo"}
+              <Badge variant={settings.enabled ? 'default' : 'secondary'}>
+                {settings.enabled ? 'Ativo' : 'Inativo'}
               </Badge>
 
               {tremor_detection?.has_tremor && (
@@ -1001,8 +1001,8 @@ export function TremorFriendlyControls({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm">Status</span>
-                      <Badge variant={tremor_detection.has_tremor ? "destructive" : "default"}>
-                        {tremor_detection.has_tremor ? "Detectado" : "Normal"}
+                      <Badge variant={tremor_detection.has_tremor ? 'destructive' : 'default'}>
+                        {tremor_detection.has_tremor ? 'Detectado' : 'Normal'}
                       </Badge>
                     </div>
 
@@ -1013,14 +1013,14 @@ export function TremorFriendlyControls({
                           <span className="text-xs">
                             {currentClassification != null
                               ? TREMOR_CLASSIFICATIONS[currentClassification]?.name
-                              : "Desconhecido"}
+                              : 'Desconhecido'}
                           </span>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span className="text-sm">Frequência</span>
                           <span className="text-xs font-mono">
-                            {tremor_detection.pattern.frequency.toFixed(1)}Hz
+                            {tremor_detection.pattern.frequency.toFixed(1,)}Hz
                           </span>
                         </div>
                       </>
@@ -1031,7 +1031,7 @@ export function TremorFriendlyControls({
                       className="h-2"
                     />
                     <span className="text-xs text-muted-foreground">
-                      Confiança: {Math.round(tremor_detection.confidence * 100)}%
+                      Confiança: {Math.round(tremor_detection.confidence * 100,)}%
                     </span>
                   </div>
                 )
@@ -1069,7 +1069,7 @@ export function TremorFriendlyControls({
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Elemento Ativo</span>
                   <span className="text-xs font-mono">
-                    {active_element || "Nenhum"}
+                    {active_element || 'Nenhum'}
                   </span>
                 </div>
               </div>
@@ -1108,8 +1108,8 @@ export function TremorFriendlyControls({
               <div className="space-y-2">
                 <Button
                   size="sm"
-                  onClick={() => updateSettings({ enabled: !settings.enabled })}
-                  variant={settings.enabled ? "default" : "outline"}
+                  onClick={() => updateSettings({ enabled: !settings.enabled, },)}
+                  variant={settings.enabled ? 'default' : 'outline'}
                   className="w-full"
                 >
                   {settings.enabled
@@ -1133,8 +1133,8 @@ export function TremorFriendlyControls({
                     variant="outline"
                     onClick={() => {
                       const recommended =
-                        TREMOR_CLASSIFICATIONS[currentClassification].recommended_settings;
-                      updateSettings({ ...recommended, enabled: true });
+                        TREMOR_CLASSIFICATIONS[currentClassification].recommended_settings
+                      updateSettings({ ...recommended, enabled: true, },)
                     }}
                     className="w-full"
                   >
@@ -1156,7 +1156,7 @@ export function TremorFriendlyControls({
                 <input
                   type="range"
                   value={settings.sensitivity}
-                  onChange={(e) => updateSettings({ sensitivity: parseInt(e.target.value) })}
+                  onChange={(e,) => updateSettings({ sensitivity: parseInt(e.target.value,), },)}
                   min={1}
                   max={10}
                   step={1}
@@ -1175,8 +1175,8 @@ export function TremorFriendlyControls({
                 <input
                   type="range"
                   value={settings.stabilization_window}
-                  onChange={(e) =>
-                    updateSettings({ stabilization_window: parseInt(e.target.value) })}
+                  onChange={(e,) =>
+                    updateSettings({ stabilization_window: parseInt(e.target.value,), },)}
                   min={50}
                   max={1000}
                   step={50}
@@ -1191,7 +1191,8 @@ export function TremorFriendlyControls({
                 <input
                   type="range"
                   value={settings.movement_threshold}
-                  onChange={(e) => updateSettings({ movement_threshold: parseInt(e.target.value) })}
+                  onChange={(e,) =>
+                    updateSettings({ movement_threshold: parseInt(e.target.value,), },)}
                   min={2}
                   max={50}
                   step={2}
@@ -1207,7 +1208,7 @@ export function TremorFriendlyControls({
                 <span className="text-sm">Confirmação por Permanência</span>
                 <Switch
                   checked={settings.dwell_confirmation}
-                  onCheckedChange={(checked) => updateSettings({ dwell_confirmation: checked })}
+                  onCheckedChange={(checked,) => updateSettings({ dwell_confirmation: checked, },)}
                 />
               </div>
 
@@ -1217,7 +1218,7 @@ export function TremorFriendlyControls({
                   <input
                     type="range"
                     value={settings.dwell_time}
-                    onChange={(e) => updateSettings({ dwell_time: parseInt(e.target.value) })}
+                    onChange={(e,) => updateSettings({ dwell_time: parseInt(e.target.value,), },)}
                     min={300}
                     max={3000}
                     step={100}
@@ -1230,20 +1231,20 @@ export function TremorFriendlyControls({
                 <span className="text-sm">Alvos Grandes</span>
                 <Switch
                   checked={settings.large_targets}
-                  onCheckedChange={(checked) => updateSettings({ large_targets: checked })}
+                  onCheckedChange={(checked,) => updateSettings({ large_targets: checked, },)}
                 />
               </div>
 
               {settings.large_targets && (
                 <div className="space-y-2">
                   <span className="text-sm">
-                    Multiplicador de Tamanho: {settings.target_size_multiplier.toFixed(1)}x
+                    Multiplicador de Tamanho: {settings.target_size_multiplier.toFixed(1,)}x
                   </span>
                   <input
                     type="range"
                     value={settings.target_size_multiplier}
-                    onChange={(e) =>
-                      updateSettings({ target_size_multiplier: parseFloat(e.target.value) })}
+                    onChange={(e,) =>
+                      updateSettings({ target_size_multiplier: parseFloat(e.target.value,), },)}
                     min={1}
                     max={3}
                     step={0.1}
@@ -1256,7 +1257,8 @@ export function TremorFriendlyControls({
                 <span className="text-sm">Prevenção Toque Duplo</span>
                 <Switch
                   checked={settings.double_tap_prevention}
-                  onCheckedChange={(checked) => updateSettings({ double_tap_prevention: checked })}
+                  onCheckedChange={(checked,) =>
+                    updateSettings({ double_tap_prevention: checked, },)}
                 />
               </div>
             </div>
@@ -1283,14 +1285,14 @@ export function TremorFriendlyControls({
                   <span className="text-sm">Expansão de Hover</span>
                   <Switch
                     checked={settings.hover_expansion}
-                    onCheckedChange={(checked) => updateSettings({ hover_expansion: checked })}
+                    onCheckedChange={(checked,) => updateSettings({ hover_expansion: checked, },)}
                   />
                 </div>
               </div>
 
               <div className="mt-4 p-3 bg-green-50 rounded-lg">
                 <p className="text-sm text-green-700">
-                  <strong>Modo Médico:</strong>{" "}
+                  <strong>Modo Médico:</strong>{' '}
                   Alvos otimizados para uso hospitalar. Modo pós-procedimento aumenta tamanhos para
                   mãos enfaixadas.
                 </p>
@@ -1307,7 +1309,7 @@ export function TremorFriendlyControls({
               </h4>
 
               <div className="space-y-2">
-                {tremor_detection.recommendations.map((recommendation, index) => (
+                {tremor_detection.recommendations.map((recommendation, index,) => (
                   <div key={index} className="p-2 bg-orange-50 rounded text-sm text-orange-700">
                     {recommendation}
                   </div>
@@ -1318,7 +1320,7 @@ export function TremorFriendlyControls({
         </CardContent>
       </Card>
     </>
-  );
+  )
 }
 
 // Convenience demo wrappers for integration examples
@@ -1327,7 +1329,7 @@ export function TremorFriendlyDemo() {
     <TremorFriendlyProvider>
       <TremorFriendlyControls />
     </TremorFriendlyProvider>
-  );
+  )
 }
 
 export function TremorFriendlySettings() {
@@ -1335,7 +1337,7 @@ export function TremorFriendlySettings() {
     <TremorFriendlyProvider>
       <TremorFriendlyControls />
     </TremorFriendlyProvider>
-  );
+  )
 }
 
-export default TremorFriendlyControls;
+export default TremorFriendlyControls

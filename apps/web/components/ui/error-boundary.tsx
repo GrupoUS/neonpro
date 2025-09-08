@@ -1,47 +1,47 @@
-import type React from "react";
-import { Component } from "react";
-import type { ErrorInfo, ReactNode } from "react";
+import type React from 'react'
+import { Component, } from 'react'
+import type { ErrorInfo, ReactNode, } from 'react'
 
 interface ErrorBoundaryState {
-  hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
+  hasError: boolean
+  error?: Error
+  errorInfo?: ErrorInfo
 }
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  showDetails?: boolean;
-  title?: string;
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: Error, errorInfo: ErrorInfo,) => void
+  showDetails?: boolean
+  title?: string
 }
 
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+  constructor(props: ErrorBoundaryProps,) {
+    super(props,)
+    this.state = { hasError: false, }
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error,): ErrorBoundaryState {
+    return { hasError: true, error, }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ errorInfo });
-    this.props.onError?.(error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo,) {
+    this.setState({ errorInfo, },)
+    this.props.onError?.(error, errorInfo,)
   }
 
   private readonly handleRetry = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
-  };
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined, },)
+  }
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback;
+        return this.props.fallback
       }
 
       return (
@@ -109,10 +109,10 @@ export class ErrorBoundary extends Component<
             </div>
           </div>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
@@ -121,23 +121,23 @@ export class CriticalErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+  constructor(props: ErrorBoundaryProps,) {
+    super(props,)
+    this.state = { hasError: false, }
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error,): ErrorBoundaryState {
+    return { hasError: true, error, }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ errorInfo });
-    this.props.onError?.(error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo,) {
+    this.setState({ errorInfo, },)
+    this.props.onError?.(error, errorInfo,)
   }
 
   private readonly handleReload = () => {
-    window.location.reload();
-  };
+    window.location.reload()
+  }
 
   render() {
     if (this.state.hasError) {
@@ -167,7 +167,7 @@ export class CriticalErrorBoundary extends Component<
                 <h3 className="font-medium text-red-800 text-sm">
                   {this.props.title
                     ? `Erro em ${this.props.title}`
-                    : "Erro Crítico"}
+                    : 'Erro Crítico'}
                 </h3>
                 <div className="mt-2 text-red-700 text-sm">
                   <p>
@@ -186,29 +186,29 @@ export class CriticalErrorBoundary extends Component<
             </div>
           </div>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
 // Higher-order component for wrapping components with error boundary
-export function withErrorBoundary<P extends object>(
+export function withErrorBoundary<P extends object,>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">,
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>,
 ) {
-  const WithErrorBoundaryComponent = (props: P) => (
+  const WithErrorBoundaryComponent = (props: P,) => (
     <ErrorBoundary {...errorBoundaryProps}>
       <WrappedComponent {...props} />
     </ErrorBoundary>
-  );
+  )
 
   WithErrorBoundaryComponent.displayName = `withErrorBoundary(${
     WrappedComponent.displayName || WrappedComponent.name
-  })`;
+  })`
 
-  return WithErrorBoundaryComponent;
+  return WithErrorBoundaryComponent
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

@@ -1,182 +1,182 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bluetooth, Nfc, Plus, Shield, Smartphone, Trash2, Usb } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Bluetooth, Nfc, Plus, Shield, Smartphone, Trash2, Usb, } from 'lucide-react'
+import { useCallback, useEffect, useState, } from 'react'
 
 interface WebAuthnCredential {
-  id: string;
-  credential_id: string;
-  name: string;
-  created_at: string;
-  last_used_at?: string;
-  transports: string[];
+  id: string
+  credential_id: string
+  name: string
+  created_at: string
+  last_used_at?: string
+  transports: string[]
 }
 
 interface WebAuthnManagerProps {
-  className?: string;
+  className?: string
 }
 
-export function WebAuthnManager({ className }: WebAuthnManagerProps) {
-  const [credentials, setCredentials] = useState<WebAuthnCredential[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
-  const [isRegistering, setIsRegistering] = useState(false);
+export function WebAuthnManager({ className, }: WebAuthnManagerProps,) {
+  const [credentials, setCredentials,] = useState<WebAuthnCredential[]>([],)
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<string | null>()
+  const [isRegistering, setIsRegistering,] = useState(false,)
 
   const fetchCredentials = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await fetch("/api/auth/webauthn/credentials");
+      setLoading(true,)
+      const response = await fetch('/api/auth/webauthn/credentials',)
       if (!response.ok) {
-        throw new Error("Failed to fetch credentials");
+        throw new Error('Failed to fetch credentials',)
       }
-      const data = await response.json();
-      setCredentials(data.credentials || []);
+      const data = await response.json()
+      setCredentials(data.credentials || [],)
     } catch {
-      setError("Failed to load WebAuthn credentials");
+      setError('Failed to load WebAuthn credentials',)
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, []);
+  }, [],)
 
   useEffect(() => {
-    fetchCredentials();
-  }, [fetchCredentials]);
+    fetchCredentials()
+  }, [fetchCredentials,],)
 
   const isWebAuthnSupported = () => {
     return (
-      typeof window !== "undefined"
-      && "credentials" in navigator
-      && "create" in navigator.credentials
-    );
-  };
+      typeof window !== 'undefined'
+      && 'credentials' in navigator
+      && 'create' in navigator.credentials
+    )
+  }
 
   const registerCredential = async () => {
     if (!isWebAuthnSupported()) {
-      setError("WebAuthn is not supported in this browser");
-      return;
+      setError('WebAuthn is not supported in this browser',)
+      return
     }
 
     try {
-      setIsRegistering(true);
-      setError(undefined);
+      setIsRegistering(true,)
+      setError(undefined,)
 
       // Get registration options from server
-      const optionsResponse = await fetch("/api/auth/webauthn/register/begin", {
-        method: "POST",
-      });
+      const optionsResponse = await fetch('/api/auth/webauthn/register/begin', {
+        method: 'POST',
+      },)
 
       if (!optionsResponse.ok) {
-        throw new Error("Failed to get registration options");
+        throw new Error('Failed to get registration options',)
       }
 
-      const options = await optionsResponse.json();
+      const options = await optionsResponse.json()
 
       // Create credential
       const credential = (await navigator.credentials.create({
         publicKey: {
           ...options,
-          challenge: new Uint8Array(options.challenge),
+          challenge: new Uint8Array(options.challenge,),
           user: {
             ...options.user,
-            id: new Uint8Array(options.user.id),
+            id: new Uint8Array(options.user.id,),
           },
         },
-      })) as unknown;
+      },)) as unknown
 
       if (!credential) {
-        throw new Error("No credential was created");
+        throw new Error('No credential was created',)
       }
 
       // Complete registration
       const completeResponse = await fetch(
-        "/api/auth/webauthn/register/complete",
+        '/api/auth/webauthn/register/complete',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            id: credential.id,
-            rawId: [...new Uint8Array(credential.rawId)],
+            id: (credential as any).id,
+            rawId: [...new Uint8Array((credential as any).rawId,),],
             response: {
               clientDataJSON: [
-                ...new Uint8Array(credential.response.clientDataJSON),
+                ...new Uint8Array((credential as any).response.clientDataJSON,),
               ],
               attestationObject: [
-                ...new Uint8Array(credential.response.attestationObject),
+                ...new Uint8Array((credential as any).response.attestationObject,),
               ],
             },
-            type: credential.type,
-          }),
+            type: (credential as any).type,
+          },),
         },
-      );
+      )
 
       if (!completeResponse.ok) {
-        throw new Error("Failed to complete registration");
+        throw new Error('Failed to complete registration',)
       }
 
       // Refresh credentials list
-      await fetchCredentials();
+      await fetchCredentials()
     } catch (error: unknown) {
-      setError(error.message || "Failed to register WebAuthn credential");
+      setError((error as any).message || 'Failed to register WebAuthn credential',)
     } finally {
-      setIsRegistering(false);
+      setIsRegistering(false,)
     }
-  };
+  }
 
-  const deleteCredential = async (credentialId: string) => {
+  const deleteCredential = async (credentialId: string,) => {
     try {
       const response = await fetch(
         `/api/auth/webauthn/credentials/${credentialId}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         },
-      );
+      )
 
       if (!response.ok) {
-        throw new Error("Failed to delete credential");
+        throw new Error('Failed to delete credential',)
       }
 
       // Refresh credentials list
-      await fetchCredentials();
+      await fetchCredentials()
     } catch {
-      setError("Failed to delete credential");
+      setError('Failed to delete credential',)
     }
-  };
+  }
 
-  const getTransportIcon = (transport: string) => {
+  const getTransportIcon = (transport: string,) => {
     switch (transport) {
-      case "usb": {
-        return <Usb className="h-4 w-4" />;
+      case 'usb': {
+        return <Usb className="h-4 w-4" />
       }
-      case "ble": {
-        return <Bluetooth className="h-4 w-4" />;
+      case 'ble': {
+        return <Bluetooth className="h-4 w-4" />
       }
-      case "nfc": {
-        return <Nfc className="h-4 w-4" />;
+      case 'nfc': {
+        return <Nfc className="h-4 w-4" />
       }
-      case "internal": {
-        return <Smartphone className="h-4 w-4" />;
+      case 'internal': {
+        return <Smartphone className="h-4 w-4" />
       }
       default: {
-        return <Shield className="h-4 w-4" />;
+        return <Shield className="h-4 w-4" />
       }
     }
-  };
+  }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatDate = (dateString: string,) => {
+    return new Date(dateString,).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    },)
+  }
 
   if (!isWebAuthnSupported()) {
     return (
@@ -199,7 +199,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
           </Alert>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -221,7 +221,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
             onClick={registerCredential}
           >
             <Plus className="h-4 w-4" />
-            {isRegistering ? "Registering..." : "Add Security Key"}
+            {isRegistering ? 'Registering...' : 'Add Security Key'}
           </Button>
         </div>
       </CardHeader>
@@ -259,7 +259,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
           )
           : (
             <div className="space-y-3">
-              {credentials.map((credential) => (
+              {credentials.map((credential,) => (
                 <div
                   className="flex items-center justify-between rounded-lg border p-4"
                   key={credential.id}
@@ -268,28 +268,28 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
                     <div className="mb-2 flex items-center gap-2">
                       <h4 className="font-medium">{credential.name}</h4>
                       <div className="flex gap-1">
-                        {credential.transports.map((transport) => (
+                        {credential.transports.map((transport,) => (
                           <Badge
                             className="flex items-center gap-1"
                             key={transport}
                             variant="secondary"
                           >
-                            {getTransportIcon(transport)}
+                            {getTransportIcon(transport,)}
                             {transport}
                           </Badge>
                         ))}
                       </div>
                     </div>
                     <div className="text-muted-foreground text-sm">
-                      <p>Created: {formatDate(credential.created_at)}</p>
+                      <p>Created: {formatDate(credential.created_at,)}</p>
                       {credential.last_used_at && (
-                        <p>Last used: {formatDate(credential.last_used_at)}</p>
+                        <p>Last used: {formatDate(credential.last_used_at,)}</p>
                       )}
                     </div>
                   </div>
                   <Button
                     className="text-red-600 hover:text-red-700"
-                    onClick={() => deleteCredential(credential.credential_id)}
+                    onClick={() => deleteCredential(credential.credential_id,)}
                     size="sm"
                     variant="outline"
                   >
@@ -301,7 +301,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
           )}
       </CardContent>
     </Card>
-  );
+  )
 }
 
-export default WebAuthnManager;
+export default WebAuthnManager

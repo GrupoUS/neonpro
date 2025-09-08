@@ -1,8 +1,0 @@
-{
-  "dependencies": ["oxlint", "dprint", "tailwindcss", "tailwindcss-animate", "typescript"],
-  "devDependencies": [],
-  "missing": {},
-  "using": {},
-  "invalidFiles": {},
-  "invalidDirs": {}
-}

@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 // import {
 //   createHealthcareError,
 //   ErrorCategory,
@@ -12,33 +12,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 // Mock types and enums for MVP (runtime + type safety)
 export const ErrorCategory = {
-  SYSTEM: "SYSTEM",
-  VALIDATION: "VALIDATION",
-  NETWORK: "NETWORK",
-  BUSINESS: "BUSINESS",
-  COMPLIANCE: "COMPLIANCE",
-  AUTHENTICATION: "AUTHENTICATION",
-  AUTHORIZATION: "AUTHORIZATION",
-  DATABASE: "DATABASE",
-} as const;
-export type ErrorCategory = typeof ErrorCategory[keyof typeof ErrorCategory];
+  SYSTEM: 'SYSTEM',
+  VALIDATION: 'VALIDATION',
+  NETWORK: 'NETWORK',
+  BUSINESS: 'BUSINESS',
+  COMPLIANCE: 'COMPLIANCE',
+  AUTHENTICATION: 'AUTHENTICATION',
+  AUTHORIZATION: 'AUTHORIZATION',
+  DATABASE: 'DATABASE',
+} as const
+export type ErrorCategory = typeof ErrorCategory[keyof typeof ErrorCategory]
 
 export const ErrorSeverity = {
-  LOW: "LOW",
-  MEDIUM: "MEDIUM",
-  HIGH: "HIGH",
-  CRITICAL: "CRITICAL",
-} as const;
-export type ErrorSeverity = typeof ErrorSeverity[keyof typeof ErrorSeverity];
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL',
+} as const
+export type ErrorSeverity = typeof ErrorSeverity[keyof typeof ErrorSeverity]
 
-type ErrorContext = Record<string, unknown>;
+type ErrorContext = Record<string, unknown>
 
 interface HealthcareError {
-  category: ErrorCategory;
-  severity: ErrorSeverity;
-  context?: ErrorContext;
-  message: string;
-  patientImpact?: string;
+  category: ErrorCategory
+  severity: ErrorSeverity
+  context?: ErrorContext
+  message: string
+  patientImpact?: string
 }
 
 const createHealthcareError = (
@@ -51,85 +51,85 @@ const createHealthcareError = (
   category,
   severity,
   context,
-});
-import { AlertTriangle, Phone, RefreshCw } from "lucide-react";
-import type { ErrorInfo, ReactNode } from "react";
-import React, { Component } from "react";
+})
+import { AlertTriangle, Phone, RefreshCw, } from 'lucide-react'
+import type { ErrorInfo, ReactNode, } from 'react'
+import React, { Component, } from 'react'
 
 interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: HealthcareError) => void;
-  context?: ErrorContext;
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: HealthcareError,) => void
+  context?: ErrorContext
 }
 
 interface State {
-  hasError: boolean;
-  healthcareError?: HealthcareError;
+  hasError: boolean
+  healthcareError?: HealthcareError
 }
 
 export class HealthcareErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
+  constructor(props: Props,) {
+    super(props,)
+    this.state = { hasError: false, }
   }
 
-  static getDerivedStateFromError(_error: Error): State {
-    return { hasError: true };
+  static getDerivedStateFromError(_error: Error,): State {
+    return { hasError: true, }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo,) {
     const healthcareError: HealthcareError = createHealthcareError(
       error.message,
       ErrorCategory.SYSTEM,
       ErrorSeverity.HIGH,
       {
         ...this.props.context,
-        endpoint: typeof window !== "undefined" ? window.location.pathname : "",
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+        endpoint: typeof window !== 'undefined' ? window.location.pathname : '',
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
       },
-    );
+    )
 
-    this.setState({ healthcareError });
+    this.setState({ healthcareError, },)
 
     // Best-effort logging hooks (MVP)
-    this.logToComplianceSystem(healthcareError, errorInfo);
-    this.props.onError?.(healthcareError);
+    this.logToComplianceSystem(healthcareError, errorInfo,)
+    this.props.onError?.(healthcareError,)
 
     // Optional UX notification event
-    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(
-        new CustomEvent("healthcare-error-reported", {
+        new CustomEvent('healthcare-error-reported', {
           detail: {
             message:
-              "Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.",
+              'Erro reportado para a equipe técnica. Aguarde resolução ou entre em contato com o suporte.',
           },
-        }),
-      );
+        },),
+      )
     }
   }
 
-  private async logToComplianceSystem(error: HealthcareError, _errorInfo: ErrorInfo) {
+  private async logToComplianceSystem(error: HealthcareError, _errorInfo: ErrorInfo,) {
     // Placeholder for compliance logging
-    console.log("Error logged for compliance:", error.message);
+    console.log('Error logged for compliance:', error.message,)
   }
 
   private handleRetry = () => {
-    this.setState({ hasError: false, healthcareError: undefined });
-    if (typeof window !== "undefined") {
-      window.location.reload();
+    this.setState({ hasError: false, healthcareError: undefined, },)
+    if (typeof window !== 'undefined') {
+      window.location.reload()
     }
-  };
+  }
 
   private handleEscalation = async () => {
-    const error = this.state.healthcareError;
-    if (!error) return;
-    console.log("Support escalation requested:", error.message);
-  };
+    const error = this.state.healthcareError
+    if (!error) return
+    console.log('Support escalation requested:', error.message,)
+  }
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) return this.props.fallback;
+      if (this.props.fallback) return this.props.fallback
 
       return (
         <HealthcareErrorFallback
@@ -137,10 +137,10 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
           onRetry={this.handleRetry}
           onEscalate={this.handleEscalation}
         />
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 } /**
  * Healthcare Error Fallback Component
@@ -148,63 +148,63 @@ export class HealthcareErrorBoundary extends Component<Props, State> {
  */
 
 interface HealthcareErrorFallbackProps {
-  error?: HealthcareError;
-  onRetry: () => void;
-  onEscalate: () => void;
+  error?: HealthcareError
+  onRetry: () => void
+  onEscalate: () => void
 }
 
 function HealthcareErrorFallback({
   error,
   onRetry,
   onEscalate,
-}: HealthcareErrorFallbackProps) {
-  const getSeverityColor = (severity?: ErrorSeverity) => {
+}: HealthcareErrorFallbackProps,) {
+  const getSeverityColor = (severity?: ErrorSeverity,) => {
     switch (severity) {
       case ErrorSeverity.CRITICAL:
-        return "border-red-500 bg-red-50";
+        return 'border-red-500 bg-red-50'
       case ErrorSeverity.HIGH:
-        return "border-orange-500 bg-orange-50";
+        return 'border-orange-500 bg-orange-50'
       case ErrorSeverity.MEDIUM:
-        return "border-yellow-500 bg-yellow-50";
+        return 'border-yellow-500 bg-yellow-50'
       default:
-        return "border-blue-500 bg-blue-50";
+        return 'border-blue-500 bg-blue-50'
     }
-  };
+  }
 
-  const getErrorMessage = (error?: HealthcareError) => {
+  const getErrorMessage = (error?: HealthcareError,) => {
     if (!error) {
-      return "Ocorreu um erro inesperado no sistema.";
+      return 'Ocorreu um erro inesperado no sistema.'
     }
 
     // Patient impact check not implemented for MVP
 
     if (error.category === ErrorCategory.COMPLIANCE) {
-      return "Erro de conformidade LGPD detectado. O responsável pela proteção de dados foi notificado.";
+      return 'Erro de conformidade LGPD detectado. O responsável pela proteção de dados foi notificado.'
     }
 
     if (
       error.category === ErrorCategory.AUTHENTICATION
       || error.category === ErrorCategory.AUTHORIZATION
     ) {
-      return "Problema de autenticação detectado. Por favor, faça login novamente.";
+      return 'Problema de autenticação detectado. Por favor, faça login novamente.'
     }
 
     if (error.category === ErrorCategory.DATABASE) {
-      return "Problema de conectividade com o banco de dados. Tentando reconectar automaticamente.";
+      return 'Problema de conectividade com o banco de dados. Tentando reconectar automaticamente.'
     }
 
-    return "Ocorreu um erro no sistema. Nossa equipe foi notificada e está trabalhando na resolução.";
-  };
+    return 'Ocorreu um erro no sistema. Nossa equipe foi notificada e está trabalhando na resolução.'
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className={`max-w-md w-full ${getSeverityColor(error?.severity)}`}>
+      <Card className={`max-w-md w-full ${getSeverityColor(error?.severity,)}`}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             <CardTitle className="text-lg">Sistema Indisponível</CardTitle>
           </div>
-          <CardDescription>{getErrorMessage(error)}</CardDescription>
+          <CardDescription>{getErrorMessage(error,)}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -221,7 +221,7 @@ function HealthcareErrorFallback({
                     <strong>Categoria:</strong> {error.category}
                   </p>
                   <p>
-                    <strong>Horário:</strong> {new Date().toLocaleString("pt-BR")}
+                    <strong>Horário:</strong> {new Date().toLocaleString('pt-BR',)}
                   </p>
                 </div>
               </AlertDescription>
@@ -262,5 +262,5 @@ function HealthcareErrorFallback({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

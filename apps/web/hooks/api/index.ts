@@ -7,7 +7,7 @@
  */
 
 // Appointment hooks
-export * from "./useAppointments";
+export * from './useAppointments'
 export {
   APPOINTMENT_QUERY_KEYS,
   useAppointment,
@@ -20,9 +20,9 @@ export {
   useCreateAppointment,
   useRescheduleAppointment,
   useUpdateAppointment,
-} from "./useAppointments";
+} from './useAppointments'
 // Authentication hooks
-export * from "./useAuth";
+export * from './useAuth'
 export {
   AUTH_QUERY_KEYS,
   useAuthStatus,
@@ -35,9 +35,9 @@ export {
   useRefreshToken,
   useRegister,
   useResetPassword,
-} from "./useAuth";
+} from './useAuth'
 // Patient hooks
-export * from "./usePatients";
+export * from './usePatients'
 export {
   PATIENT_QUERY_KEYS,
   useCreatePatient,
@@ -50,113 +50,113 @@ export {
   usePatientUtils,
   useSearchPatients,
   useUpdatePatient,
-} from "./usePatients";
+} from './usePatients'
 
 // Common query key patterns for easy invalidation
 export const ALL_QUERY_KEYS = {
   auth: AUTH_QUERY_KEYS,
   patients: PATIENT_QUERY_KEYS,
   appointments: APPOINTMENT_QUERY_KEYS,
-} as const;
+} as const
 
 // Utility functions for working with multiple hooks
 export const queryUtils = {
   // Invalidate all data (useful for logout or major updates)
-  invalidateAll: (queryClient: unknown) => {
-    queryClient.invalidateQueries();
+  invalidateAll: (queryClient: unknown,) => {
+    queryClient.invalidateQueries()
   },
 
   // Invalidate specific domain data
-  invalidateAuth: (queryClient: unknown) => {
+  invalidateAuth: (queryClient: unknown,) => {
     queryClient.invalidateQueries({
       queryKey: AUTH_QUERY_KEYS.all,
-    });
+    },)
   },
 
-  invalidatePatients: (queryClient: unknown) => {
+  invalidatePatients: (queryClient: unknown,) => {
     queryClient.invalidateQueries({
       queryKey: PATIENT_QUERY_KEYS.all,
-    });
+    },)
   },
 
-  invalidateAppointments: (queryClient: unknown) => {
+  invalidateAppointments: (queryClient: unknown,) => {
     queryClient.invalidateQueries({
       queryKey: APPOINTMENT_QUERY_KEYS.all,
-    });
+    },)
   },
 
   // Clear all cached data
-  clearAll: (queryClient: unknown) => {
-    queryClient.clear();
+  clearAll: (queryClient: unknown,) => {
+    queryClient.clear()
   },
 
   // Prefetch common data (useful for app initialization)
-  prefetchCommonData: async (queryClient: unknown) => {
+  prefetchCommonData: async (queryClient: unknown,) => {
     const promises = [
       // Prefetch user profile
       queryClient.prefetchQuery({
         queryKey: AUTH_QUERY_KEYS.profile,
         staleTime: 1000 * 60 * 5,
-      }),
+      },),
 
       // Prefetch recent patients
       queryClient.prefetchQuery({
-        queryKey: PATIENT_QUERY_KEYS.list({ page: 1, limit: 10 }),
+        queryKey: PATIENT_QUERY_KEYS.list({ page: 1, limit: 10, },),
         staleTime: 1000 * 60 * 2,
-      }),
+      },),
 
       // Prefetch today's appointments
       queryClient.prefetchQuery({
         queryKey: APPOINTMENT_QUERY_KEYS.calendar({
-          startDate: new Date().toISOString().split("T")[0],
-          endDate: new Date().toISOString().split("T")[0],
-        }),
+          startDate: new Date().toISOString().split('T',)[0],
+          endDate: new Date().toISOString().split('T',)[0],
+        },),
         staleTime: 1000 * 30,
-      }),
-    ];
+      },),
+    ]
 
-    await Promise.allSettled(promises);
+    await Promise.allSettled(promises,)
   },
-};
+}
 
 // Type helpers for hooks
 export type QueryKeyType =
   | (typeof AUTH_QUERY_KEYS)[keyof typeof AUTH_QUERY_KEYS]
   | (typeof PATIENT_QUERY_KEYS)[keyof typeof PATIENT_QUERY_KEYS]
-  | (typeof APPOINTMENT_QUERY_KEYS)[keyof typeof APPOINTMENT_QUERY_KEYS];
+  | (typeof APPOINTMENT_QUERY_KEYS)[keyof typeof APPOINTMENT_QUERY_KEYS]
 
 // Hook status helpers
-export interface UseQueryState<T> {
-  data: T | undefined;
-  isLoading: boolean;
-  isFetching: boolean;
-  isError: boolean;
-  error: Error | null;
-  isSuccess: boolean;
-  refetch: () => void;
+export interface UseQueryState<T,> {
+  data: T | undefined
+  isLoading: boolean
+  isFetching: boolean
+  isError: boolean
+  error: Error | null
+  isSuccess: boolean
+  refetch: () => void
 }
 
-export interface UseMutationState<T, V> {
-  mutate: (variables: V) => void;
-  mutateAsync: (variables: V) => Promise<T>;
-  data: T | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  error: Error | null;
-  isSuccess: boolean;
-  reset: () => void;
+export interface UseMutationState<T, V,> {
+  mutate: (variables: V,) => void
+  mutateAsync: (variables: V,) => Promise<T>
+  data: T | undefined
+  isLoading: boolean
+  isError: boolean
+  error: Error | null
+  isSuccess: boolean
+  reset: () => void
 }
 
 // Common error messages for hooks
 export const HOOK_ERROR_MESSAGES = {
-  NETWORK_ERROR: "Erro de conexão. Verifique sua internet.",
-  UNAUTHORIZED: "Sessão expirada. Faça login novamente.",
-  FORBIDDEN: "Você não tem permissão para esta ação.",
-  NOT_FOUND: "Recurso não encontrado.",
-  VALIDATION_ERROR: "Dados inválidos. Verifique os campos.",
-  SERVER_ERROR: "Erro interno do servidor. Tente novamente.",
-  UNKNOWN_ERROR: "Erro desconhecido. Tente novamente.",
-} as const;
+  NETWORK_ERROR: 'Erro de conexão. Verifique sua internet.',
+  UNAUTHORIZED: 'Sessão expirada. Faça login novamente.',
+  FORBIDDEN: 'Você não tem permissão para esta ação.',
+  NOT_FOUND: 'Recurso não encontrado.',
+  VALIDATION_ERROR: 'Dados inválidos. Verifique os campos.',
+  SERVER_ERROR: 'Erro interno do servidor. Tente novamente.',
+  UNKNOWN_ERROR: 'Erro desconhecido. Tente novamente.',
+} as const
 
 // Hook configuration defaults
 export const HOOK_DEFAULTS = {
@@ -179,4 +179,4 @@ export const HOOK_DEFAULTS = {
     DEFAULT_PAGE_SIZE: 20,
     MAX_PAGE_SIZE: 100,
   },
-} as const;
+} as const

@@ -5,43 +5,43 @@
  */
 
 // Temporary: Use relative path until module resolution is fixed
-import { createClient } from "@supabase/supabase-js";
-import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../types/database.types";
+import { createClient, } from '@supabase/supabase-js'
+import type { RealtimeChannel, SupabaseClient, } from '@supabase/supabase-js'
+import type { Database, } from '../types/database.types'
 
 export interface ConnectionConfig {
-  url: string;
-  anonKey: string;
-  serviceRoleKey?: string;
-  maxRetries: number;
-  retryDelay: number;
-  heartbeatInterval: number;
-  reconnectOnFocus: boolean;
-  enableLogging: boolean;
+  url: string
+  anonKey: string
+  serviceRoleKey?: string
+  maxRetries: number
+  retryDelay: number
+  heartbeatInterval: number
+  reconnectOnFocus: boolean
+  enableLogging: boolean
 }
 
 export interface ChannelSubscription {
-  channelName: string;
-  channel: RealtimeChannel;
-  isActive: boolean;
-  retryCount: number;
-  lastError?: Error;
-  callbacks: Map<string, (payload: unknown) => void>;
+  channelName: string
+  channel: RealtimeChannel
+  isActive: boolean
+  retryCount: number
+  lastError?: Error
+  callbacks: Map<string, (payload: unknown,) => void>
   config?: {
-    table?: string;
-    schema?: string;
-    filter?: string;
-    event?: "INSERT" | "UPDATE" | "DELETE" | "*";
-  };
+    table?: string
+    schema?: string
+    filter?: string
+    event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*'
+  }
 }
 
 export interface ConnectionStatus {
-  isConnected: boolean;
-  connectionId: string | null;
-  lastConnected: Date | null;
-  totalRetries: number;
-  activeChannels: number;
-  healthScore: number; // 0-100
+  isConnected: boolean
+  connectionId: string | null
+  lastConnected: Date | null
+  totalRetries: number
+  activeChannels: number
+  healthScore: number // 0-100
 }
 
 /**
@@ -49,19 +49,19 @@ export interface ConnectionStatus {
  * Implementa conexão robusta com healthcare-grade reliability
  */
 export class SupabaseRealtimeManager {
-  private readonly client: SupabaseClient<Database>;
-  private readonly config: ConnectionConfig;
-  private readonly subscriptions = new Map<string, ChannelSubscription>();
-  private connectionStatus: ConnectionStatus;
-  private heartbeatTimer?: NodeJS.Timeout | null;
-  private reconnectTimer?: NodeJS.Timeout | null;
+  private readonly client: SupabaseClient<Database>
+  private readonly config: ConnectionConfig
+  private readonly subscriptions = new Map<string, ChannelSubscription>()
+  private connectionStatus: ConnectionStatus
+  private heartbeatTimer?: NodeJS.Timeout | null
+  private reconnectTimer?: NodeJS.Timeout | null
   private readonly statusListeners = new Set<
-    (status: ConnectionStatus) => void
-  >();
-  private isDestroyed = false;
+    (status: ConnectionStatus,) => void
+  >()
+  private isDestroyed = false
 
-  constructor(config: ConnectionConfig) {
-    this.config = config;
+  constructor(config: ConnectionConfig,) {
+    this.config = config
     this.connectionStatus = {
       isConnected: false,
       connectionId: null,
@@ -69,7 +69,7 @@ export class SupabaseRealtimeManager {
       totalRetries: 0,
       activeChannels: 0,
       healthScore: 0,
-    };
+    }
 
     // Initialize Supabase client with realtime configuration
     this.client = createClient<Database>(config.url, config.anonKey, {
@@ -84,38 +84,38 @@ export class SupabaseRealtimeManager {
         persistSession: true,
         detectSessionInUrl: false,
       },
-    });
+    },)
 
-    this.initializeConnection();
-    this.setupHeartbeat();
-    this.setupVisibilityHandlers();
+    this.initializeConnection()
+    this.setupHeartbeat()
+    this.setupVisibilityHandlers()
   } /**
    * Initialize connection with retry logic
    */
 
   private initializeConnection(): void {
     if (this.isDestroyed) {
-      return;
+      return
     }
 
     try {
       // Setup connection event handlers using a monitoring channel
-      const monitorChannel = this.client.channel("system_monitor");
+      const monitorChannel = this.client.channel('system_monitor',)
 
-      monitorChannel.subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          this.handleConnectionOpen();
-        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-          this.handleConnectionError(new Error(`Connection status: ${status}`));
-        } else if (status === "CLOSED") {
-          this.handleConnectionClose();
+      monitorChannel.subscribe((status,) => {
+        if (status === 'SUBSCRIBED') {
+          this.handleConnectionOpen()
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          this.handleConnectionError(new Error(`Connection status: ${status}`,),)
+        } else if (status === 'CLOSED') {
+          this.handleConnectionClose()
         }
-      });
+      },)
 
       if (this.config.enableLogging) {
       }
     } catch (error) {
-      this.handleConnectionError(error as Error);
+      this.handleConnectionError(error as Error,)
     }
   }
 
@@ -129,19 +129,19 @@ export class SupabaseRealtimeManager {
       connectionId: this.generateConnectionId(),
       lastConnected: new Date(),
       healthScore: 100,
-    };
+    }
 
     if (this.config.enableLogging) {
     }
 
     // Resubscribe to all channels
-    this.resubscribeAllChannels();
-    this.notifyStatusListeners();
+    this.resubscribeAllChannels()
+    this.notifyStatusListeners()
 
     // Clear reconnect timer
     if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
+      clearTimeout(this.reconnectTimer,)
+      this.reconnectTimer = null
     }
   } /**
    * Handle connection close
@@ -153,32 +153,32 @@ export class SupabaseRealtimeManager {
       isConnected: false,
       connectionId: null,
       healthScore: 0,
-    };
+    }
 
     if (this.config.enableLogging) {
     }
 
-    this.markAllChannelsInactive();
-    this.notifyStatusListeners();
-    this.scheduleReconnect();
+    this.markAllChannelsInactive()
+    this.notifyStatusListeners()
+    this.scheduleReconnect()
   }
 
   /**
    * Handle connection errors
    */
-  private handleConnectionError(_error: Error): void {
-    this.connectionStatus.totalRetries++;
+  private handleConnectionError(_error: Error,): void {
+    this.connectionStatus.totalRetries++
 
     if (this.config.enableLogging) {
     }
 
     // Calculate health score based on errors
-    this.updateHealthScore();
-    this.notifyStatusListeners();
+    this.updateHealthScore()
+    this.notifyStatusListeners()
 
     // Schedule reconnect if not at max retries
     if (this.connectionStatus.totalRetries < this.config.maxRetries) {
-      this.scheduleReconnect();
+      this.scheduleReconnect()
     }
   } /**
    * Schedule reconnection with exponential backoff
@@ -186,18 +186,18 @@ export class SupabaseRealtimeManager {
 
   private scheduleReconnect(): void {
     if (this.isDestroyed || this.reconnectTimer) {
-      return;
+      return
     }
 
     const delay = Math.min(
       this.config.retryDelay * 2 ** this.connectionStatus.totalRetries,
       30_000, // Max 30 seconds
-    );
+    )
 
     this.reconnectTimer = setTimeout(() => {
-      this.reconnectTimer = null;
-      this.initializeConnection();
-    }, delay);
+      this.reconnectTimer = null
+      this.initializeConnection()
+    }, delay,)
 
     if (this.config.enableLogging) {
     }
@@ -208,40 +208,40 @@ export class SupabaseRealtimeManager {
    */
   private setupHeartbeat(): void {
     this.heartbeatTimer = setInterval(() => {
-      this.performHealthCheck();
-    }, this.config.heartbeatInterval);
+      this.performHealthCheck()
+    }, this.config.heartbeatInterval,)
   }
 
   /**
    * Setup window focus/blur handlers for reconnection
    */
   private setupVisibilityHandlers(): void {
-    if (typeof window === "undefined" || !this.config.reconnectOnFocus) {
-      return;
+    if (typeof window === 'undefined' || !this.config.reconnectOnFocus) {
+      return
     }
 
-    window.addEventListener("focus", this.onFocus);
-    window.addEventListener("blur", this.onBlur);
+    window.addEventListener('focus', this.onFocus,)
+    window.addEventListener('blur', this.onBlur,)
   } /**
    * Subscribe to a realtime channel
    */
 
-  public subscribe<T = unknown>(
+  public subscribe<T = unknown,>(
     channelName: string,
     config: {
-      table?: string;
-      schema?: string;
-      filter?: string;
-      event?: "INSERT" | "UPDATE" | "DELETE" | "*";
+      table?: string
+      schema?: string
+      filter?: string
+      event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*'
     },
-    callback: (payload: T) => void,
+    callback: (payload: T,) => void,
   ): () => void {
     // Create or get existing subscription
-    let subscription = this.subscriptions.get(channelName);
+    let subscription = this.subscriptions.get(channelName,)
 
     if (!subscription) {
       // Create channel with empty options (Supabase will handle postgres_changes via .on())
-      const channel = this.client.channel(channelName);
+      const channel = this.client.channel(channelName,)
 
       subscription = {
         channelName,
@@ -250,27 +250,27 @@ export class SupabaseRealtimeManager {
         retryCount: 0,
         callbacks: new Map(),
         config, // Store config for retry scenarios
-      };
+      }
 
-      this.subscriptions.set(channelName, subscription);
+      this.subscriptions.set(channelName, subscription,)
     }
 
     // Add callback (cast to match Map signature)
-    const callbackId = this.generateCallbackId();
+    const callbackId = this.generateCallbackId()
     subscription.callbacks.set(
       callbackId,
-      callback as (payload: unknown) => void,
-    );
+      callback as (payload: unknown,) => void,
+    )
 
     // Setup channel if not active
     if (!subscription.isActive) {
-      this.activateChannel(subscription, config);
+      this.activateChannel(subscription, config,)
     }
 
     // Return unsubscribe function
     return () => {
-      this.unsubscribeCallback(channelName, callbackId);
-    };
+      this.unsubscribeCallback(channelName, callbackId,)
+    }
   }
 
   /**
@@ -279,89 +279,89 @@ export class SupabaseRealtimeManager {
   private activateChannel(
     subscription: ChannelSubscription,
     config?: {
-      table?: string;
-      schema?: string;
-      filter?: string;
-      event?: "INSERT" | "UPDATE" | "DELETE" | "*";
+      table?: string
+      schema?: string
+      filter?: string
+      event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*'
     },
   ): void {
-    const { channel, callbacks } = subscription;
+    const { channel, callbacks, } = subscription
 
     // Setup postgres changes listener with configuration
     if (config?.table) {
       channel.on(
-        "postgres_changes" as "system",
+        'postgres_changes' as 'system',
         {
-          event: config.event || "*",
-          schema: config.schema || "public",
+          event: config.event || '*',
+          schema: config.schema || 'public',
           table: config.table,
           filter: config.filter,
         },
-        (payload: unknown) => {
-          callbacks.forEach((callback) => {
+        (payload: unknown,) => {
+          callbacks.forEach((callback,) => {
             try {
-              callback(payload as unknown);
+              callback(payload as unknown,)
             } catch {}
-          });
+          },)
         },
-      );
+      )
     } else {
       // Setup generic postgres changes listener for backwards compatibility
       channel.on(
-        "postgres_changes" as "system",
-        { event: "*", schema: "public" },
-        (payload: unknown) => {
-          callbacks.forEach((callback) => {
+        'postgres_changes' as 'system',
+        { event: '*', schema: 'public', },
+        (payload: unknown,) => {
+          callbacks.forEach((callback,) => {
             try {
-              callback(payload as unknown);
+              callback(payload as unknown,)
             } catch {}
-          });
+          },)
         },
-      );
+      )
     }
 
     // Subscribe to channel
-    channel.subscribe((status) => {
-      subscription.isActive = status === "SUBSCRIBED";
+    channel.subscribe((status,) => {
+      subscription.isActive = status === 'SUBSCRIBED'
 
-      if (status === "SUBSCRIBED") {
-        subscription.retryCount = 0;
-        this.connectionStatus.activeChannels = this.subscriptions.size;
-      } else if (status === "CHANNEL_ERROR") {
-        this.handleChannelError(subscription);
+      if (status === 'SUBSCRIBED') {
+        subscription.retryCount = 0
+        this.connectionStatus.activeChannels = this.subscriptions.size
+      } else if (status === 'CHANNEL_ERROR') {
+        this.handleChannelError(subscription,)
       }
 
-      this.notifyStatusListeners();
-    });
+      this.notifyStatusListeners()
+    },)
   } /**
    * Unsubscribe callback from channel
    */
 
-  private unsubscribeCallback(channelName: string, callbackId: string): void {
-    const subscription = this.subscriptions.get(channelName);
+  private unsubscribeCallback(channelName: string, callbackId: string,): void {
+    const subscription = this.subscriptions.get(channelName,)
     if (!subscription) {
-      return;
+      return
     }
 
-    subscription.callbacks.delete(callbackId);
+    subscription.callbacks.delete(callbackId,)
 
     // Remove subscription if no more callbacks
     if (subscription.callbacks.size === 0) {
-      subscription.channel.unsubscribe();
-      this.subscriptions.delete(channelName);
-      this.connectionStatus.activeChannels = this.subscriptions.size;
-      this.notifyStatusListeners();
+      subscription.channel.unsubscribe()
+      this.subscriptions.delete(channelName,)
+      this.connectionStatus.activeChannels = this.subscriptions.size
+      this.notifyStatusListeners()
     }
   }
 
   /**
    * Handle channel errors
    */
-  private handleChannelError(subscription: ChannelSubscription): void {
-    subscription.retryCount++;
+  private handleChannelError(subscription: ChannelSubscription,): void {
+    subscription.retryCount++
     subscription.lastError = new Error(
       `Channel ${subscription.channelName} error`,
-    );
+    )
 
     if (this.config.enableLogging) {
     }
@@ -369,8 +369,8 @@ export class SupabaseRealtimeManager {
     // Retry channel subscription if under limit
     if (subscription.retryCount < this.config.maxRetries) {
       setTimeout(() => {
-        this.activateChannel(subscription, subscription.config);
-      }, this.config.retryDelay * subscription.retryCount);
+        this.activateChannel(subscription, subscription.config,)
+      }, this.config.retryDelay * subscription.retryCount,)
     }
   }
 
@@ -378,32 +378,32 @@ export class SupabaseRealtimeManager {
    * Resubscribe all channels after reconnection
    */
   private resubscribeAllChannels(): void {
-    this.subscriptions.forEach((subscription) => {
+    this.subscriptions.forEach((subscription,) => {
       if (!subscription.isActive) {
-        this.activateChannel(subscription, subscription.config);
+        this.activateChannel(subscription, subscription.config,)
       }
-    });
+    },)
   } /**
    * Mark all channels as inactive
    */
 
   private markAllChannelsInactive(): void {
-    this.subscriptions.forEach((subscription) => {
-      subscription.isActive = false;
-    });
-    this.connectionStatus.activeChannels = 0;
+    this.subscriptions.forEach((subscription,) => {
+      subscription.isActive = false
+    },)
+    this.connectionStatus.activeChannels = 0
   }
 
   /**
    * Perform health check
    */
   private performHealthCheck(): void {
-    const healthScore = this.calculateHealthScore();
-    this.connectionStatus.healthScore = healthScore;
+    const healthScore = this.calculateHealthScore()
+    this.connectionStatus.healthScore = healthScore
 
     // Trigger reconnection if health is too low
     if (healthScore < 50 && this.connectionStatus.isConnected) {
-      this.client.realtime.disconnect();
+      this.client.realtime.disconnect()
     }
   }
 
@@ -412,22 +412,22 @@ export class SupabaseRealtimeManager {
    */
   private calculateHealthScore(): number {
     if (!this.connectionStatus.isConnected) {
-      return 0;
+      return 0
     }
 
-    const maxScore = 100;
-    const retryPenalty = this.connectionStatus.totalRetries * 10;
+    const maxScore = 100
+    const retryPenalty = this.connectionStatus.totalRetries * 10
     const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels)
-      * 5;
+      * 5
 
-    return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
+    return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty,)
   }
 
   /**
    * Update health score based on errors
    */
   private updateHealthScore(): void {
-    this.connectionStatus.healthScore = this.calculateHealthScore();
+    this.connectionStatus.healthScore = this.calculateHealthScore()
   }
 
   /**
@@ -435,7 +435,7 @@ export class SupabaseRealtimeManager {
    */
   private handleWindowFocus(): void {
     if (!(this.connectionStatus.isConnected || this.isDestroyed)) {
-      this.initializeConnection();
+      this.initializeConnection()
     }
   }
 
@@ -445,41 +445,41 @@ export class SupabaseRealtimeManager {
   private handleWindowBlur(): void {
     // Reduce heartbeat frequency when window is not in focus
     if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
+      clearInterval(this.heartbeatTimer,)
       this.heartbeatTimer = setInterval(() => {
-        this.performHealthCheck();
-      }, this.config.heartbeatInterval * 3);
+        this.performHealthCheck()
+      }, this.config.heartbeatInterval * 3,)
     }
   } /**
    * Add status change listener
    */
 
   public onStatusChange(
-    listener: (status: ConnectionStatus) => void,
+    listener: (status: ConnectionStatus,) => void,
   ): () => void {
-    this.statusListeners.add(listener);
+    this.statusListeners.add(listener,)
 
     // Immediately call with current status
-    listener(this.connectionStatus);
+    listener(this.connectionStatus,)
 
     // Return unsubscribe function
     return () => {
-      this.statusListeners.delete(listener);
-    };
+      this.statusListeners.delete(listener,)
+    }
   }
 
   /**
    * Get current connection status
    */
   public getStatus(): ConnectionStatus {
-    return { ...this.connectionStatus };
+    return { ...this.connectionStatus, }
   }
 
   /**
    * Get Supabase client instance
    */
   public getClient(): SupabaseClient<Database> {
-    return this.client;
+    return this.client
   }
 
   /**
@@ -487,69 +487,69 @@ export class SupabaseRealtimeManager {
    */
   public reconnect(): void {
     if (this.connectionStatus.isConnected) {
-      this.client.realtime.disconnect();
+      this.client.realtime.disconnect()
     }
-    this.initializeConnection();
+    this.initializeConnection()
   }
 
   /**
    * Destroy connection manager
    */
-  private onFocus = () => this.handleWindowFocus();
-  private onBlur = () => this.handleWindowBlur();
+  private onFocus = () => this.handleWindowFocus()
+  private onBlur = () => this.handleWindowBlur()
 
   public destroy(): void {
-    this.isDestroyed = true;
+    this.isDestroyed = true
 
     // Clear timers
     if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
+      clearInterval(this.heartbeatTimer,)
     }
     if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
+      clearTimeout(this.reconnectTimer,)
     }
 
     // Unsubscribe all channels
-    this.subscriptions.forEach((subscription) => {
-      subscription.channel.unsubscribe();
-    });
-    this.subscriptions.clear();
+    this.subscriptions.forEach((subscription,) => {
+      subscription.channel.unsubscribe()
+    },)
+    this.subscriptions.clear()
 
     // Disconnect client
-    this.client.realtime.disconnect();
+    this.client.realtime.disconnect()
 
     // Remove event listeners
-    if (typeof window !== "undefined") {
-      window.removeEventListener("focus", this.onFocus);
-      window.removeEventListener("blur", this.onBlur);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('focus', this.onFocus,)
+      window.removeEventListener('blur', this.onBlur,)
     }
 
     // Clear status listeners
-    this.statusListeners.clear();
+    this.statusListeners.clear()
   } /**
    * Notify all status listeners
    */
 
   private notifyStatusListeners(): void {
-    this.statusListeners.forEach((listener) => {
+    this.statusListeners.forEach((listener,) => {
       try {
-        listener(this.connectionStatus);
+        listener(this.connectionStatus,)
       } catch {}
-    });
+    },)
   }
 
   /**
    * Generate unique connection ID
    */
   private generateConnectionId(): string {
-    return `conn_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    return `conn_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`
   }
 
   /**
    * Generate unique callback ID
    */
   private generateCallbackId(): string {
-    return `cb_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    return `cb_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`
   }
 }
 
@@ -557,19 +557,19 @@ export class SupabaseRealtimeManager {
  * Default configuration for healthcare applications
  */
 export const DEFAULT_CONFIG: ConnectionConfig = {
-  url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+  url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
   maxRetries: 5,
   retryDelay: 1000, // 1 second base delay
   heartbeatInterval: 30_000, // 30 seconds
   reconnectOnFocus: true,
-  enableLogging: process.env.NODE_ENV === "development",
-};
+  enableLogging: process.env.NODE_ENV === 'development',
+}
 
 /**
  * Singleton instance for global realtime management
  */
-let globalRealtimeManager: SupabaseRealtimeManager | null;
+let globalRealtimeManager: SupabaseRealtimeManager | null
 
 /**
  * Get or create global realtime manager instance
@@ -578,10 +578,10 @@ export function getRealtimeManager(
   config?: Partial<ConnectionConfig>,
 ): SupabaseRealtimeManager {
   if (!globalRealtimeManager) {
-    const fullConfig = { ...DEFAULT_CONFIG, ...config };
-    globalRealtimeManager = new SupabaseRealtimeManager(fullConfig);
+    const fullConfig = { ...DEFAULT_CONFIG, ...config, }
+    globalRealtimeManager = new SupabaseRealtimeManager(fullConfig,)
   }
-  return globalRealtimeManager;
+  return globalRealtimeManager
 }
 
 /**
@@ -589,7 +589,7 @@ export function getRealtimeManager(
  */
 export function destroyRealtimeManager(): void {
   if (globalRealtimeManager) {
-    globalRealtimeManager.destroy();
-    globalRealtimeManager = null;
+    globalRealtimeManager.destroy()
+    globalRealtimeManager = null
   }
 }

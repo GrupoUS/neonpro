@@ -6,111 +6,111 @@
  * role-based visibility, and accessibility features.
  */
 
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import { Link, useLocation, useParams } from "@tanstack/react-router";
-import { ChevronRight, Home } from "lucide-react";
-import type React from "react";
+import { cn, } from '@/lib/utils'
+import { Link, useLocation, useParams, } from '@tanstack/react-router'
+import { ChevronRight, Home, } from 'lucide-react'
+import type React from 'react'
 
 interface BreadcrumbItem {
-  label: string;
-  href?: string;
-  isActive?: boolean;
-  icon?: React.ComponentType<{ className?: string; }>;
+  label: string
+  href?: string
+  isActive?: boolean
+  icon?: React.ComponentType<{ className?: string }>
 }
 
-export function Breadcrumbs({ className }: { className?: string; }) {
-  const location = useLocation();
-  const params = useParams({ strict: false });
+export function Breadcrumbs({ className, }: { className?: string },) {
+  const location = useLocation()
+  const params = useParams({ strict: false, },)
 
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    const pathSegments = location.pathname.split("/").filter(Boolean);
+    const pathSegments = location.pathname.split('/',).filter(Boolean,)
     const breadcrumbs: BreadcrumbItem[] = [
       {
-        label: "Início",
-        href: "/",
+        label: 'Início',
+        href: '/',
         icon: Home,
       },
-    ];
+    ]
 
-    let currentPath = "";
+    let currentPath = ''
 
-    pathSegments.forEach((segment, index) => {
-      currentPath += `/${segment}`;
+    pathSegments.forEach((segment, index,) => {
+      currentPath += `/${segment}`
 
       // Replace parameter values with actual data if available
-      let label = segment;
+      let label = segment
 
       // Handle dynamic segments
-      if (segment.startsWith("$")) {
-        const paramKey = segment.slice(1);
-        const paramValue = params[paramKey as keyof typeof params];
-        label = paramValue ? String(paramValue) : segment;
+      if (segment.startsWith('$',)) {
+        const paramKey = segment.slice(1,)
+        const paramValue = params[paramKey as keyof typeof params]
+        label = paramValue ? String(paramValue,) : segment
       }
 
       // Translate common segments to Portuguese
       const translations: Record<string, string> = {
-        dashboard: "Dashboard",
-        patients: "Pacientes",
-        appointments: "Consultas",
-        professionals: "Profissionais",
-        compliance: "Conformidade",
-        settings: "Configurações",
-        analytics: "Analytics",
-        new: "Novo",
-        edit: "Editar",
-        profile: "Perfil",
-        security: "Segurança",
-        clinic: "Clínica",
-        integrations: "Integrações",
-        lgpd: "LGPD",
-        anvisa: "ANVISA",
-        cfm: "CFM",
-        reports: "Relatórios",
-        schedule: "Agendar",
-        calendar: "Calendário",
-        overview: "Visão Geral",
-        "medical-records": "Prontuário",
-        performance: "Desempenho",
-      };
+        dashboard: 'Dashboard',
+        patients: 'Pacientes',
+        appointments: 'Consultas',
+        professionals: 'Profissionais',
+        compliance: 'Conformidade',
+        settings: 'Configurações',
+        analytics: 'Analytics',
+        new: 'Novo',
+        edit: 'Editar',
+        profile: 'Perfil',
+        security: 'Segurança',
+        clinic: 'Clínica',
+        integrations: 'Integrações',
+        lgpd: 'LGPD',
+        anvisa: 'ANVISA',
+        cfm: 'CFM',
+        reports: 'Relatórios',
+        schedule: 'Agendar',
+        calendar: 'Calendário',
+        overview: 'Visão Geral',
+        'medical-records': 'Prontuário',
+        performance: 'Desempenho',
+      }
 
-      label = translations[label] || label;
+      label = translations[label] || label
 
       // Don't create links for certain segments that are not navigable
-      const nonNavigableSegments = ["edit", "new"];
-      const href = nonNavigableSegments.includes(segment)
+      const nonNavigableSegments = ['edit', 'new',]
+      const href = nonNavigableSegments.includes(segment,)
         ? undefined
-        : currentPath;
+        : currentPath
 
       breadcrumbs.push({
         label,
         href,
         isActive: index === pathSegments.length - 1,
-      });
-    });
+      },)
+    },)
 
-    return breadcrumbs;
-  };
+    return breadcrumbs
+  }
 
-  const breadcrumbs = generateBreadcrumbs();
+  const breadcrumbs = generateBreadcrumbs()
 
   // Don't show breadcrumbs on home page or if only one item
   if (breadcrumbs.length <= 1) {
-    return;
+    return
   }
 
   return (
     <nav
       aria-label="Navegação estrutural"
       className={cn(
-        "flex items-center space-x-1 text-muted-foreground text-sm",
+        'flex items-center space-x-1 text-muted-foreground text-sm',
         className,
       )}
     >
       <ol className="flex items-center space-x-1">
-        {breadcrumbs.map((item, index) => {
-          const isLast = index === breadcrumbs.length - 1;
+        {breadcrumbs.map((item, index,) => {
+          const isLast = index === breadcrumbs.length - 1
 
           return (
             <li className="flex items-center" key={index}>
@@ -119,10 +119,10 @@ export function Breadcrumbs({ className }: { className?: string; }) {
               {item.href && !isLast
                 ? (
                   <Link
-                    aria-current={isLast ? "page" : undefined}
+                    aria-current={isLast ? 'page' : undefined}
                     className={cn(
-                      "flex items-center transition-colors hover:text-foreground",
-                      index === 0 && "hover:text-primary",
+                      'flex items-center transition-colors hover:text-foreground',
+                      index === 0 && 'hover:text-primary',
                     )}
                     to={item.href}
                   >
@@ -132,12 +132,12 @@ export function Breadcrumbs({ className }: { className?: string; }) {
                 )
                 : (
                   <span
-                    aria-current={isLast ? "page" : undefined}
+                    aria-current={isLast ? 'page' : undefined}
                     className={cn(
-                      "flex items-center",
+                      'flex items-center',
                       isLast
-                        ? "font-medium text-foreground"
-                        : "text-muted-foreground",
+                        ? 'font-medium text-foreground'
+                        : 'text-muted-foreground',
                     )}
                   >
                     {item.icon && index === 0 && <item.icon className="mr-1 h-4 w-4" />}
@@ -145,11 +145,11 @@ export function Breadcrumbs({ className }: { className?: string; }) {
                   </span>
                 )}
             </li>
-          );
-        })}
+          )
+        },)}
       </ol>
     </nav>
-  );
+  )
 }
 
 // Healthcare-specific breadcrumb variants
@@ -158,10 +158,10 @@ export function PatientBreadcrumbs({
   patientName,
   currentSection,
 }: {
-  patientId: string;
-  patientName?: string;
-  currentSection?: string;
-}) {
+  patientId: string
+  patientName?: string
+  currentSection?: string
+},) {
   return (
     <nav
       aria-label="Navegação do paciente"
@@ -189,14 +189,14 @@ export function PatientBreadcrumbs({
         <li className="flex items-center">
           <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
           <Link
-            aria-current={currentSection ? undefined : "page"}
+            aria-current={currentSection ? undefined : 'page'}
             className={cn(
-              "max-w-32 truncate",
+              'max-w-32 truncate',
               currentSection
-                ? "transition-colors hover:text-foreground"
-                : "font-medium text-foreground",
+                ? 'transition-colors hover:text-foreground'
+                : 'font-medium text-foreground',
             )}
-            to={`/patients/${patientId}`}
+            to={`/patients/${patientId}` as any}
           >
             {patientName || `Paciente ${patientId}`}
           </Link>
@@ -211,7 +211,7 @@ export function PatientBreadcrumbs({
         )}
       </ol>
     </nav>
-  );
+  )
 }
 
 export function AppointmentBreadcrumbs({
@@ -219,14 +219,14 @@ export function AppointmentBreadcrumbs({
   patientName,
   appointmentDate,
 }: {
-  appointmentId: string;
-  patientName?: string;
-  appointmentDate?: string;
-}) {
-  const displayName = patientName || `Consulta ${appointmentId}`;
+  appointmentId: string
+  patientName?: string
+  appointmentDate?: string
+},) {
+  const displayName = patientName || `Consulta ${appointmentId}`
   const displayDate = appointmentDate
-    ? new Date(appointmentDate).toLocaleDateString("pt-BR")
-    : "";
+    ? new Date(appointmentDate,).toLocaleDateString('pt-BR',)
+    : ''
 
   return (
     <nav
@@ -265,15 +265,15 @@ export function AppointmentBreadcrumbs({
         </li>
       </ol>
     </nav>
-  );
+  )
 }
 
 // Quick actions breadcrumb for emergency situations
 export function EmergencyBreadcrumbs({
   currentAction,
 }: {
-  currentAction: string;
-}) {
+  currentAction: string
+},) {
   return (
     <nav
       aria-label="Ação de emergência"
@@ -285,7 +285,7 @@ export function EmergencyBreadcrumbs({
         <span>{currentAction}</span>
       </div>
     </nav>
-  );
+  )
 }
 
 // =============================================================================

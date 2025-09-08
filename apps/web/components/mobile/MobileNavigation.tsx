@@ -4,10 +4,10 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -15,8 +15,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/sheet'
+import { cn, } from '@/lib/utils'
 import {
   Activity,
   BarChart3,
@@ -30,176 +30,176 @@ import {
   Stethoscope,
   User,
   Users,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, } from 'next/navigation'
+import { useEffect, useState, } from 'react'
 
 interface NavigationItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string; }>;
-  badge?: string;
-  category: "main" | "dashboard" | "tools" | "settings";
-  description?: string;
-  compliance?: string[];
+  label: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  badge?: string
+  category: 'main' | 'dashboard' | 'tools' | 'settings'
+  description?: string
+  compliance?: string[]
 }
 
 const navigationItems: NavigationItem[] = [
   // Main Navigation
   {
-    label: "Início",
-    href: "/",
+    label: 'Início',
+    href: '/',
     icon: Home,
-    category: "main",
-    description: "Página principal",
+    category: 'main',
+    description: 'Página principal',
   },
   {
-    label: "Consultas",
-    href: "/appointments",
+    label: 'Consultas',
+    href: '/appointments',
     icon: Calendar,
-    category: "main",
-    description: "Agendamentos e consultas",
-    compliance: ["LGPD", "CFM"],
+    category: 'main',
+    description: 'Agendamentos e consultas',
+    compliance: ['LGPD', 'CFM',],
   },
   {
-    label: "Pacientes",
-    href: "/patients",
+    label: 'Pacientes',
+    href: '/patients',
     icon: Users,
-    category: "main",
-    description: "Gestão de pacientes",
-    compliance: ["LGPD", "ANVISA"],
+    category: 'main',
+    description: 'Gestão de pacientes',
+    compliance: ['LGPD', 'ANVISA',],
   },
   {
-    label: "Prontuários",
-    href: "/records",
+    label: 'Prontuários',
+    href: '/records',
     icon: FileText,
-    category: "main",
-    description: "Registros médicos",
-    compliance: ["LGPD", "ANVISA", "CFM"],
+    category: 'main',
+    description: 'Registros médicos',
+    compliance: ['LGPD', 'ANVISA', 'CFM',],
   },
 
   // Dashboard Navigation
   {
-    label: "Dashboard Principal",
-    href: "/dashboard",
+    label: 'Dashboard Principal',
+    href: '/dashboard',
     icon: BarChart3,
-    category: "dashboard",
-    description: "Visão geral do sistema",
+    category: 'dashboard',
+    description: 'Visão geral do sistema',
   },
   {
-    label: "Análise IA",
-    href: "/dashboard/analytics",
+    label: 'Análise IA',
+    href: '/dashboard/analytics',
     icon: Activity,
-    category: "dashboard",
-    description: "Insights inteligentes",
-    badge: "IA",
+    category: 'dashboard',
+    description: 'Insights inteligentes',
+    badge: 'IA',
   },
   {
-    label: "Monitoramento",
-    href: "/dashboard/health",
+    label: 'Monitoramento',
+    href: '/dashboard/health',
     icon: Stethoscope,
-    category: "dashboard",
-    description: "Status do sistema",
+    category: 'dashboard',
+    description: 'Status do sistema',
   },
   {
-    label: "Conformidade",
-    href: "/dashboard/compliance",
+    label: 'Conformidade',
+    href: '/dashboard/compliance',
     icon: Shield,
-    category: "dashboard",
-    description: "LGPD/ANVISA/CFM",
-    compliance: ["LGPD", "ANVISA", "CFM"],
+    category: 'dashboard',
+    description: 'LGPD/ANVISA/CFM',
+    compliance: ['LGPD', 'ANVISA', 'CFM',],
   },
 
   // Tools
   {
-    label: "Mensagens",
-    href: "/messages",
+    label: 'Mensagens',
+    href: '/messages',
     icon: MessageSquare,
-    category: "tools",
-    description: "Comunicação segura",
-    badge: "3",
-    compliance: ["LGPD"],
+    category: 'tools',
+    description: 'Comunicação segura',
+    badge: '3',
+    compliance: ['LGPD',],
   },
   {
-    label: "Telemedicina",
-    href: "/telemedicine",
+    label: 'Telemedicina',
+    href: '/telemedicine',
     icon: Stethoscope,
-    category: "tools",
-    description: "Consultas remotas",
-    compliance: ["CFM", "LGPD"],
+    category: 'tools',
+    description: 'Consultas remotas',
+    compliance: ['CFM', 'LGPD',],
   },
 
   // Settings
   {
-    label: "Perfil",
-    href: "/profile",
+    label: 'Perfil',
+    href: '/profile',
     icon: User,
-    category: "settings",
-    description: "Configurações do usuário",
+    category: 'settings',
+    description: 'Configurações do usuário',
   },
   {
-    label: "Configurações",
-    href: "/settings",
+    label: 'Configurações',
+    href: '/settings',
     icon: Settings,
-    category: "settings",
-    description: "Configurações do sistema",
+    category: 'settings',
+    description: 'Configurações do sistema',
   },
-];
+]
 
 interface MobileNavigationProps {
-  className?: string;
+  className?: string
 }
 
-export function MobileNavigation({ className }: MobileNavigationProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+export function MobileNavigation({ className, }: MobileNavigationProps,) {
+  const [isOpen, setIsOpen,] = useState(false,)
+  const pathname = usePathname()
 
   // Close navigation when route changes
   useEffect(() => {
-    setIsOpen(false);
-  }, []);
+    setIsOpen(false,)
+  }, [],)
 
-  const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
+  const isActive = (href: string,) => {
+    if (href === '/') {
+      return pathname === '/'
     }
-    return pathname.startsWith(href);
-  };
+    return pathname.startsWith(href,)
+  }
 
   const groupedItems = navigationItems.reduce(
-    (acc, item) => {
+    (acc, item,) => {
       if (!acc[item.category]) {
-        acc[item.category] = [];
+        acc[item.category] = []
       }
-      acc[item.category].push(item);
-      return acc;
+      acc[item.category].push(item,)
+      return acc
     },
     {} as Record<string, NavigationItem[]>,
-  );
+  )
 
-  const getCategoryTitle = (category: string) => {
+  const getCategoryTitle = (category: string,) => {
     switch (category) {
-      case "main": {
-        return "Principal";
+      case 'main': {
+        return 'Principal'
       }
-      case "dashboard": {
-        return "Dashboards";
+      case 'dashboard': {
+        return 'Dashboards'
       }
-      case "tools": {
-        return "Ferramentas";
+      case 'tools': {
+        return 'Ferramentas'
       }
-      case "settings": {
-        return "Configurações";
+      case 'settings': {
+        return 'Configurações'
       }
       default: {
-        return category;
+        return category
       }
     }
-  };
+  }
 
   return (
-    <div className={cn("md:hidden", className)}>
+    <div className={cn('md:hidden', className,)}>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button
@@ -228,25 +228,25 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
           <div className="flex flex-col h-full">
             <nav className="flex-1 px-6 pb-4">
               <div className="space-y-6">
-                {Object.entries(groupedItems).map(([category, items]) => (
+                {Object.entries(groupedItems,).map(([category, items,],) => (
                   <div key={category}>
                     <h3 className="mb-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                      {getCategoryTitle(category)}
+                      {getCategoryTitle(category,)}
                     </h3>
                     <div className="space-y-1">
-                      {items.map((item) => {
-                        const { icon: Icon } = item;
-                        const active = isActive(item.href);
+                      {items.map((item,) => {
+                        const { icon: Icon, } = item
+                        const active = isActive(item.href,)
 
                         return (
                           <Link
                             key={item.href}
                             href={item.href}
                             className={cn(
-                              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted",
+                              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted',
                               active
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:text-foreground",
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-muted-foreground hover:text-foreground',
                             )}
                           >
                             <Icon className="h-4 w-4 flex-shrink-0" />
@@ -255,9 +255,9 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                                 <span className="truncate">{item.label}</span>
                                 {item.badge && (
                                   <Badge
-                                    variant={item.badge === "IA"
-                                      ? "secondary"
-                                      : "default"}
+                                    variant={item.badge === 'IA'
+                                      ? 'secondary'
+                                      : 'default'}
                                     className="ml-2 text-xs"
                                   >
                                     {item.badge}
@@ -271,8 +271,8 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                               )}
                             </div>
                           </Link>
-                        );
-                      })}
+                        )
+                      },)}
                     </div>
                   </div>
                 ))}
@@ -292,59 +292,59 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
         </SheetContent>
       </Sheet>
     </div>
-  );
+  )
 }
 
 // Quick Access Bottom Navigation for Mobile
 export function MobileBottomNavigation() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   const quickItems = [
     {
-      label: "Início",
-      href: "/",
+      label: 'Início',
+      href: '/',
       icon: Home,
     },
     {
-      label: "Consultas",
-      href: "/appointments",
+      label: 'Consultas',
+      href: '/appointments',
       icon: Calendar,
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: 'Dashboard',
+      href: '/dashboard',
       icon: BarChart3,
     },
     {
-      label: "Mensagens",
-      href: "/messages",
+      label: 'Mensagens',
+      href: '/messages',
       icon: MessageSquare,
-      badge: "3",
+      badge: '3',
     },
     {
-      label: "Menu",
-      href: "#",
+      label: 'Menu',
+      href: '#',
       icon: Menu,
       action: true,
     },
-  ];
+  ]
 
-  const isActive = (href: string) => {
-    if (href === "#") {
-      return false;
+  const isActive = (href: string,) => {
+    if (href === '#') {
+      return false
     }
-    if (href === "/") {
-      return pathname === "/";
+    if (href === '/') {
+      return pathname === '/'
     }
-    return pathname.startsWith(href);
-  };
+    return pathname.startsWith(href,)
+  }
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
       <nav className="flex items-center justify-around py-2">
-        {quickItems.map((item) => {
-          const { icon: Icon } = item;
-          const active = isActive(item.href);
+        {quickItems.map((item,) => {
+          const { icon: Icon, } = item
+          const active = isActive(item.href,)
 
           if (item.action) {
             return (
@@ -354,7 +354,7 @@ export function MobileBottomNavigation() {
                   {item.label}
                 </span>
               </div>
-            );
+            )
           }
 
           return (
@@ -362,10 +362,10 @@ export function MobileBottomNavigation() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-colors",
+                'flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-colors',
                 active
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground",
+                  ? 'text-primary'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               <div className="relative">
@@ -381,9 +381,9 @@ export function MobileBottomNavigation() {
               </div>
               <span className="text-xs">{item.label}</span>
             </Link>
-          );
-        })}
+          )
+        },)}
       </nav>
     </div>
-  );
+  )
 }

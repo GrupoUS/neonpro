@@ -4,57 +4,57 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { Notification } from "../../types/database.types";
-import { getRealtimeManager } from "../connection-manager";
+import type { RealtimePostgresChangesPayload, } from '@supabase/supabase-js'
+import { useQueryClient, } from '@tanstack/react-query'
+import { useCallback, useEffect, useRef, useState, } from 'react'
+import type { Notification, } from '../../types/database.types'
+import { getRealtimeManager, } from '../connection-manager'
 
 // Using the actual notifications table
-type NotificationRow = Notification;
+type NotificationRow = Notification
 
 // Extended notification interface with additional properties
 export interface ExtendedNotification extends NotificationRow {
-  priority?: keyof NotificationPriority;
+  priority?: keyof NotificationPriority
 }
 
 export interface NotificationPriority {
-  EMERGENCY: "emergency"; // Emergências médicas
-  HIGH: "high"; // Alterações críticas
-  MEDIUM: "medium"; // Lembretes importantes
-  LOW: "low"; // Informações gerais
+  EMERGENCY: 'emergency' // Emergências médicas
+  HIGH: 'high' // Alterações críticas
+  MEDIUM: 'medium' // Lembretes importantes
+  LOW: 'low' // Informações gerais
 }
 
 export interface RealtimeNotificationPayload {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  new?: ExtendedNotification;
-  old?: ExtendedNotification;
-  errors?: string[];
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE'
+  new?: ExtendedNotification
+  old?: ExtendedNotification
+  errors?: string[]
 }
 
 export interface UseRealtimeNotificationsOptions {
-  tenantId: string;
-  userId?: string;
-  priority?: keyof NotificationPriority | "ALL";
-  enabled?: boolean;
-  enableAudio?: boolean;
-  enableToast?: boolean;
-  onNotification?: (payload: RealtimeNotificationPayload) => void;
-  onEmergencyNotification?: (payload: RealtimeNotificationPayload) => void;
-  onError?: (error: Error) => void;
+  tenantId: string
+  userId?: string
+  priority?: keyof NotificationPriority | 'ALL'
+  enabled?: boolean
+  enableAudio?: boolean
+  enableToast?: boolean
+  onNotification?: (payload: RealtimeNotificationPayload,) => void
+  onEmergencyNotification?: (payload: RealtimeNotificationPayload,) => void
+  onError?: (error: Error,) => void
 }
 
 export interface UseRealtimeNotificationsReturn {
-  isConnected: boolean;
-  connectionHealth: number;
-  unreadCount: number;
-  lastNotification: NotificationRow | null;
-  emergencyCount: number;
-  subscribe: () => void;
-  unsubscribe: () => void;
-  markAsRead?: (notificationId: string) => void;
-  markAllAsRead?: () => void;
-  playNotificationSound?: (priority: keyof NotificationPriority) => void;
+  isConnected: boolean
+  connectionHealth: number
+  unreadCount: number
+  lastNotification: NotificationRow | null
+  emergencyCount: number
+  subscribe: () => void
+  unsubscribe: () => void
+  markAsRead?: (notificationId: string,) => void
+  markAllAsRead?: () => void
+  playNotificationSound?: (priority: keyof NotificationPriority,) => void
 }
 
 /**
@@ -74,183 +74,183 @@ export function useRealtimeNotifications(
     onNotification,
     onEmergencyNotification,
     onError,
-  } = options;
+  } = options
 
-  const queryClient = useQueryClient();
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionHealth, setConnectionHealth] = useState(0);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] = useState<NotificationRow | null>(null);
-  const [emergencyCount, setEmergencyCount] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const queryClient = useQueryClient()
+  const [isConnected, setIsConnected,] = useState(false,)
+  const [connectionHealth, setConnectionHealth,] = useState(0,)
+  const [unreadCount, setUnreadCount,] = useState(0,)
+  const [lastNotification, setLastNotification,] = useState<NotificationRow | null>(null,)
+  const [emergencyCount, setEmergencyCount,] = useState(0,)
+  const [unsubscribeFn, setUnsubscribeFn,] = useState<(() => void) | null>(null,)
+  const audioRef = useRef<HTMLAudioElement | null>(null,)
 
   /**
    * Play notification sound based on priority
    */
   const playNotificationSound = useCallback(
-    (priority: keyof NotificationPriority) => {
-      if (!enableAudio || typeof window === "undefined") {
-        return;
+    (priority: keyof NotificationPriority,) => {
+      if (!enableAudio || typeof window === 'undefined') {
+        return
       }
 
       try {
         // Different sounds for different priorities
         const soundMap = {
-          EMERGENCY: "/sounds/emergency-alert.mp3", // Critical medical alerts
-          HIGH: "/sounds/urgent-notification.mp3", // Important changes
-          MEDIUM: "/sounds/standard-notification.mp3", // Regular updates
-          LOW: "/sounds/soft-notification.mp3", // Info notifications
-        };
-
-        const soundUrl = soundMap[priority] || soundMap.LOW;
-
-        if (!audioRef.current) {
-          audioRef.current = new Audio();
+          EMERGENCY: '/sounds/emergency-alert.mp3', // Critical medical alerts
+          HIGH: '/sounds/urgent-notification.mp3', // Important changes
+          MEDIUM: '/sounds/standard-notification.mp3', // Regular updates
+          LOW: '/sounds/soft-notification.mp3', // Info notifications
         }
 
-        audioRef.current.src = soundUrl;
-        audioRef.current.volume = priority === "EMERGENCY" ? 1 : 0.7;
+        const soundUrl = soundMap[priority] || soundMap.LOW
+
+        if (!audioRef.current) {
+          audioRef.current = new Audio()
+        }
+
+        audioRef.current.src = soundUrl
+        audioRef.current.volume = priority === 'EMERGENCY' ? 1 : 0.7
 
         // Play sound with fallback
-        const playPromise = audioRef.current.play();
+        const playPromise = audioRef.current.play()
         if (playPromise !== undefined) {
-          playPromise.catch((_error) => {
+          playPromise.catch((_error,) => {
             // Fallback to system notification sound
             if (
-              "Notification" in window
-              && Notification.permission === "granted"
+              'Notification' in window
+              && Notification.permission === 'granted'
             ) {
-              new Notification("NeonPro Healthcare", {
-                body: "Nova notificação recebida",
-                icon: "/icons/healthcare-notification.png",
+              new Notification('NeonPro Healthcare', {
+                body: 'Nova notificação recebida',
+                icon: '/icons/healthcare-notification.png',
                 silent: false,
-              });
+              },)
             }
-          });
+          },)
         }
       } catch {}
     },
-    [enableAudio],
-  );
+    [enableAudio,],
+  )
 
   /**
    * Show toast notification
    */
   const showToastNotification = useCallback(
-    (_notification: ExtendedNotification) => {
-      if (!enableToast || typeof window === "undefined") {
-        return;
+    (_notification: ExtendedNotification,) => {
+      if (!enableToast || typeof window === 'undefined') {
+        return
       }
     },
-    [enableToast],
-  );
+    [enableToast,],
+  )
 
   /**
    * Update TanStack Query cache para notifications
    */
   const updateNotificationCache = useCallback(
-    (payload: RealtimeNotificationPayload) => {
-      const { eventType, new: newData, old: oldData } = payload;
+    (payload: RealtimeNotificationPayload,) => {
+      const { eventType, new: newData, old: oldData, } = payload
 
       // Update notifications cache
       queryClient.setQueryData(
-        ["notifications", tenantId, userId],
-        (oldCache: NotificationRow[] | undefined) => {
+        ['notifications', tenantId, userId,],
+        (oldCache: NotificationRow[] | undefined,) => {
           if (!oldCache) {
-            return oldCache;
+            return oldCache
           }
 
           switch (eventType) {
-            case "INSERT": {
+            case 'INSERT': {
               if (newData && newData.user_id === userId) {
-                return [newData, ...oldCache].slice(0, 500); // Keep manageable
+                return [newData, ...oldCache,].slice(0, 500,) // Keep manageable
               }
-              return oldCache;
+              return oldCache
             }
 
-            case "UPDATE": {
+            case 'UPDATE': {
               if (newData) {
-                return oldCache.map((notification) =>
+                return oldCache.map((notification,) =>
                   notification.id === newData.id ? newData : notification
-                );
+                )
               }
-              return oldCache;
+              return oldCache
             }
 
-            case "DELETE": {
+            case 'DELETE': {
               if (oldData) {
                 return oldCache.filter(
-                  (notification) => notification.id !== oldData.id,
-                );
+                  (notification,) => notification.id !== oldData.id,
+                )
               }
-              return oldCache;
+              return oldCache
             }
 
             default: {
-              return oldCache;
+              return oldCache
             }
           }
         },
-      );
+      )
 
       // Update unread count
       queryClient.invalidateQueries({
-        queryKey: ["notifications-unread", tenantId, userId],
-      });
+        queryKey: ['notifications-unread', tenantId, userId,],
+      },)
     },
-    [queryClient, tenantId, userId],
-  );
+    [queryClient, tenantId, userId,],
+  )
 
   /**
    * Handle realtime notification changes
    */
   const handleNotificationChange = useCallback(
-    (payload: unknown) => {
+    (payload: unknown,) => {
       try {
-        const typedPayload = payload as RealtimePostgresChangesPayload<ExtendedNotification>;
+        const typedPayload = payload as RealtimePostgresChangesPayload<ExtendedNotification>
         const realtimePayload: RealtimeNotificationPayload = {
           eventType: typedPayload.eventType,
           new: typedPayload.new as ExtendedNotification,
           old: typedPayload.old as ExtendedNotification,
-        };
+        }
 
         // Update state metrics
-        if (realtimePayload.eventType === "INSERT" && realtimePayload.new) {
-          setUnreadCount((prev) => prev + 1);
-          setLastNotification(realtimePayload.new as NotificationRow);
+        if (realtimePayload.eventType === 'INSERT' && realtimePayload.new) {
+          setUnreadCount((prev,) => prev + 1)
+          setLastNotification(realtimePayload.new as NotificationRow,)
 
           // Track emergency notifications
-          if (realtimePayload.new.priority === "EMERGENCY") {
-            setEmergencyCount((prev) => prev + 1);
+          if (realtimePayload.new.priority === 'EMERGENCY') {
+            setEmergencyCount((prev,) => prev + 1)
 
             // Trigger emergency callback
             if (onEmergencyNotification) {
-              onEmergencyNotification(realtimePayload);
+              onEmergencyNotification(realtimePayload,)
             }
           }
 
           // Play audio alert based on priority
           if (enableAudio) {
-            playNotificationSound(realtimePayload.new.priority || "LOW");
+            playNotificationSound(realtimePayload.new.priority || 'LOW',)
           }
 
           // Show toast notification
           if (enableToast) {
-            showToastNotification(realtimePayload.new);
+            showToastNotification(realtimePayload.new,)
           }
         }
 
         // Update TanStack Query cache
-        updateNotificationCache(realtimePayload);
+        updateNotificationCache(realtimePayload,)
 
         // Call user callback
         if (onNotification) {
-          onNotification(realtimePayload);
+          onNotification(realtimePayload,)
         }
       } catch (error) {
         if (onError) {
-          onError(error as Error);
+          onError(error as Error,)
         }
       }
     },
@@ -264,38 +264,38 @@ export function useRealtimeNotifications(
       showToastNotification,
       updateNotificationCache,
     ],
-  );
+  )
 
   /**
    * Subscribe to realtime notifications
    */
   const subscribe = useCallback(() => {
     if (!enabled || unsubscribeFn) {
-      return;
+      return
     }
 
-    const realtimeManager = getRealtimeManager();
+    const realtimeManager = getRealtimeManager()
 
-    let filter = `user_id=eq.${userId}`;
+    let filter = `user_id=eq.${userId}`
     if (tenantId) {
-      filter += `,tenant_id=eq.${tenantId}`;
+      filter += `,tenant_id=eq.${tenantId}`
     }
-    if (priority && priority !== "ALL") {
-      filter += `,priority=eq.${priority}`;
+    if (priority && priority !== 'ALL') {
+      filter += `,priority=eq.${priority}`
     }
 
     const unsubscribe = realtimeManager.subscribe(
       `notifications:${filter}`,
       {
-        table: "notifications",
+        table: 'notifications',
         filter,
       },
       handleNotificationChange,
-    );
+    )
 
-    setUnsubscribeFn(() => unsubscribe);
-    setIsConnected(true);
-    setConnectionHealth(100);
+    setUnsubscribeFn(() => unsubscribe)
+    setIsConnected(true,)
+    setConnectionHealth(100,)
   }, [
     enabled,
     tenantId,
@@ -303,32 +303,32 @@ export function useRealtimeNotifications(
     priority,
     unsubscribeFn,
     handleNotificationChange,
-  ]);
+  ],)
 
   /**
    * Unsubscribe from realtime notifications
    */
   const unsubscribe = useCallback(() => {
     if (unsubscribeFn) {
-      unsubscribeFn();
-      setUnsubscribeFn(null);
-      setIsConnected(false);
-      setConnectionHealth(0);
+      unsubscribeFn()
+      setUnsubscribeFn(null,)
+      setIsConnected(false,)
+      setConnectionHealth(0,)
     }
-  }, [unsubscribeFn]);
+  }, [unsubscribeFn,],)
 
   // Auto subscribe/unsubscribe
   useEffect(() => {
     if (enabled) {
-      subscribe();
+      subscribe()
     } else {
-      unsubscribe();
+      unsubscribe()
     }
 
     return () => {
-      unsubscribe();
-    };
-  }, [enabled, subscribe, unsubscribe]);
+      unsubscribe()
+    }
+  }, [enabled, subscribe, unsubscribe,],)
 
   return {
     isConnected,
@@ -339,5 +339,5 @@ export function useRealtimeNotifications(
     subscribe,
     unsubscribe,
     playNotificationSound,
-  };
+  }
 }

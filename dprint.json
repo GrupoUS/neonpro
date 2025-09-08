@@ -1,118 +1,40 @@
 {
   "$schema": "https://dprint.dev/schemas/v0.json",
+  "projectType": "openSource",
+  "incremental": true,
+  "useTabs": false,
   "lineWidth": 100,
   "indentWidth": 2,
-  "useTabs": false,
-
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.93.0.wasm",
+    "https://plugins.dprint.dev/json-0.17.4.wasm",
+    "https://plugins.dprint.dev/markdown-0.17.7.wasm",
+    "https://plugins.dprint.dev/toml-0.6.4.wasm"
+  ],
   "includes": [
-    "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc,md,toml,yaml,yml,css,scss,sass,less,Dockerfile}"
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.json",
+    "**/*.md",
+    "**/*.toml"
   ],
   "excludes": [
-    "packages/enterprise/scripts/setup-subscriptions.js",
-    "packages/performance/src/lazy-loading/healthcare-dynamic-loader.ts",
-    "packages/ai/src/services/ml-pipeline-management.ts",
-    "packages/ai/src/services/batch-prediction-service.ts",
-    "packages/ai/src/services/enhanced-no-show-prediction-service.ts",
-    "packages/devops/src/testing/testing-framework.ts",
-    "apps/web/components/compliance/ComplianceOrchestrator.ts",
-    "apps/web/components/ui/results-visualization.tsx",
-    "apps/web/components/ui/performance-insights.tsx",
-    "apps/web/components/ui/internal-assistant-panel.tsx",
-    "apps/web/components/ui/compliance-monitor.tsx",
-    "apps/web/src/providers/performance-monitor-provider.tsx",
-    "tools/testing/tests/integration/task-001-verification.test.ts",
-    "packages/shared/src/realtime/providers/realtime-provider.tsx",
-    "apps/web/components/compliance/workflows/ViolationDetector.ts",
-    "apps/web/components/compliance/feedback/ImprovementEngine.ts",
-    "apps/web/components/compliance/reporting/ComplianceReportGenerator.ts",
-    "**/.git/**",
-    "**/.trunk/**",
-    "**/.turbo/**",
-    "**/.next/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
     "**/coverage/**",
-    "**/playwright-report/**",
-    "**/.vercel/**",
-    "**/.claude/**",
-    "**/.github/**",
-    "**/.vscode/**",
-    "**/.idea/**",
-    "**/.trae/**",
-    "**/.ruler/**",
-    "**/tools/testing/reports/assets/**",
-    "**/tools/e2e/reports/**",
-    "**/tools/reports/**",
-    "**/test-results/**",
-    "**/.vitest-reporters/**",
-    "**/performance-report.json",
-    "**/load-test-report.json",
-    "archon/**",
-    "serena/**",
-    "**/temp-*/**",
-    "**/tmp.*/**",
-    "**/.tmp/**",
-    "**/archives/**",
-    "**/backups/**",
-    "**/deprecated/**",
-    "**/legacy/**",
-    "**/pnpm-lock.yaml",
-    "**/package-lock.json",
-    "**/yarn.lock",
-    "**/tsconfig.tsbuildinfo",
-    "**/*.d.ts",
-    "**/packages/types/src/database.ts",
-    "**/*.generated.*",
-    "**/supabase/migrations/**",
-    "**/supabase/types/**",
-    "**/logs/**",
-    "**/.env*",
-    "**/sentry.*.config.*",
-    "**/instrumentation*.ts",
-    "**/*.chatmode.md",
-    "packages/_archive/**"
+    "**/playwright-report/**"
   ],
-
   "typescript": {
-    "quoteStyle": "preferDouble",
-    "semiColons": "always",
-    "trailingCommas": "onlyMultiLine",
-    "operatorPosition": "nextLine",
-    "module.sortImportDeclarations": "caseInsensitive",
-    "module.sortExportDeclarations": "caseInsensitive",
-    "useBraces": "whenNotSingleLine",
-    "bracePosition": "sameLineUnlessHanging",
-    "nextControlFlowPosition": "sameLine",
-    "singleBodyPosition": "maintain",
-    "jsx.quoteStyle": "preferDouble",
-    "jsx.multiLineParens": "prefer",
-    "commentLine.forceSpaceAfterSlashes": true
-  },
-  "json": {
-    "indentWidth": 2,
-    "trailingCommas": "never"
-  },
-  "markdown": {
-    "textWrap": "maintain"
-  },
-  "yaml": {
-    "indentWidth": 2
-  },
-
-  "plugins": [
-    "https://plugins.dprint.dev/typescript-0.95.10.wasm",
-
-    "https://plugins.dprint.dev/json-0.20.0.wasm",
-
-    "https://plugins.dprint.dev/markdown-0.19.0.wasm",
-
-    "https://plugins.dprint.dev/toml-0.7.0.wasm",
-
-    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm",
-
-    "https://plugins.dprint.dev/g-plane/malva-v0.14.2.wasm",
-
-    "https://plugins.dprint.dev/dockerfile-0.3.3.wasm"
-  ]
+    "semiColons": "asi",
+    "quoteStyle": "preferSingle",
+    "trailingCommas": "always",
+    "jsx.quoteStyle": "preferDouble"
+  }
 }
+

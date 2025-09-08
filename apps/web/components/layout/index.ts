@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Layout Components Index
@@ -12,18 +12,18 @@ export {
   ErrorLayout,
   MainLayout,
   PrintLayout,
-} from "./MainLayout";
+} from './MainLayout'
 
 // Layout types
 export interface LayoutProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 export interface PageLayoutProps extends LayoutProps {
-  title: string;
-  description?: string;
-  compliance?: string[];
+  title: string
+  description?: string
+  compliance?: string[]
 }
 
 // Layout configurations for different page types
@@ -31,37 +31,37 @@ export const LAYOUT_CONFIGS = {
   dashboard: {
     showMobileNav: true,
     showAccessibilityPanel: true,
-    maxWidth: "full",
-    padding: "md",
+    maxWidth: 'full',
+    padding: 'md',
   },
 
   form: {
     showMobileNav: true,
     showAccessibilityPanel: true,
-    maxWidth: "2xl",
-    padding: "lg",
+    maxWidth: '2xl',
+    padding: 'lg',
   },
 
   auth: {
     showMobileNav: false,
     showAccessibilityPanel: true,
-    maxWidth: "md",
-    padding: "xl",
+    maxWidth: 'md',
+    padding: 'xl',
   },
 
   error: {
     showMobileNav: false,
     showAccessibilityPanel: true,
-    maxWidth: "md",
-    padding: "xl",
+    maxWidth: 'md',
+    padding: 'xl',
   },
 
   print: {
     showMobileNav: false,
     showAccessibilityPanel: false,
-    maxWidth: "full",
-    padding: "none",
+    maxWidth: 'full',
+    padding: 'none',
   },
-} as const;
+} as const
 
-export type LayoutType = keyof typeof LAYOUT_CONFIGS;
+export type LayoutType = keyof typeof LAYOUT_CONFIGS

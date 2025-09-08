@@ -2,30 +2,30 @@
  * @file Analytics formatting and export utilities
  */
 
-const PERCENTAGE_MULTIPLIER = 100;
-const ZERO = 0;
-const DEFAULT_PRECISION = 2;
+const PERCENTAGE_MULTIPLIER = 100
+const ZERO = 0
+const DEFAULT_PRECISION = 2
 
 interface AnalyticsData {
-  metadata?: Record<string, unknown>;
-  metric: string;
-  timestamp: Date;
-  value: number;
+  metadata?: Record<string, unknown>
+  metric: string
+  timestamp: Date
+  value: number
 }
 
 interface ExportOptions {
   dateRange?: {
-    end: Date;
-    start: Date;
-  };
-  format: "csv" | "excel" | "pdf";
-  includeMetadata?: boolean;
+    end: Date
+    start: Date
+  }
+  format: 'csv' | 'excel' | 'pdf'
+  includeMetadata?: boolean
 }
 
 interface FilterParams {
-  dateRange?: string;
-  metric?: string;
-  period?: string;
+  dateRange?: string
+  metric?: string
+  period?: string
 }
 
 /**
@@ -38,20 +38,20 @@ const formatAnalyticsPercentage = (
   value: number | null | undefined,
   precision = DEFAULT_PRECISION,
 ): string => {
-  if (value === undefined || value === null || Number.isNaN(value)) {
+  if (value === undefined || value === null || Number.isNaN(value,)) {
     if (precision > ZERO) {
-      return "0.00%";
+      return '0.00%'
     }
-    return "0%";
+    return '0%'
   }
-  if (!Number.isFinite(value)) {
+  if (!Number.isFinite(value,)) {
     if (precision > ZERO) {
-      return "0.00%";
+      return '0.00%'
     }
-    return "0%";
+    return '0%'
   }
-  return `${(value * PERCENTAGE_MULTIPLIER).toFixed(precision)}%`;
-};
+  return `${(value * PERCENTAGE_MULTIPLIER).toFixed(precision,)}%`
+}
 
 /**
  * Parse analytics filter parameters
@@ -61,32 +61,32 @@ const formatAnalyticsPercentage = (
 const parseAnalyticsFilters = (
   params: URLSearchParams | Record<string, unknown>,
 ): FilterParams => {
-  const getValue = (key: string, defaultValue?: string) => {
+  const getValue = (key: string, defaultValue?: string,) => {
     if (params instanceof URLSearchParams) {
-      return params.get(key) || defaultValue;
+      return params.get(key,) || defaultValue
     }
-    return (params[key] as string) || defaultValue;
-  };
+    return (params[key] as string) || defaultValue
+  }
 
-  const result: FilterParams = {};
+  const result: FilterParams = {}
 
-  const dateRange = getValue("dateRange");
+  const dateRange = getValue('dateRange',)
   if (dateRange) {
-    result.dateRange = dateRange;
+    result.dateRange = dateRange
   }
 
-  const metric = getValue("metric");
+  const metric = getValue('metric',)
   if (metric) {
-    result.metric = metric;
+    result.metric = metric
   }
 
-  const period = getValue("period");
+  const period = getValue('period',)
   if (period) {
-    result.period = period;
+    result.period = period
   }
 
-  return result;
-};
+  return result
+}
 
 /**
  * Export data to CSV format
@@ -96,39 +96,39 @@ const parseAnalyticsFilters = (
  */
 const exportToCSV = (
   data: Record<string, unknown>[],
-  _filename = "export.csv",
+  _filename = 'export.csv',
 ): string => {
   if (data.length === ZERO) {
-    return "";
+    return ''
   }
 
-  const headers = Object.keys(data[ZERO] ?? {});
+  const headers = Object.keys(data[ZERO] ?? {},)
   const csvContent = [
-    headers.join(","),
-    ...data.map((row) =>
+    headers.join(',',),
+    ...data.map((row,) =>
       headers
-        .map((header) => {
-          const value = row[header];
+        .map((header,) => {
+          const value = row[header]
           // Normalize null/undefined to empty string
-          const stringValue = value == null ? "" : String(value);
+          const stringValue = value == null ? '' : String(value,)
 
           // Check if field needs quoting (contains comma, quote, or newline)
-          const needsQuoting = stringValue.includes(",") || stringValue.includes('"')
-            || stringValue.includes("\n");
+          const needsQuoting = stringValue.includes(',',) || stringValue.includes('"',)
+            || stringValue.includes('\n',)
 
           if (needsQuoting) {
             // Escape internal quotes by doubling them, then wrap in quotes
-            return `"${stringValue.replace(/"/g, '""')}"`;
+            return `"${stringValue.replace(/"/g, '""',)}"`
           }
 
-          return stringValue;
-        })
-        .join(",")
+          return stringValue
+        },)
+        .join(',',)
     ),
-  ].join("\n");
+  ].join('\n',)
 
-  return csvContent;
-};
+  return csvContent
+}
 
 /**
  * Export data to PDF format (not implemented)
@@ -140,8 +140,8 @@ const exportToPDF = (
   _data: Record<string, unknown>[],
   _options?: Record<string, unknown>,
 ): never => {
-  throw new Error("exportToPDF not implemented");
-};
+  throw new Error('exportToPDF not implemented',)
+}
 
 export {
   type AnalyticsData,
@@ -151,4 +151,4 @@ export {
   type FilterParams,
   formatAnalyticsPercentage,
   parseAnalyticsFilters,
-};
+}

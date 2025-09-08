@@ -1,12 +1,12 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { createClient, } from '@/app/utils/supabase/server'
+import { NextResponse, } from 'next/server'
+import type { NextRequest, } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get("code");
-  const error = requestUrl.searchParams.get("error");
-  const error_description = requestUrl.searchParams.get("error_description");
+export async function GET(request: NextRequest,) {
+  const requestUrl = new URL(request.url,)
+  const code = requestUrl.searchParams.get('code',)
+  const error = requestUrl.searchParams.get('error',)
+  const error_description = requestUrl.searchParams.get('error_description',)
 
   if (error) {
     // Return HTML that sends error message to parent window
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
             if (window.opener) {
               window.opener.postMessage({
                 type: 'OAUTH_ERROR',
-                error: '${error_description || error || "Authentication failed"}'
+                error: '${error_description || error || 'Authentication failed'}'
               }, '${requestUrl.origin}');
             }
             window.close();
@@ -32,20 +32,20 @@ export async function GET(request: NextRequest) {
       </html>
     `,
       {
-        headers: { "Content-Type": "text/html" },
+        headers: { 'Content-Type': 'text/html', },
       },
-    );
+    )
   }
 
   if (code) {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     try {
       // Exchange the code for a session
-      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error: exchangeError, } = await supabase.auth.exchangeCodeForSession(code,)
 
       if (exchangeError) {
-        throw exchangeError;
+        throw exchangeError
       }
 
       // Return HTML that sends success message to parent window
@@ -61,8 +61,8 @@ export async function GET(request: NextRequest) {
               if (window.opener) {
                 window.opener.postMessage({
                   type: 'OAUTH_SUCCESS',
-                  user: ${JSON.stringify(data.user)},
-                  session: ${JSON.stringify(data.session)}
+                  user: ${JSON.stringify(data.user,)},
+                  session: ${JSON.stringify(data.session,)}
                 }, '${requestUrl.origin}');
               }
               window.close();
@@ -72,9 +72,9 @@ export async function GET(request: NextRequest) {
         </html>
       `,
         {
-          headers: { "Content-Type": "text/html" },
+          headers: { 'Content-Type': 'text/html', },
         },
-      );
+      )
     } catch {
       return new NextResponse(
         `
@@ -98,9 +98,9 @@ export async function GET(request: NextRequest) {
         </html>
       `,
         {
-          headers: { "Content-Type": "text/html" },
+          headers: { 'Content-Type': 'text/html', },
         },
-      );
+      )
     }
   }
 
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
     </html>
   `,
     {
-      headers: { "Content-Type": "text/html" },
+      headers: { 'Content-Type': 'text/html', },
     },
-  );
+  )
 }

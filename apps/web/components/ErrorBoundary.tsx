@@ -1,94 +1,94 @@
-"use client";
+'use client'
 
 /**
  * Healthcare Error Boundary
  * LGPD-compliant error handling with patient data protection
  */
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { clientEnv } from "@/lib/env";
-import { AlertTriangle, Bug, Home, RefreshCw } from "lucide-react";
-import type { ErrorInfo, ReactNode } from "react";
-import React, { Component } from "react";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { clientEnv, } from '@/lib/env'
+import { AlertTriangle, Bug, Home, RefreshCw, } from 'lucide-react'
+import type { ErrorInfo, ReactNode, } from 'react'
+import React, { Component, } from 'react'
 
 interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  showDetails?: boolean;
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: Error, errorInfo: ErrorInfo,) => void
+  showDetails?: boolean
 }
 
 interface State {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
-  errorId: string | null;
+  hasError: boolean
+  error: Error | null
+  errorInfo: ErrorInfo | null
+  errorId: string | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  private retryCount = 0;
-  private maxRetries = 3;
+  private retryCount = 0
+  private maxRetries = 3
 
-  constructor(props: Props) {
-    super(props);
+  constructor(props: Props,) {
+    super(props,)
     this.state = {
       hasError: false,
       error: null,
       errorInfo: null,
       errorId: null,
-    };
+    }
   }
 
-  static getDerivedStateFromError(error: Error): Partial<State> {
+  static getDerivedStateFromError(error: Error,): Partial<State> {
     // Update state so the next render will show the fallback UI
-    const errorId = `error-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const errorId = `error-${Date.now()}-${Math.random().toString(36,).slice(2, 9,)}`
     return {
       hasError: true,
       error,
       errorId,
-    };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ errorInfo });
-
-    // Healthcare-specific error handling
-    this.handleHealthcareError(error, errorInfo);
-
-    // Call custom error handler
-    this.props.onError?.(error, errorInfo);
-
-    // Log to client logger
-    this.logError(error, errorInfo);
-
-    // Report to crash reporting service in production
-    if (clientEnv.app.environment === "production") {
-      this.reportToMonitoring(error, errorInfo);
     }
   }
 
-  private handleHealthcareError(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo,) {
+    this.setState({ errorInfo, },)
+
+    // Healthcare-specific error handling
+    this.handleHealthcareError(error, errorInfo,)
+
+    // Call custom error handler
+    this.props.onError?.(error, errorInfo,)
+
+    // Log to client logger
+    this.logError(error, errorInfo,)
+
+    // Report to crash reporting service in production
+    if (clientEnv.app.environment === 'production') {
+      this.reportToMonitoring(error, errorInfo,)
+    }
+  }
+
+  private handleHealthcareError(error: Error, errorInfo: ErrorInfo,) {
     // Check if error might contain patient data
-    const errorString = error.toString() + errorInfo.componentStack;
-    const containsSensitiveData = this.detectSensitiveData(errorString);
+    const errorString = error.toString() + errorInfo.componentStack
+    const containsSensitiveData = this.detectSensitiveData(errorString,)
 
     if (containsSensitiveData) {
       console.warn(
-        "🏥 Healthcare Error: Sensitive data detected in error, redacting for compliance",
-      );
+        '🏥 Healthcare Error: Sensitive data detected in error, redacting for compliance',
+      )
 
       // In production, we would sanitize and report sanitized version
-      if (clientEnv.app.environment === "production") {
-        const sanitizedError = this.sanitizeError(error);
-        const sanitizedInfo = this.sanitizeErrorInfo(errorInfo);
+      if (clientEnv.app.environment === 'production') {
+        const sanitizedError = this.sanitizeError(error,)
+        const sanitizedInfo = this.sanitizeErrorInfo(errorInfo,)
         // Report sanitized version to monitoring
-        this.reportToMonitoring(sanitizedError, sanitizedInfo);
+        this.reportToMonitoring(sanitizedError, sanitizedInfo,)
       }
     }
   }
 
-  private detectSensitiveData(errorString: string): boolean {
+  private detectSensitiveData(errorString: string,): boolean {
     // Brazilian healthcare data patterns
     const sensitivePatterns = [
       /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/, // CPF
@@ -98,71 +98,69 @@ export class ErrorBoundary extends Component<Props, State> {
       /patient.*data/i, // Patient data references
       /medical.*record/i, // Medical records
       /prontuario/i, // Portuguese for medical record
-    ];
+    ]
 
-    return sensitivePatterns.some(pattern => pattern.test(errorString));
+    return sensitivePatterns.some(pattern => pattern.test(errorString,))
   }
 
-  private sanitizeError(error: Error): Error {
-    const sanitized = new Error("[REDACTED] Healthcare error occurred");
-    sanitized.name = error.name;
-    sanitized.stack = error.stack?.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "[CPF-REDACTED]")
-      .replace(/\b\d{3}\s?\d{9}\b/g, "[CNS-REDACTED]")
-      .replace(/@[\w.-]+\.\w+/g, "[EMAIL-REDACTED]");
-    return sanitized;
+  private sanitizeError(error: Error,): Error {
+    const sanitized = new Error('[REDACTED] Healthcare error occurred',)
+    sanitized.name = error.name
+    sanitized.stack = error.stack?.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF-REDACTED]',)
+      .replace(/\b\d{3}\s?\d{9}\b/g, '[CNS-REDACTED]',)
+      .replace(/@[\w.-]+\.\w+/g, '[EMAIL-REDACTED]',)
+    return sanitized
   }
 
-  private sanitizeErrorInfo(errorInfo: ErrorInfo): ErrorInfo {
+  private sanitizeErrorInfo(errorInfo: ErrorInfo,): ErrorInfo {
     return {
-      componentStack: errorInfo.componentStack.replace(
-        /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g,
-        "[CPF-REDACTED]",
-      )
-        .replace(/\b\d{3}\s?\d{9}\b/g, "[CNS-REDACTED]")
-        .replace(/@[\w.-]+\.\w+/g, "[EMAIL-REDACTED]"),
-    };
+      componentStack: errorInfo.componentStack
+        ?.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF-REDACTED]',)
+        ?.replace(/\b\d{3}\s?\d{9}\b/g, '[CNS-REDACTED]',)
+        ?.replace(/@[\w.-]+\.\w+/g, '[EMAIL-REDACTED]',) || null,
+    }
   }
 
-  private logError(error: Error, errorInfo: ErrorInfo) {
+  private logError(error: Error, errorInfo: ErrorInfo,) {
     // Log error with client logger (handles LGPD compliance automatically)
-    console.group("🚨 React Error Boundary");
-    console.error("Error:", error);
-    console.error("Component Stack:", errorInfo.componentStack);
-    console.error("Error ID:", this.state.errorId);
-    console.groupEnd();
+    console.group('🚨 React Error Boundary',)
+    console.error('Error:', error,)
+    console.error('Component Stack:', errorInfo.componentStack,)
+    console.error('Error ID:', this.state.errorId,)
+    console.groupEnd()
   }
 
-  private async reportToMonitoring(error: Error, errorInfo: ErrorInfo) {
+  private async reportToMonitoring(error: Error, errorInfo: ErrorInfo,) {
     // Send to external monitoring service with CSRF protection
-    if (typeof window !== "undefined" && window.location) {
+    if (typeof window !== 'undefined' && window.location) {
       try {
         // First, get a CSRF token
-        const tokenResponse = await fetch("/api/errors/token", {
-          method: "GET",
-          credentials: "same-origin",
-        });
+        const tokenResponse = await fetch('/api/errors/token', {
+          method: 'GET',
+          credentials: 'same-origin',
+        },)
 
         if (!tokenResponse.ok) {
-          console.warn("Failed to fetch CSRF token for error reporting, skipping report");
-          return;
+          console.warn('Failed to fetch CSRF token for error reporting, skipping report',)
+          return
         }
 
-        const tokenData = await tokenResponse.json();
-        const csrfToken = tokenData.token;
+        const tokenData = await tokenResponse.json()
+        const csrfToken = tokenData.token
 
         if (!csrfToken) {
-          console.warn("No CSRF token received, skipping error report");
-          return;
+          console.warn('No CSRF token received, skipping error report',)
+          return
         }
 
         // Now send the authenticated error report
-        const reportResponse = await fetch("/api/errors", {
-          method: "POST",
+        const reportResponse = await fetch('/api/errors', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "x-csrf-token": csrfToken,
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
           },
-          credentials: "same-origin",
+          credentials: 'same-origin',
           body: JSON.stringify({
             error: {
               name: error.name,
@@ -174,14 +172,14 @@ export class ErrorBoundary extends Component<Props, State> {
             url: window.location.href,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-          }),
-        });
+          },),
+        },)
 
         if (!reportResponse.ok) {
-          console.warn(`Error report failed with status: ${reportResponse.status}`);
+          console.warn(`Error report failed with status: ${reportResponse.status}`,)
         }
       } catch (reportingError) {
-        console.error("Failed to report error to monitoring:", reportingError);
+        console.error('Failed to report error to monitoring:', reportingError,)
         // Could implement buffering logic here for offline scenarios
       }
     }
@@ -189,23 +187,23 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleRetry = () => {
     if (this.retryCount < this.maxRetries) {
-      this.retryCount++;
+      this.retryCount++
       this.setState({
         hasError: false,
         error: null,
         errorInfo: null,
         errorId: null,
-      });
+      },)
     }
-  };
+  }
 
   private handleGoHome = () => {
-    window.location.href = "/";
-  };
+    window.location.href = '/'
+  }
 
   private handleReload = () => {
-    window.location.reload();
-  };
+    window.location.reload()
+  }
 
   private handleReportBug = () => {
     const errorDetails = {
@@ -213,24 +211,24 @@ export class ErrorBoundary extends Component<Props, State> {
       error: this.state.error?.message,
       url: window.location.href,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     const mailtoLink =
       `mailto:suporte@neonpro.health?subject=Bug Report - ${this.state.errorId}&body=Error Details:%0A${
-        encodeURIComponent(JSON.stringify(errorDetails, null, 2))
-      }`;
-    window.location.href = mailtoLink;
-  };
+        encodeURIComponent(JSON.stringify(errorDetails, null, 2,),)
+      }`
+    window.location.href = mailtoLink
+  }
 
   render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
-        return this.props.fallback;
+        return this.props.fallback
       }
 
-      const isDevelopment = clientEnv.app.environment === "development";
-      const canRetry = this.retryCount < this.maxRetries;
+      const isDevelopment = clientEnv.app.environment === 'development'
+      const canRetry = this.retryCount < this.maxRetries
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-red-50 p-4">
@@ -244,8 +242,8 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardTitle>
               <CardDescription className="text-red-700">
                 {isDevelopment
-                  ? "Erro detectado durante desenvolvimento"
-                  : "Encontramos um problema inesperado no sistema"}
+                  ? 'Erro detectado durante desenvolvimento'
+                  : 'Encontramos um problema inesperado no sistema'}
               </CardDescription>
             </CardHeader>
 
@@ -301,7 +299,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   Recarregar Página
                 </Button>
 
-                {clientEnv.app.environment !== "development" && (
+                {clientEnv.app.environment !== 'development' && (
                   <Button onClick={this.handleReportBug} variant="secondary">
                     <Bug className="w-4 h-4 mr-2" />
                     Reportar Problema
@@ -316,10 +314,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </CardContent>
           </Card>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
@@ -328,24 +326,24 @@ export function HealthcareErrorBoundary({
   children,
   showDetails = false,
 }: {
-  children: ReactNode;
-  showDetails?: boolean;
-}) {
+  children: ReactNode
+  showDetails?: boolean
+},) {
   return (
     <ErrorBoundary
       showDetails={showDetails}
-      onError={(error, errorInfo) => {
+      onError={(error, errorInfo,) => {
         // Healthcare-specific error logging
-        console.log("🏥 Healthcare system error captured:", {
+        console.log('🏥 Healthcare system error captured:', {
           error: error.name,
-          component: errorInfo.componentStack.split("\n")[1]?.trim(),
+          component: errorInfo.componentStack?.split('\n',)[1]?.trim(),
           timestamp: new Date().toISOString(),
-        });
+        },)
       }}
     >
       {children}
     </ErrorBoundary>
-  );
+  )
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

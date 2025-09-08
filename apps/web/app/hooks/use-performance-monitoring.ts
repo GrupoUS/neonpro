@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import type {
   DashboardFilters,
@@ -8,45 +8,45 @@ import type {
   PerformanceMetrics,
   ROICalculation,
   StaffPerformanceReport,
-} from "@/types/performance-monitoring";
-import { useCallback, useEffect, useRef, useState } from "react";
+} from '@/types/performance-monitoring'
+import { useCallback, useEffect, useRef, useState, } from 'react'
 
 interface UsePerformanceMonitoringOptions {
-  clinicId?: string;
-  departmentIds?: string[];
-  refreshInterval?: number; // milliseconds
-  realTimeUpdates?: boolean;
-  autoRefresh?: boolean;
+  clinicId?: string
+  departmentIds?: string[]
+  refreshInterval?: number // milliseconds
+  realTimeUpdates?: boolean
+  autoRefresh?: boolean
 }
 
 interface UsePerformanceMonitoringReturn {
   // Data
-  metrics: PerformanceMetrics[];
-  kpis: DashboardKPI[];
-  dashboard: PerformanceDashboard | null;
-  staffReports: StaffPerformanceReport[];
-  roiCalculation: ROICalculation | null;
+  metrics: PerformanceMetrics[]
+  kpis: DashboardKPI[]
+  dashboard: PerformanceDashboard | null
+  staffReports: StaffPerformanceReport[]
+  roiCalculation: ROICalculation | null
 
   // State
-  isLoading: boolean;
-  error: string | null;
-  lastUpdated: Date | null;
-  filters: DashboardFilters;
+  isLoading: boolean
+  error: string | null
+  lastUpdated: Date | null
+  filters: DashboardFilters
 
   // Methods
-  fetchMetrics: (filters?: DashboardFilters) => Promise<void>;
-  fetchKPIs: (period?: string) => Promise<void>;
-  fetchStaffReports: (filters?: DashboardFilters) => Promise<void>;
-  calculateROI: (period: { start: Date; end: Date; }) => Promise<void>;
-  exportReport: (options: ExportOptions) => Promise<void>;
+  fetchMetrics: (filters?: DashboardFilters,) => Promise<void>
+  fetchKPIs: (period?: string,) => Promise<void>
+  fetchStaffReports: (filters?: DashboardFilters,) => Promise<void>
+  calculateROI: (period: { start: Date; end: Date },) => Promise<void>
+  exportReport: (options: ExportOptions,) => Promise<void>
 
   // Filters and configuration
-  setFilters: (filters: DashboardFilters) => void;
-  updateRefreshRate: (minutes: number) => void;
+  setFilters: (filters: DashboardFilters,) => void
+  updateRefreshRate: (minutes: number,) => void
 
   // Real-time updates
-  subscribeToUpdates: () => () => void;
-  refreshData: () => Promise<void>;
+  subscribeToUpdates: () => () => void
+  refreshData: () => Promise<void>
 }
 
 /**
@@ -58,275 +58,275 @@ export function usePerformanceMonitoring({
   refreshInterval = 300_000, // 5 minutes
   realTimeUpdates = true,
   autoRefresh = true,
-}: UsePerformanceMonitoringOptions = {}): UsePerformanceMonitoringReturn {
-  const [metrics, setMetrics] = useState<PerformanceMetrics[]>([]);
-  const [kpis, setKpis] = useState<DashboardKPI[]>([]);
-  const [dashboard, setDashboard] = useState<PerformanceDashboard | null>(null);
-  const [staffReports, setStaffReports] = useState<StaffPerformanceReport[]>(
+}: UsePerformanceMonitoringOptions = {},): UsePerformanceMonitoringReturn {
+  const [metrics, setMetrics,] = useState<PerformanceMetrics[]>([],)
+  const [kpis, setKpis,] = useState<DashboardKPI[]>([],)
+  const [dashboard, setDashboard,] = useState<PerformanceDashboard | null>(null,)
+  const [staffReports, setStaffReports,] = useState<StaffPerformanceReport[]>(
     [],
-  );
-  const [roiCalculation, setRoiCalculation] = useState<ROICalculation | null>(
+  )
+  const [roiCalculation, setRoiCalculation,] = useState<ROICalculation | null>(
     null,
-  );
+  )
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [error, setError,] = useState<string | null>(null,)
+  const [lastUpdated, setLastUpdated,] = useState<Date | null>(null,)
 
-  const [filters, setFiltersState] = useState<DashboardFilters>({
+  const [filters, setFiltersState,] = useState<DashboardFilters>({
     dateRange: {
-      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,), // Last 30 days
       end: new Date(),
-      preset: "last30days",
+      preset: 'last30days',
     },
     departments: departmentIds,
     staffMembers: [],
-    riskLevels: ["high", "critical"],
+    riskLevels: ['high', 'critical',],
     interventionTypes: [],
     appointmentTypes: [],
-  });
+  },)
 
-  const wsRef = useRef<WebSocket | null>(null);
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const wsRef = useRef<WebSocket | null>(null,)
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null,)
 
   const fetchMetrics = useCallback(
-    async (customFilters?: DashboardFilters) => {
-      setIsLoading(true);
+    async (customFilters?: DashboardFilters,) => {
+      setIsLoading(true,)
       try {
-        setError(null);
+        setError(null,)
 
-        const queryFilters = customFilters || filters;
+        const queryFilters = customFilters || filters
 
         const params = new URLSearchParams({
-          ...(clinicId && { clinicId }),
+          ...(clinicId && { clinicId, }),
           startDate: queryFilters.dateRange.start.toISOString(),
           endDate: queryFilters.dateRange.end.toISOString(),
-          departments: queryFilters.departments.join(","),
-          staffMembers: queryFilters.staffMembers.join(","),
-        });
+          departments: queryFilters.departments.join(',',),
+          staffMembers: queryFilters.staffMembers.join(',',),
+        },)
 
         const response = await fetch(
           `/api/performance-monitoring/metrics?${params}`,
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch metrics: ${response.statusText}`);
+          throw new Error(`Failed to fetch metrics: ${response.statusText}`,)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
-          setMetrics(data.metrics || []);
-          setLastUpdated(new Date());
+          setMetrics(data.metrics || [],)
+          setLastUpdated(new Date(),)
         } else {
-          throw new Error(data.message || "Failed to fetch metrics");
+          throw new Error(data.message || 'Failed to fetch metrics',)
         }
       } catch (err) {
-        console.error("Error fetching performance metrics:", err);
+        console.error('Error fetching performance metrics:', err,)
         setError(
-          err instanceof Error ? err.message : "Failed to fetch metrics",
-        );
+          err instanceof Error ? err.message : 'Failed to fetch metrics',
+        )
       } finally {
-        setIsLoading(false);
+        setIsLoading(false,)
       }
     },
-    [clinicId, filters],
-  );
+    [clinicId, filters,],
+  )
 
   const fetchKPIs = useCallback(
-    async (period = "last30days") => {
+    async (period = 'last30days',) => {
       try {
-        setError(null);
+        setError(null,)
 
         const params = new URLSearchParams({
-          ...(clinicId && { clinicId }),
+          ...(clinicId && { clinicId, }),
           period,
-          departments: filters.departments.join(","),
-        });
+          departments: filters.departments.join(',',),
+        },)
 
         const response = await fetch(
           `/api/performance-monitoring/kpis?${params}`,
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch KPIs: ${response.statusText}`);
+          throw new Error(`Failed to fetch KPIs: ${response.statusText}`,)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
-          setKpis(data.kpis || []);
+          setKpis(data.kpis || [],)
         } else {
-          throw new Error(data.message || "Failed to fetch KPIs");
+          throw new Error(data.message || 'Failed to fetch KPIs',)
         }
       } catch (err) {
-        console.error("Error fetching KPIs:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch KPIs");
+        console.error('Error fetching KPIs:', err,)
+        setError(err instanceof Error ? err.message : 'Failed to fetch KPIs',)
       }
     },
-    [clinicId, filters.departments],
-  );
+    [clinicId, filters.departments,],
+  )
 
   const fetchStaffReports = useCallback(
-    async (customFilters?: DashboardFilters) => {
+    async (customFilters?: DashboardFilters,) => {
       try {
-        setError(null);
+        setError(null,)
 
-        const queryFilters = customFilters || filters;
+        const queryFilters = customFilters || filters
 
         const params = new URLSearchParams({
-          ...(clinicId && { clinicId }),
+          ...(clinicId && { clinicId, }),
           startDate: queryFilters.dateRange.start.toISOString(),
           endDate: queryFilters.dateRange.end.toISOString(),
-          departments: queryFilters.departments.join(","),
-          staffMembers: queryFilters.staffMembers.join(","),
-        });
+          departments: queryFilters.departments.join(',',),
+          staffMembers: queryFilters.staffMembers.join(',',),
+        },)
 
         const response = await fetch(
           `/api/performance-monitoring/staff-reports?${params}`,
-        );
+        )
 
         if (!response.ok) {
           throw new Error(
             `Failed to fetch staff reports: ${response.statusText}`,
-          );
+          )
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
-          setStaffReports(data.reports || []);
+          setStaffReports(data.reports || [],)
         } else {
-          throw new Error(data.message || "Failed to fetch staff reports");
+          throw new Error(data.message || 'Failed to fetch staff reports',)
         }
       } catch (err) {
-        console.error("Error fetching staff reports:", err);
+        console.error('Error fetching staff reports:', err,)
         setError(
-          err instanceof Error ? err.message : "Failed to fetch staff reports",
-        );
+          err instanceof Error ? err.message : 'Failed to fetch staff reports',
+        )
       }
     },
-    [clinicId, filters],
-  );
+    [clinicId, filters,],
+  )
 
   const calculateROI = useCallback(
-    async (period: { start: Date; end: Date; }) => {
+    async (period: { start: Date; end: Date },) => {
       try {
-        setError(null);
+        setError(null,)
 
         const response = await fetch(
-          "/api/performance-monitoring/roi-calculation",
+          '/api/performance-monitoring/roi-calculation',
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
             body: JSON.stringify({
               clinicId,
               startDate: period.start.toISOString(),
               endDate: period.end.toISOString(),
               departments: filters.departments,
-            }),
+            },),
           },
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`Failed to calculate ROI: ${response.statusText}`);
+          throw new Error(`Failed to calculate ROI: ${response.statusText}`,)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (data.success) {
-          setRoiCalculation(data.roiCalculation);
+          setRoiCalculation(data.roiCalculation,)
         } else {
-          throw new Error(data.message || "Failed to calculate ROI");
+          throw new Error(data.message || 'Failed to calculate ROI',)
         }
       } catch (err) {
-        console.error("Error calculating ROI:", err);
+        console.error('Error calculating ROI:', err,)
         setError(
-          err instanceof Error ? err.message : "Failed to calculate ROI",
-        );
+          err instanceof Error ? err.message : 'Failed to calculate ROI',
+        )
       }
     },
-    [clinicId, filters.departments],
-  );
+    [clinicId, filters.departments,],
+  )
 
   const exportReport = useCallback(
-    async (options: ExportOptions) => {
+    async (options: ExportOptions,) => {
       try {
-        setError(null);
+        setError(null,)
 
-        const response = await fetch("/api/performance-monitoring/export", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/performance-monitoring/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
             clinicId,
             ...options,
             filters,
-          }),
-        });
+          },),
+        },)
 
         if (!response.ok) {
-          throw new Error(`Failed to export report: ${response.statusText}`);
+          throw new Error(`Failed to export report: ${response.statusText}`,)
         }
 
         // Handle file download
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `performance-report-${Date.now()}.${options.format}`;
-        document.body.append(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob,)
+        const a = document.createElement('a',)
+        a.href = url
+        a.download = `performance-report-${Date.now()}.${options.format}`
+        document.body.append(a,)
+        a.click()
+        window.URL.revokeObjectURL(url,)
+        document.body.removeChild(a,)
       } catch (err) {
-        console.error("Error exporting report:", err);
+        console.error('Error exporting report:', err,)
         setError(
-          err instanceof Error ? err.message : "Failed to export report",
-        );
+          err instanceof Error ? err.message : 'Failed to export report',
+        )
       }
     },
-    [clinicId, filters],
-  );
+    [clinicId, filters,],
+  )
 
   const setFilters = useCallback(
-    (newFilters: DashboardFilters) => {
-      setFiltersState(newFilters);
+    (newFilters: DashboardFilters,) => {
+      setFiltersState(newFilters,)
       // Automatically refresh data when filters change
-      fetchMetrics(newFilters);
-      fetchKPIs();
-      fetchStaffReports(newFilters);
+      fetchMetrics(newFilters,)
+      fetchKPIs()
+      fetchStaffReports(newFilters,)
     },
-    [fetchMetrics, fetchKPIs, fetchStaffReports],
-  );
+    [fetchMetrics, fetchKPIs, fetchStaffReports,],
+  )
 
   const updateRefreshRate = useCallback(
-    (minutes: number) => {
-      const newInterval = minutes * 60 * 1000;
+    (minutes: number,) => {
+      const newInterval = minutes * 60 * 1000
 
       // Clear existing interval
       if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
+        clearInterval(refreshIntervalRef.current,)
       }
 
       // Set new interval if autoRefresh is enabled
       if (autoRefresh && newInterval > 0) {
         refreshIntervalRef.current = setInterval(() => {
-          refreshData();
-        }, newInterval);
+          refreshData()
+        }, newInterval,)
       }
     },
-    [autoRefresh],
-  );
+    [autoRefresh,],
+  )
 
   const refreshData = useCallback(async () => {
-    await Promise.all([fetchMetrics(), fetchKPIs(), fetchStaffReports()]);
+    await Promise.all([fetchMetrics(), fetchKPIs(), fetchStaffReports(),],)
 
     // Recalculate ROI if we have a previous calculation
     if (roiCalculation) {
       await calculateROI({
         start: roiCalculation.period.start,
         end: roiCalculation.period.end,
-      });
+      },)
     }
   }, [
     fetchMetrics,
@@ -334,88 +334,88 @@ export function usePerformanceMonitoring({
     fetchStaffReports,
     roiCalculation,
     calculateROI,
-  ]);
+  ],)
 
   const subscribeToUpdates = useCallback(() => {
-    if (!realTimeUpdates || typeof window === "undefined") {
-      return () => {};
+    if (!realTimeUpdates || typeof window === 'undefined') {
+      return () => {}
     }
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/api/performance-monitoring/websocket`;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const wsUrl = `${protocol}//${window.location.host}/api/performance-monitoring/websocket`
 
     try {
-      const ws = new WebSocket(wsUrl);
-      wsRef.current = ws;
+      const ws = new WebSocket(wsUrl,)
+      wsRef.current = ws
 
       const handleOpen = () => {
-        console.log("Performance monitoring WebSocket connected");
+        console.log('Performance monitoring WebSocket connected',)
         // Send subscription with clinic and department filters
         ws.send(
           JSON.stringify({
-            type: "subscribe",
+            type: 'subscribe',
             clinicId,
             departments: filters.departments,
-          }),
-        );
-      };
+          },),
+        )
+      }
 
-      const handleMessage = (event: MessageEvent) => {
+      const handleMessage = (event: MessageEvent,) => {
         try {
-          const message = JSON.parse(event.data);
+          const message = JSON.parse(event.data,)
           switch (message.type) {
-            case "metrics_updated":
-              fetchMetrics();
-              break;
-            case "kpi_updated":
-              fetchKPIs();
-              break;
-            case "staff_report_updated":
-              fetchStaffReports();
-              break;
-            case "alert_resolved":
+            case 'metrics_updated':
+              fetchMetrics()
+              break
+            case 'kpi_updated':
+              fetchKPIs()
+              break
+            case 'staff_report_updated':
+              fetchStaffReports()
+              break
+            case 'alert_resolved':
               // Refresh metrics when alerts are resolved
-              fetchMetrics();
-              break;
+              fetchMetrics()
+              break
           }
         } catch (err) {
-          console.error("Error parsing WebSocket message:", err);
+          console.error('Error parsing WebSocket message:', err,)
         }
-      };
+      }
 
-      const handleError = (error: Event) => {
-        console.error("Performance monitoring WebSocket error:", error);
-      };
+      const handleError = (error: Event,) => {
+        console.error('Performance monitoring WebSocket error:', error,)
+      }
 
       const handleClose = () => {
-        console.log("Performance monitoring WebSocket closed");
+        console.log('Performance monitoring WebSocket closed',)
         // Attempt to reconnect after 10 seconds
         setTimeout(() => {
           if (realTimeUpdates) {
-            subscribeToUpdates();
+            subscribeToUpdates()
           }
-        }, 10_000);
-      };
+        }, 10_000,)
+      }
 
-      ws.addEventListener("open", handleOpen);
-      ws.addEventListener("message", handleMessage);
-      ws.addEventListener("error", handleError);
-      ws.addEventListener("close", handleClose);
+      ws.addEventListener('open', handleOpen,)
+      ws.addEventListener('message', handleMessage,)
+      ws.addEventListener('error', handleError,)
+      ws.addEventListener('close', handleClose,)
     } catch (err) {
-      console.error("Error creating WebSocket connection:", err);
+      console.error('Error creating WebSocket connection:', err,)
     }
 
     return () => {
-      const ws = wsRef.current;
+      const ws = wsRef.current
       if (ws) {
         try {
-          ws.close();
+          ws.close()
         } catch {
           // ignore
         }
-        wsRef.current = null;
+        wsRef.current = null
       }
-    };
+    }
   }, [
     realTimeUpdates,
     clinicId,
@@ -423,39 +423,39 @@ export function usePerformanceMonitoring({
     fetchMetrics,
     fetchKPIs,
     fetchStaffReports,
-  ]);
+  ],)
 
   // Initial data fetch
   useEffect(() => {
-    fetchMetrics();
-    fetchKPIs();
-    fetchStaffReports();
-  }, []);
+    fetchMetrics()
+    fetchKPIs()
+    fetchStaffReports()
+  }, [],)
 
   // Set up real-time subscriptions
   useEffect(() => {
     if (realTimeUpdates) {
-      const unsubscribe = subscribeToUpdates();
-      return unsubscribe;
+      const unsubscribe = subscribeToUpdates()
+      return unsubscribe
     }
-    return;
-  }, [realTimeUpdates, subscribeToUpdates]);
+    return
+  }, [realTimeUpdates, subscribeToUpdates,],)
 
   // Set up auto-refresh
   useEffect(() => {
     if (autoRefresh && refreshInterval > 0) {
       refreshIntervalRef.current = setInterval(() => {
-        refreshData();
-      }, refreshInterval);
+        refreshData()
+      }, refreshInterval,)
 
       return () => {
         if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
+          clearInterval(refreshIntervalRef.current,)
         }
-      };
+      }
     }
-    return;
-  }, [autoRefresh, refreshInterval, refreshData]);
+    return
+  }, [autoRefresh, refreshInterval, refreshData,],)
 
   // Calculate ROI automatically when metrics are loaded
   useEffect(() => {
@@ -463,9 +463,9 @@ export function usePerformanceMonitoring({
       calculateROI({
         start: filters.dateRange.start,
         end: filters.dateRange.end,
-      });
+      },)
     }
-  }, [metrics, filters.dateRange, calculateROI]);
+  }, [metrics, filters.dateRange, calculateROI,],)
 
   return {
     // Data
@@ -495,5 +495,5 @@ export function usePerformanceMonitoring({
     // Real-time updates
     subscribeToUpdates,
     refreshData,
-  };
+  }
 }

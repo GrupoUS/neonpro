@@ -4,42 +4,42 @@
  */
 
 export interface AuditEvent {
-  id: string;
-  service: string;
-  eventType: string;
-  timestamp: string;
-  details: unknown;
-  version: string;
-  userId?: string;
-  severity?: string;
-  dataClassification?: string;
+  id: string
+  service: string
+  eventType: string
+  timestamp: string
+  details: unknown
+  version: string
+  userId?: string
+  severity?: string
+  dataClassification?: string
 }
 
 export interface ChainIntegrity {
-  valid: boolean;
-  brokenLinks: string[];
+  valid: boolean
+  brokenLinks: string[]
 }
 
 export class UnifiedAuditService {
-  private events: AuditEvent[] = [];
-  private readonly maxEvents: number;
+  private events: AuditEvent[] = []
+  private readonly maxEvents: number
 
-  constructor(maxEvents: number = 10_000) {
-    this.maxEvents = maxEvents;
+  constructor(maxEvents: number = 10_000,) {
+    this.maxEvents = maxEvents
   }
 
   /**
    * Log an audit event
    */
-  async logEvent(event: AuditEvent): Promise<void> {
+  async logEvent(event: AuditEvent,): Promise<void> {
     this.events.push({
       ...event,
       timestamp: event.timestamp || new Date().toISOString(),
-    });
+    },)
 
     // Enforce retention cap by removing oldest entries
     while (this.events.length > this.maxEvents) {
-      this.events.shift();
+      this.events.shift()
     }
   }
 
@@ -51,7 +51,7 @@ export class UnifiedAuditService {
     return {
       valid: true,
       brokenLinks: [],
-    };
+    }
   }
 
   /**
@@ -61,12 +61,12 @@ export class UnifiedAuditService {
     return {
       total: this.events.length,
       maxEvents: this.maxEvents,
-      memoryUsagePercent: Math.round((this.events.length / this.maxEvents) * 100),
+      memoryUsagePercent: Math.round((this.events.length / this.maxEvents) * 100,),
       byService: this.getEventsByService(),
       byType: this.getEventsByType(),
       lastEvent: this.events[this.events.length - 1]?.timestamp,
       firstEvent: this.events[0]?.timestamp,
-    };
+    }
   }
 
   /**
@@ -77,18 +77,18 @@ export class UnifiedAuditService {
   }
 
   private getEventsByService(): Record<string, number> {
-    const counts: Record<string, number> = {};
+    const counts: Record<string, number> = {}
     for (const event of this.events) {
-      counts[event.service] = (counts[event.service] || 0) + 1;
+      counts[event.service] = (counts[event.service] || 0) + 1
     }
-    return counts;
+    return counts
   }
 
   private getEventsByType(): Record<string, number> {
-    const counts: Record<string, number> = {};
+    const counts: Record<string, number> = {}
     for (const event of this.events) {
-      counts[event.eventType] = (counts[event.eventType] || 0) + 1;
+      counts[event.eventType] = (counts[event.eventType] || 0) + 1
     }
-    return counts;
+    return counts
   }
 }

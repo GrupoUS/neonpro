@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Badge,
@@ -9,109 +9,109 @@ import {
   CardHeader,
   CardTitle,
   Separator,
-} from "@/components/ui";
-import { Briefcase, Building2, Check, Shield, Star, Users, Zap } from "lucide-react";
-import { useRouter } from "next/navigation";
-import type React from "react";
+} from '@/components/ui'
+import { Briefcase, Building2, Check, Shield, Star, Users, Zap, } from 'lucide-react'
+import { useRouter, } from 'next/navigation'
+import type React from 'react'
 
 interface PricingPlan {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  billingPeriod: "month" | "year";
-  popular?: boolean;
-  features: string[];
-  maxUsers: number;
-  storage: string;
-  support: string;
-  icon: React.ComponentType<{ className?: string; }>;
+  id: string
+  name: string
+  description: string
+  price: number
+  billingPeriod: 'month' | 'year'
+  popular?: boolean
+  features: string[]
+  maxUsers: number
+  storage: string
+  support: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 const PRICING_PLANS: PricingPlan[] = [
   {
-    id: "basic",
-    name: "Básico",
-    description: "Ideal para pequenas clínicas e consultórios",
+    id: 'basic',
+    name: 'Básico',
+    description: 'Ideal para pequenas clínicas e consultórios',
     price: 99,
-    billingPeriod: "month",
+    billingPeriod: 'month',
     features: [
-      "Até 5 usuários",
-      "Gestão de pacientes",
-      "Agendamentos básicos",
-      "Relatórios essenciais",
-      "Suporte por email",
-      "Backup diário",
-      "LGPD compliance",
+      'Até 5 usuários',
+      'Gestão de pacientes',
+      'Agendamentos básicos',
+      'Relatórios essenciais',
+      'Suporte por email',
+      'Backup diário',
+      'LGPD compliance',
     ],
     maxUsers: 5,
-    storage: "10 GB",
-    support: "Email",
+    storage: '10 GB',
+    support: 'Email',
     icon: Users,
   },
   {
-    id: "professional",
-    name: "Profissional",
-    description: "Para clínicas em crescimento e equipes médicas",
+    id: 'professional',
+    name: 'Profissional',
+    description: 'Para clínicas em crescimento e equipes médicas',
     price: 199,
-    billingPeriod: "month",
+    billingPeriod: 'month',
     popular: true,
     features: [
-      "Até 15 usuários",
-      "Gestão completa de pacientes",
-      "Agendamentos avançados",
-      "Relatórios detalhados",
-      "Suporte prioritário",
-      "Backup em tempo real",
-      "LGPD compliance",
-      "Integração com sistemas",
-      "Controle financeiro",
-      "Auditoria de dados",
+      'Até 15 usuários',
+      'Gestão completa de pacientes',
+      'Agendamentos avançados',
+      'Relatórios detalhados',
+      'Suporte prioritário',
+      'Backup em tempo real',
+      'LGPD compliance',
+      'Integração com sistemas',
+      'Controle financeiro',
+      'Auditoria de dados',
     ],
     maxUsers: 15,
-    storage: "100 GB",
-    support: "Chat + Email",
+    storage: '100 GB',
+    support: 'Chat + Email',
     icon: Briefcase,
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
-    description: "Para hospitais e grandes organizações de saúde",
+    id: 'enterprise',
+    name: 'Enterprise',
+    description: 'Para hospitais e grandes organizações de saúde',
     price: 399,
-    billingPeriod: "month",
+    billingPeriod: 'month',
     features: [
-      "Usuários ilimitados",
-      "Todas as funcionalidades",
-      "Relatórios customizados",
-      "Suporte 24/7",
-      "Backup redundante",
-      "LGPD compliance avançado",
-      "API completa",
-      "Integrações personalizadas",
-      "Controle financeiro avançado",
-      "Auditoria completa",
-      "Treinamento dedicado",
-      "Gerente de conta",
+      'Usuários ilimitados',
+      'Todas as funcionalidades',
+      'Relatórios customizados',
+      'Suporte 24/7',
+      'Backup redundante',
+      'LGPD compliance avançado',
+      'API completa',
+      'Integrações personalizadas',
+      'Controle financeiro avançado',
+      'Auditoria completa',
+      'Treinamento dedicado',
+      'Gerente de conta',
     ],
     maxUsers: 999,
-    storage: "1 TB",
-    support: "24/7 Dedicado",
+    storage: '1 TB',
+    support: '24/7 Dedicado',
     icon: Building2,
   },
-];
+]
 
 export default function PricingPage() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const handleSelectPlan = (planId: string) => {
-    router.push(`/signup?plan=${planId}`);
-  };
+  const handleSelectPlan = (planId: string,) => {
+    router.push(`/signup?plan=${planId}`,)
+  }
 
   const PlanIcon = ({
     icon: Icon,
   }: {
-    icon: React.ComponentType<{ className?: string; }>;
-  }) => <Icon className="h-8 w-8" />;
+    icon: React.ComponentType<{ className?: string }>
+  },) => <Icon className="h-8 w-8" />
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
@@ -129,9 +129,9 @@ export default function PricingPage() {
 
         {/* Pricing Cards */}
         <div className="mb-16 grid gap-8 md:grid-cols-3">
-          {PRICING_PLANS.map((plan) => (
+          {PRICING_PLANS.map((plan,) => (
             <Card
-              className={`relative ${plan.popular ? "scale-105 border-blue-500 shadow-lg" : ""}`}
+              className={`relative ${plan.popular ? 'scale-105 border-blue-500 shadow-lg' : ''}`}
               key={plan.id}
             >
               {plan.popular && (
@@ -153,7 +153,7 @@ export default function PricingPage() {
                 <div className="mt-4">
                   <span className="font-bold text-4xl">R$ {plan.price}</span>
                   <span className="text-muted-foreground">
-                    /{plan.billingPeriod === "month" ? "mês" : "ano"}
+                    /{plan.billingPeriod === 'month' ? 'mês' : 'ano'}
                   </span>
                 </div>
               </CardHeader>
@@ -161,8 +161,8 @@ export default function PricingPage() {
               <CardContent>
                 <Button
                   className="mb-6 w-full"
-                  onClick={() => handleSelectPlan(plan.id)}
-                  variant={plan.popular ? "default" : "outline"}
+                  onClick={() => handleSelectPlan(plan.id,)}
+                  variant={plan.popular ? 'default' : 'outline'}
                 >
                   {plan.popular
                     ? (
@@ -172,7 +172,7 @@ export default function PricingPage() {
                       </>
                     )
                     : (
-                      "Selecionar Plano"
+                      'Selecionar Plano'
                     )}
                 </Button>
 
@@ -182,7 +182,7 @@ export default function PricingPage() {
                       <span className="text-muted-foreground">Usuários:</span>
                       <p className="font-medium">
                         {plan.maxUsers === 999
-                          ? "Ilimitados"
+                          ? 'Ilimitados'
                           : `Até ${plan.maxUsers}`}
                       </p>
                     </div>
@@ -201,7 +201,7 @@ export default function PricingPage() {
                   <div>
                     <h4 className="mb-3 font-medium">Recursos inclusos:</h4>
                     <ul className="space-y-2">
-                      {plan.features.map((feature, index) => (
+                      {plan.features.map((feature, index,) => (
                         <li className="flex items-start" key={index}>
                           <Check className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
                           <span className="text-sm">{feature}</span>
@@ -348,5 +348,5 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

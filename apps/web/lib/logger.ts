@@ -3,7 +3,7 @@
  * Healthcare-compliant structured logging with LGPD data protection
  */
 
-import { serverEnv } from './env';
+import { clientEnv, serverEnv } from './env';
 
 // Log levels following RFC 5424
 export enum LogLevel {
@@ -103,33 +103,32 @@ function redactSensitiveData(entry: LogEntry): LogEntry {
 // Logger class for structured healthcare logging
 class HealthcareLogger {
   private minLevel: LogLevel;
-  
+
   constructor() {
-    this.minLevel = serverEnv.app?.environment === 'production' 
-      ? LogLevel.INFO 
-      : LogLevel.DEBUG;
+    const env = clientEnv.app.environment;
+    this.minLevel = env === 'production' ? LogLevel.INFO : LogLevel.DEBUG;
   }
-  
+
   private shouldLog(level: LogLevel): boolean {
     return level >= this.minLevel;
   }
-  
+
   private formatEntry(entry: LogEntry): string {
     const redactedEntry = redactSensitiveData(entry);
-    
+
     // JSON format for production, pretty format for development
-    if (serverEnv.app?.environment === 'production') {
+    if (clientEnv.app.environment === 'production') {
       return JSON.stringify(redactedEntry);
     } else {
       return JSON.stringify(redactedEntry, null, 2);
     }
   }
-  
+
   private writeLog(entry: LogEntry): void {
     if (!this.shouldLog(LogLevel[entry.level])) return;
-    
+
     const formattedEntry = this.formatEntry(entry);
-    
+
     // In production, this would integrate with external logging service
     // For now, using console with proper formatting
     switch (entry.level) {
@@ -148,7 +147,7 @@ class HealthcareLogger {
         break;
     }
   }
-  
+
   private createEntry(
     level: keyof typeof LogLevel,
     category: LogCategory,
@@ -164,27 +163,35 @@ class HealthcareLogger {
       ...options,
     };
   }
-  
+
+  // Generic log method used by middleware and other callers
+  log(level: LogLevel, message: string, fields: { category: LogCategory } & Record<string, any>): void {
+    const levelKey = LogLevel[level] as keyof typeof LogLevel;
+    const { category, ...rest } = fields || ({} as any);
+    const options: Partial<LogEntry> = { metadata: rest };
+    this.writeLog(this.createEntry(levelKey, category, message, options));
+  }
+
   debug(category: LogCategory, message: string, options?: Partial<LogEntry>): void {
     this.writeLog(this.createEntry('DEBUG', category, message, options));
   }
-  
+
   info(category: LogCategory, message: string, options?: Partial<LogEntry>): void {
     this.writeLog(this.createEntry('INFO', category, message, options));
   }
-  
+
   warn(category: LogCategory, message: string, options?: Partial<LogEntry>): void {
     this.writeLog(this.createEntry('WARN', category, message, options));
   }
-  
+
   error(category: LogCategory, message: string, options?: Partial<LogEntry>): void {
     this.writeLog(this.createEntry('ERROR', category, message, options));
   }
-  
+
   fatal(category: LogCategory, message: string, options?: Partial<LogEntry>): void {
     this.writeLog(this.createEntry('FATAL', category, message, options));
   }
-  
+
   // Healthcare-specific logging methods
   patientAccess(action: string, patientId: string, userId: string, clinicId: string, metadata?: Record<string, any>): void {
     this.info(LogCategory.PATIENT_ACCESS, `Patient ${action}`, {
@@ -199,7 +206,7 @@ class HealthcareLogger {
       },
     });
   }
-  
+
   auditLog(action: string, entityType: string, entityId: string, userId: string, metadata?: Record<string, any>): void {
     this.info(LogCategory.AUDIT, `${entityType} ${action}`, {
       userId,
@@ -304,6 +311,6 @@ export const contextLogger = {
     logger.securityEvent(event, severity, metadata),
 };
 
-// Export types for external use
-export type { LogEntry, RequestContext };
+// Export types for external use (already exported above)
+// export type { LogEntry, RequestContext };
 // LogLevel and LogCategory already exported above

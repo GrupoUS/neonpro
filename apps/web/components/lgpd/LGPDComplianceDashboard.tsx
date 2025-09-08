@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog'
+import { Progress, } from '@/components/ui/progress'
 import {
   AlertTriangle,
   CheckCircle,
@@ -22,193 +22,193 @@ import {
   Settings,
   Shield,
   Trash2,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+} from 'lucide-react'
+import { useCallback, useEffect, useState, } from 'react'
 
 interface DataProcessingRecord {
-  id: string;
-  category: "health" | "identifying" | "behavioral" | "financial";
-  purpose: string;
-  lawfulBasis: string;
-  dataCollected: string[];
-  retentionPeriod: number;
-  lastUpdated: Date;
-  status: "active" | "deleted" | "anonymized";
+  id: string
+  category: 'health' | 'identifying' | 'behavioral' | 'financial'
+  purpose: string
+  lawfulBasis: string
+  dataCollected: string[]
+  retentionPeriod: number
+  lastUpdated: Date
+  status: 'active' | 'deleted' | 'anonymized'
 }
 
 interface ConsentRecord {
-  id: string;
-  type: "data_processing" | "marketing" | "analytics" | "research";
-  status: "granted" | "withdrawn" | "pending";
-  grantedAt?: Date;
-  withdrawnAt?: Date;
-  description: string;
+  id: string
+  type: 'data_processing' | 'marketing' | 'analytics' | 'research'
+  status: 'granted' | 'withdrawn' | 'pending'
+  grantedAt?: Date
+  withdrawnAt?: Date
+  description: string
 }
 
 interface DataSubjectRights {
-  access: { available: boolean; lastRequested?: Date; status?: string; };
-  rectification: { available: boolean; lastRequested?: Date; status?: string; };
-  erasure: { available: boolean; lastRequested?: Date; status?: string; };
-  portability: { available: boolean; lastRequested?: Date; status?: string; };
+  access: { available: boolean; lastRequested?: Date; status?: string }
+  rectification: { available: boolean; lastRequested?: Date; status?: string }
+  erasure: { available: boolean; lastRequested?: Date; status?: string }
+  portability: { available: boolean; lastRequested?: Date; status?: string }
 }
 
 export default function LGPDComplianceDashboard() {
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "data" | "consent" | "rights"
-  >("overview");
-  const [dataProcessing, setDataProcessing] = useState<DataProcessingRecord[]>(
+  const [activeTab, setActiveTab,] = useState<
+    'overview' | 'data' | 'consent' | 'rights'
+  >('overview',)
+  const [dataProcessing, setDataProcessing,] = useState<DataProcessingRecord[]>(
     [],
-  );
-  const [consents, setConsents] = useState<ConsentRecord[]>([]);
-  const [rights, setRights] = useState<DataSubjectRights>({
-    access: { available: true },
-    rectification: { available: true },
-    erasure: { available: true },
-    portability: { available: true },
-  });
-  const [showDialog, setShowDialog] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{
-    title: string;
-    description: string;
+  )
+  const [consents, setConsents,] = useState<ConsentRecord[]>([],)
+  const [rights, setRights,] = useState<DataSubjectRights>({
+    access: { available: true, },
+    rectification: { available: true, },
+    erasure: { available: true, },
+    portability: { available: true, },
+  },)
+  const [showDialog, setShowDialog,] = useState(false,)
+  const [dialogContent, setDialogContent,] = useState<{
+    title: string
+    description: string
   }>({
-    title: "",
-    description: "",
-  });
+    title: '',
+    description: '',
+  },)
 
   useEffect(() => {
-    loadUserData();
-  }, [loadUserData]);
+    loadUserData()
+  }, [loadUserData,],)
 
   const loadUserData = useCallback(async () => {
     // Mock data - integrate with real API
     setDataProcessing([
       {
-        id: "1",
-        category: "health",
-        purpose: "Prestação de cuidados médicos",
-        lawfulBasis: "Cuidados de saúde (Art. 11, LGPD)",
-        dataCollected: ["Nome", "CPF", "Histórico médico", "Exames"],
+        id: '1',
+        category: 'health',
+        purpose: 'Prestação de cuidados médicos',
+        lawfulBasis: 'Cuidados de saúde (Art. 11, LGPD)',
+        dataCollected: ['Nome', 'CPF', 'Histórico médico', 'Exames',],
         retentionPeriod: 20 * 365, // 20 years for medical data
         lastUpdated: new Date(),
-        status: "active",
+        status: 'active',
       },
       {
-        id: "2",
-        category: "identifying",
-        purpose: "Identificação e comunicação",
-        lawfulBasis: "Execução de contrato (Art. 7, II)",
-        dataCollected: ["Nome", "E-mail", "Telefone", "Endereço"],
+        id: '2',
+        category: 'identifying',
+        purpose: 'Identificação e comunicação',
+        lawfulBasis: 'Execução de contrato (Art. 7, II)',
+        dataCollected: ['Nome', 'E-mail', 'Telefone', 'Endereço',],
         retentionPeriod: 5 * 365,
         lastUpdated: new Date(),
-        status: "active",
+        status: 'active',
       },
-    ]);
+    ],)
 
     setConsents([
       {
-        id: "1",
-        type: "data_processing",
-        status: "granted",
+        id: '1',
+        type: 'data_processing',
+        status: 'granted',
         grantedAt: new Date(),
-        description: "Processamento de dados para prestação de serviços médicos",
+        description: 'Processamento de dados para prestação de serviços médicos',
       },
       {
-        id: "2",
-        type: "marketing",
-        status: "withdrawn",
-        grantedAt: new Date("2024-01-01"),
+        id: '2',
+        type: 'marketing',
+        status: 'withdrawn',
+        grantedAt: new Date('2024-01-01',),
         withdrawnAt: new Date(),
-        description: "Comunicações de marketing e promoções",
+        description: 'Comunicações de marketing e promoções',
       },
-    ]);
-  }, []);
+    ],)
+  }, [],)
 
-  const handleDataSubjectRight = async (rightType: keyof DataSubjectRights) => {
+  const handleDataSubjectRight = async (rightType: keyof DataSubjectRights,) => {
     switch (rightType) {
-      case "access": {
+      case 'access': {
         setDialogContent({
-          title: "Direito de Acesso (Art. 15, LGPD)",
+          title: 'Direito de Acesso (Art. 15, LGPD)',
           description:
-            "Solicitação de acesso aos seus dados pessoais processada. Você receberá um relatório completo em até 15 dias.",
-        });
-        break;
+            'Solicitação de acesso aos seus dados pessoais processada. Você receberá um relatório completo em até 15 dias.',
+        },)
+        break
       }
-      case "rectification": {
+      case 'rectification': {
         setDialogContent({
-          title: "Direito de Retificação (Art. 16, LGPD)",
+          title: 'Direito de Retificação (Art. 16, LGPD)',
           description:
-            "Solicitação de correção de dados processada. Entre em contato com nosso DPO para especificar as correções necessárias.",
-        });
-        break;
+            'Solicitação de correção de dados processada. Entre em contato com nosso DPO para especificar as correções necessárias.',
+        },)
+        break
       }
-      case "erasure": {
+      case 'erasure': {
         setDialogContent({
-          title: "Direito ao Apagamento (Art. 16, LGPD)",
+          title: 'Direito ao Apagamento (Art. 16, LGPD)',
           description:
-            "ATENÇÃO: Esta ação apagará permanentemente seus dados médicos. Dados essenciais podem ser mantidos por obrigação legal.",
-        });
-        break;
+            'ATENÇÃO: Esta ação apagará permanentemente seus dados médicos. Dados essenciais podem ser mantidos por obrigação legal.',
+        },)
+        break
       }
-      case "portability": {
+      case 'portability': {
         setDialogContent({
-          title: "Direito à Portabilidade (Art. 18, LGPD)",
+          title: 'Direito à Portabilidade (Art. 18, LGPD)',
           description:
-            "Seus dados serão exportados em formato estruturado. O download estará disponível em até 7 dias.",
-        });
-        break;
+            'Seus dados serão exportados em formato estruturado. O download estará disponível em até 7 dias.',
+        },)
+        break
       }
     }
-    setShowDialog(true);
+    setShowDialog(true,)
 
     // Update rights status
-    setRights((prev) => ({
+    setRights((prev,) => ({
       ...prev,
       [rightType]: {
         ...prev[rightType],
         lastRequested: new Date(),
-        status: "processing",
+        status: 'processing',
       },
-    }));
-  };
-  const getBadgeVariant = (status: string) => {
+    }))
+  }
+  const getBadgeVariant = (status: string,) => {
     switch (status) {
-      case "active":
-      case "granted": {
-        return "default";
+      case 'active':
+      case 'granted': {
+        return 'default'
       }
-      case "withdrawn":
-      case "deleted": {
-        return "destructive";
+      case 'withdrawn':
+      case 'deleted': {
+        return 'destructive'
       }
-      case "pending":
-      case "processing": {
-        return "secondary";
+      case 'pending':
+      case 'processing': {
+        return 'secondary'
       }
       default: {
-        return "outline";
+        return 'outline'
       }
     }
-  };
+  }
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category: string,) => {
     switch (category) {
-      case "health": {
-        return <Shield className="h-4 w-4" />;
+      case 'health': {
+        return <Shield className="h-4 w-4" />
       }
-      case "identifying": {
-        return <Eye className="h-4 w-4" />;
+      case 'identifying': {
+        return <Eye className="h-4 w-4" />
       }
-      case "behavioral": {
-        return <Settings className="h-4 w-4" />;
+      case 'behavioral': {
+        return <Settings className="h-4 w-4" />
       }
-      case "financial": {
-        return <FileText className="h-4 w-4" />;
+      case 'financial': {
+        return <FileText className="h-4 w-4" />
       }
       default: {
-        return <FileText className="h-4 w-4" />;
+        return <FileText className="h-4 w-4" />
       }
     }
-  };
+  }
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-6">
@@ -225,31 +225,31 @@ export default function LGPDComplianceDashboard() {
       <div className="flex space-x-1 rounded-lg bg-gray-100 p-1">
         {[
           {
-            key: "overview",
-            label: "Visão Geral",
+            key: 'overview',
+            label: 'Visão Geral',
             icon: <Eye className="h-4 w-4" />,
           },
           {
-            key: "data",
-            label: "Meus Dados",
+            key: 'data',
+            label: 'Meus Dados',
             icon: <FileText className="h-4 w-4" />,
           },
           {
-            key: "consent",
-            label: "Consentimentos",
+            key: 'consent',
+            label: 'Consentimentos',
             icon: <CheckCircle className="h-4 w-4" />,
           },
           {
-            key: "rights",
-            label: "Direitos",
+            key: 'rights',
+            label: 'Direitos',
             icon: <Shield className="h-4 w-4" />,
           },
-        ].map((tab) => (
+        ].map((tab,) => (
           <Button
             className="flex items-center space-x-2"
             key={tab.key}
-            onClick={() => setActiveTab(tab.key as unknown)}
-            variant={activeTab === tab.key ? "default" : "ghost"}
+            onClick={() => setActiveTab(tab.key as unknown,)}
+            variant={activeTab === tab.key ? 'default' : 'ghost'}
           >
             {tab.icon}
             <span>{tab.label}</span>
@@ -257,7 +257,7 @@ export default function LGPDComplianceDashboard() {
         ))}
       </div>
       {/* Overview Tab */}
-      {activeTab === "overview" && (
+      {activeTab === 'overview' && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
@@ -268,7 +268,7 @@ export default function LGPDComplianceDashboard() {
             </CardHeader>
             <CardContent>
               <div className="font-bold text-2xl">
-                {dataProcessing.filter((d) => d.status === "active").length}
+                {dataProcessing.filter((d,) => d.status === 'active').length}
               </div>
               <p className="text-gray-600 text-xs">Categorias ativas</p>
             </CardContent>
@@ -283,7 +283,7 @@ export default function LGPDComplianceDashboard() {
             </CardHeader>
             <CardContent>
               <div className="font-bold text-2xl text-green-600">
-                {consents.filter((c) => c.status === "granted").length}
+                {consents.filter((c,) => c.status === 'granted').length}
               </div>
               <p className="text-gray-600 text-xs">
                 Ativos de {consents.length}
@@ -319,14 +319,14 @@ export default function LGPDComplianceDashboard() {
         </div>
       )}
       {/* Data Processing Tab */}
-      {activeTab === "data" && (
+      {activeTab === 'data' && (
         <div className="space-y-4">
-          {dataProcessing.map((record) => (
+          {dataProcessing.map((record,) => (
             <Card key={record.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    {getCategoryIcon(record.category)}
+                    {getCategoryIcon(record.category,)}
                     <div>
                       <CardTitle className="text-lg">
                         {record.purpose}
@@ -334,12 +334,12 @@ export default function LGPDComplianceDashboard() {
                       <CardDescription>{record.lawfulBasis}</CardDescription>
                     </div>
                   </div>
-                  <Badge variant={getBadgeVariant(record.status)}>
-                    {record.status === "active"
-                      ? "Ativo"
-                      : record.status === "deleted"
-                      ? "Excluído"
-                      : "Anonimizado"}
+                  <Badge variant={getBadgeVariant(record.status,)}>
+                    {record.status === 'active'
+                      ? 'Ativo'
+                      : record.status === 'deleted'
+                      ? 'Excluído'
+                      : 'Anonimizado'}
                   </Badge>
                 </div>
               </CardHeader>
@@ -350,13 +350,13 @@ export default function LGPDComplianceDashboard() {
                       Dados Coletados
                     </h4>
                     <ul className="space-y-1 text-gray-600 text-sm">
-                      {record.dataCollected.map((data, idx) => <li key={idx}>• {data}</li>)}
+                      {record.dataCollected.map((data, idx,) => <li key={idx}>• {data}</li>)}
                     </ul>
                   </div>
                   <div>
                     <h4 className="mb-2 font-semibold text-sm">Retenção</h4>
                     <p className="text-gray-600 text-sm">
-                      {Math.floor(record.retentionPeriod / 365)} anos
+                      {Math.floor(record.retentionPeriod / 365,)} anos
                     </p>
                   </div>
                   <div>
@@ -364,7 +364,7 @@ export default function LGPDComplianceDashboard() {
                       Última Atualização
                     </h4>
                     <p className="text-gray-600 text-sm">
-                      {record.lastUpdated.toLocaleDateString("pt-BR")}
+                      {record.lastUpdated.toLocaleDateString('pt-BR',)}
                     </p>
                   </div>
                 </div>
@@ -373,30 +373,30 @@ export default function LGPDComplianceDashboard() {
           ))}
         </div>
       )} {/* Consent Management Tab */}
-      {activeTab === "consent" && (
+      {activeTab === 'consent' && (
         <div className="space-y-4">
-          {consents.map((consent) => (
+          {consents.map((consent,) => (
             <Card key={consent.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      {consent.type === "data_processing"
-                        ? "Processamento de Dados"
-                        : consent.type === "marketing"
-                        ? "Marketing"
-                        : consent.type === "analytics"
-                        ? "Analytics"
-                        : "Pesquisa"}
+                      {consent.type === 'data_processing'
+                        ? 'Processamento de Dados'
+                        : consent.type === 'marketing'
+                        ? 'Marketing'
+                        : consent.type === 'analytics'
+                        ? 'Analytics'
+                        : 'Pesquisa'}
                     </CardTitle>
                     <CardDescription>{consent.description}</CardDescription>
                   </div>
-                  <Badge variant={getBadgeVariant(consent.status)}>
-                    {consent.status === "granted"
-                      ? "Concedido"
-                      : consent.status === "withdrawn"
-                      ? "Retirado"
-                      : "Pendente"}
+                  <Badge variant={getBadgeVariant(consent.status,)}>
+                    {consent.status === 'granted'
+                      ? 'Concedido'
+                      : consent.status === 'withdrawn'
+                      ? 'Retirado'
+                      : 'Pendente'}
                   </Badge>
                 </div>
               </CardHeader>
@@ -405,41 +405,41 @@ export default function LGPDComplianceDashboard() {
                   <div className="text-gray-600 text-sm">
                     {consent.grantedAt && (
                       <p>
-                        Concedido em: {consent.grantedAt.toLocaleDateString("pt-BR")}
+                        Concedido em: {consent.grantedAt.toLocaleDateString('pt-BR',)}
                       </p>
                     )}
                     {consent.withdrawnAt && (
                       <p>
-                        Retirado em: {consent.withdrawnAt.toLocaleDateString("pt-BR")}
+                        Retirado em: {consent.withdrawnAt.toLocaleDateString('pt-BR',)}
                       </p>
                     )}
                   </div>
                   <Button
                     onClick={() => {
                       // Handle consent withdrawal/grant
-                      const newStatus = consent.status === "granted" ? "withdrawn" : "granted";
-                      setConsents((prev) =>
-                        prev.map((c) =>
+                      const newStatus = consent.status === 'granted' ? 'withdrawn' : 'granted'
+                      setConsents((prev,) =>
+                        prev.map((c,) =>
                           c.id === consent.id
                             ? {
                               ...c,
                               status: newStatus,
                               [
-                                newStatus === "withdrawn"
-                                  ? "withdrawnAt"
-                                  : "grantedAt"
+                                newStatus === 'withdrawn'
+                                  ? 'withdrawnAt'
+                                  : 'grantedAt'
                               ]: new Date(),
                             }
                             : c
                         )
-                      );
+                      )
                     }}
                     size="sm"
-                    variant={consent.status === "granted" ? "destructive" : "default"}
+                    variant={consent.status === 'granted' ? 'destructive' : 'default'}
                   >
-                    {consent.status === "granted"
-                      ? "Retirar Consentimento"
-                      : "Conceder Consentimento"}
+                    {consent.status === 'granted'
+                      ? 'Retirar Consentimento'
+                      : 'Conceder Consentimento'}
                   </Button>
                 </div>
               </CardContent>
@@ -448,7 +448,7 @@ export default function LGPDComplianceDashboard() {
         </div>
       )}
       {/* Data Subject Rights Tab */}
-      {activeTab === "rights" && (
+      {activeTab === 'rights' && (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
@@ -463,12 +463,12 @@ export default function LGPDComplianceDashboard() {
             <CardContent>
               {rights.access.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação: {rights.access.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação: {rights.access.lastRequested.toLocaleDateString('pt-BR',)}
                 </p>
               )}
               <Button
                 className="w-full"
-                onClick={() => handleDataSubjectRight("access")}
+                onClick={() => handleDataSubjectRight('access',)}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Solicitar Acesso aos Dados
@@ -490,13 +490,13 @@ export default function LGPDComplianceDashboard() {
               {rights.rectification.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
                   Última solicitação: {rights.rectification.lastRequested.toLocaleDateString(
-                    "pt-BR",
+                    'pt-BR',
                   )}
                 </p>
               )}
               <Button
                 className="w-full"
-                onClick={() => handleDataSubjectRight("rectification")}
+                onClick={() => handleDataSubjectRight('rectification',)}
                 variant="outline"
               >
                 <Edit className="mr-2 h-4 w-4" />
@@ -524,12 +524,12 @@ export default function LGPDComplianceDashboard() {
               </div>
               {rights.erasure.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação: {rights.erasure.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação: {rights.erasure.lastRequested.toLocaleDateString('pt-BR',)}
                 </p>
               )}
               <Button
                 className="w-full"
-                onClick={() => handleDataSubjectRight("erasure")}
+                onClick={() => handleDataSubjectRight('erasure',)}
                 variant="destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -551,12 +551,13 @@ export default function LGPDComplianceDashboard() {
             <CardContent>
               {rights.portability.lastRequested && (
                 <p className="mb-3 text-gray-600 text-sm">
-                  Última solicitação: {rights.portability.lastRequested.toLocaleDateString("pt-BR")}
+                  Última solicitação:{' '}
+                  {rights.portability.lastRequested.toLocaleDateString('pt-BR',)}
                 </p>
               )}
               <Button
                 className="w-full"
-                onClick={() => handleDataSubjectRight("portability")}
+                onClick={() => handleDataSubjectRight('portability',)}
                 variant="outline"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -574,15 +575,15 @@ export default function LGPDComplianceDashboard() {
             <DialogDescription>{dialogContent.description}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2 pt-4">
-            <Button onClick={() => setShowDialog(false)} variant="outline">
+            <Button onClick={() => setShowDialog(false,)} variant="outline">
               Cancelar
             </Button>
-            <Button onClick={() => setShowDialog(false)}>
+            <Button onClick={() => setShowDialog(false,)}>
               Confirmar Solicitação
             </Button>
           </div>
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

@@ -4,22 +4,22 @@
  */
 
 export interface ProfessionalManagementProps {
-  professionals?: unknown[];
-  loading?: boolean;
-  error?: string;
+  professionals?: unknown[]
+  loading?: boolean
+  error?: string
 }
 
 export default function ProfessionalManagement({
   professionals = [],
   loading = false,
   error,
-}: ProfessionalManagementProps) {
+}: ProfessionalManagementProps,) {
   if (loading) {
-    return <div>Loading professionals...</div>;
+    return <div>Loading professionals...</div>
   }
 
   if (error) {
-    return <div>Error loading professionals: {error}</div>;
+    return <div>Error loading professionals: {error}</div>
   }
 
   return (
@@ -27,7 +27,7 @@ export default function ProfessionalManagement({
       <h2>Professional Management</h2>
       <div className="professionals-list">
         {professionals.length === 0 ? <p>No professionals found</p> : (
-          professionals.map((_prof, index) => (
+          professionals.map((_prof, index,) => (
             <div className="professional-card" key={index}>
               Professional {index + 1}
             </div>
@@ -35,5 +35,5 @@ export default function ProfessionalManagement({
         )}
       </div>
     </div>
-  );
+  )
 }

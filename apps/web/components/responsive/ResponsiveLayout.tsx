@@ -1,90 +1,90 @@
-import { useMediaQuery } from "@/hooks/use-media-query";
-import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useMediaQuery, } from '@/hooks/use-media-query'
+import type React from 'react'
+import { createContext, useContext, useEffect, useState, } from 'react'
 
 // Healthcare context types for responsive behavior
 export type HealthcareContext =
-  | "normal" // Standard patient consultation
-  | "emergency" // Emergency/urgent care
-  | "post-procedure" // Post-procedure recovery
-  | "one-handed" // One-handed operation mode
-  | "high-contrast"; // High contrast for visual impairments
+  | 'normal' // Standard patient consultation
+  | 'emergency' // Emergency/urgent care
+  | 'post-procedure' // Post-procedure recovery
+  | 'one-handed' // One-handed operation mode
+  | 'high-contrast' // High contrast for visual impairments
 
 // Layout variant based on screen size and context
 export type LayoutVariant =
-  | "mobile-emergency" // 320px - Emergency interface only
-  | "mobile-standard" // 375px - Full patient interface
-  | "tablet-dual" // 768px - Dual pane layouts
-  | "desktop-dashboard"; // 1024px - Full dashboard with sidebar
+  | 'mobile-emergency' // 320px - Emergency interface only
+  | 'mobile-standard' // 375px - Full patient interface
+  | 'tablet-dual' // 768px - Dual pane layouts
+  | 'desktop-dashboard' // 1024px - Full dashboard with sidebar
 
 interface ResponsiveContextValue {
-  variant: LayoutVariant;
-  healthcareContext: HealthcareContext;
-  isMobile: boolean;
-  isTablet: boolean;
-  isDesktop: boolean;
-  touchOptimized: boolean;
-  setHealthcareContext: (context: HealthcareContext) => void;
+  variant: LayoutVariant
+  healthcareContext: HealthcareContext
+  isMobile: boolean
+  isTablet: boolean
+  isDesktop: boolean
+  touchOptimized: boolean
+  setHealthcareContext: (context: HealthcareContext,) => void
 }
 
-const ResponsiveContext = createContext<ResponsiveContextValue | null>(null);
+const ResponsiveContext = createContext<ResponsiveContextValue | null>(null,)
 
 export function useResponsive() {
-  const context = useContext(ResponsiveContext);
+  const context = useContext(ResponsiveContext,)
   if (!context) {
-    throw new Error("useResponsive must be used within ResponsiveProvider");
+    throw new Error('useResponsive must be used within ResponsiveProvider',)
   }
-  return context;
+  return context
 }
 
 interface ResponsiveProviderProps {
-  children: React.ReactNode;
-  defaultHealthcareContext?: HealthcareContext;
+  children: React.ReactNode
+  defaultHealthcareContext?: HealthcareContext
 }
 
 export function ResponsiveProvider({
   children,
-  defaultHealthcareContext = "normal",
-}: ResponsiveProviderProps) {
-  const [healthcareContext, setHealthcareContext] = useState<HealthcareContext>(
+  defaultHealthcareContext = 'normal',
+}: ResponsiveProviderProps,) {
+  const [healthcareContext, setHealthcareContext,] = useState<HealthcareContext>(
     defaultHealthcareContext,
-  );
+  )
 
   // Media queries for healthcare-optimized breakpoints
-  const isMobileSmall = useMediaQuery("(max-width: 374px)");
-  const isMobileStandard = useMediaQuery("(min-width: 375px) and (max-width: 767px)");
-  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isMobileSmall = useMediaQuery('(max-width: 374px)',)
+  const isMobileStandard = useMediaQuery('(min-width: 375px) and (max-width: 767px)',)
+  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1023px)',)
+  const isDesktop = useMediaQuery('(min-width: 1024px)',)
 
   // Derived states
-  const isMobile = isMobileSmall || isMobileStandard;
-  const touchOptimized = isMobile || isTablet;
+  const isMobile = isMobileSmall || isMobileStandard
+  const touchOptimized = isMobile || isTablet
 
   // Determine layout variant based on screen size and healthcare context
-  const variant: LayoutVariant = isMobileSmall || healthcareContext === "emergency"
-    ? "mobile-emergency"
+  const variant: LayoutVariant = isMobileSmall || healthcareContext === 'emergency'
+    ? 'mobile-emergency'
     : isMobileStandard
-    ? "mobile-standard"
+    ? 'mobile-standard'
     : isTablet
-    ? "tablet-dual"
-    : "desktop-dashboard";
+    ? 'tablet-dual'
+    : 'desktop-dashboard'
 
   // Auto-detect healthcare context based on user preferences
   useEffect(() => {
     // High contrast preference detection
-    if (window.matchMedia("(prefers-contrast: high)").matches) {
-      setHealthcareContext("high-contrast");
+    if (window.matchMedia('(prefers-contrast: high)',).matches) {
+      setHealthcareContext('high-contrast',)
     }
 
     // Touch device detection for post-procedure mode
-    const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    const hasLimitedAccuracy = window.matchMedia("(any-hover: none)").matches;
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)',).matches
+    const hasLimitedAccuracy = window.matchMedia('(any-hover: none)',).matches
 
     if (hasCoarsePointer && hasLimitedAccuracy && isMobile) {
       // Could indicate bandaged hands or motor difficulties
       // This is just a hint, user should explicitly enable if needed
     }
-  }, [isMobile]);
+  }, [isMobile,],)
 
   const contextValue: ResponsiveContextValue = {
     variant,
@@ -94,7 +94,7 @@ export function ResponsiveProvider({
     isDesktop,
     touchOptimized,
     setHealthcareContext,
-  };
+  }
 
   return (
     <ResponsiveContext.Provider value={contextValue}>
@@ -107,26 +107,26 @@ export function ResponsiveProvider({
         {children}
       </div>
     </ResponsiveContext.Provider>
-  );
+  )
 }
 
 interface ResponsiveLayoutProps {
-  children: React.ReactNode;
-  sidebar?: React.ReactNode;
-  header?: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  sidebar?: React.ReactNode
+  header?: React.ReactNode
+  className?: string
 }
 
 export function ResponsiveLayout({
   children,
   sidebar,
   header,
-  className = "",
-}: ResponsiveLayoutProps) {
-  const { variant, healthcareContext, touchOptimized } = useResponsive();
+  className = '',
+}: ResponsiveLayoutProps,) {
+  const { variant, healthcareContext, touchOptimized, } = useResponsive()
 
   // Mobile emergency layout - simplified interface
-  if (variant === "mobile-emergency") {
+  if (variant === 'mobile-emergency') {
     return (
       <div className={`layout-emergency ${className}`}>
         {header && (
@@ -138,11 +138,11 @@ export function ResponsiveLayout({
           {children}
         </main>
       </div>
-    );
+    )
   }
 
   // Mobile standard layout - full patient interface
-  if (variant === "mobile-standard") {
+  if (variant === 'mobile-standard') {
     return (
       <div className={`layout-mobile ${className}`}>
         {header && (
@@ -154,11 +154,11 @@ export function ResponsiveLayout({
           {children}
         </main>
       </div>
-    );
+    )
   }
 
   // Tablet dual-pane layout
-  if (variant === "tablet-dual") {
+  if (variant === 'tablet-dual') {
     return (
       <div className={`layout-tablet dual-pane ${className}`}>
         {sidebar && (
@@ -177,7 +177,7 @@ export function ResponsiveLayout({
           </main>
         </div>
       </div>
-    );
+    )
   }
 
   // Desktop dashboard layout
@@ -197,24 +197,24 @@ export function ResponsiveLayout({
         {children}
       </main>
     </div>
-  );
+  )
 }
 
 // Healthcare context switcher component for manual control
 interface HealthcareContextSwitcherProps {
-  className?: string;
+  className?: string
 }
 
-export function HealthcareContextSwitcher({ className = "" }: HealthcareContextSwitcherProps) {
-  const { healthcareContext, setHealthcareContext } = useResponsive();
+export function HealthcareContextSwitcher({ className = '', }: HealthcareContextSwitcherProps,) {
+  const { healthcareContext, setHealthcareContext, } = useResponsive()
 
-  const contexts: { value: HealthcareContext; label: string; description: string; }[] = [
-    { value: "normal", label: "Normal", description: "Standard consultation mode" },
-    { value: "emergency", label: "Emergency", description: "Urgent care with large targets" },
-    { value: "post-procedure", label: "Post-Procedure", description: "Enhanced accessibility" },
-    { value: "one-handed", label: "One-Handed", description: "Single-hand operation" },
-    { value: "high-contrast", label: "High Contrast", description: "Enhanced visibility" },
-  ];
+  const contexts: { value: HealthcareContext; label: string; description: string }[] = [
+    { value: 'normal', label: 'Normal', description: 'Standard consultation mode', },
+    { value: 'emergency', label: 'Emergency', description: 'Urgent care with large targets', },
+    { value: 'post-procedure', label: 'Post-Procedure', description: 'Enhanced accessibility', },
+    { value: 'one-handed', label: 'One-Handed', description: 'Single-hand operation', },
+    { value: 'high-contrast', label: 'High Contrast', description: 'Enhanced visibility', },
+  ]
 
   return (
     <div className={`healthcare-context-switcher ${className}`}>
@@ -224,17 +224,17 @@ export function HealthcareContextSwitcher({ className = "" }: HealthcareContextS
       <select
         id="healthcare-context"
         value={healthcareContext}
-        onChange={(e) => setHealthcareContext(e.target.value as HealthcareContext)}
+        onChange={(e,) => setHealthcareContext(e.target.value as HealthcareContext,)}
         className="context-select touch-target"
       >
-        {contexts.map((context) => (
+        {contexts.map((context,) => (
           <option key={context.value} value={context.value}>
             {context.label} - {context.description}
           </option>
         ))}
       </select>
     </div>
-  );
+  )
 }
 
-export default ResponsiveLayout;
+export default ResponsiveLayout

@@ -9,191 +9,191 @@ export {
   EmergencyPatientCard,
   type EmergencyPatientCardProps,
   type EmergencyPatientData,
-} from "./EmergencyPatientCard";
+} from './EmergencyPatientCard'
 
 export {
   CriticalAllergiesPanel,
   type CriticalAllergiesPanelProps,
   type CriticalAllergy,
-} from "./CriticalAllergiesPanel";
+} from './CriticalAllergiesPanel'
 
-export { type SAMUCallData, SAMUDialButton, type SAMUDialButtonProps } from "./SAMUDialButton";
+export { type SAMUCallData, SAMUDialButton, type SAMUDialButtonProps, } from './SAMUDialButton'
 
 // Emergency Services & Performance
-export { emergencyCache } from "../lib/emergency/emergency-cache";
+export { emergencyCache, } from '../lib/emergency/emergency-cache'
 export {
   emergencyPerformance,
   measureEmergencyOperation,
-} from "../lib/emergency/emergency-performance";
+} from '../lib/emergency/emergency-performance'
 
 // Sample Emergency Data for Testing and Demos
 export const sampleEmergencyPatient: EmergencyPatientData = {
-  id: "emergency-patient-001",
-  name: "Maria Silva Santos",
+  id: 'emergency-patient-001',
+  name: 'Maria Silva Santos',
   age: 45,
-  bloodType: "O+",
-  currentStatus: "life-threatening",
-  allergies: ["Penicilina", "Látex", "Frutos do mar"],
+  bloodType: 'O+',
+  currentStatus: 'life-threatening',
+  allergies: ['Penicilina', 'Látex', 'Frutos do mar',],
   criticalConditions: [
-    "Diabetes tipo 2 - insulina dependente",
-    "Hipertensão arterial",
-    "Histórico de infarto em 2020",
+    'Diabetes tipo 2 - insulina dependente',
+    'Hipertensão arterial',
+    'Histórico de infarto em 2020',
   ],
   medications: [
     {
-      name: "Insulina NPH",
-      dosage: "20 UI",
-      frequency: "12/12h",
+      name: 'Insulina NPH',
+      dosage: '20 UI',
+      frequency: '12/12h',
       isCritical: true,
-      lastTaken: "07:30",
+      lastTaken: '07:30',
     },
     {
-      name: "Captopril",
-      dosage: "25mg",
-      frequency: "8/8h",
+      name: 'Captopril',
+      dosage: '25mg',
+      frequency: '8/8h',
       isCritical: true,
-      lastTaken: "08:00",
+      lastTaken: '08:00',
     },
     {
-      name: "AAS",
-      dosage: "100mg",
-      frequency: "24/24h",
+      name: 'AAS',
+      dosage: '100mg',
+      frequency: '24/24h',
       isCritical: false,
-      lastTaken: "08:00",
+      lastTaken: '08:00',
     },
   ],
   emergencyContacts: [
     {
-      name: "João Santos",
-      relationship: "Esposo",
-      phone: "(11) 99999-8888",
+      name: 'João Santos',
+      relationship: 'Esposo',
+      phone: '(11) 99999-8888',
       isPrimary: true,
     },
     {
-      name: "Ana Silva",
-      relationship: "Filha",
-      phone: "(11) 99999-7777",
+      name: 'Ana Silva',
+      relationship: 'Filha',
+      phone: '(11) 99999-7777',
       isPrimary: false,
     },
   ],
   medicalHistory: [
-    "Cirurgia de vesícula em 2018",
-    "Alergia severa a penicilina desde a infância",
-    "Hipertensão diagnosticada em 2015",
-    "Diabetes diagnosticada em 2019",
+    'Cirurgia de vesícula em 2018',
+    'Alergia severa a penicilina desde a infância',
+    'Hipertensão diagnosticada em 2015',
+    'Diabetes diagnosticada em 2019',
   ],
   lastKnownLocation: {
     lat: -23.5505,
     lng: -46.6333,
-    address: "Rua Augusta, 123 - Consolação, São Paulo - SP",
+    address: 'Rua Augusta, 123 - Consolação, São Paulo - SP',
   },
-  cfmNumber: "SP-123456",
+  cfmNumber: 'SP-123456',
   lgpdConsent: true,
-};
+}
 export const sampleCriticalAllergies: CriticalAllergy[] = [
   {
-    id: "allergy-001",
-    name: "Penicilina",
-    severity: "life-threatening",
-    reactions: ["Choque anafilático", "Edema de glote", "Broncoespasmo severo"],
+    id: 'allergy-001',
+    name: 'Penicilina',
+    severity: 'life-threatening',
+    reactions: ['Choque anafilático', 'Edema de glote', 'Broncoespasmo severo',],
     treatments: [
-      "Epinefrina IM",
-      "Corticosteroide IV",
-      "Anti-histamínico H1/H2",
+      'Epinefrina IM',
+      'Corticosteroide IV',
+      'Anti-histamínico H1/H2',
     ],
     lastReaction: {
-      date: "15/03/2023",
-      description: "Reação anafilática após administração de amoxicilina",
-      treatment: "Epinefrina 0.5mg IM + Hidrocortisona 200mg IV",
+      date: '15/03/2023',
+      description: 'Reação anafilática após administração de amoxicilina',
+      treatment: 'Epinefrina 0.5mg IM + Hidrocortisona 200mg IV',
     },
-    medications: ["Penicilina", "Amoxicilina", "Ampicilina", "Cloxacilina"],
-    crossReactivities: ["Cefalosporinas (risco cruzado 10%)", "Carbapenêmicos"],
+    medications: ['Penicilina', 'Amoxicilina', 'Ampicilina', 'Cloxacilina',],
+    crossReactivities: ['Cefalosporinas (risco cruzado 10%)', 'Carbapenêmicos',],
   },
   {
-    id: "allergy-002",
-    name: "Látex",
-    severity: "severe",
+    id: 'allergy-002',
+    name: 'Látex',
+    severity: 'severe',
     reactions: [
-      "Urticária generalizada",
-      "Dificuldade respiratória",
-      "Hipotensão",
+      'Urticária generalizada',
+      'Dificuldade respiratória',
+      'Hipotensão',
     ],
     treatments: [
-      "Remoção do agente",
-      "Anti-histamínico",
-      "Corticosteroide se necessário",
+      'Remoção do agente',
+      'Anti-histamínico',
+      'Corticosteroide se necessário',
     ],
-    medications: ["Produtos com látex"],
-    crossReactivities: ["Banana", "Abacate", "Kiwi", "Castanha"],
+    medications: ['Produtos com látex',],
+    crossReactivities: ['Banana', 'Abacate', 'Kiwi', 'Castanha',],
   },
   {
-    id: "allergy-003",
-    name: "Frutos do Mar",
-    severity: "moderate",
-    reactions: ["Urticária", "Náuseas", "Vômitos", "Diarreia"],
-    treatments: ["Anti-histamínico oral", "Corticosteroide se necessário"],
-    crossReactivities: ["Crustáceos", "Moluscos", "Ácaros"],
+    id: 'allergy-003',
+    name: 'Frutos do Mar',
+    severity: 'moderate',
+    reactions: ['Urticária', 'Náuseas', 'Vômitos', 'Diarreia',],
+    treatments: ['Anti-histamínico oral', 'Corticosteroide se necessário',],
+    crossReactivities: ['Crustáceos', 'Moluscos', 'Ácaros',],
   },
-];
+]
 
 export const sampleSAMUCallData: Partial<SAMUCallData> = {
-  emergencyType: "life-threatening",
+  emergencyType: 'life-threatening',
   patientInfo: {
-    name: "Maria Silva Santos",
+    name: 'Maria Silva Santos',
     age: 45,
-    gender: "F",
-    consciousness: "semi-conscious",
-    breathing: "difficulty",
-    pulse: "weak",
+    gender: 'F',
+    consciousness: 'semi-conscious',
+    breathing: 'difficulty',
+    pulse: 'weak',
   },
   location: {
-    address: "Rua Augusta, 123 - Consolação, São Paulo - SP",
+    address: 'Rua Augusta, 123 - Consolação, São Paulo - SP',
     coordinates: {
       lat: -23.5505,
       lng: -46.6333,
     },
-    landmarks: "Próximo ao metrô Consolação, em frente à farmacia",
-    accessInstructions: "Portão azul, 2º andar, apartamento 23",
+    landmarks: 'Próximo ao metrô Consolação, em frente à farmacia',
+    accessInstructions: 'Portão azul, 2º andar, apartamento 23',
   },
   symptoms: [
-    "Dificuldade respiratória severa",
-    "Edema facial",
-    "Hipotensão",
-    "Confusão mental",
+    'Dificuldade respiratória severa',
+    'Edema facial',
+    'Hipotensão',
+    'Confusão mental',
   ],
-  allergies: ["Penicilina", "Látex"],
-  currentMedications: ["Insulina NPH", "Captopril"],
+  allergies: ['Penicilina', 'Látex',],
+  currentMedications: ['Insulina NPH', 'Captopril',],
   callerInfo: {
-    name: "Dr. Roberto Medeiros",
-    phone: "(11) 99999-0000",
-    relationship: "Médico assistente",
+    name: 'Dr. Roberto Medeiros',
+    phone: '(11) 99999-0000',
+    relationship: 'Médico assistente',
   },
-};
+}
 
 // Emergency Performance Testing Utilities
 export const performEmergencyPerformanceTest = () => {
-  console.log("🚨 Starting Emergency Performance Test...");
+  console.log('🚨 Starting Emergency Performance Test...',)
 
   const testOperations = [
-    "load-patient-data",
-    "display-critical-allergies",
-    "prepare-samu-call",
-    "cache-emergency-data",
-  ];
+    'load-patient-data',
+    'display-critical-allergies',
+    'prepare-samu-call',
+    'cache-emergency-data',
+  ]
 
-  testOperations.forEach((operation, index) => {
+  testOperations.forEach((operation, index,) => {
     setTimeout(() => {
       measureEmergencyOperation(
         operation,
-        () => new Promise((resolve) => setTimeout(resolve, Math.random() * 150)),
+        () => new Promise((resolve,) => setTimeout(resolve, Math.random() * 150,)),
         {
-          componentName: "EmergencyInterface",
-          emergencyLevel: index === 0 ? "life-threatening" : "urgent",
-          patientId: "test-patient-001",
+          componentName: 'EmergencyInterface',
+          emergencyLevel: index === 0 ? 'life-threatening' : 'urgent',
+          patientId: 'test-patient-001',
         },
       ).then(() => {
-        console.log(`✅ Completed: ${operation}`);
-      });
-    }, index * 100);
-  });
-};
+        console.log(`✅ Completed: ${operation}`,)
+      },)
+    }, index * 100,)
+  },)
+}

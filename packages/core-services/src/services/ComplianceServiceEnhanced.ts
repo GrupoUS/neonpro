@@ -9,186 +9,186 @@
  * - Analytics de compliance
  */
 
-import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
-import type { ServiceConfig } from "../base/EnhancedServiceBase";
-import type { ServiceContext } from "../types";
+import { EnhancedServiceBase, } from '../base/EnhancedServiceBase'
+import type { ServiceConfig, } from '../base/EnhancedServiceBase'
+import type { ServiceContext, } from '../types'
 
 // ================================================
 // ENHANCED COMPLIANCE TYPES
 // ================================================
 
 interface CompliancePolicy {
-  id: string;
-  tenantId: string;
-  name: string;
-  description: string;
-  type: PolicyType;
-  category: ComplianceCategory;
-  framework: ComplianceFramework;
-  rules: ComplianceRule[];
-  isActive: boolean;
-  version: string;
-  effectiveDate: Date;
-  expiryDate?: Date;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
+  id: string
+  tenantId: string
+  name: string
+  description: string
+  type: PolicyType
+  category: ComplianceCategory
+  framework: ComplianceFramework
+  rules: ComplianceRule[]
+  isActive: boolean
+  version: string
+  effectiveDate: Date
+  expiryDate?: Date
+  metadata: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
+  createdBy: string
 }
 
 interface ComplianceRule {
-  id: string;
-  name: string;
-  description: string;
-  type: RuleType;
-  condition: RuleCondition;
-  action: RuleAction;
-  severity: SeverityLevel;
-  isActive: boolean;
-  metadata: Record<string, unknown>;
+  id: string
+  name: string
+  description: string
+  type: RuleType
+  condition: RuleCondition
+  action: RuleAction
+  severity: SeverityLevel
+  isActive: boolean
+  metadata: Record<string, unknown>
 }
 
 interface RuleCondition {
-  field: string;
-  operator: ConditionOperator;
-  value: unknown;
-  dataSource: DataSource;
-  logicalOperator?: LogicalOperator;
-  nestedConditions?: RuleCondition[];
+  field: string
+  operator: ConditionOperator
+  value: unknown
+  dataSource: DataSource
+  logicalOperator?: LogicalOperator
+  nestedConditions?: RuleCondition[]
 }
 
 interface RuleAction {
-  type: ActionType;
-  parameters: Record<string, unknown>;
-  autoExecute: boolean;
-  notificationRequired: boolean;
-  escalationRequired: boolean;
+  type: ActionType
+  parameters: Record<string, unknown>
+  autoExecute: boolean
+  notificationRequired: boolean
+  escalationRequired: boolean
 }
 
 interface ComplianceIncident {
-  id: string;
-  tenantId: string;
-  title: string;
-  description: string;
-  type: IncidentType;
-  category: ComplianceCategory;
-  severity: SeverityLevel;
-  status: IncidentStatus;
-  reportedBy: string;
-  assignedTo?: string;
-  detectedAt: Date;
-  acknowledgedAt?: Date;
-  resolvedAt?: Date;
-  affectedSystems: string[];
-  affectedData: DataImpactAssessment;
-  containmentActions: ContainmentAction[];
-  rootCause?: string;
-  remediation: RemediationPlan;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  tenantId: string
+  title: string
+  description: string
+  type: IncidentType
+  category: ComplianceCategory
+  severity: SeverityLevel
+  status: IncidentStatus
+  reportedBy: string
+  assignedTo?: string
+  detectedAt: Date
+  acknowledgedAt?: Date
+  resolvedAt?: Date
+  affectedSystems: string[]
+  affectedData: DataImpactAssessment
+  containmentActions: ContainmentAction[]
+  rootCause?: string
+  remediation: RemediationPlan
+  metadata: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface DataImpactAssessment {
-  recordsAffected: number;
-  dataTypes: string[];
-  sensitivityLevel: SensitivityLevel;
-  jurisdictions: string[];
-  estimatedImpact: ImpactLevel;
-  notificationRequired: boolean;
-  regulatoryReportingRequired: boolean;
+  recordsAffected: number
+  dataTypes: string[]
+  sensitivityLevel: SensitivityLevel
+  jurisdictions: string[]
+  estimatedImpact: ImpactLevel
+  notificationRequired: boolean
+  regulatoryReportingRequired: boolean
 }
 
 interface ContainmentAction {
-  id: string;
-  type: string;
-  description: string;
-  executedAt: Date;
-  executedBy: string;
-  effectiveness: EffectivenessLevel;
-  metadata: Record<string, unknown>;
+  id: string
+  type: string
+  description: string
+  executedAt: Date
+  executedBy: string
+  effectiveness: EffectivenessLevel
+  metadata: Record<string, unknown>
 }
 
 interface RemediationPlan {
-  actions: RemediationAction[];
-  timeline: string;
-  responsibleParty: string;
-  estimatedCost?: number;
-  approvalRequired: boolean;
-  status: RemediationStatus;
+  actions: RemediationAction[]
+  timeline: string
+  responsibleParty: string
+  estimatedCost?: number
+  approvalRequired: boolean
+  status: RemediationStatus
 }
 
 interface RemediationAction {
-  id: string;
-  description: string;
-  type: string;
-  priority: PriorityLevel;
-  dueDate: Date;
-  assignedTo: string;
-  status: ActionStatus;
-  completedAt?: Date;
-  notes?: string;
+  id: string
+  description: string
+  type: string
+  priority: PriorityLevel
+  dueDate: Date
+  assignedTo: string
+  status: ActionStatus
+  completedAt?: Date
+  notes?: string
 }
 
 interface ConsentRecord {
-  id: string;
-  tenantId: string;
-  dataSubjectId: string;
-  dataSubjectType: DataSubjectType;
-  purpose: string;
-  legalBasis: LegalBasis;
-  dataCategories: string[];
-  processingActivities: string[];
-  consentGiven: boolean;
-  consentDate: Date;
-  consentMethod: ConsentMethod;
-  consentVersion: string;
-  withdrawalDate?: Date;
-  withdrawalMethod?: string;
-  retentionPeriod: number;
-  isActive: boolean;
-  metadata: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  tenantId: string
+  dataSubjectId: string
+  dataSubjectType: DataSubjectType
+  purpose: string
+  legalBasis: LegalBasis
+  dataCategories: string[]
+  processingActivities: string[]
+  consentGiven: boolean
+  consentDate: Date
+  consentMethod: ConsentMethod
+  consentVersion: string
+  withdrawalDate?: Date
+  withdrawalMethod?: string
+  retentionPeriod: number
+  isActive: boolean
+  metadata: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface ComplianceMetrics {
-  policyCompliance: number;
-  incidentCount: number;
-  findingCount: number;
-  riskScore: number;
-  consentRate: number;
-  responseTime: number;
-  auditScore: number;
-  trendsAnalysis: TrendsAnalysis;
-  riskBreakdown: RiskBreakdown;
-  complianceByFramework: Record<ComplianceFramework, FrameworkCompliance>;
+  policyCompliance: number
+  incidentCount: number
+  findingCount: number
+  riskScore: number
+  consentRate: number
+  responseTime: number
+  auditScore: number
+  trendsAnalysis: TrendsAnalysis
+  riskBreakdown: RiskBreakdown
+  complianceByFramework: Record<ComplianceFramework, FrameworkCompliance>
 }
 
 interface TrendsAnalysis {
-  incidentTrend: TrendData[];
-  complianceTrend: TrendData[];
-  riskTrend: TrendData[];
+  incidentTrend: TrendData[]
+  complianceTrend: TrendData[]
+  riskTrend: TrendData[]
 }
 
 interface TrendData {
-  period: string;
-  value: number;
-  change: number;
+  period: string
+  value: number
+  change: number
 }
 
 interface RiskBreakdown {
-  critical: number;
-  high: number;
-  medium: number;
-  low: number;
+  critical: number
+  high: number
+  medium: number
+  low: number
 }
 
 interface FrameworkCompliance {
-  score: number;
-  policies: number;
-  violations: number;
-  lastAssessment: Date;
+  score: number
+  policies: number
+  violations: number
+  lastAssessment: Date
 }
 
 // ================================================
@@ -196,169 +196,169 @@ interface FrameworkCompliance {
 // ================================================
 
 enum PolicyType {
-  PRIVACY = "privacy",
-  SECURITY = "security",
-  DATA_RETENTION = "data_retention",
-  ACCESS_CONTROL = "access_control",
-  AUDIT = "audit",
-  INCIDENT_RESPONSE = "incident_response",
-  TRAINING = "training",
-  VENDOR_MANAGEMENT = "vendor_management",
+  PRIVACY = 'privacy',
+  SECURITY = 'security',
+  DATA_RETENTION = 'data_retention',
+  ACCESS_CONTROL = 'access_control',
+  AUDIT = 'audit',
+  INCIDENT_RESPONSE = 'incident_response',
+  TRAINING = 'training',
+  VENDOR_MANAGEMENT = 'vendor_management',
 }
 
 enum ComplianceCategory {
-  DATA_PROTECTION = "data_protection",
-  HEALTHCARE = "healthcare",
-  FINANCIAL = "financial",
-  SECURITY = "security",
-  OPERATIONAL = "operational",
-  ENVIRONMENTAL = "environmental",
-  QUALITY = "quality",
+  DATA_PROTECTION = 'data_protection',
+  HEALTHCARE = 'healthcare',
+  FINANCIAL = 'financial',
+  SECURITY = 'security',
+  OPERATIONAL = 'operational',
+  ENVIRONMENTAL = 'environmental',
+  QUALITY = 'quality',
 }
 
 enum ComplianceFramework {
-  LGPD = "lgpd",
-  GDPR = "gdpr",
-  ANVISA = "anvisa",
-  CFM = "cfm",
-  ISO27001 = "iso27001",
-  HIPAA = "hipaa",
-  SOX = "sox",
-  PCI_DSS = "pci_dss",
-  CUSTOM = "custom",
+  LGPD = 'lgpd',
+  GDPR = 'gdpr',
+  ANVISA = 'anvisa',
+  CFM = 'cfm',
+  ISO27001 = 'iso27001',
+  HIPAA = 'hipaa',
+  SOX = 'sox',
+  PCI_DSS = 'pci_dss',
+  CUSTOM = 'custom',
 }
 
 enum RuleType {
-  PREVENTIVE = "preventive",
-  DETECTIVE = "detective",
-  CORRECTIVE = "corrective",
-  COMPENSATING = "compensating",
+  PREVENTIVE = 'preventive',
+  DETECTIVE = 'detective',
+  CORRECTIVE = 'corrective',
+  COMPENSATING = 'compensating',
 }
 
 enum ConditionOperator {
-  EQUALS = "equals",
-  NOT_EQUALS = "not_equals",
-  GREATER_THAN = "greater_than",
-  LESS_THAN = "less_than",
-  CONTAINS = "contains",
-  REGEX = "regex",
+  EQUALS = 'equals',
+  NOT_EQUALS = 'not_equals',
+  GREATER_THAN = 'greater_than',
+  LESS_THAN = 'less_than',
+  CONTAINS = 'contains',
+  REGEX = 'regex',
 }
 
 enum DataSource {
-  DATABASE = "database",
-  LOG_FILE = "log_file",
-  API = "api",
-  FILE_SYSTEM = "file_system",
-  EXTERNAL = "external",
+  DATABASE = 'database',
+  LOG_FILE = 'log_file',
+  API = 'api',
+  FILE_SYSTEM = 'file_system',
+  EXTERNAL = 'external',
 }
 
 enum LogicalOperator {
-  AND = "and",
-  OR = "or",
-  NOT = "not",
+  AND = 'and',
+  OR = 'or',
+  NOT = 'not',
 }
 
 enum ActionType {
-  BLOCK = "block",
-  ALERT = "alert",
-  LOG = "log",
-  QUARANTINE = "quarantine",
-  ENCRYPT = "encrypt",
-  DELETE = "delete",
-  NOTIFY = "notify",
+  BLOCK = 'block',
+  ALERT = 'alert',
+  LOG = 'log',
+  QUARANTINE = 'quarantine',
+  ENCRYPT = 'encrypt',
+  DELETE = 'delete',
+  NOTIFY = 'notify',
 }
 
 enum SeverityLevel {
-  CRITICAL = "critical",
-  HIGH = "high",
-  MEDIUM = "medium",
-  LOW = "low",
-  INFO = "info",
+  CRITICAL = 'critical',
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low',
+  INFO = 'info',
 }
 
 enum IncidentType {
-  DATA_BREACH = "data_breach",
-  PRIVACY_VIOLATION = "privacy_violation",
-  SECURITY_INCIDENT = "security_incident",
-  POLICY_VIOLATION = "policy_violation",
-  SYSTEM_FAILURE = "system_failure",
-  HUMAN_ERROR = "human_error",
-  EXTERNAL_THREAT = "external_threat",
+  DATA_BREACH = 'data_breach',
+  PRIVACY_VIOLATION = 'privacy_violation',
+  SECURITY_INCIDENT = 'security_incident',
+  POLICY_VIOLATION = 'policy_violation',
+  SYSTEM_FAILURE = 'system_failure',
+  HUMAN_ERROR = 'human_error',
+  EXTERNAL_THREAT = 'external_threat',
 }
 
 enum IncidentStatus {
-  REPORTED = "reported",
-  INVESTIGATING = "investigating",
-  CONTAINED = "contained",
-  RESOLVED = "resolved",
-  CLOSED = "closed",
+  REPORTED = 'reported',
+  INVESTIGATING = 'investigating',
+  CONTAINED = 'contained',
+  RESOLVED = 'resolved',
+  CLOSED = 'closed',
 }
 
 enum SensitivityLevel {
-  PUBLIC = "public",
-  INTERNAL = "internal",
-  CONFIDENTIAL = "confidential",
-  RESTRICTED = "restricted",
+  PUBLIC = 'public',
+  INTERNAL = 'internal',
+  CONFIDENTIAL = 'confidential',
+  RESTRICTED = 'restricted',
 }
 
 enum ImpactLevel {
-  MINIMAL = "minimal",
-  MINOR = "minor",
-  MODERATE = "moderate",
-  MAJOR = "major",
-  CATASTROPHIC = "catastrophic",
+  MINIMAL = 'minimal',
+  MINOR = 'minor',
+  MODERATE = 'moderate',
+  MAJOR = 'major',
+  CATASTROPHIC = 'catastrophic',
 }
 
 enum EffectivenessLevel {
-  INEFFECTIVE = "ineffective",
-  PARTIALLY_EFFECTIVE = "partially_effective",
-  EFFECTIVE = "effective",
-  HIGHLY_EFFECTIVE = "highly_effective",
+  INEFFECTIVE = 'ineffective',
+  PARTIALLY_EFFECTIVE = 'partially_effective',
+  EFFECTIVE = 'effective',
+  HIGHLY_EFFECTIVE = 'highly_effective',
 }
 
 enum RemediationStatus {
-  PLANNED = "planned",
-  IN_PROGRESS = "in_progress",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
+  PLANNED = 'planned',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
 
 enum PriorityLevel {
-  CRITICAL = "critical",
-  HIGH = "high",
-  MEDIUM = "medium",
-  LOW = "low",
+  CRITICAL = 'critical',
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low',
 }
 
 enum ActionStatus {
-  PENDING = "pending",
-  IN_PROGRESS = "in_progress",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
 
 enum DataSubjectType {
-  PATIENT = "patient",
-  EMPLOYEE = "employee",
-  CUSTOMER = "customer",
-  VENDOR = "vendor",
-  OTHER = "other",
+  PATIENT = 'patient',
+  EMPLOYEE = 'employee',
+  CUSTOMER = 'customer',
+  VENDOR = 'vendor',
+  OTHER = 'other',
 }
 
 enum LegalBasis {
-  CONSENT = "consent",
-  CONTRACT = "contract",
-  LEGAL_OBLIGATION = "legal_obligation",
-  VITAL_INTERESTS = "vital_interests",
-  PUBLIC_TASK = "public_task",
-  LEGITIMATE_INTERESTS = "legitimate_interests",
+  CONSENT = 'consent',
+  CONTRACT = 'contract',
+  LEGAL_OBLIGATION = 'legal_obligation',
+  VITAL_INTERESTS = 'vital_interests',
+  PUBLIC_TASK = 'public_task',
+  LEGITIMATE_INTERESTS = 'legitimate_interests',
 }
 
 enum ConsentMethod {
-  ELECTRONIC = "electronic",
-  WRITTEN = "written",
-  VERBAL = "verbal",
-  IMPLIED = "implied",
+  ELECTRONIC = 'electronic',
+  WRITTEN = 'written',
+  VERBAL = 'verbal',
+  IMPLIED = 'implied',
 }
 
 // ================================================
@@ -366,45 +366,45 @@ enum ConsentMethod {
 // ================================================
 
 interface CreatePolicyRequest {
-  tenantId: string;
-  name: string;
-  description: string;
-  type: PolicyType;
-  category: ComplianceCategory;
-  framework: ComplianceFramework;
-  rules: Omit<ComplianceRule, "id">[];
-  effectiveDate: Date;
-  expiryDate?: Date;
-  metadata?: Record<string, unknown>;
+  tenantId: string
+  name: string
+  description: string
+  type: PolicyType
+  category: ComplianceCategory
+  framework: ComplianceFramework
+  rules: Omit<ComplianceRule, 'id'>[]
+  effectiveDate: Date
+  expiryDate?: Date
+  metadata?: Record<string, unknown>
 }
 
 interface ReportIncidentRequest {
-  tenantId: string;
-  title: string;
-  description: string;
-  type: IncidentType;
-  category: ComplianceCategory;
-  severity: SeverityLevel;
-  affectedSystems: string[];
+  tenantId: string
+  title: string
+  description: string
+  type: IncidentType
+  category: ComplianceCategory
+  severity: SeverityLevel
+  affectedSystems: string[]
   affectedData: Omit<
     DataImpactAssessment,
-    "notificationRequired" | "regulatoryReportingRequired"
-  >;
-  metadata?: Record<string, unknown>;
+    'notificationRequired' | 'regulatoryReportingRequired'
+  >
+  metadata?: Record<string, unknown>
 }
 
 interface CreateConsentRequest {
-  tenantId: string;
-  dataSubjectId: string;
-  dataSubjectType: DataSubjectType;
-  purpose: string;
-  legalBasis: LegalBasis;
-  dataCategories: string[];
-  processingActivities: string[];
-  consentMethod: ConsentMethod;
-  consentVersion: string;
-  retentionPeriod: number;
-  metadata?: Record<string, unknown>;
+  tenantId: string
+  dataSubjectId: string
+  dataSubjectType: DataSubjectType
+  purpose: string
+  legalBasis: LegalBasis
+  dataCategories: string[]
+  processingActivities: string[]
+  consentMethod: ConsentMethod
+  consentVersion: string
+  retentionPeriod: number
+  metadata?: Record<string, unknown>
 }
 
 // ================================================
@@ -412,8 +412,8 @@ interface CreateConsentRequest {
 // ================================================
 
 export class ComplianceServiceEnhanced extends EnhancedServiceBase {
-  private readonly complianceRules: Map<string, ComplianceRule[]> = new Map();
-  private readonly activeMonitors: Map<string, NodeJS.Timeout> = new Map();
+  private readonly complianceRules: Map<string, ComplianceRule[]> = new Map()
+  private readonly activeMonitors: Map<string, NodeJS.Timeout> = new Map()
 
   // Brazilian healthcare compliance templates
   private readonly brazilianTemplates = {
@@ -421,14 +421,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.LGPD,
       rules: [
         {
-          name: "Consentimento Explícito",
-          description: "Verificar consentimento antes de processar dados pessoais",
+          name: 'Consentimento Explícito',
+          description: 'Verificar consentimento antes de processar dados pessoais',
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
         {
-          name: "Direito de Portabilidade",
-          description: "Garantir exportação de dados em formato legível",
+          name: 'Direito de Portabilidade',
+          description: 'Garantir exportação de dados em formato legível',
           type: RuleType.CORRECTIVE,
           severity: SeverityLevel.MEDIUM,
         },
@@ -438,14 +438,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.ANVISA,
       rules: [
         {
-          name: "Rastreabilidade de Dispositivos",
-          description: "Manter rastro completo de dispositivos médicos",
+          name: 'Rastreabilidade de Dispositivos',
+          description: 'Manter rastro completo de dispositivos médicos',
           type: RuleType.DETECTIVE,
           severity: SeverityLevel.CRITICAL,
         },
         {
-          name: "Notificação de Eventos Adversos",
-          description: "Reportar eventos adversos em até 72h",
+          name: 'Notificação de Eventos Adversos',
+          description: 'Reportar eventos adversos em até 72h',
           type: RuleType.CORRECTIVE,
           severity: SeverityLevel.HIGH,
         },
@@ -455,25 +455,25 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.CFM,
       rules: [
         {
-          name: "Sigilo Médico",
-          description: "Proteger informações médicas confidenciais",
+          name: 'Sigilo Médico',
+          description: 'Proteger informações médicas confidenciais',
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.CRITICAL,
         },
         {
-          name: "Telemedicina Regulamentada",
-          description: "Seguir diretrizes CFM para telemedicina",
+          name: 'Telemedicina Regulamentada',
+          description: 'Seguir diretrizes CFM para telemedicina',
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
       ],
     },
-  };
+  }
 
-  constructor(config?: Partial<ServiceConfig>) {
+  constructor(config?: Partial<ServiceConfig>,) {
     super({
-      serviceName: "ComplianceServiceEnhanced",
-      version: "2.0.0",
+      serviceName: 'ComplianceServiceEnhanced',
+      version: '2.0.0',
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -482,9 +482,9 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         maxItems: 2000,
       },
       ...config,
-    });
+    },)
 
-    this.initializeBrazilianCompliance();
+    this.initializeBrazilianCompliance()
   }
 
   // ================================================
@@ -492,11 +492,11 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   // ================================================
 
   getServiceName(): string {
-    return "ComplianceServiceEnhanced";
+    return 'ComplianceServiceEnhanced'
   }
 
   getServiceVersion(): string {
-    return "2.0.0";
+    return '2.0.0'
   }
 
   // ================================================
@@ -511,14 +511,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<CompliancePolicy> {
     return this.executeOperation(
-      "createPolicy",
+      'createPolicy',
       async () => {
         // Validate policy data
-        this.validatePolicyRequest(request);
+        this.validatePolicyRequest(request,)
 
         // Generate policy ID and version
-        const policyId = `policy_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-        const version = this.generatePolicyVersion();
+        const policyId = `policy_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`
+        const version = this.generatePolicyVersion()
 
         // Create policy object
         const policy: CompliancePolicy = {
@@ -529,7 +529,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           type: request.type,
           category: request.category,
           framework: request.framework,
-          rules: request.rules.map((rule, index) => ({
+          rules: request.rules.map((rule, index,) => ({
             ...rule,
             id: `rule_${policyId}_${index}`,
           })),
@@ -540,11 +540,11 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           metadata: request.metadata || {},
           createdAt: new Date(),
           updatedAt: new Date(),
-          createdBy: context.userId ?? "system",
-        };
+          createdBy: context.userId ?? 'system',
+        }
 
         // Store policy (mock - would integrate with database)
-        await this.storePolicyInDatabase(policy, context);
+        await this.storePolicyInDatabase(policy, context,)
 
         // Cache the policy
         await this.cacheHealthcareData(
@@ -552,19 +552,19 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           policy,
           true, // Always consent for policies
           this.config.cacheOptions?.defaultTTL,
-        );
+        )
 
         // Start compliance monitoring for this policy
-        await this.startPolicyMonitoring(policy);
+        await this.startPolicyMonitoring(policy,)
 
-        return policy;
+        return policy
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -573,22 +573,22 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   async searchPolicies(
     tenantId: string,
     filters: {
-      framework?: ComplianceFramework;
-      category?: ComplianceCategory;
-      isActive?: boolean;
+      framework?: ComplianceFramework
+      category?: ComplianceCategory
+      isActive?: boolean
     },
     context: ServiceContext,
   ): Promise<CompliancePolicy[]> {
     return this.executeOperation(
-      "searchPolicies",
+      'searchPolicies',
       async () => {
         // Build cache key based on filters
-        const cacheKey = `policies_${tenantId}_${JSON.stringify(filters)}`;
+        const cacheKey = `policies_${tenantId}_${JSON.stringify(filters,)}`
 
         // Try to get from cache first
-        const cached = await this.cache.get<CompliancePolicy[]>(cacheKey);
+        const cached = await this.cache.get<CompliancePolicy[]>(cacheKey,)
         if (cached) {
-          return cached;
+          return cached
         }
 
         // Fetch from database (mock implementation)
@@ -596,18 +596,18 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           tenantId,
           filters,
           context,
-        );
+        )
 
         // Cache results
-        await this.cache.set(cacheKey, policies, 10 * 60 * 1000); // 10 minutes
+        await this.cache.set(cacheKey, policies, 10 * 60 * 1000,) // 10 minutes
 
-        return policies;
+        return policies
       },
       context,
       {
         requiresAuth: true,
       },
-    );
+    )
   }
 
   // ================================================
@@ -622,18 +622,18 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ComplianceIncident> {
     return this.executeOperation(
-      "reportIncident",
+      'reportIncident',
       async () => {
         // Validate incident data
-        this.validateIncidentRequest(request);
+        this.validateIncidentRequest(request,)
 
         // Assess data impact automatically
         const impactAssessment = await this.assessDataImpact(
           request.affectedData,
-        );
+        )
 
         // Generate incident ID
-        const incidentId = `incident_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        const incidentId = `incident_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`
 
         // Create incident object
         const incident: ComplianceIncident = {
@@ -645,47 +645,47 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           category: request.category,
           severity: request.severity,
           status: IncidentStatus.REPORTED,
-          reportedBy: context.userId ?? "system",
+          reportedBy: context.userId ?? 'system',
           detectedAt: new Date(),
           affectedSystems: request.affectedSystems,
           affectedData: impactAssessment,
           containmentActions: [],
           remediation: this.createDefaultRemediationPlan(
             request.severity,
-            context.userId ?? "system",
+            context.userId ?? 'system',
           ),
           metadata: request.metadata || {},
           createdAt: new Date(),
           updatedAt: new Date(),
-        };
+        }
 
         // Store incident
-        await this.storeIncidentInDatabase(incident, context);
+        await this.storeIncidentInDatabase(incident, context,)
 
         // Auto-assign based on severity
         if (
           incident.severity === SeverityLevel.CRITICAL
           || incident.severity === SeverityLevel.HIGH
         ) {
-          await this.autoAssignIncident(incident);
+          await this.autoAssignIncident(incident,)
         }
 
         // Create automatic notifications
-        await this.createIncidentNotifications(incident);
+        await this.createIncidentNotifications(incident,)
 
         // Check for regulatory reporting requirements
         if (impactAssessment.regulatoryReportingRequired) {
-          await this.initiateRegulatoryReporting(incident);
+          await this.initiateRegulatoryReporting(incident,)
         }
 
-        return incident;
+        return incident
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -698,14 +698,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ComplianceMetrics> {
     return this.executeOperation(
-      "getComplianceMetrics",
+      'getComplianceMetrics',
       async () => {
-        const cacheKey = `metrics_${tenantId}_${periodStart.getTime()}_${periodEnd.getTime()}`;
+        const cacheKey = `metrics_${tenantId}_${periodStart.getTime()}_${periodEnd.getTime()}`
 
         // Check cache first
-        const cached = await this.cache.get<ComplianceMetrics>(cacheKey);
+        const cached = await this.cache.get<ComplianceMetrics>(cacheKey,)
         if (cached) {
-          return cached;
+          return cached
         }
 
         // Calculate metrics
@@ -714,18 +714,18 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           periodStart,
           periodEnd,
           context,
-        );
+        )
 
         // Cache metrics for 5 minutes
-        await this.cache.set(cacheKey, metrics, 5 * 60 * 1000);
+        await this.cache.set(cacheKey, metrics, 5 * 60 * 1000,)
 
-        return metrics;
+        return metrics
       },
       context,
       {
         requiresAuth: true,
       },
-    );
+    )
   }
 
   // ================================================
@@ -740,13 +740,13 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ConsentRecord> {
     return this.executeOperation(
-      "recordConsent",
+      'recordConsent',
       async () => {
         // Validate consent request
-        this.validateConsentRequest(request);
+        this.validateConsentRequest(request,)
 
         // Generate consent ID
-        const consentId = `consent_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        const consentId = `consent_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`
 
         // Create consent record
         const consent: ConsentRecord = {
@@ -767,10 +767,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           metadata: request.metadata || {},
           createdAt: new Date(),
           updatedAt: new Date(),
-        };
+        }
 
         // Store consent
-        await this.storeConsentInDatabase(consent, context);
+        await this.storeConsentInDatabase(consent, context,)
 
         // Cache consent for quick validation
         await this.cacheHealthcareData(
@@ -778,16 +778,16 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
           consent,
           true, // Consent records always have consent
           this.config.cacheOptions?.defaultTTL,
-        );
+        )
 
-        return consent;
+        return consent
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   /**
@@ -799,7 +799,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      "withdrawConsent",
+      'withdrawConsent',
       async () => {
         // Update consent record
         const success = await this.updateConsentInDatabase(
@@ -811,24 +811,24 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
             isActive: false,
           },
           context,
-        );
+        )
 
         if (success) {
           // Invalidate cache
-          await this.cache.invalidate(`consent_*${consentId}*`);
+          await this.cache.invalidate(`consent_*${consentId}*`,)
 
           // Trigger data deletion/anonymization process
-          await this.initiateDataCleanup(consentId, context);
+          await this.initiateDataCleanup(consentId, context,)
         }
 
-        return success;
+        return success
       },
       context,
       {
         requiresAuth: true,
         sensitiveData: true,
       },
-    );
+    )
   }
 
   // ================================================
@@ -843,24 +843,24 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<string> {
     return this.executeOperation(
-      "startComplianceMonitoring",
+      'startComplianceMonitoring',
       async () => {
-        const monitorId = `monitor_${tenantId}_${Date.now()}`;
+        const monitorId = `monitor_${tenantId}_${Date.now()}`
 
         // Set up real-time monitoring
         const interval = setInterval(async () => {
-          await this.performComplianceCheck(tenantId, context);
-        }, 60_000); // Check every minute
+          await this.performComplianceCheck(tenantId, context,)
+        }, 60_000,) // Check every minute
 
-        this.activeMonitors.set(monitorId, interval);
+        this.activeMonitors.set(monitorId, interval,)
 
-        return monitorId;
+        return monitorId
       },
       context,
       {
         requiresAuth: true,
       },
-    );
+    )
   }
 
   /**
@@ -871,21 +871,21 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      "stopComplianceMonitoring",
+      'stopComplianceMonitoring',
       async () => {
-        const interval = this.activeMonitors.get(monitorId);
+        const interval = this.activeMonitors.get(monitorId,)
         if (interval) {
-          clearInterval(interval);
-          this.activeMonitors.delete(monitorId);
-          return true;
+          clearInterval(interval,)
+          this.activeMonitors.delete(monitorId,)
+          return true
         }
-        return false;
+        return false
       },
       context,
       {
         requiresAuth: true,
       },
-    );
+    )
   }
 
   // ================================================
@@ -899,50 +899,50 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     tenantId: string,
     context: ServiceContext,
   ): Promise<{
-    lgpd: { compliant: boolean; issues: string[]; };
-    anvisa: { compliant: boolean; issues: string[]; };
-    cfm: { compliant: boolean; issues: string[]; };
+    lgpd: { compliant: boolean; issues: string[] }
+    anvisa: { compliant: boolean; issues: string[] }
+    cfm: { compliant: boolean; issues: string[] }
     overall: {
-      score: number;
-      status: "compliant" | "non-compliant" | "warning";
-    };
+      score: number
+      status: 'compliant' | 'non-compliant' | 'warning'
+    }
   }> {
     return this.executeOperation(
-      "checkBrazilianCompliance",
+      'checkBrazilianCompliance',
       async () => {
         // Check LGPD compliance
-        const lgpdCheck = await this.checkLGPDCompliance(tenantId, context);
+        const lgpdCheck = await this.checkLGPDCompliance(tenantId, context,)
 
         // Check ANVISA compliance
-        const anvisaCheck = await this.checkANVISACompliance(tenantId, context);
+        const anvisaCheck = await this.checkANVISACompliance(tenantId, context,)
 
         // Check CFM compliance
-        const cfmCheck = await this.checkCFMCompliance(tenantId, context);
+        const cfmCheck = await this.checkCFMCompliance(tenantId, context,)
 
         // Calculate overall score        const totalChecks = 3;
         const compliantFrameworks = [
           lgpdCheck.compliant,
           anvisaCheck.compliant,
           cfmCheck.compliant,
-        ].filter(Boolean).length;
+        ].filter(Boolean,).length
 
-        const score = (compliantFrameworks / totalChecks) * 100;
-        let status: "compliant" | "non-compliant" | "warning";
+        const score = (compliantFrameworks / totalChecks) * 100
+        let status: 'compliant' | 'non-compliant' | 'warning'
 
         if (score === 100) {
-          status = "compliant";
+          status = 'compliant'
         } else if (score >= 70) {
-          status = "warning";
+          status = 'warning'
         } else {
-          status = "non-compliant";
+          status = 'non-compliant'
         }
 
         return {
           lgpd: lgpdCheck,
           anvisa: anvisaCheck,
           cfm: cfmCheck,
-          overall: { score, status },
-        };
+          overall: { score, status, },
+        }
       },
       context,
       {
@@ -950,7 +950,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         cacheTTL: 5 * 60 * 1000, // 5 minutes
         requiresAuth: true,
       },
-    );
+    )
   }
 
   // ================================================
@@ -959,124 +959,124 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   private initializeBrazilianCompliance(): void {
     // Set up Brazilian healthcare compliance rules
-    Object.entries(this.brazilianTemplates).forEach(([key, template]) => {
-      this.complianceRules.set(key, template.rules as ComplianceRule[]);
-    });
+    Object.entries(this.brazilianTemplates,).forEach(([key, template,],) => {
+      this.complianceRules.set(key, template.rules as ComplianceRule[],)
+    },)
   }
 
-  private validatePolicyRequest(request: CreatePolicyRequest): void {
+  private validatePolicyRequest(request: CreatePolicyRequest,): void {
     if (!(request.name && request.tenantId)) {
-      throw new Error("Policy name and tenant ID are required");
+      throw new Error('Policy name and tenant ID are required',)
     }
     if (!request.rules || request.rules.length === 0) {
-      throw new Error("At least one rule is required for a policy");
+      throw new Error('At least one rule is required for a policy',)
     }
   }
 
-  private validateIncidentRequest(request: ReportIncidentRequest): void {
+  private validateIncidentRequest(request: ReportIncidentRequest,): void {
     if (!(request.title && request.tenantId)) {
-      throw new Error("Incident title and tenant ID are required");
+      throw new Error('Incident title and tenant ID are required',)
     }
     if (!request.affectedData) {
-      throw new Error("Affected data assessment is required");
+      throw new Error('Affected data assessment is required',)
     }
   }
 
-  private validateConsentRequest(request: CreateConsentRequest): void {
+  private validateConsentRequest(request: CreateConsentRequest,): void {
     if (!(request.dataSubjectId && request.purpose)) {
-      throw new Error("Data subject ID and purpose are required");
+      throw new Error('Data subject ID and purpose are required',)
     }
     if (request.retentionPeriod <= 0) {
-      throw new Error("Retention period must be positive");
+      throw new Error('Retention period must be positive',)
     }
   }
 
   private generatePolicyVersion(): string {
-    return `v${new Date().getFullYear()}.${Date.now()}`;
+    return `v${new Date().getFullYear()}.${Date.now()}`
   }
 
   private async assessDataImpact(
     affectedData: Omit<
       DataImpactAssessment,
-      "notificationRequired" | "regulatoryReportingRequired"
+      'notificationRequired' | 'regulatoryReportingRequired'
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification requirements based on Brazilian laws
     const notificationRequired = affectedData.recordsAffected > 100
       || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
       || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC
 
     const regulatoryReportingRequired = affectedData.recordsAffected > 500
       || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
       || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC
 
     return {
       ...affectedData,
       notificationRequired,
       regulatoryReportingRequired,
-    };
+    }
   }
 
   private createDefaultRemediationPlan(
     severity: SeverityLevel,
     userId: string,
   ): RemediationPlan {
-    const actions: RemediationAction[] = [];
+    const actions: RemediationAction[] = []
 
     if (severity === SeverityLevel.CRITICAL) {
       actions.push({
         id: `action_${Date.now()}_1`,
-        description: "Contenção imediata do incidente",
-        type: "containment",
+        description: 'Contenção imediata do incidente',
+        type: 'containment',
         priority: PriorityLevel.CRITICAL,
-        dueDate: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
+        dueDate: new Date(Date.now() + 2 * 60 * 60 * 1000,), // 2 hours
         assignedTo: userId,
         status: ActionStatus.PENDING,
-      });
+      },)
     }
 
     return {
       actions,
-      timeline: severity === SeverityLevel.CRITICAL ? "2 horas" : "24 horas",
+      timeline: severity === SeverityLevel.CRITICAL ? '2 horas' : '24 horas',
       responsibleParty: userId,
       approvalRequired: severity === SeverityLevel.CRITICAL,
       status: RemediationStatus.PLANNED,
-    };
+    }
   }
 
   private async checkLGPDCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock LGPD compliance check
     return {
       compliant: true,
       issues: [],
-    };
+    }
   }
 
   private async checkANVISACompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock ANVISA compliance check
     return {
       compliant: true,
       issues: [],
-    };
+    }
   }
 
   private async checkCFMCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock CFM compliance check
     return {
       compliant: true,
       issues: [],
-    };
+    }
   }
 
   private async calculateComplianceMetrics(
@@ -1106,7 +1106,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         low: 4,
       },
       complianceByFramework: {} as unknown,
-    };
+    }
   }
 
   private async performComplianceCheck(
@@ -1146,7 +1146,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     _filters: unknown,
     _context: ServiceContext,
   ): Promise<CompliancePolicy[]> {
-    return []; // Mock empty result
+    return [] // Mock empty result
   }
 
   private async storeIncidentInDatabase(
@@ -1164,7 +1164,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     _updates: unknown,
     _context: ServiceContext,
   ): Promise<boolean> {
-    return true;
+    return true
   }
 
   // ================================================
@@ -1173,17 +1173,17 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   protected async initialize(): Promise<void> {
     // Initialize Brazilian compliance templates
-    this.initializeBrazilianCompliance();
+    this.initializeBrazilianCompliance()
   }
 
   protected async cleanup(): Promise<void> {
     // Stop all active monitors
-    for (const [, interval] of this.activeMonitors.entries()) {
-      clearInterval(interval);
+    for (const [, interval,] of this.activeMonitors.entries()) {
+      clearInterval(interval,)
     }
-    this.activeMonitors.clear();
+    this.activeMonitors.clear()
 
     // Clear compliance rules
-    this.complianceRules.clear();
+    this.complianceRules.clear()
   }
 }

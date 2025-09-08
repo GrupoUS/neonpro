@@ -97,7 +97,7 @@ Healthcare, specifically designed for Brazilian healthcare regulations and emerg
   // Example: Live region for emergency updates
   <div aria-live="assertive" aria-atomic="true">
     {emergencyMessage}
-  </div>;
+  </div>
   ```
 
 #### Cross-Device Compatibility
@@ -179,7 +179,7 @@ Healthcare, specifically designed for Brazilian healthcare regulations and emerg
       <AlertTriangle className="h-5 w-5 text-red-500" />
       <p className="text-red-800 font-medium">Modo de Emergência Ativo</p>
     </div>
-  );
+  )
   ```
 
 #### Emergency Communications

@@ -1,26 +1,28 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Input, } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { ControlledSubstanceClass } from "@/lib/compliance/anvisa-controlled-substances";
-import { Search } from "lucide-react";
-import type React from "react";
-import { getSubstanceClassConfig /*, SUBSTANCE_CLASS_CONFIG*/ } from "../../constants/anvisa-configs"; // SUBSTANCE_CLASS_CONFIG unused import
-import type { ANVISASubstance } from "../../types/compliance";
+} from '@/components/ui/select'
+import type { ControlledSubstanceClass, } from '@/lib/compliance/anvisa-controlled-substances'
+import { Search, } from 'lucide-react'
+import type React from 'react'
+import {
+  getSubstanceClassConfig, /*, SUBSTANCE_CLASS_CONFIG*/
+} from '../../constants/anvisa-configs' // SUBSTANCE_CLASS_CONFIG unused import
+import type { ANVISASubstance, } from '../../types/compliance'
 
 interface ANVISASubstancesListProps {
-  substances: ANVISASubstance[];
-  searchTerm: string;
-  selectedClass: ControlledSubstanceClass | "all";
-  onSearchChange: (value: string) => void;
-  onClassChange: (value: ControlledSubstanceClass | "all") => void;
-  loading: boolean;
+  substances: ANVISASubstance[]
+  searchTerm: string
+  selectedClass: ControlledSubstanceClass | 'all'
+  onSearchChange: (value: string,) => void
+  onClassChange: (value: ControlledSubstanceClass | 'all',) => void
+  loading: boolean
 }
 
 export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
@@ -30,19 +32,19 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
   onSearchChange,
   onClassChange,
   loading,
-}) => {
-  const getClassBadgeVariant = (controlledClass: ControlledSubstanceClass) => {
+},) => {
+  const getClassBadgeVariant = (controlledClass: ControlledSubstanceClass,) => {
     // Map classes to badge variants based on severity
-    if (controlledClass === "A1" || controlledClass === "A2") return "destructive";
-    if (controlledClass === "A3" || controlledClass === "B1") return "default";
-    return "secondary";
-  };
+    if (controlledClass === 'A1' || controlledClass === 'A2') return 'destructive'
+    if (controlledClass === 'A3' || controlledClass === 'B1') return 'default'
+    return 'secondary'
+  }
 
-  const getClassIcon = (controlledClass: ControlledSubstanceClass) => {
-    const config = getSubstanceClassConfig(controlledClass);
-    const IconComponent = config.icon;
-    return <IconComponent className="h-4 w-4" />;
-  };
+  const getClassIcon = (controlledClass: ControlledSubstanceClass,) => {
+    const config = getSubstanceClassConfig(controlledClass,)
+    const IconComponent = config.icon
+    return <IconComponent className="h-4 w-4" />
+  }
 
   return (
     <Card>
@@ -58,15 +60,15 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
             <Input
               placeholder="Buscar substância..."
               value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e,) => onSearchChange(e.target.value,)}
               className="w-full"
             />
           </div>
           <div className="w-full sm:w-48">
             <Select
               value={selectedClass}
-              onValueChange={(value: string) =>
-                onClassChange(value as ControlledSubstanceClass | "all")}
+              onValueChange={(value: string,) =>
+                onClassChange(value as ControlledSubstanceClass | 'all',)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Filtrar por classe" />
@@ -104,8 +106,8 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
           )
           : (
             <div className="space-y-3">
-              {substances.map((substance) => {
-                const config = getSubstanceClassConfig(substance.controlledClass);
+              {substances.map((substance,) => {
+                const config = getSubstanceClassConfig(substance.controlledClass,)
                 return (
                   <div
                     key={substance.id}
@@ -114,8 +116,8 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-2">
-                          {getClassIcon(substance.controlledClass)}
-                          <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
+                          {getClassIcon(substance.controlledClass,)}
+                          <Badge variant={getClassBadgeVariant(substance.controlledClass,)}>
                             {substance.controlledClass}
                           </Badge>
                         </div>
@@ -145,11 +147,11 @@ export const ANVISASubstancesList: React.FC<ANVISASubstancesListProps> = ({
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                )
+              },)}
             </div>
           )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}

@@ -1,8 +1,8 @@
 // Inventory module exports
 
-export type { InventoryRepository } from "./service";
-export * from "./service";
-export { InventoryService } from "./service";
+export type { InventoryRepository, } from './service'
+export * from './service'
+export { InventoryService, } from './service'
 // Re-export commonly used types
 export type {
   AlertFilters,
@@ -21,8 +21,8 @@ export type {
   StorageLocation,
   StorageRequirements,
   Supplier,
-} from "./types";
-export * from "./types";
+} from './types'
+export * from './types'
 export {
   AlertSeverity,
   AlertType,
@@ -31,4 +31,4 @@ export {
   ProductCategory,
   ProductType,
   UnitOfMeasure,
-} from "./types";
+} from './types'

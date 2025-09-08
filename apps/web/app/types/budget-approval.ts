@@ -1,3 +1,3 @@
 // Placeholder file
-export const placeholder = true;
-export default placeholder;
+export const placeholder = true
+export default placeholder

@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import { useStaffAlerts } from "@/app/hooks/use-staff-alerts";
-import { Alert as AlertUI, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useStaffAlerts, } from '@/app/hooks/use-staff-alerts'
+import { Alert as AlertUI, AlertDescription, AlertTitle, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 // Removed unused Dialog imports
-import { Input } from "@/components/ui/input";
+import { Input, } from '@/components/ui/input'
 // Removed unused Select imports
 // import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import type { StaffAlert } from "@/types/staff-alerts";
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
+import type { StaffAlert, } from '@/types/staff-alerts'
 import {
   ALERT_PRIORITY_COLORS,
   ALERT_PRIORITY_LABELS_PT,
   ALERT_STATUS_LABELS_PT,
   DEPARTMENT_LABELS_PT,
-} from "@/types/staff-alerts";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+} from '@/types/staff-alerts'
+import { formatDistanceToNow, } from 'date-fns'
+import { ptBR, } from 'date-fns/locale'
 import {
   AlertTriangle,
   ArrowUp,
@@ -31,14 +31,14 @@ import {
   Search,
   User,
   XCircle,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 interface StaffAlertDashboardProps {
-  staffMemberId?: string;
-  department?: string;
-  isMobile?: boolean;
-  compactMode?: boolean;
+  staffMemberId?: string
+  department?: string
+  isMobile?: boolean
+  compactMode?: boolean
 }
 
 /**
@@ -50,7 +50,7 @@ export function StaffAlertDashboard({
   department,
   isMobile = false,
   compactMode = false,
-}: StaffAlertDashboardProps) {
+}: StaffAlertDashboardProps,) {
   const {
     alerts,
     stats,
@@ -68,77 +68,77 @@ export function StaffAlertDashboard({
     realTimeUpdates: true,
     autoRefresh: true,
     refreshInterval: 15_000, // 15 seconds for high responsiveness
-  });
+  },)
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [selectedAlert, setSelectedAlert] = useState<StaffAlert | null>(null);
+  const [searchTerm, setSearchTerm,] = useState('',)
+  const [activeTab, setActiveTab,] = useState('all',)
+  const [selectedAlert, setSelectedAlert,] = useState<StaffAlert | null>(null,)
 
   // Filter alerts based on search term and tab
-  const filteredAlerts = alerts.filter((alert) => {
-    const matchesSearch = searchTerm === ""
-      || alert.title.toLowerCase().includes(searchTerm.toLowerCase())
-      || alert.message.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAlerts = alerts.filter((alert,) => {
+    const matchesSearch = searchTerm === ''
+      || alert.title.toLowerCase().includes(searchTerm.toLowerCase(),)
+      || alert.message.toLowerCase().includes(searchTerm.toLowerCase(),)
 
-    const matchesTab = activeTab === "all" || alert.status === activeTab;
+    const matchesTab = activeTab === 'all' || alert.status === activeTab
 
-    return matchesSearch && matchesTab;
-  });
+    return matchesSearch && matchesTab
+  },)
 
-  const getAlertIcon = (alert: StaffAlert) => {
+  const getAlertIcon = (alert: StaffAlert,) => {
     switch (alert.status) {
-      case "pending":
-        return <Bell className="h-4 w-4" />;
-      case "acknowledged":
-        return <Clock className="h-4 w-4" />;
-      case "assigned":
-        return <User className="h-4 w-4" />;
-      case "in_progress":
-        return <ArrowUp className="h-4 w-4" />;
-      case "resolved":
-        return <CheckCircle className="h-4 w-4" />;
-      case "dismissed":
-        return <XCircle className="h-4 w-4" />;
+      case 'pending':
+        return <Bell className="h-4 w-4" />
+      case 'acknowledged':
+        return <Clock className="h-4 w-4" />
+      case 'assigned':
+        return <User className="h-4 w-4" />
+      case 'in_progress':
+        return <ArrowUp className="h-4 w-4" />
+      case 'resolved':
+        return <CheckCircle className="h-4 w-4" />
+      case 'dismissed':
+        return <XCircle className="h-4 w-4" />
       default:
-        return <Bell className="h-4 w-4" />;
+        return <Bell className="h-4 w-4" />
     }
-  };
+  }
 
-  const getAlertAge = (createdAt: Date) => {
+  const getAlertAge = (createdAt: Date,) => {
     return formatDistanceToNow(createdAt, {
       addSuffix: true,
       locale: ptBR,
-    });
-  };
+    },)
+  }
 
   const handleQuickAction = async (
     alert: StaffAlert,
-    action: "acknowledge" | "assign" | "resolve" | "dismiss" | "escalate",
+    action: 'acknowledge' | 'assign' | 'resolve' | 'dismiss' | 'escalate',
   ) => {
     try {
       switch (action) {
-        case "acknowledge":
-          await acknowledgeAlert(alert.id);
-          break;
-        case "assign":
+        case 'acknowledge':
+          await acknowledgeAlert(alert.id,)
+          break
+        case 'assign':
           if (staffMemberId) {
-            await assignAlert(alert.id, staffMemberId);
+            await assignAlert(alert.id, staffMemberId,)
           }
-          break;
-        case "resolve":
-          await resolveAlert(alert.id, "Resolved via dashboard");
-          break;
-        case "dismiss":
-          await dismissAlert(alert.id, "Dismissed via dashboard");
-          break;
-        case "escalate":
-          await escalateAlert(alert.id);
-          break;
+          break
+        case 'resolve':
+          await resolveAlert(alert.id, 'Resolved via dashboard',)
+          break
+        case 'dismiss':
+          await dismissAlert(alert.id, 'Dismissed via dashboard',)
+          break
+        case 'escalate':
+          await escalateAlert(alert.id,)
+          break
       }
     } catch (err) {
-      console.error(`Error performing ${action} on alert:`, err);
+      console.error(`Error performing ${action} on alert:`, err,)
     }
-  };
+  }
 
   // Mobile-optimized compact view
   if (compactMode || isMobile) {
@@ -167,7 +167,7 @@ export function StaffAlertDashboard({
             <Input
               placeholder="Buscar alertas..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e,) => setSearchTerm(e.target.value,)}
               className="pl-8"
             />
           </div>
@@ -178,22 +178,22 @@ export function StaffAlertDashboard({
 
         {/* Mobile Alert List */}
         <div className="space-y-2">
-          {filteredAlerts.slice(0, 10).map((alert) => (
+          {filteredAlerts.slice(0, 10,).map((alert,) => (
             <Card key={alert.id} className="p-3">
               <div className="flex items-start gap-3">
                 <div
                   className={cn(
-                    "p-1 rounded-full",
-                    alert.priority === "critical"
-                      ? "bg-red-100"
-                      : alert.priority === "urgent"
-                      ? "bg-orange-100"
-                      : alert.priority === "high"
-                      ? "bg-yellow-100"
-                      : "bg-blue-100",
+                    'p-1 rounded-full',
+                    alert.priority === 'critical'
+                      ? 'bg-red-100'
+                      : alert.priority === 'urgent'
+                      ? 'bg-orange-100'
+                      : alert.priority === 'high'
+                      ? 'bg-yellow-100'
+                      : 'bg-blue-100',
                   )}
                 >
-                  {getAlertIcon(alert)}
+                  {getAlertIcon(alert,)}
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -204,7 +204,7 @@ export function StaffAlertDashboard({
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-xs",
+                        'text-xs',
                         ALERT_PRIORITY_COLORS[alert.priority],
                       )}
                     >
@@ -218,25 +218,25 @@ export function StaffAlertDashboard({
 
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs text-muted-foreground">
-                      {getAlertAge(alert.createdAt)}
+                      {getAlertAge(alert.createdAt,)}
                     </span>
 
                     <div className="flex gap-1">
-                      {alert.status === "pending" && (
+                      {alert.status === 'pending' && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction(alert, "acknowledge")}
+                          onClick={() => handleQuickAction(alert, 'acknowledge',)}
                           className="h-6 px-2 text-xs"
                         >
                           Confirmar
                         </Button>
                       )}
-                      {alert.status === "acknowledged" && staffMemberId && (
+                      {alert.status === 'acknowledged' && staffMemberId && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction(alert, "assign")}
+                          onClick={() => handleQuickAction(alert, 'assign',)}
                           className="h-6 px-2 text-xs"
                         >
                           Assumir
@@ -257,7 +257,7 @@ export function StaffAlertDashboard({
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
   // Desktop full view
@@ -335,7 +335,7 @@ export function StaffAlertDashboard({
             <Clock className="h-4 w-4 text-purple-500" />
             <div>
               <p className="text-2xl font-bold">
-                {Math.round(stats.avgResponseTime)}
+                {Math.round(stats.avgResponseTime,)}
               </p>
               <p className="text-xs text-muted-foreground">Min Resp.</p>
             </div>
@@ -347,7 +347,7 @@ export function StaffAlertDashboard({
             <CheckCircle className="h-4 w-4 text-green-600" />
             <div>
               <p className="text-2xl font-bold">
-                {Math.round(stats.interventionSuccessRate)}%
+                {Math.round(stats.interventionSuccessRate,)}%
               </p>
               <p className="text-xs text-muted-foreground">Sucesso</p>
             </div>
@@ -364,7 +364,7 @@ export function StaffAlertDashboard({
               <Input
                 placeholder="Buscar alertas..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e,) => setSearchTerm(e.target.value,)}
                 className="w-64"
               />
               <Button variant="outline" size="sm">
@@ -398,31 +398,31 @@ export function StaffAlertDashboard({
 
             <TabsContent value={activeTab} className="mt-4">
               <div className="space-y-2">
-                {filteredAlerts.map((alert) => (
+                {filteredAlerts.map((alert,) => (
                   <Card
                     key={alert.id}
                     className={cn(
-                      "p-4 cursor-pointer transition-colors hover:bg-muted/50",
-                      alert.priority === "critical"
-                        && "border-red-200 bg-red-50/30",
-                      alert.priority === "urgent"
-                        && "border-orange-200 bg-orange-50/30",
+                      'p-4 cursor-pointer transition-colors hover:bg-muted/50',
+                      alert.priority === 'critical'
+                        && 'border-red-200 bg-red-50/30',
+                      alert.priority === 'urgent'
+                        && 'border-orange-200 bg-orange-50/30',
                     )}
                   >
                     <div className="flex items-start gap-4">
                       <div
                         className={cn(
-                          "p-2 rounded-full",
-                          alert.priority === "critical"
-                            ? "bg-red-100"
-                            : alert.priority === "urgent"
-                            ? "bg-orange-100"
-                            : alert.priority === "high"
-                            ? "bg-yellow-100"
-                            : "bg-blue-100",
+                          'p-2 rounded-full',
+                          alert.priority === 'critical'
+                            ? 'bg-red-100'
+                            : alert.priority === 'urgent'
+                            ? 'bg-orange-100'
+                            : alert.priority === 'high'
+                            ? 'bg-yellow-100'
+                            : 'bg-blue-100',
                         )}
                       >
-                        {getAlertIcon(alert)}
+                        {getAlertIcon(alert,)}
                       </div>
 
                       <div className="flex-1">
@@ -441,7 +441,7 @@ export function StaffAlertDashboard({
                           </div>
 
                           <div className="text-sm text-muted-foreground">
-                            {getAlertAge(alert.createdAt)}
+                            {getAlertAge(alert.createdAt,)}
                           </div>
                         </div>
 
@@ -459,39 +459,39 @@ export function StaffAlertDashboard({
                           </div>
 
                           <div className="flex gap-2">
-                            {alert.status === "pending" && (
+                            {alert.status === 'pending' && (
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleQuickAction(alert, "acknowledge")}
+                                onClick={() => handleQuickAction(alert, 'acknowledge',)}
                               >
                                 Confirmar
                               </Button>
                             )}
-                            {alert.status === "acknowledged" && (
+                            {alert.status === 'acknowledged' && (
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleQuickAction(alert, "assign")}
+                                onClick={() => handleQuickAction(alert, 'assign',)}
                               >
                                 Atribuir a Mim
                               </Button>
                             )}
-                            {["assigned", "in_progress"].includes(
+                            {['assigned', 'in_progress',].includes(
                               alert.status,
                             ) && (
                               <>
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleQuickAction(alert, "resolve")}
+                                  onClick={() => handleQuickAction(alert, 'resolve',)}
                                 >
                                   Resolver
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleQuickAction(alert, "escalate")}
+                                  onClick={() => handleQuickAction(alert, 'escalate',)}
                                 >
                                   Escalar
                                 </Button>
@@ -500,7 +500,7 @@ export function StaffAlertDashboard({
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => setSelectedAlert(alert)}
+                              onClick={() => setSelectedAlert(alert,)}
                             >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
@@ -516,5 +516,5 @@ export function StaffAlertDashboard({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

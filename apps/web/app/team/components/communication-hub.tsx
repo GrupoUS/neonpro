@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,17 +19,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Textarea, } from '@/components/ui/textarea'
 import {
   AlertTriangle,
   ArrowRight,
@@ -50,434 +50,434 @@ import {
   Stethoscope,
   User,
   Users,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+} from 'lucide-react'
+import { useMemo, useState, } from 'react'
 
 import type {
   CommunicationPriority,
   PatientHandoff,
   TeamMessage,
-} from "@/app/types/team-coordination"; // Mock team messages with Brazilian healthcare context
+} from '@/app/types/team-coordination' // Mock team messages with Brazilian healthcare context
 
 const mockTeamMessages: TeamMessage[] = [
   {
-    id: "msg-001",
-    senderId: "prof-001", // Dra. Maria Silva
-    recipientIds: ["prof-002", "prof-003"],
+    id: 'msg-001',
+    senderId: 'prof-001', // Dra. Maria Silva
+    recipientIds: ['prof-002', 'prof-003',],
     channelId: null,
-    subject: "Paciente João Silva - Intercorrência Cardiológica",
+    subject: 'Paciente João Silva - Intercorrência Cardiológica',
     content:
-      "Paciente apresentou episódio de arritmia às 14:30. ECG realizado, solicitando avaliação de emergência. Medicação antiarrítmica administrada conforme protocolo.",
-    priority: "high",
-    messageType: "handoff",
-    patientId: "patient-001",
-    treatmentId: "treat-001",
+      'Paciente apresentou episódio de arritmia às 14:30. ECG realizado, solicitando avaliação de emergência. Medicação antiarrítmica administrada conforme protocolo.',
+    priority: 'high',
+    messageType: 'handoff',
+    patientId: 'patient-001',
+    treatmentId: 'treat-001',
     attachments: [],
-    status: "delivered",
+    status: 'delivered',
     readBy: {
-      "prof-002": new Date("2024-08-21T14:45:00"),
+      'prof-002': new Date('2024-08-21T14:45:00',),
     },
     isEmergency: false,
     requiresAcknowledgment: true,
-    acknowledgedBy: ["prof-002"],
-    retentionDate: new Date("2029-08-21"),
+    acknowledgedBy: ['prof-002',],
+    retentionDate: new Date('2029-08-21',),
     containsPersonalData: true,
-    createdAt: new Date("2024-08-21T14:35:00"),
-    updatedAt: new Date("2024-08-21T14:35:00"),
+    createdAt: new Date('2024-08-21T14:35:00',),
+    updatedAt: new Date('2024-08-21T14:35:00',),
     editedAt: null,
     isDeleted: false,
   },
   {
-    id: "msg-002",
-    senderId: "prof-002", // Dr. Roberto Oliveira
-    recipientIds: ["team-emergency"],
-    channelId: "emergency-channel",
-    subject: "🚨 CÓDIGO AZUL - Trauma Bay 1",
+    id: 'msg-002',
+    senderId: 'prof-002', // Dr. Roberto Oliveira
+    recipientIds: ['team-emergency',],
+    channelId: 'emergency-channel',
+    subject: '🚨 CÓDIGO AZUL - Trauma Bay 1',
     content:
-      "Ativação imediata equipe de trauma. Paciente politraumatizado chegando via SAMU. ETA: 5 minutos. Preparar sala cirúrgica e banco de sangue.",
-    priority: "emergency",
-    messageType: "alert",
+      'Ativação imediata equipe de trauma. Paciente politraumatizado chegando via SAMU. ETA: 5 minutos. Preparar sala cirúrgica e banco de sangue.',
+    priority: 'emergency',
+    messageType: 'alert',
     patientId: null,
     treatmentId: null,
     attachments: [],
-    status: "delivered",
+    status: 'delivered',
     readBy: {},
     isEmergency: true,
     requiresAcknowledgment: true,
     acknowledgedBy: [],
-    retentionDate: new Date("2029-08-21"),
+    retentionDate: new Date('2029-08-21',),
     containsPersonalData: false,
-    createdAt: new Date("2024-08-21T15:20:00"),
-    updatedAt: new Date("2024-08-21T15:20:00"),
+    createdAt: new Date('2024-08-21T15:20:00',),
+    updatedAt: new Date('2024-08-21T15:20:00',),
     editedAt: null,
     isDeleted: false,
   },
   {
-    id: "msg-003",
-    senderId: "prof-003", // Enf. Ana Paula
-    recipientIds: ["prof-001"],
+    id: 'msg-003',
+    senderId: 'prof-003', // Enf. Ana Paula
+    recipientIds: ['prof-001',],
     channelId: null,
-    subject: "UTI - Relatório de Plantão",
+    subject: 'UTI - Relatório de Plantão',
     content:
-      "Passagem de plantão UTI:\n• Leito 05: Paciente estável, VM com PEEP 8, FiO2 40%\n• Leito 06: Pós-operatório, extubado às 13h, sem intercorrências\n• Leito 07: Paciente crítico, família orientada sobre prognóstico",
-    priority: "normal",
-    messageType: "handoff",
+      'Passagem de plantão UTI:\n• Leito 05: Paciente estável, VM com PEEP 8, FiO2 40%\n• Leito 06: Pós-operatório, extubado às 13h, sem intercorrências\n• Leito 07: Paciente crítico, família orientada sobre prognóstico',
+    priority: 'normal',
+    messageType: 'handoff',
     patientId: null,
     treatmentId: null,
     attachments: [],
-    status: "read",
+    status: 'read',
     readBy: {
-      "prof-001": new Date("2024-08-21T16:10:00"),
+      'prof-001': new Date('2024-08-21T16:10:00',),
     },
     isEmergency: false,
     requiresAcknowledgment: false,
     acknowledgedBy: [],
-    retentionDate: new Date("2029-08-21"),
+    retentionDate: new Date('2029-08-21',),
     containsPersonalData: true,
-    createdAt: new Date("2024-08-21T16:00:00"),
-    updatedAt: new Date("2024-08-21T16:00:00"),
+    createdAt: new Date('2024-08-21T16:00:00',),
+    updatedAt: new Date('2024-08-21T16:00:00',),
     editedAt: null,
     isDeleted: false,
   },
   {
-    id: "msg-004",
-    senderId: "admin-001",
-    recipientIds: ["all-staff"],
-    channelId: "general-announcements",
-    subject: "Lembrete: Treinamento LGPD Obrigatório",
+    id: 'msg-004',
+    senderId: 'admin-001',
+    recipientIds: ['all-staff',],
+    channelId: 'general-announcements',
+    subject: 'Lembrete: Treinamento LGPD Obrigatório',
     content:
-      "Lembrete para todos os profissionais: Treinamento sobre novas diretrizes LGPD na área da saúde é obrigatório. Prazo final: 30/08/2024. Acesse o portal de treinamento.",
-    priority: "low",
-    messageType: "text",
+      'Lembrete para todos os profissionais: Treinamento sobre novas diretrizes LGPD na área da saúde é obrigatório. Prazo final: 30/08/2024. Acesse o portal de treinamento.',
+    priority: 'low',
+    messageType: 'text',
     patientId: null,
     treatmentId: null,
     attachments: [],
-    status: "sent",
+    status: 'sent',
     readBy: {},
     isEmergency: false,
     requiresAcknowledgment: true,
     acknowledgedBy: [],
-    retentionDate: new Date("2025-08-21"),
+    retentionDate: new Date('2025-08-21',),
     containsPersonalData: false,
-    createdAt: new Date("2024-08-21T09:00:00"),
-    updatedAt: new Date("2024-08-21T09:00:00"),
+    createdAt: new Date('2024-08-21T09:00:00',),
+    updatedAt: new Date('2024-08-21T09:00:00',),
     editedAt: null,
     isDeleted: false,
   },
-]; // Mock patient handoff data
+] // Mock patient handoff data
 const mockPatientHandoffs: PatientHandoff[] = [
   {
-    id: "handoff-001",
-    patientId: "patient-001",
-    fromProfessionalId: "prof-001", // Dra. Maria Silva
-    toProfessionalId: "prof-002", // Dr. Roberto Oliveira
-    handoffType: "transfer",
-    currentCondition: "Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.",
+    id: 'handoff-001',
+    patientId: 'patient-001',
+    fromProfessionalId: 'prof-001', // Dra. Maria Silva
+    toProfessionalId: 'prof-002', // Dr. Roberto Oliveira
+    handoffType: 'transfer',
+    currentCondition: 'Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.',
     vitalSigns: {
-      pa: "130/80 mmHg",
-      fc: "78 bpm",
-      fr: "16 irpm",
-      temp: "36.5°C",
-      spo2: "98%",
+      pa: '130/80 mmHg',
+      fc: '78 bpm',
+      fr: '16 irpm',
+      temp: '36.5°C',
+      spo2: '98%',
     },
     activeMedications: [
-      "Amiodarona 200mg 12/12h",
-      "AAS 100mg 1x/dia",
-      "Atorvastatina 40mg à noite",
-      "Enalapril 10mg 12/12h",
+      'Amiodarona 200mg 12/12h',
+      'AAS 100mg 1x/dia',
+      'Atorvastatina 40mg à noite',
+      'Enalapril 10mg 12/12h',
     ],
-    allergies: ["Penicilina", "Contrastes iodados"],
+    allergies: ['Penicilina', 'Contrastes iodados',],
     recentProcedures: [
-      "ECG - 21/08/2024 14:30",
-      "Ecocardiograma - 20/08/2024",
-      "Cateterismo cardíaco - 18/08/2024",
+      'ECG - 21/08/2024 14:30',
+      'Ecocardiograma - 20/08/2024',
+      'Cateterismo cardíaco - 18/08/2024',
     ],
     careInstructions:
-      "Manter monitorização cardíaca contínua. Atentar para sinais de nova arritmia. Dieta hipossódica rigorosa. Repouso relativo no leito.",
+      'Manter monitorização cardíaca contínua. Atentar para sinais de nova arritmia. Dieta hipossódica rigorosa. Repouso relativo no leito.',
     specialRequirements: [
-      "Acesso venoso calibroso mantido",
-      "Desfibrilador próximo ao leito",
-      "Comunicar qualquer alteração do ritmo",
+      'Acesso venoso calibroso mantido',
+      'Desfibrilador próximo ao leito',
+      'Comunicar qualquer alteração do ritmo',
     ],
     riskFactors: [
-      "Histórico de IAM prévio",
-      "Diabetes mellitus",
-      "Dislipidemia",
-      "Tabagismo (cessou há 2 anos)",
+      'Histórico de IAM prévio',
+      'Diabetes mellitus',
+      'Dislipidemia',
+      'Tabagismo (cessou há 2 anos)',
     ],
     followUpRequired: [
-      "Reavaliação cardiológica em 24h",
-      "Controle de eletrólitos em 6h",
-      "ECG de controle em 4h",
+      'Reavaliação cardiológica em 24h',
+      'Controle de eletrólitos em 6h',
+      'ECG de controle em 4h',
     ],
-    status: "acknowledged",
-    acknowledgedAt: new Date("2024-08-21T14:50:00"),
+    status: 'acknowledged',
+    acknowledgedAt: new Date('2024-08-21T14:50:00',),
     completedAt: null,
-    notes: "Família orientada sobre quadro. Paciente colaborativo.",
-    createdAt: new Date("2024-08-21T14:35:00"),
-    updatedAt: new Date("2024-08-21T14:50:00"),
-    priority: "high",
+    notes: 'Família orientada sobre quadro. Paciente colaborativo.',
+    createdAt: new Date('2024-08-21T14:35:00',),
+    updatedAt: new Date('2024-08-21T14:50:00',),
+    priority: 'high',
   },
   {
-    id: "handoff-002",
-    patientId: "patient-uti-001",
-    fromProfessionalId: "prof-003", // Enf. Ana Paula
-    toProfessionalId: "prof-004", // Próximo enfermeiro
-    handoffType: "shift_change",
-    currentCondition: "Paciente crítico em VM, sedado e em uso de drogas vasoativas.",
+    id: 'handoff-002',
+    patientId: 'patient-uti-001',
+    fromProfessionalId: 'prof-003', // Enf. Ana Paula
+    toProfessionalId: 'prof-004', // Próximo enfermeiro
+    handoffType: 'shift_change',
+    currentCondition: 'Paciente crítico em VM, sedado e em uso de drogas vasoativas.',
     vitalSigns: {
-      pa: "90/60 mmHg (com noradrenalina)",
-      fc: "110 bpm",
-      fr: "20 irpm (VM)",
-      temp: "37.8°C",
-      spo2: "94%",
+      pa: '90/60 mmHg (com noradrenalina)',
+      fc: '110 bpm',
+      fr: '20 irpm (VM)',
+      temp: '37.8°C',
+      spo2: '94%',
     },
     activeMedications: [
-      "Noradrenalina 0.3 mcg/kg/min",
-      "Midazolam 5mg/h",
-      "Fentanil 100mcg/h",
-      "Omeprazol 40mg EV 12/12h",
+      'Noradrenalina 0.3 mcg/kg/min',
+      'Midazolam 5mg/h',
+      'Fentanil 100mcg/h',
+      'Omeprazol 40mg EV 12/12h',
     ],
-    allergies: ["Não conhecidas"],
+    allergies: ['Não conhecidas',],
     recentProcedures: [
-      "Intubação orotraqueal - 20/08/2024",
-      "Cateter venoso central - 20/08/2024",
-      "Sonda vesical de demora - 20/08/2024",
+      'Intubação orotraqueal - 20/08/2024',
+      'Cateter venoso central - 20/08/2024',
+      'Sonda vesical de demora - 20/08/2024',
     ],
     careInstructions:
-      "Manter sedação conforme escala RASS -2 a -3. Controlar PAM > 65mmHg. Aspiração TQT conforme necessário.",
+      'Manter sedação conforme escala RASS -2 a -3. Controlar PAM > 65mmHg. Aspiração TQT conforme necessário.',
     specialRequirements: [
-      "Controle rigoroso de débito urinário",
-      "Mudança de decúbito a cada 2h",
-      "Higiene oral com clorexidina 12/12h",
+      'Controle rigoroso de débito urinário',
+      'Mudança de decúbito a cada 2h',
+      'Higiene oral com clorexidina 12/12h',
     ],
     riskFactors: [
-      "Choque séptico",
-      "Insuficiência respiratória aguda",
-      "Lesão renal aguda",
+      'Choque séptico',
+      'Insuficiência respiratória aguda',
+      'Lesão renal aguda',
     ],
     followUpRequired: [
-      "Gasometria arterial em 4h",
-      "Raio-X tórax pela manhã",
-      "Culturas pendentes - aguardar resultado",
+      'Gasometria arterial em 4h',
+      'Raio-X tórax pela manhã',
+      'Culturas pendentes - aguardar resultado',
     ],
-    status: "pending",
+    status: 'pending',
     acknowledgedAt: null,
     completedAt: null,
-    notes: "Família presente, muito ansiosa. Necessita suporte emocional.",
-    createdAt: new Date("2024-08-21T16:00:00"),
-    updatedAt: new Date("2024-08-21T16:00:00"),
-    priority: "high",
+    notes: 'Família presente, muito ansiosa. Necessita suporte emocional.',
+    createdAt: new Date('2024-08-21T16:00:00',),
+    updatedAt: new Date('2024-08-21T16:00:00',),
+    priority: 'high',
   },
-]; // Mock staff data for communication
+] // Mock staff data for communication
 const mockStaffForComms = [
   {
-    id: "prof-001",
-    name: "Dra. Maria Silva",
-    role: "Cardiologista",
-    avatar: "MS",
+    id: 'prof-001',
+    name: 'Dra. Maria Silva',
+    role: 'Cardiologista',
+    avatar: 'MS',
   },
   {
-    id: "prof-002",
-    name: "Dr. Roberto Oliveira",
-    role: "Emergencista",
-    avatar: "RO",
+    id: 'prof-002',
+    name: 'Dr. Roberto Oliveira',
+    role: 'Emergencista',
+    avatar: 'RO',
   },
   {
-    id: "prof-003",
-    name: "Enf. Ana Paula",
-    role: "Enfermeira UTI",
-    avatar: "AP",
+    id: 'prof-003',
+    name: 'Enf. Ana Paula',
+    role: 'Enfermeira UTI',
+    avatar: 'AP',
   },
   {
-    id: "prof-004",
-    name: "Enf. Carlos Lima",
-    role: "Enfermeiro",
-    avatar: "CL",
+    id: 'prof-004',
+    name: 'Enf. Carlos Lima',
+    role: 'Enfermeiro',
+    avatar: 'CL',
   },
-  { id: "admin-001", name: "Administração", role: "Sistema", avatar: "AD" },
-];
+  { id: 'admin-001', name: 'Administração', role: 'Sistema', avatar: 'AD', },
+]
 
 // Helper functions for message status and priority
-const getPriorityInfo = (priority: CommunicationPriority) => {
+const getPriorityInfo = (priority: CommunicationPriority,) => {
   switch (priority) {
-    case "emergency": {
+    case 'emergency': {
       return {
-        color: "text-red-600",
-        bg: "bg-red-100",
+        color: 'text-red-600',
+        bg: 'bg-red-100',
         icon: AlertTriangle,
-        label: "EMERGÊNCIA",
-      };
+        label: 'EMERGÊNCIA',
+      }
     }
-    case "urgent": {
+    case 'urgent': {
       return {
-        color: "text-orange-600",
-        bg: "bg-orange-100",
+        color: 'text-orange-600',
+        bg: 'bg-orange-100',
         icon: Bell,
-        label: "Urgente",
-      };
+        label: 'Urgente',
+      }
     }
-    case "high": {
+    case 'high': {
       return {
-        color: "text-yellow-600",
-        bg: "bg-yellow-100",
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
         icon: Star,
-        label: "Alta",
-      };
+        label: 'Alta',
+      }
     }
-    case "normal": {
+    case 'normal': {
       return {
-        color: "text-blue-600",
-        bg: "bg-blue-100",
+        color: 'text-blue-600',
+        bg: 'bg-blue-100',
         icon: MessageCircle,
-        label: "Normal",
-      };
+        label: 'Normal',
+      }
     }
-    case "low": {
+    case 'low': {
       return {
-        color: "text-gray-600",
-        bg: "bg-gray-100",
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
         icon: Clock,
-        label: "Baixa",
-      };
+        label: 'Baixa',
+      }
     }
     default: {
       return {
-        color: "text-gray-600",
-        bg: "bg-gray-100",
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
         icon: MessageCircle,
-        label: "Normal",
-      };
+        label: 'Normal',
+      }
     }
   }
-};
+}
 
-const getMessageTypeIcon = (type: string) => {
+const getMessageTypeIcon = (type: string,) => {
   switch (type) {
-    case "handoff": {
-      return ArrowRight;
+    case 'handoff': {
+      return ArrowRight
     }
-    case "alert": {
-      return AlertTriangle;
+    case 'alert': {
+      return AlertTriangle
     }
-    case "voice": {
-      return Phone;
+    case 'voice': {
+      return Phone
     }
-    case "file": {
-      return FileText;
+    case 'file': {
+      return FileText
     }
     default: {
-      return MessageCircle;
+      return MessageCircle
     }
   }
-};
+}
 
-const getHandoffStatusInfo = (status: string) => {
+const getHandoffStatusInfo = (status: string,) => {
   switch (status) {
-    case "pending": {
+    case 'pending': {
       return {
-        color: "text-yellow-600",
-        bg: "bg-yellow-100",
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
         icon: Clock,
-        label: "Pendente",
-      };
+        label: 'Pendente',
+      }
     }
-    case "acknowledged": {
+    case 'acknowledged': {
       return {
-        color: "text-blue-600",
-        bg: "bg-blue-100",
+        color: 'text-blue-600',
+        bg: 'bg-blue-100',
         icon: CheckCircle2,
-        label: "Confirmado",
-      };
+        label: 'Confirmado',
+      }
     }
-    case "completed": {
+    case 'completed': {
       return {
-        color: "text-green-600",
-        bg: "bg-green-100",
+        color: 'text-green-600',
+        bg: 'bg-green-100',
         icon: CheckCircle2,
-        label: "Concluído",
-      };
+        label: 'Concluído',
+      }
     }
     default: {
       return {
-        color: "text-gray-600",
-        bg: "bg-gray-100",
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
         icon: Clock,
-        label: "Indefinido",
-      };
+        label: 'Indefinido',
+      }
     }
   }
-};
+}
 
 interface CommunicationHubProps {
-  emergencyMode?: boolean;
+  emergencyMode?: boolean
 }
 
 export function CommunicationHub({
   emergencyMode = false,
-}: CommunicationHubProps) {
-  const [activeTab, setActiveTab] = useState("messages");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState<
-    CommunicationPriority | "all"
-  >("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(null);
-  const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
-  const [newMessage, setNewMessage] = useState({
-    subject: "",
-    content: "",
-    priority: "normal" as CommunicationPriority,
+}: CommunicationHubProps,) {
+  const [activeTab, setActiveTab,] = useState('messages',)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [priorityFilter, setPriorityFilter,] = useState<
+    CommunicationPriority | 'all'
+  >('all',)
+  const [typeFilter, setTypeFilter,] = useState<string>('all',)
+  const [showUnreadOnly, setShowUnreadOnly,] = useState(false,)
+  const [_selectedMessage, setSelectedMessage,] = useState<TeamMessage | null>(null,)
+  const [isComposeDialogOpen, setIsComposeDialogOpen,] = useState(false,)
+  const [newMessage, setNewMessage,] = useState({
+    subject: '',
+    content: '',
+    priority: 'normal' as CommunicationPriority,
     recipients: [] as string[],
     isEmergency: false,
     requiresAcknowledgment: false,
-  }); // Filter messages
+  },) // Filter messages
   const filteredMessages = useMemo(() => {
-    return mockTeamMessages.filter((message) => {
+    return mockTeamMessages.filter((message,) => {
       // Search filter
       if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const staff = mockStaffForComms.find((s) => s.id === message.senderId);
-        const matchesSearch = message.subject.toLowerCase().includes(searchLower)
-          || message.content.toLowerCase().includes(searchLower)
-          || staff?.name.toLowerCase().includes(searchLower);
+        const searchLower = searchQuery.toLowerCase()
+        const staff = mockStaffForComms.find((s,) => s.id === message.senderId)
+        const matchesSearch = message.subject.toLowerCase().includes(searchLower,)
+          || message.content.toLowerCase().includes(searchLower,)
+          || staff?.name.toLowerCase().includes(searchLower,)
 
         if (!matchesSearch) {
-          return false;
+          return false
         }
       }
 
       // Priority filter
-      if (priorityFilter !== "all" && message.priority !== priorityFilter) {
-        return false;
+      if (priorityFilter !== 'all' && message.priority !== priorityFilter) {
+        return false
       }
 
       // Type filter
-      if (typeFilter !== "all" && message.messageType !== typeFilter) {
-        return false;
+      if (typeFilter !== 'all' && message.messageType !== typeFilter) {
+        return false
       }
 
       // Unread filter
-      if (showUnreadOnly && message.status === "read") {
-        return false;
+      if (showUnreadOnly && message.status === 'read') {
+        return false
       }
 
-      return true;
-    });
-  }, [searchQuery, priorityFilter, typeFilter, showUnreadOnly]);
+      return true
+    },)
+  }, [searchQuery, priorityFilter, typeFilter, showUnreadOnly,],)
 
   // Get staff member info
-  const getStaffInfo = (id: string) => {
+  const getStaffInfo = (id: string,) => {
     return (
-      mockStaffForComms.find((staff) => staff.id === id) || {
+      mockStaffForComms.find((staff,) => staff.id === id) || {
         id,
-        name: "Profissional",
-        role: "Indefinido",
-        avatar: "PR",
+        name: 'Profissional',
+        role: 'Indefinido',
+        avatar: 'PR',
       }
-    );
-  };
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -544,7 +544,7 @@ export function CommunicationHub({
             <AlertTriangle className="mr-2 h-4 w-4" />
             Protocolos
           </TabsTrigger>
-        </TabsList>{" "}
+        </TabsList>{' '}
         {/* Messages Tab */}
         <TabsContent className="space-y-6" value="messages">
           {/* Search and Filters */}
@@ -564,7 +564,7 @@ export function CommunicationHub({
                     <Input
                       aria-label="Buscar mensagens"
                       className="pl-10"
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e,) => setSearchQuery(e.target.value,)}
                       placeholder="Buscar mensagens..."
                       value={searchQuery}
                     />
@@ -573,8 +573,8 @@ export function CommunicationHub({
 
                 {/* Priority Filter */}
                 <Select
-                  onValueChange={(value: string) =>
-                    setPriorityFilter(value as CommunicationPriority | "all")}
+                  onValueChange={(value: string,) =>
+                    setPriorityFilter(value as CommunicationPriority | 'all',)}
                   value={priorityFilter}
                 >
                   <SelectTrigger>
@@ -609,9 +609,9 @@ export function CommunicationHub({
                 <div className="flex items-center space-x-2">
                   <Button
                     className="text-xs"
-                    onClick={() => setShowUnreadOnly(!showUnreadOnly)}
+                    onClick={() => setShowUnreadOnly(!showUnreadOnly,)}
                     size="sm"
-                    variant={showUnreadOnly ? "default" : "outline"}
+                    variant={showUnreadOnly ? 'default' : 'outline'}
                   >
                     <Filter className="mr-1 h-3 w-3" />
                     Não Lidas
@@ -619,7 +619,7 @@ export function CommunicationHub({
                 </div>
               </div>
             </CardContent>
-          </Card>{" "}
+          </Card>{' '}
           {/* Messages List */}
           <Card>
             <CardHeader>
@@ -630,27 +630,27 @@ export function CommunicationHub({
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {filteredMessages.map((message) => {
-                  const senderInfo = getStaffInfo(message.senderId);
-                  const priorityInfo = getPriorityInfo(message.priority);
-                  const { icon: PriorityIcon } = priorityInfo;
-                  const TypeIcon = getMessageTypeIcon(message.messageType);
-                  const isUnread = message.status !== "read";
+                {filteredMessages.map((message,) => {
+                  const senderInfo = getStaffInfo(message.senderId,)
+                  const priorityInfo = getPriorityInfo(message.priority,)
+                  const { icon: PriorityIcon, } = priorityInfo
+                  const TypeIcon = getMessageTypeIcon(message.messageType,)
+                  const isUnread = message.status !== 'read'
 
                   return (
                     <button
                       type="button"
                       className={`cursor-pointer rounded-lg border p-4 transition-all duration-200 hover:shadow-md text-left w-full ${
                         isUnread
-                          ? "border-blue-200 bg-blue-50"
-                          : "border-border bg-background"
-                      } ${message.isEmergency ? "border-red-400 ring-2 ring-red-300" : ""}`}
+                          ? 'border-blue-200 bg-blue-50'
+                          : 'border-border bg-background'
+                      } ${message.isEmergency ? 'border-red-400 ring-2 ring-red-300' : ''}`}
                       key={message.id}
-                      onClick={() => setSelectedMessage(message)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setSelectedMessage(message);
+                      onClick={() => setSelectedMessage(message,)}
+                      onKeyDown={(e,) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setSelectedMessage(message,)
                         }
                       }}
                     >
@@ -685,10 +685,10 @@ export function CommunicationHub({
                             <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                               <TypeIcon className="h-3 w-3" />
                               <span>
-                                {message.createdAt.toLocaleTimeString("pt-BR", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
+                                {message.createdAt.toLocaleTimeString('pt-BR', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                },)}
                               </span>
                             </div>
                           </div>
@@ -702,8 +702,8 @@ export function CommunicationHub({
                             <h3
                               className={`truncate font-medium text-sm ${
                                 isUnread
-                                  ? "text-foreground"
-                                  : "text-muted-foreground"
+                                  ? 'text-foreground'
+                                  : 'text-muted-foreground'
                               }`}
                             >
                               {message.subject}
@@ -736,12 +736,12 @@ export function CommunicationHub({
                                 <Badge
                                   className="text-xs"
                                   variant={message.acknowledgedBy.length > 0
-                                    ? "default"
-                                    : "secondary"}
+                                    ? 'default'
+                                    : 'secondary'}
                                 >
                                   {message.acknowledgedBy.length > 0
-                                    ? "✓ Confirmado"
-                                    : "Aguarda Confirmação"}
+                                    ? '✓ Confirmado'
+                                    : 'Aguarda Confirmação'}
                                 </Badge>
                               )}
                               {isUnread && <div className="h-2 w-2 rounded-full bg-blue-500" />}
@@ -777,7 +777,7 @@ export function CommunicationHub({
                             </DropdownMenuItem>
                             {message.requiresAcknowledgment
                               && !message.acknowledgedBy.includes(
-                                "current-user",
+                                'current-user',
                               ) && (
                               <DropdownMenuItem>
                                 <CheckCircle2 className="mr-2 h-4 w-4" />
@@ -788,8 +788,8 @@ export function CommunicationHub({
                         </DropdownMenu>
                       </div>
                     </button>
-                  );
-                })}
+                  )
+                },)}
 
                 {/* Empty State */}
                 {filteredMessages.length === 0 && (
@@ -810,7 +810,7 @@ export function CommunicationHub({
               </div>
             </CardContent>
           </Card>
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Handoffs Tab */}
         <TabsContent className="space-y-6" value="handoffs">
           <Card>
@@ -822,12 +822,12 @@ export function CommunicationHub({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockPatientHandoffs.map((handoff) => {
-                  const fromStaff = getStaffInfo(handoff.fromProfessionalId);
-                  const toStaff = getStaffInfo(handoff.toProfessionalId);
-                  const statusInfo = getHandoffStatusInfo(handoff.status);
-                  const { icon: StatusIcon } = statusInfo;
-                  const priorityInfo = getPriorityInfo(handoff.priority);
+                {mockPatientHandoffs.map((handoff,) => {
+                  const fromStaff = getStaffInfo(handoff.fromProfessionalId,)
+                  const toStaff = getStaffInfo(handoff.toProfessionalId,)
+                  const statusInfo = getHandoffStatusInfo(handoff.status,)
+                  const { icon: StatusIcon, } = statusInfo
+                  const priorityInfo = getPriorityInfo(handoff.priority,)
 
                   return (
                     <Card className="relative" key={handoff.id}>
@@ -884,13 +884,13 @@ export function CommunicationHub({
                               Paciente ID: {handoff.patientId}
                             </h4>
                             <Badge className="text-xs" variant="outline">
-                              {handoff.handoffType === "transfer"
-                                ? "Transferência"
-                                : handoff.handoffType === "shift_change"
-                                ? "Troca de Plantão"
-                                : handoff.handoffType === "emergency"
-                                ? "Emergência"
-                                : "Procedimento"}
+                              {handoff.handoffType === 'transfer'
+                                ? 'Transferência'
+                                : handoff.handoffType === 'shift_change'
+                                ? 'Troca de Plantão'
+                                : handoff.handoffType === 'emergency'
+                                ? 'Emergência'
+                                : 'Procedimento'}
                             </Badge>
                           </div>
                           <p className="text-muted-foreground text-sm">
@@ -900,25 +900,25 @@ export function CommunicationHub({
 
                         {/* Vital Signs */}
                         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-                          {Object.entries(handoff.vitalSigns).map(
-                            ([key, value]) => (
+                          {Object.entries(handoff.vitalSigns,).map(
+                            ([key, value,],) => (
                               <div
                                 className="rounded bg-gray-50 p-2 text-center"
                                 key={key}
                               >
                                 <div className="font-medium text-muted-foreground text-xs uppercase">
-                                  {key === "pa"
-                                    ? "PA"
-                                    : key === "fc"
-                                    ? "FC"
-                                    : key === "fr"
-                                    ? "FR"
-                                    : key === "temp"
-                                    ? "T°"
-                                    : "SpO₂"}
+                                  {key === 'pa'
+                                    ? 'PA'
+                                    : key === 'fc'
+                                    ? 'FC'
+                                    : key === 'fr'
+                                    ? 'FR'
+                                    : key === 'temp'
+                                    ? 'T°'
+                                    : 'SpO₂'}
                                 </div>
                                 <div className="mt-1 font-medium text-sm">
-                                  {String(value)}
+                                  {String(value,)}
                                 </div>
                               </div>
                             ),
@@ -932,7 +932,7 @@ export function CommunicationHub({
                             Medicações Ativas
                           </h5>
                           <div className="space-y-1">
-                            {handoff.activeMedications.map((med, idx) => (
+                            {handoff.activeMedications.map((med, idx,) => (
                               <div
                                 className="rounded bg-yellow-50 px-2 py-1 text-sm"
                                 key={idx}
@@ -951,7 +951,7 @@ export function CommunicationHub({
                               Alergias
                             </h5>
                             <div className="flex flex-wrap gap-2">
-                              {handoff.allergies.map((allergy, idx) => (
+                              {handoff.allergies.map((allergy, idx,) => (
                                 <Badge
                                   className="text-xs"
                                   key={idx}
@@ -983,7 +983,7 @@ export function CommunicationHub({
                               Acompanhamento Necessário
                             </h5>
                             <div className="space-y-1">
-                              {handoff.followUpRequired.map((item, idx) => (
+                              {handoff.followUpRequired.map((item, idx,) => (
                                 <div
                                   className="flex items-center text-sm"
                                   key={idx}
@@ -1011,16 +1011,16 @@ export function CommunicationHub({
                         {/* Actions */}
                         <div className="flex items-center justify-between border-t pt-3">
                           <div className="text-muted-foreground text-xs">
-                            Criado em: {handoff.createdAt.toLocaleString("pt-BR")}
+                            Criado em: {handoff.createdAt.toLocaleString('pt-BR',)}
                             {handoff.acknowledgedAt && (
                               <span className="ml-3">
-                                Confirmado em: {handoff.acknowledgedAt.toLocaleString("pt-BR")}
+                                Confirmado em: {handoff.acknowledgedAt.toLocaleString('pt-BR',)}
                               </span>
                             )}
                           </div>
 
                           <div className="flex items-center space-x-2">
-                            {handoff.status === "pending" && (
+                            {handoff.status === 'pending' && (
                               <Button
                                 className="bg-green-600 hover:bg-green-700"
                                 size="sm"
@@ -1037,8 +1037,8 @@ export function CommunicationHub({
                         </div>
                       </CardContent>
                     </Card>
-                  );
-                })}
+                  )
+                },)}
 
                 {/* Empty State */}
                 {mockPatientHandoffs.length === 0 && (
@@ -1347,7 +1347,7 @@ export function CommunicationHub({
                   <SelectValue placeholder="Selecionar profissionais..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockStaffForComms.map((staff) => (
+                  {mockStaffForComms.map((staff,) => (
                     <SelectItem key={staff.id} value={staff.id}>
                       {staff.name} - {staff.role}
                     </SelectItem>
@@ -1365,8 +1365,8 @@ export function CommunicationHub({
                 Prioridade
               </label>
               <Select
-                onValueChange={(value: string) =>
-                  setNewMessage((prev) => ({
+                onValueChange={(value: string,) =>
+                  setNewMessage((prev,) => ({
                     ...prev,
                     priority: value as CommunicationPriority,
                   }))}
@@ -1395,8 +1395,8 @@ export function CommunicationHub({
               </label>
               <Input
                 id="subject-input"
-                onChange={(e) =>
-                  setNewMessage((prev) => ({
+                onChange={(e,) =>
+                  setNewMessage((prev,) => ({
                     ...prev,
                     subject: e.target.value,
                   }))}
@@ -1415,8 +1415,8 @@ export function CommunicationHub({
               </label>
               <Textarea
                 id="message-textarea"
-                onChange={(e) =>
-                  setNewMessage((prev) => ({
+                onChange={(e,) =>
+                  setNewMessage((prev,) => ({
                     ...prev,
                     content: e.target.value,
                   }))}
@@ -1433,8 +1433,8 @@ export function CommunicationHub({
                   checked={newMessage.isEmergency}
                   className="rounded"
                   id="emergency"
-                  onChange={(e) =>
-                    setNewMessage((prev) => ({
+                  onChange={(e,) =>
+                    setNewMessage((prev,) => ({
                       ...prev,
                       isEmergency: e.target.checked,
                     }))}
@@ -1450,8 +1450,8 @@ export function CommunicationHub({
                   checked={newMessage.requiresAcknowledgment}
                   className="rounded"
                   id="acknowledgment"
-                  onChange={(e) =>
-                    setNewMessage((prev) => ({
+                  onChange={(e,) =>
+                    setNewMessage((prev,) => ({
                       ...prev,
                       requiresAcknowledgment: e.target.checked,
                     }))}
@@ -1480,7 +1480,7 @@ export function CommunicationHub({
 
           <DialogFooter>
             <Button
-              onClick={() => setIsComposeDialogOpen(false)}
+              onClick={() => setIsComposeDialogOpen(false,)}
               variant="outline"
             >
               Cancelar
@@ -1493,5 +1493,5 @@ export function CommunicationHub({
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

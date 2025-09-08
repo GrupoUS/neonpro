@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * Compliance Dashboard Page
@@ -6,15 +6,15 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-import { ComplianceStatusDashboard } from "@/components/dashboard/ai-powered";
+import { ComplianceStatusDashboard, } from '@/components/dashboard/ai-powered'
 
 interface CompliancePageProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Record<string, string | string[] | undefined>
 }
 
 export default function CompliancePage({
   searchParams: _searchParams,
-}: CompliancePageProps) {
+}: CompliancePageProps,) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6"
@@ -42,5 +42,5 @@ export default function CompliancePage({
         </div>
       </div>
     </main>
-  );
+  )
 }

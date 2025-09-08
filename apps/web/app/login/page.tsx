@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import type { Metadata, } from 'next'
+import Link from 'next/link'
 
-import { LoginForm } from "./login-form";
+import { LoginForm, } from './login-form'
 
 export const metadata: Metadata = {
-  title: "Login - NeonPro",
-  description: "Acesse sua conta NeonPro",
-};
+  title: 'Login - NeonPro',
+  description: 'Acesse sua conta NeonPro',
+}
 
 export default function LoginPage() {
   return (
@@ -106,21 +106,21 @@ export default function LoginPage() {
           {/* Enhanced Legal Notice */}
           <div className="space-y-4">
             <p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
-              Ao continuar, você concorda com nossos{" "}
+              Ao continuar, você concorda com nossos{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/terms"
               >
                 Termos de Serviço
               </Link>
-              ,{" "}
+              ,{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/privacy"
               >
                 Política de Privacidade LGPD
-              </Link>{" "}
-              e{" "}
+              </Link>{' '}
+              e{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/compliance"
@@ -141,5 +141,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -3,17 +3,17 @@
  * Integrado com AuthTokenManager e Supabase
  */
 
-import { createMiddleware } from "hono/factory";
-import { HTTPException } from "hono/http-exception";
-import jwt from "jsonwebtoken";
-import type { AuthContext } from "../types/hono.types";
+import { createMiddleware, } from 'hono/factory'
+import { HTTPException, } from 'hono/http-exception'
+import jwt from 'jsonwebtoken'
+import type { AuthContext, } from '../types/hono.types'
 
 export interface AuthUser {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string;
-  tenantId?: string;
+  id: string
+  email: string
+  name?: string
+  role?: string
+  tenantId?: string
 }
 
 // Module augmentation moved to types/hono.types.ts to avoid conflicts
@@ -27,39 +27,39 @@ export interface AuthUser {
 /**
  * Extrai token do header Authorization
  */
-function extractTokenFromHeader(authHeader: string | undefined): string | null {
+function extractTokenFromHeader(authHeader: string | undefined,): string | null {
   if (!authHeader) {
-    return null;
+    return null
   }
 
-  const parts = authHeader.split(" ");
-  if (parts.length !== 2 || parts[0] !== "Bearer") {
-    return null;
+  const parts = authHeader.split(' ',)
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    return null
   }
 
-  return parts[1] || null;
+  return parts[1] || null
 }
 
 /**
  * Valida e decodifica JWT token
  */
-async function validateJWTToken(token: string): Promise<AuthUser | null> {
+async function validateJWTToken(token: string,): Promise<AuthUser | null> {
   try {
     if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET not configured");
+      throw new Error('JWT_SECRET not configured',)
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as unknown;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET,) as unknown
 
-    if (!decoded || typeof decoded !== "object") {
-      return null;
+    if (!decoded || typeof decoded !== 'object') {
+      return null
     }
 
-    const payload = decoded as Record<string, unknown>;
+    const payload = decoded as Record<string, unknown>
 
     // Validar estrutura do token
     if (!(payload.sub && payload.email)) {
-      return null;
+      return null
     }
 
     return {
@@ -68,9 +68,9 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
       name: payload.name as string,
       role: payload.role as string,
       tenantId: payload.tenant_id as string,
-    };
+    }
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -78,166 +78,166 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
  * Middleware obrigatório de autenticação
  * Rejeita requests sem token válido
  */
-export const requireAuth = createMiddleware(async (c, next) => {
-  const authHeader = c.req.header("authorization");
-  const token = extractTokenFromHeader(authHeader);
+export const requireAuth = createMiddleware(async (c, next,) => {
+  const authHeader = c.req.header('authorization',)
+  const token = extractTokenFromHeader(authHeader,)
 
   if (!token) {
     throw new HTTPException(401, {
-      message: "Token de autenticação obrigatório",
-    });
+      message: 'Token de autenticação obrigatório',
+    },)
   }
 
-  const user = await validateJWTToken(token);
+  const user = await validateJWTToken(token,)
 
   if (!user) {
     throw new HTTPException(401, {
-      message: "Token de autenticação inválido",
-    });
+      message: 'Token de autenticação inválido',
+    },)
   }
 
   // Adicionar dados de auth ao contexto
-  c.set("auth", { user, token });
+  c.set('auth', { user, token, },)
 
-  await next();
-});
+  await next()
+},)
 
 /**
  * Middleware opcional de autenticação
  * Permite requests sem token, mas adiciona dados se disponível
  */
-export const optionalAuth = createMiddleware(async (c, next) => {
-  const authHeader = c.req.header("authorization");
-  const token = extractTokenFromHeader(authHeader);
+export const optionalAuth = createMiddleware(async (c, next,) => {
+  const authHeader = c.req.header('authorization',)
+  const token = extractTokenFromHeader(authHeader,)
 
   if (token) {
-    const user = await validateJWTToken(token);
+    const user = await validateJWTToken(token,)
 
     if (user) {
-      c.set("auth", { user, token });
+      c.set('auth', { user, token, },)
     }
   }
 
-  await next();
-});
+  await next()
+},)
 
 /**
  * Middleware de verificação de role
  */
-export const requireRole = (requiredRole: string) => {
-  return createMiddleware(async (c, next) => {
-    const authContext = c.get("auth");
+export const requireRole = (requiredRole: string,) => {
+  return createMiddleware(async (c, next,) => {
+    const authContext = c.get('auth',)
 
     if (!authContext) {
       throw new HTTPException(401, {
-        message: "Autenticação obrigatória",
-      });
+        message: 'Autenticação obrigatória',
+      },)
     }
 
     if (authContext.user.role !== requiredRole) {
       throw new HTTPException(403, {
         message: `Role '${requiredRole}' obrigatória`,
-      });
+      },)
     }
 
-    await next();
-  });
-};
+    await next()
+  },)
+}
 
 /**
  * Middleware de verificação de permissões
  */
-export const requirePermissions = (permissions: string[]) => {
-  return createMiddleware(async (c, next) => {
-    const authContext = c.get("auth");
+export const requirePermissions = (permissions: string[],) => {
+  return createMiddleware(async (c, next,) => {
+    const authContext = c.get('auth',)
 
     if (!authContext) {
       throw new HTTPException(401, {
-        message: "Autenticação obrigatória",
-      });
+        message: 'Autenticação obrigatória',
+      },)
     }
 
-    const { user } = authContext;
+    const { user, } = authContext
 
     // Admin tem todas as permissões
-    if (user.role === "admin") {
-      await next();
-      return;
+    if (user.role === 'admin') {
+      await next()
+      return
     }
 
     // TODO: Implementar sistema de permissões mais sofisticado
     // Por enquanto, apenas verifica roles básicas
-    const hasPermissions = permissions.every((permission) => {
+    const hasPermissions = permissions.every((permission,) => {
       switch (permission) {
-        case "read: {patients":
-          return ["healthcare_professional", "nurse", "doctor"].includes(
-            user.role || "",
-          );
-        case "write: {patients":
-          return ["healthcare_professional", "doctor"].includes(
-            user.role || "",
-          );
-        case "read: {analytics":
-          return ["admin", "manager"].includes(user.role || "");
-        case "write: {system":
-          return user.role === "admin";
+        case 'read: {patients':
+          return ['healthcare_professional', 'nurse', 'doctor',].includes(
+            user.role || '',
+          )
+        case 'write: {patients':
+          return ['healthcare_professional', 'doctor',].includes(
+            user.role || '',
+          )
+        case 'read: {analytics':
+          return ['admin', 'manager',].includes(user.role || '',)
+        case 'write: {system':
+          return user.role === 'admin'
         default: {
-          return false;
+          return false
         }
       }
-    });
+    },)
 
     if (!hasPermissions) {
       throw new HTTPException(403, {
-        message: "Permissões insuficientes",
-      });
+        message: 'Permissões insuficientes',
+      },)
     }
 
-    await next();
-  });
-};
+    await next()
+  },)
+}
 
 /**
  * Middleware de verificação de tenant
  * Garante que usuário só acessa dados do seu tenant
  */
-export const requireTenant = createMiddleware(async (c, next) => {
-  const authContext = c.get("auth");
+export const requireTenant = createMiddleware(async (c, next,) => {
+  const authContext = c.get('auth',)
 
   if (!authContext) {
     throw new HTTPException(401, {
-      message: "Autenticação obrigatória",
-    });
+      message: 'Autenticação obrigatória',
+    },)
   }
 
-  const { user } = authContext;
-  const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
+  const { user, } = authContext
+  const requestedTenantId = c.req.header('x-tenant-id',) || c.req.param('tenantId',)
 
   if (!user.tenantId) {
     throw new HTTPException(403, {
-      message: "Usuário não associado a nenhum tenant",
-    });
+      message: 'Usuário não associado a nenhum tenant',
+    },)
   }
 
   if (requestedTenantId && user.tenantId !== requestedTenantId) {
     throw new HTTPException(403, {
-      message: "Acesso negado ao tenant solicitado",
-    });
+      message: 'Acesso negado ao tenant solicitado',
+    },)
   }
 
-  await next();
-});
+  await next()
+},)
 
 /**
  * Utility para obter dados de autenticação do contexto
  */
 export function getAuthContext(c: {
-  get: (key: string) => unknown;
-}): AuthContext | null {
+  get: (key: string,) => unknown
+},): AuthContext | null {
   try {
-    return (c.get("auth") as AuthContext) || null;
+    return (c.get('auth',) as AuthContext) || null
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -245,21 +245,21 @@ export function getAuthContext(c: {
  * Utility para obter usuário atual
  */
 export function getCurrentUser(c: {
-  get: (key: string) => unknown;
-}): AuthUser | null {
-  const authContext = getAuthContext(c);
-  return authContext?.user || null;
+  get: (key: string,) => unknown
+},): AuthUser | null {
+  const authContext = getAuthContext(c,)
+  return authContext?.user || null
 }
 
 /**
  * Middleware combinado para rotas protegidas com tenant
  */
-export const protectedRoute = [requireAuth, requireTenant];
+export const protectedRoute = [requireAuth, requireTenant,]
 
 /**
  * Middleware para rotas administrativas
  */
-export const adminRoute = [requireAuth, requireRole("admin")];
+export const adminRoute = [requireAuth, requireRole('admin',),]
 
 /**
  * Middleware para profissionais de saúde
@@ -267,5 +267,5 @@ export const adminRoute = [requireAuth, requireRole("admin")];
 export const healthcareRoute = [
   requireAuth,
   requireTenant,
-  requirePermissions(["read:patients"]),
-];
+  requirePermissions(['read:patients',],),
+]

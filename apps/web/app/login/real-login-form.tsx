@@ -1,91 +1,111 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
 import {
   Card,
   CardContent, /*, CardDescription, CardHeader, CardTitle*/
-} from "@/components/ui/card"; // CardDescription, CardHeader, CardTitle unused imports
-import { Icons } from "@/components/ui/icons";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useRealAuthContext } from "@/contexts/RealAuthContext";
-import { toastHelpers } from "@/lib/toast-helpers";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+} from '@/components/ui/card' // CardDescription, CardHeader, CardTitle unused imports
+import { Icons, } from '@/components/ui/icons'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { useRealAuthContext, } from '@/contexts/RealAuthContext'
+import { toastHelpers, } from '@/lib/toast-helpers'
+import { AlertCircle, Eye, EyeOff, } from 'lucide-react'
+import { useRouter, } from 'next/navigation'
+import { useEffect, useState, } from 'react'
+
+// Proper TypeScript result types for authentication
+interface AuthSuccess {
+  success: true
+  type: 'success'
+}
+
+interface AuthMfaRequired {
+  success: false
+  type: 'mfa_required'
+  requiresMfa: true
+}
+
+interface AuthError {
+  success: false
+  type: 'error'
+  error: string
+}
+
+type AuthResult = AuthSuccess | AuthMfaRequired | AuthError
 
 export function RealLoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mfaCode, setMfaCode] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showMfaInput, setShowMfaInput] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail,] = useState('',)
+  const [password, setPassword,] = useState('',)
+  const [mfaCode, setMfaCode,] = useState('',)
+  const [showPassword, setShowPassword,] = useState(false,)
+  const [showMfaInput, setShowMfaInput,] = useState(false,)
+  const [isSubmitting, setIsSubmitting,] = useState(false,)
 
-  const { login, isLoading, error, isAuthenticated, clearError } = useRealAuthContext();
-  const router = useRouter();
+  const { login, isLoading, error, isAuthenticated, clearError, } = useRealAuthContext()
+  const router = useRouter()
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push('/dashboard',)
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router,],)
 
   // Clear error when inputs change
   useEffect(() => {
     if (error) {
-      clearError();
+      clearError()
     }
-  }, [email, password, mfaCode, error, clearError]);
+  }, [email, password, mfaCode, error, clearError,],)
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    clearError();
+  const handleEmailLogin = async (e: React.FormEvent,) => {
+    e.preventDefault()
+    setIsSubmitting(true,)
+    clearError()
 
     try {
       const result = await login({
         email: email.trim(),
         password,
-        ...(mfaCode && { mfaCode: mfaCode.trim() }),
-      });
+        ...(mfaCode && { mfaCode: mfaCode.trim(), }),
+      },) as AuthResult
 
-      if (result.success) {
-        toastHelpers.success.login();
-        router.push("/dashboard");
-      } else if ((result as any).requiresMfa) {
-        setShowMfaInput(true);
-        toastHelpers.info("Por favor, insira seu código de autenticação de dois fatores");
-      } else {
+      if (result.success && result.type === 'success') {
+        toastHelpers.success.login()
+        router.push('/dashboard',)
+      } else if (!result.success && result.type === 'mfa_required' && result.requiresMfa) {
+        setShowMfaInput(true,)
+        toastHelpers.info('Por favor, insira seu código de autenticação de dois fatores',)
+      } else if (!result.success && result.type === 'error') {
         // Error is handled by the context
-        if (result.error?.includes("Invalid") || result.error?.includes("credentials")) {
-          toastHelpers.error.validation("Email ou senha incorretos");
-        } else if (result.error?.includes("locked")) {
+        if (result.error?.includes('Invalid',) || result.error?.includes('credentials',)) {
+          toastHelpers.error.validation('Email ou senha incorretos',)
+        } else if (result.error?.includes('locked',)) {
           toastHelpers.error.generic(
-            "Conta temporariamente bloqueada. Tente novamente mais tarde.",
-          );
-        } else if (result.error?.includes("MFA")) {
-          toastHelpers.error.validation("Código MFA inválido");
+            'Conta temporariamente bloqueada. Tente novamente mais tarde.',
+          )
+        } else if (result.error?.includes('MFA',)) {
+          toastHelpers.error.validation('Código MFA inválido',)
         } else {
-          toastHelpers.error.generic();
+          toastHelpers.error.generic()
         }
       }
     } catch (err) {
-      console.error("Login error:", err);
-      toastHelpers.error.network();
+      console.error('Login error:', err,)
+      toastHelpers.error.network()
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false,)
     }
-  };
+  }
 
   const handleGoogleLogin = async () => {
-    toastHelpers.info("Login social em desenvolvimento. Use email e senha por enquanto.");
-  };
+    toastHelpers.info('Login social em desenvolvimento. Use email e senha por enquanto.',)
+  }
 
-  const isFormValid = email.trim() && password && (!showMfaInput || mfaCode.trim());
-  const buttonText = isSubmitting ? "Entrando..." : "Entrar";
+  const isFormValid = email.trim() && password && (!showMfaInput || mfaCode.trim())
+  const buttonText = isSubmitting ? 'Entrando...' : 'Entrar'
 
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -119,7 +139,7 @@ export function RealLoginForm() {
                 type="email"
                 placeholder="nome@clinica.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e,) => setEmail(e.target.value,)}
                 disabled={isSubmitting || isLoading}
                 autoComplete="email"
                 required
@@ -132,10 +152,10 @@ export function RealLoginForm() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Digite sua senha"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e,) => setPassword(e.target.value,)}
                   disabled={isSubmitting || isLoading}
                   autoComplete="current-password"
                   required
@@ -145,7 +165,7 @@ export function RealLoginForm() {
                   variant="ghost"
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword,)}
                   disabled={isSubmitting || isLoading}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -162,7 +182,7 @@ export function RealLoginForm() {
                   type="text"
                   placeholder="123456"
                   value={mfaCode}
-                  onChange={(e) => setMfaCode(e.target.value)}
+                  onChange={(e,) => setMfaCode(e.target.value,)}
                   disabled={isSubmitting || isLoading}
                   autoComplete="one-time-code"
                   maxLength={6}
@@ -217,11 +237,11 @@ export function RealLoginForm() {
 
       {/* Registration Link */}
       <p className="px-8 text-center text-muted-foreground text-sm">
-        Não tem uma conta?{" "}
+        Não tem uma conta?{' '}
         <Button
           variant="link"
           className="p-0 font-normal underline underline-offset-4 hover:text-primary"
-          onClick={() => router.push("/auth/cadastrar")}
+          onClick={() => router.push('/auth/cadastrar',)}
         >
           Cadastre-se aqui
         </Button>
@@ -229,25 +249,25 @@ export function RealLoginForm() {
 
       {/* Forgot Password Link */}
       <p className="px-8 text-center text-muted-foreground text-sm">
-        Esqueceu sua senha?{" "}
+        Esqueceu sua senha?{' '}
         <Button
           variant="link"
           className="p-0 font-normal underline underline-offset-4 hover:text-primary"
-          onClick={() => toastHelpers.info("Recuperação de senha em desenvolvimento")}
+          onClick={() => toastHelpers.info('Recuperação de senha em desenvolvimento',)}
         >
           Clique aqui
         </Button>
       </p>
 
       {/* Development Notice - Only show in development */}
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === 'development' && (
         <div className="rounded-md bg-blue-50 p-4 text-center dark:bg-blue-950">
           <p className="text-blue-700 text-xs dark:text-blue-300">
-            🚧 <strong>Modo Desenvolvimento:</strong>{" "}
+            🚧 <strong>Modo Desenvolvimento:</strong>{' '}
             Usando sistema de autenticação real integrado com Supabase
           </p>
         </div>
       )}
     </div>
-  );
+  )
 }

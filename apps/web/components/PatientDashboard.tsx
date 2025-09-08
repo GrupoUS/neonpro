@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -18,7 +18,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui";
+} from '@/components/ui'
 import {
   Activity,
   AlertCircle,
@@ -30,239 +30,239 @@ import {
   Pill,
   TrendingUp,
   User,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 interface PatientInfo {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  address: string;
-  emergencyContact: string;
-  emergencyPhone: string;
-  avatar?: string;
+  id: string
+  name: string
+  email: string
+  phone: string
+  dateOfBirth: string
+  address: string
+  emergencyContact: string
+  emergencyPhone: string
+  avatar?: string
 }
 
 interface HealthMetrics {
   bloodPressure: {
-    systolic: number;
-    diastolic: number;
-    date: Date;
-    status: "normal" | "high" | "low";
-  };
+    systolic: number
+    diastolic: number
+    date: Date
+    status: 'normal' | 'high' | 'low'
+  }
   heartRate: {
-    value: number;
-    date: Date;
-    status: "normal" | "high" | "low";
-  };
+    value: number
+    date: Date
+    status: 'normal' | 'high' | 'low'
+  }
   weight: {
-    value: number;
-    date: Date;
-    trend: "up" | "down" | "stable";
-  };
+    value: number
+    date: Date
+    trend: 'up' | 'down' | 'stable'
+  }
   bmi: {
-    value: number;
-    category: "underweight" | "normal" | "overweight" | "obese";
-  };
+    value: number
+    category: 'underweight' | 'normal' | 'overweight' | 'obese'
+  }
 }
 
 interface Appointment {
-  id: string;
-  date: Date;
-  time: string;
-  doctor: string;
-  specialty: string;
-  type: string;
-  status: "scheduled" | "completed" | "cancelled";
+  id: string
+  date: Date
+  time: string
+  doctor: string
+  specialty: string
+  type: string
+  status: 'scheduled' | 'completed' | 'cancelled'
 }
 
 interface Medication {
-  id: string;
-  name: string;
-  dosage: string;
-  frequency: string;
-  startDate: Date;
-  endDate?: Date;
-  prescribedBy: string;
-  status: "active" | "completed" | "paused";
+  id: string
+  name: string
+  dosage: string
+  frequency: string
+  startDate: Date
+  endDate?: Date
+  prescribedBy: string
+  status: 'active' | 'completed' | 'paused'
 }
 
 const MOCK_PATIENT: PatientInfo = {
-  id: "1",
-  name: "Maria Silva Santos",
-  email: "maria.santos@email.com",
-  phone: "(11) 99999-9999",
-  dateOfBirth: "1985-03-15",
-  address: "Rua das Flores, 123 - São Paulo, SP",
-  emergencyContact: "João Santos",
-  emergencyPhone: "(11) 88888-8888",
-};
+  id: '1',
+  name: 'Maria Silva Santos',
+  email: 'maria.santos@email.com',
+  phone: '(11) 99999-9999',
+  dateOfBirth: '1985-03-15',
+  address: 'Rua das Flores, 123 - São Paulo, SP',
+  emergencyContact: 'João Santos',
+  emergencyPhone: '(11) 88888-8888',
+}
 
 const MOCK_HEALTH_METRICS: HealthMetrics = {
   bloodPressure: {
     systolic: 125,
     diastolic: 80,
     date: new Date(),
-    status: "normal",
+    status: 'normal',
   },
   heartRate: {
     value: 72,
     date: new Date(),
-    status: "normal",
+    status: 'normal',
   },
   weight: {
     value: 65.2,
     date: new Date(),
-    trend: "stable",
+    trend: 'stable',
   },
   bmi: {
     value: 23.4,
-    category: "normal",
+    category: 'normal',
   },
-};
+}
 
 const MOCK_APPOINTMENTS: Appointment[] = [
   {
-    id: "1",
-    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    time: "14:30",
-    doctor: "Dr. Ana Silva",
-    specialty: "Cardiologia",
-    type: "Consulta de retorno",
-    status: "scheduled",
+    id: '1',
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000,),
+    time: '14:30',
+    doctor: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
+    type: 'Consulta de retorno',
+    status: 'scheduled',
   },
   {
-    id: "2",
-    date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    time: "09:00",
-    doctor: "Dr. João Santos",
-    specialty: "Clínica Geral",
-    type: "Consulta de rotina",
-    status: "completed",
+    id: '2',
+    date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,),
+    time: '09:00',
+    doctor: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
+    type: 'Consulta de rotina',
+    status: 'completed',
   },
-];
+]
 
 const MOCK_MEDICATIONS: Medication[] = [
   {
-    id: "1",
-    name: "Losartana",
-    dosage: "50mg",
-    frequency: "1x ao dia",
-    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    prescribedBy: "Dr. Ana Silva",
-    status: "active",
+    id: '1',
+    name: 'Losartana',
+    dosage: '50mg',
+    frequency: '1x ao dia',
+    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000,),
+    prescribedBy: 'Dr. Ana Silva',
+    status: 'active',
   },
   {
-    id: "2",
-    name: "Vitamina D",
-    dosage: "2000 UI",
-    frequency: "1x ao dia",
-    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-    prescribedBy: "Dr. João Santos",
-    status: "active",
+    id: '2',
+    name: 'Vitamina D',
+    dosage: '2000 UI',
+    frequency: '1x ao dia',
+    startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000,),
+    prescribedBy: 'Dr. João Santos',
+    status: 'active',
   },
-];
+]
 
 export default function PatientDashboard() {
-  const [patient] = useState<PatientInfo>(MOCK_PATIENT);
-  const [healthMetrics] = useState<HealthMetrics>(MOCK_HEALTH_METRICS);
-  const [appointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
-  const [medications] = useState<Medication[]>(MOCK_MEDICATIONS);
+  const [patient,] = useState<PatientInfo>(MOCK_PATIENT,)
+  const [healthMetrics,] = useState<HealthMetrics>(MOCK_HEALTH_METRICS,)
+  const [appointments,] = useState<Appointment[]>(MOCK_APPOINTMENTS,)
+  const [medications,] = useState<Medication[]>(MOCK_MEDICATIONS,)
 
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birth = new Date(dateOfBirth);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
+  const calculateAge = (dateOfBirth: string,) => {
+    const today = new Date()
+    const birth = new Date(dateOfBirth,)
+    let age = today.getFullYear() - birth.getFullYear()
+    const monthDiff = today.getMonth() - birth.getMonth()
 
     if (
       monthDiff < 0
       || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
-      age--;
+      age--
     }
 
-    return age;
-  };
+    return age
+  }
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string,) => {
     const variants = {
-      normal: "bg-green-100 text-green-800",
-      high: "bg-red-100 text-red-800",
-      low: "bg-blue-100 text-blue-800",
-      scheduled: "bg-blue-100 text-blue-800",
-      cancelled: "bg-red-100 text-red-800",
-      active: "bg-green-100 text-green-800",
-      paused: "bg-yellow-100 text-yellow-800",
-      completed: "bg-gray-100 text-gray-800",
-    };
+      normal: 'bg-green-100 text-green-800',
+      high: 'bg-red-100 text-red-800',
+      low: 'bg-blue-100 text-blue-800',
+      scheduled: 'bg-blue-100 text-blue-800',
+      cancelled: 'bg-red-100 text-red-800',
+      active: 'bg-green-100 text-green-800',
+      paused: 'bg-yellow-100 text-yellow-800',
+      completed: 'bg-gray-100 text-gray-800',
+    }
 
     const labels = {
-      normal: "Normal",
-      high: "Alto",
-      low: "Baixo",
-      scheduled: "Agendado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      active: "Ativo",
-      paused: "Pausado",
-    };
+      normal: 'Normal',
+      high: 'Alto',
+      low: 'Baixo',
+      scheduled: 'Agendado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      active: 'Ativo',
+      paused: 'Pausado',
+    }
 
     return (
       <Badge
         className={variants[status as keyof typeof variants]
-          || "bg-gray-100 text-gray-800"}
+          || 'bg-gray-100 text-gray-800'}
       >
         {labels[status as keyof typeof labels] || status}
       </Badge>
-    );
-  };
+    )
+  }
 
-  const getBMIColor = (category: string) => {
+  const getBMIColor = (category: string,) => {
     switch (category) {
-      case "underweight": {
-        return "text-blue-600";
+      case 'underweight': {
+        return 'text-blue-600'
       }
-      case "normal": {
-        return "text-green-600";
+      case 'normal': {
+        return 'text-green-600'
       }
-      case "overweight": {
-        return "text-yellow-600";
+      case 'overweight': {
+        return 'text-yellow-600'
       }
-      case "obese": {
-        return "text-red-600";
+      case 'obese': {
+        return 'text-red-600'
       }
       default: {
-        return "text-gray-600";
+        return 'text-gray-600'
       }
     }
-  };
+  }
 
-  const getBMILabel = (category: string) => {
+  const getBMILabel = (category: string,) => {
     switch (category) {
-      case "underweight": {
-        return "Abaixo do peso";
+      case 'underweight': {
+        return 'Abaixo do peso'
       }
-      case "normal": {
-        return "Peso normal";
+      case 'normal': {
+        return 'Peso normal'
       }
-      case "overweight": {
-        return "Sobrepeso";
+      case 'overweight': {
+        return 'Sobrepeso'
       }
-      case "obese": {
-        return "Obesidade";
+      case 'obese': {
+        return 'Obesidade'
       }
       default: {
-        return "Não classificado";
+        return 'Não classificado'
       }
     }
-  };
+  }
 
   const upcomingAppointment = appointments.find(
-    (apt) => apt.status === "scheduled",
-  );
+    (apt,) => apt.status === 'scheduled',
+  )
 
   return (
     <div className="space-y-6">
@@ -271,16 +271,16 @@ export default function PatientDashboard() {
         <div>
           <h1 className="font-bold text-3xl tracking-tight">Meu Dashboard</h1>
           <p className="text-muted-foreground">
-            Bem-vindo de volta, {patient.name.split(" ")[0]}!
+            Bem-vindo de volta, {patient.name.split(' ',)[0]}!
           </p>
         </div>
         <Avatar className="h-16 w-16">
           <AvatarImage src={patient.avatar} />
           <AvatarFallback className="text-lg">
             {patient.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+              .split(' ',)
+              .map((n,) => n[0])
+              .join('',)}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -296,7 +296,7 @@ export default function PatientDashboard() {
               <div>
                 <p className="font-medium text-sm">Idade</p>
                 <p className="font-bold text-xl">
-                  {calculateAge(patient.dateOfBirth)} anos
+                  {calculateAge(patient.dateOfBirth,)} anos
                 </p>
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function PatientDashboard() {
               <div>
                 <p className="font-medium text-sm">IMC</p>
                 <p
-                  className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}
+                  className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category,)}`}
                 >
                   {healthMetrics.bmi.value}
                 </p>
@@ -361,8 +361,8 @@ export default function PatientDashboard() {
           <Calendar className="h-4 w-4" />
           <AlertDescription>
             <strong>Próxima consulta:</strong> {upcomingAppointment.doctor} (
-            {upcomingAppointment.specialty}) -{" "}
-            {upcomingAppointment.date.toLocaleDateString("pt-BR")} às {upcomingAppointment.time}
+            {upcomingAppointment.specialty}) -{' '}
+            {upcomingAppointment.date.toLocaleDateString('pt-BR',)} às {upcomingAppointment.time}
           </AlertDescription>
         </Alert>
       )}
@@ -398,7 +398,7 @@ export default function PatientDashboard() {
                       {healthMetrics.bloodPressure.systolic}/
                       {healthMetrics.bloodPressure.diastolic} mmHg
                     </span>
-                    {getStatusBadge(healthMetrics.bloodPressure.status)}
+                    {getStatusBadge(healthMetrics.bloodPressure.status,)}
                   </div>
                 </div>
 
@@ -413,7 +413,7 @@ export default function PatientDashboard() {
                     <span className="font-medium">
                       {healthMetrics.heartRate.value} bpm
                     </span>
-                    {getStatusBadge(healthMetrics.heartRate.status)}
+                    {getStatusBadge(healthMetrics.heartRate.status,)}
                   </div>
                 </div>
 
@@ -427,11 +427,11 @@ export default function PatientDashboard() {
                       {healthMetrics.weight.value} kg
                     </span>
                     <Badge variant="outline">
-                      {healthMetrics.weight.trend === "stable"
-                        ? "Estável"
-                        : healthMetrics.weight.trend === "up"
-                        ? "Subindo"
-                        : "Descendo"}
+                      {healthMetrics.weight.trend === 'stable'
+                        ? 'Estável'
+                        : healthMetrics.weight.trend === 'up'
+                        ? 'Subindo'
+                        : 'Descendo'}
                     </Badge>
                   </div>
                 </div>
@@ -444,7 +444,7 @@ export default function PatientDashboard() {
                       Índice de Massa Corporal (IMC)
                     </span>
                     <span
-                      className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}
+                      className={`font-bold ${getBMIColor(healthMetrics.bmi.category,)}`}
                     >
                       {healthMetrics.bmi.value}
                     </span>
@@ -454,9 +454,9 @@ export default function PatientDashboard() {
                       Classificação
                     </span>
                     <span
-                      className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}
+                      className={`text-sm ${getBMIColor(healthMetrics.bmi.category,)}`}
                     >
-                      {getBMILabel(healthMetrics.bmi.category)}
+                      {getBMILabel(healthMetrics.bmi.category,)}
                     </span>
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export default function PatientDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {appointments.map((appointment) => (
+                {appointments.map((appointment,) => (
                   <div
                     className="flex items-center justify-between rounded-lg border p-4"
                     key={appointment.id}
@@ -508,7 +508,7 @@ export default function PatientDashboard() {
                         </p>
                         <div className="mt-1 flex items-center space-x-4">
                           <span className="text-muted-foreground text-xs">
-                            {appointment.date.toLocaleDateString("pt-BR")}
+                            {appointment.date.toLocaleDateString('pt-BR',)}
                           </span>
                           <span className="text-muted-foreground text-xs">
                             {appointment.time}
@@ -517,7 +517,7 @@ export default function PatientDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {getStatusBadge(appointment.status)}
+                      {getStatusBadge(appointment.status,)}
                       <Button size="sm" variant="outline">
                         Detalhes
                       </Button>
@@ -540,7 +540,7 @@ export default function PatientDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {medications.map((medication) => (
+                {medications.map((medication,) => (
                   <div
                     className="flex items-center justify-between rounded-lg border p-4"
                     key={medication.id}
@@ -560,12 +560,12 @@ export default function PatientDashboard() {
                           Prescrito por {medication.prescribedBy}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          Desde {medication.startDate.toLocaleDateString("pt-BR")}
+                          Desde {medication.startDate.toLocaleDateString('pt-BR',)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {getStatusBadge(medication.status)}
+                      {getStatusBadge(medication.status,)}
                       <Button size="sm" variant="outline">
                         Detalhes
                       </Button>
@@ -577,7 +577,7 @@ export default function PatientDashboard() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembre-se:</strong>{" "}
+                  <strong>Lembre-se:</strong>{' '}
                   Sempre consulte seu médico antes de alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
@@ -626,8 +626,8 @@ export default function PatientDashboard() {
                   <div>
                     <p className="font-medium text-sm">Data de Nascimento</p>
                     <p className="text-muted-foreground text-sm">
-                      {new Date(patient.dateOfBirth).toLocaleDateString(
-                        "pt-BR",
+                      {new Date(patient.dateOfBirth,).toLocaleDateString(
+                        'pt-BR',
                       )}
                     </p>
                   </div>
@@ -682,5 +682,5 @@ export default function PatientDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

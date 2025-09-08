@@ -1,40 +1,40 @@
-"use client";
+'use client'
 
 /**
  * Client-side Environment Validation Component
  * Validates environment on client mount and handles errors gracefully
  */
 
-import { initializeGlobalErrorHandler } from "@/lib/global-error-handler";
-import { initializeClient } from "@/lib/init";
-import type { StartupValidationResult } from "@/lib/startup";
-import { useEffect, useState } from "react";
+import { initializeGlobalErrorHandler, } from '@/lib/global-error-handler'
+import { initializeClient, } from '@/lib/init'
+import type { StartupValidationResult, } from '@/lib/startup'
+import { useEffect, useState, } from 'react'
 
 interface ClientInitProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function ClientInit({ children }: ClientInitProps) {
-  const [initResult, setInitResult] = useState<StartupValidationResult | null>(null);
-  const [hasError, setHasError] = useState(false);
+export function ClientInit({ children, }: ClientInitProps,) {
+  const [initResult, setInitResult,] = useState<StartupValidationResult | null>(null,)
+  const [hasError, setHasError,] = useState(false,)
 
   useEffect(() => {
     try {
       // Initialize global error handler first
-      initializeGlobalErrorHandler();
+      initializeGlobalErrorHandler()
 
-      const result = initializeClient();
-      setInitResult(result);
+      const result = initializeClient()
+      setInitResult(result || null,)
 
-      if (!result.success) {
-        setHasError(true);
-        console.error("🚨 Client initialization failed:", result.errors);
+      if (!result || !result.success) {
+        setHasError(true,)
+        console.error('🚨 Client initialization failed:', result?.errors || 'Unknown error',)
       }
     } catch (error) {
-      setHasError(true);
-      console.error("🚨 Client initialization error:", error);
+      setHasError(true,)
+      console.error('🚨 Client initialization error:', error,)
     }
-  }, []);
+  }, [],)
 
   // Show loading state while initializing
   if (!initResult) {
@@ -45,7 +45,7 @@ export function ClientInit({ children }: ClientInitProps) {
           <p className="text-gray-600">Inicializando NeonPro Healthcare...</p>
         </div>
       </div>
-    );
+    )
   }
 
   // Show error state if initialization failed in production
@@ -65,7 +65,7 @@ export function ClientInit({ children }: ClientInitProps) {
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   // Show warnings in development mode
@@ -79,7 +79,7 @@ export function ClientInit({ children }: ClientInitProps) {
             </div>
             <div className="ml-3">
               <p className="text-sm text-yellow-800">
-                <strong>Aviso de Desenvolvimento:</strong>{" "}
+                <strong>Aviso de Desenvolvimento:</strong>{' '}
                 Problemas de configuração detectados. Verifique o console para detalhes.
               </p>
             </div>
@@ -87,9 +87,9 @@ export function ClientInit({ children }: ClientInitProps) {
         </div>
         {children}
       </div>
-    );
+    )
   }
 
   // Render normally if everything is ok
-  return <>{children}</>;
+  return <>{children}</>
 }

@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Button, } from '@/components/ui/button'
 import {
   Card,
   /* CardContent, */ CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"; // CardContent unused import
-import { BarChart3, Calendar, Lock, Shield, Stethoscope, Users } from "lucide-react";
-import Link from "next/link";
+} from '@/components/ui/card' // CardContent unused import
+import { BarChart3, Calendar, Lock, Shield, Stethoscope, Users, } from 'lucide-react'
+import Link from 'next/link'
 
 export default function HomePage() {
   return (
@@ -106,5 +106,5 @@ export default function HomePage() {
         </Button>
       </section>
     </div>
-  );
+  )
 }

@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import { UniversalAIChat } from "@/app/components/chat/universal-ai-chat";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
-import { Activity, Globe, Lock, MessageSquare, Shield, Zap } from "lucide-react";
-import { useState } from "react";
+import { UniversalAIChat, } from '@/app/components/chat/universal-ai-chat'
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { useAuth, } from '@/hooks/useAuth'
+import { Activity, Globe, Lock, MessageSquare, Shield, Zap, } from 'lucide-react'
+import { useState, } from 'react'
 
 interface ChatPageProps {
   searchParams?: {
-    interface?: "external" | "internal";
-    patientId?: string;
-  };
+    interface?: 'external' | 'internal'
+    patientId?: string
+  }
 }
 
-export default function ChatPage({ searchParams }: ChatPageProps) {
-  const { user } = useAuth();
-  const [activeInterface, setActiveInterface] = useState<
-    "external" | "internal"
-  >(searchParams?.interface || "external");
+export default function ChatPage({ searchParams, }: ChatPageProps,) {
+  const { user, } = useAuth()
+  const [activeInterface, setActiveInterface,] = useState<
+    'external' | 'internal'
+  >(searchParams?.interface || 'external',)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 p-4">
@@ -81,7 +81,7 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
 
         {/* Main Chat Interface */}
         <Tabs
-          onValueChange={(value: string) => setActiveInterface(value as "external" | "internal")}
+          onValueChange={(value: string,) => setActiveInterface(value as 'external' | 'internal',)}
           value={activeInterface}
         >
           <TabsList className="grid w-full grid-cols-2">
@@ -202,5 +202,5 @@ export default function ChatPage({ searchParams }: ChatPageProps) {
         </Tabs>
       </div>
     </div>
-  );
+  )
 }

@@ -10,448 +10,448 @@ import type {
   AppointmentPriority,
   AppointmentStatus,
   AppointmentType,
-} from "../schemas/appointment.schema";
-import type { MFAMethod, UserRole } from "../schemas/auth.schema";
+} from '../schemas/appointment.schema'
+import type { MFAMethod, UserRole, } from '../schemas/auth.schema'
 
 // Base entity interface (all entities extend this)
 export interface BaseEntity {
-  id: string; // UUID
-  createdAt: string; // ISO datetime
-  updatedAt: string; // ISO datetime
-  isActive?: boolean;
+  id: string // UUID
+  createdAt: string // ISO datetime
+  updatedAt: string // ISO datetime
+  isActive?: boolean
 }
 
 // Soft delete support
 export interface SoftDeletable {
-  deletedAt?: string | null;
-  deletedBy?: string | null;
+  deletedAt?: string | null
+  deletedBy?: string | null
 }
 
 // Audit trail support
 export interface Auditable {
-  createdBy?: string;
-  updatedBy?: string;
-  version?: number;
+  createdBy?: string
+  updatedBy?: string
+  version?: number
 }
 
 // Geographic coordinates
 export interface GeoCoordinates {
-  latitude: number;
-  longitude: number;
+  latitude: number
+  longitude: number
 }
 
 // Address interface
 export interface Address {
-  street: string;
-  number: string;
-  complement?: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country?: string;
-  coordinates?: GeoCoordinates;
-  landmark?: string;
+  street: string
+  number: string
+  complement?: string
+  neighborhood: string
+  city: string
+  state: string
+  zipCode: string
+  country?: string
+  coordinates?: GeoCoordinates
+  landmark?: string
 }
 
 // Contact information
 export interface ContactInfo {
-  phone: string;
-  whatsapp?: string;
-  email: string;
-  website?: string;
+  phone: string
+  whatsapp?: string
+  email: string
+  website?: string
   socialMedia?: {
-    instagram?: string;
-    facebook?: string;
-    tiktok?: string;
-  };
+    instagram?: string
+    facebook?: string
+    tiktok?: string
+  }
 }
 
 // User Entity
 export interface User extends BaseEntity, SoftDeletable, Auditable {
-  email: string;
-  fullName: string;
-  avatar?: string;
-  phone?: string;
-  role: UserRole;
+  email: string
+  fullName: string
+  avatar?: string
+  phone?: string
+  role: UserRole
 
   // Professional info
-  licenseNumber?: string;
-  specialization?: string;
-  bio?: string;
-  title?: string; // Dr., Enf., etc.
+  licenseNumber?: string
+  specialization?: string
+  bio?: string
+  title?: string // Dr., Enf., etc.
 
   // Security
-  isVerified: boolean;
-  isMFAEnabled: boolean;
-  mfaMethods?: MFAMethod[];
-  lastLoginAt?: string;
-  passwordChangedAt?: string;
+  isVerified: boolean
+  isMFAEnabled: boolean
+  mfaMethods?: MFAMethod[]
+  lastLoginAt?: string
+  passwordChangedAt?: string
 
   // Clinic association
-  clinicId?: string;
+  clinicId?: string
 
   // Preferences
   preferences: {
-    language: "pt" | "en" | "es";
-    timezone: string;
-    theme: "light" | "dark" | "auto";
-    emailNotifications: boolean;
-    smsNotifications: boolean;
-    marketingConsent: boolean;
-  };
+    language: 'pt' | 'en' | 'es'
+    timezone: string
+    theme: 'light' | 'dark' | 'auto'
+    emailNotifications: boolean
+    smsNotifications: boolean
+    marketingConsent: boolean
+  }
 
   // Permissions (computed based on role and clinic)
-  permissions: string[];
+  permissions: string[]
 }
 
 // Patient Entity
 export interface Patient extends BaseEntity, SoftDeletable, Auditable {
   // Personal information
-  fullName: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  rg?: string;
-  birthDate: string;
-  gender: "male" | "female" | "other" | "prefer_not_to_say";
+  fullName: string
+  email: string
+  phone: string
+  cpf: string
+  rg?: string
+  birthDate: string
+  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
 
   // Address
-  address: Address;
+  address: Address
 
   // Emergency contact
   emergencyContact?: {
-    name: string;
-    relationship: string;
-    phone: string;
-  };
+    name: string
+    relationship: string
+    phone: string
+  }
 
   // Medical information
-  allergies: string[];
-  chronicConditions: string[];
-  currentMedications: string[];
-  bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
-  height?: number; // cm
-  weight?: number; // kg
+  allergies: string[]
+  chronicConditions: string[]
+  currentMedications: string[]
+  bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+  height?: number // cm
+  weight?: number // kg
 
   // Insurance
-  insuranceProvider?: string;
-  insuranceNumber?: string;
+  insuranceProvider?: string
+  insuranceNumber?: string
 
   // LGPD Consent
-  consentGiven: boolean;
-  consentDate: string;
-  dataProcessingConsent: boolean;
-  marketingConsent: boolean;
+  consentGiven: boolean
+  consentDate: string
+  dataProcessingConsent: boolean
+  marketingConsent: boolean
 
   // Relationships
-  clinicId?: string;
-  assignedProfessionalId?: string;
+  clinicId?: string
+  assignedProfessionalId?: string
 
   // Statistics
-  totalAppointments?: number;
-  lastAppointmentDate?: string;
-  totalSpent?: number;
+  totalAppointments?: number
+  lastAppointmentDate?: string
+  totalSpent?: number
 }
 
 // Professional Entity (extends User)
-export interface Professional extends Omit<User, "role"> {
-  role: "doctor" | "nurse" | "aesthetician";
+export interface Professional extends Omit<User, 'role'> {
+  role: 'doctor' | 'nurse' | 'aesthetician'
 
   // Professional specific fields
-  crm?: string; // For doctors
-  coren?: string; // For nurses
-  specializations: string[];
-  qualifications: string[];
-  yearsOfExperience?: number;
+  crm?: string // For doctors
+  coren?: string // For nurses
+  specializations: string[]
+  qualifications: string[]
+  yearsOfExperience?: number
 
   // Schedule and availability
-  workingHours?: BusinessHours[];
-  isAvailableForBooking: boolean;
-  consultationDuration: number; // default duration in minutes
+  workingHours?: BusinessHours[]
+  isAvailableForBooking: boolean
+  consultationDuration: number // default duration in minutes
 
   // Statistics
-  totalPatients?: number;
-  totalAppointments?: number;
-  averageRating?: number;
-  totalReviews?: number;
+  totalPatients?: number
+  totalAppointments?: number
+  averageRating?: number
+  totalReviews?: number
 
   // Clinic association
-  clinics: string[]; // Can work at multiple clinics
-  primaryClinicId: string;
+  clinics: string[] // Can work at multiple clinics
+  primaryClinicId: string
 }
 
 // Business hours type
 export interface BusinessHours {
   day:
-    | "monday"
-    | "tuesday"
-    | "wednesday"
-    | "thursday"
-    | "friday"
-    | "saturday"
-    | "sunday";
-  isOpen: boolean;
-  openTime: string; // HH:MM
-  closeTime: string; // HH:MM
-  breakStart?: string; // HH:MM
-  breakEnd?: string; // HH:MM
+    | 'monday'
+    | 'tuesday'
+    | 'wednesday'
+    | 'thursday'
+    | 'friday'
+    | 'saturday'
+    | 'sunday'
+  isOpen: boolean
+  openTime: string // HH:MM
+  closeTime: string // HH:MM
+  breakStart?: string // HH:MM
+  breakEnd?: string // HH:MM
 }
 
 // Clinic Service
 export interface ClinicService extends BaseEntity {
-  name: string;
+  name: string
   category:
-    | "injectables"
-    | "laser"
-    | "skincare"
-    | "body_treatments"
-    | "hair_removal"
-    | "wellness"
-    | "consultation"
-    | "other";
-  description?: string;
-  duration: number; // minutes
-  price?: number;
-  isActive: boolean;
+    | 'injectables'
+    | 'laser'
+    | 'skincare'
+    | 'body_treatments'
+    | 'hair_removal'
+    | 'wellness'
+    | 'consultation'
+    | 'other'
+  description?: string
+  duration: number // minutes
+  price?: number
+  isActive: boolean
 
   // Requirements
-  requiresConsultation?: boolean;
+  requiresConsultation?: boolean
   ageRestrictions?: {
-    minAge: number;
-    maxAge?: number;
-  };
-  contraindications?: string[];
+    minAge: number
+    maxAge?: number
+  }
+  contraindications?: string[]
 
   // Professional requirements
-  requiredRole?: UserRole[];
-  requiredCertifications?: string[];
+  requiredRole?: UserRole[]
+  requiredCertifications?: string[]
 
-  clinicId: string;
+  clinicId: string
 }
 
 // Clinic Entity
 export interface Clinic extends BaseEntity, SoftDeletable, Auditable {
   // Basic information
-  name: string;
-  tradeName?: string;
-  description?: string;
+  name: string
+  tradeName?: string
+  description?: string
 
   // Legal information
-  cnpj: string;
-  stateRegistration?: string;
-  municipalRegistration?: string;
-  anvisaLicense?: string;
+  cnpj: string
+  stateRegistration?: string
+  municipalRegistration?: string
+  anvisaLicense?: string
 
   // Contact and location
-  contact: ContactInfo;
-  address: Address;
-  businessHours: BusinessHours[];
+  contact: ContactInfo
+  address: Address
+  businessHours: BusinessHours[]
 
   // Branding
-  logo?: string;
-  images: string[];
-  primaryColor?: string;
+  logo?: string
+  images: string[]
+  primaryColor?: string
 
   // Settings
-  capacity: number; // max simultaneous appointments
-  acceptsInsurance: boolean;
+  capacity: number // max simultaneous appointments
+  acceptsInsurance: boolean
   acceptedPaymentMethods: (
-    | "cash"
-    | "credit_card"
-    | "debit_card"
-    | "pix"
-    | "bank_transfer"
-    | "installments"
-  )[];
+    | 'cash'
+    | 'credit_card'
+    | 'debit_card'
+    | 'pix'
+    | 'bank_transfer'
+    | 'installments'
+  )[]
 
   // Booking settings
   bookingSettings: {
-    allowOnlineBooking: boolean;
-    requireApproval: boolean;
-    advanceBookingDays: number;
-    cancellationHours: number;
-    reminderEnabled: boolean;
-    reminderHours: number;
-  };
+    allowOnlineBooking: boolean
+    requireApproval: boolean
+    advanceBookingDays: number
+    cancellationHours: number
+    reminderEnabled: boolean
+    reminderHours: number
+  }
 
   // Owner
-  ownerId: string;
+  ownerId: string
 
   // Statistics
   stats?: {
-    totalPatients: number;
-    totalAppointments: number;
-    activeStaff: number;
-    averageRating: number;
-    totalReviews: number;
-    monthlyRevenue?: number;
-  };
+    totalPatients: number
+    totalAppointments: number
+    activeStaff: number
+    averageRating: number
+    totalReviews: number
+    monthlyRevenue?: number
+  }
 
   // Compliance
   complianceStatus: {
-    lgpd: "compliant" | "non_compliant" | "pending";
-    anvisa: "compliant" | "non_compliant" | "pending";
-    lastAuditDate?: string;
-  };
+    lgpd: 'compliant' | 'non_compliant' | 'pending'
+    anvisa: 'compliant' | 'non_compliant' | 'pending'
+    lastAuditDate?: string
+  }
 }
 
 // Appointment Entity
 export interface Appointment extends BaseEntity, SoftDeletable, Auditable {
   // Core data
-  patientId: string;
-  professionalId: string;
-  clinicId: string;
+  patientId: string
+  professionalId: string
+  clinicId: string
 
   // Schedule
-  scheduledAt: string;
-  duration: number;
-  estimatedEndTime: string; // computed
+  scheduledAt: string
+  duration: number
+  estimatedEndTime: string // computed
 
   // Details
-  type: AppointmentType;
-  status: AppointmentStatus;
-  priority: AppointmentPriority;
+  type: AppointmentType
+  status: AppointmentStatus
+  priority: AppointmentPriority
 
-  title: string;
-  description?: string;
-  notes?: string;
+  title: string
+  description?: string
+  notes?: string
 
   // Treatment specific
-  treatmentArea?: string;
-  estimatedCost?: number;
-  actualCost?: number;
+  treatmentArea?: string
+  estimatedCost?: number
+  actualCost?: number
 
   // Instructions
-  preAppointmentInstructions?: string;
-  postAppointmentInstructions?: string;
+  preAppointmentInstructions?: string
+  postAppointmentInstructions?: string
 
   // Cancellation/Rescheduling
-  cancelReason?: string;
-  rescheduleReason?: string;
-  cancelledBy?: "patient" | "professional" | "clinic" | "system";
-  originalScheduledAt?: string; // for rescheduled appointments
+  cancelReason?: string
+  rescheduleReason?: string
+  cancelledBy?: 'patient' | 'professional' | 'clinic' | 'system'
+  originalScheduledAt?: string // for rescheduled appointments
 
   // Actual times (for completed appointments)
-  actualStartTime?: string;
-  actualEndTime?: string;
+  actualStartTime?: string
+  actualEndTime?: string
 
   // Payment
-  paymentStatus?: "pending" | "paid" | "partially_paid" | "refunded";
-  paymentMethod?: string;
+  paymentStatus?: 'pending' | 'paid' | 'partially_paid' | 'refunded'
+  paymentMethod?: string
 
   // Follow-up
-  followUpRequired?: boolean;
-  followUpDate?: string;
-  followUpNotes?: string;
+  followUpRequired?: boolean
+  followUpDate?: string
+  followUpNotes?: string
 
   // Populated relations (when needed)
-  patient?: Patient;
-  professional?: Professional;
-  clinic?: Clinic;
+  patient?: Patient
+  professional?: Professional
+  clinic?: Clinic
 }
 
 // Treatment Record Entity
 export interface TreatmentRecord extends BaseEntity, Auditable {
-  appointmentId: string;
-  patientId: string;
-  professionalId: string;
-  clinicId: string;
+  appointmentId: string
+  patientId: string
+  professionalId: string
+  clinicId: string
 
   // Treatment details
-  treatmentType: string;
-  area: string;
+  treatmentType: string
+  area: string
   products?: {
-    name: string;
-    brand: string;
-    quantity: number;
-    batchNumber?: string;
-    expirationDate?: string;
-  }[];
+    name: string
+    brand: string
+    quantity: number
+    batchNumber?: string
+    expirationDate?: string
+  }[]
 
   // Before/After
-  beforePhotos?: string[];
-  afterPhotos?: string[];
+  beforePhotos?: string[]
+  afterPhotos?: string[]
 
   // Results and notes
-  results: string;
-  patientFeedback?: string;
-  complications?: string;
+  results: string
+  patientFeedback?: string
+  complications?: string
 
   // Follow-up
-  nextRecommendedDate?: string;
-  recommendations: string;
+  nextRecommendedDate?: string
+  recommendations: string
 
   // ANVISA compliance
-  anvisaReportId?: string;
-  adverseReaction?: boolean;
-  adverseReactionDetails?: string;
+  anvisaReportId?: string
+  adverseReaction?: boolean
+  adverseReactionDetails?: string
 }
 
 // Payment Entity
 export interface Payment extends BaseEntity {
-  appointmentId: string;
-  patientId: string;
-  clinicId: string;
+  appointmentId: string
+  patientId: string
+  clinicId: string
 
   // Amount
-  amount: number;
-  currency: "BRL";
+  amount: number
+  currency: 'BRL'
 
   // Payment details
-  method: "cash" | "credit_card" | "debit_card" | "pix" | "bank_transfer";
-  status: "pending" | "completed" | "failed" | "cancelled" | "refunded";
+  method: 'cash' | 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer'
+  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded'
 
   // External references
-  transactionId?: string;
-  paymentProcessorId?: string;
+  transactionId?: string
+  paymentProcessorId?: string
 
   // Installments (if applicable)
   installments?: {
-    total: number;
-    current: number;
-    amount: number;
-  };
+    total: number
+    current: number
+    amount: number
+  }
 
   // Dates
-  dueDate?: string;
-  paidAt?: string;
+  dueDate?: string
+  paidAt?: string
 
   // Notes
-  notes?: string;
+  notes?: string
 }
 
 // File/Document Entity
 export interface FileDocument extends BaseEntity {
-  filename: string;
-  originalName: string;
-  mimetype: string;
-  size: number;
+  filename: string
+  originalName: string
+  mimetype: string
+  size: number
 
   // Storage
-  storageProvider: "local" | "aws" | "gcs";
-  storageKey: string;
-  url?: string;
+  storageProvider: 'local' | 'aws' | 'gcs'
+  storageKey: string
+  url?: string
 
   // Metadata
-  description?: string;
-  tags?: string[];
+  description?: string
+  tags?: string[]
 
   // Relations
-  entityType: "patient" | "appointment" | "clinic" | "user" | "treatment";
-  entityId: string;
-  uploadedBy: string;
+  entityType: 'patient' | 'appointment' | 'clinic' | 'user' | 'treatment'
+  entityId: string
+  uploadedBy: string
 
   // Security
-  isPublic: boolean;
-  encryptionKey?: string;
+  isPublic: boolean
+  encryptionKey?: string
 
   // LGPD
-  containsSensitiveData: boolean;
+  containsSensitiveData: boolean
   retentionPolicy?: {
-    deleteAfterDays: number;
-    reason: string;
-  };
+    deleteAfterDays: number
+    reason: string
+  }
 }
 
 // Export all entity types as a union
@@ -463,15 +463,15 @@ export type Entity =
   | Appointment
   | TreatmentRecord
   | Payment
-  | FileDocument;
+  | FileDocument
 
 export type EntityType =
-  | "user"
-  | "patient"
-  | "professional"
-  | "clinic"
-  | "appointment"
-  | "notification"
-  | "treatment"
-  | "payment"
-  | "file";
+  | 'user'
+  | 'patient'
+  | 'professional'
+  | 'clinic'
+  | 'appointment'
+  | 'notification'
+  | 'treatment'
+  | 'payment'
+  | 'file'

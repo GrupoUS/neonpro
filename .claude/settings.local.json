@@ -29,9 +29,25 @@
       "mcp__desktop-commander__list_directory",
       "mcp__archon__list_projects",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs"
+      "mcp__context7__get-library-docs",
+      "WebFetch(domain:turborepo.com)",
+      "Bash(bun run:*)",
+      "Bash(bun run:*)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run type-check --filter=@neonpro/web)",
+      "mcp__desktop-commander__move_file",
+      "Bash(npx tsc:*)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "shadcn-ui",
+    "archon",
+    "desktop-commander",
+    "Tavily",
+    "context7",
+    "Sequential Thinking",
+    "supabase",
+    "serena"
+  ],
   "allowedToolsUnguarded": [
     "mcp__archon__create_project",
     "mcp__archon__list_projects",

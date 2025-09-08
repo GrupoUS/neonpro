@@ -5,4 +5,4 @@
  * for healthcare analytics and business metrics.
  */
 
-export * from "./utils";
+export * from './utils'

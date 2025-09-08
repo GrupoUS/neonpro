@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { createClient } from "@/app/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { createClient, } from '@/app/utils/supabase/client'
+import { useEffect, useState, } from 'react'
 
 interface DashboardMetrics {
-  totalPatients: number;
-  activePatients: number;
-  monthlyRevenue: number;
-  revenueGrowth: number;
-  upcomingAppointments: number;
-  appointmentsGrowth: number;
-  activeStaffMembers: number;
-  loading: boolean;
-  error: Error | null;
+  totalPatients: number
+  activePatients: number
+  monthlyRevenue: number
+  revenueGrowth: number
+  upcomingAppointments: number
+  appointmentsGrowth: number
+  activeStaffMembers: number
+  loading: boolean
+  error: Error | null
 }
 
 export function useDashboardMetrics(): DashboardMetrics {
-  const [metrics, setMetrics] = useState<
-    Omit<DashboardMetrics, "loading" | "error">
+  const [metrics, setMetrics,] = useState<
+    Omit<DashboardMetrics, 'loading' | 'error'>
   >({
     totalPatients: 0,
     activePatients: 0,
@@ -26,17 +26,17 @@ export function useDashboardMetrics(): DashboardMetrics {
     upcomingAppointments: 0,
     appointmentsGrowth: 0,
     activeStaffMembers: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  },)
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<Error | null>()
 
-  const supabase = createClient();
+  const supabase = createClient()
 
   useEffect(() => {
     async function fetchDashboardMetrics() {
       try {
-        setLoading(true);
-        setError(undefined);
+        setLoading(true,)
+        setError(undefined,)
 
         // Buscar métricas em paralelo
         const [
@@ -50,25 +50,25 @@ export function useDashboardMetrics(): DashboardMetrics {
         ] = await Promise.all([
           // Total de pacientes
           supabase
-            .from("patients")
-            .select("id", { count: "exact", head: true }),
+            .from('patients',)
+            .select('id', { count: 'exact', head: true, },),
 
           // Pacientes ativos (com consulta nos últimos 3 meses)
           supabase
-            .from("patients")
-            .select("id", { count: "exact", head: true })
+            .from('patients',)
+            .select('id', { count: 'exact', head: true, },)
             .gte(
-              "updated_at",
-              new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+              'updated_at',
+              new Date(Date.now() - 90 * 24 * 60 * 60 * 1000,).toISOString(),
             ),
 
           // Receita do mês atual
           supabase
-            .from("financial_transactions")
-            .select("amount")
-            .eq("type", "income")
+            .from('financial_transactions',)
+            .select('amount',)
+            .eq('type', 'income',)
             .gte(
-              "date",
+              'date',
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth(),
@@ -78,11 +78,11 @@ export function useDashboardMetrics(): DashboardMetrics {
 
           // Receita do mês anterior (para calcular crescimento)
           supabase
-            .from("financial_transactions")
-            .select("amount")
-            .eq("type", "income")
+            .from('financial_transactions',)
+            .select('amount',)
+            .eq('type', 'income',)
             .gte(
-              "date",
+              'date',
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth() - 1,
@@ -90,7 +90,7 @@ export function useDashboardMetrics(): DashboardMetrics {
               ).toISOString(),
             )
             .lt(
-              "date",
+              'date',
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth(),
@@ -100,22 +100,22 @@ export function useDashboardMetrics(): DashboardMetrics {
 
           // Consultas agendadas (próximos 30 dias)
           supabase
-            .from("appointments")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "scheduled")
-            .gte("appointment_date", new Date().toISOString())
+            .from('appointments',)
+            .select('id', { count: 'exact', head: true, },)
+            .eq('status', 'scheduled',)
+            .gte('appointment_date', new Date().toISOString(),)
             .lte(
-              "appointment_date",
-              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              'appointment_date',
+              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000,).toISOString(),
             ),
 
           // Consultas do mês anterior (para calcular crescimento)
           supabase
-            .from("appointments")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "completed")
+            .from('appointments',)
+            .select('id', { count: 'exact', head: true, },)
+            .eq('status', 'completed',)
             .gte(
-              "appointment_date",
+              'appointment_date',
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth() - 1,
@@ -123,7 +123,7 @@ export function useDashboardMetrics(): DashboardMetrics {
               ).toISOString(),
             )
             .lt(
-              "appointment_date",
+              'appointment_date',
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth(),
@@ -133,40 +133,40 @@ export function useDashboardMetrics(): DashboardMetrics {
 
           // Staff ativo
           supabase
-            .from("staff_members")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "active"),
-        ]);
+            .from('staff_members',)
+            .select('id', { count: 'exact', head: true, },)
+            .eq('status', 'active',),
+        ],)
 
         // Processar resultados
-        const totalPatients = patientsResult.count || 0;
-        const activePatients = activePatientsResult.count || 0;
+        const totalPatients = patientsResult.count || 0
+        const activePatients = activePatientsResult.count || 0
 
         const monthlyRevenue = monthlyRevenueResult.data?.reduce(
-          (sum, transaction) => sum + (transaction.amount || 0),
+          (sum, transaction,) => sum + (transaction.amount || 0),
           0,
-        ) || 0;
+        ) || 0
 
         const previousMonthRevenue = previousMonthRevenueResult.data?.reduce(
-          (sum, transaction) => sum + (transaction.amount || 0),
+          (sum, transaction,) => sum + (transaction.amount || 0),
           0,
-        ) || 0;
+        ) || 0
 
         const revenueGrowth = previousMonthRevenue > 0
           ? ((monthlyRevenue - previousMonthRevenue) / previousMonthRevenue)
             * 100
-          : 0;
+          : 0
 
-        const upcomingAppointments = upcomingAppointmentsResult.count || 0;
-        const previousMonthAppointments = previousMonthAppointmentsResult.count || 0;
+        const upcomingAppointments = upcomingAppointmentsResult.count || 0
+        const previousMonthAppointments = previousMonthAppointmentsResult.count || 0
 
         const appointmentsGrowth = previousMonthAppointments > 0
           ? ((upcomingAppointments - previousMonthAppointments)
             / previousMonthAppointments)
             * 100
-          : 0;
+          : 0
 
-        const activeStaffMembers = activeStaffResult.count || 0;
+        const activeStaffMembers = activeStaffResult.count || 0
 
         setMetrics({
           totalPatients,
@@ -176,20 +176,20 @@ export function useDashboardMetrics(): DashboardMetrics {
           upcomingAppointments,
           appointmentsGrowth,
           activeStaffMembers,
-        });
+        },)
       } catch (error) {
-        setError(error as Error);
+        setError(error as Error,)
       } finally {
-        setLoading(false);
+        setLoading(false,)
       }
     }
 
-    fetchDashboardMetrics();
-  }, [supabase]);
+    fetchDashboardMetrics()
+  }, [supabase,],)
 
   return {
     ...metrics,
     loading,
     error,
-  };
+  }
 }

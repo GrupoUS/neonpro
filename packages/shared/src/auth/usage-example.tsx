@@ -3,36 +3,36 @@
  * Demonstra integração de todos os componentes implementados
  */
 
-"use client";
+'use client'
 
-import React from "react";
-import { AuthProvider, ProtectedRoute, useAuth, withAuth } from "./index";
+import React from 'react'
+import { AuthProvider, ProtectedRoute, useAuth, withAuth, } from './index'
 
 // === 1. CONFIGURAÇÃO DO PROVIDER NO ROOT LAYOUT ===
-export function RootLayout({ children }: { children: React.ReactNode; }) {
+export function RootLayout({ children, }: { children: React.ReactNode },) {
   return (
     <html lang="pt-BR">
       <body>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
-  );
+  )
 }
 
 // === 2. COMPONENTE DE LOGIN ===
 function LoginPage() {
-  const { login, isLoading, error } = useAuth();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const { login, isLoading, error, } = useAuth()
+  const [email, setEmail,] = React.useState('',)
+  const [password, setPassword,] = React.useState('',)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent,) => {
+    e.preventDefault()
 
-    const result = await login({ email, password });
+    const result = await login({ email, password, },)
 
     if (result.success) {
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -52,7 +52,7 @@ function LoginPage() {
           <div>
             <input
               className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e,) => setEmail(e.target.value,)}
               placeholder="Email"
               required
               type="email"
@@ -63,7 +63,7 @@ function LoginPage() {
           <div>
             <input
               className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e,) => setPassword(e.target.value,)}
               placeholder="Senha"
               required
               type="password"
@@ -77,27 +77,27 @@ function LoginPage() {
               disabled={isLoading}
               type="submit"
             >
-              {isLoading ? "Entrando..." : "Entrar"}
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 // === 3. NAVBAR COM INFORMAÇÕES DO USUÁRIO ===
 function Navbar() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, } = useAuth()
 
   if (!isAuthenticated) {
-    return;
+    return
   }
 
   const handleLogout = async () => {
-    await logout();
+    await logout()
     // Redirecionamento será feito automaticamente
-  };
+  }
 
   return (
     <nav className="bg-white shadow-sm">
@@ -124,40 +124,40 @@ function Navbar() {
         </div>
       </div>
     </nav>
-  );
+  )
 }
 
 // === 4. PÁGINA PROTEGIDA - DASHBOARD ===
 function DashboardPage() {
-  const { user, getValidToken } = useAuth();
-  const [data, setData] = React.useState();
-  const [loading, setLoading] = React.useState(false);
+  const { user, getValidToken, } = useAuth()
+  const [data, setData,] = React.useState()
+  const [loading, setLoading,] = React.useState(false,)
 
   const fetchProtectedData = React.useCallback(async () => {
-    setLoading(true);
+    setLoading(true,)
     try {
-      const token = await getValidToken();
+      const token = await getValidToken()
 
-      const response = await fetch("/api/v1/patients", {
+      const response = await fetch('/api/v1/patients', {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-      });
+      },)
 
       if (response.ok) {
-        const result = await response.json();
-        setData(result.data);
+        const result = await response.json()
+        setData(result.data,)
       }
     } catch {
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, [getValidToken]);
+  }, [getValidToken,],)
 
   React.useEffect(() => {
-    fetchProtectedData();
-  }, [fetchProtectedData]);
+    fetchProtectedData()
+  }, [fetchProtectedData,],)
 
   return (
     <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
@@ -191,13 +191,13 @@ function DashboardPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // Versão protegida do Dashboard usando HOC
 export const ProtectedDashboard = withAuth(DashboardPage, {
-  requiredRole: "healthcare_professional",
-});
+  requiredRole: 'healthcare_professional',
+},)
 
 // === 5. PÁGINA ADMINISTRATIVA (APENAS ADMINS) ===
 function AdminPage() {
@@ -210,23 +210,23 @@ function AdminPage() {
         Esta página é acessível apenas para administradores.
       </p>
     </div>
-  );
+  )
 }
 
 // === 6. ESTRUTURA PRINCIPAL DA APLICAÇÃO ===
 export function AppExample() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, } = useAuth()
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-indigo-600 border-b-2" />
       </div>
-    );
+    )
   }
 
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return <LoginPage />
   }
 
   return (
@@ -252,7 +252,7 @@ export function AppExample() {
         </ProtectedRoute>
       </main>
     </div>
-  );
+  )
 }
 
 // === 7. EXEMPLO DE USO EM COMPONENT SERVER (NEXT.JS) ===
@@ -261,42 +261,42 @@ export async function ServerComponentExample() {
     <AuthProvider>
       <AppExample />
     </AuthProvider>
-  );
+  )
 }
 
 // === 8. HOOK PERSONALIZADO PARA API CALLS ===
 export function useApiCall() {
-  const { getAuthHeader } = useAuth();
+  const { getAuthHeader, } = useAuth()
 
   const apiCall = React.useCallback(
-    async (url: string, options: RequestInit = {}) => {
-      const authHeader = await getAuthHeader();
+    async (url: string, options: RequestInit = {},) => {
+      const authHeader = await getAuthHeader()
 
       return fetch(url, {
         ...options,
         headers: {
-          "Content-Type": "application/json",
-          ...(authHeader && { Authorization: authHeader }),
+          'Content-Type': 'application/json',
+          ...(authHeader && { Authorization: authHeader, }),
           ...options.headers,
         },
-      });
+      },)
     },
-    [getAuthHeader],
-  );
+    [getAuthHeader,],
+  )
 
-  return { apiCall };
+  return { apiCall, }
 }
 
 // === 9. EXEMPLO DE TESTE E VALIDAÇÃO ===
 export async function validateAuthSystem() {
-  const { runAllAuthTests } = await import("./auth-e2e-test");
+  const { runAllAuthTests, } = await import('./auth-e2e-test')
 
   const testCredentials = {
-    email: "admin@neonpro.com.br",
-    password: "test123",
-  };
+    email: 'admin@neonpro.com.br',
+    password: 'test123',
+  }
 
-  const results = await runAllAuthTests(testCredentials);
+  const results = await runAllAuthTests(testCredentials,)
 
-  return results.overallSuccess;
+  return results.overallSuccess
 }

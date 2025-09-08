@@ -6,10 +6,10 @@
  * with LGPD compliance and TanStack Query integration
  */
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { useCallback } from "react";
-import type { UseRealtimeQueryConfig } from "../types/realtime.types";
-import { useRealtimeQuery } from "./use-realtime";
+import type { SupabaseClient, } from '@supabase/supabase-js'
+import { useCallback, } from 'react'
+import type { UseRealtimeQueryConfig, } from '../types/realtime.types'
+import { useRealtimeQuery, } from './use-realtime'
 
 /**
  * Healthcare-specific patient real-time hook
@@ -17,37 +17,37 @@ import { useRealtimeQuery } from "./use-realtime";
 export function usePatientRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    patientId?: string;
-    clinicId?: string;
-    enabled?: boolean;
-    onPatientUpdate?: (patient: unknown) => void;
+    patientId?: string
+    clinicId?: string
+    enabled?: boolean
+    onPatientUpdate?: (patient: unknown,) => void
   },
 ) {
   const filter = options.patientId
     ? `id=eq.${options.patientId}`
     : options.clinicId
     ? `clinic_id=eq.${options.clinicId}`
-    : "";
+    : ''
 
   const config: UseRealtimeQueryConfig = {
-    table: "patients",
-    ...(filter && { filter }),
-    queryKey: ["patients", options.patientId, options.clinicId].filter(
+    table: 'patients',
+    ...(filter && { filter, }),
+    queryKey: ['patients', options.patientId, options.clinicId,].filter(
       Boolean,
     ) as string[],
     enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
-    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate }),
+    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate, }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: true,
       invalidateOnDelete: true,
       backgroundRefetch: true,
     },
-  };
+  }
 
-  return useRealtimeQuery(supabaseClient, config);
+  return useRealtimeQuery(supabaseClient, config,)
 }
 
 /**
@@ -56,47 +56,47 @@ export function usePatientRealtime(
 export function useAppointmentRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    appointmentId?: string;
-    patientId?: string;
-    professionalId?: string;
-    clinicId?: string;
-    dateRange?: { start: string; end: string; };
-    enabled?: boolean;
-    onAppointmentUpdate?: (appointment: unknown) => void;
+    appointmentId?: string
+    patientId?: string
+    professionalId?: string
+    clinicId?: string
+    dateRange?: { start: string; end: string }
+    enabled?: boolean
+    onAppointmentUpdate?: (appointment: unknown,) => void
   },
 ) {
   const buildFilter = useCallback(() => {
-    const filters = [];
+    const filters = []
 
     if (options.appointmentId) {
-      filters.push(`id=eq.${options.appointmentId}`);
+      filters.push(`id=eq.${options.appointmentId}`,)
     }
     if (options.patientId) {
-      filters.push(`patient_id=eq.${options.patientId}`);
+      filters.push(`patient_id=eq.${options.patientId}`,)
     }
     if (options.professionalId) {
-      filters.push(`professional_id=eq.${options.professionalId}`);
+      filters.push(`professional_id=eq.${options.professionalId}`,)
     }
     if (options.clinicId) {
-      filters.push(`clinic_id=eq.${options.clinicId}`);
+      filters.push(`clinic_id=eq.${options.clinicId}`,)
     }
     if (options.dateRange) {
-      filters.push(`scheduled_at=gte.${options.dateRange.start}`);
-      filters.push(`scheduled_at=lte.${options.dateRange.end}`);
+      filters.push(`scheduled_at=gte.${options.dateRange.start}`,)
+      filters.push(`scheduled_at=lte.${options.dateRange.end}`,)
     }
 
-    return filters.join(",");
-  }, [options]);
+    return filters.join(',',)
+  }, [options,],)
 
   const config: UseRealtimeQueryConfig = {
-    table: "appointments",
+    table: 'appointments',
     filter: buildFilter(),
     queryKey: [
-      "appointments",
+      'appointments',
       options.appointmentId,
       options.patientId,
       options.professionalId,
-    ].filter(Boolean) as string[],
+    ].filter(Boolean,) as string[],
     enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
@@ -109,9 +109,9 @@ export function useAppointmentRealtime(
       invalidateOnDelete: true,
       backgroundRefetch: true,
     },
-  };
+  }
 
-  return useRealtimeQuery(supabaseClient, config);
+  return useRealtimeQuery(supabaseClient, config,)
 }
 
 /**
@@ -120,37 +120,37 @@ export function useAppointmentRealtime(
 export function useProfessionalRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    professionalId?: string;
-    clinicId?: string;
-    specialty?: string;
-    enabled?: boolean;
-    onProfessionalUpdate?: (professional: unknown) => void;
+    professionalId?: string
+    clinicId?: string
+    specialty?: string
+    enabled?: boolean
+    onProfessionalUpdate?: (professional: unknown,) => void
   },
 ) {
   const buildFilter = useCallback(() => {
-    const filters = [];
+    const filters = []
 
     if (options.professionalId) {
-      filters.push(`id=eq.${options.professionalId}`);
+      filters.push(`id=eq.${options.professionalId}`,)
     }
     if (options.clinicId) {
-      filters.push(`clinic_id=eq.${options.clinicId}`);
+      filters.push(`clinic_id=eq.${options.clinicId}`,)
     }
     if (options.specialty) {
-      filters.push(`specialty=eq.${options.specialty}`);
+      filters.push(`specialty=eq.${options.specialty}`,)
     }
 
-    return filters.join(",");
-  }, [options]);
+    return filters.join(',',)
+  }, [options,],)
 
   const config: UseRealtimeQueryConfig = {
-    table: "professionals",
+    table: 'professionals',
     filter: buildFilter(),
     queryKey: [
-      "professionals",
+      'professionals',
       options.professionalId,
       options.clinicId,
-    ].filter(Boolean) as string[],
+    ].filter(Boolean,) as string[],
     enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
@@ -163,9 +163,9 @@ export function useProfessionalRealtime(
       invalidateOnDelete: true,
       backgroundRefetch: true,
     },
-  };
+  }
 
-  return useRealtimeQuery(supabaseClient, config);
+  return useRealtimeQuery(supabaseClient, config,)
 }
 
 /**
@@ -175,35 +175,35 @@ export function useProfessionalRealtime(
 export function useDashboardRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    clinicId?: string;
-    enabled?: boolean;
-    onMetricsUpdate?: (metrics: unknown) => void;
+    clinicId?: string
+    enabled?: boolean
+    onMetricsUpdate?: (metrics: unknown,) => void
   },
 ) {
   // Listen to multiple tables for dashboard metrics
   const appointmentsRealtime = useAppointmentRealtime(supabaseClient, {
-    ...(options.clinicId && { clinicId: options.clinicId }),
-    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.clinicId && { clinicId: options.clinicId, }),
+    ...(options.enabled !== undefined && { enabled: options.enabled, }),
     ...(options.onMetricsUpdate && {
       onAppointmentUpdate: options.onMetricsUpdate,
     }),
-  });
+  },)
 
   const patientsRealtime = usePatientRealtime(supabaseClient, {
-    ...(options.clinicId && { clinicId: options.clinicId }),
-    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.clinicId && { clinicId: options.clinicId, }),
+    ...(options.enabled !== undefined && { enabled: options.enabled, }),
     ...(options.onMetricsUpdate && {
       onPatientUpdate: options.onMetricsUpdate,
     }),
-  });
+  },)
 
   const professionalsRealtime = useProfessionalRealtime(supabaseClient, {
-    ...(options.clinicId && { clinicId: options.clinicId }),
-    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.clinicId && { clinicId: options.clinicId, }),
+    ...(options.enabled !== undefined && { enabled: options.enabled, }),
     ...(options.onMetricsUpdate && {
       onProfessionalUpdate: options.onMetricsUpdate,
     }),
-  });
+  },)
 
   return {
     appointments: appointmentsRealtime,
@@ -216,8 +216,8 @@ export function useDashboardRealtime(
       appointmentsRealtime.error,
       patientsRealtime.error,
       professionalsRealtime.error,
-    ].filter(Boolean),
-  };
+    ].filter(Boolean,),
+  }
 }
 
 /**
@@ -226,50 +226,50 @@ export function useDashboardRealtime(
 export function useAuditRealtime(
   supabaseClient: SupabaseClient,
   options: {
-    table?: string;
-    userId?: string;
-    action?: string;
-    enabled?: boolean;
-    onAuditUpdate?: (audit: unknown) => void;
+    table?: string
+    userId?: string
+    action?: string
+    enabled?: boolean
+    onAuditUpdate?: (audit: unknown,) => void
   },
 ) {
   const buildFilter = useCallback(() => {
-    const filters = [];
+    const filters = []
 
     if (options.table) {
-      filters.push(`table_name=eq.${options.table}`);
+      filters.push(`table_name=eq.${options.table}`,)
     }
     if (options.userId) {
-      filters.push(`user_id=eq.${options.userId}`);
+      filters.push(`user_id=eq.${options.userId}`,)
     }
     if (options.action) {
-      filters.push(`action=eq.${options.action}`);
+      filters.push(`action=eq.${options.action}`,)
     }
 
-    return filters.join(",");
-  }, [options]);
+    return filters.join(',',)
+  }, [options,],)
 
   const config: UseRealtimeQueryConfig = {
-    table: "audit_logs",
-    event: "INSERT", // Only listen to new audit entries
+    table: 'audit_logs',
+    event: 'INSERT', // Only listen to new audit entries
     filter: buildFilter(),
     queryKey: [
-      "audit_logs",
+      'audit_logs',
       options.table,
       options.userId,
       options.action,
-    ].filter(Boolean) as string[],
+    ].filter(Boolean,) as string[],
     enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: false, // Don't audit the audit logs
-    ...(options.onAuditUpdate && { onInsert: options.onAuditUpdate }),
+    ...(options.onAuditUpdate && { onInsert: options.onAuditUpdate, }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: false,
       invalidateOnDelete: false,
       backgroundRefetch: true,
     },
-  };
+  }
 
-  return useRealtimeQuery(supabaseClient, config);
+  return useRealtimeQuery(supabaseClient, config,)
 }

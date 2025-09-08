@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Bot, CheckCircle, User } from "lucide-react";
-import { useMemo } from "react";
-import { cn } from "../../lib/utils";
-import { ConfidenceIndicator } from "./confidence-indicator";
+import { Avatar, AvatarFallback, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { AlertTriangle, Bot, CheckCircle, User, } from 'lucide-react'
+import { useMemo, } from 'react'
+import { cn, } from '../../lib/utils'
+import { ConfidenceIndicator, } from './confidence-indicator'
 
 export interface Message {
-  id: string;
-  content: string;
-  role: "user" | "assistant" | "system";
-  timestamp: Date;
-  confidence?: number;
+  id: string
+  content: string
+  role: 'user' | 'assistant' | 'system'
+  timestamp: Date
+  confidence?: number
   metadata?: {
-    source?: string;
-    requiresHumanHandoff?: boolean;
-    processed?: boolean;
-    error?: boolean;
-    errorMessage?: string;
-  };
+    source?: string
+    requiresHumanHandoff?: boolean
+    processed?: boolean
+    error?: boolean
+    errorMessage?: string
+  }
 }
 
 interface MessageRendererProps {
-  message: Message;
-  className?: string;
-  showAvatar?: boolean;
-  showTimestamp?: boolean;
-  showConfidence?: boolean;
-  isHighContrast?: boolean;
+  message: Message
+  className?: string
+  showAvatar?: boolean
+  showTimestamp?: boolean
+  showConfidence?: boolean
+  isHighContrast?: boolean
 }
 
 export function MessageRenderer({
@@ -38,28 +38,28 @@ export function MessageRenderer({
   showTimestamp = true,
   showConfidence = true,
   isHighContrast = false,
-}: MessageRendererProps) {
-  const isUser = message.role === "user";
-  const isSystem = message.role === "system";
-  const hasError = message.metadata?.error;
-  const requiresHandoff = message.metadata?.requiresHumanHandoff;
+}: MessageRendererProps,) {
+  const isUser = message.role === 'user'
+  const isSystem = message.role === 'system'
+  const hasError = message.metadata?.error
+  const requiresHandoff = message.metadata?.requiresHumanHandoff
 
   const formattedTime = useMemo(() => {
-    return message.timestamp.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }, [message.timestamp]);
+    return message.timestamp.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    },)
+  }, [message.timestamp,],)
 
-  const messageContentId = `message-content-${message.id}`;
-  const messageTimeId = `message-time-${message.id}`;
+  const messageContentId = `message-content-${message.id}`
+  const messageTimeId = `message-time-${message.id}`
 
   return (
     <div
       className={cn(
-        "flex gap-3 p-4 group",
-        isUser ? "flex-row-reverse" : "flex-row",
-        isHighContrast && "border border-gray-300",
+        'flex gap-3 p-4 group',
+        isUser ? 'flex-row-reverse' : 'flex-row',
+        isHighContrast && 'border border-gray-300',
         className,
       )}
       role="group"
@@ -72,10 +72,10 @@ export function MessageRenderer({
           <AvatarFallback
             className={cn(
               isUser
-                ? "bg-blue-100 text-blue-700"
+                ? 'bg-blue-100 text-blue-700'
                 : isSystem
-                ? "bg-gray-100 text-gray-700"
-                : "bg-green-100 text-green-700",
+                ? 'bg-gray-100 text-gray-700'
+                : 'bg-green-100 text-green-700',
             )}
             aria-hidden="true"
           >
@@ -91,35 +91,35 @@ export function MessageRenderer({
       {/* Message Container */}
       <div
         className={cn(
-          "flex-1 space-y-2 max-w-[85%]",
-          isUser && "text-right",
+          'flex-1 space-y-2 max-w-[85%]',
+          isUser && 'text-right',
         )}
       >
         {/* Message Bubble */}
         <div
           className={cn(
-            "inline-block px-4 py-3 rounded-lg break-words",
-            "focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500",
+            'inline-block px-4 py-3 rounded-lg break-words',
+            'focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500',
             isUser
               ? cn(
-                "bg-blue-600 text-white",
-                isHighContrast && "bg-blue-800 border border-blue-900",
+                'bg-blue-600 text-white',
+                isHighContrast && 'bg-blue-800 border border-blue-900',
               )
               : isSystem
               ? cn(
-                "bg-yellow-50 text-yellow-800 border border-yellow-200",
-                isHighContrast && "bg-yellow-100 border-yellow-400",
+                'bg-yellow-50 text-yellow-800 border border-yellow-200',
+                isHighContrast && 'bg-yellow-100 border-yellow-400',
               )
               : cn(
-                "bg-gray-100 text-gray-900 border border-gray-200",
-                hasError && "bg-red-50 border-red-200 text-red-800",
-                isHighContrast && "bg-white border-gray-400",
+                'bg-gray-100 text-gray-900 border border-gray-200',
+                hasError && 'bg-red-50 border-red-200 text-red-800',
+                isHighContrast && 'bg-white border-gray-400',
               ),
           )}
           tabIndex={0}
           role="article"
           aria-label={`Mensagem ${
-            isUser ? "do usuário" : isSystem ? "do sistema" : "do assistente"
+            isUser ? 'do usuário' : isSystem ? 'do sistema' : 'do assistente'
           }`}
         >
           <p
@@ -144,8 +144,8 @@ export function MessageRenderer({
         {/* Message Metadata */}
         <div
           className={cn(
-            "flex items-center gap-2 text-xs text-gray-500",
-            isUser ? "justify-end" : "justify-start",
+            'flex items-center gap-2 text-xs text-gray-500',
+            isUser ? 'justify-end' : 'justify-start',
           )}
         >
           {/* Timestamp */}
@@ -206,5 +206,5 @@ export function MessageRenderer({
         </div>
       </div>
     </div>
-  );
+  )
 }

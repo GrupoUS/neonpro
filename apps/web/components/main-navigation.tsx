@@ -6,13 +6,13 @@
  * healthcare-specific menu items, and mobile optimization.
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
-import { cn } from "@/lib/utils";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { useAuth, } from '@/contexts/auth-context'
+import { cn, } from '@/lib/utils'
+import { Link, useLocation, } from '@tanstack/react-router'
 import {
   BarChart3,
   Calendar,
@@ -23,137 +23,137 @@ import {
   Shield,
   Stethoscope,
   Users,
-} from "lucide-react";
-import React from "react";
+} from 'lucide-react'
+import React from 'react'
 
 interface NavigationItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string; }>;
-  description?: string;
-  badge?: string;
-  permission?: () => boolean;
-  children?: NavigationItem[];
+  label: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  description?: string
+  badge?: string
+  permission?: () => boolean
+  children?: NavigationItem[]
 }
 
 export function MainNavigation() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const location = useLocation();
-  const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen,] = React.useState(false,)
+  const location = useLocation()
+  const { user, } = useAuth()
 
   // Simple permission checks based on user role
   const canAccessPatients = React.useCallback(() => {
     return (
-      user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role)
-    );
-  }, [user]);
+      user && ['clinic_owner', 'clinic_manager', 'professional',].includes(user.role,)
+    )
+  }, [user,],)
 
   const canAccessProfessionals = React.useCallback(() => {
-    return user && ["clinic_owner", "clinic_manager"].includes(user.role);
-  }, [user]);
+    return user && ['clinic_owner', 'clinic_manager',].includes(user.role,)
+  }, [user,],)
 
   const canAccessCompliance = React.useCallback(() => {
-    return user && ["clinic_owner", "clinic_manager"].includes(user.role);
-  }, [user]);
+    return user && ['clinic_owner', 'clinic_manager',].includes(user.role,)
+  }, [user,],)
 
   // Define navigation items based on user role and permissions
   const navigationItems: NavigationItem[] = React.useMemo(() => {
     const items: NavigationItem[] = [
       {
-        label: "Dashboard",
-        href: "/dashboard",
+        label: 'Dashboard',
+        href: '/dashboard',
         icon: Home,
-        description: "Visão geral da clínica",
+        description: 'Visão geral da clínica',
       },
-    ];
+    ]
 
     // Add patient management for authorized roles
     if (canAccessPatients()) {
       items.push({
-        label: "Pacientes",
-        href: "/patients",
+        label: 'Pacientes',
+        href: '/patients',
         icon: Users,
-        description: "Gestão de pacientes",
-      });
+        description: 'Gestão de pacientes',
+      },)
     }
 
     // Add appointments for all authenticated users
     items.push({
-      label: "Consultas",
-      href: "/appointments",
+      label: 'Consultas',
+      href: '/appointments',
       icon: Calendar,
-      description: "Agendamento e gestão",
-    });
+      description: 'Agendamento e gestão',
+    },)
 
     // Add professionals for managers and owners
     if (canAccessProfessionals()) {
       items.push({
-        label: "Profissionais",
-        href: "/professionals",
+        label: 'Profissionais',
+        href: '/professionals',
         icon: Stethoscope,
-        description: "Gestão da equipe",
-      });
+        description: 'Gestão da equipe',
+      },)
     }
 
     // Add analytics for managers and owners
     if (canAccessCompliance()) {
       items.push({
-        label: "Analytics",
-        href: "/analytics",
+        label: 'Analytics',
+        href: '/analytics',
         icon: BarChart3,
-        description: "Relatórios e métricas",
-        badge: "Pro",
-      });
+        description: 'Relatórios e métricas',
+        badge: 'Pro',
+      },)
     }
 
     // Add compliance for managers and owners
     if (canAccessCompliance()) {
       items.push({
-        label: "Conformidade",
-        href: "/compliance",
+        label: 'Conformidade',
+        href: '/compliance',
         icon: Shield,
-        description: "LGPD, ANVISA, CFM",
-        badge: "Crítico",
-      });
+        description: 'LGPD, ANVISA, CFM',
+        badge: 'Crítico',
+      },)
     }
 
     // Add settings for all authenticated users
     items.push({
-      label: "Configurações",
-      href: "/settings",
+      label: 'Configurações',
+      href: '/settings',
       icon: Settings,
-      description: "Preferências e conta",
-    });
+      description: 'Preferências e conta',
+    },)
 
-    return items;
-  }, [canAccessCompliance, canAccessPatients, canAccessProfessionals]);
+    return items
+  }, [canAccessCompliance, canAccessPatients, canAccessProfessionals,],)
 
-  const isActiveRoute = (href: string) => {
+  const isActiveRoute = (href: string,) => {
     return (
-      location.pathname === href || location.pathname.startsWith(`${href}/`)
-    );
-  };
+      location.pathname === href || location.pathname.startsWith(`${href}/`,)
+    )
+  }
 
   const NavigationItems = ({
     items,
     mobile = false,
   }: {
-    items: NavigationItem[];
-    mobile?: boolean;
-  }) => (
-    <div className={cn("space-y-2", mobile && "w-full")}>
-      {items.map((item) => (
+    items: NavigationItem[]
+    mobile?: boolean
+  },) => (
+    <div className={cn('space-y-2', mobile && 'w-full',)}>
+      {items.map((item,) => (
         <Link
           className={cn(
-            "flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
-            "hover:bg-accent hover:text-accent-foreground",
-            isActiveRoute(item.href)
-              ? "bg-accent text-accent-foreground"
-              : "text-muted-foreground",
-            mobile && "w-full",
+            'flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors',
+            'hover:bg-accent hover:text-accent-foreground',
+            isActiveRoute(item.href,)
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground',
+            mobile && 'w-full',
           )}
           key={item.href}
-          onClick={() => mobile && setIsMobileMenuOpen(false)}
+          onClick={() => mobile && setIsMobileMenuOpen(false,)}
           to={item.href}
         >
           <item.icon className="h-5 w-5" />
@@ -163,7 +163,7 @@ export function MainNavigation() {
               {item.badge && (
                 <Badge
                   className="ml-2"
-                  variant={item.badge === "Crítico" ? "destructive" : "secondary"}
+                  variant={item.badge === 'Crítico' ? 'destructive' : 'secondary'}
                 >
                   {item.badge}
                 </Badge>
@@ -178,7 +178,7 @@ export function MainNavigation() {
         </Link>
       ))}
     </div>
-  );
+  )
 
   return (
     <>
@@ -201,22 +201,22 @@ export function MainNavigation() {
               <div className="flex-shrink-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
                   <span className="font-medium text-primary-foreground text-sm">
-                    {user?.name?.charAt(0).toUpperCase() || "U"}
+                    {user?.name?.charAt(0,).toUpperCase() || 'U'}
                   </span>
                 </div>
               </div>
               <div className="ml-3">
-                <p className="font-medium text-sm">{user?.name || "Usuário"}</p>
+                <p className="font-medium text-sm">{user?.name || 'Usuário'}</p>
                 <p className="text-muted-foreground text-xs">
-                  {user?.role === "clinic_owner"
-                    ? "Proprietário"
-                    : user?.role === "clinic_manager"
-                    ? "Gerente"
-                    : user?.role === "professional"
-                    ? "Profissional"
-                    : user?.role === "admin"
-                    ? "Administrador"
-                    : "Usuário"}
+                  {user?.role === 'clinic_owner'
+                    ? 'Proprietário'
+                    : user?.role === 'clinic_manager'
+                    ? 'Gerente'
+                    : user?.role === 'professional'
+                    ? 'Profissional'
+                    : user?.role === 'admin'
+                    ? 'Administrador'
+                    : 'Usuário'}
                 </p>
               </div>
             </div>
@@ -247,7 +247,7 @@ export function MainNavigation() {
         <div className="flex h-16 items-center border-b bg-card px-4">
           <Button
             className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen,)}
             size="icon"
             variant="ghost"
           >
@@ -271,10 +271,10 @@ export function MainNavigation() {
               className="fixed inset-0 bg-sidebar-background/80 backdrop-blur-sm"
               tabIndex={0}
               aria-label="Fechar menu móvel"
-              onClick={() => setIsMobileMenuOpen(false)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === "Escape" || e.key === " ") {
-                  setIsMobileMenuOpen(false);
+              onClick={() => setIsMobileMenuOpen(false,)}
+              onKeyDown={(e,) => {
+                if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+                  setIsMobileMenuOpen(false,)
                 }
               }}
             />
@@ -284,7 +284,7 @@ export function MainNavigation() {
                 <div className="flex h-16 items-center border-b px-6">
                   <Link
                     className="flex items-center space-x-3"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => setIsMobileMenuOpen(false,)}
                     to="/"
                   >
                     <div className="neonpro-gradient flex h-8 w-8 items-center justify-center rounded-lg">
@@ -301,19 +301,19 @@ export function MainNavigation() {
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                       <span className="font-medium text-primary-foreground">
-                        {user?.name?.charAt(0).toUpperCase() || "U"}
+                        {user?.name?.charAt(0,).toUpperCase() || 'U'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium">{user?.name || "Usuário"}</p>
+                      <p className="font-medium">{user?.name || 'Usuário'}</p>
                       <p className="text-muted-foreground text-sm">
-                        {user?.role === "clinic_owner"
-                          ? "Proprietário"
-                          : user?.role === "clinic_manager"
-                          ? "Gerente"
-                          : user?.role === "professional"
-                          ? "Profissional"
-                          : "Usuário"}
+                        {user?.role === 'clinic_owner'
+                          ? 'Proprietário'
+                          : user?.role === 'clinic_manager'
+                          ? 'Gerente'
+                          : user?.role === 'professional'
+                          ? 'Profissional'
+                          : 'Usuário'}
                       </p>
                     </div>
                   </div>
@@ -337,5 +337,5 @@ export function MainNavigation() {
         )}
       </div>
     </>
-  );
+  )
 }

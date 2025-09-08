@@ -6,16 +6,16 @@
  * with existing authentication system.
  */
 
-"use client";
+'use client'
 
-import { LoginForm } from "@/app/login/login-form";
-import { useSearch } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
-import Link from "next/link";
+import { LoginForm, } from '@/app/login/login-form'
+import { useSearch, } from '@tanstack/react-router'
+import { Heart, } from 'lucide-react'
+import Link from 'next/link'
 
 export function LoginPage() {
-  const search = useSearch({ from: "/login" });
-  const redirectUrl = search?.redirect;
+  const search = useSearch({ from: '/login', },)
+  const redirectUrl = search?.redirect
 
   return (
     <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -52,16 +52,16 @@ export function LoginPage() {
               )}
             </p>
           </div>
-          <LoginForm redirectUrl={redirectUrl} />
+          <LoginForm />
           <p className="px-8 text-center text-muted-foreground text-sm">
-            Ao clicar em continuar, você concorda com nossos{" "}
+            Ao clicar em continuar, você concorda com nossos{' '}
             <Link
               className="underline underline-offset-4 hover:text-primary"
               href="/terms"
             >
               Termos de Serviço
-            </Link>{" "}
-            e{" "}
+            </Link>{' '}
+            e{' '}
             <Link
               className="underline underline-offset-4 hover:text-primary"
               href="/privacy"
@@ -73,5 +73,5 @@ export function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

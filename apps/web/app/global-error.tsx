@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { AlertTriangle, Home, RefreshCw, } from 'lucide-react'
+import { useEffect, } from 'react'
 
 export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string; };
-  reset: () => void;
-}) {
-  useEffect(() => {}, []);
+  error: Error & { digest?: string }
+  reset: () => void
+},) {
+  useEffect(() => {}, [],)
 
   return (
     <html lang="pt-BR">
@@ -29,7 +29,7 @@ export default function GlobalError({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {process.env.NODE_ENV === "development" && (
+              {process.env.NODE_ENV === 'development' && (
                 <div className="rounded-md bg-muted p-3">
                   <p className="font-mono text-muted-foreground text-sm">
                     {error.message}
@@ -43,7 +43,7 @@ export default function GlobalError({
                 </Button>
                 <Button
                   className="w-full"
-                  onClick={() => (globalThis.location.href = "/")}
+                  onClick={() => (globalThis.location.href = '/')}
                   variant="outline"
                 >
                   <Home className="mr-2 h-4 w-4" />
@@ -55,5 +55,5 @@ export default function GlobalError({
         </div>
       </body>
     </html>
-  );
+  )
 }

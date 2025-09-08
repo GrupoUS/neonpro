@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -14,13 +14,13 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui";
-import { useAppointments } from "@/hooks/useAppointments";
+} from '@/components/ui'
+import { useAppointments, } from '@/hooks/useAppointments'
 // AppointmentCalendar component not available - will create mock
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Calendar, Clock, LoaderCircle, Plus, User } from "lucide-react";
-import { useState } from "react";
+import { format, } from 'date-fns'
+import { ptBR, } from 'date-fns/locale'
+import { Calendar, Clock, LoaderCircle, Plus, User, } from 'lucide-react'
+import { useState, } from 'react'
 
 export default function AgendaPage() {
   const {
@@ -31,9 +31,9 @@ export default function AgendaPage() {
     loading,
     error,
     refreshAppointments,
-  } = useAppointments();
+  } = useAppointments()
 
-  const [selectedDate] = useState(new Date());
+  const [selectedDate,] = useState(new Date(),)
 
   // Transform appointments data for the calendar component (reserved for future calendar view)
   // const calendarAppointments = appointments.map(appointment => ({
@@ -49,7 +49,7 @@ export default function AgendaPage() {
   //   staffMember: appointment.staff_members?.name || "Profissional não definido",
   // }));
 
-  const selectedDateAppointments = appointmentsByDate(selectedDate);
+  const selectedDateAppointments = appointmentsByDate(selectedDate,)
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ export default function AgendaPage() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -166,12 +166,12 @@ export default function AgendaPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  Agendamentos para {format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}
+                  Agendamentos para {format(selectedDate, 'dd/MM/yyyy', { locale: ptBR, },)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {selectedDateAppointments.map((appointment) => (
+                  {selectedDateAppointments.map((appointment,) => (
                     <div
                       key={appointment.id}
                       className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
@@ -180,7 +180,7 @@ export default function AgendaPage() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <p className="font-medium">
-                            {format(new Date(appointment.appointment_date), "HH:mm")}
+                            {format(new Date(appointment.appointment_date,), 'HH:mm',)}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {appointment.patients?.name}
@@ -189,7 +189,7 @@ export default function AgendaPage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge
-                          variant={appointment.status === "scheduled" ? "default" : "secondary"}
+                          variant={appointment.status === 'scheduled' ? 'default' : 'secondary'}
                         >
                           {appointment.status}
                         </Badge>
@@ -216,7 +216,7 @@ export default function AgendaPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {appointments.map((appointment) => (
+                {appointments.map((appointment,) => (
                   <div
                     key={appointment.id}
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors"
@@ -224,10 +224,10 @@ export default function AgendaPage() {
                     <div className="flex items-center space-x-4">
                       <div className="text-center">
                         <p className="text-sm font-medium">
-                          {format(new Date(appointment.appointment_date), "dd/MM")}
+                          {format(new Date(appointment.appointment_date,), 'dd/MM',)}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(appointment.appointment_date), "HH:mm")}
+                          {format(new Date(appointment.appointment_date,), 'HH:mm',)}
                         </p>
                       </div>
                       <div>
@@ -237,7 +237,7 @@ export default function AgendaPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant={appointment.status === "scheduled" ? "default" : "secondary"}>
+                    <Badge variant={appointment.status === 'scheduled' ? 'default' : 'secondary'}>
                       {appointment.status}
                     </Badge>
                   </div>
@@ -262,12 +262,12 @@ export default function AgendaPage() {
             <CardHeader>
               <CardTitle>Agendamentos de Hoje</CardTitle>
               <CardDescription>
-                {format(new Date(), "dd/MM/yyyy", { locale: ptBR })}
+                {format(new Date(), 'dd/MM/yyyy', { locale: ptBR, },)}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {todaysAppointments.map((appointment) => (
+                {todaysAppointments.map((appointment,) => (
                   <div
                     key={appointment.id}
                     className="flex items-center justify-between p-4 border-l-4 border-l-primary bg-primary/5 rounded-r-lg"
@@ -275,7 +275,7 @@ export default function AgendaPage() {
                     <div className="flex items-center space-x-4">
                       <div className="text-center">
                         <p className="text-lg font-bold text-primary">
-                          {format(new Date(appointment.appointment_date), "HH:mm")}
+                          {format(new Date(appointment.appointment_date,), 'HH:mm',)}
                         </p>
                       </div>
                       <div>
@@ -285,7 +285,7 @@ export default function AgendaPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant={appointment.status === "confirmed" ? "default" : "secondary"}>
+                    <Badge variant={appointment.status === 'confirmed' ? 'default' : 'secondary'}>
                       {appointment.status}
                     </Badge>
                   </div>
@@ -305,5 +305,5 @@ export default function AgendaPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

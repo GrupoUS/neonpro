@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
 /**
  * Optimized Image Component for NeonPro
  * Production-ready image optimization with Next.js Image
  */
 
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { useState } from "react";
+import { cn, } from '@/lib/utils'
+import Image from 'next/image'
+import { useState, } from 'react'
 
 interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  priority?: boolean;
-  className?: string;
-  fill?: boolean;
-  sizes?: string;
-  quality?: number;
-  placeholder?: "blur" | "empty";
-  blurDataURL?: string;
-  onLoadingComplete?: () => void;
-  style?: React.CSSProperties;
+  src: string
+  alt: string
+  width: number
+  height: number
+  priority?: boolean
+  className?: string
+  fill?: boolean
+  sizes?: string
+  quality?: number
+  placeholder?: 'blur' | 'empty'
+  blurDataURL?: string
+  onLoadingComplete?: () => void
+  style?: React.CSSProperties
 }
 
 /**
@@ -30,7 +30,7 @@ interface OptimizedImageProps {
  * Low quality, minimal base64 image
  */
 const DEFAULT_BLUR_DATA_URL =
-  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==";
+  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
 
 /**
  * Optimized Image Component
@@ -51,43 +51,43 @@ export function OptimizedImage({
   priority = false,
   className,
   fill = false,
-  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   quality = 85,
-  placeholder = "blur",
+  placeholder = 'blur',
   blurDataURL = DEFAULT_BLUR_DATA_URL,
   onLoadingComplete,
   style,
   ...props
-}: OptimizedImageProps) {
-  const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+}: OptimizedImageProps,) {
+  const [imageError, setImageError,] = useState(false,)
+  const [isLoading, setIsLoading,] = useState(true,)
 
   const handleLoad = () => {
-    setIsLoading(false);
-    onLoadingComplete?.();
-  };
+    setIsLoading(false,)
+    onLoadingComplete?.()
+  }
 
   const handleError = () => {
-    setImageError(true);
-    setIsLoading(false);
-  };
+    setImageError(true,)
+    setIsLoading(false,)
+  }
 
   // Fallback image for errors
   if (imageError) {
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-gray-100 text-gray-400 text-sm",
+          'flex items-center justify-center bg-gray-100 text-gray-400 text-sm',
           className,
         )}
-        style={{ width, height, ...style }}
+        style={{ width, height, ...style, }}
       >
         <div className="text-center">
           <div className="text-2xl mb-1">📷</div>
           <div>Imagem não encontrada</div>
         </div>
       </div>
-    );
+    )
   }
 
   const imageProps = {
@@ -96,20 +96,20 @@ export function OptimizedImage({
     quality,
     priority,
     placeholder,
-    blurDataURL: placeholder === "blur" ? blurDataURL : undefined,
+    blurDataURL: placeholder === 'blur' ? blurDataURL : undefined,
     onLoad: handleLoad,
     onError: handleError,
     className: cn(
-      "transition-opacity duration-300",
-      isLoading ? "opacity-0" : "opacity-100",
+      'transition-opacity duration-300',
+      isLoading ? 'opacity-0' : 'opacity-100',
       className,
     ),
     style: {
-      objectFit: "cover" as const,
+      objectFit: 'cover' as const,
       ...style,
     },
     ...props,
-  };
+  }
 
   if (fill) {
     return (
@@ -118,7 +118,7 @@ export function OptimizedImage({
         fill
         sizes={sizes}
       />
-    );
+    )
   }
 
   return (
@@ -128,7 +128,7 @@ export function OptimizedImage({
       height={height}
       sizes={sizes}
     />
-  );
+  )
 }
 
 /**
@@ -141,18 +141,18 @@ export function AvatarImage({
   size = 40,
   className,
   ...props
-}: Omit<OptimizedImageProps, "width" | "height"> & { size?: number; }) {
+}: Omit<OptimizedImageProps, 'width' | 'height'> & { size?: number },) {
   return (
     <OptimizedImage
       src={src}
       alt={alt}
       width={size}
       height={size}
-      className={cn("rounded-full", className)}
+      className={cn('rounded-full', className,)}
       sizes="(max-width: 768px) 100px, 200px"
       {...props}
     />
-  );
+  )
 }
 
 /**
@@ -161,13 +161,13 @@ export function AvatarImage({
  */
 export function LogoImage({
   src,
-  alt = "Logo",
+  alt = 'Logo',
   width = 120,
   height = 40,
   priority = true,
   className,
   ...props
-}: Omit<OptimizedImageProps, "placeholder">) {
+}: Omit<OptimizedImageProps, 'placeholder'>,) {
   return (
     <OptimizedImage
       src={src}
@@ -176,10 +176,10 @@ export function LogoImage({
       height={height}
       priority={priority}
       placeholder="empty"
-      className={cn("object-contain", className)}
+      className={cn('object-contain', className,)}
       {...props}
     />
-  );
+  )
 }
 
 /**
@@ -196,22 +196,22 @@ export function MedicalImage({
   className,
   ...props
 }: OptimizedImageProps & {
-  patientId?: string;
-  clinicId?: string;
-}) {
+  patientId?: string
+  clinicId?: string
+},) {
   // Add compliance tracking
   const handleLoad = () => {
-    if (process.env.NODE_ENV === "production" && patientId && clinicId) {
+    if (process.env.NODE_ENV === 'production' && patientId && clinicId) {
       // Log medical image access for LGPD compliance
-      console.log("Medical image accessed:", {
+      console.log('Medical image accessed:', {
         patientId,
         clinicId,
         timestamp: new Date().toISOString(),
         imageAlt: alt,
-      });
+      },)
     }
-    props.onLoadingComplete?.();
-  };
+    props.onLoadingComplete?.()
+  }
 
   return (
     <OptimizedImage
@@ -219,9 +219,9 @@ export function MedicalImage({
       alt={alt}
       width={width}
       height={height}
-      className={cn("border border-gray-200 rounded", className)}
+      className={cn('border border-gray-200 rounded', className,)}
       onLoadingComplete={handleLoad}
       {...props}
     />
-  );
+  )
 }

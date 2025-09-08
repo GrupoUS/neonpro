@@ -1,8 +1,8 @@
 // Patient module exports
 
-export type { PatientRepository } from "./service";
-export * from "./service";
-export { PatientService } from "./service";
+export type { PatientRepository, } from './service'
+export * from './service'
+export { PatientService, } from './service'
 // Re-export commonly used types
 export type {
   Address,
@@ -20,8 +20,8 @@ export type {
   SkinAssessment,
   UpdatePatientData,
   WrinkleAssessment,
-} from "./types";
-export * from "./types";
+} from './types'
+export * from './types'
 export {
   AcneGrade,
   AllergySeverity,
@@ -33,4 +33,4 @@ export {
   SkinCondition,
   SkinType,
   WrinkleGrade,
-} from "./types";
+} from './types'

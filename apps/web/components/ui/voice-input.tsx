@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Mic, Square } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "../../lib/utils";
-import { ConfidenceIndicator } from "./confidence-indicator";
+import { Button, } from '@/components/ui/button'
+import { Mic, Square, } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState, } from 'react'
+import { cn, } from '../../lib/utils'
+import { ConfidenceIndicator, } from './confidence-indicator'
 
 interface VoiceInputProps {
-  onTranscript: (transcript: string, confidence: number) => void;
-  onError?: (error: string) => void;
-  className?: string;
-  disabled?: boolean;
-  continuous?: boolean;
-  interimResults?: boolean;
+  onTranscript: (transcript: string, confidence: number,) => void
+  onError?: (error: string,) => void
+  className?: string
+  disabled?: boolean
+  continuous?: boolean
+  interimResults?: boolean
 }
 
 interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
+  results: SpeechRecognitionResultList
+  resultIndex: number
 }
 
 interface SpeechRecognitionError extends Event {
-  error: string;
-  message: string;
+  error: string
+  message: string
 }
 
 export function VoiceInput({
@@ -32,141 +32,141 @@ export function VoiceInput({
   disabled = false,
   continuous = false,
   interimResults = true,
-}: VoiceInputProps) {
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [confidence, setConfidence] = useState(0);
-  const [isSupported, setIsSupported] = useState(true);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+}: VoiceInputProps,) {
+  const [isListening, setIsListening,] = useState(false,)
+  const [transcript, setTranscript,] = useState('',)
+  const [confidence, setConfidence,] = useState(0,)
+  const [isSupported, setIsSupported,] = useState(true,)
+  const recognitionRef = useRef<SpeechRecognition | null>(null,)
 
   useEffect(() => {
     // Verifica se a Speech Recognition API é suportada
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition
-        || (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition; })
-          .webkitSpeechRecognition;
+        || (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition })
+          .webkitSpeechRecognition
 
       if (!SpeechRecognition) {
-        setIsSupported(false);
-        onError?.("Speech Recognition não é suportado neste navegador");
-        return;
+        setIsSupported(false,)
+        onError?.('Speech Recognition não é suportado neste navegador',)
+        return
       }
 
-      const recognition = new SpeechRecognition();
-      recognition.continuous = continuous;
-      recognition.interimResults = interimResults;
-      recognition.lang = "pt-BR";
-      recognition.maxAlternatives = 1;
+      const recognition = new SpeechRecognition()
+      recognition.continuous = continuous
+      recognition.interimResults = interimResults
+      recognition.lang = 'pt-BR'
+      recognition.maxAlternatives = 1
 
       recognition.onstart = () => {
-        setIsListening(true);
-      };
+        setIsListening(true,)
+      }
 
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
-        let finalTranscript = "";
-        let interimTranscript = "";
-        let maxConfidence = 0;
+      recognition.onresult = (event: SpeechRecognitionEvent,) => {
+        let finalTranscript = ''
+        let interimTranscript = ''
+        let maxConfidence = 0
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
-          const transcriptText = result[0].transcript;
-          const resultConfidence = Math.round(result[0].confidence * 100);
+          const result = event.results[i]
+          const transcriptText = result[0].transcript
+          const resultConfidence = Math.round(result[0].confidence * 100,)
 
-          maxConfidence = Math.max(maxConfidence, resultConfidence);
+          maxConfidence = Math.max(maxConfidence, resultConfidence,)
 
           if (result.isFinal) {
-            finalTranscript += transcriptText;
+            finalTranscript += transcriptText
           } else {
-            interimTranscript += transcriptText;
+            interimTranscript += transcriptText
           }
         }
 
-        const fullTranscript = finalTranscript || interimTranscript;
-        setTranscript(fullTranscript);
-        setConfidence(maxConfidence);
+        const fullTranscript = finalTranscript || interimTranscript
+        setTranscript(fullTranscript,)
+        setConfidence(maxConfidence,)
 
         if (finalTranscript) {
-          onTranscript(finalTranscript, maxConfidence);
+          onTranscript(finalTranscript, maxConfidence,)
         }
-      };
+      }
 
       recognition.onend = () => {
-        setIsListening(false);
-      };
+        setIsListening(false,)
+      }
 
-      recognition.addEventListener("error", (event: Event) => {
-        const err = event as unknown as SpeechRecognitionError;
-        console.error("Speech recognition error:", err.error);
-        setIsListening(false);
+      recognition.addEventListener('error', (event: Event,) => {
+        const err = event as unknown as SpeechRecognitionError
+        console.error('Speech recognition error:', err.error,)
+        setIsListening(false,)
 
         const errorMessages = {
-          "no-speech": "Nenhuma fala detectada. Tente novamente.",
-          "audio-capture": "Falha ao capturar áudio. Verifique o microfone.",
-          "not-allowed": "Permissão de microfone negada.",
-          "network": "Erro de rede. Verifique sua conexão.",
-          "service-not-allowed": "Serviço de reconhecimento não permitido.",
-          "bad-grammar": "Erro na gramática de reconhecimento.",
-          "language-not-supported": "Idioma não suportado.",
-        } as const;
+          'no-speech': 'Nenhuma fala detectada. Tente novamente.',
+          'audio-capture': 'Falha ao capturar áudio. Verifique o microfone.',
+          'not-allowed': 'Permissão de microfone negada.',
+          'network': 'Erro de rede. Verifique sua conexão.',
+          'service-not-allowed': 'Serviço de reconhecimento não permitido.',
+          'bad-grammar': 'Erro na gramática de reconhecimento.',
+          'language-not-supported': 'Idioma não suportado.',
+        } as const
 
         const errorMessage = errorMessages[err.error as keyof typeof errorMessages]
-          || `Erro de reconhecimento de fala: ${err.error}`;
+          || `Erro de reconhecimento de fala: ${err.error}`
 
-        onError?.(errorMessage);
-      });
+        onError?.(errorMessage,)
+      },)
 
-      recognitionRef.current = recognition;
+      recognitionRef.current = recognition
     }
 
     return () => {
       if (recognitionRef.current) {
-        recognitionRef.current.abort();
+        recognitionRef.current.abort()
       }
-    };
-  }, [continuous, interimResults, onTranscript, onError]);
+    }
+  }, [continuous, interimResults, onTranscript, onError,],)
 
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || !isSupported || disabled) return;
+    if (!recognitionRef.current || !isSupported || disabled) return
 
     try {
-      setTranscript("");
-      setConfidence(0);
-      recognitionRef.current.start();
+      setTranscript('',)
+      setConfidence(0,)
+      recognitionRef.current.start()
     } catch (error) {
-      console.error("Error starting speech recognition:", error);
-      onError?.("Erro ao iniciar o reconhecimento de fala");
+      console.error('Error starting speech recognition:', error,)
+      onError?.('Erro ao iniciar o reconhecimento de fala',)
     }
-  }, [isSupported, disabled, onError]);
+  }, [isSupported, disabled, onError,],)
 
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current) return;
+    if (!recognitionRef.current) return
 
     try {
-      recognitionRef.current.stop();
+      recognitionRef.current.stop()
     } catch (error) {
-      console.error("Error stopping speech recognition:", error);
+      console.error('Error stopping speech recognition:', error,)
     }
-  }, []);
+  }, [],)
 
   if (!isSupported) {
     return (
       <div className="text-sm text-gray-500 text-center p-4">
         Reconhecimento de voz não disponível neste navegador
       </div>
-    );
+    )
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className,)}>
       <div className="flex items-center gap-2">
         <Button
           type="button"
-          variant={isListening ? "destructive" : "default"}
+          variant={isListening ? 'destructive' : 'default'}
           size="sm"
           onClick={isListening ? stopListening : startListening}
           disabled={disabled}
           className="flex items-center gap-2"
-          aria-label={isListening ? "Parar gravação" : "Iniciar gravação"}
+          aria-label={isListening ? 'Parar gravação' : 'Iniciar gravação'}
         >
           {isListening
             ? (
@@ -212,5 +212,5 @@ export function VoiceInput({
         </div>
       )}
     </div>
-  );
+  )
 }

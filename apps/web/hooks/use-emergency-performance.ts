@@ -5,5 +5,5 @@ export const useEmergencyPerformance = () => {
     emergencyMode: false,
     enableEmergencyMode: () => {},
     disableEmergencyMode: () => {},
-  };
-};
+  }
+}

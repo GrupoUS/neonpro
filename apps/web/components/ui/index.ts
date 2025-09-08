@@ -1,6 +1,6 @@
 // Test-only UI barrel: export only primitives used by unit tests
-export { Button } from "./button";
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
+export { Button, } from './button'
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from './card'
 export {
   Form,
   FormControl,
@@ -9,15 +9,15 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./form";
+} from './form'
 
 // Export existing UI components
-export { Alert, AlertDescription, AlertIcon, AlertTitle } from "./alert";
-export { LoadingSpinner, PageLoader } from "./loading-spinner";
+export { Alert, AlertDescription, AlertIcon, AlertTitle, } from './alert'
+export { LoadingSpinner, PageLoader, } from './loading-spinner'
 
 // Export additional UI components
-export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-export { Badge } from "./badge";
+export { Avatar, AvatarFallback, AvatarImage, } from './avatar'
+export { Badge, } from './badge'
 export {
   Dialog,
   DialogContent,
@@ -26,17 +26,17 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./dialog";
-export { Input } from "./input";
-export { Label } from "./label";
+} from './dialog'
+export { Input, } from './input'
+export { Label, } from './label'
 // Note: Re-enabling components needed for dashboard
-export { Progress } from "./progress";
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
-export { Separator } from "./separator";
-export { Switch } from "./switch";
-export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
-export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-export { Textarea } from "./textarea";
+export { Progress, } from './progress'
+export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from './select'
+export { Separator, } from './separator'
+export { Switch, } from './switch'
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from './table'
+export { Tabs, TabsContent, TabsList, TabsTrigger, } from './tabs'
+export { Textarea, } from './textarea'
 
 // Sidebar components
 export {
@@ -64,7 +64,7 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-} from "./sidebar";
+} from './sidebar'
 
 // Dropdown menu components
 export {
@@ -74,4 +74,4 @@ export {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from './dropdown-menu'

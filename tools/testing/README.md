@@ -33,6 +33,7 @@ tools/testing/
 │   ├── vitest.config.ts    # Vitest configuration
 │   ├── playwright.config.ts # Playwright configuration
 │   └── jest.config.js      # Jest configuration (legacy)
+- pages/: Test-only Next.js pages used exclusively for E2E, not shipped to production
 └── README.md               # This file
 ```
 

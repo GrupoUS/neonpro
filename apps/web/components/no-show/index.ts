@@ -9,21 +9,21 @@ export {
   RiskIndicatorWithTooltip,
   type RiskLevel,
   useRiskCalculation,
-} from "./risk-indicator";
+} from './risk-indicator'
 
 // Risk Factor Breakdown Component
 export {
   default as RiskFactorBreakdown,
   type RiskFactor,
   type RiskFactorBreakdownProps,
-} from "./risk-factor-breakdown";
+} from './risk-factor-breakdown'
 
 // Intervention Dashboard Component
 export {
   default as InterventionDashboard,
   type InterventionAction,
   type InterventionDashboardProps,
-} from "./intervention-dashboard";
+} from './intervention-dashboard'
 
 // Performance Metrics Component
 export {
@@ -33,4 +33,4 @@ export {
   type PerformanceMetric,
   type PerformanceMetricsProps,
   type ROIMetrics,
-} from "./performance-metrics";
+} from './performance-metrics'

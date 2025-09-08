@@ -3,51 +3,51 @@
 // Centralized configuration management with feature flags and environment management
 // ================================================
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, } from '@supabase/supabase-js'
 
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
 
 interface ConfigurationValue {
-  key: string;
-  value: unknown;
-  type: "string" | "number" | "boolean" | "json" | "array";
-  environment: string;
-  tenantId?: string;
-  description?: string;
-  isSecret: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  version: number;
+  key: string
+  value: unknown
+  type: 'string' | 'number' | 'boolean' | 'json' | 'array'
+  environment: string
+  tenantId?: string
+  description?: string
+  isSecret: boolean
+  createdAt: Date
+  updatedAt: Date
+  version: number
 }
 
 interface FeatureFlag {
-  key: string;
-  enabled: boolean;
-  percentage?: number; // For gradual rollout
-  tenantIds?: string[]; // Tenant-specific flags
-  userRoles?: string[]; // Role-specific flags
-  startDate?: Date;
-  endDate?: Date;
-  environment: string;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  key: string
+  enabled: boolean
+  percentage?: number // For gradual rollout
+  tenantIds?: string[] // Tenant-specific flags
+  userRoles?: string[] // Role-specific flags
+  startDate?: Date
+  endDate?: Date
+  environment: string
+  description?: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface ConfigurationContext {
-  environment: string;
-  tenantId?: string;
-  userId?: string;
-  userRoles?: string[];
+  environment: string
+  tenantId?: string
+  userId?: string
+  userRoles?: string[]
 }
 
 interface ConfigurationUpdate {
-  key: string;
-  value: unknown;
-  updatedBy: string;
-  reason?: string;
+  key: string
+  value: unknown
+  updatedBy: string
+  reason?: string
 }
 
 // ================================================
@@ -55,42 +55,42 @@ interface ConfigurationUpdate {
 // ================================================
 
 class ConfigurationCache {
-  private readonly cache: Map<string, { value: unknown; expiry: number; }> = new Map();
-  private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
-  private readonly secretTtl = 60 * 1000; // 1 minute for secrets
+  private readonly cache: Map<string, { value: unknown; expiry: number }> = new Map()
+  private readonly defaultTtl = 5 * 60 * 1000 // 5 minutes
+  private readonly secretTtl = 60 * 1000 // 1 minute for secrets
 
-  set(key: string, value: unknown, isSecret = false): void {
-    const ttl = isSecret ? this.secretTtl : this.defaultTtl;
+  set(key: string, value: unknown, isSecret = false,): void {
+    const ttl = isSecret ? this.secretTtl : this.defaultTtl
     this.cache.set(key, {
       value,
       expiry: Date.now() + ttl,
-    });
+    },)
   }
 
-  get(key: string): unknown | null {
-    const cached = this.cache.get(key);
+  get(key: string,): unknown | null {
+    const cached = this.cache.get(key,)
     if (!cached) {
-      return;
+      return
     }
 
     if (Date.now() > cached.expiry) {
-      this.cache.delete(key);
-      return;
+      this.cache.delete(key,)
+      return
     }
 
-    return cached.value;
+    return cached.value
   }
 
-  invalidate(key?: string): void {
+  invalidate(key?: string,): void {
     if (key) {
-      this.cache.delete(key);
+      this.cache.delete(key,)
     } else {
-      this.cache.clear();
+      this.cache.clear()
     }
   }
 
   keys(): string[] {
-    return [...this.cache.keys()];
+    return [...this.cache.keys(),]
   }
 }
 
@@ -99,22 +99,22 @@ class ConfigurationCache {
 // ================================================
 
 export class ConfigurationService {
-  private static instance: ConfigurationService;
-  private readonly cache = new ConfigurationCache();
+  private static instance: ConfigurationService
+  private readonly cache = new ConfigurationCache()
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-  );
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  )
 
   private constructor() {
-    this.initializeRealtimeUpdates();
+    this.initializeRealtimeUpdates()
   }
 
   public static getInstance(): ConfigurationService {
     if (!ConfigurationService.instance) {
-      ConfigurationService.instance = new ConfigurationService();
+      ConfigurationService.instance = new ConfigurationService()
     }
-    return ConfigurationService.instance;
+    return ConfigurationService.instance
   }
 
   // ================================================
@@ -126,50 +126,50 @@ export class ConfigurationService {
     context: ConfigurationContext,
     defaultValue?: unknown,
   ): Promise<unknown> {
-    const cacheKey = this.buildCacheKey(key, context);
+    const cacheKey = this.buildCacheKey(key, context,)
 
     // Try cache first
-    const cached = this.cache.get(cacheKey);
+    const cached = this.cache.get(cacheKey,)
     if (cached !== null) {
-      return cached;
+      return cached
     }
 
     try {
       // Query database
       let query = this.supabase
-        .from("configurations")
-        .select("*")
-        .eq("key", key)
-        .eq("environment", context.environment);
+        .from('configurations',)
+        .select('*',)
+        .eq('key', key,)
+        .eq('environment', context.environment,)
 
       // Add tenant filter if provided
       if (context.tenantId) {
-        query = query.or(`tenant_id.is.null,tenant_id.eq.${context.tenantId}`);
+        query = query.or(`tenant_id.is.null,tenant_id.eq.${context.tenantId}`,)
       } else {
-        query = query.is("tenant_id", undefined);
+        query = query.is('tenant_id', undefined,)
       }
 
-      const { data, error } = await query
-        .order("tenant_id", { ascending: false })
-        .limit(1);
+      const { data, error, } = await query
+        .order('tenant_id', { ascending: false, },)
+        .limit(1,)
 
       if (error) {
-        return defaultValue;
+        return defaultValue
       }
 
       if (!data || data.length === 0) {
-        return defaultValue;
+        return defaultValue
       }
 
-      const [config] = data as ConfigurationValue;
-      const value = this.parseConfigValue(config);
+      const [config,] = data as ConfigurationValue
+      const value = this.parseConfigValue(config,)
 
       // Cache the result
-      this.cache.set(cacheKey, value, config.isSecret);
+      this.cache.set(cacheKey, value, config.isSecret,)
 
-      return value;
+      return value
     } catch {
-      return defaultValue;
+      return defaultValue
     }
   }
 
@@ -182,36 +182,36 @@ export class ConfigurationService {
     try {
       const configValue: Partial<ConfigurationValue> = {
         key,
-        value: JSON.stringify(value),
-        type: this.getValueType(value),
+        value: JSON.stringify(value,),
+        type: this.getValueType(value,),
         environment: context.environment,
         tenantId: context.tenantId,
-        isSecret: this.isSecretKey(key),
+        isSecret: this.isSecretKey(key,),
         updatedAt: new Date(),
         version: 1,
-      };
+      }
 
       // Upsert configuration
-      const { error } = await this.supabase
-        .from("configurations")
+      const { error, } = await this.supabase
+        .from('configurations',)
         .upsert(configValue, {
-          onConflict: "key,environment,tenant_id",
-        });
+          onConflict: 'key,environment,tenant_id',
+        },)
 
       if (error) {
-        return false;
+        return false
       }
 
       // Log the change
-      await this.logConfigurationChange(key, value, update);
+      await this.logConfigurationChange(key, value, update,)
 
       // Invalidate cache
-      const cacheKey = this.buildCacheKey(key, context);
-      this.cache.invalidate(cacheKey);
+      const cacheKey = this.buildCacheKey(key, context,)
+      this.cache.invalidate(cacheKey,)
 
-      return true;
+      return true
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -222,36 +222,36 @@ export class ConfigurationService {
   ): Promise<boolean> {
     try {
       let query = this.supabase
-        .from("configurations")
+        .from('configurations',)
         .delete()
-        .eq("key", key)
-        .eq("environment", context.environment);
+        .eq('key', key,)
+        .eq('environment', context.environment,)
 
       if (context.tenantId) {
-        query = query.eq("tenant_id", context.tenantId);
+        query = query.eq('tenant_id', context.tenantId,)
       } else {
-        query = query.is("tenant_id", undefined);
+        query = query.is('tenant_id', undefined,)
       }
 
-      const { error } = await query;
+      const { error, } = await query
 
       if (error) {
-        return false;
+        return false
       }
 
       // Log the change
       await this.logConfigurationChange(key, undefined, {
         ...update,
-        reason: "Configuration deleted",
-      });
+        reason: 'Configuration deleted',
+      },)
 
       // Invalidate cache
-      const cacheKey = this.buildCacheKey(key, context);
-      this.cache.invalidate(cacheKey);
+      const cacheKey = this.buildCacheKey(key, context,)
+      this.cache.invalidate(cacheKey,)
 
-      return true;
+      return true
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -263,41 +263,41 @@ export class ConfigurationService {
     featureKey: string,
     context: ConfigurationContext,
   ): Promise<boolean> {
-    const cacheKey = `feature:${this.buildCacheKey(featureKey, context)}`;
+    const cacheKey = `feature:${this.buildCacheKey(featureKey, context,)}`
 
     // Try cache first
-    const cached = this.cache.get(cacheKey);
+    const cached = this.cache.get(cacheKey,)
     if (cached !== null) {
-      return cached;
+      return cached
     }
 
     try {
       const query = this.supabase
-        .from("feature_flags")
-        .select("*")
-        .eq("key", featureKey)
-        .eq("environment", context.environment)
-        .eq("enabled", true);
+        .from('feature_flags',)
+        .select('*',)
+        .eq('key', featureKey,)
+        .eq('environment', context.environment,)
+        .eq('enabled', true,)
 
-      const { data, error } = await query;
+      const { data, error, } = await query
 
       if (error) {
-        return false;
+        return false
       }
 
       if (!data || data.length === 0) {
-        return false;
+        return false
       }
 
-      const [flag] = data as FeatureFlag;
-      const isEnabled = this.evaluateFeatureFlag(flag, context);
+      const [flag,] = data as FeatureFlag
+      const isEnabled = this.evaluateFeatureFlag(flag, context,)
 
       // Cache the result
-      this.cache.set(cacheKey, isEnabled);
+      this.cache.set(cacheKey, isEnabled,)
 
-      return isEnabled;
+      return isEnabled
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -306,12 +306,12 @@ export class ConfigurationService {
     enabled: boolean,
     context: ConfigurationContext,
     options?: {
-      percentage?: number;
-      tenantIds?: string[];
-      userRoles?: string[];
-      startDate?: Date;
-      endDate?: Date;
-      description?: string;
+      percentage?: number
+      tenantIds?: string[]
+      userRoles?: string[]
+      startDate?: Date
+      endDate?: Date
+      description?: string
     },
   ): Promise<boolean> {
     try {
@@ -326,23 +326,23 @@ export class ConfigurationService {
         endDate: options?.endDate,
         description: options?.description,
         updatedAt: new Date(),
-      };
+      }
 
-      const { error } = await this.supabase.from("feature_flags").upsert(flag, {
-        onConflict: "key,environment",
-      });
+      const { error, } = await this.supabase.from('feature_flags',).upsert(flag, {
+        onConflict: 'key,environment',
+      },)
 
       if (error) {
-        return false;
+        return false
       }
 
       // Invalidate cache
-      const cacheKey = `feature:${this.buildCacheKey(featureKey, context)}`;
-      this.cache.invalidate(cacheKey);
+      const cacheKey = `feature:${this.buildCacheKey(featureKey, context,)}`
+      this.cache.invalidate(cacheKey,)
 
-      return true;
+      return true
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -354,15 +354,15 @@ export class ConfigurationService {
     keys: string[],
     context: ConfigurationContext,
   ): Promise<Record<string, unknown>> {
-    const results: Record<string, unknown> = {};
+    const results: Record<string, unknown> = {}
 
     await Promise.allSettled(
-      keys.map(async (key) => {
-        results[key] = await this.getConfiguration(key, context);
-      }),
-    );
+      keys.map(async (key,) => {
+        results[key] = await this.getConfiguration(key, context,)
+      },),
+    )
 
-    return results;
+    return results
   }
 
   async getAllConfigurations(
@@ -370,25 +370,25 @@ export class ConfigurationService {
   ): Promise<ConfigurationValue[]> {
     try {
       let query = this.supabase
-        .from("configurations")
-        .select("*")
-        .eq("environment", context.environment);
+        .from('configurations',)
+        .select('*',)
+        .eq('environment', context.environment,)
 
       if (context.tenantId) {
-        query = query.or(`tenant_id.is.null,tenant_id.eq.${context.tenantId}`);
+        query = query.or(`tenant_id.is.null,tenant_id.eq.${context.tenantId}`,)
       } else {
-        query = query.is("tenant_id", undefined);
+        query = query.is('tenant_id', undefined,)
       }
 
-      const { data, error } = await query.order("key");
+      const { data, error, } = await query.order('key',)
 
       if (error) {
-        return [];
+        return []
       }
 
-      return data as ConfigurationValue[];
+      return data as ConfigurationValue[]
     } catch {
-      return [];
+      return []
     }
   }
 
@@ -396,52 +396,52 @@ export class ConfigurationService {
   // PRIVATE HELPER METHODS
   // ================================================
 
-  private buildCacheKey(key: string, context: ConfigurationContext): string {
-    return `${context.environment}:${context.tenantId || "global"}:${key}`;
+  private buildCacheKey(key: string, context: ConfigurationContext,): string {
+    return `${context.environment}:${context.tenantId || 'global'}:${key}`
   }
 
-  private parseConfigValue(config: ConfigurationValue): unknown {
+  private parseConfigValue(config: ConfigurationValue,): unknown {
     try {
       switch (config.type) {
-        case "string": {
-          return String(config.value);
+        case 'string': {
+          return String(config.value,)
         }
-        case "number": {
-          return Number(config.value);
+        case 'number': {
+          return Number(config.value,)
         }
-        case "boolean": {
-          return Boolean(config.value);
+        case 'boolean': {
+          return Boolean(config.value,)
         }
-        case "json":
-        case "array": {
-          return JSON.parse(config.value);
+        case 'json':
+        case 'array': {
+          return JSON.parse(config.value,)
         }
         default: {
-          return config.value;
+          return config.value
         }
       }
     } catch {
-      return config.value;
+      return config.value
     }
   }
 
-  private getValueType(value: unknown): ConfigurationValue["type"] {
-    if (typeof value === "string") {
-      return "string";
+  private getValueType(value: unknown,): ConfigurationValue['type'] {
+    if (typeof value === 'string') {
+      return 'string'
     }
-    if (typeof value === "number") {
-      return "number";
+    if (typeof value === 'number') {
+      return 'number'
     }
-    if (typeof value === "boolean") {
-      return "boolean";
+    if (typeof value === 'boolean') {
+      return 'boolean'
     }
-    if (Array.isArray(value)) {
-      return "array";
+    if (Array.isArray(value,)) {
+      return 'array'
     }
-    return "json";
+    return 'json'
   }
 
-  private isSecretKey(key: string): boolean {
+  private isSecretKey(key: string,): boolean {
     const secretPatterns = [
       /^.*_secret$/i,
       /^.*_password$/i,
@@ -449,9 +449,9 @@ export class ConfigurationService {
       /^.*_token$/i,
       /^api_/i,
       /^db_/i,
-    ];
+    ]
 
-    return secretPatterns.some((pattern) => pattern.test(key));
+    return secretPatterns.some((pattern,) => pattern.test(key,))
   }
 
   private evaluateFeatureFlag(
@@ -459,55 +459,55 @@ export class ConfigurationService {
     context: ConfigurationContext,
   ): boolean {
     // Check date range
-    const now = new Date();
+    const now = new Date()
     if (flag.startDate && now < flag.startDate) {
-      return false;
+      return false
     }
     if (flag.endDate && now > flag.endDate) {
-      return false;
+      return false
     }
 
     // Check tenant restriction
     if (
       flag.tenantIds
       && flag.tenantIds.length > 0
-      && !(context.tenantId && flag.tenantIds.includes(context.tenantId))
+      && !(context.tenantId && flag.tenantIds.includes(context.tenantId,))
     ) {
-      return false;
+      return false
     }
 
     // Check role restriction
     if (
       flag.userRoles
       && flag.userRoles.length > 0
-      && !context.userRoles?.some((role) => flag.userRoles?.includes(role))
+      && !context.userRoles?.some((role,) => flag.userRoles?.includes(role,))
     ) {
-      return false;
+      return false
     }
 
     // Check percentage rollout
     if (flag.percentage && flag.percentage < 100) {
       // Use user ID for consistent rollout
       if (context.userId) {
-        const hash = this.hashString(context.userId);
-        const userPercentage = hash % 100;
-        return userPercentage < flag.percentage;
+        const hash = this.hashString(context.userId,)
+        const userPercentage = hash % 100
+        return userPercentage < flag.percentage
       }
       // Fallback to random for anonymous users
-      return Math.random() * 100 < flag.percentage;
+      return Math.random() * 100 < flag.percentage
     }
 
-    return true;
+    return true
   }
 
-  private hashString(str: string): number {
-    let hash = 0;
+  private hashString(str: string,): number {
+    let hash = 0
     for (let i = 0; i < str.length; i++) {
-      const char = str.codePointAt(i);
-      hash = (hash << 5) - hash + char;
-      hash &= hash; // Convert to 32bit integer
+      const char = str.codePointAt(i,)
+      hash = (hash << 5) - hash + char
+      hash &= hash // Convert to 32bit integer
     }
-    return Math.abs(hash);
+    return Math.abs(hash,)
   }
 
   private async logConfigurationChange(
@@ -516,67 +516,67 @@ export class ConfigurationService {
     update: ConfigurationUpdate,
   ): Promise<void> {
     try {
-      await this.supabase.from("configuration_audit_log").insert({
+      await this.supabase.from('configuration_audit_log',).insert({
         configuration_key: key,
         old_value: undefined, // Would need to fetch previous value
-        new_value: JSON.stringify(value),
+        new_value: JSON.stringify(value,),
         updated_by: update.updatedBy,
         reason: update.reason,
         timestamp: new Date(),
-      });
+      },)
     } catch {}
   }
 
   private initializeRealtimeUpdates(): void {
     // Subscribe to configuration changes
     this.supabase
-      .channel("configuration_changes")
+      .channel('configuration_changes',)
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "configurations" },
-        (payload) => {
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'configurations', },
+        (payload,) => {
           // Invalidate relevant cache entries
           if (
             payload.new
-            && typeof payload.new === "object"
-            && "key" in payload.new
+            && typeof payload.new === 'object'
+            && 'key' in payload.new
           ) {
-            const config = payload.new as ConfigurationValue;
+            const config = payload.new as ConfigurationValue
             // Invalidate all cache entries for this key
             this.cache
               .keys()
-              .filter((key) => key.endsWith(`:${config.key}`))
-              .forEach((key) => this.cache.invalidate(key));
+              .filter((key,) => key.endsWith(`:${config.key}`,))
+              .forEach((key,) => this.cache.invalidate(key,))
           }
         },
       )
-      .subscribe();
+      .subscribe()
 
     // Subscribe to feature flag changes
     this.supabase
-      .channel("feature_flag_changes")
+      .channel('feature_flag_changes',)
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "feature_flags" },
-        (payload) => {
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'feature_flags', },
+        (payload,) => {
           // Invalidate relevant cache entries
           if (
             payload.new
-            && typeof payload.new === "object"
-            && "key" in payload.new
+            && typeof payload.new === 'object'
+            && 'key' in payload.new
           ) {
-            const flag = payload.new as FeatureFlag;
+            const flag = payload.new as FeatureFlag
             // Invalidate all cache entries for this feature flag
             this.cache
               .keys()
               .filter(
-                (key) => key.includes("feature:") && key.endsWith(`:${flag.key}`),
+                (key,) => key.includes('feature:',) && key.endsWith(`:${flag.key}`,),
               )
-              .forEach((key) => this.cache.invalidate(key));
+              .forEach((key,) => this.cache.invalidate(key,))
           }
         },
       )
-      .subscribe();
+      .subscribe()
   }
 }
 
@@ -584,19 +584,19 @@ export class ConfigurationService {
 // CONFIGURATION HELPERS
 // ================================================
 
-export const config = ConfigurationService.getInstance();
+export const config = ConfigurationService.getInstance()
 
-export async function getConfig<T = unknown>(
+export async function getConfig<T = unknown,>(
   key: string,
   defaultValue?: T,
   context?: Partial<ConfigurationContext>,
 ): Promise<T> {
   const fullContext: ConfigurationContext = {
-    environment: process.env.NODE_ENV || "development",
+    environment: process.env.NODE_ENV || 'development',
     ...context,
-  };
+  }
 
-  return config.getConfiguration(key, fullContext, defaultValue);
+  return config.getConfiguration(key, fullContext, defaultValue,)
 }
 
 export async function isFeatureEnabled(
@@ -604,19 +604,19 @@ export async function isFeatureEnabled(
   context?: Partial<ConfigurationContext>,
 ): Promise<boolean> {
   const fullContext: ConfigurationContext = {
-    environment: process.env.NODE_ENV || "development",
+    environment: process.env.NODE_ENV || 'development',
     ...context,
-  };
+  }
 
-  return config.isFeatureEnabled(featureKey, fullContext);
+  return config.isFeatureEnabled(featureKey, fullContext,)
 }
 
 // ================================================
 // CONFIGURATION MIDDLEWARE
 // ================================================
 
-export async function withConfiguration<T>(
-  handler: (config: ConfigurationService) => Promise<T>,
+export async function withConfiguration<T,>(
+  handler: (config: ConfigurationService,) => Promise<T>,
 ): Promise<T> {
-  return handler(ConfigurationService.getInstance());
+  return handler(ConfigurationService.getInstance(),)
 }

@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
-import { useState } from "react";
+import { useRegulatoryDocuments, } from '@/hooks/use-regulatory-documents'
+import { useState, } from 'react'
 
 export function RegulatoryDocumentsList() {
-  const { documents, loading, error, deleteDocument } = useRegulatoryDocuments();
-  const [filter, setFilter] = useState("");
-  const [sortBy, setSortBy] = useState("expiration_date");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState<string | null>();
+  const { documents, loading, error, deleteDocument, } = useRegulatoryDocuments()
+  const [filter, setFilter,] = useState('',)
+  const [sortBy, setSortBy,] = useState('expiration_date',)
+  const [deleteDialogOpen, setDeleteDialogOpen,] = useState(false,)
+  const [documentToDelete, setDocumentToDelete,] = useState<string | null>()
 
   // Show loading skeleton
   if (loading) {
@@ -18,7 +18,7 @@ export function RegulatoryDocumentsList() {
         <div className="h-6 w-1/2 animate-pulse rounded bg-gray-200" />
         <div className="h-6 w-5/6 animate-pulse rounded bg-gray-200" />
       </div>
-    );
+    )
   }
 
   // Show error state
@@ -28,7 +28,7 @@ export function RegulatoryDocumentsList() {
         Error loading documents
         <div>Failed to fetch documents</div>
       </div>
-    );
+    )
   }
 
   // Show empty state
@@ -37,42 +37,42 @@ export function RegulatoryDocumentsList() {
       <div className="p-4 text-center text-gray-500" data-testid="empty-state">
         No regulatory documents found
       </div>
-    );
+    )
   }
 
   // Filter documents by category
   const filteredDocuments = filter
-    ? documents.filter((doc) => doc.category.toLowerCase().includes(filter.toLowerCase()))
-    : documents;
+    ? documents.filter((doc,) => doc.category.toLowerCase().includes(filter.toLowerCase(),))
+    : documents
 
   // Sort documents
-  const sortedDocuments = [...filteredDocuments].sort((a, b) => {
-    if (sortBy === "expiration_date") {
+  const sortedDocuments = [...filteredDocuments,].sort((a, b,) => {
+    if (sortBy === 'expiration_date') {
       return (
-        new Date(a.expiration_date).getTime()
-        - new Date(b.expiration_date).getTime()
-      );
+        new Date(a.expiration_date,).getTime()
+        - new Date(b.expiration_date,).getTime()
+      )
     }
-    return a.title.localeCompare(b.title);
-  });
+    return a.title.localeCompare(b.title,)
+  },)
 
-  const handleDelete = async (id: string) => {
-    setDocumentToDelete(id);
-    setDeleteDialogOpen(true);
-  };
+  const handleDelete = async (id: string,) => {
+    setDocumentToDelete(id,)
+    setDeleteDialogOpen(true,)
+  }
 
   const confirmDelete = async () => {
     if (documentToDelete) {
-      await deleteDocument(documentToDelete);
-      setDeleteDialogOpen(false);
-      setDocumentToDelete(undefined);
+      await deleteDocument(documentToDelete,)
+      setDeleteDialogOpen(false,)
+      setDocumentToDelete(undefined,)
     }
-  };
+  }
 
   const cancelDelete = () => {
-    setDeleteDialogOpen(false);
-    setDocumentToDelete(undefined);
-  };
+    setDeleteDialogOpen(false,)
+    setDocumentToDelete(undefined,)
+  }
 
   return (
     <div className="space-y-6">
@@ -81,7 +81,7 @@ export function RegulatoryDocumentsList() {
         <select
           className="rounded border px-3 py-2"
           data-testid="category-filter"
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={(e,) => setFilter(e.target.value,)}
           value={filter}
         >
           <option value="">All Categories</option>
@@ -93,7 +93,7 @@ export function RegulatoryDocumentsList() {
         <select
           className="rounded border px-3 py-2"
           data-testid="sort-select"
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={(e,) => setSortBy(e.target.value,)}
           value={sortBy}
         >
           <option value="expiration_date">Sort by Expiration</option>
@@ -103,7 +103,7 @@ export function RegulatoryDocumentsList() {
 
       {/* Documents list */}
       <div className="space-y-4">
-        {sortedDocuments.map((document) => (
+        {sortedDocuments.map((document,) => (
           <div
             className="rounded-lg border bg-white p-4 shadow-sm"
             key={document.id}
@@ -125,7 +125,7 @@ export function RegulatoryDocumentsList() {
               <button
                 className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 data-testid="delete-document-button"
-                onClick={() => handleDelete(document.id)}
+                onClick={() => handleDelete(document.id,)}
               >
                 Delete
               </button>
@@ -161,7 +161,7 @@ export function RegulatoryDocumentsList() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default RegulatoryDocumentsList;
+export default RegulatoryDocumentsList

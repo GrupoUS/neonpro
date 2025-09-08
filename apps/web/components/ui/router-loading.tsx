@@ -6,9 +6,9 @@
  * with healthcare-specific branding.
  */
 
-"use client";
+'use client'
 
-import { Heart } from "lucide-react";
+import { Heart, } from 'lucide-react'
 
 export function RouterLoading() {
   return (
@@ -28,5 +28,5 @@ export function RouterLoading() {
         </div>
       </div>
     </div>
-  );
+  )
 }

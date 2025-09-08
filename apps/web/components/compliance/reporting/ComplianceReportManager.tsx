@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Checkbox, } from '@/components/ui/checkbox'
 
-import { Label } from "@/components/ui/label";
+import { Label, } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import {
   Archive,
   Calendar,
@@ -30,32 +30,32 @@ import {
   Play,
   Plus,
   Settings,
-} from "lucide-react";
-import type React from "react";
-import { useState } from "react";
-import type { ComplianceFramework } from "../types";
-import type { GeneratedReport, ReportGenerationConfig } from "./ComplianceReportGenerator";
-import type { ReportSchedule } from "./ReportScheduler";
+} from 'lucide-react'
+import type React from 'react'
+import { useState, } from 'react'
+import type { ComplianceFramework, } from '../types'
+import type { GeneratedReport, ReportGenerationConfig, } from './ComplianceReportGenerator'
+import type { ReportSchedule, } from './ReportScheduler'
 
 interface ComplianceReportManagerProps {
-  className?: string;
+  className?: string
 }
 
 // Mock data (would be fetched from API)
 const mockReports: GeneratedReport[] = [
   {
-    id: "report_1",
-    title: "Executive Summary - WCAG, LGPD Compliance",
-    type: "executive_summary",
-    frameworks: ["WCAG", "LGPD"],
-    generatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    format: "pdf",
-    filePath: "/reports/report_1.pdf",
+    id: 'report_1',
+    title: 'Executive Summary - WCAG, LGPD Compliance',
+    type: 'executive_summary',
+    frameworks: ['WCAG', 'LGPD',],
+    generatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000,), // 2 hours ago
+    format: 'pdf',
+    filePath: '/reports/report_1.pdf',
     fileSize: 524_288, // 512KB
     metadata: {
       totalPages: 12,
       dataPointsAnalyzed: 1547,
-      reportingPeriod: "Current Status",
+      reportingPeriod: 'Current Status',
       generationTime: 3500,
       complianceScore: 87,
       criticalViolations: 2,
@@ -63,43 +63,43 @@ const mockReports: GeneratedReport[] = [
     },
   },
   {
-    id: "report_2",
-    title: "Technical Analysis Report - All Frameworks",
-    type: "detailed_technical",
-    frameworks: ["WCAG", "LGPD", "ANVISA", "CFM"],
-    generatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    format: "html",
-    filePath: "/reports/report_2.html",
+    id: 'report_2',
+    title: 'Technical Analysis Report - All Frameworks',
+    type: 'detailed_technical',
+    frameworks: ['WCAG', 'LGPD', 'ANVISA', 'CFM',],
+    generatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000,), // 1 day ago
+    format: 'html',
+    filePath: '/reports/report_2.html',
     fileSize: 1_048_576, // 1MB
     metadata: {
       dataPointsAnalyzed: 2134,
-      reportingPeriod: "2024-01-01 to 2024-01-31",
+      reportingPeriod: '2024-01-01 to 2024-01-31',
       generationTime: 7200,
       complianceScore: 82,
       criticalViolations: 5,
       recommendations: 15,
     },
   },
-];
+]
 
 const mockSchedules: ReportSchedule[] = [
   {
-    id: "schedule_1",
-    name: "Weekly Compliance Summary",
-    description: "Weekly executive summary for management review",
+    id: 'schedule_1',
+    name: 'Weekly Compliance Summary',
+    description: 'Weekly executive summary for management review',
     enabled: true,
-    frequency: "weekly",
+    frequency: 'weekly',
     reportConfig: {
-      frameworks: ["WCAG", "LGPD", "ANVISA", "CFM"],
-      reportType: "executive_summary",
-      outputFormat: "pdf",
+      frameworks: ['WCAG', 'LGPD', 'ANVISA', 'CFM',],
+      reportType: 'executive_summary',
+      outputFormat: 'pdf',
       includeRecommendations: true,
       includeVisualizations: true,
     },
     distribution: {
       email: {
         enabled: true,
-        recipients: ["management@clinic.com", "compliance@clinic.com"],
+        recipients: ['management@clinic.com', 'compliance@clinic.com',],
         includeAttachment: true,
         embedCharts: true,
       },
@@ -108,180 +108,182 @@ const mockSchedules: ReportSchedule[] = [
         notify: true,
       },
     },
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    lastRun: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    nextRun: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000,),
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000,),
+    lastRun: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000,),
+    nextRun: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000,),
     isRunning: false,
   },
   {
-    id: "schedule_2",
-    name: "Monthly Audit Report",
-    description: "Comprehensive monthly report for audit preparation",
+    id: 'schedule_2',
+    name: 'Monthly Audit Report',
+    description: 'Comprehensive monthly report for audit preparation',
     enabled: false,
-    frequency: "monthly",
+    frequency: 'monthly',
     reportConfig: {
-      frameworks: ["WCAG", "LGPD", "ANVISA"],
-      reportType: "audit_preparation",
-      outputFormat: "pdf",
+      frameworks: ['WCAG', 'LGPD', 'ANVISA',],
+      reportType: 'audit_preparation',
+      outputFormat: 'pdf',
       includeViolationDetails: true,
       includeRecommendations: true,
     },
     distribution: {
       email: {
         enabled: true,
-        recipients: ["audit@clinic.com"],
+        recipients: ['audit@clinic.com',],
         includeAttachment: true,
         embedCharts: false,
       },
       storage: {
         enabled: true,
-        location: "s3://compliance-reports/",
+        location: 's3://compliance-reports/',
         retention: 2555, // 7 years
       },
     },
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    lastRun: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    nextRun: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,),
+    updatedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000,),
+    lastRun: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000,),
+    nextRun: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000,),
     isRunning: false,
   },
-];
+]
 
-const ReportTypeIcon = ({ type }: { type: string; }) => {
-  const iconClass = "w-4 h-4";
+const ReportTypeIcon = ({ type, }: { type: string },) => {
+  const iconClass = 'w-4 h-4'
   switch (type) {
-    case "executive_summary":
-      return <FileText className={iconClass} />;
-    case "detailed_technical":
-      return <Settings className={iconClass} />;
-    case "audit_preparation":
-      return <Archive className={iconClass} />;
+    case 'executive_summary':
+      return <FileText className={iconClass} />
+    case 'detailed_technical':
+      return <Settings className={iconClass} />
+    case 'audit_preparation':
+      return <Archive className={iconClass} />
     default:
-      return <FileText className={iconClass} />;
+      return <FileText className={iconClass} />
   }
-};
+}
 
-const FormatBadge = ({ format }: { format: string; }) => {
+const FormatBadge = ({ format, }: { format: string },) => {
   const formatColors = {
-    pdf: "bg-red-100 text-red-800",
-    html: "bg-blue-100 text-blue-800",
-    json: "bg-green-100 text-green-800",
-    csv: "bg-yellow-100 text-yellow-800",
-    xlsx: "bg-purple-100 text-purple-800",
-  };
+    pdf: 'bg-red-100 text-red-800',
+    html: 'bg-blue-100 text-blue-800',
+    json: 'bg-green-100 text-green-800',
+    csv: 'bg-yellow-100 text-yellow-800',
+    xlsx: 'bg-purple-100 text-purple-800',
+  }
 
   return (
     <Badge
       variant="outline"
-      className={cn("text-xs", formatColors[format as keyof typeof formatColors])}
+      className={cn('text-xs', formatColors[format as keyof typeof formatColors],)}
     >
       {format.toUpperCase()}
     </Badge>
-  );
-};
+  )
+}
 
-const formatFileSize = (bytes: number): string => {
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  if (bytes === 0) return "0 Byte";
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString());
-  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
-};
+const formatFileSize = (bytes: number,): string => {
+  const sizes = ['Bytes', 'KB', 'MB', 'GB',]
+  if (bytes === 0) return '0 Byte'
+  const i = parseInt(Math.floor(Math.log(bytes,) / Math.log(1024,),).toString(),)
+  return Math.round(bytes / Math.pow(1024, i,) * 100,) / 100 + ' ' + sizes[i]
+}
 
-const formatRelativeTime = (date: Date): string => {
-  const now = new Date();
-  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+const formatRelativeTime = (date: Date,): string => {
+  const now = new Date()
+  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
-  if (diffInHours < 1) return "Há poucos minutos";
-  if (diffInHours < 24) return `Há ${Math.floor(diffInHours)} horas`;
-  if (diffInHours < 48) return "Ontem";
-  return `Há ${Math.floor(diffInHours / 24)} dias`;
-};
+  if (diffInHours < 1) return 'Há poucos minutos'
+  if (diffInHours < 24) return `Há ${Math.floor(diffInHours,)} horas`
+  if (diffInHours < 48) return 'Ontem'
+  return `Há ${Math.floor(diffInHours / 24,)} dias`
+}
 
-export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = ({ className }) => {
-  const [reports, setReports] = useState<GeneratedReport[]>(mockReports);
-  const [schedules, setSchedules] = useState<ReportSchedule[]>(mockSchedules);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedFrameworks, setSelectedFrameworks] = useState<ComplianceFramework[]>([
-    "WCAG",
-    "LGPD",
-  ]);
-  const [reportType, setReportType] = useState<ReportGenerationConfig["reportType"]>(
-    "executive_summary",
-  );
-  const [outputFormat, setOutputFormat] = useState<ReportGenerationConfig["outputFormat"]>("pdf");
+export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
+  { className, },
+) => {
+  const [reports, setReports,] = useState<GeneratedReport[]>(mockReports,)
+  const [schedules, setSchedules,] = useState<ReportSchedule[]>(mockSchedules,)
+  const [isGenerating, setIsGenerating,] = useState(false,)
+  const [selectedFrameworks, setSelectedFrameworks,] = useState<ComplianceFramework[]>([
+    'WCAG',
+    'LGPD',
+  ],)
+  const [reportType, setReportType,] = useState<ReportGenerationConfig['reportType']>(
+    'executive_summary',
+  )
+  const [outputFormat, setOutputFormat,] = useState<ReportGenerationConfig['outputFormat']>('pdf',)
 
   // Generate report on demand
   const handleGenerateReport = async () => {
-    setIsGenerating(true);
+    setIsGenerating(true,)
 
     try {
       // Mock report generation
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 2000,))
 
       const newReport: GeneratedReport = {
         id: `report_${Date.now()}`,
-        title: `${reportType.replace("_", " ")} - ${selectedFrameworks.join(", ")} Compliance`,
+        title: `${reportType.replace('_', ' ',)} - ${selectedFrameworks.join(', ',)} Compliance`,
         type: reportType,
         frameworks: selectedFrameworks,
         generatedAt: new Date(),
         format: outputFormat,
         filePath: `/reports/report_${Date.now()}.${outputFormat}`,
-        fileSize: Math.floor(Math.random() * 1_000_000) + 100_000,
+        fileSize: Math.floor(Math.random() * 1_000_000,) + 100_000,
         metadata: {
-          totalPages: outputFormat === "pdf" ? Math.floor(Math.random() * 30) + 5 : undefined,
-          dataPointsAnalyzed: Math.floor(Math.random() * 2000) + 500,
-          reportingPeriod: "Current Status",
-          generationTime: Math.floor(Math.random() * 5000) + 1000,
-          complianceScore: Math.floor(Math.random() * 40) + 60,
-          criticalViolations: Math.floor(Math.random() * 10),
-          recommendations: Math.floor(Math.random() * 20) + 5,
+          totalPages: outputFormat === 'pdf' ? Math.floor(Math.random() * 30,) + 5 : undefined,
+          dataPointsAnalyzed: Math.floor(Math.random() * 2000,) + 500,
+          reportingPeriod: 'Current Status',
+          generationTime: Math.floor(Math.random() * 5000,) + 1000,
+          complianceScore: Math.floor(Math.random() * 40,) + 60,
+          criticalViolations: Math.floor(Math.random() * 10,),
+          recommendations: Math.floor(Math.random() * 20,) + 5,
         },
-      };
+      }
 
-      setReports(prev => [newReport, ...prev]);
+      setReports(prev => [newReport, ...prev,])
     } catch (error) {
-      console.error("Error generating report:", error);
+      console.error('Error generating report:', error,)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false,)
     }
-  };
+  }
 
   // Toggle schedule enabled status
-  const handleToggleSchedule = async (scheduleId: string) => {
+  const handleToggleSchedule = async (scheduleId: string,) => {
     setSchedules(prev =>
       prev.map(schedule =>
         schedule.id === scheduleId
-          ? { ...schedule, enabled: !schedule.enabled }
+          ? { ...schedule, enabled: !schedule.enabled, }
           : schedule
       )
-    );
-  };
+    )
+  }
 
   // Execute schedule immediately
-  const handleExecuteSchedule = async (scheduleId: string) => {
+  const handleExecuteSchedule = async (scheduleId: string,) => {
     setSchedules(prev =>
       prev.map(schedule =>
         schedule.id === scheduleId
-          ? { ...schedule, isRunning: true }
+          ? { ...schedule, isRunning: true, }
           : schedule
       )
-    );
+    )
 
     // Mock execution
     setTimeout(() => {
       setSchedules(prev =>
         prev.map(schedule =>
           schedule.id === scheduleId
-            ? { ...schedule, isRunning: false, lastRun: new Date() }
+            ? { ...schedule, isRunning: false, lastRun: new Date(), }
             : schedule
         )
-      );
-    }, 3000);
-  };
+      )
+    }, 3000,)
+  }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className,)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -313,7 +315,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {reports.map((report) => (
+                {reports.map((report,) => (
                   <div
                     key={report.id}
                     className="flex items-center justify-between p-4 border rounded-lg"
@@ -330,8 +332,8 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                         </div>
 
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>{formatRelativeTime(report.generatedAt)}</span>
-                          <span>{formatFileSize(report.fileSize)}</span>
+                          <span>{formatRelativeTime(report.generatedAt,)}</span>
+                          <span>{formatFileSize(report.fileSize,)}</span>
                           {report.metadata.totalPages && (
                             <span>{report.metadata.totalPages} páginas</span>
                           )}
@@ -392,7 +394,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {schedules.map((schedule) => (
+                {schedules.map((schedule,) => (
                   <div
                     key={schedule.id}
                     className="flex items-center justify-between p-4 border rounded-lg"
@@ -405,8 +407,8 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium">{schedule.name}</h4>
-                          <Badge variant={schedule.enabled ? "default" : "secondary"}>
-                            {schedule.enabled ? "Ativo" : "Inativo"}
+                          <Badge variant={schedule.enabled ? 'default' : 'secondary'}>
+                            {schedule.enabled ? 'Ativo' : 'Inativo'}
                           </Badge>
                           <Badge variant="outline" className="text-xs">
                             {schedule.frequency}
@@ -418,13 +420,13 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                         </p>
 
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>Frameworks: {schedule.reportConfig.frameworks.join(", ")}</span>
+                          <span>Frameworks: {schedule.reportConfig.frameworks.join(', ',)}</span>
                           <span>Formato: {schedule.reportConfig.outputFormat.toUpperCase()}</span>
                         </div>
 
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           {schedule.lastRun && (
-                            <span>Última execução: {formatRelativeTime(schedule.lastRun)}</span>
+                            <span>Última execução: {formatRelativeTime(schedule.lastRun,)}</span>
                           )}
                           {schedule.nextRun && (
                             <span>Próxima: {schedule.nextRun.toLocaleDateString()}</span>
@@ -443,22 +445,22 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleExecuteSchedule(schedule.id)}
+                        onClick={() => handleExecuteSchedule(schedule.id,)}
                         disabled={schedule.isRunning}
                       >
                         <Play className="w-4 h-4 mr-2" />
-                        {schedule.isRunning ? "Executando..." : "Executar Agora"}
+                        {schedule.isRunning ? 'Executando...' : 'Executar Agora'}
                       </Button>
 
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleToggleSchedule(schedule.id)}
+                        onClick={() => handleToggleSchedule(schedule.id,)}
                       >
                         {schedule.enabled
                           ? <Pause className="w-4 h-4 mr-2" />
                           : <Play className="w-4 h-4 mr-2" />}
-                        {schedule.enabled ? "Desativar" : "Ativar"}
+                        {schedule.enabled ? 'Desativar' : 'Ativar'}
                       </Button>
 
                       <Button variant="outline" size="sm">
@@ -499,16 +501,18 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
               <div className="space-y-3">
                 <Label className="text-sm font-medium">Frameworks de Compliance</Label>
                 <div className="flex flex-wrap gap-3">
-                  {(["WCAG", "LGPD", "ANVISA", "CFM"] as ComplianceFramework[]).map((framework) => (
+                  {(['WCAG', 'LGPD', 'ANVISA', 'CFM',] as ComplianceFramework[]).map((
+                    framework,
+                  ) => (
                     <div key={framework} className="flex items-center space-x-2">
                       <Checkbox
                         id={framework}
-                        checked={selectedFrameworks.includes(framework)}
-                        onCheckedChange={(checked) => {
+                        checked={selectedFrameworks.includes(framework,)}
+                        onCheckedChange={(checked,) => {
                           if (checked) {
-                            setSelectedFrameworks(prev => [...prev, framework]);
+                            setSelectedFrameworks(prev => [...prev, framework,])
                           } else {
-                            setSelectedFrameworks(prev => prev.filter(f => f !== framework));
+                            setSelectedFrameworks(prev => prev.filter(f => f !== framework))
                           }
                         }}
                       />
@@ -525,7 +529,10 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                 <Label htmlFor="report-type" className="text-sm font-medium">
                   Tipo de Relatório
                 </Label>
-                <Select value={reportType} onValueChange={(value: unknown) => setReportType(value)}>
+                <Select
+                  value={reportType}
+                  onValueChange={(value: unknown,) => setReportType(value,)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -546,7 +553,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                 </Label>
                 <Select
                   value={outputFormat}
-                  onValueChange={(value: unknown) => setOutputFormat(value)}
+                  onValueChange={(value: unknown,) => setOutputFormat(value,)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -625,7 +632,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default ComplianceReportManager;
+export default ComplianceReportManager

@@ -94,7 +94,7 @@ export default defineConfig({
               "**/build/**",
               "**/.next/**",
               "**/.turbo/**",
-              "**/lib/**",
+              "packages/*/lib/**",
             ],
             thresholds: {
               global: { branches: 70, functions: 75, lines: 80, statements: 80 },
@@ -119,6 +119,10 @@ export default defineConfig({
       "**/*.spec.{ts,tsx}",
       "**/*.e2e.{ts,tsx}",
       "**/playwright/**",
+      // Guard against accidental unit tests in Next.js app routes
+      // Unit tests should live under tools/tests/** or apps/*/tests/**
+      "apps/*/app/**",
+      "apps/*/pages/**",
       "**/compliance/**",
       "**/ai/**",
       "**/lgpd/**",

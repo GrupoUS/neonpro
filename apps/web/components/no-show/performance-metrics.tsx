@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
+import { Badge, } from '@/components/ui/badge'
 // import { Button } from "@/components/ui/button"; // Unused import
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import {
   Activity,
   ArrowDown,
@@ -29,101 +29,101 @@ import {
   TrendingUp,
   Users,
   // Zap,
-} from "lucide-react";
-import React from "react";
+} from 'lucide-react'
+import React from 'react'
 
 export interface PerformanceMetric {
-  id: string;
-  name: string;
-  value: number;
-  previousValue?: number;
-  target?: number;
-  format: "percentage" | "currency" | "number" | "decimal";
-  trend: "up" | "down" | "stable";
-  period: string;
-  description?: string;
+  id: string
+  name: string
+  value: number
+  previousValue?: number
+  target?: number
+  format: 'percentage' | 'currency' | 'number' | 'decimal'
+  trend: 'up' | 'down' | 'stable'
+  period: string
+  description?: string
 }
 
 export interface MLModelMetrics {
-  accuracy: number;
-  precision: number;
-  recall: number;
-  f1Score: number;
-  confidenceScore: number;
-  totalPredictions: number;
-  correctPredictions: number;
-  falsePositives: number;
-  falseNegatives: number;
-  lastUpdated: string;
-  modelVersion: string;
+  accuracy: number
+  precision: number
+  recall: number
+  f1Score: number
+  confidenceScore: number
+  totalPredictions: number
+  correctPredictions: number
+  falsePositives: number
+  falseNegatives: number
+  lastUpdated: string
+  modelVersion: string
 }
 
 export interface ROIMetrics {
-  totalRevenue: number;
-  revenueProtected: number;
-  interventionCosts: number;
-  netROI: number;
-  roiPercentage: number;
-  appointmentsProtected: number;
-  interventionSuccessRate: number;
-  averageAppointmentValue: number;
-  costPerIntervention: number;
-  monthlyTarget: number;
+  totalRevenue: number
+  revenueProtected: number
+  interventionCosts: number
+  netROI: number
+  roiPercentage: number
+  appointmentsProtected: number
+  interventionSuccessRate: number
+  averageAppointmentValue: number
+  costPerIntervention: number
+  monthlyTarget: number
 }
 
 export interface NoShowMetrics {
-  currentNoShowRate: number;
-  previousNoShowRate: number;
-  reductionPercentage: number;
-  targetReduction: number;
-  totalAppointments: number;
-  noShowAppointments: number;
-  interventionsExecuted: number;
-  preventedNoShows: number;
+  currentNoShowRate: number
+  previousNoShowRate: number
+  reductionPercentage: number
+  targetReduction: number
+  totalAppointments: number
+  noShowAppointments: number
+  interventionsExecuted: number
+  preventedNoShows: number
   byRiskLevel: {
-    low: { total: number; noShows: number; rate: number; };
-    medium: { total: number; noShows: number; rate: number; };
-    high: { total: number; noShows: number; rate: number; };
-    critical: { total: number; noShows: number; rate: number; };
-  };
+    low: { total: number; noShows: number; rate: number }
+    medium: { total: number; noShows: number; rate: number }
+    high: { total: number; noShows: number; rate: number }
+    critical: { total: number; noShows: number; rate: number }
+  }
 }
 
 export interface PerformanceMetricsProps {
-  mlMetrics: MLModelMetrics;
-  roiMetrics: ROIMetrics;
-  noShowMetrics: NoShowMetrics;
-  customMetrics: PerformanceMetric[];
-  timeRange: "today" | "week" | "month" | "quarter" | "year";
-  onTimeRangeChange: (range: string) => void;
-  className?: string;
-  isLoading?: boolean;
+  mlMetrics: MLModelMetrics
+  roiMetrics: ROIMetrics
+  noShowMetrics: NoShowMetrics
+  customMetrics: PerformanceMetric[]
+  timeRange: 'today' | 'week' | 'month' | 'quarter' | 'year'
+  onTimeRangeChange: (range: string,) => void
+  className?: string
+  isLoading?: boolean
 }
 
-const formatValue = (value: number, format: PerformanceMetric["format"]) => {
+const formatValue = (value: number, format: PerformanceMetric['format'],) => {
   switch (format) {
-    case "percentage":
-      return `${value.toFixed(1)}%`;
-    case "currency":
-      return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-    case "decimal":
-      return value.toFixed(2);
-    case "number":
+    case 'percentage':
+      return `${value.toFixed(1,)}%`
+    case 'currency':
+      return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, },)}`
+    case 'decimal':
+      return value.toFixed(2,)
+    case 'number':
     default:
-      return value.toLocaleString("pt-BR");
+      return value.toLocaleString('pt-BR',)
   }
-};
+}
 
-const getTrendIcon = (trend: "up" | "down" | "stable") => {
+const getTrendIcon = (trend: 'up' | 'down' | 'stable',) => {
   switch (trend) {
-    case "up":
-      return <TrendingUp className="h-4 w-4 text-green-600" />;
-    case "down":
-      return <TrendingDown className="h-4 w-4 text-red-600" />;
-    case "stable":
+    case 'up':
+      return <TrendingUp className="h-4 w-4 text-green-600" />
+    case 'down':
+      return <TrendingDown className="h-4 w-4 text-red-600" />
+    case 'stable':
     default:
-      return <Activity className="h-4 w-4 text-gray-600" />;
+      return <Activity className="h-4 w-4 text-gray-600" />
   }
-};
+}
 
 export function PerformanceMetrics({
   mlMetrics,
@@ -134,28 +134,28 @@ export function PerformanceMetrics({
   onTimeRangeChange,
   className,
   isLoading = false,
-}: PerformanceMetricsProps) {
+}: PerformanceMetricsProps,) {
   // Calcular métricas derivadas
   const mlAccuracyTrend = mlMetrics.accuracy >= 85
-    ? "up"
+    ? 'up'
     : mlMetrics.accuracy >= 70
-    ? "stable"
-    : "down";
-  const roiTrend = roiMetrics.roiPercentage > 0 ? "up" : "down";
-  const noShowTrend = noShowMetrics.reductionPercentage > 0 ? "up" : "down";
+    ? 'stable'
+    : 'down'
+  const roiTrend = roiMetrics.roiPercentage > 0 ? 'up' : 'down'
+  const noShowTrend = noShowMetrics.reductionPercentage > 0 ? 'up' : 'down'
 
   if (isLoading) {
     return (
-      <div className={cn("space-y-6", className)}>
-        {[...Array(4)].map((_, i) => (
+      <div className={cn('space-y-6', className,)}>
+        {[...Array(4,),].map((_, i,) => (
           <div key={i} className="h-48 bg-muted rounded-lg animate-pulse" />
         ))}
       </div>
-    );
+    )
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className,)}>
       {/* Header com filtro de período */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -191,9 +191,9 @@ export function PerformanceMetrics({
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-2xl font-bold text-green-600">
-                    {noShowMetrics.reductionPercentage.toFixed(1)}%
+                    {noShowMetrics.reductionPercentage.toFixed(1,)}%
                   </span>
-                  {getTrendIcon(noShowTrend)}
+                  {getTrendIcon(noShowTrend,)}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">
@@ -223,9 +223,9 @@ export function PerformanceMetrics({
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-2xl font-bold text-blue-600">
-                    {mlMetrics.accuracy.toFixed(1)}%
+                    {mlMetrics.accuracy.toFixed(1,)}%
                   </span>
-                  {getTrendIcon(mlAccuracyTrend)}
+                  {getTrendIcon(mlAccuracyTrend,)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
                   {mlMetrics.totalPredictions.toLocaleString()} predições
@@ -247,16 +247,16 @@ export function PerformanceMetrics({
                 <div className="flex items-center gap-2 mt-2">
                   <span
                     className={cn(
-                      "text-2xl font-bold",
-                      roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600",
+                      'text-2xl font-bold',
+                      roiMetrics.netROI >= 0 ? 'text-green-600' : 'text-red-600',
                     )}
                   >
-                    {formatValue(roiMetrics.netROI, "currency")}
+                    {formatValue(roiMetrics.netROI, 'currency',)}
                   </span>
-                  {getTrendIcon(roiTrend)}
+                  {getTrendIcon(roiTrend,)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  {roiMetrics.roiPercentage.toFixed(1)}% retorno
+                  {roiMetrics.roiPercentage.toFixed(1,)}% retorno
                 </div>
               </div>
               <DollarSign className="h-8 w-8 text-green-600" />
@@ -274,7 +274,7 @@ export function PerformanceMetrics({
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-2xl font-bold text-orange-600">
-                    {noShowMetrics.currentNoShowRate.toFixed(1)}%
+                    {noShowMetrics.currentNoShowRate.toFixed(1,)}%
                   </span>
                   <ArrowDown className="h-4 w-4 text-green-600" />
                 </div>
@@ -312,10 +312,10 @@ export function PerformanceMetrics({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Redução No-Show (Meta: 25%)</span>
-                    <span>{noShowMetrics.reductionPercentage.toFixed(1)}%</span>
+                    <span>{noShowMetrics.reductionPercentage.toFixed(1,)}%</span>
                   </div>
                   <Progress
-                    value={Math.min((noShowMetrics.reductionPercentage / 25) * 100, 100)}
+                    value={Math.min((noShowMetrics.reductionPercentage / 25) * 100, 100,)}
                     className="h-2"
                   />
                 </div>
@@ -323,7 +323,7 @@ export function PerformanceMetrics({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Precisão ML (Meta: 90%)</span>
-                    <span>{mlMetrics.accuracy.toFixed(1)}%</span>
+                    <span>{mlMetrics.accuracy.toFixed(1,)}%</span>
                   </div>
                   <Progress
                     value={(mlMetrics.accuracy / 90) * 100}
@@ -334,10 +334,10 @@ export function PerformanceMetrics({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>ROI Mensal (Meta: R$ {roiMetrics.monthlyTarget.toLocaleString()})</span>
-                    <span>{formatValue(roiMetrics.netROI, "currency")}</span>
+                    <span>{formatValue(roiMetrics.netROI, 'currency',)}</span>
                   </div>
                   <Progress
-                    value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100)}
+                    value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100,)}
                     className="h-2"
                   />
                 </div>
@@ -354,7 +354,7 @@ export function PerformanceMetrics({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {customMetrics.slice(0, 5).map((metric) => (
+                  {customMetrics.slice(0, 5,).map((metric,) => (
                     <div key={metric.id} className="flex items-center justify-between">
                       <div className="space-y-1">
                         <div className="text-sm font-medium">{metric.name}</div>
@@ -367,13 +367,13 @@ export function PerformanceMetrics({
                       <div className="text-right">
                         <div className="flex items-center gap-1">
                           <span className="font-semibold">
-                            {formatValue(metric.value, metric.format)}
+                            {formatValue(metric.value, metric.format,)}
                           </span>
-                          {getTrendIcon(metric.trend)}
+                          {getTrendIcon(metric.trend,)}
                         </div>
                         {metric.target && (
                           <div className="text-xs text-muted-foreground">
-                            Meta: {formatValue(metric.target, metric.format)}
+                            Meta: {formatValue(metric.target, metric.format,)}
                           </div>
                         )}
                       </div>
@@ -400,28 +400,28 @@ export function PerformanceMetrics({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-blue-600">
-                      {mlMetrics.accuracy.toFixed(1)}%
+                      {mlMetrics.accuracy.toFixed(1,)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Acurácia</div>
                   </div>
 
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-green-600">
-                      {mlMetrics.precision.toFixed(1)}%
+                      {mlMetrics.precision.toFixed(1,)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Precisão</div>
                   </div>
 
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-orange-600">
-                      {mlMetrics.recall.toFixed(1)}%
+                      {mlMetrics.recall.toFixed(1,)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Recall</div>
                   </div>
 
                   <div className="text-center p-4 rounded-lg bg-muted/50">
                     <div className="text-2xl font-bold text-purple-600">
-                      {mlMetrics.f1Score.toFixed(1)}%
+                      {mlMetrics.f1Score.toFixed(1,)}%
                     </div>
                     <div className="text-sm text-muted-foreground">F1-Score</div>
                   </div>
@@ -430,7 +430,7 @@ export function PerformanceMetrics({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Confiança Média</span>
-                    <span>{mlMetrics.confidenceScore.toFixed(1)}%</span>
+                    <span>{mlMetrics.confidenceScore.toFixed(1,)}%</span>
                   </div>
                   <Progress value={mlMetrics.confidenceScore} className="h-2" />
                 </div>
@@ -472,7 +472,7 @@ export function PerformanceMetrics({
                 <div className="text-xs text-muted-foreground text-center">
                   Versão do modelo: {mlMetrics.modelVersion}
                   <br />
-                  Última atualização: {new Date(mlMetrics.lastUpdated).toLocaleString("pt-BR")}
+                  Última atualização: {new Date(mlMetrics.lastUpdated,).toLocaleString('pt-BR',)}
                 </div>
               </CardContent>
             </Card>
@@ -495,21 +495,21 @@ export function PerformanceMetrics({
                   <div className="flex justify-between">
                     <span className="text-sm">Receita Total</span>
                     <span className="font-semibold">
-                      {formatValue(roiMetrics.totalRevenue, "currency")}
+                      {formatValue(roiMetrics.totalRevenue, 'currency',)}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-sm">Receita Protegida</span>
                     <span className="font-semibold text-green-600">
-                      {formatValue(roiMetrics.revenueProtected, "currency")}
+                      {formatValue(roiMetrics.revenueProtected, 'currency',)}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-sm">Custo Intervenções</span>
                     <span className="font-semibold text-red-600">
-                      -{formatValue(roiMetrics.interventionCosts, "currency")}
+                      -{formatValue(roiMetrics.interventionCosts, 'currency',)}
                     </span>
                   </div>
 
@@ -519,11 +519,11 @@ export function PerformanceMetrics({
                     <span className="font-medium">ROI Líquido</span>
                     <span
                       className={cn(
-                        "font-bold text-lg",
-                        roiMetrics.netROI >= 0 ? "text-green-600" : "text-red-600",
+                        'font-bold text-lg',
+                        roiMetrics.netROI >= 0 ? 'text-green-600' : 'text-red-600',
                       )}
                     >
-                      {formatValue(roiMetrics.netROI, "currency")}
+                      {formatValue(roiMetrics.netROI, 'currency',)}
                     </span>
                   </div>
 
@@ -531,11 +531,11 @@ export function PerformanceMetrics({
                     <span className="text-sm">Percentual de ROI</span>
                     <span
                       className={cn(
-                        "font-semibold",
-                        roiMetrics.roiPercentage >= 0 ? "text-green-600" : "text-red-600",
+                        'font-semibold',
+                        roiMetrics.roiPercentage >= 0 ? 'text-green-600' : 'text-red-600',
                       )}
                     >
-                      {roiMetrics.roiPercentage.toFixed(1)}%
+                      {roiMetrics.roiPercentage.toFixed(1,)}%
                     </span>
                   </div>
                 </div>
@@ -562,21 +562,21 @@ export function PerformanceMetrics({
                   <div className="flex justify-between">
                     <span className="text-sm">Taxa de Sucesso</span>
                     <span className="font-semibold text-green-600">
-                      {roiMetrics.interventionSuccessRate.toFixed(1)}%
+                      {roiMetrics.interventionSuccessRate.toFixed(1,)}%
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-sm">Valor Médio Consulta</span>
                     <span className="font-semibold">
-                      {formatValue(roiMetrics.averageAppointmentValue, "currency")}
+                      {formatValue(roiMetrics.averageAppointmentValue, 'currency',)}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-sm">Custo por Intervenção</span>
                     <span className="font-semibold">
-                      {formatValue(roiMetrics.costPerIntervention, "currency")}
+                      {formatValue(roiMetrics.costPerIntervention, 'currency',)}
                     </span>
                   </div>
                 </div>
@@ -584,10 +584,10 @@ export function PerformanceMetrics({
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Meta Mensal</span>
-                    <span>{formatValue(roiMetrics.monthlyTarget, "currency")}</span>
+                    <span>{formatValue(roiMetrics.monthlyTarget, 'currency',)}</span>
                   </div>
                   <Progress
-                    value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100)}
+                    value={Math.min((roiMetrics.netROI / roiMetrics.monthlyTarget) * 100, 100,)}
                     className="h-2"
                   />
                 </div>
@@ -607,33 +607,36 @@ export function PerformanceMetrics({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Object.entries(noShowMetrics.byRiskLevel).map(([level, data]) => {
+                {Object.entries(noShowMetrics.byRiskLevel,).map(([level, data,],) => {
                   const levelConfig = {
-                    low: { label: "Baixo", color: "bg-green-100 text-green-800 border-green-200" },
+                    low: { label: 'Baixo', color: 'bg-green-100 text-green-800 border-green-200', },
                     medium: {
-                      label: "Médio",
-                      color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+                      label: 'Médio',
+                      color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
                     },
                     high: {
-                      label: "Alto",
-                      color: "bg-orange-100 text-orange-800 border-orange-200",
+                      label: 'Alto',
+                      color: 'bg-orange-100 text-orange-800 border-orange-200',
                     },
-                    critical: { label: "Crítico", color: "bg-red-100 text-red-800 border-red-200" },
-                  }[level as keyof typeof noShowMetrics.byRiskLevel];
+                    critical: {
+                      label: 'Crítico',
+                      color: 'bg-red-100 text-red-800 border-red-200',
+                    },
+                  }[level as keyof typeof noShowMetrics.byRiskLevel]
 
                   return (
                     <div key={level} className="p-4 rounded-lg border">
                       <div className="text-center space-y-3">
                         <Badge
                           variant="outline"
-                          className={cn("px-3 py-1", levelConfig?.color)}
+                          className={cn('px-3 py-1', levelConfig?.color,)}
                         >
                           Risco {levelConfig?.label}
                         </Badge>
 
                         <div>
                           <div className="text-2xl font-bold">
-                            {data.rate.toFixed(1)}%
+                            {data.rate.toFixed(1,)}%
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Taxa de No-Show
@@ -647,15 +650,15 @@ export function PerformanceMetrics({
                         <Progress value={data.rate} className="h-2" />
                       </div>
                     </div>
-                  );
-                })}
+                  )
+                },)}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
-export default PerformanceMetrics;
+export default PerformanceMetrics

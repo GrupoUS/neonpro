@@ -4,11 +4,11 @@
  * with Brazilian accessibility standards, LGPD compliance, and proper error handling.
  */
 
-"use client";
+'use client'
 
-import type { ReactNode } from "react";
-import React, { useEffect, useMemo, useState } from "react";
-import type { z } from "zod";
+import type { ReactNode, } from 'react'
+import React, { useEffect, useMemo, useState, } from 'react'
+import type { z, } from 'zod'
 // TODO: Import from @neonpro/utils when implementing
 // import { Logger } from '@neonpro/utils';
 // TODO: Import custom hooks when implementing
@@ -24,136 +24,137 @@ import type { z } from "zod";
 
 // Placeholder implementations for template compilation
 const Logger = {
-  info: (message: string, meta?: unknown) => console.log(message, meta),
-  error: (message: string, meta?: unknown) => console.error(message, meta),
-  warn: (message: string, meta?: unknown) => console.warn(message, meta),
-  debug: (message: string, meta?: unknown) => console.debug(message, meta),
-};
+  info: (message: string, meta?: unknown,) => console.log(message, meta,),
+  error: (message: string, meta?: unknown,) => console.error(message, meta,),
+  warn: (message: string, meta?: unknown,) => console.warn(message, meta,),
+  debug: (message: string, meta?: unknown,) => console.debug(message, meta,),
+}
 
 // Placeholder components for template compilation
 interface HealthcareErrorBoundaryProps {
-  children: ReactNode;
-  onError?: (error: Error) => void;
-  componentName?: string;
+  children: ReactNode
+  onError?: (error: Error,) => void
+  componentName?: string
 }
 
 const HealthcareErrorBoundary: React.FC<HealthcareErrorBoundaryProps> = ({
   children,
-}) => <div>{children}</div>;
+},) => <div>{children}</div>
 
 // Note: HealthcareContainerProps interface available for future use
 
 interface LoadingSpinnerProps {
-  size?: string;
+  size?: string
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size, },) => (
   <div data-size={size}>Loading...</div>
-);
+)
 
 // Note: ButtonProps interface available for future use
 
 interface LGPDConsentBannerProps {
-  children?: ReactNode;
-  className?: string;
-  onConsent?: () => void | Promise<void>;
-  purpose?: string;
+  children?: ReactNode
+  className?: string
+  onConsent?: () => void | Promise<void>
+  purpose?: string
 }
 
 const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   children,
   className,
-}) => <div className={className}>{children}</div>;
+},) => <div className={className}>{children}</div>
 
 interface AccessibilityWrapperProps {
-  children: ReactNode;
-  className?: string | undefined;
-  "data-testid"?: string | undefined;
-  "aria-label"?: string | undefined;
-  "aria-describedby"?: string | undefined;
-  accessibilityLevel?: "AA" | "AAA";
+  children: ReactNode
+  className?: string | undefined
+  'data-testid'?: string | undefined
+  'aria-label'?: string | undefined
+  'aria-describedby'?: string | undefined
+  accessibilityLevel?: 'AA' | 'AAA'
 }
 
 const AccessibilityWrapper: React.FC<AccessibilityWrapperProps> = ({
   children,
   className,
   ...props
-}) => (
+},) => (
   <div className={className} {...props}>
     {children}
   </div>
-);
+)
 
 interface AlertProps {
-  children: ReactNode;
-  className?: string;
-  variant?: string;
-  role?: string;
+  children: ReactNode
+  className?: string
+  variant?: string
+  role?: string
 }
 
-const Alert: React.FC<AlertProps> = ({ children, className, ...props }) => (
+const Alert: React.FC<AlertProps> = ({ children, className, ...props },) => (
   <div className={className} {...props}>
     {children}
   </div>
-);
+)
 
-const AlertDescription: React.FC<{ children: ReactNode; }> = ({ children }) => <div>{children}
-</div>;
+const AlertDescription: React.FC<{ children: ReactNode }> = ({ children, },) => (
+  <div>{children}</div>
+)
 
 // Placeholder hooks for template compilation
 const useHealthcareAuth = () => ({
-  user: { professionalLicense: "123456" } as { professionalLicense: string; },
+  user: { professionalLicense: '123456', } as { professionalLicense: string },
   isAuthenticated: true,
-});
+})
 
 const useLGPDConsent = () => ({
   hasConsent: true,
   requestConsent: async () => true,
   checkConsent: async () => true,
   grantConsent: async () => true,
-});
+})
 
 // Note: useHealthcareForm hook available for future use
 
 // Base props for all healthcare components
 export interface HealthcareComponentProps {
-  className?: string;
-  "data-testid"?: string;
-  ariaLabel?: string;
-  ariaDescribedBy?: string;
-  onError?: (error: Error) => void;
-  loading?: boolean;
-  disabled?: boolean;
-  lgpdConsentRequired?: boolean;
-  professionalLicenseRequired?: boolean;
-  emergencyAccessAllowed?: boolean;
+  className?: string
+  'data-testid'?: string
+  ariaLabel?: string
+  ariaDescribedBy?: string
+  onError?: (error: Error,) => void
+  loading?: boolean
+  disabled?: boolean
+  lgpdConsentRequired?: boolean
+  professionalLicenseRequired?: boolean
+  emergencyAccessAllowed?: boolean
 }
 
 // Component state management
-export interface HealthcareComponentState<T> {
-  data: T | null;
-  loading: boolean;
-  error: Error | null;
-  lgpdConsent: boolean;
-  professionalVerified: boolean;
-  emergencyMode: boolean;
+export interface HealthcareComponentState<T,> {
+  data: T | null
+  loading: boolean
+  error: Error | null
+  lgpdConsent: boolean
+  professionalVerified: boolean
+  emergencyMode: boolean
 }
 
 // Form validation state
 export interface ValidationState {
-  isValid: boolean;
-  errors: Record<string, string[]>;
-  touched: Record<string, boolean>;
+  isValid: boolean
+  errors: Record<string, string[]>
+  touched: Record<string, boolean>
 }
 
 // Healthcare component configuration
 export interface HealthcareComponentConfig {
-  componentName: string;
-  auditLevel: "minimal" | "standard" | "comprehensive";
-  requiresLGPDConsent: boolean;
-  requiresProfessionalLicense: boolean;
-  allowsEmergencyAccess: boolean;
-  accessibilityLevel: "AA" | "AAA";
+  componentName: string
+  auditLevel: 'minimal' | 'standard' | 'comprehensive'
+  requiresLGPDConsent: boolean
+  requiresProfessionalLicense: boolean
+  allowsEmergencyAccess: boolean
+  accessibilityLevel: 'AA' | 'AAA'
 }
 
 // Template for healthcare React components
@@ -161,13 +162,13 @@ export abstract class HealthcareComponentTemplate<
   T,
   P extends HealthcareComponentProps,
 > extends React.Component<P, HealthcareComponentState<T>> {
-  protected readonly logger: typeof Logger;
-  protected readonly config: HealthcareComponentConfig;
+  protected readonly logger: typeof Logger
+  protected readonly config: HealthcareComponentConfig
 
-  constructor(props: P, config: HealthcareComponentConfig) {
-    super(props);
-    this.config = config;
-    this.logger = Logger;
+  constructor(props: P, config: HealthcareComponentConfig,) {
+    super(props,)
+    this.config = config
+    this.logger = Logger
 
     this.state = {
       data: null,
@@ -176,38 +177,38 @@ export abstract class HealthcareComponentTemplate<
       lgpdConsent: false,
       professionalVerified: false,
       emergencyMode: false,
-    };
+    }
   }
 
   // Abstract methods to be implemented by specific components
-  protected abstract validateProps(props: P): z.SafeParseReturnType<P, P>;
-  protected abstract loadData(): Promise<T>;
-  protected abstract handleDataUpdate(data: Partial<T>): Promise<void>;
-  protected abstract renderContent(): React.ReactNode;
+  protected abstract validateProps(props: P,): z.SafeParseReturnType<P, P>
+  protected abstract loadData(): Promise<T>
+  protected abstract handleDataUpdate(data: Partial<T>,): Promise<void>
+  protected abstract renderContent(): React.ReactNode
 
   override componentDidMount() {
-    this.validateAndInitialize();
+    this.validateAndInitialize()
   }
 
-  override componentDidUpdate(prevProps: P) {
-    if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-      this.validateAndInitialize();
+  override componentDidUpdate(prevProps: P,) {
+    if (JSON.stringify(prevProps,) !== JSON.stringify(this.props,)) {
+      this.validateAndInitialize()
     }
   }
 
   private async validateAndInitialize(): Promise<void> {
     try {
-      const validation = this.validateProps(this.props);
+      const validation = this.validateProps(this.props,)
       if (!validation.success) {
         throw new Error(
           `Component validation failed: ${validation.error.message}`,
-        );
+        )
       }
 
-      await this.checkHealthcareCompliance();
-      await this.loadInitialData();
+      await this.checkHealthcareCompliance()
+      await this.loadInitialData()
     } catch (error) {
-      this.handleError(error as Error);
+      this.handleError(error as Error,)
     }
   }
 
@@ -215,74 +216,74 @@ export abstract class HealthcareComponentTemplate<
     // Check LGPD consent if required
     if (this.config.requiresLGPDConsent) {
       // Implementation would check user consent
-      this.setState({ lgpdConsent: true }); // Placeholder
+      this.setState({ lgpdConsent: true, },) // Placeholder
     }
 
     // Check professional license if required
     if (this.config.requiresProfessionalLicense) {
       // Implementation would verify professional license
-      this.setState({ professionalVerified: true }); // Placeholder
+      this.setState({ professionalVerified: true, },) // Placeholder
     }
 
-    this.logger.info("Healthcare compliance checked", {
+    this.logger.info('Healthcare compliance checked', {
       componentName: this.config.componentName,
       lgpdConsent: this.state.lgpdConsent,
       professionalVerified: this.state.professionalVerified,
-    });
+    },)
   }
 
   private async loadInitialData(): Promise<void> {
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: null, },)
 
     try {
-      const data = await this.loadData();
-      this.setState({ data, loading: false });
+      const data = await this.loadData()
+      this.setState({ data, loading: false, },)
 
-      this.logger.info("Component data loaded successfully", {
+      this.logger.info('Component data loaded successfully', {
         componentName: this.config.componentName,
-      });
+      },)
     } catch (error) {
-      this.handleError(error as Error);
+      this.handleError(error as Error,)
     }
   }
 
-  protected handleError = (error: Error): void => {
-    this.setState({ error, loading: false });
+  protected handleError = (error: Error,): void => {
+    this.setState({ error, loading: false, },)
 
-    this.logger.error("Component error", {
+    this.logger.error('Component error', {
       componentName: this.config.componentName,
       error: error.message,
       stack: error.stack,
-    });
+    },)
 
-    this.props.onError?.(error);
-  };
+    this.props.onError?.(error,)
+  }
 
   protected handleEmergencyAccess = async (
     justification: string,
   ): Promise<void> => {
     if (!this.config.allowsEmergencyAccess) {
-      throw new Error("Emergency access not allowed for this component");
+      throw new Error('Emergency access not allowed for this component',)
     }
 
-    this.setState({ emergencyMode: true });
+    this.setState({ emergencyMode: true, },)
 
-    this.logger.warn("Emergency access activated", {
+    this.logger.warn('Emergency access activated', {
       componentName: this.config.componentName,
       justification,
-    });
+    },)
 
-    await this.loadInitialData();
-  };
+    await this.loadInitialData()
+  }
 
   override render(): React.ReactNode {
     const {
       className,
-      "data-testid": testId,
+      'data-testid': testId,
       ariaLabel,
       ariaDescribedBy,
-    } = this.props;
-    const { loading, error, lgpdConsent } = this.state;
+    } = this.props
+    const { loading, error, lgpdConsent, } = this.state
 
     return (
       <HealthcareErrorBoundary
@@ -299,7 +300,7 @@ export abstract class HealthcareComponentTemplate<
           {/* LGPD Consent Check */}
           {this.config.requiresLGPDConsent && !lgpdConsent && (
             <LGPDConsentBanner
-              onConsent={() => this.setState({ lgpdConsent: true })}
+              onConsent={() => this.setState({ lgpdConsent: true, },)}
               purpose={`Using ${this.config.componentName} component`}
             />
           )}
@@ -321,7 +322,7 @@ export abstract class HealthcareComponentTemplate<
                   <button
                     onClick={() =>
                       this.handleEmergencyAccess(
-                        "User requested emergency access",
+                        'User requested emergency access',
                       )}
                     className="ml-2 underline"
                   >
@@ -336,50 +337,50 @@ export abstract class HealthcareComponentTemplate<
           {!loading && !error && this.renderContent()}
         </AccessibilityWrapper>
       </HealthcareErrorBoundary>
-    );
+    )
   }
 }
 
 // Functional component template using hooks
-export function createHealthcareComponent<T>(
+export function createHealthcareComponent<T,>(
   config: HealthcareComponentConfig,
   implementation: {
-    loadData: () => Promise<T>;
-    validateData?: (data: T) => boolean;
+    loadData: () => Promise<T>
+    validateData?: (data: T,) => boolean
     renderContent: (
       data: T,
       actions: HealthcareComponentActions,
-    ) => React.ReactNode;
+    ) => React.ReactNode
   },
 ) {
-  return function HealthcareComponent(props: HealthcareComponentProps) {
-    const [state, setState] = useState<HealthcareComponentState<T>>({
+  return function HealthcareComponent(props: HealthcareComponentProps,) {
+    const [state, setState,] = useState<HealthcareComponentState<T>>({
       data: null,
       loading: false,
       error: null,
       lgpdConsent: false,
       professionalVerified: false,
       emergencyMode: false,
-    });
+    },)
 
-    const logger = useMemo(() => Logger, []);
-    const { user } = useHealthcareAuth();
-    const { requestConsent, grantConsent } = useLGPDConsent();
+    const logger = useMemo(() => Logger, [],)
+    const { user, } = useHealthcareAuth()
+    const { requestConsent, grantConsent, } = useLGPDConsent()
 
     // Load initial data
     useEffect(() => {
       const loadData = async () => {
-        setState((prev) => ({ ...prev, loading: true, error: null }));
+        setState((prev,) => ({ ...prev, loading: true, error: null, }))
 
         try {
           // Check healthcare compliance
           if (config.requiresLGPDConsent) {
-            const hasConsent = await requestConsent();
-            setState((prev) => ({ ...prev, lgpdConsent: hasConsent }));
+            const hasConsent = await requestConsent()
+            setState((prev,) => ({ ...prev, lgpdConsent: hasConsent, }))
 
             if (!hasConsent) {
-              setState((prev) => ({ ...prev, loading: false }));
-              return;
+              setState((prev,) => ({ ...prev, loading: false, }))
+              return
             }
           }
 
@@ -388,104 +389,104 @@ export function createHealthcareComponent<T>(
             && !user?.professionalLicense
           ) {
             throw new Error(
-              "Professional license required to access this component",
-            );
+              'Professional license required to access this component',
+            )
           }
 
-          const data = await implementation.loadData();
+          const data = await implementation.loadData()
 
           if (
             implementation.validateData
-            && !implementation.validateData(data)
+            && !implementation.validateData(data,)
           ) {
-            throw new Error("Data validation failed");
+            throw new Error('Data validation failed',)
           }
 
-          setState((prev) => ({
+          setState((prev,) => ({
             ...prev,
             data,
             loading: false,
             professionalVerified: !!user?.professionalLicense,
-          }));
+          }))
 
-          logger.info("Healthcare component data loaded", {
+          logger.info('Healthcare component data loaded', {
             componentName: config.componentName,
             dataType: typeof data,
-          });
+          },)
         } catch (error) {
-          setState((prev) => ({
+          setState((prev,) => ({
             ...prev,
             error: error as Error,
             loading: false,
-          }));
+          }))
 
-          logger.error("Failed to load component data", {
+          logger.error('Failed to load component data', {
             componentName: config.componentName,
             error: (error as Error).message,
-          });
+          },)
         }
-      };
+      }
 
-      loadData();
-    }, [user, requestConsent, logger]);
+      loadData()
+    }, [user, requestConsent, logger,],)
 
     // Component actions
     const actions: HealthcareComponentActions = useMemo(
       () => ({
         refresh: async () => {
-          setState((prev) => ({ ...prev, loading: true, error: null }));
+          setState((prev,) => ({ ...prev, loading: true, error: null, }))
           try {
-            const data = await implementation.loadData();
-            setState((prev) => ({ ...prev, data, loading: false }));
+            const data = await implementation.loadData()
+            setState((prev,) => ({ ...prev, data, loading: false, }))
           } catch (error) {
-            setState((prev) => ({
+            setState((prev,) => ({
               ...prev,
               error: error as Error,
               loading: false,
-            }));
+            }))
           }
         },
 
-        handleEmergencyAccess: async (justification: string) => {
+        handleEmergencyAccess: async (justification: string,) => {
           if (!config.allowsEmergencyAccess) {
-            throw new Error("Emergency access not allowed");
+            throw new Error('Emergency access not allowed',)
           }
 
-          setState((prev) => ({ ...prev, emergencyMode: true }));
-          logger.warn("Emergency access requested", { justification });
+          setState((prev,) => ({ ...prev, emergencyMode: true, }))
+          logger.warn('Emergency access requested', { justification, },)
 
           try {
-            const data = await implementation.loadData();
-            setState((prev) => ({ ...prev, data, loading: false }));
+            const data = await implementation.loadData()
+            setState((prev,) => ({ ...prev, data, loading: false, }))
           } catch (error) {
-            setState((prev) => ({
+            setState((prev,) => ({
               ...prev,
               error: error as Error,
               loading: false,
-            }));
+            }))
           }
         },
 
         grantLGPDConsent: async () => {
-          await grantConsent();
-          setState((prev) => ({ ...prev, lgpdConsent: true }));
+          await grantConsent()
+          setState((prev,) => ({ ...prev, lgpdConsent: true, }))
         },
       }),
-      [grantConsent, logger],
-    );
+      [grantConsent, logger,],
+    )
 
     // Render component
     return (
       <HealthcareErrorBoundary
-        onError={(error: Error) => {
-          setState((prev) => ({ ...prev, error }));
-          props.onError?.(error);
+        onError={(error: Error,) => {
+          setState((prev,) => ({ ...prev, error, }))
+          props.onError?.(error,)
         }}
         componentName={config.componentName}
       >
         <AccessibilityWrapper
           className={props.className}
-          data-testid={props["data-testid"]}
+          data-testid={props['data-testid']}
           aria-label={props.ariaLabel}
           aria-describedby={props.ariaDescribedBy}
           accessibilityLevel={config.accessibilityLevel}
@@ -519,7 +520,7 @@ export function createHealthcareComponent<T>(
                   <button
                     onClick={() =>
                       actions.handleEmergencyAccess(
-                        "User requested emergency access",
+                        'User requested emergency access',
                       )}
                     className="ml-2 underline text-white hover:text-gray-200"
                     aria-label="Solicitar acesso de emergência"
@@ -546,120 +547,120 @@ export function createHealthcareComponent<T>(
             && !state.error
             && state.data
             && state.lgpdConsent !== false
-            && implementation.renderContent(state.data, actions)}
+            && implementation.renderContent(state.data, actions,)}
         </AccessibilityWrapper>
       </HealthcareErrorBoundary>
-    );
-  };
+    )
+  }
 }
 
 // Actions available to healthcare components
 export interface HealthcareComponentActions {
-  refresh: () => Promise<void>;
-  handleEmergencyAccess: (justification: string) => Promise<void>;
-  grantLGPDConsent: () => Promise<void>;
+  refresh: () => Promise<void>
+  handleEmergencyAccess: (justification: string,) => Promise<void>
+  grantLGPDConsent: () => Promise<void>
 }
 
 // Brazilian healthcare form field patterns
 export const BrazilianHealthcareFields = {
   CPFField: {
-    name: "cpf",
-    label: "CPF",
-    placeholder: "000.000.000-00",
-    pattern: "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$",
+    name: 'cpf',
+    label: 'CPF',
+    placeholder: '000.000.000-00',
+    pattern: '^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$',
     required: true,
-    autoComplete: "off",
-    inputMode: "numeric" as const,
+    autoComplete: 'off',
+    inputMode: 'numeric' as const,
   },
 
   PhoneField: {
-    name: "phone",
-    label: "Telefone",
-    placeholder: "(00) 00000-0000",
-    pattern: "^\\(\\d{2}\\) \\d{4,5}-\\d{4}$",
+    name: 'phone',
+    label: 'Telefone',
+    placeholder: '(00) 00000-0000',
+    pattern: '^\\(\\d{2}\\) \\d{4,5}-\\d{4}$',
     required: true,
-    autoComplete: "tel",
-    inputMode: "tel" as const,
+    autoComplete: 'tel',
+    inputMode: 'tel' as const,
   },
 
   CEPField: {
-    name: "zipCode",
-    label: "CEP",
-    placeholder: "00000-000",
-    pattern: "^\\d{5}-\\d{3}$",
+    name: 'zipCode',
+    label: 'CEP',
+    placeholder: '00000-000',
+    pattern: '^\\d{5}-\\d{3}$',
     required: true,
-    autoComplete: "postal-code",
-    inputMode: "numeric" as const,
+    autoComplete: 'postal-code',
+    inputMode: 'numeric' as const,
   },
 
   CRMField: {
-    name: "crm",
-    label: "CRM",
-    placeholder: "000000/UF",
-    pattern: "^\\d{4,6}\\/[A-Z]{2}$",
+    name: 'crm',
+    label: 'CRM',
+    placeholder: '000000/UF',
+    pattern: '^\\d{4,6}\\/[A-Z]{2}$',
     required: true,
-    autoComplete: "off",
-    inputMode: "text" as const,
+    autoComplete: 'off',
+    inputMode: 'text' as const,
   },
-};
+}
 
 // Component configuration presets
 export const HealthcareComponentPresets = {
   PatientProfile: {
-    componentName: "patient-profile",
-    auditLevel: "comprehensive" as const,
+    componentName: 'patient-profile',
+    auditLevel: 'comprehensive' as const,
     requiresLGPDConsent: true,
     requiresProfessionalLicense: true,
     allowsEmergencyAccess: true,
-    accessibilityLevel: "AA" as const,
+    accessibilityLevel: 'AA' as const,
   },
 
   AppointmentScheduler: {
-    componentName: "appointment-scheduler",
-    auditLevel: "standard" as const,
+    componentName: 'appointment-scheduler',
+    auditLevel: 'standard' as const,
     requiresLGPDConsent: true,
     requiresProfessionalLicense: false,
     allowsEmergencyAccess: false,
-    accessibilityLevel: "AA" as const,
+    accessibilityLevel: 'AA' as const,
   },
 
   MedicalRecords: {
-    componentName: "medical-records",
-    auditLevel: "comprehensive" as const,
+    componentName: 'medical-records',
+    auditLevel: 'comprehensive' as const,
     requiresLGPDConsent: true,
     requiresProfessionalLicense: true,
     allowsEmergencyAccess: true,
-    accessibilityLevel: "AAA" as const,
+    accessibilityLevel: 'AAA' as const,
   },
 
   PatientDashboard: {
-    componentName: "patient-dashboard",
-    auditLevel: "standard" as const,
+    componentName: 'patient-dashboard',
+    auditLevel: 'standard' as const,
     requiresLGPDConsent: true,
     requiresProfessionalLicense: false,
     allowsEmergencyAccess: false,
-    accessibilityLevel: "AA" as const,
+    accessibilityLevel: 'AA' as const,
   },
-} as const;
+} as const
 
-export type ComponentPresetKey = keyof typeof HealthcareComponentPresets;
+export type ComponentPresetKey = keyof typeof HealthcareComponentPresets
 
 // Helper for creating components with presets
-export function createHealthcareComponentWithPreset<T>(
+export function createHealthcareComponentWithPreset<T,>(
   preset: ComponentPresetKey,
   implementation: {
-    loadData: () => Promise<T>;
-    validateData?: (data: T) => boolean;
+    loadData: () => Promise<T>
+    validateData?: (data: T,) => boolean
     renderContent: (
       data: T,
       actions: HealthcareComponentActions,
-    ) => React.ReactNode;
+    ) => React.ReactNode
   },
 ) {
   return createHealthcareComponent(
     HealthcareComponentPresets[preset],
     implementation,
-  );
+  )
 }
 
-export default HealthcareComponentTemplate;
+export default HealthcareComponentTemplate

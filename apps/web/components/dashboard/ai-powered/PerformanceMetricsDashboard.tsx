@@ -4,11 +4,11 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Activity,
   BarChart3,
@@ -23,8 +23,8 @@ import {
   TrendingUp,
   Users,
   Zap,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 import {
   Area,
   AreaChart,
@@ -35,49 +35,49 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts'
 
 interface PerformanceMetrics {
   systemPerformance: {
-    cpuUsage: number;
-    memoryUsage: number;
-    diskUsage: number;
-    networkLatency: number;
-  };
+    cpuUsage: number
+    memoryUsage: number
+    diskUsage: number
+    networkLatency: number
+  }
   applicationMetrics: {
-    responseTime: number;
-    throughput: number;
-    errorRate: number;
-    activeConnections: number;
-  };
+    responseTime: number
+    throughput: number
+    errorRate: number
+    activeConnections: number
+  }
   businessMetrics: {
-    appointmentsPerHour: number;
-    revenuePerHour: number;
-    patientSatisfaction: number;
-    systemAdoption: number;
-  };
+    appointmentsPerHour: number
+    revenuePerHour: number
+    patientSatisfaction: number
+    systemAdoption: number
+  }
   cacheMetrics: {
-    hitRate: number;
-    missRate: number;
-    evictionRate: number;
-    memoryUsage: number;
-  };
+    hitRate: number
+    missRate: number
+    evictionRate: number
+    memoryUsage: number
+  }
 }
 
 interface PerformanceDataPoint {
-  timestamp: string;
-  responseTime: number;
-  throughput: number;
-  cpuUsage: number;
-  memoryUsage: number;
+  timestamp: string
+  responseTime: number
+  throughput: number
+  cpuUsage: number
+  memoryUsage: number
 }
 
 export function PerformanceMetricsDashboard() {
-  const [metrics, setMetrics] = useState<PerformanceMetrics | null>();
-  const [historicalData, setHistoricalData] = useState<PerformanceDataPoint[]>(
+  const [metrics, setMetrics,] = useState<PerformanceMetrics | null>()
+  const [historicalData, setHistoricalData,] = useState<PerformanceDataPoint[]>(
     [],
-  );
-  const [loading, setLoading] = useState(true);
+  )
+  const [loading, setLoading,] = useState(true,)
 
   useEffect(() => {
     // Simulate loading performance data
@@ -107,101 +107,101 @@ export function PerformanceMetricsDashboard() {
           evictionRate: 2.1,
           memoryUsage: 234,
         },
-      });
+      },)
 
       // Generate historical data for the last 24 hours
-      const now = new Date();
-      const data: PerformanceDataPoint[] = [];
+      const now = new Date()
+      const data: PerformanceDataPoint[] = []
 
       for (let i = 23; i >= 0; i--) {
-        const timestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
+        const timestamp = new Date(now.getTime() - i * 60 * 60 * 1000,)
         data.push({
-          timestamp: timestamp.toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          responseTime: Math.floor(150 + Math.random() * 100),
-          throughput: Math.floor(200 + Math.random() * 100),
-          cpuUsage: Math.floor(20 + Math.random() * 30),
-          memoryUsage: Math.floor(60 + Math.random() * 20),
-        });
+          timestamp: timestamp.toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          },),
+          responseTime: Math.floor(150 + Math.random() * 100,),
+          throughput: Math.floor(200 + Math.random() * 100,),
+          cpuUsage: Math.floor(20 + Math.random() * 30,),
+          memoryUsage: Math.floor(60 + Math.random() * 20,),
+        },)
       }
 
-      setHistoricalData(data);
-      setLoading(false);
-    };
+      setHistoricalData(data,)
+      setLoading(false,)
+    }
 
-    loadPerformanceData();
+    loadPerformanceData()
 
     // Simulate real-time updates
     const interval = setInterval(() => {
-      setMetrics((prev) => {
-        if (!prev) return prev;
+      setMetrics((prev,) => {
+        if (!prev) return prev
         return {
           ...prev,
           systemPerformance: {
             ...prev.systemPerformance,
-            cpuUsage: Math.floor(20 + Math.random() * 30),
-            networkLatency: Math.floor(10 + Math.random() * 20),
+            cpuUsage: Math.floor(20 + Math.random() * 30,),
+            networkLatency: Math.floor(10 + Math.random() * 20,),
           },
           applicationMetrics: {
             ...prev.applicationMetrics,
-            responseTime: Math.floor(150 + Math.random() * 100),
-            throughput: Math.floor(200 + Math.random() * 100),
-            activeConnections: Math.floor(40 + Math.random() * 20),
+            responseTime: Math.floor(150 + Math.random() * 100,),
+            throughput: Math.floor(200 + Math.random() * 100,),
+            activeConnections: Math.floor(40 + Math.random() * 20,),
           },
-        };
-      });
-    }, 5000);
+        }
+      },)
+    }, 5000,)
 
-    return () => clearInterval(interval);
-  }, [metrics]);
+    return () => clearInterval(interval,)
+  }, [metrics,],)
 
   const getPerformanceStatus = (
     value: number,
-    thresholds: { good: number; warning: number; },
+    thresholds: { good: number; warning: number },
     inverse = false,
   ) => {
     if (inverse) {
       if (value <= thresholds.good) {
-        return "success";
+        return 'success'
       }
       if (value <= thresholds.warning) {
-        return "warning";
+        return 'warning'
       }
-      return "error";
+      return 'error'
     }
     if (value >= thresholds.good) {
-      return "success";
+      return 'success'
     }
     if (value >= thresholds.warning) {
-      return "warning";
+      return 'warning'
     }
-    return "error";
-  };
+    return 'error'
+  }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string,) => {
     switch (status) {
-      case "success": {
-        return "text-green-600";
+      case 'success': {
+        return 'text-green-600'
       }
-      case "warning": {
-        return "text-yellow-600";
+      case 'warning': {
+        return 'text-yellow-600'
       }
-      case "error": {
-        return "text-red-600";
+      case 'error': {
+        return 'text-red-600'
       }
       default: {
-        return "text-muted-foreground";
+        return 'text-muted-foreground'
       }
     }
-  };
+  }
 
   if (loading || !metrics) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+          {[1, 2, 3, 4,].map((i,) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-4 bg-muted rounded w-20" />
@@ -214,7 +214,7 @@ export function PerformanceMetricsDashboard() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -286,10 +286,10 @@ export function PerformanceMetricsDashboard() {
               <div className="text-xs text-muted-foreground">
                 Target: &lt;80% | Status:
                 {metrics.systemPerformance.cpuUsage < 70
-                  ? " Ótimo"
+                  ? ' Ótimo'
                   : metrics.systemPerformance.cpuUsage < 85
-                  ? " Bom"
-                  : " Atenção"}
+                  ? ' Bom'
+                  : ' Atenção'}
               </div>
             </div>
           </CardContent>
@@ -421,8 +421,8 @@ export function PerformanceMetricsDashboard() {
                   <XAxis dataKey="timestamp" />
                   <YAxis />
                   <Tooltip
-                    formatter={(value) => [`${value}ms`, "Tempo de Resposta"]}
-                    labelFormatter={(label) => `Horário: ${label}`}
+                    formatter={(value,) => [`${value}ms`, 'Tempo de Resposta',]}
+                    labelFormatter={(label,) => `Horário: ${label}`}
                   />
                   <Line
                     type="monotone"
@@ -454,11 +454,11 @@ export function PerformanceMetricsDashboard() {
                   <XAxis dataKey="timestamp" />
                   <YAxis />
                   <Tooltip
-                    formatter={(value, name) => [
+                    formatter={(value, name,) => [
                       `${value}%`,
-                      name === "cpuUsage" ? "CPU" : "Memória",
+                      name === 'cpuUsage' ? 'CPU' : 'Memória',
                     ]}
-                    labelFormatter={(label) => `Horário: ${label}`}
+                    labelFormatter={(label,) => `Horário: ${label}`}
                   />
                   <Area
                     type="monotone"
@@ -573,7 +573,7 @@ export function PerformanceMetricsDashboard() {
                 </div>
                 <span className="text-lg font-bold text-green-600">
                   R$ {metrics.businessMetrics.revenuePerHour.toLocaleString(
-                    "pt-BR",
+                    'pt-BR',
                   )}
                 </span>
               </div>
@@ -659,5 +659,5 @@ export function PerformanceMetricsDashboard() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

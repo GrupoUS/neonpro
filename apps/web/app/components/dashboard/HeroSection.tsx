@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, FileText, Heart, Shield, Star, Stethoscope } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Button, } from '@/components/ui/button'
+import { ArrowRight, Calendar, FileText, Heart, Shield, Star, Stethoscope, } from 'lucide-react'
+import { useRouter, } from 'next/navigation'
 
 export function HeroSection() {
-  const router = useRouter();
+  const router = useRouter()
 
   const handleLoginClick = () => {
-    router.push("/login");
-  };
+    router.push('/login',)
+  }
 
   const handleSignupClick = () => {
-    router.push("/signup");
-  };
+    router.push('/signup',)
+  }
 
   return (
     <section className="relative">
@@ -95,5 +95,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

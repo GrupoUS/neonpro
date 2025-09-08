@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
 // import { useMFA } from "@neonpro/domain/hooks/auth/use-mfa";
 // Mock MfaMethod enum for MVP
 enum MfaMethod {
-  TOTP = "totp",
-  SMS = "sms",
-  EMAIL = "email",
-  BACKUP_CODES = "backup_codes",
+  TOTP = 'totp',
+  SMS = 'sms',
+  EMAIL = 'email',
+  BACKUP_CODES = 'backup_codes',
 }
-import { useState } from "react";
+import { useState, } from 'react'
 
 // Mock hook for MVP
 const useMFA = () => ({
@@ -17,35 +17,35 @@ const useMFA = () => ({
     methods: [],
     backupCodes: 0,
   }),
-  disableMfaMethod: async (_method: unknown) => ({ success: true }),
+  disableMfaMethod: async (_method: unknown,) => ({ success: true, }),
   generateBackupCodes: async () => ({
     success: true,
-    codes: ["123456", "789012"],
+    codes: ['123456', '789012',],
   }),
   isEnabled: false,
   config: {
     method: MfaMethod.TOTP,
-    phoneNumber: "+55 11 99999-9999",
-    email: "user@example.com",
+    phoneNumber: '+55 11 99999-9999',
+    email: 'user@example.com',
     backupCodesCount: 5,
   },
-  disableMfa: async (_method?: unknown) => ({ success: true }),
+  disableMfa: async (_method?: unknown,) => ({ success: true, }),
   regenerateBackupCodes: async () => ({
     success: true,
-    backupCodes: ["123456", "789012", "345678", "456789", "567890"],
+    backupCodes: ['123456', '789012', '345678', '456789', '567890',],
   }),
-  isMethodEnabled: (_method: unknown) => false,
+  isMethodEnabled: (_method: unknown,) => false,
   hasBackupCodes: () => false,
   clearError: () => {},
   isLoading: false,
   error: null,
-});
+})
 
 interface MfaStatusProps {
-  onSetupMfa?: () => void;
+  onSetupMfa?: () => void
 }
 
-export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
+export function MfaStatus({ onSetupMfa, }: MfaStatusProps,) {
   const {
     isEnabled,
     config,
@@ -56,54 +56,54 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
     isMethodEnabled,
     hasBackupCodes,
     clearError,
-  } = useMFA();
+  } = useMFA()
 
-  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
-  const [showBackupCodes, setShowBackupCodes] = useState(false);
-  const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[]>(
+  const [showDisableConfirm, setShowDisableConfirm,] = useState(false,)
+  const [showBackupCodes, setShowBackupCodes,] = useState(false,)
+  const [generatedBackupCodes, setGeneratedBackupCodes,] = useState<string[]>(
     [],
-  );
+  )
 
   const handleDisableMfa = async () => {
     try {
-      const result = await disableMfa();
+      const result = await disableMfa()
       if (result.success) {
-        setShowDisableConfirm(false);
+        setShowDisableConfirm(false,)
       }
     } catch (err) {
       // ignore
     }
-  };
+  }
 
   const handleRegenerateBackupCodes = async () => {
     try {
-      const result = await regenerateBackupCodes();
+      const result = await regenerateBackupCodes()
       if (result.success && result.backupCodes) {
-        setGeneratedBackupCodes(result.backupCodes);
-        setShowBackupCodes(true);
+        setGeneratedBackupCodes(result.backupCodes,)
+        setShowBackupCodes(true,)
       }
     } catch {}
-  };
+  }
 
-  const getMethodDisplayName = (method: MfaMethod) => {
+  const getMethodDisplayName = (method: MfaMethod,) => {
     switch (method) {
       case MfaMethod.TOTP: {
-        return "Authenticator App";
+        return 'Authenticator App'
       }
       case MfaMethod.SMS: {
-        return "SMS";
+        return 'SMS'
       }
       case MfaMethod.EMAIL: {
-        return "Email";
+        return 'Email'
       }
       case MfaMethod.BACKUP_CODES: {
-        return "Backup Codes";
+        return 'Backup Codes'
       }
       default: {
-        return method;
+        return method
       }
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -113,7 +113,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
           <div className="h-4 w-1/2 rounded bg-gray-200" />
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -123,11 +123,11 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
         <div
           className={`rounded-full px-2 py-1 text-xs ${
             isEnabled
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
           }`}
         >
-          {isEnabled ? "Enabled" : "Disabled"}
+          {isEnabled ? 'Enabled' : 'Disabled'}
         </div>
       </div>
 
@@ -162,7 +162,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
                 <div>
                   <div className="font-medium">MFA is active</div>
                   <div className="text-gray-600 text-sm">
-                    Primary method: {getMethodDisplayName(config.method)}
+                    Primary method: {getMethodDisplayName(config.method,)}
                     {config.phoneNumber && ` (${config.phoneNumber})`}
                     {config.email && ` (${config.email})`}
                   </div>
@@ -173,19 +173,19 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
             <div className="space-y-2">
               <h4 className="font-medium">Active Methods:</h4>
               <div className="space-y-1 text-sm">
-                {isMethodEnabled(MfaMethod.TOTP) && (
+                {isMethodEnabled(MfaMethod.TOTP,) && (
                   <div className="flex items-center space-x-2">
                     <span className="h-2 w-2 rounded-full bg-green-500" />
                     <span>Authenticator App</span>
                   </div>
                 )}
-                {isMethodEnabled(MfaMethod.SMS) && config.phoneNumber && (
+                {isMethodEnabled(MfaMethod.SMS,) && config.phoneNumber && (
                   <div className="flex items-center space-x-2">
                     <span className="h-2 w-2 rounded-full bg-green-500" />
                     <span>SMS ({config.phoneNumber})</span>
                   </div>
                 )}
-                {isMethodEnabled(MfaMethod.EMAIL) && config.email && (
+                {isMethodEnabled(MfaMethod.EMAIL,) && config.email && (
                   <div className="flex items-center space-x-2">
                     <span className="h-2 w-2 rounded-full bg-green-500" />
                     <span>Email ({config.email})</span>
@@ -213,7 +213,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
               <button
                 className="rounded border border-red-200 px-3 py-1 text-red-600 text-sm hover:bg-red-50 disabled:opacity-50"
                 disabled={isLoading}
-                onClick={() => setShowDisableConfirm(true)}
+                onClick={() => setShowDisableConfirm(true,)}
               >
                 Disable MFA
               </button>
@@ -237,7 +237,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
                   </button>
                   <button
                     className="rounded border px-3 py-1 text-sm hover:bg-gray-50"
-                    onClick={() => setShowDisableConfirm(false)}
+                    onClick={() => setShowDisableConfirm(false,)}
                   >
                     Cancel
                   </button>
@@ -290,7 +290,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
               account if you lose access to your primary MFA method.
             </p>
             <div className="mb-4 grid grid-cols-2 gap-2 font-mono text-sm">
-              {generatedBackupCodes.map((code, index) => (
+              {generatedBackupCodes.map((code, index,) => (
                 <div
                   className="rounded border bg-gray-100 p-2 text-center"
                   key={index}
@@ -304,8 +304,8 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
                 className="flex-1 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    generatedBackupCodes.join("\n"),
-                  );
+                    generatedBackupCodes.join('\n',),
+                  )
                 }}
               >
                 Copy Codes
@@ -313,8 +313,8 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
               <button
                 className="flex-1 rounded border px-4 py-2 hover:bg-gray-50"
                 onClick={() => {
-                  setShowBackupCodes(false);
-                  setGeneratedBackupCodes([]);
+                  setShowBackupCodes(false,)
+                  setGeneratedBackupCodes([],)
                 }}
               >
                 Close
@@ -324,5 +324,5 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

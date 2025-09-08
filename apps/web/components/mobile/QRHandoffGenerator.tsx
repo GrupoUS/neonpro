@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * QR Handoff Generator Component
@@ -13,12 +13,12 @@
  * - Real-time sync indicators
  */
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { cn, } from '@/lib/utils'
 import {
   AlertCircle,
   CheckCircle,
@@ -31,63 +31,63 @@ import {
   Tablet,
   Wifi,
   WifiOff,
-} from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+} from 'lucide-react'
+import { QRCodeSVG, } from 'qrcode.react'
+import React, { useCallback, useEffect, useRef, useState, } from 'react'
 
 // Types
 interface DeviceFingerprint {
-  userAgent: string;
-  screenResolution: string;
-  timezone: string;
-  language: string;
-  deviceType: "mobile" | "tablet" | "desktop";
+  userAgent: string
+  screenResolution: string
+  timezone: string
+  language: string
+  deviceType: 'mobile' | 'tablet' | 'desktop'
 }
 
 interface HandoffToken {
-  sessionId: string;
-  deviceFingerprint: DeviceFingerprint;
-  payload: string; // Encrypted session state
-  issuedAt: number;
-  expiresAt: number;
-  nonce: string;
+  sessionId: string
+  deviceFingerprint: DeviceFingerprint
+  payload: string // Encrypted session state
+  issuedAt: number
+  expiresAt: number
+  nonce: string
 }
 
 interface QRHandoffState {
-  status: "idle" | "generating" | "active" | "scanning" | "success" | "error" | "expired";
-  token?: string;
-  qrCodeUrl?: string;
-  expiresAt?: number;
-  targetDevice?: DeviceFingerprint;
-  error?: string;
+  status: 'idle' | 'generating' | 'active' | 'scanning' | 'success' | 'error' | 'expired'
+  token?: string
+  qrCodeUrl?: string
+  expiresAt?: number
+  targetDevice?: DeviceFingerprint
+  error?: string
 }
 
 export interface QRHandoffGeneratorProps {
-  className?: string;
-  emergencyMode?: boolean;
-  onHandoffComplete?: (targetDevice: DeviceFingerprint) => void;
-  onError?: (error: string) => void;
-  sessionData?: Record<string, unknown>;
+  className?: string
+  emergencyMode?: boolean
+  onHandoffComplete?: (targetDevice: DeviceFingerprint,) => void
+  onError?: (error: string,) => void
+  sessionData?: Record<string, unknown>
 }
 
 // Device Detection Hook
 const useDeviceFingerprint = (): DeviceFingerprint => {
-  const [fingerprint, setFingerprint] = useState<DeviceFingerprint>({
-    userAgent: "",
-    screenResolution: "",
-    timezone: "",
-    language: "",
-    deviceType: "desktop",
-  });
+  const [fingerprint, setFingerprint,] = useState<DeviceFingerprint>({
+    userAgent: '',
+    screenResolution: '',
+    timezone: '',
+    language: '',
+    deviceType: 'desktop',
+  },)
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const getDeviceType = (): "mobile" | "tablet" | "desktop" => {
-        const width = window.screen.width;
-        if (width < 768) return "mobile";
-        if (width < 1024) return "tablet";
-        return "desktop";
-      };
+    if (typeof window !== 'undefined') {
+      const getDeviceType = (): 'mobile' | 'tablet' | 'desktop' => {
+        const width = window.screen.width
+        if (width < 768) return 'mobile'
+        if (width < 1024) return 'tablet'
+        return 'desktop'
+      }
 
       setFingerprint({
         userAgent: navigator.userAgent,
@@ -95,12 +95,12 @@ const useDeviceFingerprint = (): DeviceFingerprint => {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         language: navigator.language,
         deviceType: getDeviceType(),
-      });
+      },)
     }
-  }, []);
+  }, [],)
 
-  return fingerprint;
-};
+  return fingerprint
+}
 
 // Token Service
 const useTokenService = () => {
@@ -110,51 +110,51 @@ const useTokenService = () => {
       deviceFingerprint: DeviceFingerprint,
     ): Promise<string> => {
       try {
-        const response = await fetch("/api/handoff/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/handoff/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
             sessionData,
             deviceFingerprint,
             expiryMinutes: 5,
-          }),
-        });
+          },),
+        },)
 
         if (!response.ok) {
-          throw new Error(`Failed to generate token: ${response.statusText}`);
+          throw new Error(`Failed to generate token: ${response.statusText}`,)
         }
 
-        const { token } = await response.json();
-        return token;
+        const { token, } = await response.json()
+        return token
       } catch (error) {
-        console.error("Error generating handoff token:", error);
-        throw error;
+        console.error('Error generating handoff token:', error,)
+        throw error
       }
     },
     [],
-  );
+  )
 
-  const validateToken = useCallback(async (token: string, targetDevice: DeviceFingerprint) => {
+  const validateToken = useCallback(async (token: string, targetDevice: DeviceFingerprint,) => {
     try {
-      const response = await fetch("/api/handoff/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, targetDevice }),
-      });
+      const response = await fetch('/api/handoff/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ token, targetDevice, },),
+      },)
 
       if (!response.ok) {
-        throw new Error(`Token validation failed: ${response.statusText}`);
+        throw new Error(`Token validation failed: ${response.statusText}`,)
       }
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
-      console.error("Error validating token:", error);
-      throw error;
+      console.error('Error validating token:', error,)
+      throw error
     }
-  }, []);
+  }, [],)
 
-  return { generateHandoffToken, validateToken };
-};
+  return { generateHandoffToken, validateToken, }
+}
 
 export default function QRHandoffGenerator({
   className,
@@ -162,147 +162,154 @@ export default function QRHandoffGenerator({
   onHandoffComplete,
   onError,
   sessionData = {},
-}: QRHandoffGeneratorProps) {
-  const [handoffState, setHandoffState] = useState<QRHandoffState>({ status: "idle" });
-  const [timeRemaining, setTimeRemaining] = useState(0);
-  const [networkStatus, setNetworkStatus] = useState<"online" | "offline" | "limited">("online");
-  const intervalRef = useRef<NodeJS.Timeout>();
-  const deviceFingerprint = useDeviceFingerprint();
-  const { generateHandoffToken } = useTokenService();
+}: QRHandoffGeneratorProps,) {
+  const [handoffState, setHandoffState,] = useState<QRHandoffState>({ status: 'idle', },)
+  const [timeRemaining, setTimeRemaining,] = useState(0,)
+  const [networkStatus, setNetworkStatus,] = useState<'online' | 'offline' | 'limited'>('online',)
+  const intervalRef = useRef<NodeJS.Timeout>()
+  const deviceFingerprint = useDeviceFingerprint()
+  const { generateHandoffToken, } = useTokenService()
 
   // Network Status Detection
   useEffect(() => {
     const updateNetworkStatus = () => {
       if (!navigator.onLine) {
-        setNetworkStatus("offline");
-      } else if ((navigator as any).connection?.effectiveType === "2g") {
-        setNetworkStatus("limited");
+        setNetworkStatus('offline',)
+      } else if ((navigator as any).connection?.effectiveType === '2g') {
+        setNetworkStatus('limited',)
       } else {
-        setNetworkStatus("online");
+        setNetworkStatus('online',)
       }
-    };
+    }
 
-    updateNetworkStatus();
-    window.addEventListener("online", updateNetworkStatus);
-    window.addEventListener("offline", updateNetworkStatus);
+    updateNetworkStatus()
+    window.addEventListener('online', updateNetworkStatus,)
+    window.addEventListener('offline', updateNetworkStatus,)
 
     return () => {
-      window.removeEventListener("online", updateNetworkStatus);
-      window.removeEventListener("offline", updateNetworkStatus);
-    };
-  }, []);
+      window.removeEventListener('online', updateNetworkStatus,)
+      window.removeEventListener('offline', updateNetworkStatus,)
+    }
+  }, [],)
 
   // Timer Management
   useEffect(() => {
-    if (handoffState.status === "active" && handoffState.expiresAt) {
+    if (handoffState.status === 'active' && handoffState.expiresAt) {
       intervalRef.current = setInterval(() => {
-        const now = Date.now();
-        const expires = handoffState.expiresAt ?? 0;
-        const remaining = Math.max(0, expires - now);
+        const now = Date.now()
+        const expires = handoffState.expiresAt ?? 0
+        const remaining = Math.max(0, expires - now,)
 
         if (remaining === 0) {
-          setHandoffState(prev => ({ ...prev, status: "expired" }));
-          clearInterval(intervalRef.current);
+          setHandoffState(prev => ({ ...prev, status: 'expired', }))
+          clearInterval(intervalRef.current,)
         } else {
-          setTimeRemaining(remaining);
+          setTimeRemaining(remaining,)
         }
-      }, 1000);
+      }, 1000,)
 
       return () => {
         if (intervalRef.current) {
-          clearInterval(intervalRef.current);
+          clearInterval(intervalRef.current,)
         }
-      };
+      }
     }
-  }, [handoffState.status, handoffState.expiresAt]);
+  }, [handoffState.status, handoffState.expiresAt,],)
 
   // Generate QR Code
   const handleGenerateQR = useCallback(async () => {
-    if (networkStatus === "offline") {
-      const error = "Cannot generate QR code while offline";
-      setHandoffState({ status: "error", error });
-      onError?.(error);
-      return;
+    if (networkStatus === 'offline') {
+      const error = 'Cannot generate QR code while offline'
+      setHandoffState({ status: 'error', error, },)
+      onError?.(error,)
+      return
     }
 
-    setHandoffState({ status: "generating" });
+    setHandoffState({ status: 'generating', },)
 
     try {
       // Add current session context
       const contextualSessionData = {
         ...sessionData,
-        currentPath: typeof window !== "undefined" ? window.location.pathname : "",
+        currentPath: typeof window !== 'undefined' ? window.location.pathname : '',
         timestamp: Date.now(),
         emergencyMode,
-      };
+      }
 
-      const token = await generateHandoffToken(contextualSessionData, deviceFingerprint);
+      const token = await generateHandoffToken(contextualSessionData, deviceFingerprint,)
 
       // Generate QR code URL
-      const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-      const qrCodeUrl = `${baseUrl}/handoff?token=${encodeURIComponent(token)}`;
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+      const qrCodeUrl = `${baseUrl}/handoff?token=${encodeURIComponent(token,)}`
 
-      const expiresAt = Date.now() + (5 * 60 * 1000); // 5 minutes
-      setTimeRemaining(5 * 60 * 1000);
+      const expiresAt = Date.now() + (5 * 60 * 1000) // 5 minutes
+      setTimeRemaining(5 * 60 * 1000,)
 
       setHandoffState({
-        status: "active",
+        status: 'active',
         token,
         qrCodeUrl,
         expiresAt,
-      });
+      },)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to generate QR code";
-      setHandoffState({ status: "error", error: errorMessage });
-      onError?.(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate QR code'
+      setHandoffState({ status: 'error', error: errorMessage, },)
+      onError?.(errorMessage,)
     }
-  }, [networkStatus, sessionData, emergencyMode, deviceFingerprint, generateHandoffToken, onError]);
+  }, [
+    networkStatus,
+    sessionData,
+    emergencyMode,
+    deviceFingerprint,
+    generateHandoffToken,
+    onError,
+  ],)
 
   // Format time remaining
-  const formatTimeRemaining = (ms: number): string => {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
+  const formatTimeRemaining = (ms: number,): string => {
+    const seconds = Math.floor(ms / 1000,)
+    const minutes = Math.floor(seconds / 60,)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0',)}`
+  }
 
   // Get device icon
-  const getDeviceIcon = (type: string) => {
+  const getDeviceIcon = (type: string,) => {
     switch (type) {
-      case "mobile":
-        return <Smartphone className="h-4 w-4" />;
-      case "tablet":
-        return <Tablet className="h-4 w-4" />;
+      case 'mobile':
+        return <Smartphone className="h-4 w-4" />
+      case 'tablet':
+        return <Tablet className="h-4 w-4" />
       default:
-        return <Monitor className="h-4 w-4" />;
+        return <Monitor className="h-4 w-4" />
     }
-  };
+  }
 
   // Get status color
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string,) => {
     switch (status) {
-      case "active":
-        return "bg-blue-500";
-      case "success":
-        return "bg-green-500";
-      case "error":
-        return "bg-red-500";
-      case "expired":
-        return "bg-amber-500";
+      case 'active':
+        return 'bg-blue-500'
+      case 'success':
+        return 'bg-green-500'
+      case 'error':
+        return 'bg-red-500'
+      case 'expired':
+        return 'bg-amber-500'
       default:
-        return "bg-gray-500";
+        return 'bg-gray-500'
     }
-  };
+  }
 
   const progressPercent = handoffState.expiresAt
-    ? Math.max(0, (timeRemaining / (5 * 60 * 1000)) * 100)
-    : 0;
+    ? Math.max(0, (timeRemaining / (5 * 60 * 1000)) * 100,)
+    : 0
 
   return (
     <Card
       className={cn(
-        "w-full max-w-md",
-        emergencyMode && "border-2 border-blue-500 shadow-lg",
+        'w-full max-w-md',
+        emergencyMode && 'border-2 border-blue-500 shadow-lg',
         className,
       )}
     >
@@ -314,10 +321,10 @@ export default function QRHandoffGenerator({
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge
-              variant={networkStatus === "online" ? "default" : "destructive"}
+              variant={networkStatus === 'online' ? 'default' : 'destructive'}
               className="flex items-center gap-1"
             >
-              {networkStatus === "offline"
+              {networkStatus === 'offline'
                 ? <WifiOff className="h-3 w-3" />
                 : <Wifi className="h-3 w-3" />}
               {networkStatus}
@@ -331,14 +338,14 @@ export default function QRHandoffGenerator({
         {/* Current Device Info */}
         <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
           <div className="flex items-center gap-2">
-            {getDeviceIcon(deviceFingerprint.deviceType)}
+            {getDeviceIcon(deviceFingerprint.deviceType,)}
             <span className="text-sm font-medium">Current Device</span>
           </div>
           <Badge variant="outline">{deviceFingerprint.deviceType}</Badge>
         </div>
 
         {/* QR Code Display */}
-        {handoffState.status === "active" && handoffState.qrCodeUrl && (
+        {handoffState.status === 'active' && handoffState.qrCodeUrl && (
           <div className="flex flex-col items-center space-y-3">
             <div className="p-4 bg-white rounded-lg border-2 border-dashed border-gray-300">
               <QRCodeSVG
@@ -354,9 +361,9 @@ export default function QRHandoffGenerator({
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  Expires in: {formatTimeRemaining(timeRemaining)}
+                  Expires in: {formatTimeRemaining(timeRemaining,)}
                 </span>
-                <Badge className={getStatusColor("active")}>Active</Badge>
+                <Badge className={getStatusColor('active',)}>Active</Badge>
               </div>
               <Progress value={progressPercent} className="h-2" />
             </div>
@@ -376,7 +383,7 @@ export default function QRHandoffGenerator({
         )}
 
         {/* Error State */}
-        {handoffState.status === "error" && (
+        {handoffState.status === 'error' && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
@@ -386,7 +393,7 @@ export default function QRHandoffGenerator({
         )}
 
         {/* Expired State */}
-        {handoffState.status === "expired" && (
+        {handoffState.status === 'expired' && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
@@ -397,15 +404,15 @@ export default function QRHandoffGenerator({
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          {(handoffState.status === "idle" || handoffState.status === "error"
-            || handoffState.status === "expired") && (
+          {(handoffState.status === 'idle' || handoffState.status === 'error'
+            || handoffState.status === 'expired') && (
             <Button
               onClick={handleGenerateQR}
-              disabled={handoffState.status === "generating" || networkStatus === "offline"}
+              disabled={handoffState.status === 'generating' || networkStatus === 'offline'}
               className="flex-1"
-              variant={emergencyMode ? "destructive" : "default"}
+              variant={emergencyMode ? 'destructive' : 'default'}
             >
-              {handoffState.status === "generating"
+              {handoffState.status === 'generating'
                 ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -421,7 +428,7 @@ export default function QRHandoffGenerator({
             </Button>
           )}
 
-          {handoffState.status === "active" && (
+          {handoffState.status === 'active' && (
             <Button
               onClick={handleGenerateQR}
               variant="outline"
@@ -434,16 +441,16 @@ export default function QRHandoffGenerator({
         </div>
 
         {/* Instructions */}
-        {handoffState.status === "active" && (
+        {handoffState.status === 'active' && (
           <Alert>
             <QrCode className="h-4 w-4" />
             <AlertDescription>
               Scan this QR code with your target device to transfer your current session securely.
-              The code expires in {formatTimeRemaining(timeRemaining)}.
+              The code expires in {formatTimeRemaining(timeRemaining,)}.
             </AlertDescription>
           </Alert>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

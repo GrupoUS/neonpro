@@ -1,15 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, FileText, RefreshCw, Shield } from "lucide-react";
-import type React from "react";
-import type { ANVISASubstance, ControlledPrescription } from "../../types/compliance";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { AlertTriangle, FileText, RefreshCw, Shield, } from 'lucide-react'
+import type React from 'react'
+import type { ANVISASubstance, ControlledPrescription, } from '../../types/compliance'
 
 interface ANVISAHeaderProps {
-  substances: ANVISASubstance[];
-  prescriptions: ControlledPrescription[];
-  loading: boolean;
-  onRefresh: () => void;
+  substances: ANVISASubstance[]
+  prescriptions: ControlledPrescription[]
+  loading: boolean
+  onRefresh: () => void
 }
 
 export const ANVISAHeader: React.FC<ANVISAHeaderProps> = ({
@@ -17,11 +17,11 @@ export const ANVISAHeader: React.FC<ANVISAHeaderProps> = ({
   prescriptions,
   loading,
   onRefresh,
-}) => {
-  const activeSubstances = substances.length;
-  const activePrescriptions = prescriptions.filter(p => p.status === "prescribed").length;
-  const expiredPrescriptions = prescriptions.filter(p => p.status === "expired").length;
-  const dispensedPrescriptions = prescriptions.filter(p => p.status === "dispensed").length;
+},) => {
+  const activeSubstances = substances.length
+  const activePrescriptions = prescriptions.filter(p => p.status === 'prescribed').length
+  const expiredPrescriptions = prescriptions.filter(p => p.status === 'expired').length
+  const dispensedPrescriptions = prescriptions.filter(p => p.status === 'dispensed').length
 
   return (
     <div className="space-y-6">
@@ -46,7 +46,7 @@ export const ANVISAHeader: React.FC<ANVISAHeaderProps> = ({
           variant="outline"
           className="flex items-center space-x-2"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           <span>Atualizar</span>
         </Button>
       </div>
@@ -118,5 +118,5 @@ export const ANVISAHeader: React.FC<ANVISAHeaderProps> = ({
         </Card>
       </div>
     </div>
-  );
-};
+  )
+}

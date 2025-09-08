@@ -11,169 +11,169 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { MiddlewareHandler } from "hono";
-import type { RedisOptions } from "ioredis";
+import type { MiddlewareHandler, } from 'hono'
+import type { RedisOptions, } from 'ioredis'
 
 // Healthcare user roles with license requirements
 export enum HealthcareRole {
-  ADMIN = "admin",
-  EMERGENCY_PHYSICIAN = "emergency_physician", // Special role for emergency access
-  HEALTHCARE_PROVIDER = "healthcare_provider", // Licensed professionals
-  CLINIC_MANAGER = "clinic_manager",
-  CLINIC_STAFF = "clinic_staff",
-  PATIENT = "patient",
+  ADMIN = 'admin',
+  EMERGENCY_PHYSICIAN = 'emergency_physician', // Special role for emergency access
+  HEALTHCARE_PROVIDER = 'healthcare_provider', // Licensed professionals
+  CLINIC_MANAGER = 'clinic_manager',
+  CLINIC_STAFF = 'clinic_staff',
+  PATIENT = 'patient',
 }
 
 // Professional license types in Brazil
 export enum ProfessionalLicenseType {
-  CRM = "crm", // Conselho Regional de Medicina
-  CRF = "crf", // Conselho Regional de Farmácia
-  CREFITO = "crefito", // Fisioterapia e Terapia Ocupacional
-  CRN = "crn", // Conselho Regional de Nutrição
-  COREN = "coren", // Conselho Regional de Enfermagem
-  CRO = "cro", // Conselho Regional de Odontologia
-  CRP = "crp", // Conselho Regional de Psicologia
+  CRM = 'crm', // Conselho Regional de Medicina
+  CRF = 'crf', // Conselho Regional de Farmácia
+  CREFITO = 'crefito', // Fisioterapia e Terapia Ocupacional
+  CRN = 'crn', // Conselho Regional de Nutrição
+  COREN = 'coren', // Conselho Regional de Enfermagem
+  CRO = 'cro', // Conselho Regional de Odontologia
+  CRP = 'crp', // Conselho Regional de Psicologia
 }
 
 // Healthcare-specific rate limit configuration
 interface HealthcareRateLimitConfig {
-  endpoint: string;
+  endpoint: string
   limits: {
-    general: { requests: number; window: string; };
-    authenticated: { requests: number; window: string; };
-    privileged: { requests: number; window: string; };
-    emergency: { requests: number; window: string; };
-  };
-  patientDataAccess: boolean;
-  emergencyBypass: boolean;
-  requiresLicense: boolean;
-  description: string;
+    general: { requests: number; window: string }
+    authenticated: { requests: number; window: string }
+    privileged: { requests: number; window: string }
+    emergency: { requests: number; window: string }
+  }
+  patientDataAccess: boolean
+  emergencyBypass: boolean
+  requiresLicense: boolean
+  description: string
 }
 
 // Enhanced healthcare rate limits
 const HEALTHCARE_RATE_LIMITS: HealthcareRateLimitConfig[] = [
   {
-    endpoint: "/api/v1/patients",
+    endpoint: '/api/v1/patients',
     limits: {
-      general: { requests: 0, window: "1m" }, // No unauthenticated access
-      authenticated: { requests: 100, window: "1m" },
-      privileged: { requests: 500, window: "1m" },
-      emergency: { requests: 1000, window: "1m" }, // Higher limits for emergencies
+      general: { requests: 0, window: '1m', }, // No unauthenticated access
+      authenticated: { requests: 100, window: '1m', },
+      privileged: { requests: 500, window: '1m', },
+      emergency: { requests: 1000, window: '1m', }, // Higher limits for emergencies
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: "Patient data CRUD operations",
+    description: 'Patient data CRUD operations',
   },
   {
-    endpoint: "/api/v1/appointments",
+    endpoint: '/api/v1/appointments',
     limits: {
-      general: { requests: 10, window: "1m" }, // Limited public access for booking
-      authenticated: { requests: 200, window: "1m" },
-      privileged: { requests: 1000, window: "1m" },
-      emergency: { requests: 2000, window: "1m" },
+      general: { requests: 10, window: '1m', }, // Limited public access for booking
+      authenticated: { requests: 200, window: '1m', },
+      privileged: { requests: 1000, window: '1m', },
+      emergency: { requests: 2000, window: '1m', },
     },
     patientDataAccess: false,
     emergencyBypass: true,
     requiresLicense: false,
-    description: "Appointment scheduling operations",
+    description: 'Appointment scheduling operations',
   },
   {
-    endpoint: "/api/v1/medical-records",
+    endpoint: '/api/v1/medical-records',
     limits: {
-      general: { requests: 0, window: "1m" }, // No public access
-      authenticated: { requests: 50, window: "1m" },
-      privileged: { requests: 200, window: "1m" },
-      emergency: { requests: 500, window: "1m" },
+      general: { requests: 0, window: '1m', }, // No public access
+      authenticated: { requests: 50, window: '1m', },
+      privileged: { requests: 200, window: '1m', },
+      emergency: { requests: 500, window: '1m', },
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: "Medical records access",
+    description: 'Medical records access',
   },
   {
-    endpoint: "/api/v1/compliance",
+    endpoint: '/api/v1/compliance',
     limits: {
-      general: { requests: 0, window: "1m" },
-      authenticated: { requests: 20, window: "1m" },
-      privileged: { requests: 100, window: "1m" },
-      emergency: { requests: 50, window: "1m" }, // Limited emergency access to compliance
+      general: { requests: 0, window: '1m', },
+      authenticated: { requests: 20, window: '1m', },
+      privileged: { requests: 100, window: '1m', },
+      emergency: { requests: 50, window: '1m', }, // Limited emergency access to compliance
     },
     patientDataAccess: true,
     emergencyBypass: false, // Compliance data doesn't need emergency bypass
     requiresLicense: false,
-    description: "LGPD compliance operations",
+    description: 'LGPD compliance operations',
   },
   {
-    endpoint: "/api/v1/emergency",
+    endpoint: '/api/v1/emergency',
     limits: {
-      general: { requests: 0, window: "1m" },
-      authenticated: { requests: 10, window: "1m" },
-      privileged: { requests: 100, window: "1m" },
-      emergency: { requests: 1000, window: "1m" }, // Very high limits for emergency endpoints
+      general: { requests: 0, window: '1m', },
+      authenticated: { requests: 10, window: '1m', },
+      privileged: { requests: 100, window: '1m', },
+      emergency: { requests: 1000, window: '1m', }, // Very high limits for emergency endpoints
     },
     patientDataAccess: true,
     emergencyBypass: true,
     requiresLicense: true,
-    description: "Emergency patient access",
+    description: 'Emergency patient access',
   },
-];
+]
 
 // Professional license validation interface
 export interface ProfessionalLicense {
-  licenseNumber: string;
-  licenseType: ProfessionalLicenseType;
-  state: string; // Brazilian state (SP, RJ, etc.)
-  issuedDate: Date;
-  expirationDate: Date;
-  isActive: boolean;
-  lastValidated: Date;
+  licenseNumber: string
+  licenseType: ProfessionalLicenseType
+  state: string // Brazilian state (SP, RJ, etc.)
+  issuedDate: Date
+  expirationDate: Date
+  isActive: boolean
+  lastValidated: Date
 }
 
 // Healthcare user with license information
 export interface HealthcareUser {
-  id: string;
-  email: string;
-  role: HealthcareRole;
-  clinicId?: string;
-  clinicIds?: string[]; // For multi-clinic access
-  professionalLicense?: ProfessionalLicense;
-  emergencyAccess?: boolean;
-  isActive: boolean;
+  id: string
+  email: string
+  role: HealthcareRole
+  clinicId?: string
+  clinicIds?: string[] // For multi-clinic access
+  professionalLicense?: ProfessionalLicense
+  emergencyAccess?: boolean
+  isActive: boolean
 }
 
 // Emergency access context
 export interface EmergencyAccessContext {
-  userId: string;
-  patientId?: string;
-  justification: string;
-  emergencyType: "medical" | "life_threatening" | "urgent_care";
-  timestamp: Date;
-  ipAddress: string;
-  userAgent: string;
+  userId: string
+  patientId?: string
+  justification: string
+  emergencyType: 'medical' | 'life_threatening' | 'urgent_care'
+  timestamp: Date
+  ipAddress: string
+  userAgent: string
 }
 
 // Security audit logger
 interface SecurityAlert {
-  level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  type: string;
-  message: string;
-  metadata: unknown;
-  requiresImmediate: boolean;
+  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  type: string
+  message: string
+  metadata: unknown
+  requiresImmediate: boolean
 }
 
 interface ComplianceAlert {
-  level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  type: string;
-  message: string;
-  metadata: unknown;
-  requiresImmediate: boolean;
+  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  type: string
+  message: string
+  metadata: unknown
+  requiresImmediate: boolean
 }
 
 class HealthcareSecurityLogger {
-  private static async sendSecurityAlert(alert: SecurityAlert): Promise<void> {
+  private static async sendSecurityAlert(alert: SecurityAlert,): Promise<void> {
     // Log to console for immediate visibility
-    console.error(`[SECURITY_ALERT_${alert.level}]`, alert);
+    console.error(`[SECURITY_ALERT_${alert.level}]`, alert,)
 
     // In production, integrate with:
     // - SIEM systems (Splunk, ELK Stack)
@@ -183,16 +183,16 @@ class HealthcareSecurityLogger {
 
     if (alert.requiresImmediate) {
       // Send immediate notifications via multiple channels
-      await this.sendImmediateNotification(alert);
+      await this.sendImmediateNotification(alert,)
     }
 
     // Store in audit log for compliance
-    await this.storeSecurityEvent(alert);
+    await this.storeSecurityEvent(alert,)
   }
 
-  private static async sendComplianceAlert(alert: ComplianceAlert): Promise<void> {
+  private static async sendComplianceAlert(alert: ComplianceAlert,): Promise<void> {
     // Log to console for immediate visibility
-    console.error(`[COMPLIANCE_ALERT_${alert.level}]`, alert);
+    console.error(`[COMPLIANCE_ALERT_${alert.level}]`, alert,)
 
     // In production, integrate with:
     // - Healthcare compliance systems (LGPD, ANVISA)
@@ -202,54 +202,54 @@ class HealthcareSecurityLogger {
 
     if (alert.requiresImmediate) {
       // Send immediate notifications to compliance team
-      await this.sendImmediateComplianceNotification(alert);
+      await this.sendImmediateComplianceNotification(alert,)
     }
 
     // Store in compliance audit log
-    await this.storeComplianceEvent(alert);
+    await this.storeComplianceEvent(alert,)
   }
 
-  private static async sendImmediateNotification(alert: SecurityAlert): Promise<void> {
+  private static async sendImmediateNotification(alert: SecurityAlert,): Promise<void> {
     // Placeholder for immediate notification logic
     // In production: SMS, email, Slack, PagerDuty, etc.
     console.warn(`[IMMEDIATE_SECURITY_NOTIFICATION]`, {
       timestamp: new Date().toISOString(),
       alert,
-    });
+    },)
   }
 
-  private static async sendImmediateComplianceNotification(alert: ComplianceAlert): Promise<void> {
+  private static async sendImmediateComplianceNotification(alert: ComplianceAlert,): Promise<void> {
     // Placeholder for immediate compliance notification logic
     // In production: Legal team alerts, regulatory notifications
     console.warn(`[IMMEDIATE_COMPLIANCE_NOTIFICATION]`, {
       timestamp: new Date().toISOString(),
       alert,
-    });
+    },)
   }
 
-  private static async storeSecurityEvent(alert: SecurityAlert): Promise<void> {
+  private static async storeSecurityEvent(alert: SecurityAlert,): Promise<void> {
     // Placeholder for security event storage
     // In production: Database, SIEM, audit logs
     console.info(`[SECURITY_EVENT_STORED]`, {
       timestamp: new Date().toISOString(),
-      eventId: `sec_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      eventId: `sec_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`,
       alert,
-    });
+    },)
   }
 
-  private static async storeComplianceEvent(alert: ComplianceAlert): Promise<void> {
+  private static async storeComplianceEvent(alert: ComplianceAlert,): Promise<void> {
     // Placeholder for compliance event storage
     // In production: Compliance database, regulatory audit logs
     console.info(`[COMPLIANCE_EVENT_STORED]`, {
       timestamp: new Date().toISOString(),
-      eventId: `comp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      eventId: `comp_${Date.now()}_${Math.random().toString(36,).slice(2, 9,)}`,
       alert,
-    });
+    },)
   }
 
-  static logEmergencyAccess(context: EmergencyAccessContext): void {
-    console.log("[EMERGENCY_ACCESS]", {
-      type: "emergency_access_granted",
+  static logEmergencyAccess(context: EmergencyAccessContext,): void {
+    console.log('[EMERGENCY_ACCESS]', {
+      type: 'emergency_access_granted',
       userId: context.userId,
       patientId: context.patientId,
       justification: context.justification,
@@ -257,94 +257,94 @@ class HealthcareSecurityLogger {
       timestamp: context.timestamp,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
-    });
+    },)
 
     // External audit system integration available
   }
 
   static logSuspiciousActivity(details: {
-    type: string;
-    userId?: string;
-    ip: string;
-    endpoint: string;
-    attemptCount: number;
-    timestamp: Date;
-  }): void {
-    console.log("[SUSPICIOUS_ACTIVITY]", details);
+    type: string
+    userId?: string
+    ip: string
+    endpoint: string
+    attemptCount: number
+    timestamp: Date
+  },): void {
+    console.log('[SUSPICIOUS_ACTIVITY]', details,)
 
     // Send alert to security monitoring system
     this.sendSecurityAlert({
-      level: "HIGH",
-      type: "SUSPICIOUS_ACTIVITY",
+      level: 'HIGH',
+      type: 'SUSPICIOUS_ACTIVITY',
       message: `Suspicious activity detected: ${details.type}`,
       metadata: details,
       requiresImmediate: details.attemptCount > 5,
-    });
+    },)
   }
 
   static logLicenseViolation(details: {
-    userId: string;
-    licenseNumber?: string;
-    attemptedResource: string;
-    timestamp: Date;
-  }): void {
-    console.log("[LICENSE_VIOLATION]", details);
+    userId: string
+    licenseNumber?: string
+    attemptedResource: string
+    timestamp: Date
+  },): void {
+    console.log('[LICENSE_VIOLATION]', details,)
 
     // Alert compliance team immediately
     this.sendComplianceAlert({
-      level: "CRITICAL",
-      type: "LICENSE_VIOLATION",
+      level: 'CRITICAL',
+      type: 'LICENSE_VIOLATION',
       message: `License violation detected for user ${details.userId}`,
       metadata: details,
       requiresImmediate: true,
-    });
+    },)
   }
 
   static logUnauthorizedAccess(details: {
-    userId: string;
-    resource: string;
-    reason: string;
-    timestamp: Date;
-  }): void {
-    console.log("[UNAUTHORIZED_ACCESS]", details);
+    userId: string
+    resource: string
+    reason: string
+    timestamp: Date
+  },): void {
+    console.log('[UNAUTHORIZED_ACCESS]', details,)
 
     // Alert security team immediately
     this.sendSecurityAlert({
-      level: "HIGH",
-      type: "UNAUTHORIZED_ACCESS",
+      level: 'HIGH',
+      type: 'UNAUTHORIZED_ACCESS',
       message: `Unauthorized access attempt by user ${details.userId} to ${details.resource}`,
       metadata: details,
       requiresImmediate: true,
-    });
+    },)
   }
 
   static logWeakTLS(details: {
-    ip: string;
-    tlsVersion?: string;
-    cipherSuite?: string;
-    timestamp: Date;
-  }): void {
-    console.log("[WEAK_TLS]", details);
+    ip: string
+    tlsVersion?: string
+    cipherSuite?: string
+    timestamp: Date
+  },): void {
+    console.log('[WEAK_TLS]', details,)
 
     // Infrastructure team alerting can be added later
   }
 
   static logDataValidation(details: {
-    userId?: string;
-    dataType: string;
-    timestamp: Date;
-    validationSuccess: boolean;
-  }): void {
-    console.log("[DATA_VALIDATION]", details);
+    userId?: string
+    dataType: string
+    timestamp: Date
+    validationSuccess: boolean
+  },): void {
+    console.log('[DATA_VALIDATION]', details,)
   }
 
   static logValidationFailure(details: {
-    userId?: string;
-    errors: unknown[];
-    endpoint: string;
-    timestamp: Date;
-  }): void {
-    console.log("[VALIDATION_FAILURE]", details);
+    userId?: string
+    errors: unknown[]
+    endpoint: string
+    timestamp: Date
+  },): void {
+    console.log('[VALIDATION_FAILURE]', details,)
   }
 }
 
@@ -352,85 +352,85 @@ class HealthcareSecurityLogger {
 
 // CFM API response type and guard
 interface CFMApiResponse {
-  numero_inscricao: string;
-  uf: string;
-  data_inscricao: string;
-  data_vencimento?: string | null;
-  situacao?: string;
+  numero_inscricao: string
+  uf: string
+  data_inscricao: string
+  data_vencimento?: string | null
+  situacao?: string
 }
 
-function isCFMApiResponse(data: unknown): data is CFMApiResponse {
+function isCFMApiResponse(data: unknown,): data is CFMApiResponse {
   return !!data
-    && typeof data === "object"
-    && "numero_inscricao" in data
-    && typeof (data as Record<string, unknown>).numero_inscricao === "string"
-    && "uf" in data
-    && typeof (data as Record<string, unknown>).uf === "string"
-    && "data_inscricao" in data
-    && typeof (data as any).data_inscricao === "string";
+    && typeof data === 'object'
+    && 'numero_inscricao' in data
+    && typeof (data as Record<string, unknown>).numero_inscricao === 'string'
+    && 'uf' in data
+    && typeof (data as Record<string, unknown>).uf === 'string'
+    && 'data_inscricao' in data
+    && typeof (data as any).data_inscricao === 'string'
 }
 
 class ProfessionalLicenseValidator {
-  private static licenseCache: Map<string, { license: ProfessionalLicense; cachedAt: Date; }> =
-    new Map();
-  private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+  private static licenseCache: Map<string, { license: ProfessionalLicense; cachedAt: Date }> =
+    new Map()
+  private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
   private static readonly CFM_API_BASE = process.env.CFM_API_BASE
-    || "https://portal.cfm.org.br/api";
-  private static readonly CFM_API_KEY = process.env.CFM_API_KEY;
+    || 'https://portal.cfm.org.br/api'
+  private static readonly CFM_API_KEY = process.env.CFM_API_KEY
 
-  static async validateLicense(licenseNumber: string): Promise<boolean> {
+  static async validateLicense(licenseNumber: string,): Promise<boolean> {
     try {
       // Check cache first
-      const cached = this.licenseCache.get(licenseNumber);
+      const cached = this.licenseCache.get(licenseNumber,)
       if (cached && (Date.now() - cached.cachedAt.getTime()) < this.CACHE_DURATION) {
-        const license = cached.license;
-        return license.isActive && license.expirationDate > new Date();
+        const license = cached.license
+        return license.isActive && license.expirationDate > new Date()
       }
 
       // Validate license with CFM API
-      const license = await this.fetchLicenseFromCFM(licenseNumber);
+      const license = await this.fetchLicenseFromCFM(licenseNumber,)
       if (!license) {
-        return false;
+        return false
       }
 
       // Cache the result
       this.licenseCache.set(licenseNumber, {
         license,
         cachedAt: new Date(),
-      });
+      },)
 
       // Check if license is active and not expired
-      const now = new Date();
-      return license.isActive && license.expirationDate > now;
+      const now = new Date()
+      return license.isActive && license.expirationDate > now
     } catch (error) {
-      console.error(`License validation failed for ${licenseNumber}:`, error);
+      console.error(`License validation failed for ${licenseNumber}:`, error,)
       // Log security event for failed license validation
       HealthcareSecurityLogger.logLicenseViolation({
-        userId: "system",
+        userId: 'system',
         licenseNumber,
-        attemptedResource: "license_validation",
+        attemptedResource: 'license_validation',
         timestamp: new Date(),
-      });
-      return false;
+      },)
+      return false
     }
   }
 
   // Returns full license details (or null) using cache + remote lookup
-  static async getLicense(licenseNumber: string): Promise<ProfessionalLicense | null> {
+  static async getLicense(licenseNumber: string,): Promise<ProfessionalLicense | null> {
     try {
-      const cached = this.licenseCache.get(licenseNumber);
+      const cached = this.licenseCache.get(licenseNumber,)
       if (cached && (Date.now() - cached.cachedAt.getTime()) < this.CACHE_DURATION) {
-        return cached.license;
+        return cached.license
       }
 
-      const license = await this.fetchLicenseFromCFM(licenseNumber);
+      const license = await this.fetchLicenseFromCFM(licenseNumber,)
       if (license) {
-        this.licenseCache.set(licenseNumber, { license, cachedAt: new Date() });
+        this.licenseCache.set(licenseNumber, { license, cachedAt: new Date(), },)
       }
-      return license;
+      return license
     } catch (error) {
-      console.error(`Get license failed for ${licenseNumber}:`, error);
-      return null;
+      console.error(`Get license failed for ${licenseNumber}:`, error,)
+      return null
     }
   }
 
@@ -438,65 +438,65 @@ class ProfessionalLicenseValidator {
     licenseNumber: string,
   ): Promise<ProfessionalLicense | null> {
     if (!this.CFM_API_KEY) {
-      console.warn("CFM_API_KEY not configured, using fallback validation");
-      return this.fallbackValidation(licenseNumber);
+      console.warn('CFM_API_KEY not configured, using fallback validation',)
+      return this.fallbackValidation(licenseNumber,)
     }
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000,)
 
       const response = await fetch(`${this.CFM_API_BASE}/medicos/${licenseNumber}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${this.CFM_API_KEY}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         signal: controller.signal,
-      });
+      },)
 
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId,)
 
       if (!response.ok) {
         if (response.status === 404) {
-          return null; // License not found
+          return null // License not found
         }
-        throw new Error(`CFM API error: ${response.status}`);
+        throw new Error(`CFM API error: ${response.status}`,)
       }
 
-      const data = await response.json();
-      if (!isCFMApiResponse(data)) {
-        throw new Error("Invalid CFM API response");
+      const data = await response.json()
+      if (!isCFMApiResponse(data,)) {
+        throw new Error('Invalid CFM API response',)
       }
 
       // Map and return normalized license
-      return this.mapCFMResponseToLicense(data);
+      return this.mapCFMResponseToLicense(data,)
     } catch (error) {
-      console.error(`CFM fetch failed for ${licenseNumber}:`, error);
-      return null;
+      console.error(`CFM fetch failed for ${licenseNumber}:`, error,)
+      return null
     }
   }
 
-  private static mapCFMResponseToLicense(cfmData: unknown): ProfessionalLicense {
-    if (!isCFMApiResponse(cfmData)) {
-      throw new Error("Invalid CFM API response payload");
+  private static mapCFMResponseToLicense(cfmData: unknown,): ProfessionalLicense {
+    if (!isCFMApiResponse(cfmData,)) {
+      throw new Error('Invalid CFM API response payload',)
     }
 
-    const rawNumber = String(cfmData.numero_inscricao).trim();
+    const rawNumber = String(cfmData.numero_inscricao,).trim()
 
     // Infer license type from prefix to support multiple healthcare councils (e.g., CRM, CRF, CREFITO, CRN, COREN, CRO, CRP)
-    const prefix = rawNumber.toUpperCase().match(/^[A-Z]+/)?.[0]?.toLowerCase();
-    const validTypes = new Set(Object.values(ProfessionalLicenseType));
-    const inferredType = prefix && validTypes.has(prefix as ProfessionalLicenseType)
+    const prefix = rawNumber.toUpperCase().match(/^[A-Z]+/,)?.[0]?.toLowerCase()
+    const validTypes = new Set(Object.values(ProfessionalLicenseType,),)
+    const inferredType = prefix && validTypes.has(prefix as ProfessionalLicenseType,)
       ? (prefix as ProfessionalLicenseType)
-      : ProfessionalLicenseType.CRM; // default for CFM responses
+      : ProfessionalLicenseType.CRM // default for CFM responses
 
-    const issuedDate = new Date(cfmData.data_inscricao);
-    const expirationDate = new Date(cfmData.data_vencimento ?? "2030-12-31");
+    const issuedDate = new Date(cfmData.data_inscricao,)
+    const expirationDate = new Date(cfmData.data_vencimento ?? '2030-12-31',)
 
     // Normalize status and compute active flag
-    const status = String(cfmData.situacao ?? "").toUpperCase();
-    const activeStatuses = new Set(["ATIVO", "ATIVA", "REGULAR", "OK"]);
+    const status = String(cfmData.situacao ?? '',).toUpperCase()
+    const activeStatuses = new Set(['ATIVO', 'ATIVA', 'REGULAR', 'OK',],)
 
     return {
       licenseNumber: rawNumber,
@@ -504,34 +504,34 @@ class ProfessionalLicenseValidator {
       state: cfmData.uf,
       issuedDate,
       expirationDate,
-      isActive: activeStatuses.has(status) && expirationDate > new Date(),
+      isActive: activeStatuses.has(status,) && expirationDate > new Date(),
       lastValidated: new Date(),
-    };
+    }
   }
 
-  private static fallbackValidation(licenseNumber: string): ProfessionalLicense | null {
+  private static fallbackValidation(licenseNumber: string,): ProfessionalLicense | null {
     // Basic fallback validation supporting CRM/CRF like: CRM12345SP or CRF12345SP
-    const crmPattern = /^CRM\d{4,10}[A-Z]{2}$/i;
-    const crfPattern = /^CRF\d{4,10}[A-Z]{2}$/i;
+    const crmPattern = /^CRM\d{4,10}[A-Z]{2}$/i
+    const crfPattern = /^CRF\d{4,10}[A-Z]{2}$/i
 
-    if (!crmPattern.test(licenseNumber) && !crfPattern.test(licenseNumber)) {
-      return null;
+    if (!crmPattern.test(licenseNumber,) && !crfPattern.test(licenseNumber,)) {
+      return null
     }
 
-    const state = licenseNumber.slice(-2).toUpperCase();
-    const licenseType = licenseNumber.toUpperCase().startsWith("CRM")
+    const state = licenseNumber.slice(-2,).toUpperCase()
+    const licenseType = licenseNumber.toUpperCase().startsWith('CRM',)
       ? ProfessionalLicenseType.CRM
-      : ProfessionalLicenseType.CRF;
+      : ProfessionalLicenseType.CRF
 
     return {
       licenseNumber,
       licenseType,
       state,
-      issuedDate: new Date("2020-01-01"),
-      expirationDate: new Date("2030-12-31"),
+      issuedDate: new Date('2020-01-01',),
+      expirationDate: new Date('2030-12-31',),
       isActive: true,
       lastValidated: new Date(),
-    };
+    }
   }
 }
 
@@ -725,46 +725,46 @@ class ProfessionalLicenseValidator {
 // Multi-layer authentication for healthcare APIs
 
 interface JWTLicenseClaim {
-  licenseNumber: string;
-  licenseType: ProfessionalLicenseType | string;
-  state: string;
-  issuedDate: string | Date;
-  expirationDate: string | Date;
-  isActive: boolean;
-  lastValidated?: string | Date;
+  licenseNumber: string
+  licenseType: ProfessionalLicenseType | string
+  state: string
+  issuedDate: string | Date
+  expirationDate: string | Date
+  isActive: boolean
+  lastValidated?: string | Date
 }
 
-function isJWTLicenseClaim(x: unknown): x is JWTLicenseClaim {
-  if (!x || typeof x !== "object") return false;
-  const o = x as Record<string, unknown>;
-  return typeof o.licenseNumber === "string"
-    && typeof o.state === "string"
-    && typeof o.isActive === "boolean"
-    && "licenseType" in o
-    && "issuedDate" in o
-    && "expirationDate" in o;
+function isJWTLicenseClaim(x: unknown,): x is JWTLicenseClaim {
+  if (!x || typeof x !== 'object') return false
+  const o = x as Record<string, unknown>
+  return typeof o.licenseNumber === 'string'
+    && typeof o.state === 'string'
+    && typeof o.isActive === 'boolean'
+    && 'licenseType' in o
+    && 'issuedDate' in o
+    && 'expirationDate' in o
 }
 
-function parseTimeWindow(window: string): number {
-  const match = window.match(/^(\d+)([smhd])$/);
+function parseTimeWindow(window: string,): number {
+  const match = window.match(/^(\d+)([smhd])$/,)
   if (!match) {
-    throw new Error(`Invalid time window format: ${window}`);
+    throw new Error(`Invalid time window format: ${window}`,)
   }
 
-  const value = parseInt(match[1] ?? "0", 10);
-  const unit = match[2] ?? "s";
+  const value = parseInt(match[1] ?? '0', 10,)
+  const unit = match[2] ?? 's'
 
   switch (unit) {
-    case "s":
-      return value * 1000;
-    case "m":
-      return value * 60 * 1000;
-    case "h":
-      return value * 60 * 60 * 1000;
-    case "d":
-      return value * 24 * 60 * 60 * 1000;
+    case 's':
+      return value * 1000
+    case 'm':
+      return value * 60 * 1000
+    case 'h':
+      return value * 60 * 60 * 1000
+    case 'd':
+      return value * 24 * 60 * 60 * 1000
     default:
-      throw new Error(`Unsupported time unit: ${unit}`);
+      throw new Error(`Unsupported time unit: ${unit}`,)
   }
 }
 
@@ -773,21 +773,21 @@ function parseTimeWindow(window: string): number {
 async function getRedisClient() {
   // Implementation depends on your Redis setup
   // Example using ioredis:
-  const RedisPkg = await import("ioredis");
-  const IORedis = (RedisPkg as any).default ?? (RedisPkg as any);
+  const RedisPkg = await import('ioredis')
+  const IORedis = (RedisPkg as any).default ?? (RedisPkg as any)
 
-  const config: RedisOptions & { password?: string; } = {
-    host: process.env.REDIS_HOST || "localhost",
-    port: parseInt(process.env.REDIS_PORT || "6379", 10),
+  const config: RedisOptions & { password?: string } = {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10,),
     maxRetriesPerRequest: 3,
-  };
+  }
 
   if (process.env.REDIS_PASSWORD) {
-    config.password = process.env.REDIS_PASSWORD;
+    config.password = process.env.REDIS_PASSWORD
   }
 
   // Instantiate Redis client
-  return new IORedis(config);
+  return new IORedis(config,)
 }
 
 export class HealthcareAuthMiddleware {
@@ -799,12 +799,12 @@ export class HealthcareAuthMiddleware {
   ): Promise<boolean> {
     // Admins and clinic managers have broad access
     if (user.role === HealthcareRole.ADMIN || user.role === HealthcareRole.CLINIC_MANAGER) {
-      return true;
+      return true
     }
 
     // Patients can only access their own data (read-only)
     if (user.role === HealthcareRole.PATIENT) {
-      return this.authorizePatientAccess(user, resource, action);
+      return this.authorizePatientAccess(user, resource, action,)
     }
 
     // Licensed providers (including emergency physicians)
@@ -812,15 +812,15 @@ export class HealthcareAuthMiddleware {
       user.role === HealthcareRole.HEALTHCARE_PROVIDER
       || user.role === HealthcareRole.EMERGENCY_PHYSICIAN
     ) {
-      return this.authorizeProviderAccess(user, resource, action);
+      return this.authorizeProviderAccess(user, resource, action,)
     }
 
     // Clinic staff access based on permissions
     if (user.role === HealthcareRole.CLINIC_STAFF) {
-      return this.authorizeStaffAccess(user, resource, action);
+      return this.authorizeStaffAccess(user, resource, action,)
     }
 
-    return false;
+    return false
   }
 
   private static authorizePatientAccess(
@@ -829,12 +829,12 @@ export class HealthcareAuthMiddleware {
     action: string,
   ): boolean {
     // Patients can only read their own data
-    if (action !== "read") {
-      return false;
+    if (action !== 'read') {
+      return false
     }
 
     // Check if resource contains user's ID
-    return resource.includes(user.id);
+    return resource.includes(user.id,)
   }
 
   private static async authorizeProviderAccess(
@@ -846,7 +846,7 @@ export class HealthcareAuthMiddleware {
     if (user.professionalLicense) {
       const licenseValid = await ProfessionalLicenseValidator.validateLicense(
         user.professionalLicense.licenseNumber,
-      );
+      )
 
       if (!licenseValid) {
         HealthcareSecurityLogger.logLicenseViolation({
@@ -854,26 +854,26 @@ export class HealthcareAuthMiddleware {
           licenseNumber: user.professionalLicense.licenseNumber,
           attemptedResource: resource,
           timestamp: new Date(),
-        });
-        return false;
+        },)
+        return false
       }
     }
 
     // Check clinic access permissions
-    const hasClinicAccess = user.clinicIds?.some((clinicId) => resource.includes(clinicId))
-      || (user.clinicId && resource.includes(user.clinicId));
+    const hasClinicAccess = user.clinicIds?.some((clinicId,) => resource.includes(clinicId,))
+      || (user.clinicId && resource.includes(user.clinicId,))
 
     if (!hasClinicAccess) {
       HealthcareSecurityLogger.logUnauthorizedAccess({
         userId: user.id,
         resource,
-        reason: "clinic_access_denied",
+        reason: 'clinic_access_denied',
         timestamp: new Date(),
-      });
-      return false;
+      },)
+      return false
     }
 
-    return true;
+    return true
   }
 
   private static authorizeStaffAccess(
@@ -882,47 +882,47 @@ export class HealthcareAuthMiddleware {
     action: string,
   ): boolean {
     // Staff can access data within their clinic
-    const hasClinicAccess = user.clinicIds?.some((clinicId) => resource.includes(clinicId))
-      || (user.clinicId && resource.includes(user.clinicId));
+    const hasClinicAccess = user.clinicIds?.some((clinicId,) => resource.includes(clinicId,))
+      || (user.clinicId && resource.includes(user.clinicId,))
 
     // Staff typically can't delete critical data
-    if (action === "delete" && resource.includes("patient")) {
-      return false;
+    if (action === 'delete' && resource.includes('patient',)) {
+      return false
     }
 
-    return hasClinicAccess;
+    return hasClinicAccess
   }
 }
 
 // TLS validation middleware
 export const validateTLSMiddleware = (): MiddlewareHandler => {
-  return async (c, next) => {
+  return async (c, next,) => {
     // Verify HTTPS is being used
-    const protocol = c.req.header("x-forwarded-proto") || c.req.header("x-forwarded-protocol");
+    const protocol = c.req.header('x-forwarded-proto',) || c.req.header('x-forwarded-protocol',)
 
-    if (!protocol || !protocol.includes("https")) {
+    if (!protocol || !protocol.includes('https',)) {
       return c.json(
         {
-          error: "HTTPS required for healthcare data",
-          code: "HTTPS_REQUIRED",
+          error: 'HTTPS required for healthcare data',
+          code: 'HTTPS_REQUIRED',
         },
         400,
-      );
+      )
     }
 
     // Set security headers
     c.res.headers.set(
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload",
-    );
-    c.res.headers.set("X-Content-Type-Options", "nosniff");
-    c.res.headers.set("X-Frame-Options", "DENY");
-    c.res.headers.set("X-XSS-Protection", "1; mode=block");
-    c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains; preload',
+    )
+    c.res.headers.set('X-Content-Type-Options', 'nosniff',)
+    c.res.headers.set('X-Frame-Options', 'DENY',)
+    c.res.headers.set('X-XSS-Protection', '1; mode=block',)
+    c.res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin',)
 
-    return next();
-  };
-};
+    return next()
+  }
+}
 
 // Export healthcare security utilities
 export const healthcareSecurityUtils = {
@@ -936,18 +936,18 @@ export const healthcareSecurityUtils = {
   logger: HealthcareSecurityLogger,
 
   // Check emergency access requirements
-  requiresEmergencyJustification: (endpoint: string): boolean => {
-    const config = HEALTHCARE_RATE_LIMITS.find((c) => endpoint.startsWith(c.endpoint));
-    return config?.emergencyBypass === true;
+  requiresEmergencyJustification: (endpoint: string,): boolean => {
+    const config = HEALTHCARE_RATE_LIMITS.find((c,) => endpoint.startsWith(c.endpoint,))
+    return config?.emergencyBypass === true
   },
 
   // Get rate limit configuration for endpoint
-  getRateLimitConfig: (endpoint: string): HealthcareRateLimitConfig | null => {
+  getRateLimitConfig: (endpoint: string,): HealthcareRateLimitConfig | null => {
     return (
-      HEALTHCARE_RATE_LIMITS.find((c) => endpoint.startsWith(c.endpoint))
+      HEALTHCARE_RATE_LIMITS.find((c,) => endpoint.startsWith(c.endpoint,))
       || null
-    );
+    )
   },
-};
+}
 
-export { HEALTHCARE_RATE_LIMITS, HealthcareSecurityLogger, ProfessionalLicenseValidator };
+export { HEALTHCARE_RATE_LIMITS, HealthcareSecurityLogger, ProfessionalLicenseValidator, }

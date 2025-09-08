@@ -3,16 +3,16 @@
  * Tests essential authentication functionality
  */
 
-import { cleanup, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, beforeEach, describe, expect, it, vi, } from 'vitest'
 
 // Mock Login Form Component (placeholder for actual implementation)
 interface LoginFormProps {
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>,) => void
 }
 
-const LoginForm = ({ onSubmit }: LoginFormProps) => (
+const LoginForm = ({ onSubmit, }: LoginFormProps,) => (
   <form data-testid="auth-login-form" onSubmit={onSubmit}>
     <input
       data-testid="auth-login-email"
@@ -30,40 +30,40 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => (
       Entrar
     </button>
   </form>
-);
+)
 
-describe("authentication", () => {
+describe('authentication', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  },)
 
   afterEach(() => {
-    cleanup();
-    vi.restoreAllMocks();
-  });
+    cleanup()
+    vi.restoreAllMocks()
+  },)
 
-  it("should render login form", () => {
-    render(<LoginForm onSubmit={vi.fn()} />);
+  it('should render login form', () => {
+    render(<LoginForm onSubmit={vi.fn()} />,)
 
-    expect(screen.getByTestId("auth-login-email")).toBeInTheDocument();
-    expect(screen.getByTestId("auth-login-password")).toBeInTheDocument();
-    expect(screen.getByTestId("auth-login-button")).toBeInTheDocument();
-  });
+    expect(screen.getByTestId('auth-login-email',),).toBeInTheDocument()
+    expect(screen.getByTestId('auth-login-password',),).toBeInTheDocument()
+    expect(screen.getByTestId('auth-login-button',),).toBeInTheDocument()
+  })
 
-  it("should handle login submission", async () => {
-    const mockSubmit = vi.fn();
-    const user = userEvent.setup();
+  it('should handle login submission', async () => {
+    const mockSubmit = vi.fn()
+    const user = userEvent.setup()
 
-    render(<LoginForm onSubmit={mockSubmit} />);
+    render(<LoginForm onSubmit={mockSubmit} />,)
 
-    const emailInput = screen.getByTestId("auth-login-email");
-    const passwordInput = screen.getByTestId("auth-login-password");
-    const submitButton = screen.getByTestId("auth-login-button");
+    const emailInput = screen.getByTestId('auth-login-email',)
+    const passwordInput = screen.getByTestId('auth-login-password',)
+    const submitButton = screen.getByTestId('auth-login-button',)
 
-    await user.type(emailInput, "user@example.com");
-    await user.type(passwordInput, "password123");
-    await user.click(submitButton);
+    await user.type(emailInput, 'user@example.com',)
+    await user.type(passwordInput, 'password123',)
+    await user.click(submitButton,)
 
-    expect(mockSubmit).toHaveBeenCalled();
-  });
-});
+    expect(mockSubmit,).toHaveBeenCalled()
+  })
+})

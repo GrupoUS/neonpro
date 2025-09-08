@@ -3,32 +3,32 @@
  * Server-side Supabase instance for API routes and SSR
  */
 
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createServerClient, } from '@supabase/ssr'
+import { cookies, } from 'next/headers'
 
 export const createClient = async () => {
-  const cookieStore = await cookies();
+  const cookieStore = await cookies()
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll();
+          return cookieStore.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet,) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options, },) =>
+              cookieStore.set(name, value, options,)
+            )
           } catch {
             // Server component - cookies will be set on next request
           }
         },
       },
     },
-  );
-};
+  )
+}
 
-export default createClient;
+export default createClient

@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
+import { Button, } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,9 +7,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search, Settings, User } from "lucide-react";
+} from '@/components/ui/dropdown-menu'
+import { SidebarTrigger, } from '@/components/ui/sidebar'
+import { Bell, Search, Settings, User, } from 'lucide-react'
 
 export function Header() {
   return (
@@ -96,5 +96,5 @@ export function Header() {
         </DropdownMenu>
       </div>
     </header>
-  );
+  )
 }

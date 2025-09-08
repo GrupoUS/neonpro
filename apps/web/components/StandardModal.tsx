@@ -1,13 +1,13 @@
-import { X } from "lucide-react";
-import type React from "react";
-import type { ModalComponentProps } from "./types/healthcare";
-import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
+import { X, } from 'lucide-react'
+import type React from 'react'
+import type { ModalComponentProps, } from './types/healthcare'
+import { Button, } from './ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from './ui/dialog'
 
 export interface StandardModalProps extends ModalComponentProps {
-  children: React.ReactNode;
-  showCloseButton?: boolean;
-  footer?: React.ReactNode;
+  children: React.ReactNode
+  showCloseButton?: boolean
+  footer?: React.ReactNode
 }
 
 export function StandardModal({
@@ -16,17 +16,17 @@ export function StandardModal({
   title,
   description,
   children,
-  size = "md",
+  size = 'md',
   showCloseButton = true,
   preventClose = false,
   footer,
-}: StandardModalProps) {
+}: StandardModalProps,) {
   const sizeClasses = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-  };
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+  }
 
   return (
     <Dialog
@@ -35,8 +35,8 @@ export function StandardModal({
     >
       <DialogContent
         className={`${sizeClasses[size]} max-h-[85vh] overflow-y-auto`}
-        onPointerDownOutside={preventClose ? (e) => e.preventDefault() : undefined}
-        onEscapeKeyDown={preventClose ? (e) => e.preventDefault() : undefined}
+        onPointerDownOutside={preventClose ? (e,) => e.preventDefault() : undefined}
+        onEscapeKeyDown={preventClose ? (e,) => e.preventDefault() : undefined}
       >
         {showCloseButton && !preventClose && (
           <Button
@@ -68,7 +68,7 @@ export function StandardModal({
         )}
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
-export default StandardModal;
+export default StandardModal

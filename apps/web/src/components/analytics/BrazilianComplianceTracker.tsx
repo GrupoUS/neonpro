@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * BrazilianComplianceTracker - Brazilian Healthcare Compliance Intelligence
@@ -10,26 +10,26 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import type {
   BrazilianHealthcareIntelligence,
   BrazilianRegion,
   BrazilianState,
   ComplianceViolation,
-} from "@/types/analytics";
+} from '@/types/analytics'
 import {
   AlertTriangle,
   Building,
@@ -46,13 +46,13 @@ import {
   Shield,
   Stethoscope,
   Target,
-} from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+} from 'lucide-react'
+import React, { useCallback, useMemo, useState, } from 'react'
 
 // ====== MOCK COMPLIANCE DATA ======
 const mockComplianceData: BrazilianHealthcareIntelligence = {
-  clinicId: "clinic-sp-001",
-  region: "sudeste",
+  clinicId: 'clinic-sp-001',
+  region: 'sudeste',
   lastUpdated: new Date(),
   compliance: {
     cfmCompliance: {
@@ -61,19 +61,19 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
       professionalEthics: 92,
       continuingEducation: 89,
       patientSafety: 96,
-      lastAudit: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-      nextAudit: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000),
+      lastAudit: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000,),
+      nextAudit: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000,),
       violations: [
         {
-          id: "cfm-001",
-          type: "professional_ethics",
-          severity: "minor",
-          description: "Atualização de educação continuada em atraso para 1 profissional",
-          regulatoryFramework: "CFM",
-          detectedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          responsiblePerson: "Dr. João Silva",
+          id: 'cfm-001',
+          type: 'professional_ethics',
+          severity: 'minor',
+          description: 'Atualização de educação continuada em atraso para 1 profissional',
+          regulatoryFramework: 'CFM',
+          detectedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,),
+          responsiblePerson: 'Dr. João Silva',
           penaltyRisk: 15,
-          evidenceFiles: ["certificate_pending.pdf"],
+          evidenceFiles: ['certificate_pending.pdf',],
         },
       ],
     },
@@ -83,8 +83,8 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
       sanitaryLicense: 88,
       equipmentValidation: 89,
       adverseEventReporting: 93,
-      lastInspection: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-      nextInspection: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
+      lastInspection: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000,),
+      nextInspection: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000,),
       violations: [],
     },
     lgpdCompliance: {
@@ -94,27 +94,27 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
       dataSubjectRights: 90,
       securityMeasures: 85,
       incidentResponse: 88,
-      lastAssessment: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      nextAssessment: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      lastAssessment: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000,),
+      nextAssessment: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000,),
       violations: [
         {
-          id: "lgpd-001",
-          type: "data_protection",
-          severity: "minor",
+          id: 'lgpd-001',
+          type: 'data_protection',
+          severity: 'minor',
           description:
-            "Política de retenção de dados necessita atualização para novos procedimentos",
-          regulatoryFramework: "LGPD",
-          detectedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-          responsiblePerson: "Ana Santos - DPO",
+            'Política de retenção de dados necessita atualização para novos procedimentos',
+          regulatoryFramework: 'LGPD',
+          detectedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000,),
+          responsiblePerson: 'Ana Santos - DPO',
           penaltyRisk: 25,
-          evidenceFiles: ["retention_policy_v2.pdf"],
+          evidenceFiles: ['retention_policy_v2.pdf',],
         },
       ],
     },
     susIntegration: {
       connected: true,
       dataExchangeActive: true,
-      lastSyncDate: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      lastSyncDate: new Date(Date.now() - 2 * 60 * 60 * 1000,),
       integrationHealth: 94,
       pendingUpdates: 3,
       errorCount: 1,
@@ -127,67 +127,67 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
     },
     ansConnectivity: {
       connected: true,
-      lastVerification: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      lastVerification: new Date(Date.now() - 4 * 60 * 60 * 1000,),
       beneficiaryValidation: 97,
       coverageVerification: 95,
       authorizationProcessing: 92,
-      networkStatus: "active",
+      networkStatus: 'active',
     },
   },
   demographics: {
     populationHealth: {
       regionalHealthIndex: 78,
-      commonConditions: ["Hipertensão", "Diabetes", "Obesidade", "Ansiedade"],
-      ageDistribution: { "18-30": 25, "31-45": 35, "46-60": 28, "60+": 12 },
-      socioeconomicProfile: "middle_upper",
+      commonConditions: ['Hipertensão', 'Diabetes', 'Obesidade', 'Ansiedade',],
+      ageDistribution: { '18-30': 25, '31-45': 35, '46-60': 28, '60+': 12, },
+      socioeconomicProfile: 'middle_upper',
       healthLiteracy: 72,
     },
     regionalTrends: {
-      aestheticProcedures: { trend: "increasing", growth: 15.2 },
-      preventiveCare: { trend: "stable", growth: 2.1 },
-      emergencyVisits: { trend: "decreasing", growth: -8.5 },
-      patientSatisfaction: { trend: "increasing", growth: 7.3 },
+      aestheticProcedures: { trend: 'increasing', growth: 15.2, },
+      preventiveCare: { trend: 'stable', growth: 2.1, },
+      emergencyVisits: { trend: 'decreasing', growth: -8.5, },
+      patientSatisfaction: { trend: 'increasing', growth: 7.3, },
     },
     culturalFactors: {
       treatmentPreferences: [
-        "Minimally invasive procedures",
-        "Natural results",
-        "Quick recovery",
+        'Minimally invasive procedures',
+        'Natural results',
+        'Quick recovery',
       ],
-      communicationStyle: "Direct with emotional support",
-      familyInvolvement: "High",
-      religiousConsiderations: "Moderate",
+      communicationStyle: 'Direct with emotional support',
+      familyInvolvement: 'High',
+      religiousConsiderations: 'Moderate',
     },
     socioeconomicIndicators: {
       averageIncome: 8500,
       insuranceCoverage: 85,
-      healthcareAccess: "Good",
+      healthcareAccess: 'Good',
       digitalLiteracy: 78,
     },
     epidemiologicalData: {
       prevalentConditions: [
-        { condition: "Acne/Manchas", prevalence: 45, trend: "stable" },
+        { condition: 'Acne/Manchas', prevalence: 45, trend: 'stable', },
         {
-          condition: "Envelhecimento facial",
+          condition: 'Envelhecimento facial',
           prevalence: 38,
-          trend: "increasing",
+          trend: 'increasing',
         },
-        { condition: "Celulite/Flacidez", prevalence: 52, trend: "increasing" },
-        { condition: "Calvície/Alopecia", prevalence: 28, trend: "increasing" },
+        { condition: 'Celulite/Flacidez', prevalence: 52, trend: 'increasing', },
+        { condition: 'Calvície/Alopecia', prevalence: 28, trend: 'increasing', },
       ],
       seasonalPatterns: [
         {
-          period: "Verão",
-          procedures: ["Depilação laser", "Tratamentos corporais"],
+          period: 'Verão',
+          procedures: ['Depilação laser', 'Tratamentos corporais',],
         },
-        { period: "Inverno", procedures: ["Peelings", "Tratamentos faciais"] },
+        { period: 'Inverno', procedures: ['Peelings', 'Tratamentos faciais',], },
       ],
     },
   },
   benchmarking: {
     regionalBenchmarks: {
       averageComplianceScore: 89,
-      topPerformers: ["Clinic A", "Clinic B", "Clinic C"],
+      topPerformers: ['Clinic A', 'Clinic B', 'Clinic C',],
       industryStandards: {
         cfmScore: 92,
         anvisaScore: 88,
@@ -206,107 +206,107 @@ const mockComplianceData: BrazilianHealthcareIntelligence = {
       totalClinics: 156,
       percentile: 92,
       competitiveAdvantage: [
-        "High LGPD compliance",
-        "Excellence in patient safety",
-        "Strong professional ethics",
+        'High LGPD compliance',
+        'Excellence in patient safety',
+        'Strong professional ethics',
       ],
     },
     performanceRanking: {
       stateRanking: 5,
       regionalRanking: 8,
       nationalRanking: 43,
-      improvement: "Moved up 7 positions this quarter",
+      improvement: 'Moved up 7 positions this quarter',
     },
   },
   regulations: {
     activeRegulations: [
       {
-        id: "cfm-res-2217",
-        title: "Resolução CFM nº 2.217/2018",
-        category: "Ética Médica",
-        effectiveDate: new Date("2018-09-27"),
-        lastUpdate: new Date("2023-06-15"),
-        complianceStatus: "compliant",
-        nextReview: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        id: 'cfm-res-2217',
+        title: 'Resolução CFM nº 2.217/2018',
+        category: 'Ética Médica',
+        effectiveDate: new Date('2018-09-27',),
+        lastUpdate: new Date('2023-06-15',),
+        complianceStatus: 'compliant',
+        nextReview: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000,),
       },
       {
-        id: "anvisa-rdc-302",
-        title: "RDC ANVISA nº 302/2005",
-        category: "Serviços de Saúde",
-        effectiveDate: new Date("2005-10-13"),
-        lastUpdate: new Date("2022-11-10"),
-        complianceStatus: "compliant",
-        nextReview: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
+        id: 'anvisa-rdc-302',
+        title: 'RDC ANVISA nº 302/2005',
+        category: 'Serviços de Saúde',
+        effectiveDate: new Date('2005-10-13',),
+        lastUpdate: new Date('2022-11-10',),
+        complianceStatus: 'compliant',
+        nextReview: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000,),
       },
     ],
     complianceRequirements: [
       {
-        id: "req-001",
-        title: "Certificação de Profissionais",
-        category: "CFM",
-        priority: "high",
-        dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-        status: "in_progress",
+        id: 'req-001',
+        title: 'Certificação de Profissionais',
+        category: 'CFM',
+        priority: 'high',
+        dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000,),
+        status: 'in_progress',
         completionRate: 75,
       },
       {
-        id: "req-002",
-        title: "Atualização LGPD - Consentimento",
-        category: "LGPD",
-        priority: "medium",
-        dueDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
-        status: "pending",
+        id: 'req-002',
+        title: 'Atualização LGPD - Consentimento',
+        category: 'LGPD',
+        priority: 'medium',
+        dueDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000,),
+        status: 'pending',
         completionRate: 30,
       },
     ],
     auditSchedule: [
       {
-        id: "audit-001",
-        type: "CFM",
-        scheduledDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000),
-        auditor: "Conselho Regional de Medicina de São Paulo",
-        scope: "Ética profissional e qualidade assistencial",
-        preparationStatus: "scheduled",
+        id: 'audit-001',
+        type: 'CFM',
+        scheduledDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000,),
+        auditor: 'Conselho Regional de Medicina de São Paulo',
+        scope: 'Ética profissional e qualidade assistencial',
+        preparationStatus: 'scheduled',
       },
     ],
     violationRisks: [
       {
-        category: "LGPD",
-        riskLevel: "medium",
+        category: 'LGPD',
+        riskLevel: 'medium',
         probability: 0.25,
         potentialPenalty: 50_000,
         mitigationActions: [
-          "Atualizar política de dados",
-          "Treinar equipe",
-          "Implementar novos controles",
+          'Atualizar política de dados',
+          'Treinar equipe',
+          'Implementar novos controles',
         ],
       },
     ],
   },
-};
+}
 
 const brazilianStates: {
-  code: BrazilianState;
-  name: string;
-  region: BrazilianRegion;
+  code: BrazilianState
+  name: string
+  region: BrazilianRegion
 }[] = [
-  { code: "SP", name: "São Paulo", region: "sudeste" },
-  { code: "RJ", name: "Rio de Janeiro", region: "sudeste" },
-  { code: "MG", name: "Minas Gerais", region: "sudeste" },
-  { code: "ES", name: "Espírito Santo", region: "sudeste" },
-  { code: "PR", name: "Paraná", region: "sul" },
-  { code: "SC", name: "Santa Catarina", region: "sul" },
-  { code: "RS", name: "Rio Grande do Sul", region: "sul" },
-  { code: "BA", name: "Bahia", region: "nordeste" },
-  { code: "PE", name: "Pernambuco", region: "nordeste" },
-  { code: "CE", name: "Ceará", region: "nordeste" },
-];
+  { code: 'SP', name: 'São Paulo', region: 'sudeste', },
+  { code: 'RJ', name: 'Rio de Janeiro', region: 'sudeste', },
+  { code: 'MG', name: 'Minas Gerais', region: 'sudeste', },
+  { code: 'ES', name: 'Espírito Santo', region: 'sudeste', },
+  { code: 'PR', name: 'Paraná', region: 'sul', },
+  { code: 'SC', name: 'Santa Catarina', region: 'sul', },
+  { code: 'RS', name: 'Rio Grande do Sul', region: 'sul', },
+  { code: 'BA', name: 'Bahia', region: 'nordeste', },
+  { code: 'PE', name: 'Pernambuco', region: 'nordeste', },
+  { code: 'CE', name: 'Ceará', region: 'nordeste', },
+]
 
 interface BrazilianComplianceTrackerProps {
-  clinicId: string;
-  region?: BrazilianRegion;
-  autoRefresh?: boolean;
-  refreshInterval?: number;
+  clinicId: string
+  region?: BrazilianRegion
+  autoRefresh?: boolean
+  refreshInterval?: number
 }
 
 export default function BrazilianComplianceTracker({
@@ -314,65 +314,65 @@ export default function BrazilianComplianceTracker({
   region,
   autoRefresh = true,
   refreshInterval = 300, // 5 minutes
-}: BrazilianComplianceTrackerProps) {
+}: BrazilianComplianceTrackerProps,) {
   // ====== STATE MANAGEMENT ======
-  const [complianceData, setComplianceData] = useState<BrazilianHealthcareIntelligence>(
+  const [complianceData, setComplianceData,] = useState<BrazilianHealthcareIntelligence>(
     mockComplianceData,
-  );
-  const [selectedRegulation, setSelectedRegulation] = useState<string>("all");
-  const [activeTab, setActiveTab] = useState("overview");
-  const [isLoading, setIsLoading] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState(new Date());
+  )
+  const [selectedRegulation, setSelectedRegulation,] = useState<string>('all',)
+  const [activeTab, setActiveTab,] = useState('overview',)
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [lastRefresh, setLastRefresh,] = useState(new Date(),)
 
   // ====== DATA HANDLERS ======
   const handleRefreshCompliance = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true,)
     try {
       // Simulate API call for compliance data refresh
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setLastRefresh(new Date());
+      await new Promise((resolve,) => setTimeout(resolve, 2000,))
+      setLastRefresh(new Date(),)
       // In real implementation, fetch fresh compliance data
     } catch (error) {
-      console.error("Failed to refresh compliance data:", error);
+      console.error('Failed to refresh compliance data:', error,)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, []);
+  }, [],)
 
   const handleExportReport = useCallback(
-    (type: "cfm" | "anvisa" | "lgpd" | "complete") => {
+    (type: 'cfm' | 'anvisa' | 'lgpd' | 'complete',) => {
       const reportData = {
         clinic: clinicId,
         type,
         data: complianceData,
         exportedAt: new Date(),
-      };
+      }
 
-      const blob = new Blob([JSON.stringify(reportData, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `compliance-report-${type}-${new Date().toISOString().split("T")[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const blob = new Blob([JSON.stringify(reportData, null, 2,),], {
+        type: 'application/json',
+      },)
+      const url = URL.createObjectURL(blob,)
+      const a = document.createElement('a',)
+      a.href = url
+      a.download = `compliance-report-${type}-${new Date().toISOString().split('T',)[0]}.json`
+      a.click()
+      URL.revokeObjectURL(url,)
     },
-    [clinicId, complianceData],
-  );
+    [clinicId, complianceData,],
+  )
 
   // ====== AUTO REFRESH ======
   useEffect(() => {
     if (!autoRefresh || !refreshInterval) {
-      return;
+      return
     }
 
     const interval = setInterval(() => {
-      handleRefreshCompliance();
-    }, refreshInterval * 1000);
+      handleRefreshCompliance()
+    }, refreshInterval * 1000,)
 
-    return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval, handleRefreshCompliance]);
+    return () => clearInterval(interval,)
+  }, [autoRefresh, refreshInterval, handleRefreshCompliance,],)
 
   // ====== COMPUTED VALUES ======
   const overallComplianceScore = useMemo(() => {
@@ -380,74 +380,74 @@ export default function BrazilianComplianceTracker({
       complianceData.compliance.cfmCompliance.overallScore,
       complianceData.compliance.anvisaCompliance.overallScore,
       complianceData.compliance.lgpdCompliance.overallScore,
-    ];
+    ]
     return Math.round(
-      scores.reduce((sum, score) => sum + score, 0) / scores.length,
-    );
-  }, [complianceData.compliance]);
+      scores.reduce((sum, score,) => sum + score, 0,) / scores.length,
+    )
+  }, [complianceData.compliance,],)
 
   const complianceStatus = useMemo(() => {
     if (overallComplianceScore >= 95) {
       return {
-        label: "Excelente",
-        color: "text-green-600",
-        bgColor: "bg-green-50",
-      };
+        label: 'Excelente',
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+      }
     }
     if (overallComplianceScore >= 90) {
       return {
-        label: "Muito Bom",
-        color: "text-blue-600",
-        bgColor: "bg-blue-50",
-      };
+        label: 'Muito Bom',
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50',
+      }
     }
     if (overallComplianceScore >= 80) {
       return {
-        label: "Bom",
-        color: "text-yellow-600",
-        bgColor: "bg-yellow-50",
-      };
+        label: 'Bom',
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-50',
+      }
     }
     return {
-      label: "Requer Atenção",
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-    };
-  }, [overallComplianceScore]);
+      label: 'Requer Atenção',
+      color: 'text-red-600',
+      bgColor: 'bg-red-50',
+    }
+  }, [overallComplianceScore,],)
 
   const totalViolations = useMemo(
     () =>
       complianceData.compliance.cfmCompliance.violations.length
       + complianceData.compliance.anvisaCompliance.violations.length
       + complianceData.compliance.lgpdCompliance.violations.length,
-    [complianceData.compliance],
-  );
+    [complianceData.compliance,],
+  )
 
   const upcomingDeadlines = useMemo(
     () =>
       complianceData.regulations.complianceRequirements
         .filter(
-          (req) =>
-            new Date(req.dueDate).getTime() - Date.now()
+          (req,) =>
+            new Date(req.dueDate,).getTime() - Date.now()
               < 30 * 24 * 60 * 60 * 1000,
         ) // Next 30 days
         .sort(
-          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+          (a, b,) => new Date(a.dueDate,).getTime() - new Date(b.dueDate,).getTime(),
         ),
-    [complianceData.regulations.complianceRequirements],
-  );
+    [complianceData.regulations.complianceRequirements,],
+  )
 
   const regionName = useMemo(() => {
     const regionNames = {
-      norte: "Norte",
-      nordeste: "Nordeste",
-      "centro-oeste": "Centro-Oeste",
-      sudeste: "Sudeste",
-      sul: "Sul",
-      "distrito-federal": "Distrito Federal",
-    };
-    return regionNames[complianceData.region];
-  }, [complianceData.region]);
+      norte: 'Norte',
+      nordeste: 'Nordeste',
+      'centro-oeste': 'Centro-Oeste',
+      sudeste: 'Sudeste',
+      sul: 'Sul',
+      'distrito-federal': 'Distrito Federal',
+    }
+    return regionNames[complianceData.region]
+  }, [complianceData.region,],)
 
   // ====== RENDER COMPONENTS ======
   const renderComplianceCard = (
@@ -455,7 +455,7 @@ export default function BrazilianComplianceTracker({
     score: number,
     icon: React.ElementType,
     color: string,
-    details: { label: string; value: number; }[],
+    details: { label: string; value: number }[],
     violations: ComplianceViolation[],
   ) => (
     <Card className="relative overflow-hidden">
@@ -464,37 +464,37 @@ export default function BrazilianComplianceTracker({
           <div className="flex items-center space-x-3">
             <div
               className={cn(
-                "p-2 rounded-full",
+                'p-2 rounded-full',
                 `bg-${color}-100 text-${color}-600`,
               )}
             >
-              {React.createElement(icon, { className: "h-5 w-5" })}
+              {React.createElement(icon, { className: 'h-5 w-5', },)}
             </div>
             <CardTitle className="text-lg">{title}</CardTitle>
           </div>
           <Badge
             variant={score >= 95
-              ? "default"
+              ? 'default'
               : score >= 90
-              ? "secondary"
+              ? 'secondary'
               : score >= 80
-              ? "outline"
-              : "destructive"}
+              ? 'outline'
+              : 'destructive'}
           >
             {score >= 95
-              ? "Excelente"
+              ? 'Excelente'
               : score >= 90
-              ? "Muito Bom"
+              ? 'Muito Bom'
               : score >= 80
-              ? "Bom"
-              : "Crítico"}
+              ? 'Bom'
+              : 'Crítico'}
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="text-center">
-            <div className={cn("text-4xl font-bold", `text-${color}-600`)}>
+            <div className={cn('text-4xl font-bold', `text-${color}-600`,)}>
               {score}%
             </div>
             <div className="text-sm text-muted-foreground">
@@ -504,7 +504,7 @@ export default function BrazilianComplianceTracker({
           </div>
 
           <div className="space-y-2">
-            {details.map((detail, index) => (
+            {details.map((detail, index,) => (
               <div key={index} className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">
                   {detail.label}
@@ -523,8 +523,8 @@ export default function BrazilianComplianceTracker({
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                {violations.length} violação{violations.length > 1 ? "ões" : ""}{" "}
-                detectada{violations.length > 1 ? "s" : ""}
+                {violations.length} violação{violations.length > 1 ? 'ões' : ''}{' '}
+                detectada{violations.length > 1 ? 's' : ''}
               </AlertDescription>
             </Alert>
           )}
@@ -536,18 +536,18 @@ export default function BrazilianComplianceTracker({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
-  const renderViolationCard = (violation: ComplianceViolation) => (
+  const renderViolationCard = (violation: ComplianceViolation,) => (
     <Card
       key={violation.id}
       className={cn(
-        "border-l-4",
-        violation.severity === "critical"
-          ? "border-l-red-500 bg-red-50"
-          : violation.severity === "major"
-          ? "border-l-orange-500 bg-orange-50"
-          : "border-l-yellow-500 bg-yellow-50",
+        'border-l-4',
+        violation.severity === 'critical'
+          ? 'border-l-red-500 bg-red-50'
+          : violation.severity === 'major'
+          ? 'border-l-orange-500 bg-orange-50'
+          : 'border-l-yellow-500 bg-yellow-50',
       )}
     >
       <CardHeader className="pb-2">
@@ -555,20 +555,20 @@ export default function BrazilianComplianceTracker({
           <div className="flex items-center space-x-2">
             <AlertTriangle
               className={cn(
-                "h-4 w-4",
-                violation.severity === "critical"
-                  ? "text-red-600"
-                  : violation.severity === "major"
-                  ? "text-orange-600"
-                  : "text-yellow-600",
+                'h-4 w-4',
+                violation.severity === 'critical'
+                  ? 'text-red-600'
+                  : violation.severity === 'major'
+                  ? 'text-orange-600'
+                  : 'text-yellow-600',
               )}
             />
             <Badge
-              variant={violation.severity === "critical"
-                ? "destructive"
-                : violation.severity === "major"
-                ? "secondary"
-                : "outline"}
+              variant={violation.severity === 'critical'
+                ? 'destructive'
+                : violation.severity === 'major'
+                ? 'secondary'
+                : 'outline'}
             >
               {violation.regulatoryFramework}
             </Badge>
@@ -576,12 +576,12 @@ export default function BrazilianComplianceTracker({
           <div className="text-right">
             <div
               className={cn(
-                "text-sm font-medium",
+                'text-sm font-medium',
                 violation.penaltyRisk > 70
-                  ? "text-red-600"
+                  ? 'text-red-600'
                   : violation.penaltyRisk > 40
-                  ? "text-yellow-600"
-                  : "text-green-600",
+                  ? 'text-yellow-600'
+                  : 'text-green-600',
               )}
             >
               Risco: {violation.penaltyRisk}%
@@ -601,7 +601,7 @@ export default function BrazilianComplianceTracker({
             <div>
               <span className="text-muted-foreground">Detectado:</span>
               <div className="font-medium">
-                {new Date(violation.detectedAt).toLocaleDateString("pt-BR")}
+                {new Date(violation.detectedAt,).toLocaleDateString('pt-BR',)}
               </div>
             </div>
           </div>
@@ -619,7 +619,7 @@ export default function BrazilianComplianceTracker({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   const renderBenchmarkCard = (
     title: string,
@@ -649,18 +649,18 @@ export default function BrazilianComplianceTracker({
           </div>
 
           <Progress
-            value={(current / Math.max(current, benchmark)) * 100}
+            value={(current / Math.max(current, benchmark,)) * 100}
             className="h-2"
           />
 
           <div className="flex justify-between items-center text-sm">
             <span
               className={cn(
-                "font-medium",
-                current > benchmark ? "text-green-600" : "text-red-600",
+                'font-medium',
+                current > benchmark ? 'text-green-600' : 'text-red-600',
               )}
             >
-              {current > benchmark ? "+" : ""}
+              {current > benchmark ? '+' : ''}
               {current - benchmark} pts vs. média
             </span>
             {position && <Badge variant="outline">#{position}</Badge>}
@@ -668,7 +668,7 @@ export default function BrazilianComplianceTracker({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   // ====== MAIN RENDER ======
   return (
@@ -708,7 +708,7 @@ export default function BrazilianComplianceTracker({
             disabled={isLoading}
           >
             <RefreshCw
-              className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")}
+              className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin',)}
             />
             Atualizar
           </Button>
@@ -716,7 +716,7 @@ export default function BrazilianComplianceTracker({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handleExportReport("complete")}
+            onClick={() => handleExportReport('complete',)}
           >
             <Download className="h-4 w-4 mr-2" />
             Exportar
@@ -727,16 +727,16 @@ export default function BrazilianComplianceTracker({
       {/* Overall Compliance Status */}
       <Card
         className={cn(
-          "relative overflow-hidden",
+          'relative overflow-hidden',
           complianceStatus.bgColor,
-          "border-l-4 border-l-green-500",
+          'border-l-4 border-l-green-500',
         )}
       >
         <CardContent className="flex items-center justify-between py-6">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-white rounded-full shadow-sm">
-                <Shield className={cn("h-8 w-8", complianceStatus.color)} />
+                <Shield className={cn('h-8 w-8', complianceStatus.color,)} />
               </div>
               <div>
                 <div className="text-2xl font-bold">
@@ -750,7 +750,7 @@ export default function BrazilianComplianceTracker({
             <div className="text-sm text-muted-foreground">
               <div>Região: {regionName}</div>
               <div>
-                Última atualização: {lastRefresh.toLocaleTimeString("pt-BR")}
+                Última atualização: {lastRefresh.toLocaleTimeString('pt-BR',)}
               </div>
             </div>
           </div>
@@ -793,9 +793,9 @@ export default function BrazilianComplianceTracker({
             <div className="flex justify-between items-center">
               <span>
                 <strong>
-                  {totalViolations} violação{totalViolations > 1 ? "ões" : ""} de compliance
-                </strong>{" "}
-                requer{totalViolations === 1 ? "" : "em"} atenção imediata
+                  {totalViolations} violação{totalViolations > 1 ? 'ões' : ''} de compliance
+                </strong>{' '}
+                requer{totalViolations === 1 ? '' : 'em'} atenção imediata
               </span>
               <Button size="sm" variant="destructive">
                 Revisar Agora
@@ -837,25 +837,25 @@ export default function BrazilianComplianceTracker({
           {/* Compliance Scores Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {renderComplianceCard(
-              "CFM - Conselho Federal de Medicina",
+              'CFM - Conselho Federal de Medicina',
               complianceData.compliance.cfmCompliance.overallScore,
               Stethoscope,
-              "green",
+              'green',
               [
                 {
-                  label: "Validação CRM",
+                  label: 'Validação CRM',
                   value: complianceData.compliance.cfmCompliance.licenseValidation,
                 },
                 {
-                  label: "Ética Profissional",
+                  label: 'Ética Profissional',
                   value: complianceData.compliance.cfmCompliance.professionalEthics,
                 },
                 {
-                  label: "Educação Continuada",
+                  label: 'Educação Continuada',
                   value: complianceData.compliance.cfmCompliance.continuingEducation,
                 },
                 {
-                  label: "Segurança do Paciente",
+                  label: 'Segurança do Paciente',
                   value: complianceData.compliance.cfmCompliance.patientSafety,
                 },
               ],
@@ -863,27 +863,27 @@ export default function BrazilianComplianceTracker({
             )}
 
             {renderComplianceCard(
-              "ANVISA - Vigilância Sanitária",
+              'ANVISA - Vigilância Sanitária',
               complianceData.compliance.anvisaCompliance.overallScore,
               Pill,
-              "blue",
+              'blue',
               [
                 {
-                  label: "Substâncias Controladas",
+                  label: 'Substâncias Controladas',
                   value: complianceData.compliance.anvisaCompliance
                     .controlledSubstances,
                 },
                 {
-                  label: "Licença Sanitária",
+                  label: 'Licença Sanitária',
                   value: complianceData.compliance.anvisaCompliance.sanitaryLicense,
                 },
                 {
-                  label: "Validação Equipamentos",
+                  label: 'Validação Equipamentos',
                   value: complianceData.compliance.anvisaCompliance
                     .equipmentValidation,
                 },
                 {
-                  label: "Relatório Eventos Adversos",
+                  label: 'Relatório Eventos Adversos',
                   value: complianceData.compliance.anvisaCompliance
                     .adverseEventReporting,
                 },
@@ -892,25 +892,25 @@ export default function BrazilianComplianceTracker({
             )}
 
             {renderComplianceCard(
-              "LGPD - Lei Geral de Proteção de Dados",
+              'LGPD - Lei Geral de Proteção de Dados',
               complianceData.compliance.lgpdCompliance.overallScore,
               Lock,
-              "purple",
+              'purple',
               [
                 {
-                  label: "Processamento Dados",
+                  label: 'Processamento Dados',
                   value: complianceData.compliance.lgpdCompliance.dataProcessing,
                 },
                 {
-                  label: "Gestão Consentimento",
+                  label: 'Gestão Consentimento',
                   value: complianceData.compliance.lgpdCompliance.consentManagement,
                 },
                 {
-                  label: "Direitos do Titular",
+                  label: 'Direitos do Titular',
                   value: complianceData.compliance.lgpdCompliance.dataSubjectRights,
                 },
                 {
-                  label: "Medidas Segurança",
+                  label: 'Medidas Segurança',
                   value: complianceData.compliance.lgpdCompliance.securityMeasures,
                 },
               ],
@@ -933,12 +933,12 @@ export default function BrazilianComplianceTracker({
                     <span className="text-sm">Status da Conexão</span>
                     <Badge
                       variant={complianceData.compliance.susIntegration.connected
-                        ? "default"
-                        : "destructive"}
+                        ? 'default'
+                        : 'destructive'}
                     >
                       {complianceData.compliance.susIntegration.connected
-                        ? "Conectado"
-                        : "Desconectado"}
+                        ? 'Conectado'
+                        : 'Desconectado'}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
@@ -985,9 +985,9 @@ export default function BrazilianComplianceTracker({
                     <span className="text-sm">Status da Rede</span>
                     <Badge variant="default">
                       {complianceData.compliance.ansConnectivity
-                          .networkStatus === "active"
-                        ? "Ativa"
-                        : "Inativa"}
+                          .networkStatus === 'active'
+                        ? 'Ativa'
+                        : 'Inativa'}
                     </Badge>
                   </div>
                   <div className="space-y-2">
@@ -1032,7 +1032,7 @@ export default function BrazilianComplianceTracker({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {upcomingDeadlines.map((req, index) => (
+                  {upcomingDeadlines.map((req, index,) => (
                     <div
                       key={req.id}
                       className="flex items-center justify-between p-3 border rounded-lg"
@@ -1040,8 +1040,8 @@ export default function BrazilianComplianceTracker({
                       <div>
                         <div className="font-medium">{req.title}</div>
                         <div className="text-sm text-muted-foreground">
-                          {req.category} • Vencimento:{" "}
-                          {new Date(req.dueDate).toLocaleDateString("pt-BR")}
+                          {req.category} • Vencimento:{' '}
+                          {new Date(req.dueDate,).toLocaleDateString('pt-BR',)}
                         </div>
                         <Progress
                           value={req.completionRate}
@@ -1050,21 +1050,21 @@ export default function BrazilianComplianceTracker({
                       </div>
                       <div className="text-right">
                         <Badge
-                          variant={req.priority === "high"
-                            ? "destructive"
-                            : req.priority === "medium"
-                            ? "secondary"
-                            : "outline"}
+                          variant={req.priority === 'high'
+                            ? 'destructive'
+                            : req.priority === 'medium'
+                            ? 'secondary'
+                            : 'outline'}
                         >
-                          {req.priority === "high"
-                            ? "Alta"
-                            : req.priority === "medium"
-                            ? "Média"
-                            : "Baixa"}
+                          {req.priority === 'high'
+                            ? 'Alta'
+                            : req.priority === 'medium'
+                            ? 'Média'
+                            : 'Baixa'}
                         </Badge>
                         <div className="text-sm text-muted-foreground mt-1">
                           {Math.ceil(
-                            (new Date(req.dueDate).getTime() - Date.now())
+                            (new Date(req.dueDate,).getTime() - Date.now())
                               / (24 * 60 * 60 * 1000),
                           )} dias
                         </div>
@@ -1116,23 +1116,23 @@ export default function BrazilianComplianceTracker({
         <TabsContent value="benchmarks" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {renderBenchmarkCard(
-              "CFM Score",
+              'CFM Score',
               complianceData.compliance.cfmCompliance.overallScore,
               complianceData.benchmarking.nationalAverages.cfmCompliance,
               complianceData.benchmarking.peerComparison.ranking,
             )}
             {renderBenchmarkCard(
-              "ANVISA Score",
+              'ANVISA Score',
               complianceData.compliance.anvisaCompliance.overallScore,
               complianceData.benchmarking.nationalAverages.anvisaCompliance,
             )}
             {renderBenchmarkCard(
-              "LGPD Score",
+              'LGPD Score',
               complianceData.compliance.lgpdCompliance.overallScore,
               complianceData.benchmarking.nationalAverages.lgpdCompliance,
             )}
             {renderBenchmarkCard(
-              "Score Geral",
+              'Score Geral',
               overallComplianceScore,
               complianceData.benchmarking.nationalAverages.overallCompliance,
               complianceData.benchmarking.performanceRanking.nationalRanking,
@@ -1176,7 +1176,7 @@ export default function BrazilianComplianceTracker({
                 <h4 className="font-medium mb-3">Vantagens Competitivas</h4>
                 <div className="space-y-2">
                   {complianceData.benchmarking.peerComparison.competitiveAdvantage.map(
-                    (advantage, index) => (
+                    (advantage, index,) => (
                       <div key={index} className="flex items-center space-x-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
                         <span className="text-sm">{advantage}</span>
@@ -1205,11 +1205,11 @@ export default function BrazilianComplianceTracker({
                 ...complianceData.compliance.cfmCompliance.violations,
                 ...complianceData.compliance.anvisaCompliance.violations,
                 ...complianceData.compliance.lgpdCompliance.violations,
-              ].map(renderViolationCard)}
+              ].map(renderViolationCard,)}
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  );
+  )
 }

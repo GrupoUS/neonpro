@@ -9,7 +9,6 @@ applyTo: "**/*"
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- **⚙️ Always Read the Project Memory**: [`docs/memory.md`](../docs/memory.md)
 - **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
   - Use when: Locating code, packages, or wiring across the repo
@@ -61,16 +60,6 @@ CORE_STANDARDS:
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
   archon_first_rule: "MANDATORY Archon MCP integration for all task management"
-  mandatory_execution_rules:
-    right_tool_for_job: "Understand full context before implementation and choose the right mcp and agent for the job"
-    serena_mcp: "MANDATORY use of serena mcp to search codebase, *DO NOT USE* `NATIVE SEARCH CODEBASE`"
-    serena_mcp_integration: "MANDATORY use of serena mcp for semantic code analysis"
-    supabase_integration: "MANDATORY use of supabase mcp for database operations"
-    shadcn-ui_integration: "MANDATORY use of shadcn-ui mcp to manage ui components"
-    no_interruptions: "Continue through ALL steps until problem fully solved"
-    mandatory_first_step: "Always begin with sequential-thinking tool"
-    only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
-    complete_execution: "Execute entire workflow without interruption"
 WORKFLOW_MANAGEMENT_PRINCIPLES:
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
@@ -171,22 +160,18 @@ CONSTITUTIONAL_PRINCIPLES:
 - Identify complexities, dependencies, and constraints
 - **Complexity ≥7**: Add context7 → tavily
 - **Stuck >3x**: See MCP Error Recovery (mcp-coordination.md)
+- MUST READ Project orchestrator: [`docs/AGENTS.md`](../docs/AGENTS.md)
+- MUST READ Coding standards & preferences: [`docs/rules/coding-standards.md`](../docs/rules/coding-standards.md)
 
-**🔬 Ativação Automática do @apex-researcher**:
+**Proactive Update Protocol (MANDATORY FINAL STEP)**
 
-- Implementações técnicas complexas
-- Integração de novos frameworks/bibliotecas
-- Requisitos de segurança/compliance
-- Necessidades de otimização de performance
-- Decisões arquiteturais
-- Regulamentações específicas de saúde (HIPAA, LGPD)
-
-**Comando de Ativação APEX**:
-
-```bash
-@apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
-```
-
+- At the conclusion of each request, review whether updates are needed:
+- Mistakes: `docs/mistakes/[error-category].md`
+- Features: `docs/features/[feature-name].md`
+- APIs: `docs/apis/`
+- Database schema: `docs/database-schema/`
+- Application flows: `docs/architecture/aesthetic-platform-flows.md`
+- System architecture: `docs/architecture/AGENTS.md`
 - Follow the Research Execution Framework below
 
 ```yaml
@@ -217,7 +202,10 @@ RESEARCH_EXECUTION_FRAMEWORK:
 
 - **MANDATORY**: Use `archon` for task management (create_task, update_task, list_tasks)
 - Create detailed task list using archon's system
-- Break down features: atomic tasks on archon, subtasks on native todos
+- Create atomic subtasks for each feature component, with detailed descriptions of what needs to be done
+- Assign tasks to appropriate agents (apex-dev, apex-ui-ux-designer, apex-researcher)
+- Define success criteria and quality gates for each task
+- Break down features: atomic tasks on archon, subtasks on native todos with detailed descriptions what needs to be done
 - Use `serena` to analyze codebase complexity and dependencies
 - Mark tasks as in_progress when starting, completed when finished
 - **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md)
@@ -346,6 +334,14 @@ validation:
   - Create `features/[feature-name].md` for new features or modified behavior
 - **Test Documentation**: Document new test patterns, mocks, utilities
 - Store learnings in archon knowledge base for future retrieval
+- Confirmation: Explicitly note in your thoughts whether updates were made or not.
+
+**Specific Memory File Management**
+
+- `docs/mistakes/[error-category].md` — Problem, wrong approach, correct solution, root cause, prevention, related files.
+- `docs/features/[feature-name].md` — Overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, last updated.
+- `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
+- `docs/apis/*.md` — Endpoint docs: path, method, purpose, request/response, auth, file path.
 
 ### 10. **Documentation Folder Updates** 📚
 
@@ -362,12 +358,6 @@ validation:
 - **Suggest to User**: Recommend specific updates and ask user to review
 
 ### 11. **Out-of-Scope Documentation**
-
-- **🔄 Ativação do @apex-researcher**: Para documentação não coberta por protocolos existentes
-
-```bash
-@apex-researcher "criar documentação para [conceito/padrão/integração]"
-```
 
 - Use o agente apex-researcher para criar documentação abrangente para:
   - Novos conceitos ou padrões introduzidos

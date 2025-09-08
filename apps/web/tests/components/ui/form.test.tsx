@@ -11,9 +11,9 @@
  */
 
 // Mock Form components
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, waitFor, } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi, } from 'vitest'
 import {
   Form,
   FormControl,
@@ -22,31 +22,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../components/ui";
+} from '../../../components/ui'
 
 // Mock Brazilian validation functions
 vi.mock(
-  "@neonpro/utils/validation",
+  '@neonpro/utils/validation',
   () => ({
     validateCPF: vi.fn(),
     validatePhone: vi.fn(),
     validateCEP: vi.fn(),
     validateEmail: vi.fn(),
   }),
-);
+)
 
 // Mock theme provider
-const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
+const ThemeWrapper = ({ children, }: { children: React.ReactNode },) => (
   <div className="neonprov1-theme">{children}</div>
-);
+)
 
-describe("form Component - NeonPro Healthcare", () => {
+describe('form Component - NeonPro Healthcare', () => {
   afterEach(() => {
-    cleanup();
-  });
+    cleanup()
+  },)
 
-  describe("patient Registration Form", () => {
-    it("should render patient registration form with Brazilian fields", () => {
+  describe('patient Registration Form', () => {
+    it('should render patient registration form with Brazilian fields', () => {
       render(
         <ThemeWrapper>
           <Form data-testid="patient-form">
@@ -81,21 +81,21 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
-      expect(screen.getByTestId("patient-form")).toBeInTheDocument();
-      expect(screen.getByTestId("name-input")).toBeInTheDocument();
-      expect(screen.getByTestId("cpf-input")).toBeInTheDocument();
-      expect(screen.getByText("Nome Completo *")).toBeInTheDocument();
-      expect(screen.getByText("CPF *")).toBeInTheDocument();
-    });
+      )
+      expect(screen.getByTestId('patient-form',),).toBeInTheDocument()
+      expect(screen.getByTestId('name-input',),).toBeInTheDocument()
+      expect(screen.getByTestId('cpf-input',),).toBeInTheDocument()
+      expect(screen.getByText('Nome Completo *',),).toBeInTheDocument()
+      expect(screen.getByText('CPF *',),).toBeInTheDocument()
+    })
 
-    it("should validate CPF format in real-time", async () => {
-      const mockValidateCPF = vi.fn();
-      const user = userEvent.setup();
+    it('should validate CPF format in real-time', async () => {
+      const mockValidateCPF = vi.fn()
+      const user = userEvent.setup()
 
       // Mock validation
-      const { validateCPF } = await import("@neonpro/utils/validation");
-      (validateCPF as unknown).mockImplementation(mockValidateCPF);
+      const { validateCPF, } = await import('@neonpro/utils/validation')
+      ;(validateCPF as unknown).mockImplementation(mockValidateCPF,)
 
       render(
         <ThemeWrapper>
@@ -106,8 +106,8 @@ describe("form Component - NeonPro Healthcare", () => {
                 <FormControl>
                   <input
                     data-testid="cpf-input"
-                    onChange={(e) => {
-                      const isValid = validateCPF(e.target.value);
+                    onChange={(e,) => {
+                      const isValid = validateCPF(e.target.value,)
                       if (!isValid) {
                         // Show error
                       }
@@ -120,21 +120,21 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      const cpfInput = screen.getByTestId("cpf-input");
+      const cpfInput = screen.getByTestId('cpf-input',)
 
       // Test invalid CPF
-      await user.type(cpfInput, "123.456.789-99");
-      mockValidateCPF.mockReturnValue(false);
+      await user.type(cpfInput, '123.456.789-99',)
+      mockValidateCPF.mockReturnValue(false,)
 
-      await user.tab(); // Trigger blur/validation
+      await user.tab() // Trigger blur/validation
 
-      expect(mockValidateCPF).toHaveBeenCalledWith("123.456.789-99");
-    });
+      expect(mockValidateCPF,).toHaveBeenCalledWith('123.456.789-99',)
+    })
 
-    it("should handle phone number formatting", async () => {
-      const user = userEvent.setup();
+    it('should handle phone number formatting', async () => {
+      const user = userEvent.setup()
 
       render(
         <ThemeWrapper>
@@ -153,20 +153,20 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      const phoneInput = screen.getByTestId("phone-input");
+      const phoneInput = screen.getByTestId('phone-input',)
 
       // Test phone formatting
-      await user.type(phoneInput, "11999999999");
+      await user.type(phoneInput, '11999999999',)
 
       // Should format to (11) 99999-9999
-      expect(phoneInput).toHaveValue("11999999999");
-    });
-  });
+      expect(phoneInput,).toHaveValue('11999999999',)
+    })
+  })
 
-  describe("lGPD Compliance Integration", () => {
-    it("should display LGPD consent checkboxes", () => {
+  describe('lGPD Compliance Integration', () => {
+    it('should display LGPD consent checkboxes', () => {
       render(
         <ThemeWrapper>
           <Form data-testid="lgpd-form">
@@ -211,20 +211,20 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      expect(screen.getByTestId("consent-processing")).toBeInTheDocument();
-      expect(screen.getByTestId("consent-marketing")).toBeInTheDocument();
+      expect(screen.getByTestId('consent-processing',),).toBeInTheDocument()
+      expect(screen.getByTestId('consent-marketing',),).toBeInTheDocument()
       expect(
-        screen.getByText(/Autorizo o processamento dos meus dados/),
-      ).toBeInTheDocument();
-    });
+        screen.getByText(/Autorizo o processamento dos meus dados/,),
+      ).toBeInTheDocument()
+    })
 
-    it("should enforce mandatory data processing consent", async () => {
-      const mockSubmit = vi.fn((e) => {
-        e.preventDefault();
-      });
-      const user = userEvent.setup();
+    it('should enforce mandatory data processing consent', async () => {
+      const mockSubmit = vi.fn((e,) => {
+        e.preventDefault()
+      },)
+      const user = userEvent.setup()
 
       render(
         <ThemeWrapper>
@@ -250,24 +250,24 @@ describe("form Component - NeonPro Healthcare", () => {
             </button>
           </form>
         </ThemeWrapper>,
-      );
+      )
 
       // Check that checkbox is unchecked initially
       const checkbox = screen.getByTestId(
-        "mandatory-consent",
-      ) as HTMLInputElement;
-      expect(checkbox.checked).toBeFalsy();
+        'mandatory-consent',
+      ) as HTMLInputElement
+      expect(checkbox.checked,).toBeFalsy()
 
       // Try to submit without consent
-      const submitButton = screen.getByTestId("consent-submit-button");
-      await user.click(submitButton);
+      const submitButton = screen.getByTestId('consent-submit-button',)
+      await user.click(submitButton,)
 
       // Due to jsdom limitations with form validation, we'll check that the checkbox is still unchecked
-      expect(checkbox.checked).toBeFalsy();
-    });
-  });
-  describe("accessibility and Screen Reader Support", () => {
-    it("should have proper ARIA attributes for screen readers", () => {
+      expect(checkbox.checked,).toBeFalsy()
+    })
+  })
+  describe('accessibility and Screen Reader Support', () => {
+    it('should have proper ARIA attributes for screen readers', () => {
       render(
         <ThemeWrapper>
           <Form data-testid="accessible-form">
@@ -293,19 +293,19 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      const input = screen.getByTestId("emergency-input");
-      expect(input).toHaveAttribute("aria-labelledby", "emergency-label");
-      expect(input).toHaveAttribute(
-        "aria-describedby",
-        "emergency-help emergency-error",
-      );
-      expect(input).toHaveAttribute("aria-required", "true");
-    });
+      const input = screen.getByTestId('emergency-input',)
+      expect(input,).toHaveAttribute('aria-labelledby', 'emergency-label',)
+      expect(input,).toHaveAttribute(
+        'aria-describedby',
+        'emergency-help emergency-error',
+      )
+      expect(input,).toHaveAttribute('aria-required', 'true',)
+    })
 
-    it("should announce validation errors to screen readers", async () => {
-      const user = userEvent.setup();
+    it('should announce validation errors to screen readers', async () => {
+      const user = userEvent.setup()
 
       render(
         <ThemeWrapper>
@@ -329,26 +329,26 @@ describe("form Component - NeonPro Healthcare", () => {
             </FormField>
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      const emailInput = screen.getByTestId("form-test-email-input");
+      const emailInput = screen.getByTestId('form-test-email-input',)
 
       // Enter invalid email
-      await user.type(emailInput, "invalid-email");
-      await user.tab();
+      await user.type(emailInput, 'invalid-email',)
+      await user.tab()
 
       // Error message should be announced to screen readers
-      const errorMessage = screen.getByTestId("email-error-message");
-      expect(errorMessage).toHaveAttribute("role", "alert");
-    });
-  });
+      const errorMessage = screen.getByTestId('email-error-message',)
+      expect(errorMessage,).toHaveAttribute('role', 'alert',)
+    })
+  })
 
-  describe("error Handling and Edge Cases", () => {
-    it("should handle form submission errors gracefully", async () => {
+  describe('error Handling and Edge Cases', () => {
+    it('should handle form submission errors gracefully', async () => {
       const mockSubmit = vi
         .fn()
-        .mockRejectedValue(new Error("Servidor indisponível"));
-      const user = userEvent.setup();
+        .mockRejectedValue(new Error('Servidor indisponível',),)
+      const user = userEvent.setup()
 
       render(
         <ThemeWrapper>
@@ -372,14 +372,14 @@ describe("form Component - NeonPro Healthcare", () => {
             <FormMessage className="form-error" data-testid="form-error" />
           </Form>
         </ThemeWrapper>,
-      );
+      )
 
-      const submitButton = screen.getByTestId("error-form-submit-button");
-      await user.click(submitButton);
+      const submitButton = screen.getByTestId('error-form-submit-button',)
+      await user.click(submitButton,)
 
       await waitFor(() => {
-        expect(mockSubmit).toHaveBeenCalled();
-      });
-    });
-  });
-});
+        expect(mockSubmit,).toHaveBeenCalled()
+      },)
+    })
+  })
+})

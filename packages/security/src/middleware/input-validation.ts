@@ -1,138 +1,138 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { z } from "zod";
+import { NextResponse, } from 'next/server'
+import type { NextRequest, } from 'next/server'
+import { z, } from 'zod'
 
 // Constants for byte conversions
-const BYTES_PER_KB = 1024;
+const BYTES_PER_KB = 1024
 
 // ========================================
 // VALIDATION CONSTANTS
 // ========================================
 
 // Name and Personal Information Limits
-const MAX_NAME_LENGTH = 100;
-const MIN_NAME_LENGTH = 2;
-const MAX_EMAIL_LENGTH = 255;
+const MAX_NAME_LENGTH = 100
+const MIN_NAME_LENGTH = 2
+const MAX_EMAIL_LENGTH = 255
 
 // Address Validation Limits
-const MIN_STREET_LENGTH = 5;
-const MAX_STREET_LENGTH = 200;
-const MIN_CITY_LENGTH = 2;
-const MAX_CITY_LENGTH = 100;
-const MIN_POSTAL_CODE_LENGTH = 3;
-const MAX_POSTAL_CODE_LENGTH = 20;
+const MIN_STREET_LENGTH = 5
+const MAX_STREET_LENGTH = 200
+const MIN_CITY_LENGTH = 2
+const MAX_CITY_LENGTH = 100
+const MIN_POSTAL_CODE_LENGTH = 3
+const MAX_POSTAL_CODE_LENGTH = 20
 
 // Phone Number Validation
-const MIN_PHONE_LENGTH = 10;
-const MAX_PHONE_LENGTH = 15;
+const MIN_PHONE_LENGTH = 10
+const MAX_PHONE_LENGTH = 15
 
 // Appointment and Scheduling Limits
-const MIN_APPOINTMENT_DURATION_MINUTES = 15;
-const MAX_APPOINTMENT_DURATION_MINUTES = 240;
-const MAX_NOTES_LENGTH = 1000;
-const MAX_REASON_LENGTH = 500;
+const MIN_APPOINTMENT_DURATION_MINUTES = 15
+const MAX_APPOINTMENT_DURATION_MINUTES = 240
+const MAX_NOTES_LENGTH = 1000
+const MAX_REASON_LENGTH = 500
 
 // Healthcare-specific Limits
-const MAX_SYMPTOMS_LENGTH = 2000;
-const MAX_TREATMENT_LENGTH = 2000;
-const MAX_DIAGNOSIS_LENGTH = 500;
-const MAX_MEDICATION_LENGTH = 200;
-const MIN_AGE = 0;
-const MAX_AGE = 150;
+const MAX_SYMPTOMS_LENGTH = 2000
+const MAX_TREATMENT_LENGTH = 2000
+const MAX_DIAGNOSIS_LENGTH = 500
+const MAX_MEDICATION_LENGTH = 200
+const MIN_AGE = 0
+const MAX_AGE = 150
 
 // Vital Signs Limits
-const MIN_SYSTOLIC_BP = 50;
-const MAX_SYSTOLIC_BP = 300;
-const MIN_DIASTOLIC_BP = 30;
-const MAX_DIASTOLIC_BP = 200;
-const MIN_HEART_RATE = 30;
-const MAX_HEART_RATE = 300;
-const MIN_TEMPERATURE = 30; // Celsius
-const MAX_TEMPERATURE = 45; // Celsius
-const MIN_WEIGHT_KG = 1;
-const MAX_WEIGHT_KG = 500;
-const MIN_HEIGHT_CM = 30;
-const MAX_HEIGHT_CM = 300;
+const MIN_SYSTOLIC_BP = 50
+const MAX_SYSTOLIC_BP = 300
+const MIN_DIASTOLIC_BP = 30
+const MAX_DIASTOLIC_BP = 200
+const MIN_HEART_RATE = 30
+const MAX_HEART_RATE = 300
+const MIN_TEMPERATURE = 30 // Celsius
+const MAX_TEMPERATURE = 45 // Celsius
+const MIN_WEIGHT_KG = 1
+const MAX_WEIGHT_KG = 500
+const MIN_HEIGHT_CM = 30
+const MAX_HEIGHT_CM = 300
 
 // Professional and System Limits
-const MIN_YEARS_EXPERIENCE = 0;
-const MAX_YEARS_EXPERIENCE = 60;
-const MIN_LICENSE_LENGTH = 5;
-const MAX_LICENSE_LENGTH = 50;
-const MAX_CREDENTIAL_LENGTH = 100;
-const MAX_LANGUAGE_LENGTH = 50;
-const MAX_SPECIALIZATION_LENGTH = 100;
-const MIN_SPECIALIZATION_LENGTH = 2;
-const MAX_RELATIONSHIP_LENGTH = 50;
-const MIN_RELATIONSHIP_LENGTH = 2;
-const MAX_STATE_LENGTH = 50;
-const MIN_STATE_LENGTH = 2;
-const MAX_COUNTRY_LENGTH = 100;
-const MIN_COUNTRY_LENGTH = 2;
-const MAX_INSURANCE_POLICY_LENGTH = 50;
-const MAX_TIMEZONE_LENGTH = 50;
+const MIN_YEARS_EXPERIENCE = 0
+const MAX_YEARS_EXPERIENCE = 60
+const MIN_LICENSE_LENGTH = 5
+const MAX_LICENSE_LENGTH = 50
+const MAX_CREDENTIAL_LENGTH = 100
+const MAX_LANGUAGE_LENGTH = 50
+const MAX_SPECIALIZATION_LENGTH = 100
+const MIN_SPECIALIZATION_LENGTH = 2
+const MAX_RELATIONSHIP_LENGTH = 50
+const MIN_RELATIONSHIP_LENGTH = 2
+const MAX_STATE_LENGTH = 50
+const MIN_STATE_LENGTH = 2
+const MAX_COUNTRY_LENGTH = 100
+const MIN_COUNTRY_LENGTH = 2
+const MAX_INSURANCE_POLICY_LENGTH = 50
+const MAX_TIMEZONE_LENGTH = 50
 
 // Additional System Limits
-const MAX_APPOINTMENT_TYPE_LENGTH = 100;
-const MIN_APPOINTMENT_TYPE_LENGTH = 2;
-const MAX_REMINDER_HOURS = 168; // 7 days
-const MIN_REMINDER_HOURS = 1;
-const MAX_DOSAGE_LENGTH = 100;
-const MAX_FREQUENCY_LENGTH = 100;
-const MAX_DURATION_LENGTH = 100;
-const MAX_INSTRUCTIONS_LENGTH = MAX_NOTES_LENGTH;
-const MAX_BIO_LENGTH = MAX_NOTES_LENGTH;
-const MAX_PROFILE_IMAGE_URL_LENGTH = 500;
+const MAX_APPOINTMENT_TYPE_LENGTH = 100
+const MIN_APPOINTMENT_TYPE_LENGTH = 2
+const MAX_REMINDER_HOURS = 168 // 7 days
+const MIN_REMINDER_HOURS = 1
+const MAX_DOSAGE_LENGTH = 100
+const MAX_FREQUENCY_LENGTH = 100
+const MAX_DURATION_LENGTH = 100
+const MAX_INSTRUCTIONS_LENGTH = MAX_NOTES_LENGTH
+const MAX_BIO_LENGTH = MAX_NOTES_LENGTH
+const MAX_PROFILE_IMAGE_URL_LENGTH = 500
 
 // Billing and Financial Limits
-const MIN_AMOUNT = 0;
-const MAX_AMOUNT = 999_999;
-const CURRENCY_CODE_LENGTH = 3;
-const MAX_INVOICE_NUMBER_LENGTH = 50;
-const MAX_CLAIM_NUMBER_LENGTH = 50;
-const MAX_AUTHORIZATION_CODE_LENGTH = 50;
+const MIN_AMOUNT = 0
+const MAX_AMOUNT = 999_999
+const CURRENCY_CODE_LENGTH = 3
+const MAX_INVOICE_NUMBER_LENGTH = 50
+const MAX_CLAIM_NUMBER_LENGTH = 50
+const MAX_AUTHORIZATION_CODE_LENGTH = 50
 
 // Communication and Notification Limits
-const MIN_ACTION_LENGTH = 2;
-const MAX_ACTION_LENGTH = 100;
-const MIN_RESOURCE_TYPE_LENGTH = 2;
-const MAX_RESOURCE_TYPE_LENGTH = 50;
-const MAX_USER_AGENT_LENGTH = 500;
-const MAX_COMPLIANCE_REQUIREMENT_LENGTH = 200;
-const MIN_RETENTION_DAYS = 1;
+const MIN_ACTION_LENGTH = 2
+const MAX_ACTION_LENGTH = 100
+const MIN_RESOURCE_TYPE_LENGTH = 2
+const MAX_RESOURCE_TYPE_LENGTH = 50
+const MAX_USER_AGENT_LENGTH = 500
+const MAX_COMPLIANCE_REQUIREMENT_LENGTH = 200
+const MIN_RETENTION_DAYS = 1
 
 // Rate Limiting and Health Check Limits
-const MIN_WINDOW_MS = 1000; // 1 second
-const MAX_WINDOW_MS = 3_600_000; // 1 hour
-const MIN_MAX_REQUESTS = 1;
-const MAX_MAX_REQUESTS = 10_000;
-const MIN_VERSION_LENGTH = 1;
-const MAX_VERSION_LENGTH = 50;
-const MAX_SERVICE_NAME_LENGTH = 100;
-const MIN_RESPONSE_TIME = 0;
+const MIN_WINDOW_MS = 1000 // 1 second
+const MAX_WINDOW_MS = 3_600_000 // 1 hour
+const MIN_MAX_REQUESTS = 1
+const MAX_MAX_REQUESTS = 10_000
+const MIN_VERSION_LENGTH = 1
+const MAX_VERSION_LENGTH = 50
+const MAX_SERVICE_NAME_LENGTH = 100
+const MIN_RESPONSE_TIME = 0
 
 // Data Retention and Audit Limits
-const MAX_RETENTION_PERIOD_DAYS = 3650; // 10 years
-const MAX_AUDIT_DESCRIPTION_LENGTH = 1000;
+const MAX_RETENTION_PERIOD_DAYS = 3650 // 10 years
+const MAX_AUDIT_DESCRIPTION_LENGTH = 1000
 
 // File and Upload Limits
-const MAX_FILE_SIZE_MB = 50;
-const MAX_FILE_NAME_LENGTH = 255;
-const ALLOWED_FILE_EXTENSIONS = ["pdf", "doc", "docx", "jpg", "jpeg", "png"];
+const MAX_FILE_SIZE_MB = 50
+const MAX_FILE_NAME_LENGTH = 255
+const ALLOWED_FILE_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png',]
 
 // Password and Security Limits
-const MIN_PASSWORD_LENGTH = 8;
-const MAX_PASSWORD_LENGTH = 128;
-const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+const MIN_PASSWORD_LENGTH = 8
+const MAX_PASSWORD_LENGTH = 128
+const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/
 
 // Pagination and Query Limits
-const MAX_PAGE_SIZE = 100;
-const DEFAULT_PAGE_SIZE = 20;
-const MAX_SEARCH_QUERY_LENGTH = 200;
+const MAX_PAGE_SIZE = 100
+const DEFAULT_PAGE_SIZE = 20
+const MAX_SEARCH_QUERY_LENGTH = 200
 
 // Communication Limits
-const MAX_MESSAGE_LENGTH = 5000;
-const MAX_SUBJECT_LENGTH = 200;
+const MAX_MESSAGE_LENGTH = 5000
+const MAX_SUBJECT_LENGTH = 200
 
 // ========================================
 // VALIDATION SCHEMAS
@@ -141,11 +141,11 @@ const MAX_SUBJECT_LENGTH = 200;
 // Basic validation schemas
 export const emailSchema = z
   .string()
-  .email("Invalid email format")
+  .email('Invalid email format',)
   .max(
     MAX_EMAIL_LENGTH,
     `Email must not exceed ${MAX_EMAIL_LENGTH} characters`,
-  );
+  )
 
 export const phoneSchema = z
   .string()
@@ -153,17 +153,17 @@ export const phoneSchema = z
     MIN_PHONE_LENGTH,
     `Phone must be at least ${MIN_PHONE_LENGTH} characters`,
   )
-  .max(MAX_PHONE_LENGTH, `Phone must not exceed ${MAX_PHONE_LENGTH} characters`)
-  .regex(/^\+?[\d\s\-().]+$/, "Invalid phone number format");
+  .max(MAX_PHONE_LENGTH, `Phone must not exceed ${MAX_PHONE_LENGTH} characters`,)
+  .regex(/^\+?[\d\s\-().]+$/, 'Invalid phone number format',)
 
 export const nameSchema = z
   .string()
-  .min(MIN_NAME_LENGTH, `Name must be at least ${MIN_NAME_LENGTH} characters`)
-  .max(MAX_NAME_LENGTH, `Name must not exceed ${MAX_NAME_LENGTH} characters`)
+  .min(MIN_NAME_LENGTH, `Name must be at least ${MIN_NAME_LENGTH} characters`,)
+  .max(MAX_NAME_LENGTH, `Name must not exceed ${MAX_NAME_LENGTH} characters`,)
   .regex(
     /^[a-zA-ZÀ-ÿ\u00F1\u00D1\s\-.']+$/u,
-    "Name contains invalid characters",
-  );
+    'Name contains invalid characters',
+  )
 
 // Address validation schema
 export const addressSchema = z.object({
@@ -179,8 +179,8 @@ export const addressSchema = z.object({
     ),
   city: z
     .string()
-    .min(MIN_CITY_LENGTH, `City must be at least ${MIN_CITY_LENGTH} characters`)
-    .max(MAX_CITY_LENGTH, `City must not exceed ${MAX_CITY_LENGTH} characters`),
+    .min(MIN_CITY_LENGTH, `City must be at least ${MIN_CITY_LENGTH} characters`,)
+    .max(MAX_CITY_LENGTH, `City must not exceed ${MAX_CITY_LENGTH} characters`,),
   state: z
     .string()
     .min(
@@ -211,7 +211,7 @@ export const addressSchema = z.object({
       MAX_COUNTRY_LENGTH,
       `Country must not exceed ${MAX_COUNTRY_LENGTH} characters`,
     ),
-});
+},)
 
 // Password validation schema
 export const passwordSchema = z
@@ -226,8 +226,8 @@ export const passwordSchema = z
   )
   .regex(
     PASSWORD_COMPLEXITY_REGEX,
-    "Password must contain at least one lowercase letter, uppercase letter, number, and special character",
-  );
+    'Password must contain at least one lowercase letter, uppercase letter, number, and special character',
+  )
 
 // Patient registration schema
 export const patientRegistrationSchema = z.object({
@@ -235,7 +235,7 @@ export const patientRegistrationSchema = z.object({
   lastName: nameSchema,
   email: emailSchema,
   phone: phoneSchema,
-  dateOfBirth: z.string().datetime("Invalid date format"),
+  dateOfBirth: z.string().datetime('Invalid date format',),
   address: addressSchema,
   emergencyContact: z.object({
     name: nameSchema,
@@ -250,7 +250,7 @@ export const patientRegistrationSchema = z.object({
         MAX_RELATIONSHIP_LENGTH,
         `Relationship must not exceed ${MAX_RELATIONSHIP_LENGTH} characters`,
       ),
-  }),
+  },),
   medicalHistory: z
     .string()
     .max(
@@ -288,12 +288,12 @@ export const patientRegistrationSchema = z.object({
     .optional(),
   lgpdConsent: z
     .boolean()
-    .refine((val) => val === true, "LGPD consent is required"),
-  consentTimestamp: z.string().datetime("Invalid consent timestamp format"),
-}); // Appointment scheduling schema
+    .refine((val,) => val === true, 'LGPD consent is required',),
+  consentTimestamp: z.string().datetime('Invalid consent timestamp format',),
+},) // Appointment scheduling schema
 export const appointmentSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID format"),
-  providerId: z.string().uuid("Invalid provider ID format"),
+  patientId: z.string().uuid('Invalid patient ID format',),
+  providerId: z.string().uuid('Invalid provider ID format',),
   appointmentType: z
     .string()
     .min(
@@ -304,7 +304,7 @@ export const appointmentSchema = z.object({
       MAX_APPOINTMENT_TYPE_LENGTH,
       `Appointment type must not exceed ${MAX_APPOINTMENT_TYPE_LENGTH} characters`,
     ),
-  scheduledDateTime: z.string().datetime("Invalid appointment date format"),
+  scheduledDateTime: z.string().datetime('Invalid appointment date format',),
   duration: z
     .number()
     .min(
@@ -329,11 +329,11 @@ export const appointmentSchema = z.object({
       `Notes must not exceed ${MAX_NOTES_LENGTH} characters`,
     )
     .optional(),
-  isVirtual: z.boolean().default(false),
+  isVirtual: z.boolean().default(false,),
   reminderSettings: z
     .object({
-      email: z.boolean().default(true),
-      sms: z.boolean().default(false),
+      email: z.boolean().default(true,),
+      sms: z.boolean().default(false,),
       hoursBeforeReminder: z
         .number()
         .min(
@@ -344,16 +344,16 @@ export const appointmentSchema = z.object({
           MAX_REMINDER_HOURS,
           `Reminder must not exceed ${MAX_REMINDER_HOURS} hours (7 days)`,
         ),
-    })
+    },)
     .optional(),
-});
+},)
 
 // Medical record schema
 export const medicalRecordSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID format"),
-  providerId: z.string().uuid("Invalid provider ID format"),
-  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
-  visitDate: z.string().datetime("Invalid visit date format"),
+  patientId: z.string().uuid('Invalid patient ID format',),
+  providerId: z.string().uuid('Invalid provider ID format',),
+  appointmentId: z.string().uuid('Invalid appointment ID format',).optional(),
+  visitDate: z.string().datetime('Invalid visit date format',),
   chiefComplaint: z
     .string()
     .max(
@@ -415,11 +415,11 @@ export const medicalRecordSchema = z.object({
             `Instructions must not exceed ${MAX_INSTRUCTIONS_LENGTH} characters`,
           )
           .optional(),
-      }),
+      },),
     )
     .optional(),
-  followUpRequired: z.boolean().default(false),
-  followUpDate: z.string().datetime("Invalid follow-up date format").optional(),
+  followUpRequired: z.boolean().default(false,),
+  followUpDate: z.string().datetime('Invalid follow-up date format',).optional(),
   notes: z
     .string()
     .max(
@@ -431,8 +431,8 @@ export const medicalRecordSchema = z.object({
     .object({
       bloodPressureSystolic: z
         .number()
-        .min(MIN_SYSTOLIC_BP, `Systolic BP must be at least ${MIN_SYSTOLIC_BP}`)
-        .max(MAX_SYSTOLIC_BP, `Systolic BP must not exceed ${MAX_SYSTOLIC_BP}`)
+        .min(MIN_SYSTOLIC_BP, `Systolic BP must be at least ${MIN_SYSTOLIC_BP}`,)
+        .max(MAX_SYSTOLIC_BP, `Systolic BP must not exceed ${MAX_SYSTOLIC_BP}`,)
         .optional(),
       bloodPressureDiastolic: z
         .number()
@@ -447,8 +447,8 @@ export const medicalRecordSchema = z.object({
         .optional(),
       heartRate: z
         .number()
-        .min(MIN_HEART_RATE, `Heart rate must be at least ${MIN_HEART_RATE}`)
-        .max(MAX_HEART_RATE, `Heart rate must not exceed ${MAX_HEART_RATE}`)
+        .min(MIN_HEART_RATE, `Heart rate must be at least ${MIN_HEART_RATE}`,)
+        .max(MAX_HEART_RATE, `Heart rate must not exceed ${MAX_HEART_RATE}`,)
         .optional(),
       temperature: z
         .number()
@@ -463,17 +463,17 @@ export const medicalRecordSchema = z.object({
         .optional(),
       weight: z
         .number()
-        .min(MIN_WEIGHT_KG, `Weight must be at least ${MIN_WEIGHT_KG} kg`)
-        .max(MAX_WEIGHT_KG, `Weight must not exceed ${MAX_WEIGHT_KG} kg`)
+        .min(MIN_WEIGHT_KG, `Weight must be at least ${MIN_WEIGHT_KG} kg`,)
+        .max(MAX_WEIGHT_KG, `Weight must not exceed ${MAX_WEIGHT_KG} kg`,)
         .optional(),
       height: z
         .number()
-        .min(MIN_HEIGHT_CM, `Height must be at least ${MIN_HEIGHT_CM} cm`)
-        .max(MAX_HEIGHT_CM, `Height must not exceed ${MAX_HEIGHT_CM} cm`)
+        .min(MIN_HEIGHT_CM, `Height must be at least ${MIN_HEIGHT_CM} cm`,)
+        .max(MAX_HEIGHT_CM, `Height must not exceed ${MAX_HEIGHT_CM} cm`,)
         .optional(),
-    })
+    },)
     .optional(),
-});
+},)
 // User profile update schema
 export const userProfileUpdateSchema = z.object({
   firstName: nameSchema.optional(),
@@ -481,8 +481,8 @@ export const userProfileUpdateSchema = z.object({
   email: emailSchema.optional(),
   phone: phoneSchema.optional(),
   address: addressSchema.optional(),
-  dateOfBirth: z.string().datetime("Invalid date format").optional(),
-  preferredLanguage: z.enum(["en", "pt", "es"]).optional(),
+  dateOfBirth: z.string().datetime('Invalid date format',).optional(),
+  preferredLanguage: z.enum(['en', 'pt', 'es',],).optional(),
   timezone: z
     .string()
     .max(
@@ -492,13 +492,13 @@ export const userProfileUpdateSchema = z.object({
     .optional(),
   communicationPreferences: z
     .object({
-      emailNotifications: z.boolean().default(true),
-      smsNotifications: z.boolean().default(false),
-      marketingEmails: z.boolean().default(false),
-      appointmentReminders: z.boolean().default(true),
-    })
+      emailNotifications: z.boolean().default(true,),
+      smsNotifications: z.boolean().default(false,),
+      marketingEmails: z.boolean().default(false,),
+      appointmentReminders: z.boolean().default(true,),
+    },)
     .optional(),
-});
+},)
 
 // Provider registration schema
 export const providerRegistrationSchema = z.object({
@@ -560,51 +560,51 @@ export const providerRegistrationSchema = z.object({
     .object({
       monday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       tuesday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       wednesday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       thursday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       friday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       saturday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
       sunday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-        })
+          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format',),
+        },)
         .optional(),
-    })
+    },)
     .optional(),
   profileImage: z
     .string()
-    .url("Invalid profile image URL")
+    .url('Invalid profile image URL',)
     .max(
       MAX_PROFILE_IMAGE_URL_LENGTH,
       `Profile image URL must not exceed ${MAX_PROFILE_IMAGE_URL_LENGTH} characters`,
@@ -612,15 +612,15 @@ export const providerRegistrationSchema = z.object({
     .optional(),
   bio: z
     .string()
-    .max(MAX_BIO_LENGTH, `Bio must not exceed ${MAX_BIO_LENGTH} characters`)
+    .max(MAX_BIO_LENGTH, `Bio must not exceed ${MAX_BIO_LENGTH} characters`,)
     .optional(),
-});
+},)
 
 // File upload schema
 export const fileUploadSchema = z.object({
   fileName: z
     .string()
-    .min(1, "File name is required")
+    .min(1, 'File name is required',)
     .max(
       MAX_FILE_NAME_LENGTH,
       `File name must not exceed ${MAX_FILE_NAME_LENGTH} characters`,
@@ -634,19 +634,19 @@ export const fileUploadSchema = z.object({
   fileType: z
     .string()
     .refine(
-      (type) => ALLOWED_FILE_EXTENSIONS.some((ext) => type.toLowerCase().includes(ext)),
-      `File type must be one of: ${ALLOWED_FILE_EXTENSIONS.join(", ")}`,
+      (type,) => ALLOWED_FILE_EXTENSIONS.some((ext,) => type.toLowerCase().includes(ext,)),
+      `File type must be one of: ${ALLOWED_FILE_EXTENSIONS.join(', ',)}`,
     ),
-  patientId: z.string().uuid("Invalid patient ID format").optional(),
-  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
+  patientId: z.string().uuid('Invalid patient ID format',).optional(),
+  appointmentId: z.string().uuid('Invalid appointment ID format',).optional(),
   category: z.enum([
-    "medical_record",
-    "lab_result",
-    "imaging",
-    "insurance",
-    "identification",
-    "other",
-  ]),
+    'medical_record',
+    'lab_result',
+    'imaging',
+    'insurance',
+    'identification',
+    'other',
+  ],),
   description: z
     .string()
     .max(
@@ -654,30 +654,30 @@ export const fileUploadSchema = z.object({
       `Description must not exceed ${MAX_NOTES_LENGTH} characters`,
     )
     .optional(),
-}); // Message/communication schema
+},) // Message/communication schema
 export const messageSchema = z.object({
-  recipientId: z.string().uuid("Invalid recipient ID format"),
+  recipientId: z.string().uuid('Invalid recipient ID format',),
   subject: z
     .string()
-    .min(1, "Subject is required")
+    .min(1, 'Subject is required',)
     .max(
       MAX_SUBJECT_LENGTH,
       `Subject must not exceed ${MAX_SUBJECT_LENGTH} characters`,
     ),
   content: z
     .string()
-    .min(1, "Message content is required")
+    .min(1, 'Message content is required',)
     .max(
       MAX_MESSAGE_LENGTH,
       `Message must not exceed ${MAX_MESSAGE_LENGTH} characters`,
     ),
-  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
+  priority: z.enum(['low', 'normal', 'high', 'urgent',],).default('normal',),
   messageType: z
-    .enum(["general", "appointment", "medical", "billing", "system"])
-    .default("general"),
-  attachments: z.array(z.string().uuid("Invalid attachment ID")).optional(),
-  isEncrypted: z.boolean().default(true),
-});
+    .enum(['general', 'appointment', 'medical', 'billing', 'system',],)
+    .default('general',),
+  attachments: z.array(z.string().uuid('Invalid attachment ID',),).optional(),
+  isEncrypted: z.boolean().default(true,),
+},)
 
 // Search and pagination schema
 export const searchSchema = z.object({
@@ -688,7 +688,7 @@ export const searchSchema = z.object({
       `Search query must not exceed ${MAX_SEARCH_QUERY_LENGTH} characters`,
     )
     .optional(),
-  filters: z.record(z.string()).optional(),
+  filters: z.record(z.string(),).optional(),
   sortBy: z
     .string()
     .max(
@@ -696,15 +696,15 @@ export const searchSchema = z.object({
       `Sort field must not exceed ${MAX_LANGUAGE_LENGTH} characters`,
     )
     .optional(),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
-  page: z.number().min(1, "Page must be at least 1").default(1),
+  sortOrder: z.enum(['asc', 'desc',],).default('asc',),
+  page: z.number().min(1, 'Page must be at least 1',).default(1,),
   pageSize: z
     .number()
-    .min(1, "Page size must be at least 1")
-    .max(MAX_PAGE_SIZE, `Page size must not exceed ${MAX_PAGE_SIZE}`)
-    .default(DEFAULT_PAGE_SIZE),
-  includeInactive: z.boolean().default(false),
-});
+    .min(1, 'Page size must be at least 1',)
+    .max(MAX_PAGE_SIZE, `Page size must not exceed ${MAX_PAGE_SIZE}`,)
+    .default(DEFAULT_PAGE_SIZE,),
+  includeInactive: z.boolean().default(false,),
+},)
 
 // Audit log schema
 export const auditLogSchema = z.object({
@@ -728,10 +728,10 @@ export const auditLogSchema = z.object({
       MAX_RESOURCE_TYPE_LENGTH,
       `Resource type must not exceed ${MAX_RESOURCE_TYPE_LENGTH} characters`,
     ),
-  resourceId: z.string().uuid("Invalid resource ID format").optional(),
-  userId: z.string().uuid("Invalid user ID format"),
-  tenantId: z.string().uuid("Invalid tenant ID format"),
-  ipAddress: z.string().ip("Invalid IP address format").optional(),
+  resourceId: z.string().uuid('Invalid resource ID format',).optional(),
+  userId: z.string().uuid('Invalid user ID format',),
+  tenantId: z.string().uuid('Invalid tenant ID format',),
+  ipAddress: z.string().ip('Invalid IP address format',).optional(),
   userAgent: z
     .string()
     .max(
@@ -746,10 +746,10 @@ export const auditLogSchema = z.object({
       `Description must not exceed ${MAX_AUDIT_DESCRIPTION_LENGTH} characters`,
     )
     .optional(),
-  metadata: z.record(z.unknown()).optional(),
-  severity: z.enum(["info", "warning", "error", "critical"]).default("info"),
-  timestamp: z.string().datetime("Invalid timestamp format"),
-});
+  metadata: z.record(z.unknown(),).optional(),
+  severity: z.enum(['info', 'warning', 'error', 'critical',],).default('info',),
+  timestamp: z.string().datetime('Invalid timestamp format',),
+},)
 
 // Data retention policy schema
 export const dataRetentionPolicySchema = z.object({
@@ -773,9 +773,9 @@ export const dataRetentionPolicySchema = z.object({
       MAX_RETENTION_PERIOD_DAYS,
       `Retention period must not exceed ${MAX_RETENTION_PERIOD_DAYS} days`,
     ),
-  isActive: z.boolean().default(true),
-  autoDeleteEnabled: z.boolean().default(false),
-  backupRequired: z.boolean().default(true),
+  isActive: z.boolean().default(true,),
+  autoDeleteEnabled: z.boolean().default(false,),
+  backupRequired: z.boolean().default(true,),
   complianceRequirement: z
     .string()
     .max(
@@ -783,24 +783,24 @@ export const dataRetentionPolicySchema = z.object({
       `Compliance requirement must not exceed ${MAX_COMPLIANCE_REQUIREMENT_LENGTH} characters`,
     )
     .optional(),
-}); // Billing and payment schema
+},) // Billing and payment schema
 export const billingSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID format"),
-  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
+  patientId: z.string().uuid('Invalid patient ID format',),
+  appointmentId: z.string().uuid('Invalid appointment ID format',).optional(),
   amount: z
     .number()
-    .min(MIN_AMOUNT, `Amount must be at least ${MIN_AMOUNT}`)
-    .max(MAX_AMOUNT, `Amount must not exceed ${MAX_AMOUNT.toLocaleString()}`),
+    .min(MIN_AMOUNT, `Amount must be at least ${MIN_AMOUNT}`,)
+    .max(MAX_AMOUNT, `Amount must not exceed ${MAX_AMOUNT.toLocaleString()}`,),
   currency: z
     .string()
     .length(
       CURRENCY_CODE_LENGTH,
       `Currency must be ${CURRENCY_CODE_LENGTH} characters`,
     )
-    .default("USD"),
+    .default('USD',),
   description: z
     .string()
-    .min(1, "Description is required")
+    .min(1, 'Description is required',)
     .max(
       MAX_NOTES_LENGTH,
       `Description must not exceed ${MAX_NOTES_LENGTH} characters`,
@@ -812,12 +812,12 @@ export const billingSchema = z.object({
       `Invoice number must not exceed ${MAX_INVOICE_NUMBER_LENGTH} characters`,
     )
     .optional(),
-  dueDate: z.string().datetime("Invalid due date format").optional(),
+  dueDate: z.string().datetime('Invalid due date format',).optional(),
   status: z
-    .enum(["pending", "paid", "overdue", "cancelled"])
-    .default("pending"),
+    .enum(['pending', 'paid', 'overdue', 'cancelled',],)
+    .default('pending',),
   paymentMethod: z
-    .enum(["cash", "credit_card", "debit_card", "bank_transfer", "insurance"])
+    .enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'insurance',],)
     .optional(),
   insuranceClaim: z
     .object({
@@ -842,192 +842,192 @@ export const billingSchema = z.object({
         .optional(),
       copayAmount: z
         .number()
-        .min(MIN_AMOUNT, `Copay amount must be at least ${MIN_AMOUNT}`)
+        .min(MIN_AMOUNT, `Copay amount must be at least ${MIN_AMOUNT}`,)
         .optional(),
-    })
+    },)
     .optional(),
-});
+},)
 
 // Notification preferences schema
 export const notificationPreferencesSchema = z.object({
   email: z.object({
-    enabled: z.boolean().default(true),
-    appointmentReminders: z.boolean().default(true),
-    appointmentConfirmations: z.boolean().default(true),
-    labResults: z.boolean().default(true),
-    billing: z.boolean().default(true),
-    marketing: z.boolean().default(false),
-  }),
+    enabled: z.boolean().default(true,),
+    appointmentReminders: z.boolean().default(true,),
+    appointmentConfirmations: z.boolean().default(true,),
+    labResults: z.boolean().default(true,),
+    billing: z.boolean().default(true,),
+    marketing: z.boolean().default(false,),
+  },),
   sms: z.object({
-    enabled: z.boolean().default(false),
-    appointmentReminders: z.boolean().default(false),
-    appointmentConfirmations: z.boolean().default(false),
-    emergencyAlerts: z.boolean().default(false),
-  }),
+    enabled: z.boolean().default(false,),
+    appointmentReminders: z.boolean().default(false,),
+    appointmentConfirmations: z.boolean().default(false,),
+    emergencyAlerts: z.boolean().default(false,),
+  },),
   push: z.object({
-    enabled: z.boolean().default(true),
-    appointmentReminders: z.boolean().default(true),
-    messages: z.boolean().default(true),
-    systemUpdates: z.boolean().default(false),
-  }),
+    enabled: z.boolean().default(true,),
+    appointmentReminders: z.boolean().default(true,),
+    messages: z.boolean().default(true,),
+    systemUpdates: z.boolean().default(false,),
+  },),
   frequency: z.object({
     reminderHours: z
-      .array(z.number().min(MIN_REMINDER_HOURS).max(MAX_REMINDER_HOURS))
-      .default([24, 2]),
+      .array(z.number().min(MIN_REMINDER_HOURS,).max(MAX_REMINDER_HOURS,),)
+      .default([24, 2,],),
     digestFrequency: z
-      .enum(["immediate", "daily", "weekly", "never"])
-      .default("daily"),
-  }),
-});
+      .enum(['immediate', 'daily', 'weekly', 'never',],)
+      .default('daily',),
+  },),
+},)
 
 // ========================================
 // VALIDATION MIDDLEWARE FUNCTIONS
 // ========================================
 
-export interface ValidationResult<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errors?: z.ZodError;
+export interface ValidationResult<T,> {
+  success: boolean
+  data?: T
+  error?: string
+  errors?: z.ZodError
 }
 
-export function validateInput<T>(
+export function validateInput<T,>(
   schema: z.ZodSchema<T>,
   input: unknown,
 ): ValidationResult<T> {
   try {
-    const validatedData = schema.parse(input);
+    const validatedData = schema.parse(input,)
     return {
       success: true,
       data: validatedData,
-    };
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
         error: error.errors
-          .map((e) => `${e.path.join(".")}: ${e.message}`)
-          .join(", "),
+          .map((e,) => `${e.path.join('.',)}: ${e.message}`)
+          .join(', ',),
         errors: error,
-      };
+      }
     }
     return {
       success: false,
-      error: "Validation failed",
-    };
+      error: 'Validation failed',
+    }
   }
 }
-export async function validateRequestBody<T>(
+export async function validateRequestBody<T,>(
   request: NextRequest,
   schema: z.ZodSchema<T>,
-): Promise<{ data?: T; error?: NextResponse; }> {
+): Promise<{ data?: T; error?: NextResponse }> {
   try {
-    const body = await request.json();
-    const validation = validateInput(schema, body);
+    const body = await request.json()
+    const validation = validateInput(schema, body,)
 
     if (!validation.success) {
       return {
         error: NextResponse.json(
           {
             success: false,
-            error: "Validation failed",
+            error: 'Validation failed',
             details: validation.error,
           },
-          { status: 400 },
+          { status: 400, },
         ),
-      };
+      }
     }
 
-    return { data: validation.data };
+    return { data: validation.data, }
   } catch {
     return {
       error: NextResponse.json(
         {
           success: false,
-          error: "Invalid JSON format",
+          error: 'Invalid JSON format',
         },
-        { status: 400 },
+        { status: 400, },
       ),
-    };
+    }
   }
 }
 
-export function validateQueryParams<T>(
+export function validateQueryParams<T,>(
   searchParams: URLSearchParams,
   schema: z.ZodSchema<T>,
 ): ValidationResult<T> {
-  const params: Record<string, unknown> = {};
+  const params: Record<string, unknown> = {}
 
-  for (const [key, value] of searchParams.entries()) {
+  for (const [key, value,] of searchParams.entries()) {
     // Try to parse numbers
-    if (/^\d+$/.test(value)) {
-      params[key] = Number.parseInt(value, 10);
+    if (/^\d+$/.test(value,)) {
+      params[key] = Number.parseInt(value, 10,)
     } // Try to parse booleans
-    else if (value === "true" || value === "false") {
-      params[key] = value === "true";
+    else if (value === 'true' || value === 'false') {
+      params[key] = value === 'true'
     } // Keep as string
     else {
-      params[key] = value;
+      params[key] = value
     }
   }
 
-  return validateInput(schema, params);
+  return validateInput(schema, params,)
 }
 
 // Security-focused validation helpers
-export const sanitizeInput = (input: string): string => {
+export const sanitizeInput = (input: string,): string => {
   return input
     .trim()
-    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove script tags
-    .replaceAll(/javascript:/gi, "") // Remove javascript: protocol
-    .replaceAll(/on\w+\s*=/gi, ""); // Remove event handlers
-};
+    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '',) // Remove script tags
+    .replaceAll(/javascript:/gi, '',) // Remove javascript: protocol
+    .replaceAll(/on\w+\s*=/gi, '',) // Remove event handlers
+}
 
-export const validateUUID = (uuid: string): boolean => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
+export const validateUUID = (uuid: string,): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return uuidRegex.test(uuid,)
+}
 
 export const validateTenantAccess = (
   tenantId: string,
   userTenantIds: string[],
 ): boolean => {
-  return userTenantIds.includes(tenantId);
-};
+  return userTenantIds.includes(tenantId,)
+}
 
 // Rate limiting validation
 export const rateLimitSchema = z.object({
-  windowMs: z.number().min(MIN_WINDOW_MS).max(MAX_WINDOW_MS), // 1 second to 1 hour
-  maxRequests: z.number().min(MIN_MAX_REQUESTS).max(MAX_MAX_REQUESTS),
-  skipSuccessfulRequests: z.boolean().default(false),
-  skipFailedRequests: z.boolean().default(false),
-});
+  windowMs: z.number().min(MIN_WINDOW_MS,).max(MAX_WINDOW_MS,), // 1 second to 1 hour
+  maxRequests: z.number().min(MIN_MAX_REQUESTS,).max(MAX_MAX_REQUESTS,),
+  skipSuccessfulRequests: z.boolean().default(false,),
+  skipFailedRequests: z.boolean().default(false,),
+},)
 
 // Health check schema
 export const healthCheckSchema = z.object({
   timestamp: z.string().datetime(),
-  version: z.string().min(MIN_VERSION_LENGTH).max(MAX_VERSION_LENGTH),
-  environment: z.enum(["development", "staging", "production"]),
+  version: z.string().min(MIN_VERSION_LENGTH,).max(MAX_VERSION_LENGTH,),
+  environment: z.enum(['development', 'staging', 'production',],),
   database: z.object({
     connected: z.boolean(),
-    responseTime: z.number().min(MIN_RESPONSE_TIME),
-  }),
+    responseTime: z.number().min(MIN_RESPONSE_TIME,),
+  },),
   cache: z
     .object({
       connected: z.boolean(),
-      responseTime: z.number().min(MIN_RESPONSE_TIME),
-    })
+      responseTime: z.number().min(MIN_RESPONSE_TIME,),
+    },)
     .optional(),
   externalServices: z
     .array(
       z.object({
-        name: z.string().max(MAX_SERVICE_NAME_LENGTH),
-        status: z.enum(["healthy", "degraded", "unhealthy"]),
-        responseTime: z.number().min(MIN_RESPONSE_TIME),
-      }),
+        name: z.string().max(MAX_SERVICE_NAME_LENGTH,),
+        status: z.enum(['healthy', 'degraded', 'unhealthy',],),
+        responseTime: z.number().min(MIN_RESPONSE_TIME,),
+      },),
     )
     .optional(),
-});
+},)
 
 // Export all validation constants for use in other modules
 export {
@@ -1140,4 +1140,4 @@ export {
   // Professional and System Limits
   MIN_YEARS_EXPERIENCE,
   PASSWORD_COMPLEXITY_REGEX,
-};
+}

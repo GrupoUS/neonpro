@@ -4,29 +4,29 @@
  */
 
 export interface PromptTemplate {
-  id: string;
-  name: string;
-  category: "whatsapp" | "aesthetic" | "compliance" | "general";
-  context: "external" | "internal" | "both";
-  language: "pt-BR";
-  template: string;
-  variables?: string[];
+  id: string
+  name: string
+  category: 'whatsapp' | 'aesthetic' | 'compliance' | 'general'
+  context: 'external' | 'internal' | 'both'
+  language: 'pt-BR'
+  template: string
+  variables?: string[]
   metadata: {
-    description: string;
-    useCase: string;
-    compliance: string[];
-    lastUpdated: string;
-  };
+    description: string
+    useCase: string
+    compliance: string[]
+    lastUpdated: string
+  }
 }
 
 // WhatsApp-specific prompt templates
 export const WHATSAPP_PROMPT_TEMPLATES: PromptTemplate[] = [
   {
-    id: "whatsapp-greeting",
-    name: "WhatsApp Greeting",
-    category: "whatsapp",
-    context: "external",
-    language: "pt-BR",
+    id: 'whatsapp-greeting',
+    name: 'WhatsApp Greeting',
+    category: 'whatsapp',
+    context: 'external',
+    language: 'pt-BR',
     template: `Olá! 😊 Sou a assistente virtual da NeonPro! 
 
 Estou aqui para te ajudar com:
@@ -38,18 +38,18 @@ Estou aqui para te ajudar com:
 Como posso te ajudar hoje? 💆‍♀️✨`,
     variables: [],
     metadata: {
-      description: "Friendly WhatsApp greeting with service overview",
-      useCase: "Initial contact and conversation starter",
-      compliance: ["LGPD", "CFM"],
-      lastUpdated: "2025-09-06",
+      description: 'Friendly WhatsApp greeting with service overview',
+      useCase: 'Initial contact and conversation starter',
+      compliance: ['LGPD', 'CFM',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "whatsapp-appointment-booking",
-    name: "Appointment Booking Assistant",
-    category: "whatsapp",
-    context: "external",
-    language: "pt-BR",
+    id: 'whatsapp-appointment-booking',
+    name: 'Appointment Booking Assistant',
+    category: 'whatsapp',
+    context: 'external',
+    language: 'pt-BR',
     template: `Perfeito! Vou te ajudar a agendar sua consulta! 📅
 
 Para encontrar o melhor horário para você, preciso de algumas informações:
@@ -60,20 +60,20 @@ Para encontrar o melhor horário para você, preciso de algumas informações:
 4️⃣ É seu primeiro tratamento conosco?
 
 Nossa agenda está sempre atualizada e posso verificar disponibilidade em tempo real! 😊`,
-    variables: ["procedure_type", "preferred_time", "patient_history"],
+    variables: ['procedure_type', 'preferred_time', 'patient_history',],
     metadata: {
-      description: "Interactive appointment booking flow",
-      useCase: "Scheduling appointments via WhatsApp",
-      compliance: ["LGPD", "CFM"],
-      lastUpdated: "2025-09-06",
+      description: 'Interactive appointment booking flow',
+      useCase: 'Scheduling appointments via WhatsApp',
+      compliance: ['LGPD', 'CFM',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "whatsapp-procedure-inquiry",
-    name: "Procedure Information",
-    category: "whatsapp",
-    context: "external",
-    language: "pt-BR",
+    id: 'whatsapp-procedure-inquiry',
+    name: 'Procedure Information',
+    category: 'whatsapp',
+    context: 'external',
+    language: 'pt-BR',
     template:
       `Que ótima escolha! 💫 O {{procedure_name}} é um dos nossos tratamentos mais procurados!
 
@@ -88,20 +88,20 @@ Nossa agenda está sempre atualizada e posso verificar disponibilidade em tempo 
 • Seguimos todos os protocolos de segurança
 
 Gostaria de agendar uma avaliação? Posso verificar nossa agenda! 📅`,
-    variables: ["procedure_name", "duration", "expected_results", "post_care"],
+    variables: ['procedure_name', 'duration', 'expected_results', 'post_care',],
     metadata: {
-      description: "Detailed procedure information with booking CTA",
-      useCase: "Answering procedure-specific questions",
-      compliance: ["LGPD", "CFM", "ANVISA"],
-      lastUpdated: "2025-09-06",
+      description: 'Detailed procedure information with booking CTA',
+      useCase: 'Answering procedure-specific questions',
+      compliance: ['LGPD', 'CFM', 'ANVISA',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "whatsapp-post-procedure-care",
-    name: "Post-Procedure Care",
-    category: "whatsapp",
-    context: "external",
-    language: "pt-BR",
+    id: 'whatsapp-post-procedure-care',
+    name: 'Post-Procedure Care',
+    category: 'whatsapp',
+    context: 'external',
+    language: 'pt-BR',
     template: `Oi, {{patient_name}}! 😊 Como você está se sentindo após o {{procedure_name}}?
 
 🌟 **Lembretes importantes:**
@@ -117,26 +117,26 @@ Se sentir qualquer desconforto fora do normal, entre em contato conosco imediata
 
 Estamos aqui para cuidar de você! 💕`,
     variables: [
-      "patient_name",
-      "procedure_name",
-      "care_instruction_1",
-      "care_instruction_2",
-      "care_instruction_3",
-      "emergency_contact",
+      'patient_name',
+      'procedure_name',
+      'care_instruction_1',
+      'care_instruction_2',
+      'care_instruction_3',
+      'emergency_contact',
     ],
     metadata: {
-      description: "Post-procedure care instructions and follow-up",
-      useCase: "Patient care after treatments",
-      compliance: ["LGPD", "CFM", "ANVISA"],
-      lastUpdated: "2025-09-06",
+      description: 'Post-procedure care instructions and follow-up',
+      useCase: 'Patient care after treatments',
+      compliance: ['LGPD', 'CFM', 'ANVISA',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "whatsapp-emergency-escalation",
-    name: "Emergency Escalation",
-    category: "whatsapp",
-    context: "external",
-    language: "pt-BR",
+    id: 'whatsapp-emergency-escalation',
+    name: 'Emergency Escalation',
+    category: 'whatsapp',
+    context: 'external',
+    language: 'pt-BR',
     template: `🚨 **ATENÇÃO - SITUAÇÃO DE EMERGÊNCIA DETECTADA**
 
 Entendo que você pode estar passando por uma situação que requer atenção médica imediata.
@@ -152,15 +152,15 @@ Entendo que você pode estar passando por uma situação que requer atenção m�
 • Nossa equipe médica está sendo notificada
 
 Sua segurança é nossa prioridade! 🏥`,
-    variables: ["clinic_emergency_phone"],
+    variables: ['clinic_emergency_phone',],
     metadata: {
-      description: "Emergency situation escalation protocol",
-      useCase: "Medical emergency detection and escalation",
-      compliance: ["CFM", "ANVISA", "Emergency Protocols"],
-      lastUpdated: "2025-09-06",
+      description: 'Emergency situation escalation protocol',
+      useCase: 'Medical emergency detection and escalation',
+      compliance: ['CFM', 'ANVISA', 'Emergency Protocols',],
+      lastUpdated: '2025-09-06',
     },
   },
-];
+]
 
 // System prompts for WhatsApp context
 export const WHATSAPP_SYSTEM_PROMPTS = {
@@ -216,16 +216,16 @@ CONFORMIDADE:
 - Proteção de dados de pacientes
 - Confidencialidade médica
 - Auditoria de ações`,
-};
+}
 
 // Aesthetic procedure-specific templates
 export const AESTHETIC_PROCEDURE_TEMPLATES: PromptTemplate[] = [
   {
-    id: "harmonizacao-facial",
-    name: "Harmonização Facial",
-    category: "aesthetic",
-    context: "external",
-    language: "pt-BR",
+    id: 'harmonizacao-facial',
+    name: 'Harmonização Facial',
+    category: 'aesthetic',
+    context: 'external',
+    language: 'pt-BR',
     template: `✨ **HARMONIZAÇÃO FACIAL** ✨
 
 A harmonização facial é um conjunto de procedimentos que visa equilibrar e realçar a beleza natural do seu rosto!
@@ -250,18 +250,18 @@ A harmonização facial é um conjunto de procedimentos que visa equilibrar e re
 Cada harmonização é única e personalizada para você! Que tal agendar uma avaliação? 😊`,
     variables: [],
     metadata: {
-      description: "Complete facial harmonization information",
-      useCase: "Explaining facial harmonization procedures",
-      compliance: ["LGPD", "CFM", "ANVISA"],
-      lastUpdated: "2025-09-06",
+      description: 'Complete facial harmonization information',
+      useCase: 'Explaining facial harmonization procedures',
+      compliance: ['LGPD', 'CFM', 'ANVISA',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "preenchimento-labial",
-    name: "Preenchimento Labial",
-    category: "aesthetic",
-    context: "external",
-    language: "pt-BR",
+    id: 'preenchimento-labial',
+    name: 'Preenchimento Labial',
+    category: 'aesthetic',
+    context: 'external',
+    language: 'pt-BR',
     template: `💋 **PREENCHIMENTO LABIAL** 💋
 
 Lábios mais definidos, volumosos e naturais!
@@ -288,18 +288,18 @@ Lábios mais definidos, volumosos e naturais!
 Quer saber mais sobre o procedimento ideal para você? 😊`,
     variables: [],
     metadata: {
-      description: "Lip filler procedure details",
-      useCase: "Lip enhancement consultations",
-      compliance: ["LGPD", "CFM", "ANVISA"],
-      lastUpdated: "2025-09-06",
+      description: 'Lip filler procedure details',
+      useCase: 'Lip enhancement consultations',
+      compliance: ['LGPD', 'CFM', 'ANVISA',],
+      lastUpdated: '2025-09-06',
     },
   },
   {
-    id: "criolipolise",
-    name: "Criolipólise",
-    category: "aesthetic",
-    context: "external",
-    language: "pt-BR",
+    id: 'criolipolise',
+    name: 'Criolipólise',
+    category: 'aesthetic',
+    context: 'external',
+    language: 'pt-BR',
     template: `❄️ **CRIOLIPÓLISE** ❄️
 
 Elimine gordura localizada sem cirurgia!
@@ -329,16 +329,16 @@ Elimine gordura localizada sem cirurgia!
 Vamos avaliar se é o tratamento ideal para você? 😊`,
     variables: [],
     metadata: {
-      description: "Cryolipolysis body contouring information",
-      useCase: "Body contouring consultations",
-      compliance: ["LGPD", "CFM", "ANVISA"],
-      lastUpdated: "2025-09-06",
+      description: 'Cryolipolysis body contouring information',
+      useCase: 'Body contouring consultations',
+      compliance: ['LGPD', 'CFM', 'ANVISA',],
+      lastUpdated: '2025-09-06',
     },
   },
-];
+]
 
 export default {
   WHATSAPP_PROMPT_TEMPLATES,
   WHATSAPP_SYSTEM_PROMPTS,
   AESTHETIC_PROCEDURE_TEMPLATES,
-};
+}

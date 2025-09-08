@@ -11,7 +11,7 @@ export {
   PrescriptionSchema,
   UpdateAppointmentSchema,
   VitalSignsSchema,
-} from "./appointment.schema";
+} from './appointment.schema'
 // Auth schemas only (no type exports to avoid conflicts)
 export {
   ChangePasswordRequestSchema,
@@ -25,7 +25,7 @@ export {
   UserBaseSchema,
   UserPermissionSchema,
   UserRoleSchema,
-} from "./auth.schema";
+} from './auth.schema'
 
 // Compliance schemas only
 export {
@@ -37,7 +37,7 @@ export {
   DataSubjectRequestSchema,
   LgpdLegalBasisSchema,
   SecurityIncidentSchema,
-} from "./compliance.schema";
+} from './compliance.schema'
 
 // Patient schemas only (note: AddressSchema renamed to avoid conflicts)
 export {
@@ -48,7 +48,7 @@ export {
   PatientGenderSchema,
   PatientQuerySchema,
   UpdatePatientSchema,
-} from "./patient.schema";
+} from './patient.schema'
 
 // Professional schemas only
 export {
@@ -59,7 +59,7 @@ export {
   SpecializationSchema,
   UpdateProfessionalSchema,
   WorkingHoursSchema,
-} from "./professional.schema";
+} from './professional.schema'
 
 // Service schemas only
 export {
@@ -70,7 +70,7 @@ export {
   ServiceQuerySchema,
   ServiceTypeSchema,
   UpdateServiceSchema,
-} from "./service.schema";
+} from './service.schema'
 
 // WhatsApp schemas only
 export {
@@ -82,4 +82,4 @@ export {
   whatsappMessageSchema,
   whatsappTemplateSchema,
   whatsappWebhookVerificationSchema,
-} from "./whatsapp.schema";
+} from './whatsapp.schema'

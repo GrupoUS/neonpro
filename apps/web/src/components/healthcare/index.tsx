@@ -2,17 +2,17 @@
 // Professional medical dashboard components with Brazilian compliance
 
 // Metric and Analytics Components
-export { HealthcareMetricCard, HealthcareMetricsGrid, sampleMetrics } from "./HealthcareMetricCard";
+export { HealthcareMetricCard, HealthcareMetricsGrid, sampleMetrics, } from './HealthcareMetricCard'
 
 // Brazilian Compliance Components
 export {
   CFMLicenseIndicator,
   ComplianceDashboard,
   LGPDConsentIndicator,
-} from "./ComplianceIndicators";
+} from './ComplianceIndicators'
 
 // Component Types
-export type { HealthcareMetricCardProps, HealthcareMetricsGridProps } from "./HealthcareMetricCard";
+export type { HealthcareMetricCardProps, HealthcareMetricsGridProps, } from './HealthcareMetricCard'
 
 export type {
   CFMLicenseIndicatorProps,
@@ -20,4 +20,4 @@ export type {
   ComplianceDashboardProps,
   LGPDConsentIndicatorProps,
   LGPDConsentStatus,
-} from "./ComplianceIndicators";
+} from './ComplianceIndicators'

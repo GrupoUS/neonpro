@@ -1,13 +1,13 @@
-import { SignupForm } from "@/components/auth/signup-form";
-import type { Metadata } from "next";
-import Link from "next/link";
+import { SignupForm, } from '@/components/auth/signup-form'
+import type { Metadata, } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: "Cadastro - NeonPro Healthcare",
+  title: 'Cadastro - NeonPro Healthcare',
   description:
-    "Crie sua conta no NeonPro Healthcare - Sistema completo de gestão para clínicas estéticas",
-  keywords: "cadastro, registro, clínica estética, gestão, LGPD, ANVISA, CFM",
-};
+    'Crie sua conta no NeonPro Healthcare - Sistema completo de gestão para clínicas estéticas',
+  keywords: 'cadastro, registro, clínica estética, gestão, LGPD, ANVISA, CFM',
+}
 
 export default function SignupPage() {
   return (
@@ -113,21 +113,21 @@ export default function SignupPage() {
           {/* Enhanced Legal Notice */}
           <div className="space-y-4">
             <p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
-              Ao criar sua conta, você concorda com nossos{" "}
+              Ao criar sua conta, você concorda com nossos{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/terms"
               >
                 Termos de Serviço
               </Link>
-              ,{" "}
+              ,{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/privacy"
               >
                 Política de Privacidade LGPD
-              </Link>{" "}
-              e confirma estar ciente das{" "}
+              </Link>{' '}
+              e confirma estar ciente das{' '}
               <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/compliance"
@@ -149,5 +149,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

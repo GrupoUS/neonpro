@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { getDashboardStats, getPredictions } from "@/app/lib/services/no-show-prediction";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { getDashboardStats, getPredictions, } from '@/app/lib/services/no-show-prediction'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { useToast, } from '@/components/ui/use-toast'
+import { cn, } from '@/lib/utils'
+import { AnimatePresence, motion, } from 'framer-motion'
 import {
   Activity,
   AlertCircle,
@@ -28,399 +28,399 @@ import {
   TrendingDown,
   Users,
   Zap,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+} from 'lucide-react'
+import { useCallback, useEffect, useState, } from 'react'
 
 interface PatientRiskData {
-  patientId: string;
-  patientName: string;
-  appointmentId: string;
-  appointmentDate: string;
-  appointmentTime: string;
-  appointmentType: string;
-  noShowProbability: number;
-  riskCategory: "low" | "medium" | "high" | "very_high";
-  confidenceScore: number;
-  contributingFactors: FactorContribution[];
-  recommendations: RecommendedAction[];
+  patientId: string
+  patientName: string
+  appointmentId: string
+  appointmentDate: string
+  appointmentTime: string
+  appointmentType: string
+  noShowProbability: number
+  riskCategory: 'low' | 'medium' | 'high' | 'very_high'
+  confidenceScore: number
+  contributingFactors: FactorContribution[]
+  recommendations: RecommendedAction[]
 }
 
 interface FactorContribution {
-  factorName: string;
-  category: "patient" | "appointment" | "external" | "historical";
-  importanceWeight: number;
-  impactDirection: "increases_risk" | "decreases_risk";
-  description: string;
-  confidence: number;
+  factorName: string
+  category: 'patient' | 'appointment' | 'external' | 'historical'
+  importanceWeight: number
+  impactDirection: 'increases_risk' | 'decreases_risk'
+  description: string
+  confidence: number
 }
 
 interface RecommendedAction {
   actionType:
-    | "reminder"
-    | "scheduling"
-    | "incentive"
-    | "support"
-    | "escalation";
-  priority: "low" | "medium" | "high" | "urgent";
-  description: string;
-  estimatedImpact: number;
-  implementationCost: "low" | "medium" | "high";
-  timingRecommendation: string;
-  successProbability: number;
+    | 'reminder'
+    | 'scheduling'
+    | 'incentive'
+    | 'support'
+    | 'escalation'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  description: string
+  estimatedImpact: number
+  implementationCost: 'low' | 'medium' | 'high'
+  timingRecommendation: string
+  successProbability: number
 }
 
 interface DashboardStats {
-  totalAppointments: number;
-  predictedNoShows: number;
-  noShowRate: number;
-  prevented: number;
-  cost_savings: number;
-  modelAccuracy: number;
+  totalAppointments: number
+  predictedNoShows: number
+  noShowRate: number
+  prevented: number
+  cost_savings: number
+  modelAccuracy: number
 }
 
 // ML Pipeline interfaces
 interface ModelVersion {
-  id: string;
-  version: string;
-  status: string;
-  accuracy?: number;
-  created_at: string;
-  version_id?: string;
-  version_number?: string;
-  deployment_status?: string;
-  traffic_percentage?: number;
+  id: string
+  version: string
+  status: string
+  accuracy?: number
+  created_at: string
+  version_id?: string
+  version_number?: string
+  deployment_status?: string
+  traffic_percentage?: number
   performance_metrics?: {
-    accuracy: number;
-    precision: number;
-    recall: number;
-    f1_score: number;
-  };
+    accuracy: number
+    precision: number
+    recall: number
+    f1_score: number
+  }
 }
 
 interface ABTest {
-  id: string;
-  name: string;
-  status: string;
-  confidence?: number;
-  created_at: string;
-  test_id?: string;
-  model_a_version?: string;
-  model_b_version?: string;
-  traffic_split?: number;
-  start_date?: string;
-  end_date?: string;
-  sample_size?: number;
+  id: string
+  name: string
+  status: string
+  confidence?: number
+  created_at: string
+  test_id?: string
+  model_a_version?: string
+  model_b_version?: string
+  traffic_split?: number
+  start_date?: string
+  end_date?: string
+  sample_size?: number
   metrics_comparison?: {
-    model_a: { accuracy: number; };
-    model_b: { accuracy: number; };
-    improvement_percentage?: number;
-  };
-  statistical_significance?: boolean;
-  winner?: string;
+    model_a: { accuracy: number }
+    model_b: { accuracy: number }
+    improvement_percentage?: number
+  }
+  statistical_significance?: boolean
+  winner?: string
   results?: {
-    model_a_performance: number;
-    model_b_performance: number;
-    winner?: string;
-  };
+    model_a_performance: number
+    model_b_performance: number
+    winner?: string
+  }
 }
 
 interface DriftStatus {
-  status: string;
-  drift_score?: number;
-  last_check: string;
-  alerts?: string[];
-  modelAccuracy: number;
-  drift_detected?: boolean;
-  drift_severity?: string;
-  detection_timestamp?: string;
-  recommendations?: string[];
+  status: string
+  drift_score?: number
+  last_check: string
+  alerts?: string[]
+  modelAccuracy: number
+  drift_detected?: boolean
+  drift_severity?: string
+  detection_timestamp?: string
+  recommendations?: string[]
 }
 
 interface AntiNoShowDashboardProps {
-  className?: string;
+  className?: string
 }
 
 // Utility functions for risk categories and analytics};
 
-const getRiskBadgeVariant = (riskCategory: string) => {
+const getRiskBadgeVariant = (riskCategory: string,) => {
   switch (riskCategory.toLowerCase()) {
-    case "high":
-    case "alto": {
-      return "destructive" as const;
+    case 'high':
+    case 'alto': {
+      return 'destructive' as const
     }
-    case "medium":
-    case "medio":
-    case "médio": {
-      return "default" as const;
+    case 'medium':
+    case 'medio':
+    case 'médio': {
+      return 'default' as const
     }
-    case "low":
-    case "baixo": {
-      return "secondary" as const;
+    case 'low':
+    case 'baixo': {
+      return 'secondary' as const
     }
     default: {
-      return "outline" as const;
+      return 'outline' as const
     }
   }
-};
+}
 
-const getRiskIcon = (riskCategory: string) => {
+const getRiskIcon = (riskCategory: string,) => {
   switch (riskCategory.toLowerCase()) {
-    case "high":
-    case "alto": {
-      return <AlertTriangle className="h-3 w-3" />;
+    case 'high':
+    case 'alto': {
+      return <AlertTriangle className="h-3 w-3" />
     }
-    case "medium":
-    case "medio":
-    case "médio": {
-      return <AlertCircle className="h-3 w-3" />;
+    case 'medium':
+    case 'medio':
+    case 'médio': {
+      return <AlertCircle className="h-3 w-3" />
     }
-    case "low":
-    case "baixo": {
-      return <CheckCircle className="h-3 w-3" />;
+    case 'low':
+    case 'baixo': {
+      return <CheckCircle className="h-3 w-3" />
     }
     default: {
-      return <Info className="h-3 w-3" />;
+      return <Info className="h-3 w-3" />
     }
   }
-};
+}
 
-const getRiskLabel = (riskCategory: string) => {
+const getRiskLabel = (riskCategory: string,) => {
   switch (riskCategory.toLowerCase()) {
-    case "high":
-    case "alto": {
-      return "Alto Risco";
+    case 'high':
+    case 'alto': {
+      return 'Alto Risco'
     }
-    case "medium":
-    case "medio":
-    case "médio": {
-      return "Médio Risco";
+    case 'medium':
+    case 'medio':
+    case 'médio': {
+      return 'Médio Risco'
     }
-    case "low":
-    case "baixo": {
-      return "Baixo Risco";
+    case 'low':
+    case 'baixo': {
+      return 'Baixo Risco'
     }
     default: {
-      return "Indefinido";
+      return 'Indefinido'
     }
   }
-};
+}
 
-export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
+export function AntiNoShowDashboard({ className, }: AntiNoShowDashboardProps,) {
   // State management
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats, setStats,] = useState<DashboardStats>({
     totalAppointments: 156,
     predictedNoShows: 23,
     noShowRate: 14.7,
     prevented: 18,
     cost_savings: 12_750,
     modelAccuracy: 87.3,
-  });
+  },)
 
-  const [highRiskPatients, setHighRiskPatients] = useState<PatientRiskData[]>(
+  const [highRiskPatients, setHighRiskPatients,] = useState<PatientRiskData[]>(
     [],
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState<
-    "all" | "high" | "medium" | "low"
-  >("all");
+  )
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [selectedFilter, setSelectedFilter,] = useState<
+    'all' | 'high' | 'medium' | 'low'
+  >('all',)
 
   // ML Pipeline States
-  const [modelVersions, setModelVersions] = useState<ModelVersion[]>([]);
-  const [activeABTests, setActiveABTests] = useState<ABTest[]>([]);
-  const [driftStatus, setDriftStatus] = useState<DriftStatus | undefined>();
-  const [isRunningMaintenance, setIsRunningMaintenance] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("overview");
+  const [modelVersions, setModelVersions,] = useState<ModelVersion[]>([],)
+  const [activeABTests, setActiveABTests,] = useState<ABTest[]>([],)
+  const [driftStatus, setDriftStatus,] = useState<DriftStatus | undefined>()
+  const [isRunningMaintenance, setIsRunningMaintenance,] = useState(false,)
+  const [selectedTab, setSelectedTab,] = useState('overview',)
 
-  const { toast } = useToast();
+  const { toast, } = useToast()
 
   // Mock data for development
   const generateMockData = useCallback((): PatientRiskData[] => {
     const mockData: PatientRiskData[] = [
       {
-        patientId: "PAT-001",
-        patientName: "Maria Silva Santos",
-        appointmentId: "APT-2024-001",
-        appointmentDate: "2025-01-25",
-        appointmentTime: "09:30",
-        appointmentType: "Consulta de Rotina",
+        patientId: 'PAT-001',
+        patientName: 'Maria Silva Santos',
+        appointmentId: 'APT-2024-001',
+        appointmentDate: '2025-01-25',
+        appointmentTime: '09:30',
+        appointmentType: 'Consulta de Rotina',
         noShowProbability: 0.78,
-        riskCategory: "very_high",
+        riskCategory: 'very_high',
         confidenceScore: 0.89,
         contributingFactors: [
           {
-            factorName: "Histórico de Faltas",
-            category: "historical",
+            factorName: 'Histórico de Faltas',
+            category: 'historical',
             importanceWeight: 0.35,
-            impactDirection: "increases_risk",
-            description: "Paciente faltou em 3 das últimas 5 consultas",
+            impactDirection: 'increases_risk',
+            description: 'Paciente faltou em 3 das últimas 5 consultas',
             confidence: 0.92,
           },
           {
-            factorName: "Distância da Clínica",
-            category: "patient",
+            factorName: 'Distância da Clínica',
+            category: 'patient',
             importanceWeight: 0.22,
-            impactDirection: "increases_risk",
-            description: "Reside a 45km da clínica",
+            impactDirection: 'increases_risk',
+            description: 'Reside a 45km da clínica',
             confidence: 0.85,
           },
           {
-            factorName: "Condições Climáticas",
-            category: "external",
+            factorName: 'Condições Climáticas',
+            category: 'external',
             importanceWeight: 0.18,
-            impactDirection: "increases_risk",
-            description: "Previsão de chuva forte",
+            impactDirection: 'increases_risk',
+            description: 'Previsão de chuva forte',
             confidence: 0.71,
           },
         ],
         recommendations: [
           {
-            actionType: "reminder",
-            priority: "urgent",
-            description: "Ligação de confirmação 24h antes da consulta",
+            actionType: 'reminder',
+            priority: 'urgent',
+            description: 'Ligação de confirmação 24h antes da consulta',
             estimatedImpact: 0.35,
-            implementationCost: "low",
-            timingRecommendation: "24 horas antes",
+            implementationCost: 'low',
+            timingRecommendation: '24 horas antes',
             successProbability: 0.73,
           },
           {
-            actionType: "incentive",
-            priority: "high",
-            description: "Oferecer reagendamento para horário mais próximo",
+            actionType: 'incentive',
+            priority: 'high',
+            description: 'Oferecer reagendamento para horário mais próximo',
             estimatedImpact: 0.28,
-            implementationCost: "medium",
-            timingRecommendation: "Imediato",
+            implementationCost: 'medium',
+            timingRecommendation: 'Imediato',
             successProbability: 0.65,
           },
         ],
       },
       {
-        patientId: "PAT-002",
-        patientName: "João Carlos Oliveira",
-        appointmentId: "APT-2024-002",
-        appointmentDate: "2025-01-25",
-        appointmentTime: "14:15",
-        appointmentType: "Exame de Rotina",
+        patientId: 'PAT-002',
+        patientName: 'João Carlos Oliveira',
+        appointmentId: 'APT-2024-002',
+        appointmentDate: '2025-01-25',
+        appointmentTime: '14:15',
+        appointmentType: 'Exame de Rotina',
         noShowProbability: 0.65,
-        riskCategory: "high",
+        riskCategory: 'high',
         confidenceScore: 0.82,
         contributingFactors: [
           {
-            factorName: "Primeira Consulta",
-            category: "appointment",
+            factorName: 'Primeira Consulta',
+            category: 'appointment',
             importanceWeight: 0.28,
-            impactDirection: "increases_risk",
-            description: "Primeira consulta na clínica",
+            impactDirection: 'increases_risk',
+            description: 'Primeira consulta na clínica',
             confidence: 0.88,
           },
           {
-            factorName: "Horário de Pico",
-            category: "appointment",
+            factorName: 'Horário de Pico',
+            category: 'appointment',
             importanceWeight: 0.24,
-            impactDirection: "increases_risk",
-            description: "Horário de alta demanda (14h-16h)",
+            impactDirection: 'increases_risk',
+            description: 'Horário de alta demanda (14h-16h)',
             confidence: 0.79,
           },
         ],
         recommendations: [
           {
-            actionType: "support",
-            priority: "high",
-            description: "SMS com informações de localização e preparação",
+            actionType: 'support',
+            priority: 'high',
+            description: 'SMS com informações de localização e preparação',
             estimatedImpact: 0.25,
-            implementationCost: "low",
-            timingRecommendation: "48 horas antes",
+            implementationCost: 'low',
+            timingRecommendation: '48 horas antes',
             successProbability: 0.68,
           },
         ],
       },
       {
-        patientId: "PAT-003",
-        patientName: "Ana Beatriz Costa",
-        appointmentId: "APT-2024-003",
-        appointmentDate: "2025-01-25",
-        appointmentTime: "16:00",
-        appointmentType: "Retorno",
+        patientId: 'PAT-003',
+        patientName: 'Ana Beatriz Costa',
+        appointmentId: 'APT-2024-003',
+        appointmentDate: '2025-01-25',
+        appointmentTime: '16:00',
+        appointmentType: 'Retorno',
         noShowProbability: 0.42,
-        riskCategory: "medium",
+        riskCategory: 'medium',
         confidenceScore: 0.76,
         contributingFactors: [
           {
-            factorName: "Aderência ao Tratamento",
-            category: "patient",
+            factorName: 'Aderência ao Tratamento',
+            category: 'patient',
             importanceWeight: 0.31,
-            impactDirection: "decreases_risk",
-            description: "Alta aderência ao tratamento (92%)",
+            impactDirection: 'decreases_risk',
+            description: 'Alta aderência ao tratamento (92%)',
             confidence: 0.91,
           },
         ],
         recommendations: [
           {
-            actionType: "reminder",
-            priority: "medium",
-            description: "Email de lembrete 48h antes",
+            actionType: 'reminder',
+            priority: 'medium',
+            description: 'Email de lembrete 48h antes',
             estimatedImpact: 0.15,
-            implementationCost: "low",
-            timingRecommendation: "48 horas antes",
+            implementationCost: 'low',
+            timingRecommendation: '48 horas antes',
             successProbability: 0.58,
           },
         ],
       },
-    ];
-    return mockData;
-  }, []);
+    ]
+    return mockData
+  }, [],)
 
   // Load risk predictions data
   const loadPredictions = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true,)
     try {
       // Load actual predictions from the API
-      const filters = selectedFilter !== "all" ? { riskLevel: selectedFilter } : undefined;
-      const predictions = await getPredictions(filters);
+      const filters = selectedFilter !== 'all' ? { riskLevel: selectedFilter, } : undefined
+      const predictions = await getPredictions(filters,)
 
       // Convert API response to PatientRiskData format
       const formattedData: PatientRiskData[] = predictions.map(
-        (prediction) => ({
+        (prediction,) => ({
           patientId: prediction.patientId,
           patientName: `Paciente ${prediction.patientId}`,
           appointmentId: prediction.appointmentId,
-          appointmentDate: new Date().toISOString().split("T")[0],
-          appointmentTime: "09:00",
-          appointmentType: "Consulta Médica",
+          appointmentDate: new Date().toISOString().split('T',)[0],
+          appointmentTime: '09:00',
+          appointmentType: 'Consulta Médica',
           noShowProbability: prediction.noShowProbability,
           riskCategory: prediction.riskCategory,
           confidenceScore: prediction.confidenceScore,
           contributingFactors: prediction.contributingFactors,
           recommendations: prediction.recommendations,
         }),
-      );
+      )
 
-      setHighRiskPatients(formattedData);
+      setHighRiskPatients(formattedData,)
 
       // Load dashboard stats
-      const dashboardStats = await getDashboardStats("24h");
-      setStats(dashboardStats);
+      const dashboardStats = await getDashboardStats('24h',)
+      setStats(dashboardStats,)
 
       toast({
-        title: "Predições Atualizadas",
+        title: 'Predições Atualizadas',
         description:
           `${formattedData.length} pacientes analisados. ${dashboardStats.predictedNoShows} em alto risco.`,
-      });
+      },)
     } catch (_error) {
       // console.error("Error loading predictions:", _error);
 
       // Fallback to mock data if API is not available
-      const mockData = generateMockData();
-      setHighRiskPatients(mockData);
+      const mockData = generateMockData()
+      setHighRiskPatients(mockData,)
 
       toast({
-        title: "Usando Dados de Demonstração",
-        description: "API não disponível. Mostrando dados simulados para demonstração.",
-        variant: "default",
-      });
+        title: 'Usando Dados de Demonstração',
+        description: 'API não disponível. Mostrando dados simulados para demonstração.',
+        variant: 'default',
+      },)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  }, [selectedFilter, generateMockData, toast]);
+  }, [selectedFilter, generateMockData, toast,],)
 
   // ==================== ML PIPELINE FUNCTIONS ====================
 
@@ -433,12 +433,12 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
       // Mock model versions
       setModelVersions([
         {
-          id: "model_v1.2.0",
-          version: "v1.2.0",
-          status: "production",
-          version_id: "model_v1.2.0",
-          version_number: "v1.2.0",
-          deployment_status: "production",
+          id: 'model_v1.2.0',
+          version: 'v1.2.0',
+          status: 'production',
+          version_id: 'model_v1.2.0',
+          version_number: 'v1.2.0',
+          deployment_status: 'production',
           traffic_percentage: 80,
           performance_metrics: {
             accuracy: 0.87,
@@ -446,15 +446,15 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
             recall: 0.89,
             f1_score: 0.87,
           },
-          created_at: "2024-01-15T10:00:00Z",
+          created_at: '2024-01-15T10:00:00Z',
         },
         {
-          id: "model_v1.3.0",
-          version: "v1.3.0",
-          status: "staging",
-          version_id: "model_v1.3.0",
-          version_number: "v1.3.0",
-          deployment_status: "staging",
+          id: 'model_v1.3.0',
+          version: 'v1.3.0',
+          status: 'staging',
+          version_id: 'model_v1.3.0',
+          version_number: 'v1.3.0',
+          deployment_status: 'staging',
           traffic_percentage: 20,
           performance_metrics: {
             accuracy: 0.91,
@@ -462,122 +462,122 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
             recall: 0.93,
             f1_score: 0.91,
           },
-          created_at: "2024-01-20T14:30:00Z",
+          created_at: '2024-01-20T14:30:00Z',
         },
-      ]);
+      ],)
 
       // Mock A/B tests
       setActiveABTests([
         {
-          id: "ab_test_001",
-          name: "Model v1.2.0 vs v1.3.0 Comparison",
-          test_id: "ab_test_001",
-          model_a_version: "v1.2.0",
-          model_b_version: "v1.3.0",
-          status: "running",
-          start_date: "2024-01-20T00:00:00Z",
+          id: 'ab_test_001',
+          name: 'Model v1.2.0 vs v1.3.0 Comparison',
+          test_id: 'ab_test_001',
+          model_a_version: 'v1.2.0',
+          model_b_version: 'v1.3.0',
+          status: 'running',
+          start_date: '2024-01-20T00:00:00Z',
           sample_size: 1247,
           metrics_comparison: {
-            model_a: { accuracy: 0.87 },
-            model_b: { accuracy: 0.91 },
+            model_a: { accuracy: 0.87, },
+            model_b: { accuracy: 0.91, },
           },
-          created_at: "2024-01-20T00:00:00Z",
+          created_at: '2024-01-20T00:00:00Z',
         },
-      ]);
+      ],)
 
       // Mock drift status
       setDriftStatus({
-        status: "stable",
+        status: 'stable',
         last_check: new Date().toISOString(),
         modelAccuracy: 0.87,
         drift_detected: false,
-        drift_severity: "low",
+        drift_severity: 'low',
         detection_timestamp: new Date().toISOString(),
         recommendations: [
-          "Model performance is stable",
-          "Continue regular monitoring",
+          'Model performance is stable',
+          'Continue regular monitoring',
         ],
-      });
+      },)
     } catch (_error) {
       // console.error("Failed to load ML pipeline data:", _error);
     }
-  }, []);
+  }, [],)
 
   const runModelMaintenance = async () => {
-    setIsRunningMaintenance(true);
+    setIsRunningMaintenance(true,)
     try {
       // Simulate maintenance process
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve,) => setTimeout(resolve, 3000,))
 
       toast({
-        title: "Manutenção Concluída",
-        description: "Verificação de modelo e detecção de drift executadas com sucesso",
-      });
+        title: 'Manutenção Concluída',
+        description: 'Verificação de modelo e detecção de drift executadas com sucesso',
+      },)
 
       // Refresh data after maintenance
-      await loadMLPipelineData();
+      await loadMLPipelineData()
     } catch {
       toast({
-        title: "Erro na Manutenção",
-        description: "Falha ao executar manutenção do modelo",
-        variant: "destructive",
-      });
+        title: 'Erro na Manutenção',
+        description: 'Falha ao executar manutenção do modelo',
+        variant: 'destructive',
+      },)
     } finally {
-      setIsRunningMaintenance(false);
+      setIsRunningMaintenance(false,)
     }
-  };
+  }
 
   const startNewABTest = async () => {
     try {
       toast({
-        title: "A/B Test Iniciado",
-        description: "Novo teste A/B foi configurado com sucesso",
-      });
-      await loadMLPipelineData();
+        title: 'A/B Test Iniciado',
+        description: 'Novo teste A/B foi configurado com sucesso',
+      },)
+      await loadMLPipelineData()
     } catch {
       toast({
-        title: "Erro no A/B Test",
-        description: "Falha ao iniciar novo teste A/B",
-        variant: "destructive",
-      });
+        title: 'Erro no A/B Test',
+        description: 'Falha ao iniciar novo teste A/B',
+        variant: 'destructive',
+      },)
     }
-  };
+  }
 
   // ==================== END ML PIPELINE FUNCTIONS ====================
 
   // Initialize data on mount
   useEffect(() => {
-    loadPredictions();
-    loadMLPipelineData();
-  }, [loadMLPipelineData, loadPredictions]); // eslint-disable-line react-hooks/exhaustive-deps
+    loadPredictions()
+    loadMLPipelineData()
+  }, [loadMLPipelineData, loadPredictions,],) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Filter patients based on selection
-  const filteredPatients = highRiskPatients.filter((patient) => {
-    if (selectedFilter === "all") {
-      return true;
+  const filteredPatients = highRiskPatients.filter((patient,) => {
+    if (selectedFilter === 'all') {
+      return true
     }
-    if (selectedFilter === "high") {
+    if (selectedFilter === 'high') {
       return (
-        patient.riskCategory === "high" || patient.riskCategory === "very_high"
-      );
+        patient.riskCategory === 'high' || patient.riskCategory === 'very_high'
+      )
     }
-    if (selectedFilter === "medium") {
-      return patient.riskCategory === "medium";
+    if (selectedFilter === 'medium') {
+      return patient.riskCategory === 'medium'
     }
-    if (selectedFilter === "low") {
-      return patient.riskCategory === "low";
+    if (selectedFilter === 'low') {
+      return patient.riskCategory === 'low'
     }
-    return true;
-  });
+    return true
+  },)
 
   // Risk category styling helper (fix function structure)
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className,)}>
       {/* Header */}
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: 0, }}
         className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -20, }}
       >
         <div>
           <h1 className="flex items-center gap-3 font-bold text-3xl tracking-tight">
@@ -600,7 +600,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           </Badge>
           <Button disabled={isLoading} onClick={loadPredictions} size="sm">
             <RefreshCw
-              className={cn("mr-1 h-4 w-4", isLoading && "animate-spin")}
+              className={cn('mr-1 h-4 w-4', isLoading && 'animate-spin',)}
             />
             Atualizar
           </Button>
@@ -609,10 +609,10 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
       {/* Stats Overview */}
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: 0, }}
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-6"
-        initial={{ opacity: 0, y: 20 }}
-        transition={{ delay: 0.1 }}
+        initial={{ opacity: 0, y: 20, }}
+        transition={{ delay: 0.1, }}
       >
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -640,8 +640,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
             </div>
             <p className="text-muted-foreground text-xs">
               <span className="text-orange-600">
-                ↗ {stats.noShowRate.toFixed(1)}%
-              </span>{" "}
+                ↗ {stats.noShowRate.toFixed(1,)}%
+              </span>{' '}
               taxa estimada
             </p>
           </CardContent>
@@ -671,7 +671,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl text-primary">
-              R$ {stats.cost_savings.toLocaleString("pt-BR")}
+              R$ {stats.cost_savings.toLocaleString('pt-BR',)}
             </div>
             <p className="text-muted-foreground text-xs">Este mês</p>
           </CardContent>
@@ -704,9 +704,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
       {/* Main Dashboard Content */}
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        initial={{ opacity: 0, y: 20 }}
-        transition={{ delay: 0.2 }}
+        animate={{ opacity: 1, y: 0, }}
+        initial={{ opacity: 0, y: 20, }}
+        transition={{ delay: 0.2, }}
       >
         <Tabs
           className="space-y-4"
@@ -730,30 +730,30 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
               </Button>
               <div className="flex items-center gap-1">
                 <Button
-                  onClick={() => setSelectedFilter("all")}
+                  onClick={() => setSelectedFilter('all',)}
                   size="sm"
-                  variant={selectedFilter === "all" ? "default" : "outline"}
+                  variant={selectedFilter === 'all' ? 'default' : 'outline'}
                 >
                   Todos
                 </Button>
                 <Button
-                  onClick={() => setSelectedFilter("high")}
+                  onClick={() => setSelectedFilter('high',)}
                   size="sm"
-                  variant={selectedFilter === "high" ? "destructive" : "outline"}
+                  variant={selectedFilter === 'high' ? 'destructive' : 'outline'}
                 >
                   Alto Risco
                 </Button>
                 <Button
-                  onClick={() => setSelectedFilter("medium")}
+                  onClick={() => setSelectedFilter('medium',)}
                   size="sm"
-                  variant={selectedFilter === "medium" ? "secondary" : "outline"}
+                  variant={selectedFilter === 'medium' ? 'secondary' : 'outline'}
                 >
                   Médio
                 </Button>
                 <Button
-                  onClick={() => setSelectedFilter("low")}
+                  onClick={() => setSelectedFilter('low',)}
                   size="sm"
-                  variant={selectedFilter === "low" ? "default" : "outline"}
+                  variant={selectedFilter === 'low' ? 'default' : 'outline'}
                 >
                   Baixo
                 </Button>
@@ -768,9 +768,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                 {isLoading
                   ? (
                     <motion.div
-                      animate={{ opacity: 1 }}
+                      animate={{ opacity: 1, }}
                       className="flex items-center justify-center py-12"
-                      initial={{ opacity: 0 }}
+                      initial={{ opacity: 0, }}
                     >
                       <div className="text-center">
                         <RefreshCw className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
@@ -781,7 +781,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     </motion.div>
                   )
                   : (
-                    filteredPatients.map((patient, index) => (
+                    filteredPatients.map((patient, index,) => (
                       <PatientRiskCard
                         delay={index * 0.1}
                         key={patient.patientId}
@@ -837,22 +837,22 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                 >
                   <Brain
                     className={cn(
-                      "mr-2 h-4 w-4",
-                      isRunningMaintenance && "animate-pulse",
+                      'mr-2 h-4 w-4',
+                      isRunningMaintenance && 'animate-pulse',
                     )}
                   />
-                  {isRunningMaintenance ? "Executando..." : "Manutenção"}
+                  {isRunningMaintenance ? 'Executando...' : 'Manutenção'}
                 </Button>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                {modelVersions.map((version) => (
+                {modelVersions.map((version,) => (
                   <Card
                     key={version.version_id}
                     className={cn(
-                      "transition-all duration-200",
-                      version.deployment_status === "production"
-                        && "ring-2 ring-green-500",
+                      'transition-all duration-200',
+                      version.deployment_status === 'production'
+                        && 'ring-2 ring-green-500',
                     )}
                   >
                     <CardHeader className="pb-3">
@@ -861,9 +861,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           {version.version_number}
                         </CardTitle>
                         <Badge
-                          variant={version.deployment_status === "production"
-                            ? "default"
-                            : "secondary"}
+                          variant={version.deployment_status === 'production'
+                            ? 'default'
+                            : 'secondary'}
                         >
                           {version.deployment_status}
                         </Badge>
@@ -891,7 +891,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           <div className="font-semibold text-green-600">
                             {(
                               (version.performance_metrics?.accuracy ?? 0) * 100
-                            ).toFixed(1)}
+                            ).toFixed(1,)}
                             %
                           </div>
                         </div>
@@ -902,15 +902,15 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           <div className="font-semibold">
                             {(
                               (version.performance_metrics?.f1_score ?? 0) * 100
-                            ).toFixed(1)}
+                            ).toFixed(1,)}
                             %
                           </div>
                         </div>
                       </div>
 
                       <div className="pt-2 text-xs text-muted-foreground">
-                        Criado: {new Date(version.created_at).toLocaleDateString(
-                          "pt-BR",
+                        Criado: {new Date(version.created_at,).toLocaleDateString(
+                          'pt-BR',
                         )}
                       </div>
                     </CardContent>
@@ -928,16 +928,16 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     <div className="flex items-center gap-2">
                       <div
                         className={cn(
-                          "h-3 w-3 rounded-full",
+                          'h-3 w-3 rounded-full',
                           driftStatus.drift_detected
-                            ? "bg-orange-500"
-                            : "bg-green-500",
+                            ? 'bg-orange-500'
+                            : 'bg-green-500',
                         )}
                       />
                       <CardTitle className="text-base">
                         Status: {driftStatus.drift_detected
-                          ? "Drift Detectado"
-                          : "Modelo Estável"}
+                          ? 'Drift Detectado'
+                          : 'Modelo Estável'}
                       </CardTitle>
                     </div>
                   </CardHeader>
@@ -945,9 +945,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm">Severidade:</span>
                       <Badge
-                        variant={driftStatus.drift_severity === "low"
-                          ? "outline"
-                          : "destructive"}
+                        variant={driftStatus.drift_severity === 'low'
+                          ? 'outline'
+                          : 'destructive'}
                       >
                         {driftStatus.drift_severity}
                       </Badge>
@@ -959,7 +959,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                       </span>
                       <ul className="space-y-1">
                         {(driftStatus.recommendations ?? []).map(
-                          (rec: string, index: number) => (
+                          (rec: string, index: number,) => (
                             <li
                               key={index}
                               className="text-sm text-muted-foreground"
@@ -975,7 +975,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                       Última verificação: {new Date(
                         driftStatus.detection_timestamp
                           || driftStatus.last_check,
-                      ).toLocaleString("pt-BR")}
+                      ).toLocaleString('pt-BR',)}
                     </div>
                   </CardContent>
                 </Card>
@@ -994,7 +994,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
             </div>
 
             <div className="space-y-4">
-              {activeABTests.map((test) => (
+              {activeABTests.map((test,) => (
                 <Card key={test.test_id}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -1002,7 +1002,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         {test.model_a_version} vs {test.model_b_version}
                       </CardTitle>
                       <Badge
-                        variant={test.status === "running" ? "default" : "secondary"}
+                        variant={test.status === 'running' ? 'default' : 'secondary'}
                       >
                         {test.status}
                       </Badge>
@@ -1018,7 +1018,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           {(
                             (test.metrics_comparison?.model_a.accuracy ?? 0)
                             * 100
-                          ).toFixed(1)}
+                          ).toFixed(1,)}
                           %
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -1032,20 +1032,20 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         </div>
                         <div
                           className={cn(
-                            "font-semibold text-lg",
+                            'font-semibold text-lg',
                             (test.metrics_comparison?.improvement_percentage
                                 ?? 0) > 0
-                              ? "text-green-600"
-                              : "text-red-600",
+                              ? 'text-green-600'
+                              : 'text-red-600',
                           )}
                         >
                           {(test.metrics_comparison?.improvement_percentage
                               ?? 0) > 0
-                            ? "+"
-                            : ""}
+                            ? '+'
+                            : ''}
                           {(
                             test.metrics_comparison?.improvement_percentage ?? 0
-                          ).toFixed(1)}
+                          ).toFixed(1,)}
                           %
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -1061,7 +1061,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           {(
                             (test.metrics_comparison?.model_b.accuracy ?? 0)
                             * 100
-                          ).toFixed(1)}
+                          ).toFixed(1,)}
                           %
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -1074,7 +1074,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm">Amostras coletadas:</span>
                         <span className="font-medium">
-                          {(test.sample_size ?? 0).toLocaleString("pt-BR")}
+                          {(test.sample_size ?? 0).toLocaleString('pt-BR',)}
                         </span>
                       </div>
 
@@ -1084,12 +1084,12 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         </span>
                         <Badge
                           variant={test.statistical_significance
-                            ? "default"
-                            : "outline"}
+                            ? 'default'
+                            : 'outline'}
                         >
                           {test.statistical_significance
-                            ? "Significativo"
-                            : "Não significativo"}
+                            ? 'Significativo'
+                            : 'Não significativo'}
                         </Badge>
                       </div>
 
@@ -1097,7 +1097,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Vencedor:</span>
                           <Badge variant="default" className="bg-green-600">
-                            {test.winner === "model_a"
+                            {test.winner === 'model_a'
                               ? test.model_a_version
                               : test.model_b_version}
                           </Badge>
@@ -1108,7 +1108,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     <div className="pt-2 text-xs text-muted-foreground">
                       Iniciado: {new Date(
                         test.start_date || test.created_at,
-                      ).toLocaleDateString("pt-BR")}
+                      ).toLocaleDateString('pt-BR',)}
                     </div>
                   </CardContent>
                 </Card>
@@ -1128,7 +1128,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         </Tabs>
       </motion.div>
     </div>
-  );
+  )
 }
 
 // Individual Patient Risk Card Component
@@ -1136,38 +1136,38 @@ function PatientRiskCard({
   patient,
   delay = 0,
 }: {
-  patient: PatientRiskData;
-  delay?: number;
-}) {
-  const riskPercentage = Math.round(patient.noShowProbability * 100);
-  const confidencePercentage = Math.round(patient.confidenceScore * 100);
+  patient: PatientRiskData
+  delay?: number
+},) {
+  const riskPercentage = Math.round(patient.noShowProbability * 100,)
+  const confidencePercentage = Math.round(patient.confidenceScore * 100,)
 
-  const getRiskColor = (category: string) => {
+  const getRiskColor = (category: string,) => {
     switch (category) {
-      case "very_high": {
-        return "bg-red-500";
+      case 'very_high': {
+        return 'bg-red-500'
       }
-      case "high": {
-        return "bg-orange-500";
+      case 'high': {
+        return 'bg-orange-500'
       }
-      case "medium": {
-        return "bg-yellow-500";
+      case 'medium': {
+        return 'bg-yellow-500'
       }
-      case "low": {
-        return "bg-green-500";
+      case 'low': {
+        return 'bg-green-500'
       }
       default: {
-        return "bg-gray-500";
+        return 'bg-gray-500'
       }
     }
-  };
+  }
 
   return (
     <motion.div
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0, }}
       className="w-full"
-      initial={{ opacity: 0, y: 20 }}
-      transition={{ delay }}
+      initial={{ opacity: 0, y: 20, }}
+      transition={{ delay, }}
     >
       <Card className="transition-all duration-200 hover:shadow-lg">
         <CardHeader className="pb-3">
@@ -1185,10 +1185,10 @@ function PatientRiskCard({
             <div className="flex flex-col items-end gap-2">
               <Badge
                 className="flex items-center gap-1"
-                variant={getRiskBadgeVariant(patient.riskCategory)}
+                variant={getRiskBadgeVariant(patient.riskCategory,)}
               >
-                {getRiskIcon(patient.riskCategory)}
-                {getRiskLabel(patient.riskCategory)}
+                {getRiskIcon(patient.riskCategory,)}
+                {getRiskLabel(patient.riskCategory,)}
               </Badge>
               <div className="text-right">
                 <div className="font-bold text-primary text-xl">
@@ -1210,7 +1210,7 @@ function PatientRiskCard({
               <span className="font-medium">{riskPercentage}%</span>
             </div>
             <Progress
-              className={`h-2 ${getRiskColor(patient.riskCategory)}`}
+              className={`h-2 ${getRiskColor(patient.riskCategory,)}`}
               value={riskPercentage}
             />
           </div>
@@ -1228,19 +1228,19 @@ function PatientRiskCard({
           <div className="space-y-2">
             <h4 className="font-medium text-sm">Principais Fatores de Risco</h4>
             <div className="space-y-1">
-              {patient.contributingFactors.slice(0, 3).map((factor, index) => (
+              {patient.contributingFactors.slice(0, 3,).map((factor, index,) => (
                 <div
                   className="flex items-center justify-between text-xs"
                   key={index}
                 >
                   <div className="flex items-center gap-2">
-                    {factor.impactDirection === "increases_risk"
+                    {factor.impactDirection === 'increases_risk'
                       ? <ArrowUp className="h-3 w-3 text-red-500" />
                       : <ArrowDown className="h-3 w-3 text-green-500" />}
                     <span>{factor.factorName}</span>
                   </div>
                   <span className="font-medium">
-                    {Math.round(factor.importanceWeight * 100)}%
+                    {Math.round(factor.importanceWeight * 100,)}%
                   </span>
                 </div>
               ))}
@@ -1251,23 +1251,23 @@ function PatientRiskCard({
           <div className="space-y-2">
             <h4 className="font-medium text-sm">Ações Recomendadas</h4>
             <div className="space-y-1">
-              {patient.recommendations.slice(0, 2).map((action, index) => (
+              {patient.recommendations.slice(0, 2,).map((action, index,) => (
                 <div
                   className="flex items-start gap-2 rounded bg-muted/50 p-2 text-xs"
                   key={index}
                 >
                   <Badge className="text-xs" variant="outline">
-                    {action.priority === "urgent"
-                      ? "🚨"
-                      : action.priority === "high"
-                      ? "⚡"
-                      : "📋"}
+                    {action.priority === 'urgent'
+                      ? '🚨'
+                      : action.priority === 'high'
+                      ? '⚡'
+                      : '📋'}
                   </Badge>
                   <div className="flex-1">
                     <p className="font-medium">{action.description}</p>
                     <p className="text-muted-foreground">
-                      {action.timingRecommendation} •{" "}
-                      {Math.round(action.estimatedImpact * 100)}% impacto
+                      {action.timingRecommendation} •{' '}
+                      {Math.round(action.estimatedImpact * 100,)}% impacto
                     </p>
                   </div>
                 </div>
@@ -1289,7 +1289,7 @@ function PatientRiskCard({
         </CardContent>
       </Card>
     </motion.div>
-  );
+  )
 }
 
-export default AntiNoShowDashboard;
+export default AntiNoShowDashboard

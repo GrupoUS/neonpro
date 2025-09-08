@@ -22,7 +22,7 @@ export type {
   Permission,
   Role,
   SecurityPolicy,
-} from "../types";
-export { EnterpriseAnalyticsService } from "./analytics/EnterpriseAnalyticsService";
-export { EnterpriseCacheService } from "./cache/EnterpriseCacheService";
-export { EnterpriseSecurityService } from "./security/EnterpriseSecurityService";
+} from '../types'
+export { EnterpriseAnalyticsService, } from './analytics/EnterpriseAnalyticsService'
+export { EnterpriseCacheService, } from './cache/EnterpriseCacheService'
+export { EnterpriseSecurityService, } from './security/EnterpriseSecurityService'

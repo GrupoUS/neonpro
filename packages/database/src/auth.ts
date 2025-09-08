@@ -4,11 +4,11 @@
  * LGPD + ANVISA + CFM compliance with audit trails
  */
 
-import type { Session, User } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { cache } from "react";
-import { createServerClient } from "./client";
+import type { Session, User, } from '@supabase/supabase-js'
+import { cookies, } from 'next/headers'
+import { redirect, } from 'next/navigation'
+import { cache, } from 'react'
+import { createServerClient, } from './client'
 
 /**
  * Server-side user authentication with healthcare audit trail
@@ -17,40 +17,40 @@ import { createServerClient } from "./client";
  */
 export const getUser = cache(async (): Promise<User | null> => {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies()
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookieList) => {
-        cookieList.forEach(({ name, value, options }) => {
+      setAll: (cookieList,) => {
+        cookieList.forEach(({ name, value, options, },) => {
           if (options !== undefined) {
             // Only pass options when defined to satisfy tuple typing
-            cookieStore.set(name, value, options as any);
+            cookieStore.set(name, value, options as any,)
           } else {
-            cookieStore.set(name, value);
+            cookieStore.set(name, value,)
           }
-        });
+        },)
       },
-    });
+    },)
 
     const {
-      data: { user },
+      data: { user, },
       error,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser()
 
     if (error) {
-      return null;
+      return null
     }
 
     // Healthcare audit logging for user access
     if (user) {
-      await logHealthcareAccess(user.id, "user_authenticated");
+      await logHealthcareAccess(user.id, 'user_authenticated',)
     }
 
-    return user;
+    return user
   } catch {
-    return null;
+    return null
   }
-});
+},)
 
 /**
  * Get current session with healthcare validation
@@ -58,48 +58,48 @@ export const getUser = cache(async (): Promise<User | null> => {
  */
 export const getSession = cache(async (): Promise<Session | null> => {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies()
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookieList) => {
-        cookieList.forEach(({ name, value, options }) => {
+      setAll: (cookieList,) => {
+        cookieList.forEach(({ name, value, options, },) => {
           if (options !== undefined) {
-            cookieStore.set(name, value, options as any);
+            cookieStore.set(name, value, options as any,)
           } else {
-            cookieStore.set(name, value);
+            cookieStore.set(name, value,)
           }
-        });
+        },)
       },
-    });
+    },)
 
     const {
-      data: { session },
+      data: { session, },
       error,
-    } = await supabase.auth.getSession();
+    } = await supabase.auth.getSession()
 
     if (error) {
-      return null;
+      return null
     }
 
-    return session;
+    return session
   } catch {
-    return null;
+    return null
   }
-});
+},)
 
 /**
  * Protect healthcare pages - redirects unauthorized users
  * Implements healthcare-specific authorization patterns
  */
 export async function requireUser(): Promise<User> {
-  const user = await getUser();
+  const user = await getUser()
 
   if (!user) {
     // Healthcare compliance: redirect to secure login
-    redirect("/auth/login?reason=authentication_required");
+    redirect('/auth/login?reason=authentication_required',)
   }
 
-  return user;
+  return user
 }
 
 /**
@@ -107,41 +107,41 @@ export async function requireUser(): Promise<User> {
  * Implements role-based access control for medical data
  */
 export async function requireHealthcareProfessional(): Promise<User> {
-  const user = await requireUser();
+  const user = await requireUser()
 
-  const cookieStore = await cookies();
+  const cookieStore = await cookies()
   const supabase = createServerClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookies) => {
-      cookies.forEach(({ name, value, options }) => {
+    setAll: (cookies,) => {
+      cookies.forEach(({ name, value, options, },) => {
         if (options !== undefined) {
-          cookieStore.set(name, value, options as any);
+          cookieStore.set(name, value, options as any,)
         } else {
-          cookieStore.set(name, value);
+          cookieStore.set(name, value,)
         }
-      });
+      },)
     },
-  });
+  },)
 
   // Check professional role and CFM compliance
-  const { data: professional } = await supabase
-    .from("healthcare_professionals")
-    .select("id, cfm_number, role, active")
-    .eq("user_id", user.id)
-    .eq("active", true)
-    .single();
+  const { data: professional, } = await supabase
+    .from('healthcare_professionals',)
+    .select('id, cfm_number, role, active',)
+    .eq('user_id', user.id,)
+    .eq('active', true,)
+    .single()
 
   if (!professional) {
-    redirect("/auth/unauthorized?reason=healthcare_access_required");
+    redirect('/auth/unauthorized?reason=healthcare_access_required',)
   }
 
   // Log healthcare professional access
-  await logHealthcareAccess(user.id, "professional_access", {
+  await logHealthcareAccess(user.id, 'professional_access', {
     cfm_number: professional?.cfm_number,
     role: professional?.role,
-  });
+  },)
 
-  return user;
+  return user
 }
 
 /**
@@ -154,28 +154,28 @@ async function logHealthcareAccess(
   metadata?: Record<string, unknown>,
 ): Promise<void> {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies()
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookieList) => {
-        cookieList.forEach(({ name, value, options }) => {
+      setAll: (cookieList,) => {
+        cookieList.forEach(({ name, value, options, },) => {
           if (options !== undefined) {
-            cookieStore.set(name, value, options as any);
+            cookieStore.set(name, value, options as any,)
           } else {
-            cookieStore.set(name, value);
+            cookieStore.set(name, value,)
           }
-        });
+        },)
       },
-    });
+    },)
 
-    await supabase.from("healthcare_audit_logs").insert({
+    await supabase.from('healthcare_audit_logs',).insert({
       user_id: userId,
       action,
       metadata,
-      ip_address: process.env.CF_CONNECTING_IP || "unknown",
-      user_agent: process.env.HTTP_USER_AGENT || "unknown",
+      ip_address: process.env.CF_CONNECTING_IP || 'unknown',
+      user_agent: process.env.HTTP_USER_AGENT || 'unknown',
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch {
     // Don't throw - audit logging failure shouldn't block auth
   }
@@ -185,26 +185,26 @@ async function logHealthcareAccess(
  * Sign out with healthcare audit trail
  */
 export async function signOut(): Promise<void> {
-  const user = await getUser();
+  const user = await getUser()
 
-  const cookieStore = await cookies();
+  const cookieStore = await cookies()
   const supabase = createServerClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookies) => {
-      cookies.forEach(({ name, value, options }) => {
+    setAll: (cookies,) => {
+      cookies.forEach(({ name, value, options, },) => {
         if (options !== undefined) {
-          cookieStore.set(name, value, options as any);
+          cookieStore.set(name, value, options as any,)
         } else {
-          cookieStore.set(name, value);
+          cookieStore.set(name, value,)
         }
-      });
+      },)
     },
-  });
+  },)
 
   if (user) {
-    await logHealthcareAccess(user.id, "user_signout");
+    await logHealthcareAccess(user.id, 'user_signout',)
   }
 
-  await supabase.auth.signOut();
-  redirect("/auth/login");
+  await supabase.auth.signOut()
+  redirect('/auth/login',)
 }

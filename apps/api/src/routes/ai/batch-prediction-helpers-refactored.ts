@@ -18,50 +18,50 @@
  * Extracts error message from unknown error type
  * Safe error message extraction with fallback
  */
-export function getErrorMessage(error: unknown, fallback: string): string {
+export function getErrorMessage(error: unknown, fallback: string,): string {
   if (error instanceof Error) {
-    return error.message;
+    return error.message
   }
-  if (typeof error === "string") {
-    return error;
+  if (typeof error === 'string') {
+    return error
   }
-  return fallback;
+  return fallback
 }
 
 /**
  * Calculates success rate as percentage
  * Handles division by zero gracefully
  */
-export function calculateSuccessRate(completed: number, total: number): number {
+export function calculateSuccessRate(completed: number, total: number,): number {
   if (total === 0 || completed < 0 || total < 0) {
-    return 0;
+    return 0
   }
 
   if (completed > total) {
-    return 100; // Cap at 100% for invalid inputs
+    return 100 // Cap at 100% for invalid inputs
   }
 
-  return Math.round((completed / total) * 100);
+  return Math.round((completed / total) * 100,)
 }
 
 /**
  * Calculates average processing time from array of times
  * Returns 0 for empty arrays, handles edge cases
  */
-export function calculateAverageProcessingTime(times: readonly number[]): number {
+export function calculateAverageProcessingTime(times: readonly number[],): number {
   if (times.length === 0) {
-    return 0;
+    return 0
   }
 
   // Filter out negative times (invalid data)
-  const validTimes = times.filter(time => time >= 0);
+  const validTimes = times.filter(time => time >= 0)
 
   if (validTimes.length === 0) {
-    return 0;
+    return 0
   }
 
-  const sum = validTimes.reduce((total, time) => total + time, 0);
-  return Math.round(sum / validTimes.length);
+  const sum = validTimes.reduce((total, time,) => total + time, 0,)
+  return Math.round(sum / validTimes.length,)
 }
 
 /**
@@ -73,12 +73,12 @@ export function calculateThroughputPerHour(
   avgProcessingTimeMs: number,
 ): number {
   if (totalProcessed <= 0 || avgProcessingTimeMs <= 0) {
-    return 0;
+    return 0
   }
 
   // Convert milliseconds to hours: 1 hour = 3,600,000 ms
-  const itemsPerHour = (totalProcessed / avgProcessingTimeMs) * 3_600_000;
-  return Math.round(itemsPerHour);
+  const itemsPerHour = (totalProcessed / avgProcessingTimeMs) * 3_600_000
+  return Math.round(itemsPerHour,)
 }
 
 /**
@@ -90,10 +90,10 @@ export function calculateAveragePredictionsPerJob(
   jobCount: number,
 ): number {
   if (jobCount <= 0 || totalProcessed < 0) {
-    return 0;
+    return 0
   }
 
-  return Math.round(totalProcessed / jobCount);
+  return Math.round(totalProcessed / jobCount,)
 }
 
 // =============================================================================
@@ -104,26 +104,26 @@ export function calculateAveragePredictionsPerJob(
  * Gets date string for N hours from now
  * Returns date in YYYY-MM-DD format
  */
-export function getDatePlusHours(hours: number): string {
+export function getDatePlusHours(hours: number,): string {
   if (hours < 0) {
-    throw new Error("Hours must be non-negative");
+    throw new Error('Hours must be non-negative',)
   }
 
-  const futureDate = new Date(Date.now() + hours * 60 * 60 * 1000);
-  return futureDate.toISOString().split("T")[0];
+  const futureDate = new Date(Date.now() + hours * 60 * 60 * 1000,)
+  return futureDate.toISOString().split('T',)[0]
 }
 
 /**
  * Gets date string for N days from now
  * Returns date in YYYY-MM-DD format
  */
-export function getDatePlusDays(days: number): string {
+export function getDatePlusDays(days: number,): string {
   if (days < 0) {
-    throw new Error("Days must be non-negative");
+    throw new Error('Days must be non-negative',)
   }
 
-  const futureDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-  return futureDate.toISOString().split("T")[0];
+  const futureDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000,)
+  return futureDate.toISOString().split('T',)[0]
 }
 
 /**
@@ -131,7 +131,7 @@ export function getDatePlusDays(days: number): string {
  * Returns date in YYYY-MM-DD format
  */
 export function getTodayDateString(): string {
-  return new Date().toISOString().split("T")[0];
+  return new Date().toISOString().split('T',)[0]
 }
 
 // =============================================================================
@@ -142,29 +142,29 @@ export function getTodayDateString(): string {
  * Checks if error array contains unknown errors
  * Type-safe error array validation
  */
-export function hasErrors(errors: readonly unknown[]): boolean {
-  return Array.isArray(errors) && errors.length > 0;
+export function hasErrors(errors: readonly unknown[],): boolean {
+  return Array.isArray(errors,) && errors.length > 0
 }
 
 /**
  * Returns appropriate HTTP status code based on error presence
  * 207 Multi-Status for partial success, 201 Created for full success
  */
-export function getStatusCode(hasErrors: boolean): number {
-  return hasErrors ? 207 : 201;
+export function getStatusCode(hasErrors: boolean,): number {
+  return hasErrors ? 207 : 201
 }
 
 /**
  * Validates processing time array
  * Filters out invalid times and returns clean array
  */
-export function validateProcessingTimes(times: readonly number[]): number[] {
+export function validateProcessingTimes(times: readonly number[],): number[] {
   return times.filter(time =>
-    typeof time === "number"
+    typeof time === 'number'
     && time >= 0
-    && !Number.isNaN(time)
-    && Number.isFinite(time)
-  );
+    && !Number.isNaN(time,)
+    && Number.isFinite(time,)
+  )
 }
 
 /**
@@ -172,11 +172,11 @@ export function validateProcessingTimes(times: readonly number[]): number[] {
  * Returns comprehensive performance statistics
  */
 export interface ProcessingMetrics {
-  readonly successRate: number;
-  readonly averageProcessingTime: number;
-  readonly throughputPerHour: number;
-  readonly avgPredictionsPerJob: number;
-  readonly efficiency: "high" | "medium" | "low";
+  readonly successRate: number
+  readonly averageProcessingTime: number
+  readonly throughputPerHour: number
+  readonly avgPredictionsPerJob: number
+  readonly efficiency: 'high' | 'medium' | 'low'
 }
 
 export function calculateProcessingMetrics(
@@ -185,18 +185,18 @@ export function calculateProcessingMetrics(
   processingTimes: readonly number[],
   jobCount = 1,
 ): ProcessingMetrics {
-  const successRate = calculateSuccessRate(completed, total);
-  const validTimes = validateProcessingTimes(processingTimes);
-  const averageProcessingTime = calculateAverageProcessingTime(validTimes);
-  const throughputPerHour = calculateThroughputPerHour(completed, averageProcessingTime);
-  const avgPredictionsPerJob = calculateAveragePredictionsPerJob(completed, jobCount);
+  const successRate = calculateSuccessRate(completed, total,)
+  const validTimes = validateProcessingTimes(processingTimes,)
+  const averageProcessingTime = calculateAverageProcessingTime(validTimes,)
+  const throughputPerHour = calculateThroughputPerHour(completed, averageProcessingTime,)
+  const avgPredictionsPerJob = calculateAveragePredictionsPerJob(completed, jobCount,)
 
   // Determine efficiency level
-  let efficiency: "high" | "medium" | "low" = "low";
+  let efficiency: 'high' | 'medium' | 'low' = 'low'
   if (successRate >= 95 && averageProcessingTime > 0) {
-    efficiency = "high";
+    efficiency = 'high'
   } else if (successRate >= 80) {
-    efficiency = "medium";
+    efficiency = 'medium'
   }
 
   return {
@@ -205,5 +205,5 @@ export function calculateProcessingMetrics(
     throughputPerHour,
     avgPredictionsPerJob,
     efficiency,
-  };
+  }
 }

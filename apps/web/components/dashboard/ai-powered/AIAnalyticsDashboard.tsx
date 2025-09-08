@@ -4,13 +4,13 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Skeleton, } from '@/components/ui/skeleton'
 import {
   Activity,
   AlertTriangle,
@@ -22,37 +22,37 @@ import {
   TrendingDown,
   TrendingUp,
   Users,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 interface AnalyticsMetrics {
-  totalRevenue: number;
-  monthlyGrowth: number;
-  patientRetention: number;
-  treatmentEffectiveness: number;
-  aiPredictionAccuracy: number;
-  complianceScore: number;
-  predictedRevenue: number;
-  patientSatisfaction: number;
-  noShowRate: number;
-  averageTreatmentValue: number;
+  totalRevenue: number
+  monthlyGrowth: number
+  patientRetention: number
+  treatmentEffectiveness: number
+  aiPredictionAccuracy: number
+  complianceScore: number
+  predictedRevenue: number
+  patientSatisfaction: number
+  noShowRate: number
+  averageTreatmentValue: number
 }
 
 interface AIInsight {
-  id: string;
-  type: "prediction" | "recommendation" | "alert" | "opportunity";
-  title: string;
-  description: string;
-  confidence: number;
-  impact: "high" | "medium" | "low";
-  action?: string;
-  data?: unknown;
+  id: string
+  type: 'prediction' | 'recommendation' | 'alert' | 'opportunity'
+  title: string
+  description: string
+  confidence: number
+  impact: 'high' | 'medium' | 'low'
+  action?: string
+  data?: unknown
 }
 
 export function AIAnalyticsDashboard() {
-  const [metrics, setMetrics] = useState<AnalyticsMetrics | null>();
-  const [insights, setInsights] = useState<AIInsight[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics,] = useState<AnalyticsMetrics | null>()
+  const [insights, setInsights,] = useState<AIInsight[]>([],)
+  const [loading, setLoading,] = useState(true,)
 
   useEffect(() => {
     // Simulate loading real analytics data
@@ -68,96 +68,96 @@ export function AIAnalyticsDashboard() {
         patientSatisfaction: 9.2,
         noShowRate: 8.1,
         averageTreatmentValue: 1250,
-      });
+      },)
 
       setInsights([
         {
-          id: "1",
-          type: "opportunity",
-          title: "Oportunidade de Botox",
+          id: '1',
+          type: 'opportunity',
+          title: 'Oportunidade de Botox',
           description:
-            "25 pacientes com histórico de preenchimento podem ser convertidos para Botox",
+            '25 pacientes com histórico de preenchimento podem ser convertidos para Botox',
           confidence: 89.2,
-          impact: "high",
-          action: "Criar campanha direcionada",
+          impact: 'high',
+          action: 'Criar campanha direcionada',
         },
         {
-          id: "2",
-          type: "prediction",
-          title: "Previsão de No-Show",
-          description: "3 consultas com alta probabilidade de no-show amanhã",
+          id: '2',
+          type: 'prediction',
+          title: 'Previsão de No-Show',
+          description: '3 consultas com alta probabilidade de no-show amanhã',
           confidence: 91.7,
-          impact: "medium",
-          action: "Enviar lembrete personalizado",
+          impact: 'medium',
+          action: 'Enviar lembrete personalizado',
         },
         {
-          id: "3",
-          type: "recommendation",
-          title: "Otimização de Agenda",
-          description: "Quinta-feira às 14h tem 73% de disponibilidade - ideal para promoções",
+          id: '3',
+          type: 'recommendation',
+          title: 'Otimização de Agenda',
+          description: 'Quinta-feira às 14h tem 73% de disponibilidade - ideal para promoções',
           confidence: 85.4,
-          impact: "medium",
-          action: "Configurar oferta automática",
+          impact: 'medium',
+          action: 'Configurar oferta automática',
         },
         {
-          id: "4",
-          type: "alert",
-          title: "Tendência de Sazonalidade",
-          description: "Demanda por tratamentos de verão aumentará 40% nas próximas 4 semanas",
+          id: '4',
+          type: 'alert',
+          title: 'Tendência de Sazonalidade',
+          description: 'Demanda por tratamentos de verão aumentará 40% nas próximas 4 semanas',
           confidence: 93.1,
-          impact: "high",
-          action: "Aumentar estoque e agenda",
+          impact: 'high',
+          action: 'Aumentar estoque e agenda',
         },
-      ]);
+      ],)
 
-      setLoading(false);
-    }, 1000);
+      setLoading(false,)
+    }, 1000,)
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => clearTimeout(timer,)
+  }, [],)
 
-  const getInsightIcon = (type: string) => {
+  const getInsightIcon = (type: string,) => {
     switch (type) {
-      case "prediction": {
-        return <Brain className="h-4 w-4" />;
+      case 'prediction': {
+        return <Brain className="h-4 w-4" />
       }
-      case "recommendation": {
-        return <Target className="h-4 w-4" />;
+      case 'recommendation': {
+        return <Target className="h-4 w-4" />
       }
-      case "alert": {
-        return <AlertTriangle className="h-4 w-4" />;
+      case 'alert': {
+        return <AlertTriangle className="h-4 w-4" />
       }
-      case "opportunity": {
-        return <TrendingUp className="h-4 w-4" />;
+      case 'opportunity': {
+        return <TrendingUp className="h-4 w-4" />
       }
       default: {
-        return <Activity className="h-4 w-4" />;
+        return <Activity className="h-4 w-4" />
       }
     }
-  };
+  }
 
-  const getInsightBadgeVariant = (impact: string) => {
+  const getInsightBadgeVariant = (impact: string,) => {
     switch (impact) {
-      case "high": {
-        return "destructive";
+      case 'high': {
+        return 'destructive'
       }
-      case "medium": {
-        return "default";
+      case 'medium': {
+        return 'default'
       }
-      case "low": {
-        return "secondary";
+      case 'low': {
+        return 'secondary'
       }
       default: {
-        return "default";
+        return 'default'
       }
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+          {[1, 2, 3, 4,].map((i,) => (
             <Card key={i}>
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-20" />
@@ -170,7 +170,7 @@ export function AIAnalyticsDashboard() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -237,21 +237,21 @@ export function AIAnalyticsDashboard() {
               Receita Total
             </CardTitle>
             <CardDescription>
-              {metrics?.monthlyGrowth && metrics.monthlyGrowth > 0 ? "+" : ""}
+              {metrics?.monthlyGrowth && metrics.monthlyGrowth > 0 ? '+' : ''}
               {metrics?.monthlyGrowth}% este mês
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
               <div className="text-2xl font-bold">
-                R$ {metrics?.totalRevenue.toLocaleString("pt-BR")}
+                R$ {metrics?.totalRevenue.toLocaleString('pt-BR',)}
               </div>
               {metrics?.monthlyGrowth && metrics.monthlyGrowth > 0 && (
                 <TrendingUp className="h-4 w-4 text-green-600" />
               )}
             </div>
             <div className="text-xs text-muted-foreground">
-              Previsão IA: R$ {metrics?.predictedRevenue.toLocaleString("pt-BR")}
+              Previsão IA: R$ {metrics?.predictedRevenue.toLocaleString('pt-BR',)}
             </div>
           </CardContent>
         </Card>
@@ -377,7 +377,7 @@ export function AIAnalyticsDashboard() {
             role="list"
             aria-label="Lista de insights de inteligência artificial"
           >
-            {insights.map((insight, _index) => (
+            {insights.map((insight, _index,) => (
               <div
                 key={insight.id}
                 className="flex items-start space-x-4 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
@@ -389,7 +389,7 @@ export function AIAnalyticsDashboard() {
                   className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10"
                   aria-hidden="true"
                 >
-                  {getInsightIcon(insight.type)}
+                  {getInsightIcon(insight.type,)}
                 </div>
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center space-x-2">
@@ -400,18 +400,18 @@ export function AIAnalyticsDashboard() {
                       {insight.title}
                     </h4>
                     <Badge
-                      variant={getInsightBadgeVariant(insight.impact)}
+                      variant={getInsightBadgeVariant(insight.impact,)}
                       aria-label={`Impacto ${
-                        insight.impact === "high"
-                          ? "alto"
-                          : insight.impact === "medium"
-                          ? "médio"
-                          : "baixo"
+                        insight.impact === 'high'
+                          ? 'alto'
+                          : insight.impact === 'medium'
+                          ? 'médio'
+                          : 'baixo'
                       }`}
                     >
-                      {insight.impact === "high" && "Alto Impacto"}
-                      {insight.impact === "medium" && "Médio Impacto"}
-                      {insight.impact === "low" && "Baixo Impacto"}
+                      {insight.impact === 'high' && 'Alto Impacto'}
+                      {insight.impact === 'medium' && 'Médio Impacto'}
+                      {insight.impact === 'low' && 'Baixo Impacto'}
                     </Badge>
                     <Badge
                       variant="outline"
@@ -525,15 +525,15 @@ export function AIAnalyticsDashboard() {
               className="text-2xl font-bold"
               aria-label={`Ticket médio de R$ ${
                 metrics?.averageTreatmentValue.toLocaleString(
-                  "pt-BR",
+                  'pt-BR',
                 )
               }`}
             >
-              R$ {metrics?.averageTreatmentValue.toLocaleString("pt-BR")}
+              R$ {metrics?.averageTreatmentValue.toLocaleString('pt-BR',)}
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  );
+  )
 }

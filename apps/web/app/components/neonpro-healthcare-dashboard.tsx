@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Avatar,
@@ -35,10 +35,10 @@ import {
   Tabs,
   TabsContent,
   Textarea,
-} from "@/components/ui";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { AnimatePresence, motion } from "framer-motion";
+} from '@/components/ui'
+import { format, } from 'date-fns'
+import { ptBR, } from 'date-fns/locale'
+import { AnimatePresence, motion, } from 'framer-motion'
 
 import {
   BarChart3,
@@ -67,177 +67,177 @@ import {
   UserPlus,
   Users,
   Zap,
-} from "lucide-react";
-import type React from "react";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+} from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState, } from 'react'
 
 // Constants for time calculations
-const MILLISECONDS_PER_SECOND = 1000;
-const SECONDS_PER_MINUTE = 60;
-const MINUTES_PER_HOUR = 60;
-const DEFAULT_TIMEOUT_MS = 1000;
+const MILLISECONDS_PER_SECOND = 1000
+const SECONDS_PER_MINUTE = 60
+const MINUTES_PER_HOUR = 60
+const DEFAULT_TIMEOUT_MS = 1000
 
 interface NeonProDashboardProps {
-  userId: string;
-  tenantId: string;
+  userId: string
+  tenantId: string
 }
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: string;
-  department: string;
-  status: "online" | "offline" | "away";
-  lastSeen: Date;
+  id: string
+  name: string
+  email: string
+  avatar?: string
+  role: string
+  department: string
+  status: 'online' | 'offline' | 'away'
+  lastSeen: Date
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Activity {
-  id: string;
-  user: User;
-  action: string;
-  target: string;
-  timestamp: Date;
-  metadata?: Record<string, string | number | boolean>;
+  id: string
+  user: User
+  action: string
+  target: string
+  timestamp: Date
+  metadata?: Record<string, string | number | boolean>
 }
 
 interface Metric {
-  id: string;
-  label: string;
-  value: number;
-  previousValue: number;
-  change: number;
-  trend: "up" | "down" | "stable";
-  format: "number" | "percentage" | "currency";
-  icon: React.ComponentType<{ className?: string; }>;
+  id: string
+  label: string
+  value: number
+  previousValue: number
+  change: number
+  trend: 'up' | 'down' | 'stable'
+  format: 'number' | 'percentage' | 'currency'
+  icon: React.ComponentType<{ className?: string }>
 }
 
 interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: "pending" | "in-progress" | "completed" | "cancelled";
-  priority: "low" | "medium" | "high" | "urgent";
-  assignee: User;
-  dueDate: Date;
-  tags: string[];
-  progress: number;
+  id: string
+  title: string
+  description: string
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  assignee: User
+  dueDate: Date
+  tags: string[]
+  progress: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: "planning" | "active" | "on-hold" | "completed";
-  progress: number;
-  startDate: Date;
-  endDate: Date;
-  team: User[];
-  budget: number;
-  spent: number;
-  tasks: Task[];
+  id: string
+  name: string
+  description: string
+  status: 'planning' | 'active' | 'on-hold' | 'completed'
+  progress: number
+  startDate: Date
+  endDate: Date
+  team: User[]
+  budget: number
+  spent: number
+  tasks: Task[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: "info" | "success" | "warning" | "error";
-  timestamp: Date;
-  read: boolean;
+  id: string
+  title: string
+  message: string
+  type: 'info' | 'success' | 'warning' | 'error'
+  timestamp: Date
+  read: boolean
   action?: {
-    label: string;
-    url: string;
-  };
+    label: string
+    url: string
+  }
 }
 
 // AI Enhancement Types
 interface AIInsight {
-  id: string;
-  type: "prediction" | "recommendation" | "alert" | "trend";
-  title: string;
-  description: string;
-  confidence: number; // 0-100
-  impact: "low" | "medium" | "high" | "critical";
-  category: "patient-flow" | "resource" | "efficiency" | "compliance";
-  data: unknown;
-  timestamp: Date;
-  actionable: boolean;
+  id: string
+  type: 'prediction' | 'recommendation' | 'alert' | 'trend'
+  title: string
+  description: string
+  confidence: number // 0-100
+  impact: 'low' | 'medium' | 'high' | 'critical'
+  category: 'patient-flow' | 'resource' | 'efficiency' | 'compliance'
+  data: unknown
+  timestamp: Date
+  actionable: boolean
 }
 
 type SmartMetric = Metric & {
   prediction?: {
-    value: number;
-    confidence: number;
-    timeframe: string;
-  };
-  aiInsight?: string;
-  recommendation?: string;
-};
+    value: number
+    confidence: number
+    timeframe: string
+  }
+  aiInsight?: string
+  recommendation?: string
+}
 
 interface FeatureFlags {
-  aiInsights: boolean;
-  predictiveAnalytics: boolean;
-  realTimeAlerts: boolean;
-  aiRecommendations: boolean;
-  smartMetrics: boolean;
+  aiInsights: boolean
+  predictiveAnalytics: boolean
+  realTimeAlerts: boolean
+  aiRecommendations: boolean
+  smartMetrics: boolean
 }
 
 interface AIState {
-  insights: AIInsight[];
-  isLoading: boolean;
-  lastUpdate: Date | null;
-  error: string | null;
-  featureFlags: FeatureFlags;
+  insights: AIInsight[]
+  isLoading: boolean
+  lastUpdate: Date | null
+  error: string | null
+  featureFlags: FeatureFlags
 }
 
 type AIAction =
-  | { type: "SET_INSIGHTS"; payload: AIInsight[]; }
-  | { type: "ADD_INSIGHT"; payload: AIInsight; }
-  | { type: "SET_LOADING"; payload: boolean; }
-  | { type: "SET_ERROR"; payload: string | null; }
-  | { type: "UPDATE_FEATURE_FLAGS"; payload: Partial<FeatureFlags>; }
-  | { type: "SET_LAST_UPDATE"; payload: Date; };
+  | { type: 'SET_INSIGHTS'; payload: AIInsight[] }
+  | { type: 'ADD_INSIGHT'; payload: AIInsight }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'UPDATE_FEATURE_FLAGS'; payload: Partial<FeatureFlags> }
+  | { type: 'SET_LAST_UPDATE'; payload: Date }
 
 // AI Context - Removed unused AIContext
 
 // AI Reducer
-const aiReducer = (state: AIState, action: AIAction): AIState => {
+const aiReducer = (state: AIState, action: AIAction,): AIState => {
   switch (action.type) {
-    case "SET_INSIGHTS": {
-      return { ...state, insights: action.payload, lastUpdate: new Date() };
+    case 'SET_INSIGHTS': {
+      return { ...state, insights: action.payload, lastUpdate: new Date(), }
     }
-    case "ADD_INSIGHT": {
+    case 'ADD_INSIGHT': {
       return {
         ...state,
-        insights: [...state.insights, action.payload],
+        insights: [...state.insights, action.payload,],
         lastUpdate: new Date(),
-      };
+      }
     }
-    case "SET_LOADING": {
-      return { ...state, isLoading: action.payload };
+    case 'SET_LOADING': {
+      return { ...state, isLoading: action.payload, }
     }
-    case "SET_ERROR": {
-      return { ...state, error: action.payload };
+    case 'SET_ERROR': {
+      return { ...state, error: action.payload, }
     }
-    case "UPDATE_FEATURE_FLAGS": {
+    case 'UPDATE_FEATURE_FLAGS': {
       return {
         ...state,
-        featureFlags: { ...state.featureFlags, ...action.payload },
-      };
+        featureFlags: { ...state.featureFlags, ...action.payload, },
+      }
     }
-    case "SET_LAST_UPDATE": {
-      return { ...state, lastUpdate: action.payload };
+    case 'SET_LAST_UPDATE': {
+      return { ...state, lastUpdate: action.payload, }
     }
     default: {
-      return state;
+      return state
     }
   }
-};
+}
 
 // Initial AI State
 const initialAIState: AIState = {
@@ -252,255 +252,255 @@ const initialAIState: AIState = {
     aiRecommendations: true,
     smartMetrics: true,
   },
-};
+}
 
 // AI Hook - Removed unused useAIState function
 
 // Mock AI Data
 const MOCK_AI_INSIGHTS: AIInsight[] = [
   {
-    id: "insight-1",
-    type: "prediction",
-    title: "Pico de Demanda Previsto",
-    description: "Aumento de 15% na demanda de consultas para próxima semana",
+    id: 'insight-1',
+    type: 'prediction',
+    title: 'Pico de Demanda Previsto',
+    description: 'Aumento de 15% na demanda de consultas para próxima semana',
     confidence: 85,
-    impact: "medium",
-    category: "patient-flow",
-    data: { increase: 15, timeframe: "next_week" },
+    impact: 'medium',
+    category: 'patient-flow',
+    data: { increase: 15, timeframe: 'next_week', },
     timestamp: new Date(),
     actionable: true,
   },
   {
-    id: "insight-2",
-    type: "alert",
-    title: "Recurso Sub-utilizado",
-    description: "Sala 3 teve apenas 60% de ocupação nos últimos 7 dias",
+    id: 'insight-2',
+    type: 'alert',
+    title: 'Recurso Sub-utilizado',
+    description: 'Sala 3 teve apenas 60% de ocupação nos últimos 7 dias',
     confidence: 92,
-    impact: "low",
-    category: "resource",
-    data: { room: "Sala 3", utilization: 60 },
+    impact: 'low',
+    category: 'resource',
+    data: { room: 'Sala 3', utilization: 60, },
     timestamp: new Date(),
     actionable: true,
   },
   {
-    id: "insight-3",
-    type: "recommendation",
-    title: "Otimização de Agendamento",
-    description: "Redistribuir horários pode reduzir tempo de espera em 22%",
+    id: 'insight-3',
+    type: 'recommendation',
+    title: 'Otimização de Agendamento',
+    description: 'Redistribuir horários pode reduzir tempo de espera em 22%',
     confidence: 78,
-    impact: "high",
-    category: "efficiency",
-    data: { reduction: 22, action: "reschedule" },
+    impact: 'high',
+    category: 'efficiency',
+    data: { reduction: 22, action: 'reschedule', },
     timestamp: new Date(),
     actionable: true,
   },
-];
+]
 
 const MOCK_USERS: User[] = [
   {
-    id: "1",
-    name: "João Silva",
-    email: "joao@empresa.com",
-    avatar: "/avatars/joao.jpg",
-    role: "Desenvolvedor",
-    department: "Tecnologia",
-    status: "online",
+    id: '1',
+    name: 'João Silva',
+    email: 'joao@empresa.com',
+    avatar: '/avatars/joao.jpg',
+    role: 'Desenvolvedor',
+    department: 'Tecnologia',
+    status: 'online',
     lastSeen: new Date(),
   },
   {
-    id: "2",
-    name: "Maria Santos",
-    email: "maria@empresa.com",
-    avatar: "/avatars/maria.jpg",
-    role: "Designer",
-    department: "Design",
-    status: "away",
+    id: '2',
+    name: 'Maria Santos',
+    email: 'maria@empresa.com',
+    avatar: '/avatars/maria.jpg',
+    role: 'Designer',
+    department: 'Design',
+    status: 'away',
     lastSeen: new Date(
       Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * 30,
     ),
   },
   {
-    id: "3",
-    name: "Pedro Costa",
-    email: "pedro@empresa.com",
-    role: "Gerente",
-    department: "Gestão",
-    status: "offline",
+    id: '3',
+    name: 'Pedro Costa',
+    email: 'pedro@empresa.com',
+    role: 'Gerente',
+    department: 'Gestão',
+    status: 'offline',
     lastSeen: new Date(
       Date.now()
         - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2,
     ),
   },
-];
+]
 
 const MOCK_METRICS: Metric[] = [
   {
-    id: "revenue",
-    label: "Receita Mensal",
+    id: 'revenue',
+    label: 'Receita Mensal',
     value: 125_000,
     previousValue: 115_000,
     change: 8.7,
-    trend: "up",
-    format: "currency",
+    trend: 'up',
+    format: 'currency',
     icon: DollarSign,
   },
   {
-    id: "users",
-    label: "Usuários Ativos",
+    id: 'users',
+    label: 'Usuários Ativos',
     value: 2840,
     previousValue: 2650,
     change: 7.2,
-    trend: "up",
-    format: "number",
+    trend: 'up',
+    format: 'number',
     icon: Users,
   },
   {
-    id: "conversion",
-    label: "Taxa de Conversão",
+    id: 'conversion',
+    label: 'Taxa de Conversão',
     value: 3.2,
     previousValue: 2.8,
     change: 14.3,
-    trend: "up",
-    format: "percentage",
+    trend: 'up',
+    format: 'percentage',
     icon: Target,
   },
   {
-    id: "satisfaction",
-    label: "Satisfação do Cliente",
+    id: 'satisfaction',
+    label: 'Satisfação do Cliente',
     value: 4.8,
     previousValue: 4.6,
     change: 4.3,
-    trend: "up",
-    format: "number",
+    trend: 'up',
+    format: 'number',
     icon: Star,
   },
-];
+]
 
 export default function NeonProHealthcareDashboard({
   userId: _userId,
   tenantId: _tenantId,
-}: NeonProDashboardProps) {
+}: NeonProDashboardProps,) {
   // Removed unused state - selectedDate functionality not implemented yet
-  const [activeTab, setActiveTab] = useState("overview");
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab,] = useState('overview',)
+  const [loading, setLoading,] = useState(true,)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [filterStatus, setFilterStatus,] = useState('all',)
+  const [sidebarOpen, setSidebarOpen,] = useState(false,)
 
   // AI State Management
-  const [aiState, aiDispatch] = useReducer(aiReducer, initialAIState);
+  const [aiState, aiDispatch,] = useReducer(aiReducer, initialAIState,)
 
   // AI Hook for accessing context  };
 
   useEffect(() => {
     // Simular carregamento de dados e AI insights
     const loadData = async () => {
-      setLoading(true);
-      aiDispatch({ type: "SET_LOADING", payload: true });
+      setLoading(true,)
+      aiDispatch({ type: 'SET_LOADING', payload: true, },)
 
       try {
         // Simular carregamento de dados principais
-        await new Promise((resolve) => setTimeout(resolve, DEFAULT_TIMEOUT_MS));
+        await new Promise((resolve,) => setTimeout(resolve, DEFAULT_TIMEOUT_MS,))
 
         // Simular carregamento de insights AI
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        aiDispatch({ type: "SET_INSIGHTS", payload: MOCK_AI_INSIGHTS });
+        await new Promise((resolve,) => setTimeout(resolve, 500,))
+        aiDispatch({ type: 'SET_INSIGHTS', payload: MOCK_AI_INSIGHTS, },)
 
-        setLoading(false);
-        aiDispatch({ type: "SET_LOADING", payload: false });
+        setLoading(false,)
+        aiDispatch({ type: 'SET_LOADING', payload: false, },)
       } catch {
         aiDispatch({
-          type: "SET_ERROR",
-          payload: "Erro ao carregar insights AI",
-        });
-        setLoading(false);
-        aiDispatch({ type: "SET_LOADING", payload: false });
+          type: 'SET_ERROR',
+          payload: 'Erro ao carregar insights AI',
+        },)
+        setLoading(false,)
+        aiDispatch({ type: 'SET_LOADING', payload: false, },)
       }
-    };
+    }
 
-    loadData();
-  }, []);
+    loadData()
+  }, [],)
 
   // Real-time AI updates simulation
   useEffect(() => {
     if (!aiState.featureFlags.realTimeAlerts) {
-      return;
+      return
     }
 
     const interval = setInterval(() => {
       // Simular atualizações em tempo real
-      const randomInsight = MOCK_AI_INSIGHTS[Math.floor(Math.random() * MOCK_AI_INSIGHTS.length)];
+      const randomInsight = MOCK_AI_INSIGHTS[Math.floor(Math.random() * MOCK_AI_INSIGHTS.length,)]
       const updatedInsight = {
         ...randomInsight,
         id: `${randomInsight.id}-${Date.now()}`,
         timestamp: new Date(),
-      };
+      }
 
       if (Math.random() > 0.7) {
         // 30% chance de nova insight
-        aiDispatch({ type: "ADD_INSIGHT", payload: updatedInsight });
+        aiDispatch({ type: 'ADD_INSIGHT', payload: updatedInsight, },)
       }
-    }, 30_000); // A cada 30 segundos
+    }, 30_000,) // A cada 30 segundos
 
-    return () => clearInterval(interval);
-  }, [aiState.featureFlags.realTimeAlerts]);
+    return () => clearInterval(interval,)
+  }, [aiState.featureFlags.realTimeAlerts,],)
 
-  const formatCurrency = useCallback((value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  }, []);
+  const formatCurrency = useCallback((value: number,) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    },).format(value,)
+  }, [],)
 
-  const formatPercentage = useCallback((value: number) => {
-    return `${value.toFixed(1)}%`;
-  }, []);
+  const formatPercentage = useCallback((value: number,) => {
+    return `${value.toFixed(1,)}%`
+  }, [],)
 
-  const getMetricIcon = useCallback((metric: Metric) => {
-    const { icon: Icon } = metric;
-    return <Icon className="h-4 w-4" />;
-  }, []);
+  const getMetricIcon = useCallback((metric: Metric,) => {
+    const { icon: Icon, } = metric
+    return <Icon className="h-4 w-4" />
+  }, [],)
 
-  const getChangeColor = useCallback((change: number) => {
+  const getChangeColor = useCallback((change: number,) => {
     if (change > 0) {
-      return "text-green-600";
+      return 'text-green-600'
     }
     if (change < 0) {
-      return "text-red-600";
+      return 'text-red-600'
     }
-    return "text-gray-600";
-  }, []);
+    return 'text-gray-600'
+  }, [],)
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string,) => {
     const variants = {
-      online: "bg-green-100 text-green-800",
-      offline: "bg-gray-100 text-gray-800",
-      away: "bg-yellow-100 text-yellow-800",
-      pending: "bg-blue-100 text-blue-800",
-      "in-progress": "bg-orange-100 text-orange-800",
-      completed: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      low: "bg-gray-100 text-gray-800",
-      medium: "bg-blue-100 text-blue-800",
-      high: "bg-orange-100 text-orange-800",
-      urgent: "bg-red-100 text-red-800",
-    };
+      online: 'bg-green-100 text-green-800',
+      offline: 'bg-gray-100 text-gray-800',
+      away: 'bg-yellow-100 text-yellow-800',
+      pending: 'bg-blue-100 text-blue-800',
+      'in-progress': 'bg-orange-100 text-orange-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
+      low: 'bg-gray-100 text-gray-800',
+      medium: 'bg-blue-100 text-blue-800',
+      high: 'bg-orange-100 text-orange-800',
+      urgent: 'bg-red-100 text-red-800',
+    }
 
     return (
       <Badge
         className={variants[status as keyof typeof variants]
-          || "bg-gray-100 text-gray-800"}
+          || 'bg-gray-100 text-gray-800'}
       >
         {status}
       </Badge>
-    );
-  };
+    )
+  }
 
   // AI Component Functions
   const SmartMetricCard = useMemo(
-    () => ({ metric }: { metric: Metric; }) => {
-      const smartMetric = metric as SmartMetric;
-      const { prediction } = smartMetric;
+    () => ({ metric, }: { metric: Metric },) => {
+      const smartMetric = metric as SmartMetric
+      const { prediction, } = smartMetric
 
       return (
         <Card className="relative">
@@ -516,30 +516,30 @@ export default function NeonProHealthcareDashboard({
             <CardTitle className="font-medium text-sm">
               {metric.label}
             </CardTitle>
-            {getMetricIcon(metric)}
+            {getMetricIcon(metric,)}
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl">
-              {metric.format === "currency" && formatCurrency(metric.value)}
-              {metric.format === "percentage"
-                && formatPercentage(metric.value)}
-              {metric.format === "number" && metric.value.toLocaleString()}
+              {metric.format === 'currency' && formatCurrency(metric.value,)}
+              {metric.format === 'percentage'
+                && formatPercentage(metric.value,)}
+              {metric.format === 'number' && metric.value.toLocaleString()}
             </div>
-            <p className={`text-xs ${getChangeColor(metric.change)}`}>
-              {metric.change > 0 ? "+" : ""}
-              {metric.change.toFixed(1)}% desde o período anterior
+            <p className={`text-xs ${getChangeColor(metric.change,)}`}>
+              {metric.change > 0 ? '+' : ''}
+              {metric.change.toFixed(1,)}% desde o período anterior
             </p>
             {aiState.featureFlags.predictiveAnalytics && prediction && (
               <div className="mt-2 rounded border border-blue-200 bg-blue-50 p-2">
                 <p className="text-blue-700 text-xs">
                   <TrendingUp className="mr-1 inline h-3 w-3" />
-                  Previsão: {formatPercentage(prediction.confidence)} de confiança
+                  Previsão: {formatPercentage(prediction.confidence,)} de confiança
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
-      );
+      )
     },
     [
       aiState.featureFlags,
@@ -548,48 +548,48 @@ export default function NeonProHealthcareDashboard({
       getChangeColor,
       getMetricIcon,
     ],
-  );
+  )
 
-  const AIInsightWidget = useCallback(({ insight }: { insight: AIInsight; }) => {
+  const AIInsightWidget = useCallback(({ insight, }: { insight: AIInsight },) => {
     const getInsightIcon = () => {
       switch (insight.type) {
-        case "prediction": {
-          return <TrendingUp className="h-4 w-4" />;
+        case 'prediction': {
+          return <TrendingUp className="h-4 w-4" />
         }
-        case "recommendation": {
-          return <Zap className="h-4 w-4" />;
+        case 'recommendation': {
+          return <Zap className="h-4 w-4" />
         }
-        case "alert": {
-          return <Bell className="h-4 w-4" />;
+        case 'alert': {
+          return <Bell className="h-4 w-4" />
         }
-        case "trend": {
-          return <BarChart3 className="h-4 w-4" />;
+        case 'trend': {
+          return <BarChart3 className="h-4 w-4" />
         }
         default: {
-          return <Brain className="h-4 w-4" />;
+          return <Brain className="h-4 w-4" />
         }
       }
-    };
+    }
 
     const getImpactColor = () => {
       switch (insight.impact) {
-        case "critical": {
-          return "border-red-500 bg-red-50";
+        case 'critical': {
+          return 'border-red-500 bg-red-50'
         }
-        case "high": {
-          return "border-orange-500 bg-orange-50";
+        case 'high': {
+          return 'border-orange-500 bg-orange-50'
         }
-        case "medium": {
-          return "border-yellow-500 bg-yellow-50";
+        case 'medium': {
+          return 'border-yellow-500 bg-yellow-50'
         }
-        case "low": {
-          return "border-blue-500 bg-blue-50";
+        case 'low': {
+          return 'border-blue-500 bg-blue-50'
         }
         default: {
-          return "border-gray-500 bg-gray-50";
+          return 'border-gray-500 bg-gray-50'
         }
       }
-    };
+    }
 
     return (
       <Card className={`${getImpactColor()} border-l-4`}>
@@ -608,7 +608,7 @@ export default function NeonProHealthcareDashboard({
           <p className="mb-2 text-gray-700 text-sm">{insight.description}</p>
           <div className="flex items-center justify-between text-gray-500 text-xs">
             <span>{insight.category}</span>
-            <span>{format(insight.timestamp, "HH:mm", { locale: ptBR })}</span>
+            <span>{format(insight.timestamp, 'HH:mm', { locale: ptBR, },)}</span>
           </div>
           {insight.actionable && (
             <Button className="mt-2 w-full" size="sm" variant="outline">
@@ -617,8 +617,8 @@ export default function NeonProHealthcareDashboard({
           )}
         </CardContent>
       </Card>
-    );
-  }, []);
+    )
+  }, [],)
 
   if (loading) {
     return (
@@ -628,7 +628,7 @@ export default function NeonProHealthcareDashboard({
           <p className="text-gray-600 text-sm">Carregando dashboard...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -639,7 +639,7 @@ export default function NeonProHealthcareDashboard({
           <div className="flex items-center space-x-4">
             <Button
               className="lg:hidden"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => setSidebarOpen(!sidebarOpen,)}
               size="sm"
               variant="ghost"
             >
@@ -653,7 +653,7 @@ export default function NeonProHealthcareDashboard({
               <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <Input
                 className="w-64 pl-10"
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e,) => setSearchQuery(e.target.value,)}
                 placeholder="Buscar..."
                 value={searchQuery}
               />
@@ -676,26 +676,26 @@ export default function NeonProHealthcareDashboard({
         <AnimatePresence>
           {(sidebarOpen || window.innerWidth >= 1024) && (
             <motion.aside
-              animate={{ x: 0, opacity: 1 }}
+              animate={{ x: 0, opacity: 1, }}
               className="min-h-screen w-64 bg-white shadow-lg"
-              exit={{ x: -300, opacity: 0 }}
-              initial={{ x: -300, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              exit={{ x: -300, opacity: 0, }}
+              initial={{ x: -300, opacity: 0, }}
+              transition={{ duration: 0.3, }}
             >
               <nav className="p-6">
                 <div className="space-y-2">
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("overview")}
-                    variant={activeTab === "overview" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('overview',)}
+                    variant={activeTab === 'overview' ? 'default' : 'ghost'}
                   >
                     <Home className="mr-2 h-4 w-4" />
                     Visão Geral
                   </Button>
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("analytics")}
-                    variant={activeTab === "analytics" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('analytics',)}
+                    variant={activeTab === 'analytics' ? 'default' : 'ghost'}
                   >
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Analytics
@@ -703,16 +703,16 @@ export default function NeonProHealthcareDashboard({
                   {aiState.featureFlags.aiInsights && (
                     <Button
                       className="w-full justify-start"
-                      onClick={() => setActiveTab("ai-insights")}
-                      variant={activeTab === "ai-insights" ? "default" : "ghost"}
+                      onClick={() => setActiveTab('ai-insights',)}
+                      variant={activeTab === 'ai-insights' ? 'default' : 'ghost'}
                     >
                       <Brain className="mr-2 h-4 w-4" />
                       IA Insights
-                      {aiState.insights.filter((i) => i.impact === "critical")
+                      {aiState.insights.filter((i,) => i.impact === 'critical')
                             .length > 0 && (
                         <Badge className="ml-auto" variant="destructive">
                           {aiState.insights.filter(
-                            (i) => i.impact === "critical",
+                            (i,) => i.impact === 'critical',
                           ).length}
                         </Badge>
                       )}
@@ -720,32 +720,32 @@ export default function NeonProHealthcareDashboard({
                   )}
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("projects")}
-                    variant={activeTab === "projects" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('projects',)}
+                    variant={activeTab === 'projects' ? 'default' : 'ghost'}
                   >
                     <Briefcase className="mr-2 h-4 w-4" />
                     Projetos
                   </Button>
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("tasks")}
-                    variant={activeTab === "tasks" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('tasks',)}
+                    variant={activeTab === 'tasks' ? 'default' : 'ghost'}
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Tarefas
                   </Button>
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("team")}
-                    variant={activeTab === "team" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('team',)}
+                    variant={activeTab === 'team' ? 'default' : 'ghost'}
                   >
                     <Users className="mr-2 h-4 w-4" />
                     Equipe
                   </Button>
                   <Button
                     className="w-full justify-start"
-                    onClick={() => setActiveTab("settings")}
-                    variant={activeTab === "settings" ? "default" : "ghost"}
+                    onClick={() => setActiveTab('settings',)}
+                    variant={activeTab === 'settings' ? 'default' : 'ghost'}
                   >
                     <Settings className="mr-2 h-4 w-4" />
                     Configurações
@@ -763,7 +763,7 @@ export default function NeonProHealthcareDashboard({
             <TabsContent className="space-y-6" value="overview">
               {/* Enhanced Metrics Cards with AI */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {MOCK_METRICS.map((metric) => <SmartMetricCard key={metric.id} metric={metric} />)}
+                {MOCK_METRICS.map((metric,) => <SmartMetricCard key={metric.id} metric={metric} />)}
               </div>
 
               {/* AI Insights Section */}
@@ -780,7 +780,7 @@ export default function NeonProHealthcareDashboard({
                     </Badge>
                   </div>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {aiState.insights.slice(0, 3).map((insight) => (
+                    {aiState.insights.slice(0, 3,).map((insight,) => (
                       <AIInsightWidget insight={insight} key={insight.id} />
                     ))}
                   </div>
@@ -826,7 +826,7 @@ export default function NeonProHealthcareDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {[1, 2, 3, 4, 5].map((i) => (
+                    {[1, 2, 3, 4, 5,].map((i,) => (
                       <div className="flex items-center space-x-4" key={i}>
                         <Avatar className="h-8 w-8">
                           <AvatarFallback>U{i}</AvatarFallback>
@@ -836,7 +836,7 @@ export default function NeonProHealthcareDashboard({
                             Usuário {i} executou uma ação importante
                           </p>
                           <p className="text-gray-500 text-xs">
-                            há {i} minuto{i > 1 ? "s" : ""}
+                            há {i} minuto{i > 1 ? 's' : ''}
                           </p>
                         </div>
                         <Badge variant="outline">Nova</Badge>
@@ -889,10 +889,10 @@ export default function NeonProHealthcareDashboard({
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {[
-                      { label: "Receita", current: 85, target: 100 },
-                      { label: "Usuários", current: 92, target: 100 },
-                      { label: "Satisfação", current: 78, target: 100 },
-                    ].map((goal, i) => (
+                      { label: 'Receita', current: 85, target: 100, },
+                      { label: 'Usuários', current: 92, target: 100, },
+                      { label: 'Satisfação', current: 78, target: 100, },
+                    ].map((goal, i,) => (
                       <div className="space-y-2" key={i}>
                         <div className="flex justify-between text-sm">
                           <span>{goal.label}</span>
@@ -916,9 +916,9 @@ export default function NeonProHealthcareDashboard({
                   </h2>
                   <div className="flex items-center space-x-2">
                     <Badge
-                      variant={aiState.isLoading ? "secondary" : "default"}
+                      variant={aiState.isLoading ? 'secondary' : 'default'}
                     >
-                      {aiState.isLoading ? "Atualizando..." : "Ativo"}
+                      {aiState.isLoading ? 'Atualizando...' : 'Ativo'}
                     </Badge>
                     <Button size="sm" variant="outline">
                       <Settings className="mr-2 h-4 w-4" />
@@ -943,18 +943,18 @@ export default function NeonProHealthcareDashboard({
                     <CardContent>
                       <div className="space-y-4">
                         {aiState.insights
-                          .filter((insight) =>
-                            insight.impact === "critical"
+                          .filter((insight,) =>
+                            insight.impact === 'critical'
                           )
-                          .slice(0, 3)
-                          .map((insight) => (
+                          .slice(0, 3,)
+                          .map((insight,) => (
                             <AIInsightWidget
                               insight={insight}
                               key={insight.id}
                             />
                           ))}
                         {aiState.insights.filter(
-                              (insight) => insight.impact === "critical",
+                              (insight,) => insight.impact === 'critical',
                             ).length === 0 && (
                           <div className="flex h-32 items-center justify-center text-gray-500">
                             <div className="text-center">
@@ -1014,7 +1014,7 @@ export default function NeonProHealthcareDashboard({
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {aiState.insights.map((insight) => (
+                      {aiState.insights.map((insight,) => (
                         <AIInsightWidget insight={insight} key={insight.id} />
                       ))}
                     </div>
@@ -1073,7 +1073,7 @@ export default function NeonProHealthcareDashboard({
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
+                {[1, 2, 3, 4, 5, 6,].map((i,) => (
                   <Card key={i}>
                     <CardHeader>
                       <div className="flex items-center justify-between">
@@ -1091,14 +1091,14 @@ export default function NeonProHealthcareDashboard({
                         <div>
                           <div className="mb-2 flex justify-between text-sm">
                             <span>Progresso</span>
-                            <span>{Math.floor(Math.random() * 100)}%</span>
+                            <span>{Math.floor(Math.random() * 100,)}%</span>
                           </div>
-                          <Progress value={Math.floor(Math.random() * 100)} />
+                          <Progress value={Math.floor(Math.random() * 100,)} />
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="-space-x-2 flex">
-                            {[1, 2, 3].map((j) => (
+                            {[1, 2, 3,].map((j,) => (
                               <Avatar
                                 className="h-6 w-6 border-2 border-white"
                                 key={j}
@@ -1110,8 +1110,8 @@ export default function NeonProHealthcareDashboard({
                             ))}
                           </div>
                           {getStatusBadge(
-                            ["planning", "active", "on-hold", "completed"][
-                              Math.floor(Math.random() * 4)
+                            ['planning', 'active', 'on-hold', 'completed',][
+                              Math.floor(Math.random() * 4,)
                             ],
                           )}
                         </div>
@@ -1122,7 +1122,7 @@ export default function NeonProHealthcareDashboard({
                               Date.now()
                                 + Math.random() * 30 * 24 * 60 * 60 * 1000,
                             ),
-                            "dd/MM/yyyy",
+                            'dd/MM/yyyy',
                             {
                               locale: ptBR,
                             },
@@ -1175,7 +1175,7 @@ export default function NeonProHealthcareDashboard({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {[1, 2, 3, 4, 5].map((i) => (
+                      {[1, 2, 3, 4, 5,].map((i,) => (
                         <TableRow key={i}>
                           <TableCell>
                             <div>
@@ -1197,15 +1197,15 @@ export default function NeonProHealthcareDashboard({
                           </TableCell>
                           <TableCell>
                             {getStatusBadge(
-                              ["pending", "in-progress", "completed"][
-                                Math.floor(Math.random() * 3)
+                              ['pending', 'in-progress', 'completed',][
+                                Math.floor(Math.random() * 3,)
                               ],
                             )}
                           </TableCell>
                           <TableCell>
                             {getStatusBadge(
-                              ["low", "medium", "high", "urgent"][
-                                Math.floor(Math.random() * 4)
+                              ['low', 'medium', 'high', 'urgent',][
+                                Math.floor(Math.random() * 4,)
                               ],
                             )}
                           </TableCell>
@@ -1215,7 +1215,7 @@ export default function NeonProHealthcareDashboard({
                                 Date.now()
                                   + Math.random() * 14 * 24 * 60 * 60 * 1000,
                               ),
-                              "dd/MM",
+                              'dd/MM',
                               {
                                 locale: ptBR,
                               },
@@ -1250,7 +1250,7 @@ export default function NeonProHealthcareDashboard({
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {MOCK_USERS.map((user) => (
+                {MOCK_USERS.map((user,) => (
                   <Card key={user.id}>
                     <CardHeader>
                       <div className="flex items-center space-x-4">
@@ -1258,9 +1258,9 @@ export default function NeonProHealthcareDashboard({
                           <AvatarImage src={user.avatar} />
                           <AvatarFallback>
                             {user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                              .split(' ',)
+                              .map((n,) => n[0])
+                              .join('',)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
@@ -1273,7 +1273,7 @@ export default function NeonProHealthcareDashboard({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-500 text-sm">Status</span>
-                          {getStatusBadge(user.status)}
+                          {getStatusBadge(user.status,)}
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-gray-500 text-sm">
@@ -1286,9 +1286,9 @@ export default function NeonProHealthcareDashboard({
                             Último acesso
                           </span>
                           <span className="text-sm">
-                            {format(user.lastSeen, "dd/MM HH:mm", {
+                            {format(user.lastSeen, 'dd/MM HH:mm', {
                               locale: ptBR,
-                            })}
+                            },)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2 pt-2">
@@ -1352,11 +1352,11 @@ export default function NeonProHealthcareDashboard({
                         <Switch
                           id="ai-insights-switch"
                           checked={aiState.featureFlags.aiInsights}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={(checked,) =>
                             aiDispatch({
-                              type: "UPDATE_FEATURE_FLAGS",
-                              payload: { aiInsights: checked },
-                            })}
+                              type: 'UPDATE_FEATURE_FLAGS',
+                              payload: { aiInsights: checked, },
+                            },)}
                         />
                         AI Insights
                       </label>
@@ -1369,11 +1369,11 @@ export default function NeonProHealthcareDashboard({
                         <Switch
                           id="predictive-analytics-switch"
                           checked={aiState.featureFlags.predictiveAnalytics}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={(checked,) =>
                             aiDispatch({
-                              type: "UPDATE_FEATURE_FLAGS",
-                              payload: { predictiveAnalytics: checked },
-                            })}
+                              type: 'UPDATE_FEATURE_FLAGS',
+                              payload: { predictiveAnalytics: checked, },
+                            },)}
                         />
                         Análise Preditiva
                       </label>
@@ -1386,11 +1386,11 @@ export default function NeonProHealthcareDashboard({
                         <Switch
                           id="realtime-alerts-switch"
                           checked={aiState.featureFlags.realTimeAlerts}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={(checked,) =>
                             aiDispatch({
-                              type: "UPDATE_FEATURE_FLAGS",
-                              payload: { realTimeAlerts: checked },
-                            })}
+                              type: 'UPDATE_FEATURE_FLAGS',
+                              payload: { realTimeAlerts: checked, },
+                            },)}
                         />
                         Alertas em Tempo Real
                       </label>
@@ -1403,11 +1403,11 @@ export default function NeonProHealthcareDashboard({
                         <Switch
                           id="smart-metrics-switch"
                           checked={aiState.featureFlags.smartMetrics}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={(checked,) =>
                             aiDispatch({
-                              type: "UPDATE_FEATURE_FLAGS",
-                              payload: { smartMetrics: checked },
-                            })}
+                              type: 'UPDATE_FEATURE_FLAGS',
+                              payload: { smartMetrics: checked, },
+                            },)}
                         />
                         Métricas Inteligentes
                       </label>
@@ -1420,7 +1420,7 @@ export default function NeonProHealthcareDashboard({
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg">Todos os Insights</h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {aiState.insights.map((insight) => (
+                  {aiState.insights.map((insight,) => (
                     <AIInsightWidget insight={insight} key={insight.id} />
                   ))}
                 </div>
@@ -1555,5 +1555,5 @@ export default function NeonProHealthcareDashboard({
         </main>
       </div>
     </div>
-  );
+  )
 }

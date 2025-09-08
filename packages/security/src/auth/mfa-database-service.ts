@@ -1,73 +1,73 @@
-import { createClient } from "@supabase/supabase-js";
-import type { MfaMethod } from "./mfa-service";
+import { createClient, } from '@supabase/supabase-js'
+import type { MfaMethod, } from './mfa-service'
 
 export interface MfaSettings {
-  id?: string;
-  userId: string;
-  clinicId?: string;
-  mfaEnabled: boolean;
-  preferredMethod?: MfaMethod;
-  enforced: boolean;
+  id?: string
+  userId: string
+  clinicId?: string
+  mfaEnabled: boolean
+  preferredMethod?: MfaMethod
+  enforced: boolean
 
   // SMS settings
-  smsEnabled: boolean;
-  smsPhoneNumber?: string;
-  smsVerified: boolean;
-  smsLastUsed?: Date;
+  smsEnabled: boolean
+  smsPhoneNumber?: string
+  smsVerified: boolean
+  smsLastUsed?: Date
 
   // Email settings
-  emailEnabled: boolean;
-  emailAddress?: string;
-  emailVerified: boolean;
-  emailLastUsed?: Date;
+  emailEnabled: boolean
+  emailAddress?: string
+  emailVerified: boolean
+  emailLastUsed?: Date
 
   // TOTP settings
-  totpEnabled: boolean;
-  totpSecret?: string;
-  totpVerified: boolean;
-  totpLastUsed?: Date;
+  totpEnabled: boolean
+  totpSecret?: string
+  totpVerified: boolean
+  totpLastUsed?: Date
 
   // Biometric settings
-  biometricEnabled: boolean;
-  biometricVerified: boolean;
-  biometricLastUsed?: Date;
+  biometricEnabled: boolean
+  biometricVerified: boolean
+  biometricLastUsed?: Date
 
   // Backup codes
-  backupCodesEnabled: boolean;
-  backupCodesCount: number;
+  backupCodesEnabled: boolean
+  backupCodesCount: number
 
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface MfaVerificationCode {
-  id?: string;
-  userId: string;
-  clinicId?: string;
-  code: string;
-  type: "sms" | "email" | "totp" | "recovery";
-  phoneNumber?: string;
-  email?: string;
-  used: boolean;
-  attempts: number;
-  maxAttempts: number;
-  expiresAt: Date;
-  createdAt?: Date;
-  verifiedAt?: Date;
+  id?: string
+  userId: string
+  clinicId?: string
+  code: string
+  type: 'sms' | 'email' | 'totp' | 'recovery'
+  phoneNumber?: string
+  email?: string
+  used: boolean
+  attempts: number
+  maxAttempts: number
+  expiresAt: Date
+  createdAt?: Date
+  verifiedAt?: Date
 }
 
 export interface MfaAuditLog {
-  id?: string;
-  userId: string;
-  clinicId?: string;
-  eventType: string;
-  eventDescription?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  success: boolean;
-  errorMessage?: string;
-  metadata?: Record<string, unknown>;
-  createdAt?: Date;
+  id?: string
+  userId: string
+  clinicId?: string
+  eventType: string
+  eventDescription?: string
+  ipAddress?: string
+  userAgent?: string
+  success: boolean
+  errorMessage?: string
+  metadata?: Record<string, unknown>
+  createdAt?: Date
 }
 
 /**
@@ -76,67 +76,67 @@ export interface MfaAuditLog {
  */
 // Database row interfaces for type safety
 interface MfaSettingsRow {
-  id: string;
-  user_id: string;
-  clinic_id?: string;
-  mfa_enabled: boolean;
-  preferred_method?: string;
-  enforced: boolean;
-  sms_enabled: boolean;
-  sms_phone_number?: string;
-  sms_verified: boolean;
-  sms_last_used?: string;
-  email_enabled: boolean;
-  email_address?: string;
-  email_verified: boolean;
-  email_last_used?: string;
-  totp_enabled: boolean;
-  totp_secret?: string;
-  totp_verified: boolean;
-  totp_last_used?: string;
-  biometric_enabled: boolean;
-  biometric_verified: boolean;
-  biometric_last_used?: string;
-  backup_codes_enabled: boolean;
-  backup_codes_count: number;
-  created_at?: string;
-  updated_at?: string;
+  id: string
+  user_id: string
+  clinic_id?: string
+  mfa_enabled: boolean
+  preferred_method?: string
+  enforced: boolean
+  sms_enabled: boolean
+  sms_phone_number?: string
+  sms_verified: boolean
+  sms_last_used?: string
+  email_enabled: boolean
+  email_address?: string
+  email_verified: boolean
+  email_last_used?: string
+  totp_enabled: boolean
+  totp_secret?: string
+  totp_verified: boolean
+  totp_last_used?: string
+  biometric_enabled: boolean
+  biometric_verified: boolean
+  biometric_last_used?: string
+  backup_codes_enabled: boolean
+  backup_codes_count: number
+  created_at?: string
+  updated_at?: string
 }
 
 interface MfaVerificationCodeRow {
-  id: string;
-  user_id: string;
-  clinic_id?: string;
-  code: string;
-  type: string;
-  phone_number?: string;
-  email?: string;
-  used: boolean;
-  attempts: number;
-  max_attempts: number;
-  expires_at: string;
-  created_at?: string;
-  verified_at?: string;
+  id: string
+  user_id: string
+  clinic_id?: string
+  code: string
+  type: string
+  phone_number?: string
+  email?: string
+  used: boolean
+  attempts: number
+  max_attempts: number
+  expires_at: string
+  created_at?: string
+  verified_at?: string
 }
 
 export class MfaDatabaseService {
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-  );
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+  )
 
   /**
    * Get MFA settings for a user
    */
-  async getMfaSettings(userId: string): Promise<MfaSettings | null> {
-    const { data, error } = await this.supabase
-      .from("user_mfa_settings")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+  async getMfaSettings(userId: string,): Promise<MfaSettings | null> {
+    const { data, error, } = await this.supabase
+      .from('user_mfa_settings',)
+      .select('*',)
+      .eq('user_id', userId,)
+      .single()
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         // No settings found, return default
         return {
           userId,
@@ -152,9 +152,9 @@ export class MfaDatabaseService {
           biometricVerified: false,
           backupCodesEnabled: false,
           backupCodesCount: 0,
-        };
+        }
       }
-      throw error;
+      throw error
     }
 
     return {
@@ -168,30 +168,30 @@ export class MfaDatabaseService {
       smsPhoneNumber: data.sms_phone_number,
       smsVerified: data.sms_verified,
       smsLastUsed: data.sms_last_used
-        ? new Date(data.sms_last_used)
+        ? new Date(data.sms_last_used,)
         : undefined,
       emailEnabled: data.email_enabled,
       emailAddress: data.email_address,
       emailVerified: data.email_verified,
       emailLastUsed: data.email_last_used
-        ? new Date(data.email_last_used)
+        ? new Date(data.email_last_used,)
         : undefined,
       totpEnabled: data.totp_enabled,
       totpSecret: data.totp_secret,
       totpVerified: data.totp_verified,
       totpLastUsed: data.totp_last_used
-        ? new Date(data.totp_last_used)
+        ? new Date(data.totp_last_used,)
         : undefined,
       biometricEnabled: data.biometric_enabled,
       biometricVerified: data.biometric_verified,
       biometricLastUsed: data.biometric_last_used
-        ? new Date(data.biometric_last_used)
+        ? new Date(data.biometric_last_used,)
         : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
-      createdAt: data.created_at ? new Date(data.created_at) : undefined,
-      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-    };
+      createdAt: data.created_at ? new Date(data.created_at,) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at,) : undefined,
+    }
   }
 
   /**
@@ -224,26 +224,26 @@ export class MfaDatabaseService {
       backup_codes_enabled: settings.backupCodesEnabled,
       backup_codes_count: settings.backupCodesCount,
       updated_at: new Date().toISOString(),
-    };
-
-    const { data, error } = await this.supabase
-      .from("user_mfa_settings")
-      .upsert(dbData)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
     }
 
-    return this.mapDbDataToSettings(data);
+    const { data, error, } = await this.supabase
+      .from('user_mfa_settings',)
+      .upsert(dbData,)
+      .select()
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    return this.mapDbDataToSettings(data,)
   }
 
   /**
    * Store verification code
    */
   async storeVerificationCode(
-    code: Omit<MfaVerificationCode, "id">,
+    code: Omit<MfaVerificationCode, 'id'>,
   ): Promise<string> {
     const dbData = {
       user_id: code.userId,
@@ -256,19 +256,19 @@ export class MfaDatabaseService {
       attempts: code.attempts,
       max_attempts: code.maxAttempts,
       expires_at: code.expiresAt.toISOString(),
-    };
-
-    const { data, error } = await this.supabase
-      .from("mfa_verification_codes")
-      .insert(dbData)
-      .select("id")
-      .single();
-
-    if (error) {
-      throw error;
     }
 
-    return data.id;
+    const { data, error, } = await this.supabase
+      .from('mfa_verification_codes',)
+      .insert(dbData,)
+      .select('id',)
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    return data.id
   }
 
   /**
@@ -277,61 +277,61 @@ export class MfaDatabaseService {
   async verifyCode(
     userId: string,
     code: string,
-    type: MfaVerificationCode["type"],
+    type: MfaVerificationCode['type'],
   ): Promise<{
-    valid: boolean;
-    codeRecord?: MfaVerificationCode;
+    valid: boolean
+    codeRecord?: MfaVerificationCode
   }> {
     // Get the most recent unused code of this type for the user
-    const { data: codes, error } = await this.supabase
-      .from("mfa_verification_codes")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("type", type)
-      .eq("used", false)
-      .gt("expires_at", new Date().toISOString())
-      .order("created_at", { ascending: false })
-      .limit(1);
+    const { data: codes, error, } = await this.supabase
+      .from('mfa_verification_codes',)
+      .select('*',)
+      .eq('user_id', userId,)
+      .eq('type', type,)
+      .eq('used', false,)
+      .gt('expires_at', new Date().toISOString(),)
+      .order('created_at', { ascending: false, },)
+      .limit(1,)
 
     if (error) {
-      throw error;
+      throw error
     }
 
     if (!codes || codes.length === 0) {
-      return { valid: false };
+      return { valid: false, }
     }
 
-    const [codeRecord] = codes;
+    const [codeRecord,] = codes
 
     // Check if code matches
-    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts
 
     // Increment attempts and potentially mark as used
     const updates: Record<string, unknown> = {
       attempts: codeRecord.attempts + 1,
-    };
+    }
 
     if (valid) {
-      updates.used = true;
-      updates.verified_at = new Date().toISOString();
+      updates.used = true
+      updates.verified_at = new Date().toISOString()
     }
 
     await this.supabase
-      .from("mfa_verification_codes")
-      .update(updates)
-      .eq("id", codeRecord.id);
+      .from('mfa_verification_codes',)
+      .update(updates,)
+      .eq('id', codeRecord.id,)
 
     return {
       valid,
-      codeRecord: this.mapDbDataToCode(codeRecord),
-    };
+      codeRecord: this.mapDbDataToCode(codeRecord,),
+    }
   }
 
   /**
    * Log MFA audit event
    */
   async logAuditEvent(
-    event: Omit<MfaAuditLog, "id" | "createdAt">,
+    event: Omit<MfaAuditLog, 'id' | 'createdAt'>,
   ): Promise<void> {
     const dbData = {
       user_id: event.userId,
@@ -343,12 +343,12 @@ export class MfaDatabaseService {
       success: event.success,
       error_message: event.errorMessage,
       metadata: event.metadata,
-    };
+    }
 
-    const { error } = await this.supabase.from("mfa_audit_logs").insert(dbData);
+    const { error, } = await this.supabase.from('mfa_audit_logs',).insert(dbData,)
 
     if (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -356,54 +356,54 @@ export class MfaDatabaseService {
    * Clean expired verification codes
    */
   async cleanExpiredCodes(): Promise<number> {
-    const { data, error } = await this.supabase
-      .from("mfa_verification_codes")
+    const { data, error, } = await this.supabase
+      .from('mfa_verification_codes',)
       .delete()
-      .lt("expires_at", new Date().toISOString())
-      .select("id");
+      .lt('expires_at', new Date().toISOString(),)
+      .select('id',)
 
     if (error) {
-      throw error;
+      throw error
     }
 
-    return data?.length || 0;
+    return data?.length || 0
   }
 
   /**
    * Get user lockout status
    */
-  async getUserLockout(userId: string): Promise<{
-    locked: boolean;
-    lockoutUntil?: Date;
-    attempts: number;
+  async getUserLockout(userId: string,): Promise<{
+    locked: boolean
+    lockoutUntil?: Date
+    attempts: number
   }> {
-    const { data, error } = await this.supabase
-      .from("mfa_verification_codes")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("used", false)
-      .gte("attempts", "max_attempts")
-      .gt("expires_at", new Date().toISOString())
-      .order("created_at", { ascending: false })
-      .limit(1);
+    const { data, error, } = await this.supabase
+      .from('mfa_verification_codes',)
+      .select('*',)
+      .eq('user_id', userId,)
+      .eq('used', false,)
+      .gte('attempts', 'max_attempts',)
+      .gt('expires_at', new Date().toISOString(),)
+      .order('created_at', { ascending: false, },)
+      .limit(1,)
 
     if (error) {
-      throw error;
+      throw error
     }
 
     if (!data || data.length === 0) {
-      return { locked: false, attempts: 0 };
+      return { locked: false, attempts: 0, }
     }
 
-    const [record] = data;
+    const [record,] = data
     return {
       locked: record.attempts >= record.max_attempts,
-      lockoutUntil: new Date(record.expires_at),
+      lockoutUntil: new Date(record.expires_at,),
       attempts: record.attempts,
-    };
+    }
   }
 
-  private mapDbDataToSettings(data: MfaSettingsRow): MfaSettings {
+  private mapDbDataToSettings(data: MfaSettingsRow,): MfaSettings {
     return {
       id: data.id,
       userId: data.user_id,
@@ -415,47 +415,47 @@ export class MfaDatabaseService {
       smsPhoneNumber: data.sms_phone_number,
       smsVerified: data.sms_verified,
       smsLastUsed: data.sms_last_used
-        ? new Date(data.sms_last_used)
+        ? new Date(data.sms_last_used,)
         : undefined,
       emailEnabled: data.email_enabled,
       emailAddress: data.email_address,
       emailVerified: data.email_verified,
       emailLastUsed: data.email_last_used
-        ? new Date(data.email_last_used)
+        ? new Date(data.email_last_used,)
         : undefined,
       totpEnabled: data.totp_enabled,
       totpSecret: data.totp_secret,
       totpVerified: data.totp_verified,
       totpLastUsed: data.totp_last_used
-        ? new Date(data.totp_last_used)
+        ? new Date(data.totp_last_used,)
         : undefined,
       biometricEnabled: data.biometric_enabled,
       biometricVerified: data.biometric_verified,
       biometricLastUsed: data.biometric_last_used
-        ? new Date(data.biometric_last_used)
+        ? new Date(data.biometric_last_used,)
         : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
-      createdAt: data.created_at ? new Date(data.created_at) : undefined,
-      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-    };
+      createdAt: data.created_at ? new Date(data.created_at,) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at,) : undefined,
+    }
   }
 
-  private mapDbDataToCode(data: MfaVerificationCodeRow): MfaVerificationCode {
+  private mapDbDataToCode(data: MfaVerificationCodeRow,): MfaVerificationCode {
     return {
       id: data.id,
       userId: data.user_id,
       clinicId: data.clinic_id,
       code: data.code,
-      type: data.type as "sms" | "email" | "totp" | "recovery",
+      type: data.type as 'sms' | 'email' | 'totp' | 'recovery',
       phoneNumber: data.phone_number,
       email: data.email,
       used: data.used,
       attempts: data.attempts,
       maxAttempts: data.max_attempts,
-      expiresAt: new Date(data.expires_at),
-      createdAt: data.created_at ? new Date(data.created_at) : undefined,
-      verifiedAt: data.verified_at ? new Date(data.verified_at) : undefined,
-    };
+      expiresAt: new Date(data.expires_at,),
+      createdAt: data.created_at ? new Date(data.created_at,) : undefined,
+      verifiedAt: data.verified_at ? new Date(data.verified_at,) : undefined,
+    }
   }
 }

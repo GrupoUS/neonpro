@@ -1,65 +1,65 @@
-"use client";
+'use client'
 
-"use client";
+'use client'
 
-import { createClient } from "@/app/utils/supabase/client";
-import type { AuthError, Session, User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from "react";
-import type { ReactNode } from "react";
+import { createClient, } from '@/app/utils/supabase/client'
+import type { AuthError, Session, User, } from '@supabase/supabase-js'
+import { createContext, useContext, useEffect, useState, } from 'react'
+import type { ReactNode, } from 'react'
 
 // Types
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
+  user: User | null
+  session: Session | null
+  loading: boolean
   signIn: (
     email: string,
     password: string,
   ) => Promise<{
-    data: unknown;
-    error: AuthError | null;
-  }>;
+    data: unknown
+    error: AuthError | null
+  }>
   signUp: (
     email: string,
     password: string,
     additionalData?: {
-      fullName: string;
-      cpf: string;
-      phone: string;
-      clinicName: string;
-      userType: string;
+      fullName: string
+      cpf: string
+      phone: string
+      clinicName: string
+      userType: string
     },
   ) => Promise<{
-    data: unknown;
-    error: AuthError | null;
-  }>;
+    data: unknown
+    error: AuthError | null
+  }>
   signInWithGoogle: () => Promise<{
-    data: unknown;
-    error: AuthError | null;
-  }>;
-  signOut: () => Promise<{ error: AuthError | null; }>;
-  resetPassword: (email: string) => Promise<{
-    data: unknown;
-    error: AuthError | null;
-  }>;
+    data: unknown
+    error: AuthError | null
+  }>
+  signOut: () => Promise<{ error: AuthError | null }>
+  resetPassword: (email: string,) => Promise<{
+    data: unknown
+    error: AuthError | null
+  }>
 }
 
 // Create context
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined,)
 
 // Provider props
 interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 // Provider component
-export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>();
-  const [session, setSession] = useState<Session | null>();
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children, }: AuthProviderProps,) {
+  const [user, setUser,] = useState<User | null>()
+  const [session, setSession,] = useState<Session | null>()
+  const [loading, setLoading,] = useState(true,)
 
   // Initialize Supabase client
-  const supabase = createClient();
+  const supabase = createClient()
 
   // Initialize session on mount
   useEffect(() => {
@@ -67,73 +67,73 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initializeAuth = async () => {
       try {
         const {
-          data: { session },
+          data: { session, },
           error,
-        } = await supabase.auth.getSession();
+        } = await supabase.auth.getSession()
 
         if (error) {
         } else {
-          setSession(session);
-          setUser(session?.user ?? undefined);
+          setSession(session,)
+          setUser(session?.user ?? undefined,)
         }
       } catch {
       } finally {
-        setLoading(false);
+        setLoading(false,)
       }
-    };
+    }
 
-    initializeAuth();
+    initializeAuth()
 
     // Listen for auth changes
     const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? undefined);
+      data: { subscription, },
+    } = supabase.auth.onAuthStateChange(async (event, session,) => {
+      setSession(session,)
+      setUser(session?.user ?? undefined,)
 
-      if (event === "SIGNED_IN") {
+      if (event === 'SIGNED_IN') {
         // Redirect to dashboard after successful sign in
-        window.location.href = "/dashboard";
-      } else if (event === "SIGNED_OUT") {
+        window.location.href = '/dashboard'
+      } else if (event === 'SIGNED_OUT') {
         // Redirect to login after sign out
-        window.location.href = "/login";
+        window.location.href = '/login'
       }
 
-      setLoading(false);
-    });
+      setLoading(false,)
+    },)
 
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]); // Auth methods
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
+    return () => subscription.unsubscribe()
+  }, [supabase.auth,],) // Auth methods
+  const signIn = async (email: string, password: string,) => {
+    setLoading(true,)
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error, } = await supabase.auth.signInWithPassword({
         email,
         password,
-      });
+      },)
 
-      return { data, error };
+      return { data, error, }
     } catch (error) {
-      return { data: undefined, error: error as AuthError };
+      return { data: undefined, error: error as AuthError, }
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  };
+  }
 
   const signUp = async (
     email: string,
     password: string,
     additionalData?: {
-      fullName: string;
-      cpf: string;
-      phone: string;
-      clinicName: string;
-      userType: string;
+      fullName: string
+      cpf: string
+      phone: string
+      clinicName: string
+      userType: string
     },
   ) => {
-    setLoading(true);
+    setLoading(true,)
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error, } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -148,13 +148,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
             : undefined,
         },
-      });
+      },)
 
       // If signup successful and we have additional data, save to profiles table
       if (data?.user && !error && additionalData) {
         try {
-          const { error: profileError } = await supabase
-            .from("profiles")
+          const { error: profileError, } = await supabase
+            .from('profiles',)
             .insert({
               id: data.user.id,
               full_name: additionalData.fullName,
@@ -165,7 +165,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               email,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-            });
+            },)
 
           if (profileError) {
             // Don't fail the signup for profile errors
@@ -175,134 +175,133 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       }
 
-      return { data, error };
+      return { data, error, }
     } catch (error) {
-      return { data: undefined, error: error as AuthError };
+      return { data: undefined, error: error as AuthError, }
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  };
+  }
 
   const signInWithGoogle = async () => {
-    setLoading(true);
+    setLoading(true,)
     try {
       // Use Supabase's signInWithOAuth but in popup mode
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+      const { data, error, } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/popup-callback`,
           queryParams: {
-            access_type: "offline",
-            prompt: "consent",
+            access_type: 'offline',
+            prompt: 'consent',
           },
         },
-      });
+      },)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       // If we have a URL, open it in a popup
       if (data?.url) {
-        const left = window.screen.width / 2 - 250;
-        const top = window.screen.height / 2 - 300;
-        const features =
-          `width=500,height=600,scrollbars=yes,resizable=yes,left=${left},top=${top}`;
+        const left = window.screen.width / 2 - 250
+        const top = window.screen.height / 2 - 300
+        const features = `width=500,height=600,scrollbars=yes,resizable=yes,left=${left},top=${top}`
         const popup = window.open(
           data.url,
-          "google-oauth",
+          'google-oauth',
           features,
-        );
+        )
 
         if (!popup) {
-          throw new Error("Popup blocked. Please allow popups for this site.");
+          throw new Error('Popup blocked. Please allow popups for this site.',)
         }
 
         // Return a promise that resolves when authentication completes
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject,) => {
           // Listen for messages from popup
-          const messageListener = (event: MessageEvent) => {
+          const messageListener = (event: MessageEvent,) => {
             if (event.origin !== window.location.origin) {
-              return;
+              return
             }
 
-            if (event.data.type === "OAUTH_SUCCESS") {
-              popup.close();
-              window.removeEventListener("message", messageListener);
-              clearInterval(checkClosed);
+            if (event.data.type === 'OAUTH_SUCCESS') {
+              popup.close()
+              window.removeEventListener('message', messageListener,)
+              clearInterval(checkClosed,)
 
               // Get the fresh session and update our state
               supabase.auth
                 .getSession()
-                .then(({ data: sessionData, error: sessionError }) => {
+                .then(({ data: sessionData, error: sessionError, },) => {
                   if (sessionError) {
-                    reject(sessionError);
-                    return;
+                    reject(sessionError,)
+                    return
                   }
 
                   if (sessionData?.session) {
                     // Update the local state immediately
-                    setSession(sessionData.session);
-                    setUser(sessionData.session.user);
+                    setSession(sessionData.session,)
+                    setUser(sessionData.session.user,)
 
                     // Redirect to dashboard immediately
-                    window.location.href = "/dashboard";
+                    window.location.href = '/dashboard'
                   }
 
-                  resolve({ data: sessionData, error: undefined });
-                });
-            } else if (event.data.type === "OAUTH_ERROR") {
-              popup.close();
-              window.removeEventListener("message", messageListener);
-              clearInterval(checkClosed);
-              reject(new Error(event.data.error || "Authentication failed"));
+                  resolve({ data: sessionData, error: undefined, },)
+                },)
+            } else if (event.data.type === 'OAUTH_ERROR') {
+              popup.close()
+              window.removeEventListener('message', messageListener,)
+              clearInterval(checkClosed,)
+              reject(new Error(event.data.error || 'Authentication failed',),)
             }
-          };
+          }
 
-          window.addEventListener("message", messageListener);
+          window.addEventListener('message', messageListener,)
 
           // Check if popup was closed manually
           const checkClosed = setInterval(() => {
             if (popup.closed) {
-              clearInterval(checkClosed);
-              window.removeEventListener("message", messageListener);
-              reject(new Error("Authentication was cancelled"));
+              clearInterval(checkClosed,)
+              window.removeEventListener('message', messageListener,)
+              reject(new Error('Authentication was cancelled',),)
             }
-          }, 1000);
-        });
+          }, 1000,)
+        },)
       }
 
-      return { data, error };
+      return { data, error, }
     } catch (error) {
-      return { data: undefined, error: error as AuthError };
+      return { data: undefined, error: error as AuthError, }
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  };
+  }
 
   const signOut = async () => {
-    setLoading(true);
+    setLoading(true,)
     try {
-      const { error } = await supabase.auth.signOut();
-      return { error };
+      const { error, } = await supabase.auth.signOut()
+      return { error, }
     } catch (error) {
-      return { error: error as AuthError };
+      return { error: error as AuthError, }
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  };
+  }
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async (email: string,) => {
     try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { data, error, } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
+      },)
 
-      return { data, error };
+      return { data, error, }
     } catch (error) {
-      return { data: undefined, error: error as AuthError };
+      return { data: undefined, error: error as AuthError, }
     }
-  }; // Context value
+  } // Context value
   const value: AuthContextType = {
     user,
     session,
@@ -312,19 +311,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signInWithGoogle,
     signOut,
     resetPassword,
-  };
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 // Hook to use auth context
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext,)
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider',)
   }
-  return context;
+  return context
 }
 
 // Export types for use in other files
-export type { AuthContextType, AuthError, Session, User };
+export type { AuthContextType, AuthError, Session, User, }

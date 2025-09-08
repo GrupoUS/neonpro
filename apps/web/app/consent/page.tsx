@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Checkbox, } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/select'
+import { Separator, } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -29,8 +29,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   AlertTriangle,
   Archive,
@@ -50,375 +50,375 @@ import {
   UserCheck,
   Users,
   XCircle,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 // Types for consent management
 interface ConsentRecord {
-  id: string;
-  patientId: string;
-  patientName: string;
+  id: string
+  patientId: string
+  patientName: string
   consentType:
-    | "medical_procedure"
-    | "photography"
-    | "data_processing"
-    | "marketing"
-    | "research"
-    | "telemedicine"
-    | "minor_guardian";
-  status: "active" | "withdrawn" | "expired" | "pending" | "rejected";
-  grantedDate: string;
-  expiryDate: string;
-  withdrawnDate?: string;
+    | 'medical_procedure'
+    | 'photography'
+    | 'data_processing'
+    | 'marketing'
+    | 'research'
+    | 'telemedicine'
+    | 'minor_guardian'
+  status: 'active' | 'withdrawn' | 'expired' | 'pending' | 'rejected'
+  grantedDate: string
+  expiryDate: string
+  withdrawnDate?: string
   legalBasis:
-    | "consent"
-    | "legal_obligation"
-    | "vital_interests"
-    | "public_interest"
-    | "legitimate_interest";
-  purpose: string;
-  description: string;
-  version: string;
-  digitalSignature?: string;
-  witnessSignature?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  isMinor: boolean;
+    | 'consent'
+    | 'legal_obligation'
+    | 'vital_interests'
+    | 'public_interest'
+    | 'legitimate_interest'
+  purpose: string
+  description: string
+  version: string
+  digitalSignature?: string
+  witnessSignature?: string
+  ipAddress?: string
+  userAgent?: string
+  isMinor: boolean
   guardianInfo?: {
-    name: string;
-    relationship: string;
-    signature: string;
-  };
+    name: string
+    relationship: string
+    signature: string
+  }
 }
 
 interface PatientRightsRequest {
-  id: string;
-  patientId: string;
-  patientName: string;
+  id: string
+  patientId: string
+  patientName: string
   requestType:
-    | "access"
-    | "rectification"
-    | "erasure"
-    | "portability"
-    | "restriction"
-    | "objection";
-  status: "pending" | "in_progress" | "completed" | "rejected";
-  submittedDate: string;
-  description: string;
-  response?: string;
-  completedDate?: string;
-  legalDeadline: string;
+    | 'access'
+    | 'rectification'
+    | 'erasure'
+    | 'portability'
+    | 'restriction'
+    | 'objection'
+  status: 'pending' | 'in_progress' | 'completed' | 'rejected'
+  submittedDate: string
+  description: string
+  response?: string
+  completedDate?: string
+  legalDeadline: string
 }
 
 interface AuditTrailEntry {
-  id: string;
-  timestamp: string;
+  id: string
+  timestamp: string
   action:
-    | "consent_granted"
-    | "consent_withdrawn"
-    | "consent_modified"
-    | "rights_request"
-    | "data_accessed"
-    | "data_exported";
-  userId: string;
-  userName: string;
-  patientId: string;
-  patientName: string;
-  details: string;
-  ipAddress: string;
-  userAgent: string;
-  legalBasis: string;
-  dataCategories: string[];
+    | 'consent_granted'
+    | 'consent_withdrawn'
+    | 'consent_modified'
+    | 'rights_request'
+    | 'data_accessed'
+    | 'data_exported'
+  userId: string
+  userName: string
+  patientId: string
+  patientName: string
+  details: string
+  ipAddress: string
+  userAgent: string
+  legalBasis: string
+  dataCategories: string[]
 }
 
 // Mock data for consent management
 const mockConsentRecords: ConsentRecord[] = [
   {
-    id: "consent-001",
-    patientId: "patient-001",
-    patientName: "Maria Silva Santos",
-    consentType: "medical_procedure",
-    status: "active",
-    grantedDate: "2024-01-15T10:00:00Z",
-    expiryDate: "2025-01-15T10:00:00Z",
-    legalBasis: "consent",
-    purpose: "Realização de procedimento estético de preenchimento facial",
-    description: "Consentimento para procedimento de preenchimento facial com ácido hialurônico",
-    version: "2.1",
-    digitalSignature: "SHA256:a1b2c3d4...",
-    ipAddress: "192.168.1.100",
-    userAgent: "Mozilla/5.0...",
+    id: 'consent-001',
+    patientId: 'patient-001',
+    patientName: 'Maria Silva Santos',
+    consentType: 'medical_procedure',
+    status: 'active',
+    grantedDate: '2024-01-15T10:00:00Z',
+    expiryDate: '2025-01-15T10:00:00Z',
+    legalBasis: 'consent',
+    purpose: 'Realização de procedimento estético de preenchimento facial',
+    description: 'Consentimento para procedimento de preenchimento facial com ácido hialurônico',
+    version: '2.1',
+    digitalSignature: 'SHA256:a1b2c3d4...',
+    ipAddress: '192.168.1.100',
+    userAgent: 'Mozilla/5.0...',
     isMinor: false,
   },
   {
-    id: "consent-002",
-    patientId: "patient-002",
-    patientName: "Ana Beatriz Costa",
-    consentType: "photography",
-    status: "active",
-    grantedDate: "2024-01-20T14:30:00Z",
-    expiryDate: "2025-01-20T14:30:00Z",
-    legalBasis: "consent",
-    purpose: "Documentação fotográfica para fins clínicos e educacionais",
-    description: "Autorização para captação e uso de imagens antes/depois do tratamento",
-    version: "1.8",
-    digitalSignature: "SHA256:e5f6g7h8...",
+    id: 'consent-002',
+    patientId: 'patient-002',
+    patientName: 'Ana Beatriz Costa',
+    consentType: 'photography',
+    status: 'active',
+    grantedDate: '2024-01-20T14:30:00Z',
+    expiryDate: '2025-01-20T14:30:00Z',
+    legalBasis: 'consent',
+    purpose: 'Documentação fotográfica para fins clínicos e educacionais',
+    description: 'Autorização para captação e uso de imagens antes/depois do tratamento',
+    version: '1.8',
+    digitalSignature: 'SHA256:e5f6g7h8...',
     isMinor: false,
   },
   {
-    id: "consent-003",
-    patientId: "patient-003",
-    patientName: "João Pedro Oliveira",
-    consentType: "minor_guardian",
-    status: "active",
-    grantedDate: "2024-02-01T09:15:00Z",
-    expiryDate: "2026-02-01T09:15:00Z",
-    legalBasis: "consent",
-    purpose: "Tratamento dermatológico para menor de idade",
-    description: "Consentimento do responsável legal para tratamento de acne",
-    version: "3.0",
+    id: 'consent-003',
+    patientId: 'patient-003',
+    patientName: 'João Pedro Oliveira',
+    consentType: 'minor_guardian',
+    status: 'active',
+    grantedDate: '2024-02-01T09:15:00Z',
+    expiryDate: '2026-02-01T09:15:00Z',
+    legalBasis: 'consent',
+    purpose: 'Tratamento dermatológico para menor de idade',
+    description: 'Consentimento do responsável legal para tratamento de acne',
+    version: '3.0',
     isMinor: true,
     guardianInfo: {
-      name: "Carlos Oliveira",
-      relationship: "Pai",
-      signature: "SHA256:i9j0k1l2...",
+      name: 'Carlos Oliveira',
+      relationship: 'Pai',
+      signature: 'SHA256:i9j0k1l2...',
     },
   },
   {
-    id: "consent-004",
-    patientId: "patient-004",
-    patientName: "Beatriz Ferreira Lima",
-    consentType: "data_processing",
-    status: "expired",
-    grantedDate: "2023-01-10T11:00:00Z",
-    expiryDate: "2024-01-10T11:00:00Z",
-    legalBasis: "consent",
-    purpose: "Processamento de dados pessoais para fins de tratamento",
-    description: "Consentimento LGPD para processamento de dados de saúde",
-    version: "1.5",
+    id: 'consent-004',
+    patientId: 'patient-004',
+    patientName: 'Beatriz Ferreira Lima',
+    consentType: 'data_processing',
+    status: 'expired',
+    grantedDate: '2023-01-10T11:00:00Z',
+    expiryDate: '2024-01-10T11:00:00Z',
+    legalBasis: 'consent',
+    purpose: 'Processamento de dados pessoais para fins de tratamento',
+    description: 'Consentimento LGPD para processamento de dados de saúde',
+    version: '1.5',
     isMinor: false,
   },
   {
-    id: "consent-005",
-    patientId: "patient-005",
-    patientName: "Roberto Santos Silva",
-    consentType: "marketing",
-    status: "withdrawn",
-    grantedDate: "2024-01-05T16:20:00Z",
-    expiryDate: "2025-01-05T16:20:00Z",
-    withdrawnDate: "2024-02-15T10:30:00Z",
-    legalBasis: "consent",
-    purpose: "Comunicações de marketing e promoções",
-    description: "Autorização para envio de materiais promocionais",
-    version: "1.2",
+    id: 'consent-005',
+    patientId: 'patient-005',
+    patientName: 'Roberto Santos Silva',
+    consentType: 'marketing',
+    status: 'withdrawn',
+    grantedDate: '2024-01-05T16:20:00Z',
+    expiryDate: '2025-01-05T16:20:00Z',
+    withdrawnDate: '2024-02-15T10:30:00Z',
+    legalBasis: 'consent',
+    purpose: 'Comunicações de marketing e promoções',
+    description: 'Autorização para envio de materiais promocionais',
+    version: '1.2',
     isMinor: false,
   },
-];
+]
 
 const mockRightsRequests: PatientRightsRequest[] = [
   {
-    id: "request-001",
-    patientId: "patient-006",
-    patientName: "Carla Mendes Rodrigues",
-    requestType: "access",
-    status: "pending",
-    submittedDate: "2024-02-20T14:00:00Z",
-    legalDeadline: "2024-03-05T23:59:59Z",
-    description: "Solicitação de acesso a todos os dados pessoais processados pela clínica",
+    id: 'request-001',
+    patientId: 'patient-006',
+    patientName: 'Carla Mendes Rodrigues',
+    requestType: 'access',
+    status: 'pending',
+    submittedDate: '2024-02-20T14:00:00Z',
+    legalDeadline: '2024-03-05T23:59:59Z',
+    description: 'Solicitação de acesso a todos os dados pessoais processados pela clínica',
   },
   {
-    id: "request-002",
-    patientId: "patient-007",
-    patientName: "Felipe Souza Lima",
-    requestType: "erasure",
-    status: "in_progress",
-    submittedDate: "2024-02-18T10:30:00Z",
-    legalDeadline: "2024-03-03T23:59:59Z",
+    id: 'request-002',
+    patientId: 'patient-007',
+    patientName: 'Felipe Souza Lima',
+    requestType: 'erasure',
+    status: 'in_progress',
+    submittedDate: '2024-02-18T10:30:00Z',
+    legalDeadline: '2024-03-03T23:59:59Z',
     description:
-      "Solicitação de exclusão de todos os dados pessoais após encerramento do tratamento",
-    response: "Análise em andamento. Verificando dependências legais.",
+      'Solicitação de exclusão de todos os dados pessoais após encerramento do tratamento',
+    response: 'Análise em andamento. Verificando dependências legais.',
   },
   {
-    id: "request-003",
-    patientId: "patient-008",
-    patientName: "Juliana Costa Alves",
-    requestType: "portability",
-    status: "completed",
-    submittedDate: "2024-02-10T16:45:00Z",
-    legalDeadline: "2024-02-25T23:59:59Z",
-    completedDate: "2024-02-22T11:20:00Z",
-    description: "Solicitação de portabilidade de dados para nova clínica",
-    response: "Dados exportados e enviados conforme solicitado. Processo concluído.",
+    id: 'request-003',
+    patientId: 'patient-008',
+    patientName: 'Juliana Costa Alves',
+    requestType: 'portability',
+    status: 'completed',
+    submittedDate: '2024-02-10T16:45:00Z',
+    legalDeadline: '2024-02-25T23:59:59Z',
+    completedDate: '2024-02-22T11:20:00Z',
+    description: 'Solicitação de portabilidade de dados para nova clínica',
+    response: 'Dados exportados e enviados conforme solicitado. Processo concluído.',
   },
-];
+]
 
 const mockAuditTrail: AuditTrailEntry[] = [
   {
-    id: "audit-001",
-    timestamp: "2024-02-22T15:30:00Z",
-    action: "consent_granted",
-    userId: "user-001",
-    userName: "Dr. Maria Santos",
-    patientId: "patient-009",
-    patientName: "Lucas Andrade Silva",
-    details: "Consentimento para procedimento de botox concedido",
-    ipAddress: "192.168.1.105",
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    legalBasis: "consent",
-    dataCategories: ["dados_saude", "dados_pessoais"],
+    id: 'audit-001',
+    timestamp: '2024-02-22T15:30:00Z',
+    action: 'consent_granted',
+    userId: 'user-001',
+    userName: 'Dr. Maria Santos',
+    patientId: 'patient-009',
+    patientName: 'Lucas Andrade Silva',
+    details: 'Consentimento para procedimento de botox concedido',
+    ipAddress: '192.168.1.105',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    legalBasis: 'consent',
+    dataCategories: ['dados_saude', 'dados_pessoais',],
   },
   {
-    id: "audit-002",
-    timestamp: "2024-02-22T14:15:00Z",
-    action: "consent_withdrawn",
-    userId: "patient-005",
-    userName: "Roberto Santos Silva",
-    patientId: "patient-005",
-    patientName: "Roberto Santos Silva",
-    details: "Consentimento de marketing retirado pelo próprio paciente",
-    ipAddress: "201.45.67.89",
-    userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X)",
-    legalBasis: "consent",
-    dataCategories: ["dados_marketing"],
+    id: 'audit-002',
+    timestamp: '2024-02-22T14:15:00Z',
+    action: 'consent_withdrawn',
+    userId: 'patient-005',
+    userName: 'Roberto Santos Silva',
+    patientId: 'patient-005',
+    patientName: 'Roberto Santos Silva',
+    details: 'Consentimento de marketing retirado pelo próprio paciente',
+    ipAddress: '201.45.67.89',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X)',
+    legalBasis: 'consent',
+    dataCategories: ['dados_marketing',],
   },
   {
-    id: "audit-003",
-    timestamp: "2024-02-22T13:00:00Z",
-    action: "rights_request",
-    userId: "patient-006",
-    userName: "Carla Mendes Rodrigues",
-    patientId: "patient-006",
-    patientName: "Carla Mendes Rodrigues",
-    details: "Solicitação de acesso aos dados pessoais submetida",
-    ipAddress: "179.123.45.67",
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-    legalBasis: "legitimate_interest",
-    dataCategories: ["dados_pessoais", "dados_saude"],
+    id: 'audit-003',
+    timestamp: '2024-02-22T13:00:00Z',
+    action: 'rights_request',
+    userId: 'patient-006',
+    userName: 'Carla Mendes Rodrigues',
+    patientId: 'patient-006',
+    patientName: 'Carla Mendes Rodrigues',
+    details: 'Solicitação de acesso aos dados pessoais submetida',
+    ipAddress: '179.123.45.67',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+    legalBasis: 'legitimate_interest',
+    dataCategories: ['dados_pessoais', 'dados_saude',],
   },
-];
+]
 
 export default function ConsentManagementPage() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [filterType, setFilterType] = useState("all");
-  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>();
+  const [activeTab, setActiveTab,] = useState('dashboard',)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [filterStatus, setFilterStatus,] = useState('all',)
+  const [filterType, setFilterType,] = useState('all',)
+  const [selectedConsent, setSelectedConsent,] = useState<ConsentRecord | null>()
   // const [isLoading, setIsLoading] = useState(false); // TODO: Implement loading state
 
   // Filter functions
-  const filteredConsents = mockConsentRecords.filter((consent) => {
-    const matchesSearch = consent.patientName.toLowerCase().includes(searchQuery.toLowerCase())
-      || consent.purpose.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = filterStatus === "all" || consent.status === filterStatus;
-    const matchesType = filterType === "all" || consent.consentType === filterType;
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  const filteredConsents = mockConsentRecords.filter((consent,) => {
+    const matchesSearch = consent.patientName.toLowerCase().includes(searchQuery.toLowerCase(),)
+      || consent.purpose.toLowerCase().includes(searchQuery.toLowerCase(),)
+    const matchesStatus = filterStatus === 'all' || consent.status === filterStatus
+    const matchesType = filterType === 'all' || consent.consentType === filterType
+    return matchesSearch && matchesStatus && matchesType
+  },)
 
-  const filteredRightsRequests = mockRightsRequests.filter((request) => {
-    const matchesSearch = request.patientName.toLowerCase().includes(searchQuery.toLowerCase())
-      || request.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredRightsRequests = mockRightsRequests.filter((request,) => {
+    const matchesSearch = request.patientName.toLowerCase().includes(searchQuery.toLowerCase(),)
+      || request.description.toLowerCase().includes(searchQuery.toLowerCase(),)
+    return matchesSearch
+  },)
 
-  const filteredAuditTrail = mockAuditTrail.filter((entry) => {
-    const matchesSearch = entry.patientName.toLowerCase().includes(searchQuery.toLowerCase())
-      || entry.details.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredAuditTrail = mockAuditTrail.filter((entry,) => {
+    const matchesSearch = entry.patientName.toLowerCase().includes(searchQuery.toLowerCase(),)
+      || entry.details.toLowerCase().includes(searchQuery.toLowerCase(),)
+    return matchesSearch
+  },)
 
   // Utility functions
-  const getStatusBadgeVariant = (status: string) => {
+  const getStatusBadgeVariant = (status: string,) => {
     switch (status) {
-      case "active": {
-        return "default";
+      case 'active': {
+        return 'default'
       }
-      case "expired": {
-        return "secondary";
+      case 'expired': {
+        return 'secondary'
       }
-      case "withdrawn": {
-        return "destructive";
+      case 'withdrawn': {
+        return 'destructive'
       }
-      case "pending": {
-        return "outline";
+      case 'pending': {
+        return 'outline'
       }
-      case "rejected": {
-        return "destructive";
+      case 'rejected': {
+        return 'destructive'
       }
-      case "in_progress": {
-        return "outline";
+      case 'in_progress': {
+        return 'outline'
       }
-      case "completed": {
-        return "default";
+      case 'completed': {
+        return 'default'
       }
       default: {
-        return "secondary";
+        return 'secondary'
       }
     }
-  };
+  }
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string,) => {
     const labels = {
-      active: "Ativo",
-      expired: "Expirado",
-      withdrawn: "Retirado",
-      pending: "Pendente",
-      rejected: "Rejeitado",
-      in_progress: "Em Andamento",
-      completed: "Concluído",
-    };
-    return labels[status as keyof typeof labels] || status;
-  };
+      active: 'Ativo',
+      expired: 'Expirado',
+      withdrawn: 'Retirado',
+      pending: 'Pendente',
+      rejected: 'Rejeitado',
+      in_progress: 'Em Andamento',
+      completed: 'Concluído',
+    }
+    return labels[status as keyof typeof labels] || status
+  }
 
-  const getConsentTypeLabel = (type: string) => {
+  const getConsentTypeLabel = (type: string,) => {
     const labels = {
-      medical_procedure: "Procedimento Médico",
-      photography: "Documentação Fotográfica",
-      data_processing: "Processamento de Dados",
-      marketing: "Marketing",
-      research: "Pesquisa",
-      telemedicine: "Telemedicina",
-      minor_guardian: "Responsável Legal",
-    };
-    return labels[type as keyof typeof labels] || type;
-  };
+      medical_procedure: 'Procedimento Médico',
+      photography: 'Documentação Fotográfica',
+      data_processing: 'Processamento de Dados',
+      marketing: 'Marketing',
+      research: 'Pesquisa',
+      telemedicine: 'Telemedicina',
+      minor_guardian: 'Responsável Legal',
+    }
+    return labels[type as keyof typeof labels] || type
+  }
 
-  const getRightsRequestTypeLabel = (type: string) => {
+  const getRightsRequestTypeLabel = (type: string,) => {
     const labels = {
-      access: "Acesso aos Dados",
-      rectification: "Retificação",
-      erasure: "Exclusão",
-      portability: "Portabilidade",
-      restriction: "Restrição",
-      objection: "Oposição",
-    };
-    return labels[type as keyof typeof labels] || type;
-  };
+      access: 'Acesso aos Dados',
+      rectification: 'Retificação',
+      erasure: 'Exclusão',
+      portability: 'Portabilidade',
+      restriction: 'Restrição',
+      objection: 'Oposição',
+    }
+    return labels[type as keyof typeof labels] || type
+  }
 
-  const calculateDaysToExpiry = (expiryDate: string) => {
-    const expiry = new Date(expiryDate);
-    const today = new Date();
-    const diffTime = expiry.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const calculateDaysToExpiry = (expiryDate: string,) => {
+    const expiry = new Date(expiryDate,)
+    const today = new Date()
+    const diffTime = expiry.getTime() - today.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24),)
+    return diffDays
+  }
 
   // Dashboard statistics
   const stats = {
     totalConsents: mockConsentRecords.length,
-    activeConsents: mockConsentRecords.filter((c) => c.status === "active")
+    activeConsents: mockConsentRecords.filter((c,) => c.status === 'active')
       .length,
-    expiringSoon: mockConsentRecords.filter((c) => {
-      const daysToExpiry = calculateDaysToExpiry(c.expiryDate);
-      return c.status === "active" && daysToExpiry <= 30 && daysToExpiry > 0;
-    }).length,
-    pendingRequests: mockRightsRequests.filter((r) => r.status === "pending")
+    expiringSoon: mockConsentRecords.filter((c,) => {
+      const daysToExpiry = calculateDaysToExpiry(c.expiryDate,)
+      return c.status === 'active' && daysToExpiry <= 30 && daysToExpiry > 0
+    },).length,
+    pendingRequests: mockRightsRequests.filter((r,) => r.status === 'pending')
       .length,
     withdrawnConsents: mockConsentRecords.filter(
-      (c) => c.status === "withdrawn",
+      (c,) => c.status === 'withdrawn',
     ).length,
-    expiredConsents: mockConsentRecords.filter((c) => c.status === "expired")
+    expiredConsents: mockConsentRecords.filter((c,) => c.status === 'expired')
       .length,
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6 lg:p-8">
@@ -598,7 +598,7 @@ export default function ConsentManagementPage() {
             >
               <TabsTrigger
                 aria-controls="dashboard-panel"
-                aria-selected={activeTab === "dashboard"}
+                aria-selected={activeTab === 'dashboard'}
                 className="flex items-center gap-2"
                 role="tab"
                 value="dashboard"
@@ -609,7 +609,7 @@ export default function ConsentManagementPage() {
               </TabsTrigger>
               <TabsTrigger
                 aria-controls="forms-panel"
-                aria-selected={activeTab === "forms"}
+                aria-selected={activeTab === 'forms'}
                 className="flex items-center gap-2"
                 role="tab"
                 value="forms"
@@ -622,7 +622,7 @@ export default function ConsentManagementPage() {
               </TabsTrigger>
               <TabsTrigger
                 aria-controls="rights-panel"
-                aria-selected={activeTab === "rights"}
+                aria-selected={activeTab === 'rights'}
                 className="flex items-center gap-2"
                 role="tab"
                 value="rights"
@@ -635,7 +635,7 @@ export default function ConsentManagementPage() {
               </TabsTrigger>
               <TabsTrigger
                 aria-controls="audit-panel"
-                aria-selected={activeTab === "audit"}
+                aria-selected={activeTab === 'audit'}
                 className="flex items-center gap-2"
                 role="tab"
                 value="audit"
@@ -646,7 +646,7 @@ export default function ConsentManagementPage() {
               </TabsTrigger>
               <TabsTrigger
                 aria-controls="admin-panel"
-                aria-selected={activeTab === "admin"}
+                aria-selected={activeTab === 'admin'}
                 className="flex items-center gap-2"
                 role="tab"
                 value="admin"
@@ -680,9 +680,9 @@ export default function ConsentManagementPage() {
                   <CardContent>
                     <div className="space-y-4">
                       {mockConsentRecords
-                        .filter((c) => c.status === "active")
-                        .slice(0, 5)
-                        .map((consent) => (
+                        .filter((c,) => c.status === 'active')
+                        .slice(0, 5,)
+                        .map((consent,) => (
                           <div
                             className="flex items-center justify-between rounded-lg bg-green-50 p-3"
                             key={consent.id}
@@ -692,7 +692,7 @@ export default function ConsentManagementPage() {
                                 {consent.patientName}
                               </p>
                               <p className="text-gray-600 text-sm">
-                                {getConsentTypeLabel(consent.consentType)}
+                                {getConsentTypeLabel(consent.consentType,)}
                               </p>
                             </div>
                             <div className="text-right">
@@ -700,7 +700,7 @@ export default function ConsentManagementPage() {
                                 className="bg-green-100 text-green-800"
                                 variant="default"
                               >
-                                {calculateDaysToExpiry(consent.expiryDate)} dias
+                                {calculateDaysToExpiry(consent.expiryDate,)} dias
                               </Badge>
                             </div>
                           </div>
@@ -723,21 +723,21 @@ export default function ConsentManagementPage() {
                   <CardContent>
                     <div className="space-y-4">
                       {mockConsentRecords
-                        .filter((c) => {
+                        .filter((c,) => {
                           const daysToExpiry = calculateDaysToExpiry(
                             c.expiryDate,
-                          );
+                          )
                           return (
-                            c.status === "active"
+                            c.status === 'active'
                             && daysToExpiry <= 30
                             && daysToExpiry > 0
-                          );
-                        })
-                        .slice(0, 5)
-                        .map((consent) => {
+                          )
+                        },)
+                        .slice(0, 5,)
+                        .map((consent,) => {
                           const daysToExpiry = calculateDaysToExpiry(
                             consent.expiryDate,
-                          );
+                          )
                           return (
                             <div
                               className="flex items-center justify-between rounded-lg bg-orange-50 p-3"
@@ -748,7 +748,7 @@ export default function ConsentManagementPage() {
                                   {consent.patientName}
                                 </p>
                                 <p className="text-gray-600 text-sm">
-                                  {getConsentTypeLabel(consent.consentType)}
+                                  {getConsentTypeLabel(consent.consentType,)}
                                 </p>
                               </div>
                               <div className="text-right">
@@ -760,8 +760,8 @@ export default function ConsentManagementPage() {
                                 </Badge>
                               </div>
                             </div>
-                          );
-                        })}
+                          )
+                        },)}
                       {stats.expiringSoon === 0 && (
                         <p className="py-4 text-center text-gray-500">
                           Nenhum consentimento expirando em breve
@@ -785,19 +785,19 @@ export default function ConsentManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {mockAuditTrail.slice(0, 5).map((entry) => (
+                    {mockAuditTrail.slice(0, 5,).map((entry,) => (
                       <div
                         className="flex items-start gap-4 rounded-lg bg-gray-50 p-4"
                         key={entry.id}
                       >
                         <div className="flex-shrink-0">
-                          {entry.action === "consent_granted" && (
+                          {entry.action === 'consent_granted' && (
                             <CheckCircle className="h-5 w-5 text-green-600" />
                           )}
-                          {entry.action === "consent_withdrawn" && (
+                          {entry.action === 'consent_withdrawn' && (
                             <XCircle className="h-5 w-5 text-red-600" />
                           )}
-                          {entry.action === "rights_request" && (
+                          {entry.action === 'rights_request' && (
                             <Users className="h-5 w-5 text-blue-600" />
                           )}
                         </div>
@@ -806,8 +806,8 @@ export default function ConsentManagementPage() {
                             {entry.details}
                           </p>
                           <p className="text-gray-600 text-sm">
-                            {entry.patientName} •{" "}
-                            {new Date(entry.timestamp).toLocaleString("pt-BR")}
+                            {entry.patientName} •{' '}
+                            {new Date(entry.timestamp,).toLocaleString('pt-BR',)}
                           </p>
                         </div>
                       </div>
@@ -843,7 +843,7 @@ export default function ConsentManagementPage() {
                             aria-describedby="search-help"
                             className="pl-10"
                             id="consent-search"
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e,) => setSearchQuery(e.target.value,)}
                             placeholder="Buscar por paciente ou procedimento..."
                             value={searchQuery}
                           />
@@ -948,7 +948,7 @@ export default function ConsentManagementPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredConsents.map((consent) => (
+                        {filteredConsents.map((consent,) => (
                           <TableRow
                             aria-describedby={`consent-${consent.id}-description`}
                             key={consent.id}
@@ -969,19 +969,19 @@ export default function ConsentManagementPage() {
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">
-                                {getConsentTypeLabel(consent.consentType)}
+                                {getConsentTypeLabel(consent.consentType,)}
                               </Badge>
                             </TableCell>
                             <TableCell>
                               <Badge
-                                variant={getStatusBadgeVariant(consent.status)}
+                                variant={getStatusBadgeVariant(consent.status,)}
                               >
-                                {getStatusLabel(consent.status)}
+                                {getStatusLabel(consent.status,)}
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              {new Date(consent.grantedDate).toLocaleDateString(
-                                "pt-BR",
+                              {new Date(consent.grantedDate,).toLocaleDateString(
+                                'pt-BR',
                               )}
                             </TableCell>
                             <TableCell>
@@ -989,11 +989,11 @@ export default function ConsentManagementPage() {
                                 <p>
                                   {new Date(
                                     consent.expiryDate,
-                                  ).toLocaleDateString("pt-BR")}
+                                  ).toLocaleDateString('pt-BR',)}
                                 </p>
-                                {consent.status === "active" && (
+                                {consent.status === 'active' && (
                                   <p className="text-gray-600 text-sm">
-                                    {calculateDaysToExpiry(consent.expiryDate)} dias restantes
+                                    {calculateDaysToExpiry(consent.expiryDate,)} dias restantes
                                   </p>
                                 )}
                               </div>
@@ -1006,7 +1006,7 @@ export default function ConsentManagementPage() {
                               >
                                 <Button
                                   aria-label={`Visualizar detalhes do consentimento de ${consent.patientName}`}
-                                  onClick={() => setSelectedConsent(consent)}
+                                  onClick={() => setSelectedConsent(consent,)}
                                   size="sm"
                                   variant="ghost"
                                 >
@@ -1024,7 +1024,7 @@ export default function ConsentManagementPage() {
                                   />
                                   <span className="sr-only">Baixar PDF</span>
                                 </Button>
-                                {consent.status === "active" && (
+                                {consent.status === 'active' && (
                                   <Button
                                     aria-label={`Editar consentimento de ${consent.patientName}`}
                                     size="sm"
@@ -1127,7 +1127,7 @@ export default function ConsentManagementPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {filteredRightsRequests.map((request) => (
+                        {filteredRightsRequests.map((request,) => (
                           <div
                             className="rounded-lg border p-4"
                             key={request.id}
@@ -1144,9 +1144,9 @@ export default function ConsentManagementPage() {
                                 </p>
                               </div>
                               <Badge
-                                variant={getStatusBadgeVariant(request.status)}
+                                variant={getStatusBadgeVariant(request.status,)}
                               >
-                                {getStatusLabel(request.status)}
+                                {getStatusLabel(request.status,)}
                               </Badge>
                             </div>
                             <p className="mb-3 text-gray-700 text-sm">
@@ -1156,12 +1156,12 @@ export default function ConsentManagementPage() {
                               <span>
                                 Submetido: {new Date(
                                   request.submittedDate,
-                                ).toLocaleDateString("pt-BR")}
+                                ).toLocaleDateString('pt-BR',)}
                               </span>
                               <span>
                                 Prazo: {new Date(
                                   request.legalDeadline,
-                                ).toLocaleDateString("pt-BR")}
+                                ).toLocaleDateString('pt-BR',)}
                               </span>
                             </div>
                             {request.response && (
@@ -1200,26 +1200,26 @@ export default function ConsentManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {filteredAuditTrail.map((entry) => (
+                    {filteredAuditTrail.map((entry,) => (
                       <div className="rounded-lg border p-4" key={entry.id}>
                         <div className="flex items-start gap-4">
                           <div className="mt-1 flex-shrink-0">
-                            {entry.action === "consent_granted" && (
+                            {entry.action === 'consent_granted' && (
                               <CheckCircle className="h-5 w-5 text-green-600" />
                             )}
-                            {entry.action === "consent_withdrawn" && (
+                            {entry.action === 'consent_withdrawn' && (
                               <XCircle className="h-5 w-5 text-red-600" />
                             )}
-                            {entry.action === "consent_modified" && (
+                            {entry.action === 'consent_modified' && (
                               <Edit className="h-5 w-5 text-blue-600" />
                             )}
-                            {entry.action === "rights_request" && (
+                            {entry.action === 'rights_request' && (
                               <Users className="h-5 w-5 text-purple-600" />
                             )}
-                            {entry.action === "data_accessed" && (
+                            {entry.action === 'data_accessed' && (
                               <Eye className="h-5 w-5 text-orange-600" />
                             )}
-                            {entry.action === "data_exported" && (
+                            {entry.action === 'data_exported' && (
                               <Download className="h-5 w-5 text-gray-600" />
                             )}
                           </div>
@@ -1229,8 +1229,8 @@ export default function ConsentManagementPage() {
                                 {entry.details}
                               </h4>
                               <span className="text-gray-500 text-sm">
-                                {new Date(entry.timestamp).toLocaleString(
-                                  "pt-BR",
+                                {new Date(entry.timestamp,).toLocaleString(
+                                  'pt-BR',
                                 )}
                               </span>
                             </div>
@@ -1259,7 +1259,7 @@ export default function ConsentManagementPage() {
                                   <strong>Categorias de Dados:</strong>
                                 </p>
                                 <div className="flex flex-wrap gap-1">
-                                  {entry.dataCategories.map((category) => (
+                                  {entry.dataCategories.map((category,) => (
                                     <Badge
                                       className="text-xs"
                                       key={category}
@@ -1506,8 +1506,8 @@ export default function ConsentManagementPage() {
           <Dialog
             aria-describedby="consent-details-description"
             aria-labelledby="consent-details-title"
-            onOpenChange={() => setSelectedConsent(undefined)}
-            open={Boolean(selectedConsent)}
+            onOpenChange={() => setSelectedConsent(undefined,)}
+            open={Boolean(selectedConsent,)}
           >
             <DialogContent
               aria-modal="true"
@@ -1546,7 +1546,7 @@ export default function ConsentManagementPage() {
                               selectedConsent.status,
                             )}
                           >
-                            {getStatusLabel(selectedConsent.status)}
+                            {getStatusLabel(selectedConsent.status,)}
                           </Badge>
                         </div>
                       </div>
@@ -1559,7 +1559,7 @@ export default function ConsentManagementPage() {
                       <div>
                         <Label>Tipo de Consentimento</Label>
                         <p className="font-medium">
-                          {getConsentTypeLabel(selectedConsent.consentType)}
+                          {getConsentTypeLabel(selectedConsent.consentType,)}
                         </p>
                       </div>
                       <div>
@@ -1589,16 +1589,16 @@ export default function ConsentManagementPage() {
                       <div>
                         <Label>Data de Concessão</Label>
                         <p className="font-medium">
-                          {new Date(selectedConsent.grantedDate).toLocaleString(
-                            "pt-BR",
+                          {new Date(selectedConsent.grantedDate,).toLocaleString(
+                            'pt-BR',
                           )}
                         </p>
                       </div>
                       <div>
                         <Label>Data de Expiração</Label>
                         <p className="font-medium">
-                          {new Date(selectedConsent.expiryDate).toLocaleString(
-                            "pt-BR",
+                          {new Date(selectedConsent.expiryDate,).toLocaleString(
+                            'pt-BR',
                           )}
                         </p>
                       </div>
@@ -1608,7 +1608,7 @@ export default function ConsentManagementPage() {
                           <p className="font-medium text-red-600">
                             {new Date(
                               selectedConsent.withdrawnDate,
-                            ).toLocaleString("pt-BR")}
+                            ).toLocaleString('pt-BR',)}
                           </p>
                         </div>
                       )}
@@ -1661,7 +1661,7 @@ export default function ConsentManagementPage() {
                         <Download className="mr-2 h-4 w-4" />
                         Baixar PDF
                       </Button>
-                      {selectedConsent.status === "active" && (
+                      {selectedConsent.status === 'active' && (
                         <Button variant="destructive">
                           <XCircle className="mr-2 h-4 w-4" />
                           Retirar Consentimento
@@ -1676,5 +1676,5 @@ export default function ConsentManagementPage() {
         </main>
       </div>
     </div>
-  );
+  )
 }

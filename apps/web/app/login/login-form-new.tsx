@@ -1,67 +1,67 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Icons } from "@/components/ui/icons";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/auth-context-new";
-import { AlertCircle, Eye, EyeOff, Lock, Shield, UserCheck } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Checkbox, } from '@/components/ui/checkbox'
+import { Icons, } from '@/components/ui/icons'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { useAuth, } from '@/contexts/auth-context-new'
+import { AlertCircle, Eye, EyeOff, Lock, Shield, UserCheck, } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter, } from 'next/navigation'
+import { useEffect, useState, } from 'react'
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [email, setEmail,] = useState('',)
+  const [password, setPassword,] = useState('',)
+  const [rememberMe, setRememberMe,] = useState(false,)
+  const [showPassword, setShowPassword,] = useState(false,)
+  const [error, setError,] = useState<string | null>(null,)
+  const [isSubmitting, setIsSubmitting,] = useState(false,)
+  const [successMessage, setSuccessMessage,] = useState<string | null>(null,)
 
-  const { signIn, loading, isAuthenticated } = useAuth();
-  const router = useRouter();
+  const { signIn, loading, isAuthenticated, } = useAuth()
+  const router = useRouter()
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && !loading) {
-      router.push("/dashboard");
+      router.push('/dashboard',)
     }
-  }, [isAuthenticated, loading, router]);
+  }, [isAuthenticated, loading, router,],)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccessMessage(null);
-    setIsSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent,) => {
+    e.preventDefault()
+    setError(null,)
+    setSuccessMessage(null,)
+    setIsSubmitting(true,)
 
     try {
-      const response = await signIn(email, password, rememberMe);
+      const response = await signIn(email, password, rememberMe,)
 
       if (response.success && response.user) {
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...");
+        setSuccessMessage('Login realizado com sucesso! Redirecionando...',)
 
         // Clear form
-        setEmail("");
-        setPassword("");
-        setRememberMe(false);
+        setEmail('',)
+        setPassword('',)
+        setRememberMe(false,)
 
         // Redirect will be handled by auth context
       } else {
-        setError(response.error || "Falha na autenticação");
+        setError(response.error || 'Falha na autenticação',)
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Erro inesperado. Tente novamente.");
+      console.error('Login error:', err,)
+      setError('Erro inesperado. Tente novamente.',)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false,)
     }
-  };
+  }
 
-  const isFormValid = email && password && !isSubmitting && !loading;
+  const isFormValid = email && password && !isSubmitting && !loading
 
   return (
     <Card className="neonpro-card w-full max-w-md shadow-lg">
@@ -125,7 +125,7 @@ export function LoginForm() {
               type="email"
               placeholder="profissional@clinica.com.br"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e,) => setEmail(e.target.value,)}
               disabled={loading || isSubmitting}
               required
               className="w-full"
@@ -141,10 +141,10 @@ export function LoginForm() {
             <div className="relative">
               <Input
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Sua senha segura"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e,) => setPassword(e.target.value,)}
                 disabled={loading || isSubmitting}
                 required
                 className="w-full pr-10"
@@ -155,9 +155,9 @@ export function LoginForm() {
                 variant="ghost"
                 size="sm"
                 className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword(!showPassword,)}
                 disabled={loading || isSubmitting}
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
               >
                 {showPassword
                   ? <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -172,7 +172,7 @@ export function LoginForm() {
               <Checkbox
                 id="remember"
                 checked={rememberMe}
-                onCheckedChange={(checked) => setRememberMe(checked === true)}
+                onCheckedChange={(checked,) => setRememberMe(checked === true,)}
                 disabled={loading || isSubmitting}
               />
               <Label
@@ -231,7 +231,7 @@ export function LoginForm() {
           {/* Sign Up Link */}
           <div className="text-center">
             <span className="text-sm text-muted-foreground">
-              Não tem uma conta?{" "}
+              Não tem uma conta?{' '}
             </span>
             <Link
               href="/signup"
@@ -266,7 +266,7 @@ export function LoginForm() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 // Loading state component for when auth is initializing
@@ -301,5 +301,5 @@ export function LoginFormSkeleton() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

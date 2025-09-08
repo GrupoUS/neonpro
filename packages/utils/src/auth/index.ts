@@ -18,4 +18,4 @@ export {
   type HealthcareUser,
   type Permission,
   type Role,
-} from "@neonpro/shared/auth";
+} from '@neonpro/shared/auth'

@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -11,19 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import {
   AlertTriangle,
   BarChart3,
@@ -42,30 +42,30 @@ import {
   User,
   Workflow,
   Zap,
-} from "lucide-react";
-import type React from "react";
-import { useState } from "react";
-import type { ComplianceFramework } from "../types";
-import type { RemediationWorkflow } from "./RemediationEngine";
+} from 'lucide-react'
+import type React from 'react'
+import { useState, } from 'react'
+import type { ComplianceFramework, } from '../types'
+import type { RemediationWorkflow, } from './RemediationEngine'
 
 interface WorkflowManagerProps {
-  className?: string;
+  className?: string
 }
 
 // Mock data (would be fetched from API)
 const mockWorkflows: RemediationWorkflow[] = [
   {
-    id: "workflow_1",
-    violationId: "violation_1",
-    framework: "WCAG",
-    status: "in_progress",
-    priority: "high",
-    assignedTo: "dev@clinic.com",
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+    id: 'workflow_1',
+    violationId: 'violation_1',
+    framework: 'WCAG',
+    status: 'in_progress',
+    priority: 'high',
+    assignedTo: 'dev@clinic.com',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000,), // 2 days ago
+    updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000,), // 2 hours ago
+    dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000,), // Tomorrow
     actions: [],
-    selectedAction: "action_1",
+    selectedAction: 'action_1',
     progress: {
       totalSteps: 5,
       completedSteps: 3,
@@ -81,15 +81,15 @@ const mockWorkflows: RemediationWorkflow[] = [
     },
   },
   {
-    id: "workflow_2",
-    violationId: "violation_2",
-    framework: "LGPD",
-    status: "assigned",
-    priority: "critical",
-    assignedTo: "legal@clinic.com",
-    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
-    updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
-    dueDate: new Date(Date.now() + 18 * 60 * 60 * 1000), // 18 hours
+    id: 'workflow_2',
+    violationId: 'violation_2',
+    framework: 'LGPD',
+    status: 'assigned',
+    priority: 'critical',
+    assignedTo: 'legal@clinic.com',
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000,), // 6 hours ago
+    updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000,), // 1 hour ago
+    dueDate: new Date(Date.now() + 18 * 60 * 60 * 1000,), // 18 hours
     actions: [],
     progress: {
       totalSteps: 3,
@@ -99,26 +99,26 @@ const mockWorkflows: RemediationWorkflow[] = [
     timeline: [],
     estimatedEffort: 6,
     blockers: [{
-      id: "blocker_1",
-      description: "Waiting for legal team review",
-      severity: "medium",
-      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
-    }],
+      id: 'blocker_1',
+      description: 'Waiting for legal team review',
+      severity: 'medium',
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000,),
+    },],
     metrics: {
       escalations: 1,
       reopenCount: 0,
     },
   },
   {
-    id: "workflow_3",
-    violationId: "violation_3",
-    framework: "ANVISA",
-    status: "completed",
-    priority: "medium",
-    assignedTo: "medical@clinic.com",
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    id: 'workflow_3',
+    violationId: 'violation_3',
+    framework: 'ANVISA',
+    status: 'completed',
+    priority: 'medium',
+    assignedTo: 'medical@clinic.com',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000,), // 5 days ago
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000,), // 1 day ago
+    completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000,),
     actions: [],
     progress: {
       totalSteps: 4,
@@ -136,156 +136,156 @@ const mockWorkflows: RemediationWorkflow[] = [
       satisfactionRating: 4,
     },
   },
-];
+]
 
-const StatusBadge = ({ status }: { status: RemediationWorkflow["status"]; }) => {
+const StatusBadge = ({ status, }: { status: RemediationWorkflow['status'] },) => {
   const statusConfig = {
-    created: { color: "bg-gray-100 text-gray-800", icon: Clock },
-    assigned: { color: "bg-blue-100 text-blue-800", icon: User },
-    in_progress: { color: "bg-orange-100 text-orange-800", icon: PlayCircle },
-    review: { color: "bg-purple-100 text-purple-800", icon: Eye },
-    completed: { color: "bg-green-100 text-green-800", icon: CheckCircle },
-    cancelled: { color: "bg-red-100 text-red-800", icon: PauseCircle },
-  };
+    created: { color: 'bg-gray-100 text-gray-800', icon: Clock, },
+    assigned: { color: 'bg-blue-100 text-blue-800', icon: User, },
+    in_progress: { color: 'bg-orange-100 text-orange-800', icon: PlayCircle, },
+    review: { color: 'bg-purple-100 text-purple-800', icon: Eye, },
+    completed: { color: 'bg-green-100 text-green-800', icon: CheckCircle, },
+    cancelled: { color: 'bg-red-100 text-red-800', icon: PauseCircle, },
+  }
 
-  const config = statusConfig[status];
-  const Icon = config.icon;
+  const config = statusConfig[status]
+  const Icon = config.icon
 
   return (
-    <Badge variant="outline" className={cn("text-xs font-medium", config.color)}>
+    <Badge variant="outline" className={cn('text-xs font-medium', config.color,)}>
       <Icon className="w-3 h-3 mr-1" />
-      {status.replace("_", " ")}
+      {status.replace('_', ' ',)}
     </Badge>
-  );
-};
+  )
+}
 
-const PriorityBadge = ({ priority }: { priority: RemediationWorkflow["priority"]; }) => {
+const PriorityBadge = ({ priority, }: { priority: RemediationWorkflow['priority'] },) => {
   const priorityColors = {
-    low: "bg-green-100 text-green-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    high: "bg-orange-100 text-orange-800",
-    critical: "bg-red-100 text-red-800",
-  };
+    low: 'bg-green-100 text-green-800',
+    medium: 'bg-yellow-100 text-yellow-800',
+    high: 'bg-orange-100 text-orange-800',
+    critical: 'bg-red-100 text-red-800',
+  }
 
   return (
-    <Badge variant="outline" className={cn("text-xs", priorityColors[priority])}>
+    <Badge variant="outline" className={cn('text-xs', priorityColors[priority],)}>
       {priority}
     </Badge>
-  );
-};
+  )
+}
 
-const FrameworkIcon = ({ framework }: { framework: ComplianceFramework; }) => {
-  const iconClass = "w-4 h-4";
+const FrameworkIcon = ({ framework, }: { framework: ComplianceFramework },) => {
+  const iconClass = 'w-4 h-4'
   const frameworkIcons = {
     WCAG: Shield,
     LGPD: FileText,
     ANVISA: Target,
     CFM: User,
-  };
+  }
 
-  const Icon = frameworkIcons[framework] || Shield;
-  return <Icon className={iconClass} />;
-};
+  const Icon = frameworkIcons[framework] || Shield
+  return <Icon className={iconClass} />
+}
 
-const formatRelativeTime = (date: Date): string => {
-  const now = new Date();
-  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+const formatRelativeTime = (date: Date,): string => {
+  const now = new Date()
+  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
-  if (diffInHours < 1) return "Há poucos minutos";
-  if (diffInHours < 24) return `Há ${Math.floor(diffInHours)} horas`;
-  if (diffInHours < 48) return "Ontem";
-  return `Há ${Math.floor(diffInHours / 24)} dias`;
-};
+  if (diffInHours < 1) return 'Há poucos minutos'
+  if (diffInHours < 24) return `Há ${Math.floor(diffInHours,)} horas`
+  if (diffInHours < 48) return 'Ontem'
+  return `Há ${Math.floor(diffInHours / 24,)} dias`
+}
 
-const formatTimeUntil = (date: Date): string => {
-  const now = new Date();
-  const diffInHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
+const formatTimeUntil = (date: Date,): string => {
+  const now = new Date()
+  const diffInHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60)
 
-  if (diffInHours < 0) return "Vencido";
-  if (diffInHours < 1) return "Vence em breve";
-  if (diffInHours < 24) return `${Math.floor(diffInHours)}h restantes`;
-  return `${Math.floor(diffInHours / 24)} dias restantes`;
-};
+  if (diffInHours < 0) return 'Vencido'
+  if (diffInHours < 1) return 'Vence em breve'
+  if (diffInHours < 24) return `${Math.floor(diffInHours,)}h restantes`
+  return `${Math.floor(diffInHours / 24,)} dias restantes`
+}
 
-export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) => {
-  const [workflows, setWorkflows] = useState<RemediationWorkflow[]>(mockWorkflows);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [priorityFilter, setPriorityFilter] = useState<string>("all");
-  const [frameworkFilter, setFrameworkFilter] = useState<string>("all");
-  const [selectedWorkflow, setSelectedWorkflow] = useState<RemediationWorkflow | null>(null);
+export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className, },) => {
+  const [workflows, setWorkflows,] = useState<RemediationWorkflow[]>(mockWorkflows,)
+  const [searchTerm, setSearchTerm,] = useState('',)
+  const [statusFilter, setStatusFilter,] = useState<string>('all',)
+  const [priorityFilter, setPriorityFilter,] = useState<string>('all',)
+  const [frameworkFilter, setFrameworkFilter,] = useState<string>('all',)
+  const [selectedWorkflow, setSelectedWorkflow,] = useState<RemediationWorkflow | null>(null,)
 
   // Filter workflows based on search and filters
   const filteredWorkflows = workflows.filter(workflow => {
     if (
-      searchTerm && !workflow.id.toLowerCase().includes(searchTerm.toLowerCase())
-      && !workflow.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase())
+      searchTerm && !workflow.id.toLowerCase().includes(searchTerm.toLowerCase(),)
+      && !workflow.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase(),)
     ) {
-      return false;
+      return false
     }
-    if (statusFilter !== "all" && workflow.status !== statusFilter) {
-      return false;
+    if (statusFilter !== 'all' && workflow.status !== statusFilter) {
+      return false
     }
-    if (priorityFilter !== "all" && workflow.priority !== priorityFilter) {
-      return false;
+    if (priorityFilter !== 'all' && workflow.priority !== priorityFilter) {
+      return false
     }
-    if (frameworkFilter !== "all" && workflow.framework !== frameworkFilter) {
-      return false;
+    if (frameworkFilter !== 'all' && workflow.framework !== frameworkFilter) {
+      return false
     }
-    return true;
-  });
+    return true
+  },)
 
   // Calculate statistics
   const stats = {
     total: workflows.length,
-    inProgress: workflows.filter(w => w.status === "in_progress").length,
+    inProgress: workflows.filter(w => w.status === 'in_progress').length,
     overdue:
-      workflows.filter(w => w.dueDate && new Date() > w.dueDate && w.status !== "completed").length,
-    completed: workflows.filter(w => w.status === "completed").length,
+      workflows.filter(w => w.dueDate && new Date() > w.dueDate && w.status !== 'completed').length,
+    completed: workflows.filter(w => w.status === 'completed').length,
     averageResolution: workflows
           .filter(w => w.metrics.timeToResolution)
-          .reduce((sum, w) => sum + (w.metrics.timeToResolution || 0), 0)
+          .reduce((sum, w,) => sum + (w.metrics.timeToResolution || 0), 0,)
         / workflows.filter(w => w.metrics.timeToResolution).length || 0,
-  };
+  }
 
-  const _handleAssignWorkflow = async (workflowId: string, assignee: string) => {
+  const _handleAssignWorkflow = async (workflowId: string, assignee: string,) => {
     setWorkflows(prev =>
       prev.map(w =>
         w.id === workflowId
-          ? { ...w, assignedTo: assignee, status: "assigned" as const, updatedAt: new Date() }
+          ? { ...w, assignedTo: assignee, status: 'assigned' as const, updatedAt: new Date(), }
           : w
       )
-    );
-  };
+    )
+  }
 
-  const handleStartWorkflow = async (workflowId: string) => {
+  const handleStartWorkflow = async (workflowId: string,) => {
     setWorkflows(prev =>
       prev.map(w =>
         w.id === workflowId
-          ? { ...w, status: "in_progress" as const, updatedAt: new Date() }
+          ? { ...w, status: 'in_progress' as const, updatedAt: new Date(), }
           : w
       )
-    );
-  };
+    )
+  }
 
-  const handleCompleteWorkflow = async (workflowId: string) => {
+  const handleCompleteWorkflow = async (workflowId: string,) => {
     setWorkflows(prev =>
       prev.map(w =>
         w.id === workflowId
           ? {
             ...w,
-            status: "completed" as const,
+            status: 'completed' as const,
             completedAt: new Date(),
             updatedAt: new Date(),
-            progress: { ...w.progress, percentage: 100 },
+            progress: { ...w.progress, percentage: 100, },
           }
           : w
       )
-    );
-  };
+    )
+  }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className,)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -374,7 +374,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                       id="search"
                       placeholder="ID ou responsável"
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={(e,) => setSearchTerm(e.target.value,)}
                       className="pl-9"
                     />
                   </div>
@@ -435,10 +435,10 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                     variant="outline"
                     className="w-full"
                     onClick={() => {
-                      setSearchTerm("");
-                      setStatusFilter("all");
-                      setPriorityFilter("all");
-                      setFrameworkFilter("all");
+                      setSearchTerm('',)
+                      setStatusFilter('all',)
+                      setPriorityFilter('all',)
+                      setFrameworkFilter('all',)
                     }}
                   >
                     <Filter className="w-4 h-4 mr-2" />
@@ -459,7 +459,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {filteredWorkflows.map((workflow) => (
+                {filteredWorkflows.map((workflow,) => (
                   <div
                     key={workflow.id}
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
@@ -478,17 +478,17 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
 
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>Framework: {workflow.framework}</span>
-                          <span>Responsável: {workflow.assignedTo || "Não atribuído"}</span>
-                          <span>{formatRelativeTime(workflow.createdAt)}</span>
+                          <span>Responsável: {workflow.assignedTo || 'Não atribuído'}</span>
+                          <span>{formatRelativeTime(workflow.createdAt,)}</span>
                           {workflow.dueDate && (
                             <span
                               className={cn(
-                                new Date() > workflow.dueDate && workflow.status !== "completed"
-                                  ? "text-red-600 font-medium"
-                                  : "text-muted-foreground",
+                                new Date() > workflow.dueDate && workflow.status !== 'completed'
+                                  ? 'text-red-600 font-medium'
+                                  : 'text-muted-foreground',
                               )}
                             >
-                              {formatTimeUntil(workflow.dueDate)}
+                              {formatTimeUntil(workflow.dueDate,)}
                             </span>
                           )}
                         </div>
@@ -529,7 +529,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setSelectedWorkflow(workflow)}
+                            onClick={() => setSelectedWorkflow(workflow,)}
                           >
                             <Eye className="w-4 h-4 mr-2" />
                             Detalhes
@@ -567,7 +567,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                 <div>
                                   <Label className="text-sm font-medium">Responsável</Label>
                                   <p className="mt-1 text-sm">
-                                    {selectedWorkflow.assignedTo || "Não atribuído"}
+                                    {selectedWorkflow.assignedTo || 'Não atribuído'}
                                   </p>
                                 </div>
 
@@ -575,8 +575,8 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                   <Label className="text-sm font-medium">Prazo</Label>
                                   <p className="mt-1 text-sm">
                                     {selectedWorkflow.dueDate
-                                      ? selectedWorkflow.dueDate.toLocaleDateString("pt-BR")
-                                      : "Não definido"}
+                                      ? selectedWorkflow.dueDate.toLocaleDateString('pt-BR',)
+                                      : 'Não definido'}
                                   </p>
                                 </div>
                               </div>
@@ -590,8 +590,8 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                     className="h-3"
                                   />
                                   <p className="text-sm text-muted-foreground">
-                                    {selectedWorkflow.progress.completedSteps} de{" "}
-                                    {selectedWorkflow.progress.totalSteps}{" "}
+                                    {selectedWorkflow.progress.completedSteps} de{' '}
+                                    {selectedWorkflow.progress.totalSteps}{' '}
                                     etapas concluídas ({selectedWorkflow.progress.percentage}%)
                                   </p>
                                 </div>
@@ -602,7 +602,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                 <div>
                                   <Label className="text-sm font-medium">Bloqueios</Label>
                                   <div className="mt-2 space-y-2">
-                                    {selectedWorkflow.blockers.map((blocker) => (
+                                    {selectedWorkflow.blockers.map((blocker,) => (
                                       <Alert key={blocker.id}>
                                         <AlertTriangle className="h-4 w-4" />
                                         <AlertDescription>
@@ -611,19 +611,19 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                             <Badge
                                               variant="outline"
                                               className={cn(
-                                                "text-xs",
-                                                blocker.severity === "high"
-                                                  ? "text-red-600"
-                                                  : blocker.severity === "medium"
-                                                  ? "text-orange-600"
-                                                  : "text-green-600",
+                                                'text-xs',
+                                                blocker.severity === 'high'
+                                                  ? 'text-red-600'
+                                                  : blocker.severity === 'medium'
+                                                  ? 'text-orange-600'
+                                                  : 'text-green-600',
                                               )}
                                             >
                                               {blocker.severity}
                                             </Badge>
                                           </div>
                                           <p className="text-xs text-muted-foreground mt-1">
-                                            Criado: {formatRelativeTime(blocker.createdAt)}
+                                            Criado: {formatRelativeTime(blocker.createdAt,)}
                                           </p>
                                         </AlertDescription>
                                       </Alert>
@@ -654,7 +654,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                                         Tempo de resolução:
                                       </span>
                                       <span className="ml-2 font-medium">
-                                        {selectedWorkflow.metrics.timeToResolution.toFixed(1)}h
+                                        {selectedWorkflow.metrics.timeToResolution.toFixed(1,)}h
                                       </span>
                                     </div>
                                   )}
@@ -665,20 +665,20 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                         </DialogContent>
                       </Dialog>
 
-                      {workflow.status === "created" && (
+                      {workflow.status === 'created' && (
                         <Button
                           size="sm"
-                          onClick={() => handleStartWorkflow(workflow.id)}
+                          onClick={() => handleStartWorkflow(workflow.id,)}
                         >
                           <PlayCircle className="w-4 h-4 mr-2" />
                           Iniciar
                         </Button>
                       )}
 
-                      {workflow.status === "in_progress" && (
+                      {workflow.status === 'in_progress' && (
                         <Button
                           size="sm"
-                          onClick={() => handleCompleteWorkflow(workflow.id)}
+                          onClick={() => handleCompleteWorkflow(workflow.id,)}
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
                           Concluir
@@ -718,7 +718,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Tempo Médio de Resolução</span>
                       <span className="text-sm text-muted-foreground">
-                        {stats.averageResolution.toFixed(1)}h
+                        {stats.averageResolution.toFixed(1,)}h
                       </span>
                     </div>
                   </div>
@@ -727,7 +727,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Taxa de Conclusão</span>
                       <span className="text-sm text-muted-foreground">
-                        {Math.round((stats.completed / stats.total) * 100)}%
+                        {Math.round((stats.completed / stats.total) * 100,)}%
                       </span>
                     </div>
                     <Progress value={(stats.completed / stats.total) * 100} className="mt-2 h-2" />
@@ -737,7 +737,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Taxa de Workflows no Prazo</span>
                       <span className="text-sm text-muted-foreground">
-                        {Math.round(((stats.total - stats.overdue) / stats.total) * 100)}%
+                        {Math.round(((stats.total - stats.overdue) / stats.total) * 100,)}%
                       </span>
                     </div>
                     <Progress
@@ -758,9 +758,9 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {(["WCAG", "LGPD", "ANVISA", "CFM"] as ComplianceFramework[]).map(framework => {
-                    const count = workflows.filter(w => w.framework === framework).length;
-                    const percentage = stats.total > 0 ? (count / stats.total) * 100 : 0;
+                  {(['WCAG', 'LGPD', 'ANVISA', 'CFM',] as ComplianceFramework[]).map(framework => {
+                    const count = workflows.filter(w => w.framework === framework).length
+                    const percentage = stats.total > 0 ? (count / stats.total) * 100 : 0
 
                     return (
                       <div key={framework} className="flex items-center justify-between">
@@ -773,12 +773,12 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
                             <Progress value={percentage} className="h-2" />
                           </div>
                           <span className="text-sm text-muted-foreground w-12 text-right">
-                            {count} ({Math.round(percentage)}%)
+                            {count} ({Math.round(percentage,)}%)
                           </span>
                         </div>
                       </div>
-                    );
-                  })}
+                    )
+                  },)}
                 </div>
               </CardContent>
             </Card>
@@ -810,7 +810,7 @@ export const WorkflowManager: React.FC<WorkflowManagerProps> = ({ className }) =
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default WorkflowManager;
+export default WorkflowManager

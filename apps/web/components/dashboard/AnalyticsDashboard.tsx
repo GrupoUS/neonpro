@@ -4,22 +4,22 @@
  */
 
 export interface AnalyticsDashboardProps {
-  data?: unknown;
-  loading?: boolean;
-  error?: string;
+  data?: unknown
+  loading?: boolean
+  error?: string
 }
 
 export default function AnalyticsDashboard({
   data,
   loading = false,
   error,
-}: AnalyticsDashboardProps) {
+}: AnalyticsDashboardProps,) {
   if (loading) {
-    return <div>Loading analytics...</div>;
+    return <div>Loading analytics...</div>
   }
 
   if (error) {
-    return <div>Error loading analytics: {error}</div>;
+    return <div>Error loading analytics: {error}</div>
   }
 
   return (
@@ -30,5 +30,5 @@ export default function AnalyticsDashboard({
         <div>Analytics data placeholder</div>
       </div>
     </div>
-  );
+  )
 }

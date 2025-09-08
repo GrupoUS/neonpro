@@ -27,8 +27,10 @@
     "next:lint:web": "bunx next lint --dir apps/web",
     "type-check": "NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run type-check",
     "trunk": "trunk check --all",
-    "ci:check": "bun run quality:check && bun run test",
-    "test:e2e": "echo 'E2E tests are run separately; install browsers with \"npx playwright install --with-deps\" and run from the appropriate package'",
+    "ci:check": "bun run quality:check && bun run test && bash scripts/guard-test-placement.sh",
+    "test:e2e": "bunx playwright test",
+    "test:e2e:ui": "bunx playwright test --ui",
+    "test:e2e:report": "bunx playwright show-report",
     "ci:fix": "bun run lint:fix && bun run format",
     "test": "turbo run test",
     "test:changed": "turbo run test --filter=...[HEAD^]",
@@ -99,13 +101,6 @@
     "packages/*",
     "tools/*"
   ],
-  "dependencies": {
-    "@tanstack/react-query": "^5.62.2",
-    "next": "^15.1.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "vercel": "47.0.5"
-  },
   "pnpm": {
     "overrides": {
       "react": "^19.1.1",

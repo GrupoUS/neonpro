@@ -1,11 +1,11 @@
 // app/(dashboard)/dashboard/automated-analysis/page.tsx
 // Dashboard page for Story 10.1: Automated Before/After Analysis
-import type { Metadata } from "next";
+import type { Metadata, } from 'next'
 
 export const metadata: Metadata = {
-  title: "Automated Before/After Analysis | NeonPro",
-  description: "AI-powered photo analysis with ≥95% accuracy and <30s processing time",
-};
+  title: 'Automated Before/After Analysis | NeonPro',
+  description: 'AI-powered photo analysis with ≥95% accuracy and <30s processing time',
+}
 
 export default function AutomatedAnalysisPage() {
   return (
@@ -15,21 +15,21 @@ export default function AutomatedAnalysisPage() {
         <p className="text-muted-foreground">Feature em desenvolvimento...</p>
       </div>
     </div>
-  );
+  )
 }
 
-export const validateCSRF = () => true;
+export const validateCSRF = () => true
 
-export const rateLimit = () => ({});
+export const rateLimit = () => ({})
 
-export const createBackupConfig = () => ({});
+export const createBackupConfig = () => ({})
 
-export const sessionConfig = {};
+export const sessionConfig = {}
 
 export class UnifiedSessionSystem {}
 
-export const trackLoginPerformance = () => {};
+export const trackLoginPerformance = () => {}
 
-export type PermissionContext = unknown;
+export type PermissionContext = unknown
 
-export type SessionValidationResult = unknown;
+export type SessionValidationResult = unknown

@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
 // Removed unused AlertDialog imports and aliases
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 // Removed unused Separator import
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
-import { useStaffTraining } from "@/hooks/use-staff-training";
-import { cn } from "@/lib/utils";
-import type { TrainingModule } from "@/types/staff-training";
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { useToast, } from '@/components/ui/use-toast'
+import { useStaffTraining, } from '@/hooks/use-staff-training'
+import { cn, } from '@/lib/utils'
+import type { TrainingModule, } from '@/types/staff-training'
 import {
   DIFFICULTY_LABELS_PT,
   ROLE_LABELS_PT,
   SECTION_TYPE_LABELS_PT,
   TRAINING_CATEGORY_LABELS_PT,
-} from "@/types/staff-training";
+} from '@/types/staff-training'
 import {
   Award,
   BookOpen,
@@ -32,14 +32,14 @@ import {
   TrendingUp,
   Users,
   Video,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 
 interface StaffTrainingInterfaceProps {
-  userId?: string;
-  userRole?: string;
-  compactMode?: boolean;
-  offlineMode?: boolean;
+  userId?: string
+  userRole?: string
+  compactMode?: boolean
+  offlineMode?: boolean
 }
 
 /**
@@ -51,92 +51,92 @@ export function StaffTrainingInterface({
   userRole,
   compactMode: _compactMode = false,
   offlineMode = false,
-}: StaffTrainingInterfaceProps) {
-  const { toast } = useToast();
+}: StaffTrainingInterfaceProps,) {
+  const { toast, } = useToast()
   const {
     modules: trainingModules,
     progress: userProgress,
     isLoading,
     startModule,
-  } = useStaffTraining();
+  } = useStaffTraining()
 
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedModule, setSelectedModule] = useState<TrainingModule | null>(
+  const [activeTab, setActiveTab,] = useState('dashboard',)
+  const [selectedModule, setSelectedModule,] = useState<TrainingModule | null>(
     null,
-  );
-  const [isGeneratingCertificate, setIsGeneratingCertificate] = useState(false);
-  const [eligibleCertifications] = useState<string[]>([]);
+  )
+  const [isGeneratingCertificate, setIsGeneratingCertificate,] = useState(false,)
+  const [eligibleCertifications,] = useState<string[]>([],)
 
   // Removed certification eligibility check - not available in simplified hook
 
-  const handleStartModule = async (module: TrainingModule) => {
+  const handleStartModule = async (module: TrainingModule,) => {
     try {
-      await startModule(module.id);
-      setActiveTab("learning");
+      await startModule(module.id,)
+      setActiveTab('learning',)
     } catch (err) {
-      console.error("Error starting module:", err);
+      console.error('Error starting module:', err,)
     }
-  };
+  }
 
-  const handleGenerateCertificate = async (moduleId: string) => {
-    setIsGeneratingCertificate(true);
+  const handleGenerateCertificate = async (moduleId: string,) => {
+    setIsGeneratingCertificate(true,)
     try {
       // Simplified certificate generation - would normally call API
-      console.log("Certificate generation requested for module:", moduleId);
+      console.log('Certificate generation requested for module:', moduleId,)
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000,))
       toast({
-        title: "Certificado gerado",
-        description: "Seu certificado foi gerado com sucesso.",
-        variant: "default",
-      });
+        title: 'Certificado gerado',
+        description: 'Seu certificado foi gerado com sucesso.',
+        variant: 'default',
+      },)
     } catch (err) {
-      console.error("Error generating certificate:", err);
+      console.error('Error generating certificate:', err,)
     } finally {
-      setIsGeneratingCertificate(false);
+      setIsGeneratingCertificate(false,)
     }
-  };
+  }
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category: string,) => {
     switch (category) {
-      case "basics":
-        return <BookOpen className="h-4 w-4" />;
-      case "prediction":
-        return <Brain className="h-4 w-4" />;
-      case "intervention":
-        return <Users className="h-4 w-4" />;
-      case "workflow":
-        return <TrendingUp className="h-4 w-4" />;
-      case "compliance":
-        return <FileText className="h-4 w-4" />;
+      case 'basics':
+        return <BookOpen className="h-4 w-4" />
+      case 'prediction':
+        return <Brain className="h-4 w-4" />
+      case 'intervention':
+        return <Users className="h-4 w-4" />
+      case 'workflow':
+        return <TrendingUp className="h-4 w-4" />
+      case 'compliance':
+        return <FileText className="h-4 w-4" />
       default:
-        return <BookOpen className="h-4 w-4" />;
+        return <BookOpen className="h-4 w-4" />
     }
-  };
+  }
 
-  const getSectionIcon = (type: string) => {
+  const getSectionIcon = (type: string,) => {
     switch (type) {
-      case "video":
-        return <Video className="h-4 w-4" />;
-      case "text":
-        return <FileText className="h-4 w-4" />;
-      case "interactive":
-        return <Target className="h-4 w-4" />;
-      case "case_study":
-        return <Users className="h-4 w-4" />;
-      case "checklist":
-        return <CheckCircle className="h-4 w-4" />;
+      case 'video':
+        return <Video className="h-4 w-4" />
+      case 'text':
+        return <FileText className="h-4 w-4" />
+      case 'interactive':
+        return <Target className="h-4 w-4" />
+      case 'case_study':
+        return <Users className="h-4 w-4" />
+      case 'checklist':
+        return <CheckCircle className="h-4 w-4" />
       default:
-        return <BookOpen className="h-4 w-4" />;
+        return <BookOpen className="h-4 w-4" />
     }
-  };
+  }
 
   // Calculate progress metrics from available data
-  const requiredModules = trainingModules.filter(m => m.isRequired);
-  const completedModules = trainingModules.filter(m => userProgress[m.id]?.completedAt);
+  const requiredModules = trainingModules.filter(m => m.isRequired)
+  const completedModules = trainingModules.filter(m => userProgress[m.id]?.completedAt)
   const overallProgress = trainingModules.length > 0
     ? (completedModules.length / trainingModules.length) * 100
-    : 0;
+    : 0
 
   return (
     <div className="space-y-6">
@@ -158,7 +158,7 @@ export function StaffTrainingInterface({
           {offlineMode && (
             <Button
               variant="outline"
-              onClick={() => console.log("Sync offline data")}
+              onClick={() => console.log('Sync offline data',)}
             >
               <Download className="h-4 w-4 mr-2" />
               Sincronizar
@@ -188,7 +188,7 @@ export function StaffTrainingInterface({
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span>Progresso Geral</span>
-                  <span>{overallProgress.toFixed(0)}%</span>
+                  <span>{overallProgress.toFixed(0,)}%</span>
                 </div>
                 <Progress value={overallProgress} className="h-2" />
               </div>
@@ -216,7 +216,7 @@ export function StaffTrainingInterface({
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-purple-600">
-                    {Math.round(completedModules.length * 2)}h
+                    {Math.round(completedModules.length * 2,)}h
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Tempo de Estudo
@@ -245,18 +245,18 @@ export function StaffTrainingInterface({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {Object.entries(userProgress)
-                  .filter(([_, progress]) => progress.status === "in_progress")
-                  .slice(0, 3)
-                  .map(([moduleId, progress]) => {
+                {Object.entries(userProgress,)
+                  .filter(([_, progress,],) => progress.status === 'in_progress')
+                  .slice(0, 3,)
+                  .map(([moduleId, progress,],) => {
                     const trainingModule = trainingModules.find(
-                      (m) => m.id === moduleId,
-                    );
+                      (m,) => m.id === moduleId,
+                    )
                     if (!trainingModule) {
-                      return null;
+                      return null
                     }
 
-                    const moduleProgress = progress;
+                    const moduleProgress = progress
 
                     return (
                       <div
@@ -266,19 +266,19 @@ export function StaffTrainingInterface({
                         <div className="flex items-center gap-3">
                           <div
                             className={cn(
-                              "p-2 rounded-full",
-                              trainingModule.category === "basics"
-                                ? "bg-blue-100"
-                                : trainingModule.category === "prediction"
-                                ? "bg-purple-100"
-                                : trainingModule.category === "intervention"
-                                ? "bg-green-100"
-                                : trainingModule.category === "workflow"
-                                ? "bg-orange-100"
-                                : "bg-gray-100",
+                              'p-2 rounded-full',
+                              trainingModule.category === 'basics'
+                                ? 'bg-blue-100'
+                                : trainingModule.category === 'prediction'
+                                ? 'bg-purple-100'
+                                : trainingModule.category === 'intervention'
+                                ? 'bg-green-100'
+                                : trainingModule.category === 'workflow'
+                                ? 'bg-orange-100'
+                                : 'bg-gray-100',
                             )}
                           >
-                            {getCategoryIcon(trainingModule.category)}
+                            {getCategoryIcon(trainingModule.category,)}
                           </div>
                           <div>
                             <h4 className="font-semibold">{trainingModule.title}</h4>
@@ -303,16 +303,16 @@ export function StaffTrainingInterface({
                           <Button
                             size="sm"
                             onClick={() => {
-                              setSelectedModule(trainingModule as unknown as TrainingModule);
-                              setActiveTab("learning");
+                              setSelectedModule(trainingModule as unknown as TrainingModule,)
+                              setActiveTab('learning',)
                             }}
                           >
                             Continuar
                           </Button>
                         </div>
                       </div>
-                    );
-                  })}
+                    )
+                  },)}
               </div>
             </CardContent>
           </Card>
@@ -332,12 +332,12 @@ export function StaffTrainingInterface({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {trainingModules
                   .filter(
-                    (module) =>
+                    (module,) =>
                       requiredModules.some(req => req.id === module.id)
                       && !completedModules.some(comp => comp.id === module.id),
                   )
-                  .slice(0, 6)
-                  .map((module) => (
+                  .slice(0, 6,)
+                  .map((module,) => (
                     <Card
                       key={module.id}
                       className="cursor-pointer hover:shadow-md transition-shadow"
@@ -350,11 +350,11 @@ export function StaffTrainingInterface({
                             ]}
                           </Badge>
                           <Badge
-                            variant={module.difficulty === "beginner"
-                              ? "secondary"
-                              : module.difficulty === "intermediate"
-                              ? "default"
-                              : "destructive"}
+                            variant={module.difficulty === 'beginner'
+                              ? 'secondary'
+                              : module.difficulty === 'intermediate'
+                              ? 'default'
+                              : 'destructive'}
                           >
                             {DIFFICULTY_LABELS_PT[module.difficulty]}
                           </Badge>
@@ -374,7 +374,7 @@ export function StaffTrainingInterface({
                           </div>
                           <Button
                             size="sm"
-                            onClick={() => handleStartModule(module as unknown as TrainingModule)}
+                            onClick={() => handleStartModule(module as unknown as TrainingModule,)}
                             disabled={isLoading}
                           >
                             <Play className="h-3 w-3 mr-1" />
@@ -391,32 +391,32 @@ export function StaffTrainingInterface({
 
         <TabsContent value="modules" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {trainingModules.map((module) => {
-              const progress = userProgress[module.id];
+            {trainingModules.map((module,) => {
+              const progress = userProgress[module.id]
               const moduleProgress = progress?.completedAt
                 ? 100
                 : progress?.startedAt
                 ? 50
-                : 0;
-              const isCompleted = progress?.status === "completed";
-              const isInProgress = progress?.status === "in_progress";
+                : 0
+              const isCompleted = progress?.status === 'completed'
+              const isInProgress = progress?.status === 'in_progress'
               const canStart = module.prerequisites.every(
-                (prereqId) => userProgress[prereqId]?.status === "completed",
-              );
+                (prereqId,) => userProgress[prereqId]?.status === 'completed',
+              )
 
               return (
                 <Card
                   key={module.id}
                   className={cn(
-                    "transition-all duration-200",
-                    isCompleted && "border-green-200 bg-green-50/30",
-                    isInProgress && "border-blue-200 bg-blue-50/30",
+                    'transition-all duration-200',
+                    isCompleted && 'border-green-200 bg-green-50/30',
+                    isInProgress && 'border-blue-200 bg-blue-50/30',
                   )}
                 >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {getCategoryIcon(module.category)}
+                        {getCategoryIcon(module.category,)}
                         <Badge variant="outline" className="text-xs">
                           {TRAINING_CATEGORY_LABELS_PT[
                             module.category as keyof typeof TRAINING_CATEGORY_LABELS_PT
@@ -443,7 +443,7 @@ export function StaffTrainingInterface({
                       <div>
                         <div className="flex justify-between text-sm mb-2">
                           <span>Progresso</span>
-                          <span>{moduleProgress.toFixed(0)}%</span>
+                          <span>{moduleProgress.toFixed(0,)}%</span>
                         </div>
                         <Progress value={moduleProgress} className="h-2" />
                       </div>
@@ -465,13 +465,13 @@ export function StaffTrainingInterface({
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Conteúdo:</p>
                       <div className="flex flex-wrap gap-1">
-                        {module.sections.slice(0, 4).map((section) => (
+                        {module.sections.slice(0, 4,).map((section,) => (
                           <Badge
                             key={section.id}
                             variant="secondary"
                             className="text-xs"
                           >
-                            {getSectionIcon(section.type)}
+                            {getSectionIcon(section.type,)}
                             <span className="ml-1">
                               {SECTION_TYPE_LABELS_PT[
                                 section.type as keyof typeof SECTION_TYPE_LABELS_PT
@@ -492,7 +492,7 @@ export function StaffTrainingInterface({
                       {!progress && canStart && (
                         <Button
                           className="flex-1"
-                          onClick={() => handleStartModule(module as unknown as TrainingModule)}
+                          onClick={() => handleStartModule(module as unknown as TrainingModule,)}
                           disabled={isLoading}
                         >
                           <Play className="h-3 w-3 mr-1" />
@@ -504,8 +504,8 @@ export function StaffTrainingInterface({
                         <Button
                           className="flex-1"
                           onClick={() => {
-                            setSelectedModule(module as unknown as TrainingModule);
-                            setActiveTab("learning");
+                            setSelectedModule(module as unknown as TrainingModule,)
+                            setActiveTab('learning',)
                           }}
                         >
                           Continuar
@@ -516,7 +516,7 @@ export function StaffTrainingInterface({
                         <Button
                           className="flex-1"
                           variant="outline"
-                          onClick={() => handleGenerateCertificate(module.id)}
+                          onClick={() => handleGenerateCertificate(module.id,)}
                           disabled={isGeneratingCertificate}
                         >
                           <Award className="h-3 w-3 mr-1" />
@@ -528,7 +528,7 @@ export function StaffTrainingInterface({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => console.log("Download offline:", module.id)}
+                          onClick={() => console.log('Download offline:', module.id,)}
                         >
                           <Smartphone className="h-3 w-3" />
                         </Button>
@@ -542,8 +542,8 @@ export function StaffTrainingInterface({
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
+              )
+            },)}
           </div>
         </TabsContent>
 
@@ -582,10 +582,10 @@ export function StaffTrainingInterface({
                     </div>
 
                     <div className="flex justify-between pt-4 border-t">
-                      <Button variant="outline" onClick={() => setActiveTab("modules")}>
+                      <Button variant="outline" onClick={() => setActiveTab('modules',)}>
                         Anterior
                       </Button>
-                      <Button onClick={() => console.log("Next section")}>Próximo</Button>
+                      <Button onClick={() => console.log('Next section',)}>Próximo</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -598,7 +598,7 @@ export function StaffTrainingInterface({
                 <p className="text-muted-foreground mb-4">
                   Escolha um módulo da lista para começar seu treinamento.
                 </p>
-                <Button onClick={() => setActiveTab("modules")}>Ver Módulos</Button>
+                <Button onClick={() => setActiveTab('modules',)}>Ver Módulos</Button>
               </div>
             )}
         </TabsContent>
@@ -615,14 +615,14 @@ export function StaffTrainingInterface({
               {completedModules.length > 0
                 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {completedModules.map((module) => (
+                    {completedModules.map((module,) => (
                       <Card key={module.id}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <Award className="h-6 w-6 text-yellow-600" />
                             <Badge variant="secondary">
-                              {userProgress[module.id]?.completedAt?.toLocaleDateString("pt-BR")
-                                || "Concluído"}
+                              {userProgress[module.id]?.completedAt?.toLocaleDateString('pt-BR',)
+                                || 'Concluído'}
                             </Badge>
                           </div>
                           <CardTitle className="text-lg">{module.title}</CardTitle>
@@ -646,7 +646,7 @@ export function StaffTrainingInterface({
                             <Button
                               variant="outline"
                               className="w-full mt-3"
-                              onClick={() => handleGenerateCertificate(module.id)}
+                              onClick={() => handleGenerateCertificate(module.id,)}
                               disabled={isGeneratingCertificate}
                             >
                               <Download className="h-3 w-3 mr-2" />
@@ -674,5 +674,5 @@ export function StaffTrainingInterface({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

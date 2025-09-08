@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/_/husky.sh"
+
+# Lightweight guard to prevent committing test pages or root tests
+bash scripts/guard-test-placement.sh || exit 1
+
+# Optional: run a quick lint on changed files (kept light)
+# pnpm -w oxlint --max-warnings=0 $(git diff --cached --name-only --diff-filter=ACM | tr '\n' ' ')
+

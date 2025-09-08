@@ -1,21 +1,21 @@
 // Real-time compliance monitoring dashboard with comprehensive tracking
-import { formatDistanceToNow } from "date-fns";
-import type React from "react";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { formatDistanceToNow, } from 'date-fns'
+import type React from 'react'
+import { useEffect, useMemo, useState, } from 'react'
+import { toast, } from 'sonner'
 
 // UI Components
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { ScrollArea, } from '@/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
 // Icons
 import {
@@ -35,10 +35,10 @@ import {
   TrendingUp,
   UserCheck,
   XCircle,
-} from "lucide-react";
+} from 'lucide-react'
 
 // Types and Service
-import { ComplianceService } from "./ComplianceService";
+import { ComplianceService, } from './ComplianceService'
 import type {
   ComplianceFramework,
   ComplianceScore,
@@ -46,170 +46,176 @@ import type {
   ComplianceTrend,
   ComplianceTrendData,
   ComplianceViolation,
-} from "./types";
+} from './types'
 
 interface ComplianceDashboardProps {
-  data?: unknown;
+  data?: unknown
 }
 
 export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
-  const [complianceScores, setComplianceScores] = useState<ComplianceScore[]>([]);
-  const [violations, setViolations] = useState<ComplianceViolation[]>([]);
-  const [_trends, setTrends] = useState<Record<string, ComplianceTrendData>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | "all">("all");
-  const [refreshInterval, _setRefreshInterval] = useState<number>(30_000); // 30 seconds
+  const [complianceScores, setComplianceScores,] = useState<ComplianceScore[]>([],)
+  const [violations, setViolations,] = useState<ComplianceViolation[]>([],)
+  const [_trends, setTrends,] = useState<Record<string, ComplianceTrendData>>({},)
+  const [isLoading, setIsLoading,] = useState(true,)
+  const [selectedFramework, setSelectedFramework,] = useState<ComplianceFramework | 'all'>('all',)
+  const [refreshInterval, _setRefreshInterval,] = useState<number>(30_000,) // 30 seconds
 
-  const complianceService = useMemo(() => new ComplianceService(), []);
+  const complianceService = useMemo(() => new ComplianceService(), [],)
 
   // Real-time subscription effect
   useEffect(() => {
-    let unsubscribe: (() => void) | null = null;
+    let unsubscribe: (() => void) | null = null
 
     const setupRealTimeMonitoring = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true,)
 
         // Initial data fetch
-        const [initialScores, initialViolations] = await Promise.all([
-          complianceService.fetchComplianceScores(selectedFramework),
+        const [initialScores, initialViolations,] = await Promise.all([
+          complianceService.fetchComplianceScores(selectedFramework,),
           complianceService.fetchViolations({
-            framework: selectedFramework !== "all" ? selectedFramework : undefined,
-          }),
-        ]);
+            framework: selectedFramework !== 'all' ? selectedFramework : undefined,
+          },),
+        ],)
 
-        setComplianceScores(initialScores);
-        setViolations(initialViolations);
+        setComplianceScores(initialScores,)
+        setViolations(initialViolations,)
 
         // Load trends for each framework
-        const frameworks: ComplianceFramework[] = ["WCAG", "LGPD", "ANVISA", "CFM"];
-        const trendsData: Record<string, ComplianceTrendData> = {};
+        const frameworks: ComplianceFramework[] = ['WCAG', 'LGPD', 'ANVISA', 'CFM',]
+        const trendsData: Record<string, ComplianceTrendData> = {}
 
         await Promise.all(
-          frameworks.map(async (framework) => {
-            if (selectedFramework === "all" || selectedFramework === framework) {
-              const trendResult = await complianceService.getComplianceTrends(framework, 7);
+          frameworks.map(async (framework,) => {
+            if (selectedFramework === 'all' || selectedFramework === framework) {
+              const trendResult = await complianceService.getComplianceTrends(framework, 7,)
 
               // Transform the result to match ComplianceTrendData interface
               trendsData[framework] = {
                 framework,
-                data: trendResult, // Use the array directly instead of destructuring
+                data: trendResult as any, // Use the array directly instead of destructuring
                 summary: {
-                  averageScore: trendResult.reduce((sum, item) => sum + item.score, 0)
-                    / trendResult.length,
-                  totalViolations: trendResult.reduce((sum, item) => sum + item.violations, 0),
-                  trend: trendResult.length >= 2
-                    ? trendResult[trendResult.length - 1].score > trendResult[0].score
-                      ? "up"
-                      : "down"
-                    : "stable",
+                  averageScore: (trendResult as any).reduce((sum: number, item: any,) =>
+                    sum + item.score, 0,)
+                    / (trendResult as any).length,
+                  totalViolations: (trendResult as any).reduce(
+                    (sum: number, item: any,) => sum + item.violations,
+                    0,
+                  ),
+                  scoreImprovement: 0,
+                  violationTrend: (trendResult as any).length >= 2
+                    ? (trendResult as any)[(trendResult as any).length - 1].score
+                        > (trendResult as any)[0].score
+                      ? 'up'
+                      : 'down'
+                    : 'stable',
                 },
-              };
+              }
             }
-          }),
-        );
+          },),
+        )
 
-        setTrends(trendsData);
+        setTrends(trendsData,)
 
         // Set up real-time subscription
         unsubscribe = complianceService.subscribeToUpdates(
           selectedFramework,
-          (updatedScores) => {
-            setComplianceScores(updatedScores);
+          (updatedScores,) => {
+            setComplianceScores(updatedScores,)
           },
-        );
+        )
 
-        setIsLoading(false);
+        setIsLoading(false,)
       } catch (error) {
-        console.error("Error setting up compliance monitoring:", error);
-        setIsLoading(false);
+        console.error('Error setting up compliance monitoring:', error,)
+        setIsLoading(false,)
       }
-    };
+    }
 
-    setupRealTimeMonitoring();
+    setupRealTimeMonitoring()
 
     return () => {
       if (unsubscribe) {
-        unsubscribe();
+        unsubscribe()
       }
-    };
-  }, [selectedFramework, complianceService]);
+    }
+  }, [selectedFramework, complianceService,],)
 
   // Auto-refresh effect for violations and trends
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const updatedViolations = await complianceService.fetchViolations({
-          framework: selectedFramework !== "all" ? selectedFramework : undefined,
-        });
-        setViolations(updatedViolations);
+          framework: selectedFramework !== 'all' ? selectedFramework : undefined,
+        },)
+        setViolations(updatedViolations,)
       } catch (error) {
-        console.error("Error refreshing compliance data:", error);
+        console.error('Error refreshing compliance data:', error,)
       }
-    }, refreshInterval);
+    }, refreshInterval,)
 
-    return () => clearInterval(interval);
-  }, [selectedFramework, refreshInterval, complianceService]);
+    return () => clearInterval(interval,)
+  }, [selectedFramework, refreshInterval, complianceService,],)
 
-  const getStatusColor = (status: ComplianceStatus): string => {
+  const getStatusColor = (status: ComplianceStatus,): string => {
     const colors = {
-      excellent: "bg-green-500",
-      good: "bg-blue-500",
-      warning: "bg-yellow-500",
-      critical: "bg-red-500",
-    };
-    return colors[status];
-  };
+      excellent: 'bg-green-500',
+      good: 'bg-blue-500',
+      warning: 'bg-yellow-500',
+      critical: 'bg-red-500',
+    }
+    return colors[status]
+  }
 
-  const getStatusIcon = (status: ComplianceStatus) => {
+  const getStatusIcon = (status: ComplianceStatus,) => {
     const icons = {
       excellent: <CheckCircle className="h-5 w-5" />,
       good: <CheckCircle className="h-5 w-5" />,
       warning: <AlertTriangle className="h-5 w-5" />,
       critical: <XCircle className="h-5 w-5" />,
-    };
-    return icons[status];
-  };
-
-  const getTrendIcon = (trend: ComplianceTrend) => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-500" />;
-    return <Minus className="h-4 w-4 text-gray-400" />;
-  };
-
-  const runManualCheck = async (framework: ComplianceFramework) => {
-    try {
-      setIsLoading(true);
-      await complianceService.runComplianceCheck(framework);
-      // Data will be updated automatically via real-time subscription
-      toast.success(`${framework} compliance check completed`);
-    } catch (error) {
-      console.error("Manual check failed:", error);
-      toast.error(`Failed to run ${framework} check`);
-    } finally {
-      setIsLoading(false);
     }
-  };
+    return icons[status]
+  }
+
+  const getTrendIcon = (trend: ComplianceTrend,) => {
+    if (trend === 'up') return <TrendingUp className="h-4 w-4 text-green-500" />
+    if (trend === 'down') return <TrendingDown className="h-4 w-4 text-red-500" />
+    return <Minus className="h-4 w-4 text-gray-400" />
+  }
+
+  const runManualCheck = async (framework: ComplianceFramework,) => {
+    try {
+      setIsLoading(true,)
+      await complianceService.runComplianceCheck(framework,)
+      // Data will be updated automatically via real-time subscription
+      toast.success(`${framework} compliance check completed`,)
+    } catch (error) {
+      console.error('Manual check failed:', error,)
+      toast.error(`Failed to run ${framework} check`,)
+    } finally {
+      setIsLoading(false,)
+    }
+  }
 
   const generateReport = async () => {
     try {
-      const frameworks: ComplianceFramework[] = selectedFramework === "all"
-        ? ["WCAG", "LGPD", "ANVISA", "CFM"]
-        : [selectedFramework];
+      const frameworks: ComplianceFramework[] = selectedFramework === 'all'
+        ? ['WCAG', 'LGPD', 'ANVISA', 'CFM',]
+        : [selectedFramework,]
 
-      const result = await complianceService.generateReport(frameworks);
-      toast.success("Compliance report generated");
-      window.open(result.downloadUrl, "_blank");
+      const result = await complianceService.generateReport(frameworks,)
+      toast.success('Compliance report generated',)
+      window.open(result.downloadUrl, '_blank',)
     } catch (error) {
-      console.error("Report generation failed:", error);
-      toast.error("Failed to generate compliance report");
+      console.error('Report generation failed:', error,)
+      toast.error('Failed to generate compliance report',)
     }
-  };
+  }
 
   // Update the onValueChange handler to properly type the value
-  const handleFrameworkChange = (value: string) => {
-    setSelectedFramework(value as ComplianceFramework | "all");
-  };
+  const handleFrameworkChange = (value: string,) => {
+    setSelectedFramework(value as ComplianceFramework | 'all',)
+  }
 
   if (isLoading && complianceScores.length === 0) {
     return (
@@ -217,7 +223,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading compliance data...</span>
       </div>
-    );
+    )
   }
 
   return (
@@ -270,7 +276,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
 
       {/* Compliance Score Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {complianceScores.map((score) => (
+        {complianceScores.map((score,) => (
           <Card key={score.framework} className="relative overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -279,7 +285,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
                   size="sm"
                   variant="ghost"
                   onClick={() =>
-                    runManualCheck(score.framework)}
+                    runManualCheck(score.framework,)}
                   disabled={isLoading}
                 >
                   <Play className="h-3 w-3" />
@@ -288,22 +294,22 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-full ${getStatusColor(score.status)}`}>
-                  {getStatusIcon(score.status)}
+                <div className={`p-3 rounded-full ${getStatusColor(score.status,)}`}>
+                  {getStatusIcon(score.status,)}
                 </div>
 
                 <div className="flex-1">
                   <div className="text-2xl font-bold">{score.score}%</div>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
-                    {getTrendIcon(score.trend)}
+                    {getTrendIcon(score.trend,)}
                     <span
-                      className={score.trend === "up"
-                        ? "text-green-600"
-                        : score.trend === "down"
-                        ? "text-red-600"
-                        : "text-gray-600"}
+                      className={score.trend === 'up'
+                        ? 'text-green-600'
+                        : score.trend === 'down'
+                        ? 'text-red-600'
+                        : 'text-gray-600'}
                     >
-                      {score.trend === "stable" ? "Stable" : `${Math.abs(score.trendValue)}%`}
+                      {score.trend === 'stable' ? 'Stable' : `${Math.abs(score.trendValue,)}%`}
                     </span>
                   </div>
                 </div>
@@ -312,14 +318,14 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
               <div className="mt-4 flex items-center justify-between text-sm">
                 <span>{score.violations} violations</span>
                 <span className="text-gray-500">
-                  {formatDistanceToNow(score.lastUpdated)} ago
+                  {formatDistanceToNow(score.lastUpdated,)} ago
                 </span>
               </div>
 
               <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-500 ${getStatusColor(score.status)}`}
-                  style={{ width: `${score.score}%` }}
+                  className={`h-full transition-all duration-500 ${getStatusColor(score.status,)}`}
+                  style={{ width: `${score.score}%`, }}
                 />
               </div>
             </CardContent>
@@ -353,17 +359,17 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
           <CardContent>
             <ScrollArea className="h-64">
               <div className="space-y-3">
-                {violations.slice(0, 10).map((violation) => (
+                {violations.slice(0, 10,).map((violation,) => (
                   <div key={violation.id} className="flex items-start gap-3 p-3 border rounded-lg">
                     <div
                       className={`h-2 w-2 rounded-full mt-2 flex-shrink-0 ${
-                        violation.severity === "critical"
-                          ? "bg-red-500"
-                          : violation.severity === "high"
-                          ? "bg-orange-500"
-                          : violation.severity === "medium"
-                          ? "bg-yellow-500"
-                          : "bg-blue-500"
+                        violation.severity === 'critical'
+                          ? 'bg-red-500'
+                          : violation.severity === 'high'
+                          ? 'bg-orange-500'
+                          : violation.severity === 'medium'
+                          ? 'bg-yellow-500'
+                          : 'bg-blue-500'
                       }`}
                     />
 
@@ -373,13 +379,13 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
                           {violation.framework}
                         </Badge>
                         <Badge
-                          variant={violation.severity === "critical"
-                            ? "destructive"
-                            : violation.severity === "high"
-                            ? "destructive"
-                            : violation.severity === "medium"
-                            ? "default"
-                            : "secondary"}
+                          variant={violation.severity === 'critical'
+                            ? 'destructive'
+                            : violation.severity === 'high'
+                            ? 'destructive'
+                            : violation.severity === 'medium'
+                            ? 'default'
+                            : 'secondary'}
                         >
                           {violation.severity}
                         </Badge>
@@ -392,7 +398,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
                         {violation.description}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {violation.page} • {formatDistanceToNow(violation.timestamp)} ago
+                        {violation.page} • {formatDistanceToNow(violation.timestamp,)} ago
                       </p>
                     </div>
                   </div>
@@ -417,22 +423,22 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => runManualCheck("WCAG")} variant="outline">
+            <Button onClick={() => runManualCheck('WCAG',)} variant="outline">
               <Accessibility className="h-4 w-4 mr-2" />
               Run WCAG Check
             </Button>
 
-            <Button onClick={() => runManualCheck("LGPD")} variant="outline">
+            <Button onClick={() => runManualCheck('LGPD',)} variant="outline">
               <Shield className="h-4 w-4 mr-2" />
               Run LGPD Check
             </Button>
 
-            <Button onClick={() => runManualCheck("ANVISA")} variant="outline">
+            <Button onClick={() => runManualCheck('ANVISA',)} variant="outline">
               <Activity className="h-4 w-4 mr-2" />
               Run ANVISA Check
             </Button>
 
-            <Button onClick={() => runManualCheck("CFM")} variant="outline">
+            <Button onClick={() => runManualCheck('CFM',)} variant="outline">
               <UserCheck className="h-4 w-4 mr-2" />
               Run CFM Check
             </Button>
@@ -445,7 +451,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ComplianceDashboard;
+export default ComplianceDashboard

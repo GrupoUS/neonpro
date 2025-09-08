@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,16 +10,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -27,8 +27,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   Activity,
   AlertTriangle,
@@ -49,403 +49,403 @@ import {
   Wrench,
   Wrench as Tool,
   XCircle,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+} from 'lucide-react'
+import { useMemo, useState, } from 'react'
 
 import type {
   EquipmentStatus,
   FacilityRoom,
   MedicalEquipment,
-} from "@/app/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
+} from '@/app/types/team-coordination' // Mock medical equipment data with ANVISA compliance
 
 const mockEquipmentData: MedicalEquipment[] = [
   {
-    id: "equip-001",
-    name: "Monitor Multiparamétrico",
-    model: "IntelliVue MX40",
-    serialNumber: "MX40-2024-001",
-    manufacturer: "Philips Healthcare",
-    purchaseDate: new Date("2023-05-15"),
-    warrantyExpiry: new Date("2026-05-15"),
-    anvisaRegistration: "80146270009",
-    regulatoryClass: "Classe IIb",
-    lastInspectionDate: new Date("2024-01-15"),
-    nextInspectionDate: new Date("2024-07-15"),
-    status: "available",
-    currentLocation: "UTI - Setor A",
+    id: 'equip-001',
+    name: 'Monitor Multiparamétrico',
+    model: 'IntelliVue MX40',
+    serialNumber: 'MX40-2024-001',
+    manufacturer: 'Philips Healthcare',
+    purchaseDate: new Date('2023-05-15',),
+    warrantyExpiry: new Date('2026-05-15',),
+    anvisaRegistration: '80146270009',
+    regulatoryClass: 'Classe IIb',
+    lastInspectionDate: new Date('2024-01-15',),
+    nextInspectionDate: new Date('2024-07-15',),
+    status: 'available',
+    currentLocation: 'UTI - Setor A',
     assignedTo: null,
     reservations: [],
-    lastMaintenanceDate: new Date("2024-01-10"),
-    nextMaintenanceDate: new Date("2024-07-10"),
-    maintenanceNotes: "Calibração realizada conforme cronograma",
-    calibrationDate: new Date("2024-01-10"),
-    nextCalibrationDate: new Date("2024-07-10"),
+    lastMaintenanceDate: new Date('2024-01-10',),
+    nextMaintenanceDate: new Date('2024-07-10',),
+    maintenanceNotes: 'Calibração realizada conforme cronograma',
+    calibrationDate: new Date('2024-01-10',),
+    nextCalibrationDate: new Date('2024-07-10',),
     totalUsageHours: 2450,
     utilizationRate: 85,
     failureCount: 0,
     lastFailureDate: null,
-    requiredTraining: ["Monitorização Avançada", "Interpretação de Arritmias"],
+    requiredTraining: ['Monitorização Avançada', 'Interpretação de Arritmias',],
     safetyAlerts: [],
-    operatingInstructions: "Seguir protocolo UTI para monitorização contínua",
-    createdAt: new Date("2023-05-15"),
-    updatedAt: new Date("2024-08-21"),
+    operatingInstructions: 'Seguir protocolo UTI para monitorização contínua',
+    createdAt: new Date('2023-05-15',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
   {
-    id: "equip-002",
-    name: "Ventilador Mecânico",
-    model: "SERVO-i",
-    serialNumber: "SRV-2024-002",
-    manufacturer: "Maquet",
-    purchaseDate: new Date("2023-08-20"),
-    warrantyExpiry: new Date("2026-08-20"),
-    anvisaRegistration: "10313490004",
-    regulatoryClass: "Classe III",
-    lastInspectionDate: new Date("2024-02-01"),
-    nextInspectionDate: new Date("2024-08-01"), // Overdue!
-    status: "maintenance",
-    currentLocation: "Manutenção - Oficina",
+    id: 'equip-002',
+    name: 'Ventilador Mecânico',
+    model: 'SERVO-i',
+    serialNumber: 'SRV-2024-002',
+    manufacturer: 'Maquet',
+    purchaseDate: new Date('2023-08-20',),
+    warrantyExpiry: new Date('2026-08-20',),
+    anvisaRegistration: '10313490004',
+    regulatoryClass: 'Classe III',
+    lastInspectionDate: new Date('2024-02-01',),
+    nextInspectionDate: new Date('2024-08-01',), // Overdue!
+    status: 'maintenance',
+    currentLocation: 'Manutenção - Oficina',
     assignedTo: null,
     reservations: [],
-    lastMaintenanceDate: new Date("2024-07-20"),
-    nextMaintenanceDate: new Date("2024-10-20"),
-    maintenanceNotes: "Manutenção preventiva em andamento - sensor de pressão",
-    calibrationDate: new Date("2024-07-20"),
-    nextCalibrationDate: new Date("2024-10-20"),
+    lastMaintenanceDate: new Date('2024-07-20',),
+    nextMaintenanceDate: new Date('2024-10-20',),
+    maintenanceNotes: 'Manutenção preventiva em andamento - sensor de pressão',
+    calibrationDate: new Date('2024-07-20',),
+    nextCalibrationDate: new Date('2024-10-20',),
     totalUsageHours: 1850,
     utilizationRate: 95,
     failureCount: 1,
-    lastFailureDate: new Date("2024-07-18"),
-    requiredTraining: ["Ventilação Mecânica Avançada", "Modos Ventilatórios"],
-    safetyAlerts: ["Inspeção ANVISA pendente"],
-    operatingInstructions: "Protocolo de ventilação protetiva obrigatório",
-    createdAt: new Date("2023-08-20"),
-    updatedAt: new Date("2024-08-21"),
+    lastFailureDate: new Date('2024-07-18',),
+    requiredTraining: ['Ventilação Mecânica Avançada', 'Modos Ventilatórios',],
+    safetyAlerts: ['Inspeção ANVISA pendente',],
+    operatingInstructions: 'Protocolo de ventilação protetiva obrigatório',
+    createdAt: new Date('2023-08-20',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
   {
-    id: "equip-003",
-    name: "Desfibrilador/Monitor",
-    model: "HeartStart MRx",
-    serialNumber: "MRX-2024-003",
-    manufacturer: "Philips Healthcare",
-    purchaseDate: new Date("2024-01-10"),
-    warrantyExpiry: new Date("2027-01-10"),
-    anvisaRegistration: "80146270015",
-    regulatoryClass: "Classe III",
-    lastInspectionDate: new Date("2024-06-01"),
-    nextInspectionDate: new Date("2024-12-01"),
-    status: "in_use",
-    currentLocation: "Pronto Socorro",
-    assignedTo: "prof-002", // Dr. Roberto Oliveira
+    id: 'equip-003',
+    name: 'Desfibrilador/Monitor',
+    model: 'HeartStart MRx',
+    serialNumber: 'MRX-2024-003',
+    manufacturer: 'Philips Healthcare',
+    purchaseDate: new Date('2024-01-10',),
+    warrantyExpiry: new Date('2027-01-10',),
+    anvisaRegistration: '80146270015',
+    regulatoryClass: 'Classe III',
+    lastInspectionDate: new Date('2024-06-01',),
+    nextInspectionDate: new Date('2024-12-01',),
+    status: 'in_use',
+    currentLocation: 'Pronto Socorro',
+    assignedTo: 'prof-002', // Dr. Roberto Oliveira
     reservations: [],
-    lastMaintenanceDate: new Date("2024-06-01"),
-    nextMaintenanceDate: new Date("2024-12-01"),
-    maintenanceNotes: "Teste de bateria e calibração aprovados",
-    calibrationDate: new Date("2024-06-01"),
-    nextCalibrationDate: new Date("2024-12-01"),
+    lastMaintenanceDate: new Date('2024-06-01',),
+    nextMaintenanceDate: new Date('2024-12-01',),
+    maintenanceNotes: 'Teste de bateria e calibração aprovados',
+    calibrationDate: new Date('2024-06-01',),
+    nextCalibrationDate: new Date('2024-12-01',),
     totalUsageHours: 450,
     utilizationRate: 75,
     failureCount: 0,
     lastFailureDate: null,
-    requiredTraining: ["Suporte Avançado de Vida", "Desfibrilação"],
+    requiredTraining: ['Suporte Avançado de Vida', 'Desfibrilação',],
     safetyAlerts: [],
-    operatingInstructions: "Disponível para emergências 24/7",
-    createdAt: new Date("2024-01-10"),
-    updatedAt: new Date("2024-08-21"),
+    operatingInstructions: 'Disponível para emergências 24/7',
+    createdAt: new Date('2024-01-10',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
-]; // Mock facility room data
+] // Mock facility room data
 const mockRoomData: FacilityRoom[] = [
   {
-    id: "room-001",
-    name: "Consultório 301",
-    type: "consultation",
-    floor: "3º Andar",
+    id: 'room-001',
+    name: 'Consultório 301',
+    type: 'consultation',
+    floor: '3º Andar',
     capacity: 4,
-    equipmentIds: ["equip-echo-001", "equip-exam-table-001"],
-    status: "available",
+    equipmentIds: ['equip-echo-001', 'equip-exam-table-001',],
+    status: 'available',
     currentOccupancy: 0,
     reservations: [],
-    features: ["ar-condicionado", "oxigênio", "aspiração", "wi-fi"],
-    accessibilityFeatures: ["rampa-acesso", "banheiro-adaptado"],
-    sanitationStatus: "clean",
-    lastCleaningTime: new Date("2024-08-21T06:00:00"),
-    createdAt: new Date("2023-01-15"),
-    updatedAt: new Date("2024-08-21"),
+    features: ['ar-condicionado', 'oxigênio', 'aspiração', 'wi-fi',],
+    accessibilityFeatures: ['rampa-acesso', 'banheiro-adaptado',],
+    sanitationStatus: 'clean',
+    lastCleaningTime: new Date('2024-08-21T06:00:00',),
+    createdAt: new Date('2023-01-15',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
   {
-    id: "room-002",
-    name: "Sala Cirúrgica 01",
-    type: "surgery",
-    floor: "2º Andar",
+    id: 'room-002',
+    name: 'Sala Cirúrgica 01',
+    type: 'surgery',
+    floor: '2º Andar',
     capacity: 8,
-    equipmentIds: ["equip-surgery-table", "equip-anesthesia", "equip-lights"],
-    status: "occupied",
+    equipmentIds: ['equip-surgery-table', 'equip-anesthesia', 'equip-lights',],
+    status: 'occupied',
     currentOccupancy: 6,
     reservations: [],
     features: [
-      "pressão-positiva",
-      "oxigênio",
-      "gases-medicinais",
-      "aspiração",
-      "sistema-som",
+      'pressão-positiva',
+      'oxigênio',
+      'gases-medicinais',
+      'aspiração',
+      'sistema-som',
     ],
-    accessibilityFeatures: ["acesso-amplo"],
-    sanitationStatus: "clean",
-    lastCleaningTime: new Date("2024-08-21T05:30:00"),
-    createdAt: new Date("2023-01-15"),
-    updatedAt: new Date("2024-08-21"),
+    accessibilityFeatures: ['acesso-amplo',],
+    sanitationStatus: 'clean',
+    lastCleaningTime: new Date('2024-08-21T05:30:00',),
+    createdAt: new Date('2023-01-15',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
   {
-    id: "room-003",
-    name: "UTI - Leito 05",
-    type: "recovery",
-    floor: "4º Andar",
+    id: 'room-003',
+    name: 'UTI - Leito 05',
+    type: 'recovery',
+    floor: '4º Andar',
     capacity: 2,
-    equipmentIds: ["equip-001", "equip-002"], // Monitor and ventilator
-    status: "occupied",
+    equipmentIds: ['equip-001', 'equip-002',], // Monitor and ventilator
+    status: 'occupied',
     currentOccupancy: 2,
     reservations: [],
     features: [
-      "monitorização-contínua",
-      "oxigênio",
-      "aspiração",
-      "gases-medicinais",
+      'monitorização-contínua',
+      'oxigênio',
+      'aspiração',
+      'gases-medicinais',
     ],
-    accessibilityFeatures: ["acesso-equipamentos"],
-    sanitationStatus: "clean",
-    lastCleaningTime: new Date("2024-08-21T04:00:00"),
-    createdAt: new Date("2023-01-15"),
-    updatedAt: new Date("2024-08-21"),
+    accessibilityFeatures: ['acesso-equipamentos',],
+    sanitationStatus: 'clean',
+    lastCleaningTime: new Date('2024-08-21T04:00:00',),
+    createdAt: new Date('2023-01-15',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
   {
-    id: "room-004",
-    name: "Box Emergência 01",
-    type: "emergency",
-    floor: "1º Andar",
+    id: 'room-004',
+    name: 'Box Emergência 01',
+    type: 'emergency',
+    floor: '1º Andar',
     capacity: 6,
-    equipmentIds: ["equip-003", "equip-emergency-cart"],
-    status: "available",
+    equipmentIds: ['equip-003', 'equip-emergency-cart',],
+    status: 'available',
     currentOccupancy: 0,
     reservations: [],
     features: [
-      "acesso-rápido",
-      "oxigênio",
-      "aspiração",
-      "desfibrilador",
-      "carrinho-emergência",
+      'acesso-rápido',
+      'oxigênio',
+      'aspiração',
+      'desfibrilador',
+      'carrinho-emergência',
     ],
-    accessibilityFeatures: ["entrada-ampla", "acesso-maca"],
-    sanitationStatus: "clean",
-    lastCleaningTime: new Date("2024-08-21T07:00:00"),
-    createdAt: new Date("2023-01-15"),
-    updatedAt: new Date("2024-08-21"),
+    accessibilityFeatures: ['entrada-ampla', 'acesso-maca',],
+    sanitationStatus: 'clean',
+    lastCleaningTime: new Date('2024-08-21T07:00:00',),
+    createdAt: new Date('2023-01-15',),
+    updatedAt: new Date('2024-08-21',),
     isActive: true,
   },
-]; // Helper functions for status indicators
-const getEquipmentStatusInfo = (status: EquipmentStatus) => {
+] // Helper functions for status indicators
+const getEquipmentStatusInfo = (status: EquipmentStatus,) => {
   switch (status) {
-    case "available": {
+    case 'available': {
       return {
-        color: "text-green-600",
-        bg: "bg-green-100",
+        color: 'text-green-600',
+        bg: 'bg-green-100',
         icon: CheckCircle,
-        label: "Disponível",
-      };
+        label: 'Disponível',
+      }
     }
-    case "in_use": {
+    case 'in_use': {
       return {
-        color: "text-blue-600",
-        bg: "bg-blue-100",
+        color: 'text-blue-600',
+        bg: 'bg-blue-100',
         icon: Activity,
-        label: "Em Uso",
-      };
+        label: 'Em Uso',
+      }
     }
-    case "maintenance": {
+    case 'maintenance': {
       return {
-        color: "text-yellow-600",
-        bg: "bg-yellow-100",
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
         icon: Tool,
-        label: "Manutenção",
-      };
+        label: 'Manutenção',
+      }
     }
-    case "reserved": {
+    case 'reserved': {
       return {
-        color: "text-purple-600",
-        bg: "bg-purple-100",
+        color: 'text-purple-600',
+        bg: 'bg-purple-100',
         icon: Calendar,
-        label: "Reservado",
-      };
+        label: 'Reservado',
+      }
     }
-    case "out_of_service": {
+    case 'out_of_service': {
       return {
-        color: "text-red-600",
-        bg: "bg-red-100",
+        color: 'text-red-600',
+        bg: 'bg-red-100',
         icon: XCircle,
-        label: "Fora de Serviço",
-      };
+        label: 'Fora de Serviço',
+      }
     }
     default: {
       return {
-        color: "text-gray-600",
-        bg: "bg-gray-100",
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
         icon: Clock,
-        label: "Indefinido",
-      };
+        label: 'Indefinido',
+      }
     }
   }
-};
+}
 
-const getRoomStatusInfo = (status: string) => {
+const getRoomStatusInfo = (status: string,) => {
   switch (status) {
-    case "available": {
+    case 'available': {
       return {
-        color: "text-green-600",
-        bg: "bg-green-100",
+        color: 'text-green-600',
+        bg: 'bg-green-100',
         icon: CheckCircle,
-        label: "Disponível",
-      };
+        label: 'Disponível',
+      }
     }
-    case "occupied": {
+    case 'occupied': {
       return {
-        color: "text-red-600",
-        bg: "bg-red-100",
+        color: 'text-red-600',
+        bg: 'bg-red-100',
         icon: Users,
-        label: "Ocupado",
-      };
+        label: 'Ocupado',
+      }
     }
-    case "maintenance": {
+    case 'maintenance': {
       return {
-        color: "text-yellow-600",
-        bg: "bg-yellow-100",
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
         icon: Wrench,
-        label: "Manutenção",
-      };
+        label: 'Manutenção',
+      }
     }
-    case "reserved": {
+    case 'reserved': {
       return {
-        color: "text-purple-600",
-        bg: "bg-purple-100",
+        color: 'text-purple-600',
+        bg: 'bg-purple-100',
         icon: Calendar,
-        label: "Reservado",
-      };
+        label: 'Reservado',
+      }
     }
     default: {
       return {
-        color: "text-gray-600",
-        bg: "bg-gray-100",
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
         icon: Clock,
-        label: "Indefinido",
-      };
+        label: 'Indefinido',
+      }
     }
   }
-};
+}
 
 // Room type translations
 const roomTypeLabels = {
-  consultation: "Consultório",
-  procedure: "Procedimento",
-  surgery: "Cirúrgica",
-  recovery: "Recuperação",
-  emergency: "Emergência",
-};
+  consultation: 'Consultório',
+  procedure: 'Procedimento',
+  surgery: 'Cirúrgica',
+  recovery: 'Recuperação',
+  emergency: 'Emergência',
+}
 
 interface ResourceAllocationProps {
-  emergencyMode?: boolean;
+  emergencyMode?: boolean
 }
 
 export function ResourceAllocation({
   emergencyMode = false,
-}: ResourceAllocationProps) {
-  const [activeTab, setActiveTab] = useState("equipment");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [locationFilter, setLocationFilter] = useState<string>("all");
-  const [showMaintenanceOnly, setShowMaintenanceOnly] = useState(false); // Filter equipment data
+}: ResourceAllocationProps,) {
+  const [activeTab, setActiveTab,] = useState('equipment',)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [statusFilter, setStatusFilter,] = useState<string>('all',)
+  const [locationFilter, setLocationFilter,] = useState<string>('all',)
+  const [showMaintenanceOnly, setShowMaintenanceOnly,] = useState(false,) // Filter equipment data
   const filteredEquipment = useMemo(() => {
-    return mockEquipmentData.filter((equipment) => {
+    return mockEquipmentData.filter((equipment,) => {
       // Search filter
       if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = equipment.name.toLowerCase().includes(searchLower)
-          || equipment.model.toLowerCase().includes(searchLower)
-          || equipment.serialNumber.toLowerCase().includes(searchLower)
-          || equipment.currentLocation.toLowerCase().includes(searchLower)
-          || equipment.anvisaRegistration?.toLowerCase().includes(searchLower);
+        const searchLower = searchQuery.toLowerCase()
+        const matchesSearch = equipment.name.toLowerCase().includes(searchLower,)
+          || equipment.model.toLowerCase().includes(searchLower,)
+          || equipment.serialNumber.toLowerCase().includes(searchLower,)
+          || equipment.currentLocation.toLowerCase().includes(searchLower,)
+          || equipment.anvisaRegistration?.toLowerCase().includes(searchLower,)
 
         if (!matchesSearch) {
-          return false;
+          return false
         }
       }
 
       // Status filter
-      if (statusFilter !== "all" && equipment.status !== statusFilter) {
-        return false;
+      if (statusFilter !== 'all' && equipment.status !== statusFilter) {
+        return false
       }
 
       // Location filter
       if (
-        locationFilter !== "all"
-        && !equipment.currentLocation.includes(locationFilter)
+        locationFilter !== 'all'
+        && !equipment.currentLocation.includes(locationFilter,)
       ) {
-        return false;
+        return false
       }
 
       // Maintenance filter
       if (showMaintenanceOnly) {
-        const hasMaintenanceIssues = equipment.status === "maintenance"
+        const hasMaintenanceIssues = equipment.status === 'maintenance'
           || equipment.safetyAlerts.length > 0
           || (equipment.nextInspectionDate
             && equipment.nextInspectionDate < new Date())
           || (equipment.nextMaintenanceDate
-            && equipment.nextMaintenanceDate < new Date());
+            && equipment.nextMaintenanceDate < new Date())
 
         if (!hasMaintenanceIssues) {
-          return false;
+          return false
         }
       }
 
-      return true;
-    });
-  }, [searchQuery, statusFilter, locationFilter, showMaintenanceOnly]);
+      return true
+    },)
+  }, [searchQuery, statusFilter, locationFilter, showMaintenanceOnly,],)
 
   // Filter room data
   const filteredRooms = useMemo(() => {
-    return mockRoomData.filter((room) => {
+    return mockRoomData.filter((room,) => {
       // Search filter
       if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = room.name.toLowerCase().includes(searchLower)
-          || room.type.toLowerCase().includes(searchLower)
-          || room.floor.toLowerCase().includes(searchLower)
-          || room.features.some((feature) => feature.toLowerCase().includes(searchLower));
+        const searchLower = searchQuery.toLowerCase()
+        const matchesSearch = room.name.toLowerCase().includes(searchLower,)
+          || room.type.toLowerCase().includes(searchLower,)
+          || room.floor.toLowerCase().includes(searchLower,)
+          || room.features.some((feature,) => feature.toLowerCase().includes(searchLower,))
 
         if (!matchesSearch) {
-          return false;
+          return false
         }
       }
 
       // Status filter
-      if (statusFilter !== "all" && room.status !== statusFilter) {
-        return false;
+      if (statusFilter !== 'all' && room.status !== statusFilter) {
+        return false
       }
 
-      return true;
-    });
-  }, [searchQuery, statusFilter]);
+      return true
+    },)
+  }, [searchQuery, statusFilter,],)
 
   // Get unique locations for filter
   const locations = useMemo(() => {
     return [
       ...new Set(
-        mockEquipmentData.map((equip) => equip.currentLocation.split(" - ")[0]),
+        mockEquipmentData.map((equip,) => equip.currentLocation.split(' - ',)[0]),
       ),
-    ];
-  }, []);
+    ]
+  }, [],)
   return (
     <div className="space-y-6">
       {/* Header with Actions */}
@@ -492,7 +492,7 @@ export function ResourceAllocation({
                 <Input
                   aria-label="Buscar recursos"
                   className="pl-10"
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e,) => setSearchQuery(e.target.value,)}
                   placeholder="Buscar recursos..."
                   value={searchQuery}
                 />
@@ -511,7 +511,7 @@ export function ResourceAllocation({
                 <SelectItem value="reserved">Reservado</SelectItem>
                 <SelectItem value="out_of_service">Fora de Serviço</SelectItem>
               </SelectContent>
-            </Select>{" "}
+            </Select>{' '}
             {/* Location Filter */}
             <Select onValueChange={setLocationFilter} value={locationFilter}>
               <SelectTrigger>
@@ -519,7 +519,7 @@ export function ResourceAllocation({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as Localizações</SelectItem>
-                {locations.map((location) => (
+                {locations.map((location,) => (
                   <SelectItem key={location} value={location}>
                     {location}
                   </SelectItem>
@@ -530,9 +530,9 @@ export function ResourceAllocation({
             <div className="flex items-center space-x-2">
               <Button
                 className="text-xs"
-                onClick={() => setShowMaintenanceOnly(!showMaintenanceOnly)}
+                onClick={() => setShowMaintenanceOnly(!showMaintenanceOnly,)}
                 size="sm"
-                variant={showMaintenanceOnly ? "default" : "outline"}
+                variant={showMaintenanceOnly ? 'default' : 'outline'}
               >
                 <Filter className="mr-1 h-3 w-3" />
                 Manutenção
@@ -561,7 +561,7 @@ export function ResourceAllocation({
             <Package className="mr-2 h-4 w-4" />
             Suprimentos
           </TabsTrigger>
-        </TabsList>{" "}
+        </TabsList>{' '}
         {/* Equipment Tab */}
         <TabsContent className="space-y-6" value="equipment">
           <Card>
@@ -586,18 +586,18 @@ export function ResourceAllocation({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredEquipment.map((equipment) => {
+                    {filteredEquipment.map((equipment,) => {
                       const statusInfo = getEquipmentStatusInfo(
                         equipment.status,
-                      );
-                      const { icon: StatusIcon } = statusInfo;
+                      )
+                      const { icon: StatusIcon, } = statusInfo
 
                       // Check for alerts
                       const hasInspectionAlert = equipment.nextInspectionDate
-                        && equipment.nextInspectionDate < new Date();
+                        && equipment.nextInspectionDate < new Date()
                       const hasMaintenanceAlert = equipment.nextMaintenanceDate
-                        && equipment.nextMaintenanceDate < new Date();
-                      const hasSafetyAlerts = equipment.safetyAlerts.length > 0;
+                        && equipment.nextMaintenanceDate < new Date()
+                      const hasSafetyAlerts = equipment.safetyAlerts.length > 0
 
                       return (
                         <TableRow
@@ -646,7 +646,7 @@ export function ResourceAllocation({
                                 {equipment.currentLocation}
                               </span>
                             </div>
-                          </TableCell>{" "}
+                          </TableCell>{' '}
                           {/* ANVISA Registration */}
                           <TableCell>
                             <div className="space-y-1">
@@ -696,10 +696,10 @@ export function ResourceAllocation({
                                 <Tool className="h-3 w-3 text-yellow-500" />
                                 <span className="text-xs">
                                   {equipment.nextMaintenanceDate?.toLocaleDateString(
-                                    "pt-BR",
+                                    'pt-BR',
                                     {
-                                      day: "2-digit",
-                                      month: "2-digit",
+                                      day: '2-digit',
+                                      month: '2-digit',
                                     },
                                   )}
                                 </span>
@@ -763,14 +763,14 @@ export function ResourceAllocation({
                             </DropdownMenu>
                           </TableCell>
                         </TableRow>
-                      );
-                    })}
+                      )
+                    },)}
                   </TableBody>
                 </Table>
               </div>
             </CardContent>
           </Card>
-        </TabsContent>{" "}
+        </TabsContent>{' '}
         {/* Rooms Tab */}
         <TabsContent className="space-y-6" value="rooms">
           <Card>
@@ -782,10 +782,10 @@ export function ResourceAllocation({
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filteredRooms.map((room) => {
-                  const statusInfo = getRoomStatusInfo(room.status);
-                  const { icon: StatusIcon } = statusInfo;
-                  const occupancyPercentage = (room.currentOccupancy / room.capacity) * 100;
+                {filteredRooms.map((room,) => {
+                  const statusInfo = getRoomStatusInfo(room.status,)
+                  const { icon: StatusIcon, } = statusInfo
+                  const occupancyPercentage = (room.currentOccupancy / room.capacity) * 100
 
                   return (
                     <Card
@@ -835,7 +835,7 @@ export function ResourceAllocation({
                         <div>
                           <p className="mb-2 font-medium text-sm">Recursos</p>
                           <div className="flex flex-wrap gap-1">
-                            {room.features.slice(0, 3).map((feature) => (
+                            {room.features.slice(0, 3,).map((feature,) => (
                               <Badge
                                 className="text-xs"
                                 key={feature}
@@ -858,11 +858,11 @@ export function ResourceAllocation({
                           <div className="flex items-center space-x-1">
                             <div
                               className={`h-2 w-2 rounded-full ${
-                                room.sanitationStatus === "clean"
-                                  ? "bg-green-500"
-                                  : room.sanitationStatus === "cleaning"
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
+                                room.sanitationStatus === 'clean'
+                                  ? 'bg-green-500'
+                                  : room.sanitationStatus === 'cleaning'
+                                  ? 'bg-yellow-500'
+                                  : 'bg-red-500'
                               }`}
                             />
                             <span className="text-xs capitalize">
@@ -887,8 +887,8 @@ export function ResourceAllocation({
                         </div>
                       </CardContent>
                     </Card>
-                  );
-                })}
+                  )
+                },)}
               </div>
             </CardContent>
           </Card>
@@ -915,5 +915,5 @@ export function ResourceAllocation({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

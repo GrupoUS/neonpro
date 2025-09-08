@@ -9,7 +9,7 @@ export {
   createHealthcareFeature,
   HealthcareFeaturePresets,
   HealthcareFeatureTemplate,
-} from "./healthcare-feature-template";
+} from './healthcare-feature-template'
 
 export type {
   AuditMetadata,
@@ -19,13 +19,13 @@ export type {
   HealthcareFeatureConfig,
   HealthcarePatient,
   HealthcarePatientSchema,
-} from "./healthcare-feature-template";
+} from './healthcare-feature-template'
 
 export {
   BrazilianHealthcareSchemas,
   createHealthcareApi,
   HealthcareApiTemplate,
-} from "./healthcare-api-template";
+} from './healthcare-api-template'
 
 export type {
   HealthcareApiResponse,
@@ -33,7 +33,7 @@ export type {
   HealthcareErrorCodes,
   PaginatedResponse,
   PaginationParams,
-} from "./healthcare-api-template";
+} from './healthcare-api-template'
 
 export {
   BrazilianHealthcareFields,
@@ -41,7 +41,7 @@ export {
   createHealthcareComponentWithPreset,
   HealthcareComponentPresets,
   HealthcareComponentTemplate,
-} from "./healthcare-component-template";
+} from './healthcare-component-template'
 
 export type {
   ComponentPresetKey,
@@ -50,7 +50,7 @@ export type {
   HealthcareComponentProps,
   HealthcareComponentState,
   ValidationState,
-} from "./healthcare-component-template";
+} from './healthcare-component-template'
 
 // Template usage patterns for AI agents
 export const TemplatePatternsGuide = {
@@ -148,56 +148,56 @@ export const TemplatePatternsGuide = {
   // Brazilian healthcare compliance checklist
   complianceChecklist: {
     lgpd: [
-      "LGPD consent checking implemented",
-      "Data encryption for sensitive information",
-      "Audit logging for all data access",
-      "User consent withdrawal handling",
-      "Data retention policy compliance",
+      'LGPD consent checking implemented',
+      'Data encryption for sensitive information',
+      'Audit logging for all data access',
+      'User consent withdrawal handling',
+      'Data retention policy compliance',
     ],
 
     healthcareRegulation: [
-      "Professional license validation (CRM/CRF/CREFITO)",
-      "Emergency access controls with justification",
-      "Patient data access restrictions",
-      "Medical record confidentiality",
-      "Brazilian healthcare data format validation",
+      'Professional license validation (CRM/CRF/CREFITO)',
+      'Emergency access controls with justification',
+      'Patient data access restrictions',
+      'Medical record confidentiality',
+      'Brazilian healthcare data format validation',
     ],
 
     accessibility: [
-      "WCAG 2.1 AA compliance minimum",
-      "Portuguese language support",
-      "Screen reader compatibility",
-      "Keyboard navigation support",
-      "High contrast mode support",
+      'WCAG 2.1 AA compliance minimum',
+      'Portuguese language support',
+      'Screen reader compatibility',
+      'Keyboard navigation support',
+      'High contrast mode support',
     ],
   },
 
   // Common error patterns and solutions
   troubleshooting: {
-    "Professional license required": "User role is physician but no professionalLicense in context",
-    "LGPD consent required": "Feature requires consent but lgpdConsent is false in context",
-    "Emergency access denied": "Emergency access requested but allowsEmergencyAccess is false",
-    "Encryption failed": "Check encryption keys and patient ID for data encryption",
-    "Validation failed": "Input data does not match Brazilian healthcare format requirements",
+    'Professional license required': 'User role is physician but no professionalLicense in context',
+    'LGPD consent required': 'Feature requires consent but lgpdConsent is false in context',
+    'Emergency access denied': 'Emergency access requested but allowsEmergencyAccess is false',
+    'Encryption failed': 'Check encryption keys and patient ID for data encryption',
+    'Validation failed': 'Input data does not match Brazilian healthcare format requirements',
   },
-};
+}
 
 // AI Prompt Templates
-export * from "./ai-prompt-templates";
-export * from "./lgpd-compliance-templates";
-export * from "./template-manager";
+export * from './ai-prompt-templates'
+export * from './lgpd-compliance-templates'
+export * from './template-manager'
 
 // Common types are already exported above - no need to re-export
 
 // Version and metadata
-export const TEMPLATES_VERSION = "1.0.0";
+export const TEMPLATES_VERSION = '1.0.0'
 export const TEMPLATES_COMPATIBILITY = {
-  nextjs: ">=15.0.0",
-  react: ">=19.0.0",
-  typescript: ">=5.6.0",
-  hono: ">=4.0.0",
-  zod: ">=3.0.0",
-};
+  nextjs: '>=15.0.0',
+  react: '>=19.0.0',
+  typescript: '>=5.6.0',
+  hono: '>=4.0.0',
+  zod: '>=3.0.0',
+}
 
 export const BRAZILIAN_HEALTHCARE_STANDARDS = {
   cpfFormat: /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
@@ -207,32 +207,32 @@ export const BRAZILIAN_HEALTHCARE_STANDARDS = {
   crfFormat: /^\d{4,6}-[A-Z]{2}$/,
   crefitoFormat: /^\d{5,6}-F$/,
   supportedStates: [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ],
-};
+}

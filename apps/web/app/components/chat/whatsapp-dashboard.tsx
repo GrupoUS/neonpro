@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * WhatsApp Dashboard Component for NeonPro Healthcare
@@ -15,25 +15,25 @@ import {
   Settings,
   Wifi,
   WifiOff,
-} from "lucide-react";
-import type React from "react";
-import { useState } from "react";
+} from 'lucide-react'
+import type React from 'react'
+import { useState, } from 'react'
 
 interface Conversation {
-  id: string;
-  clinicId: string;
-  patientId?: string;
-  phoneNumber: string;
-  contactName?: string;
-  status: "active" | "closed" | "archived";
-  lastMessageAt?: Date;
-  messageCount: number;
-  unreadCount: number;
-  assignedTo?: string;
-  tags: string[];
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  clinicId: string
+  patientId?: string
+  phoneNumber: string
+  contactName?: string
+  status: 'active' | 'closed' | 'archived'
+  lastMessageAt?: Date
+  messageCount: number
+  unreadCount: number
+  assignedTo?: string
+  tags: string[]
+  metadata?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 // UI Components
@@ -51,28 +51,28 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui";
-import { cn } from "@/lib/utils";
+} from '@/components/ui'
+import { cn, } from '@/lib/utils'
 
 // Custom components
-import { WhatsappChat } from "./whatsapp-chat";
-import { WhatsappConversationList } from "./whatsapp-conversation-list";
+import { WhatsappChat, } from './whatsapp-chat'
+import { WhatsappConversationList, } from './whatsapp-conversation-list'
 
 // Hooks
-import { useWhatsapp } from "@/app/hooks/use-whatsapp";
+import { useWhatsapp, } from '@/app/hooks/use-whatsapp'
 
 interface WhatsappDashboardProps {
-  clinicId: string;
-  currentUserId: string;
-  className?: string;
+  clinicId: string
+  currentUserId: string
+  className?: string
 }
 
 export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
   clinicId,
   currentUserId,
   className,
-}) => {
-  const [activeTab, setActiveTab] = useState("conversations");
+},) => {
+  const [activeTab, setActiveTab,] = useState('conversations',)
 
   // WhatsApp hook
   const {
@@ -92,78 +92,78 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
     clinicId,
     autoRefresh: true,
     refreshInterval: 30_000,
-  });
+  },)
 
   // Handle conversation selection
-  const handleSelectConversation = (conversation: Conversation) => {
-    selectConversation(conversation);
+  const handleSelectConversation = (conversation: Conversation,) => {
+    selectConversation(conversation,)
     // On mobile, switch to chat tab when conversation is selected
     if (window.innerWidth < 768) {
-      setActiveTab("chat");
+      setActiveTab('chat',)
     }
-  };
+  }
 
   // Handle refresh
-  const [refreshError, setRefreshError] = useState<string | null>(null);
+  const [refreshError, setRefreshError,] = useState<string | null>(null,)
   const handleRefresh = async () => {
     try {
-      await refreshData();
-      setRefreshError(null);
+      await refreshData()
+      setRefreshError(null,)
     } catch (err) {
-      console.error("Failed to refresh data:", err);
-      const msg = err instanceof Error ? err.message : String(err);
-      setRefreshError(`Failed to refresh data: ${msg}`);
+      console.error('Failed to refresh data:', err,)
+      const msg = err instanceof Error ? err.message : String(err,)
+      setRefreshError(`Failed to refresh data: ${msg}`,)
     }
-  };
+  }
 
   // Connection status indicator
   const ConnectionStatus = () => {
     const getStatusIcon = () => {
       switch (connectionStatus) {
-        case "connected":
-          return <Wifi className="h-4 w-4 text-green-500" />;
-        case "connecting":
-          return <RefreshCw className="h-4 w-4 text-yellow-500 animate-spin" />;
-        case "disconnected":
-          return <WifiOff className="h-4 w-4 text-red-500" />;
+        case 'connected':
+          return <Wifi className="h-4 w-4 text-green-500" />
+        case 'connecting':
+          return <RefreshCw className="h-4 w-4 text-yellow-500 animate-spin" />
+        case 'disconnected':
+          return <WifiOff className="h-4 w-4 text-red-500" />
         default:
-          return <WifiOff className="h-4 w-4 text-gray-400" />;
+          return <WifiOff className="h-4 w-4 text-gray-400" />
       }
-    };
+    }
 
     const getStatusText = () => {
       switch (connectionStatus) {
-        case "connected":
-          return "Conectado";
-        case "connecting":
-          return "Conectando...";
-        case "disconnected":
-          return "Desconectado";
+        case 'connected':
+          return 'Conectado'
+        case 'connecting':
+          return 'Conectando...'
+        case 'disconnected':
+          return 'Desconectado'
         default:
-          return "Status desconhecido";
+          return 'Status desconhecido'
       }
-    };
+    }
 
     return (
       <div className="flex items-center gap-2 text-sm">
         {getStatusIcon()}
         <span className="text-muted-foreground">{getStatusText()}</span>
       </div>
-    );
-  };
+    )
+  }
 
   // Statistics
   const stats = {
     total: conversations.length,
-    active: conversations.filter((c: Conversation) => c.status === "active").length,
+    active: conversations.filter((c: Conversation,) => c.status === 'active').length,
     unread: conversations.reduce(
-      (sum: number, c: Conversation) => sum + (c.unreadCount || 0),
+      (sum: number, c: Conversation,) => sum + (c.unreadCount || 0),
       0,
     ),
-  };
+  }
 
   return (
-    <div className={cn("flex flex-col h-full", className)}>
+    <div className={cn('flex flex-col h-full', className,)}>
       {/* Header */}
       <Card className="mb-4">
         <CardHeader className="pb-3">
@@ -188,7 +188,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
                 onClick={handleRefresh}
                 disabled={isLoading}
               >
-                <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
+                <RefreshCw className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin',)} />
                 Atualizar
               </Button>
               <Button variant="outline" size="sm">
@@ -282,7 +282,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
                 Conversas
                 {stats.unread > 0 && (
                   <Badge variant="destructive" className="h-5 min-w-5 text-xs">
-                    {stats.unread > 99 ? "99+" : stats.unread}
+                    {stats.unread > 99 ? '99+' : stats.unread}
                   </Badge>
                 )}
               </TabsTrigger>
@@ -332,7 +332,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
                       </p>
                       <Button
                         variant="outline"
-                        onClick={() => setActiveTab("conversations")}
+                        onClick={() => setActiveTab('conversations',)}
                       >
                         Ver Conversas
                       </Button>
@@ -370,7 +370,7 @@ export const WhatsappDashboard: React.FC<WhatsappDashboardProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WhatsappDashboard;
+export default WhatsappDashboard

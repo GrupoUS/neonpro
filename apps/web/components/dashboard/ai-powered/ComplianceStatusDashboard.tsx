@@ -4,14 +4,14 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   AlertTriangle,
   CheckCircle,
@@ -22,280 +22,280 @@ import {
   Shield,
   Stethoscope,
   XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 interface ComplianceFramework {
-  name: "LGPD" | "ANVISA" | "CFM";
-  score: number;
-  status: "compliant" | "warning" | "non-compliant";
-  lastAudit: string;
-  nextAudit: string;
-  criticalIssues: number;
-  warningIssues: number;
-  requirements: ComplianceRequirement[];
+  name: 'LGPD' | 'ANVISA' | 'CFM'
+  score: number
+  status: 'compliant' | 'warning' | 'non-compliant'
+  lastAudit: string
+  nextAudit: string
+  criticalIssues: number
+  warningIssues: number
+  requirements: ComplianceRequirement[]
 }
 
 interface ComplianceRequirement {
-  id: string;
-  title: string;
-  description: string;
-  status: "compliant" | "warning" | "non-compliant" | "pending";
-  lastChecked: string;
-  autoRemediationAvailable: boolean;
-  priority: "high" | "medium" | "low";
+  id: string
+  title: string
+  description: string
+  status: 'compliant' | 'warning' | 'non-compliant' | 'pending'
+  lastChecked: string
+  autoRemediationAvailable: boolean
+  priority: 'high' | 'medium' | 'low'
 }
 
 interface ComplianceReport {
-  id: string;
-  type: "audit" | "violation" | "remediation" | "certification";
-  title: string;
-  date: string;
-  framework: "LGPD" | "ANVISA" | "CFM" | "ALL";
-  status: "completed" | "pending" | "in-progress";
-  downloadUrl?: string;
+  id: string
+  type: 'audit' | 'violation' | 'remediation' | 'certification'
+  title: string
+  date: string
+  framework: 'LGPD' | 'ANVISA' | 'CFM' | 'ALL'
+  status: 'completed' | 'pending' | 'in-progress'
+  downloadUrl?: string
 }
 
 export function ComplianceStatusDashboard() {
-  const [frameworks, setFrameworks] = useState<ComplianceFramework[]>([]);
-  const [reports, setReports] = useState<ComplianceReport[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [frameworks, setFrameworks,] = useState<ComplianceFramework[]>([],)
+  const [reports, setReports,] = useState<ComplianceReport[]>([],)
+  const [loading, setLoading,] = useState(true,)
 
   useEffect(() => {
     // Simulate loading compliance data
     const timer = setTimeout(() => {
       setFrameworks([
         {
-          name: "LGPD",
+          name: 'LGPD',
           score: 98.5,
-          status: "compliant",
-          lastAudit: "2025-01-15T10:00:00Z",
-          nextAudit: "2025-04-15T10:00:00Z",
+          status: 'compliant',
+          lastAudit: '2025-01-15T10:00:00Z',
+          nextAudit: '2025-04-15T10:00:00Z',
           criticalIssues: 0,
           warningIssues: 1,
           requirements: [
             {
-              id: "lgpd-1",
-              title: "Consentimento Granular",
-              description: "Consentimento específico para cada finalidade de tratamento",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'lgpd-1',
+              title: 'Consentimento Granular',
+              description: 'Consentimento específico para cada finalidade de tratamento',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "high",
+              priority: 'high',
             },
             {
-              id: "lgpd-2",
-              title: "Portabilidade de Dados",
-              description: "Exportação de dados em formato estruturado",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'lgpd-2',
+              title: 'Portabilidade de Dados',
+              description: 'Exportação de dados em formato estruturado',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "medium",
+              priority: 'medium',
             },
             {
-              id: "lgpd-3",
-              title: "Anonimização",
-              description: "Processo de anonimização para dados antigos",
-              status: "warning",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'lgpd-3',
+              title: 'Anonimização',
+              description: 'Processo de anonimização para dados antigos',
+              status: 'warning',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: false,
-              priority: "medium",
+              priority: 'medium',
             },
           ],
         },
         {
-          name: "ANVISA",
+          name: 'ANVISA',
           score: 96.2,
-          status: "compliant",
-          lastAudit: "2025-01-10T14:00:00Z",
-          nextAudit: "2025-07-10T14:00:00Z",
+          status: 'compliant',
+          lastAudit: '2025-01-10T14:00:00Z',
+          nextAudit: '2025-07-10T14:00:00Z',
           criticalIssues: 0,
           warningIssues: 2,
           requirements: [
             {
-              id: "anvisa-1",
-              title: "Registro de Equipamentos",
-              description: "Todos equipamentos médicos registrados na ANVISA",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'anvisa-1',
+              title: 'Registro de Equipamentos',
+              description: 'Todos equipamentos médicos registrados na ANVISA',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: false,
-              priority: "high",
+              priority: 'high',
             },
             {
-              id: "anvisa-2",
-              title: "Rastreabilidade de Insumos",
-              description: "Controle de lote e validade de insumos médicos",
-              status: "warning",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'anvisa-2',
+              title: 'Rastreabilidade de Insumos',
+              description: 'Controle de lote e validade de insumos médicos',
+              status: 'warning',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "medium",
+              priority: 'medium',
             },
             {
-              id: "anvisa-3",
-              title: "Controle de Qualidade",
-              description: "Protocolos de controle de qualidade implementados",
-              status: "warning",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'anvisa-3',
+              title: 'Controle de Qualidade',
+              description: 'Protocolos de controle de qualidade implementados',
+              status: 'warning',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: false,
-              priority: "low",
+              priority: 'low',
             },
           ],
         },
         {
-          name: "CFM",
+          name: 'CFM',
           score: 100,
-          status: "compliant",
-          lastAudit: "2025-01-20T16:00:00Z",
-          nextAudit: "2025-12-20T16:00:00Z",
+          status: 'compliant',
+          lastAudit: '2025-01-20T16:00:00Z',
+          nextAudit: '2025-12-20T16:00:00Z',
           criticalIssues: 0,
           warningIssues: 0,
           requirements: [
             {
-              id: "cfm-1",
-              title: "Registro Médico Válido",
-              description: "CRM ativo e especialização validada",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'cfm-1',
+              title: 'Registro Médico Válido',
+              description: 'CRM ativo e especialização validada',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "high",
+              priority: 'high',
             },
             {
-              id: "cfm-2",
-              title: "Consentimento Informado",
-              description: "Processo de consentimento conforme resolução CFM",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'cfm-2',
+              title: 'Consentimento Informado',
+              description: 'Processo de consentimento conforme resolução CFM',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "high",
+              priority: 'high',
             },
             {
-              id: "cfm-3",
-              title: "Prontuário Digital",
-              description: "Prontuário médico digital conforme CFM 1.821/07",
-              status: "compliant",
-              lastChecked: "2025-01-25T08:00:00Z",
+              id: 'cfm-3',
+              title: 'Prontuário Digital',
+              description: 'Prontuário médico digital conforme CFM 1.821/07',
+              status: 'compliant',
+              lastChecked: '2025-01-25T08:00:00Z',
               autoRemediationAvailable: true,
-              priority: "medium",
+              priority: 'medium',
             },
           ],
         },
-      ]);
+      ],)
 
       setReports([
         {
-          id: "1",
-          type: "audit",
-          title: "Auditoria LGPD Completa - Janeiro 2025",
-          date: "2025-01-15T10:00:00Z",
-          framework: "LGPD",
-          status: "completed",
-          downloadUrl: "/reports/lgpd-audit-jan-2025.pdf",
+          id: '1',
+          type: 'audit',
+          title: 'Auditoria LGPD Completa - Janeiro 2025',
+          date: '2025-01-15T10:00:00Z',
+          framework: 'LGPD',
+          status: 'completed',
+          downloadUrl: '/reports/lgpd-audit-jan-2025.pdf',
         },
         {
-          id: "2",
-          type: "certification",
-          title: "Certificação ANVISA - Renovação",
-          date: "2025-01-20T14:00:00Z",
-          framework: "ANVISA",
-          status: "completed",
-          downloadUrl: "/reports/anvisa-cert-2025.pdf",
+          id: '2',
+          type: 'certification',
+          title: 'Certificação ANVISA - Renovação',
+          date: '2025-01-20T14:00:00Z',
+          framework: 'ANVISA',
+          status: 'completed',
+          downloadUrl: '/reports/anvisa-cert-2025.pdf',
         },
         {
-          id: "3",
-          type: "audit",
-          title: "Auditoria CFM - Prontuários Digitais",
-          date: "2025-01-22T16:00:00Z",
-          framework: "CFM",
-          status: "completed",
+          id: '3',
+          type: 'audit',
+          title: 'Auditoria CFM - Prontuários Digitais',
+          date: '2025-01-22T16:00:00Z',
+          framework: 'CFM',
+          status: 'completed',
         },
         {
-          id: "4",
-          type: "audit",
-          title: "Auditoria Trimestral - Multi-Framework",
-          date: "2025-04-01T09:00:00Z",
-          framework: "ALL",
-          status: "pending",
+          id: '4',
+          type: 'audit',
+          title: 'Auditoria Trimestral - Multi-Framework',
+          date: '2025-04-01T09:00:00Z',
+          framework: 'ALL',
+          status: 'pending',
         },
-      ]);
+      ],)
 
-      setLoading(false);
-    }, 1000);
+      setLoading(false,)
+    }, 1000,)
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => clearTimeout(timer,)
+  }, [],)
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string,) => {
     switch (status) {
-      case "compliant": {
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'compliant': {
+        return <CheckCircle className="h-4 w-4 text-green-600" />
       }
-      case "warning": {
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case 'warning': {
+        return <AlertTriangle className="h-4 w-4 text-yellow-600" />
       }
-      case "non-compliant": {
-        return <XCircle className="h-4 w-4 text-red-600" />;
+      case 'non-compliant': {
+        return <XCircle className="h-4 w-4 text-red-600" />
       }
-      case "pending": {
-        return <Clock className="h-4 w-4 text-blue-600" />;
+      case 'pending': {
+        return <Clock className="h-4 w-4 text-blue-600" />
       }
       default: {
-        return <Clock className="h-4 w-4 text-gray-400" />;
+        return <Clock className="h-4 w-4 text-gray-400" />
       }
     }
-  };
+  }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string,) => {
     switch (status) {
-      case "compliant": {
-        return "text-green-600 border-green-600";
+      case 'compliant': {
+        return 'text-green-600 border-green-600'
       }
-      case "warning": {
-        return "text-yellow-600 border-yellow-600";
+      case 'warning': {
+        return 'text-yellow-600 border-yellow-600'
       }
-      case "non-compliant": {
-        return "text-red-600 border-red-600";
+      case 'non-compliant': {
+        return 'text-red-600 border-red-600'
       }
-      case "pending": {
-        return "text-blue-600 border-blue-600";
+      case 'pending': {
+        return 'text-blue-600 border-blue-600'
       }
       default: {
-        return "text-gray-400 border-gray-400";
+        return 'text-gray-400 border-gray-400'
       }
     }
-  };
+  }
 
-  const getFrameworkIcon = (name: string) => {
+  const getFrameworkIcon = (name: string,) => {
     switch (name) {
-      case "LGPD": {
-        return <Shield className="h-5 w-5 text-blue-600" />;
+      case 'LGPD': {
+        return <Shield className="h-5 w-5 text-blue-600" />
       }
-      case "ANVISA": {
-        return <Stethoscope className="h-5 w-5 text-green-600" />;
+      case 'ANVISA': {
+        return <Stethoscope className="h-5 w-5 text-green-600" />
       }
-      case "CFM": {
-        return <FileText className="h-5 w-5 text-purple-600" />;
+      case 'CFM': {
+        return <FileText className="h-5 w-5 text-purple-600" />
       }
       default: {
-        return <Shield className="h-5 w-5" />;
+        return <Shield className="h-5 w-5" />
       }
     }
-  };
+  }
 
   const overallScore = frameworks.length > 0
     ? Math.round(
-      frameworks.reduce((acc, f) => acc + f.score, 0) / frameworks.length,
+      frameworks.reduce((acc, f,) => acc + f.score, 0,) / frameworks.length,
     )
-    : 0;
+    : 0
 
   const totalCriticalIssues = frameworks.reduce(
-    (acc, f) => acc + f.criticalIssues,
+    (acc, f,) => acc + f.criticalIssues,
     0,
-  );
+  )
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3,].map((i,) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-4 bg-muted rounded w-20" />
@@ -308,7 +308,7 @@ export function ComplianceStatusDashboard() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -333,7 +333,7 @@ export function ComplianceStatusDashboard() {
         </div>
         <Badge
           variant="outline"
-          className={getStatusColor("compliant")}
+          className={getStatusColor('compliant',)}
           role="status"
           aria-label={`Score geral de compliance: ${overallScore}%`}
         >
@@ -347,7 +347,7 @@ export function ComplianceStatusDashboard() {
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>Atenção: Problemas Críticos Detectados</AlertTitle>
           <AlertDescription>
-            {totalCriticalIssues}{" "}
+            {totalCriticalIssues}{' '}
             issue(s) crítica(s) requer(em) atenção imediata para manter compliance.
           </AlertDescription>
         </Alert>
@@ -355,24 +355,24 @@ export function ComplianceStatusDashboard() {
 
       {/* Framework Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {frameworks.map((framework) => (
+        {frameworks.map((framework,) => (
           <Card key={framework.name} className="neonpro-card group">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center text-sm font-medium">
                 <div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 transition-all">
-                  {getFrameworkIcon(framework.name)}
+                  {getFrameworkIcon(framework.name,)}
                 </div>
                 {framework.name}
               </CardTitle>
               <CardDescription>
-                Última auditoria: {new Date(framework.lastAudit).toLocaleDateString("pt-BR")}
+                Última auditoria: {new Date(framework.lastAudit,).toLocaleDateString('pt-BR',)}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="text-2xl font-bold">{framework.score}%</div>
-                  {getStatusIcon(framework.status)}
+                  {getStatusIcon(framework.status,)}
                 </div>
                 <Progress value={framework.score} className="h-2" />
                 <div className="flex justify-between text-sm">
@@ -384,7 +384,7 @@ export function ComplianceStatusDashboard() {
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Próxima auditoria: {new Date(framework.nextAudit).toLocaleDateString("pt-BR")}
+                  Próxima auditoria: {new Date(framework.nextAudit,).toLocaleDateString('pt-BR',)}
                 </div>
               </div>
             </CardContent>
@@ -403,42 +403,42 @@ export function ComplianceStatusDashboard() {
         <CardContent>
           <Tabs defaultValue="LGPD" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              {frameworks.map((framework) => (
+              {frameworks.map((framework,) => (
                 <TabsTrigger key={framework.name} value={framework.name}>
                   {framework.name}
                 </TabsTrigger>
               ))}
             </TabsList>
-            {frameworks.map((framework) => (
+            {frameworks.map((framework,) => (
               <TabsContent
                 key={framework.name}
                 value={framework.name}
                 className="space-y-4"
               >
-                {framework.requirements.map((req) => (
+                {framework.requirements.map((req,) => (
                   <div
                     key={req.id}
                     className="flex items-start space-x-4 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                      {getStatusIcon(req.status)}
+                      {getStatusIcon(req.status,)}
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-semibold">{req.title}</h4>
                         <Badge
                           variant="outline"
-                          className={getStatusColor(req.status)}
+                          className={getStatusColor(req.status,)}
                         >
-                          {req.status === "compliant" && "Conforme"}
-                          {req.status === "warning" && "Atenção"}
-                          {req.status === "non-compliant" && "Não Conforme"}
-                          {req.status === "pending" && "Pendente"}
+                          {req.status === 'compliant' && 'Conforme'}
+                          {req.status === 'warning' && 'Atenção'}
+                          {req.status === 'non-compliant' && 'Não Conforme'}
+                          {req.status === 'pending' && 'Pendente'}
                         </Badge>
                         <Badge variant="outline">
-                          {req.priority === "high" && "Alta Prioridade"}
-                          {req.priority === "medium" && "Média Prioridade"}
-                          {req.priority === "low" && "Baixa Prioridade"}
+                          {req.priority === 'high' && 'Alta Prioridade'}
+                          {req.priority === 'medium' && 'Média Prioridade'}
+                          {req.priority === 'low' && 'Baixa Prioridade'}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -446,8 +446,8 @@ export function ComplianceStatusDashboard() {
                       </p>
                       <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                         <span>
-                          Última verificação: {new Date(req.lastChecked).toLocaleDateString(
-                            "pt-BR",
+                          Última verificação: {new Date(req.lastChecked,).toLocaleDateString(
+                            'pt-BR',
                           )}
                         </span>
                         {req.autoRemediationAvailable && (
@@ -462,7 +462,7 @@ export function ComplianceStatusDashboard() {
                     </div>
                     <div className="flex space-x-2">
                       {req.autoRemediationAvailable
-                        && req.status !== "compliant" && (
+                        && req.status !== 'compliant' && (
                         <Button size="sm" variant="outline">
                           Corrigir Automaticamente
                         </Button>
@@ -492,29 +492,29 @@ export function ComplianceStatusDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {reports.map((report) => (
+            {reports.map((report,) => (
               <div
                 key={report.id}
                 className="flex items-center justify-between rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
               >
                 <div className="flex items-center space-x-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                    {getStatusIcon(report.status)}
+                    {getStatusIcon(report.status,)}
                   </div>
                   <div>
                     <h4 className="font-semibold">{report.title}</h4>
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <span>
-                        {new Date(report.date).toLocaleDateString("pt-BR")}
+                        {new Date(report.date,).toLocaleDateString('pt-BR',)}
                       </span>
                       <Badge variant="outline">{report.framework}</Badge>
                       <Badge
                         variant="outline"
-                        className={getStatusColor(report.status)}
+                        className={getStatusColor(report.status,)}
                       >
-                        {report.status === "completed" && "Concluído"}
-                        {report.status === "pending" && "Pendente"}
-                        {report.status === "in-progress" && "Em andamento"}
+                        {report.status === 'completed' && 'Concluído'}
+                        {report.status === 'pending' && 'Pendente'}
+                        {report.status === 'in-progress' && 'Em andamento'}
                       </Badge>
                     </div>
                   </div>
@@ -536,5 +536,5 @@ export function ComplianceStatusDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

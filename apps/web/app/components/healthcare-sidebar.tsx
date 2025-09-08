@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 import {
   AlertTriangle,
   BarChart3,
@@ -30,95 +30,95 @@ import {
   Stethoscope,
   UserCheck,
   Users,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, } from 'next/navigation'
 
 // Healthcare navigation items with Brazilian Portuguese labels
 const navigationItems = [
   {
-    title: "Emergência",
-    href: "/emergency",
+    title: 'Emergência',
+    href: '/emergency',
     icon: AlertTriangle,
-    description: "Acesso rápido para emergências médicas",
+    description: 'Acesso rápido para emergências médicas',
     isEmergency: true,
   },
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: 'Dashboard',
+    href: '/dashboard',
     icon: LayoutDashboard,
-    description: "Visão geral do sistema",
+    description: 'Visão geral do sistema',
   },
   {
-    title: "Pacientes",
-    href: "/dashboard/patients",
+    title: 'Pacientes',
+    href: '/dashboard/patients',
     icon: Users,
-    description: "Gestão de pacientes",
+    description: 'Gestão de pacientes',
   },
   {
-    title: "Consultas",
-    href: "/dashboard/appointments",
+    title: 'Consultas',
+    href: '/dashboard/appointments',
     icon: Calendar,
-    description: "Agendamentos e consultas",
+    description: 'Agendamentos e consultas',
   },
   {
-    title: "Tratamentos",
-    href: "/dashboard/treatments",
+    title: 'Tratamentos',
+    href: '/dashboard/treatments',
     icon: Heart,
-    description: "Tratamentos e procedimentos",
+    description: 'Tratamentos e procedimentos',
   },
   {
-    title: "Equipe",
-    href: "/team",
+    title: 'Equipe',
+    href: '/team',
     icon: UserCheck,
-    description: "Coordenação e gestão da equipe",
+    description: 'Coordenação e gestão da equipe',
   },
-];
+]
 
 const analyticsItems = [
   {
-    title: "Análises",
-    href: "/dashboard/analytics",
+    title: 'Análises',
+    href: '/dashboard/analytics',
     icon: BarChart3,
-    description: "Relatórios e análises",
+    description: 'Relatórios e análises',
   },
   {
-    title: "Financeiro",
-    href: "/dashboard/financial",
+    title: 'Financeiro',
+    href: '/dashboard/financial',
     icon: CreditCard,
-    description: "Gestão financeira",
+    description: 'Gestão financeira',
   },
   {
-    title: "Relatórios",
-    href: "/dashboard/reports",
+    title: 'Relatórios',
+    href: '/dashboard/reports',
     icon: FileText,
-    description: "Relatórios detalhados",
+    description: 'Relatórios detalhados',
   },
-];
+]
 
 const systemItems = [
   {
-    title: "Compliance",
-    href: "/dashboard/compliance",
+    title: 'Compliance',
+    href: '/dashboard/compliance',
     icon: Shield,
-    description: "LGPD e conformidade",
+    description: 'LGPD e conformidade',
   },
   {
-    title: "Consentimentos",
-    href: "/consent",
+    title: 'Consentimentos',
+    href: '/consent',
     icon: FileCheck,
-    description: "Gestão de consentimentos e direitos LGPD",
+    description: 'Gestão de consentimentos e direitos LGPD',
   },
   {
-    title: "Configurações",
-    href: "/dashboard/settings",
+    title: 'Configurações',
+    href: '/dashboard/settings',
     icon: Settings,
-    description: "Configurações do sistema",
+    description: 'Configurações do sistema',
   },
-];
+]
 
 export function HealthcareSidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <Sidebar className="border-healthcare-border border-r bg-sidebar-bg">
@@ -147,10 +147,10 @@ export function HealthcareSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => {
-                const { icon: Icon } = item;
-                const isActive = pathname === item.href;
-                const { isEmergency } = item;
+              {navigationItems.map((item,) => {
+                const { icon: Icon, } = item
+                const isActive = pathname === item.href
+                const { isEmergency, } = item
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -159,11 +159,11 @@ export function HealthcareSidebar() {
                       className={`group transition-all duration-200 ${
                         isEmergency
                           ? isActive
-                            ? "bg-destructive text-destructive-foreground shadow-md"
-                            : "border border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                            ? 'bg-destructive text-destructive-foreground shadow-md'
+                            : 'border border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground'
                           : isActive
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "text-foreground hover:bg-muted hover:text-foreground"
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'text-foreground hover:bg-muted hover:text-foreground'
                       }`}
                       isActive={isActive}
                       tooltip={item.description}
@@ -176,11 +176,11 @@ export function HealthcareSidebar() {
                           className={`h-4 w-4 ${
                             isEmergency
                               ? isActive
-                                ? "text-destructive-foreground"
-                                : "text-destructive"
+                                ? 'text-destructive-foreground'
+                                : 'text-destructive'
                               : isActive
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground"
+                              ? 'text-primary-foreground'
+                              : 'text-muted-foreground'
                           }`}
                         />
                         <span className="font-medium">{item.title}</span>
@@ -188,8 +188,8 @@ export function HealthcareSidebar() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
-              })}
+                )
+              },)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -203,9 +203,9 @@ export function HealthcareSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {analyticsItems.map((item) => {
-                const { icon: Icon } = item;
-                const isActive = pathname === item.href;
+              {analyticsItems.map((item,) => {
+                const { icon: Icon, } = item
+                const isActive = pathname === item.href
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -213,8 +213,8 @@ export function HealthcareSidebar() {
                       asChild
                       className={`group transition-all duration-200 hover:bg-muted ${
                         isActive
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "text-foreground hover:text-foreground"
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'text-foreground hover:text-foreground'
                       }`}
                       isActive={isActive}
                       tooltip={item.description}
@@ -226,16 +226,16 @@ export function HealthcareSidebar() {
                         <Icon
                           className={`h-4 w-4 ${
                             isActive
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground"
+                              ? 'text-primary-foreground'
+                              : 'text-muted-foreground'
                           }`}
                         />
                         <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
-              })}
+                )
+              },)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -249,9 +249,9 @@ export function HealthcareSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {systemItems.map((item) => {
-                const { icon: Icon } = item;
-                const isActive = pathname === item.href;
+              {systemItems.map((item,) => {
+                const { icon: Icon, } = item
+                const isActive = pathname === item.href
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -259,8 +259,8 @@ export function HealthcareSidebar() {
                       asChild
                       className={`group transition-all duration-200 hover:bg-muted ${
                         isActive
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "text-foreground hover:text-foreground"
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'text-foreground hover:text-foreground'
                       }`}
                       isActive={isActive}
                       tooltip={item.description}
@@ -272,16 +272,16 @@ export function HealthcareSidebar() {
                         <Icon
                           className={`h-4 w-4 ${
                             isActive
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground"
+                              ? 'text-primary-foreground'
+                              : 'text-muted-foreground'
                           }`}
                         />
                         <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
-              })}
+                )
+              },)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -345,5 +345,5 @@ export function HealthcareSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

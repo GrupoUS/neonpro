@@ -11,7 +11,7 @@
     "lint": "oxlint src --fix",
     "format": "dprint fmt",
     "format:check": "dprint check",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -p tsconfig.typecheck.json",
     "test": "vitest --run",
     "test:watch": "vitest",
     "coverage": "vitest --run --coverage",

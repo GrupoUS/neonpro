@@ -6,23 +6,23 @@
  * and scheduling tools.
  */
 
-"use client";
+'use client'
 
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { MainNavigation } from "@/components/main-navigation";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Outlet } from "@tanstack/react-router";
-import { Calendar, Clock, Filter, Plus } from "lucide-react";
+import { Breadcrumbs, } from '@/components/breadcrumbs'
+import { MainNavigation, } from '@/components/main-navigation'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Outlet, } from '@tanstack/react-router'
+import { Calendar, Clock, Filter, Plus, } from 'lucide-react'
 
 export function AppointmentsLayout() {
-  const today = new Date();
-  const todayStr = today.toLocaleDateString("pt-BR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const today = new Date()
+  const todayStr = today.toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  },)
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,10 +42,10 @@ export function AppointmentsLayout() {
                   <span>{todayStr}</span>
                   <Badge className="ml-2" variant="outline">
                     <Clock className="mr-1 h-3 w-3" />
-                    {today.toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {today.toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    },)}
                   </Badge>
                 </div>
               </div>
@@ -75,5 +75,5 @@ export function AppointmentsLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

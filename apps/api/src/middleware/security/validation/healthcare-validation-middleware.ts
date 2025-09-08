@@ -11,66 +11,66 @@
  * - Emergency bypass for critical situations
  */
 
-import type { Context, MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler, } from 'hono'
 
-import { z, ZodError } from "zod";
-import type { BrazilianHealthcareLicense, BrazilianState } from "./brazilian-healthcare-validator";
+import { z, ZodError, } from 'zod'
+import type { BrazilianHealthcareLicense, BrazilianState, } from './brazilian-healthcare-validator'
 import {
   BrazilianHealthcareSanitizer,
   CPFValidator,
   HealthcareLicenseValidator,
   healthcareProviderSchema,
   patientPersonalDataSchema,
-} from "./brazilian-healthcare-validator";
+} from './brazilian-healthcare-validator'
 
 // Validation context types
 export enum ValidationContext {
-  PATIENT_REGISTRATION = "patient_registration",
-  PATIENT_UPDATE = "patient_update",
-  PROVIDER_REGISTRATION = "provider_registration",
-  PROVIDER_UPDATE = "provider_update",
-  APPOINTMENT_BOOKING = "appointment_booking",
-  MEDICAL_RECORD_CREATE = "medical_record_create",
-  EMERGENCY_ACCESS = "emergency_access",
-  COMPLIANCE_AUDIT = "compliance_audit",
+  PATIENT_REGISTRATION = 'patient_registration',
+  PATIENT_UPDATE = 'patient_update',
+  PROVIDER_REGISTRATION = 'provider_registration',
+  PROVIDER_UPDATE = 'provider_update',
+  APPOINTMENT_BOOKING = 'appointment_booking',
+  MEDICAL_RECORD_CREATE = 'medical_record_create',
+  EMERGENCY_ACCESS = 'emergency_access',
+  COMPLIANCE_AUDIT = 'compliance_audit',
 }
 
 // Validation severity levels
 export enum ValidationSeverity {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  CRITICAL = "critical",
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical',
 }
 
 // Validation rule configuration
 interface ValidationRule {
-  context: ValidationContext;
-  severity: ValidationSeverity;
-  schema: z.ZodSchema<unknown>;
-  requiresLicense: boolean;
-  emergencyBypass: boolean;
-  lgpdSensitive: boolean;
-  auditRequired: boolean;
+  context: ValidationContext
+  severity: ValidationSeverity
+  schema: z.ZodSchema<unknown>
+  requiresLicense: boolean
+  emergencyBypass: boolean
+  lgpdSensitive: boolean
+  auditRequired: boolean
 }
 
 // Validation error details
 interface ValidationErrorDetail {
-  field: string;
-  message: string;
-  code: string;
-  severity: ValidationSeverity;
-  value?: unknown;
+  field: string
+  message: string
+  code: string
+  severity: ValidationSeverity
+  value?: unknown
 }
 
 // Validation result
 interface ValidationResult {
-  success: boolean;
-  data?: unknown;
-  errors?: ValidationErrorDetail[];
-  warnings?: ValidationErrorDetail[];
-  emergencyBypass?: boolean;
-  auditRequired?: boolean;
+  success: boolean
+  data?: unknown
+  errors?: ValidationErrorDetail[]
+  warnings?: ValidationErrorDetail[]
+  emergencyBypass?: boolean
+  auditRequired?: boolean
 }
 
 /**
@@ -117,11 +117,11 @@ const HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
     context: ValidationContext.APPOINTMENT_BOOKING,
     severity: ValidationSeverity.MEDIUM,
     schema: z.object({
-      patientCpf: z.string().refine(CPFValidator.validate, "Invalid CPF"),
-      providerId: z.string().uuid("Invalid provider ID"),
-      appointmentDateTime: z.string().datetime("Invalid appointment date"),
-      appointmentType: z.string().min(1, "Appointment type required"),
-    }),
+      patientCpf: z.string().refine(CPFValidator.validate, 'Invalid CPF',),
+      providerId: z.string().uuid('Invalid provider ID',),
+      appointmentDateTime: z.string().datetime('Invalid appointment date',),
+      appointmentType: z.string().min(1, 'Appointment type required',),
+    },),
     requiresLicense: false,
     emergencyBypass: true,
     lgpdSensitive: true,
@@ -133,24 +133,27 @@ const HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
     schema: z.object({
       patientCpf: z.string().optional(),
       patientCns: z.string().optional(),
-      emergencyType: z.string().min(1, "Emergency type required"),
-      justification: z.string().min(10, "Emergency justification required (minimum 10 characters)"),
-    }),
+      emergencyType: z.string().min(1, 'Emergency type required',),
+      justification: z.string().min(
+        10,
+        'Emergency justification required (minimum 10 characters)',
+      ),
+    },),
     requiresLicense: true,
     emergencyBypass: true,
     lgpdSensitive: true,
     auditRequired: true,
   },
-];
+]
 
 /**
  * Healthcare Input Validator Class
  */
 export class HealthcareInputValidator {
-  private auditLogger: unknown; // Your audit logging implementation
+  private auditLogger: unknown // Your audit logging implementation
 
-  constructor(auditLogger?: unknown) {
-    this.auditLogger = auditLogger;
+  constructor(auditLogger?: unknown,) {
+    this.auditLogger = auditLogger
   }
 
   /**
@@ -160,25 +163,25 @@ export class HealthcareInputValidator {
     context: ValidationContext,
     data: unknown,
     options: {
-      emergencyBypass?: boolean;
+      emergencyBypass?: boolean
       userLicenses?: {
-        number: string;
-        type: BrazilianHealthcareLicense;
-        state: BrazilianState;
-      }[];
-      userId?: string;
+        number: string
+        type: BrazilianHealthcareLicense
+        state: BrazilianState
+      }[]
+      userId?: string
     } = {},
   ): Promise<ValidationResult> {
     try {
       // Find validation rule for context
-      const rule = this.findValidationRule(context);
+      const rule = this.findValidationRule(context,)
       if (!rule) {
-        throw new Error(`No validation rule found for context: ${context}`);
+        throw new Error(`No validation rule found for context: ${context}`,)
       }
 
       // Check emergency bypass eligibility
       if (options.emergencyBypass && rule.emergencyBypass) {
-        return await this.handleEmergencyBypass(rule, data, options);
+        return await this.handleEmergencyBypass(rule, data, options,)
       }
 
       // Check professional license requirements
@@ -186,19 +189,19 @@ export class HealthcareInputValidator {
         return {
           success: false,
           errors: [{
-            field: "license",
-            message: "Professional license required for this operation",
-            code: "LICENSE_REQUIRED",
+            field: 'license',
+            message: 'Professional license required for this operation',
+            code: 'LICENSE_REQUIRED',
             severity: ValidationSeverity.CRITICAL,
-          }],
-        };
+          },],
+        }
       }
 
       // Sanitize input data
-      const sanitizedData = BrazilianHealthcareSanitizer.sanitizePatientData(data);
+      const sanitizedData = BrazilianHealthcareSanitizer.sanitizePatientData(data,)
 
       // Validate against schema
-      const validationResult = await this.validateSchema(rule.schema, sanitizedData);
+      const validationResult = await this.validateSchema(rule.schema, sanitizedData,)
 
       if (!validationResult.success) {
         // Log validation failure for audit if required
@@ -209,42 +212,42 @@ export class HealthcareInputValidator {
             false,
             validationResult.errors,
             options.userId,
-          );
+          )
         }
-        return validationResult;
+        return validationResult
       }
 
       // Additional Brazilian healthcare-specific validations
       const additionalValidation = await this.performAdditionalValidations(
         context,
         validationResult.data,
-      );
+      )
 
       if (!additionalValidation.success) {
-        return additionalValidation;
+        return additionalValidation
       }
 
       // Log successful validation if required
       if (rule.auditRequired) {
-        await this.logValidationEvent(context, rule.severity, true, undefined, options.userId);
+        await this.logValidationEvent(context, rule.severity, true, undefined, options.userId,)
       }
 
       return {
         success: true,
         data: validationResult.data,
         auditRequired: rule.auditRequired,
-      };
+      }
     } catch (error) {
-      console.error("Healthcare validation error:", error);
+      console.error('Healthcare validation error:', error,)
       return {
         success: false,
         errors: [{
-          field: "system",
-          message: "Internal validation error",
-          code: "VALIDATION_SYSTEM_ERROR",
+          field: 'system',
+          message: 'Internal validation error',
+          code: 'VALIDATION_SYSTEM_ERROR',
           severity: ValidationSeverity.CRITICAL,
-        }],
-      };
+        },],
+      }
     }
   }
 
@@ -257,23 +260,23 @@ export class HealthcareInputValidator {
     options: unknown,
   ): Promise<ValidationResult> {
     // Relaxed validation for emergency situations
-    const relaxedSchema = this.createRelaxedSchema(rule.schema);
-    const sanitizedData = BrazilianHealthcareSanitizer.sanitizePatientData(data);
+    const relaxedSchema = this.createRelaxedSchema(rule.schema,)
+    const sanitizedData = BrazilianHealthcareSanitizer.sanitizePatientData(data,)
 
-    const result = await this.validateSchema(relaxedSchema, sanitizedData);
+    const result = await this.validateSchema(relaxedSchema, sanitizedData,)
 
     if (result.success) {
       // Log emergency bypass usage
-      await this.logEmergencyBypass(rule.context, options.userId, data);
+      await this.logEmergencyBypass(rule.context, options.userId, data,)
 
       return {
         ...result,
         emergencyBypass: true,
         auditRequired: true,
-      };
+      }
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -284,28 +287,28 @@ export class HealthcareInputValidator {
     data: unknown,
   ): Promise<ValidationResult> {
     try {
-      const validatedData = await schema.parseAsync(data);
+      const validatedData = await schema.parseAsync(data,)
       return {
         success: true,
         data: validatedData,
-      };
+      }
     } catch (error) {
       if (error instanceof ZodError) {
         const errors: ValidationErrorDetail[] = error.issues.map(issue => ({
-          field: issue.path.join("."),
+          field: issue.path.join('.',),
           message: issue.message,
           code: issue.code.toUpperCase(),
           severity: ValidationSeverity.HIGH,
           value: issue.received,
-        }));
+        }))
 
         return {
           success: false,
           errors,
-        };
+        }
       }
 
-      throw error;
+      throw error
     }
   }
 
@@ -316,52 +319,52 @@ export class HealthcareInputValidator {
     context: ValidationContext,
     data: unknown,
   ): Promise<ValidationResult> {
-    const warnings: ValidationErrorDetail[] = [];
+    const warnings: ValidationErrorDetail[] = []
 
     // Check for duplicate CPF in high-priority contexts
     if (context === ValidationContext.PATIENT_REGISTRATION && data.cpf) {
-      const duplicateCheck = await this.checkCPFDuplication(data.cpf);
+      const duplicateCheck = await this.checkCPFDuplication(data.cpf,)
       if (duplicateCheck.isDuplicate) {
         return {
           success: false,
           errors: [{
-            field: "cpf",
-            message: "CPF already registered in the system",
-            code: "CPF_DUPLICATE",
+            field: 'cpf',
+            message: 'CPF already registered in the system',
+            code: 'CPF_DUPLICATE',
             severity: ValidationSeverity.CRITICAL,
-          }],
-        };
+          },],
+        }
       }
     }
 
     // Validate professional licenses for provider contexts
     if (context === ValidationContext.PROVIDER_REGISTRATION && data.licenses) {
       for (const license of data.licenses) {
-        const licenseValidation = await this.validateProfessionalLicense(license);
+        const licenseValidation = await this.validateProfessionalLicense(license,)
         if (!licenseValidation.valid) {
           return {
             success: false,
             errors: [{
-              field: "licenses",
+              field: 'licenses',
               message: `Invalid professional license: ${licenseValidation.reason}`,
-              code: "INVALID_PROFESSIONAL_LICENSE",
+              code: 'INVALID_PROFESSIONAL_LICENSE',
               severity: ValidationSeverity.CRITICAL,
-            }],
-          };
+            },],
+          }
         }
       }
     }
 
     // Check age restrictions for certain contexts
     if (data.dateOfBirth) {
-      const ageValidation = this.validateAgeRestrictions(context, data.dateOfBirth);
+      const ageValidation = this.validateAgeRestrictions(context, data.dateOfBirth,)
       if (!ageValidation.valid) {
         warnings.push({
-          field: "dateOfBirth",
+          field: 'dateOfBirth',
           message: ageValidation.message,
-          code: "AGE_RESTRICTION_WARNING",
+          code: 'AGE_RESTRICTION_WARNING',
           severity: ValidationSeverity.MEDIUM,
-        });
+        },)
       }
     }
 
@@ -369,7 +372,7 @@ export class HealthcareInputValidator {
       success: true,
       data,
       warnings: warnings.length > 0 ? warnings : undefined,
-    };
+    }
   }
 
   /**
@@ -377,13 +380,13 @@ export class HealthcareInputValidator {
    */
   private async checkCPFDuplication(
     cpf: string,
-  ): Promise<{ isDuplicate: boolean; existingPatientId?: string; }> {
+  ): Promise<{ isDuplicate: boolean; existingPatientId?: string }> {
     try {
       // Sanitize CPF before database query
-      const sanitizedCpf = BrazilianHealthcareSanitizer.sanitizeCPF(cpf);
+      const sanitizedCpf = BrazilianHealthcareSanitizer.sanitizeCPF(cpf,)
 
-      if (!CPFValidator.validate(sanitizedCpf)) {
-        throw new Error("Invalid CPF format for duplication check");
+      if (!CPFValidator.validate(sanitizedCpf,)) {
+        throw new Error('Invalid CPF format for duplication check',)
       }
 
       // In production, this would query your actual database
@@ -396,27 +399,27 @@ export class HealthcareInputValidator {
 
       // For now, simulate database check with validation
       // This prevents duplicate registrations in the system
-      const existingPatients = await this.queryPatientByCPF(sanitizedCpf);
+      const existingPatients = await this.queryPatientByCPF(sanitizedCpf,)
 
       if (existingPatients && existingPatients.length > 0) {
         return {
           isDuplicate: true,
           existingPatientId: existingPatients[0].id,
-        };
+        }
       }
 
-      return { isDuplicate: false };
+      return { isDuplicate: false, }
     } catch (error) {
       // Log error for monitoring
-      console.error("[CPF_DUPLICATION_CHECK_ERROR]", {
-        cpf: cpf.slice(0, 3) + "***", // Mask CPF for privacy
-        error: error instanceof Error ? error.message : "Unknown error",
+      console.error('[CPF_DUPLICATION_CHECK_ERROR]', {
+        cpf: cpf.slice(0, 3,) + '***', // Mask CPF for privacy
+        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
-      });
+      },)
 
       // In case of database error, assume no duplication to avoid blocking legitimate registrations
       // But log this for investigation
-      return { isDuplicate: false };
+      return { isDuplicate: false, }
     }
   }
 
@@ -426,7 +429,7 @@ export class HealthcareInputValidator {
    */
   private async queryPatientByCPF(
     _cpf: string,
-  ): Promise<{ id: string; cpf: string; }[] | null> {
+  ): Promise<{ id: string; cpf: string }[] | null> {
     // Placeholder for actual database query
     // In production, integrate with your database layer:
     // - Supabase: supabase.from('patients').select('id, cpf').eq('cpf', cpf)
@@ -435,35 +438,35 @@ export class HealthcareInputValidator {
 
     // For now, return null to indicate no existing patients
     // This prevents false positives during development
-    return null;
+    return null
   }
 
   /**
    * Validate professional license with regulatory bodies
    */
   private async validateProfessionalLicense(license: {
-    number: string;
-    type: BrazilianHealthcareLicense;
-    state: BrazilianState;
-  }): Promise<{ valid: boolean; reason?: string; }> {
+    number: string
+    type: BrazilianHealthcareLicense
+    state: BrazilianState
+  },): Promise<{ valid: boolean; reason?: string }> {
     // Basic format validation
     const formatValid = HealthcareLicenseValidator.validate(
       license.number,
       license.type,
       license.state,
-    );
+    )
 
     if (!formatValid) {
       return {
         valid: false,
         reason: `Invalid ${license.type.toUpperCase()} format for state ${license.state}`,
-      };
+      }
     }
 
     // Basic format validation - external API integration can be added later if needed
 
     // For now, accept valid format as sufficient
-    return { valid: true };
+    return { valid: true, }
   }
 
   /**
@@ -472,10 +475,10 @@ export class HealthcareInputValidator {
   private validateAgeRestrictions(
     context: ValidationContext,
     dateOfBirth: string,
-  ): { valid: boolean; message?: string; } {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
+  ): { valid: boolean; message?: string } {
+    const birthDate = new Date(dateOfBirth,)
+    const today = new Date()
+    const age = today.getFullYear() - birthDate.getFullYear()
 
     // Check specific age restrictions
     switch (context) {
@@ -483,53 +486,53 @@ export class HealthcareInputValidator {
         if (age < 18) {
           return {
             valid: false,
-            message: "Healthcare providers must be at least 18 years old",
-          };
+            message: 'Healthcare providers must be at least 18 years old',
+          }
         }
-        break;
+        break
 
       case ValidationContext.APPOINTMENT_BOOKING:
         if (age > 120) {
           return {
             valid: false,
-            message: "Please verify the birth date - age seems unusually high",
-          };
+            message: 'Please verify the birth date - age seems unusually high',
+          }
         }
-        break;
+        break
     }
 
-    return { valid: true };
+    return { valid: true, }
   }
 
   /**
    * Create relaxed schema for emergency situations
    */
-  private createRelaxedSchema(originalSchema: z.ZodSchema<unknown>): z.ZodSchema<unknown> {
+  private createRelaxedSchema(originalSchema: z.ZodSchema<unknown>,): z.ZodSchema<unknown> {
     // For emergency situations, make most fields optional except critical ones
     if (originalSchema instanceof z.ZodObject) {
-      const shape = originalSchema.shape;
-      const relaxedShape: unknown = {};
+      const shape = originalSchema.shape
+      const relaxedShape: unknown = {}
 
-      for (const [key, value] of Object.entries(shape)) {
+      for (const [key, value,] of Object.entries(shape,)) {
         // Keep CPF and critical identifiers required
-        if (["cpf", "fullName", "emergencyType", "justification"].includes(key)) {
-          relaxedShape[key] = value;
+        if (['cpf', 'fullName', 'emergencyType', 'justification',].includes(key,)) {
+          relaxedShape[key] = value
         } else {
-          relaxedShape[key] = (value as z.ZodType<unknown>).optional();
+          relaxedShape[key] = (value as z.ZodType<unknown>).optional()
         }
       }
 
-      return z.object(relaxedShape);
+      return z.object(relaxedShape,)
     }
 
-    return originalSchema;
+    return originalSchema
   }
 
   /**
    * Find validation rule by context
    */
-  private findValidationRule(context: ValidationContext): ValidationRule | null {
-    return HEALTHCARE_VALIDATION_RULES.find(rule => rule.context === context) || null;
+  private findValidationRule(context: ValidationContext,): ValidationRule | null {
+    return HEALTHCARE_VALIDATION_RULES.find(rule => rule.context === context) || null
   }
 
   /**
@@ -544,21 +547,21 @@ export class HealthcareInputValidator {
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),
-      event: "HEALTHCARE_VALIDATION",
+      event: 'HEALTHCARE_VALIDATION',
       context,
       severity,
       success,
-      userId: userId || "anonymous",
+      userId: userId || 'anonymous',
       errorCount: errors?.length || 0,
       errors: success
         ? undefined
-        : BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(errors),
-    };
+        : BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(errors,),
+    }
 
-    console.log("🏥 Healthcare Validation Log:", JSON.stringify(logEntry, null, 2));
+    console.log('🏥 Healthcare Validation Log:', JSON.stringify(logEntry, null, 2,),)
 
     if (this.auditLogger) {
-      await this.auditLogger.log(logEntry);
+      await this.auditLogger.log(logEntry,)
     }
   }
 
@@ -572,18 +575,18 @@ export class HealthcareInputValidator {
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),
-      event: "EMERGENCY_VALIDATION_BYPASS",
+      event: 'EMERGENCY_VALIDATION_BYPASS',
       context,
-      userId: userId || "anonymous",
-      justification: data?.justification || "Not provided",
-      emergencyType: data?.emergencyType || "Not specified",
-      patientData: BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(data),
-    };
+      userId: userId || 'anonymous',
+      justification: data?.justification || 'Not provided',
+      emergencyType: data?.emergencyType || 'Not specified',
+      patientData: BrazilianHealthcareSanitizer.removeSensitiveDataForLogging(data,),
+    }
 
-    console.warn("🚨 Emergency Validation Bypass:", JSON.stringify(logEntry, null, 2));
+    console.warn('🚨 Emergency Validation Bypass:', JSON.stringify(logEntry, null, 2,),)
 
     if (this.auditLogger) {
-      await this.auditLogger.log(logEntry);
+      await this.auditLogger.log(logEntry,)
     }
   }
 }
@@ -594,108 +597,108 @@ export class HealthcareInputValidator {
 export function createHealthcareValidationMiddleware(
   context: ValidationContext,
   options: {
-    auditLogger?: unknown;
-    allowEmergencyBypass?: boolean;
+    auditLogger?: unknown
+    allowEmergencyBypass?: boolean
   } = {},
 ): MiddlewareHandler {
-  const validator = new HealthcareInputValidator(options.auditLogger);
+  const validator = new HealthcareInputValidator(options.auditLogger,)
 
-  return async (c: Context, next) => {
+  return async (c: Context, next,) => {
     try {
       // Skip validation for GET requests (read operations)
-      if (c.req.method === "GET") {
-        await next();
-        return;
+      if (c.req.method === 'GET') {
+        await next()
+        return
       }
 
       // Extract request body
-      const body = await c.req.json().catch(() => ({}));
+      const body = await c.req.json().catch(() => ({}))
 
       // Extract user information from JWT token (set by auth middleware)
-      const user = c.get("user");
-      const userId = user?.id;
-      const userLicenses = user?.licenses || [];
+      const user = c.get('user',)
+      const userId = user?.id
+      const userLicenses = user?.licenses || []
 
       // Check for emergency bypass header
       const emergencyBypass = options.allowEmergencyBypass
-        && c.req.header("X-Emergency-Validation-Bypass") === "true";
+        && c.req.header('X-Emergency-Validation-Bypass',) === 'true'
 
       // Validate input
       const validationResult = await validator.validateInput(context, body, {
         emergencyBypass,
         userLicenses,
         userId,
-      });
+      },)
 
       if (!validationResult.success) {
         return c.json({
           success: false,
-          error: "VALIDATION_FAILED",
-          message: "Input validation failed",
+          error: 'VALIDATION_FAILED',
+          message: 'Input validation failed',
           details: {
             errors: validationResult.errors,
             warnings: validationResult.warnings,
           },
-        }, 400);
+        }, 400,)
       }
 
       // Set validated data in context for next middleware
-      c.set("validatedData", validationResult.data);
-      c.set("validationWarnings", validationResult.warnings);
+      c.set('validatedData', validationResult.data,)
+      c.set('validationWarnings', validationResult.warnings,)
 
       // Set headers for client information
       if (validationResult.emergencyBypass) {
-        c.header("X-Emergency-Validation-Bypass", "true");
+        c.header('X-Emergency-Validation-Bypass', 'true',)
       }
 
       if (validationResult.warnings?.length) {
-        c.header("X-Validation-Warnings", validationResult.warnings.length.toString());
+        c.header('X-Validation-Warnings', validationResult.warnings.length.toString(),)
       }
 
-      await next();
+      await next()
     } catch (error) {
-      console.error("Healthcare validation middleware error:", error);
+      console.error('Healthcare validation middleware error:', error,)
 
       return c.json({
         success: false,
-        error: "VALIDATION_MIDDLEWARE_ERROR",
-        message: "Internal validation error",
-      }, 500);
+        error: 'VALIDATION_MIDDLEWARE_ERROR',
+        message: 'Internal validation error',
+      }, 500,)
     }
-  };
+  }
 }
 
 /**
  * Validation middleware factory for common contexts
  */
 export const validationMiddlewares = {
-  patientRegistration: (auditLogger?: unknown) =>
+  patientRegistration: (auditLogger?: unknown,) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: true,
-    }),
+    },),
 
-  patientUpdate: (auditLogger?: unknown) =>
+  patientUpdate: (auditLogger?: unknown,) =>
     createHealthcareValidationMiddleware(ValidationContext.PATIENT_UPDATE, {
       auditLogger,
       allowEmergencyBypass: true,
-    }),
+    },),
 
-  providerRegistration: (auditLogger?: unknown) =>
+  providerRegistration: (auditLogger?: unknown,) =>
     createHealthcareValidationMiddleware(ValidationContext.PROVIDER_REGISTRATION, {
       auditLogger,
       allowEmergencyBypass: false,
-    }),
+    },),
 
-  appointmentBooking: (auditLogger?: unknown) =>
+  appointmentBooking: (auditLogger?: unknown,) =>
     createHealthcareValidationMiddleware(ValidationContext.APPOINTMENT_BOOKING, {
       auditLogger,
       allowEmergencyBypass: true,
-    }),
+    },),
 
-  emergencyAccess: (auditLogger?: unknown) =>
+  emergencyAccess: (auditLogger?: unknown,) =>
     createHealthcareValidationMiddleware(ValidationContext.EMERGENCY_ACCESS, {
       auditLogger,
       allowEmergencyBypass: true,
-    }),
-};
+    },),
+}

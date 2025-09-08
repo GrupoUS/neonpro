@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { cn, } from '@/lib/utils'
 import {
   Activity,
   AlertTriangle,
@@ -15,85 +15,85 @@ import {
   Shield,
   User,
   Zap,
-} from "lucide-react";
-import React, { useState } from "react";
+} from 'lucide-react'
+import React, { useState, } from 'react'
 
 // Emergency Patient Data Types
 export interface EmergencyPatientData {
-  id: string;
-  name: string;
-  age: number;
-  bloodType: string;
-  allergies: string[];
-  criticalConditions: string[];
-  emergencyContacts: EmergencyContact[];
+  id: string
+  name: string
+  age: number
+  bloodType: string
+  allergies: string[]
+  criticalConditions: string[]
+  emergencyContacts: EmergencyContact[]
   lastKnownLocation?: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-  currentStatus: "stable" | "critical" | "emergency" | "life-threatening";
-  medications: EmergencyMedication[];
-  medicalHistory: string[];
-  cfmNumber?: string;
-  lgpdConsent: boolean;
+    lat: number
+    lng: number
+    address: string
+  }
+  currentStatus: 'stable' | 'critical' | 'emergency' | 'life-threatening'
+  medications: EmergencyMedication[]
+  medicalHistory: string[]
+  cfmNumber?: string
+  lgpdConsent: boolean
 }
 
 export interface EmergencyContact {
-  name: string;
-  relationship: string;
-  phone: string;
-  isPrimary: boolean;
+  name: string
+  relationship: string
+  phone: string
+  isPrimary: boolean
 }
 
 export interface EmergencyMedication {
-  name: string;
-  dosage: string;
-  frequency: string;
-  isCritical: boolean;
-  lastTaken?: string;
+  name: string
+  dosage: string
+  frequency: string
+  isCritical: boolean
+  lastTaken?: string
 }
 
 export interface EmergencyPatientCardProps {
-  patient: EmergencyPatientData;
-  onCallSAMU: () => void;
-  onCallEmergencyContact: (contact: EmergencyContact) => void;
-  onAccessMedicalHistory: () => void;
-  emergencyMode?: boolean;
-  className?: string;
+  patient: EmergencyPatientData
+  onCallSAMU: () => void
+  onCallEmergencyContact: (contact: EmergencyContact,) => void
+  onAccessMedicalHistory: () => void
+  emergencyMode?: boolean
+  className?: string
 } // Emergency Status Colors with TweakCN Integration
-const getStatusStyles = (status: EmergencyPatientData["currentStatus"]) => {
+const getStatusStyles = (status: EmergencyPatientData['currentStatus'],) => {
   switch (status) {
-    case "life-threatening":
+    case 'life-threatening':
       return {
-        card: "border-red-500 bg-red-50 dark:bg-red-950/20 shadow-red-500/20 shadow-lg",
-        badge: "bg-red-600 text-white animate-pulse",
-        icon: "text-red-600 animate-bounce",
-        priority: "CRÍTICO",
-      };
-    case "emergency":
+        card: 'border-red-500 bg-red-50 dark:bg-red-950/20 shadow-red-500/20 shadow-lg',
+        badge: 'bg-red-600 text-white animate-pulse',
+        icon: 'text-red-600 animate-bounce',
+        priority: 'CRÍTICO',
+      }
+    case 'emergency':
       return {
-        card: "border-orange-500 bg-orange-50 dark:bg-orange-950/20 shadow-orange-500/20 shadow-lg",
-        badge: "bg-orange-600 text-white",
-        icon: "text-orange-600",
-        priority: "URGENTE",
-      };
-    case "critical":
+        card: 'border-orange-500 bg-orange-50 dark:bg-orange-950/20 shadow-orange-500/20 shadow-lg',
+        badge: 'bg-orange-600 text-white',
+        icon: 'text-orange-600',
+        priority: 'URGENTE',
+      }
+    case 'critical':
       return {
-        card: "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 shadow-yellow-500/20",
-        badge: "bg-yellow-600 text-white",
-        icon: "text-yellow-600",
-        priority: "CRÍTICO",
-      };
-    case "stable":
+        card: 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 shadow-yellow-500/20',
+        badge: 'bg-yellow-600 text-white',
+        icon: 'text-yellow-600',
+        priority: 'CRÍTICO',
+      }
+    case 'stable':
       return {
-        card: "border-green-500 bg-green-50 dark:bg-green-950/20 shadow-green-500/20",
-        badge: "bg-green-600 text-white",
-        icon: "text-green-600",
-        priority: "ESTÁVEL",
-      };
+        card: 'border-green-500 bg-green-50 dark:bg-green-950/20 shadow-green-500/20',
+        badge: 'bg-green-600 text-white',
+        icon: 'text-green-600',
+        priority: 'ESTÁVEL',
+      }
   }
-};
+}
 
 export function EmergencyPatientCard({
   patient,
@@ -102,15 +102,15 @@ export function EmergencyPatientCard({
   onAccessMedicalHistory,
   emergencyMode = false,
   className,
-}: EmergencyPatientCardProps) {
-  const [isExpanded, setIsExpanded] = useState(emergencyMode);
-  const statusStyles = getStatusStyles(patient.currentStatus);
+}: EmergencyPatientCardProps,) {
+  const [isExpanded, setIsExpanded,] = useState(emergencyMode,)
+  const statusStyles = getStatusStyles(patient.currentStatus,)
   return (
     <Card
       className={cn(
-        "w-full transition-all duration-200 hover:shadow-neonpro-glow/30",
+        'w-full transition-all duration-200 hover:shadow-neonpro-glow/30',
         statusStyles.card,
-        emergencyMode && "border-2 shadow-2xl scale-[1.02]",
+        emergencyMode && 'border-2 shadow-2xl scale-[1.02]',
         className,
       )}
       role="alert"
@@ -120,17 +120,17 @@ export function EmergencyPatientCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn("relative", statusStyles.icon)}>
-              {patient.currentStatus === "life-threatening" && (
+            <div className={cn('relative', statusStyles.icon,)}>
+              {patient.currentStatus === 'life-threatening' && (
                 <Zap className="h-6 w-6" aria-hidden="true" />
               )}
-              {patient.currentStatus === "emergency" && (
+              {patient.currentStatus === 'emergency' && (
                 <AlertTriangle className="h-6 w-6" aria-hidden="true" />
               )}
-              {patient.currentStatus === "critical" && (
+              {patient.currentStatus === 'critical' && (
                 <Activity className="h-6 w-6" aria-hidden="true" />
               )}
-              {patient.currentStatus === "stable" && (
+              {patient.currentStatus === 'stable' && (
                 <Heart className="h-6 w-6" aria-hidden="true" />
               )}
             </div>
@@ -151,7 +151,7 @@ export function EmergencyPatientCard({
                 {statusStyles.priority}
               </Badge>
             </div>
-          </div>{" "}
+          </div>{' '}
           {/* Emergency Actions */}
           <div className="flex flex-col gap-2">
             <Button
@@ -166,7 +166,7 @@ export function EmergencyPatientCard({
             </Button>
             {patient.emergencyContacts.length > 0 && (
               <Button
-                onClick={() => onCallEmergencyContact(patient.emergencyContacts[0])}
+                onClick={() => onCallEmergencyContact(patient.emergencyContacts[0],)}
                 variant="outline"
                 size="sm"
                 className="border-orange-500 text-orange-600 hover:bg-orange-50"
@@ -195,7 +195,7 @@ export function EmergencyPatientCard({
               <Badge variant="destructive" className="font-bold">
                 {patient.bloodType}
               </Badge>
-            </div>{" "}
+            </div>{' '}
             {patient.allergies.length > 0 && (
               <div className="space-y-1">
                 <span className="font-semibold text-sm text-red-600 flex items-center gap-1">
@@ -203,7 +203,7 @@ export function EmergencyPatientCard({
                   Alergias:
                 </span>
                 <div className="flex flex-wrap gap-1">
-                  {patient.allergies.map((allergy, index) => (
+                  {patient.allergies.map((allergy, index,) => (
                     <Badge
                       key={index}
                       variant="destructive"
@@ -226,7 +226,7 @@ export function EmergencyPatientCard({
                 Condições Críticas:
               </span>
               <div className="space-y-1">
-                {patient.criticalConditions.map((condition, index) => (
+                {patient.criticalConditions.map((condition, index,) => (
                   <div
                     key={index}
                     className="text-sm bg-orange-50 dark:bg-orange-950/20 px-2 py-1 rounded border-l-4 border-orange-500"
@@ -237,9 +237,9 @@ export function EmergencyPatientCard({
               </div>
             </div>
           )}
-        </div>{" "}
+        </div>{' '}
         {/* Critical Medications */}
-        {patient.medications.some((med) => med.isCritical) && (
+        {patient.medications.some((med,) => med.isCritical) && (
           <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-lg border border-yellow-300">
             <span className="font-semibold text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-1 mb-2">
               <Zap className="h-4 w-4" aria-hidden="true" />
@@ -247,8 +247,8 @@ export function EmergencyPatientCard({
             </span>
             <div className="space-y-2">
               {patient.medications
-                .filter((med) => med.isCritical)
-                .map((medication, index) => (
+                .filter((med,) => med.isCritical)
+                .map((medication, index,) => (
                   <div key={index} className="text-sm space-y-1">
                     <div className="font-medium">{medication.name}</div>
                     <div className="text-muted-foreground">
@@ -274,7 +274,7 @@ export function EmergencyPatientCard({
         {/* Additional Actions */}
         <div className="flex flex-wrap gap-2 pt-2">
           <Button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => setIsExpanded(!isExpanded,)}
             variant="ghost"
             size="sm"
             className="text-primary hover:text-primary/80"
@@ -282,7 +282,7 @@ export function EmergencyPatientCard({
             aria-controls={`emergency-details-${patient.id}`}
           >
             <FileText className="h-4 w-4 mr-1" aria-hidden="true" />
-            {isExpanded ? "Menos Detalhes" : "Mais Detalhes"}
+            {isExpanded ? 'Menos Detalhes' : 'Mais Detalhes'}
           </Button>
 
           <Button
@@ -295,7 +295,7 @@ export function EmergencyPatientCard({
             <Clock className="h-4 w-4 mr-1" aria-hidden="true" />
             Histórico
           </Button>
-        </div>{" "}
+        </div>{' '}
         {/* Expanded Details */}
         {isExpanded && (
           <div
@@ -309,7 +309,7 @@ export function EmergencyPatientCard({
                   Todos os Contatos de Emergência:
                 </span>
                 <div className="space-y-2">
-                  {patient.emergencyContacts.map((contact, index) => (
+                  {patient.emergencyContacts.map((contact, index,) => (
                     <div
                       key={index}
                       className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
@@ -323,7 +323,7 @@ export function EmergencyPatientCard({
                         </div>
                       </div>
                       <Button
-                        onClick={() => onCallEmergencyContact(contact)}
+                        onClick={() => onCallEmergencyContact(contact,)}
                         variant="outline"
                         size="sm"
                         className="ml-2"
@@ -344,7 +344,7 @@ export function EmergencyPatientCard({
                   Histórico Médico Relevante:
                 </span>
                 <div className="space-y-1">
-                  {patient.medicalHistory.slice(0, 3).map((item, index) => (
+                  {patient.medicalHistory.slice(0, 3,).map((item, index,) => (
                     <div key={index} className="text-sm text-muted-foreground">
                       • {item}
                     </div>
@@ -370,5 +370,5 @@ export function EmergencyPatientCard({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

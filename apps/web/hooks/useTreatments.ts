@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient, } from '@/app/utils/supabase/client'
 import type {
   AestheticTreatmentCategory,
   TreatmentPlan,
@@ -9,327 +9,327 @@ import type {
   TreatmentProtocol,
   TreatmentSession,
   TreatmentStatus,
-} from "@/types/treatments";
-import { useCallback, useEffect, useMemo, useState } from "react";
+} from '@/types/treatments'
+import { useCallback, useEffect, useMemo, useState, } from 'react'
 
 interface TreatmentsHook {
   // Treatment Plans
-  treatmentPlans: TreatmentPlan[];
-  activeTreatments: TreatmentPlan[];
-  completedTreatments: TreatmentPlan[];
-  treatmentPlansSummary: TreatmentPlanSummary[];
+  treatmentPlans: TreatmentPlan[]
+  activeTreatments: TreatmentPlan[]
+  completedTreatments: TreatmentPlan[]
+  treatmentPlansSummary: TreatmentPlanSummary[]
 
   // Treatment Sessions
-  upcomingSessions: TreatmentSession[];
-  recentSessions: TreatmentSession[];
-  todaysSessions: TreatmentSession[];
+  upcomingSessions: TreatmentSession[]
+  recentSessions: TreatmentSession[]
+  todaysSessions: TreatmentSession[]
 
   // Treatment Protocols
-  availableProtocols: TreatmentProtocol[];
-  popularProtocols: TreatmentProtocol[];
+  availableProtocols: TreatmentProtocol[]
+  popularProtocols: TreatmentProtocol[]
 
   // Statistics and Analytics
-  totalTreatments: number;
-  activeSessionsCount: number;
-  completionRate: number;
-  averageSatisfactionScore: number;
+  totalTreatments: number
+  activeSessionsCount: number
+  completionRate: number
+  averageSatisfactionScore: number
 
   // Loading and Error States
-  loading: boolean;
-  error: Error | null;
+  loading: boolean
+  error: Error | null
 
   // Search and Filter Functions
-  searchTreatments: (query: string) => void;
-  filterByCategory: (category: AestheticTreatmentCategory | null) => void;
-  filterByStatus: (status: TreatmentStatus | null) => void;
-  filterByPatient: (patientId: string | null) => void;
+  searchTreatments: (query: string,) => void
+  filterByCategory: (category: AestheticTreatmentCategory | null,) => void
+  filterByStatus: (status: TreatmentStatus | null,) => void
+  filterByPatient: (patientId: string | null,) => void
 
   // CRUD Operations
-  getTreatmentById: (id: string) => TreatmentPlan | null;
+  getTreatmentById: (id: string,) => TreatmentPlan | null
   createTreatmentPlan: (
-    plan: Omit<TreatmentPlan, "id" | "created_at" | "updated_at">,
-  ) => Promise<TreatmentPlan | null>;
+    plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>,
+  ) => Promise<TreatmentPlan | null>
   updateTreatmentPlan: (
     id: string,
     updates: Partial<TreatmentPlan>,
-  ) => Promise<TreatmentPlan | null>;
-  deleteTreatmentPlan: (id: string) => Promise<boolean>;
+  ) => Promise<TreatmentPlan | null>
+  deleteTreatmentPlan: (id: string,) => Promise<boolean>
 
   // Session Management
   scheduleSession: (
-    session: Omit<TreatmentSession, "id" | "created_at" | "updated_at">,
-  ) => Promise<TreatmentSession | null>;
+    session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>,
+  ) => Promise<TreatmentSession | null>
   completeSession: (
     sessionId: string,
     sessionData: Partial<TreatmentSession>,
-  ) => Promise<TreatmentSession | null>;
-  cancelSession: (sessionId: string, reason: string) => Promise<boolean>;
+  ) => Promise<TreatmentSession | null>
+  cancelSession: (sessionId: string, reason: string,) => Promise<boolean>
 
   // Progress Tracking
   updateProgress: (
-    progressData: Omit<TreatmentProgress, "id" | "recorded_at">,
-  ) => Promise<TreatmentProgress | null>;
-  getProgressHistory: (treatmentPlanId: string) => Promise<TreatmentProgress[]>;
+    progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>,
+  ) => Promise<TreatmentProgress | null>
+  getProgressHistory: (treatmentPlanId: string,) => Promise<TreatmentProgress[]>
 
   // Brazilian Compliance Functions
-  validateCFMCompliance: (treatmentPlanId: string) => Promise<boolean>;
+  validateCFMCompliance: (treatmentPlanId: string,) => Promise<boolean>
   updateLGPDConsent: (
     treatmentPlanId: string,
     consentStatus: boolean,
-  ) => Promise<boolean>;
-  generateComplianceReport: (treatmentPlanId: string) => Promise<unknown>;
+  ) => Promise<boolean>
+  generateComplianceReport: (treatmentPlanId: string,) => Promise<unknown>
 
   // Utility Functions
-  refreshData: () => Promise<void>;
-  exportTreatmentData: (treatmentPlanId: string) => Promise<unknown>;
+  refreshData: () => Promise<void>
+  exportTreatmentData: (treatmentPlanId: string,) => Promise<unknown>
 }
 
 export function useTreatments(): TreatmentsHook {
   // State Management
-  const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>([]);
-  const [treatmentSessions, setTreatmentSessions] = useState<
+  const [treatmentPlans, setTreatmentPlans,] = useState<TreatmentPlan[]>([],)
+  const [treatmentSessions, setTreatmentSessions,] = useState<
     TreatmentSession[]
-  >([]);
-  const [treatmentProtocols, setTreatmentProtocols] = useState<
+  >([],)
+  const [treatmentProtocols, setTreatmentProtocols,] = useState<
     TreatmentProtocol[]
-  >([]);
-  const [_treatmentProgress, _setTreatmentProgress] = useState<
+  >([],)
+  const [_treatmentProgress, _setTreatmentProgress,] = useState<
     TreatmentProgress[]
-  >([]);
+  >([],)
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>();
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<Error | null>()
 
   // Filter States
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | null>();
-  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>();
-  const [patientFilter, setPatientFilter] = useState<string | null>();
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [categoryFilter, setCategoryFilter,] = useState<AestheticTreatmentCategory | null>()
+  const [statusFilter, setStatusFilter,] = useState<TreatmentStatus | null>()
+  const [patientFilter, setPatientFilter,] = useState<string | null>()
 
-  const supabase = createClient();
+  const supabase = createClient()
 
   // Fetch Treatment Plans
   const fetchTreatmentPlans = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(undefined);
+      setLoading(true,)
+      setError(undefined,)
 
       let query = supabase
-        .from("treatment_plans")
-        .select("*")
-        .order("created_at", {
+        .from('treatment_plans',)
+        .select('*',)
+        .order('created_at', {
           ascending: false,
-        });
+        },)
 
       // Apply filters
       if (searchQuery.trim()) {
         query = query.or(
           `treatment_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`,
-        );
+        )
       }
 
       if (categoryFilter) {
-        query = query.eq("category", categoryFilter);
+        query = query.eq('category', categoryFilter,)
       }
 
       if (statusFilter) {
-        query = query.eq("status", statusFilter);
+        query = query.eq('status', statusFilter,)
       }
 
       if (patientFilter) {
-        query = query.eq("patient_id", patientFilter);
+        query = query.eq('patient_id', patientFilter,)
       }
 
-      const { data, error: fetchError } = await query;
+      const { data, error: fetchError, } = await query
 
       if (fetchError) {
         throw new Error(
           `Erro ao carregar planos de tratamento: ${fetchError.message}`,
-        );
+        )
       }
 
-      setTreatmentPlans(data || []);
+      setTreatmentPlans(data || [],)
     } catch (error) {
-      setError(error as Error);
+      setError(error as Error,)
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, [supabase, searchQuery, categoryFilter, statusFilter, patientFilter]);
+  }, [supabase, searchQuery, categoryFilter, statusFilter, patientFilter,],)
 
   // Fetch Treatment Sessions
   const fetchTreatmentSessions = useCallback(async () => {
     try {
-      const { data, error: fetchError } = await supabase
-        .from("treatment_sessions")
-        .select("*")
-        .order("scheduled_date", { ascending: true });
+      const { data, error: fetchError, } = await supabase
+        .from('treatment_sessions',)
+        .select('*',)
+        .order('scheduled_date', { ascending: true, },)
 
       if (fetchError) {
-        throw new Error(`Erro ao carregar sessões: ${fetchError.message}`);
+        throw new Error(`Erro ao carregar sessões: ${fetchError.message}`,)
       }
 
-      setTreatmentSessions(data || []);
+      setTreatmentSessions(data || [],)
     } catch (error) {
-      setError(error as Error);
+      setError(error as Error,)
     }
-  }, [supabase]);
+  }, [supabase,],)
 
   // Fetch Treatment Protocols
   const fetchTreatmentProtocols = useCallback(async () => {
     try {
-      const { data, error: fetchError } = await supabase
-        .from("treatment_protocols")
-        .select("*")
-        .eq("cfm_approved", true)
-        .order("protocol_name", { ascending: true });
+      const { data, error: fetchError, } = await supabase
+        .from('treatment_protocols',)
+        .select('*',)
+        .eq('cfm_approved', true,)
+        .order('protocol_name', { ascending: true, },)
 
       if (fetchError) {
-        throw new Error(`Erro ao carregar protocolos: ${fetchError.message}`);
+        throw new Error(`Erro ao carregar protocolos: ${fetchError.message}`,)
       }
 
-      setTreatmentProtocols(data || []);
+      setTreatmentProtocols(data || [],)
     } catch (error) {
-      setError(error as Error);
+      setError(error as Error,)
     }
-  }, [supabase]);
+  }, [supabase,],)
 
   // Computed Values
   const activeTreatments = useMemo(() => {
-    return treatmentPlans.filter((plan) =>
-      ["planned", "consent_pending", "active"].includes(plan.status)
-    );
-  }, [treatmentPlans]);
+    return treatmentPlans.filter((plan,) =>
+      ['planned', 'consent_pending', 'active',].includes(plan.status,)
+    )
+  }, [treatmentPlans,],)
 
   const completedTreatments = useMemo(() => {
-    return treatmentPlans.filter((plan) => plan.status === "completed");
-  }, [treatmentPlans]);
+    return treatmentPlans.filter((plan,) => plan.status === 'completed')
+  }, [treatmentPlans,],)
 
   const treatmentPlansSummary = useMemo((): TreatmentPlanSummary[] => {
-    return treatmentPlans.map((plan) => ({
+    return treatmentPlans.map((plan,) => ({
       id: plan.id,
       treatment_name: plan.treatment_name,
       category: plan.category,
       status: plan.status,
       expected_sessions: plan.expected_sessions,
       completed_sessions: plan.completed_sessions,
-    }));
-  }, [treatmentPlans]);
+    }))
+  }, [treatmentPlans,],)
 
   const upcomingSessions = useMemo(() => {
-    const now = new Date();
+    const now = new Date()
     return treatmentSessions
       .filter(
-        (session) =>
-          session.status === "scheduled"
-          && new Date(session.scheduled_date) > now,
+        (session,) =>
+          session.status === 'scheduled'
+          && new Date(session.scheduled_date,) > now,
       )
-      .slice(0, 10);
-  }, [treatmentSessions]);
+      .slice(0, 10,)
+  }, [treatmentSessions,],)
 
   const recentSessions = useMemo(() => {
     return treatmentSessions
-      .filter((session) => session.status === "completed")
+      .filter((session,) => session.status === 'completed')
       .sort(
-        (a, b) =>
-          new Date(b.actual_date || b.scheduled_date).getTime()
-          - new Date(a.actual_date || a.scheduled_date).getTime(),
+        (a, b,) =>
+          new Date(b.actual_date || b.scheduled_date,).getTime()
+          - new Date(a.actual_date || a.scheduled_date,).getTime(),
       )
-      .slice(0, 10);
-  }, [treatmentSessions]);
+      .slice(0, 10,)
+  }, [treatmentSessions,],)
 
   const todaysSessions = useMemo(() => {
-    const today = new Date().toDateString();
+    const today = new Date().toDateString()
     return treatmentSessions.filter(
-      (session) => new Date(session.scheduled_date).toDateString() === today,
-    );
-  }, [treatmentSessions]);
+      (session,) => new Date(session.scheduled_date,).toDateString() === today,
+    )
+  }, [treatmentSessions,],)
 
   const availableProtocols = useMemo(() => {
-    return treatmentProtocols.filter((protocol) => protocol.cfm_approved);
-  }, [treatmentProtocols]);
+    return treatmentProtocols.filter((protocol,) => protocol.cfm_approved)
+  }, [treatmentProtocols,],)
 
   const popularProtocols = useMemo(() => {
     return treatmentProtocols
-      .filter((protocol) => protocol.success_rate >= 80)
+      .filter((protocol,) => protocol.success_rate >= 80)
       .sort(
-        (a, b) => b.patient_satisfaction_average - a.patient_satisfaction_average,
+        (a, b,) => b.patient_satisfaction_average - a.patient_satisfaction_average,
       )
-      .slice(0, 5);
-  }, [treatmentProtocols]);
+      .slice(0, 5,)
+  }, [treatmentProtocols,],)
 
   // Statistics
-  const { length: totalTreatments } = treatmentPlans;
-  const { length: activeSessionsCount } = upcomingSessions;
+  const { length: totalTreatments, } = treatmentPlans
+  const { length: activeSessionsCount, } = upcomingSessions
   const completionRate = totalTreatments > 0
     ? (completedTreatments.length / totalTreatments) * 100
-    : 0;
+    : 0
   const averageSatisfactionScore = useMemo(() => {
     const sessionsWithScores = treatmentSessions.filter(
-      (s) => s.patient_satisfaction_score,
-    );
+      (s,) => s.patient_satisfaction_score,
+    )
     if (sessionsWithScores.length === 0) {
-      return 0;
+      return 0
     }
     const total = sessionsWithScores.reduce(
-      (sum, s) => sum + (s.patient_satisfaction_score || 0),
+      (sum, s,) => sum + (s.patient_satisfaction_score || 0),
       0,
-    );
-    return total / sessionsWithScores.length;
-  }, [treatmentSessions]);
+    )
+    return total / sessionsWithScores.length
+  }, [treatmentSessions,],)
 
   // Filter Functions
-  const searchTreatments = useCallback((query: string) => {
-    setSearchQuery(query);
-  }, []);
+  const searchTreatments = useCallback((query: string,) => {
+    setSearchQuery(query,)
+  }, [],)
 
   const filterByCategory = useCallback(
-    (category: AestheticTreatmentCategory | null) => {
-      setCategoryFilter(category);
+    (category: AestheticTreatmentCategory | null,) => {
+      setCategoryFilter(category,)
     },
     [],
-  );
+  )
 
-  const filterByStatus = useCallback((status: TreatmentStatus | null) => {
-    setStatusFilter(status);
-  }, []);
+  const filterByStatus = useCallback((status: TreatmentStatus | null,) => {
+    setStatusFilter(status,)
+  }, [],)
 
-  const filterByPatient = useCallback((patientId: string | null) => {
-    setPatientFilter(patientId);
-  }, []);
+  const filterByPatient = useCallback((patientId: string | null,) => {
+    setPatientFilter(patientId,)
+  }, [],)
 
   // CRUD Operations
   const getTreatmentById = useCallback(
-    (id: string): TreatmentPlan | null => {
-      return treatmentPlans.find((plan) => plan.id === id) || undefined;
+    (id: string,): TreatmentPlan | null => {
+      return treatmentPlans.find((plan,) => plan.id === id) || undefined
     },
-    [treatmentPlans],
-  );
+    [treatmentPlans,],
+  )
 
   const createTreatmentPlan = useCallback(
     async (
-      plan: Omit<TreatmentPlan, "id" | "created_at" | "updated_at">,
+      plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>,
     ): Promise<TreatmentPlan | null> => {
       try {
-        const { data, error } = await supabase
-          .from("treatment_plans")
-          .insert([plan])
+        const { data, error, } = await supabase
+          .from('treatment_plans',)
+          .insert([plan,],)
           .select()
-          .single();
+          .single()
 
         if (error) {
           throw new Error(
             `Erro ao criar plano de tratamento: ${error.message}`,
-          );
+          )
         }
 
-        return data;
+        return data
       } catch (error) {
-        setError(error as Error);
-        return;
+        setError(error as Error,)
+        return
       }
     },
-    [supabase],
-  );
+    [supabase,],
+  )
 
   const updateTreatmentPlan = useCallback(
     async (
@@ -337,119 +337,119 @@ export function useTreatments(): TreatmentsHook {
       updates: Partial<TreatmentPlan>,
     ): Promise<TreatmentPlan | null> => {
       try {
-        const { data, error } = await supabase
-          .from("treatment_plans")
-          .update({ ...updates, updated_at: new Date().toISOString() })
-          .eq("id", id)
+        const { data, error, } = await supabase
+          .from('treatment_plans',)
+          .update({ ...updates, updated_at: new Date().toISOString(), },)
+          .eq('id', id,)
           .select()
-          .single();
+          .single()
 
         if (error) {
           throw new Error(
             `Erro ao atualizar plano de tratamento: ${error.message}`,
-          );
+          )
         }
 
-        return data;
+        return data
       } catch (error) {
-        setError(error as Error);
-        return;
+        setError(error as Error,)
+        return
       }
     },
-    [supabase],
-  );
+    [supabase,],
+  )
 
   const deleteTreatmentPlan = useCallback(
-    async (id: string): Promise<boolean> => {
+    async (id: string,): Promise<boolean> => {
       try {
-        const { error } = await supabase
-          .from("treatment_plans")
+        const { error, } = await supabase
+          .from('treatment_plans',)
           .delete()
-          .eq("id", id);
+          .eq('id', id,)
 
         if (error) {
           throw new Error(
             `Erro ao excluir plano de tratamento: ${error.message}`,
-          );
+          )
         }
 
-        return true;
+        return true
       } catch (error) {
-        setError(error as Error);
-        return false;
+        setError(error as Error,)
+        return false
       }
     },
-    [supabase],
-  );
+    [supabase,],
+  )
 
   // Session Management Functions (placeholder implementations)
   const scheduleSession = useCallback(
     async (
-      _session: Omit<TreatmentSession, "id" | "created_at" | "updated_at">,
+      _session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>,
     ): Promise<TreatmentSession | null> => {
-      return;
+      return
     },
     [],
-  );
+  )
 
   const completeSession = useCallback(
     async (
       _sessionId: string,
       _sessionData: Partial<TreatmentSession>,
     ): Promise<TreatmentSession | null> => {
-      return;
+      return
     },
     [],
-  );
+  )
 
   const cancelSession = useCallback(
-    async (_sessionId: string, _reason: string): Promise<boolean> => {
-      return true;
+    async (_sessionId: string, _reason: string,): Promise<boolean> => {
+      return true
     },
     [],
-  );
+  )
 
   // Progress Tracking Functions (placeholder implementations)
   const updateProgress = useCallback(
     async (
-      _progressData: Omit<TreatmentProgress, "id" | "recorded_at">,
+      _progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>,
     ): Promise<TreatmentProgress | null> => {
-      return;
+      return
     },
     [],
-  );
+  )
 
   const getProgressHistory = useCallback(
-    async (_treatmentPlanId: string): Promise<TreatmentProgress[]> => {
-      return [];
+    async (_treatmentPlanId: string,): Promise<TreatmentProgress[]> => {
+      return []
     },
     [],
-  );
+  )
 
   // Brazilian Compliance Functions (placeholder implementations)
   const validateCFMCompliance = useCallback(
-    async (_treatmentPlanId: string): Promise<boolean> => {
-      return true;
+    async (_treatmentPlanId: string,): Promise<boolean> => {
+      return true
     },
     [],
-  );
+  )
 
   const updateLGPDConsent = useCallback(
     async (
       _treatmentPlanId: string,
       _consentStatus: boolean,
     ): Promise<boolean> => {
-      return true;
+      return true
     },
     [],
-  );
+  )
 
   const generateComplianceReport = useCallback(
-    async (_treatmentPlanId: string): Promise<unknown> => {
-      return {};
+    async (_treatmentPlanId: string,): Promise<unknown> => {
+      return {}
     },
     [],
-  );
+  )
 
   // Utility Functions
   const refreshData = useCallback(async () => {
@@ -457,93 +457,95 @@ export function useTreatments(): TreatmentsHook {
       fetchTreatmentPlans(),
       fetchTreatmentSessions(),
       fetchTreatmentProtocols(),
-    ]);
-  }, [fetchTreatmentPlans, fetchTreatmentSessions, fetchTreatmentProtocols]);
+    ],)
+  }, [fetchTreatmentPlans, fetchTreatmentSessions, fetchTreatmentProtocols,],)
 
   const exportTreatmentData = useCallback(
-    async (_treatmentPlanId: string): Promise<unknown> => {
-      return {};
+    async (_treatmentPlanId: string,): Promise<unknown> => {
+      return {}
     },
     [],
-  );
+  )
 
   // Effects
   useEffect(() => {
-    fetchTreatmentPlans();
-  }, [fetchTreatmentPlans]);
+    fetchTreatmentPlans()
+  }, [fetchTreatmentPlans,],)
 
   useEffect(() => {
-    fetchTreatmentSessions();
-    fetchTreatmentProtocols();
-  }, [fetchTreatmentSessions, fetchTreatmentProtocols]);
+    fetchTreatmentSessions()
+    fetchTreatmentProtocols()
+  }, [fetchTreatmentSessions, fetchTreatmentProtocols,],)
 
   // Real-time subscriptions
   useEffect(() => {
     const treatmentPlansChannel = supabase
-      .channel("treatment-plans-changes")
+      .channel('treatment-plans-changes',)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "treatment_plans",
+          event: '*',
+          schema: 'public',
+          table: 'treatment_plans',
         },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setTreatmentPlans((prev) => [
+        (payload,) => {
+          if (payload.eventType === 'INSERT') {
+            setTreatmentPlans((prev,) => [
               payload.new as TreatmentPlan,
               ...prev,
-            ]);
-          } else if (payload.eventType === "UPDATE") {
-            setTreatmentPlans((prev) =>
-              prev.map((plan) =>
+            ])
+          } else if (payload.eventType === 'UPDATE') {
+            setTreatmentPlans((prev,) =>
+              prev.map((plan,) =>
                 plan.id === payload.new.id
                   ? (payload.new as TreatmentPlan)
                   : plan
               )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setTreatmentPlans((prev) => prev.filter((plan) => plan.id !== payload.old.id));
+            )
+          } else if (payload.eventType === 'DELETE') {
+            setTreatmentPlans((prev,) => prev.filter((plan,) => plan.id !== payload.old.id))
           }
         },
       )
-      .subscribe();
+      .subscribe()
 
     const treatmentSessionsChannel = supabase
-      .channel("treatment-sessions-changes")
+      .channel('treatment-sessions-changes',)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "treatment_sessions",
+          event: '*',
+          schema: 'public',
+          table: 'treatment_sessions',
         },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setTreatmentSessions((prev) => [
+        (payload,) => {
+          if (payload.eventType === 'INSERT') {
+            setTreatmentSessions((prev,) => [
               ...prev,
               payload.new as TreatmentSession,
-            ]);
-          } else if (payload.eventType === "UPDATE") {
-            setTreatmentSessions((prev) =>
-              prev.map((session) =>
+            ])
+          } else if (payload.eventType === 'UPDATE') {
+            setTreatmentSessions((prev,) =>
+              prev.map((session,) =>
                 session.id === payload.new.id
                   ? (payload.new as TreatmentSession)
                   : session
               )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setTreatmentSessions((prev) => prev.filter((session) => session.id !== payload.old.id));
+            )
+          } else if (payload.eventType === 'DELETE') {
+            setTreatmentSessions((prev,) =>
+              prev.filter((session,) => session.id !== payload.old.id)
+            )
           }
         },
       )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      treatmentPlansChannel.unsubscribe();
-      treatmentSessionsChannel.unsubscribe();
-    };
-  }, [supabase]);
+      treatmentPlansChannel.unsubscribe()
+      treatmentSessionsChannel.unsubscribe()
+    }
+  }, [supabase,],)
 
   return {
     // Treatment Plans
@@ -600,5 +602,5 @@ export function useTreatments(): TreatmentsHook {
     // Utility Functions
     refreshData,
     exportTreatmentData,
-  };
+  }
 }

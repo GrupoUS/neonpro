@@ -2,20 +2,23 @@
   "name": "@neonpro/database",
   "version": "1.0.0",
   "description": "NeonPro Healthcare Database Package - Consolidated Prisma ORM + Supabase integration with LGPD/ANVISA compliance",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./prisma": {
       "types": "./node_modules/@prisma/client/index.d.ts",
-      "default": "./node_modules/@prisma/client/index.js"
+      "import": "./node_modules/@prisma/client/index.js",
+      "require": "./node_modules/@prisma/client/index.js"
     }
   },
   "scripts": {

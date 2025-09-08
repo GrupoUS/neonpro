@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -17,9 +17,9 @@ import {
   TabsList,
   TabsTrigger,
   // Textarea, // Unused import
-} from "@/components/ui";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+} from '@/components/ui'
+import { format, } from 'date-fns'
+import { ptBR, } from 'date-fns/locale'
 import {
   Briefcase,
   Building2,
@@ -37,40 +37,40 @@ import {
   Shield,
   TrendingUp,
   Users,
-} from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState, } from 'react'
 
 // Mock data - in real implementation this would come from API/database
 const mockClinicData = {
-  id: "clinic-123",
-  clinic_code: "CLINIC001",
-  clinic_name: "Clínica Estética Premium",
-  legal_name: "Premium Aesthetics LTDA",
-  tax_id: "12.345.678/0001-90",
-  email: "contato@clinicapremium.com.br",
-  phone: "(11) 99999-9999",
-  website: "https://clinicapremium.com.br",
-  address_line1: "Rua das Flores, 123",
-  address_line2: "Sala 456",
-  city: "São Paulo",
-  state: "SP",
-  postal_code: "01234-567",
-  neighborhood: "Jardins",
-  country: "Brasil",
-  specialties: ["Harmonização Facial", "Tratamentos Corporais", "Laserterapia"],
+  id: 'clinic-123',
+  clinic_code: 'CLINIC001',
+  clinic_name: 'Clínica Estética Premium',
+  legal_name: 'Premium Aesthetics LTDA',
+  tax_id: '12.345.678/0001-90',
+  email: 'contato@clinicapremium.com.br',
+  phone: '(11) 99999-9999',
+  website: 'https://clinicapremium.com.br',
+  address_line1: 'Rua das Flores, 123',
+  address_line2: 'Sala 456',
+  city: 'São Paulo',
+  state: 'SP',
+  postal_code: '01234-567',
+  neighborhood: 'Jardins',
+  country: 'Brasil',
+  specialties: ['Harmonização Facial', 'Tratamentos Corporais', 'Laserterapia',],
   services_offered: [
-    "Botox",
-    "Preenchimento",
-    "Peeling",
-    "Criolipólise",
-    "Laser Hair Removal",
+    'Botox',
+    'Preenchimento',
+    'Peeling',
+    'Criolipólise',
+    'Laser Hair Removal',
   ],
   is_active: true,
-  subscription_status: "active" as const,
-  created_at: "2024-01-15T10:00:00Z",
-  updated_at: "2024-12-01T15:30:00Z",
-};
+  subscription_status: 'active' as const,
+  created_at: '2024-01-15T10:00:00Z',
+  updated_at: '2024-12-01T15:30:00Z',
+}
 
 const mockClinicStats = {
   totalPatients: 1247,
@@ -79,35 +79,35 @@ const mockClinicStats = {
   activeServices: 15,
   revenue: 89_500,
   growthRate: 12.5,
-};
+}
 
 export default function ClinicaPage() {
-  const [clinic, setClinic] = useState(mockClinicData);
-  const [stats, setStats] = useState(mockClinicStats);
-  const [loading, setLoading] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editedClinic, setEditedClinic] = useState(clinic);
+  const [clinic, setClinic,] = useState(mockClinicData,)
+  const [stats, setStats,] = useState(mockClinicStats,)
+  const [loading, setLoading,] = useState(false,)
+  const [editMode, setEditMode,] = useState(false,)
+  const [editedClinic, setEditedClinic,] = useState(clinic,)
 
   // In real implementation, this would fetch data from API
   useEffect(() => {
     // Simulated API call
-    setLoading(false);
-  }, []);
+    setLoading(false,)
+  }, [],)
 
   const handleSave = async () => {
-    setLoading(true);
+    setLoading(true,)
     // Simulate API call
     setTimeout(() => {
-      setClinic(editedClinic);
-      setEditMode(false);
-      setLoading(false);
-    }, 1000);
-  };
+      setClinic(editedClinic,)
+      setEditMode(false,)
+      setLoading(false,)
+    }, 1000,)
+  }
 
   const handleCancel = () => {
-    setEditedClinic(clinic);
-    setEditMode(false);
-  };
+    setEditedClinic(clinic,)
+    setEditMode(false,)
+  }
 
   if (loading) {
     return (
@@ -119,7 +119,7 @@ export default function ClinicaPage() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,7 +138,7 @@ export default function ClinicaPage() {
         <div className="flex space-x-2">
           {!editMode
             ? (
-              <Button onClick={() => setEditMode(true)}>
+              <Button onClick={() => setEditMode(true,)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Editar
               </Button>
@@ -162,8 +162,8 @@ export default function ClinicaPage() {
         <CheckCircle className="h-4 w-4 text-green-500" />
         <AlertDescription>
           <span className="font-medium text-green-600">Clínica Ativa</span> • Última atualização:
-          {" "}
-          {format(new Date(clinic.updated_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+          {' '}
+          {format(new Date(clinic.updated_at,), 'dd/MM/yyyy HH:mm', { locale: ptBR, },)}
         </AlertDescription>
       </Alert>
 
@@ -215,7 +215,7 @@ export default function ClinicaPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              R$ {stats.revenue.toLocaleString("pt-BR")}
+              R$ {stats.revenue.toLocaleString('pt-BR',)}
             </div>
             <p className="text-xs text-muted-foreground">
               +{stats.growthRate}% vs mês anterior
@@ -252,8 +252,8 @@ export default function ClinicaPage() {
                       <Input
                         id="clinic_name"
                         value={editedClinic.clinic_name}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, clinic_name: e.target.value })}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, clinic_name: e.target.value, },)}
                       />
                     )
                     : <p className="text-lg font-medium">{clinic.clinic_name}</p>}
@@ -264,9 +264,9 @@ export default function ClinicaPage() {
                   {editMode
                     ? (
                       <Input
-                        value={editedClinic.legal_name || ""}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, legal_name: e.target.value })}
+                        value={editedClinic.legal_name || ''}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, legal_name: e.target.value, },)}
                       />
                     )
                     : <p className="text-sm text-muted-foreground">{clinic.legal_name}</p>}
@@ -277,9 +277,9 @@ export default function ClinicaPage() {
                   {editMode
                     ? (
                       <Input
-                        value={editedClinic.tax_id || ""}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, tax_id: e.target.value })}
+                        value={editedClinic.tax_id || ''}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, tax_id: e.target.value, },)}
                       />
                     )
                     : <p className="text-sm font-mono">{clinic.tax_id}</p>}
@@ -288,7 +288,7 @@ export default function ClinicaPage() {
                 <div>
                   <Label>Especialidades</Label>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {clinic.specialties?.map((specialty, index) => (
+                    {clinic.specialties?.map((specialty, index,) => (
                       <Badge key={index} variant="secondary">
                         {specialty}
                       </Badge>
@@ -313,9 +313,9 @@ export default function ClinicaPage() {
                     ? (
                       <Input
                         type="email"
-                        value={editedClinic.email || ""}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, email: e.target.value })}
+                        value={editedClinic.email || ''}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, email: e.target.value, },)}
                       />
                     )
                     : <p>{clinic.email}</p>}
@@ -326,9 +326,9 @@ export default function ClinicaPage() {
                   {editMode
                     ? (
                       <Input
-                        value={editedClinic.phone || ""}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, phone: e.target.value })}
+                        value={editedClinic.phone || ''}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, phone: e.target.value, },)}
                       />
                     )
                     : <p>{clinic.phone}</p>}
@@ -339,9 +339,9 @@ export default function ClinicaPage() {
                   {editMode
                     ? (
                       <Input
-                        value={editedClinic.website || ""}
-                        onChange={(e) =>
-                          setEditedClinic({ ...editedClinic, website: e.target.value })}
+                        value={editedClinic.website || ''}
+                        onChange={(e,) =>
+                          setEditedClinic({ ...editedClinic, website: e.target.value, },)}
                       />
                     )
                     : (
@@ -366,28 +366,28 @@ export default function ClinicaPage() {
                       <div className="space-y-2 ml-6">
                         <Input
                           placeholder="Logradouro"
-                          value={editedClinic.address_line1 || ""}
-                          onChange={(e) =>
-                            setEditedClinic({ ...editedClinic, address_line1: e.target.value })}
+                          value={editedClinic.address_line1 || ''}
+                          onChange={(e,) =>
+                            setEditedClinic({ ...editedClinic, address_line1: e.target.value, },)}
                         />
                         <Input
                           placeholder="Complemento"
-                          value={editedClinic.address_line2 || ""}
-                          onChange={(e) =>
-                            setEditedClinic({ ...editedClinic, address_line2: e.target.value })}
+                          value={editedClinic.address_line2 || ''}
+                          onChange={(e,) =>
+                            setEditedClinic({ ...editedClinic, address_line2: e.target.value, },)}
                         />
                         <div className="grid grid-cols-2 gap-2">
                           <Input
                             placeholder="Cidade"
-                            value={editedClinic.city || ""}
-                            onChange={(e) =>
-                              setEditedClinic({ ...editedClinic, city: e.target.value })}
+                            value={editedClinic.city || ''}
+                            onChange={(e,) =>
+                              setEditedClinic({ ...editedClinic, city: e.target.value, },)}
                           />
                           <Input
                             placeholder="CEP"
-                            value={editedClinic.postal_code || ""}
-                            onChange={(e) =>
-                              setEditedClinic({ ...editedClinic, postal_code: e.target.value })}
+                            value={editedClinic.postal_code || ''}
+                            onChange={(e,) =>
+                              setEditedClinic({ ...editedClinic, postal_code: e.target.value, },)}
                           />
                         </div>
                       </div>
@@ -412,7 +412,7 @@ export default function ClinicaPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                {clinic.services_offered?.map((service, index) => (
+                {clinic.services_offered?.map((service, index,) => (
                   <Badge key={index} variant="outline" className="justify-center">
                     {service}
                   </Badge>
@@ -513,10 +513,10 @@ export default function ClinicaPage() {
 
                 <Alert>
                   <AlertDescription>
-                    Acesse a página de{" "}
+                    Acesse a página de{' '}
                     <Link href="/team" className="font-medium text-primary hover:underline">
                       Gerenciamento de Equipe
-                    </Link>{" "}
+                    </Link>{' '}
                     para visualizar detalhes completos, adicionar novos funcionários e gerenciar
                     permissões.
                   </AlertDescription>
@@ -587,5 +587,5 @@ export default function ClinicaPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

@@ -6,82 +6,82 @@
  * and role-based settings access.
  */
 
-"use client";
+'use client'
 
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { MainNavigation } from "@/components/main-navigation";
-import { useAuth } from "@/contexts/auth-context";
-import { cn } from "@/lib/utils";
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Bell, Building, CreditCard, Plug, Settings, Shield, User } from "lucide-react";
-import type React from "react";
+import { Breadcrumbs, } from '@/components/breadcrumbs'
+import { MainNavigation, } from '@/components/main-navigation'
+import { useAuth, } from '@/contexts/auth-context'
+import { cn, } from '@/lib/utils'
+import { Link, Outlet, useLocation, } from '@tanstack/react-router'
+import { Bell, Building, CreditCard, Plug, Settings, Shield, User, } from 'lucide-react'
+import type React from 'react'
 
 interface SettingsTab {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string; }>;
-  permission?: () => boolean;
+  label: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  permission?: () => boolean
 }
 
 export function SettingsLayout() {
-  const location = useLocation();
-  const { user } = useAuth();
+  const location = useLocation()
+  const { user, } = useAuth()
 
   const canAccessClinicSettings = () => {
-    return user && ["clinic_owner", "clinic_manager"].includes(user.role);
-  };
+    return user && ['clinic_owner', 'clinic_manager',].includes(user.role,)
+  }
 
   const settingsTabs: SettingsTab[] = [
     {
-      label: "Geral",
-      href: "/settings",
+      label: 'Geral',
+      href: '/settings',
       icon: Settings,
     },
     {
-      label: "Perfil",
-      href: "/settings/profile",
+      label: 'Perfil',
+      href: '/settings/profile',
       icon: User,
     },
     {
-      label: "Segurança",
-      href: "/settings/security",
+      label: 'Segurança',
+      href: '/settings/security',
       icon: Shield,
     },
     {
-      label: "Notificações",
-      href: "/settings/notifications",
+      label: 'Notificações',
+      href: '/settings/notifications',
       icon: Bell,
     },
     {
-      label: "Clínica",
-      href: "/settings/clinic",
+      label: 'Clínica',
+      href: '/settings/clinic',
       icon: Building,
       permission: canAccessClinicSettings,
     },
     {
-      label: "Integrações",
-      href: "/settings/integrations",
+      label: 'Integrações',
+      href: '/settings/integrations',
       icon: Plug,
       permission: canAccessClinicSettings,
     },
     {
-      label: "Billing",
-      href: "/settings/billing",
+      label: 'Billing',
+      href: '/settings/billing',
       icon: CreditCard,
       permission: canAccessClinicSettings,
     },
-  ];
+  ]
 
   const visibleTabs = settingsTabs.filter(
-    (tab) => !tab.permission || tab.permission(),
-  );
+    (tab,) => !tab.permission || tab.permission(),
+  )
 
-  const isActiveTab = (href: string) => {
-    if (href === "/settings") {
-      return location.pathname === "/settings";
+  const isActiveTab = (href: string,) => {
+    if (href === '/settings') {
+      return location.pathname === '/settings'
     }
-    return location.pathname.startsWith(href);
-  };
+    return location.pathname.startsWith(href,)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,14 +112,14 @@ export function SettingsLayout() {
                 {/* Settings Navigation */}
                 <aside className="flex-shrink-0 lg:w-64">
                   <nav className="space-y-1">
-                    {visibleTabs.map((tab) => (
+                    {visibleTabs.map((tab,) => (
                       <Link
                         className={cn(
-                          "flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          isActiveTab(tab.href)
-                            ? "bg-accent text-accent-foreground"
-                            : "text-muted-foreground",
+                          'flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors',
+                          'hover:bg-accent hover:text-accent-foreground',
+                          isActiveTab(tab.href,)
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-muted-foreground',
                         )}
                         key={tab.href}
                         to={tab.href}
@@ -141,5 +141,5 @@ export function SettingsLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

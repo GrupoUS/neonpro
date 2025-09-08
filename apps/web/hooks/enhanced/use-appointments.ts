@@ -7,8 +7,8 @@
  */
 
 // Import our enhanced API client
-import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
-import type { ApiResponse } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers, } from '@neonpro/shared/api-client'
+import type { ApiResponse, } from '@neonpro/shared/api-client'
 // Import validation schemas and types
 import {
   AppointmentQuerySchema,
@@ -23,7 +23,7 @@ import {
   DailyScheduleSchema,
   UpdateAppointmentSchema,
   WeeklyScheduleResponseSchema,
-} from "@neonpro/shared/schemas";
+} from '@neonpro/shared/schemas'
 import type {
   AppointmentBase,
   AppointmentPriority,
@@ -36,72 +36,72 @@ import type {
   CreateAppointment,
   PaymentStatus,
   UpdateAppointment,
-} from "@neonpro/shared/schemas";
-import { useCallback, useMemo } from "react";
+} from '@neonpro/shared/schemas'
+import { useCallback, useMemo, } from 'react'
 // Import our enhanced query utilities
 import {
   HealthcareQueryConfig,
   InvalidationHelpers,
   QueryKeys,
   useHealthcareQueryUtils,
-} from "@/lib/query/query-utils";
+} from '@/lib/query/query-utils'
 
 // Appointment management context interface
 export interface AppointmentManagementContext {
   // Basic operations
-  createAppointment: ReturnType<typeof useCreateAppointment>;
-  updateAppointment: ReturnType<typeof useUpdateAppointment>;
-  cancelAppointment: ReturnType<typeof useCancelAppointment>;
-  deleteAppointment: ReturnType<typeof useDeleteAppointment>;
+  createAppointment: ReturnType<typeof useCreateAppointment>
+  updateAppointment: ReturnType<typeof useUpdateAppointment>
+  cancelAppointment: ReturnType<typeof useCancelAppointment>
+  deleteAppointment: ReturnType<typeof useDeleteAppointment>
 
   // Workflow operations
-  checkInAppointment: ReturnType<typeof useCheckInAppointment>;
-  completeAppointment: ReturnType<typeof useCompleteAppointment>;
-  rescheduleAppointment: ReturnType<typeof useRescheduleAppointment>;
+  checkInAppointment: ReturnType<typeof useCheckInAppointment>
+  completeAppointment: ReturnType<typeof useCompleteAppointment>
+  rescheduleAppointment: ReturnType<typeof useRescheduleAppointment>
 
   // Data retrieval
-  getAppointment: (id: string) => ReturnType<typeof useAppointment>;
+  getAppointment: (id: string,) => ReturnType<typeof useAppointment>
   getAppointments: (
     filters?: AppointmentQuery,
-  ) => ReturnType<typeof useAppointments>;
-  getAppointmentStats: ReturnType<typeof useAppointmentStats>;
+  ) => ReturnType<typeof useAppointments>
+  getAppointmentStats: ReturnType<typeof useAppointmentStats>
 
   // Schedule management
   getDailySchedule: (
     date: string,
     professionalId?: string,
-  ) => ReturnType<typeof useDailySchedule>;
+  ) => ReturnType<typeof useDailySchedule>
   getWeeklySchedule: (
     weekStart: string,
     professionalId?: string,
-  ) => ReturnType<typeof useWeeklySchedule>;
-  getAvailableSlots: ReturnType<typeof useAvailableSlots>;
+  ) => ReturnType<typeof useWeeklySchedule>
+  getAvailableSlots: ReturnType<typeof useAvailableSlots>
 
   // Bulk operations
-  bulkUpdateAppointments: ReturnType<typeof useBulkUpdateAppointments>;
+  bulkUpdateAppointments: ReturnType<typeof useBulkUpdateAppointments>
 
   // Utility functions
-  utils: ReturnType<typeof useAppointmentUtils>;
+  utils: ReturnType<typeof useAppointmentUtils>
 }
 
 // 📅 Get single appointment with clinical data
-export function useAppointment(id: string) {
-  const queryUtils = useHealthcareQueryUtils();
+export function useAppointment(id: string,) {
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
-    queryKey: QueryKeys.appointments.detail(id),
+    queryKey: QueryKeys.appointments.detail(id,),
     queryFn: async () => {
-      const response = await apiClient.api.v1.appointments[":id"].$get({
-        param: { id },
-      });
-      return await response.json();
+      const response = await apiClient.api.v1.appointments[':id'].$get({
+        param: { id, },
+      },)
+      return await response.json()
     },
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error(response.error?.code || "Failed to fetch appointment");
+        throw new Error(response.error?.code || 'Failed to fetch appointment',)
       }
-      return response.data?.appointment;
+      return response.data?.appointment
     },
     enableAuditLogging: true,
     sensitiveData: true,
@@ -111,44 +111,44 @@ export function useAppointment(id: string) {
     staleTime: HealthcareQueryConfig.appointment.staleTime,
     gcTime: HealthcareQueryConfig.appointment.gcTime,
 
-    retry: (failureCount, error) => {
+    retry: (failureCount, error,) => {
       if (
-        ApiHelpers.isAuthError(error)
-        || (error as unknown)?.message?.includes("not found")
+        ApiHelpers.isAuthError(error,)
+        || (error as unknown)?.message?.includes('not found',)
       ) {
-        return false;
+        return false
       }
-      return failureCount < 2;
+      return failureCount < 2
     },
-  });
+  },)
 }
 
 // 📅 Get appointments list with advanced filtering
-export function useAppointments(filters?: AppointmentQuery) {
-  const queryUtils = useHealthcareQueryUtils();
+export function useAppointments(filters?: AppointmentQuery,) {
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
-    queryKey: QueryKeys.appointments.list(filters),
+    queryKey: QueryKeys.appointments.list(filters,),
     queryFn: async () => {
       const validatedFilters = filters
-        ? AppointmentQuerySchema.parse(filters)
-        : {};
+        ? AppointmentQuerySchema.parse(filters,)
+        : {}
 
       const response = await apiClient.api.v1.appointments.$get({
         query: validatedFilters as unknown,
-      });
-      return await response.json();
+      },)
+      return await response.json()
     },
-    validator: (data: unknown) => {
-      const response = AppointmentsListResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentsListResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error(response.error?.code || "Failed to fetch appointments");
+        throw new Error(response.error?.code || 'Failed to fetch appointments',)
       }
       return {
         appointments: response.data?.appointments,
         pagination: response.data?.pagination,
         summary: response.data?.summary,
-      };
+      }
     },
     enableAuditLogging: true,
     sensitiveData: true,
@@ -157,40 +157,40 @@ export function useAppointments(filters?: AppointmentQuery) {
     // Appointment data configuration
     staleTime: HealthcareQueryConfig.appointment.staleTime,
     gcTime: HealthcareQueryConfig.appointment.gcTime,
-  });
+  },)
 }
 
 // 🏗️ Create new appointment with validation and scheduling logic
 export function useCreateAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       appointmentData: CreateAppointment,
-    ): Promise<ApiResponse<AppointmentResponse["data"]>> => {
+    ): Promise<ApiResponse<AppointmentResponse['data']>> => {
       // Validate appointment data
-      const validatedData = CreateAppointmentSchema.parse(appointmentData);
+      const validatedData = CreateAppointmentSchema.parse(appointmentData,)
 
       // Check for scheduling conflicts (could be done on backend)
       // Additional client-side validation could be added here
 
       const response = await apiClient.api.v1.appointments.$post({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error(response.error?.code || "Failed to create appointment");
+        throw new Error(response.error?.code || 'Failed to create appointment',)
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -198,7 +198,7 @@ export function useCreateAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta agendada com sucesso",
+    successMessage: 'Consulta agendada com sucesso',
 
     // Invalidate appointment and schedule data
     invalidateQueries: [
@@ -207,54 +207,54 @@ export function useCreateAppointment() {
       QueryKeys.professionals.all(), // For schedules
     ],
 
-    onSuccess: (response, _variables) => {
+    onSuccess: (response, _variables,) => {
       // Log appointment creation
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user && response.appointment) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "create",
-          resource_type: "appointment",
+          action: 'create',
+          resource_type: 'appointment',
           resource_id: response.appointment.id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // ✏️ Update appointment with change tracking
-export function useUpdateAppointment(id: string) {
-  const queryUtils = useHealthcareQueryUtils();
+export function useUpdateAppointment(id: string,) {
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       appointmentData: UpdateAppointment,
-    ): Promise<ApiResponse<AppointmentResponse["data"]>> => {
-      const validatedData = UpdateAppointmentSchema.parse(appointmentData);
+    ): Promise<ApiResponse<AppointmentResponse['data']>> => {
+      const validatedData = UpdateAppointmentSchema.parse(appointmentData,)
 
-      const response = await apiClient.api.v1.appointments[":id"].$put({
-        param: { id },
+      const response = await apiClient.api.v1.appointments[':id'].$put({
+        param: { id, },
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error(response.error?.code || "Failed to update appointment");
+        throw new Error(response.error?.code || 'Failed to update appointment',)
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -262,47 +262,47 @@ export function useUpdateAppointment(id: string) {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta atualizada com sucesso",
+    successMessage: 'Consulta atualizada com sucesso',
 
     // Invalidate related queries
     invalidateQueries: [
-      QueryKeys.appointments.detail(id),
+      QueryKeys.appointments.detail(id,),
       QueryKeys.appointments.all(),
       QueryKeys.professionals.all(), // For schedules
     ],
 
     // Optimistic update
     ...queryUtils.createOptimisticUpdate<AppointmentBase>(
-      QueryKeys.appointments.detail(id),
-      (oldData) =>
+      QueryKeys.appointments.detail(id,),
+      (oldData,) =>
         oldData
-          ? { ...oldData, ...appointmentData }
+          ? { ...oldData, ...appointmentData, }
           : (oldData as AppointmentBase),
     ),
 
-    onSuccess: (_response, _variables) => {
+    onSuccess: (_response, _variables,) => {
       // Log appointment update
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "update",
-          resource_type: "appointment",
+          action: 'update',
+          resource_type: 'appointment',
           resource_id: id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // 🚫 Cancel appointment with reason tracking
 export function useCancelAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async ({
@@ -310,28 +310,28 @@ export function useCancelAppointment() {
       reason,
       notes,
     }: {
-      id: string;
-      reason: string;
-      notes?: string;
-    }): Promise<ApiResponse<AppointmentResponse["data"]>> => {
-      const response = await apiClient.api.v1.appointments[":id"].cancel.$post({
-        param: { id },
-        json: { cancellation_reason: reason, cancellation_notes: notes },
-      });
+      id: string
+      reason: string
+      notes?: string
+    },): Promise<ApiResponse<AppointmentResponse['data']>> => {
+      const response = await apiClient.api.v1.appointments[':id'].cancel.$post({
+        param: { id, },
+        json: { cancellation_reason: reason, cancellation_notes: notes, },
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error(response.error?.code || "Failed to cancel appointment");
+        throw new Error(response.error?.code || 'Failed to cancel appointment',)
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -339,7 +339,7 @@ export function useCancelAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta cancelada com sucesso",
+    successMessage: 'Consulta cancelada com sucesso',
 
     invalidateQueries: [
       QueryKeys.appointments.all(),
@@ -347,37 +347,37 @@ export function useCancelAppointment() {
       QueryKeys.professionals.all(),
     ],
 
-    onSuccess: (_response, variables) => {
+    onSuccess: (_response, variables,) => {
       // Log appointment cancellation
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "update",
-          resource_type: "appointment",
+          action: 'update',
+          resource_type: 'appointment',
           resource_id: variables.id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // 🗑️ Delete appointment (admin only)
 export function useDeleteAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
-    mutationFn: async (id: string): Promise<ApiResponse<void>> => {
-      const response = await apiClient.api.v1.appointments[":id"].$delete({
-        param: { id },
-      });
+    mutationFn: async (id: string,): Promise<ApiResponse<void>> => {
+      const response = await apiClient.api.v1.appointments[':id'].$delete({
+        param: { id, },
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
     enableAuditLogging: true,
@@ -385,80 +385,80 @@ export function useDeleteAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta removida com sucesso",
+    successMessage: 'Consulta removida com sucesso',
 
     invalidateQueries: [
       QueryKeys.appointments.all(),
       QueryKeys.appointments.stats(),
     ],
 
-    onMutate: async (id: string) => {
+    onMutate: async (id: string,) => {
       // Note: Confirmation should be handled at component level using ConfirmationDialog
       // for healthcare compliance and accessibility (WCAG 2.1 AA+)
-      return { id };
+      return { id, }
     },
 
-    onSuccess: (_response, id) => {
+    onSuccess: (_response, id,) => {
       // Clear appointment from cache
       queryUtils.queryClient.removeQueries({
-        queryKey: QueryKeys.appointments.detail(id),
-      });
+        queryKey: QueryKeys.appointments.detail(id,),
+      },)
 
       // Log appointment deletion
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "delete",
-          resource_type: "appointment",
+          action: 'delete',
+          resource_type: 'appointment',
           resource_id: id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // 📋 Check-in appointment with vital signs
 export function useCheckInAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async ({
       id,
       checkInData,
     }: {
-      id: string;
-      checkInData: CheckInAppointment;
-    }): Promise<ApiResponse<AppointmentResponse["data"]>> => {
-      const validatedData = CheckInAppointmentSchema.parse(checkInData);
+      id: string
+      checkInData: CheckInAppointment
+    },): Promise<ApiResponse<AppointmentResponse['data']>> => {
+      const validatedData = CheckInAppointmentSchema.parse(checkInData,)
 
-      const response = await apiClient.api.v1.appointments[":id"][
-        "check-in"
+      const response = await apiClient.api.v1.appointments[':id'][
+        'check-in'
       ].$post({
-        param: { id },
+        param: { id, },
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
         throw new Error(
-          response.error?.code || "Failed to check in appointment",
-        );
+          response.error?.code || 'Failed to check in appointment',
+        )
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -466,66 +466,66 @@ export function useCheckInAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Check-in realizado com sucesso",
+    successMessage: 'Check-in realizado com sucesso',
 
-    invalidateQueries: [QueryKeys.appointments.all()],
+    invalidateQueries: [QueryKeys.appointments.all(),],
 
-    onSuccess: (_response, variables) => {
+    onSuccess: (_response, variables,) => {
       // Log check-in
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "update",
-          resource_type: "appointment",
+          action: 'update',
+          resource_type: 'appointment',
           resource_id: variables.id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // ✅ Complete appointment with clinical data
 export function useCompleteAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async ({
       id,
       completionData,
     }: {
-      id: string;
-      completionData: CompleteAppointment;
-    }): Promise<ApiResponse<AppointmentResponse["data"]>> => {
-      const validatedData = CompleteAppointmentSchema.parse(completionData);
+      id: string
+      completionData: CompleteAppointment
+    },): Promise<ApiResponse<AppointmentResponse['data']>> => {
+      const validatedData = CompleteAppointmentSchema.parse(completionData,)
 
       const response = await apiClient.api.v1.appointments[
-        ":id"
+        ':id'
       ].complete.$post({
-        param: { id },
+        param: { id, },
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
         throw new Error(
-          response.error?.code || "Failed to complete appointment",
-        );
+          response.error?.code || 'Failed to complete appointment',
+        )
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -533,37 +533,37 @@ export function useCompleteAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta finalizada com sucesso",
+    successMessage: 'Consulta finalizada com sucesso',
 
     invalidateQueries: [
-      QueryKeys.appointments.detail(id),
+      QueryKeys.appointments.detail(id,),
       QueryKeys.appointments.all(),
       QueryKeys.appointments.stats(),
     ],
 
-    onSuccess: (_response, variables) => {
+    onSuccess: (_response, variables,) => {
       // Log appointment completion
-      const user = apiClient.auth.getUser();
+      const user = apiClient.auth.getUser()
       if (user) {
         apiClient.audit.log({
           timestamp: new Date().toISOString(),
           userId: user.id,
           sessionId: apiClient.auth.getSessionId() || undefined,
-          action: "update",
-          resource_type: "appointment",
+          action: 'update',
+          resource_type: 'appointment',
           resource_id: variables.id,
           ip_address: apiClient.utils.getClientIP(),
           user_agent: apiClient.utils.getUserAgent(),
           success: true,
-        });
+        },)
       }
     },
-  });
+  },)
 }
 
 // 🔄 Reschedule appointment
 export function useRescheduleAppointment() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async ({
@@ -572,37 +572,37 @@ export function useRescheduleAppointment() {
       newTime,
       reason,
     }: {
-      id: string;
-      newDate: string;
-      newTime: string;
-      reason?: string;
-    }): Promise<ApiResponse<AppointmentResponse["data"]>> => {
+      id: string
+      newDate: string
+      newTime: string
+      reason?: string
+    },): Promise<ApiResponse<AppointmentResponse['data']>> => {
       const response = await apiClient.api.v1.appointments[
-        ":id"
+        ':id'
       ].reschedule.$post({
-        param: { id },
+        param: { id, },
         json: {
           scheduled_date: newDate,
           scheduled_time: newTime,
           reschedule_reason: reason,
         },
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
-    validator: (data: unknown) => {
-      const response = AppointmentResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = AppointmentResponseSchema.parse(data,)
       if (!response.success) {
         throw new Error(
-          response.error?.code || "Failed to reschedule appointment",
-        );
+          response.error?.code || 'Failed to reschedule appointment',
+        )
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
 
     enableAuditLogging: true,
@@ -610,96 +610,96 @@ export function useRescheduleAppointment() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consulta reagendada com sucesso",
+    successMessage: 'Consulta reagendada com sucesso',
 
     invalidateQueries: [
-      QueryKeys.appointments.detail(id),
+      QueryKeys.appointments.detail(id,),
       QueryKeys.appointments.all(),
       QueryKeys.professionals.all(),
     ],
-  });
+  },)
 }
 
 // 📊 Get appointment statistics
 export function useAppointmentStats() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
     queryKey: QueryKeys.appointments.stats(),
     queryFn: async () => {
-      const response = await apiClient.api.v1.appointments.stats.$get();
-      return await response.json();
+      const response = await apiClient.api.v1.appointments.stats.$get()
+      return await response.json()
     },
-    validator: (data: unknown) => AppointmentStatsSchema.parse(data),
+    validator: (data: unknown,) => AppointmentStatsSchema.parse(data,),
     enableAuditLogging: false,
     sensitiveData: false,
     lgpdCompliant: true,
 
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes
-  });
+  },)
 }
 
 // 📅 Get daily schedule for a professional
-export function useDailySchedule(date: string, professionalId?: string) {
-  const queryUtils = useHealthcareQueryUtils();
+export function useDailySchedule(date: string, professionalId?: string,) {
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
     queryKey: professionalId
-      ? QueryKeys.professionals.schedule(professionalId, date)
-      : QueryKeys.appointments.calendar(date),
+      ? QueryKeys.professionals.schedule(professionalId, date,)
+      : QueryKeys.appointments.calendar(date,),
     queryFn: async () => {
       const response = professionalId
-        ? await apiClient.api.v1.professionals[":id"].schedule[":date"].$get({
-          param: { id: professionalId, date },
-        })
-        : await apiClient.api.v1.appointments.schedule[":date"].$get({
-          param: { date },
-        });
-      return await response.json();
+        ? await apiClient.api.v1.professionals[':id'].schedule[':date'].$get({
+          param: { id: professionalId, date, },
+        },)
+        : await apiClient.api.v1.appointments.schedule[':date'].$get({
+          param: { date, },
+        },)
+      return await response.json()
     },
-    validator: (data: unknown) => DailyScheduleSchema.parse(data),
+    validator: (data: unknown,) => DailyScheduleSchema.parse(data,),
     enableAuditLogging: false,
     sensitiveData: true,
     lgpdCompliant: true,
 
     staleTime: 1000 * 60 * 2, // 2 minutes for schedules
     gcTime: 1000 * 60 * 5, // 5 minutes
-  });
+  },)
 }
 
 // 📅 Get weekly schedule
-export function useWeeklySchedule(weekStart: string, professionalId?: string) {
-  const queryUtils = useHealthcareQueryUtils();
+export function useWeeklySchedule(weekStart: string, professionalId?: string,) {
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createQuery({
     queryKey: professionalId
       ? [
-        ...QueryKeys.professionals.schedule(professionalId, weekStart),
-        "weekly",
+        ...QueryKeys.professionals.schedule(professionalId, weekStart,),
+        'weekly',
       ]
-      : [...QueryKeys.appointments.calendar(weekStart), "weekly"],
+      : [...QueryKeys.appointments.calendar(weekStart,), 'weekly',],
     queryFn: async () => {
       const response = professionalId
-        ? await apiClient.api.v1.professionals[":id"].schedule.weekly.$get({
-          param: { id: professionalId },
-          query: { week_start: weekStart },
-        })
+        ? await apiClient.api.v1.professionals[':id'].schedule.weekly.$get({
+          param: { id: professionalId, },
+          query: { week_start: weekStart, },
+        },)
         : await apiClient.api.v1.appointments.schedule.weekly.$get({
-          query: { week_start: weekStart },
-        });
-      return await response.json();
+          query: { week_start: weekStart, },
+        },)
+      return await response.json()
     },
-    validator: (data: unknown) => {
-      const response = WeeklyScheduleResponseSchema.parse(data);
+    validator: (data: unknown,) => {
+      const response = WeeklyScheduleResponseSchema.parse(data,)
       if (!response.success) {
-        throw new Error("Failed to fetch weekly schedule");
+        throw new Error('Failed to fetch weekly schedule',)
       }
-      const responseData = response.data;
+      const responseData = response.data
       if (responseData == null) {
-        throw new Error("Empty response data");
+        throw new Error('Empty response data',)
       }
-      return responseData;
+      return responseData
     },
     enableAuditLogging: false,
     sensitiveData: true,
@@ -707,40 +707,40 @@ export function useWeeklySchedule(weekStart: string, professionalId?: string) {
 
     staleTime: 1000 * 60 * 5, // 5 minutes for weekly schedules
     gcTime: 1000 * 60 * 10, // 10 minutes
-  });
+  },)
 }
 
 // 🕐 Get available appointment slots
 export function useAvailableSlots() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return useCallback(
-    (professionalId: string, date: string, serviceId?: string) => {
+    (professionalId: string, date: string, serviceId?: string,) => {
       return queryUtils.createQuery({
         queryKey: [
-          "appointments",
-          "available-slots",
+          'appointments',
+          'available-slots',
           professionalId,
           date,
           serviceId,
         ],
         queryFn: async () => {
           const response = await apiClient.api.v1.appointments[
-            "available-slots"
+            'available-slots'
           ].$get({
             query: {
               professional_id: professionalId,
               date,
               service_id: serviceId,
             },
-          });
-          return await response.json();
+          },)
+          return await response.json()
         },
-        validator: (data: unknown) => {
-          if (!Array.isArray(data)) {
-            throw new TypeError("Invalid available slots response");
+        validator: (data: unknown,) => {
+          if (!Array.isArray(data,)) {
+            throw new TypeError('Invalid available slots response',)
           }
-          return data.map((slot) => AvailabilitySlotSchema.parse(slot));
+          return data.map((slot,) => AvailabilitySlotSchema.parse(slot,))
         },
         enableAuditLogging: false,
         sensitiveData: false,
@@ -748,27 +748,27 @@ export function useAvailableSlots() {
 
         staleTime: 1000 * 60 * 1, // 1 minute for availability
         gcTime: 1000 * 60 * 2, // 2 minutes
-      });
+      },)
     },
-    [queryUtils],
-  );
+    [queryUtils,],
+  )
 }
 
 // 🔄 Bulk update appointments
 export function useBulkUpdateAppointments() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return queryUtils.createMutation({
     mutationFn: async (
       bulkData: BulkUpdateAppointments,
-    ): Promise<ApiResponse<{ updated_count: number; }>> => {
-      const validatedData = BulkUpdateAppointmentsSchema.parse(bulkData);
+    ): Promise<ApiResponse<{ updated_count: number }>> => {
+      const validatedData = BulkUpdateAppointmentsSchema.parse(bulkData,)
 
       const response = await apiClient.api.v1.appointments.bulk.$put({
         json: validatedData,
-      });
+      },)
 
-      return await response.json();
+      return await response.json()
     },
 
     enableAuditLogging: true,
@@ -776,111 +776,111 @@ export function useBulkUpdateAppointments() {
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
-    successMessage: "Consultas atualizadas com sucesso",
+    successMessage: 'Consultas atualizadas com sucesso',
 
     invalidateQueries: [
       QueryKeys.appointments.all(),
       QueryKeys.appointments.stats(),
     ],
-  });
+  },)
 }
 
 // 🛠️ Appointment utilities hook
 export function useAppointmentUtils() {
-  const queryUtils = useHealthcareQueryUtils();
+  const queryUtils = useHealthcareQueryUtils()
 
   return useMemo(
     () => ({
       // Format appointment time display
-      formatAppointmentTime: (appointment: AppointmentBase): string => {
-        const date = new Date(appointment.scheduled_date);
-        const { scheduled_time: time } = appointment;
+      formatAppointmentTime: (appointment: AppointmentBase,): string => {
+        const date = new Date(appointment.scheduled_date,)
+        const { scheduled_time: time, } = appointment
 
-        return `${date.toLocaleDateString("pt-BR")} às ${time}`;
+        return `${date.toLocaleDateString('pt-BR',)} às ${time}`
       },
 
       // Calculate appointment duration
-      getAppointmentDuration: (appointment: AppointmentBase): string => {
-        const { duration_minutes: duration } = appointment;
-        const hours = Math.floor(duration / 60);
-        const minutes = duration % 60;
+      getAppointmentDuration: (appointment: AppointmentBase,): string => {
+        const { duration_minutes: duration, } = appointment
+        const hours = Math.floor(duration / 60,)
+        const minutes = duration % 60
 
         if (hours > 0) {
-          return `${hours}h${minutes > 0 ? ` ${minutes}min` : ""}`;
+          return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`
         }
-        return `${minutes}min`;
+        return `${minutes}min`
       },
 
       // Get appointment status color
-      getStatusColor: (status: AppointmentStatus): string => {
+      getStatusColor: (status: AppointmentStatus,): string => {
         const colors = {
-          scheduled: "#3b82f6", // blue
-          confirmed: "#10b981", // green
-          in_progress: "#f59e0b", // amber
-          completed: "#059669", // emerald
-          cancelled: "#ef4444", // red
-          no_show: "#dc2626", // red-600
-          rescheduled: "#8b5cf6", // violet
-        };
-        return colors[status] || "#6b7280"; // gray
+          scheduled: '#3b82f6', // blue
+          confirmed: '#10b981', // green
+          in_progress: '#f59e0b', // amber
+          completed: '#059669', // emerald
+          cancelled: '#ef4444', // red
+          no_show: '#dc2626', // red-600
+          rescheduled: '#8b5cf6', // violet
+        }
+        return colors[status] || '#6b7280' // gray
       },
 
       // Get priority badge info
-      getPriorityBadge: (priority: AppointmentPriority) => {
+      getPriorityBadge: (priority: AppointmentPriority,) => {
         const badges = {
-          low: { label: "Baixa", color: "#10b981", bgColor: "#d1fae5" },
-          normal: { label: "Normal", color: "#3b82f6", bgColor: "#dbeafe" },
-          high: { label: "Alta", color: "#f59e0b", bgColor: "#fef3c7" },
-          urgent: { label: "Urgente", color: "#ef4444", bgColor: "#fee2e2" },
-        };
-        return badges[priority] || badges.normal;
+          low: { label: 'Baixa', color: '#10b981', bgColor: '#d1fae5', },
+          normal: { label: 'Normal', color: '#3b82f6', bgColor: '#dbeafe', },
+          high: { label: 'Alta', color: '#f59e0b', bgColor: '#fef3c7', },
+          urgent: { label: 'Urgente', color: '#ef4444', bgColor: '#fee2e2', },
+        }
+        return badges[priority] || badges.normal
       },
 
       // Calculate time until appointment
-      getTimeUntilAppointment: (appointment: AppointmentBase): string => {
+      getTimeUntilAppointment: (appointment: AppointmentBase,): string => {
         const appointmentTime = new Date(
           `${appointment.scheduled_date}T${appointment.scheduled_time}`,
-        );
-        const now = new Date();
-        const diffMs = appointmentTime.getTime() - now.getTime();
+        )
+        const now = new Date()
+        const diffMs = appointmentTime.getTime() - now.getTime()
 
         if (diffMs < 0) {
-          return "Vencido";
+          return 'Vencido'
         }
 
-        const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+        const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000),)
         const diffHours = Math.floor(
           (diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000),
-        );
+        )
         const diffMinutes = Math.floor(
           (diffMs % (60 * 60 * 1000)) / (60 * 1000),
-        );
+        )
 
         if (diffDays > 0) {
-          return `${diffDays} dias`;
+          return `${diffDays} dias`
         }
         if (diffHours > 0) {
-          return `${diffHours}h${diffMinutes > 0 ? ` ${diffMinutes}min` : ""}`;
+          return `${diffHours}h${diffMinutes > 0 ? ` ${diffMinutes}min` : ''}`
         }
-        return `${diffMinutes} minutos`;
+        return `${diffMinutes} minutos`
       },
 
       // Check if appointment is today
-      isToday: (appointment: AppointmentBase): boolean => {
-        const appointmentDate = new Date(appointment.scheduled_date);
-        const today = new Date();
-        return appointmentDate.toDateString() === today.toDateString();
+      isToday: (appointment: AppointmentBase,): boolean => {
+        const appointmentDate = new Date(appointment.scheduled_date,)
+        const today = new Date()
+        return appointmentDate.toDateString() === today.toDateString()
       },
 
       // Check if appointment is overdue
-      isOverdue: (appointment: AppointmentBase): boolean => {
+      isOverdue: (appointment: AppointmentBase,): boolean => {
         const appointmentTime = new Date(
           `${appointment.scheduled_date}T${appointment.scheduled_time}`,
-        );
+        )
         return (
           appointmentTime < new Date()
-          && !["completed", "cancelled", "no_show"].includes(appointment.status)
-        );
+          && !['completed', 'cancelled', 'no_show',].includes(appointment.status,)
+        )
       },
 
       // Get next appointment status in workflow
@@ -888,92 +888,92 @@ export function useAppointmentUtils() {
         currentStatus: AppointmentStatus,
       ): AppointmentStatus[] => {
         const statusFlow = {
-          scheduled: ["confirmed", "cancelled"],
-          confirmed: ["in_progress", "cancelled", "no_show"],
-          in_progress: ["completed"],
+          scheduled: ['confirmed', 'cancelled',],
+          confirmed: ['in_progress', 'cancelled', 'no_show',],
+          in_progress: ['completed',],
           completed: [],
           cancelled: [],
           no_show: [],
-          rescheduled: ["scheduled"],
-        };
-        return statusFlow[currentStatus] || [];
+          rescheduled: ['scheduled',],
+        }
+        return statusFlow[currentStatus] || []
       },
 
       // Format payment status
-      formatPaymentStatus: (status: PaymentStatus): string => {
+      formatPaymentStatus: (status: PaymentStatus,): string => {
         const labels = {
-          pending: "Pendente",
-          paid: "Pago",
-          partial: "Parcial",
-          overdue: "Em Atraso",
-          cancelled: "Cancelado",
-          refunded: "Reembolsado",
-        };
-        return labels[status] || status;
+          pending: 'Pendente',
+          paid: 'Pago',
+          partial: 'Parcial',
+          overdue: 'Em Atraso',
+          cancelled: 'Cancelado',
+          refunded: 'Reembolsado',
+        }
+        return labels[status] || status
       },
 
       // Get appointment revenue
-      getAppointmentRevenue: (appointment: AppointmentBase): number => {
+      getAppointmentRevenue: (appointment: AppointmentBase,): number => {
         return appointment.services_performed.reduce(
-          (total, service) => total + service.final_price,
+          (total, service,) => total + service.final_price,
           0,
-        );
+        )
       },
 
       // Check if appointment can be modified
-      canModifyAppointment: (appointment: AppointmentBase): boolean => {
-        return !["completed", "cancelled", "no_show"].includes(
+      canModifyAppointment: (appointment: AppointmentBase,): boolean => {
+        return !['completed', 'cancelled', 'no_show',].includes(
           appointment.status,
-        );
+        )
       },
 
       // Check if appointment can be cancelled
-      canCancelAppointment: (appointment: AppointmentBase): boolean => {
-        return ["scheduled", "confirmed"].includes(appointment.status);
+      canCancelAppointment: (appointment: AppointmentBase,): boolean => {
+        return ['scheduled', 'confirmed',].includes(appointment.status,)
       },
 
       // Invalidate appointment data
-      invalidateAppointment: (appointmentId: string) => {
+      invalidateAppointment: (appointmentId: string,) => {
         InvalidationHelpers.invalidateAppointmentData(
           queryUtils.queryClient,
           appointmentId,
-        );
+        )
       },
 
       // Invalidate all appointment data
       invalidateAllAppointments: () => {
-        InvalidationHelpers.invalidateAppointmentData(queryUtils.queryClient);
+        InvalidationHelpers.invalidateAppointmentData(queryUtils.queryClient,)
       },
 
       // Generate appointment summary
-      generateAppointmentSummary: (appointment: AppointmentBase): string => {
+      generateAppointmentSummary: (appointment: AppointmentBase,): string => {
         const parts = [
           appointment.patient_name,
           appointment.service_name,
           appointment.professional_name,
           `${appointment.scheduled_date} ${appointment.scheduled_time}`,
-        ].filter(Boolean);
+        ].filter(Boolean,)
 
-        return parts.join(" - ");
+        return parts.join(' - ',)
       },
     }),
-    [queryUtils],
-  );
+    [queryUtils,],
+  )
 }
 
 // 🎯 Complete appointment management context hook
 export function useAppointmentManagement(): AppointmentManagementContext {
-  const createAppointment = useCreateAppointment();
-  const updateAppointment = useUpdateAppointment;
-  const cancelAppointment = useCancelAppointment();
-  const deleteAppointment = useDeleteAppointment();
-  const checkInAppointment = useCheckInAppointment();
-  const completeAppointment = useCompleteAppointment();
-  const rescheduleAppointment = useRescheduleAppointment();
-  const getAppointmentStats = useAppointmentStats();
-  const bulkUpdateAppointments = useBulkUpdateAppointments();
-  const getAvailableSlots = useAvailableSlots();
-  const utils = useAppointmentUtils();
+  const createAppointment = useCreateAppointment()
+  const updateAppointment = useUpdateAppointment
+  const cancelAppointment = useCancelAppointment()
+  const deleteAppointment = useDeleteAppointment()
+  const checkInAppointment = useCheckInAppointment()
+  const completeAppointment = useCompleteAppointment()
+  const rescheduleAppointment = useRescheduleAppointment()
+  const getAppointmentStats = useAppointmentStats()
+  const bulkUpdateAppointments = useBulkUpdateAppointments()
+  const getAvailableSlots = useAvailableSlots()
+  const utils = useAppointmentUtils()
 
   return useMemo<AppointmentManagementContext>(
     () => ({
@@ -1017,7 +1017,7 @@ export function useAppointmentManagement(): AppointmentManagementContext {
       getAvailableSlots,
       utils,
     ],
-  );
+  )
 }
 
 // Export all hooks for individual use
@@ -1038,4 +1038,4 @@ export {
   useRescheduleAppointment,
   useUpdateAppointment,
   useWeeklySchedule,
-};
+}

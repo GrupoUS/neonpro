@@ -1,8 +1,8 @@
 // Notification module exports
 
-export type { ExternalNotificationProvider, NotificationRepository } from "./service";
-export * from "./service";
-export { NotificationService } from "./service";
+export type { ExternalNotificationProvider, NotificationRepository, } from './service'
+export * from './service'
+export { NotificationService, } from './service'
 // Re-export commonly used types
 export type {
   ABTestConfig,
@@ -25,8 +25,8 @@ export type {
   TemplateVariable,
   TimePreference,
   TreatmentPlanInfo,
-} from "./types";
-export * from "./types";
+} from './types'
+export * from './types'
 export {
   CampaignStatus,
   CampaignType,
@@ -36,4 +36,4 @@ export {
   NotificationStatus,
   RecurringFrequency,
   VariableType,
-} from "./types";
+} from './types'

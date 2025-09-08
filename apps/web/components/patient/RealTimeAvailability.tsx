@@ -6,11 +6,11 @@
 // Features: Análise preditiva, segmentação automática, personalização IA
 // =============================================================================
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 import {
   Activity,
   Award,
@@ -23,86 +23,86 @@ import {
   TrendingUp,
   Users,
   Zap,
-} from "lucide-react";
-import { useCallback, useState } from "react";
+} from 'lucide-react'
+import { useCallback, useState, } from 'react'
 
 // =============================================================================
 // TYPES & INTERFACES
 // =============================================================================
 
 interface PatientBehaviorProfile {
-  id: string;
-  patientId: string;
-  name: string;
-  email: string;
-  phone: string;
+  id: string
+  patientId: string
+  name: string
+  email: string
+  phone: string
 
   // Behavioral Analytics
-  engagementScore: number;
-  loyaltyIndex: number;
-  satisfactionScore: number;
-  riskScore: number;
+  engagementScore: number
+  loyaltyIndex: number
+  satisfactionScore: number
+  riskScore: number
 
   // Behavioral Patterns
   communicationPreferences: {
-    channel: "email" | "whatsapp" | "sms" | "phone";
-    frequency: "daily" | "weekly" | "monthly";
-    timePreference: string;
-  };
+    channel: 'email' | 'whatsapp' | 'sms' | 'phone'
+    frequency: 'daily' | 'weekly' | 'monthly'
+    timePreference: string
+  }
 
   appointmentBehavior: {
-    punctuality: number;
-    noShowRate: number;
-    rescheduleRate: number;
-    preferredTimes: string[];
-    seasonalPatterns: string[];
-  };
+    punctuality: number
+    noShowRate: number
+    rescheduleRate: number
+    preferredTimes: string[]
+    seasonalPatterns: string[]
+  }
 
   treatmentCompliance: {
-    adherenceRate: number;
-    followUpEngagement: number;
-    medicationCompliance: number;
-  };
+    adherenceRate: number
+    followUpEngagement: number
+    medicationCompliance: number
+  }
 
   // AI-Generated Insights
-  personalityType: "analytical" | "expressive" | "driver" | "amiable";
-  predictedActions: PredictedAction[];
-  recommendedStrategies: Strategy[];
+  personalityType: 'analytical' | 'expressive' | 'driver' | 'amiable'
+  predictedActions: PredictedAction[]
+  recommendedStrategies: Strategy[]
 
   // Segmentation
-  segment: "vip" | "loyal" | "at-risk" | "new" | "inactive";
-  lifetimeValue: number;
-  acquisitionCost: number;
+  segment: 'vip' | 'loyal' | 'at-risk' | 'new' | 'inactive'
+  lifetimeValue: number
+  acquisitionCost: number
 }
 
 interface PredictedAction {
-  action: string;
-  probability: number;
-  timeframe: string;
-  impact: "high" | "medium" | "low";
+  action: string
+  probability: number
+  timeframe: string
+  impact: 'high' | 'medium' | 'low'
 }
 
 interface Strategy {
-  type: "retention" | "engagement" | "upsell" | "recovery";
-  title: string;
-  description: string;
-  expectedOutcome: string;
-  confidence: number;
+  type: 'retention' | 'engagement' | 'upsell' | 'recovery'
+  title: string
+  description: string
+  expectedOutcome: string
+  confidence: number
 }
 
 interface CampaignPerformance {
-  id: string;
-  name: string;
-  type: "retention" | "acquisition" | "reactivation";
-  status: "active" | "paused" | "completed";
+  id: string
+  name: string
+  type: 'retention' | 'acquisition' | 'reactivation'
+  status: 'active' | 'paused' | 'completed'
   metrics: {
-    sent: number;
-    opened: number;
-    clicked: number;
-    converted: number;
-    revenue: number;
-  };
-  behavioralTargeting: string[];
+    sent: number
+    opened: number
+    clicked: number
+    converted: number
+    revenue: number
+  }
+  behavioralTargeting: string[]
 }
 
 // =============================================================================
@@ -111,13 +111,13 @@ interface CampaignPerformance {
 
 export default function BehavioralCRM() {
   // Estado principal
-  const [patients] = useState<PatientBehaviorProfile[]>([
+  const [patients,] = useState<PatientBehaviorProfile[]>([
     {
-      id: "1",
-      patientId: "p001",
-      name: "Ana Silva",
-      email: "ana.silva@email.com",
-      phone: "(11) 99999-9999",
+      id: '1',
+      patientId: 'p001',
+      name: 'Ana Silva',
+      email: 'ana.silva@email.com',
+      phone: '(11) 99999-9999',
 
       engagementScore: 85,
       loyaltyIndex: 92,
@@ -125,17 +125,17 @@ export default function BehavioralCRM() {
       riskScore: 15,
 
       communicationPreferences: {
-        channel: "whatsapp",
-        frequency: "weekly",
-        timePreference: "14:00-18:00",
+        channel: 'whatsapp',
+        frequency: 'weekly',
+        timePreference: '14:00-18:00',
       },
 
       appointmentBehavior: {
         punctuality: 95,
         noShowRate: 5,
         rescheduleRate: 10,
-        preferredTimes: ["14:00", "15:00", "16:00"],
-        seasonalPatterns: ["Mais ativa no inverno", "Prefere manhã no verão"],
+        preferredTimes: ['14:00', '15:00', '16:00',],
+        seasonalPatterns: ['Mais ativa no inverno', 'Prefere manhã no verão',],
       },
 
       treatmentCompliance: {
@@ -144,42 +144,42 @@ export default function BehavioralCRM() {
         medicationCompliance: 88,
       },
 
-      personalityType: "analytical",
+      personalityType: 'analytical',
       predictedActions: [
         {
-          action: "Agendar consulta preventiva",
+          action: 'Agendar consulta preventiva',
           probability: 78,
-          timeframe: "Próximas 2 semanas",
-          impact: "high",
+          timeframe: 'Próximas 2 semanas',
+          impact: 'high',
         },
         {
-          action: "Indicar familiar",
+          action: 'Indicar familiar',
           probability: 45,
-          timeframe: "Próximo mês",
-          impact: "medium",
+          timeframe: 'Próximo mês',
+          impact: 'medium',
         },
       ],
 
       recommendedStrategies: [
         {
-          type: "engagement",
-          title: "Série de Conteúdo Educativo",
-          description: "Enviar dicas de saúde personalizadas baseadas no perfil analítico",
-          expectedOutcome: "+15% engagement",
+          type: 'engagement',
+          title: 'Série de Conteúdo Educativo',
+          description: 'Enviar dicas de saúde personalizadas baseadas no perfil analítico',
+          expectedOutcome: '+15% engagement',
           confidence: 82,
         },
       ],
 
-      segment: "vip",
+      segment: 'vip',
       lifetimeValue: 15_000,
       acquisitionCost: 120,
     },
     {
-      id: "2",
-      patientId: "p002",
-      name: "Carlos Santos",
-      email: "carlos.santos@email.com",
-      phone: "(11) 88888-8888",
+      id: '2',
+      patientId: 'p002',
+      name: 'Carlos Santos',
+      email: 'carlos.santos@email.com',
+      phone: '(11) 88888-8888',
 
       engagementScore: 65,
       loyaltyIndex: 58,
@@ -187,17 +187,17 @@ export default function BehavioralCRM() {
       riskScore: 68,
 
       communicationPreferences: {
-        channel: "email",
-        frequency: "monthly",
-        timePreference: "08:00-12:00",
+        channel: 'email',
+        frequency: 'monthly',
+        timePreference: '08:00-12:00',
       },
 
       appointmentBehavior: {
         punctuality: 70,
         noShowRate: 25,
         rescheduleRate: 35,
-        preferredTimes: ["09:00", "10:00"],
-        seasonalPatterns: ["Evita verão", "Mais ativo em março-maio"],
+        preferredTimes: ['09:00', '10:00',],
+        seasonalPatterns: ['Evita verão', 'Mais ativo em março-maio',],
       },
 
       treatmentCompliance: {
@@ -206,38 +206,38 @@ export default function BehavioralCRM() {
         medicationCompliance: 55,
       },
 
-      personalityType: "driver",
+      personalityType: 'driver',
       predictedActions: [
         {
-          action: "Cancelar próximo agendamento",
+          action: 'Cancelar próximo agendamento',
           probability: 85,
-          timeframe: "Esta semana",
-          impact: "high",
+          timeframe: 'Esta semana',
+          impact: 'high',
         },
       ],
 
       recommendedStrategies: [
         {
-          type: "recovery",
-          title: "Campanha de Recuperação",
-          description: "Contato direto via telefone para entender motivos de distanciamento",
-          expectedOutcome: "+40% retenção",
+          type: 'recovery',
+          title: 'Campanha de Recuperação',
+          description: 'Contato direto via telefone para entender motivos de distanciamento',
+          expectedOutcome: '+40% retenção',
           confidence: 75,
         },
       ],
 
-      segment: "at-risk",
+      segment: 'at-risk',
       lifetimeValue: 3200,
       acquisitionCost: 180,
     },
-  ]);
+  ],)
 
-  const [campaigns] = useState<CampaignPerformance[]>([
+  const [campaigns,] = useState<CampaignPerformance[]>([
     {
-      id: "1",
-      name: "Preventive Care Reminder",
-      type: "retention",
-      status: "active",
+      id: '1',
+      name: 'Preventive Care Reminder',
+      type: 'retention',
+      status: 'active',
       metrics: {
         sent: 250,
         opened: 180,
@@ -246,16 +246,16 @@ export default function BehavioralCRM() {
         revenue: 22_500,
       },
       behavioralTargeting: [
-        "Alto engagement",
-        "Segmento leal",
-        "Consulta em atraso",
+        'Alto engagement',
+        'Segmento leal',
+        'Consulta em atraso',
       ],
     },
     {
-      id: "2",
-      name: "At-Risk Recovery",
-      type: "reactivation",
-      status: "active",
+      id: '2',
+      name: 'At-Risk Recovery',
+      type: 'reactivation',
+      status: 'active',
       metrics: {
         sent: 89,
         opened: 34,
@@ -264,88 +264,88 @@ export default function BehavioralCRM() {
         revenue: 4800,
       },
       behavioralTargeting: [
-        "Alto risco",
-        "Baixo engagement",
-        "No-show recente",
+        'Alto risco',
+        'Baixo engagement',
+        'No-show recente',
       ],
     },
-  ]);
+  ],)
 
-  const [loading, setLoading] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<PatientBehaviorProfile | null>(
+  const [loading, setLoading,] = useState(false,)
+  const [selectedPatient, setSelectedPatient,] = useState<PatientBehaviorProfile | null>(
     patients[0],
-  );
+  )
 
   // =============================================================================
   // HANDLERS
   // =============================================================================
 
   const handleAnalyzeBehavior = useCallback(async () => {
-    setLoading(true);
+    setLoading(true,)
     try {
       // Simular análise comportamental com IA
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve,) => setTimeout(resolve, 2000,))
       // console.log("🧠 Running behavioral analysis...");
 
       // Aqui seria implementada a análise real com ML
     } catch (error) {
       // console.error("Error analyzing behavior:", error);
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, []);
+  }, [],)
 
-  const handleGenerateStrategy = useCallback((patientId: string) => {
+  const handleGenerateStrategy = useCallback((patientId: string,) => {
     // console.log(`🎯 Generating strategy for patient: ${patientId}`);
     // Implementar geração de estratégias personalizadas
-  }, []);
+  }, [],)
 
   // =============================================================================
   // UTILITY FUNCTIONS
   // =============================================================================
 
-  const getSegmentColor = (segment: string) => {
+  const getSegmentColor = (segment: string,) => {
     switch (segment) {
-      case "vip": {
-        return "bg-purple-500";
+      case 'vip': {
+        return 'bg-purple-500'
       }
-      case "loyal": {
-        return "bg-green-500";
+      case 'loyal': {
+        return 'bg-green-500'
       }
-      case "at-risk": {
-        return "bg-red-500";
+      case 'at-risk': {
+        return 'bg-red-500'
       }
-      case "new": {
-        return "bg-blue-500";
+      case 'new': {
+        return 'bg-blue-500'
       }
-      case "inactive": {
-        return "bg-gray-500";
+      case 'inactive': {
+        return 'bg-gray-500'
       }
       default: {
-        return "bg-gray-500";
+        return 'bg-gray-500'
       }
     }
-  };
+  }
 
-  const getPersonalityIcon = (type: string) => {
+  const getPersonalityIcon = (type: string,) => {
     switch (type) {
-      case "analytical": {
-        return <BarChart3 className="w-4 h-4" />;
+      case 'analytical': {
+        return <BarChart3 className="w-4 h-4" />
       }
-      case "expressive": {
-        return <MessageSquare className="w-4 h-4" />;
+      case 'expressive': {
+        return <MessageSquare className="w-4 h-4" />
       }
-      case "driver": {
-        return <Target className="w-4 h-4" />;
+      case 'driver': {
+        return <Target className="w-4 h-4" />
       }
-      case "amiable": {
-        return <Heart className="w-4 h-4" />;
+      case 'amiable': {
+        return <Heart className="w-4 h-4" />
       }
       default: {
-        return <Users className="w-4 h-4" />;
+        return <Users className="w-4 h-4" />
       }
     }
-  };
+  }
 
   // =============================================================================
   // RENDER
@@ -374,7 +374,7 @@ export default function BehavioralCRM() {
             disabled={loading}
             className="flex items-center space-x-2"
           >
-            <Brain className={`w-4 h-4 ${loading ? "animate-pulse" : ""}`} />
+            <Brain className={`w-4 h-4 ${loading ? 'animate-pulse' : ''}`} />
             <span>Analisar Comportamento</span>
           </Button>
         </div>
@@ -465,19 +465,19 @@ export default function BehavioralCRM() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {patients.map((patient) => (
+                {patients.map((patient,) => (
                   <div
                     key={patient.id}
                     className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                       selectedPatient?.id === patient.id
-                        ? "bg-primary/5 border-primary"
-                        : "hover:bg-muted/50"
+                        ? 'bg-primary/5 border-primary'
+                        : 'hover:bg-muted/50'
                     }`}
-                    onClick={() => setSelectedPatient(patient)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelectedPatient(patient);
+                    onClick={() => setSelectedPatient(patient,)}
+                    onKeyDown={(e,) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedPatient(patient,)
                       }
                     }}
                     role="button"
@@ -492,9 +492,9 @@ export default function BehavioralCRM() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div
-                          className={`w-3 h-3 rounded-full ${getSegmentColor(patient.segment)}`}
+                          className={`w-3 h-3 rounded-full ${getSegmentColor(patient.segment,)}`}
                         />
-                        {getPersonalityIcon(patient.personalityType)}
+                        {getPersonalityIcon(patient.personalityType,)}
                       </div>
                     </div>
 
@@ -512,8 +512,8 @@ export default function BehavioralCRM() {
                         <span
                           className={`font-medium ${
                             patient.riskScore > 50
-                              ? "text-red-500"
-                              : "text-green-500"
+                              ? 'text-red-500'
+                              : 'text-green-500'
                           }`}
                         >
                           {patient.riskScore}%
@@ -535,7 +535,7 @@ export default function BehavioralCRM() {
                         <span>{selectedPatient.name}</span>
                         <Badge
                           variant="outline"
-                          className={`${getSegmentColor(selectedPatient.segment)} text-white`}
+                          className={`${getSegmentColor(selectedPatient.segment,)} text-white`}
                         >
                           {selectedPatient.segment.toUpperCase()}
                         </Badge>
@@ -545,7 +545,7 @@ export default function BehavioralCRM() {
                       </CardDescription>
                     </div>
                     <Button
-                      onClick={() => handleGenerateStrategy(selectedPatient.id)}
+                      onClick={() => handleGenerateStrategy(selectedPatient.id,)}
                       size="sm"
                       className="flex items-center space-x-2"
                     >
@@ -583,8 +583,8 @@ export default function BehavioralCRM() {
                       <div
                         className={`text-2xl font-bold ${
                           selectedPatient.riskScore > 50
-                            ? "text-red-500"
-                            : "text-green-500"
+                            ? 'text-red-500'
+                            : 'text-green-500'
                         }`}
                       >
                         {selectedPatient.riskScore}%
@@ -604,7 +604,7 @@ export default function BehavioralCRM() {
                     <CardContent>
                       <div className="space-y-4">
                         {selectedPatient.predictedActions.map(
-                          (action, index) => (
+                          (action, index,) => (
                             <div
                               key={index}
                               className="flex items-center justify-between border rounded-lg p-3"
@@ -643,7 +643,7 @@ export default function BehavioralCRM() {
                     <CardContent>
                       <div className="space-y-4">
                         {selectedPatient.recommendedStrategies.map(
-                          (strategy, index) => (
+                          (strategy, index,) => (
                             <div key={index} className="border rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
                                 <Badge variant="outline">{strategy.type}</Badge>
@@ -763,7 +763,7 @@ export default function BehavioralCRM() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {campaigns.map((campaign) => (
+                {campaigns.map((campaign,) => (
                   <div key={campaign.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div>
@@ -771,9 +771,9 @@ export default function BehavioralCRM() {
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge variant="outline">{campaign.type}</Badge>
                           <Badge
-                            variant={campaign.status === "active"
-                              ? "default"
-                              : "secondary"}
+                            variant={campaign.status === 'active'
+                              ? 'default'
+                              : 'secondary'}
                           >
                             {campaign.status}
                           </Badge>
@@ -823,7 +823,7 @@ export default function BehavioralCRM() {
                         Segmentação comportamental:
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        {campaign.behavioralTargeting.map((target, index) => (
+                        {campaign.behavioralTargeting.map((target, index,) => (
                           <Badge
                             key={index}
                             variant="secondary"
@@ -907,5 +907,5 @@ export default function BehavioralCRM() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

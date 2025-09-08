@@ -3,66 +3,66 @@
  * Handles data fetching, real-time updates, and compliance scoring
  */
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient, } from '@/lib/supabase/client'
 import type {
   ComplianceConfig,
   ComplianceFramework,
   ComplianceScore,
   ComplianceViolation,
-} from "./types";
+} from './types'
 
 export class ComplianceService {
-  private supabase = createClient();
-  private listeners: Map<string, Set<(data: unknown) => void>> = new Map();
+  private supabase = createClient()
+  private listeners: Map<string, Set<(data: unknown,) => void>> = new Map()
 
   /**
    * Subscribe to real-time compliance updates
    */
   subscribeToUpdates(
-    framework: ComplianceFramework | "all",
-    callback: (data: ComplianceScore[]) => void,
+    framework: ComplianceFramework | 'all',
+    callback: (data: ComplianceScore[],) => void,
   ): () => void {
     const channel = this.supabase
-      .channel("compliance_monitoring")
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "compliance_scores",
-        filter: framework !== "all" ? `framework=eq.${framework}` : undefined,
+      .channel('compliance_monitoring',)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'compliance_scores',
+        filter: framework !== 'all' ? `framework=eq.${framework}` : undefined,
       }, () => {
-        this.fetchComplianceScores(framework).then(callback);
-      })
-      .subscribe();
+        this.fetchComplianceScores(framework,).then(callback,)
+      },)
+      .subscribe()
 
     return () => {
-      this.supabase.removeChannel(channel);
-    };
+      this.supabase.removeChannel(channel,)
+    }
   }
 
   /**
    * Fetch current compliance scores
    */
   async fetchComplianceScores(
-    framework: ComplianceFramework | "all" = "all",
+    framework: ComplianceFramework | 'all' = 'all',
   ): Promise<ComplianceScore[]> {
     try {
       let query = this.supabase
-        .from("compliance_scores")
-        .select("*")
-        .order("updated_at", { ascending: false });
+        .from('compliance_scores',)
+        .select('*',)
+        .order('updated_at', { ascending: false, },)
 
-      if (framework !== "all") {
-        query = query.eq("framework", framework);
+      if (framework !== 'all') {
+        query = query.eq('framework', framework,)
       }
 
-      const { data, error } = await query;
+      const { data, error, } = await query
 
-      if (error) throw error;
+      if (error) throw error
 
-      return this.transformScoreData(data || []);
+      return this.transformScoreData(data || [],)
     } catch (error) {
-      console.error("Error fetching compliance scores:", error);
-      return this.getFallbackScores(framework);
+      console.error('Error fetching compliance scores:', error,)
+      return this.getFallbackScores(framework,)
     }
   }
 
@@ -70,32 +70,32 @@ export class ComplianceService {
    * Fetch compliance violations
    */
   async fetchViolations(filters?: {
-    framework?: ComplianceFramework;
-    severity?: "low" | "medium" | "high" | "critical";
-    status?: "open" | "in_progress" | "resolved";
-    page?: string;
-  }): Promise<ComplianceViolation[]> {
+    framework?: ComplianceFramework
+    severity?: 'low' | 'medium' | 'high' | 'critical'
+    status?: 'open' | 'in_progress' | 'resolved'
+    page?: string
+  },): Promise<ComplianceViolation[]> {
     try {
       let query = this.supabase
-        .from("compliance_violations")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('compliance_violations',)
+        .select('*',)
+        .order('created_at', { ascending: false, },)
 
       if (filters) {
-        if (filters.framework) query = query.eq("framework", filters.framework);
-        if (filters.severity) query = query.eq("severity", filters.severity);
-        if (filters.status) query = query.eq("status", filters.status);
-        if (filters.page) query = query.ilike("page", `%${filters.page}%`);
+        if (filters.framework) query = query.eq('framework', filters.framework,)
+        if (filters.severity) query = query.eq('severity', filters.severity,)
+        if (filters.status) query = query.eq('status', filters.status,)
+        if (filters.page) query = query.ilike('page', `%${filters.page}%`,)
       }
 
-      const { data, error } = await query;
+      const { data, error, } = await query
 
-      if (error) throw error;
+      if (error) throw error
 
-      return this.transformViolationData(data || []);
+      return this.transformViolationData(data || [],)
     } catch (error) {
-      console.error("Error fetching violations:", error);
-      return [];
+      console.error('Error fetching violations:', error,)
+      return []
     }
   }
 
@@ -107,19 +107,19 @@ export class ComplianceService {
     config?: ComplianceConfig,
   ): Promise<ComplianceScore> {
     try {
-      const response = await fetch("/api/compliance/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ framework, config }),
-      });
+      const response = await fetch('/api/compliance/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ framework, config, },),
+      },)
 
-      if (!response.ok) throw new Error("Compliance check failed");
+      if (!response.ok) throw new Error('Compliance check failed',)
 
-      const result = await response.json();
-      return this.transformSingleScore(result);
+      const result = await response.json()
+      return this.transformSingleScore(result,)
     } catch (error) {
-      console.error("Error running compliance check:", error);
-      throw error;
+      console.error('Error running compliance check:', error,)
+      throw error
     }
   }
 
@@ -127,23 +127,23 @@ export class ComplianceService {
    * Generate compliance report
    */
   async generateReport(frameworks: ComplianceFramework[], options?: {
-    startDate?: Date;
-    endDate?: Date;
-    includeResolved?: boolean;
-  }): Promise<{ reportId: string; downloadUrl: string; }> {
+    startDate?: Date
+    endDate?: Date
+    includeResolved?: boolean
+  },): Promise<{ reportId: string; downloadUrl: string }> {
     try {
-      const response = await fetch("/api/compliance/reports", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ frameworks, ...options }),
-      });
+      const response = await fetch('/api/compliance/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ frameworks, ...options, },),
+      },)
 
-      if (!response.ok) throw new Error("Report generation failed");
+      if (!response.ok) throw new Error('Report generation failed',)
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
-      console.error("Error generating report:", error);
-      throw error;
+      console.error('Error generating report:', error,)
+      throw error
     }
   }
 
@@ -151,94 +151,94 @@ export class ComplianceService {
    * Update violation status
    */
   async updateViolation(violationId: string, updates: {
-    status?: "open" | "in_progress" | "resolved";
-    assignedTo?: string;
-    notes?: string;
-  }): Promise<ComplianceViolation> {
+    status?: 'open' | 'in_progress' | 'resolved'
+    assignedTo?: string
+    notes?: string
+  },): Promise<ComplianceViolation> {
     try {
-      const { data, error } = await this.supabase
-        .from("compliance_violations")
+      const { data, error, } = await this.supabase
+        .from('compliance_violations',)
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", violationId)
+        },)
+        .eq('id', violationId,)
         .select()
-        .single();
+        .single()
 
-      if (error) throw error;
+      if (error) throw error
 
-      return this.transformSingleViolation(data);
+      return this.transformSingleViolation(data,)
     } catch (error) {
-      console.error("Error updating violation:", error);
-      throw error;
+      console.error('Error updating violation:', error,)
+      throw error
     }
   }
 
   /**
    * Get compliance trends
    */
-  async getComplianceTrends(framework: ComplianceFramework, days: number = 30): Promise<{
-    dates: string[];
-    scores: number[];
-    violations: number[];
+  async getComplianceTrends(framework: ComplianceFramework, days: number = 30,): Promise<{
+    dates: string[]
+    scores: number[]
+    violations: number[]
   }> {
     try {
-      const endDate = new Date();
-      const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
+      const endDate = new Date()
+      const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000),)
 
-      const { data, error } = await this.supabase
-        .from("compliance_history")
-        .select("date, score, violations_count")
-        .eq("framework", framework)
-        .gte("date", startDate.toISOString().split("T")[0])
-        .lte("date", endDate.toISOString().split("T")[0])
-        .order("date", { ascending: true });
+      const { data, error, } = await this.supabase
+        .from('compliance_history',)
+        .select('date, score, violations_count',)
+        .eq('framework', framework,)
+        .gte('date', startDate.toISOString().split('T',)[0],)
+        .lte('date', endDate.toISOString().split('T',)[0],)
+        .order('date', { ascending: true, },)
 
-      if (error) throw error;
+      if (error) throw error
 
       return {
         dates: data?.map(d => d.date) || [],
         scores: data?.map(d => d.score) || [],
         violations: data?.map(d => d.violations_count) || [],
-      };
+      }
     } catch (error) {
-      console.error("Error fetching trends:", error);
-      return { dates: [], scores: [], violations: [] };
+      console.error('Error fetching trends:', error,)
+      return { dates: [], scores: [], violations: [], }
     }
   }
 
   /**
    * WCAG-specific automated checking using axe-core
    */
-  async runWCAGCheck(url: string): Promise<{
+  async runWCAGCheck(url: string,): Promise<{
     violations: {
-      id: string;
-      impact: "minor" | "moderate" | "serious" | "critical";
-      description: string;
-      help: string;
-      helpUrl: string;
+      id: string
+      impact: 'minor' | 'moderate' | 'serious' | 'critical'
+      description: string
+      help: string
+      helpUrl: string
       nodes: {
-        target: string[];
-        html: string;
-      }[];
-    }[];
-    passes: number;
-    incomplete: number;
+        target: string[]
+        html: string
+      }[]
+    }[]
+    passes: number
+    incomplete: number
   }> {
     try {
-      const response = await fetch("/api/compliance/wcag/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
+      const response = await fetch('/api/compliance/wcag/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ url, },),
+      },)
 
-      if (!response.ok) throw new Error("WCAG check failed");
+      if (!response.ok) throw new Error('WCAG check failed',)
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
-      console.error("Error running WCAG check:", error);
-      throw error;
+      console.error('Error running WCAG check:', error,)
+      throw error
     }
   }
 
@@ -247,141 +247,143 @@ export class ComplianceService {
    */
   async runLGPDCheck(): Promise<{
     dataProcessingActivities: {
-      purpose: string;
-      legalBasis: string;
-      dataCategories: string[];
-      retentionPeriod: string;
-      hasConsent: boolean;
-    }[];
+      purpose: string
+      legalBasis: string
+      dataCategories: string[]
+      retentionPeriod: string
+      hasConsent: boolean
+    }[]
     consentStatus: {
-      total: number;
-      valid: number;
-      expired: number;
-      withdrawn: number;
-    };
+      total: number
+      valid: number
+      expired: number
+      withdrawn: number
+    }
     violations: {
       type:
-        | "missing_consent"
-        | "expired_consent"
-        | "excessive_retention"
-        | "unauthorized_processing";
-      description: string;
-      severity: "low" | "medium" | "high" | "critical";
-    }[];
+        | 'missing_consent'
+        | 'expired_consent'
+        | 'excessive_retention'
+        | 'unauthorized_processing'
+      description: string
+      severity: 'low' | 'medium' | 'high' | 'critical'
+    }[]
   }> {
     try {
-      const response = await fetch("/api/compliance/lgpd/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch('/api/compliance/lgpd/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+      },)
 
-      if (!response.ok) throw new Error("LGPD check failed");
+      if (!response.ok) throw new Error('LGPD check failed',)
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
-      console.error("Error running LGPD check:", error);
-      throw error;
+      console.error('Error running LGPD check:', error,)
+      throw error
     }
   }
 
   /**
    * Transform database score data to application format
    */
-  private transformScoreData(data: unknown[]): ComplianceScore[] {
-    return data.map(item => this.transformSingleScore(item));
+  private transformScoreData(data: unknown[],): ComplianceScore[] {
+    return data.map(item => this.transformSingleScore(item,))
   }
 
-  private transformSingleScore(item: unknown): ComplianceScore {
+  private transformSingleScore(item: unknown,): ComplianceScore {
+    const typedItem = item as any
     return {
-      framework: item.framework,
-      score: item.score,
-      status: this.getStatusFromScore(item.score),
-      lastUpdated: new Date(item.updated_at).getTime(),
-      violations: item.violations_count || 0,
-      trend: item.trend || "stable",
-      trendValue: item.trend_value || 0,
-    };
+      framework: typedItem.framework,
+      score: typedItem.score,
+      status: this.getStatusFromScore(typedItem.score,),
+      lastUpdated: new Date(typedItem.updated_at,).getTime(),
+      violations: typedItem.violations_count || 0,
+      trend: typedItem.trend || 'stable',
+      trendValue: typedItem.trend_value || 0,
+    }
   }
 
   /**
    * Transform database violation data to application format
    */
-  private transformViolationData(data: unknown[]): ComplianceViolation[] {
-    return data.map(item => this.transformSingleViolation(item));
+  private transformViolationData(data: unknown[],): ComplianceViolation[] {
+    return data.map(item => this.transformSingleViolation(item,))
   }
 
-  private transformSingleViolation(item: unknown): ComplianceViolation {
+  private transformSingleViolation(item: unknown,): ComplianceViolation {
+    const typedItem = item as any
     return {
-      id: item.id,
-      framework: item.framework,
-      severity: item.severity,
-      rule: item.rule,
-      description: item.description,
-      element: item.element,
-      page: item.page,
-      timestamp: new Date(item.created_at).getTime(),
-      status: item.status,
-      assignedTo: item.assigned_to,
-    };
+      id: typedItem.id,
+      framework: typedItem.framework,
+      severity: typedItem.severity,
+      rule: typedItem.rule,
+      description: typedItem.description,
+      element: typedItem.element,
+      page: typedItem.page,
+      timestamp: new Date(typedItem.created_at,).getTime(),
+      status: typedItem.status,
+      assignedTo: typedItem.assigned_to,
+    }
   }
 
   /**
    * Get status based on score
    */
-  private getStatusFromScore(score: number): "excellent" | "good" | "warning" | "critical" {
-    if (score >= 90) return "excellent";
-    if (score >= 75) return "good";
-    if (score >= 60) return "warning";
-    return "critical";
+  private getStatusFromScore(score: number,): 'excellent' | 'good' | 'warning' | 'critical' {
+    if (score >= 90) return 'excellent'
+    if (score >= 75) return 'good'
+    if (score >= 60) return 'warning'
+    return 'critical'
   }
 
   /**
    * Fallback scores for offline/error scenarios
    */
-  private getFallbackScores(framework: ComplianceFramework | "all"): ComplianceScore[] {
+  private getFallbackScores(framework: ComplianceFramework | 'all',): ComplianceScore[] {
     const fallbackData = [
       {
-        framework: "WCAG" as ComplianceFramework,
+        framework: 'WCAG' as ComplianceFramework,
         score: 85,
-        status: "good" as const,
+        status: 'good' as const,
         lastUpdated: Date.now() - 300_000,
         violations: 3,
-        trend: "stable" as const,
+        trend: 'stable' as const,
         trendValue: 0,
       },
       {
-        framework: "LGPD" as ComplianceFramework,
+        framework: 'LGPD' as ComplianceFramework,
         score: 92,
-        status: "excellent" as const,
+        status: 'excellent' as const,
         lastUpdated: Date.now() - 180_000,
         violations: 1,
-        trend: "up" as const,
+        trend: 'up' as const,
         trendValue: 2.1,
       },
       {
-        framework: "ANVISA" as ComplianceFramework,
+        framework: 'ANVISA' as ComplianceFramework,
         score: 78,
-        status: "good" as const,
+        status: 'good' as const,
         lastUpdated: Date.now() - 120_000,
         violations: 5,
-        trend: "down" as const,
+        trend: 'down' as const,
         trendValue: -1.2,
       },
       {
-        framework: "CFM" as ComplianceFramework,
+        framework: 'CFM' as ComplianceFramework,
         score: 89,
-        status: "good" as const,
+        status: 'good' as const,
         lastUpdated: Date.now() - 240_000,
         violations: 2,
-        trend: "up" as const,
+        trend: 'up' as const,
         trendValue: 1.8,
       },
-    ];
+    ]
 
-    if (framework === "all") return fallbackData;
-    return fallbackData.filter(item => item.framework === framework);
+    if (framework === 'all') return fallbackData
+    return fallbackData.filter(item => item.framework === framework)
   }
 }
 
 // Singleton instance
-export const complianceService = new ComplianceService();
+export const complianceService = new ComplianceService()

@@ -4,12 +4,12 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
+import { Badge, } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { ScrollArea, } from '@/components/ui/scroll-area'
 import {
   Activity,
   AlertCircle,
@@ -25,175 +25,175 @@ import {
   TrendingUp,
   UserCheck,
   Users,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 interface ActivityEvent {
-  id: string;
+  id: string
   type:
-    | "appointment"
-    | "consultation"
-    | "prescription"
-    | "report"
-    | "message"
-    | "login"
-    | "audit";
-  title: string;
-  description: string;
+    | 'appointment'
+    | 'consultation'
+    | 'prescription'
+    | 'report'
+    | 'message'
+    | 'login'
+    | 'audit'
+  title: string
+  description: string
   user: {
-    name: string;
-    role: string;
-    avatar?: string;
-  };
-  timestamp: Date;
-  location?: string;
-  priority: "low" | "medium" | "high" | "critical";
-  metadata?: Record<string, unknown>;
+    name: string
+    role: string
+    avatar?: string
+  }
+  timestamp: Date
+  location?: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  metadata?: Record<string, unknown>
 }
 
 interface LiveStats {
-  activeUsers: number;
-  ongoingConsultations: number;
-  pendingApprovals: number;
-  systemAlerts: number;
-  dailyAppointments: number;
-  completedToday: number;
+  activeUsers: number
+  ongoingConsultations: number
+  pendingApprovals: number
+  systemAlerts: number
+  dailyAppointments: number
+  completedToday: number
 }
 
 export function RealTimeActivityDashboard() {
-  const [activities, setActivities] = useState<ActivityEvent[]>([]);
-  const [liveStats, setLiveStats] = useState<LiveStats | null>();
-  const [loading, setLoading] = useState(true);
+  const [activities, setActivities,] = useState<ActivityEvent[]>([],)
+  const [liveStats, setLiveStats,] = useState<LiveStats | null>()
+  const [loading, setLoading,] = useState(true,)
 
   useEffect(() => {
     // Simulate loading real-time data
     const loadActivityData = () => {
-      const now = new Date();
+      const now = new Date()
 
       const mockActivities: ActivityEvent[] = [
         {
-          id: "1",
-          type: "consultation",
-          title: "Nova Consulta Iniciada",
-          description: "Dr. Silva iniciou consulta com Maria Santos",
+          id: '1',
+          type: 'consultation',
+          title: 'Nova Consulta Iniciada',
+          description: 'Dr. Silva iniciou consulta com Maria Santos',
           user: {
-            name: "Dr. Silva",
-            role: "Médico Cardiologista",
-            avatar: "/avatars/dr-silva.jpg",
+            name: 'Dr. Silva',
+            role: 'Médico Cardiologista',
+            avatar: '/avatars/dr-silva.jpg',
           },
-          timestamp: new Date(now.getTime() - 2 * 60 * 1000),
-          location: "Consultório 3",
-          priority: "medium",
+          timestamp: new Date(now.getTime() - 2 * 60 * 1000,),
+          location: 'Consultório 3',
+          priority: 'medium',
           metadata: {
-            patientId: "PAT-001",
-            appointmentType: "Retorno",
+            patientId: 'PAT-001',
+            appointmentType: 'Retorno',
           },
         },
         {
-          id: "2",
-          type: "prescription",
-          title: "Prescrição Digital Emitida",
-          description: "Receita médica para João Carlos - Hipertensão",
+          id: '2',
+          type: 'prescription',
+          title: 'Prescrição Digital Emitida',
+          description: 'Receita médica para João Carlos - Hipertensão',
           user: {
-            name: "Dra. Oliveira",
-            role: "Médica Clínica Geral",
-            avatar: "/avatars/dra-oliveira.jpg",
+            name: 'Dra. Oliveira',
+            role: 'Médica Clínica Geral',
+            avatar: '/avatars/dra-oliveira.jpg',
           },
-          timestamp: new Date(now.getTime() - 5 * 60 * 1000),
-          priority: "medium",
+          timestamp: new Date(now.getTime() - 5 * 60 * 1000,),
+          priority: 'medium',
           metadata: {
-            medications: ["Losartana 50mg", "Hidroclorotiazida 25mg"],
-            cfmNumber: "CFM-12345",
+            medications: ['Losartana 50mg', 'Hidroclorotiazida 25mg',],
+            cfmNumber: 'CFM-12345',
           },
         },
         {
-          id: "3",
-          type: "audit",
-          title: "Acesso a Dados Sensíveis",
-          description: "Enfermeira Ana acessou prontuário - LGPD Log",
+          id: '3',
+          type: 'audit',
+          title: 'Acesso a Dados Sensíveis',
+          description: 'Enfermeira Ana acessou prontuário - LGPD Log',
           user: {
-            name: "Ana Costa",
-            role: "Enfermeira",
-            avatar: "/avatars/ana-costa.jpg",
+            name: 'Ana Costa',
+            role: 'Enfermeira',
+            avatar: '/avatars/ana-costa.jpg',
           },
-          timestamp: new Date(now.getTime() - 8 * 60 * 1000),
-          priority: "high",
+          timestamp: new Date(now.getTime() - 8 * 60 * 1000,),
+          priority: 'high',
           metadata: {
-            dataType: "prontuario_medico",
-            justification: "Preparação para consulta",
+            dataType: 'prontuario_medico',
+            justification: 'Preparação para consulta',
             lgpdCompliance: true,
           },
         },
         {
-          id: "4",
-          type: "appointment",
-          title: "Agendamento Confirmado",
-          description: "Pedro Lima confirmou consulta para amanhã",
+          id: '4',
+          type: 'appointment',
+          title: 'Agendamento Confirmado',
+          description: 'Pedro Lima confirmou consulta para amanhã',
           user: {
-            name: "Pedro Lima",
-            role: "Paciente",
+            name: 'Pedro Lima',
+            role: 'Paciente',
           },
-          timestamp: new Date(now.getTime() - 12 * 60 * 1000),
-          priority: "low",
+          timestamp: new Date(now.getTime() - 12 * 60 * 1000,),
+          priority: 'low',
           metadata: {
-            appointmentDate: "2024-01-15T10:00:00Z",
-            specialty: "Dermatologia",
+            appointmentDate: '2024-01-15T10:00:00Z',
+            specialty: 'Dermatologia',
           },
         },
         {
-          id: "5",
-          type: "report",
-          title: "Relatório ANVISA Gerado",
-          description: "Relatório mensal de reações adversas",
+          id: '5',
+          type: 'report',
+          title: 'Relatório ANVISA Gerado',
+          description: 'Relatório mensal de reações adversas',
           user: {
-            name: "Sistema Automático",
-            role: "Sistema",
+            name: 'Sistema Automático',
+            role: 'Sistema',
           },
-          timestamp: new Date(now.getTime() - 15 * 60 * 1000),
-          priority: "critical",
+          timestamp: new Date(now.getTime() - 15 * 60 * 1000,),
+          priority: 'critical',
           metadata: {
-            reportType: "anvisa_monthly",
+            reportType: 'anvisa_monthly',
             recordCount: 23,
-            compliance: "approved",
+            compliance: 'approved',
           },
         },
         {
-          id: "6",
-          type: "message",
-          title: "Mensagem Recebida",
-          description: "Paciente enviou mensagem sobre resultados",
+          id: '6',
+          type: 'message',
+          title: 'Mensagem Recebida',
+          description: 'Paciente enviou mensagem sobre resultados',
           user: {
-            name: "Carla Fernandes",
-            role: "Paciente",
+            name: 'Carla Fernandes',
+            role: 'Paciente',
           },
-          timestamp: new Date(now.getTime() - 18 * 60 * 1000),
-          priority: "medium",
+          timestamp: new Date(now.getTime() - 18 * 60 * 1000,),
+          priority: 'medium',
           metadata: {
-            messageType: "resultado_exame",
+            messageType: 'resultado_exame',
             encrypted: true,
           },
         },
         {
-          id: "7",
-          type: "login",
-          title: "Login de Usuário",
-          description: "Dr. Roberto fez login no sistema",
+          id: '7',
+          type: 'login',
+          title: 'Login de Usuário',
+          description: 'Dr. Roberto fez login no sistema',
           user: {
-            name: "Dr. Roberto",
-            role: "Médico Ortopedista",
+            name: 'Dr. Roberto',
+            role: 'Médico Ortopedista',
           },
-          timestamp: new Date(now.getTime() - 25 * 60 * 1000),
-          location: "IP: 192.168.1.45",
-          priority: "low",
+          timestamp: new Date(now.getTime() - 25 * 60 * 1000,),
+          location: 'IP: 192.168.1.45',
+          priority: 'low',
           metadata: {
-            deviceType: "desktop",
-            location: "São Paulo, SP",
+            deviceType: 'desktop',
+            location: 'São Paulo, SP',
             twoFactorAuth: true,
           },
         },
-      ];
+      ]
 
-      setActivities(mockActivities);
+      setActivities(mockActivities,)
       setLiveStats({
         activeUsers: 12,
         ongoingConsultations: 3,
@@ -201,117 +201,117 @@ export function RealTimeActivityDashboard() {
         systemAlerts: 1,
         dailyAppointments: 28,
         completedToday: 15,
-      });
-      setLoading(false);
-    };
+      },)
+      setLoading(false,)
+    }
 
-    loadActivityData();
+    loadActivityData()
 
     // Simulate real-time updates
     const interval = setInterval(() => {
       if (Math.random() > 0.7) {
         const newActivity: ActivityEvent = {
           id: Date.now().toString(),
-          type: ["appointment", "consultation", "message"][
-            Math.floor(Math.random() * 3)
+          type: ['appointment', 'consultation', 'message',][
+            Math.floor(Math.random() * 3,)
           ] as unknown,
-          title: "Nova Atividade",
-          description: "Atividade simulada em tempo real",
+          title: 'Nova Atividade',
+          description: 'Atividade simulada em tempo real',
           user: {
-            name: "Usuário Simulado",
-            role: "Sistema",
+            name: 'Usuário Simulado',
+            role: 'Sistema',
           },
           timestamp: new Date(),
-          priority: "medium",
-        };
+          priority: 'medium',
+        }
 
-        setActivities((prev) => [newActivity, ...prev.slice(0, 9)]);
+        setActivities((prev,) => [newActivity, ...prev.slice(0, 9,),])
       }
 
       // Update live stats
-      setLiveStats((prev) =>
+      setLiveStats((prev,) =>
         prev
           ? {
             ...prev,
-            activeUsers: Math.floor(10 + Math.random() * 8),
-            ongoingConsultations: Math.floor(2 + Math.random() * 4),
+            activeUsers: Math.floor(10 + Math.random() * 8,),
+            ongoingConsultations: Math.floor(2 + Math.random() * 4,),
           }
           : undefined
-      );
-    }, 10_000);
+      )
+    }, 10_000,)
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval,)
+  }, [],)
 
-  const getActivityIcon = (type: ActivityEvent["type"]) => {
+  const getActivityIcon = (type: ActivityEvent['type'],) => {
     switch (type) {
-      case "appointment": {
-        return <Calendar className="h-4 w-4" />;
+      case 'appointment': {
+        return <Calendar className="h-4 w-4" />
       }
-      case "consultation": {
-        return <Stethoscope className="h-4 w-4" />;
+      case 'consultation': {
+        return <Stethoscope className="h-4 w-4" />
       }
-      case "prescription": {
-        return <FileText className="h-4 w-4" />;
+      case 'prescription': {
+        return <FileText className="h-4 w-4" />
       }
-      case "report": {
-        return <FileText className="h-4 w-4" />;
+      case 'report': {
+        return <FileText className="h-4 w-4" />
       }
-      case "message": {
-        return <MessageSquare className="h-4 w-4" />;
+      case 'message': {
+        return <MessageSquare className="h-4 w-4" />
       }
-      case "login": {
-        return <UserCheck className="h-4 w-4" />;
+      case 'login': {
+        return <UserCheck className="h-4 w-4" />
       }
-      case "audit": {
-        return <Shield className="h-4 w-4" />;
+      case 'audit': {
+        return <Shield className="h-4 w-4" />
       }
       default: {
-        return <Activity className="h-4 w-4" />;
+        return <Activity className="h-4 w-4" />
       }
     }
-  };
+  }
 
   const getActivityColor = (
-    type: ActivityEvent["type"],
-    priority: ActivityEvent["priority"],
+    type: ActivityEvent['type'],
+    priority: ActivityEvent['priority'],
   ) => {
-    if (priority === "critical") {
-      return "text-red-600 bg-red-50";
+    if (priority === 'critical') {
+      return 'text-red-600 bg-red-50'
     }
-    if (priority === "high") {
-      return "text-orange-600 bg-orange-50";
+    if (priority === 'high') {
+      return 'text-orange-600 bg-orange-50'
     }
 
     switch (type) {
-      case "consultation": {
-        return "text-blue-600 bg-blue-50";
+      case 'consultation': {
+        return 'text-blue-600 bg-blue-50'
       }
-      case "prescription": {
-        return "text-green-600 bg-green-50";
+      case 'prescription': {
+        return 'text-green-600 bg-green-50'
       }
-      case "audit": {
-        return "text-purple-600 bg-purple-50";
+      case 'audit': {
+        return 'text-purple-600 bg-purple-50'
       }
-      case "appointment": {
-        return "text-teal-600 bg-teal-50";
+      case 'appointment': {
+        return 'text-teal-600 bg-teal-50'
       }
       default: {
-        return "text-gray-600 bg-gray-50";
+        return 'text-gray-600 bg-gray-50'
       }
     }
-  };
+  }
 
-  const getPriorityBadge = (priority: ActivityEvent["priority"]) => {
+  const getPriorityBadge = (priority: ActivityEvent['priority'],) => {
     switch (priority) {
-      case "critical": {
+      case 'critical': {
         return (
           <Badge variant="destructive" className="text-xs">
             Crítico
           </Badge>
-        );
+        )
       }
-      case "high": {
+      case 'high': {
         return (
           <Badge
             variant="secondary"
@@ -319,48 +319,48 @@ export function RealTimeActivityDashboard() {
           >
             Alto
           </Badge>
-        );
+        )
       }
-      case "medium": {
+      case 'medium': {
         return (
           <Badge variant="outline" className="text-xs">
             Médio
           </Badge>
-        );
+        )
       }
-      case "low": {
+      case 'low': {
         return (
           <Badge variant="outline" className="text-xs text-gray-500">
             Baixo
           </Badge>
-        );
+        )
       }
     }
-  };
+  }
 
-  const formatTimeAgo = (timestamp: Date) => {
-    const now = new Date();
+  const formatTimeAgo = (timestamp: Date,) => {
+    const now = new Date()
     const diffInMinutes = Math.floor(
       (now.getTime() - timestamp.getTime()) / (1000 * 60),
-    );
+    )
 
     if (diffInMinutes < 1) {
-      return "Agora";
+      return 'Agora'
     }
     if (diffInMinutes < 60) {
-      return `${diffInMinutes}min atrás`;
+      return `${diffInMinutes}min atrás`
     }
     if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h atrás`;
+      return `${Math.floor(diffInMinutes / 60,)}h atrás`
     }
-    return timestamp.toLocaleDateString("pt-BR");
-  };
+    return timestamp.toLocaleDateString('pt-BR',)
+  }
 
   if (loading || !liveStats) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[1, 2, 3, 4, 5, 6,].map((i,) => (
             <Card key={i} className="animate-pulse">
               <CardContent className="p-4">
                 <div className="h-8 bg-muted rounded w-16" />
@@ -370,7 +370,7 @@ export function RealTimeActivityDashboard() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -511,14 +511,14 @@ export function RealTimeActivityDashboard() {
             Feed de Atividades
           </CardTitle>
           <CardDescription>
-            Eventos e ações em tempo real • Última atualização:{" "}
-            {new Date().toLocaleTimeString("pt-BR")}
+            Eventos e ações em tempo real • Última atualização:{' '}
+            {new Date().toLocaleTimeString('pt-BR',)}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-96">
             <div className="space-y-4">
-              {activities.map((activity) => (
+              {activities.map((activity,) => (
                 <div
                   key={activity.id}
                   className="flex items-start space-x-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
@@ -532,7 +532,7 @@ export function RealTimeActivityDashboard() {
                       )
                     }`}
                   >
-                    {getActivityIcon(activity.type)}
+                    {getActivityIcon(activity.type,)}
                   </div>
 
                   {/* Content */}
@@ -542,9 +542,9 @@ export function RealTimeActivityDashboard() {
                         {activity.title}
                       </h4>
                       <div className="flex items-center space-x-2">
-                        {getPriorityBadge(activity.priority)}
+                        {getPriorityBadge(activity.priority,)}
                         <span className="text-xs text-muted-foreground">
-                          {formatTimeAgo(activity.timestamp)}
+                          {formatTimeAgo(activity.timestamp,)}
                         </span>
                       </div>
                     </div>
@@ -559,10 +559,10 @@ export function RealTimeActivityDashboard() {
                         <AvatarImage src={activity.user.avatar} />
                         <AvatarFallback className="text-xs">
                           {activity.user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .slice(0, 2)}
+                            .split(' ',)
+                            .map((n,) => n[0])
+                            .join('',)
+                            .slice(0, 2,)}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-xs text-muted-foreground">
@@ -586,15 +586,15 @@ export function RealTimeActivityDashboard() {
                     {/* Metadata */}
                     {activity.metadata && (
                       <div className="mt-2 flex flex-wrap gap-1">
-                        {Object.entries(activity.metadata)
-                          .slice(0, 3)
-                          .map(([key, value]) => (
+                        {Object.entries(activity.metadata,)
+                          .slice(0, 3,)
+                          .map(([key, value,],) => (
                             <Badge
                               key={key}
                               variant="outline"
                               className="text-xs"
                             >
-                              {key}: {String(value)}
+                              {key}: {String(value,)}
                             </Badge>
                           ))}
                       </div>
@@ -606,7 +606,7 @@ export function RealTimeActivityDashboard() {
                     <button className="p-1 text-muted-foreground hover:text-foreground">
                       <Eye className="h-4 w-4" />
                     </button>
-                    {activity.type === "audit" && (
+                    {activity.type === 'audit' && (
                       <button className="p-1 text-muted-foreground hover:text-foreground">
                         <Shield className="h-4 w-4" />
                       </button>
@@ -662,5 +662,5 @@ export function RealTimeActivityDashboard() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

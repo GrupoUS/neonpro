@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Checkbox, } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -12,17 +12,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 // Switch removed (unused)
 import {
   Table,
@@ -31,11 +31,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { Textarea, } from '@/components/ui/textarea'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from '@/components/ui/tooltip'
+import { cn, } from '@/lib/utils'
 import {
   Activity,
   AlertTriangle,
@@ -56,10 +56,10 @@ import {
   Trash2,
   UserCheck,
   UserX,
-} from "lucide-react";
-import type React from "react";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+} from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useState, } from 'react'
+import { toast, } from 'sonner'
 
 import type {
   LGPDConsentRecord,
@@ -68,229 +68,229 @@ import type {
   LGPDDataCategory,
   LGPDDataProcessingActivity,
   LGPDProcessingPurpose,
-} from "@/lib/compliance/lgpd-consent-management";
-import { LGPDConsentManagementService } from "@/lib/compliance/lgpd-consent-management";
+} from '@/lib/compliance/lgpd-consent-management'
+import { LGPDConsentManagementService, } from '@/lib/compliance/lgpd-consent-management'
 
 // Initialize LGPD service
-const lgpdService = LGPDConsentManagementService.getInstance();
+const lgpdService = LGPDConsentManagementService.getInstance()
 
 interface LGPDConsentManagerProps {
-  className?: string;
+  className?: string
 }
 
 interface ConsentFormData {
-  dataSubjectId: string;
-  dataSubjectName: string;
-  dataSubjectEmail: string;
-  dataSubjectPhone: string;
-  processingActivityId: string;
-  consentType: LGPDConsentType;
-  purposes: LGPDProcessingPurpose[];
-  dataCategories: LGPDDataCategory[];
-  optionalConsents: { purpose: string; granted: boolean; }[];
-  communicationChannel: "web" | "mobile" | "email" | "sms" | "in-person";
+  dataSubjectId: string
+  dataSubjectName: string
+  dataSubjectEmail: string
+  dataSubjectPhone: string
+  processingActivityId: string
+  consentType: LGPDConsentType
+  purposes: LGPDProcessingPurpose[]
+  dataCategories: LGPDDataCategory[]
+  optionalConsents: { purpose: string; granted: boolean }[]
+  communicationChannel: 'web' | 'mobile' | 'email' | 'sms' | 'in-person'
 }
 
 const CONSENT_TYPE_CONFIG = {
   explicit: {
-    label: "Consentimento Explícito",
-    description: "Manifestação livre, informada e inequívoca",
-    bg: "bg-green-100 dark:bg-green-900/20",
-    text: "text-green-700 dark:text-green-300",
+    label: 'Consentimento Explícito',
+    description: 'Manifestação livre, informada e inequívoca',
+    bg: 'bg-green-100 dark:bg-green-900/20',
+    text: 'text-green-700 dark:text-green-300',
     icon: CheckCircle,
   },
   implied: {
-    label: "Consentimento Implícito",
-    description: "Inferido através do comportamento do titular",
-    bg: "bg-yellow-100 dark:bg-yellow-900/20",
-    text: "text-yellow-700 dark:text-yellow-300",
+    label: 'Consentimento Implícito',
+    description: 'Inferido através do comportamento do titular',
+    bg: 'bg-yellow-100 dark:bg-yellow-900/20',
+    text: 'text-yellow-700 dark:text-yellow-300',
     icon: AlertTriangle,
   },
   granular: {
-    label: "Consentimento Granular",
-    description: "Por finalidade específica e categoria de dados",
-    bg: "bg-blue-100 dark:bg-blue-900/20",
-    text: "text-blue-700 dark:text-blue-300",
+    label: 'Consentimento Granular',
+    description: 'Por finalidade específica e categoria de dados',
+    bg: 'bg-blue-100 dark:bg-blue-900/20',
+    text: 'text-blue-700 dark:text-blue-300',
     icon: Settings,
   },
-} as const;
+} as const
 
 const STATUS_CONFIG = {
   given: {
-    label: "Concedido",
-    bg: "bg-green-100 dark:bg-green-900/20",
-    text: "text-green-700 dark:text-green-300",
+    label: 'Concedido',
+    bg: 'bg-green-100 dark:bg-green-900/20',
+    text: 'text-green-700 dark:text-green-300',
     icon: CheckCircle,
   },
   withdrawn: {
-    label: "Retirado",
-    bg: "bg-red-100 dark:bg-red-900/20",
-    text: "text-red-700 dark:text-red-300",
+    label: 'Retirado',
+    bg: 'bg-red-100 dark:bg-red-900/20',
+    text: 'text-red-700 dark:text-red-300',
     icon: UserX,
   },
   expired: {
-    label: "Expirado",
-    bg: "bg-orange-100 dark:bg-orange-900/20",
-    text: "text-orange-700 dark:text-orange-300",
+    label: 'Expirado',
+    bg: 'bg-orange-100 dark:bg-orange-900/20',
+    text: 'text-orange-700 dark:text-orange-300',
     icon: Clock,
   },
   renewed: {
-    label: "Renovado",
-    bg: "bg-blue-100 dark:bg-blue-900/20",
-    text: "text-blue-700 dark:text-blue-300",
+    label: 'Renovado',
+    bg: 'bg-blue-100 dark:bg-blue-900/20',
+    text: 'text-blue-700 dark:text-blue-300',
     icon: RefreshCw,
   },
-} as const;
+} as const
 
 const LEGAL_BASIS_CONFIG = {
   consent: {
-    label: "Consentimento",
-    description: "Manifestação livre, informada e inequívoca",
+    label: 'Consentimento',
+    description: 'Manifestação livre, informada e inequívoca',
     icon: UserCheck,
     requiresConsent: true,
   },
   contract: {
-    label: "Execução de Contrato",
-    description: "Necessário para execução de contrato",
+    label: 'Execução de Contrato',
+    description: 'Necessário para execução de contrato',
     icon: FileText,
     requiresConsent: false,
   },
-  "legal-obligation": {
-    label: "Cumprimento de Obrigação Legal",
-    description: "Exigido por lei ou regulamento",
+  'legal-obligation': {
+    label: 'Cumprimento de Obrigação Legal',
+    description: 'Exigido por lei ou regulamento',
     icon: Scale,
     requiresConsent: false,
   },
-  "vital-interests": {
-    label: "Proteção da Vida",
-    description: "Proteção da vida ou incolumidade física",
+  'vital-interests': {
+    label: 'Proteção da Vida',
+    description: 'Proteção da vida ou incolumidade física',
     icon: Shield,
     requiresConsent: false,
   },
-  "public-interest": {
-    label: "Interesse Público",
-    description: "Execução de políticas públicas",
+  'public-interest': {
+    label: 'Interesse Público',
+    description: 'Execução de políticas públicas',
     icon: Globe,
     requiresConsent: false,
   },
-  "legitimate-interests": {
-    label: "Interesse Legítimo",
-    description: "Interesse legítimo do controlador",
+  'legitimate-interests': {
+    label: 'Interesse Legítimo',
+    description: 'Interesse legítimo do controlador',
     icon: Activity,
     requiresConsent: false,
   },
-} as const;
+} as const
 
 const DATA_CATEGORIES = {
-  "identification-data": "Dados de Identificação",
-  "contact-data": "Dados de Contato",
-  "health-data": "Dados de Saúde",
-  "financial-data": "Dados Financeiros",
-  "preference-data": "Dados de Preferências",
-  "behavioral-data": "Dados Comportamentais",
-  "biometric-data": "Dados Biométricos",
-  "location-data": "Dados de Localização",
-  "transaction-data": "Dados de Transações",
-};
+  'identification-data': 'Dados de Identificação',
+  'contact-data': 'Dados de Contato',
+  'health-data': 'Dados de Saúde',
+  'financial-data': 'Dados Financeiros',
+  'preference-data': 'Dados de Preferências',
+  'behavioral-data': 'Dados Comportamentais',
+  'biometric-data': 'Dados Biométricos',
+  'location-data': 'Dados de Localização',
+  'transaction-data': 'Dados de Transações',
+}
 
 const PROCESSING_PURPOSES = {
-  "medical-care": "Prestação de Cuidados Médicos",
-  "service-provision": "Prestação de Serviços",
-  "payment-processing": "Processamento de Pagamentos",
-  communication: "Comunicação",
-  marketing: "Marketing",
-  "legal-obligation": "Cumprimento de Obrigação Legal",
-  research: "Pesquisa e Desenvolvimento",
-  security: "Segurança",
-  accounting: "Contabilidade",
-};
+  'medical-care': 'Prestação de Cuidados Médicos',
+  'service-provision': 'Prestação de Serviços',
+  'payment-processing': 'Processamento de Pagamentos',
+  communication: 'Comunicação',
+  marketing: 'Marketing',
+  'legal-obligation': 'Cumprimento de Obrigação Legal',
+  research: 'Pesquisa e Desenvolvimento',
+  security: 'Segurança',
+  accounting: 'Contabilidade',
+}
 
 export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
   className,
-}) => {
-  const [consentRecords, setConsentRecords] = useState<LGPDConsentRecord[]>([]);
-  const [processingActivities, setProcessingActivities] = useState<
+},) => {
+  const [consentRecords, setConsentRecords,] = useState<LGPDConsentRecord[]>([],)
+  const [processingActivities, setProcessingActivities,] = useState<
     LGPDDataProcessingActivity[]
-  >([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<LGPDConsentStatus | "all">(
-    "all",
-  );
-  const [activityFilter, setActivityFilter] = useState<string>("all");
-  const [isConsentDialogOpen, setIsConsentDialogOpen] = useState(false);
-  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
-  const [selectedConsent, setSelectedConsent] = useState<LGPDConsentRecord | null>(null);
-  const [withdrawalReason, setWithdrawalReason] = useState("");
-  const [complianceScore, setComplianceScore] = useState(0);
+  >([],)
+  const [loading, setLoading,] = useState(true,)
+  const [searchTerm, setSearchTerm,] = useState('',)
+  const [statusFilter, setStatusFilter,] = useState<LGPDConsentStatus | 'all'>(
+    'all',
+  )
+  const [activityFilter, setActivityFilter,] = useState<string>('all',)
+  const [isConsentDialogOpen, setIsConsentDialogOpen,] = useState(false,)
+  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen,] = useState(false,)
+  const [selectedConsent, setSelectedConsent,] = useState<LGPDConsentRecord | null>(null,)
+  const [withdrawalReason, setWithdrawalReason,] = useState('',)
+  const [complianceScore, setComplianceScore,] = useState(0,)
 
-  const [formData, setFormData] = useState<ConsentFormData>({
-    dataSubjectId: "",
-    dataSubjectName: "",
-    dataSubjectEmail: "",
-    dataSubjectPhone: "",
-    processingActivityId: "",
-    consentType: "explicit",
+  const [formData, setFormData,] = useState<ConsentFormData>({
+    dataSubjectId: '',
+    dataSubjectName: '',
+    dataSubjectEmail: '',
+    dataSubjectPhone: '',
+    processingActivityId: '',
+    consentType: 'explicit',
     purposes: [],
     dataCategories: [],
     optionalConsents: [],
-    communicationChannel: "web",
-  });
+    communicationChannel: 'web',
+  },)
 
   useEffect(() => {
     // eslint-disable-next-line no-void
-    void loadData();
-  }, []);
+    void loadData()
+  }, [],)
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(true,)
 
       // Load processing activities
-      const activities = lgpdService.getProcessingActivities();
-      setProcessingActivities(activities);
+      const activities = lgpdService.getProcessingActivities()
+      setProcessingActivities(activities,)
 
       // Load consent records
-      const consents = lgpdService.getConsentRecords();
-      setConsentRecords(consents);
+      const consents = lgpdService.getConsentRecords()
+      setConsentRecords(consents,)
 
       // Calculate compliance score
-      calculateComplianceScore(consents, activities);
+      calculateComplianceScore(consents, activities,)
     } catch (error) {
-      console.error("Error loading LGPD data:", error);
-      toast.error("Erro ao carregar dados LGPD");
+      console.error('Error loading LGPD data:', error,)
+      toast.error('Erro ao carregar dados LGPD',)
     } finally {
-      setLoading(false);
+      setLoading(false,)
     }
-  }, []);
+  }, [],)
 
   const calculateComplianceScore = (
     consents: LGPDConsentRecord[],
     activities: LGPDDataProcessingActivity[],
   ) => {
-    let score = 100;
+    let score = 100
 
     // Check for expired consents
-    const expiredConsents = consents.filter((c) => c.status === "expired");
-    score -= expiredConsents.length * 5;
+    const expiredConsents = consents.filter((c,) => c.status === 'expired')
+    score -= expiredConsents.length * 5
 
     // Check for missing consents for consent-based activities
     const consentBasedActivities = activities.filter(
-      (a) => a.legalBasis === "consent",
-    );
-    const activeConsents = consents.filter((c) => c.status === "given");
+      (a,) => a.legalBasis === 'consent',
+    )
+    const activeConsents = consents.filter((c,) => c.status === 'given')
 
-    consentBasedActivities.forEach((activity) => {
+    consentBasedActivities.forEach((activity,) => {
       const hasActiveConsent = activeConsents.some(
-        (c) => c.processingActivityId === activity.id,
-      );
+        (c,) => c.processingActivityId === activity.id,
+      )
       if (!hasActiveConsent) {
-        score -= 10;
+        score -= 10
       }
-    });
+    },)
 
-    setComplianceScore(Math.max(0, score));
-  };
+    setComplianceScore(Math.max(0, score,),)
+  }
 
   const handleCreateConsent = useCallback(async () => {
     try {
@@ -301,138 +301,138 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         dataCategories: formData.dataCategories,
         optionalConsents: formData.optionalConsents,
         communicationChannel: formData.communicationChannel,
-        ipAddress: "127.0.0.1", // In real app, get actual IP
+        ipAddress: '127.0.0.1', // In real app, get actual IP
         userAgent: navigator.userAgent,
-        location: "Web Application",
-      });
+        location: 'Web Application',
+      },)
 
       if (result.isValid && result.data) {
-        setConsentRecords((prev) => [result.data, ...prev]);
-        setIsConsentDialogOpen(false);
-        resetForm();
-        toast.success("Consentimento registrado com sucesso");
+        setConsentRecords((prev,) => [result.data, ...prev,])
+        setIsConsentDialogOpen(false,)
+        resetForm()
+        toast.success('Consentimento registrado com sucesso',)
 
         // Recalculate compliance score
-        const activities = lgpdService.getProcessingActivities();
-        calculateComplianceScore([result.data, ...consentRecords], activities);
+        const activities = lgpdService.getProcessingActivities()
+        calculateComplianceScore([result.data, ...consentRecords,], activities,)
       } else {
-        toast.error(result.errors?.[0] || "Erro ao registrar consentimento");
+        toast.error(result.errors?.[0] || 'Erro ao registrar consentimento',)
       }
     } catch (error) {
-      console.error("Error creating consent:", error);
-      toast.error("Erro interno ao registrar consentimento");
+      console.error('Error creating consent:', error,)
+      toast.error('Erro interno ao registrar consentimento',)
     }
-  }, [formData, consentRecords]);
+  }, [formData, consentRecords,],)
 
   const handleWithdrawConsent = useCallback(async () => {
     if (!selectedConsent) {
-      return;
+      return
     }
 
     try {
       const result = await lgpdService.withdrawConsent(
         selectedConsent.id,
-        withdrawalReason || "Solicitação do titular",
-      );
+        withdrawalReason || 'Solicitação do titular',
+      )
 
       if (result.isValid) {
         // Update local state
-        setConsentRecords((prev) =>
-          prev.map((consent) =>
+        setConsentRecords((prev,) =>
+          prev.map((consent,) =>
             consent.id === selectedConsent.id
-              ? { ...consent, status: "withdrawn" as LGPDConsentStatus }
+              ? { ...consent, status: 'withdrawn' as LGPDConsentStatus, }
               : consent
           )
-        );
+        )
 
-        setIsWithdrawalDialogOpen(false);
-        setSelectedConsent(null);
-        setWithdrawalReason("");
-        toast.success("Consentimento retirado com sucesso");
+        setIsWithdrawalDialogOpen(false,)
+        setSelectedConsent(null,)
+        setWithdrawalReason('',)
+        toast.success('Consentimento retirado com sucesso',)
 
         // Recalculate compliance score
-        const activities = lgpdService.getProcessingActivities();
-        const updatedConsents = consentRecords.map((c) =>
+        const activities = lgpdService.getProcessingActivities()
+        const updatedConsents = consentRecords.map((c,) =>
           c.id === selectedConsent.id
-            ? { ...c, status: "withdrawn" as LGPDConsentStatus }
+            ? { ...c, status: 'withdrawn' as LGPDConsentStatus, }
             : c
-        );
-        calculateComplianceScore(updatedConsents, activities);
+        )
+        calculateComplianceScore(updatedConsents, activities,)
       } else {
-        toast.error(result.errors?.[0] || "Erro ao retirar consentimento");
+        toast.error(result.errors?.[0] || 'Erro ao retirar consentimento',)
       }
     } catch (error) {
-      console.error("Error withdrawing consent:", error);
-      toast.error("Erro interno ao retirar consentimento");
+      console.error('Error withdrawing consent:', error,)
+      toast.error('Erro interno ao retirar consentimento',)
     }
-  }, [selectedConsent, withdrawalReason, consentRecords]);
+  }, [selectedConsent, withdrawalReason, consentRecords,],)
 
   const handleDataSubjectRequest = useCallback(async (
-    type: "access" | "portability" | "deletion" | "rectification",
+    type: 'access' | 'portability' | 'deletion' | 'rectification',
   ) => {
     try {
       // This would typically show a form to collect request details
       const result = await lgpdService.processDataSubjectRightsRequest(
         type,
-        "demo-subject-id", // In real app, get from user selection
+        'demo-subject-id', // In real app, get from user selection
         {},
-      );
+      )
 
       if (result.isValid) {
         toast.success(
           `Solicitação de ${
-            type === "access"
-              ? "acesso"
-              : type === "portability"
-              ? "portabilidade"
-              : type === "deletion"
-              ? "exclusão"
-              : "retificação"
+            type === 'access'
+              ? 'acesso'
+              : type === 'portability'
+              ? 'portabilidade'
+              : type === 'deletion'
+              ? 'exclusão'
+              : 'retificação'
           } processada com sucesso`,
-        );
+        )
       } else {
-        toast.error(result.errors?.[0] || "Erro ao processar solicitação");
+        toast.error(result.errors?.[0] || 'Erro ao processar solicitação',)
       }
     } catch (error) {
-      console.error("Error processing request:", error);
-      toast.error("Erro interno ao processar solicitação");
+      console.error('Error processing request:', error,)
+      toast.error('Erro interno ao processar solicitação',)
     }
-  }, []);
+  }, [],)
 
   const resetForm = useCallback(() => {
     setFormData({
-      dataSubjectId: "",
-      dataSubjectName: "",
-      dataSubjectEmail: "",
-      dataSubjectPhone: "",
-      processingActivityId: "",
-      consentType: "explicit",
+      dataSubjectId: '',
+      dataSubjectName: '',
+      dataSubjectEmail: '',
+      dataSubjectPhone: '',
+      processingActivityId: '',
+      consentType: 'explicit',
       purposes: [],
       dataCategories: [],
       optionalConsents: [],
-      communicationChannel: "web",
-    });
-  }, []);
+      communicationChannel: 'web',
+    },)
+  }, [],)
 
-  const filteredConsentRecords = consentRecords.filter((consent) => {
+  const filteredConsentRecords = consentRecords.filter((consent,) => {
     const matchesSearch = consent.dataSubjectId
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || consent.status === statusFilter;
-    const matchesActivity = activityFilter === "all"
-      || consent.processingActivityId === activityFilter;
-    return matchesSearch && matchesStatus && matchesActivity;
-  });
+      .includes(searchTerm.toLowerCase(),)
+    const matchesStatus = statusFilter === 'all' || consent.status === statusFilter
+    const matchesActivity = activityFilter === 'all'
+      || consent.processingActivityId === activityFilter
+    return matchesSearch && matchesStatus && matchesActivity
+  },)
 
-  const getScoreColor = (score: number) => {
+  const getScoreColor = (score: number,) => {
     if (score >= 90) {
-      return "text-green-600";
+      return 'text-green-600'
     }
     if (score >= 70) {
-      return "text-yellow-600";
+      return 'text-yellow-600'
     }
-    return "text-red-600";
-  };
+    return 'text-red-600'
+  }
 
   if (loading) {
     return (
@@ -440,11 +440,11 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando dados LGPD...</span>
       </div>
-    );
+    )
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className,)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
@@ -459,8 +459,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
           <div className="text-center">
             <div
               className={cn(
-                "text-2xl font-bold",
-                getScoreColor(complianceScore),
+                'text-2xl font-bold',
+                getScoreColor(complianceScore,),
               )}
             >
               {complianceScore}%
@@ -496,8 +496,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <Input
                         id="dataSubjectName"
                         value={formData.dataSubjectName}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
+                        onChange={(e,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             dataSubjectName: e.target.value,
                           }))}
@@ -509,8 +509,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <Input
                         id="dataSubjectId"
                         value={formData.dataSubjectId}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
+                        onChange={(e,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             dataSubjectId: e.target.value,
                           }))}
@@ -525,8 +525,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                         id="dataSubjectEmail"
                         type="email"
                         value={formData.dataSubjectEmail}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
+                        onChange={(e,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             dataSubjectEmail: e.target.value,
                           }))}
@@ -538,8 +538,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <Input
                         id="dataSubjectPhone"
                         value={formData.dataSubjectPhone}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
+                        onChange={(e,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             dataSubjectPhone: e.target.value,
                           }))}
@@ -557,8 +557,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <Label htmlFor="processingActivity">Atividade</Label>
                       <Select
                         value={formData.processingActivityId}
-                        onValueChange={(value) =>
-                          setFormData((prev) => ({
+                        onValueChange={(value,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             processingActivityId: value,
                           }))}
@@ -567,7 +567,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           <SelectValue placeholder="Selecione a atividade" />
                         </SelectTrigger>
                         <SelectContent>
-                          {processingActivities.map((activity) => (
+                          {processingActivities.map((activity,) => (
                             <SelectItem key={activity.id} value={activity.id}>
                               <div className="flex flex-col">
                                 <span>{activity.name}</span>
@@ -584,8 +584,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       <Label htmlFor="consentType">Tipo de Consentimento</Label>
                       <Select
                         value={formData.consentType}
-                        onValueChange={(value: LGPDConsentType) =>
-                          setFormData((prev) => ({
+                        onValueChange={(value: LGPDConsentType,) =>
+                          setFormData((prev,) => ({
                             ...prev,
                             consentType: value,
                           }))}
@@ -594,8 +594,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           <SelectValue placeholder="Tipo de consentimento" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.entries(CONSENT_TYPE_CONFIG).map(
-                            ([key, config]) => (
+                          {Object.entries(CONSENT_TYPE_CONFIG,).map(
+                            ([key, config,],) => (
                               <SelectItem key={key} value={key}>
                                 <div className="flex items-center gap-2">
                                   <config.icon className="h-4 w-4" />
@@ -614,28 +614,28 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                 <div className="space-y-4">
                   <h4 className="font-medium">Categorias de Dados</h4>
                   <div className="grid grid-cols-3 gap-4">
-                    {Object.entries(DATA_CATEGORIES).map(([key, label]) => (
+                    {Object.entries(DATA_CATEGORIES,).map(([key, label,],) => (
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox
                           id={key}
-                          checked={formData.dataCategories.includes(key as unknown)}
-                          onCheckedChange={(checked) => {
+                          checked={formData.dataCategories.includes(key as unknown,)}
+                          onCheckedChange={(checked,) => {
                             if (checked) {
-                              setFormData((prev) => ({
+                              setFormData((prev,) => ({
                                 ...prev,
                                 dataCategories: [
                                   ...prev.dataCategories,
                                   key as unknown,
                                 ],
-                              }));
+                              }))
                             } else {
-                              setFormData((prev) => ({
+                              setFormData((prev,) => ({
                                 ...prev,
                                 dataCategories: prev.dataCategories.filter(
-                                  (cat) =>
+                                  (cat,) =>
                                     cat !== key,
                                 ),
-                              }));
+                              }))
                             }
                           }}
                         />
@@ -651,25 +651,25 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                 <div className="space-y-4">
                   <h4 className="font-medium">Finalidades do Processamento</h4>
                   <div className="grid grid-cols-3 gap-4">
-                    {Object.entries(PROCESSING_PURPOSES).map(([key, label]) => (
+                    {Object.entries(PROCESSING_PURPOSES,).map(([key, label,],) => (
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox
                           id={key}
-                          checked={formData.purposes.includes(key as unknown)}
-                          onCheckedChange={(checked) => {
+                          checked={formData.purposes.includes(key as unknown,)}
+                          onCheckedChange={(checked,) => {
                             if (checked) {
-                              setFormData((prev) => ({
+                              setFormData((prev,) => ({
                                 ...prev,
-                                purposes: [...prev.purposes, key as unknown],
-                              }));
+                                purposes: [...prev.purposes, key as unknown,],
+                              }))
                             } else {
-                              setFormData((prev) => ({
+                              setFormData((prev,) => ({
                                 ...prev,
                                 purposes: prev.purposes.filter(
-                                  (purpose) =>
+                                  (purpose,) =>
                                     purpose !== key,
                                 ),
-                              }));
+                              }))
                             }
                           }}
                         />
@@ -686,8 +686,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   <h4 className="font-medium">Canal de Comunicação</h4>
                   <Select
                     value={formData.communicationChannel}
-                    onValueChange={(value: unknown) =>
-                      setFormData((prev) => ({
+                    onValueChange={(value: unknown,) =>
+                      setFormData((prev,) => ({
                         ...prev,
                         communicationChannel: value,
                       }))}
@@ -709,7 +709,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => setIsConsentDialogOpen(false)}
+                  onClick={() => setIsConsentDialogOpen(false,)}
                 >
                   Cancelar
                 </Button>
@@ -734,13 +734,13 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
           <Input
             placeholder="Buscar por CPF, nome ou ID do titular..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e,) => setSearchTerm(e.target.value,)}
             className="pl-10"
           />
         </div>
         <Select
           value={statusFilter}
-          onValueChange={(value: LGPDConsentStatus | "all") => setStatusFilter(value)}
+          onValueChange={(value: LGPDConsentStatus | 'all',) => setStatusFilter(value,)}
         >
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -759,7 +759,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as Atividades</SelectItem>
-            {processingActivities.map((activity) => (
+            {processingActivities.map((activity,) => (
               <SelectItem key={activity.id} value={activity.id}>
                 {activity.name}
               </SelectItem>
@@ -803,14 +803,14 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredConsentRecords.map((consent) => {
+                  {filteredConsentRecords.map((consent,) => {
                     const activity = processingActivities.find(
-                      (a) => a.id === consent.processingActivityId,
-                    );
-                    const statusConfig = STATUS_CONFIG[consent.status];
-                    const consentTypeConfig = CONSENT_TYPE_CONFIG[consent.consentType];
-                    const StatusIcon = statusConfig.icon;
-                    const ConsentIcon = consentTypeConfig.icon;
+                      (a,) => a.id === consent.processingActivityId,
+                    )
+                    const statusConfig = STATUS_CONFIG[consent.status]
+                    const consentTypeConfig = CONSENT_TYPE_CONFIG[consent.consentType]
+                    const StatusIcon = statusConfig.icon
+                    const ConsentIcon = consentTypeConfig.icon
 
                     return (
                       <TableRow key={consent.id}>
@@ -822,7 +822,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                         <TableCell>
                           <div>
                             <div className="font-medium text-sm">
-                              {activity?.name || "Atividade não encontrada"}
+                              {activity?.name || 'Atividade não encontrada'}
                             </div>
                             <div className="text-xs text-muted-foreground">
                               Base legal: {activity?.legalBasis}
@@ -835,7 +835,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                               <TooltipTrigger asChild>
                                 <div
                                   className={cn(
-                                    "flex items-center gap-2 px-2 py-1 rounded-md w-fit text-xs",
+                                    'flex items-center gap-2 px-2 py-1 rounded-md w-fit text-xs',
                                     consentTypeConfig.bg,
                                     consentTypeConfig.text,
                                   )}
@@ -853,7 +853,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                         <TableCell>
                           <div
                             className={cn(
-                              "flex items-center gap-2 text-sm",
+                              'flex items-center gap-2 text-sm',
                               statusConfig.text,
                             )}
                           >
@@ -863,16 +863,16 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                         </TableCell>
                         <TableCell>
                           <div className="text-sm">
-                            {consent.consentDate.toLocaleDateString("pt-BR")}
+                            {consent.consentDate.toLocaleDateString('pt-BR',)}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="text-sm">
                             {consent.expirationDate
                               ? consent.expirationDate.toLocaleDateString(
-                                "pt-BR",
+                                'pt-BR',
                               )
-                              : "Indefinida"}
+                              : 'Indefinida'}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -880,13 +880,13 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                             <Button size="sm" variant="outline">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            {consent.status === "given" && (
+                            {consent.status === 'given' && (
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => {
-                                  setSelectedConsent(consent);
-                                  setIsWithdrawalDialogOpen(true);
+                                  setSelectedConsent(consent,)
+                                  setIsWithdrawalDialogOpen(true,)
                                 }}
                               >
                                 <UserX className="h-4 w-4" />
@@ -898,8 +898,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                           </div>
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
+                    )
+                  },)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -909,14 +909,14 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         {/* Activities Tab */}
         <TabsContent value="activities" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {processingActivities.map((activity) => {
-              const legalBasisConfig = LEGAL_BASIS_CONFIG[activity.legalBasis];
-              const LegalIcon = legalBasisConfig.icon;
+            {processingActivities.map((activity,) => {
+              const legalBasisConfig = LEGAL_BASIS_CONFIG[activity.legalBasis]
+              const LegalIcon = legalBasisConfig.icon
               const activeConsents = consentRecords.filter(
-                (c) =>
+                (c,) =>
                   c.processingActivityId === activity.id
-                  && c.status === "given",
-              ).length;
+                  && c.status === 'given',
+              ).length
 
               return (
                 <Card key={activity.id}>
@@ -932,9 +932,9 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                       </div>
                       <Badge
                         variant="outline"
-                        className={activity.isActive ? "bg-green-50" : "bg-red-50"}
+                        className={activity.isActive ? 'bg-green-50' : 'bg-red-50'}
                       >
-                        {activity.isActive ? "Ativo" : "Inativo"}
+                        {activity.isActive ? 'Ativo' : 'Inativo'}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -950,7 +950,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                         Categorias de Dados:
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {activity.dataCategories.map((category) => (
+                        {activity.dataCategories.map((category,) => (
                           <Badge
                             key={category}
                             variant="secondary"
@@ -965,7 +965,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Finalidades:</div>
                       <div className="flex flex-wrap gap-1">
-                        {activity.processingPurposes.map((purpose) => (
+                        {activity.processingPurposes.map((purpose,) => (
                           <Badge
                             key={purpose}
                             variant="outline"
@@ -987,8 +987,8 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
+              )
+            },)}
           </div>
         </TabsContent>
 
@@ -998,7 +998,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <Button
               variant="outline"
               className="h-24 flex flex-col gap-2"
-              onClick={() => handleDataSubjectRequest("access")}
+              onClick={() => handleDataSubjectRequest('access',)}
             >
               <Eye className="h-6 w-6" />
               <span>Solicitar Acesso</span>
@@ -1006,7 +1006,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <Button
               variant="outline"
               className="h-24 flex flex-col gap-2"
-              onClick={() => handleDataSubjectRequest("portability")}
+              onClick={() => handleDataSubjectRequest('portability',)}
             >
               <Download className="h-6 w-6" />
               <span>Portabilidade</span>
@@ -1014,7 +1014,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <Button
               variant="outline"
               className="h-24 flex flex-col gap-2"
-              onClick={() => handleDataSubjectRequest("deletion")}
+              onClick={() => handleDataSubjectRequest('deletion',)}
             >
               <Trash2 className="h-6 w-6" />
               <span>Exclusão</span>
@@ -1022,7 +1022,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
             <Button
               variant="outline"
               className="h-24 flex flex-col gap-2"
-              onClick={() => handleDataSubjectRequest("rectification")}
+              onClick={() => handleDataSubjectRequest('rectification',)}
             >
               <Edit className="h-6 w-6" />
               <span>Retificação</span>
@@ -1069,7 +1069,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {consentRecords.filter((c) => c.status === "given")
+                      {consentRecords.filter((c,) => c.status === 'given')
                         .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -1088,7 +1088,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {consentRecords.filter((c) => c.status === "withdrawn")
+                      {consentRecords.filter((c,) => c.status === 'withdrawn')
                         .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -1107,7 +1107,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {consentRecords.filter((c) => c.status === "expired")
+                      {consentRecords.filter((c,) => c.status === 'expired')
                         .length}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -1145,19 +1145,19 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Score de Conformidade Atual:{" "}
+                  Score de Conformidade Atual:{' '}
                   <span
-                    className={cn("font-bold", getScoreColor(complianceScore))}
+                    className={cn('font-bold', getScoreColor(complianceScore,),)}
                   >
                     {complianceScore}%
                   </span>
                   {complianceScore < 90 && (
                     <span className="block mt-2 text-sm">
-                      • {consentRecords.filter((c) => c.status === "expired")
-                            .length > 0 && "Renovar consentimentos expirados"}
-                      • {consentRecords.filter((c) => c.status === "given")
+                      • {consentRecords.filter((c,) => c.status === 'expired')
+                            .length > 0 && 'Renovar consentimentos expirados'}
+                      • {consentRecords.filter((c,) => c.status === 'given')
                             .length === 0
-                        && "Coletar consentimentos para atividades obrigatórias"}
+                        && 'Coletar consentimentos para atividades obrigatórias'}
                     </span>
                   )}
                 </AlertDescription>
@@ -1188,7 +1188,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
               <Textarea
                 id="withdrawalReason"
                 value={withdrawalReason}
-                onChange={(e) => setWithdrawalReason(e.target.value)}
+                onChange={(e,) => setWithdrawalReason(e.target.value,)}
                 placeholder="Descreva o motivo da retirada do consentimento..."
                 rows={3}
               />
@@ -1206,7 +1206,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
-              onClick={() => setIsWithdrawalDialogOpen(false)}
+              onClick={() => setIsWithdrawalDialogOpen(false,)}
             >
               Cancelar
             </Button>
@@ -1217,7 +1217,7 @@ export const LGPDConsentManager: React.FC<LGPDConsentManagerProps> = ({
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}
 
-export default LGPDConsentManager;
+export default LGPDConsentManager

@@ -1,32 +1,32 @@
-import { testClient } from "hono/testing";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { whatsappRoutes } from "./whatsapp";
+import { testClient, } from 'hono/testing'
+import { afterEach, beforeEach, describe, expect, it, vi, } from 'vitest'
+import { whatsappRoutes, } from './whatsapp'
 
 // Mock environment variables
 const mockEnv = {
-  WHATSAPP_VERIFY_TOKEN: "test_verify_token",
-  WHATSAPP_ACCESS_TOKEN: "test_access_token",
-  WHATSAPP_PHONE_NUMBER_ID: "test_phone_number_id",
-};
+  WHATSAPP_VERIFY_TOKEN: 'test_verify_token',
+  WHATSAPP_ACCESS_TOKEN: 'test_access_token',
+  WHATSAPP_PHONE_NUMBER_ID: 'test_phone_number_id',
+}
 
 // Mock fetch for WhatsApp API calls
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
+const mockFetch = vi.fn()
+global.fetch = mockFetch
 
 // Mock all external dependencies
-vi.mock("@neonpro/core-services", () => ({
+vi.mock('@neonpro/core-services', () => ({
   BrazilianAIService: vi.fn(() => ({
     processWhatsAppChat: vi.fn().mockResolvedValue({
-      id: "test_response_id",
+      id: 'test_response_id',
       message: {
-        id: "test_msg_id",
-        role: "assistant",
-        content: "Olá! Como posso ajudá-lo hoje? 😊",
+        id: 'test_msg_id',
+        role: 'assistant',
+        content: 'Olá! Como posso ajudá-lo hoje? 😊',
         timestamp: Date.now(),
       },
-      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
-      metadata: { model: "brazilian-ai", responseTime: 100, cached: false },
-      templateUsed: "whatsapp-greeting",
+      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
+      metadata: { model: 'brazilian-ai', responseTime: 100, cached: false, },
+      templateUsed: 'whatsapp-greeting',
       emergencyDetected: false,
       escalationTriggered: false,
       lgpdCompliance: {
@@ -34,68 +34,68 @@ vi.mock("@neonpro/core-services", () => ({
         dataUsageExplained: true,
         rightsInformed: true,
       },
-    }),
+    },),
   })),
-}));
+}),)
 
-vi.mock("../middleware/audit.middleware", () => ({
-  auditMiddleware: () => (c: any, next: any) => next(),
-}));
+vi.mock('../middleware/audit.middleware', () => ({
+  auditMiddleware: () => (c: any, next: any,) => next(),
+}),)
 
-vi.mock("../middleware/healthcare-security", () => ({
+vi.mock('../middleware/healthcare-security', () => ({
   HealthcareAuthMiddleware: vi.fn(() => ({
-    handle: (c: any, next: any) => {
+    handle: (c: any, next: any,) => {
       // Mock authenticated user with clinic access
-      c.set("user", {
-        id: "test-user-id",
-        roles: ["admin"],
-        clinicIds: ["550e8400-e29b-41d4-a716-446655440000"],
-      });
-      return next();
+      c.set('user', {
+        id: 'test-user-id',
+        roles: ['admin',],
+        clinicIds: ['550e8400-e29b-41d4-a716-446655440000',],
+      },)
+      return next()
     },
-    middleware: (c: any, next: any) => {
+    middleware: (c: any, next: any,) => {
       // Mock authenticated user with clinic access
-      c.set("user", {
-        id: "test-user-id",
-        roles: ["admin"],
-        clinicIds: ["550e8400-e29b-41d4-a716-446655440000"],
-      });
-      return next();
+      c.set('user', {
+        id: 'test-user-id',
+        roles: ['admin',],
+        clinicIds: ['550e8400-e29b-41d4-a716-446655440000',],
+      },)
+      return next()
     },
   })),
-}));
+}),)
 
-vi.mock("../services/audit.service", () => ({
+vi.mock('../services/audit.service', () => ({
   auditService: {
-    logEvent: vi.fn().mockResolvedValue({}),
+    logEvent: vi.fn().mockResolvedValue({},),
   },
-}));
+}),)
 
 // Mock helper functions used in whatsapp.ts
-vi.mock("./whatsapp", async (importOriginal) => {
-  const actual = await importOriginal() as any;
+vi.mock('./whatsapp', async (importOriginal,) => {
+  const actual = await importOriginal() as any
   return {
     ...actual,
     sendWhatsAppMessage: vi.fn().mockResolvedValue({
-      messageId: "wamid.test123",
+      messageId: 'wamid.test123',
       timestamp: new Date().toISOString(),
-    }),
-    isFirstContact: vi.fn().mockResolvedValue(false),
-    getPreviousInteractionCount: vi.fn().mockResolvedValue(0),
-  };
-});
+    },),
+    isFirstContact: vi.fn().mockResolvedValue(false,),
+    getPreviousInteractionCount: vi.fn().mockResolvedValue(0,),
+  }
+},)
 
-describe("WhatsApp Integration Tests", () => {
-  const client = testClient(whatsappRoutes);
+describe('WhatsApp Integration Tests', () => {
+  const client = testClient(whatsappRoutes,)
 
   beforeEach(() => {
     // Reset mocks
-    vi.clearAllMocks();
+    vi.clearAllMocks()
 
     // Set up environment
-    Object.entries(mockEnv).forEach(([key, value]) => {
-      process.env[key] = value;
-    });
+    Object.entries(mockEnv,).forEach(([key, value,],) => {
+      process.env[key] = value
+    },)
 
     // Mock successful WhatsApp API response
     mockFetch.mockResolvedValue({
@@ -103,91 +103,91 @@ describe("WhatsApp Integration Tests", () => {
       status: 200,
       json: () =>
         Promise.resolve({
-          messages: [{ id: "wamid.test123" }],
-        }),
-    });
-  });
+          messages: [{ id: 'wamid.test123', },],
+        },),
+    },)
+  },)
 
   afterEach(() => {
-    vi.resetAllMocks();
-  });
+    vi.resetAllMocks()
+  },)
 
-  describe("Webhook Verification", () => {
-    it("should verify webhook with correct token", async () => {
+  describe('Webhook Verification', () => {
+    it('should verify webhook with correct token', async () => {
       const response = await client.webhook.$get({
         query: {
-          "hub.mode": "subscribe",
-          "hub.challenge": "test_challenge",
-          "hub.verify_token": "test_verify_token",
+          'hub.mode': 'subscribe',
+          'hub.challenge': 'test_challenge',
+          'hub.verify_token': 'test_verify_token',
         },
-      });
+      },)
 
-      expect(response.status).toBe(200);
-      const text = await response.text();
-      expect(text).toBe("test_challenge");
-    });
+      expect(response.status,).toBe(200,)
+      const text = await response.text()
+      expect(text,).toBe('test_challenge',)
+    })
 
-    it("should reject webhook with incorrect token", async () => {
+    it('should reject webhook with incorrect token', async () => {
       const response = await client.webhook.$get({
         query: {
-          "hub.mode": "subscribe",
-          "hub.challenge": "test_challenge",
-          "hub.verify_token": "wrong_token",
+          'hub.mode': 'subscribe',
+          'hub.challenge': 'test_challenge',
+          'hub.verify_token': 'wrong_token',
         },
-      });
+      },)
 
-      expect(response.status).toBe(403);
-    });
-  });
+      expect(response.status,).toBe(403,)
+    })
+  })
 
-  describe("Message Processing", () => {
+  describe('Message Processing', () => {
     const validWebhookPayload = {
-      object: "whatsapp_business_account",
+      object: 'whatsapp_business_account',
       entry: [
         {
-          id: "entry_id",
+          id: 'entry_id',
           changes: [
             {
               value: {
-                messaging_product: "whatsapp",
+                messaging_product: 'whatsapp',
                 metadata: {
-                  display_phone_number: "15551234567",
-                  phone_number_id: "test_phone_number_id",
+                  display_phone_number: '15551234567',
+                  phone_number_id: 'test_phone_number_id',
                 },
                 messages: [
                   {
-                    from: "5511999999999",
-                    id: "wamid.test123",
-                    timestamp: "1234567890",
+                    from: '5511999999999',
+                    id: 'wamid.test123',
+                    timestamp: '1234567890',
                     text: {
-                      body: "Olá, gostaria de agendar uma consulta",
+                      body: 'Olá, gostaria de agendar uma consulta',
                     },
-                    type: "text",
+                    type: 'text',
                   },
                 ],
               },
-              field: "messages",
+              field: 'messages',
             },
           ],
         },
       ],
-    };
+    }
 
-    it("should process incoming text message successfully", async () => {
+    it('should process incoming text message successfully', async () => {
       const response = await client.webhook.$post({
         json: validWebhookPayload,
-      });
+      },)
 
-      expect(response.status).toBe(200);
+      expect(response.status,).toBe(200,)
 
-      const result = await response.json();
-      expect(result).toEqual({
-        status: "success",
-        message: "Webhook processed successfully",
-      });
-    });
+      const result = await response.json()
+      expect(result,).toEqual({
+        status: 'success',
+        message: 'Webhook processed successfully',
+      },)
+    })
 
-    it("should handle empty message content gracefully", async () => {
+    it('should handle empty message content gracefully', async () => {
       const emptyMessagePayload = {
         ...validWebhookPayload,
         entry: [
@@ -200,13 +200,13 @@ describe("WhatsApp Integration Tests", () => {
                   ...validWebhookPayload.entry[0].changes[0].value,
                   messages: [
                     {
-                      from: "5511999999999",
-                      id: "wamid.test123",
-                      timestamp: "1234567890",
+                      from: '5511999999999',
+                      id: 'wamid.test123',
+                      timestamp: '1234567890',
                       text: {
-                        body: "",
+                        body: '',
                       },
-                      type: "text",
+                      type: 'text',
                     },
                   ],
                 },
@@ -214,84 +214,84 @@ describe("WhatsApp Integration Tests", () => {
             ],
           },
         ],
-      };
+      }
 
       const response = await client.webhook.$post({
         json: emptyMessagePayload,
-      });
+      },)
 
-      expect(response.status).toBe(200);
-    });
-  });
+      expect(response.status,).toBe(200,)
+    })
+  })
 
-  describe("Health Check", () => {
-    it("should return healthy status when properly configured", async () => {
-      const response = await client.health.$get();
+  describe('Health Check', () => {
+    it('should return healthy status when properly configured', async () => {
+      const response = await client.health.$get()
 
-      expect(response.status).toBe(200);
+      expect(response.status,).toBe(200,)
 
-      const result = await response.json();
-      expect(result).toMatchObject({
-        status: "healthy",
+      const result = await response.json()
+      expect(result,).toMatchObject({
+        status: 'healthy',
         configuration: {
-          phoneNumberId: "test_phone_number_id",
+          phoneNumberId: 'test_phone_number_id',
           webhookConfigured: true,
         },
-      });
-    });
+      },)
+    })
 
-    it("should return unhealthy status when missing environment variables", async () => {
+    it('should return unhealthy status when missing environment variables', async () => {
       // Remove required env var
-      delete process.env.WHATSAPP_ACCESS_TOKEN;
+      delete process.env.WHATSAPP_ACCESS_TOKEN
 
-      const response = await client.health.$get();
+      const response = await client.health.$get()
 
-      expect(response.status).toBe(500);
+      expect(response.status,).toBe(500,)
 
-      const result = await response.json();
-      expect(result).toMatchObject({
-        status: "unhealthy",
-        error: "Missing required environment variables",
-        missing: ["WHATSAPP_ACCESS_TOKEN"],
-      });
-    });
-  });
+      const result = await response.json()
+      expect(result,).toMatchObject({
+        status: 'unhealthy',
+        error: 'Missing required environment variables',
+        missing: ['WHATSAPP_ACCESS_TOKEN',],
+      },)
+    })
+  })
 
-  describe("Send Message", () => {
+  describe('Send Message', () => {
     const validSendPayload = {
-      to: "+5511999999999",
-      message: "Sua consulta foi agendada para amanhã às 14h",
-      type: "text" as const,
-      clinicId: "550e8400-e29b-41d4-a716-446655440000",
-      messageType: "appointment_reminder" as const,
-    };
+      to: '+5511999999999',
+      message: 'Sua consulta foi agendada para amanhã às 14h',
+      type: 'text' as const,
+      clinicId: '550e8400-e29b-41d4-a716-446655440000',
+      messageType: 'appointment_reminder' as const,
+    }
 
-    it("should send message successfully", async () => {
+    it('should send message successfully', async () => {
       const response = await client.send.$post({
         json: validSendPayload,
-      });
+      },)
 
-      expect(response.status).toBe(200);
+      expect(response.status,).toBe(200,)
 
-      const result = await response.json();
-      expect(result).toMatchObject({
-        status: "success",
-        messageId: expect.any(String),
-        timestamp: expect.any(String),
-      });
-    });
+      const result = await response.json()
+      expect(result,).toMatchObject({
+        status: 'success',
+        messageId: expect.any(String,),
+        timestamp: expect.any(String,),
+      },)
+    })
 
-    it("should validate phone number format", async () => {
+    it('should validate phone number format', async () => {
       const invalidPayload = {
         ...validSendPayload,
-        to: "invalid-phone",
-      };
+        to: 'invalid-phone',
+      }
 
       const response = await client.send.$post({
         json: invalidPayload,
-      });
+      },)
 
-      expect(response.status).toBe(400);
-    });
-  });
-});
+      expect(response.status,).toBe(400,)
+    })
+  })
+})

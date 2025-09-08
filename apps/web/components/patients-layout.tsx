@@ -6,13 +6,13 @@
  * and healthcare-specific patient tools.
  */
 
-"use client";
+'use client'
 
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { MainNavigation } from "@/components/main-navigation";
-import { Button } from "@/components/ui/button";
-import { Outlet } from "@tanstack/react-router";
-import { Filter, Plus, Search } from "lucide-react";
+import { Breadcrumbs, } from '@/components/breadcrumbs'
+import { MainNavigation, } from '@/components/main-navigation'
+import { Button, } from '@/components/ui/button'
+import { Outlet, } from '@tanstack/react-router'
+import { Filter, Plus, Search, } from 'lucide-react'
 
 export function PatientsLayout() {
   return (
@@ -53,5 +53,5 @@ export function PatientsLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

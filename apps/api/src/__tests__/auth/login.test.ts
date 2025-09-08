@@ -11,8 +11,8 @@
  */
 
 /* eslint-disable no-unused-vars */
-import type { Context } from "hono";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Context, } from 'hono'
+import { afterEach, beforeEach, describe, expect, it, vi, } from 'vitest'
 
 // Mock the Hono app and auth routes
 // Mock authentication service
@@ -22,7 +22,7 @@ const mockAuthService = {
   refreshToken: vi.fn(),
   validateToken: vi.fn(),
   validateHealthcareProfessional: vi.fn(),
-};
+}
 
 // Mock database client
 const mockPrisma = {
@@ -40,259 +40,259 @@ const mockPrisma = {
   auditLog: {
     create: vi.fn(),
   },
-};
+}
 
 // Mock JWT utilities
 const mockJWT = {
   sign: vi.fn(),
   verify: vi.fn(),
   decode: vi.fn(),
-};
+}
 
-describe("authentication API Endpoints - NeonPro Healthcare", () => {
+describe('authentication API Endpoints - NeonPro Healthcare', () => {
   // Test data
   const mockUser = {
-    id: "user-123",
-    email: "doctor@neonpro.com.br",
-    name: "Dr. Maria Silva",
-    role: "DOCTOR",
-    tenantId: "clinic-abc",
+    id: 'user-123',
+    email: 'doctor@neonpro.com.br',
+    name: 'Dr. Maria Silva',
+    role: 'DOCTOR',
+    tenantId: 'clinic-abc',
     isEmailVerified: true,
-    professionalLicense: "CRM-SP-123456",
+    professionalLicense: 'CRM-SP-123456',
     isActive: true,
     lgpdConsent: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  }
 
   const mockTokens = {
-    accessToken: "mock-access-token",
-    refreshToken: "mock-refresh-token",
+    accessToken: 'mock-access-token',
+    refreshToken: 'mock-refresh-token',
     expiresAt: Date.now() + 3_600_000,
-  };
+  }
 
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  },)
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
-  describe("pOST /auth/login - Healthcare Professional Login", () => {
-    it("should authenticate doctor with valid credentials", async () => {
+    vi.restoreAllMocks()
+  },)
+  describe('pOST /auth/login - Healthcare Professional Login', () => {
+    it('should authenticate doctor with valid credentials', async () => {
       // Mock successful database lookup
-      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.user.findUnique.mockResolvedValue(mockUser,)
       mockAuthService.login.mockResolvedValue({
         success: true,
         user: mockUser,
         tokens: mockTokens,
-      });
+      },)
 
       // Mock JWT generation
-      mockJWT.sign.mockReturnValue(mockTokens.accessToken);
+      mockJWT.sign.mockReturnValue(mockTokens.accessToken,)
 
       // Mock request context
       const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "doctor@neonpro.com.br",
-            password: "SecurePass123!",
-            tenantId: "clinic-abc",
-          }),
+            email: 'doctor@neonpro.com.br',
+            password: 'SecurePass123!',
+            tenantId: 'clinic-abc',
+          },),
         },
         json: vi.fn(),
         status: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
       // Simulate login endpoint
-      const _loginHandler = async (c: Context) => {
-        const { email, password, tenantId } = await c.req.json();
+      const _loginHandler = async (c: Context,) => {
+        const { email, password, tenantId, } = await c.req.json()
 
         // Validate healthcare professional
         const user = await mockPrisma.user.findUnique({
-          where: { email, tenantId, isActive: true },
-        });
+          where: { email, tenantId, isActive: true, },
+        },)
 
         if (!user) {
-          return c.json({ error: "Invalid credentials" }, 401);
+          return c.json({ error: 'Invalid credentials', }, 401,)
         }
 
         // Generate tokens
-        const tokens = await mockAuthService.login(email, password);
+        const tokens = await mockAuthService.login(email, password,)
 
         // Create audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: "LOGIN",
+            action: 'LOGIN',
             userId: user.id,
             tenantId: user.tenantId,
-            metadata: { ip: "127.0.0.1", userAgent: "test" },
+            metadata: { ip: '127.0.0.1', userAgent: 'test', },
             timestamp: new Date(),
           },
-        });
+        },)
 
         return c.json({
           success: true,
-          data: { user, tokens },
-          message: "Login realizado com sucesso",
-        });
-      };
-      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+          data: { user, tokens, },
+          message: 'Login realizado com sucesso',
+        },)
+      }
+      expect(mockPrisma.user.findUnique,).toHaveBeenCalledWith({
         where: {
-          email: "doctor@neonpro.com.br",
-          tenantId: "clinic-abc",
+          email: 'doctor@neonpro.com.br',
+          tenantId: 'clinic-abc',
           isActive: true,
         },
-      });
-      expect(mockPrisma.auditLog.create).toHaveBeenCalled();
-    });
+      },)
+      expect(mockPrisma.auditLog.create,).toHaveBeenCalled()
+    })
 
-    it("should reject login with invalid credentials", async () => {
+    it('should reject login with invalid credentials', async () => {
       // Mock user not found
-      mockPrisma.user.findUnique.mockResolvedValue();
+      mockPrisma.user.findUnique.mockResolvedValue()
 
       const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "invalid@example.com",
-            password: "wrongpassword",
-            tenantId: "clinic-abc",
-          }),
+            email: 'invalid@example.com',
+            password: 'wrongpassword',
+            tenantId: 'clinic-abc',
+          },),
         },
         json: vi.fn(),
         status: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
-      const _loginHandler = async (c: Context) => {
-        const { email, tenantId } = await c.req.json();
+      const _loginHandler = async (c: Context,) => {
+        const { email, tenantId, } = await c.req.json()
 
         const user = await mockPrisma.user.findUnique({
-          where: { email, tenantId, isActive: true },
-        });
+          where: { email, tenantId, isActive: true, },
+        },)
 
         if (!user) {
           // Log failed attempt
           await mockPrisma.auditLog.create({
             data: {
-              action: "LOGIN_FAILED",
-              metadata: { email, reason: "USER_NOT_FOUND" },
+              action: 'LOGIN_FAILED',
+              metadata: { email, reason: 'USER_NOT_FOUND', },
               timestamp: new Date(),
             },
-          });
+          },)
 
           return c.json(
             {
               success: false,
-              error: "Credenciais inválidas",
+              error: 'Credenciais inválidas',
             },
             401,
-          );
+          )
         }
 
-        return c.json({ success: true });
-      };
+        return c.json({ success: true, },)
+      }
 
-      await loginHandler(mockContext);
+      await loginHandler(mockContext,)
 
-      expect(mockPrisma.user.findUnique).toHaveBeenCalled();
-      expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
+      expect(mockPrisma.user.findUnique,).toHaveBeenCalled()
+      expect(mockPrisma.auditLog.create,).toHaveBeenCalledWith({
         data: {
-          action: "LOGIN_FAILED",
-          metadata: { email: "invalid@example.com", reason: "USER_NOT_FOUND" },
-          timestamp: expect.any(Date),
+          action: 'LOGIN_FAILED',
+          metadata: { email: 'invalid@example.com', reason: 'USER_NOT_FOUND', },
+          timestamp: expect.any(Date,),
         },
-      });
-    });
+      },)
+    })
 
-    it("should validate healthcare professional license", async () => {
+    it('should validate healthcare professional license', async () => {
       const userWithoutLicense = {
         ...mockUser,
         professionalLicense: undefined,
-      };
+      }
 
-      mockPrisma.user.findUnique.mockResolvedValue(userWithoutLicense);
+      mockPrisma.user.findUnique.mockResolvedValue(userWithoutLicense,)
       mockAuthService.validateHealthcareProfessional.mockResolvedValue({
         isValid: false,
-        reason: "NO_PROFESSIONAL_LICENSE",
-      });
+        reason: 'NO_PROFESSIONAL_LICENSE',
+      },)
 
       const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "doctor@neonpro.com.br",
-            password: "password",
-            tenantId: "clinic-abc",
-          }),
+            email: 'doctor@neonpro.com.br',
+            password: 'password',
+            tenantId: 'clinic-abc',
+          },),
         },
         json: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
-      const _loginHandler = async (c: Context) => {
-        const { email, password: _password, tenantId } = await c.req.json();
+      const _loginHandler = async (c: Context,) => {
+        const { email, password: _password, tenantId, } = await c.req.json()
 
         const user = await mockPrisma.user.findUnique({
-          where: { email, tenantId, isActive: true },
-        });
+          where: { email, tenantId, isActive: true, },
+        },)
 
-        if (user && user.role === "DOCTOR") {
-          const validation = await mockAuthService.validateHealthcareProfessional(user);
+        if (user && user.role === 'DOCTOR') {
+          const validation = await mockAuthService.validateHealthcareProfessional(user,)
           if (!validation.isValid) {
             return c.json(
               {
                 success: false,
-                error: "Licença profissional requerida para médicos",
+                error: 'Licença profissional requerida para médicos',
               },
               403,
-            );
+            )
           }
         }
 
-        return c.json({ success: true });
-      };
+        return c.json({ success: true, },)
+      }
 
-      await loginHandler(mockContext);
+      await loginHandler(mockContext,)
 
       expect(
         mockAuthService.validateHealthcareProfessional,
-      ).toHaveBeenCalledWith(userWithoutLicense);
-    });
-  });
-  describe("pOST /auth/refresh - Token Refresh", () => {
-    it("should refresh valid access token", async () => {
-      const mockRefreshToken = "valid-refresh-token";
+      ).toHaveBeenCalledWith(userWithoutLicense,)
+    })
+  })
+  describe('pOST /auth/refresh - Token Refresh', () => {
+    it('should refresh valid access token', async () => {
+      const mockRefreshToken = 'valid-refresh-token'
       const newTokens = {
-        accessToken: "new-access-token",
-        refreshToken: "new-refresh-token",
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
         expiresAt: Date.now() + 3_600_000,
-      };
+      }
 
       mockJWT.verify.mockReturnValue({
-        userId: "user-123",
-        tenantId: "clinic-abc",
-      });
+        userId: 'user-123',
+        tenantId: 'clinic-abc',
+      },)
       mockPrisma.session.findUnique.mockResolvedValue({
-        id: "session-123",
-        userId: "user-123",
+        id: 'session-123',
+        userId: 'user-123',
         refreshToken: mockRefreshToken,
-        expiresAt: new Date(Date.now() + 86_400_000), // 24h
+        expiresAt: new Date(Date.now() + 86_400_000,), // 24h
         isActive: true,
-      });
+      },)
       mockAuthService.refreshToken.mockResolvedValue({
         success: true,
         tokens: newTokens,
-      });
+      },)
 
       const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: mockRefreshToken,
-          }),
+          },),
         },
         json: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
-      const refreshHandler = async (c: Context) => {
-        const { refreshToken } = await c.req.json();
+      const refreshHandler = async (c: Context,) => {
+        const { refreshToken, } = await c.req.json()
 
         // Verify refresh token
         // Find active session
@@ -300,159 +300,159 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           where: {
             refreshToken,
             isActive: true,
-            expiresAt: { gt: new Date() },
+            expiresAt: { gt: new Date(), },
           },
-        });
+        },)
 
         if (!session) {
-          return c.json({ error: "Invalid refresh token" }, 401);
+          return c.json({ error: 'Invalid refresh token', }, 401,)
         }
 
         // Generate new tokens
-        const newTokens = await mockAuthService.refreshToken(refreshToken);
+        const newTokens = await mockAuthService.refreshToken(refreshToken,)
 
         // Update session
         await mockPrisma.session.update({
-          where: { id: session.id },
+          where: { id: session.id, },
           data: {
             refreshToken: newTokens.tokens.refreshToken,
-            expiresAt: new Date(newTokens.tokens.expiresAt),
+            expiresAt: new Date(newTokens.tokens.expiresAt,),
           },
-        });
+        },)
 
         return c.json({
           success: true,
-          data: { tokens: newTokens.tokens },
-        });
-      };
+          data: { tokens: newTokens.tokens, },
+        },)
+      }
 
-      await refreshHandler(mockContext);
+      await refreshHandler(mockContext,)
 
-      expect(mockJWT.verify).toHaveBeenCalledWith(mockRefreshToken);
-      expect(mockPrisma.session.findUnique).toHaveBeenCalled();
-      expect(mockAuthService.refreshToken).toHaveBeenCalledWith(
+      expect(mockJWT.verify,).toHaveBeenCalledWith(mockRefreshToken,)
+      expect(mockPrisma.session.findUnique,).toHaveBeenCalled()
+      expect(mockAuthService.refreshToken,).toHaveBeenCalledWith(
         mockRefreshToken,
-      );
-    });
+      )
+    })
 
-    it("should reject expired refresh token", async () => {
-      const expiredRefreshToken = "expired-refresh-token";
+    it('should reject expired refresh token', async () => {
+      const expiredRefreshToken = 'expired-refresh-token'
 
-      mockPrisma.session.findUnique.mockResolvedValue(); // Expired session not found
+      mockPrisma.session.findUnique.mockResolvedValue() // Expired session not found
 
       const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: expiredRefreshToken,
-          }),
+          },),
         },
         json: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
-      const refreshHandler = async (c: Context) => {
-        const { refreshToken } = await c.req.json();
+      const refreshHandler = async (c: Context,) => {
+        const { refreshToken, } = await c.req.json()
 
         const session = await mockPrisma.session.findUnique({
           where: {
             refreshToken,
             isActive: true,
-            expiresAt: { gt: new Date() },
+            expiresAt: { gt: new Date(), },
           },
-        });
+        },)
 
         if (!session) {
           await mockPrisma.auditLog.create({
             data: {
-              action: "TOKEN_REFRESH_FAILED",
-              metadata: { reason: "EXPIRED_TOKEN" },
+              action: 'TOKEN_REFRESH_FAILED',
+              metadata: { reason: 'EXPIRED_TOKEN', },
               timestamp: new Date(),
             },
-          });
+          },)
 
           return c.json(
             {
               success: false,
-              error: "Token de refresh expirado",
+              error: 'Token de refresh expirado',
             },
             401,
-          );
+          )
         }
 
-        return c.json({ success: true });
-      };
+        return c.json({ success: true, },)
+      }
 
-      await refreshHandler(mockContext);
+      await refreshHandler(mockContext,)
 
-      expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
+      expect(mockPrisma.auditLog.create,).toHaveBeenCalledWith({
         data: {
-          action: "TOKEN_REFRESH_FAILED",
-          metadata: { reason: "EXPIRED_TOKEN" },
-          timestamp: expect.any(Date),
+          action: 'TOKEN_REFRESH_FAILED',
+          metadata: { reason: 'EXPIRED_TOKEN', },
+          timestamp: expect.any(Date,),
         },
-      });
-    });
-  });
+      },)
+    })
+  })
 
-  describe("pOST /auth/logout - Session Termination", () => {
-    it("should successfully logout user and invalidate session", async () => {
-      const accessToken = "valid-access-token";
+  describe('pOST /auth/logout - Session Termination', () => {
+    it('should successfully logout user and invalidate session', async () => {
+      const accessToken = 'valid-access-token'
 
       mockJWT.verify.mockReturnValue({
-        userId: "user-123",
-        sessionId: "session-123",
-      });
-      mockPrisma.session.delete.mockResolvedValue({ id: "session-123" });
+        userId: 'user-123',
+        sessionId: 'session-123',
+      },)
+      mockPrisma.session.delete.mockResolvedValue({ id: 'session-123', },)
 
       const _mockContext = {
         req: {
-          header: vi.fn().mockReturnValue(`Bearer ${accessToken}`),
+          header: vi.fn().mockReturnValue(`Bearer ${accessToken}`,),
         },
         json: vi.fn(),
-      } as unknown as Context;
+      } as unknown as Context
 
-      const logoutHandler = async (c: Context) => {
-        const authHeader = c.req.header("Authorization");
-        const token = authHeader?.replace("Bearer ", "");
+      const logoutHandler = async (c: Context,) => {
+        const authHeader = c.req.header('Authorization',)
+        const token = authHeader?.replace('Bearer ', '',)
 
         if (!token) {
-          return c.json({ error: "No token provided" }, 401);
+          return c.json({ error: 'No token provided', }, 401,)
         }
 
-        const decoded = mockJWT.verify(token);
+        const decoded = mockJWT.verify(token,)
 
         // Invalidate session
         await mockPrisma.session.delete({
-          where: { id: decoded.sessionId },
-        });
+          where: { id: decoded.sessionId, },
+        },)
 
         // Create logout audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: "LOGOUT",
+            action: 'LOGOUT',
             userId: decoded.userId,
             timestamp: new Date(),
           },
-        });
+        },)
 
         return c.json({
           success: true,
-          message: "Logout realizado com sucesso",
-        });
-      };
+          message: 'Logout realizado com sucesso',
+        },)
+      }
 
-      await logoutHandler(mockContext);
+      await logoutHandler(mockContext,)
 
-      expect(mockJWT.verify).toHaveBeenCalledWith(accessToken);
-      expect(mockPrisma.session.delete).toHaveBeenCalledWith({
-        where: { id: "session-123" },
-      });
-      expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
+      expect(mockJWT.verify,).toHaveBeenCalledWith(accessToken,)
+      expect(mockPrisma.session.delete,).toHaveBeenCalledWith({
+        where: { id: 'session-123', },
+      },)
+      expect(mockPrisma.auditLog.create,).toHaveBeenCalledWith({
         data: {
-          action: "LOGOUT",
-          userId: "user-123",
-          timestamp: expect.any(Date),
+          action: 'LOGOUT',
+          userId: 'user-123',
+          timestamp: expect.any(Date,),
         },
-      });
-    });
-  });
-});
+      },)
+    })
+  })
+})

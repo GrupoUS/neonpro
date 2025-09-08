@@ -13,58 +13,58 @@ import {
   EnterpriseAnalyticsService,
   EnterpriseCacheService,
   EnterpriseSecurityService,
-} from "../enterprise";
-import { EnterpriseHealthCheckService } from "../health";
-import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
+} from '../enterprise'
+import { EnterpriseHealthCheckService, } from '../health'
+import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext, } from '../types'
 
 // Minimal Audit interface used internally
 interface MinimalAudit {
-  logEvent(event: AuditEvent): Promise<void>;
-  getAuditStats(): Promise<unknown>;
-  shutdown(): Promise<void>;
+  logEvent(event: AuditEvent,): Promise<void>
+  getAuditStats(): Promise<unknown>
+  shutdown(): Promise<void>
 }
 
 // Core service interfaces
 interface ICacheService {
-  get<T>(key: string): Promise<T | null>;
-  set<T>(key: string, value: T, ttl?: number): Promise<void>;
-  delete(key: string): Promise<void>;
-  invalidate(pattern: string): Promise<void>;
-  getStats(): Promise<unknown>;
+  get<T,>(key: string,): Promise<T | null>
+  set<T,>(key: string, value: T, ttl?: number,): Promise<void>
+  delete(key: string,): Promise<void>
+  invalidate(pattern: string,): Promise<void>
+  getStats(): Promise<unknown>
 }
 
 interface IAnalyticsService {
-  track(event: string, properties: unknown): Promise<void>;
-  recordPerformance(operation: string, duration: number): Promise<void>;
-  recordError(error: Error, context: unknown): Promise<void>;
-  getMetrics(period: string): Promise<PerformanceMetrics>;
+  track(event: string, properties: unknown,): Promise<void>
+  recordPerformance(operation: string, duration: number,): Promise<void>
+  recordError(error: Error, context: unknown,): Promise<void>
+  getMetrics(period: string,): Promise<PerformanceMetrics>
 }
 
 interface ISecurityService {
-  validateAccess(operation: string, context: ServiceContext): Promise<boolean>;
-  auditOperation(event: AuditEvent): Promise<void>;
-  encryptSensitiveData<T>(data: T): Promise<string>;
-  decryptSensitiveData<T>(encrypted: string): Promise<T>;
+  validateAccess(operation: string, context: ServiceContext,): Promise<boolean>
+  auditOperation(event: AuditEvent,): Promise<void>
+  encryptSensitiveData<T,>(data: T,): Promise<string>
+  decryptSensitiveData<T,>(encrypted: string,): Promise<T>
   checkRateLimit(
     identifier: string,
     limit: number,
     windowMs: number,
-  ): Promise<boolean>;
-  clearRateLimit(identifier: string): Promise<void>;
+  ): Promise<boolean>
+  clearRateLimit(identifier: string,): Promise<void>
 }
 
 // Base service configuration
 export interface ServiceConfig {
-  serviceName: string;
-  version: string;
-  enableCache: boolean;
-  enableAnalytics: boolean;
-  enableSecurity: boolean;
+  serviceName: string
+  version: string
+  enableCache: boolean
+  enableAnalytics: boolean
+  enableSecurity: boolean
   cacheOptions?: {
-    defaultTTL: number;
-    maxItems: number;
-  };
-  securityOptions?: SecurityConfig;
+    defaultTTL: number
+    maxItems: number
+  }
+  securityOptions?: SecurityConfig
 }
 
 /**
@@ -74,25 +74,25 @@ export interface ServiceConfig {
  * Fornece funcionalidades enterprise integradas.
  */
 export abstract class EnhancedServiceBase {
-  protected readonly config: ServiceConfig;
-  protected readonly cache: ICacheService;
-  protected readonly analytics: IAnalyticsService;
-  protected readonly security: ISecurityService;
-  protected readonly audit: MinimalAudit; // UnifiedAuditService;
-  protected readonly healthCheck: EnterpriseHealthCheckService;
+  protected readonly config: ServiceConfig
+  protected readonly cache: ICacheService
+  protected readonly analytics: IAnalyticsService
+  protected readonly security: ISecurityService
+  protected readonly audit: MinimalAudit // UnifiedAuditService;
+  protected readonly healthCheck: EnterpriseHealthCheckService
 
   // Internal services
-  private readonly startTime: number;
-  private readonly operationMetrics: Map<string, number[]> = new Map();
+  private readonly startTime: number
+  private readonly operationMetrics: Map<string, number[]> = new Map()
 
   // Enterprise service instances
-  private readonly enterpriseCache: EnterpriseCacheService;
-  private readonly enterpriseAnalytics: EnterpriseAnalyticsService;
-  private readonly enterpriseSecurity: EnterpriseSecurityService;
+  private readonly enterpriseCache: EnterpriseCacheService
+  private readonly enterpriseAnalytics: EnterpriseAnalyticsService
+  private readonly enterpriseSecurity: EnterpriseSecurityService
 
-  constructor(config: ServiceConfig) {
-    this.config = config;
-    this.startTime = Date.now();
+  constructor(config: ServiceConfig,) {
+    this.config = config
+    this.startTime = Date.now()
 
     // Initialize enterprise services
     this.enterpriseCache = new EnterpriseCacheService({
@@ -104,10 +104,10 @@ export abstract class EnhancedServiceBase {
         },
         redis: {
           enabled: true,
-          host: process.env.REDIS_HOST || "localhost",
-          port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
+          host: process.env.REDIS_HOST || 'localhost',
+          port: Number.parseInt(process.env.REDIS_PORT || '6379', 10,),
           ttl: 1_800_000, // 30 minutes
-          keyPrefix: "neonpro:",
+          keyPrefix: 'neonpro:',
         },
         database: {
           enabled: true,
@@ -123,63 +123,63 @@ export abstract class EnhancedServiceBase {
         autoExpiry: true,
         auditAccess: true,
       },
-    });
+    },)
 
-    this.enterpriseAnalytics = new EnterpriseAnalyticsService();
+    this.enterpriseAnalytics = new EnterpriseAnalyticsService()
 
     this.enterpriseSecurity = new EnterpriseSecurityService({
       enableEncryption: true,
       enableAuditLogging: true,
       enableAccessControl: true,
-      encryptionAlgorithm: "aes-256-gcm",
+      encryptionAlgorithm: 'aes-256-gcm',
       auditRetentionDays: 2555, // 7 years for healthcare compliance
       requireSecureChannel: true,
-      allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
-    });
+      allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',',) || ['*',],
+    },)
 
     // Lightweight in-memory audit stub for tests/runtime without external deps
     this.audit = {
-      async logEvent(_event: AuditEvent): Promise<void> {
+      async logEvent(_event: AuditEvent,): Promise<void> {
         // no-op
       },
       async getAuditStats(): Promise<Record<string, unknown>> {
-        return { events: 0 };
+        return { events: 0, }
       },
       async shutdown(): Promise<void> {
         // no-op
       },
-    } as MinimalAudit; // replace with UnifiedAuditService in production environments
-    this.healthCheck = new EnterpriseHealthCheckService();
+    } as MinimalAudit // replace with UnifiedAuditService in production environments
+    this.healthCheck = new EnterpriseHealthCheckService()
 
     // Initialize integrated service interfaces
-    this.cache = this.initializeCacheService();
-    this.analytics = this.initializeAnalyticsService();
-    this.security = this.initializeSecurityService();
+    this.cache = this.initializeCacheService()
+    this.analytics = this.initializeAnalyticsService()
+    this.security = this.initializeSecurityService()
 
     // Register service startup
-    this.auditServiceLifecycle("SERVICE_STARTED", {
+    this.auditServiceLifecycle('SERVICE_STARTED', {
       service: config.serviceName,
       version: config.version,
       timestamp: new Date().toISOString(),
-    });
+    },)
   }
 
   /**
    * Execute operation with full enterprise features
    */
-  protected async executeOperation<T>(
+  protected async executeOperation<T,>(
     operationName: string,
     operation: () => Promise<T>,
     context?: ServiceContext,
     options?: {
-      cacheKey?: string;
-      cacheTTL?: number;
-      requiresAuth?: boolean;
-      sensitiveData?: boolean;
+      cacheKey?: string
+      cacheTTL?: number
+      requiresAuth?: boolean
+      sensitiveData?: boolean
     },
   ): Promise<T> {
-    const startTime = performance.now();
-    const operationId = `${this.config.serviceName}.${operationName}.${Date.now()}`;
+    const startTime = performance.now()
+    const operationId = `${this.config.serviceName}.${operationName}.${Date.now()}`
 
     try {
       // 1. Security validation
@@ -187,54 +187,54 @@ export abstract class EnhancedServiceBase {
         const hasAccess = await this.security.validateAccess(
           operationName,
           context,
-        );
+        )
         if (!hasAccess) {
-          throw new Error(`Access denied for operation: ${operationName}`);
+          throw new Error(`Access denied for operation: ${operationName}`,)
         }
       }
 
       // 2. Cache lookup (if enabled)
       if (options?.cacheKey && this.config.enableCache) {
-        const cached = await this.cache.get<T>(options.cacheKey);
+        const cached = await this.cache.get<T>(options.cacheKey,)
         if (cached) {
           await this.recordOperationMetrics(
             operationName,
             performance.now() - startTime,
             true,
-          );
-          await this.auditOperation("CACHE_HIT", {
+          )
+          await this.auditOperation('CACHE_HIT', {
             operationName,
             cacheKey: options.cacheKey,
-          });
-          return cached;
+          },)
+          return cached
         }
       }
 
       // 3. Execute operation with retry logic
-      const result = await this.executeWithRetry(operation, operationName);
+      const result = await this.executeWithRetry(operation, operationName,)
 
       // 4. Cache result (if configured)
       if (options?.cacheKey && this.config.enableCache && result) {
-        await this.cache.set(options.cacheKey, result, options?.cacheTTL);
+        await this.cache.set(options.cacheKey, result, options?.cacheTTL,)
       }
 
       // 5. Record metrics and audit
-      const duration = performance.now() - startTime;
-      await this.recordOperationMetrics(operationName, duration, false);
+      const duration = performance.now() - startTime
+      await this.recordOperationMetrics(operationName, duration, false,)
 
       if (options?.sensitiveData) {
-        await this.auditOperation("SENSITIVE_DATA_ACCESS", {
+        await this.auditOperation('SENSITIVE_DATA_ACCESS', {
           operationName,
           operationId,
           duration,
           patientId: context?.patientId,
           userId: context?.userId,
-        });
+        },)
       }
 
-      return result;
+      return result
     } catch (error) {
-      const duration = performance.now() - startTime;
+      const duration = performance.now() - startTime
 
       // Record error metrics
       await this.analytics.recordError(error as Error, {
@@ -242,84 +242,84 @@ export abstract class EnhancedServiceBase {
         operationId,
         duration,
         context,
-      });
+      },)
 
       // Security audit for failed operations
-      await this.auditOperation("OPERATION_FAILED", {
+      await this.auditOperation('OPERATION_FAILED', {
         operationName,
         operationId,
         error: (error as Error).message,
         context,
-      });
+      },)
 
-      throw error;
+      throw error
     }
   }
 
   /**
    * Execute with retry and fallback logic
    */
-  private async executeWithRetry<T>(
+  private async executeWithRetry<T,>(
     operation: () => Promise<T>,
     operationName: string,
     maxRetries = 3,
   ): Promise<T> {
-    let lastError: Error | undefined;
+    let lastError: Error | undefined
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        return await operation();
+        return await operation()
       } catch (error) {
-        lastError = error as Error;
+        lastError = error as Error
 
         if (attempt === maxRetries) {
-          break;
+          break
         }
 
         // Exponential backoff
-        const delay = 2 ** (attempt - 1) * 1000;
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        const delay = 2 ** (attempt - 1) * 1000
+        await new Promise((resolve,) => setTimeout(resolve, delay,))
 
-        await this.auditOperation("OPERATION_RETRY", {
+        await this.auditOperation('OPERATION_RETRY', {
           operationName,
           attempt,
           error: lastError.message,
-        });
+        },)
       }
     }
 
-    if (lastError) throw lastError;
-    throw new Error("Operation failed after retries");
+    if (lastError) throw lastError
+    throw new Error('Operation failed after retries',)
   }
 
   /**
    * Healthcare-specific caching with LGPD compliance
    */
-  protected async cacheHealthcareData<T>(
+  protected async cacheHealthcareData<T,>(
     key: string,
     data: T,
     patientConsent: boolean,
     ttl?: number,
   ): Promise<void> {
     if (!patientConsent) {
-      await this.auditOperation("CACHE_DENIED_NO_CONSENT", {
+      await this.auditOperation('CACHE_DENIED_NO_CONSENT', {
         key,
         patientConsent,
-      });
-      return;
+      },)
+      return
     }
 
     await this.cache.set(
       key,
       data,
       ttl || this.config.cacheOptions?.defaultTTL,
-    );
+    )
 
-    await this.auditOperation("HEALTHCARE_DATA_CACHED", {
-      key: key.replace(/patient_\d+/, "patient_***"), // Mask patient ID in logs
+    await this.auditOperation('HEALTHCARE_DATA_CACHED', {
+      key: key.replace(/patient_\d+/, 'patient_***',), // Mask patient ID in logs
       ttl,
       patientConsent,
-    });
+    },)
   }
 
   /**
@@ -331,22 +331,22 @@ export abstract class EnhancedServiceBase {
     fromCache: boolean,
   ): Promise<void> {
     if (!this.config.enableAnalytics) {
-      return;
+      return
     }
 
     // Store in memory for aggregation
-    if (!this.operationMetrics.has(operation)) {
-      this.operationMetrics.set(operation, []);
+    if (!this.operationMetrics.has(operation,)) {
+      this.operationMetrics.set(operation, [],)
     }
-    this.operationMetrics.get(operation)?.push(duration);
+    this.operationMetrics.get(operation,)?.push(duration,)
 
     // Record in analytics service
-    await this.analytics.recordPerformance(operation, duration);
+    await this.analytics.recordPerformance(operation, duration,)
     await this.analytics.track(`${this.config.serviceName}.${operation}`, {
       duration,
       fromCache,
       timestamp: Date.now(),
-    });
+    },)
   }
 
   /**
@@ -363,9 +363,9 @@ export abstract class EnhancedServiceBase {
       timestamp: new Date().toISOString(),
       details,
       version: this.config.version,
-    };
+    }
 
-    await this.audit.logEvent(auditEvent);
+    await this.audit.logEvent(auditEvent,)
   }
 
   /**
@@ -375,29 +375,29 @@ export abstract class EnhancedServiceBase {
     event: string,
     details: unknown,
   ): Promise<void> {
-    await this.auditOperation("SERVICE_LIFECYCLE", {
+    await this.auditOperation('SERVICE_LIFECYCLE', {
       event,
       ...(details as Record<string, unknown>),
-    });
+    },)
   }
 
   /**
    * Get service health metrics
    */
   public async getHealthMetrics(): Promise<unknown> {
-    const uptime = Date.now() - this.startTime;
-    const cacheStats = await this.cache.getStats();
-    const auditStats = await this.audit.getAuditStats();
+    const uptime = Date.now() - this.startTime
+    const cacheStats = await this.cache.getStats()
+    const auditStats = await this.audit.getAuditStats()
 
     // Calculate operation averages
-    const operationStats: Record<string, unknown> = {};
-    for (const [operation, durations] of this.operationMetrics.entries()) {
+    const operationStats: Record<string, unknown> = {}
+    for (const [operation, durations,] of this.operationMetrics.entries()) {
       operationStats[operation] = {
         count: durations.length,
-        avgDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
-        maxDuration: Math.max(...durations),
-        minDuration: Math.min(...durations),
-      };
+        avgDuration: durations.reduce((a, b,) => a + b, 0,) / durations.length,
+        maxDuration: Math.max(...durations,),
+        minDuration: Math.min(...durations,),
+      }
     }
 
     // Get enterprise service health
@@ -407,7 +407,7 @@ export abstract class EnhancedServiceBase {
       security: await this.enterpriseSecurity.getHealthMetrics(),
       audit: auditStats,
       overall: await this.healthCheck.getSystemStatus(),
-    };
+    }
 
     return {
       service: this.config.serviceName,
@@ -417,51 +417,51 @@ export abstract class EnhancedServiceBase {
       cacheStats,
       enterpriseHealth,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   /**
    * Initialize cache service
    */
   private initializeCacheService(): ICacheService {
-    const enterpriseCache = this.enterpriseCache;
+    const enterpriseCache = this.enterpriseCache
 
     return {
-      async get<T>(key: string): Promise<T | null> {
-        return enterpriseCache.get<T>(key);
+      async get<T,>(key: string,): Promise<T | null> {
+        return enterpriseCache.get<T>(key,)
       },
-      async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-        await enterpriseCache.set(key, value, ttl);
+      async set<T,>(key: string, value: T, ttl?: number,): Promise<void> {
+        await enterpriseCache.set(key, value, ttl,)
       },
-      async delete(key: string): Promise<void> {
-        await enterpriseCache.delete(key);
+      async delete(key: string,): Promise<void> {
+        await enterpriseCache.delete(key,)
       },
-      async invalidate(pattern: string): Promise<void> {
+      async invalidate(pattern: string,): Promise<void> {
         // Use invalidatePatientData for now as a pattern-based invalidation
-        if (pattern.includes("patient_")) {
-          const patientId = pattern.replace("patient_", "");
-          await enterpriseCache.invalidatePatientData(patientId);
+        if (pattern.includes('patient_',)) {
+          const patientId = pattern.replace('patient_', '',)
+          await enterpriseCache.invalidatePatientData(patientId,)
         }
       },
       async getStats(): Promise<unknown> {
-        return enterpriseCache.getStats();
+        return enterpriseCache.getStats()
       },
-    };
+    }
   }
 
   /**
    * Initialize analytics service
    */
   private initializeAnalyticsService(): IAnalyticsService {
-    const enterpriseAnalytics = this.enterpriseAnalytics;
-    const config = this.config;
+    const enterpriseAnalytics = this.enterpriseAnalytics
+    const config = this.config
 
     return {
-      async track(event: string, properties: unknown): Promise<void> {
+      async track(event: string, properties: unknown,): Promise<void> {
         await enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: event,
-          category: "service",
+          category: 'service',
           action: event,
           properties: properties as Record<string, unknown>,
           timestamp: Date.now(),
@@ -469,7 +469,7 @@ export abstract class EnhancedServiceBase {
             source: config.serviceName,
             version: config.version,
           },
-        });
+        },)
       },
       async recordPerformance(
         operation: string,
@@ -478,15 +478,15 @@ export abstract class EnhancedServiceBase {
         await enterpriseAnalytics.recordMetric({
           name: `${operation}_duration`,
           value: duration,
-          tags: { operation, service: config.serviceName },
-        });
+          tags: { operation, service: config.serviceName, },
+        },)
       },
-      async recordError(error: Error, context: unknown): Promise<void> {
+      async recordError(error: Error, context: unknown,): Promise<void> {
         await enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
-          type: "error",
-          category: "service",
-          action: "error",
+          type: 'error',
+          category: 'service',
+          action: 'error',
           properties: {
             error: error.message,
             stack: error.stack,
@@ -497,19 +497,19 @@ export abstract class EnhancedServiceBase {
             source: config.serviceName,
             version: config.version,
           },
-        });
+        },)
       },
-      async getMetrics(_period: string): Promise<PerformanceMetrics> {
-        return enterpriseAnalytics.getHealthMetrics();
+      async getMetrics(_period: string,): Promise<PerformanceMetrics> {
+        return enterpriseAnalytics.getHealthMetrics()
       },
-    };
+    }
   }
 
   /**
    * Initialize security service
    */
   private initializeSecurityService(): ISecurityService {
-    const { enterpriseSecurity, audit } = this;
+    const { enterpriseSecurity, audit, } = this
 
     return {
       async validateAccess(
@@ -517,23 +517,23 @@ export abstract class EnhancedServiceBase {
         context: ServiceContext,
       ): Promise<boolean> {
         if (!context.userId) {
-          return false;
+          return false
         }
 
         return enterpriseSecurity.validatePermission(
           context.userId,
           operation,
-        );
+        )
       },
-      async auditOperation(event: AuditEvent): Promise<void> {
-        await audit.logEvent(event);
+      async auditOperation(event: AuditEvent,): Promise<void> {
+        await audit.logEvent(event,)
       },
-      async encryptSensitiveData<T>(data: T): Promise<string> {
-        return enterpriseSecurity.encryptData(JSON.stringify(data));
+      async encryptSensitiveData<T,>(data: T,): Promise<string> {
+        return enterpriseSecurity.encryptData(JSON.stringify(data,),)
       },
-      async decryptSensitiveData<T>(encrypted: string): Promise<T> {
-        const decrypted = await enterpriseSecurity.decryptData(encrypted);
-        return JSON.parse(decrypted);
+      async decryptSensitiveData<T,>(encrypted: string,): Promise<T> {
+        const decrypted = await enterpriseSecurity.decryptData(encrypted,)
+        return JSON.parse(decrypted,)
       },
       async checkRateLimit(
         identifier: string,
@@ -544,72 +544,72 @@ export abstract class EnhancedServiceBase {
           identifier,
           limit,
           windowMs,
-        );
+        )
       },
-      async clearRateLimit(identifier: string): Promise<void> {
-        return enterpriseSecurity.clearRateLimit(identifier);
+      async clearRateLimit(identifier: string,): Promise<void> {
+        return enterpriseSecurity.clearRateLimit(identifier,)
       },
-    };
+    }
   }
 
   /**
    * Abstract methods that services must implement
    */
-  abstract getServiceName(): string;
-  abstract getServiceVersion(): string;
+  abstract getServiceName(): string
+  abstract getServiceVersion(): string
 
   /**
    * Optional: Service-specific initialization
    */
-  protected async initialize?(): Promise<void>;
+  protected async initialize?(): Promise<void>
 
   /**
    * Optional: Service-specific cleanup
    */
-  protected async cleanup?(): Promise<void>;
+  protected async cleanup?(): Promise<void>
 
   /**
    * Enterprise service health validation
    */
   public async validateEnterpriseServices(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
-    services: Record<string, unknown>;
-    errors: string[];
+    status: 'healthy' | 'degraded' | 'unhealthy'
+    services: Record<string, unknown>
+    errors: string[]
   }> {
-    const results: Record<string, unknown> = {};
-    const errors: string[] = [];
+    const results: Record<string, unknown> = {}
+    const errors: string[] = []
 
     try {
       // Test cache service
-      const cacheHealth = await this.enterpriseCache.getHealthMetrics();
-      results.cache = { status: "healthy", ...cacheHealth };
+      const cacheHealth = await this.enterpriseCache.getHealthMetrics()
+      results.cache = { status: 'healthy', ...cacheHealth, }
     } catch (error) {
-      results.cache = { status: "unhealthy", error: (error as Error).message };
-      errors.push(`Cache service error: ${(error as Error).message}`);
+      results.cache = { status: 'unhealthy', error: (error as Error).message, }
+      errors.push(`Cache service error: ${(error as Error).message}`,)
     }
 
     try {
       // Test analytics service
-      const analyticsHealth = await this.enterpriseAnalytics.getHealthMetrics();
-      results.analytics = { status: "healthy", ...analyticsHealth };
+      const analyticsHealth = await this.enterpriseAnalytics.getHealthMetrics()
+      results.analytics = { status: 'healthy', ...analyticsHealth, }
     } catch (error) {
       results.analytics = {
-        status: "unhealthy",
+        status: 'unhealthy',
         error: (error as Error).message,
-      };
-      errors.push(`Analytics service error: ${(error as Error).message}`);
+      }
+      errors.push(`Analytics service error: ${(error as Error).message}`,)
     }
 
     try {
       // Test security service
-      const securityHealth = await this.enterpriseSecurity.getHealthMetrics();
-      results.security = { ...securityHealth, status: "healthy" };
+      const securityHealth = await this.enterpriseSecurity.getHealthMetrics()
+      results.security = { ...securityHealth, status: 'healthy', }
     } catch (error) {
       results.security = {
-        status: "unhealthy",
+        status: 'unhealthy',
         error: (error as Error).message,
-      };
-      errors.push(`Security service error: ${(error as Error).message}`);
+      }
+      errors.push(`Security service error: ${(error as Error).message}`,)
     }
 
     try {
@@ -617,20 +617,20 @@ export abstract class EnhancedServiceBase {
       const auditStats = (await this.audit.getAuditStats()) as Record<
         string,
         unknown
-      >;
-      results.audit = { status: "healthy", ...auditStats };
+      >
+      results.audit = { status: 'healthy', ...auditStats, }
     } catch (error) {
-      results.audit = { status: "unhealthy", error: (error as Error).message };
-      errors.push(`Audit service error: ${(error as Error).message}`);
+      results.audit = { status: 'unhealthy', error: (error as Error).message, }
+      errors.push(`Audit service error: ${(error as Error).message}`,)
     }
 
     const status = errors.length === 0
-      ? "healthy"
+      ? 'healthy'
       : errors.length <= 2
-      ? "degraded"
-      : "unhealthy";
+      ? 'degraded'
+      : 'unhealthy'
 
-    return { status, services: results, errors };
+    return { status, services: results, errors, }
   }
 
   /**
@@ -638,14 +638,14 @@ export abstract class EnhancedServiceBase {
    */
   public async shutdown(): Promise<void> {
     // Log shutdown start
-    await this.auditServiceLifecycle("SERVICE_SHUTDOWN_STARTED", {
+    await this.auditServiceLifecycle('SERVICE_SHUTDOWN_STARTED', {
       service: this.config.serviceName,
       timestamp: new Date().toISOString(),
-    });
+    },)
 
     // Service-specific cleanup
     if (this.cleanup) {
-      await this.cleanup();
+      await this.cleanup()
     }
 
     // Shutdown enterprise services
@@ -655,13 +655,13 @@ export abstract class EnhancedServiceBase {
       this.enterpriseSecurity.shutdown(),
       this.audit.shutdown(),
       this.healthCheck.stopHealthMonitoring(),
-    ]);
+    ],)
 
     // Log shutdown complete
-    await this.auditServiceLifecycle("SERVICE_SHUTDOWN_COMPLETED", {
+    await this.auditServiceLifecycle('SERVICE_SHUTDOWN_COMPLETED', {
       service: this.config.serviceName,
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,
-    });
+    },)
   }
 }

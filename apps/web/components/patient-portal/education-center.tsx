@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { cn } from "@neonpro/utils";
+import { cn, } from '@neonpro/utils'
 import {
   AlertTriangle,
   Award,
@@ -26,8 +26,8 @@ import {
   Star,
   Volume2,
   VolumeX,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 import {
   Badge,
   Button,
@@ -42,108 +42,108 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../ui";
+} from '../ui'
 
 // Content types
 interface BaseContent {
-  id: number;
-  title: string;
-  description?: string;
-  category?: string;
-  priority?: "high" | "medium" | "low";
-  completed?: boolean;
-  featured?: boolean;
-  tags?: string[];
-  views?: number;
-  rating?: number;
+  id: number
+  title: string
+  description?: string
+  category?: string
+  priority?: 'high' | 'medium' | 'low'
+  completed?: boolean
+  featured?: boolean
+  tags?: string[]
+  views?: number
+  rating?: number
 }
 
 export type VideoContent = BaseContent & {
-  type: "video";
-  duration: string;
-  thumbnail?: string;
-};
+  type: 'video'
+  duration: string
+  thumbnail?: string
+}
 
 export type ArticleContent = BaseContent & {
-  type: "article";
-  readTime: string;
-};
+  type: 'article'
+  readTime: string
+}
 
 export type QuizContent = BaseContent & {
-  type: "quiz";
-  duration?: string;
-  readTime?: string;
-};
+  type: 'quiz'
+  duration?: string
+  readTime?: string
+}
 
 export type InteractiveContent = BaseContent & {
-  type: "interactive";
-  duration?: string;
-};
+  type: 'interactive'
+  duration?: string
+}
 
 export type ContentItem =
   | VideoContent
   | ArticleContent
   | QuizContent
-  | InteractiveContent;
+  | InteractiveContent
 
 // Mock data for educational content
 const mockEducationalContent = {
   myTreatments: [
     {
       id: 1,
-      treatment: "Botox",
+      treatment: 'Botox',
       content: [
         {
           id: 1,
-          title: "Cuidados Pós-Botox: Primeiras 24 Horas",
-          type: "video",
-          duration: "3:45",
-          category: "Cuidados Pós-Procedimento",
-          priority: "high",
+          title: 'Cuidados Pós-Botox: Primeiras 24 Horas',
+          type: 'video',
+          duration: '3:45',
+          category: 'Cuidados Pós-Procedimento',
+          priority: 'high',
           completed: false,
-          description: "Instruções essenciais para as primeiras 24h após aplicação de Botox",
-          thumbnail: "/botox-care-thumb.jpg",
-          tags: ["botox", "pós-procedimento", "cuidados"],
+          description: 'Instruções essenciais para as primeiras 24h após aplicação de Botox',
+          thumbnail: '/botox-care-thumb.jpg',
+          tags: ['botox', 'pós-procedimento', 'cuidados',],
         },
         {
           id: 2,
-          title: "O que Esperar nos Primeiros 7 Dias",
-          type: "article",
-          readTime: "5 min",
-          category: "Evolução",
-          priority: "medium",
+          title: 'O que Esperar nos Primeiros 7 Dias',
+          type: 'article',
+          readTime: '5 min',
+          category: 'Evolução',
+          priority: 'medium',
           completed: true,
-          description: "Timeline detalhado da evolução do Botox na primeira semana",
-          tags: ["botox", "evolução", "resultados"],
+          description: 'Timeline detalhado da evolução do Botox na primeira semana',
+          tags: ['botox', 'evolução', 'resultados',],
         },
         {
           id: 3,
-          title: "Exercícios Faciais Recomendados",
-          type: "interactive",
-          duration: "10 min",
-          category: "Exercícios",
-          priority: "medium",
+          title: 'Exercícios Faciais Recomendados',
+          type: 'interactive',
+          duration: '10 min',
+          category: 'Exercícios',
+          priority: 'medium',
           completed: false,
-          description: "Exercícios específicos para otimizar os resultados do Botox",
-          tags: ["botox", "exercícios", "resultados"],
+          description: 'Exercícios específicos para otimizar os resultados do Botox',
+          tags: ['botox', 'exercícios', 'resultados',],
         },
       ],
     },
     {
       id: 2,
-      treatment: "Preenchimento",
+      treatment: 'Preenchimento',
       content: [
         {
           id: 4,
-          title: "Massagem Pós-Preenchimento",
-          type: "video",
-          duration: "4:20",
-          category: "Cuidados Pós-Procedimento",
-          priority: "high",
+          title: 'Massagem Pós-Preenchimento',
+          type: 'video',
+          duration: '4:20',
+          category: 'Cuidados Pós-Procedimento',
+          priority: 'high',
           completed: false,
-          description: "Técnicas corretas de massagem após preenchimento",
-          thumbnail: "/massage-thumb.jpg",
-          tags: ["preenchimento", "massagem", "cuidados"],
+          description: 'Técnicas corretas de massagem após preenchimento',
+          thumbnail: '/massage-thumb.jpg',
+          tags: ['preenchimento', 'massagem', 'cuidados',],
         },
       ],
     },
@@ -151,193 +151,193 @@ const mockEducationalContent = {
   generalContent: [
     {
       id: 5,
-      title: "Proteção Solar em Tratamentos Estéticos",
-      type: "article",
-      readTime: "7 min",
-      category: "Cuidados Diários",
-      priority: "high",
+      title: 'Proteção Solar em Tratamentos Estéticos',
+      type: 'article',
+      readTime: '7 min',
+      category: 'Cuidados Diários',
+      priority: 'high',
       rating: 4.8,
       views: 1234,
-      description: "Como e por que usar protetor solar durante tratamentos estéticos",
-      tags: ["proteção solar", "cuidados", "prevenção"],
+      description: 'Como e por que usar protetor solar durante tratamentos estéticos',
+      tags: ['proteção solar', 'cuidados', 'prevenção',],
       featured: true,
     },
     {
       id: 6,
-      title: "Hidratação da Pele: Guia Completo",
-      type: "video",
-      duration: "8:15",
-      category: "Skincare",
-      priority: "medium",
+      title: 'Hidratação da Pele: Guia Completo',
+      type: 'video',
+      duration: '8:15',
+      category: 'Skincare',
+      priority: 'medium',
       rating: 4.9,
       views: 2156,
-      description: "Tudo sobre hidratação da pele em tratamentos estéticos",
-      tags: ["hidratação", "skincare", "cuidados"],
+      description: 'Tudo sobre hidratação da pele em tratamentos estéticos',
+      tags: ['hidratação', 'skincare', 'cuidados',],
       featured: true,
     },
     {
       id: 7,
-      title: "Quiz: Conhece Sua Pele?",
-      type: "quiz",
-      duration: "5 min",
-      category: "Avaliação",
-      priority: "low",
+      title: 'Quiz: Conhece Sua Pele?',
+      type: 'quiz',
+      duration: '5 min',
+      category: 'Avaliação',
+      priority: 'low',
       rating: 4.6,
       views: 987,
-      description: "Teste seus conhecimentos sobre cuidados com a pele",
-      tags: ["quiz", "conhecimento", "pele"],
+      description: 'Teste seus conhecimentos sobre cuidados com a pele',
+      tags: ['quiz', 'conhecimento', 'pele',],
     },
   ],
   categories: [
-    { id: "care", name: "Cuidados", icon: Heart, count: 15 },
-    { id: "protection", name: "Proteção", icon: Shield, count: 8 },
-    { id: "skincare", name: "Skincare", icon: Droplets, count: 12 },
-    { id: "safety", name: "Segurança", icon: AlertTriangle, count: 6 },
-    { id: "results", name: "Resultados", icon: Star, count: 10 },
+    { id: 'care', name: 'Cuidados', icon: Heart, count: 15, },
+    { id: 'protection', name: 'Proteção', icon: Shield, count: 8, },
+    { id: 'skincare', name: 'Skincare', icon: Droplets, count: 12, },
+    { id: 'safety', name: 'Segurança', icon: AlertTriangle, count: 6, },
+    { id: 'results', name: 'Resultados', icon: Star, count: 10, },
   ],
   emergencyContacts: [
     {
       id: 1,
-      title: "Emergência 24h",
-      phone: "+55 (21) 99999-9999",
-      description: "Para emergências médicas relacionadas aos tratamentos",
-      available: "24/7",
+      title: 'Emergência 24h',
+      phone: '+55 (21) 99999-9999',
+      description: 'Para emergências médicas relacionadas aos tratamentos',
+      available: '24/7',
     },
     {
       id: 2,
-      title: "Suporte Clínica",
-      phone: "+55 (21) 3333-3333",
-      description: "Dúvidas gerais e agendamentos",
-      available: "Seg-Sex 8h-18h",
+      title: 'Suporte Clínica',
+      phone: '+55 (21) 3333-3333',
+      description: 'Dúvidas gerais e agendamentos',
+      available: 'Seg-Sex 8h-18h',
     },
   ],
-};
+}
 
 const mockCareInstructions = {
-  currentPhase: "Pós-Botox (Dia 2)",
-  timeRemaining: "22 horas",
+  currentPhase: 'Pós-Botox (Dia 2)',
+  timeRemaining: '22 horas',
   instructions: [
     {
       id: 1,
-      title: "Evitar exercícios intensos",
-      description: "Não faça atividades físicas que aumentem muito a frequência cardíaca",
-      status: "active",
-      timeframe: "Até 24h pós-procedimento",
+      title: 'Evitar exercícios intensos',
+      description: 'Não faça atividades físicas que aumentem muito a frequência cardíaca',
+      status: 'active',
+      timeframe: 'Até 24h pós-procedimento',
       completed: false,
-      priority: "high",
+      priority: 'high',
     },
     {
       id: 2,
-      title: "Não deitar de bruços",
-      description: "Mantenha a cabeça elevada por pelo menos 4 horas",
-      status: "completed",
-      timeframe: "Primeiras 4 horas",
+      title: 'Não deitar de bruços',
+      description: 'Mantenha a cabeça elevada por pelo menos 4 horas',
+      status: 'completed',
+      timeframe: 'Primeiras 4 horas',
       completed: true,
-      priority: "high",
+      priority: 'high',
     },
     {
       id: 3,
-      title: "Aplicar protetor solar",
-      description: "Use FPS 60+ sempre que sair de casa",
-      status: "active",
-      timeframe: "Diariamente",
+      title: 'Aplicar protetor solar',
+      description: 'Use FPS 60+ sempre que sair de casa',
+      status: 'active',
+      timeframe: 'Diariamente',
       completed: false,
-      priority: "medium",
+      priority: 'medium',
     },
     {
       id: 4,
-      title: "Hidratação abundante",
-      description: "Beba pelo menos 2L de água por dia",
-      status: "active",
-      timeframe: "Contínuo",
+      title: 'Hidratação abundante',
+      description: 'Beba pelo menos 2L de água por dia',
+      status: 'active',
+      timeframe: 'Contínuo',
       completed: false,
-      priority: "medium",
+      priority: 'medium',
     },
   ],
-};
+}
 
 function ContentCard({
   content,
   onView,
 }: {
-  content: ContentItem;
-  onView: (content: ContentItem) => void;
-}) {
-  const getTypeIcon = (type: string) => {
+  content: ContentItem
+  onView: (content: ContentItem,) => void
+},) {
+  const getTypeIcon = (type: string,) => {
     switch (type) {
-      case "video": {
-        return <Play className="h-4 w-4" />;
+      case 'video': {
+        return <Play className="h-4 w-4" />
       }
-      case "article": {
-        return <BookOpen className="h-4 w-4" />;
+      case 'article': {
+        return <BookOpen className="h-4 w-4" />
       }
-      case "quiz": {
-        return <Award className="h-4 w-4" />;
+      case 'quiz': {
+        return <Award className="h-4 w-4" />
       }
-      case "interactive": {
-        return <MessageCircle className="h-4 w-4" />;
+      case 'interactive': {
+        return <MessageCircle className="h-4 w-4" />
       }
       default: {
-        return <BookOpen className="h-4 w-4" />;
+        return <BookOpen className="h-4 w-4" />
       }
     }
-  };
+  }
 
-  const getTypeColor = (type: string) => {
+  const getTypeColor = (type: string,) => {
     switch (type) {
-      case "video": {
-        return "text-red-600 bg-red-100";
+      case 'video': {
+        return 'text-red-600 bg-red-100'
       }
-      case "article": {
-        return "text-blue-600 bg-blue-100";
+      case 'article': {
+        return 'text-blue-600 bg-blue-100'
       }
-      case "quiz": {
-        return "text-purple-600 bg-purple-100";
+      case 'quiz': {
+        return 'text-purple-600 bg-purple-100'
       }
-      case "interactive": {
-        return "text-green-600 bg-green-100";
+      case 'interactive': {
+        return 'text-green-600 bg-green-100'
       }
       default: {
-        return "text-gray-600 bg-gray-100";
+        return 'text-gray-600 bg-gray-100'
       }
     }
-  };
+  }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority: string,) => {
     switch (priority) {
-      case "high": {
-        return "border-l-red-500";
+      case 'high': {
+        return 'border-l-red-500'
       }
-      case "medium": {
-        return "border-l-yellow-500";
+      case 'medium': {
+        return 'border-l-yellow-500'
       }
-      case "low": {
-        return "border-l-green-500";
+      case 'low': {
+        return 'border-l-green-500'
       }
       default: {
-        return "border-l-gray-500";
+        return 'border-l-gray-500'
       }
     }
-  };
+  }
 
   return (
     <Card
       className={cn(
-        "cursor-pointer border-l-4 transition-all hover:shadow-md",
-        getPriorityColor(content.priority),
+        'cursor-pointer border-l-4 transition-all hover:shadow-md',
+        getPriorityColor(content.priority,),
       )}
     >
-      <CardContent className="p-4" onClick={() => onView(content)}>
+      <CardContent className="p-4" onClick={() => onView(content,)}>
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
             <div className="mb-2 flex items-center space-x-2">
               <Badge
                 className={cn(
-                  "flex items-center space-x-1",
-                  getTypeColor(content.type),
+                  'flex items-center space-x-1',
+                  getTypeColor(content.type,),
                 )}
               >
-                {getTypeIcon(content.type)}
+                {getTypeIcon(content.type,)}
                 <span className="capitalize">{content.type}</span>
               </Badge>
               {content.completed && <CheckCircle className="h-4 w-4 text-green-600" />}
@@ -383,7 +383,7 @@ function ContentCard({
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1">
-          {content.tags?.slice(0, 3).map((tag: string) => (
+          {content.tags?.slice(0, 3,).map((tag: string,) => (
             <Badge className="py-0 text-xs" key={tag} variant="outline">
               {tag}
             </Badge>
@@ -391,19 +391,19 @@ function ContentCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function CareInstructionsWidget() {
   const activeInstructions = mockCareInstructions.instructions.filter(
-    (i) => i.status === "active",
-  );
+    (i,) => i.status === 'active',
+  )
   const completedInstructions = mockCareInstructions.instructions.filter(
-    (i) => i.completed,
-  );
+    (i,) => i.completed,
+  )
   const progressPercentage =
     (completedInstructions.length / mockCareInstructions.instructions.length)
-    * 100;
+    * 100
 
   return (
     <Card className="border-l-4 border-l-pink-500">
@@ -421,21 +421,21 @@ function CareInstructionsWidget() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Progresso dos Cuidados</span>
-            <span>{Math.round(progressPercentage)}%</span>
+            <span>{Math.round(progressPercentage,)}%</span>
           </div>
           <Progress className="h-2" value={progressPercentage} />
         </div>
 
         {/* Active Instructions */}
         <div className="space-y-3">
-          {activeInstructions.map((instruction) => (
+          {activeInstructions.map((instruction,) => (
             <div className="flex items-start space-x-3" key={instruction.id}>
               <div
                 className={cn(
-                  "mt-0.5 h-2 w-2 rounded-full",
-                  instruction.priority === "high"
-                    ? "bg-red-500"
-                    : "bg-yellow-500",
+                  'mt-0.5 h-2 w-2 rounded-full',
+                  instruction.priority === 'high'
+                    ? 'bg-red-500'
+                    : 'bg-yellow-500',
                 )}
               />
               <div className="flex-1">
@@ -468,20 +468,20 @@ function CareInstructionsWidget() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function VideoPlayer({ content }: { content: VideoContent; }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, _setCurrentTime] = useState(45); // seconds
-  const [duration] = useState(225); // 3:45 in seconds
+function VideoPlayer({ content, }: { content: VideoContent },) {
+  const [isPlaying, setIsPlaying,] = useState(false,)
+  const [isMuted, setIsMuted,] = useState(false,)
+  const [currentTime, _setCurrentTime,] = useState(45,) // seconds
+  const [duration,] = useState(225,) // 3:45 in seconds
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
+  const formatTime = (seconds: number,) => {
+    const mins = Math.floor(seconds / 60,)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0',)}`
+  }
 
   return (
     <Card>
@@ -503,7 +503,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
               <div className="h-1 w-full rounded-full bg-white/20">
                 <div
                   className="h-1 rounded-full bg-pink-500 transition-all"
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                  style={{ width: `${(currentTime / duration) * 100}%`, }}
                 />
               </div>
 
@@ -512,7 +512,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
                 <div className="flex items-center space-x-3">
                   <Button
                     className="text-white hover:bg-white/20"
-                    onClick={() => setIsPlaying(!isPlaying)}
+                    onClick={() => setIsPlaying(!isPlaying,)}
                     size="sm"
                     variant="ghost"
                   >
@@ -521,7 +521,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
 
                   <Button
                     className="text-white hover:bg-white/20"
-                    onClick={() => setIsMuted(!isMuted)}
+                    onClick={() => setIsMuted(!isMuted,)}
                     size="sm"
                     variant="ghost"
                   >
@@ -529,7 +529,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
                   </Button>
 
                   <span className="text-sm">
-                    {formatTime(currentTime)} / {formatTime(duration)}
+                    {formatTime(currentTime,)} / {formatTime(duration,)}
                   </span>
                 </div>
 
@@ -587,7 +587,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            {content.tags?.map((tag: string) => (
+            {content.tags?.map((tag: string,) => (
               <Badge key={tag} variant="outline">
                 {tag}
               </Badge>
@@ -596,7 +596,7 @@ function VideoPlayer({ content }: { content: VideoContent; }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function EmergencyContacts() {
@@ -612,7 +612,7 @@ function EmergencyContacts() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {mockEducationalContent.emergencyContacts.map((contact) => (
+        {mockEducationalContent.emergencyContacts.map((contact,) => (
           <div
             className="flex items-center justify-between rounded-lg bg-red-50 p-3 dark:bg-red-950/20"
             key={contact.id}
@@ -634,30 +634,30 @@ function EmergencyContacts() {
         ))}
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export function EducationCenter() {
-  const [activeTab, setActiveTab] = useState("my-treatments");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [/* _selectedCategory */, setSelectedCategory] = useState("all");
-  const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null);
+  const [activeTab, setActiveTab,] = useState('my-treatments',)
+  const [searchTerm, setSearchTerm,] = useState('',)
+  const [/* _selectedCategory */, setSelectedCategory,] = useState('all',)
+  const [selectedContent, setSelectedContent,] = useState<ContentItem | null>(null,)
 
-  const handleViewContent = (content: ContentItem) => {
-    setSelectedContent(content);
-  };
+  const handleViewContent = (content: ContentItem,) => {
+    setSelectedContent(content,)
+  }
 
   if (selectedContent) {
     return (
       <div className="space-y-6">
         {/* Back Button */}
-        <Button onClick={() => setSelectedContent(null)} variant="outline">
+        <Button onClick={() => setSelectedContent(null,)} variant="outline">
           <ChevronRight className="h-4 w-4 rotate-180" />
           Voltar
         </Button>
 
         {/* Content Viewer */}
-        {selectedContent.type === "video"
+        {selectedContent.type === 'video'
           ? <VideoPlayer content={selectedContent as VideoContent} />
           : (
             <Card>
@@ -673,7 +673,7 @@ export function EducationCenter() {
             </Card>
           )}
       </div>
-    );
+    )
   }
 
   return (
@@ -706,7 +706,7 @@ export function EducationCenter() {
         <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
         <Input
           className="pl-10"
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e,) => setSearchTerm(e.target.value,)}
           placeholder="Buscar por tratamento, cuidado ou palavra-chave..."
           value={searchTerm}
         />
@@ -727,7 +727,7 @@ export function EducationCenter() {
         </TabsList>
 
         <TabsContent className="space-y-6" value="my-treatments">
-          {mockEducationalContent.myTreatments.map((treatment) => (
+          {mockEducationalContent.myTreatments.map((treatment,) => (
             <div className="space-y-4" key={treatment.id}>
               <div className="flex items-center space-x-2">
                 <Heart className="h-5 w-5 text-pink-600" />
@@ -738,11 +738,11 @@ export function EducationCenter() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {treatment.content.map((content) => (
+                {treatment.content.map((content,) => (
                   <ContentCard
                     content={content}
                     key={content.id}
-                    onView={() => handleViewContent(content)}
+                    onView={() => handleViewContent(content,)}
                   />
                 ))}
               </div>
@@ -752,11 +752,11 @@ export function EducationCenter() {
 
         <TabsContent className="space-y-6" value="general">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {mockEducationalContent.generalContent.map((content) => (
+            {mockEducationalContent.generalContent.map((content,) => (
               <ContentCard
                 content={content}
                 key={content.id}
-                onView={() => handleViewContent(content)}
+                onView={() => handleViewContent(content,)}
               />
             ))}
           </div>
@@ -764,11 +764,11 @@ export function EducationCenter() {
 
         <TabsContent className="space-y-6" value="categories">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {mockEducationalContent.categories.map((category) => (
+            {mockEducationalContent.categories.map((category,) => (
               <Card
                 className="cursor-pointer transition-shadow hover:shadow-md"
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => setSelectedCategory(category.id,)}
               >
                 <CardContent className="p-6 text-center">
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900/20">
@@ -785,5 +785,5 @@ export function EducationCenter() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import { useAIScheduling } from "@/hooks/use-ai-scheduling";
+import { useAIScheduling, } from '@/hooks/use-ai-scheduling'
 import type {
   Patient,
   SchedulingResult,
   Staff,
   TreatmentType,
-} from "@neonpro/core-services/scheduling";
-import type React from "react";
-import { useState } from "react";
-import { IntelligentScheduler } from "./intelligent-scheduler";
-import { SchedulingAnalyticsDashboard } from "./scheduling-analytics-dashboard";
+} from '@neonpro/core-services/scheduling'
+import type React from 'react'
+import { useState, } from 'react'
+import { IntelligentScheduler, } from './intelligent-scheduler'
+import { SchedulingAnalyticsDashboard, } from './scheduling-analytics-dashboard'
 
 interface AISchedulingDemoProps {
-  tenantId: string;
+  tenantId: string
 }
 
 /**
@@ -23,127 +23,127 @@ interface AISchedulingDemoProps {
  */
 export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
   tenantId,
-}) => {
-  const [activeTab, setActiveTab] = useState<
-    "schedule" | "analytics" | "optimization"
-  >("schedule");
-  const [timeRange, setTimeRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+},) => {
+  const [activeTab, setActiveTab,] = useState<
+    'schedule' | 'analytics' | 'optimization'
+  >('schedule',)
+  const [timeRange, setTimeRange,] = useState({
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,),
     end: new Date(),
-  });
+  },)
 
   // Mock data for demonstration
-  const [treatmentTypes] = useState<TreatmentType[]>([
+  const [treatmentTypes,] = useState<TreatmentType[]>([
     {
-      id: "treatment-1",
-      name: "Botox Treatment",
-      category: "botox",
+      id: 'treatment-1',
+      name: 'Botox Treatment',
+      category: 'botox',
       duration: 45,
       bufferTime: 15,
-      requiredEquipment: ["botox-kit", "injection-chair"],
-      staffSpecializations: ["botox-certified"],
+      requiredEquipment: ['botox-kit', 'injection-chair',],
+      staffSpecializations: ['botox-certified',],
       complexityLevel: 3,
       averageDuration: 42,
     },
     {
-      id: "treatment-2",
-      name: "Dermal Fillers",
-      category: "fillers",
+      id: 'treatment-2',
+      name: 'Dermal Fillers',
+      category: 'fillers',
       duration: 60,
       bufferTime: 20,
-      requiredEquipment: ["filler-kit", "injection-chair"],
-      staffSpecializations: ["filler-certified"],
+      requiredEquipment: ['filler-kit', 'injection-chair',],
+      staffSpecializations: ['filler-certified',],
       complexityLevel: 4,
       averageDuration: 58,
     },
     {
-      id: "treatment-3",
-      name: "Laser Hair Removal",
-      category: "laser",
+      id: 'treatment-3',
+      name: 'Laser Hair Removal',
+      category: 'laser',
       duration: 30,
       bufferTime: 10,
-      requiredEquipment: ["laser-machine"],
-      staffSpecializations: ["laser-certified"],
+      requiredEquipment: ['laser-machine',],
+      staffSpecializations: ['laser-certified',],
       complexityLevel: 2,
       averageDuration: 28,
     },
     {
-      id: "treatment-4",
-      name: "Facial Treatment",
-      category: "skincare",
+      id: 'treatment-4',
+      name: 'Facial Treatment',
+      category: 'skincare',
       duration: 90,
       bufferTime: 15,
-      requiredEquipment: ["facial-bed", "skincare-kit"],
-      staffSpecializations: ["esthetician"],
+      requiredEquipment: ['facial-bed', 'skincare-kit',],
+      staffSpecializations: ['esthetician',],
       complexityLevel: 2,
       averageDuration: 85,
     },
-  ]);
+  ],)
 
-  const [staff] = useState<Staff[]>([
+  const [staff,] = useState<Staff[]>([
     {
-      id: "staff-1",
-      name: "Dr. Maria Silva",
-      specializations: ["botox-certified", "filler-certified"],
+      id: 'staff-1',
+      name: 'Dr. Maria Silva',
+      specializations: ['botox-certified', 'filler-certified',],
       workingHours: {
-        "1": { start: "08:00", end: "17:00", breaks: [] },
-        "2": { start: "08:00", end: "17:00", breaks: [] },
-        "3": { start: "08:00", end: "17:00", breaks: [] },
-        "4": { start: "08:00", end: "17:00", breaks: [] },
-        "5": { start: "08:00", end: "16:00", breaks: [] },
+        '1': { start: '08:00', end: '17:00', breaks: [], },
+        '2': { start: '08:00', end: '17:00', breaks: [], },
+        '3': { start: '08:00', end: '17:00', breaks: [], },
+        '4': { start: '08:00', end: '17:00', breaks: [], },
+        '5': { start: '08:00', end: '16:00', breaks: [], },
       },
       skillLevel: 5,
       efficiency: 0.92,
       patientSatisfactionScore: 4.8,
     },
     {
-      id: "staff-2",
-      name: "Dr. João Santos",
-      specializations: ["laser-certified", "botox-certified"],
+      id: 'staff-2',
+      name: 'Dr. João Santos',
+      specializations: ['laser-certified', 'botox-certified',],
       workingHours: {
-        "1": { start: "09:00", end: "18:00", breaks: [] },
-        "2": { start: "09:00", end: "18:00", breaks: [] },
-        "3": { start: "09:00", end: "18:00", breaks: [] },
-        "4": { start: "09:00", end: "18:00", breaks: [] },
-        "5": { start: "09:00", end: "17:00", breaks: [] },
+        '1': { start: '09:00', end: '18:00', breaks: [], },
+        '2': { start: '09:00', end: '18:00', breaks: [], },
+        '3': { start: '09:00', end: '18:00', breaks: [], },
+        '4': { start: '09:00', end: '18:00', breaks: [], },
+        '5': { start: '09:00', end: '17:00', breaks: [], },
       },
       skillLevel: 4,
       efficiency: 0.88,
       patientSatisfactionScore: 4.6,
     },
     {
-      id: "staff-3",
-      name: "Ana Costa (Esthetician)",
-      specializations: ["esthetician", "skincare-specialist"],
+      id: 'staff-3',
+      name: 'Ana Costa (Esthetician)',
+      specializations: ['esthetician', 'skincare-specialist',],
       workingHours: {
-        "1": { start: "10:00", end: "19:00", breaks: [] },
-        "2": { start: "10:00", end: "19:00", breaks: [] },
-        "3": { start: "10:00", end: "19:00", breaks: [] },
-        "4": { start: "10:00", end: "19:00", breaks: [] },
-        "6": { start: "09:00", end: "15:00", breaks: [] },
+        '1': { start: '10:00', end: '19:00', breaks: [], },
+        '2': { start: '10:00', end: '19:00', breaks: [], },
+        '3': { start: '10:00', end: '19:00', breaks: [], },
+        '4': { start: '10:00', end: '19:00', breaks: [], },
+        '6': { start: '09:00', end: '15:00', breaks: [], },
       },
       skillLevel: 4,
       efficiency: 0.9,
       patientSatisfactionScore: 4.7,
     },
-  ]);
+  ],)
 
-  const [patients] = useState<Patient[]>([
+  const [patients,] = useState<Patient[]>([
     {
-      id: "patient-1",
-      name: "Carla Oliveira",
+      id: 'patient-1',
+      name: 'Carla Oliveira',
       preferences: {
-        preferredStaff: ["staff-1"],
+        preferredStaff: ['staff-1',],
         preferredTimeSlots: [
           {
-            start: new Date(2024, 0, 1, 14, 0),
-            end: new Date(2024, 0, 1, 17, 0),
+            start: new Date(2024, 0, 1, 14, 0,),
+            end: new Date(2024, 0, 1, 17, 0,),
           },
         ],
         treatmentSpacing: 14,
         reminderPreferences: [
-          { method: "sms", timing: 24 },
-          { method: "email", timing: 48 },
+          { method: 'sms', timing: 24, },
+          { method: 'email', timing: 48, },
         ],
       },
       history: [],
@@ -151,54 +151,54 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
       noShowProbability: 0.08,
     },
     {
-      id: "patient-2",
-      name: "Roberto Mendes",
+      id: 'patient-2',
+      name: 'Roberto Mendes',
       preferences: {
         preferredTimeSlots: [
           {
-            start: new Date(2024, 0, 1, 8, 0),
-            end: new Date(2024, 0, 1, 11, 0),
+            start: new Date(2024, 0, 1, 8, 0,),
+            end: new Date(2024, 0, 1, 11, 0,),
           },
         ],
         treatmentSpacing: 21,
-        reminderPreferences: [{ method: "email", timing: 24 }],
+        reminderPreferences: [{ method: 'email', timing: 24, },],
       },
       history: [],
       riskFactors: [],
       noShowProbability: 0.15,
     },
     {
-      id: "patient-3",
-      name: "Fernanda Lima",
+      id: 'patient-3',
+      name: 'Fernanda Lima',
       preferences: {
-        preferredStaff: ["staff-3"],
+        preferredStaff: ['staff-3',],
         preferredTimeSlots: [
           {
-            start: new Date(2024, 0, 1, 16, 0),
-            end: new Date(2024, 0, 1, 19, 0),
+            start: new Date(2024, 0, 1, 16, 0,),
+            end: new Date(2024, 0, 1, 19, 0,),
           },
         ],
         treatmentSpacing: 28,
         reminderPreferences: [
-          { method: "sms", timing: 4 },
-          { method: "push", timing: 1 },
+          { method: 'sms', timing: 4, },
+          { method: 'push', timing: 1, },
         ],
       },
       history: [],
       riskFactors: [],
       noShowProbability: 0.05,
     },
-  ]);
+  ],)
 
   // Use the AI scheduling hook
-  const { isLoading, optimizationScore, processingTime } = useAIScheduling({
+  const { isLoading, optimizationScore, processingTime, } = useAIScheduling({
     tenantId,
     autoOptimize: true,
     realtimeUpdates: true,
     analyticsEnabled: true,
-  });
+  },)
 
-  const handleAppointmentScheduled = (result: SchedulingResult) => {
+  const handleAppointmentScheduled = (result: SchedulingResult,) => {
     // Show success notification
     if (result.success) {
       // TODO: Replace with proper toast notification
@@ -206,16 +206,16 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
       //   `Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`,
       // );
       console.log(
-        `Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`,
-      );
+        `Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0,)}ms`,
+      )
     }
-  };
+  }
 
-  const handleError = (errorMessage: string) => {
+  const handleError = (errorMessage: string,) => {
     // TODO: Replace with proper toast notification
     // alert(`Scheduling error: ${errorMessage}`);
-    console.error(`Scheduling error: ${errorMessage}`);
-  };
+    console.error(`Scheduling error: ${errorMessage}`,)
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-6">
@@ -253,20 +253,20 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
       <div className="border-gray-200 border-b">
         <nav className="-mb-px flex space-x-8">
           {[
-            { id: "schedule", label: "AI Scheduling", icon: "🤖" },
-            { id: "analytics", label: "Analytics Dashboard", icon: "📊" },
-            { id: "optimization", label: "Real-time Optimization", icon: "⚡" },
-          ].map((tab) => (
+            { id: 'schedule', label: 'AI Scheduling', icon: '🤖', },
+            { id: 'analytics', label: 'Analytics Dashboard', icon: '📊', },
+            { id: 'optimization', label: 'Real-time Optimization', icon: '⚡', },
+          ].map((tab,) => (
             <button
               className={`border-b-2 px-1 py-2 font-medium text-sm ${
                 activeTab === tab.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
               }`}
               key={tab.id}
               onClick={() =>
                 setActiveTab(
-                  tab.id as "analytics" | "schedule" | "optimization",
+                  tab.id as 'analytics' | 'schedule' | 'optimization',
                 )}
             >
               <span className="mr-2">{tab.icon}</span>
@@ -278,7 +278,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
       {/* Tab Content */}
       <div className="min-h-[600px]">
-        {activeTab === "schedule" && (
+        {activeTab === 'schedule' && (
           <div className="space-y-6">
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
               <h3 className="mb-2 font-semibold text-blue-900 text-lg">
@@ -316,7 +316,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                       Processing Time:
                     </span>
                     <span className="ml-2 text-green-900">
-                      {processingTime.toFixed(0)}ms
+                      {processingTime.toFixed(0,)}ms
                     </span>
                   </div>
                   <div>
@@ -324,7 +324,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                       Optimization Score:
                     </span>
                     <span className="ml-2 text-green-900">
-                      {(optimizationScore * 100).toFixed(1)}%
+                      {(optimizationScore * 100).toFixed(1,)}%
                     </span>
                   </div>
                   <div>
@@ -332,7 +332,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                       System Status:
                     </span>
                     <span className="ml-2 text-green-900">
-                      {isLoading ? "Processing" : "Ready"}
+                      {isLoading ? 'Processing' : 'Ready'}
                     </span>
                   </div>
                   <div>
@@ -347,7 +347,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
           </div>
         )}
 
-        {activeTab === "analytics" && (
+        {activeTab === 'analytics' && (
           <div className="space-y-6">
             <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
               <h3 className="mb-2 font-semibold text-lg text-purple-900">
@@ -367,7 +367,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
           </div>
         )}
 
-        {activeTab === "optimization" && (
+        {activeTab === 'optimization' && (
           <div className="space-y-6">
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
               <h3 className="mb-2 font-semibold text-lg text-yellow-900">
@@ -409,7 +409,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                       Optimization Score
                     </span>
                     <span className="font-semibold text-blue-600 text-sm">
-                      {(optimizationScore * 100).toFixed(1)}%
+                      {(optimizationScore * 100).toFixed(1,)}%
                     </span>
                   </div>
 
@@ -419,8 +419,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                     </span>
                     <span className="font-semibold text-green-600 text-sm">
                       {processingTime > 0
-                        ? `${processingTime.toFixed(0)}ms`
-                        : "Ready"}
+                        ? `${processingTime.toFixed(0,)}ms`
+                        : 'Ready'}
                     </span>
                   </div>
                 </div>
@@ -502,10 +502,10 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
       {/* System Status Footer */}
       <div className="rounded-lg bg-gray-50 p-4 text-center text-gray-600 text-sm">
-        AI Scheduling System v2.0 - Production Ready | Processing Time: {processingTime.toFixed(0)}
-        ms | Optimization Score: {(optimizationScore * 100).toFixed(1)}% | Status:{" "}
-        {isLoading ? "Processing" : "Ready"}
+        AI Scheduling System v2.0 - Production Ready | Processing Time: {processingTime.toFixed(0,)}
+        ms | Optimization Score: {(optimizationScore * 100).toFixed(1,)}% | Status:{' '}
+        {isLoading ? 'Processing' : 'Ready'}
       </div>
     </div>
-  );
-};
+  )
+}

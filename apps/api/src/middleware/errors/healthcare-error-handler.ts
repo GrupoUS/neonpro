@@ -1,10 +1,10 @@
-import { createHealthcareError, generateErrorId } from "@neonpro/shared/errors/error-utils";
-import { ErrorCategory, ErrorSeverity } from "@neonpro/shared/errors/healthcare-error-types";
-import type { ErrorContext, HealthcareError } from "@neonpro/shared/errors/healthcare-error-types";
-import type { Context, Hono } from "hono";
+import { createHealthcareError, generateErrorId, } from '@neonpro/shared/errors/error-utils'
+import { ErrorCategory, ErrorSeverity, } from '@neonpro/shared/errors/healthcare-error-types'
+import type { ErrorContext, HealthcareError, } from '@neonpro/shared/errors/healthcare-error-types'
+import type { Context, Hono, } from 'hono'
 // import { HTTPException } from "hono/http-exception";
-import { logger } from "../../lib/logger";
-import { auditService } from "../../services/audit.service";
+import { logger, } from '../../lib/logger'
+import { auditService, } from '../../services/audit.service'
 
 /**
  * Healthcare-specific error handling middleware for Hono.dev
@@ -12,14 +12,14 @@ import { auditService } from "../../services/audit.service";
  */
 
 export function healthcareErrorHandler() {
-  return async (c: Context, next: () => Promise<void>) => {
+  return async (c: Context, next: () => Promise<void>,) => {
     try {
-      return await next();
+      return await next()
     } catch (error) {
-      const healthcareError = await handleHealthcareError(error, c);
-      return createErrorResponse(c, healthcareError);
+      const healthcareError = await handleHealthcareError(error, c,)
+      return createErrorResponse(c, healthcareError,)
     }
-  };
+  }
 }
 
 /**
@@ -29,67 +29,67 @@ async function handleHealthcareError(
   error: unknown,
   c: Context,
 ): Promise<HealthcareError> {
-  const originalError = error instanceof Error ? error : new Error(String(error));
+  const originalError = error instanceof Error ? error : new Error(String(error,),)
 
   // Extract context from request
   const context: ErrorContext = {
-    userId: c.get("user")?.id,
-    clinicId: c.get("clinic")?.id || c.get("user")?.clinic_id,
-    patientId: extractPatientId(c),
-    requestId: c.get("requestId") || generateErrorId(),
+    userId: c.get('user',)?.id,
+    clinicId: c.get('clinic',)?.id || c.get('user',)?.clinic_id,
+    patientId: extractPatientId(c,),
+    requestId: c.get('requestId',) || generateErrorId(),
     endpoint: c.req.path,
-    userAgent: c.req.header("user-agent"),
-    ipAddress: c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for"),
-    sessionId: c.get("sessionId"),
-  };
+    userAgent: c.req.header('user-agent',),
+    ipAddress: c.req.header('cf-connecting-ip',) || c.req.header('x-forwarded-for',),
+    sessionId: c.get('sessionId',),
+  }
 
-  const healthcareError = createHealthcareError(originalError, context);
+  const healthcareError = createHealthcareError(originalError, context,)
 
   // Log error with healthcare context
-  await logHealthcareError(healthcareError, c);
+  await logHealthcareError(healthcareError, c,)
 
   // Handle LGPD compliance logging for patient data access errors
   if (
     healthcareError.category === ErrorCategory.PATIENT_DATA
     || healthcareError.patientImpact
   ) {
-    await logLGPDComplianceError(healthcareError);
+    await logLGPDComplianceError(healthcareError,)
   }
 
   // Trigger alerts for critical errors
   if (healthcareError.severity === ErrorSeverity.CRITICAL) {
-    await triggerCriticalErrorAlert(healthcareError);
+    await triggerCriticalErrorAlert(healthcareError,)
   }
 
-  return healthcareError;
+  return healthcareError
 } /**
  * Extracts patient ID from request context
  */
 
-function extractPatientId(c: Context): string | undefined {
+function extractPatientId(c: Context,): string | undefined {
   // Try to extract from URL parameters
-  const patientIdFromParam = c.req.param("patientId") || c.req.param("patient_id");
+  const patientIdFromParam = c.req.param('patientId',) || c.req.param('patient_id',)
   if (patientIdFromParam) {
-    return patientIdFromParam;
+    return patientIdFromParam
   }
 
   // Try to extract from query parameters
-  const patientIdFromQuery = c.req.query("patient_id") || c.req.query("patientId");
+  const patientIdFromQuery = c.req.query('patient_id',) || c.req.query('patientId',)
   if (patientIdFromQuery) {
-    return patientIdFromQuery;
+    return patientIdFromQuery
   }
 
   // Try to extract from request body (if available)
   try {
-    const body = c.get("requestBody");
+    const body = c.get('requestBody',)
     if (body && (body.patient_id || body.patientId)) {
-      return body.patient_id || body.patientId;
+      return body.patient_id || body.patientId
     }
   } catch {
     // Body not available or not parsed
   }
 
-  return undefined;
+  return undefined
 }
 
 /**
@@ -108,22 +108,22 @@ async function logHealthcareError(
     patientImpact: error.patientImpact,
     complianceRisk: error.complianceRisk,
     timestamp: error.timestamp,
-    stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-  };
+    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+  }
 
   // Log with appropriate level based on severity
   switch (error.severity) {
     case ErrorSeverity.CRITICAL:
-      logger.error("CRITICAL Healthcare Error", logData);
-      break;
+      logger.error('CRITICAL Healthcare Error', logData,)
+      break
     case ErrorSeverity.HIGH:
-      logger.error("HIGH Healthcare Error", logData);
-      break;
+      logger.error('HIGH Healthcare Error', logData,)
+      break
     case ErrorSeverity.MEDIUM:
-      logger.warn("MEDIUM Healthcare Error", logData);
-      break;
+      logger.warn('MEDIUM Healthcare Error', logData,)
+      break
     default:
-      logger.info("LOW Healthcare Error", logData);
+      logger.info('LOW Healthcare Error', logData,)
   }
 }
 
@@ -131,15 +131,15 @@ async function logHealthcareError(
  * Logs LGPD compliance errors for patient data access failures
  */
 
-async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
+async function logLGPDComplianceError(error: HealthcareError,): Promise<void> {
   if (!error.context.patientId) {
-    return;
+    return
   }
 
   try {
     await auditService.logEvent({
-      action: "DATA_ACCESS",
-      resourceType: "patient_data",
+      action: 'DATA_ACCESS',
+      resourceType: 'patient_data',
       resourceId: error.context.patientId,
       userId: error.context.userId,
       metadata: {
@@ -151,14 +151,14 @@ async function logLGPDComplianceError(error: HealthcareError): Promise<void> {
         ipAddress: error.context.ipAddress,
         userAgent: error.context.userAgent,
       },
-    });
+    },)
   } catch (auditError) {
     // Critical: audit logging failed
-    logger.error("CRITICAL: Audit logging failed for patient data error", {
+    logger.error('CRITICAL: Audit logging failed for patient data error', {
       originalErrorId: error.id,
       auditError: auditError,
       patientId: error.context.patientId,
-    });
+    },)
   }
 }
 
@@ -169,33 +169,33 @@ async function triggerCriticalErrorAlert(
   error: HealthcareError,
 ): Promise<void> {
   // TODO: Implement actual alerting system (Slack, PagerDuty, etc.)
-  console.error("[CRITICAL ALERT] Healthcare Error", {
+  console.error('[CRITICAL ALERT] Healthcare Error', {
     errorId: error.id,
     category: error.category,
     patientImpact: error.patientImpact,
     complianceRisk: error.complianceRisk,
     context: error.context,
-  });
+  },)
 
   // For now, just log the alert
   logger.error(
-    "CRITICAL ALERT: Healthcare system error requires immediate attention",
+    'CRITICAL ALERT: Healthcare system error requires immediate attention',
     {
       errorId: error.id,
       category: error.category,
       severity: error.severity,
       context: error.context,
     },
-  );
+  )
 } /**
  * Creates appropriate HTTP error response
  */
 
-function createErrorResponse(c: Context, error: HealthcareError): Response {
-  const statusCode = getHttpStatusCode(error.category, error.severity);
+function createErrorResponse(c: Context, error: HealthcareError,): Response {
+  const statusCode = getHttpStatusCode(error.category, error.severity,)
 
   // Sanitize error message for user
-  const userMessage = sanitizeErrorMessage(error.message, error.category);
+  const userMessage = sanitizeErrorMessage(error.message, error.category,)
 
   const errorResponse = {
     error: {
@@ -205,21 +205,21 @@ function createErrorResponse(c: Context, error: HealthcareError): Response {
       severity: error.severity,
       timestamp: error.timestamp.toISOString(),
       recoverable: error.recoverable,
-      ...(process.env.NODE_ENV === "development" && {
+      ...(process.env.NODE_ENV === 'development' && {
         originalMessage: error.message,
         stack: error.stack,
       }),
     },
-  };
+  }
 
   // Add additional context for specific error types
   if (error.patientImpact) {
-    const payload = errorResponse.error as Record<string, unknown>;
-    payload.patientDataInvolved = true;
-    payload.complianceNotification = "Security team has been automatically notified";
+    const payload = errorResponse.error as Record<string, unknown>
+    payload.patientDataInvolved = true
+    payload.complianceNotification = 'Security team has been automatically notified'
   }
 
-  return c.json(errorResponse, statusCode as number);
+  return c.json(errorResponse, statusCode as number,)
 }
 
 /**
@@ -231,20 +231,20 @@ function getHttpStatusCode(
 ): number {
   switch (category) {
     case ErrorCategory.AUTHENTICATION:
-      return 401;
+      return 401
     case ErrorCategory.AUTHORIZATION:
-      return 403;
+      return 403
     case ErrorCategory.VALIDATION:
-      return 400;
+      return 400
     case ErrorCategory.DATABASE:
     case ErrorCategory.EXTERNAL_API:
-      return severity === ErrorSeverity.CRITICAL ? 503 : 500;
+      return severity === ErrorSeverity.CRITICAL ? 503 : 500
     case ErrorCategory.COMPLIANCE:
     case ErrorCategory.PATIENT_DATA:
     case ErrorCategory.AUDIT_LOG:
-      return 500; // Internal server error for security
+      return 500 // Internal server error for security
     default:
-      return 500;
+      return 500
   }
 } /**
  * Sanitizes error messages to prevent information leakage
@@ -257,42 +257,42 @@ function sanitizeErrorMessage(
   // For security-sensitive categories, use generic messages
   switch (category) {
     case ErrorCategory.COMPLIANCE:
-      return "Compliance error detected. Security team has been notified.";
+      return 'Compliance error detected. Security team has been notified.'
     case ErrorCategory.PATIENT_DATA:
-      return "Patient data access error. Security protocols activated.";
+      return 'Patient data access error. Security protocols activated.'
     case ErrorCategory.AUDIT_LOG:
-      return "Audit system error. Compliance team has been notified.";
+      return 'Audit system error. Compliance team has been notified.'
     case ErrorCategory.AUTHENTICATION:
-      return "Authentication failed. Please verify your credentials.";
+      return 'Authentication failed. Please verify your credentials.'
     case ErrorCategory.AUTHORIZATION:
-      return "Access denied. Insufficient permissions for this resource.";
+      return 'Access denied. Insufficient permissions for this resource.'
     case ErrorCategory.DATABASE:
-      return "Database connectivity issue. Please try again in a moment.";
+      return 'Database connectivity issue. Please try again in a moment.'
     case ErrorCategory.EXTERNAL_API:
-      return "External service temporarily unavailable. Please try again later.";
+      return 'External service temporarily unavailable. Please try again later.'
     case ErrorCategory.SYSTEM:
-      return "System error detected. Technical team has been notified.";
+      return 'System error detected. Technical team has been notified.'
     case ErrorCategory.VALIDATION:
       // For validation errors, we can be more specific but still sanitize
       return message
-        .replace(/\b\d{11}\b/g, "***.***.***-**") // Hide CPF
-        .replace(/\b[\w.-]+@[\w.-]+\.\w+\b/g, "***@***.***"); // Hide email
+        .replace(/\b\d{11}\b/g, '***.***.***-**',) // Hide CPF
+        .replace(/\b[\w.-]+@[\w.-]+\.\w+\b/g, '***@***.***',) // Hide email
     default:
-      return "An error occurred while processing your request. Please try again.";
+      return 'An error occurred while processing your request. Please try again.'
   }
 }
 
 /**
  * Global error handler setup for Hono app
  */
-export function setupHealthcareErrorHandling(app: Hono) {
-  app.onError(async (err, c) => {
-    const healthcareError = await handleHealthcareError(err, c);
-    return createErrorResponse(c, healthcareError);
-  });
+export function setupHealthcareErrorHandling(app: Hono,) {
+  app.onError(async (err, c,) => {
+    const healthcareError = await handleHealthcareError(err, c,)
+    return createErrorResponse(c, healthcareError,)
+  },)
 
   // Add error handling middleware to the app
-  app.use("*", healthcareErrorHandler());
+  app.use('*', healthcareErrorHandler(),)
 
-  return app;
+  return app
 }

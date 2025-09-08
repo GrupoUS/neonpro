@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * PatientOutcomePrediction - AI-Powered Patient Outcome Forecasting
@@ -10,27 +10,27 @@
  * @author NeonPro Healthcare AI Team
  */
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { cn, } from '@/lib/utils'
 import type {
   AlternativeTreatment,
   ComplicationPrediction,
   PatientOutcomePredictionProps,
   PredictiveIntelligence,
   RecoveryMilestone,
-} from "@/types/analytics";
+} from '@/types/analytics'
 import {
   AlertTriangle,
   Brain,
@@ -44,103 +44,103 @@ import {
   Target,
   TrendingDown,
   TrendingUp,
-} from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+} from 'lucide-react'
+import React, { useCallback, useMemo, useState, } from 'react'
 
 // ====== MOCK PREDICTION DATA ======
 const mockPredictionData: PredictiveIntelligence = {
-  patientId: "patient-123",
+  patientId: 'patient-123',
   generatedAt: new Date(),
   predictions: {
     outcomeScore: 87, // 87% likelihood of successful treatment
-    riskLevel: "medium",
+    riskLevel: 'medium',
     noShowProbability: 0.12, // 12% probability of no-show
     treatmentDuration: 21, // 21 days
     complications: [
       {
-        type: "Inchaço leve",
+        type: 'Inchaço leve',
         probability: 0.25,
-        severity: "minor",
+        severity: 'minor',
         timeframe: 3,
         preventionStrategies: [
-          "Compressas frias",
-          "Elevação da área",
-          "Anti-inflamatórios",
+          'Compressas frias',
+          'Elevação da área',
+          'Anti-inflamatórios',
         ],
         warningSignals: [
-          "Vermelhidão excessiva",
-          "Dor crescente",
-          "Temperatura local",
+          'Vermelhidão excessiva',
+          'Dor crescente',
+          'Temperatura local',
         ],
       },
       {
-        type: "Hiperpigmentação temporária",
+        type: 'Hiperpigmentação temporária',
         probability: 0.15,
-        severity: "minor",
+        severity: 'minor',
         timeframe: 14,
         preventionStrategies: [
-          "Protetor solar FPS 50+",
-          "Evitar exposição solar",
-          "Hidratação",
+          'Protetor solar FPS 50+',
+          'Evitar exposição solar',
+          'Hidratação',
         ],
-        warningSignals: ["Escurecimento da pele", "Manchas irregulares"],
+        warningSignals: ['Escurecimento da pele', 'Manchas irregulares',],
       },
       {
-        type: "Reação alérgica",
+        type: 'Reação alérgica',
         probability: 0.08,
-        severity: "moderate",
+        severity: 'moderate',
         timeframe: 1,
         preventionStrategies: [
-          "Teste de alergia prévio",
-          "Anti-histamínicos",
-          "Monitoramento",
+          'Teste de alergia prévio',
+          'Anti-histamínicos',
+          'Monitoramento',
         ],
         warningSignals: [
-          "Coceira intensa",
-          "Urticária",
-          "Dificuldade respiratória",
+          'Coceira intensa',
+          'Urticária',
+          'Dificuldade respiratória',
         ],
       },
     ],
     recoveryTimeline: [
       {
-        milestone: "Redução inicial do inchaço",
+        milestone: 'Redução inicial do inchaço',
         expectedDay: 3,
         probability: 0.92,
-        dependencies: ["Cuidados pós-procedimento", "Repouso adequado"],
-        criticalFactors: ["Hidratação", "Compressas frias"],
+        dependencies: ['Cuidados pós-procedimento', 'Repouso adequado',],
+        criticalFactors: ['Hidratação', 'Compressas frias',],
       },
       {
-        milestone: "Retorno às atividades normais",
+        milestone: 'Retorno às atividades normais',
         expectedDay: 7,
         probability: 0.85,
-        dependencies: ["Ausência de complicações", "Seguimento das instruções"],
-        criticalFactors: ["Evitar exercícios intensos", "Proteção solar"],
+        dependencies: ['Ausência de complicações', 'Seguimento das instruções',],
+        criticalFactors: ['Evitar exercícios intensos', 'Proteção solar',],
       },
       {
-        milestone: "Resultado parcial visível",
+        milestone: 'Resultado parcial visível',
         expectedDay: 14,
         probability: 0.78,
-        dependencies: ["Cicatrização adequada", "Cuidados contínuos"],
-        criticalFactors: ["Regeneração celular", "Resposta individual"],
+        dependencies: ['Cicatrização adequada', 'Cuidados contínuos',],
+        criticalFactors: ['Regeneração celular', 'Resposta individual',],
       },
       {
-        milestone: "Resultado final esperado",
+        milestone: 'Resultado final esperado',
         expectedDay: 21,
         probability: 0.87,
         dependencies: [
-          "Todos os marcos anteriores",
-          "Ausência de complicações",
+          'Todos os marcos anteriores',
+          'Ausência de complicações',
         ],
-        criticalFactors: ["Healing response", "Patient compliance"],
+        criticalFactors: ['Healing response', 'Patient compliance',],
       },
     ],
   },
   recommendations: {
     optimalTreatment: {
-      id: "treatment-opt-1",
-      name: "Protocolo Otimizado Laser + Bioestimulação",
-      description: "Combinação de laser fracionado com bioestimulação para maximizar resultados",
+      id: 'treatment-opt-1',
+      name: 'Protocolo Otimizado Laser + Bioestimulação',
+      description: 'Combinação de laser fracionado com bioestimulação para maximizar resultados',
       steps: [],
       duration: 21,
       cost: 0,
@@ -148,24 +148,24 @@ const mockPredictionData: PredictiveIntelligence = {
     },
     preventiveMeasures: [
       {
-        id: "prev-1",
-        action: "Aplicar protetor solar FPS 50+ diariamente",
-        priority: "high",
-        timeframe: "21 dias",
+        id: 'prev-1',
+        action: 'Aplicar protetor solar FPS 50+ diariamente',
+        priority: 'high',
+        timeframe: '21 dias',
         importance: 0.95,
       },
       {
-        id: "prev-2",
-        action: "Evitar exposição solar direta por 2 semanas",
-        priority: "critical",
-        timeframe: "14 dias",
+        id: 'prev-2',
+        action: 'Evitar exposição solar direta por 2 semanas',
+        priority: 'critical',
+        timeframe: '14 dias',
         importance: 0.98,
       },
       {
-        id: "prev-3",
-        action: "Usar compressas frias 3x ao dia nos primeiros 5 dias",
-        priority: "medium",
-        timeframe: "5 dias",
+        id: 'prev-3',
+        action: 'Usar compressas frias 3x ao dia nos primeiros 5 dias',
+        priority: 'medium',
+        timeframe: '5 dias',
         importance: 0.75,
       },
     ],
@@ -173,223 +173,223 @@ const mockPredictionData: PredictiveIntelligence = {
       appointments: [
         {
           day: 3,
-          type: "check-up",
-          importance: "high",
-          description: "Avaliação inicial pós-procedimento",
+          type: 'check-up',
+          importance: 'high',
+          description: 'Avaliação inicial pós-procedimento',
         },
         {
           day: 7,
-          type: "follow-up",
-          importance: "medium",
-          description: "Verificação da cicatrização",
+          type: 'follow-up',
+          importance: 'medium',
+          description: 'Verificação da cicatrização',
         },
         {
           day: 14,
-          type: "assessment",
-          importance: "high",
-          description: "Análise dos resultados parciais",
+          type: 'assessment',
+          importance: 'high',
+          description: 'Análise dos resultados parciais',
         },
         {
           day: 21,
-          type: "final",
-          importance: "critical",
-          description: "Avaliação final dos resultados",
+          type: 'final',
+          importance: 'critical',
+          description: 'Avaliação final dos resultados',
         },
       ],
     },
     riskMitigation: [
       {
-        risk: "Hiperpigmentação",
-        strategy: "Uso rigoroso de protetor solar e evitar exposição UV",
+        risk: 'Hiperpigmentação',
+        strategy: 'Uso rigoroso de protetor solar e evitar exposição UV',
         probability: 0.85,
-        impact: "low",
+        impact: 'low',
       },
       {
-        risk: "Inchaço prolongado",
-        strategy: "Compressas frias regulares e elevação da área tratada",
+        risk: 'Inchaço prolongado',
+        strategy: 'Compressas frias regulares e elevação da área tratada',
         probability: 0.9,
-        impact: "medium",
+        impact: 'medium',
       },
     ],
     resourceAllocation: [
       {
-        resource: "Tempo de consulta",
-        recommended: "45 minutos",
-        rationale: "Paciente requer explicações detalhadas devido ao perfil ansioso",
+        resource: 'Tempo de consulta',
+        recommended: '45 minutos',
+        rationale: 'Paciente requer explicações detalhadas devido ao perfil ansioso',
       },
       {
-        resource: "Follow-up adicional",
-        recommended: "1 consulta extra",
-        rationale: "Histórico familiar de cicatrização lenta",
+        resource: 'Follow-up adicional',
+        recommended: '1 consulta extra',
+        rationale: 'Histórico familiar de cicatrização lenta',
       },
     ],
   },
   confidence: 0.91,
-  modelVersion: "neonpro-prediction-v2.1",
-  trainingDataDate: new Date("2024-12-01"),
-};
+  modelVersion: 'neonpro-prediction-v2.1',
+  trainingDataDate: new Date('2024-12-01',),
+}
 
 const alternativeTreatments: AlternativeTreatment[] = [
   {
-    treatmentId: "alt-1",
-    name: "Laser CO2 Fracionado",
+    treatmentId: 'alt-1',
+    name: 'Laser CO2 Fracionado',
     successProbability: 0.82,
     costDifference: -500,
     timeDifference: -3,
-    riskProfile: { overallRisk: "low", complications: [] },
+    riskProfile: { overallRisk: 'low', complications: [], },
     suitabilityScore: 78,
   },
   {
-    treatmentId: "alt-2",
-    name: "Microagulhamento + Radiofrequência",
+    treatmentId: 'alt-2',
+    name: 'Microagulhamento + Radiofrequência',
     successProbability: 0.79,
     costDifference: -800,
     timeDifference: 5,
-    riskProfile: { overallRisk: "low", complications: [] },
+    riskProfile: { overallRisk: 'low', complications: [], },
     suitabilityScore: 85,
   },
   {
-    treatmentId: "alt-3",
-    name: "Peeling Químico Profundo",
+    treatmentId: 'alt-3',
+    name: 'Peeling Químico Profundo',
     successProbability: 0.73,
     costDifference: -1200,
     timeDifference: -7,
-    riskProfile: { overallRisk: "medium", complications: [] },
+    riskProfile: { overallRisk: 'medium', complications: [], },
     suitabilityScore: 65,
   },
-];
+]
 
 export default function PatientOutcomePrediction({
   patientId: _patientId,
   treatmentId: _treatmentId,
-  predictionModels = ["neonpro-prediction-v2.1"],
+  predictionModels = ['neonpro-prediction-v2.1',],
   confidenceThreshold: _confidenceThreshold = 0.7,
   showAlternatives = true,
   interactiveCharts: _interactiveCharts = true,
-}: PatientOutcomePredictionProps) {
+}: PatientOutcomePredictionProps,) {
   // ====== STATE MANAGEMENT ======
-  const [prediction, setPrediction] = useState<PredictiveIntelligence>(mockPredictionData);
-  const [selectedModel, setSelectedModel] = useState(predictionModels[0]);
-  const [activeTab, setActiveTab] = useState("prediction");
-  const [showDetails, setShowDetails] = useState<string[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [prediction, setPrediction,] = useState<PredictiveIntelligence>(mockPredictionData,)
+  const [selectedModel, setSelectedModel,] = useState(predictionModels[0],)
+  const [activeTab, setActiveTab,] = useState('prediction',)
+  const [showDetails, setShowDetails,] = useState<string[]>([],)
+  const [refreshing, setRefreshing,] = useState(false,)
 
   // ====== DATA HANDLERS ======
   const handleRefreshPrediction = useCallback(async () => {
-    setRefreshing(true);
+    setRefreshing(true,)
     try {
       // Simulate API call for fresh prediction
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve,) => setTimeout(resolve, 2000,))
 
       // In real implementation, fetch new prediction data
       setPrediction({
         ...prediction,
         generatedAt: new Date(),
         confidence: 0.88 + Math.random() * 0.1, // Simulate slight variation
-      });
+      },)
     } catch (error) {
-      console.error("Failed to refresh prediction:", error);
+      console.error('Failed to refresh prediction:', error,)
     } finally {
-      setRefreshing(false);
+      setRefreshing(false,)
     }
-  }, [prediction]);
+  }, [prediction,],)
 
-  const toggleDetailsExpansion = useCallback((itemId: string) => {
-    setShowDetails((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
-  }, []);
+  const toggleDetailsExpansion = useCallback((itemId: string,) => {
+    setShowDetails((prev,) =>
+      prev.includes(itemId,)
+        ? prev.filter((id,) => id !== itemId)
+        : [...prev, itemId,]
+    )
+  }, [],)
 
   // ====== COMPUTED VALUES ======
   const outcomeCategory = useMemo(() => {
-    const score = prediction.predictions.outcomeScore;
+    const score = prediction.predictions.outcomeScore
     if (score >= 85) {
       return {
-        label: "Excelente",
-        color: "text-green-600",
-        bgColor: "bg-green-50",
-      };
+        label: 'Excelente',
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+      }
     }
     if (score >= 75) {
-      return { label: "Bom", color: "text-blue-600", bgColor: "bg-blue-50" };
+      return { label: 'Bom', color: 'text-blue-600', bgColor: 'bg-blue-50', }
     }
     if (score >= 60) {
       return {
-        label: "Moderado",
-        color: "text-yellow-600",
-        bgColor: "bg-yellow-50",
-      };
+        label: 'Moderado',
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-50',
+      }
     }
-    return { label: "Baixo", color: "text-red-600", bgColor: "bg-red-50" };
-  }, [prediction.predictions.outcomeScore]);
+    return { label: 'Baixo', color: 'text-red-600', bgColor: 'bg-red-50', }
+  }, [prediction.predictions.outcomeScore,],)
 
   const riskLevelConfig = useMemo(() => {
-    const risk = prediction.predictions.riskLevel;
+    const risk = prediction.predictions.riskLevel
     switch (risk) {
-      case "low":
+      case 'low':
         return {
-          label: "Baixo",
-          color: "text-green-600",
-          bgColor: "bg-green-100",
+          label: 'Baixo',
+          color: 'text-green-600',
+          bgColor: 'bg-green-100',
           icon: CheckCircle,
-        };
-      case "medium":
+        }
+      case 'medium':
         return {
-          label: "Médio",
-          color: "text-yellow-600",
-          bgColor: "bg-yellow-100",
+          label: 'Médio',
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-100',
           icon: AlertTriangle,
-        };
-      case "high":
+        }
+      case 'high':
         return {
-          label: "Alto",
-          color: "text-orange-600",
-          bgColor: "bg-orange-100",
+          label: 'Alto',
+          color: 'text-orange-600',
+          bgColor: 'bg-orange-100',
           icon: AlertTriangle,
-        };
-      case "critical":
+        }
+      case 'critical':
         return {
-          label: "Crítico",
-          color: "text-red-600",
-          bgColor: "bg-red-100",
+          label: 'Crítico',
+          color: 'text-red-600',
+          bgColor: 'bg-red-100',
           icon: AlertTriangle,
-        };
+        }
       default:
         return {
-          label: "Médio",
-          color: "text-yellow-600",
-          bgColor: "bg-yellow-100",
+          label: 'Médio',
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-100',
           icon: AlertTriangle,
-        };
+        }
     }
-  }, [prediction.predictions.riskLevel]);
+  }, [prediction.predictions.riskLevel,],)
 
   const highRiskComplications = useMemo(
     () =>
       prediction.predictions.complications.filter(
-        (comp) =>
+        (comp,) =>
           comp.probability > 0.2
-          || comp.severity === "severe"
-          || comp.severity === "critical",
+          || comp.severity === 'severe'
+          || comp.severity === 'critical',
       ),
-    [prediction.predictions.complications],
-  );
+    [prediction.predictions.complications,],
+  )
 
   const confidenceLevel = useMemo(() => {
-    const conf = prediction.confidence;
+    const conf = prediction.confidence
     if (conf >= 0.9) {
-      return { label: "Muito Alta", color: "text-green-600" };
+      return { label: 'Muito Alta', color: 'text-green-600', }
     }
     if (conf >= 0.8) {
-      return { label: "Alta", color: "text-blue-600" };
+      return { label: 'Alta', color: 'text-blue-600', }
     }
     if (conf >= 0.7) {
-      return { label: "Moderada", color: "text-yellow-600" };
+      return { label: 'Moderada', color: 'text-yellow-600', }
     }
-    return { label: "Baixa", color: "text-red-600" };
-  }, [prediction.confidence]);
+    return { label: 'Baixa', color: 'text-red-600', }
+  }, [prediction.confidence,],)
 
   // ====== RENDER COMPONENTS ======
   const renderComplicationCard = (
@@ -402,14 +402,14 @@ export default function PatientOutcomePrediction({
           <div className="flex items-center space-x-3">
             <div
               className={cn(
-                "p-2 rounded-full",
-                complication.severity === "critical"
-                  ? "bg-red-100 text-red-600"
-                  : complication.severity === "severe"
-                  ? "bg-orange-100 text-orange-600"
-                  : complication.severity === "moderate"
-                  ? "bg-yellow-100 text-yellow-600"
-                  : "bg-blue-100 text-blue-600",
+                'p-2 rounded-full',
+                complication.severity === 'critical'
+                  ? 'bg-red-100 text-red-600'
+                  : complication.severity === 'severe'
+                  ? 'bg-orange-100 text-orange-600'
+                  : complication.severity === 'moderate'
+                  ? 'bg-yellow-100 text-yellow-600'
+                  : 'bg-blue-100 text-blue-600',
               )}
             >
               <AlertTriangle className="h-4 w-4" />
@@ -418,24 +418,24 @@ export default function PatientOutcomePrediction({
               <CardTitle className="text-base">{complication.type}</CardTitle>
               <div className="flex items-center space-x-2 mt-1">
                 <Badge
-                  variant={complication.severity === "critical"
-                    ? "destructive"
-                    : complication.severity === "severe"
-                    ? "destructive"
-                    : complication.severity === "moderate"
-                    ? "secondary"
-                    : "outline"}
+                  variant={complication.severity === 'critical'
+                    ? 'destructive'
+                    : complication.severity === 'severe'
+                    ? 'destructive'
+                    : complication.severity === 'moderate'
+                    ? 'secondary'
+                    : 'outline'}
                 >
-                  {complication.severity === "critical"
-                    ? "Crítico"
-                    : complication.severity === "severe"
-                    ? "Grave"
-                    : complication.severity === "moderate"
-                    ? "Moderado"
-                    : "Leve"}
+                  {complication.severity === 'critical'
+                    ? 'Crítico'
+                    : complication.severity === 'severe'
+                    ? 'Grave'
+                    : complication.severity === 'moderate'
+                    ? 'Moderado'
+                    : 'Leve'}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
-                  {(complication.probability * 100).toFixed(0)}% probabilidade
+                  {(complication.probability * 100).toFixed(0,)}% probabilidade
                 </span>
               </div>
             </div>
@@ -458,7 +458,7 @@ export default function PatientOutcomePrediction({
                 Estratégias de Prevenção:
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
-                {complication.preventionStrategies.map((strategy, idx) => (
+                {complication.preventionStrategies.map((strategy, idx,) => (
                   <li key={idx} className="flex items-start space-x-2">
                     <CheckCircle className="h-3 w-3 mt-1 text-green-500 flex-shrink-0" />
                     <span>{strategy}</span>
@@ -472,7 +472,7 @@ export default function PatientOutcomePrediction({
                 Sinais de Alerta:
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
-                {complication.warningSignals.map((signal, idx) => (
+                {complication.warningSignals.map((signal, idx,) => (
                   <li key={idx} className="flex items-start space-x-2">
                     <AlertTriangle className="h-3 w-3 mt-1 text-orange-500 flex-shrink-0" />
                     <span>{signal}</span>
@@ -484,7 +484,7 @@ export default function PatientOutcomePrediction({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   const renderRecoveryMilestone = (
     milestone: RecoveryMilestone,
@@ -504,7 +504,7 @@ export default function PatientOutcomePrediction({
         <div className="font-medium">{milestone.milestone}</div>
         <div className="flex items-center space-x-3 mt-1">
           <Badge variant="outline">
-            {(milestone.probability * 100).toFixed(0)}% probabilidade
+            {(milestone.probability * 100).toFixed(0,)}% probabilidade
           </Badge>
           <Progress
             value={milestone.probability * 100}
@@ -512,20 +512,20 @@ export default function PatientOutcomePrediction({
           />
         </div>
         <div className="text-sm text-muted-foreground mt-1">
-          Fatores críticos: {milestone.criticalFactors.join(", ")}
+          Fatores críticos: {milestone.criticalFactors.join(', ',)}
         </div>
       </div>
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => toggleDetailsExpansion(`milestone-${index}`)}
+        onClick={() => toggleDetailsExpansion(`milestone-${index}`,)}
       >
         <Eye className="h-4 w-4" />
       </Button>
     </div>
-  );
+  )
 
-  const renderAlternativeTreatment = (treatment: AlternativeTreatment) => (
+  const renderAlternativeTreatment = (treatment: AlternativeTreatment,) => (
     <Card
       key={treatment.treatmentId}
       className="hover:shadow-md transition-shadow"
@@ -536,10 +536,10 @@ export default function PatientOutcomePrediction({
             <CardTitle className="text-base">{treatment.name}</CardTitle>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="outline">
-                {(treatment.successProbability * 100).toFixed(0)}% sucesso
+                {(treatment.successProbability * 100).toFixed(0,)}% sucesso
               </Badge>
               <Badge
-                variant={treatment.suitabilityScore >= 80 ? "default" : "secondary"}
+                variant={treatment.suitabilityScore >= 80 ? 'default' : 'secondary'}
               >
                 {treatment.suitabilityScore}/100 adequação
               </Badge>
@@ -548,13 +548,13 @@ export default function PatientOutcomePrediction({
           <div className="text-right">
             <div
               className={cn(
-                "text-sm font-medium",
+                'text-sm font-medium',
                 treatment.costDifference < 0
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? 'text-green-600'
+                  : 'text-red-600',
               )}
             >
-              {treatment.costDifference < 0 ? "-" : "+"}R$ {Math.abs(treatment.costDifference)}
+              {treatment.costDifference < 0 ? '-' : '+'}R$ {Math.abs(treatment.costDifference,)}
             </div>
             <div className="text-xs text-muted-foreground">
               {treatment.timeDifference} dias diferença
@@ -580,17 +580,17 @@ export default function PatientOutcomePrediction({
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Risco:</span>
             <Badge
-              variant={treatment.riskProfile.overallRisk === "low"
-                ? "outline"
-                : treatment.riskProfile.overallRisk === "medium"
-                ? "secondary"
-                : "destructive"}
+              variant={treatment.riskProfile.overallRisk === 'low'
+                ? 'outline'
+                : treatment.riskProfile.overallRisk === 'medium'
+                ? 'secondary'
+                : 'destructive'}
             >
-              {treatment.riskProfile.overallRisk === "low"
-                ? "Baixo"
-                : treatment.riskProfile.overallRisk === "medium"
-                ? "Médio"
-                : "Alto"}
+              {treatment.riskProfile.overallRisk === 'low'
+                ? 'Baixo'
+                : treatment.riskProfile.overallRisk === 'medium'
+                ? 'Médio'
+                : 'Alto'}
             </Badge>
           </div>
 
@@ -600,7 +600,7 @@ export default function PatientOutcomePrediction({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 
   // ====== MAIN RENDER ======
   return (
@@ -621,7 +621,7 @@ export default function PatientOutcomePrediction({
               <SelectValue placeholder="Modelo de IA" />
             </SelectTrigger>
             <SelectContent>
-              {predictionModels.map((model) => (
+              {predictionModels.map((model,) => (
                 <SelectItem key={model} value={model}>
                   {model}
                 </SelectItem>
@@ -636,7 +636,7 @@ export default function PatientOutcomePrediction({
             disabled={refreshing}
           >
             <RefreshCw
-              className={cn("h-4 w-4 mr-2", refreshing && "animate-spin")}
+              className={cn('h-4 w-4 mr-2', refreshing && 'animate-spin',)}
             />
             Atualizar
           </Button>
@@ -652,23 +652,23 @@ export default function PatientOutcomePrediction({
               <span className="font-medium">Modelo: {selectedModel}</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              Treinado em: {prediction.trainingDataDate.toLocaleDateString("pt-BR")}
+              Treinado em: {prediction.trainingDataDate.toLocaleDateString('pt-BR',)}
             </div>
             <div className="text-sm text-muted-foreground">
-              Gerado: {prediction.generatedAt.toLocaleTimeString("pt-BR")}
+              Gerado: {prediction.generatedAt.toLocaleTimeString('pt-BR',)}
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm">
-              Confiança:{" "}
-              <span className={cn("font-bold", confidenceLevel.color)}>
-                {(prediction.confidence * 100).toFixed(0)}%
+              Confiança:{' '}
+              <span className={cn('font-bold', confidenceLevel.color,)}>
+                {(prediction.confidence * 100).toFixed(0,)}%
               </span>
             </div>
             <Badge
               className={cn(
-                "text-white",
-                confidenceLevel.color.replace("text-", "bg-"),
+                'text-white',
+                confidenceLevel.color.replace('text-', 'bg-',),
               )}
             >
               {confidenceLevel.label}
@@ -681,23 +681,23 @@ export default function PatientOutcomePrediction({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Outcome Score */}
         <Card
-          className={cn("relative overflow-hidden", outcomeCategory.bgColor)}
+          className={cn('relative overflow-hidden', outcomeCategory.bgColor,)}
         >
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center space-x-2">
-              <Target className={cn("h-5 w-5", outcomeCategory.color)} />
+              <Target className={cn('h-5 w-5', outcomeCategory.color,)} />
               <span>Probabilidade de Sucesso</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center space-y-2">
-              <div className={cn("text-4xl font-bold", outcomeCategory.color)}>
+              <div className={cn('text-4xl font-bold', outcomeCategory.color,)}>
                 {prediction.predictions.outcomeScore}%
               </div>
               <Badge
                 className={cn(
-                  "text-white",
-                  outcomeCategory.color.replace("text-", "bg-"),
+                  'text-white',
+                  outcomeCategory.color.replace('text-', 'bg-',),
                 )}
               >
                 {outcomeCategory.label}
@@ -716,19 +716,19 @@ export default function PatientOutcomePrediction({
 
         {/* Risk Level */}
         <Card
-          className={cn("relative overflow-hidden", riskLevelConfig.bgColor)}
+          className={cn('relative overflow-hidden', riskLevelConfig.bgColor,)}
         >
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center space-x-2">
               <riskLevelConfig.icon
-                className={cn("h-5 w-5", riskLevelConfig.color)}
+                className={cn('h-5 w-5', riskLevelConfig.color,)}
               />
               <span>Nível de Risco</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center space-y-2">
-              <div className={cn("text-2xl font-bold", riskLevelConfig.color)}>
+              <div className={cn('text-2xl font-bold', riskLevelConfig.color,)}>
                 {riskLevelConfig.label}
               </div>
               <div className="text-sm text-muted-foreground">
@@ -739,7 +739,7 @@ export default function PatientOutcomePrediction({
               <Alert className="mt-4">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Monitorar sinais de: {highRiskComplications.map((c) => c.type).join(", ")}
+                  Monitorar sinais de: {highRiskComplications.map((c,) => c.type).join(', ',)}
                 </AlertDescription>
               </Alert>
             )}
@@ -765,7 +765,7 @@ export default function PatientOutcomePrediction({
               <div className="flex justify-between text-sm">
                 <span>No-Show Risk:</span>
                 <span className="font-medium">
-                  {(prediction.predictions.noShowProbability * 100).toFixed(0)}%
+                  {(prediction.predictions.noShowProbability * 100).toFixed(0,)}%
                 </span>
               </div>
               <Progress
@@ -823,27 +823,27 @@ export default function PatientOutcomePrediction({
                 <div className="space-y-4">
                   {[
                     {
-                      factor: "Histórico de tratamentos similares",
+                      factor: 'Histórico de tratamentos similares',
                       impact: 85,
                       positive: true,
                     },
                     {
-                      factor: "Tipo de pele e resposta",
+                      factor: 'Tipo de pele e resposta',
                       impact: 78,
                       positive: true,
                     },
-                    { factor: "Idade do paciente", impact: 65, positive: true },
+                    { factor: 'Idade do paciente', impact: 65, positive: true, },
                     {
-                      factor: "Compliance com instruções",
+                      factor: 'Compliance com instruções',
                       impact: 72,
                       positive: true,
                     },
                     {
-                      factor: "Fatores de risco identificados",
+                      factor: 'Fatores de risco identificados',
                       impact: 45,
                       positive: false,
                     },
-                  ].map((item, index) => (
+                  ].map((item, index,) => (
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">
@@ -876,19 +876,19 @@ export default function PatientOutcomePrediction({
               <CardContent>
                 <div className="space-y-4">
                   {prediction.recommendations.preventiveMeasures.map(
-                    (measure, index) => (
+                    (measure, index,) => (
                       <div
                         key={index}
                         className="flex items-start space-x-3 p-3 bg-muted/20 rounded-lg"
                       >
                         <div
                           className={cn(
-                            "p-1 rounded-full mt-1",
-                            measure.priority === "critical"
-                              ? "bg-red-100 text-red-600"
-                              : measure.priority === "high"
-                              ? "bg-orange-100 text-orange-600"
-                              : "bg-blue-100 text-blue-600",
+                            'p-1 rounded-full mt-1',
+                            measure.priority === 'critical'
+                              ? 'bg-red-100 text-red-600'
+                              : measure.priority === 'high'
+                              ? 'bg-orange-100 text-orange-600'
+                              : 'bg-blue-100 text-blue-600',
                           )}
                         >
                           <CheckCircle className="h-3 w-3" />
@@ -899,24 +899,24 @@ export default function PatientOutcomePrediction({
                           </div>
                           <div className="flex items-center space-x-2 mt-1">
                             <Badge
-                              variant={measure.priority === "critical"
-                                ? "destructive"
-                                : measure.priority === "high"
-                                ? "secondary"
-                                : "outline"}
+                              variant={measure.priority === 'critical'
+                                ? 'destructive'
+                                : measure.priority === 'high'
+                                ? 'secondary'
+                                : 'outline'}
                               className="text-xs"
                             >
-                              {measure.priority === "critical"
-                                ? "Crítico"
-                                : measure.priority === "high"
-                                ? "Alto"
-                                : "Médio"}
+                              {measure.priority === 'critical'
+                                ? 'Crítico'
+                                : measure.priority === 'high'
+                                ? 'Alto'
+                                : 'Médio'}
                             </Badge>
                             <span className="text-xs text-muted-foreground">
                               {measure.timeframe}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              Impacto: {(measure.importance * 100).toFixed(0)}%
+                              Impacto: {(measure.importance * 100).toFixed(0,)}%
                             </span>
                           </div>
                         </div>
@@ -957,7 +957,7 @@ export default function PatientOutcomePrediction({
             <CardContent>
               <div className="space-y-3">
                 {prediction.recommendations.followUpSchedule.appointments.map(
-                  (apt, index) => (
+                  (apt, index,) => (
                     <div
                       key={index}
                       className="flex items-center justify-between p-3 border rounded-lg"
@@ -986,7 +986,7 @@ export default function PatientOutcomePrediction({
 
         <TabsContent value="complications" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {prediction.predictions.complications.map(renderComplicationCard)}
+            {prediction.predictions.complications.map(renderComplicationCard,)}
           </div>
 
           {/* Risk Mitigation Strategies */}
@@ -997,7 +997,7 @@ export default function PatientOutcomePrediction({
             <CardContent>
               <div className="space-y-4">
                 {prediction.recommendations.riskMitigation.map(
-                  (strategy, index) => (
+                  (strategy, index,) => (
                     <div
                       key={index}
                       className="flex items-start space-x-3 p-4 border rounded-lg"
@@ -1010,14 +1010,14 @@ export default function PatientOutcomePrediction({
                         </div>
                         <div className="flex items-center space-x-4 mt-2">
                           <Badge variant="outline">
-                            {(strategy.probability * 100).toFixed(0)}% efetividade
+                            {(strategy.probability * 100).toFixed(0,)}% efetividade
                           </Badge>
                           <Badge
-                            variant={strategy.impact === "low"
-                              ? "outline"
-                              : strategy.impact === "medium"
-                              ? "secondary"
-                              : "destructive"}
+                            variant={strategy.impact === 'low'
+                              ? 'outline'
+                              : strategy.impact === 'medium'
+                              ? 'secondary'
+                              : 'destructive'}
                           >
                             Impacto: {strategy.impact}
                           </Badge>
@@ -1042,7 +1042,7 @@ export default function PatientOutcomePrediction({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {alternativeTreatments.map(renderAlternativeTreatment)}
+                  {alternativeTreatments.map(renderAlternativeTreatment,)}
                 </div>
               </CardContent>
             </Card>
@@ -1050,5 +1050,5 @@ export default function PatientOutcomePrediction({
         )}
       </Tabs>
     </div>
-  );
+  )
 }

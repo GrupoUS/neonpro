@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Input, } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -10,8 +10,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { usePatients } from "@/hooks/use-patients";
+} from '@/components/ui/table'
+import { usePatients, } from '@/hooks/use-patients'
 import {
   Calendar,
   Edit,
@@ -22,33 +22,33 @@ import {
   Phone,
   Plus,
   Search,
-} from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+} from 'lucide-react'
+import Link from 'next/link'
+import { useState, } from 'react'
 
 interface PatientFilters {
-  searchTerm: string;
+  searchTerm: string
 }
 
 export default function PatientsPage() {
-  const [filters, setFilters] = useState<PatientFilters>({
-    searchTerm: "",
-  });
+  const [filters, setFilters,] = useState<PatientFilters>({
+    searchTerm: '',
+  },)
 
   // Use the API hook to fetch patients
-  const { patients, loading, error, refreshPatients } = usePatients();
+  const { patients, loading, error, refreshPatients, } = usePatients()
 
-  const filteredPatients = patients.filter((patient) => {
-    const matchesSearch = patient.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      || patient.email.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      || patient.phone?.includes(filters.searchTerm);
+  const filteredPatients = patients.filter((patient,) => {
+    const matchesSearch = patient.name.toLowerCase().includes(filters.searchTerm.toLowerCase(),)
+      || patient.email.toLowerCase().includes(filters.searchTerm.toLowerCase(),)
+      || patient.phone?.includes(filters.searchTerm,)
 
-    return matchesSearch;
-  });
+    return matchesSearch
+  },)
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
+  const formatDate = (dateString: string,) => {
+    return new Date(dateString,).toLocaleDateString('pt-BR',)
+  }
 
   // Loading state
   if (loading) {
@@ -61,7 +61,7 @@ export default function PatientsPage() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   // Error state
@@ -83,7 +83,7 @@ export default function PatientsPage() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -116,8 +116,8 @@ export default function PatientsPage() {
                 <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
                 <Input
                   className="pl-10"
-                  onChange={(e) =>
-                    setFilters((prev) => ({
+                  onChange={(e,) =>
+                    setFilters((prev,) => ({
                       ...prev,
                       searchTerm: e.target.value,
                     }))}
@@ -219,7 +219,7 @@ export default function PatientsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPatients.map((patient) => (
+                {filteredPatients.map((patient,) => (
                   <TableRow key={patient.id}>
                     <TableCell>
                       <div>
@@ -246,17 +246,17 @@ export default function PatientsPage() {
                     <TableCell>
                       <div className="text-gray-900 text-sm">
                         {patient.date_of_birth
-                          ? formatDate(patient.date_of_birth)
-                          : "N/A"}
+                          ? formatDate(patient.date_of_birth,)
+                          : 'N/A'}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="text-gray-900 text-sm">
-                        {patient.gender === "M"
-                          ? "Masculino"
-                          : patient.gender === "F"
-                          ? "Feminino"
-                          : "Outro"}
+                        {patient.gender === 'M'
+                          ? 'Masculino'
+                          : patient.gender === 'F'
+                          ? 'Feminino'
+                          : 'Outro'}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -302,8 +302,8 @@ export default function PatientsPage() {
               </h3>
               <p className="mb-6 text-gray-500">
                 {patients.length === 0
-                  ? "Ainda não há pacientes cadastrados."
-                  : "Tente ajustar os filtros."}
+                  ? 'Ainda não há pacientes cadastrados.'
+                  : 'Tente ajustar os filtros.'}
               </p>
               <Button asChild>
                 <Link href="/patients/new">
@@ -316,5 +316,5 @@ export default function PatientsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

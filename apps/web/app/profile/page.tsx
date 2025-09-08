@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Alert,
@@ -27,50 +27,50 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@/components/ui";
-import { useAuth } from "@/contexts/auth-context";
-import { Activity, Camera, Edit, Lock, Save, Shield } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui'
+import { useAuth, } from '@/contexts/auth-context'
+import { Activity, Camera, Edit, Lock, Save, Shield, } from 'lucide-react'
+import { useState, } from 'react'
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    firstName: (user as any)?.firstName || "",
-    lastName: (user as any)?.lastName || "",
-    email: user?.email || "",
-    phone: (user as any)?.phone || "",
-    bio: "",
-    specialty: "",
-    crm: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-  });
+  const { user, loading, } = useAuth()
+  const [isEditing, setIsEditing,] = useState(false,)
+  const [profileData, setProfileData,] = useState({
+    firstName: (user as any)?.firstName || '',
+    lastName: (user as any)?.lastName || '',
+    email: user?.email || '',
+    phone: (user as any)?.phone || '',
+    bio: '',
+    specialty: '',
+    crm: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+  },)
 
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences,] = useState({
     emailNotifications: true,
     smsNotifications: false,
     marketingEmails: false,
     twoFactorAuth: false,
     darkMode: false,
-    language: "pt-BR",
-  });
+    language: 'pt-BR',
+  },)
 
-  const handlePreferenceChange = (key: string, value: boolean) => {
-    setPreferences((prev) => ({
+  const handlePreferenceChange = (key: string, value: boolean,) => {
+    setPreferences((prev,) => ({
       ...prev,
       [key]: value,
-    }));
-  };
+    }))
+  }
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
       </div>
-    );
+    )
   }
 
   return (
@@ -84,8 +84,8 @@ export default function ProfilePage() {
           </p>
         </div>
         <Button
-          onClick={() => setIsEditing(!isEditing)}
-          variant={isEditing ? "outline" : "default"}
+          onClick={() => setIsEditing(!isEditing,)}
+          variant={isEditing ? 'outline' : 'default'}
         >
           {isEditing
             ? (
@@ -127,13 +127,13 @@ export default function ProfilePage() {
                   <AvatarImage src={(user as any)?.imageUrl} />
                   <AvatarFallback className="text-lg">
                     {(user as any)?.firstName?.[0] || user?.email?.[0]?.toUpperCase()}
-                    {(user as any)?.lastName?.[0] || ""}
+                    {(user as any)?.lastName?.[0] || ''}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-medium text-lg">
-                    {(user as any)?.firstName || user?.email?.split("@")[0]}{" "}
-                    {(user as any)?.lastName || ""}
+                    {(user as any)?.firstName || user?.email?.split('@',)[0]}{' '}
+                    {(user as any)?.lastName || ''}
                   </h3>
                   <p className="text-muted-foreground text-sm">
                     {user?.email}
@@ -154,8 +154,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="firstName"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         firstName: e.target.value,
                       }))}
@@ -167,8 +167,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="lastName"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         lastName: e.target.value,
                       }))}
@@ -193,8 +193,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="phone"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         phone: e.target.value,
                       }))}
@@ -208,7 +208,7 @@ export default function ProfilePage() {
                 <Textarea
                   disabled={!isEditing}
                   id="bio"
-                  onChange={(e) => setProfileData((prev) => ({ ...prev, bio: e.target.value }))}
+                  onChange={(e,) => setProfileData((prev,) => ({ ...prev, bio: e.target.value, }))}
                   placeholder="Conte um pouco sobre você..."
                   rows={3}
                   value={profileData.bio}
@@ -221,8 +221,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="city"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         city: e.target.value,
                       }))}
@@ -234,8 +234,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="state"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         state: e.target.value,
                       }))}
@@ -247,8 +247,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="zipCode"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         zipCode: e.target.value,
                       }))}
@@ -293,8 +293,8 @@ export default function ProfilePage() {
                   <Input
                     disabled={!isEditing}
                     id="crm"
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
+                    onChange={(e,) =>
+                      setProfileData((prev,) => ({
                         ...prev,
                         crm: e.target.value,
                       }))}
@@ -309,8 +309,8 @@ export default function ProfilePage() {
                 <Textarea
                   disabled={!isEditing}
                   id="address"
-                  onChange={(e) =>
-                    setProfileData((prev) => ({
+                  onChange={(e,) =>
+                    setProfileData((prev,) => ({
                       ...prev,
                       address: e.target.value,
                     }))}
@@ -349,8 +349,8 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.emailNotifications}
-                  onCheckedChange={(checked) =>
-                    handlePreferenceChange("emailNotifications", checked)}
+                  onCheckedChange={(checked,) =>
+                    handlePreferenceChange('emailNotifications', checked,)}
                 />
               </div>
 
@@ -363,7 +363,8 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.smsNotifications}
-                  onCheckedChange={(checked) => handlePreferenceChange("smsNotifications", checked)}
+                  onCheckedChange={(checked,) =>
+                    handlePreferenceChange('smsNotifications', checked,)}
                 />
               </div>
 
@@ -376,7 +377,8 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.marketingEmails}
-                  onCheckedChange={(checked) => handlePreferenceChange("marketingEmails", checked)}
+                  onCheckedChange={(checked,) =>
+                    handlePreferenceChange('marketingEmails', checked,)}
                 />
               </div>
             </CardContent>
@@ -399,7 +401,7 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.darkMode}
-                  onCheckedChange={(checked) => handlePreferenceChange("darkMode", checked)}
+                  onCheckedChange={(checked,) => handlePreferenceChange('darkMode', checked,)}
                 />
               </div>
 
@@ -444,7 +446,8 @@ export default function ProfilePage() {
                   )}
                   <Switch
                     checked={preferences.twoFactorAuth}
-                    onCheckedChange={(checked) => handlePreferenceChange("twoFactorAuth", checked)}
+                    onCheckedChange={(checked,) =>
+                      handlePreferenceChange('twoFactorAuth', checked,)}
                   />
                 </div>
               </div>
@@ -490,5 +493,5 @@ export default function ProfilePage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

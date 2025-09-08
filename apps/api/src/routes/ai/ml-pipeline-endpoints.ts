@@ -12,48 +12,48 @@ import type {
   MLPipelineConfig,
   MLPipelineStatus,
   ModelPerformanceMetrics,
-} from "@neonpro/types";
-import { Hono } from "hono";
+} from '@neonpro/types'
+import { Hono, } from 'hono'
 
-const mlPipeline = new Hono();
+const mlPipeline = new Hono()
 
 interface ModelVersionInfo {
-  id: string;
-  model_name: string;
-  version: string;
-  status: "training" | "testing" | "deployed" | "deprecated";
-  accuracy: number;
-  created_at: string;
-  deployed_at?: string;
-  metadata: Record<string, unknown>;
+  id: string
+  model_name: string
+  version: string
+  status: 'training' | 'testing' | 'deployed' | 'deprecated'
+  accuracy: number
+  created_at: string
+  deployed_at?: string
+  metadata: Record<string, unknown>
 }
 
 interface ABTestExperiment {
-  id: string;
-  name: string;
-  model_a_id: string;
-  model_b_id: string;
-  status: "planning" | "running" | "completed" | "cancelled";
-  traffic_split: number;
-  start_date: string;
-  end_date?: string;
-  success_criteria: Record<string, unknown>;
+  id: string
+  name: string
+  model_a_id: string
+  model_b_id: string
+  status: 'planning' | 'running' | 'completed' | 'cancelled'
+  traffic_split: number
+  start_date: string
+  end_date?: string
+  success_criteria: Record<string, unknown>
 }
 
 interface DriftAnalysisRequest {
-  model_id: string;
-  data_source: "live" | "batch";
-  reference_period_days?: number;
-  analysis_window_hours?: number;
-  sensitivity?: "low" | "medium" | "high";
+  model_id: string
+  data_source: 'live' | 'batch'
+  reference_period_days?: number
+  analysis_window_hours?: number
+  sensitivity?: 'low' | 'medium' | 'high'
 }
 
 interface ModelDeploymentStatus {
-  model_id: string;
-  status: "preparing" | "deploying" | "active" | "rollback" | "failed";
-  progress: number;
-  estimated_completion?: string;
-  error_details?: string;
+  model_id: string
+  status: 'preparing' | 'deploying' | 'active' | 'rollback' | 'failed'
+  progress: number
+  estimated_completion?: string
+  error_details?: string
 }
 
 // =============================================================================
@@ -61,24 +61,24 @@ interface ModelDeploymentStatus {
 // =============================================================================
 
 // List all models for a clinic
-mlPipeline.get("/models", async (c) => {
+mlPipeline.get('/models', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     // Mock data for now - replace with actual Supabase query
     const models: ModelVersionInfo[] = [
       {
-        id: "model_001",
-        model_name: "no_show_predictor_v1",
-        version: "1.2.3",
-        status: "deployed",
+        id: 'model_001',
+        model_name: 'no_show_predictor_v1',
+        version: '1.2.3',
+        status: 'deployed',
         accuracy: 0.87,
-        created_at: "2025-01-15T10:00:00Z",
-        deployed_at: "2025-01-16T14:30:00Z",
+        created_at: '2025-01-15T10:00:00Z',
+        deployed_at: '2025-01-16T14:30:00Z',
         metadata: {
           training_samples: 10_000,
           validation_accuracy: 0.89,
@@ -86,26 +86,26 @@ mlPipeline.get("/models", async (c) => {
         },
       },
       {
-        id: "model_002",
-        model_name: "patient_risk_scorer",
-        version: "2.1.0",
-        status: "testing",
+        id: 'model_002',
+        model_name: 'patient_risk_scorer',
+        version: '2.1.0',
+        status: 'testing',
         accuracy: 0.82,
-        created_at: "2025-01-20T09:15:00Z",
+        created_at: '2025-01-20T09:15:00Z',
         metadata: {
           training_samples: 8500,
           validation_accuracy: 0.84,
           features_count: 22,
         },
       },
-    ];
+    ]
 
     return c.json({
       success: true,
       data: models,
       total: models.length,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -114,31 +114,31 @@ mlPipeline.get("/models", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Create a new model version
-mlPipeline.post("/models", async (c) => {
+mlPipeline.post('/models', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
-    const body = await c.req.json();
-    const request: CreateModelVersionRequest = body;
+    const body = await c.req.json()
+    const request: CreateModelVersionRequest = body
 
     // Validate required fields
     if (!(request.model_name && request.version && request.clinic_id)) {
       return c.json(
         {
           success: false,
-          error: "Missing required fields: model_name, version, clinic_id",
+          error: 'Missing required fields: model_name, version, clinic_id',
         },
         400,
-      );
+      )
     }
 
     // Create model via Supabase
@@ -146,18 +146,18 @@ mlPipeline.post("/models", async (c) => {
       id: `model_${Date.now()}`,
       model_name: request.model_name,
       version: request.version,
-      status: "training",
+      status: 'training',
       accuracy: request.accuracy || 0,
       created_at: new Date().toISOString(),
       metadata: request.model_config || {},
-    };
+    }
 
     return c.json({
       success: true,
       data: newModel,
-      message: "Model version created successfully",
+      message: 'Model version created successfully',
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -166,33 +166,33 @@ mlPipeline.post("/models", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Deploy a model version
-mlPipeline.post("/models/:modelId/deploy", async (c) => {
+mlPipeline.post('/models/:modelId/deploy', async (c,) => {
   try {
-    const modelId = c.req.param("modelId");
-    const tenantId = c.req.header("x-tenant-id");
+    const modelId = c.req.param('modelId',)
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const deployment: ModelDeploymentStatus = {
       model_id: modelId,
-      status: "deploying",
+      status: 'deploying',
       progress: 0,
-      estimated_completion: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
-    };
+      estimated_completion: new Date(Date.now() + 5 * 60 * 1000,).toISOString(), // 5 minutes
+    }
 
     return c.json({
       success: true,
       data: deployment,
-      message: "Model deployment initiated",
+      message: 'Model deployment initiated',
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -201,31 +201,31 @@ mlPipeline.post("/models/:modelId/deploy", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Get model deployment status
-mlPipeline.get("/models/:modelId/deployment-status", async (c) => {
+mlPipeline.get('/models/:modelId/deployment-status', async (c,) => {
   try {
-    const modelId = c.req.param("modelId");
-    const tenantId = c.req.header("x-tenant-id");
+    const modelId = c.req.param('modelId',)
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const status: ModelDeploymentStatus = {
       model_id: modelId,
-      status: "active",
+      status: 'active',
       progress: 100,
-    };
+    }
 
     return c.json({
       success: true,
       data: status,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -234,24 +234,24 @@ mlPipeline.get("/models/:modelId/deployment-status", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Get model performance metrics
-mlPipeline.get("/models/:modelId/metrics", async (c) => {
+mlPipeline.get('/models/:modelId/metrics', async (c,) => {
   try {
-    const modelId = c.req.param("modelId");
-    const tenantId = c.req.header("x-tenant-id");
-    const days = Number(c.req.query("days")) || 7;
+    const modelId = c.req.param('modelId',)
+    const tenantId = c.req.header('x-tenant-id',)
+    const days = Number(c.req.query('days',),) || 7
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const metrics: ModelPerformanceMetrics = {
       model_id: modelId,
-      model_version: "1.2.3",
+      model_version: '1.2.3',
       period_start: new Date(
         Date.now() - days * 24 * 60 * 60 * 1000,
       ).toISOString(),
@@ -264,13 +264,13 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
       avg_confidence: 0.76,
       error_rate: 0.13,
       clinic_id: tenantId,
-    };
+    }
 
     return c.json({
       success: true,
       data: metrics,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -279,45 +279,45 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // =============================================================================
 // A/B TESTING ENDPOINTS
 // =============================================================================
 
 // List A/B tests
-mlPipeline.get("/ab-tests", async (c) => {
+mlPipeline.get('/ab-tests', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const tests: ABTestExperiment[] = [
       {
-        id: "ab_test_001",
-        name: "NoShow Predictor v1.2 vs v1.3",
-        model_a_id: "model_001",
-        model_b_id: "model_002",
-        status: "running",
+        id: 'ab_test_001',
+        name: 'NoShow Predictor v1.2 vs v1.3',
+        model_a_id: 'model_001',
+        model_b_id: 'model_002',
+        status: 'running',
         traffic_split: 0.5,
-        start_date: "2025-01-15T00:00:00Z",
+        start_date: '2025-01-15T00:00:00Z',
         success_criteria: {
           accuracy_improvement: 0.02,
           min_sample_size: 1000,
         },
       },
-    ];
+    ]
 
     return c.json({
       success: true,
       data: tests,
       total: tests.length,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -326,40 +326,40 @@ mlPipeline.get("/ab-tests", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Create A/B test
-mlPipeline.post("/ab-tests", async (c) => {
+mlPipeline.post('/ab-tests', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
-    const body = await c.req.json();
-    const request: CreateABTestRequest = body;
+    const body = await c.req.json()
+    const request: CreateABTestRequest = body
 
     const newTest: ABTestExperiment = {
       id: `ab_test_${Date.now()}`,
       name: request.test_name,
       model_a_id: request.model_a_id,
       model_b_id: request.model_b_id,
-      status: "planning",
+      status: 'planning',
       traffic_split: request.traffic_split,
       start_date: new Date().toISOString(),
       end_date: request.end_date,
       success_criteria: request.success_criteria,
-    };
+    }
 
     return c.json({
       success: true,
       data: newTest,
-      message: "A/B test created successfully",
+      message: 'A/B test created successfully',
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -368,26 +368,26 @@ mlPipeline.post("/ab-tests", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Start A/B test
-mlPipeline.post("/ab-tests/:testId/start", async (c) => {
+mlPipeline.post('/ab-tests/:testId/start', async (c,) => {
   try {
-    const testId = c.req.param("testId");
-    const tenantId = c.req.header("x-tenant-id");
+    const testId = c.req.param('testId',)
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     return c.json({
       success: true,
-      message: "A/B test started successfully",
-      data: { testId, status: "running" },
+      message: 'A/B test started successfully',
+      data: { testId, status: 'running', },
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -396,32 +396,32 @@ mlPipeline.post("/ab-tests/:testId/start", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Get A/B test results
-mlPipeline.get("/ab-tests/:testId/results", async (c) => {
+mlPipeline.get('/ab-tests/:testId/results', async (c,) => {
   try {
-    const testId = c.req.param("testId");
-    const tenantId = c.req.header("x-tenant-id");
+    const testId = c.req.param('testId',)
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const results: ABTestResult[] = [
       {
-        id: "result_001",
+        id: 'result_001',
         test_id: testId,
-        model_id: "model_001",
-        model_version: "1.2.3",
+        model_id: 'model_001',
+        model_version: '1.2.3',
         sample_size: 1250,
         accuracy: 0.87,
         precision: 0.84,
         recall: 0.91,
         f1_score: 0.87,
-        confidence_interval: { lower: 0.85, upper: 0.89 },
+        confidence_interval: { lower: 0.85, upper: 0.89, },
         statistical_significance: true,
         p_value: 0.03,
         clinic_id: tenantId,
@@ -429,13 +429,13 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
-    ];
+    ]
 
     return c.json({
       success: true,
       data: results,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -444,51 +444,51 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // =============================================================================
 // DRIFT DETECTION ENDPOINTS
 // =============================================================================
 
 // Get drift alerts
-mlPipeline.get("/drift-alerts", async (c) => {
+mlPipeline.get('/drift-alerts', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const alerts: DriftDetection[] = [
       {
-        id: "drift_001",
-        model_id: "model_001",
-        drift_type: "data",
+        id: 'drift_001',
+        model_id: 'model_001',
+        drift_type: 'data',
         detection_date: new Date().toISOString(),
-        severity: "medium",
+        severity: 'medium',
         drift_score: 0.65,
         threshold: 0.5,
-        status: "detected",
+        status: 'detected',
         clinic_id: tenantId,
-        affected_metrics: ["age_distribution", "appointment_hour"],
+        affected_metrics: ['age_distribution', 'appointment_hour',],
         details: {
           kl_divergence: 0.65,
           feature_importance_shift: 0.3,
-          recommendation: "Review recent data patterns",
+          recommendation: 'Review recent data patterns',
         },
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
-    ];
+    ]
 
     return c.json({
       success: true,
       data: alerts,
       total: alerts.length,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -497,39 +497,39 @@ mlPipeline.get("/drift-alerts", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Detect drift
-mlPipeline.post("/drift-detection", async (c) => {
+mlPipeline.post('/drift-detection', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
-    const body = await c.req.json();
-    const _request: DriftAnalysisRequest = body;
+    const body = await c.req.json()
+    const _request: DriftAnalysisRequest = body
 
     const result: DriftDetectionResult = {
       hasDrift: true,
       driftScore: 0.65,
-      severity: "medium",
-      affectedFeatures: ["age_distribution", "appointment_hour"],
+      severity: 'medium',
+      affectedFeatures: ['age_distribution', 'appointment_hour',],
       details: {
         kl_divergence: 0.65,
         feature_importance_shift: 0.3,
-        recommendation: "Consider retraining model with recent data",
+        recommendation: 'Consider retraining model with recent data',
       },
-    };
+    }
 
     return c.json({
       success: true,
       data: result,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -538,21 +538,21 @@ mlPipeline.post("/drift-detection", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // =============================================================================
 // PIPELINE STATUS AND CONFIGURATION
 // =============================================================================
 
 // Get ML Pipeline status
-mlPipeline.get("/status", async (c) => {
+mlPipeline.get('/status', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const status: MLPipelineStatus = {
@@ -561,14 +561,14 @@ mlPipeline.get("/status", async (c) => {
       detected_drifts: 1,
       models_needing_retrain: 0,
       last_evaluation_date: new Date().toISOString(),
-      overall_health: "warning",
-    };
+      overall_health: 'warning',
+    }
 
     return c.json({
       success: true,
       data: status,
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -577,17 +577,17 @@ mlPipeline.get("/status", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
 // Get ML Pipeline configuration
-mlPipeline.get("/config", async (c) => {
+mlPipeline.get('/config', async (c,) => {
   try {
-    const tenantId = c.req.header("x-tenant-id");
+    const tenantId = c.req.header('x-tenant-id',)
 
     if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
     }
 
     const config: MLPipelineConfig = {
@@ -597,43 +597,13 @@ mlPipeline.get("/config", async (c) => {
       ab_test_significance_level: 0.05,
       auto_retrain_enabled: false,
       model_retention_days: 365,
-    };
-
-    return c.json({
-      success: true,
-      data: config,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    return c.json(
-      {
-        success: false,
-        error: (error as Error).message,
-        timestamp: new Date().toISOString(),
-      },
-      500,
-    );
-  }
-});
-
-// Update ML Pipeline configuration
-mlPipeline.put("/config", async (c) => {
-  try {
-    const tenantId = c.req.header("x-tenant-id");
-
-    if (!tenantId) {
-      return c.json({ success: false, error: "Tenant ID required" }, 400);
     }
 
-    const body = await c.req.json();
-    const config: Partial<MLPipelineConfig> = body;
-
     return c.json({
       success: true,
       data: config,
-      message: "Configuration updated successfully",
       timestamp: new Date().toISOString(),
-    });
+    },)
   } catch (error) {
     return c.json(
       {
@@ -642,8 +612,38 @@ mlPipeline.put("/config", async (c) => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+},)
 
-export default mlPipeline;
+// Update ML Pipeline configuration
+mlPipeline.put('/config', async (c,) => {
+  try {
+    const tenantId = c.req.header('x-tenant-id',)
+
+    if (!tenantId) {
+      return c.json({ success: false, error: 'Tenant ID required', }, 400,)
+    }
+
+    const body = await c.req.json()
+    const config: Partial<MLPipelineConfig> = body
+
+    return c.json({
+      success: true,
+      data: config,
+      message: 'Configuration updated successfully',
+      timestamp: new Date().toISOString(),
+    },)
+  } catch (error) {
+    return c.json(
+      {
+        success: false,
+        error: (error as Error).message,
+        timestamp: new Date().toISOString(),
+      },
+      500,
+    )
+  }
+},)
+
+export default mlPipeline

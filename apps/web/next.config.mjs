@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   transpilePackages: [
-    "@neonpro/ui",
-    "@neonpro/utils",
-    "@neonpro/database",
+    '@neonpro/ui',
+    '@neonpro/utils',
+    '@neonpro/database',
   ],
 
   // HEALTHCARE PRODUCTION OPTIMIZATION
@@ -13,21 +13,21 @@ const nextConfig = {
 
   // Image optimization for healthcare media
   images: {
-    formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    formats: ['image/avif', 'image/webp',],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840,],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384,],
   },
 
   // Performance optimization
   experimental: {
     optimizePackageImports: [
-      "@neonpro/ui",
-      "lucide-react",
-      "@radix-ui/react-icons",
+      '@neonpro/ui',
+      'lucide-react',
+      '@radix-ui/react-icons',
     ],
     turbo: {
       resolveAlias: {
-        "@/": "./",
+        '@/': './',
       },
     },
   },
@@ -36,27 +36,27 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: '/(.*)',
         headers: [
           {
-            key: "X-Frame-Options",
-            value: "DENY",
+            key: 'X-Frame-Options',
+            value: 'DENY',
           },
           {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
           },
           {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
           },
           {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
         ],
       },
-    ];
+    ]
   },
 
   eslint: {
@@ -67,6 +67,6 @@ const nextConfig = {
     // HEALTHCARE CRITICAL: TypeScript errors MUST be fixed for patient safety
     // ignoreBuildErrors: true, // ❌ REMOVED - Patient safety requirement
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

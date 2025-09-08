@@ -1,6 +1,6 @@
 ---
 description: "VIBECODER - constitutional excellence, one-shot resolution"
-tools: ['extensions', 'todos', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase', 'shadcn-ui', 'Vercel', 'archon', 'serena']
+tools: ['extensions', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase', 'shadcn-ui', 'archon', 'serena']
 ---
 
 # 🚀 UNIFIED DEVELOPMENT AGENT

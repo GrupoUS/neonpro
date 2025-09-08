@@ -13,11 +13,11 @@ module.exports = {
     collect: {
       // URLs to test
       url: [
-        "http://localhost:3000", // Home page
-        "http://localhost:3000/dashboard", // Dashboard
-        "http://localhost:3000/pacientes", // Patient management
-        "http://localhost:3000/agenda", // Appointments
-        "http://localhost:3000/financeiro", // Financial
+        'http://localhost:3000', // Home page
+        'http://localhost:3000/dashboard', // Dashboard
+        'http://localhost:3000/pacientes', // Patient management
+        'http://localhost:3000/agenda', // Appointments
+        'http://localhost:3000/financeiro', // Financial
       ],
 
       // Collection settings
@@ -25,18 +25,18 @@ module.exports = {
       settings: {
         // Chrome flags for consistent testing
         chromeFlags: [
-          "--no-sandbox",
-          "--headless",
-          "--disable-gpu",
-          "--disable-dev-shm-usage",
-          "--disable-extensions",
-          "--disable-background-timer-throttling",
-          "--disable-backgrounding-occluded-windows",
-          "--disable-renderer-backgrounding",
+          '--no-sandbox',
+          '--headless',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-extensions',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
         ],
 
         // Throttling for mobile testing
-        throttlingMethod: "simulate",
+        throttlingMethod: 'simulate',
         throttling: {
           rttMs: 150,
           throughputKbps: 1638.4,
@@ -44,15 +44,15 @@ module.exports = {
         },
 
         // Emulate mobile device
-        emulatedFormFactor: "mobile",
+        emulatedFormFactor: 'mobile',
 
         // Skip PWA audits for now
         skipAudits: [
-          "service-worker",
-          "installable-manifest",
-          "splash-screen",
-          "themed-omnibox",
-          "maskable-icon",
+          'service-worker',
+          'installable-manifest',
+          'splash-screen',
+          'themed-omnibox',
+          'maskable-icon',
         ],
       },
     },
@@ -61,65 +61,65 @@ module.exports = {
       // Performance budgets - STRICT for healthcare
       assertions: {
         // Core Web Vitals - PRIMARY TARGETS
-        "largest-contentful-paint": ["error", { maxNumericValue: 2500 }], // 2.5s
-        "interaction-to-next-paint": ["error", { maxNumericValue: 200 }], // 200ms - Replaced FID as of March 2024
-        "cumulative-layout-shift": ["error", { maxNumericValue: 0.1 }], // 0.1
+        'largest-contentful-paint': ['error', { maxNumericValue: 2500, },], // 2.5s
+        'interaction-to-next-paint': ['error', { maxNumericValue: 200, },], // 200ms - Replaced FID as of March 2024
+        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1, },], // 0.1
 
         // Additional Performance Metrics
-        "first-contentful-paint": ["error", { maxNumericValue: 1800 }], // 1.8s
-        "speed-index": ["error", { maxNumericValue: 3000 }], // 3s
-        "total-blocking-time": ["error", { maxNumericValue: 200 }], // 200ms
-        "interactive": ["error", { maxNumericValue: 3800 }], // 3.8s
+        'first-contentful-paint': ['error', { maxNumericValue: 1800, },], // 1.8s
+        'speed-index': ['error', { maxNumericValue: 3000, },], // 3s
+        'total-blocking-time': ['error', { maxNumericValue: 200, },], // 200ms
+        'interactive': ['error', { maxNumericValue: 3800, },], // 3.8s
 
         // Healthcare-specific requirements
-        "color-contrast": "error", // WCAG compliance
-        "heading-order": "error", // Accessibility
-        "label": "error", // Form accessibility
-        "link-name": "error", // Link accessibility
-        "tap-targets": "error", // Mobile usability
+        'color-contrast': 'error', // WCAG compliance
+        'heading-order': 'error', // Accessibility
+        'label': 'error', // Form accessibility
+        'link-name': 'error', // Link accessibility
+        'tap-targets': 'error', // Mobile usability
 
         // Bundle size optimization
-        "unused-javascript": ["warn", { maxNumericValue: 100_000 }], // 100KB
-        "unused-css-rules": ["warn", { maxNumericValue: 50_000 }], // 50KB
-        "render-blocking-resources": "error",
-        "unminified-css": "error",
-        "unminified-javascript": "error",
+        'unused-javascript': ['warn', { maxNumericValue: 100_000, },], // 100KB
+        'unused-css-rules': ['warn', { maxNumericValue: 50_000, },], // 50KB
+        'render-blocking-resources': 'error',
+        'unminified-css': 'error',
+        'unminified-javascript': 'error',
 
         // Image optimization
-        "modern-image-formats": "error",
-        "uses-optimized-images": "error",
-        "uses-responsive-images": "error",
-        "efficient-animated-content": "error",
+        'modern-image-formats': 'error',
+        'uses-optimized-images': 'error',
+        'uses-responsive-images': 'error',
+        'efficient-animated-content': 'error',
 
         // Font optimization
-        "font-display": "error",
-        "preload-fonts": "warn",
+        'font-display': 'error',
+        'preload-fonts': 'warn',
 
         // Caching
-        "uses-long-cache-ttl": "warn",
-        "uses-rel-preconnect": "warn",
-        "uses-rel-preload": "warn",
+        'uses-long-cache-ttl': 'warn',
+        'uses-rel-preconnect': 'warn',
+        'uses-rel-preload': 'warn',
 
         // Security (healthcare compliance)
-        "is-on-https": "error",
-        "external-anchors-use-rel-noopener": "error",
-        "no-vulnerable-libraries": "error",
+        'is-on-https': 'error',
+        'external-anchors-use-rel-noopener': 'error',
+        'no-vulnerable-libraries': 'error',
 
         // SEO (healthcare discoverability)
-        "document-title": "error",
-        "meta-description": "error",
-        "viewport": "error",
-        "robots-txt": "warn",
+        'document-title': 'error',
+        'meta-description': 'error',
+        'viewport': 'error',
+        'robots-txt': 'warn',
       },
     },
 
     upload: {
       // Temporary server for CI results
-      target: "temporary-public-storage",
+      target: 'temporary-public-storage',
 
       // GitHub integration (if using GitHub Actions)
       githubAppToken: process.env.LHCI_GITHUB_APP_TOKEN,
-      githubApiHost: "https://api.github.com",
+      githubApiHost: 'https://api.github.com',
       githubToken: process.env.GITHUB_TOKEN,
     },
 
@@ -127,25 +127,25 @@ module.exports = {
       // Local server configuration
       port: 9001,
       storage: {
-        storageMethod: "sql",
-        sqlDialect: "sqlite",
-        sqlDatabasePath: "./lhci.db",
+        storageMethod: 'sql',
+        sqlDialect: 'sqlite',
+        sqlDatabasePath: './lhci.db',
       },
     },
   },
-};
+}
 
 // Healthcare-specific Lighthouse plugins
 const healthcarePlugins = [
   // Accessibility plugin
-  "lighthouse-plugin-accessibility",
+  'lighthouse-plugin-accessibility',
 
   // Performance monitoring
-  "lighthouse-plugin-field-performance",
+  'lighthouse-plugin-field-performance',
 
   // Security plugin
-  "lighthouse-plugin-security",
-];
+  'lighthouse-plugin-security',
+]
 
 // Export configuration for GitHub Actions
 module.exports.healthcareConfig = {
@@ -173,24 +173,24 @@ module.exports.healthcareConfig = {
   // Healthcare compliance checks
   compliance: {
     accessibility: {
-      "color-contrast": "error",
-      "keyboard-navigation": "error",
-      "screen-reader": "error",
-      "focus-management": "error",
+      'color-contrast': 'error',
+      'keyboard-navigation': 'error',
+      'screen-reader': 'error',
+      'focus-management': 'error',
     },
 
     security: {
-      "https-only": "error",
-      "no-mixed-content": "error",
-      "secure-cookies": "error",
-      "csp-header": "warn",
+      'https-only': 'error',
+      'no-mixed-content': 'error',
+      'secure-cookies': 'error',
+      'csp-header': 'warn',
     },
 
     performance: {
-      "bundle-size": "error",
-      "image-optimization": "error",
-      "font-optimization": "error",
-      "caching": "warn",
+      'bundle-size': 'error',
+      'image-optimization': 'error',
+      'font-optimization': 'error',
+      'caching': 'warn',
     },
   },
-};
+}

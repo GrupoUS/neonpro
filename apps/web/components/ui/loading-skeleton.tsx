@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "../../lib/utils";
+import { Skeleton, } from '@/components/ui/skeleton'
+import { cn, } from '../../lib/utils'
 
 interface LoadingSkeletonProps {
-  className?: string;
-  variant?: "pdf" | "excel" | "chart" | "payment" | "animation" | "default";
+  className?: string
+  variant?: 'pdf' | 'excel' | 'chart' | 'payment' | 'animation' | 'default'
 }
 
-export function LoadingSkeleton({ className, variant = "default" }: LoadingSkeletonProps) {
+export function LoadingSkeleton({ className, variant = 'default', }: LoadingSkeletonProps,) {
   const getSkeletonLayout = () => {
     switch (variant) {
-      case "pdf":
+      case 'pdf':
         return (
           <div className="space-y-4 p-4">
             <div className="flex items-center justify-between">
@@ -25,9 +25,9 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-8 w-8 rounded" />
             </div>
           </div>
-        );
+        )
 
-      case "excel":
+      case 'excel':
         return (
           <div className="space-y-4 p-4">
             <div className="flex gap-2">
@@ -36,12 +36,12 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-10 w-32" />
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {Array(20).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
+              {Array(20,).fill(0,).map((_, i,) => <Skeleton key={i} className="h-8 w-full" />)}
             </div>
           </div>
-        );
+        )
 
-      case "chart":
+      case 'chart':
         return (
           <div className="space-y-4 p-4">
             <div className="flex items-center justify-between">
@@ -60,9 +60,9 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               </div>
             </div>
           </div>
-        );
+        )
 
-      case "payment":
+      case 'payment':
         return (
           <div className="space-y-4 p-6">
             <Skeleton className="h-8 w-48 mx-auto" />
@@ -84,9 +84,9 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-12 w-full rounded-lg" />
             </div>
           </div>
-        );
+        )
 
-      case "animation":
+      case 'animation':
         return (
           <div className="space-y-4 p-4">
             <div className="flex items-center gap-4">
@@ -102,7 +102,7 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-24 w-full rounded animate-pulse" />
             </div>
           </div>
-        );
+        )
 
       default:
         return (
@@ -115,43 +115,43 @@ export function LoadingSkeleton({ className, variant = "default" }: LoadingSkele
               <Skeleton className="h-8 w-20" />
             </div>
           </div>
-        );
+        )
     }
-  };
+  }
 
   return (
-    <div className={cn("animate-pulse", className)}>
+    <div className={cn('animate-pulse', className,)}>
       {getSkeletonLayout()}
     </div>
-  );
+  )
 }
 
 // Loading messages for different variants
 export const LoadingMessages = {
-  pdf: "Carregando gerador de PDF...",
-  excel: "Carregando processador Excel...",
-  chart: "Carregando visualização...",
-  payment: "Carregando sistema de pagamento...",
-  animation: "Carregando animações...",
-  default: "Carregando componente...",
-} as const;
+  pdf: 'Carregando gerador de PDF...',
+  excel: 'Carregando processador Excel...',
+  chart: 'Carregando visualização...',
+  payment: 'Carregando sistema de pagamento...',
+  animation: 'Carregando animações...',
+  default: 'Carregando componente...',
+} as const
 
 // Loading component with message
 interface LoadingWithMessageProps extends LoadingSkeletonProps {
-  message?: string;
-  showMessage?: boolean;
+  message?: string
+  showMessage?: boolean
 }
 
 export function LoadingWithMessage({
-  variant = "default",
+  variant = 'default',
   message,
   showMessage = true,
   className,
-}: LoadingWithMessageProps) {
-  const displayMessage = message || LoadingMessages[variant];
+}: LoadingWithMessageProps,) {
+  const displayMessage = message || LoadingMessages[variant]
 
   return (
-    <div className={cn("flex flex-col items-center justify-center min-h-32", className)}>
+    <div className={cn('flex flex-col items-center justify-center min-h-32', className,)}>
       <LoadingSkeleton variant={variant} />
       {showMessage && (
         <p className="text-sm text-gray-500 mt-4 text-center">
@@ -159,5 +159,5 @@ export function LoadingWithMessage({
         </p>
       )}
     </div>
-  );
+  )
 }
