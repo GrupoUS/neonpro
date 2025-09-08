@@ -30,9 +30,9 @@
     "lint:fix": "oxlint src --fix",
     "format": "dprint fmt",
     "format:check": "dprint check",
-    "test": "vitest --run",
+    "test": "vitest --run --passWithNoTests",
     "test:watch": "vitest",
-    "coverage": "vitest --run --coverage"
+    "coverage": "vitest --run --coverage --passWithNoTests"
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",

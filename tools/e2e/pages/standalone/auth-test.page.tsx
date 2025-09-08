@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { useRealAuthContext } from "@/contexts/RealAuthContext";
+import { useRealAuthContext, } from '@/contexts/RealAuthContext'
 import {
   Alert,
   AlertDescription,
@@ -13,7 +13,7 @@ import {
   CardTitle,
   Input,
   Separator,
-} from "@neonpro/ui";
+} from '@neonpro/ui'
 import {
   CheckCircle,
   Clock,
@@ -23,8 +23,8 @@ import {
   Shield,
   User,
   XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 export default function AuthTestPage() {
   const {
@@ -35,52 +35,52 @@ export default function AuthTestPage() {
     login,
     logout,
     clearError,
-  } = useRealAuthContext();
+  } = useRealAuthContext()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mfaCode, setMfaCode] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
+  const [email, setEmail,] = useState('',)
+  const [password, setPassword,] = useState('',)
+  const [mfaCode, setMfaCode,] = useState('',)
+  const [loginLoading, setLoginLoading,] = useState(false,)
 
   // Clear errors when form changes
   useEffect(() => {
     if (error) {
-      clearError();
+      clearError()
     }
-  }, [email, password, mfaCode, error, clearError]);
+  }, [email, password, mfaCode, error, clearError,],)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (e: React.FormEvent,) => {
+    e.preventDefault()
 
     if (!email.trim() || !password.trim()) {
-      return;
+      return
     }
 
-    setLoginLoading(true);
+    setLoginLoading(true,)
 
     try {
       await login({
         email: email.trim(),
         password,
-        ...(mfaCode && { mfaCode: mfaCode.trim() }),
-      });
+        ...(mfaCode && { mfaCode: mfaCode.trim(), }),
+      },)
     } catch (_err) { // Unused catch parameter
       // Error is handled by the auth context
     } finally {
-      setLoginLoading(false);
+      setLoginLoading(false,)
     }
-  };
+  }
 
   const handleLogout = async () => {
     try {
-      await logout();
-      setEmail("");
-      setPassword("");
-      setMfaCode("");
+      await logout()
+      setEmail('',)
+      setPassword('',)
+      setMfaCode('',)
     } catch (_err) { // Unused catch parameter
       // Error is handled by the auth context
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -92,7 +92,7 @@ export default function AuthTestPage() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -119,11 +119,11 @@ export default function AuthTestPage() {
                 ? <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
                 : <XCircle className="h-5 w-5 text-red-500 mr-2" />}
               <span className="text-lg font-medium">
-                {isAuthenticated ? "Autenticado" : "Não autenticado"}
+                {isAuthenticated ? 'Autenticado' : 'Não autenticado'}
               </span>
             </div>
-            <Badge variant={isAuthenticated ? "default" : "secondary"}>
-              {isAuthenticated ? "ATIVO" : "INATIVO"}
+            <Badge variant={isAuthenticated ? 'default' : 'secondary'}>
+              {isAuthenticated ? 'ATIVO' : 'INATIVO'}
             </Badge>
           </div>
         </CardContent>
@@ -161,7 +161,7 @@ export default function AuthTestPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e,) => setEmail(e.target.value,)}
                   placeholder="usuario@exemplo.com"
                   required
                   disabled={loginLoading}
@@ -176,7 +176,7 @@ export default function AuthTestPage() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e,) => setPassword(e.target.value,)}
                   placeholder="Digite sua senha"
                   required
                   disabled={loginLoading}
@@ -191,7 +191,7 @@ export default function AuthTestPage() {
                   id="mfaCode"
                   type="text"
                   value={mfaCode}
-                  onChange={(e) => setMfaCode(e.target.value)}
+                  onChange={(e,) => setMfaCode(e.target.value,)}
                   placeholder="123456"
                   disabled={loginLoading}
                   maxLength={6}
@@ -209,7 +209,7 @@ export default function AuthTestPage() {
                 {loginLoading
                   ? <LoaderCircle className="h-4 w-4 animate-spin mr-2" />
                   : <LogIn className="h-4 w-4 mr-2" />}
-                {loginLoading ? "Fazendo Login..." : "Fazer Login"}
+                {loginLoading ? 'Fazendo Login...' : 'Fazer Login'}
               </Button>
             </form>
           </CardContent>
@@ -258,7 +258,7 @@ export default function AuthTestPage() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Função</p>
                 <Badge variant="outline">
-                  {user.role || "Não definido"}
+                  {user.role || 'Não definido'}
                 </Badge>
               </div>
 
@@ -271,7 +271,7 @@ export default function AuthTestPage() {
                     ? <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
                     : <XCircle className="h-4 w-4 text-red-500 mr-1" />}
                   <span className="text-sm">
-                    {user.isActive ? "Sim" : "Não"}
+                    {user.isActive ? 'Sim' : 'Não'}
                   </span>
                 </div>
               </div>
@@ -284,9 +284,9 @@ export default function AuthTestPage() {
                 Permissões
               </p>
               <div className="flex flex-wrap gap-1">
-                {Object.keys(user.permissions || {}).length > 0
+                {Object.keys(user.permissions || {},).length > 0
                   ? (
-                    Object.keys(user.permissions || {}).map((permission: string) => (
+                    Object.keys(user.permissions || {},).map((permission: string,) => (
                       <Badge key={permission} variant="secondary" className="text-xs">
                         {(user.permissions && user.permissions[permission]) || permission}
                       </Badge>
@@ -306,8 +306,8 @@ export default function AuthTestPage() {
               <div className="text-xs space-y-1 text-muted-foreground">
                 <p>
                   Último login: {user.lastLoginAt
-                    ? new Date(user.lastLoginAt).toLocaleString("pt-BR")
-                    : "Não disponível"}
+                    ? new Date(user.lastLoginAt,).toLocaleString('pt-BR',)
+                    : 'Não disponível'}
                 </p>
                 {/* Session expiration not available in User type */}
               </div>
@@ -365,5 +365,5 @@ export default function AuthTestPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

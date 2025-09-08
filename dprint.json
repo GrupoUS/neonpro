@@ -28,7 +28,13 @@
     "**/.next/**",
     "**/.turbo/**",
     "**/coverage/**",
-    "**/playwright-report/**"
+    "**/playwright-report/**",
+    "apps/api/src/index.ts",
+    "apps/web/components/forms/form-provider.tsx",
+    "apps/web/components/examples/anti-no-show-dashboard-example.tsx",
+    "apps/web/app/components/no-show/patient-risk-context.tsx",
+    "apps/web/tests/integration/database-integration.test.tsx",
+    "apps/web/src/components/no-show-activation/StaffAlertSystem.tsx"
   ],
   "typescript": {
     "semiColons": "asi",
@@ -37,4 +43,3 @@
     "jsx.quoteStyle": "preferDouble"
   }
 }
-

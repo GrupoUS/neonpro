@@ -177,10 +177,13 @@ export class TemplateManager {
    * Get LGPD compliance templates
    */
   getLGPDTemplates(): LGPDTemplate[] {
-    return this.searchTemplates({
-      category: 'compliance',
-      language: 'pt-BR',
-    },) as LGPDTemplate[]
+    const results: LGPDTemplate[] = []
+    for (const [id, tpl] of this.templates.entries()) {
+      if (id.startsWith('lgpd-') && (tpl as LGPDTemplate).language === 'pt-BR') {
+        results.push(tpl as LGPDTemplate)
+      }
+    }
+    return results
   }
 
   /**

@@ -1,27 +1,27 @@
-import { afterAll, beforeAll } from "vitest";
-import { setupSupabaseMock } from "./supabase-mock";
+import { afterAll, beforeAll, } from 'vitest'
+import { setupSupabaseMock, } from './supabase-mock'
 
 // Healthcare API Testing Setup for NeonPro
 // LGPD, ANVISA, and CFM compliance testing setup
 
 beforeAll(async () => {
   // Setup Supabase mock for healthcare data
-  await setupSupabaseMock();
+  await setupSupabaseMock()
 
   // Setup ANVISA API mocks
-  setupAnvisaMocks();
+  setupAnvisaMocks()
 
   // Setup CFM validation mocks
-  setupCFMMocks();
+  setupCFMMocks()
 
   // Setup LGPD compliance testing environment
-  setupLGPDTestEnvironment();
-});
+  setupLGPDTestEnvironment()
+},)
 
 afterAll(async () => {
   // Cleanup all healthcare API mocks
-  await cleanupHealthcareMocks();
-});
+  await cleanupHealthcareMocks()
+},)
 
 function setupAnvisaMocks() {}
 

@@ -4,42 +4,42 @@
  */
 
 export interface HealthcareMetric {
-  name: string;
-  description: string;
-  threshold: number;
-  unit: "ms" | "score" | "bytes" | "count";
-  critical: boolean;
-  category: "clinical" | "administrative" | "compliance" | "user-experience";
+  name: string
+  description: string
+  threshold: number
+  unit: 'ms' | 'score' | 'bytes' | 'count'
+  critical: boolean
+  category: 'clinical' | 'administrative' | 'compliance' | 'user-experience'
 }
 
 export interface HealthcarePerformanceBudget {
   // Core Web Vitals - Critical for all healthcare apps
-  lcp: number; // Largest Contentful Paint
-  fid: number; // First Input Delay
-  cls: number; // Cumulative Layout Shift
-  fcp: number; // First Contentful Paint
-  ttfb: number; // Time to First Byte
+  lcp: number // Largest Contentful Paint
+  fid: number // First Input Delay
+  cls: number // Cumulative Layout Shift
+  fcp: number // First Contentful Paint
+  ttfb: number // Time to First Byte
 
   // Healthcare-specific metrics
-  patientDataLoadTime: number;
-  medicalRecordAccessTime: number;
-  prescriptionLoadTime: number;
-  diagnosticImageLoadTime: number;
-  formSubmissionTime: number;
-  searchResponseTime: number;
-  navigationTime: number;
-  authenticationTime: number;
+  patientDataLoadTime: number
+  medicalRecordAccessTime: number
+  prescriptionLoadTime: number
+  diagnosticImageLoadTime: number
+  formSubmissionTime: number
+  searchResponseTime: number
+  navigationTime: number
+  authenticationTime: number
 
   // Compliance and security metrics
-  auditLogTime: number;
-  encryptionTime: number;
-  accessControlCheckTime: number;
+  auditLogTime: number
+  encryptionTime: number
+  accessControlCheckTime: number
 
   // Memory and resource metrics
-  memoryUsage: number;
-  cpuUsage: number;
-  networkRequests: number;
-  bundleSize: number;
+  memoryUsage: number
+  cpuUsage: number
+  networkRequests: number
+  bundleSize: number
 }
 
 /**
@@ -48,54 +48,54 @@ export interface HealthcarePerformanceBudget {
  */
 export const HEALTHCARE_CRITICAL_METRICS: HealthcareMetric[] = [
   {
-    name: "patientDataLoadTime",
-    description: "Time to load critical patient data (demographics, allergies, medications)",
+    name: 'patientDataLoadTime',
+    description: 'Time to load critical patient data (demographics, allergies, medications)',
     threshold: 2000, // 2 seconds - critical for emergency situations
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "clinical",
+    category: 'clinical',
   },
   {
-    name: "medicalRecordAccessTime",
-    description: "Time to access complete medical records",
+    name: 'medicalRecordAccessTime',
+    description: 'Time to access complete medical records',
     threshold: 3000, // 3 seconds
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "clinical",
+    category: 'clinical',
   },
   {
-    name: "prescriptionLoadTime",
-    description: "Time to load prescription history and current medications",
+    name: 'prescriptionLoadTime',
+    description: 'Time to load prescription history and current medications',
     threshold: 1500, // 1.5 seconds - critical for drug interactions
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "clinical",
+    category: 'clinical',
   },
   {
-    name: "diagnosticImageLoadTime",
-    description: "Time to load diagnostic images (X-rays, MRIs, etc.)",
+    name: 'diagnosticImageLoadTime',
+    description: 'Time to load diagnostic images (X-rays, MRIs, etc.)',
     threshold: 5000, // 5 seconds - acceptable for large medical images
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "clinical",
+    category: 'clinical',
   },
   {
-    name: "authenticationTime",
-    description: "Time for healthcare provider authentication",
+    name: 'authenticationTime',
+    description: 'Time for healthcare provider authentication',
     threshold: 3000, // 3 seconds
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "compliance",
+    category: 'compliance',
   },
   {
-    name: "auditLogTime",
-    description: "Time to record audit log entries (HIPAA compliance)",
+    name: 'auditLogTime',
+    description: 'Time to record audit log entries (HIPAA compliance)',
     threshold: 500, // 500ms - must be fast to not impact workflow
-    unit: "ms",
+    unit: 'ms',
     critical: true,
-    category: "compliance",
+    category: 'compliance',
   },
-];
+]
 
 /**
  * Standard healthcare performance metrics
@@ -103,46 +103,46 @@ export const HEALTHCARE_CRITICAL_METRICS: HealthcareMetric[] = [
  */
 export const HEALTHCARE_STANDARD_METRICS: HealthcareMetric[] = [
   {
-    name: "formSubmissionTime",
-    description: "Time to submit and process healthcare forms",
+    name: 'formSubmissionTime',
+    description: 'Time to submit and process healthcare forms',
     threshold: 2000, // 2 seconds
-    unit: "ms",
+    unit: 'ms',
     critical: false,
-    category: "user-experience",
+    category: 'user-experience',
   },
   {
-    name: "searchResponseTime",
-    description: "Time to return search results (patients, procedures, etc.)",
+    name: 'searchResponseTime',
+    description: 'Time to return search results (patients, procedures, etc.)',
     threshold: 1000, // 1 second
-    unit: "ms",
+    unit: 'ms',
     critical: false,
-    category: "user-experience",
+    category: 'user-experience',
   },
   {
-    name: "navigationTime",
-    description: "Time to navigate between different sections",
+    name: 'navigationTime',
+    description: 'Time to navigate between different sections',
     threshold: 800, // 800ms
-    unit: "ms",
+    unit: 'ms',
     critical: false,
-    category: "user-experience",
+    category: 'user-experience',
   },
   {
-    name: "encryptionTime",
-    description: "Time to encrypt/decrypt sensitive data",
+    name: 'encryptionTime',
+    description: 'Time to encrypt/decrypt sensitive data',
     threshold: 200, // 200ms
-    unit: "ms",
+    unit: 'ms',
     critical: false,
-    category: "compliance",
+    category: 'compliance',
   },
   {
-    name: "accessControlCheckTime",
-    description: "Time to verify user permissions",
+    name: 'accessControlCheckTime',
+    description: 'Time to verify user permissions',
     threshold: 300, // 300ms
-    unit: "ms",
+    unit: 'ms',
     critical: false,
-    category: "compliance",
+    category: 'compliance',
   },
-];
+]
 
 /**
  * Performance budgets for different types of healthcare pages
@@ -274,7 +274,7 @@ export const HEALTHCARE_PERFORMANCE_BUDGETS: Record<
     networkRequests: 60, // Many requests for data
     bundleSize: 1500 * 1024, // 1.5MB max bundle
   },
-};
+}
 
 /**
  * Healthcare-specific performance assertions
@@ -284,35 +284,35 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
   // Patient Safety Critical Assertions
   patientSafety: {
     criticalDataLoad: {
-      description: "Critical patient data must load within safety thresholds",
-      assertion: (metrics: Record<string, number>) => {
+      description: 'Critical patient data must load within safety thresholds',
+      assertion: (metrics: Record<string, number>,) => {
         const criticalMetrics = [
-          "patientDataLoadTime",
-          "prescriptionLoadTime",
-          "medicalRecordAccessTime",
-        ];
-        return criticalMetrics.every((metric) => {
-          const value = metrics[metric];
+          'patientDataLoadTime',
+          'prescriptionLoadTime',
+          'medicalRecordAccessTime',
+        ]
+        return criticalMetrics.every((metric,) => {
+          const value = metrics[metric]
           const threshold = HEALTHCARE_CRITICAL_METRICS.find(
-            (m) => m.name === metric,
-          )?.threshold;
-          return value && threshold && value <= threshold;
-        });
+            (m,) => m.name === metric,
+          )?.threshold
+          return value && threshold && value <= threshold
+        },)
       },
     },
 
     emergencyResponse: {
-      description: "Emergency scenarios must meet strict performance requirements",
-      assertion: (metrics: Record<string, number>, pageType: string) => {
-        if (pageType !== "emergency") {
-          return true;
+      description: 'Emergency scenarios must meet strict performance requirements',
+      assertion: (metrics: Record<string, number>, pageType: string,) => {
+        if (pageType !== 'emergency') {
+          return true
         }
-        const budget = HEALTHCARE_PERFORMANCE_BUDGETS.emergency;
+        const budget = HEALTHCARE_PERFORMANCE_BUDGETS.emergency
         return (
           metrics.patientDataLoadTime <= budget.patientDataLoadTime
           && metrics.prescriptionLoadTime <= budget.prescriptionLoadTime
           && metrics.lcp <= budget.lcp
-        );
+        )
       },
     },
   },
@@ -320,23 +320,23 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
   // Regulatory Compliance Assertions
   compliance: {
     auditTrail: {
-      description: "Audit logging must not impact user workflow performance",
-      assertion: (metrics: Record<string, number>) => {
-        return metrics.auditLogTime <= 500; // 500ms max for audit logging
+      description: 'Audit logging must not impact user workflow performance',
+      assertion: (metrics: Record<string, number>,) => {
+        return metrics.auditLogTime <= 500 // 500ms max for audit logging
       },
     },
 
     dataEncryption: {
-      description: "Data encryption/decryption must be performant",
-      assertion: (metrics: Record<string, number>) => {
-        return metrics.encryptionTime <= 300; // 300ms max for encryption
+      description: 'Data encryption/decryption must be performant',
+      assertion: (metrics: Record<string, number>,) => {
+        return metrics.encryptionTime <= 300 // 300ms max for encryption
       },
     },
 
     accessControl: {
-      description: "Access control checks must be fast",
-      assertion: (metrics: Record<string, number>) => {
-        return metrics.accessControlCheckTime <= 400; // 400ms max
+      description: 'Access control checks must be fast',
+      assertion: (metrics: Record<string, number>,) => {
+        return metrics.accessControlCheckTime <= 400 // 400ms max
       },
     },
   },
@@ -344,30 +344,30 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
   // User Experience Assertions
   userExperience: {
     coreWebVitals: {
-      description: "Core Web Vitals must meet healthcare standards",
-      assertion: (metrics: Record<string, number>, pageType = "clinical") => {
+      description: 'Core Web Vitals must meet healthcare standards',
+      assertion: (metrics: Record<string, number>, pageType = 'clinical',) => {
         const budget = HEALTHCARE_PERFORMANCE_BUDGETS[pageType]
-          || HEALTHCARE_PERFORMANCE_BUDGETS.clinical;
+          || HEALTHCARE_PERFORMANCE_BUDGETS.clinical
         return (
           metrics.lcp <= budget.lcp
           && metrics.fid <= budget.fid
           && metrics.cls <= budget.cls
-        );
+        )
       },
     },
 
     interactivity: {
-      description: "User interactions must be responsive",
-      assertion: (metrics: Record<string, number>) => {
+      description: 'User interactions must be responsive',
+      assertion: (metrics: Record<string, number>,) => {
         return (
           metrics.formSubmissionTime <= 3000 // 3s max for form submission
           && metrics.searchResponseTime <= 1500 // 1.5s max for search
           && metrics.navigationTime <= 1000 // 1s max for navigation
-        );
+        )
       },
     },
   },
-};
+}
 
 /**
  * Get performance budget for a specific healthcare page type
@@ -378,14 +378,14 @@ export function getHealthcarePerformanceBudget(
   return (
     HEALTHCARE_PERFORMANCE_BUDGETS[pageType]
     || HEALTHCARE_PERFORMANCE_BUDGETS.clinical
-  );
+  )
 }
 
 /**
  * Check if a page type is considered critical for patient safety
  */
-export function isCriticalHealthcarePage(pageType: string): boolean {
-  return pageType === "emergency" || pageType === "clinical";
+export function isCriticalHealthcarePage(pageType: string,): boolean {
+  return pageType === 'emergency' || pageType === 'clinical'
 }
 
 /**
@@ -394,12 +394,12 @@ export function isCriticalHealthcarePage(pageType: string): boolean {
 export function getCriticalHealthcareMetrics(
   pageType: string,
 ): HealthcareMetric[] {
-  if (isCriticalHealthcarePage(pageType)) {
-    return HEALTHCARE_CRITICAL_METRICS;
+  if (isCriticalHealthcarePage(pageType,)) {
+    return HEALTHCARE_CRITICAL_METRICS
   }
   return HEALTHCARE_CRITICAL_METRICS.filter(
-    (metric) => metric.category === "compliance",
-  );
+    (metric,) => metric.category === 'compliance',
+  )
 }
 
 /**
@@ -407,43 +407,43 @@ export function getCriticalHealthcareMetrics(
  */
 export function validateHealthcareMetrics(
   metrics: Record<string, number>,
-  pageType = "clinical",
+  pageType = 'clinical',
 ): {
-  passed: boolean;
+  passed: boolean
   failures: {
-    metric: string;
-    value: number;
-    threshold: number;
-    critical: boolean;
-  }[];
+    metric: string
+    value: number
+    threshold: number
+    critical: boolean
+  }[]
 } {
-  const budget = getHealthcarePerformanceBudget(pageType);
-  const criticalMetrics = getCriticalHealthcareMetrics(pageType);
-  const failures: Record<string, unknown>[] = [];
+  const budget = getHealthcarePerformanceBudget(pageType,)
+  const criticalMetrics = getCriticalHealthcareMetrics(pageType,)
+  const failures: Record<string, unknown>[] = []
 
   // Check Core Web Vitals
   const coreVitals = [
-    { name: "lcp", threshold: budget.lcp, critical: true },
-    { name: "fid", threshold: budget.fid, critical: true },
-    { name: "cls", threshold: budget.cls, critical: true },
-    { name: "fcp", threshold: budget.fcp, critical: false },
-    { name: "ttfb", threshold: budget.ttfb, critical: false },
-  ];
+    { name: 'lcp', threshold: budget.lcp, critical: true, },
+    { name: 'fid', threshold: budget.fid, critical: true, },
+    { name: 'cls', threshold: budget.cls, critical: true, },
+    { name: 'fcp', threshold: budget.fcp, critical: false, },
+    { name: 'ttfb', threshold: budget.ttfb, critical: false, },
+  ]
 
-  coreVitals.forEach((vital) => {
+  coreVitals.forEach((vital,) => {
     if (metrics[vital.name] && metrics[vital.name] > vital.threshold) {
       failures.push({
         metric: vital.name,
         value: metrics[vital.name],
         threshold: vital.threshold,
         critical: vital.critical,
-      });
+      },)
     }
-  });
+  },)
 
   // Check healthcare-specific metrics
-  criticalMetrics.forEach((metric) => {
-    const budgetValue = (budget as any)[metric.name];
+  criticalMetrics.forEach((metric,) => {
+    const budgetValue = (budget as any)[metric.name]
     if (
       metrics[metric.name]
       && budgetValue
@@ -454,12 +454,12 @@ export function validateHealthcareMetrics(
         value: metrics[metric.name],
         threshold: budgetValue,
         critical: metric.critical,
-      });
+      },)
     }
-  });
+  },)
 
   return {
     passed: failures.length === 0,
     failures,
-  };
+  }
 }

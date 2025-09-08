@@ -145,4 +145,117 @@ export const cfmProfessionalData = {
       {
         activity: 'Workshop Preenchimento Facial',
         date: '2024-01-10',
-      
+        hours: 8,
+        category: 'Workshops',
+      },
+    ],
+  },
+}
+
+// Utility functions
+export const formatCurrency = (value: number,): string => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  },).format(value,)
+}
+
+export const formatDate = (date: string | Date,): string => {
+  const dateObj = typeof date === 'string' ? new Date(date,) : date
+  return new Intl.DateTimeFormat('pt-BR',).format(dateObj,)
+}
+
+// Financial Data
+export const financialData = {
+  revenue: {
+    total: 850000,
+    monthly: 70833,
+    quarterly: 212500,
+    yearly: 850000,
+    consultations: 450000,
+    procedures: 320000,
+    products: 80000,
+    growth: {
+      monthly: 5.2,
+      quarterly: 12.8,
+      yearly: 18.5,
+    },
+  },
+  expenses: {
+    total: 620000,
+    staff: 380000,
+    equipment: 120000,
+    supplies: 85000,
+    overhead: 35000,
+  },
+  taxes: {
+    irpf: 45000,
+    irpj: 38000,
+    csll: 22000,
+    pis: 12000,
+    cofins: 18000,
+    iss: 25000,
+    inss: 32000,
+    total: 192000,
+  },
+  paymentMethods: {
+    pix: { amount: 340000, percentage: 40, },
+    card: { amount: 255000, percentage: 30, },
+    creditCard: { amount: 255000, percentage: 30, },
+    debitCard: { amount: 170000, percentage: 20, },
+    cash: { amount: 170000, percentage: 20, },
+    transfer: { amount: 85000, percentage: 10, },
+  },
+}
+
+// Clinical Data
+export const clinicalData = {
+  patients: {
+    total: 2847,
+    active: 2156,
+    newThisMonth: 89,
+    averageAge: 42.5,
+  },
+  procedures: {
+    total: 1245,
+    consultations: 856,
+    treatments: 389,
+    successRate: 94.2,
+  },
+  outcomes: {
+    satisfaction: 4.7,
+    complications: 2.1,
+    followUpRate: 87.3,
+  },
+  treatmentOutcomes: {
+    successRate: 94.2,
+    complicationRate: 2.1,
+    patientSatisfaction: 4.7,
+    treatmentCompletionRate: 89.5,
+    followUpAdherence: 87.3,
+    followUpCompliance: 87.3,
+  },
+  patientSatisfaction: {
+    overall: 4.7,
+    treatment: 4.8,
+    communication: 4.6,
+    facilities: 4.5,
+    nps: 8.5,
+    breakdown: {
+      treatment: 4.8,
+      communication: 4.6,
+      facilities: 4.5,
+      staff: 4.7,
+      service: 4.6,
+      scheduling: 4.4,
+    },
+  },
+}
+
+// Combined report data
+export const reportData = {
+  lgpd: lgpdComplianceData,
+  cfm: cfmProfessionalData,
+  financial: financialData,
+  clinical: clinicalData,
+}

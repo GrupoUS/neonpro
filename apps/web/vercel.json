@@ -2,9 +2,9 @@
   "version": 2,
   "framework": "nextjs",
   "regions": ["gru1"],
-  "outputDirectory": "apps/web/.next",
   "installCommand": "corepack enable && corepack prepare pnpm@8.15.8 --activate && pnpm -w install --frozen-lockfile",
   "buildCommand": "pnpm --filter @neonpro/web run vercel-build",
+  "outputDirectory": ".next",
   "env": {
     "NODE_ENV": "production",
     "VERCEL": "1",

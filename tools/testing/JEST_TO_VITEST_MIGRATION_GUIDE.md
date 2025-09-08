@@ -35,14 +35,14 @@ The following Jest-based test files have been temporarily excluded from Vitest r
 **Before (Jest):**
 
 ```typescript
-import { jest } from "@jest/globals";
-import { describe, expect, it } from "@jest/globals";
+import { jest, } from '@jest/globals'
+import { describe, expect, it, } from '@jest/globals'
 ```
 
 **After (Vitest):**
 
 ```typescript
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, } from 'vitest'
 // Note: globals are enabled, so these imports are optional
 ```
 
@@ -51,23 +51,23 @@ import { describe, expect, it, vi } from "vitest";
 **Before (Jest):**
 
 ```typescript
-jest.mock("@/app/utils/supabase/client", () => ({
+jest.mock('@/app/utils/supabase/client', () => ({
   createClient: jest.fn(),
-}));
+}),)
 
-const mockFn = jest.fn();
-jest.spyOn(object, "method");
+const mockFn = jest.fn()
+jest.spyOn(object, 'method',)
 ```
 
 **After (Vitest):**
 
 ```typescript
-vi.mock("@/app/utils/supabase/client", () => ({
+vi.mock('@/app/utils/supabase/client', () => ({
   createClient: vi.fn(),
-}));
+}),)
 
-const mockFn = vi.fn();
-vi.spyOn(object, "method");
+const mockFn = vi.fn()
+vi.spyOn(object, 'method',)
 ```
 
 ### 3. Path Resolution
@@ -178,11 +178,12 @@ pnpm exec vitest run tools/testing/unit/auth/auth.test.ts
 
 1. **Enable Vitest config include paths** after migration:
    ```typescript
-   include: [
-     "tools/testing/unit/**/*.{test,spec}.{js,ts,jsx,tsx}",
-     "apps/**/*.{test,spec}.{js,ts,jsx,tsx}", // Re-enable
-     "packages/**/*.{test,spec}.{js,ts,jsx,tsx}", // Re-enable
-   ];
+   include: ;
+   ;[
+     'tools/testing/unit/**/*.{test,spec}.{js,ts,jsx,tsx}',
+     'apps/**/*.{test,spec}.{js,ts,jsx,tsx}', // Re-enable
+     'packages/**/*.{test,spec}.{js,ts,jsx,tsx}', // Re-enable
+   ]
    ```
 
 2. **Remove Jest dependencies** from package.json

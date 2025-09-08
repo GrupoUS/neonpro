@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { vi, } from 'vitest'
 
 // Supabase Mock for Healthcare Testing
 // LGPD-compliant data mocking and healthcare-specific scenarios
@@ -38,55 +38,55 @@ export const createSupabaseMock = () => {
         unsubscribe: vi.fn(),
       })),
     },
-  };
+  }
 
-  return supabaseMock;
-};
+  return supabaseMock
+}
 
 export const setupSupabaseMock = async () => {
-  const mock = createSupabaseMock();
+  const mock = createSupabaseMock()
 
   // Setup healthcare-specific mock data
-  setupPatientDataMocks(mock);
-  setupAnvisaDataMocks(mock);
-  setupCFMDataMocks(mock);
-  setupAuditTrailMocks(mock);
-  return mock;
-};
+  setupPatientDataMocks(mock,)
+  setupAnvisaDataMocks(mock,)
+  setupCFMDataMocks(mock,)
+  setupAuditTrailMocks(mock,)
+  return mock
+}
 
-function setupPatientDataMocks(mock: unknown) {
+function setupPatientDataMocks(mock: unknown,) {
   // Mock LGPD-compliant patient data
   const mockPatients = [
     {
-      id: "test-patient-1",
-      name: "João Test Silva",
-      cpf: "123.456.789-00",
+      id: 'test-patient-1',
+      name: 'João Test Silva',
+      cpf: '123.456.789-00',
       consent_given: true,
       data_processing_consent: new Date().toISOString(),
     },
     {
-      id: "test-patient-2",
-      name: "Maria Test Santos",
-      cpf: "987.654.321-00",
+      id: 'test-patient-2',
+      name: 'Maria Test Santos',
+      cpf: '987.654.321-00',
       consent_given: true,
       data_processing_consent: new Date().toISOString(),
     },
-  ];
+  ]
 
-  mock.from.mockImplementation((table: string) => {
-    if (table === "patients") {
+  mock.from.mockImplementation((table: string,) => {
+    if (table === 'patients') {
       return {
-        select: () => ({ data: mockPatients, error: undefined }),
-        insert: () => ({ data: mockPatients[0], error: undefined }),
-        update: () => ({ data: mockPatients[0], error: undefined }),
-        delete: () => ({ data: undefined, error: undefined }),
-      };
+        select: () => ({ data: mockPatients, error: undefined, }),
+        insert: () => ({ data: mockPatients[0], error: undefined, }),
+        update: () => ({ data: mockPatients[0], error: undefined, }),
+        delete: () => ({ data: undefined, error: undefined, }),
+      }
     }
-    return mock.from();
-  });
+    return mock.from()
+  },)
 }
 
-function setupAnvisaDataMocks(_mock: unknown) {
+function setupAnvisaDataMocks(_mock: unknown,) {
   // Mock ANVISA device registration data}
 
   // Removed unused functions setupCFMDataMocks and setupAuditTrailMocks

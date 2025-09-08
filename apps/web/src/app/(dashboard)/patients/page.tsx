@@ -1,47 +1,47 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Filter, Mail, MoreHorizontal, Phone, Plus, Search, User } from "lucide-react";
-import Link from "next/link";
+} from '@/components/ui/dropdown-menu'
+import { Input, } from '@/components/ui/input'
+import { Filter, Mail, MoreHorizontal, Phone, Plus, Search, User, } from 'lucide-react'
+import Link from 'next/link'
 
 const patients = [
   {
-    id: "1",
-    name: "Maria Silva",
-    email: "maria.silva@email.com",
-    phone: "(11) 99999-9999",
-    lastVisit: "2024-01-15",
-    status: "ativo",
+    id: '1',
+    name: 'Maria Silva',
+    email: 'maria.silva@email.com',
+    phone: '(11) 99999-9999',
+    lastVisit: '2024-01-15',
+    status: 'ativo',
     treatments: 5,
   },
   {
-    id: "2",
-    name: "João Santos",
-    email: "joao.santos@email.com",
-    phone: "(11) 88888-8888",
-    lastVisit: "2024-01-10",
-    status: "ativo",
+    id: '2',
+    name: 'João Santos',
+    email: 'joao.santos@email.com',
+    phone: '(11) 88888-8888',
+    lastVisit: '2024-01-10',
+    status: 'ativo',
     treatments: 3,
   },
   {
-    id: "3",
-    name: "Ana Costa",
-    email: "ana.costa@email.com",
-    phone: "(11) 77777-7777",
-    lastVisit: "2023-12-20",
-    status: "inativo",
+    id: '3',
+    name: 'Ana Costa',
+    email: 'ana.costa@email.com',
+    phone: '(11) 77777-7777',
+    lastVisit: '2023-12-20',
+    status: 'inativo',
     treatments: 8,
   },
-];
+]
 
 export default function PatientsPage() {
   return (
@@ -88,7 +88,7 @@ export default function PatientsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {patients.map((patient) => (
+            {patients.map((patient,) => (
               <div
                 key={patient.id}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
@@ -130,7 +130,7 @@ export default function PatientsPage() {
                   </div>
 
                   <Badge
-                    variant={patient.status === "ativo" ? "default" : "secondary"}
+                    variant={patient.status === 'ativo' ? 'default' : 'secondary'}
                   >
                     {patient.status}
                   </Badge>
@@ -166,5 +166,5 @@ export default function PatientsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

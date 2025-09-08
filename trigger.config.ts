@@ -1,12 +1,12 @@
-import type { TriggerConfig } from "@trigger.dev/sdk/v3";
+import type { TriggerConfig, } from '@trigger.dev/sdk/v3'
 
 export const config: TriggerConfig = {
   project: process.env.TRIGGER_PROJECT_ID
     || (() => {
-      throw new Error("TRIGGER_PROJECT_ID environment variable is required");
+      throw new Error('TRIGGER_PROJECT_ID environment variable is required',)
     })(),
   // Vercel deployment friendly
-  logLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
+  logLevel: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
   maxDuration: 300, // 5 minutos para jobs de longa duração
   retries: {
     enabledInDev: true,
@@ -18,9 +18,9 @@ export const config: TriggerConfig = {
     },
   },
   // Integração com sistema NeonPro existente
-  dirs: ["./infrastructure/automation"],
+  dirs: ['./infrastructure/automation',],
   // Vercel compatível
   build: {
-    external: ["@supabase/supabase-js"],
+    external: ['@supabase/supabase-js',],
   },
-};
+}

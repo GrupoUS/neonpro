@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
 import {
   AlertTriangle,
   CheckCircle,
@@ -13,97 +13,97 @@ import {
   Lock,
   Shield,
   Users,
-} from "lucide-react";
+} from 'lucide-react'
 
 const complianceItems = [
   {
-    id: "lgpd",
-    title: "LGPD - Lei Geral de Proteção de Dados",
-    description: "Conformidade com a Lei Geral de Proteção de Dados Pessoais",
-    status: "compliant",
+    id: 'lgpd',
+    title: 'LGPD - Lei Geral de Proteção de Dados',
+    description: 'Conformidade com a Lei Geral de Proteção de Dados Pessoais',
+    status: 'compliant',
     progress: 95,
-    lastCheck: "2024-01-15",
+    lastCheck: '2024-01-15',
     issues: 1,
-    category: "privacy",
+    category: 'privacy',
   },
   {
-    id: "anvisa",
-    title: "ANVISA - Regulamentação Sanitária",
-    description: "Conformidade com normas da Agência Nacional de Vigilância Sanitária",
-    status: "warning",
+    id: 'anvisa',
+    title: 'ANVISA - Regulamentação Sanitária',
+    description: 'Conformidade com normas da Agência Nacional de Vigilância Sanitária',
+    status: 'warning',
     progress: 78,
-    lastCheck: "2024-01-10",
+    lastCheck: '2024-01-10',
     issues: 3,
-    category: "health",
+    category: 'health',
   },
   {
-    id: "cfm",
-    title: "CFM - Conselho Federal de Medicina",
-    description: "Conformidade com normas do Conselho Federal de Medicina",
-    status: "compliant",
+    id: 'cfm',
+    title: 'CFM - Conselho Federal de Medicina',
+    description: 'Conformidade com normas do Conselho Federal de Medicina',
+    status: 'compliant',
     progress: 88,
-    lastCheck: "2024-01-12",
+    lastCheck: '2024-01-12',
     issues: 0,
-    category: "medical",
+    category: 'medical',
   },
   {
-    id: "security",
-    title: "Segurança de Dados",
-    description: "Políticas de segurança e proteção de informações",
-    status: "critical",
+    id: 'security',
+    title: 'Segurança de Dados',
+    description: 'Políticas de segurança e proteção de informações',
+    status: 'critical',
     progress: 65,
-    lastCheck: "2024-01-08",
+    lastCheck: '2024-01-08',
     issues: 5,
-    category: "security",
+    category: 'security',
   },
-];
+]
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string,) => {
   switch (status) {
-    case "compliant":
-      return "bg-green-100 text-green-800";
-    case "warning":
-      return "bg-yellow-100 text-yellow-800";
-    case "critical":
-      return "bg-red-100 text-red-800";
+    case 'compliant':
+      return 'bg-green-100 text-green-800'
+    case 'warning':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'critical':
+      return 'bg-red-100 text-red-800'
     default:
-      return "bg-gray-100 text-gray-800";
+      return 'bg-gray-100 text-gray-800'
   }
-};
+}
 
-const getStatusIcon = (status: string) => {
+const getStatusIcon = (status: string,) => {
   switch (status) {
-    case "compliant":
-      return <CheckCircle className="h-5 w-5 text-green-600" />;
-    case "warning":
-      return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
-    case "critical":
-      return <AlertTriangle className="h-5 w-5 text-red-600" />;
+    case 'compliant':
+      return <CheckCircle className="h-5 w-5 text-green-600" />
+    case 'warning':
+      return <AlertTriangle className="h-5 w-5 text-yellow-600" />
+    case 'critical':
+      return <AlertTriangle className="h-5 w-5 text-red-600" />
     default:
-      return <Clock className="h-5 w-5 text-gray-600" />;
+      return <Clock className="h-5 w-5 text-gray-600" />
   }
-};
+}
 
-const getCategoryIcon = (category: string) => {
+const getCategoryIcon = (category: string,) => {
   switch (category) {
-    case "privacy":
-      return <Lock className="h-5 w-5" />;
-    case "health":
-      return <Shield className="h-5 w-5" />;
-    case "medical":
-      return <Users className="h-5 w-5" />;
-    case "security":
-      return <Database className="h-5 w-5" />;
+    case 'privacy':
+      return <Lock className="h-5 w-5" />
+    case 'health':
+      return <Shield className="h-5 w-5" />
+    case 'medical':
+      return <Users className="h-5 w-5" />
+    case 'security':
+      return <Database className="h-5 w-5" />
     default:
-      return <FileText className="h-5 w-5" />;
+      return <FileText className="h-5 w-5" />
   }
-};
+}
 
 export default function CompliancePage() {
   const overallScore = Math.round(
-    complianceItems.reduce((acc, item) => acc + item.progress, 0)
+    complianceItems.reduce((acc, item,) => acc + item.progress, 0,)
       / complianceItems.length,
-  );
+  )
 
   return (
     <div className="space-y-8">
@@ -163,7 +163,7 @@ export default function CompliancePage() {
                 <p className="text-sm font-medium text-gray-500">Conforme</p>
                 <p className="text-lg font-medium text-gray-900">
                   {complianceItems.filter(
-                    (item) => item.status === "compliant",
+                    (item,) => item.status === 'compliant',
                   ).length}
                 </p>
               </div>
@@ -180,7 +180,7 @@ export default function CompliancePage() {
               <div className="ml-5">
                 <p className="text-sm font-medium text-gray-500">Atenção</p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.filter((item) => item.status === "warning")
+                  {complianceItems.filter((item,) => item.status === 'warning')
                     .length}
                 </p>
               </div>
@@ -197,7 +197,7 @@ export default function CompliancePage() {
               <div className="ml-5">
                 <p className="text-sm font-medium text-gray-500">Crítico</p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.filter((item) => item.status === "critical")
+                  {complianceItems.filter((item,) => item.status === 'critical')
                     .length}
                 </p>
               </div>
@@ -216,7 +216,7 @@ export default function CompliancePage() {
                   Total Issues
                 </p>
                 <p className="text-lg font-medium text-gray-900">
-                  {complianceItems.reduce((acc, item) => acc + item.issues, 0)}
+                  {complianceItems.reduce((acc, item,) => acc + item.issues, 0,)}
                 </p>
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function CompliancePage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {complianceItems.map((item) => (
+            {complianceItems.map((item,) => (
               <div
                 key={item.id}
                 className="border rounded-lg p-6 hover:bg-gray-50"
@@ -242,14 +242,14 @@ export default function CompliancePage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
                     <div className="bg-gray-100 rounded-md p-3">
-                      {getCategoryIcon(item.category)}
+                      {getCategoryIcon(item.category,)}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <h3 className="font-medium text-gray-900">
                           {item.title}
                         </h3>
-                        {getStatusIcon(item.status)}
+                        {getStatusIcon(item.status,)}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">
                         {item.description}
@@ -271,10 +271,10 @@ export default function CompliancePage() {
                               {item.issues} issue(s) encontrado(s)
                             </span>
                           )}
-                          <Badge className={getStatusColor(item.status)}>
-                            {item.status === "compliant" && "Conforme"}
-                            {item.status === "warning" && "Atenção"}
-                            {item.status === "critical" && "Crítico"}
+                          <Badge className={getStatusColor(item.status,)}>
+                            {item.status === 'compliant' && 'Conforme'}
+                            {item.status === 'warning' && 'Atenção'}
+                            {item.status === 'critical' && 'Crítico'}
                           </Badge>
                         </div>
                       </div>
@@ -290,5 +290,5 @@ export default function CompliancePage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

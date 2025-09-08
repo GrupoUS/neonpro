@@ -1,11 +1,13 @@
 # 🧹 **UNIVERSAL NODE_MODULES CLEANER** — Multi-Package-Manager Optimization Expert
 
 ## 🎯 OBJETIVO
+
 **MISSÃO**: Analisar e otimizar **TODA** a estrutura de dependências removendo modules duplicados, redundantes, inutilizados e obsoletos (Bun + PNPM + NPM)
 **QUALIDADE**: ≥9.5/10, **SUCESSO**: ≥95%
 **MÉTODO**: A.P.T.E (Analyze → Plan → Test → Execute) com suporte multi-package-manager
 
 ## 🌐 CONTEXTO UNIVERSAL
+
 ```yaml
 project: "Node.js project com múltiplos package managers"
 environment: "Bun | PNPM | NPM | Node.js | TypeScript"
@@ -34,6 +36,7 @@ hierarchy: "detecção → análise → implementação → validação"
 ## 🧠 METODOLOGIA A.P.T.E
 
 ### **A - ANALYZE (Detecção e Mapeamento)**
+
 ```yaml
 objetivo: "Identificar package managers e mapear arquitetura completa"
 detecção_automática:
@@ -52,6 +55,7 @@ validação: "Mapeamento completo ≥9.5/10 de precisão"
 ```
 
 ### **P - PLAN (Estratégia Universal)**
+
 ```yaml
 objetivo: "Criar estratégia detalhada de otimização multi-manager"
 backup_obrigatório:
@@ -70,8 +74,8 @@ notas:
   - "Preferir bun workspaces com --filter ou pnpm -r para operações em monorepo"
 ```
 
-
 ### **T - TEST (Validação Contínua)**
+
 ```yaml
 objetivo: "Validar cada etapa sem quebrar funcionalidades"
 pré_validação:
@@ -89,6 +93,7 @@ validação_final:
 ```
 
 ### **E - EXECUTE (Implementação Segura)**
+
 ```yaml
 objetivo: "Executar limpeza preservando funcionalidades críticas"
 logging_detalhado:
@@ -108,6 +113,7 @@ relatório_final:
 ## 📋 FASES DE EXECUÇÃO UNIVERSAL
 
 ### **FASE 0: DETECÇÃO DE AMBIENTE**
+
 ```bash
 # Comandos de detecção automática (Monorepo-aware)
 echo "🔍 Detectando package manager e monorepo..."
@@ -146,8 +152,8 @@ echo "📊 Estado inicial do root:"
 find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec du -sh {} + 2>/dev/null || true
 ```
 
-
 ### **FASE 1: ANÁLISE ARQUITETURAL UNIVERSAL**
+
 ```bash
 # Mapeamento completo de dependências (root + workspaces)
 echo "📋 Analisando dependências..."
@@ -191,9 +197,9 @@ grep -r "import\|require" \
   . > used_deps.txt 2>/dev/null || true
 ```
 
-
 ### **FASE 2: BACKUP E SEGURANÇA UNIVERSAL**
-```bash
+
+````bash
 # Backup completo obrigatório
 echo "💾 Criando backup completo..."
 mkdir -p backup-dependencies
@@ -296,9 +302,10 @@ if [[ -f package-lock.json && ! -f bun.lock && ! -f bun.lockb && ! -f pnpm-lock.
   
   echo "✅ Otimização NPM concluída"
 fi
-```
+````
 
 ### **FASE 4: LIMPEZA UNIVERSAL FINAL**
+
 ```bash
 # Limpeza de cache e arquivos temporários (inclui Next.js/Turbo/Playwright)
 echo "🗑️ Limpeza universal de cache e temporários..."
@@ -328,7 +335,6 @@ find node_modules/.bin -type l ! -exec test -e {} \; -delete 2>/dev/null || true
 echo "🧹 Limpeza universal concluída"
 ```
 
-
 ### **FASE 4B: HEAVY CLEAN (OPCIONAL E DESTRUTIVO)**
 
 Aviso: use apenas se a limpeza padrão não resolveu problemas. Irá remover módulos e caches reconstruíveis.
@@ -350,6 +356,7 @@ find apps -maxdepth 2 -type d -name cache -path '*/.next/cache' -exec rm -rf {} 
 ```
 
 ### **FASE 5: VALIDAÇÃO FINAL UNIVERSAL**
+
 ```bash
 # Validação completa pós-otimização
 echo "✅ Executando validação final..."
@@ -395,10 +402,10 @@ echo "📊 Métricas finais:"
 echo "✅ Validação final concluída"
 ```
 
-
 ## 🔒 SALVAGUARDAS CRÍTICAS
 
 ### 🚫 NUNCA FAÇA
+
 - ❌ Executar limpeza sem backup completo
 - ❌ Ignorar falhas no type-check ou build
 - ❌ Remover dependências sem verificar uso real
@@ -407,6 +414,7 @@ echo "✅ Validação final concluída"
 - ❌ Remover arquivos de lock sem backup
 
 ### ✅ SEMPRE FAÇA
+
 - ✅ Backup completo antes de qualquer alteração
 - ✅ Detectar package manager automaticamente
 - ✅ Medir métricas antes e depois
@@ -416,6 +424,7 @@ echo "✅ Validação final concluída"
 - ✅ Testar funcionalidades críticas após limpeza
 
 ### 🛡️ SAFETY FIRST
+
 - Verificar exit codes de todos os comandos
 - Parar execução em caso de erros críticos
 - Documentar procedimento de recuperação
@@ -425,6 +434,7 @@ echo "✅ Validação final concluída"
 ## 📊 MÉTRICAS DE QUALIDADE
 
 ### KPIs de Sucesso Universal
+
 - **Redução de tamanho**: Meta ≥40% do node_modules
 - **Arquivos removidos**: Meta ≥1000 arquivos desnecessários
 - **Duplicatas resolvidas**: Meta 100% das duplicatas identificadas
@@ -433,21 +443,22 @@ echo "✅ Validação final concluída"
 - **Vulnerabilidades**: Resolução de issues críticas e altas
 
 ### Formato de Relatório
-```markdown
+
+````markdown
 ## 📊 RESULTADOS DA LIMPEZA UNIVERSAL
 
 | Package Manager | Detectado | Otimizado |
-|----------------|-----------|-----------|
-| Bun            | ✅/❌     | ✅/❌     |
-| PNPM           | ✅/❌     | ✅/❌     |
-| NPM            | ✅/❌     | ✅/❌     |
+| --------------- | --------- | --------- |
+| Bun             | ✅/❌     | ✅/❌     |
+| PNPM            | ✅/❌     | ✅/❌     |
+| NPM             | ✅/❌     | ✅/❌     |
 
-| Métrica               | ANTES     | DEPOIS    | ECONOMIA              |
-|-----------------------|-----------|-----------|----------------------|
-| Tamanho node_modules  | X.XX GB   | X.XX GB   | X.XX GB (X.X%)       |
-| Arquivos totais       | XXX,XXX   | XXX,XXX   | X,XXX arquivos       |
-| Packages instalados   | XXX       | XXX       | XX packages          |
-| Vulnerabilidades      | XX        | XX        | XX corrigidas        |
+| Métrica              | ANTES   | DEPOIS  | ECONOMIA       |
+| -------------------- | ------- | ------- | -------------- |
+| Tamanho node_modules | X.XX GB | X.XX GB | X.XX GB (X.X%) |
+| Arquivos totais      | XXX,XXX | XXX,XXX | X,XXX arquivos |
+| Packages instalados  | XXX     | XXX     | XX packages    |
+| Vulnerabilidades     | XX      | XX      | XX corrigidas  |
 
 ## ✅ VALIDAÇÕES EXECUTADAS
 
@@ -469,13 +480,16 @@ cp backup-dependencies/*-lock*.backup-* .
 rm -rf node_modules
 # Execute install do package manager detectado
 ```
-```
+````
 
+```
 ## 🚀 COMANDOS RÁPIDOS PARA GITHUB COPILOT
 
 ### 🎯 Comando Básico
 ```
+
 @copilot Execute limpeza universal de dependências:
+
 1. Detectar package managers (Bun/PNPM/NPM)
 2. Backup completo (package.json + lock files)
 3. Medir tamanho atual node_modules
@@ -484,13 +498,15 @@ rm -rf node_modules
 6. Relatório com métricas antes/depois
 
 Meta: ≥40% redução, zero breakage, suporte universal
-```
 
+```
 ### 🔍 Comando Completo A.P.T.E
 ```
+
 @copilot Seguindo metodologia A.P.T.E, execute limpeza UNIVERSAL de dependências:
 
 **ANALYZE:**
+
 - Detectar automaticamente Bun/PNPM/NPM
 - Mapear package.json e todos os lock files
 - Medir tamanho/arquivos de node_modules
@@ -498,26 +514,31 @@ Meta: ≥40% redução, zero breakage, suporte universal
 - Verificar audit para vulnerabilidades
 
 **PLAN:**
+
 - Backup universal: package.json + lock files + node_modules
 - Estratégia específica por package manager detectado
 - Sequência otimizada: prune → cache clean → reinstall → audit fix
 
 **TEST:**
+
 - Validar exit codes de cada comando
 - Executar build e type-check (se disponíveis)
 - Verificar estrutura do projeto intacta
 
 **EXECUTE:**
+
 - Logging detalhado de cada operação
 - Métricas antes/depois universais
 - Relatório final com economia alcançada e package manager usado
 
 **SAFETY:** Backup obrigatório, detecção automática, rollback disponível, zero tolerância a quebras
-```
 
+```
 ### 📊 Comando de Análise Somente
 ```
+
 @copilot Analise dependências do projeto:
+
 1. Detectar package managers ativos (PNPM/NPM/Yarn)
 2. Listar deps/devDeps do package.json
 3. Medir tamanho atual do node_modules
@@ -526,25 +547,29 @@ Meta: ≥40% redução, zero breakage, suporte universal
 6. Relatório com oportunidades de otimização
 
 NÃO execute limpeza, apenas análise e detecção.
-```
 
+```
 ### 🔄 Comando de Rollback Universal
 ```
+
 @copilot Execute rollback da limpeza de dependências:
+
 1. Detectar package manager usado originalmente
-2. Restaurar backup-dependencies/*.backup-*
+2. Restaurar backup-dependencies/_.backup-_
 3. Executar install com frozen lockfile
 4. Validar com build/type-check
 5. Confirmar funcionalidade restaurada
 
 Restaurar estado exato anterior à limpeza.
-```
 
+```
 ### 🏥 Comando Específico NEONPRO Healthcare
 ```
+
 @copilot Execute limpeza de dependências para projeto healthcare NEONPRO:
 
 **CONTEXTO HEALTHCARE/MONOREPO:**
+
 - packageManager=bun ou pnpm no root; usar Bun como padrão e PNPM como fallback
 - Turborepo e Next.js 15: limpar .turbo e .next/cache de apps/*
 - Playwright: não remover browsers baixados salvo necessidade; reinstalar com `playwright install --with-deps` se limpar
@@ -552,6 +577,7 @@ Restaurar estado exato anterior à limpeza.
 - Evitar misturar managers; respeitar pnpm-lock.yaml
 
 **EXECUÇÃO SEGURA:**
+
 - Backup completo antes de qualquer modificação
 - A.P.T.E com foco em zero downtime
 - Bun: install --frozen-lockfile --ignore-scripts --filter '*' → prisma generate → bunx turbo run build
@@ -559,8 +585,8 @@ Restaurar estado exato anterior à limpeza.
 - Relatório final com métricas healthcare
 
 Meta: ≥40% redução mantendo compliance 100% e builds verdes
-```
 
+````
 ---
 
 ## 🎯 COMO USAR
@@ -598,9 +624,10 @@ bunx playwright install --with-deps || true
 # Fallbacks
 pnpm install --frozen-lockfile --prefer-offline --ignore-scripts || true
 npm ci --ignore-scripts || true
-```
+````
 
 ### ℹ️ Nota sobre Bun × PNPM × NPM
+
 - Preferir Bun como package manager e executor (bun, bunx, bun.lock ou bun.lockb).
 - Se um pacote não funcionar com Bun, usar PNPM como fallback (pnpm-lock.yaml presente).
 - Em último caso, usar NPM (package-lock.json) apenas quando o pacote não aceitar Bun nem PNPM.
@@ -609,6 +636,7 @@ npm ci --ignore-scripts || true
 ## 🔄 MANUTENÇÃO E CUSTOMIZAÇÃO
 
 ### Versioning
+
 - v1.2.0 - Bun-first monorepo update (Set 2025)
   - Detecção monorepo/manager aprimorada
   - Fluxo PNPM workspace-aware (prune/dedupe/install/rebuild)
@@ -621,7 +649,9 @@ npm ci --ignore-scripts || true
 - Atualizar conforme novos package managers
 
 ### Adaptação por Projeto
+
 Para personalizar:
+
 1. Ajustar dependências críticas na seção de salvaguardas
 2. Modificar comandos de validação específicos
 3. Adaptar métricas de sucesso conforme necessidade

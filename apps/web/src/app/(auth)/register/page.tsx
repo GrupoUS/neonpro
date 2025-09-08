@@ -1,47 +1,47 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { zodResolver, } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, UserPlus, } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter, } from 'next/navigation'
+import { useState, } from 'react'
+import { useForm, } from 'react-hook-form'
 
-import { LoadingButton } from "@/components/ui/loading";
-import { useAuth } from "@/hooks/use-auth";
-import { RegisterSchema } from "@/lib/validations";
-import type { RegisterInput } from "@/lib/validations";
+import { LoadingButton, } from '@/components/ui/loading'
+import { useAuth, } from '@/hooks/use-auth'
+import { RegisterSchema, } from '@/lib/validations'
+import type { RegisterInput, } from '@/lib/validations'
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { login } = useAuth(); // Will register then auto-login
-  const router = useRouter();
+  const [showPassword, setShowPassword,] = useState(false,)
+  const [showConfirmPassword, setShowConfirmPassword,] = useState(false,)
+  const { login, } = useAuth() // Will register then auto-login
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, },
     setError,
   } = useForm<RegisterInput>({
-    resolver: zodResolver(RegisterSchema),
-  });
+    resolver: zodResolver(RegisterSchema,),
+  },)
 
-  const onSubmit = async (data: RegisterInput) => {
+  const onSubmit = async (data: RegisterInput,) => {
     try {
       // TODO: Implement registration API call
       // For now, simulate registration
       // console.log("Registration data:", data);
 
       // After successful registration, auto-login
-      await login(data.email, data.password);
-      router.push("/dashboard");
+      await login(data.email, data.password,)
+      router.push('/dashboard',)
     } catch (error) {
-      setError("root", {
-        message: error instanceof Error ? error.message : "Erro ao criar conta",
-      });
+      setError('root', {
+        message: error instanceof Error ? error.message : 'Erro ao criar conta',
+      },)
     }
-  };
+  }
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-8">
@@ -51,7 +51,7 @@ export default function RegisterPage() {
         <p className="text-gray-600 mt-2">Cadastre-se como profissional</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit,)} className="space-y-4">
         <div>
           <label
             htmlFor="name"
@@ -60,7 +60,7 @@ export default function RegisterPage() {
             Nome completo
           </label>
           <input
-            {...register("name")}
+            {...register('name',)}
             type="text"
             id="name"
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -77,7 +77,7 @@ export default function RegisterPage() {
             Email profissional
           </label>
           <input
-            {...register("email")}
+            {...register('email',)}
             type="email"
             id="email"
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -95,15 +95,15 @@ export default function RegisterPage() {
           </label>
           <div className="relative">
             <input
-              {...register("password")}
-              type={showPassword ? "text" : "password"}
+              {...register('password',)}
+              type={showPassword ? 'text' : 'password'}
               id="password"
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword(!showPassword,)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
               {showPassword
@@ -127,15 +127,15 @@ export default function RegisterPage() {
           </label>
           <div className="relative">
             <input
-              {...register("confirmPassword")}
-              type={showConfirmPassword ? "text" : "password"}
+              {...register('confirmPassword',)}
+              type={showConfirmPassword ? 'text' : 'password'}
               id="confirmPassword"
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword,)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
               {showConfirmPassword
@@ -164,13 +164,13 @@ export default function RegisterPage() {
         </div>
 
         <LoadingButton isLoading={isSubmitting} className="w-full">
-          {isSubmitting ? "Criando conta..." : "Criar conta"}
+          {isSubmitting ? 'Criando conta...' : 'Criar conta'}
         </LoadingButton>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
-          Já tem uma conta?{" "}
+          Já tem uma conta?{' '}
           <Link
             href="/login"
             className="font-medium text-blue-600 hover:text-blue-500"
@@ -180,5 +180,5 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
-  );
+  )
 }

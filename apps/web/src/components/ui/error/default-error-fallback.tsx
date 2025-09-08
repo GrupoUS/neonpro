@@ -1,16 +1,16 @@
 // import { cn } from "@/lib/utils";
-import { AlertTriangle, RefreshCw } from "lucide-react";
-import * as React from "react";
+import { AlertTriangle, RefreshCw, } from 'lucide-react'
+import * as React from 'react'
 
 interface DefaultErrorFallbackProps {
-  error: Error;
-  resetError: () => void;
+  error: Error
+  resetError: () => void
 }
 
 export function DefaultErrorFallback({
   error,
   resetError,
-}: DefaultErrorFallbackProps) {
+}: DefaultErrorFallbackProps,) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md w-full bg-white border border-red-200 rounded-lg p-6 shadow-lg">
@@ -43,5 +43,5 @@ export function DefaultErrorFallback({
         </button>
       </div>
     </div>
-  );
+  )
 }

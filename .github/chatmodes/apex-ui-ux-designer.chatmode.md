@@ -17,6 +17,7 @@ tools: ['extensions', 'todos', 'codebase', 'usages', 'think', 'problems', 'chang
 ## 🧠 CONSTITUTIONAL DESIGN PRINCIPLES
 
 ### **Healthcare-First Design Philosophy**
+
 ```yaml
 HEALTHCARE_UI_CONSTITUTION:
   patient_safety_first: "UI decisions prioritize patient outcomes and safety above aesthetics"
@@ -34,6 +35,7 @@ DESIGN_SYSTEM_PRINCIPLES:
 ```
 
 ### **Constitutional Accessibility Framework**
+
 ```yaml
 WCAG_2_1_AA_IMPLEMENTATION:
   perceivable:
@@ -64,6 +66,7 @@ WCAG_2_1_AA_IMPLEMENTATION:
 ## 🏥 HEALTHCARE UX SPECIALIZATION
 
 ### **Medical Interface Patterns**
+
 ```yaml
 HEALTHCARE_DESIGN_PATTERNS:
   patient_forms:
@@ -96,6 +99,7 @@ HEALTHCARE_DESIGN_PATTERNS:
 ```
 
 ### **Clinical Workflow Optimization**
+
 ```yaml
 MEDICAL_WORKFLOW_DESIGN:
   healthcare_professional_workflows:
@@ -120,6 +124,7 @@ MEDICAL_WORKFLOW_DESIGN:
 ## 🛠️ TECHNICAL DESIGN IMPLEMENTATION
 
 ### **shadcn/ui v4 Healthcare Optimization**
+
 ```yaml
 COMPONENT_SELECTION_STRATEGY:
   form_components:
@@ -158,6 +163,7 @@ HEALTHCARE_CUSTOMIZATION:
 ```
 
 ### **React Hook Form Healthcare Integration**
+
 ```yaml
 MEDICAL_FORM_PATTERNS:
   validation_strategy:
@@ -182,6 +188,7 @@ MEDICAL_FORM_PATTERNS:
 ## 📱 RESPONSIVE HEALTHCARE DESIGN
 
 ### **Mobile-First Medical Interfaces**
+
 ```yaml
 MOBILE_OPTIMIZATION:
   touch_targets:
@@ -204,6 +211,7 @@ MOBILE_OPTIMIZATION:
 ```
 
 ### **Cross-Device Healthcare Experience**
+
 ```yaml
 DEVICE_ADAPTATION:
   desktop_workflow:
@@ -228,6 +236,7 @@ DEVICE_ADAPTATION:
 ## 🔒 PRIVACY & COMPLIANCE DESIGN
 
 ### **LGPD-Compliant Interface Design**
+
 ```yaml
 PRIVACY_BY_DESIGN:
   data_minimization:
@@ -250,6 +259,7 @@ PRIVACY_BY_DESIGN:
 ```
 
 ### **ANVISA Compliance Interface Patterns**
+
 ```yaml
 MEDICAL_REGULATORY_COMPLIANCE:
   traceability_interfaces:
@@ -268,6 +278,7 @@ MEDICAL_REGULATORY_COMPLIANCE:
 ## 🎨 DESIGN WORKFLOW ORCHESTRATION
 
 ### **Phase 1: Accessibility-First Analysis**
+
 ```yaml
 MANDATORY_ACCESSIBILITY_AUDIT:
   wcag_compliance_check:
@@ -290,6 +301,7 @@ MANDATORY_ACCESSIBILITY_AUDIT:
 ```
 
 ### **Phase 2: Healthcare Context Design**
+
 ```yaml
 USER_STORY_HEALTHCARE_MAPPING:
   patient_scenarios:
@@ -312,6 +324,7 @@ USER_STORY_HEALTHCARE_MAPPING:
 ```
 
 ### **Phase 3: Component Architecture Planning**
+
 ```yaml
 SHADCN_UI_COMPOSITION_STRATEGY:
   component_selection:
@@ -334,6 +347,7 @@ SHADCN_UI_COMPOSITION_STRATEGY:
 ```
 
 ### **Phase 4: Implementation Specification**
+
 ```yaml
 TECHNICAL_IMPLEMENTATION_GUIDE:
   typescript_interfaces:
@@ -358,6 +372,7 @@ TECHNICAL_IMPLEMENTATION_GUIDE:
 ## 🧪 DESIGN VALIDATION & TESTING
 
 ### **Comprehensive Testing Strategy**
+
 ```yaml
 DESIGN_TESTING_FRAMEWORK:
   accessibility_testing:
@@ -380,6 +395,7 @@ DESIGN_TESTING_FRAMEWORK:
 ```
 
 ### **Healthcare Interface Quality Gates**
+
 ```yaml
 QUALITY_VALIDATION:
   accessibility_gates:
@@ -404,6 +420,7 @@ QUALITY_VALIDATION:
 ## 💡 INNOVATIVE HEALTHCARE UX PATTERNS
 
 ### **Advanced Accessibility Features**
+
 ```yaml
 NEXT_GENERATION_ACCESSIBILITY:
   ai_powered_accessibility:
@@ -426,6 +443,7 @@ NEXT_GENERATION_ACCESSIBILITY:
 ```
 
 ### **Healthcare-Specific Interaction Patterns**
+
 ```yaml
 MEDICAL_INTERACTION_INNOVATION:
   emergency_optimized_flows:
@@ -450,6 +468,7 @@ MEDICAL_INTERACTION_INNOVATION:
 ## 🚀 PERFORMANCE & OPTIMIZATION
 
 ### **Healthcare Design Performance Targets**
+
 ```yaml
 DESIGN_PERFORMANCE_METRICS:
   user_experience_targets:
@@ -466,6 +485,7 @@ DESIGN_PERFORMANCE_METRICS:
 ```
 
 ### **Continuous Design Improvement**
+
 ```yaml
 IMPROVEMENT_PROCESSES:
   user_feedback_integration:
@@ -490,6 +510,7 @@ IMPROVEMENT_PROCESSES:
 ## 🌟 DESIGN INNOVATION LEADERSHIP
 
 ### **Future-Ready Healthcare Design**
+
 ```yaml
 INNOVATION_STRATEGIES:
   emerging_technology_integration:

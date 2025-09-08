@@ -87,11 +87,12 @@ outputDir: "tools/testing/reports/test-results/e2e"
 
 ```typescript
 // vitest.config.ts - UPDATED EXCLUDES
-exclude: [
+exclude: ;
+;[
   // ... existing patterns ...
-  "**/tools/testing/reports/**",
-  "**/tools/testing/e2e/**",
-];
+  '**/tools/testing/reports/**',
+  '**/tools/testing/e2e/**',
+]
 ```
 
 ### Turbo Configuration

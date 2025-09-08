@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
+import { motion, } from 'framer-motion'
 import {
   Activity,
   AlertTriangle,
@@ -17,65 +17,65 @@ import {
   TrendingUp,
   Users,
   Zap,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react'
+import { useState, } from 'react'
 // Import our treatment components
-import { AestheticTreatmentPlan } from "@/components/treatments/AestheticTreatmentPlan";
-import { BeforeAfterSecureGallery } from "@/components/treatments/BeforeAfterSecureGallery";
-import { CosmeticConsentBrazilian } from "@/components/treatments/CosmeticConsentBrazilian";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AestheticTreatmentPlan, } from '@/components/treatments/AestheticTreatmentPlan'
+import { BeforeAfterSecureGallery, } from '@/components/treatments/BeforeAfterSecureGallery'
+import { CosmeticConsentBrazilian, } from '@/components/treatments/CosmeticConsentBrazilian'
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog'
+import { Input, } from '@/components/ui/input'
+import { Progress, } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/select'
+import { Separator, } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
 
 // Import hooks
-import { useTreatments } from "@/hooks/useTreatments";
+import { useTreatments, } from '@/hooks/useTreatments'
 import type {
   AestheticTreatmentCategory,
   TreatmentPlan,
   TreatmentStatus,
-} from "@/types/treatments";
+} from '@/types/treatments'
 
 // Visual components maintaining NeonPro design
 interface NeonGradientCardProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 const NeonGradientCard = ({
   children,
-  className = "",
-}: NeonGradientCardProps) => (
+  className = '',
+}: NeonGradientCardProps,) => (
   <motion.div
-    animate={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 1, y: 0, }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 20, }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10">{children}</div>
   </motion.div>
-);
+)
 
 // Filter and view options
-type ViewMode = "overview" | "treatments" | "sessions" | "compliance";
+type ViewMode = 'overview' | 'treatments' | 'sessions' | 'compliance'
 
 export default function TreatmentsPage() {
   // Hook for treatments data
@@ -93,67 +93,67 @@ export default function TreatmentsPage() {
     searchTreatments,
     filterByCategory,
     filterByStatus,
-  } = useTreatments();
+  } = useTreatments()
 
   // State management
-  const [viewMode, setViewMode] = useState<ViewMode>("overview");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<
-    AestheticTreatmentCategory | "all"
-  >("all");
-  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | "all">(
-    "all",
-  );
+  const [viewMode, setViewMode,] = useState<ViewMode>('overview',)
+  const [searchQuery, setSearchQuery,] = useState('',)
+  const [categoryFilter, setCategoryFilter,] = useState<
+    AestheticTreatmentCategory | 'all'
+  >('all',)
+  const [statusFilter, setStatusFilter,] = useState<TreatmentStatus | 'all'>(
+    'all',
+  )
   // const [selectedTreatment, setSelectedTreatment] = useState<TreatmentPlan | null>(); // TODO: Implement treatment selection
-  const [showNewTreatmentDialog, setShowNewTreatmentDialog] = useState(false);
+  const [showNewTreatmentDialog, setShowNewTreatmentDialog,] = useState(false,)
 
   // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    searchTreatments(query);
-  };
+  const handleSearch = (query: string,) => {
+    setSearchQuery(query,)
+    searchTreatments(query,)
+  }
 
   // Handle category filter
-  const handleCategoryFilter = (category: string) => {
-    setCategoryFilter(category as AestheticTreatmentCategory | "all");
+  const handleCategoryFilter = (category: string,) => {
+    setCategoryFilter(category as AestheticTreatmentCategory | 'all',)
     filterByCategory(
-      category === "all" ? null : (category as AestheticTreatmentCategory),
-    );
-  };
+      category === 'all' ? null : (category as AestheticTreatmentCategory),
+    )
+  }
 
   // Handle status filter
-  const handleStatusFilter = (status: string) => {
-    setStatusFilter(status as TreatmentStatus | "all");
-    filterByStatus(status === "all" ? null : (status as TreatmentStatus));
-  };
+  const handleStatusFilter = (status: string,) => {
+    setStatusFilter(status as TreatmentStatus | 'all',)
+    filterByStatus(status === 'all' ? null : (status as TreatmentStatus),)
+  }
 
   // Mock data for demonstration (in real implementation, this would come from the hook)
   const mockTreatmentPlan: TreatmentPlan = {
-    id: "1",
-    patient_id: "patient-1",
-    professional_id: "prof-1",
-    treatment_name: "Rejuvenescimento Facial com Laser",
-    treatment_type: "multi_session",
-    category: "facial",
-    status: "active",
+    id: '1',
+    patient_id: 'patient-1',
+    professional_id: 'prof-1',
+    treatment_name: 'Rejuvenescimento Facial com Laser',
+    treatment_type: 'multi_session',
+    category: 'facial',
+    status: 'active',
     description:
-      "Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.",
+      'Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.',
     expected_sessions: 6,
     completed_sessions: 2,
     session_interval_days: 21,
-    cfm_compliance_status: "compliant",
+    cfm_compliance_status: 'compliant',
     professional_license_verified: true,
     ethics_review_required: false,
     lgpd_consent_granted: true,
     lgpd_consent_date: new Date().toISOString(),
-    lgpd_photo_consent_status: "granted",
+    lgpd_photo_consent_status: 'granted',
     data_retention_days: 2555,
     expected_outcomes: {},
     risk_assessment: {},
     total_cost: 3500,
     payment_plan: null,
     insurance_coverage: null,
-    start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,).toISOString(),
     estimated_completion_date: new Date(
       Date.now() + 90 * 24 * 60 * 60 * 1000,
     ).toISOString(),
@@ -162,9 +162,9 @@ export default function TreatmentsPage() {
     ).toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    created_by: "system",
-    last_modified_by: "system",
-  };
+    created_by: 'system',
+    last_modified_by: 'system',
+  }
 
   if (error) {
     return (
@@ -176,7 +176,7 @@ export default function TreatmentsPage() {
           </AlertDescription>
         </Alert>
       </div>
-    );
+    )
   }
 
   return (
@@ -196,7 +196,7 @@ export default function TreatmentsPage() {
             <Settings className="mr-2 h-4 w-4" />
             Configurações
           </Button>
-          <Button onClick={() => setShowNewTreatmentDialog(true)}>
+          <Button onClick={() => setShowNewTreatmentDialog(true,)}>
             <Plus className="mr-2 h-4 w-4" />
             Novo Tratamento
           </Button>
@@ -246,7 +246,7 @@ export default function TreatmentsPage() {
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl text-white">
-              {completionRate.toFixed(1)}%
+              {completionRate.toFixed(1,)}%
             </div>
             <p className="text-slate-400 text-xs">+5.2% vs mês anterior</p>
           </CardContent>
@@ -261,7 +261,7 @@ export default function TreatmentsPage() {
           </CardHeader>
           <CardContent>
             <div className="font-bold text-2xl text-white">
-              {averageSatisfactionScore.toFixed(1)}/10
+              {averageSatisfactionScore.toFixed(1,)}/10
             </div>
             <p className="text-slate-400 text-xs">Excelente qualidade</p>
           </CardContent>
@@ -271,7 +271,7 @@ export default function TreatmentsPage() {
       {/* Main Content Tabs */}
       <Tabs
         className="space-y-4"
-        onValueChange={(value: string) => setViewMode(value as ViewMode)}
+        onValueChange={(value: string,) => setViewMode(value as ViewMode,)}
         value={viewMode}
       >
         <TabsList className="grid w-full grid-cols-4">
@@ -297,14 +297,14 @@ export default function TreatmentsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {activeTreatments.slice(0, 3).map((treatment, index) => (
+                  {activeTreatments.slice(0, 3,).map((treatment, index,) => (
                     <div
                       className="flex items-center justify-between rounded-lg border p-3"
                       key={treatment.id || index}
                     >
                       <div className="flex-1">
                         <p className="font-medium">
-                          {treatment.treatment_name || "Tratamento de Exemplo"}
+                          {treatment.treatment_name || 'Tratamento de Exemplo'}
                         </p>
                         <p className="text-muted-foreground text-sm">
                           {treatment.completed_sessions || 2}/
@@ -338,7 +338,7 @@ export default function TreatmentsPage() {
                       </p>
                       <Button
                         className="mt-2"
-                        onClick={() => setShowNewTreatmentDialog(true)}
+                        onClick={() => setShowNewTreatmentDialog(true,)}
                         size="sm"
                         variant="outline"
                       >
@@ -350,7 +350,7 @@ export default function TreatmentsPage() {
                   {activeTreatments.length > 3 && (
                     <Button
                       className="w-full"
-                      onClick={() => setViewMode("treatments")}
+                      onClick={() => setViewMode('treatments',)}
                       variant="outline"
                     >
                       Ver Todos os Tratamentos ({activeTreatments.length})
@@ -371,7 +371,7 @@ export default function TreatmentsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {todaysSessions.slice(0, 4).map((session, index) => (
+                  {todaysSessions.slice(0, 4,).map((session, index,) => (
                     <div
                       className="flex items-center justify-between rounded-lg border p-3"
                       key={session.id || index}
@@ -383,24 +383,24 @@ export default function TreatmentsPage() {
                         <p className="text-muted-foreground text-sm">
                           {new Date(
                             session.scheduled_date || Date.now(),
-                          ).toLocaleTimeString("pt-BR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          ).toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },)}
                         </p>
                       </div>
                       <Badge
-                        variant={session.status === "completed"
-                          ? "default"
-                          : session.status === "cancelled"
-                          ? "destructive"
-                          : "outline"}
+                        variant={session.status === 'completed'
+                          ? 'default'
+                          : session.status === 'cancelled'
+                          ? 'destructive'
+                          : 'outline'}
                       >
-                        {session.status === "scheduled" && "Agendada"}
-                        {session.status === "completed" && "Concluída"}
-                        {session.status === "cancelled" && "Cancelada"}
-                        {session.status === "no_show" && "Faltou"}
-                        {session.status === "rescheduled" && "Reagendada"}
+                        {session.status === 'scheduled' && 'Agendada'}
+                        {session.status === 'completed' && 'Concluída'}
+                        {session.status === 'cancelled' && 'Cancelada'}
+                        {session.status === 'no_show' && 'Faltou'}
+                        {session.status === 'rescheduled' && 'Reagendada'}
                       </Badge>
                     </div>
                   ))}
@@ -417,7 +417,7 @@ export default function TreatmentsPage() {
                   {todaysSessions.length > 4 && (
                     <Button
                       className="w-full"
-                      onClick={() => setViewMode("sessions")}
+                      onClick={() => setViewMode('sessions',)}
                       variant="outline"
                     >
                       Ver Todas as Sessões ({todaysSessions.length})
@@ -441,8 +441,8 @@ export default function TreatmentsPage() {
             </CardHeader>
             <CardContent>
               <AestheticTreatmentPlan
-                onScheduleSession={(_id) => {}}
-                onViewProgress={(_id) => {}}
+                onScheduleSession={(_id,) => {}}
+                onViewProgress={(_id,) => {}}
                 treatmentPlan={mockTreatmentPlan}
                 variant="card"
               />
@@ -463,7 +463,7 @@ export default function TreatmentsPage() {
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
                     className="w-64"
-                    onChange={(e) => handleSearch(e.target.value)}
+                    onChange={(e,) => handleSearch(e.target.value,)}
                     placeholder="Buscar tratamentos..."
                     value={searchQuery}
                   />
@@ -516,7 +516,7 @@ export default function TreatmentsPage() {
             {loading
               ? (
                 // Loading skeleton
-                Array.from({ length: 4 }).map((_, i) => (
+                Array.from({ length: 4, },).map((_, i,) => (
                   <Card key={i}>
                     <CardHeader>
                       <div className="space-y-2">
@@ -535,11 +535,11 @@ export default function TreatmentsPage() {
               )
               : treatmentPlans.length > 0
               ? (
-                treatmentPlans.map((treatment) => (
+                treatmentPlans.map((treatment,) => (
                   <AestheticTreatmentPlan
                     key={treatment.id}
-                    onScheduleSession={(_id) => {}}
-                    onViewProgress={(_id) => {}}
+                    onScheduleSession={(_id,) => {}}
+                    onViewProgress={(_id,) => {}}
                     treatmentPlan={treatment}
                     variant="summary"
                   />
@@ -549,8 +549,8 @@ export default function TreatmentsPage() {
                 // Show mock data for demonstration
                 <div className="col-span-full">
                   <AestheticTreatmentPlan
-                    onScheduleSession={(_id) => {}}
-                    onViewProgress={(_id) => {}}
+                    onScheduleSession={(_id,) => {}}
+                    onViewProgress={(_id,) => {}}
                     treatmentPlan={mockTreatmentPlan}
                     variant="summary"
                   />
@@ -702,7 +702,7 @@ export default function TreatmentsPage() {
             <CardContent>
               <CosmeticConsentBrazilian
                 mode="new"
-                onConsentGranted={(_consent) => {}}
+                onConsentGranted={(_consent,) => {}}
                 showProgress
                 treatmentPlan={mockTreatmentPlan}
               />
@@ -726,8 +726,8 @@ export default function TreatmentsPage() {
                 canShare
                 consentStatus="granted"
                 enableComparison
-                onPhotoShare={(_id, _hours) => {}}
-                onPhotoUpload={(_file, _type) => {}}
+                onPhotoShare={(_id, _hours,) => {}}
+                onPhotoUpload={(_file, _type,) => {}}
                 photos={[]}
                 treatmentSessionId="session-1"
               />
@@ -762,7 +762,7 @@ export default function TreatmentsPage() {
             <div className="flex gap-2 pt-4">
               <Button
                 className="flex-1"
-                onClick={() => setShowNewTreatmentDialog(false)}
+                onClick={() => setShowNewTreatmentDialog(false,)}
                 variant="outline"
               >
                 Cancelar
@@ -771,7 +771,7 @@ export default function TreatmentsPage() {
                 className="flex-1"
                 onClick={() => {
                   // Would implement treatment creation here
-                  setShowNewTreatmentDialog(false);
+                  setShowNewTreatmentDialog(false,)
                 }}
               >
                 Criar Tratamento
@@ -781,5 +781,5 @@ export default function TreatmentsPage() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

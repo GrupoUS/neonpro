@@ -3,7 +3,7 @@
  * Centralized configuration for performance monitoring and budgets
  */
 
-import type { PerformanceBudget } from "../utils/performance-metrics";
+import type { PerformanceBudget, } from '../utils/performance-metrics'
 
 /**
  * Performance budgets for different types of pages in the healthcare application
@@ -60,43 +60,43 @@ export const PERFORMANCE_BUDGETS = {
     navigationTime: 1000, // 1s
     searchResponseTime: 1500, // 1.5s - Complex searches
   } as PerformanceBudget,
-};
+}
 
 /**
  * Page type mapping for automatic budget selection
  */
 export const PAGE_TYPE_MAPPING = {
   // Critical healthcare pages
-  "/patients": "critical",
-  "/patients/[id]": "critical",
-  "/emergency": "critical",
-  "/appointments/urgent": "critical",
-  "/medical-records": "critical",
-  "/prescriptions": "critical",
-  "/lab-results": "critical",
+  '/patients': 'critical',
+  '/patients/[id]': 'critical',
+  '/emergency': 'critical',
+  '/appointments/urgent': 'critical',
+  '/medical-records': 'critical',
+  '/prescriptions': 'critical',
+  '/lab-results': 'critical',
 
   // Standard pages
-  "/dashboard": "standard",
-  "/appointments": "standard",
-  "/calendar": "standard",
-  "/notifications": "standard",
-  "/profile": "standard",
-  "/settings": "standard",
+  '/dashboard': 'standard',
+  '/appointments': 'standard',
+  '/calendar': 'standard',
+  '/notifications': 'standard',
+  '/profile': 'standard',
+  '/settings': 'standard',
 
   // Administrative pages
-  "/admin": "administrative",
-  "/users": "administrative",
-  "/roles": "administrative",
-  "/audit": "administrative",
-  "/compliance": "administrative",
-  "/billing": "administrative",
+  '/admin': 'administrative',
+  '/users': 'administrative',
+  '/roles': 'administrative',
+  '/audit': 'administrative',
+  '/compliance': 'administrative',
+  '/billing': 'administrative',
 
   // Reports and analytics
-  "/reports": "reports",
-  "/analytics": "reports",
-  "/statistics": "reports",
-  "/exports": "reports",
-} as const;
+  '/reports': 'reports',
+  '/analytics': 'reports',
+  '/statistics': 'reports',
+  '/exports': 'reports',
+} as const
 
 /**
  * Performance test configuration
@@ -116,7 +116,7 @@ export const PERFORMANCE_CONFIG = {
     generateJSON: true,
     generateHTML: true,
     generateSummary: true,
-    outputDir: "./test-results/performance",
+    outputDir: './test-results/performance',
     includeScreenshots: true,
     includeTraces: false, // Set to true for detailed debugging
   },
@@ -138,8 +138,8 @@ export const PERFORMANCE_CONFIG = {
   thresholds: {
     failOnBudgetViolation: false, // Set to true for strict enforcement
     maxBudgetViolations: 2, // Maximum violations before test fails
-    criticalMetrics: ["lcp", "fid", "patientDataLoadTime"], // Always fail on these
-    warningMetrics: ["cls", "fcp", "ttfb"], // Log warnings for these
+    criticalMetrics: ['lcp', 'fid', 'patientDataLoadTime',], // Always fail on these
+    warningMetrics: ['cls', 'fcp', 'ttfb',], // Log warnings for these
   },
 
   // Healthcare-specific settings
@@ -158,39 +158,39 @@ export const PERFORMANCE_CONFIG = {
     emergencyPageThreshold: 1000, // Emergency pages must load under 1s
     patientSafetyThreshold: 2000, // Patient safety features under 2s
   },
-};
+}
 
 /**
  * Get performance budget for a specific page
  */
-export function getPerformanceBudget(url: string): PerformanceBudget {
+export function getPerformanceBudget(url: string,): PerformanceBudget {
   // Extract pathname from URL
-  const pathname = new URL(url, "http://localhost").pathname;
+  const pathname = new URL(url, 'http://localhost',).pathname
 
   // Find matching page type
-  const pageType = Object.entries(PAGE_TYPE_MAPPING).find(([pattern, _]) => {
+  const pageType = Object.entries(PAGE_TYPE_MAPPING,).find(([pattern, _,],) => {
     // Simple pattern matching - can be enhanced with regex if needed
     return (
-      pathname.startsWith(pattern.replace("[id]", "")) || pathname === pattern
-    );
-  })?.[1] || "standard";
+      pathname.startsWith(pattern.replace('[id]', '',),) || pathname === pattern
+    )
+  },)?.[1] || 'standard'
 
-  return PERFORMANCE_BUDGETS[pageType as keyof typeof PERFORMANCE_BUDGETS];
+  return PERFORMANCE_BUDGETS[pageType as keyof typeof PERFORMANCE_BUDGETS]
 }
 
 /**
  * Check if a page is critical for healthcare operations
  */
-export function isCriticalPage(url: string): boolean {
-  const budget = getPerformanceBudget(url);
-  return budget === PERFORMANCE_BUDGETS.critical;
+export function isCriticalPage(url: string,): boolean {
+  const budget = getPerformanceBudget(url,)
+  return budget === PERFORMANCE_BUDGETS.critical
 }
 
 /**
  * Get test configuration based on page criticality
  */
-export function getTestConfig(url: string) {
-  const isCritical = isCriticalPage(url);
+export function getTestConfig(url: string,) {
+  const isCritical = isCriticalPage(url,)
 
   return {
     ...PERFORMANCE_CONFIG,
@@ -204,7 +204,7 @@ export function getTestConfig(url: string) {
       failOnBudgetViolation: isCritical, // Strict enforcement for critical pages
       maxBudgetViolations: isCritical ? 0 : 2, // No violations allowed for critical pages
     },
-  };
+  }
 }
 
 /**
@@ -244,7 +244,7 @@ export const PERFORMANCE_SELECTORS = {
   emergencyAlert: '[data-testid="emergency-alert"]',
   criticalValues: '[data-testid="critical-values"]',
   medicationAlerts: '[data-testid="medication-alerts"]',
-};
+}
 
 /**
  * Custom performance assertions for healthcare workflows
@@ -253,32 +253,32 @@ export const HEALTHCARE_PERFORMANCE_ASSERTIONS = {
   // Patient data must load quickly for safety
   patientDataLoad: {
     maxTime: 1000,
-    errorMessage: "Patient data loading exceeded safety threshold",
+    errorMessage: 'Patient data loading exceeded safety threshold',
   },
 
   // Emergency features must be immediately responsive
   emergencyResponse: {
     maxTime: 500,
-    errorMessage: "Emergency features must respond within 500ms",
+    errorMessage: 'Emergency features must respond within 500ms',
   },
 
   // Medical forms must submit reliably and quickly
   medicalFormSubmission: {
     maxTime: 2000,
-    errorMessage: "Medical form submission exceeded acceptable time",
+    errorMessage: 'Medical form submission exceeded acceptable time',
   },
 
   // Search must be fast for clinical efficiency
   clinicalSearch: {
     maxTime: 800,
-    errorMessage: "Clinical search response time affects workflow efficiency",
+    errorMessage: 'Clinical search response time affects workflow efficiency',
   },
 
   // Navigation must be smooth for user experience
   clinicalNavigation: {
     maxTime: 400,
-    errorMessage: "Clinical navigation must be smooth and responsive",
+    errorMessage: 'Clinical navigation must be smooth and responsive',
   },
-};
+}
 
-export default PERFORMANCE_CONFIG;
+export default PERFORMANCE_CONFIG

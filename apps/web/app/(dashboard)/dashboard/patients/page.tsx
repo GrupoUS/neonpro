@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePatients } from "@/hooks/usePatients";
-import { Calendar, Mail, Phone, Plus, Search, Users } from "lucide-react";
-import { useState } from "react";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Input, } from '@/components/ui/input'
+import { Skeleton, } from '@/components/ui/skeleton'
+import { usePatients, } from '@/hooks/usePatients'
+import { Calendar, Mail, Phone, Plus, Search, Users, } from 'lucide-react'
+import { useState, } from 'react'
 
 export default function PatientsPage() {
-  const { patients, loading, error, searchPatients, totalCount } = usePatients();
-  const [searchQuery, setSearchQuery] = useState("");
+  const { patients, loading, error, searchPatients, totalCount, } = usePatients()
+  const [searchQuery, setSearchQuery,] = useState('',)
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    searchPatients(query);
-  };
+  const handleSearch = (query: string,) => {
+    setSearchQuery(query,)
+    searchPatients(query,)
+  }
 
   if (error) {
     return (
@@ -24,7 +24,7 @@ export default function PatientsPage() {
           Erro ao carregar pacientes: {error.message}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -45,13 +45,13 @@ export default function PatientsPage() {
           <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
           <Input
             className="pl-9"
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e,) => handleSearch(e.target.value,)}
             placeholder="Buscar pacientes..."
             value={searchQuery}
           />
         </div>
         <div className="text-muted-foreground text-sm">
-          {loading ? "Carregando..." : `${totalCount} pacientes`}
+          {loading ? 'Carregando...' : `${totalCount} pacientes`}
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function PatientsPage() {
         {loading
           ? (
             // Loading skeleton
-            Array.from({ length: 6 }).map((_, i) => (
+            Array.from({ length: 6, },).map((_, i,) => (
               <Card key={i}>
                 <CardHeader>
                   <div className="flex items-center space-x-4">
@@ -77,7 +77,7 @@ export default function PatientsPage() {
           : patients.length > 0
           ? (
             // Patients cards
-            patients.map((patient) => (
+            patients.map((patient,) => (
               <Card
                 className="transition-shadow hover:shadow-md"
                 key={patient.id}
@@ -87,7 +87,7 @@ export default function PatientsPage() {
                     <div className="flex items-center space-x-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                         <span className="font-semibold text-lg text-primary">
-                          {patient.name.charAt(0).toUpperCase()}
+                          {patient.name.charAt(0,).toUpperCase()}
                         </span>
                       </div>
                       <div>
@@ -109,12 +109,12 @@ export default function PatientsPage() {
                     <div className="text-right text-muted-foreground text-sm">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        Cadastrado em {new Date(patient.created_at).toLocaleDateString("pt-BR")}
+                        Cadastrado em {new Date(patient.created_at,).toLocaleDateString('pt-BR',)}
                       </div>
                       {patient.date_of_birth && (
                         <div className="mt-1">
-                          Nascimento: {new Date(patient.date_of_birth).toLocaleDateString(
-                            "pt-BR",
+                          Nascimento: {new Date(patient.date_of_birth,).toLocaleDateString(
+                            'pt-BR',
                           )}
                         </div>
                       )}
@@ -139,13 +139,13 @@ export default function PatientsPage() {
                   <Users className="mx-auto h-12 w-12 text-muted" />
                   <h3 className="mt-2 font-semibold text-foreground text-sm">
                     {searchQuery
-                      ? "Nenhum paciente encontrado"
-                      : "Nenhum paciente cadastrado"}
+                      ? 'Nenhum paciente encontrado'
+                      : 'Nenhum paciente cadastrado'}
                   </h3>
                   <p className="mt-1 text-muted-foreground text-sm">
                     {searchQuery
-                      ? "Tente buscar com outros termos."
-                      : "Comece adicionando seu primeiro paciente."}
+                      ? 'Tente buscar com outros termos.'
+                      : 'Comece adicionando seu primeiro paciente.'}
                   </p>
                   {!searchQuery && (
                     <div className="mt-6">
@@ -161,5 +161,5 @@ export default function PatientsPage() {
           )}
       </div>
     </div>
-  );
+  )
 }

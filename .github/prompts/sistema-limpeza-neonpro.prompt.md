@@ -11,9 +11,10 @@
 
 ## 🧭 Sequência Obrigatória (APEX)
 
-1) sequential-thinking → 2) archon (tarefa) → 3) serena (análise do repo) → 4) desktop-commander (operações de arquivo)
+1. sequential-thinking → 2) archon (tarefa) → 3) serena (análise do repo) → 4) desktop-commander (operações de arquivo)
 
 Regras:
+
 - Carregar apenas os documentos necessários: `docs/AGENTS.md`, `docs/architecture/AGENTS.md`, `docs/architecture/source-tree.md`, `docs/memory.md`.
 - Respeitar `.gitignore` e exclusões padrão; nunca operar fora do workspace raiz.
 
@@ -26,6 +27,7 @@ Regras:
 - Confirmação extra para ações potencialmente destrutivas (ex.: remoção de diretórios inteiros).
 
 Parâmetros (default seguros):
+
 ```yaml
 root_path: "/home/vibecoder/neonpro"   # ajustar conforme ambiente
 include: ["."]
@@ -58,13 +60,14 @@ log_dir: "cleanup-logs/"
 
 ## 🧩 Categorias de Limpeza (padrões)
 
-1) Temporários (baixo risco): `*.tmp`, `*.temp`, `*.cache`, `*.bak`, `node_modules/.cache/`, `.next/cache/`, `turbo/.cache/`, `**/dist/temp/`, `**/build/temp/`.
-2) Logs (baixo risco): `*.log`, `*.log.*`, `npm-debug.log*`, `yarn-debug.log*`, `lerna-debug.log*`, `logs/**/*.log`.
-3) Backups obsoletos (médio): `*.backup`, `*.old`, `*.orig`, `*_backup/`, `backup_*/`, `*-copy.*` (após checagem de idade > 7 dias).
-4) Reports/Coverage (médio): `coverage/`, `nyc_output/`, `reports/`, `test-results/`, `*.coverage`, `*.report`.
-5) Placeholders (alto, validação extra): `TODO.md` vazio, `placeholder_*`, `template_*` não referenciados, `sample_*` não utilizados.
+1. Temporários (baixo risco): `*.tmp`, `*.temp`, `*.cache`, `*.bak`, `node_modules/.cache/`, `.next/cache/`, `turbo/.cache/`, `**/dist/temp/`, `**/build/temp/`.
+2. Logs (baixo risco): `*.log`, `*.log.*`, `npm-debug.log*`, `yarn-debug.log*`, `lerna-debug.log*`, `logs/**/*.log`.
+3. Backups obsoletos (médio): `*.backup`, `*.old`, `*.orig`, `*_backup/`, `backup_*/`, `*-copy.*` (após checagem de idade > 7 dias).
+4. Reports/Coverage (médio): `coverage/`, `nyc_output/`, `reports/`, `test-results/`, `*.coverage`, `*.report`.
+5. Placeholders (alto, validação extra): `TODO.md` vazio, `placeholder_*`, `template_*` não referenciados, `sample_*` não utilizados.
 
 Observações:
+
 - “Código redundante”, “dependências não utilizadas” e afins exigem pipeline próprio com testes e revisão (fora deste template base).
 
 ---
@@ -72,20 +75,24 @@ Observações:
 ## 🧠 Fluxo Operacional (A.P.T.E + APEX)
 
 ### A) Analyze — Leitura e Mapeamento
+
 - Ler `docs/architecture/source-tree.md` com serena e extrair: total de apps, total de packages, limites e diretórios críticos.
 - Mapear estado atual vs. arquitetura (apenas contagens e presença dos diretórios esperados).
 - Gerar inventário por categoria (apenas listagem; sem remover nada).
 
 ### P) Pesquisar — Identificação de Alvos
+
 - Classificar candidatos nas categorias 1–4 (5 apenas com validação explícita).
 - Respeitar `exclude` + `.gitignore`. Nunca incluir arquivos listados como críticos pela arquitetura.
 
 ### T) Think — Estratégia e Plano
+
 - Propor plano por fases: Temporários → Logs → Backups → Reports.
 - Produzir MANIFESTO JSON de dry‑run com: caminho, categoria, tamanho estimado, justificativa.
 - Validar checkpoints arquiteturais após cada fase (contagens e diretórios exigidos ainda presentes).
 
 ### E) Elaborate — Execução Controlada
+
 - DRY‑RUN: gerar apenas `cleanup-logs/manifest-[timestamp].json` e relatório humano.
 - APPLY (após "CONFIRMO LIMPAR"):
   - Criar `cleanup-logs/backup-[timestamp].txt` contendo lista completa antes da remoção.
@@ -97,6 +104,7 @@ Observações:
 ## ✅ Checkpoints de Segurança
 
 Obrigatórios após cada fase:
+
 ```yaml
 arquitetura:
   apps_preservados: true        # confere presença conforme source-tree.md
@@ -113,6 +121,7 @@ comandos_basicos:
 ```
 
 Critérios de parada imediata:
+
 - Diferença entre contagens esperadas e reais de apps/packages.
 - Falha em comandos básicos relacionados a dependências.
 - Tentativa de remoção fora do `root_path` ou em diretórios críticos.
@@ -121,12 +130,14 @@ Critérios de parada imediata:
 
 ## 📤 Saídas Padronizadas
 
-1) Relatório Humano (Markdown)
+1. Relatório Humano (Markdown)
+
 - Resumo do plano (dry‑run) ou execução (apply)
 - Tabela por categoria (itens, espaço estimado, status)
 - Checkpoints e validações
 
-2) Manifesto JSON (obrigatório)
+2. Manifesto JSON (obrigatório)
+
 ```json
 {
   "mode": "dry-run|apply",
@@ -147,7 +158,8 @@ Critérios de parada imediata:
 }
 ```
 
-3) Logs
+3. Logs
+
 - `cleanup-logs/manifest-[timestamp].json`
 - `cleanup-logs/report-[timestamp].md`
 - `cleanup-logs/errors-[timestamp].log` (quando houver)
@@ -157,6 +169,7 @@ Critérios de parada imediata:
 ## 🧪 Exemplos de Uso
 
 Análise (dry‑run por padrão):
+
 ```
 Gerar inventário de limpeza no repo atual seguindo APEX:
 - Ler source-tree.md, mapear apps/packages
@@ -165,6 +178,7 @@ Gerar inventário de limpeza no repo atual seguindo APEX:
 ```
 
 Aplicação (requer confirmação):
+
 ```
 CONFIRMO LIMPAR
 Parâmetros: root_path=., include=["."], exclude=[".git/", "node_modules/"], max_depth=8
@@ -172,6 +186,7 @@ Executar limpeza por fases com validação após cada fase e gerar relatório fi
 ```
 
 Rollback básico:
+
 ```
 Recriar itens removidos a partir do manifest/backup se necessário, priorizando categorias 1–2. Para 3–4 verificar idade/impacto antes.
 ```
@@ -202,4 +217,4 @@ Recriar itens removidos a partir do manifest/backup se necessário, priorizando 
 
 ---
 
-Status: ✅ Pronto para uso recorrente (com salvaguardas)  | Segurança: 10/10 | Observabilidade: 10/10 | Aderência APEX: 100%
+Status: ✅ Pronto para uso recorrente (com salvaguardas) | Segurança: 10/10 | Observabilidade: 10/10 | Aderência APEX: 100%

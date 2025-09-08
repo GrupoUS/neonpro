@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import path from "node:path";
-import { defineConfig } from "vitest/config";
+import path from 'node:path'
+import { defineConfig, } from 'vitest/config'
 
 /**
  * Simplified Vitest Configuration for NeonPro Healthcare Testing
@@ -13,50 +13,50 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    name: "neonpro-healthcare-tests",
-    environment: "jsdom",
+    name: 'neonpro-healthcare-tests',
+    environment: 'jsdom',
     globals: true,
 
     // Setup files for healthcare testing
-    setupFiles: ["./healthcare-setup.ts", "./setup.ts"],
+    setupFiles: ['./healthcare-setup.ts', './setup.ts',],
 
     // Test file patterns
     include: [
-      "**/*.{test,spec}.{ts,tsx}",
-      "**/__tests__/**/*.{ts,tsx}",
-      "../**/*.{test,spec}.{ts,tsx}", // Include parent directory tests
+      '**/*.{test,spec}.{ts,tsx}',
+      '**/__tests__/**/*.{ts,tsx}',
+      '../**/*.{test,spec}.{ts,tsx}', // Include parent directory tests
     ],
 
     // Exclusions to avoid conflicts
     exclude: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/e2e/**",
-      "**/playwright/**",
-      "**/cypress/**",
-      "**/coverage/**",
-      "**/*.e2e.{test,spec}.{ts,tsx}",
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/e2e/**',
+      '**/playwright/**',
+      '**/cypress/**',
+      '**/coverage/**',
+      '**/*.e2e.{test,spec}.{ts,tsx}',
       // Skip Prisma-related tests for now
-      "**/prisma/**",
-      "**/database/**",
+      '**/prisma/**',
+      '**/database/**',
       // Skip packages that might have dependency issues
-      "**/packages/database/**",
+      '**/packages/database/**',
     ],
 
     // Coverage configuration
     coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      reportsDirectory: "./coverage",
+      provider: 'v8',
+      reporter: ['text', 'json', 'html',],
+      reportsDirectory: './coverage',
       exclude: [
-        "**/node_modules/**",
-        "**/dist/**",
-        "**/*.config.*",
-        "**/*.setup.*",
-        "**/mocks/**",
-        "**/e2e/**",
-        "**/playwright/**",
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/*.config.*',
+        '**/*.setup.*',
+        '**/mocks/**',
+        '**/e2e/**',
+        '**/playwright/**',
       ],
     },
 
@@ -66,28 +66,28 @@ export default defineConfig({
 
     // Healthcare-specific environment variables
     env: {
-      NODE_ENV: "test",
-      HEALTHCARE_MODE: "true",
-      LGPD_COMPLIANCE: "true",
-      ANVISA_VALIDATION: "true",
-      CFM_STANDARDS: "true",
+      NODE_ENV: 'test',
+      HEALTHCARE_MODE: 'true',
+      LGPD_COMPLIANCE: 'true',
+      ANVISA_VALIDATION: 'true',
+      CFM_STANDARDS: 'true',
     },
   },
 
   // Path resolution for NeonPro modules
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "../../"),
-      "@/app": path.resolve(__dirname, "../../app"),
-      "@/lib": path.resolve(__dirname, "../../lib"),
-      "@/components": path.resolve(__dirname, "../../components"),
-      "@/hooks": path.resolve(__dirname, "../../hooks"),
-      "@/providers": path.resolve(__dirname, "../../providers"),
-      "@/types": path.resolve(__dirname, "../../lib/types"),
-      "@/utils": path.resolve(__dirname, "../../packages/utils/src"),
+      '@': path.resolve(__dirname, '../../',),
+      '@/app': path.resolve(__dirname, '../../app',),
+      '@/lib': path.resolve(__dirname, '../../lib',),
+      '@/components': path.resolve(__dirname, '../../components',),
+      '@/hooks': path.resolve(__dirname, '../../hooks',),
+      '@/providers': path.resolve(__dirname, '../../providers',),
+      '@/types': path.resolve(__dirname, '../../lib/types',),
+      '@/utils': path.resolve(__dirname, '../../packages/utils/src',),
 
-      "@neonpro/utils": path.resolve(__dirname, "../../packages/utils/src"),
-      "@neonpro/types": path.resolve(__dirname, "../../packages/types/src"),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src',),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src',),
     },
   },
 
@@ -95,4 +95,4 @@ export default defineConfig({
   esbuild: {
     sourcemap: true,
   },
-});
+},)

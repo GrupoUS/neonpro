@@ -1,69 +1,69 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Calendar, Clock, Filter, Plus, Search, User } from "lucide-react";
-import Link from "next/link";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Input, } from '@/components/ui/input'
+import { Calendar, Clock, Filter, Plus, Search, User, } from 'lucide-react'
+import Link from 'next/link'
 
 const appointments = [
   {
-    id: "1",
-    patient: "Maria Silva",
-    service: "Limpeza de Pele",
-    date: "2024-01-15",
-    time: "09:00",
-    duration: "60 min",
-    status: "confirmado",
-    professional: "Dr. Ana Santos",
+    id: '1',
+    patient: 'Maria Silva',
+    service: 'Limpeza de Pele',
+    date: '2024-01-15',
+    time: '09:00',
+    duration: '60 min',
+    status: 'confirmado',
+    professional: 'Dr. Ana Santos',
   },
   {
-    id: "2",
-    patient: "João Santos",
-    service: "Massagem Relaxante",
-    date: "2024-01-15",
-    time: "10:30",
-    duration: "90 min",
-    status: "pendente",
-    professional: "Terapeuta Carlos",
+    id: '2',
+    patient: 'João Santos',
+    service: 'Massagem Relaxante',
+    date: '2024-01-15',
+    time: '10:30',
+    duration: '90 min',
+    status: 'pendente',
+    professional: 'Terapeuta Carlos',
   },
   {
-    id: "3",
-    patient: "Ana Costa",
-    service: "Tratamento Facial",
-    date: "2024-01-15",
-    time: "14:00",
-    duration: "120 min",
-    status: "confirmado",
-    professional: "Dra. Mariana",
+    id: '3',
+    patient: 'Ana Costa',
+    service: 'Tratamento Facial',
+    date: '2024-01-15',
+    time: '14:00',
+    duration: '120 min',
+    status: 'confirmado',
+    professional: 'Dra. Mariana',
   },
   {
-    id: "4",
-    patient: "Pedro Oliveira",
-    service: "Consulta Dermatológica",
-    date: "2024-01-15",
-    time: "15:30",
-    duration: "45 min",
-    status: "cancelado",
-    professional: "Dr. Roberto",
+    id: '4',
+    patient: 'Pedro Oliveira',
+    service: 'Consulta Dermatológica',
+    date: '2024-01-15',
+    time: '15:30',
+    duration: '45 min',
+    status: 'cancelado',
+    professional: 'Dr. Roberto',
   },
-];
+]
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string,) => {
   switch (status) {
-    case "confirmado":
-      return "bg-green-100 text-green-800";
-    case "pendente":
-      return "bg-yellow-100 text-yellow-800";
-    case "cancelado":
-      return "bg-red-100 text-red-800";
-    case "concluido":
-      return "bg-blue-100 text-blue-800";
+    case 'confirmado':
+      return 'bg-green-100 text-green-800'
+    case 'pendente':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'cancelado':
+      return 'bg-red-100 text-red-800'
+    case 'concluido':
+      return 'bg-blue-100 text-blue-800'
     default:
-      return "bg-gray-100 text-gray-800";
+      return 'bg-gray-100 text-gray-800'
   }
-};
+}
 
 export default function AppointmentsPage() {
   return (
@@ -170,7 +170,7 @@ export default function AppointmentsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {appointments.map((appointment) => (
+            {appointments.map((appointment,) => (
               <div
                 key={appointment.id}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
@@ -202,7 +202,7 @@ export default function AppointmentsPage() {
                     </p>
                   </div>
 
-                  <Badge className={getStatusColor(appointment.status)}>
+                  <Badge className={getStatusColor(appointment.status,)}>
                     {appointment.status}
                   </Badge>
 
@@ -223,5 +223,5 @@ export default function AppointmentsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

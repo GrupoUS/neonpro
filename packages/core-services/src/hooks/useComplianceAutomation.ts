@@ -5,6 +5,8 @@
 
 'use client'
 
+import React, { useCallback, useEffect, useState, } from 'react'
+
 // CONTENT CHECK: import { useState, useEffect, useCallback } from 'react';
 
 // ================================================
@@ -82,16 +84,16 @@ interface ProfessionalValidationRequest {
 // ================================================
 
 export const useComplianceStatus = (clinicId?: string, autoRefresh = true,) => {
-  const [status, setStatus,] = useState<ComplianceStatus | null>()
+  const [status, setStatus,] = useState<ComplianceStatus | null>(null,)
   const [alerts, setAlerts,] = useState<ComplianceAlert[]>([],)
   const [loading, setLoading,] = useState(true,)
-  const [error, setError,] = useState<string | null>()
+  const [error, setError,] = useState<string | null>(null,)
   const [lastRefresh, setLastRefresh,] = useState<Date>(new Date(),)
 
   const fetchStatus = useCallback(async () => {
     try {
       setLoading(true,)
-      setError(undefined,)
+      setError(null,)
 
       const url = new URL(
         '/api/compliance/monitor/status',
@@ -115,10 +117,8 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true,) => {
       } else {
         throw new Error(data.error || 'Invalid response format',)
       }
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : 'Unknown error occurred',
-      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error occurred',)
     } finally {
       setLoading(false,)
     }
@@ -132,6 +132,7 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true,) => {
       const interval = setInterval(fetchStatus, 5 * 60 * 1000,)
       return () => clearInterval(interval,)
     }
+    return undefined
   }, [fetchStatus, autoRefresh,],)
 
   return {
@@ -150,13 +151,13 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true,) => {
 
 export const useDataClassification = () => {
   const [loading, setLoading,] = useState(false,)
-  const [error, setError,] = useState<string | null>()
+  const [error, setError,] = useState<string | null>(null,)
 
   const classifyData = useCallback(
     async (request: DataClassificationRequest,) => {
       try {
         setLoading(true,)
-        setError(undefined,)
+        setError(null,)
 
         const response = await fetch(
           '/api/compliance/lgpd/data-classification',
@@ -176,10 +177,10 @@ export const useDataClassification = () => {
         }
 
         return data
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
         setError(errorMessage,)
-        throw error
+        throw err
       } finally {
         setLoading(false,)
       }
@@ -196,7 +197,7 @@ export const useDataClassification = () => {
 
 export const useDataSubjectRequests = () => {
   const [loading, setLoading,] = useState(false,)
-  const [error, setError,] = useState<string | null>()
+  const [error, setError,] = useState<string | null>(null,)
 
   const createRequest = useCallback(async (request: DataSubjectRequest,) => {
     try {

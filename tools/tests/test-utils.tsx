@@ -2,10 +2,10 @@
  * Testing utilities following official TanStack Query + React Testing Library patterns
  */
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, renderHook } from "@testing-library/react";
-import type { RenderOptions } from "@testing-library/react";
-import type React from "react";
+import { QueryClient, QueryClientProvider, } from '@tanstack/react-query'
+import { render, renderHook, } from '@testing-library/react'
+import type { RenderOptions, } from '@testing-library/react'
+import type React from 'react'
 
 /**
  * Create a test QueryClient following official docs
@@ -22,8 +22,8 @@ export const createTestQueryClient = () => {
         retry: false, // ✅ no mutation retries in tests
       },
     },
-  });
-};
+  },)
+}
 
 /**
  * Custom render with QueryClient wrapper
@@ -31,43 +31,43 @@ export const createTestQueryClient = () => {
 export const renderWithClient = (
   ui: React.ReactElement,
   options?: {
-    client?: QueryClient;
-    renderOptions?: Omit<RenderOptions, "wrapper">;
+    client?: QueryClient
+    renderOptions?: Omit<RenderOptions, 'wrapper'>
   },
 ) => {
-  const { client = createTestQueryClient(), renderOptions } = options || {};
+  const { client = createTestQueryClient(), renderOptions, } = options || {}
 
-  const wrapper = ({ children }: { children: React.ReactNode; }) => (
+  const wrapper = ({ children, }: { children: React.ReactNode },) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
-  );
+  )
 
   return {
     client,
-    ...render(ui, { wrapper, ...renderOptions }),
-  };
-};
+    ...render(ui, { wrapper, ...renderOptions, },),
+  }
+}
 
 /**
  * Custom renderHook with QueryClient wrapper following official docs
  */
-export const renderHookWithClient = <TResult, TProps>(
-  hook: (props: TProps) => TResult,
+export const renderHookWithClient = <TResult, TProps,>(
+  hook: (props: TProps,) => TResult,
   options?: {
-    client?: QueryClient;
-    initialProps?: TProps;
+    client?: QueryClient
+    initialProps?: TProps
   },
 ) => {
-  const { client = createTestQueryClient(), initialProps } = options || {};
+  const { client = createTestQueryClient(), initialProps, } = options || {}
 
-  const wrapper = ({ children }: { children: React.ReactNode; }) => (
+  const wrapper = ({ children, }: { children: React.ReactNode },) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
-  );
+  )
 
   return {
     client,
-    ...renderHook(hook, { wrapper, initialProps }),
-  };
-};
+    ...renderHook(hook, { wrapper, initialProps, },),
+  }
+}
 
 /**
  * Access global test mocks - for compatibility with existing tests
@@ -80,4 +80,4 @@ export const getGlobalMocks = () => ({
   cpfValidator: (globalThis as unknown).mockCpfValidator,
   queryClient: (globalThis as unknown).testQueryClient
     || (globalThis as unknown).queryClient,
-});
+})

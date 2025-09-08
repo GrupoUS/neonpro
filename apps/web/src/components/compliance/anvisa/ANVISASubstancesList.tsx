@@ -1,17 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
-import { Badge, Button, Input } from "@/components/ui";
-import React from "react";
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui'
+import { Badge, Button, Input, } from '@/components/ui'
+import React from 'react'
 // Using native select for simplicity to avoid type conflicts
-import { Filter, Search } from "lucide-react";
-import type { ANVISAControlledClass, ANVISASubstance } from "../../../types/compliance";
+import { Filter, Search, } from 'lucide-react'
+import type { ANVISAControlledClass, ANVISASubstance, } from '../../../types/compliance'
 
 interface ANVISASubstancesListProps {
-  substances: ANVISASubstance[];
-  searchTerm: string;
-  selectedClass: ANVISAControlledClass | "all";
-  onSearchChange: (term: string) => void;
-  onClassChange: (substanceClass: ANVISAControlledClass | "all") => void;
-  onSubstanceSelect?: (substance: ANVISASubstance) => void;
+  substances: ANVISASubstance[]
+  searchTerm: string
+  selectedClass: ANVISAControlledClass | 'all'
+  onSearchChange: (term: string,) => void
+  onClassChange: (substanceClass: ANVISAControlledClass | 'all',) => void
+  onSubstanceSelect?: (substance: ANVISASubstance,) => void
 }
 
 export function ANVISASubstancesList({
@@ -21,50 +21,50 @@ export function ANVISASubstancesList({
   onSearchChange,
   onClassChange,
   onSubstanceSelect,
-}: ANVISASubstancesListProps) {
-  const getClassBadgeVariant = (substanceClass: ANVISAControlledClass) => {
+}: ANVISASubstancesListProps,) {
+  const getClassBadgeVariant = (substanceClass: ANVISAControlledClass,) => {
     switch (substanceClass) {
-      case "A1":
-      case "A2":
-      case "A3":
-        return "destructive";
-      case "B1":
-      case "B2":
-        return "secondary";
-      case "C1":
-      case "C2":
-      case "C3":
-        return "outline";
+      case 'A1':
+      case 'A2':
+      case 'A3':
+        return 'destructive'
+      case 'B1':
+      case 'B2':
+        return 'secondary'
+      case 'C1':
+      case 'C2':
+      case 'C3':
+        return 'outline'
       default:
-        return "default";
+        return 'default'
     }
-  };
+  }
 
-  const getClassIcon = (substanceClass: ANVISAControlledClass) => {
+  const getClassIcon = (substanceClass: ANVISAControlledClass,) => {
     switch (substanceClass) {
-      case "A1":
-      case "A2":
-      case "A3":
-        return "⚠️";
-      case "B1":
-      case "B2":
-        return "🔒";
-      case "C1":
-      case "C2":
-      case "C3":
-        return "📋";
+      case 'A1':
+      case 'A2':
+      case 'A3':
+        return '⚠️'
+      case 'B1':
+      case 'B2':
+        return '🔒'
+      case 'C1':
+      case 'C2':
+      case 'C3':
+        return '📋'
       default:
-        return "💊";
+        return '💊'
     }
-  };
+  }
 
-  const filteredSubstances = substances.filter((substance) => {
-    const matchesSearch = substance.substanceName.toLowerCase().includes(searchTerm.toLowerCase())
-      || substance.commercialName.toLowerCase().includes(searchTerm.toLowerCase())
-      || substance.activeIngredient.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesClass = selectedClass === "all" || substance.controlledClass === selectedClass;
-    return matchesSearch && matchesClass;
-  });
+  const filteredSubstances = substances.filter((substance,) => {
+    const matchesSearch = substance.substanceName.toLowerCase().includes(searchTerm.toLowerCase(),)
+      || substance.commercialName.toLowerCase().includes(searchTerm.toLowerCase(),)
+      || substance.activeIngredient.toLowerCase().includes(searchTerm.toLowerCase(),)
+    const matchesClass = selectedClass === 'all' || substance.controlledClass === selectedClass
+    return matchesSearch && matchesClass
+  },)
 
   return (
     <Card>
@@ -79,14 +79,14 @@ export function ANVISASubstancesList({
             <Input
               placeholder="Buscar substâncias..."
               value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e,) => onSearchChange(e.target.value,)}
               className="pl-10"
             />
           </div>
           <div className="w-48">
             <select
               value={selectedClass}
-              onChange={(e) => onClassChange(e.target.value as ANVISAControlledClass | "all")}
+              onChange={(e,) => onClassChange(e.target.value as ANVISAControlledClass | 'all',)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todas as Classes</option>
@@ -111,15 +111,15 @@ export function ANVISASubstancesList({
               </div>
             )
             : (
-              filteredSubstances.map((substance) => (
+              filteredSubstances.map((substance,) => (
                 <div
                   key={substance.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{getClassIcon(substance.controlledClass)}</span>
-                      <Badge variant={getClassBadgeVariant(substance.controlledClass)}>
+                      <span className="text-lg">{getClassIcon(substance.controlledClass,)}</span>
+                      <Badge variant={getClassBadgeVariant(substance.controlledClass,)}>
                         {substance.controlledClass}
                       </Badge>
                       <Badge variant="outline">{substance.prescriptionType}</Badge>
@@ -139,7 +139,7 @@ export function ANVISASubstancesList({
                       <div className="mt-2">
                         <p className="text-xs font-medium text-orange-600">Restrições:</p>
                         <p className="text-xs text-muted-foreground">
-                          {substance.restrictions.join(", ")}
+                          {substance.restrictions.join(', ',)}
                         </p>
                       </div>
                     )}
@@ -148,7 +148,7 @@ export function ANVISASubstancesList({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => onSubstanceSelect(substance)}
+                      onClick={() => onSubstanceSelect(substance,)}
                     >
                       Selecionar
                     </Button>
@@ -159,5 +159,5 @@ export function ANVISASubstancesList({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

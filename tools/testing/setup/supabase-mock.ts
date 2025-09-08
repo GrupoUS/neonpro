@@ -3,38 +3,40 @@
  * This file must be loaded before any other setup files to ensure singleton pattern
  */
 
-import { vi } from "vitest";
+import { vi, } from 'vitest'
 
 // Suppress Supabase warnings immediately
-const { warn: originalConsoleWarn } = console;
+const { warn: originalConsoleWarn, } = console
 console.warn = (...args) => {
-  const message = args.join(" ");
+  const message = args.join(' ',)
   if (
-    message.includes("Multiple GoTrueClient instances detected")
-    || message.includes("GoTrueClient")
-    || message.includes("Multiple instances of auth client")
+    message.includes('Multiple GoTrueClient instances detected',)
+    || message.includes('GoTrueClient',)
+    || message.includes('Multiple instances of auth client',)
   ) {
-    return; // Suppress these warnings
+    return // Suppress these warnings
   }
-  originalConsoleWarn.apply(console, args);
-};
+  originalConsoleWarn.apply(console, args,)
+}
 
 // Create a singleton mock Supabase client to prevent "Multiple GoTrueClient instances" warning
-let singletonMockSupabaseClient: unknown;
+let singletonMockSupabaseClient: unknown
 
 const createMockSupabaseClient = () => {
   if (singletonMockSupabaseClient) {
-    return singletonMockSupabaseClient;
+    return singletonMockSupabaseClient
   }
 
   singletonMockSupabaseClient = {
     auth: {
-      getSession: vi.fn(() => Promise.resolve({ data: { session: undefined }, error: undefined })),
-      getUser: vi.fn(() => Promise.resolve({ data: { user: undefined }, error: undefined })),
+      getSession: vi.fn(() =>
+        Promise.resolve({ data: { session: undefined, }, error: undefined, },)
+      ),
+      getUser: vi.fn(() => Promise.resolve({ data: { user: undefined, }, error: undefined, },)),
       signIn: vi.fn(),
       signOut: vi.fn(),
       onAuthStateChange: vi.fn(() => ({
-        data: { subscription: { unsubscribe: vi.fn() } },
+        data: { subscription: { unsubscribe: vi.fn(), }, },
       })),
     },
     from: vi.fn(() => ({
@@ -54,10 +56,10 @@ const createMockSupabaseClient = () => {
       is: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
-      single: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
-      then: vi.fn((fn) => fn({ data: [], error: undefined })),
+      single: vi.fn(() => Promise.resolve({ data: undefined, error: undefined, },)),
+      then: vi.fn((fn,) => fn({ data: [], error: undefined, },)),
     })),
-    rpc: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
+    rpc: vi.fn(() => Promise.resolve({ data: undefined, error: undefined, },)),
     storage: {
       from: vi.fn(() => ({
         upload: vi.fn(),
@@ -66,64 +68,64 @@ const createMockSupabaseClient = () => {
         remove: vi.fn(),
       })),
     },
-  };
+  }
 
-  return singletonMockSupabaseClient;
-};
+  return singletonMockSupabaseClient
+}
 
 // Mock Supabase client creation with singleton pattern - this MUST be called early
-vi.mock<typeof import("@supabase/supabase-js")>(
-  "@supabase/supabase-js",
+vi.mock<typeof import('@supabase/supabase-js')>(
+  '@supabase/supabase-js',
   () => ({
     createClient: vi.fn(() => createMockSupabaseClient()),
   }),
-);
+)
 
 // Mock the GoTrueClient directly to prevent multiple instances warning
-vi.mock<typeof import("@supabase/auth-js")>("@supabase/auth-js", () => {
-  const originalModule = vi.importActual("@supabase/auth-js");
-  let singletonGoTrueClient: unknown;
+vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
+  const originalModule = vi.importActual('@supabase/auth-js',)
+  let singletonGoTrueClient: unknown
 
   return {
     ...originalModule,
     GoTrueClient: vi.fn().mockImplementation(() => {
       if (singletonGoTrueClient) {
-        return singletonGoTrueClient;
+        return singletonGoTrueClient
       }
 
       singletonGoTrueClient = {
         onAuthStateChange: vi.fn().mockReturnValue({
-          data: { subscription: { unsubscribe: vi.fn() } },
-        }),
+          data: { subscription: { unsubscribe: vi.fn(), }, },
+        },),
         getUser: vi
           .fn()
-          .mockResolvedValue({ data: { user: undefined }, error: undefined }),
+          .mockResolvedValue({ data: { user: undefined, }, error: undefined, },),
         getSession: vi.fn().mockResolvedValue({
-          data: { session: undefined },
+          data: { session: undefined, },
           error: undefined,
-        }),
+        },),
         signInWithPassword: vi.fn().mockResolvedValue({
-          data: { user: undefined, session: undefined },
+          data: { user: undefined, session: undefined, },
           error: undefined,
-        }),
-        signOut: vi.fn().mockResolvedValue({ error: undefined }),
+        },),
+        signOut: vi.fn().mockResolvedValue({ error: undefined, },),
         signUp: vi.fn().mockResolvedValue({
-          data: { user: undefined, session: undefined },
+          data: { user: undefined, session: undefined, },
           error: undefined,
-        }),
+        },),
         _handleAuthResponse: vi.fn(),
         _handleGoTrueSignIn: vi.fn(),
         _handleGoTrueSignUp: vi.fn(),
         _handleGoTrueSession: vi.fn(),
         _handleGoTrueUser: vi.fn(),
-      };
+      }
 
-      return singletonGoTrueClient;
-    }),
+      return singletonGoTrueClient
+    },),
     AuthError: originalModule.AuthError || vi.fn(),
     AuthApiError: originalModule.AuthApiError || vi.fn(),
-  };
-});
+  }
+},)
 
 // Export the singleton for use in tests
-export const mockSupabaseClient = createMockSupabaseClient();
+export const mockSupabaseClient = createMockSupabaseClient()

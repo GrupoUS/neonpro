@@ -3,22 +3,22 @@
  * NeonPro Healthcare System API Test Setup
  */
 
-import { vi } from "vitest";
+import { vi, } from 'vitest'
 
 // Mock Supabase client for API tests
 vi.mock(
-  "@supabase/supabase-js",
+  '@supabase/supabase-js',
   () => ({
     createClient: vi.fn(() => ({
       auth: {
         getSession: vi.fn().mockResolvedValue({
-          data: { session: { user: { id: "test-user-id" } } },
+          data: { session: { user: { id: 'test-user-id', }, }, },
           error: undefined,
-        }),
+        },),
         getUser: vi.fn().mockResolvedValue({
-          data: { user: { id: "test-user-id", email: "test@neonpro.com" } },
+          data: { user: { id: 'test-user-id', email: 'test@neonpro.com', }, },
           error: undefined,
-        }),
+        },),
         signInWithPassword: vi.fn(),
         signUp: vi.fn(),
         signOut: vi.fn(),
@@ -32,8 +32,8 @@ vi.mock(
         eq: vi.fn().mockReturnThis(),
         order: vi.fn().mockReturnThis(),
         range: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: {}, error: undefined }),
-        then: vi.fn().mockResolvedValue({ data: [], error: undefined }),
+        single: vi.fn().mockResolvedValue({ data: {}, error: undefined, },),
+        then: vi.fn().mockResolvedValue({ data: [], error: undefined, },),
       })),
       storage: {
         from: vi.fn(() => ({
@@ -43,21 +43,21 @@ vi.mock(
           list: vi.fn(),
         })),
       },
-      rpc: vi.fn().mockResolvedValue({ data: [], error: undefined }),
+      rpc: vi.fn().mockResolvedValue({ data: [], error: undefined, },),
     })),
   }),
-);
+)
 
 // Mock Next.js API request/response objects
-export const mockRequest = (overrides = {}) => ({
-  method: "GET",
+export const mockRequest = (overrides = {},) => ({
+  method: 'GET',
   headers: {},
   query: {},
   body: {},
   cookies: {},
-  url: "/api/test",
+  url: '/api/test',
   ...overrides,
-});
+})
 
 export const mockResponse = () => {
   const res = {
@@ -68,15 +68,15 @@ export const mockResponse = () => {
     getHeader: jest.fn(),
     end: jest.fn(),
     redirect: jest.fn(),
-  };
-  return res;
-};
+  }
+  return res
+}
 
 // Mock environment variables for API tests
-process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
-process.env.SUPABASE_URL = "https://test.supabase.co";
-process.env.NEXTAUTH_SECRET = "test-secret";
-process.env.NEXTAUTH_URL = "http://localhost:3000";
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key'
+process.env.SUPABASE_URL = 'https://test.supabase.co'
+process.env.NEXTAUTH_SECRET = 'test-secret'
+process.env.NEXTAUTH_URL = 'http://localhost:3000'
 
 // Helper function for API route testing
 export const testApiRoute = async (
@@ -84,5 +84,5 @@ export const testApiRoute = async (
   req: unknown,
   res: unknown,
 ) => {
-  return handler(req, res);
-};
+  return handler(req, res,)
+}

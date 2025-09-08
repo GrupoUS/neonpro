@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState, } from 'react'
 import { complianceService, } from './ComplianceService'
 import type {
   ComplianceCheckResult,
+  ComplianceConfig,
   ComplianceFilters,
   ComplianceFramework,
   ComplianceScore,

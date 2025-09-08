@@ -5,13 +5,13 @@
 // Features: 3D modeling, treatment simulation, AR visualization, outcome prediction
 // =============================================================================
 
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Progress, } from '@/components/ui/progress'
+import { Slider, } from '@/components/ui/slider'
 import {
   Camera,
   Eye,
@@ -22,45 +22,45 @@ import {
   Target,
   TrendingUp,
   Zap,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 // =============================================================================
 // TYPES & INTERFACES
 // =============================================================================
 
 export interface SimulationData {
-  id: string;
-  patientId: string;
+  id: string
+  patientId: string
   treatmentType:
-    | "botox"
-    | "filler"
-    | "facial_harmonization"
-    | "thread_lift"
-    | "peeling";
-  status: "initializing" | "processing" | "ready" | "completed" | "failed";
-  beforeModel: string;
-  afterModel: string;
-  confidenceScore: number;
+    | 'botox'
+    | 'filler'
+    | 'facial_harmonization'
+    | 'thread_lift'
+    | 'peeling'
+  status: 'initializing' | 'processing' | 'ready' | 'completed' | 'failed'
+  beforeModel: string
+  afterModel: string
+  confidenceScore: number
   estimatedOutcome: {
-    improvement: number;
-    durability: number; // months
-    naturalness: number;
-    satisfactionScore: number;
-  };
+    improvement: number
+    durability: number // months
+    naturalness: number
+    satisfactionScore: number
+  }
   metadata: {
-    processingTime: number;
-    accuracy: number;
-    createdAt: string;
-  };
+    processingTime: number
+    accuracy: number
+    createdAt: string
+  }
 }
 
 interface ARResultsSimulatorProps {
-  patientId: string;
-  simulationData?: SimulationData;
-  onSimulationCreate?: (data: unknown) => void;
-  onSimulationUpdate?: (id: string, data: unknown) => void;
-  className?: string;
+  patientId: string
+  simulationData?: SimulationData
+  onSimulationCreate?: (data: unknown,) => void
+  onSimulationUpdate?: (id: string, data: unknown,) => void
+  className?: string
 }
 
 // =============================================================================
@@ -71,9 +71,9 @@ function ViewportPlaceholder({
   showBefore,
   showAfter,
 }: {
-  showBefore: boolean;
-  showAfter: boolean;
-}) {
+  showBefore: boolean
+  showAfter: boolean
+},) {
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
       <div className="text-center">
@@ -85,16 +85,16 @@ function ViewportPlaceholder({
         </div>
         <div className="text-sm text-gray-500 mt-1">
           {showBefore && showAfter
-            ? "Before & After View"
+            ? 'Before & After View'
             : showBefore
-            ? "Before Treatment"
+            ? 'Before Treatment'
             : showAfter
-            ? "After Treatment"
-            : "Select View Mode"}
+            ? 'After Treatment'
+            : 'Select View Mode'}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // =============================================================================
@@ -109,13 +109,13 @@ function SimulationControls({
   animationProgress,
   onProgressChange,
 }: {
-  isPlaying: boolean;
-  onPlayPause: () => void;
-  onReset: () => void;
-  onCapture: () => void;
-  animationProgress: number;
-  onProgressChange: (value: number) => void;
-}) {
+  isPlaying: boolean
+  onPlayPause: () => void
+  onReset: () => void
+  onCapture: () => void
+  animationProgress: number
+  onProgressChange: (value: number,) => void
+},) {
   return (
     <Card className="absolute bottom-4 left-4 right-4 z-10">
       <CardContent className="p-4">
@@ -136,8 +136,8 @@ function SimulationControls({
 
           <div className="flex-1 max-w-xs">
             <Slider
-              value={[animationProgress]}
-              onValueChange={(value) => onProgressChange(value[0])}
+              value={[animationProgress,]}
+              onValueChange={(value,) => onProgressChange(value[0],)}
               max={100}
               step={1}
               className="w-full"
@@ -150,12 +150,12 @@ function SimulationControls({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-function ResultsPanel({ simulationData }: { simulationData: SimulationData; }) {
+function ResultsPanel({ simulationData, }: { simulationData: SimulationData },) {
   if (!simulationData) {
-    return;
+    return
   }
 
   return (
@@ -225,7 +225,7 @@ function ResultsPanel({ simulationData }: { simulationData: SimulationData; }) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 // =============================================================================
@@ -237,22 +237,22 @@ export default function ARResultsSimulator({
   simulationData,
   onSimulationCreate,
   onSimulationUpdate,
-  className = "",
-}: ARResultsSimulatorProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showBefore, setShowBefore] = useState(true);
-  const [showAfter, setShowAfter] = useState(true);
-  const [animationProgress, setAnimationProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(!simulationData);
+  className = '',
+}: ARResultsSimulatorProps,) {
+  const [isPlaying, setIsPlaying,] = useState(false,)
+  const [showBefore, setShowBefore,] = useState(true,)
+  const [showAfter, setShowAfter,] = useState(true,)
+  const [animationProgress, setAnimationProgress,] = useState(0,)
+  const [isLoading, setIsLoading,] = useState(!simulationData,)
 
   // Mock data for demonstration
   const mockSimulationData: SimulationData = {
     id: `sim_${Date.now()}`,
     patientId,
-    treatmentType: "botox",
-    status: "ready",
-    beforeModel: "/models/face_before.gltf",
-    afterModel: "/models/face_after.gltf",
+    treatmentType: 'botox',
+    status: 'ready',
+    beforeModel: '/models/face_before.gltf',
+    afterModel: '/models/face_after.gltf',
     confidenceScore: 94,
     estimatedOutcome: {
       improvement: 78,
@@ -265,35 +265,35 @@ export default function ARResultsSimulator({
       accuracy: 96,
       createdAt: new Date().toISOString(),
     },
-  };
+  }
 
-  const currentData = simulationData || mockSimulationData;
+  const currentData = simulationData || mockSimulationData
 
   useEffect(() => {
     if (!simulationData) {
       // Simulate loading
       const timer = setTimeout(() => {
-        setIsLoading(false);
-        onSimulationCreate?.(mockSimulationData);
-      }, 3000);
+        setIsLoading(false,)
+        onSimulationCreate?.(mockSimulationData,)
+      }, 3000,)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer,)
     }
-  }, [simulationData, onSimulationCreate, mockSimulationData]);
+  }, [simulationData, onSimulationCreate, mockSimulationData,],)
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
+    setIsPlaying(!isPlaying,)
+  }
 
   const handleReset = () => {
-    setAnimationProgress(0);
-    setIsPlaying(false);
-  };
+    setAnimationProgress(0,)
+    setIsPlaying(false,)
+  }
 
   const handleCapture = () => {
     // Implement screenshot functionality
     // console.log("Capturing simulation screenshot...");
-  };
+  }
 
   if (isLoading) {
     return (
@@ -312,7 +312,7 @@ export default function ARResultsSimulator({
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -336,17 +336,17 @@ export default function ARResultsSimulator({
       <div className="absolute top-4 left-4 z-10">
         <div className="flex flex-col gap-2">
           <Button
-            variant={showBefore ? "default" : "outline"}
+            variant={showBefore ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setShowBefore(!showBefore)}
+            onClick={() => setShowBefore(!showBefore,)}
           >
             <Eye className="w-4 h-4 mr-2" />
             Before
           </Button>
           <Button
-            variant={showAfter ? "default" : "outline"}
+            variant={showAfter ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setShowAfter(!showAfter)}
+            onClick={() => setShowAfter(!showAfter,)}
           >
             <Zap className="w-4 h-4 mr-2" />
             After
@@ -354,5 +354,5 @@ export default function ARResultsSimulator({
         </div>
       </div>
     </div>
-  );
+  )
 }

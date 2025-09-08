@@ -372,12 +372,12 @@ export class ComplianceOrchestrator {
   private async validateSystemIntegration(): Promise<IntegrationValidation> {
     console.log('🔧 Validating system integration',)
 
-    const validations: Array<{
+    const validations: {
       component: string
       status: 'healthy' | 'warning' | 'error'
       checks?: unknown
       error?: string
-    }> = []
+    }[] = []
 
     // Test service connectivity
     for (const [serviceName, service,] of Object.entries(this.services,)) {
@@ -450,14 +450,12 @@ export class ComplianceOrchestrator {
     }
   }
 
-  private async testInterServiceCommunication(): Promise<
-    Array<{
-      component: string
-      status: 'healthy' | 'warning' | 'error'
-      checks?: unknown
-      error?: string
-    }>
-  > {
+  private async testInterServiceCommunication(): Promise<{
+    component: string
+    status: 'healthy' | 'warning' | 'error'
+    checks?: unknown
+    error?: string
+  }[]> {
     // Test critical service interactions
     const tests = [
       {

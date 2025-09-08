@@ -1,7 +1,16 @@
 {
   "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
   "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "projectName": "neonpro",
   "settings": {
-    "rootDirectory": "apps/web"
+    "createdAt": 1750299142397,
+    "framework": "nextjs",
+    "devCommand": "npm run dev",
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": ".next",
+    "rootDirectory": "apps/web",
+    "directoryListing": false,
+    "nodeVersion": "22.x"
   }
 }

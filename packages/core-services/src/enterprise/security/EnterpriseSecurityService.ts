@@ -179,7 +179,7 @@ export class EnterpriseSecurityService {
     } catch (_error) {
       await this.logSecurityEvent('ACCESS_VALIDATION_ERROR', {
         operation,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
         context,
       },)
       return false

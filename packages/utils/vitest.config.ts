@@ -1,11 +1,18 @@
 import path from 'node:path'
+import fs from 'node:fs'
 import { defineConfig, } from 'vitest/config'
 
 export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    reporters: ['default', '../../.vitest-reporters/junit.cjs',],
+    reporters: (() => {
+      const reporters: string[] = ['default']
+      const reporterPath = path.resolve(__dirname, '../../.vitest-reporters/junit.cjs')
+      const enabled = process.env.VITEST_JUNIT !== '0'
+      if (enabled && fs.existsSync(reporterPath)) reporters.push(reporterPath)
+      return reporters
+    })(),
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.test.{ts,tsx}',],
     coverage: {
       provider: 'v8',

@@ -1,122 +1,122 @@
 {
-	"version": "1.0.0",
-	"project": {
-		"name": "NeonPro AI Aesthetic Clinic Platform",
-		"type": "aesthetic-ai",
-		"compliance": {
-			"standards": ["LGPD", "ANVISA Class IIa"],
-			"auditTrail": true,
-			"dataProtection": "aesthetic"
-		},
-		"architecture": {
-			"pattern": "ai-first-monorepo",
-			"packages": 32,
-			"governance": "constitutional"
-		}
-	},
-	"tasks": {
-		"configFiles": [
-			".trae/tasks.json"
-		],
-		"defaultGroup": "build",
-		"archonIntegration": {
-			"enabled": true,
-			"server": "mcp.config.usrlocalmcp.archon",
-			"syncOnStart": true,
-			"taskTracking": true
-		}
-	},
-	"development": {
-		"packageManager": "bun",
-		"nodeVersion": ">=20.0.0",
-		"typescript": {
-			"strict": true,
-			"healthcareTypes": true
-		},
-		"qualityGates": {
-			"codeQuality": 9.8,
-			"testCoverage": 95,
-			"performanceTargets": {
-				"emergencyResponse": "<200ms",
-				"healthcareOps": "<2s",
-				"aiResponse": "<500ms"
-			}
-		}
-	},
-	"ai": {
-		"frameworks": {
-			"primary": "Vercel AI SDK 5.0",
-			"streaming": true,
-			"models": ["gpt-5-nano", "claude-3.5-sonnet", "gemini-2.5-flash"]
-		},
-		"integration": {
-			"native": true,
-			"layers": "all",
-			"realtime": true
-		}
-	},
-	"mcp": {
-		"configFile": ".trae/mcp.json",
-		"official": true,
-		"autoLoad": true,
-		"servers": {
-			"archon": {
-				"name": "mcp.config.usrlocalmcp.archon",
-				"role": "task-management",
-				"priority": "high"
-			},
-			"supabase": {
-				"name": "mcp.config.usrlocalmcp.supabase",
-				"role": "database-operations",
-				"priority": "high"
-			},
-			"context7": {
-				"name": "mcp.config.usrlocalmcp.context7",
-				"role": "documentation-research",
-				"priority": "medium"
-			},
-			"shadcn-ui": {
-				"name": "shadcn-ui",
-				"role": "ui-components",
-				"priority": "medium"
-			},
-			"tavily": {
-				"name": "Tavily",
-				"role": "web-search",
-				"priority": "medium"
-			},
-			"sequential-thinking": {
-				"name": "Sequential Thinking",
-				"role": "reasoning",
-				"priority": "high"
-			},
-			"serena": {
-				"name": "serena",
-				"role": "code-analysis",
-				"priority": "high"
-			},
-			"desktop-commander": {
-				"name": "desktop-commander",
-				"role": "system-operations",
-				"priority": "medium"
-			}
-		}
-	},
-	"workflows": {
-		"coreWorkflow": ".ruler/core-workflow.md",
-		"devWorkflow": "docs/AGENTS.md",
-		"mandatory": {
-			"sequentialThinking": true,
-			"archonFirst": true,
-			"qualityValidation": true
-		}
-	},
-	"builders": {
-		"primary": "vibecoder",
-		"configPath": ".trae/builders/vibecoder.md",
-		"specializations": [
-			"full-stack",
-			"compliance-driven"
-		]
-	}
+  "version": "1.0.0",
+  "project": {
+    "name": "NeonPro AI Aesthetic Clinic Platform",
+    "type": "aesthetic-ai",
+    "compliance": {
+      "standards": ["LGPD", "ANVISA Class IIa"],
+      "auditTrail": true,
+      "dataProtection": "aesthetic"
+    },
+    "architecture": {
+      "pattern": "ai-first-monorepo",
+      "packages": 32,
+      "governance": "constitutional"
+    }
+  },
+  "tasks": {
+    "configFiles": [
+      ".trae/tasks.json"
+    ],
+    "defaultGroup": "build",
+    "archonIntegration": {
+      "enabled": true,
+      "server": "mcp.config.usrlocalmcp.archon",
+      "syncOnStart": true,
+      "taskTracking": true
+    }
+  },
+  "development": {
+    "packageManager": "bun",
+    "nodeVersion": ">=20.0.0",
+    "typescript": {
+      "strict": true,
+      "healthcareTypes": true
+    },
+    "qualityGates": {
+      "codeQuality": 9.8,
+      "testCoverage": 95,
+      "performanceTargets": {
+        "emergencyResponse": "<200ms",
+        "healthcareOps": "<2s",
+        "aiResponse": "<500ms"
+      }
+    }
+  },
+  "ai": {
+    "frameworks": {
+      "primary": "Vercel AI SDK 5.0",
+      "streaming": true,
+      "models": ["gpt-5-nano", "claude-3.5-sonnet", "gemini-2.5-flash"]
+    },
+    "integration": {
+      "native": true,
+      "layers": "all",
+      "realtime": true
+    }
+  },
+  "mcp": {
+    "configFile": ".trae/mcp.json",
+    "official": true,
+    "autoLoad": true,
+    "servers": {
+      "archon": {
+        "name": "mcp.config.usrlocalmcp.archon",
+        "role": "task-management",
+        "priority": "high"
+      },
+      "supabase": {
+        "name": "mcp.config.usrlocalmcp.supabase",
+        "role": "database-operations",
+        "priority": "high"
+      },
+      "context7": {
+        "name": "mcp.config.usrlocalmcp.context7",
+        "role": "documentation-research",
+        "priority": "medium"
+      },
+      "shadcn-ui": {
+        "name": "shadcn-ui",
+        "role": "ui-components",
+        "priority": "medium"
+      },
+      "tavily": {
+        "name": "Tavily",
+        "role": "web-search",
+        "priority": "medium"
+      },
+      "sequential-thinking": {
+        "name": "Sequential Thinking",
+        "role": "reasoning",
+        "priority": "high"
+      },
+      "serena": {
+        "name": "serena",
+        "role": "code-analysis",
+        "priority": "high"
+      },
+      "desktop-commander": {
+        "name": "desktop-commander",
+        "role": "system-operations",
+        "priority": "medium"
+      }
+    }
+  },
+  "workflows": {
+    "coreWorkflow": ".ruler/core-workflow.md",
+    "devWorkflow": "docs/AGENTS.md",
+    "mandatory": {
+      "sequentialThinking": true,
+      "archonFirst": true,
+      "qualityValidation": true
+    }
+  },
+  "builders": {
+    "primary": "vibecoder",
+    "configPath": ".trae/builders/vibecoder.md",
+    "specializations": [
+      "full-stack",
+      "compliance-driven"
+    ]
+  }
 }

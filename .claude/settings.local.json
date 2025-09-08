@@ -35,7 +35,8 @@
       "Bash(bun run:*)",
       "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run type-check --filter=@neonpro/web)",
       "mcp__desktop-commander__move_file",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__desktop-commander__list_sessions"
     ]
   },
   "enabledMcpjsonServers": [

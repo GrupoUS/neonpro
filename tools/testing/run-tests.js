@@ -6,89 +6,89 @@
  * with the correct configurations and environments.
  */
 
-const { spawn } = require("node:child_process");
+const { spawn, } = require('node:child_process',)
 // Test configurations
 const CONFIGS = {
   vitest: {
-    simple: "vitest.simple.config.ts",
-    full: "vitest.config.ts",
+    simple: 'vitest.simple.config.ts',
+    full: 'vitest.config.ts',
   },
   playwright: {
-    simple: "playwright.simple.config.ts",
-    full: "playwright.config.ts",
+    simple: 'playwright.simple.config.ts',
+    full: 'playwright.config.ts',
   },
-};
+}
 
 // Environment setup
 const HEALTHCARE_ENV = {
-  NODE_ENV: "test",
-  HEALTHCARE_MODE: "true",
-  LGPD_COMPLIANCE: "true",
-  ANVISA_VALIDATION: "true",
-  CFM_STANDARDS: "true",
-};
+  NODE_ENV: 'test',
+  HEALTHCARE_MODE: 'true',
+  LGPD_COMPLIANCE: 'true',
+  ANVISA_VALIDATION: 'true',
+  CFM_STANDARDS: 'true',
+}
 
 /**
  * Run command with proper environment and error handling
  */
-function runCommand(command, args = [], options = {}) {
-  return new Promise((resolve, reject) => {
+function runCommand(command, args = [], options = {},) {
+  return new Promise((resolve, reject,) => {
     const child = spawn(command, args, {
-      stdio: "inherit",
+      stdio: 'inherit',
       shell: true,
-      env: { ...process.env, ...HEALTHCARE_ENV, ...options.env },
+      env: { ...process.env, ...HEALTHCARE_ENV, ...options.env, },
       cwd: options.cwd || process.cwd(),
-    });
+    },)
 
-    child.on("close", (code) => {
+    child.on('close', (code,) => {
       if (code === 0) {
-        resolve(code);
+        resolve(code,)
       } else {
-        reject(new Error(`Command failed with code ${code}`));
+        reject(new Error(`Command failed with code ${code}`,),)
       }
-    });
+    },)
 
-    child.on("error", (error) => {
-      reject(error);
-    });
-  });
+    child.on('error', (error,) => {
+      reject(error,)
+    },)
+  },)
 }
 
 /**
  * Run Vitest tests
  */
-async function runVitest(config = "simple") {
-  const configFile = CONFIGS.vitest[config];
+async function runVitest(config = 'simple',) {
+  const configFile = CONFIGS.vitest[config]
 
   try {
-    await runCommand("npx", [
-      "vitest",
-      "run",
-      "--config",
+    await runCommand('npx', [
+      'vitest',
+      'run',
+      '--config',
       configFile,
-      "--reporter=verbose",
-    ]);
+      '--reporter=verbose',
+    ],)
   } catch {
-    process.exit(1);
+    process.exit(1,)
   }
 }
 
 /**
  * Run Playwright tests
  */
-async function runPlaywright(config = "simple") {
-  const configFile = CONFIGS.playwright[config];
+async function runPlaywright(config = 'simple',) {
+  const configFile = CONFIGS.playwright[config]
 
   try {
-    await runCommand("npx", [
-      "playwright",
-      "test",
-      "--config",
+    await runCommand('npx', [
+      'playwright',
+      'test',
+      '--config',
       configFile,
-      "--reporter=line",
-    ]);
+      '--reporter=line',
+    ],)
   } catch {
-    process.exit(1);
+    process.exit(1,)
   }
 }
 
@@ -96,33 +96,33 @@ async function runPlaywright(config = "simple") {
  * Main CLI interface
  */
 async function main() {
-  const args = process.argv.slice(2);
-  const [command] = args;
-  const config = args[1] || "simple";
+  const args = process.argv.slice(2,)
+  const [command,] = args
+  const config = args[1] || 'simple'
 
   switch (command) {
-    case "vitest": {
-      await runVitest(config);
-      break;
+    case 'vitest': {
+      await runVitest(config,)
+      break
     }
 
-    case "playwright": {
-      await runPlaywright(config);
-      break;
+    case 'playwright': {
+      await runPlaywright(config,)
+      break
     }
 
-    case "all": {
-      await runVitest(config);
-      await runPlaywright(config);
-      break;
+    case 'all': {
+      await runVitest(config,)
+      await runPlaywright(config,)
+      break
     }
     default: {
-      break;
+      break
     }
   }
 }
 
 // Run the CLI
-main().catch((_error) => {
-  process.exit(1);
-});
+main().catch((_error,) => {
+  process.exit(1,)
+},)

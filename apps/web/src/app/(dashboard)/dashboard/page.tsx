@@ -1,64 +1,64 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, AlertTriangle, Calendar, Plus, TrendingUp, Users } from "lucide-react";
-import Link from "next/link";
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { Activity, AlertTriangle, Calendar, Plus, TrendingUp, Users, } from 'lucide-react'
+import Link from 'next/link'
 
 const stats = [
   {
-    name: "Agendamentos Hoje",
-    value: "12",
+    name: 'Agendamentos Hoje',
+    value: '12',
     icon: Calendar,
-    color: "text-blue-600",
-    bg: "bg-blue-100",
+    color: 'text-blue-600',
+    bg: 'bg-blue-100',
   },
   {
-    name: "Pacientes Ativos",
-    value: "284",
+    name: 'Pacientes Ativos',
+    value: '284',
     icon: Users,
-    color: "text-green-600",
-    bg: "bg-green-100",
+    color: 'text-green-600',
+    bg: 'bg-green-100',
   },
   {
-    name: "Taxa de Comparecimento",
-    value: "89%",
+    name: 'Taxa de Comparecimento',
+    value: '89%',
     icon: TrendingUp,
-    color: "text-purple-600",
-    bg: "bg-purple-100",
+    color: 'text-purple-600',
+    bg: 'bg-purple-100',
   },
   {
-    name: "Alertas Pendentes",
-    value: "3",
+    name: 'Alertas Pendentes',
+    value: '3',
     icon: AlertTriangle,
-    color: "text-red-600",
-    bg: "bg-red-100",
+    color: 'text-red-600',
+    bg: 'bg-red-100',
   },
-];
+]
 
 const recentAppointments = [
   {
-    id: "1",
-    patient: "Maria Silva",
-    time: "09:00",
-    service: "Limpeza de Pele",
-    status: "confirmado",
+    id: '1',
+    patient: 'Maria Silva',
+    time: '09:00',
+    service: 'Limpeza de Pele',
+    status: 'confirmado',
   },
   {
-    id: "2",
-    patient: "João Santos",
-    time: "10:30",
-    service: "Massagem Relaxante",
-    status: "pendente",
+    id: '2',
+    patient: 'João Santos',
+    time: '10:30',
+    service: 'Massagem Relaxante',
+    status: 'pendente',
   },
   {
-    id: "3",
-    patient: "Ana Costa",
-    time: "14:00",
-    service: "Tratamento Facial",
-    status: "confirmado",
+    id: '3',
+    patient: 'Ana Costa',
+    time: '14:00',
+    service: 'Tratamento Facial',
+    status: 'confirmado',
   },
-];
+]
 
 export default function DashboardPage() {
   return (
@@ -83,7 +83,7 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {stats.map((stat,) => (
           <Card key={stat.name}>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -118,7 +118,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentAppointments.map((appointment) => (
+              {recentAppointments.map((appointment,) => (
                 <div
                   key={appointment.id}
                   className="flex items-center justify-between p-4 border rounded-lg"
@@ -134,9 +134,9 @@ export default function DashboardPage() {
                   <div>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        appointment.status === "confirmado"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
+                        appointment.status === 'confirmado'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
                       }`}
                     >
                       {appointment.status}
@@ -199,5 +199,5 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

@@ -7,4 +7,4 @@
 
 // This file intentionally re-exports future AR components when activated.
 // For now, export a harmless placeholder to avoid empty-file lint errors.
-export const __AR_SIMULATOR_PLACEHOLDER__ = true;
+export const __AR_SIMULATOR_PLACEHOLDER__ = true

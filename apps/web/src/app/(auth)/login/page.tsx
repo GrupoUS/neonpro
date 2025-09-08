@@ -1,41 +1,41 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, LogIn } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { zodResolver, } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, LogIn, } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter, } from 'next/navigation'
+import { useState, } from 'react'
+import { useForm, } from 'react-hook-form'
 
-import { LoadingButton } from "@/components/ui/loading";
-import { useAuth } from "@/hooks/use-auth";
-import { LoginSchema } from "@/lib/validations";
-import type { LoginInput } from "@/lib/validations";
+import { LoadingButton, } from '@/components/ui/loading'
+import { useAuth, } from '@/hooks/use-auth'
+import { LoginSchema, } from '@/lib/validations'
+import type { LoginInput, } from '@/lib/validations'
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
-  const router = useRouter();
+  const [showPassword, setShowPassword,] = useState(false,)
+  const { login, } = useAuth()
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, },
     setError,
   } = useForm<LoginInput>({
-    resolver: zodResolver(LoginSchema),
-  });
+    resolver: zodResolver(LoginSchema,),
+  },)
 
-  const onSubmit = async (data: LoginInput) => {
+  const onSubmit = async (data: LoginInput,) => {
     try {
-      await login(data.email, data.password);
-      router.push("/dashboard");
+      await login(data.email, data.password,)
+      router.push('/dashboard',)
     } catch (error) {
-      setError("root", {
-        message: error instanceof Error ? error.message : "Erro ao fazer login",
-      });
+      setError('root', {
+        message: error instanceof Error ? error.message : 'Erro ao fazer login',
+      },)
     }
-  };
+  }
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-8">
@@ -45,7 +45,7 @@ export default function LoginPage() {
         <p className="text-gray-600 mt-2">Acesse sua conta profissional</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit,)} className="space-y-4">
         <div>
           <label
             htmlFor="email"
@@ -54,7 +54,7 @@ export default function LoginPage() {
             Email
           </label>
           <input
-            {...register("email")}
+            {...register('email',)}
             type="email"
             id="email"
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -72,15 +72,15 @@ export default function LoginPage() {
           </label>
           <div className="relative">
             <input
-              {...register("password")}
-              type={showPassword ? "text" : "password"}
+              {...register('password',)}
+              type={showPassword ? 'text' : 'password'}
               id="password"
               className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword(!showPassword,)}
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
               {showPassword
@@ -102,13 +102,13 @@ export default function LoginPage() {
         )}
 
         <LoadingButton isLoading={isSubmitting} className="w-full">
-          {isSubmitting ? "Entrando..." : "Entrar"}
+          {isSubmitting ? 'Entrando...' : 'Entrar'}
         </LoadingButton>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
-          Não tem uma conta?{" "}
+          Não tem uma conta?{' '}
           <Link
             href="/register"
             className="font-medium text-blue-600 hover:text-blue-500"
@@ -127,5 +127,5 @@ export default function LoginPage() {
         </Link>
       </div>
     </div>
-  );
+  )
 }

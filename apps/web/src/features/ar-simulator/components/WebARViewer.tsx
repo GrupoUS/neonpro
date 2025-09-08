@@ -5,12 +5,12 @@
 // Features: WebXR API, AR.js integration, mobile optimization, cross-platform
 // =============================================================================
 
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 import {
   AlertCircle,
   Camera,
@@ -20,26 +20,26 @@ import {
   Smartphone,
   Target,
   Zap,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+} from 'lucide-react'
+import { useEffect, useRef, useState, } from 'react'
 
 // =============================================================================
 // TYPES & INTERFACES
 // =============================================================================
 
 interface WebARViewerProps {
-  simulationId: string;
-  modelUrl: string;
-  onARSession?: (active: boolean) => void;
-  className?: string;
+  simulationId: string
+  modelUrl: string
+  onARSession?: (active: boolean,) => void
+  className?: string
 }
 
 interface ARCapabilities {
-  webXRSupported: boolean;
-  cameraSupported: boolean;
-  orientationSupported: boolean;
-  isMobile: boolean;
-  canUseAR: boolean;
+  webXRSupported: boolean
+  cameraSupported: boolean
+  orientationSupported: boolean
+  isMobile: boolean
+  canUseAR: boolean
 }
 
 // =============================================================================
@@ -47,43 +47,43 @@ interface ARCapabilities {
 // =============================================================================
 
 function useARCapabilities(): ARCapabilities {
-  const [capabilities, setCapabilities] = useState<ARCapabilities>({
+  const [capabilities, setCapabilities,] = useState<ARCapabilities>({
     webXRSupported: false,
     cameraSupported: false,
     orientationSupported: false,
     isMobile: false,
     canUseAR: false,
-  });
+  },)
 
   useEffect(() => {
     const detectCapabilities = async () => {
       // Check if running in browser
-      if (typeof window === "undefined") {
-        return;
+      if (typeof window === 'undefined') {
+        return
       }
 
       // Detect mobile device
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent,
-      );
+      )
 
       // Check WebXR support
-      const webXRSupported = "xr" in navigator;
+      const webXRSupported = 'xr' in navigator
 
       // Check camera access
-      let cameraSupported = false;
+      let cameraSupported = false
       try {
         if (navigator.mediaDevices?.getUserMedia) {
-          cameraSupported = true;
+          cameraSupported = true
         }
       } catch (error) {
         // console.warn("Camera access check failed:", error);
       }
 
       // Check device orientation
-      const orientationSupported = "DeviceOrientationEvent" in window;
+      const orientationSupported = 'DeviceOrientationEvent' in window
 
-      const canUseAR = webXRSupported && cameraSupported && isMobile;
+      const canUseAR = webXRSupported && cameraSupported && isMobile
 
       setCapabilities({
         webXRSupported,
@@ -91,13 +91,13 @@ function useARCapabilities(): ARCapabilities {
         orientationSupported,
         isMobile,
         canUseAR,
-      });
-    };
+      },)
+    }
 
-    detectCapabilities();
-  }, []);
+    detectCapabilities()
+  }, [],)
 
-  return capabilities;
+  return capabilities
 }
 
 // =============================================================================
@@ -105,49 +105,49 @@ function useARCapabilities(): ARCapabilities {
 // =============================================================================
 
 function useARSession() {
-  const [isARActive, setIsARActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isARActive, setIsARActive,] = useState(false,)
+  const [isLoading, setIsLoading,] = useState(false,)
+  const [error, setError,] = useState<string | null>()
+  const canvasRef = useRef<HTMLCanvasElement>(null,)
 
   const startARSession = async () => {
-    setIsLoading(true);
-    setError(undefined);
+    setIsLoading(true,)
+    setError(undefined,)
 
     try {
       // Check WebXR support
-      if (!("xr" in navigator)) {
-        throw new Error("WebXR not supported");
+      if (!('xr' in navigator)) {
+        throw new Error('WebXR not supported',)
       }
 
       // Request AR session
-      const xr = (navigator as unknown).xr;
-      const session = await xr.requestSession("immersive-ar", {
-        requiredFeatures: ["local"],
-        optionalFeatures: ["dom-overlay"],
-        domOverlay: { root: document.body },
-      });
+      const xr = (navigator as unknown).xr
+      const session = await xr.requestSession('immersive-ar', {
+        requiredFeatures: ['local',],
+        optionalFeatures: ['dom-overlay',],
+        domOverlay: { root: document.body, },
+      },)
 
-      setIsARActive(true);
+      setIsARActive(true,)
 
       // Set up AR session handlers
-      session.addEventListener("end", () => {
-        setIsARActive(false);
-      });
+      session.addEventListener('end', () => {
+        setIsARActive(false,)
+      },)
 
       // console.log("AR session started successfully");
     } catch (error) {
       // console.error("Failed to start AR session:", error);
-      setError(error instanceof Error ? error.message : "Failed to start AR");
+      setError(error instanceof Error ? error.message : 'Failed to start AR',)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false,)
     }
-  };
+  }
 
   const endARSession = () => {
-    setIsARActive(false);
-    setError(undefined);
-  };
+    setIsARActive(false,)
+    setError(undefined,)
+  }
 
   return {
     isARActive,
@@ -156,7 +156,7 @@ function useARSession() {
     canvasRef,
     startARSession,
     endARSession,
-  };
+  }
 }
 
 // =============================================================================
@@ -167,10 +167,10 @@ function ARFallback({
   modelUrl,
   simulationId,
 }: {
-  modelUrl: string;
-  simulationId: string;
-}) {
-  const [isViewing, setIsViewing] = useState(false);
+  modelUrl: string
+  simulationId: string
+},) {
+  const [isViewing, setIsViewing,] = useState(false,)
 
   return (
     <Card className="w-full">
@@ -196,7 +196,7 @@ function ARFallback({
             )
             : (
               <Button
-                onClick={() => setIsViewing(true)}
+                onClick={() => setIsViewing(true,)}
                 className="bg-orange-600 hover:bg-orange-700"
               >
                 <Eye className="w-4 h-4 mr-2" />
@@ -218,7 +218,7 @@ function ARFallback({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIsViewing(false)}
+              onClick={() => setIsViewing(false,)}
             >
               Exit View
             </Button>
@@ -226,7 +226,7 @@ function ARFallback({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }
 
 // =============================================================================
@@ -237,16 +237,16 @@ export default function WebARViewer({
   simulationId,
   modelUrl,
   onARSession,
-  className = "",
-}: WebARViewerProps) {
-  const capabilities = useARCapabilities();
-  const arSession = useARSession();
-  const [showInstructions, setShowInstructions] = useState(true);
+  className = '',
+}: WebARViewerProps,) {
+  const capabilities = useARCapabilities()
+  const arSession = useARSession()
+  const [showInstructions, setShowInstructions,] = useState(true,)
 
   // Notify parent about AR session state
   useEffect(() => {
-    onARSession?.(arSession.isARActive);
-  }, [arSession.isARActive, onARSession]);
+    onARSession?.(arSession.isARActive,)
+  }, [arSession.isARActive, onARSession,],)
 
   // If AR is not supported, show fallback
   if (!capabilities.canUseAR && capabilities.isMobile) {
@@ -254,7 +254,7 @@ export default function WebARViewer({
       <div className={className}>
         <ARFallback modelUrl={modelUrl} simulationId={simulationId} />
       </div>
-    );
+    )
   }
 
   // Desktop fallback
@@ -288,7 +288,7 @@ export default function WebARViewer({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -297,7 +297,7 @@ export default function WebARViewer({
       <canvas
         ref={arSession.canvasRef}
         className={`w-full h-96 bg-black rounded-lg ${
-          arSession.isARActive ? "fixed inset-0 z-50" : ""
+          arSession.isARActive ? 'fixed inset-0 z-50' : ''
         }`}
       />
 
@@ -311,7 +311,7 @@ export default function WebARViewer({
                   AR Ready
                 </Badge>
                 <span className="text-sm text-gray-600">
-                  {capabilities.webXRSupported ? "WebXR" : "WebGL"} Enabled
+                  {capabilities.webXRSupported ? 'WebXR' : 'WebGL'} Enabled
                 </span>
               </div>
 
@@ -380,7 +380,7 @@ export default function WebARViewer({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowInstructions(false)}
+                onClick={() => setShowInstructions(false,)}
               >
                 ×
               </Button>
@@ -417,5 +417,5 @@ export default function WebARViewer({
         </Card>
       )}
     </div>
-  );
+  )
 }

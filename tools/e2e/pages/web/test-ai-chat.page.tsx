@@ -3,7 +3,7 @@
  * Temporarily disabled for MVP
  */
 
-"use client";
+'use client'
 
 export default function TestAIChatPage() {
   return (
@@ -11,5 +11,5 @@ export default function TestAIChatPage() {
       <h1 className="text-2xl font-bold mb-4">AI Chat Test</h1>
       <p className="text-gray-600">AI Chat functionality temporarily disabled for MVP build.</p>
     </div>
-  );
+  )
 }

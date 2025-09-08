@@ -5,149 +5,149 @@
 // Features: API integration, real-time updates, caching, error handling
 // =============================================================================
 
-"use client";
+'use client'
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient, } from '@tanstack/react-query'
+import { useCallback, useEffect, useState, } from 'react'
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
 export interface SimulationRequest {
-  patientId: string;
+  patientId: string
   treatmentType:
-    | "botox"
-    | "filler"
-    | "facial_harmonization"
-    | "thread_lift"
-    | "peeling";
+    | 'botox'
+    | 'filler'
+    | 'facial_harmonization'
+    | 'thread_lift'
+    | 'peeling'
   preferences: {
-    intensityLevel: "subtle" | "moderate" | "dramatic";
-    concerns: string[];
-    goals: string[];
-    referenceImages?: string[];
-    avoidanceList: string[];
-  };
+    intensityLevel: 'subtle' | 'moderate' | 'dramatic'
+    concerns: string[]
+    goals: string[]
+    referenceImages?: string[]
+    avoidanceList: string[]
+  }
   treatmentParameters: {
     areas: {
-      name: string;
-      severity: number;
-      priority: number;
-      technique: string;
-      units?: number;
-      coordinates?: { x: number; y: number; z: number; }[];
-    }[];
-    technique: string;
-    expectedUnits?: number;
-    sessionCount: number;
-    combinedTreatments?: string[];
-  };
-  priority?: "low" | "normal" | "high";
+      name: string
+      severity: number
+      priority: number
+      technique: string
+      units?: number
+      coordinates?: { x: number; y: number; z: number }[]
+    }[]
+    technique: string
+    expectedUnits?: number
+    sessionCount: number
+    combinedTreatments?: string[]
+  }
+  priority?: 'low' | 'normal' | 'high'
 }
 
 export interface ARSimulation {
-  id: string;
-  patientId: string;
-  treatmentType: string;
-  status: "initializing" | "processing" | "ready" | "completed" | "failed";
-  inputData: unknown;
+  id: string
+  patientId: string
+  treatmentType: string
+  status: 'initializing' | 'processing' | 'ready' | 'completed' | 'failed'
+  inputData: unknown
   outputData: {
-    beforeModel: unknown;
-    afterModel: unknown;
-    animationFrames: unknown[];
-    confidenceScore: number;
+    beforeModel: unknown
+    afterModel: unknown
+    animationFrames: unknown[]
+    confidenceScore: number
     estimatedOutcome: {
-      improvement: number;
-      durability: number;
-      naturalness: number;
-      satisfactionScore: number;
-    };
-    timeToResults: number;
-    recoveryTimeline: unknown[];
-  };
+      improvement: number
+      durability: number
+      naturalness: number
+      satisfactionScore: number
+    }
+    timeToResults: number
+    recoveryTimeline: unknown[]
+  }
   metadata: {
-    modelVersion: string;
-    processingTime: number;
-    accuracy: number;
-    createdAt: string;
-    updatedAt: string;
-    viewCount: number;
-  };
+    modelVersion: string
+    processingTime: number
+    accuracy: number
+    createdAt: string
+    updatedAt: string
+    viewCount: number
+  }
 }
 
 // =============================================================================
 // API FUNCTIONS
 // =============================================================================
 
-const API_BASE = "/api/ar-simulator";
+const API_BASE = '/api/ar-simulator'
 
 async function createSimulation(
   request: SimulationRequest,
 ): Promise<ARSimulation> {
   const response = await fetch(`${API_BASE}/simulations`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(request),
-  });
+    body: JSON.stringify(request,),
+  },)
 
   if (!response.ok) {
-    throw new Error(`Failed to create simulation: ${response.statusText}`);
+    throw new Error(`Failed to create simulation: ${response.statusText}`,)
   }
 
-  return response.json();
+  return response.json()
 }
 
-async function getSimulation(simulationId: string): Promise<ARSimulation> {
-  const response = await fetch(`${API_BASE}/simulations/${simulationId}`);
+async function getSimulation(simulationId: string,): Promise<ARSimulation> {
+  const response = await fetch(`${API_BASE}/simulations/${simulationId}`,)
 
   if (!response.ok) {
-    throw new Error(`Failed to get simulation: ${response.statusText}`);
+    throw new Error(`Failed to get simulation: ${response.statusText}`,)
   }
 
-  return response.json();
+  return response.json()
 }
 
 async function getSimulationsByPatient(
   patientId: string,
 ): Promise<ARSimulation[]> {
-  const response = await fetch(`${API_BASE}/patients/${patientId}/simulations`);
+  const response = await fetch(`${API_BASE}/patients/${patientId}/simulations`,)
 
   if (!response.ok) {
     throw new Error(
       `Failed to get patient simulations: ${response.statusText}`,
-    );
+    )
   }
 
-  return response.json();
+  return response.json()
 }
 
-async function compareSimulations(simulationIds: string[]): Promise<unknown> {
+async function compareSimulations(simulationIds: string[],): Promise<unknown> {
   const response = await fetch(`${API_BASE}/simulations/compare`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ simulationIds }),
-  });
+    body: JSON.stringify({ simulationIds, },),
+  },)
 
   if (!response.ok) {
-    throw new Error(`Failed to compare simulations: ${response.statusText}`);
+    throw new Error(`Failed to compare simulations: ${response.statusText}`,)
   }
 
-  return response.json();
+  return response.json()
 }
 
 // =============================================================================
 // MAIN HOOK
 // =============================================================================
 
-export function useARSimulator(patientId: string) {
-  const queryClient = useQueryClient();
-  const [currentSimulation, setCurrentSimulation] = useState<ARSimulation | null>();
-  const [isPolling, setIsPolling] = useState(false);
+export function useARSimulator(patientId: string,) {
+  const queryClient = useQueryClient()
+  const [currentSimulation, setCurrentSimulation,] = useState<ARSimulation | null>()
+  const [isPolling, setIsPolling,] = useState(false,)
 
   // Query for patient simulations
   const {
@@ -156,10 +156,10 @@ export function useARSimulator(patientId: string) {
     error: simulationsError,
     refetch: refetchSimulations,
   } = useQuery({
-    queryKey: ["ar-simulations", patientId],
-    queryFn: () => getSimulationsByPatient(patientId),
-    enabled: Boolean(patientId),
-  });
+    queryKey: ['ar-simulations', patientId,],
+    queryFn: () => getSimulationsByPatient(patientId,),
+    enabled: Boolean(patientId,),
+  },)
 
   // Query for current simulation details
   const {
@@ -167,97 +167,97 @@ export function useARSimulator(patientId: string) {
     isLoading: isLoadingDetails,
     error: detailsError,
   } = useQuery({
-    queryKey: ["ar-simulation", currentSimulation?.id],
-    queryFn: () => getSimulation(currentSimulation?.id),
-    enabled: Boolean(currentSimulation?.id),
+    queryKey: ['ar-simulation', currentSimulation?.id,],
+    queryFn: () => getSimulation(currentSimulation?.id,),
+    enabled: Boolean(currentSimulation?.id,),
     refetchInterval: isPolling ? 2000 : false, // Poll every 2 seconds when processing
-  });
+  },)
 
   // Mutation for creating new simulation
   const createSimulationMutation = useMutation({
     mutationFn: createSimulation,
-    onSuccess: (data) => {
-      setCurrentSimulation(data);
+    onSuccess: (data,) => {
+      setCurrentSimulation(data,)
       queryClient.invalidateQueries({
-        queryKey: ["ar-simulations", patientId],
-      });
+        queryKey: ['ar-simulations', patientId,],
+      },)
 
       // Start polling if simulation is processing
-      if (data.status === "initializing" || data.status === "processing") {
-        setIsPolling(true);
+      if (data.status === 'initializing' || data.status === 'processing') {
+        setIsPolling(true,)
       }
     },
-    onError: (error) => {
+    onError: (error,) => {
       // console.error("Failed to create simulation:", error);
     },
-  });
+  },)
 
   // Mutation for comparing simulations
   const compareSimulationsMutation = useMutation({
     mutationFn: compareSimulations,
-    onError: (error) => {
+    onError: (error,) => {
       // console.error("Failed to compare simulations:", error);
     },
-  });
+  },)
 
   // Stop polling when simulation is complete
   useEffect(() => {
     if (
-      simulationDetails?.status === "ready"
-      || simulationDetails?.status === "completed"
-      || simulationDetails?.status === "failed"
+      simulationDetails?.status === 'ready'
+      || simulationDetails?.status === 'completed'
+      || simulationDetails?.status === 'failed'
     ) {
-      setIsPolling(false);
+      setIsPolling(false,)
     }
-  }, [simulationDetails?.status]);
+  }, [simulationDetails?.status,],)
 
   // Create new simulation
   const startSimulation = useCallback(
-    async (request: Omit<SimulationRequest, "patientId">) => {
+    async (request: Omit<SimulationRequest, 'patientId'>,) => {
       return createSimulationMutation.mutateAsync({
         ...request,
         patientId,
-      });
+      },)
     },
-    [patientId, createSimulationMutation],
-  );
+    [patientId, createSimulationMutation,],
+  )
 
   // Compare simulations
   const compareSimulations = useCallback(
-    async (simulationIds: string[]) => {
-      return compareSimulationsMutation.mutateAsync(simulationIds);
+    async (simulationIds: string[],) => {
+      return compareSimulationsMutation.mutateAsync(simulationIds,)
     },
-    [compareSimulationsMutation],
-  );
+    [compareSimulationsMutation,],
+  )
 
   // Select simulation for viewing
-  const selectSimulation = useCallback((simulation: ARSimulation) => {
-    setCurrentSimulation(simulation);
+  const selectSimulation = useCallback((simulation: ARSimulation,) => {
+    setCurrentSimulation(simulation,)
 
     // Start polling if simulation is still processing
     if (
-      simulation.status === "initializing"
-      || simulation.status === "processing"
+      simulation.status === 'initializing'
+      || simulation.status === 'processing'
     ) {
-      setIsPolling(true);
+      setIsPolling(true,)
     } else {
-      setIsPolling(false);
+      setIsPolling(false,)
     }
-  }, []);
+  }, [],)
 
   // Get simulation status
   const getSimulationStatus = useCallback(
-    (simulationId: string) => {
-      const simulation = simulations?.find((s) => s.id === simulationId);
-      return simulation?.status || undefined;
+    (simulationId: string,) => {
+      const simulation = simulations?.find((s,) => s.id === simulationId)
+      return simulation?.status || undefined
     },
-    [simulations],
-  );
+    [simulations,],
+  )
 
   // Check if unknown simulation is processing
   const hasProcessingSimulation = simulations?.some(
-    (s) => s.status === "initializing" || s.status === "processing",
-  ) || false;
+    (s,) => s.status === 'initializing' || s.status === 'processing',
+  ) || false
 
   return {
     // State
@@ -287,42 +287,42 @@ export function useARSimulator(patientId: string) {
 
     // Utils
     canStartNewSimulation: !hasProcessingSimulation && !createSimulationMutation.isPending,
-  };
+  }
 }
 
 // =============================================================================
 // SPECIALIZED HOOKS
 // =============================================================================
 
-export function useSimulationComparison(simulationIds: string[]) {
+export function useSimulationComparison(simulationIds: string[],) {
   return useQuery({
-    queryKey: ["simulation-comparison", ...simulationIds.sort()],
-    queryFn: () => compareSimulations(simulationIds),
+    queryKey: ['simulation-comparison', ...simulationIds.sort(),],
+    queryFn: () => compareSimulations(simulationIds,),
     enabled: simulationIds.length >= 2,
-  });
+  },)
 }
 
-export function useSimulationMetrics(patientId: string) {
-  const { simulations } = useARSimulator(patientId);
+export function useSimulationMetrics(patientId: string,) {
+  const { simulations, } = useARSimulator(patientId,)
 
   const metrics = {
     totalSimulations: simulations.length,
-    completedSimulations: simulations.filter((s) => s.status === "completed")
+    completedSimulations: simulations.filter((s,) => s.status === 'completed')
       .length,
     averageConfidence: simulations.length > 0
       ? simulations.reduce(
-        (acc, s) => acc + (s.outputData?.confidenceScore || 0),
+        (acc, s,) => acc + (s.outputData?.confidenceScore || 0),
         0,
       ) / simulations.length
       : 0,
     mostRecentSimulation: simulations[0], // Assuming sorted by date
     processingTime: simulations.length > 0
       ? simulations.reduce(
-        (acc, s) => acc + (s.metadata?.processingTime || 0),
+        (acc, s,) => acc + (s.metadata?.processingTime || 0),
         0,
       ) / simulations.length
       : 0,
-  };
+  }
 
-  return metrics;
+  return metrics
 }

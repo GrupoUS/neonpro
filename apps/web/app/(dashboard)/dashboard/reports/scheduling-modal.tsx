@@ -1,94 +1,94 @@
-"use client";
+'use client'
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, } from '@/components/ui/alert'
+import { Badge, } from '@/components/ui/badge'
+import { Button, } from '@/components/ui/button'
+import { Input, } from '@/components/ui/input'
+import { Label, } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
-import { AlertTriangle, Calendar, CheckCircle, Plus, Settings, Trash2, X } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui/select'
+import { Switch, } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { motion, } from 'framer-motion'
+import { AlertTriangle, Calendar, CheckCircle, Plus, Settings, Trash2, X, } from 'lucide-react'
+import { useState, } from 'react'
 
 // Types for scheduling
 type ScheduleFrequency =
-  | "daily"
-  | "weekly"
-  | "monthly"
-  | "quarterly"
-  | "yearly";
-type ScheduleStatus = "active" | "paused" | "error";
-type DeliveryMethod = "email" | "download" | "both";
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly'
+type ScheduleStatus = 'active' | 'paused' | 'error'
+type DeliveryMethod = 'email' | 'download' | 'both'
 
 interface ScheduleConfig {
-  id: string;
-  reportId: string;
-  reportName: string;
-  frequency: ScheduleFrequency;
-  time: string; // HH:MM format
-  dayOfWeek?: number; // 0-6 for weekly
-  dayOfMonth?: number; // 1-31 for monthly
-  recipients: string[];
-  format: "pdf" | "excel" | "both";
-  deliveryMethod: DeliveryMethod;
-  status: ScheduleStatus;
-  nextRun: string;
-  lastRun?: string;
-  lgpdCompliant: boolean;
-  retentionDays: number;
+  id: string
+  reportId: string
+  reportName: string
+  frequency: ScheduleFrequency
+  time: string // HH:MM format
+  dayOfWeek?: number // 0-6 for weekly
+  dayOfMonth?: number // 1-31 for monthly
+  recipients: string[]
+  format: 'pdf' | 'excel' | 'both'
+  deliveryMethod: DeliveryMethod
+  status: ScheduleStatus
+  nextRun: string
+  lastRun?: string
+  lgpdCompliant: boolean
+  retentionDays: number
 }
 
 interface SchedulingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  reportId: string;
-  reportName: string;
-  onScheduleCreated: (schedule: ScheduleConfig) => void;
+  isOpen: boolean
+  onClose: () => void
+  reportId: string
+  reportName: string
+  onScheduleCreated: (schedule: ScheduleConfig,) => void
 }
 
 // Mock existing schedules
 const existingSchedules: ScheduleConfig[] = [
   {
-    id: "sched-001",
-    reportId: "lgpd-compliance",
-    reportName: "Relatório de Conformidade LGPD",
-    frequency: "monthly",
-    time: "08:00",
+    id: 'sched-001',
+    reportId: 'lgpd-compliance',
+    reportName: 'Relatório de Conformidade LGPD',
+    frequency: 'monthly',
+    time: '08:00',
     dayOfMonth: 1,
-    recipients: ["compliance@neonpro.com.br", "admin@neonpro.com.br"],
-    format: "pdf",
-    deliveryMethod: "email",
-    status: "active",
-    nextRun: "2024-02-01T08:00:00Z",
-    lastRun: "2024-01-01T08:00:00Z",
+    recipients: ['compliance@neonpro.com.br', 'admin@neonpro.com.br',],
+    format: 'pdf',
+    deliveryMethod: 'email',
+    status: 'active',
+    nextRun: '2024-02-01T08:00:00Z',
+    lastRun: '2024-01-01T08:00:00Z',
     lgpdCompliant: true,
     retentionDays: 90,
   },
   {
-    id: "sched-002",
-    reportId: "revenue-analysis",
-    reportName: "Análise de Receita",
-    frequency: "weekly",
-    time: "09:00",
+    id: 'sched-002',
+    reportId: 'revenue-analysis',
+    reportName: 'Análise de Receita',
+    frequency: 'weekly',
+    time: '09:00',
     dayOfWeek: 1, // Monday
-    recipients: ["financeiro@neonpro.com.br"],
-    format: "excel",
-    deliveryMethod: "both",
-    status: "active",
-    nextRun: "2024-01-29T09:00:00Z",
-    lastRun: "2024-01-22T09:00:00Z",
+    recipients: ['financeiro@neonpro.com.br',],
+    format: 'excel',
+    deliveryMethod: 'both',
+    status: 'active',
+    nextRun: '2024-01-29T09:00:00Z',
+    lastRun: '2024-01-22T09:00:00Z',
     lgpdCompliant: true,
     retentionDays: 30,
   },
-];
+]
 
 export default function SchedulingModal({
   isOpen,
@@ -96,36 +96,36 @@ export default function SchedulingModal({
   reportId,
   reportName,
   onScheduleCreated,
-}: SchedulingModalProps) {
-  const [frequency, setFrequency] = useState<ScheduleFrequency>("monthly");
-  const [time, setTime] = useState("08:00");
-  const [dayOfWeek, setDayOfWeek] = useState(1);
-  const [dayOfMonth, setDayOfMonth] = useState(1);
-  const [recipients, setRecipients] = useState<string[]>([""]);
-  const [format, setFormat] = useState<"pdf" | "excel" | "both">("pdf");
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("email");
-  const [lgpdCompliant, setLgpdCompliant] = useState(true);
-  const [retentionDays, setRetentionDays] = useState(30);
-  const [activeTab, setActiveTab] = useState("create");
+}: SchedulingModalProps,) {
+  const [frequency, setFrequency,] = useState<ScheduleFrequency>('monthly',)
+  const [time, setTime,] = useState('08:00',)
+  const [dayOfWeek, setDayOfWeek,] = useState(1,)
+  const [dayOfMonth, setDayOfMonth,] = useState(1,)
+  const [recipients, setRecipients,] = useState<string[]>(['',],)
+  const [format, setFormat,] = useState<'pdf' | 'excel' | 'both'>('pdf',)
+  const [deliveryMethod, setDeliveryMethod,] = useState<DeliveryMethod>('email',)
+  const [lgpdCompliant, setLgpdCompliant,] = useState(true,)
+  const [retentionDays, setRetentionDays,] = useState(30,)
+  const [activeTab, setActiveTab,] = useState('create',)
 
   if (!isOpen) {
-    return;
+    return
   }
 
   const handleAddRecipient = () => {
-    setRecipients([...recipients, ""]);
-  };
+    setRecipients([...recipients, '',],)
+  }
 
-  const handleRemoveRecipient = (index: number) => {
-    const newRecipients = recipients.filter((_, i) => i !== index);
-    setRecipients(newRecipients);
-  };
+  const handleRemoveRecipient = (index: number,) => {
+    const newRecipients = recipients.filter((_, i,) => i !== index)
+    setRecipients(newRecipients,)
+  }
 
-  const handleRecipientChange = (index: number, value: string) => {
-    const newRecipients = [...recipients];
-    newRecipients[index] = value;
-    setRecipients(newRecipients);
-  };
+  const handleRecipientChange = (index: number, value: string,) => {
+    const newRecipients = [...recipients,]
+    newRecipients[index] = value
+    setRecipients(newRecipients,)
+  }
 
   const handleCreateSchedule = () => {
     const newSchedule: ScheduleConfig = {
@@ -134,105 +134,105 @@ export default function SchedulingModal({
       reportName,
       frequency,
       time,
-      dayOfWeek: frequency === "weekly" ? dayOfWeek : undefined,
-      dayOfMonth: frequency === "monthly" ? dayOfMonth : undefined,
-      recipients: recipients.filter((email) => email.trim() !== ""),
+      dayOfWeek: frequency === 'weekly' ? dayOfWeek : undefined,
+      dayOfMonth: frequency === 'monthly' ? dayOfMonth : undefined,
+      recipients: recipients.filter((email,) => email.trim() !== ''),
       format,
       deliveryMethod,
-      status: "active",
+      status: 'active',
       nextRun: calculateNextRun(),
       lgpdCompliant,
       retentionDays,
-    };
+    }
 
-    onScheduleCreated(newSchedule);
-    onClose();
-  };
+    onScheduleCreated(newSchedule,)
+    onClose()
+  }
 
   const calculateNextRun = (): string => {
-    const now = new Date();
-    const nextRun = new Date();
+    const now = new Date()
+    const nextRun = new Date()
 
     // Set time
-    const [hours, minutes] = time.split(":").map(Number);
-    nextRun.setHours(hours, minutes, 0, 0);
+    const [hours, minutes,] = time.split(':',).map(Number,)
+    nextRun.setHours(hours, minutes, 0, 0,)
 
     // Adjust date based on frequency
     switch (frequency) {
-      case "daily": {
+      case 'daily': {
         if (nextRun <= now) {
-          nextRun.setDate(nextRun.getDate() + 1);
+          nextRun.setDate(nextRun.getDate() + 1,)
         }
-        break;
+        break
       }
-      case "weekly": {
+      case 'weekly': {
         nextRun.setDate(
           nextRun.getDate() + ((7 - nextRun.getDay() + dayOfWeek) % 7),
-        );
+        )
         if (nextRun <= now) {
-          nextRun.setDate(nextRun.getDate() + 7);
+          nextRun.setDate(nextRun.getDate() + 7,)
         }
-        break;
+        break
       }
-      case "monthly": {
-        nextRun.setDate(dayOfMonth);
+      case 'monthly': {
+        nextRun.setDate(dayOfMonth,)
         if (nextRun <= now) {
-          nextRun.setMonth(nextRun.getMonth() + 1);
+          nextRun.setMonth(nextRun.getMonth() + 1,)
         }
-        break;
+        break
       }
-      case "quarterly": {
-        nextRun.setDate(1);
-        nextRun.setMonth(Math.ceil((nextRun.getMonth() + 1) / 3) * 3 - 3);
+      case 'quarterly': {
+        nextRun.setDate(1,)
+        nextRun.setMonth(Math.ceil((nextRun.getMonth() + 1) / 3,) * 3 - 3,)
         if (nextRun <= now) {
-          nextRun.setMonth(nextRun.getMonth() + 3);
+          nextRun.setMonth(nextRun.getMonth() + 3,)
         }
-        break;
+        break
       }
-      case "yearly": {
-        nextRun.setMonth(0, 1);
+      case 'yearly': {
+        nextRun.setMonth(0, 1,)
         if (nextRun <= now) {
-          nextRun.setFullYear(nextRun.getFullYear() + 1);
+          nextRun.setFullYear(nextRun.getFullYear() + 1,)
         }
-        break;
+        break
       }
     }
 
-    return nextRun.toISOString();
-  };
+    return nextRun.toISOString()
+  }
 
-  const getStatusBadge = (status: ScheduleStatus) => {
+  const getStatusBadge = (status: ScheduleStatus,) => {
     switch (status) {
-      case "active": {
+      case 'active': {
         return (
           <Badge className="border-green-400 bg-green-500/10 text-green-400">
             Ativo
           </Badge>
-        );
+        )
       }
-      case "paused": {
+      case 'paused': {
         return (
           <Badge className="border-yellow-400 bg-yellow-500/10 text-yellow-400">
             Pausado
           </Badge>
-        );
+        )
       }
-      case "error": {
-        return <Badge variant="destructive">Erro</Badge>;
+      case 'error': {
+        return <Badge variant="destructive">Erro</Badge>
       }
     }
-  };
+  }
 
-  const formatNextRun = (nextRun: string) => {
-    return new Date(nextRun).toLocaleString("pt-BR");
-  };
+  const formatNextRun = (nextRun: string,) => {
+    return new Date(nextRun,).toLocaleString('pt-BR',)
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <motion.div
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: 1, scale: 1, }}
         className="mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl border border-slate-800 bg-slate-900"
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.9, }}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-slate-800 border-b p-6">
@@ -270,7 +270,7 @@ export default function SchedulingModal({
               <div className="space-y-4">
                 <Label className="font-medium text-white">Frequência</Label>
                 <Select
-                  onValueChange={(value: ScheduleFrequency) => setFrequency(value)}
+                  onValueChange={(value: ScheduleFrequency,) => setFrequency(value,)}
                   value={frequency}
                 >
                   <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -292,19 +292,19 @@ export default function SchedulingModal({
                   <Label className="font-medium text-white">Horário</Label>
                   <Input
                     className="border-slate-700 bg-slate-800 text-white"
-                    onChange={(e) => setTime(e.target.value)}
+                    onChange={(e,) => setTime(e.target.value,)}
                     type="time"
                     value={time}
                   />
                 </div>
 
-                {frequency === "weekly" && (
+                {frequency === 'weekly' && (
                   <div className="space-y-2">
                     <Label className="font-medium text-white">
                       Dia da Semana
                     </Label>
                     <Select
-                      onValueChange={(value: string) => setDayOfWeek(Number(value))}
+                      onValueChange={(value: string,) => setDayOfWeek(Number(value,),)}
                       value={dayOfWeek.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -323,19 +323,19 @@ export default function SchedulingModal({
                   </div>
                 )}
 
-                {frequency === "monthly" && (
+                {frequency === 'monthly' && (
                   <div className="space-y-2">
                     <Label className="font-medium text-white">Dia do Mês</Label>
                     <Select
-                      onValueChange={(value: string) => setDayOfMonth(Number(value))}
+                      onValueChange={(value: string,) => setDayOfMonth(Number(value,),)}
                       value={dayOfMonth.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="border-slate-700 bg-slate-800">
-                        {Array.from({ length: 28 }, (_, i) => i + 1).map(
-                          (day) => (
+                        {Array.from({ length: 28, }, (_, i,) => i + 1,).map(
+                          (day,) => (
                             <SelectItem key={day} value={day.toString()}>
                               Dia {day}
                             </SelectItem>
@@ -365,11 +365,11 @@ export default function SchedulingModal({
                 </div>
 
                 <div className="space-y-2">
-                  {recipients.map((email, index) => (
+                  {recipients.map((email, index,) => (
                     <div className="flex gap-2" key={index}>
                       <Input
                         className="flex-1 border-slate-700 bg-slate-800 text-white"
-                        onChange={(e) => handleRecipientChange(index, e.target.value)}
+                        onChange={(e,) => handleRecipientChange(index, e.target.value,)}
                         placeholder="email@exemplo.com"
                         type="email"
                         value={email}
@@ -377,7 +377,7 @@ export default function SchedulingModal({
                       {recipients.length > 1 && (
                         <Button
                           className="border-slate-700 text-slate-300 hover:bg-slate-700"
-                          onClick={() => handleRemoveRecipient(index)}
+                          onClick={() => handleRemoveRecipient(index,)}
                           size="sm"
                           variant="outline"
                         >
@@ -394,7 +394,7 @@ export default function SchedulingModal({
                 <div className="space-y-2">
                   <Label className="font-medium text-white">Formato</Label>
                   <Select
-                    onValueChange={(value: "pdf" | "excel" | "both") => setFormat(value)}
+                    onValueChange={(value: 'pdf' | 'excel' | 'both',) => setFormat(value,)}
                     value={format}
                   >
                     <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -413,7 +413,7 @@ export default function SchedulingModal({
                     Método de Entrega
                   </Label>
                   <Select
-                    onValueChange={(value: DeliveryMethod) => setDeliveryMethod(value)}
+                    onValueChange={(value: DeliveryMethod,) => setDeliveryMethod(value,)}
                     value={deliveryMethod}
                   >
                     <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -454,7 +454,7 @@ export default function SchedulingModal({
                       Retenção (dias)
                     </Label>
                     <Select
-                      onValueChange={(value: string) => setRetentionDays(Number(value))}
+                      onValueChange={(value: string,) => setRetentionDays(Number(value,),)}
                       value={retentionDays.toString()}
                     >
                       <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -476,7 +476,7 @@ export default function SchedulingModal({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Aviso LGPD:</strong>{" "}
+                  <strong>Aviso LGPD:</strong>{' '}
                   Este agendamento processará dados pessoais. Certifique-se de que existe base legal
                   adequada e consentimento dos titulares para o compartilhamento automático dos
                   relatórios.
@@ -504,7 +504,7 @@ export default function SchedulingModal({
 
             {/* Existing Schedules Tab */}
             <TabsContent className="space-y-4" value="existing">
-              {existingSchedules.map((schedule) => (
+              {existingSchedules.map((schedule,) => (
                 <div
                   className="rounded-lg border border-slate-700 bg-slate-800/50 p-4"
                   key={schedule.id}
@@ -518,14 +518,14 @@ export default function SchedulingModal({
                         {schedule.frequency} às {schedule.time}
                       </p>
                     </div>
-                    {getStatusBadge(schedule.status)}
+                    {getStatusBadge(schedule.status,)}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                     <div>
                       <p className="text-slate-400">Próxima execução</p>
                       <p className="text-white">
-                        {formatNextRun(schedule.nextRun)}
+                        {formatNextRun(schedule.nextRun,)}
                       </p>
                     </div>
                     <div>
@@ -562,7 +562,7 @@ export default function SchedulingModal({
                       size="sm"
                       variant="outline"
                     >
-                      {schedule.status === "active" ? "Pausar" : "Ativar"}
+                      {schedule.status === 'active' ? 'Pausar' : 'Ativar'}
                     </Button>
                   </div>
                 </div>
@@ -572,5 +572,5 @@ export default function SchedulingModal({
         </div>
       </motion.div>
     </div>
-  );
+  )
 }

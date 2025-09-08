@@ -118,37 +118,37 @@ pnpm type-check
 ### Estrutura de Teste Unitário
 
 ```typescript
-describe("ComponentName", () => {
+describe('ComponentName', () => {
   beforeEach(() => {
     // Setup comum
-  });
+  },)
 
-  it("should render correctly", () => {
+  it('should render correctly', () => {
     // Teste de rendering básico
-  });
+  })
 
-  it("should handle user interactions", () => {
+  it('should handle user interactions', () => {
     // Teste de interações
-  });
+  })
 
-  it("should handle error states", () => {
+  it('should handle error states', () => {
     // Teste de estados de erro
-  });
-});
+  })
+})
 ```
 
 ### Estrutura de Teste E2E
 
 ```typescript
-test.describe("Feature Name", () => {
-  test.beforeEach(async ({ page }) => {
+test.describe('Feature Name', () => {
+  test.beforeEach(async ({ page, },) => {
     // Setup da página
-  });
+  },)
 
-  test("should complete user journey", async ({ page }) => {
+  test('should complete user journey', async ({ page, },) => {
     // Teste do fluxo completo
-  });
-});
+  })
+})
 ```
 
 ## 🛡️ Mocking Strategy
@@ -162,23 +162,23 @@ const mockSupabase = {
     signInWithPassword: jest.fn(),
     // ... outros métodos
   },
-};
+}
 
-jest.mock("@/app/utils/supabase/client", () => ({
+jest.mock('@/app/utils/supabase/client', () => ({
   createClient: () => mockSupabase,
-}));
+}),)
 ```
 
 ### Next.js Router
 
 ```typescript
-jest.mock("next/navigation", () => ({
+jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),
     // ... outros métodos
   }),
-}));
+}),)
 ```
 
 ## 🎨 Teste de Componentes UI

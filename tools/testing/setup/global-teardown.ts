@@ -13,29 +13,29 @@
  * - Database cleanup for healthcare scenarios
  */
 
-import type { FullConfig } from "@playwright/test";
-import fs from "node:fs";
-import path from "node:path";
+import type { FullConfig, } from '@playwright/test'
+import fs from 'node:fs'
+import path from 'node:path'
 
 /**
  * Global teardown function for Playwright healthcare testing
  */
-async function globalTeardown(_config: FullConfig) {
+async function globalTeardown(_config: FullConfig,) {
   try {
     // 1. Cleanup test data
-    await cleanupTestData();
+    await cleanupTestData()
 
     // 2. Generate compliance reports
-    await generateComplianceReports();
+    await generateComplianceReports()
 
     // 3. Archive test artifacts
-    await archiveTestArtifacts();
+    await archiveTestArtifacts()
 
     // 4. Cleanup authentication states
-    await cleanupAuthStates();
+    await cleanupAuthStates()
 
     // 5. Final security cleanup
-    await performSecurityCleanup();
+    await performSecurityCleanup()
   } catch {
     // Don't throw - we want tests to complete even if cleanup fails
   }
@@ -54,41 +54,41 @@ async function cleanupTestData() {
  */
 async function generateComplianceReports() {
   try {
-    const reportsDir = path.join(__dirname, "../reports/compliance");
+    const reportsDir = path.join(__dirname, '../reports/compliance',)
 
     // Ensure reports directory exists
-    if (!fs.existsSync(reportsDir)) {
-      fs.mkdirSync(reportsDir, { recursive: true });
+    if (!fs.existsSync(reportsDir,)) {
+      fs.mkdirSync(reportsDir, { recursive: true, },)
     }
 
     // Generate LGPD compliance report
     const lgpdReport = {
       timestamp: new Date().toISOString(),
-      compliance_level: "healthcare",
-      data_processed: "test-data-only",
-      privacy_controls: "active",
-      audit_trail: "complete",
-      data_retention: "test-cleanup-applied",
-    };
+      compliance_level: 'healthcare',
+      data_processed: 'test-data-only',
+      privacy_controls: 'active',
+      audit_trail: 'complete',
+      data_retention: 'test-cleanup-applied',
+    }
 
     fs.writeFileSync(
-      path.join(reportsDir, `lgpd-compliance-${Date.now()}.json`),
-      JSON.stringify(lgpdReport, undefined, 2),
-    );
+      path.join(reportsDir, `lgpd-compliance-${Date.now()}.json`,),
+      JSON.stringify(lgpdReport, undefined, 2,),
+    )
 
     // Generate ANVISA compliance report
     const anvisaReport = {
       timestamp: new Date().toISOString(),
-      regulatory_compliance: "test-mode",
-      medical_device_validation: "passed",
-      safety_protocols: "active",
-      quality_standards: "maintained",
-    };
+      regulatory_compliance: 'test-mode',
+      medical_device_validation: 'passed',
+      safety_protocols: 'active',
+      quality_standards: 'maintained',
+    }
 
     fs.writeFileSync(
-      path.join(reportsDir, `anvisa-compliance-${Date.now()}.json`),
-      JSON.stringify(anvisaReport, undefined, 2),
-    );
+      path.join(reportsDir, `anvisa-compliance-${Date.now()}.json`,),
+      JSON.stringify(anvisaReport, undefined, 2,),
+    )
   } catch {}
 }
 
@@ -97,30 +97,30 @@ async function generateComplianceReports() {
  */
 async function archiveTestArtifacts() {
   try {
-    const artifactsDir = path.join(__dirname, "../test-results");
-    const archiveDir = path.join(__dirname, "../reports/archives");
+    const artifactsDir = path.join(__dirname, '../test-results',)
+    const archiveDir = path.join(__dirname, '../reports/archives',)
 
-    if (fs.existsSync(artifactsDir)) {
+    if (fs.existsSync(artifactsDir,)) {
       // Ensure archive directory exists
-      if (!fs.existsSync(archiveDir)) {
-        fs.mkdirSync(archiveDir, { recursive: true });
+      if (!fs.existsSync(archiveDir,)) {
+        fs.mkdirSync(archiveDir, { recursive: true, },)
       }
 
       // Archive test results for compliance audit
-      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, "-");
+      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-',)
       // Create archive metadata
       const metadata = {
         archived_at: new Date().toISOString(),
-        test_type: "healthcare-e2e",
-        compliance_frameworks: ["LGPD", "ANVISA", "CFM"],
-        retention_period: "7-years", // Healthcare data retention requirement
-        purpose: "regulatory-compliance-audit",
-      };
+        test_type: 'healthcare-e2e',
+        compliance_frameworks: ['LGPD', 'ANVISA', 'CFM',],
+        retention_period: '7-years', // Healthcare data retention requirement
+        purpose: 'regulatory-compliance-audit',
+      }
 
       fs.writeFileSync(
-        path.join(archiveDir, `archive-metadata-${timestamp}.json`),
-        JSON.stringify(metadata, undefined, 2),
-      );
+        path.join(archiveDir, `archive-metadata-${timestamp}.json`,),
+        JSON.stringify(metadata, undefined, 2,),
+      )
     }
   } catch {}
 }
@@ -130,17 +130,17 @@ async function archiveTestArtifacts() {
  */
 async function cleanupAuthStates() {
   try {
-    const authDir = path.join(__dirname, "auth");
+    const authDir = path.join(__dirname, 'auth',)
 
-    if (fs.existsSync(authDir)) {
+    if (fs.existsSync(authDir,)) {
       const authFiles = fs
-        .readdirSync(authDir)
-        .filter((file) => file.endsWith(".json"));
+        .readdirSync(authDir,)
+        .filter((file,) => file.endsWith('.json',))
 
       for (const file of authFiles) {
-        const filePath = path.join(authDir, file);
+        const filePath = path.join(authDir, file,)
         // Securely delete auth files
-        fs.unlinkSync(filePath);
+        fs.unlinkSync(filePath,)
       }
     }
   } catch {}
@@ -153,38 +153,38 @@ async function performSecurityCleanup() {
   try {
     // Clear sensitive environment variables
     const sensitiveVars = [
-      "TEST_DATABASE_URL",
-      "SUPABASE_TEST_KEY",
-      "TEST_JWT_SECRET",
-      "HEALTHCARE_ADMIN_TOKEN",
-    ];
+      'TEST_DATABASE_URL',
+      'SUPABASE_TEST_KEY',
+      'TEST_JWT_SECRET',
+      'HEALTHCARE_ADMIN_TOKEN',
+    ]
 
-    sensitiveVars.forEach((varName) => {
+    sensitiveVars.forEach((varName,) => {
       if (process.env[varName]) {
-        delete process.env[varName];
+        delete process.env[varName]
       }
-    });
+    },)
 
     // Generate security cleanup report
     const securityReport = {
       timestamp: new Date().toISOString(),
-      action: "security-cleanup-completed",
+      action: 'security-cleanup-completed',
       sensitive_data_purged: true,
       auth_states_cleared: true,
       environment_sanitized: true,
-      compliance_status: "secure",
-    };
+      compliance_status: 'secure',
+    }
 
-    const reportsDir = path.join(__dirname, "../reports/security");
-    if (!fs.existsSync(reportsDir)) {
-      fs.mkdirSync(reportsDir, { recursive: true });
+    const reportsDir = path.join(__dirname, '../reports/security',)
+    if (!fs.existsSync(reportsDir,)) {
+      fs.mkdirSync(reportsDir, { recursive: true, },)
     }
 
     fs.writeFileSync(
-      path.join(reportsDir, `security-cleanup-${Date.now()}.json`),
-      JSON.stringify(securityReport, undefined, 2),
-    );
+      path.join(reportsDir, `security-cleanup-${Date.now()}.json`,),
+      JSON.stringify(securityReport, undefined, 2,),
+    )
   } catch {}
 }
 
-export default globalTeardown;
+export default globalTeardown

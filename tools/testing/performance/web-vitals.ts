@@ -5,8 +5,8 @@
  * Based on latest 2025 performance optimization patterns
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB } from "web-vitals";
-import type { Metric } from "web-vitals";
+import { getCLS, getFCP, getFID, getLCP, getTTFB, } from 'web-vitals'
+import type { Metric, } from 'web-vitals'
 
 // Performance thresholds based on Core Web Vitals 2025 standards
 export const PERFORMANCE_THRESHOLDS = {
@@ -35,33 +35,33 @@ export const PERFORMANCE_THRESHOLDS = {
     GOOD: 800, // <= 800ms
     NEEDS_IMPROVEMENT: 1800, // 800ms - 1.8s
   },
-} as const;
+} as const
 
 // Performance grade calculator
 export function getPerformanceGrade(
   metric: string,
   value: number,
-): "good" | "needs-improvement" | "poor" {
-  const thresholds = PERFORMANCE_THRESHOLDS[metric as keyof typeof PERFORMANCE_THRESHOLDS];
+): 'good' | 'needs-improvement' | 'poor' {
+  const thresholds = PERFORMANCE_THRESHOLDS[metric as keyof typeof PERFORMANCE_THRESHOLDS]
 
   if (!thresholds) {
-    return "poor";
+    return 'poor'
   }
 
   if (value <= thresholds.GOOD) {
-    return "good";
+    return 'good'
   }
   if (value <= thresholds.NEEDS_IMPROVEMENT) {
-    return "needs-improvement";
+    return 'needs-improvement'
   }
-  return "poor";
+  return 'poor'
 }
 
 // Analytics endpoint for storing performance data
-const ANALYTICS_ENDPOINT = "/api/analytics/performance";
+const ANALYTICS_ENDPOINT = '/api/analytics/performance'
 
 // Send metric to analytics service
-export async function sendToAnalytics(metric: Metric) {
+export async function sendToAnalytics(metric: Metric,) {
   try {
     const body = {
       name: metric.name,
@@ -74,24 +74,24 @@ export async function sendToAnalytics(metric: Metric) {
       url: window.location.href,
       userAgent: navigator.userAgent,
       timestamp: Date.now(),
-      grade: getPerformanceGrade(metric.name, metric.value),
-    };
+      grade: getPerformanceGrade(metric.name, metric.value,),
+    }
 
     // Use sendBeacon for reliability, fallback to fetch
     if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(body)], {
-        type: "application/json",
-      });
-      navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+      const blob = new Blob([JSON.stringify(body,),], {
+        type: 'application/json',
+      },)
+      navigator.sendBeacon(ANALYTICS_ENDPOINT, blob,)
     } else {
       fetch(ANALYTICS_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify(body,),
         keepalive: true,
-      }).catch(() => {
+      },).catch(() => {
         // Silently fail - don't impact user experience
-      });
+      },)
     }
   } catch {}
 }
@@ -100,72 +100,72 @@ export async function sendToAnalytics(metric: Metric) {
 export function reportWebVitals() {
   try {
     // Core web vitals with enhanced reporting
-    getCLS(sendToAnalytics);
-    getFID(sendToAnalytics);
-    getFCP(sendToAnalytics);
-    getLCP(sendToAnalytics);
-    getTTFB(sendToAnalytics);
+    getCLS(sendToAnalytics,)
+    getFID(sendToAnalytics,)
+    getFCP(sendToAnalytics,)
+    getLCP(sendToAnalytics,)
+    getTTFB(sendToAnalytics,)
 
     // Additional performance observations
-    if ("PerformanceObserver" in window) {
+    if ('PerformanceObserver' in window) {
       // Long Tasks API - detect blocking main thread
-      const longTaskObserver = new PerformanceObserver((list) => {
+      const longTaskObserver = new PerformanceObserver((list,) => {
         for (const entry of list.getEntries()) {
           sendToAnalytics({
-            name: "LONG_TASK",
+            name: 'LONG_TASK',
             value: entry.duration,
-            rating: entry.duration > 50 ? "poor" : "good",
+            rating: entry.duration > 50 ? 'poor' : 'good',
             delta: 0,
             id: `long-task-${Date.now()}`,
-            navigationType: "navigate",
-            entries: [entry],
-          } as Metric);
+            navigationType: 'navigate',
+            entries: [entry,],
+          } as Metric,)
         }
-      });
+      },)
 
       try {
-        longTaskObserver.observe({ entryTypes: ["longtask"] });
+        longTaskObserver.observe({ entryTypes: ['longtask',], },)
       } catch {
         // Long Tasks API not supported
       }
 
       // Navigation Timing API - detailed navigation metrics
-      const navigationObserver = new PerformanceObserver((list) => {
+      const navigationObserver = new PerformanceObserver((list,) => {
         for (const entry of list.getEntries()) {
-          const navEntry = entry as PerformanceNavigationTiming;
+          const navEntry = entry as PerformanceNavigationTiming
 
           // DNS lookup time
-          const dnsTime = navEntry.domainLookupEnd - navEntry.domainLookupStart;
+          const dnsTime = navEntry.domainLookupEnd - navEntry.domainLookupStart
           if (dnsTime > 0) {
             sendToAnalytics({
-              name: "DNS_TIME",
+              name: 'DNS_TIME',
               value: dnsTime,
-              rating: dnsTime > 100 ? "poor" : "good",
+              rating: dnsTime > 100 ? 'poor' : 'good',
               delta: 0,
               id: `dns-${Date.now()}`,
-              navigationType: "navigate",
-              entries: [entry],
-            } as Metric);
+              navigationType: 'navigate',
+              entries: [entry,],
+            } as Metric,)
           }
 
           // Connection time
-          const connectTime = navEntry.connectEnd - navEntry.connectStart;
+          const connectTime = navEntry.connectEnd - navEntry.connectStart
           if (connectTime > 0) {
             sendToAnalytics({
-              name: "CONNECT_TIME",
+              name: 'CONNECT_TIME',
               value: connectTime,
-              rating: connectTime > 100 ? "poor" : "good",
+              rating: connectTime > 100 ? 'poor' : 'good',
               delta: 0,
               id: `connect-${Date.now()}`,
-              navigationType: "navigate",
-              entries: [entry],
-            } as Metric);
+              navigationType: 'navigate',
+              entries: [entry,],
+            } as Metric,)
           }
         }
-      });
+      },)
 
       try {
-        navigationObserver.observe({ entryTypes: ["navigation"] });
+        navigationObserver.observe({ entryTypes: ['navigation',], },)
       } catch {
         // Navigation Timing API not supported
       }
@@ -175,103 +175,103 @@ export function reportWebVitals() {
 
 // Performance monitoring hook for React components
 export function usePerformanceMonitoring() {
-  const startTime = performance.now();
+  const startTime = performance.now()
 
   return {
     // Mark component render time
-    markRender: (componentName: string) => {
-      const renderTime = performance.now() - startTime;
+    markRender: (componentName: string,) => {
+      const renderTime = performance.now() - startTime
 
       sendToAnalytics({
-        name: "COMPONENT_RENDER",
+        name: 'COMPONENT_RENDER',
         value: renderTime,
-        rating: renderTime > 16 ? "poor" : "good", // 60fps = 16.67ms per frame
+        rating: renderTime > 16 ? 'poor' : 'good', // 60fps = 16.67ms per frame
         delta: 0,
         id: `${componentName}-${Date.now()}`,
-        navigationType: "navigate",
+        navigationType: 'navigate',
         entries: [],
-      } as Metric);
+      } as Metric,)
     },
 
     // Mark interaction response time
-    markInteraction: (interactionName: string, startTime: number) => {
-      const responseTime = performance.now() - startTime;
+    markInteraction: (interactionName: string, startTime: number,) => {
+      const responseTime = performance.now() - startTime
 
       sendToAnalytics({
-        name: "INTERACTION_RESPONSE",
+        name: 'INTERACTION_RESPONSE',
         value: responseTime,
-        rating: responseTime > 200 ? "poor" : "good", // INP threshold
+        rating: responseTime > 200 ? 'poor' : 'good', // INP threshold
         delta: 0,
         id: `${interactionName}-${Date.now()}`,
-        navigationType: "navigate",
+        navigationType: 'navigate',
         entries: [],
-      } as Metric);
+      } as Metric,)
     },
-  };
+  }
 }
 
 // Advanced performance utilities
 export const PerformanceUtils = {
   // Measure function execution time
-  measureFunction: async <T>(
+  measureFunction: async <T,>(
     name: string,
     fn: () => Promise<T> | T,
   ): Promise<T> => {
-    const start = performance.now();
-    const result = await fn();
-    const duration = performance.now() - start;
+    const start = performance.now()
+    const result = await fn()
+    const duration = performance.now() - start
 
     sendToAnalytics({
-      name: "FUNCTION_EXECUTION",
+      name: 'FUNCTION_EXECUTION',
       value: duration,
-      rating: duration > 100 ? "poor" : "good",
+      rating: duration > 100 ? 'poor' : 'good',
       delta: 0,
       id: `${name}-${Date.now()}`,
-      navigationType: "navigate",
+      navigationType: 'navigate',
       entries: [],
-    } as Metric);
+    } as Metric,)
 
-    return result;
+    return result
   },
 
   // Monitor resource loading performance
   observeResourceTiming: () => {
-    if ("PerformanceObserver" in window) {
-      const resourceObserver = new PerformanceObserver((list) => {
+    if ('PerformanceObserver' in window) {
+      const resourceObserver = new PerformanceObserver((list,) => {
         for (const entry of list.getEntries()) {
-          const resource = entry as PerformanceResourceTiming;
+          const resource = entry as PerformanceResourceTiming
 
           // Focus on large resources that might impact performance
           if (resource.transferSize > 100_000) {
             // > 100kb
             sendToAnalytics({
-              name: "LARGE_RESOURCE",
+              name: 'LARGE_RESOURCE',
               value: resource.duration,
-              rating: resource.duration > 1000 ? "poor" : "good",
+              rating: resource.duration > 1000 ? 'poor' : 'good',
               delta: 0,
               id: `resource-${Date.now()}`,
-              navigationType: "navigate",
-              entries: [entry],
-            } as Metric);
+              navigationType: 'navigate',
+              entries: [entry,],
+            } as Metric,)
           }
         }
-      });
+      },)
 
       try {
-        resourceObserver.observe({ entryTypes: ["resource"] });
+        resourceObserver.observe({ entryTypes: ['resource',], },)
       } catch {
         // Resource Timing API not supported
       }
     }
   },
-};
+}
 
 // Initialize performance monitoring
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   // Start monitoring when page loads
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", reportWebVitals);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', reportWebVitals,)
   } else {
-    reportWebVitals();
+    reportWebVitals()
   }
 }

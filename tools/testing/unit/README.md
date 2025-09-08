@@ -38,33 +38,33 @@ unit/
 ### LGPD Compliance Unit Tests
 
 ```typescript
-describe("Patient Data Privacy", () => {
-  it("should encrypt patient data before storage", () => {
+describe('Patient Data Privacy', () => {
+  it('should encrypt patient data before storage', () => {
     // Test data encryption compliance
-  });
+  })
 
-  it("should validate consent before data processing", () => {
+  it('should validate consent before data processing', () => {
     // Test consent validation
-  });
-});
+  })
+})
 ```
 
 ### ANVISA Compliance Unit Tests
 
 ```typescript
-describe("Medical Device Validation", () => {
-  it("should validate device registration status", () => {
+describe('Medical Device Validation', () => {
+  it('should validate device registration status', () => {
     // Test device registration compliance
-  });
-});
+  })
+})
 ```
 
 ### CFM Standards Unit Tests
 
 ```typescript
-describe("Medical Professional Standards", () => {
-  it("should validate professional licensing", () => {
+describe('Medical Professional Standards', () => {
+  it('should validate professional licensing', () => {
     // Test professional license validation
-  });
-});
+  })
+})
 ```
