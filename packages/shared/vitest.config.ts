@@ -1,5 +1,5 @@
-import path from 'node:path'
 import fs from 'node:fs'
+import path from 'node:path'
 import { defineConfig, } from 'vitest/config'
 
 export default defineConfig({
@@ -8,10 +8,10 @@ export default defineConfig({
     environment: 'happy-dom',
     include: ['tests/**/*.test.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}',],
     reporters: (() => {
-      const reporters: string[] = ['default']
-      const reporterPath = path.resolve(__dirname, '../../.vitest-reporters/junit.cjs')
+      const reporters: string[] = ['default',]
+      const reporterPath = path.resolve(__dirname, '../../.vitest-reporters/junit.cjs',)
       const enabled = process.env.VITEST_JUNIT !== '0'
-      if (enabled && fs.existsSync(reporterPath)) reporters.push(reporterPath)
+      if (enabled && fs.existsSync(reporterPath,)) reporters.push(reporterPath,)
       return reporters
     })(),
     coverage: {
@@ -38,6 +38,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src',),
+      // Ensure a single React instance for tests to avoid invalid hook calls
+      'react': path.resolve(__dirname, '../../node_modules/react',),
+      'react-dom': path.resolve(__dirname, '../../node_modules/react-dom',),
     },
   },
 },)

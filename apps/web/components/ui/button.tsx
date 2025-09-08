@@ -63,6 +63,8 @@ const buttonVariants = cva(
 interface HealthcareButtonProps {
   /** Healthcare-specific loading state for patient data operations */
   isLoading?: boolean
+  /** Optional loading text to display while loading */
+  loadingText?: string
   /** Medical urgency level for appropriate styling */
   urgency?: 'low' | 'medium' | 'high' | 'critical'
   /** LGPD compliance indicator */
@@ -79,6 +81,7 @@ function Button({
   size,
   asChild = false,
   isLoading,
+  loadingText,
   urgency,
   lgpdCompliant,
   emergencyMode,
@@ -162,6 +165,7 @@ function Button({
       disabled={isLoading || props.disabled}
       onClick={handleClick}
       // Enhanced accessibility for healthcare contexts
+      aria-busy={isLoading ? 'true' : undefined}
       aria-describedby={urgency === 'critical' || urgency === 'high'
         ? 'healthcare-critical-action-warning'
         : undefined}
@@ -170,6 +174,7 @@ function Button({
       {isLoading && (
         <>
           <svg
+            data-testid="loading-spinner"
             className="mr-2 h-4 w-4 animate-spin"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -190,7 +195,10 @@ function Button({
               d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span className="sr-only">Processando...</span>
+          <span className="sr-only">{loadingText ?? 'Processando...'}</span>
+          {loadingText && (
+            <span className="ml-1 inline-block">{loadingText}</span>
+          )}
         </>
       )}
       {children}

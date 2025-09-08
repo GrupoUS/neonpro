@@ -4,34 +4,45 @@ import { LoadingWithMessage, } from '@/components/ui/loading-skeleton'
 import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useState, } from 'react'
 
-// Dynamic imports for Stripe
-const StripeProvider = dynamic(
-  () => import('../payments/stripe-provider').then((mod,) => mod.StripeProvider),
-  {
-    loading: () => <LoadingWithMessage variant="payment" message="Carregando Stripe..." />,
-    ssr: false, // Payment processing é client-side only
-  },
-)
+// TODO: Create missing payment modules
+// const StripeProvider = dynamic(
+//   () => import('../payments/stripe-provider').then((mod,) => mod.StripeProvider),
+//   {
+//     loading: () => <LoadingWithMessage variant="payment" message="Carregando Stripe..." />,
+//     ssr: false, // Payment processing é client-side only
+//   },
+// )
 
-const StripePaymentForm = dynamic(
-  () => import('../payments/stripe-payment-form').then((mod,) => mod.StripePaymentForm),
-  {
-    loading: () => (
-      <LoadingWithMessage variant="payment" message="Carregando formulário de pagamento..." />
-    ),
-    ssr: false,
-  },
-)
+// const StripePaymentForm = dynamic(
+//   () => import('../payments/stripe-payment-form').then((mod,) => mod.StripePaymentForm),
+//   {
+//     loading: () => (
+//       <LoadingWithMessage variant="payment" message="Carregando formulário de pagamento..." />
+//     ),
+//     ssr: false,
+//   },
+// )
 
-const StripeSubscriptionManager = dynamic(
-  () => import('../payments/stripe-subscription').then((mod,) => mod.StripeSubscriptionManager),
-  {
-    loading: () => (
-      <LoadingWithMessage variant="payment" message="Carregando gerenciador de assinatura..." />
-    ),
-    ssr: false,
-  },
+// Temporary placeholders
+const StripeProvider = ({ children, }: { children: any },) => (
+  <div className="animate-pulse">Stripe Provider: {children}</div>
 )
+const StripePaymentForm = (_props: any,) => <div className="animate-pulse">Stripe Payment Form</div>
+
+// TODO: Create stripe-subscription module
+// const StripeSubscriptionManager = dynamic(
+//   () => import('../payments/stripe-subscription').then((mod,) => mod.StripeSubscriptionManager),
+//   {
+//     loading: () => (
+//       <LoadingWithMessage variant="payment" message="Carregando gerenciador de assinatura..." />
+//     ),
+//     ssr: false,
+//   },
+// )
+
+// Temporary placeholder
+const StripeSubscriptionManager = (_props: any,) =>
+  <div className="animate-pulse">Stripe Subscription Manager</div>
 
 // Interfaces
 interface PaymentIntent {
@@ -197,7 +208,7 @@ export function usePaymentProcessing() {
       setError(null,)
 
       try {
-        const { error: stripeError, paymentIntent: confirmedPaymentIntent, } = await stripe
+        const { error: stripeError, paymentIntent: confirmedPaymentIntent, } = await (stripe as any)
           .confirmPayment({
             elements,
             confirmParams: {

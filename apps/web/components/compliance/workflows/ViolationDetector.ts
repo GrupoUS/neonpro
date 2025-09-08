@@ -441,9 +441,10 @@ export class ViolationDetector {
       description: 'Medical record without required digital signature',
       category: 'medical_records',
       severity: 'critical',
-      checkFunction: async (_context,) => {
+      checkFunction: async (context,) => {
         // Mock implementation
-        const missingSignature = context.url?.includes('/medical-records',) && Math.random() < 0.03
+        const missingSignature = Boolean(context.url?.includes('/medical-records',),)
+          && Math.random() < 0.03
         return {
           detected: missingSignature,
           details: missingSignature ? 'Medical record saved without digital signature' : undefined,

@@ -212,9 +212,9 @@ export function RealTimeActivityDashboard() {
       if (Math.random() > 0.7) {
         const newActivity: ActivityEvent = {
           id: Date.now().toString(),
-          type: ['appointment', 'consultation', 'message',][
+          type: (['appointment', 'consultation', 'message',] as const)[
             Math.floor(Math.random() * 3,)
-          ] as unknown,
+          ],
           title: 'Nova Atividade',
           description: 'Atividade simulada em tempo real',
           user: {

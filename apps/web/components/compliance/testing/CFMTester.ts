@@ -3,7 +3,8 @@
  * Tests compliance with Brazilian medical ethics and professional conduct regulations
  */
 
-import type { ComplianceTestResult, ComplianceViolation, } from '../types'
+import type { ComplianceViolation, } from '../types'
+import type { ComplianceTestResult, } from './ComplianceTestRunner'
 
 export interface CFMTestConfig {
   checkEthicsCompliance?: boolean

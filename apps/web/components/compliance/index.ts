@@ -4,6 +4,11 @@ export { ComplianceOrchestrator, } from './ComplianceOrchestrator'
 export { ComplianceService, } from './ComplianceService'
 export { ComplianceSystemValidator, } from './ComplianceSystemValidator'
 
+// Import for internal use
+import { ComplianceOrchestrator, type ComplianceSystemConfig, } from './ComplianceOrchestrator'
+import { ComplianceSystemValidator, } from './ComplianceSystemValidator'
+import type { ComplianceFramework, } from './types'
+
 // Core components
 export { ANVISATester, } from './testing/ANVISATester'
 export { CFMTester, } from './testing/CFMTester'
@@ -29,19 +34,28 @@ export { EvidenceCollector, } from './audit/EvidenceCollector'
 export { FeedbackCollector, ImprovementEngine, } from './feedback'
 
 // Automation components
-export { AutomationConfig, } from './automation/AutomationConfig'
-export { AutomationDashboard, } from './automation/AutomationDashboard'
+export { default as AutomationConfig, } from './automation/AutomationConfig'
+export { default as AutomationDashboard, } from './automation/AutomationDashboard'
 
 // Types
+export type { ComplianceSystemConfig, } from './ComplianceOrchestrator'
 export * from './feedback/types'
 export * from './types'
 
 // Hooks for React integration
-export { useComplianceData, } from './hooks'
+export {
+  useCompliance,
+  useComplianceAlerts,
+  useComplianceCheck,
+  useComplianceReports,
+  useComplianceTrends,
+  useComplianceViolations,
+  useMonitoringConfig,
+} from './hooks'
 
 // Default system configuration
-export const defaultComplianceConfig = {
-  frameworks: ['WCAG', 'LGPD', 'ANVISA', 'CFM',] as const,
+export const defaultComplianceConfig: ComplianceSystemConfig = {
+  frameworks: ['WCAG', 'LGPD', 'ANVISA', 'CFM',],
   enabledModules: {
     dashboard: true,
     testing: true,
@@ -53,7 +67,7 @@ export const defaultComplianceConfig = {
   monitoring: {
     realTimeUpdates: true,
     detectionInterval: 15, // minutes
-    reportingSchedule: 'weekly' as const,
+    reportingSchedule: 'weekly',
     alertThresholds: {
       criticalViolations: 0,
       scoreThreshold: 80,
@@ -69,7 +83,9 @@ export const defaultComplianceConfig = {
 /**
  * Initialize the complete compliance system
  */
-export const initializeComplianceSystem = async (config = defaultComplianceConfig,) => {
+export const initializeComplianceSystem = async (
+  config: ComplianceSystemConfig = defaultComplianceConfig,
+) => {
   console.log('🏥 Initializing NeonPro Healthcare Compliance System',)
 
   const orchestrator = new ComplianceOrchestrator(config,)
@@ -99,7 +115,7 @@ export const startComplianceMonitoring = async (
 ) => {
   console.log('🚀 Starting quick compliance monitoring',)
 
-  const config = {
+  const config: ComplianceSystemConfig = {
     ...defaultComplianceConfig,
     frameworks,
   }
@@ -164,11 +180,15 @@ export const healthcareComplianceUtils = {
    * Check if system meets Brazilian healthcare regulations
    */
   validateBrazilianHealthcareCompliance: async (orchestrator: ComplianceOrchestrator,) => {
-    const brazilianFrameworks: ComplianceFramework[] = new Set(['ANVISA', 'CFM', 'LGPD',],)
+    const brazilianFrameworks: ComplianceFramework[] = [
+      'ANVISA',
+      'CFM',
+      'LGPD',
+    ] as ComplianceFramework[]
     const check = await orchestrator.runComprehensiveCheck()
 
     const brazilianScores = Object.entries(check.summary.frameworkScores,)
-      .filter(([framework,],) => brazilianFrameworks.has(framework as ComplianceFramework,))
+      .filter(([framework,],) => brazilianFrameworks.includes(framework as ComplianceFramework,))
       .reduce((acc, [framework, score,],) => {
         acc[framework as ComplianceFramework] = score
         return acc

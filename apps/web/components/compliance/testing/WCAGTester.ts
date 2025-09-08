@@ -3,7 +3,8 @@
  * Tests against WCAG 2.1 Level A, AA, and AAA guidelines
  */
 
-import type { ComplianceTestResult, ComplianceViolation, } from '../types'
+import type { ComplianceViolation, } from '../types'
+import type { ComplianceTestResult, } from './ComplianceTestRunner'
 
 // axe-core result types
 interface AxeResult {

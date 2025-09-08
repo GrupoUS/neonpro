@@ -29,6 +29,7 @@
     "**/.turbo/**",
     "**/coverage/**",
     "**/playwright-report/**",
+    ".github/prompts/**",
     "apps/api/src/index.ts",
     "apps/web/components/forms/form-provider.tsx",
     "apps/web/components/examples/anti-no-show-dashboard-example.tsx",

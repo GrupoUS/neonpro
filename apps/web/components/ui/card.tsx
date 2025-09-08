@@ -25,7 +25,7 @@ const cardVariants = cva(
         warning:
           'bg-warning/5 shadow-healthcare-sm border-warning/40 hover:shadow-healthcare-md hover:border-warning/60',
         critical:
-          'bg-status-critical/10 shadow-emergency-glow border-status-critical/50 hover:shadow-emergency-glow border-2 pulse-healthcare',
+          'bg-status-critical/10 shadow-emergency-glow border-status-critical/50 hover:shadow-emergency-glow border-2 animate-pulse-healthcare',
 
         // Status-based variants
         normal: 'bg-card shadow-healthcare-sm border-status-normal/30',

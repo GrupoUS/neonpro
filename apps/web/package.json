@@ -2,6 +2,10 @@
   "name": "@neonpro/web",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@8.15.8",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "next build",
     "build:vercel": "bun install && next build",
@@ -72,6 +76,7 @@
     "csv-parse": "^6.1.0",
     "dompurify": "^3.2.6",
     "dotenv": "^17.2.1",
+    "exceljs": "^4.4.0",
     "framer-motion": "^12.23.12",
     "html2canvas": "^1.4.1",
     "ioredis": "^5.7.0",

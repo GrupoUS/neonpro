@@ -4,30 +4,38 @@ import { LoadingWithMessage, } from '@/components/ui/loading-skeleton'
 import dynamic from 'next/dynamic'
 import { Suspense, useCallback, useState, } from 'react'
 
-// Dynamic imports for Excel libraries
-const ExcelImporter = dynamic(
-  () => import('../excel/excel-importer').then((mod,) => mod.ExcelImporter),
-  {
-    loading: () => <LoadingWithMessage variant="excel" message="Carregando importador Excel..." />,
-    ssr: false,
-  },
-)
+// TODO: Create missing excel modules
+// const ExcelImporter = dynamic(
+//   () => import('../excel/excel-importer').then((mod,) => mod.ExcelImporter),
+//   {
+//     loading: () => <LoadingWithMessage variant="excel" message="Carregando importador Excel..." />,
+//     ssr: false,
+//   },
+// )
 
-const ExcelExporter = dynamic(
-  () => import('../excel/excel-exporter').then((mod,) => mod.ExcelExporter),
-  {
-    loading: () => <LoadingWithMessage variant="excel" message="Carregando exportador Excel..." />,
-    ssr: false,
-  },
-)
+// const ExcelExporter = dynamic(
+//   () => import('../excel/excel-exporter').then((mod,) => mod.ExcelExporter),
+//   {
+//     loading: () => <LoadingWithMessage variant="excel" message="Carregando exportador Excel..." />,
+//     ssr: false,
+//   },
+// )
 
-const CSVProcessor = dynamic(
-  () => import('../excel/csv-processor').then((mod,) => mod.CSVProcessor),
-  {
-    loading: () => <LoadingWithMessage variant="excel" message="Carregando processador CSV..." />,
-    ssr: false,
-  },
-)
+// Temporary placeholders
+const ExcelImporter = (_props: any,) => <div className="animate-pulse">Excel Importer</div>
+const ExcelExporter = (_props: any,) => <div className="animate-pulse">Excel Exporter</div>
+
+// TODO: Create csv-processor module
+// const CSVProcessor = dynamic(
+//   () => import('../excel/csv-processor').then((mod,) => mod.CSVProcessor),
+//   {
+//     loading: () => <LoadingWithMessage variant="excel" message="Carregando processador CSV..." />,
+//     ssr: false,
+//   },
+// )
+
+// Temporary placeholder
+const CSVProcessor = (_props: any,) => <div className="animate-pulse">CSV Processor</div>
 
 // Interfaces
 interface ExcelData {

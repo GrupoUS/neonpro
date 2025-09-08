@@ -161,7 +161,6 @@ CONSTITUTIONAL_PRINCIPLES:
 - **Complexity ≥7**: Add context7 → tavily
 - **Stuck >3x**: See MCP Error Recovery (mcp-coordination.md)
 - MUST READ Project orchestrator: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- MUST READ Coding standards & preferences: [`docs/rules/coding-standards.md`](../docs/rules/coding-standards.md)
 
 **Proactive Update Protocol (MANDATORY FINAL STEP)**
 

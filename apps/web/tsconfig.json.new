@@ -1,0 +1,95 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "composite": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": false,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "outDir": "dist",
+    "rootDir": "../../",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/contexts/*": ["./src/contexts/*"],
+      "@/providers/*": ["./src/providers/*"],
+      "@/routes/*": ["./src/routes/*"],
+
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/core-services": ["../../packages/core-services/src"],
+      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/cache": ["../../packages/cache/src"],
+      "@neonpro/cache/*": ["../../packages/cache/src/*"]
+    },
+
+    /* Linting */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    
+    /* TanStack Router */
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "__tests__/**/*",
+    "tests/**",
+    "tests/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "tests/e2e/**",
+    "test-mvp-compilation.ts",
+    
+    // Legacy Next.js files to exclude during migration
+    "app/**/*",
+    "pages/**/*",
+    "next.config.mjs",
+    "next-env.d.ts"
+  ],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/core-services" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/security" }
+  ]
+}

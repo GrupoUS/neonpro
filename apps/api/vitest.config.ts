@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import path from 'node:path'
 import fs from 'node:fs'
+import path from 'node:path'
 import { defineConfig, } from 'vitest/config'
 
 export default defineConfig({
@@ -11,10 +11,10 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}',],
     reporters: (() => {
-      const reporters: string[] = ['default']
-      const reporterPath = path.resolve(__dirname, '../../.vitest-reporters/junit.cjs')
+      const reporters: string[] = ['default',]
+      const reporterPath = path.resolve(__dirname, '../../.vitest-reporters/junit.cjs',)
       const enabled = process.env.VITEST_JUNIT !== '0'
-      if (enabled && fs.existsSync(reporterPath)) reporters.push(reporterPath)
+      if (enabled && fs.existsSync(reporterPath,)) reporters.push(reporterPath,)
       return reporters
     })(),
     coverage: {

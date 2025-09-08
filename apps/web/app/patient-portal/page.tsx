@@ -143,7 +143,7 @@ export default function PatientPortalPage() {
   // Compute display name and initials once
   const displayName = profile.firstName ?? profile.email?.split('@',)[0] ?? 'Paciente'
   const initials = ((profile.firstName?.[0] || profile.email?.[0] || 'P').toUpperCase()
-    + (profile.lastName?.[0] || '').toUpperCase()).substring(0, 2,)
+    + (profile.lastName?.[0] || '').toUpperCase()).slice(0, 2,)
 
   const getStatusBadge = (status: string,) => {
     const variants = {

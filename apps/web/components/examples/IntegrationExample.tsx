@@ -17,13 +17,25 @@ import {
   usePatients,
   useProfile,
 } from '@/hooks/api'
-import type { CreateAppointment, CreatePatient, Login, } from '@neonpro/shared/schemas'
+import type {
+  CreateAppointmentSchema,
+  CreatePatientSchema,
+  LoginRequestSchema,
+} from '@neonpro/shared/schemas'
+import type { z, } from 'zod'
+
+// Type aliases for convenience
+type CreateAppointment = z.infer<typeof CreateAppointmentSchema>
+type CreatePatient = z.infer<typeof CreatePatientSchema>
+type Login = z.infer<typeof LoginRequestSchema>
 import { useState, } from 'react'
+import { toast, } from 'sonner'
 
 export function IntegrationExample() {
   const [loginData, setLoginData,] = useState<Login>({
     email: 'admin@neonpro.com',
     password: 'Admin123!',
+    remember_me: false,
   },)
 
   // Auth hooks
@@ -58,27 +70,32 @@ export function IntegrationExample() {
 
   const handleCreateTestPatient = async () => {
     const testPatient: CreatePatient = {
-      fullName: 'Ana Silva Santos',
+      first_name: 'Ana Silva',
+      last_name: 'Santos',
       email: 'ana.silva@email.com',
       phone: '11987654321',
       cpf: '12345678901',
-      birthDate: '1985-06-15',
+      birth_date: '1985-06-15',
       gender: 'female',
-      address: {
+      clinic_id: '550e8400-e29b-41d4-a716-446655440000', // Mock clinic ID
+      addresses: [{
         street: 'Rua das Flores',
         number: '123',
         complement: 'Apto 45',
         neighborhood: 'Centro',
         city: 'São Paulo',
         state: 'SP',
-        zipCode: '01234567',
-      },
-      allergies: ['Nenhuma conhecida',],
-      chronicConditions: [],
-      currentMedications: [],
-      consentGiven: true,
-      dataProcessingConsent: true,
-      marketingConsent: false,
+        zip_code: '01234567',
+        country: 'Brasil',
+        is_primary: true,
+        type: 'home' as const,
+      },],
+      allergies: [],
+      medications: [],
+      emergency_contacts: [],
+      insurance_plans: [],
+      lgpd_consent: true,
+      marketing_consent: false,
     }
 
     try {
@@ -201,7 +218,7 @@ export function IntegrationExample() {
                           key={patient.id}
                         >
                           <p>
-                            <strong>{patient.fullName}</strong>
+                            <strong>{patient.first_name} {patient.last_name}</strong>
                           </p>
                           <p className="text-gray-600 text-sm">{patient.email}</p>
                           <p className="text-gray-500 text-xs">ID: {patient.id}</p>

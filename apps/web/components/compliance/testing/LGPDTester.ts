@@ -3,7 +3,8 @@
  * Tests Brazilian data privacy law compliance including consent, data processing, and retention
  */
 
-import type { ComplianceTestResult, ComplianceViolation, } from '../types'
+import type { ComplianceViolation, } from '../types'
+import type { ComplianceTestResult, } from './ComplianceTestRunner'
 
 export interface LGPDTestConfig {
   checkConsent?: boolean

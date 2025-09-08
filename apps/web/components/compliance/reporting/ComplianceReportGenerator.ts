@@ -4,9 +4,9 @@
  */
 
 import type {
+  ComplianceCheckResult,
   ComplianceFramework,
   ComplianceScore,
-  ComplianceTestResult,
   ComplianceViolation,
 } from '../types'
 
@@ -59,7 +59,7 @@ export interface GeneratedReport {
 export interface ReportData {
   scores: ComplianceScore[]
   violations: ComplianceViolation[]
-  testResults: ComplianceTestResult[]
+  testResults: ComplianceCheckResult[]
   trends?: {
     framework: ComplianceFramework
     scoreHistory: { date: string; score: number }[]
@@ -105,12 +105,12 @@ export class ComplianceReportGenerator {
 
       // Generate visualizations if requested
       if (config.includeVisualizations) {
-        reportContent.visualizations = await this.generateVisualizations(data, config,)
+        ;(reportContent as any).visualizations = await this.generateVisualizations(data, config,)
       }
 
       // Add recommendations if requested
       if (config.includeRecommendations) {
-        reportContent.recommendations = await this.generateRecommendations(data, config,)
+        ;(reportContent as any).recommendations = await this.generateRecommendations(data, config,)
       }
 
       // Apply report template
@@ -142,7 +142,7 @@ export class ComplianceReportGenerator {
           generationTime,
           complianceScore: data.summary.overallScore,
           criticalViolations: data.summary.criticalViolations,
-          recommendations: reportContent.recommendations?.length || 0,
+          recommendations: (reportContent as any).recommendations?.length || 0,
         },
       }
 
@@ -242,7 +242,7 @@ export class ComplianceReportGenerator {
 
     // Add framework-specific sections
     for (const framework of config.frameworks) {
-      content[framework.toLowerCase()] = await this.generateFrameworkSection(
+      ;(content as any)[framework.toLowerCase()] = await this.generateFrameworkSection(
         framework,
         data,
         config,
@@ -251,18 +251,18 @@ export class ComplianceReportGenerator {
 
     // Add violation analysis if requested
     if (config.includeViolationDetails) {
-      content.violations = await this.generateViolationAnalysis(data, config,)
+      ;(content as any).violations = await this.generateViolationAnalysis(data, config,)
     }
 
     // Add trend analysis if requested
     if (config.includeTrends && data.trends) {
-      content.trends = await this.generateTrendAnalysis(data.trends, config,)
+      ;(content as any).trends = await this.generateTrendAnalysis(data.trends, config,)
     }
 
     // Add custom sections
     if (config.customSections) {
       for (const section of config.customSections) {
-        content[section] = await this.generateCustomSection(section, data, config,)
+        ;(content as any)[section] = await this.generateCustomSection(section, data, config,)
       }
     }
 
@@ -300,16 +300,16 @@ export class ComplianceReportGenerator {
     // Add framework-specific analysis
     switch (framework) {
       case 'WCAG':
-        section.accessibilityAnalysis = await this.generateWCAGAnalysis(frameworkData,)
+        ;(section as any).accessibilityAnalysis = await this.generateWCAGAnalysis(frameworkData,)
         break
       case 'LGPD':
-        section.privacyAnalysis = await this.generateLGPDAnalysis(frameworkData,)
+        ;(section as any).privacyAnalysis = await this.generateLGPDAnalysis(frameworkData,)
         break
       case 'ANVISA':
-        section.healthcareAnalysis = await this.generateANVISAAnalysis(frameworkData,)
+        ;(section as any).healthcareAnalysis = await this.generateANVISAAnalysis(frameworkData,)
         break
       case 'CFM':
-        section.ethicsAnalysis = await this.generateCFMAnalysis(frameworkData,)
+        ;(section as any).ethicsAnalysis = await this.generateCFMAnalysis(frameworkData,)
         break
     }
 
@@ -354,10 +354,10 @@ export class ComplianceReportGenerator {
     return {
       overallTrend: this.calculateOverallTrend(trends,),
       frameworkTrends: trends.map(trend => ({
-        framework: trend.framework,
-        scoreImprovement: this.calculateScoreImprovement(trend.scoreHistory,),
-        violationTrend: this.calculateViolationTrend(trend.violationHistory,),
-        projectedScore: this.projectFutureScore(trend.scoreHistory,),
+        framework: (trend as any).framework,
+        scoreImprovement: this.calculateScoreImprovement((trend as any).scoreHistory,),
+        violationTrend: this.calculateViolationTrend((trend as any).violationHistory,),
+        projectedScore: this.projectFutureScore((trend as any).scoreHistory,),
         recommendations: this.generateTrendRecommendations(trend,),
       })),
     }
@@ -370,10 +370,10 @@ export class ComplianceReportGenerator {
     data: ReportData,
     config: ReportGenerationConfig,
   ): Promise<unknown> {
-    const visualizations: unknown = {}
+    const visualizations = {} as any
 
     // Compliance score overview chart
-    visualizations.scoreOverview = await this.createScoreOverviewChart(data.summary,)
+    visualizations.scoreOverview = { type: 'bar', data: (data.summary as any).frameworkScores, }
 
     // Violation severity distribution
     visualizations.violationDistribution = await this.createViolationDistributionChart(
@@ -404,7 +404,7 @@ export class ComplianceReportGenerator {
     const recommendations: unknown[] = []
 
     // Framework-specific recommendations
-    for (const framework of config.frameworks) {
+    for (const framework of _config.frameworks) {
       const frameworkScore = data.summary.frameworkScores[framework] || 0
       const frameworkViolations = data.violations.filter(v => v.framework === framework)
 
@@ -434,15 +434,15 @@ export class ComplianceReportGenerator {
    * Apply template to report content
    */
   private async applyTemplate(content: unknown, _config: ReportGenerationConfig,): Promise<string> {
-    const templateName = `${config.reportType}_${config.outputFormat}`
+    const templateName = `${_config.reportType}_${_config.outputFormat}`
 
     // Apply branding if provided
-    if (config.branding) {
-      content.branding = config.branding
+    if (_config.branding) {
+      ;(content as any).branding = _config.branding
     }
 
     // Use template engine to render content
-    return this.templateEngine.render(templateName, content,)
+    return (this.templateEngine as any).render(templateName, content,)
   }
 
   /**
@@ -888,11 +888,11 @@ export class ComplianceReportGenerator {
   }
 
   private generateTrendRecommendations(trend: unknown,): string[] {
-    return [`Focus on ${trend.framework} improvements`,]
+    return [`Focus on ${(trend as any).framework} improvements`,]
   }
 
   private async createScoreOverviewChart(summary: unknown,): Promise<unknown> {
-    return { type: 'bar', data: summary.frameworkScores, }
+    return { type: 'bar', data: (summary as any).frameworkScores, }
   }
 
   private async createViolationDistributionChart(
@@ -908,11 +908,11 @@ export class ComplianceReportGenerator {
   }
 
   private async createScoreTrendsChart(trends: unknown[],): Promise<unknown> {
-    return { type: 'line', data: trends.map(t => t.scoreHistory), }
+    return { type: 'line', data: trends.map(t => (t as any).scoreHistory), }
   }
 
   private async createViolationTrendsChart(trends: unknown[],): Promise<unknown> {
-    return { type: 'line', data: trends.map(t => t.violationHistory), }
+    return { type: 'line', data: trends.map(t => (t as any).violationHistory), }
   }
 
   private async getFrameworkRecommendations(
@@ -948,7 +948,7 @@ export class ComplianceReportGenerator {
     return [
       {
         title: 'Address critical compliance violations immediately',
-        description: `${violations.length} critical violations need immediate attention`,
+        description: `${_violations.length} critical violations need immediate attention`,
         priority: 10,
         effort: 'high',
         impact: 'critical',

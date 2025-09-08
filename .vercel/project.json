@@ -9,7 +9,7 @@
     "installCommand": null,
     "buildCommand": null,
     "outputDirectory": ".next",
-    "rootDirectory": "apps/web",
+    "rootDirectory": null,
     "directoryListing": false,
     "nodeVersion": "22.x"
   }

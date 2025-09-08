@@ -368,7 +368,7 @@ export const useComplianceReports = () => {
         setIsGenerating(true,)
         setError(null,)
 
-        const result = await complianceService.generateReport(frameworks, options,)
+        const result = await complianceService.generateReport(frameworks, options as any,)
 
         const newReport = {
           id: result.reportId,

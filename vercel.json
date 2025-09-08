@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "framework": "nextjs",
   "regions": ["gru1"],
   "outputDirectory": "apps/web/.next",
   "installCommand": "corepack enable && corepack prepare pnpm@8.15.8 --activate && pnpm -w install --frozen-lockfile",

@@ -211,7 +211,7 @@ export function DashboardLayout({
         <div className="flex items-center gap-4">
           <Select
             value={selectedDashboard}
-            onValueChange={(value,) => setSelectedDashboard(value as DashboardType,)}
+            onValueChange={(value: string,) => setSelectedDashboard(value as DashboardType,)}
           >
             <SelectTrigger className="w-64">
               <SelectValue />

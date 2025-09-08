@@ -531,7 +531,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                 </Label>
                 <Select
                   value={reportType}
-                  onValueChange={(value: unknown,) => setReportType(value,)}
+                  onValueChange={(value: string,) => setReportType(value as any,)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -553,7 +553,7 @@ export const ComplianceReportManager: React.FC<ComplianceReportManagerProps> = (
                 </Label>
                 <Select
                   value={outputFormat}
-                  onValueChange={(value: unknown,) => setOutputFormat(value,)}
+                  onValueChange={(value: string,) => setOutputFormat(value as any,)}
                 >
                   <SelectTrigger>
                     <SelectValue />

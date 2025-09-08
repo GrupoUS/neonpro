@@ -171,7 +171,11 @@ export default defineConfig({
         find: /^@\/components\/ui$/,
         replacement: path.resolve(__dirname, './apps/web/components/ui/index.ts',),
       },
-      { find: /^@\/components/, replacement: path.resolve(__dirname, './apps/web/components',), },
+      {
+        find: /^@\/components\/ui\/(.*)$/,
+        replacement: path.resolve(__dirname, './apps/web/components/ui',) + '/$1',
+      },
+      { find: /^@\/components\/(.*)$/, replacement: path.resolve(__dirname, './apps/web/components',) + '/$1', },
       { find: /^@\/lib/, replacement: path.resolve(__dirname, 'apps/web/lib',), },
 
       // Generic app alias (kept after specifics)
@@ -194,8 +198,10 @@ export default defineConfig({
       },
 
       // React resolutions for isolation
+      { find: 'react/jsx-runtime', replacement: path.resolve(__dirname, './node_modules/react/jsx-runtime.js') },
+      { find: 'react/jsx-dev-runtime', replacement: path.resolve(__dirname, './node_modules/react/jsx-dev-runtime.js') },
       { find: 'react', replacement: path.resolve(__dirname, './node_modules/react',), },
-      { find: 'react-dom', replacement: path.resolve(__dirname, './node_modules/react-dom',), },
+      { find: 'react-dom', replacement: path.resolve(__dirname, './node_modules/react-dom',), }
     ],
   },
   // Vite-only option; ignore during Vitest config parsing

@@ -7,7 +7,12 @@
 
 import { Button, } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
-import { clientEnv, } from '@/lib/env'
+// TODO: Replace with actual clientEnv when available
+const clientEnv = {
+  app: {
+    environment: process.env.NODE_ENV || 'development',
+  },
+}
 import { AlertTriangle, Bug, Home, RefreshCw, } from 'lucide-react'
 import type { ErrorInfo, ReactNode, } from 'react'
 import React, { Component, } from 'react'

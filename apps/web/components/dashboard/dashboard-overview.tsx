@@ -22,7 +22,8 @@ export function DashboardOverview() {
       {/* Welcome Section */}
       <div>
         <h1 className="font-bold text-3xl">
-          Bem-vindo de volta, {user?.name || 'Usuário'}!
+          Bem-vindo de volta,{' '}
+          {user?.user_metadata?.full_name || user?.email?.split('@',)[0] || 'Usuário'}!
         </h1>
         <p className="text-muted-foreground">
           Aqui está um resumo da sua clínica hoje

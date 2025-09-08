@@ -3,7 +3,8 @@
  * Tests compliance with Brazilian healthcare regulations including RDC 11/2014 for medical records
  */
 
-import type { ComplianceTestResult, ComplianceViolation, } from '../types'
+import type { ComplianceViolation, } from '../types'
+import type { ComplianceTestResult, } from './ComplianceTestRunner'
 
 export interface ANVISATestConfig {
   checkMedicalRecords?: boolean

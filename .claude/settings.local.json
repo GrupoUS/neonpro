@@ -36,7 +36,9 @@
       "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run type-check --filter=@neonpro/web)",
       "mcp__desktop-commander__move_file",
       "Bash(npx tsc:*)",
-      "mcp__desktop-commander__list_sessions"
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(node:*)"
     ]
   },
   "enabledMcpjsonServers": [
@@ -237,6 +239,50 @@
             "Environment validation via guard-nonprod-only.py",
             "User confirmation with search pattern",
             "Pattern validation and security checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Bash(git ls-tree:*)",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  GIT LS-TREE WARNING ⚠️\n\nThis will execute git ls-tree command which can:\n• Access repository structure and file information\n• Potentially expose sensitive file paths\n• Consume system resources for large repositories\n• Reveal repository architecture\n\nEnvironment: {environment}\nCommand: git ls-tree with flags\n\nNote: Dangerous flags like -p, --patch, -S, -G are restricted.\nOnly safer flags like --name-only are allowed.\n\nConfirm you want to execute this git command?",
+        "metadata": {
+          "description": "Git ls-tree execution with security protection and flag validation",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation that rejects dangerous flags"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "Dangerous flag validation (blocks -p, --patch, -S, -G)",
+            "User confirmation with command details",
+            "Repository access validation"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Bash(git log:*)",
+      "preToolUse": {
+        "guardScript": "scripts/guard-nonprod-only.py",
+        "confirmationRequired": true,
+        "confirmationPrompt": "⚠️  GIT LOG WARNING ⚠️\n\nThis will execute git log command which can:\n• Access commit history and potentially sensitive information\n• Expose author information and commit messages\n• Consume system resources for large repositories\n• Reveal development patterns and repository history\n\nEnvironment: {environment}\nCommand: git log with flags\n\nNote: Dangerous flags like -p, --patch, -S, -G are restricted.\nOnly safer flags like --oneline, --name-only are allowed.\n\nConfirm you want to execute this git command?",
+        "metadata": {
+          "description": "Git log execution with security protection and flag validation",
+          "requirements": [
+            "Non-production environment (CLAUDE_ENV != production)",
+            "Explicit user confirmation",
+            "Guard script validation that rejects dangerous flags"
+          ],
+          "safetyChecks": [
+            "Environment validation via guard-nonprod-only.py",
+            "Dangerous flag validation (blocks -p, --patch, -S, -G)",
+            "User confirmation with command details",
+            "Repository access validation"
           ]
         }
       }

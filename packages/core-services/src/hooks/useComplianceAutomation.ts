@@ -132,7 +132,7 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true,) => {
       const interval = setInterval(fetchStatus, 5 * 60 * 1000,)
       return () => clearInterval(interval,)
     }
-    return undefined
+    return
   }, [fetchStatus, autoRefresh,],)
 
   return {

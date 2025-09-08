@@ -7,11 +7,11 @@
  */
 
 // Re-export types if needed
-export type { AnalyticsData, ChartDataPoint, Metric, } from './AIAnalyticsDashboard'
+// export type { AnalyticsMetrics, AIInsight, } from './AIAnalyticsDashboard'
 export { AIAnalyticsDashboard, } from './AIAnalyticsDashboard'
-export type { AuditLog, ComplianceFramework, ComplianceStatus, } from './ComplianceStatusDashboard'
+// export type { AuditLog, ComplianceFramework, ComplianceStatus, } from './ComplianceStatusDashboard'
 export { ComplianceStatusDashboard, } from './ComplianceStatusDashboard'
-export type { HealthAlert, HealthMetrics, SystemStatus, } from './HealthMonitoringDashboard'
+// export type { HealthAlert, HealthMetrics, SystemStatus, } from './HealthMonitoringDashboard'
 export { HealthMonitoringDashboard, } from './HealthMonitoringDashboard'
 export { PerformanceMetricsDashboard, } from './PerformanceMetricsDashboard'
 export { RealTimeActivityDashboard, } from './RealTimeActivityDashboard'

@@ -975,7 +975,7 @@ export function announceStatus(message: string,) {
 function parseColor(color: string,): { r: number; g: number; b: number } | null {
   // Handle hex colors
   if (color.startsWith('#',)) {
-    const hex = color.substring(1,)
+    const hex = color.slice(1,)
     if (hex.length === 3) {
       return {
         r: parseInt(hex[0] + hex[0], 16,),
@@ -985,9 +985,9 @@ function parseColor(color: string,): { r: number; g: number; b: number } | null 
     }
     if (hex.length === 6) {
       return {
-        r: parseInt(hex.substring(0, 2,), 16,),
-        g: parseInt(hex.substring(2, 4,), 16,),
-        b: parseInt(hex.substring(4, 6,), 16,),
+        r: parseInt(hex.slice(0, 2,), 16,),
+        g: parseInt(hex.slice(2, 4,), 16,),
+        b: parseInt(hex.slice(4, 6,), 16,),
       }
     }
   }

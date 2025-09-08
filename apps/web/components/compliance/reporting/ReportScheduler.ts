@@ -222,7 +222,7 @@ export class ReportScheduler {
 
       // Generate report
       const report = await this.reportGenerator.generateReport(
-        complianceData,
+        complianceData as any,
         schedule.reportConfig,
       )
 
@@ -247,7 +247,7 @@ export class ReportScheduler {
         duration,
         success: true,
         report,
-        distributionResults,
+        distributionResults: distributionResults as any,
       }
     } catch (error) {
       const endTime = new Date()
@@ -390,9 +390,9 @@ export class ReportScheduler {
    * Collect compliance data for report generation
    */
   private async collectComplianceData(frameworks: ComplianceFramework[],): Promise<unknown> {
-    const scores = []
-    const violations = []
-    const testResults = []
+    const scores: any[] = []
+    const violations: any[] = []
+    const testResults: any[] = []
 
     for (const framework of frameworks) {
       const frameworkScores = await complianceService.fetchComplianceScores(framework,)
@@ -441,15 +441,17 @@ export class ReportScheduler {
   private passesFilters(data: unknown, filters?: ReportSchedule['filters'],): boolean {
     if (!filters) return true
 
-    if (filters.minimumScore && data.summary.overallScore < filters.minimumScore) {
+    if (filters.minimumScore && (data as any).summary.overallScore < filters.minimumScore) {
       return false
     }
 
-    if (filters.maximumViolations && data.summary.totalViolations > filters.maximumViolations) {
+    if (
+      filters.maximumViolations && (data as any).summary.totalViolations > filters.maximumViolations
+    ) {
       return false
     }
 
-    if (filters.criticalViolationsOnly && data.summary.criticalViolations === 0) {
+    if (filters.criticalViolationsOnly && (data as any).summary.criticalViolations === 0) {
       return false
     }
 
@@ -468,13 +470,14 @@ export class ReportScheduler {
     // Email distribution
     if (schedule.distribution.email?.enabled) {
       try {
-        await this.sendEmailReport(report, schedule.distribution.email,)
-        results.email = {
+        await (this.sendEmailReport as any)(report, schedule.distribution.email,)
+        const resultsAny = results as any
+        resultsAny.email = {
           success: true,
           recipients: schedule.distribution.email.recipients,
         }
       } catch (error) {
-        results.email = {
+        ;(results as any).email = {
           success: false,
           recipients: schedule.distribution.email.recipients,
           error: error instanceof Error ? error.message : 'Email sending failed',
@@ -489,9 +492,9 @@ export class ReportScheduler {
           report,
           schedule.distribution.webhook,
         )
-        results.webhook = { success: true, statusCode, }
+        ;(results as any).webhook = { success: true, statusCode, }
       } catch (error) {
-        results.webhook = {
+        ;(results as any).webhook = {
           success: false,
           error: error instanceof Error ? error.message : 'Webhook failed',
         }
@@ -502,9 +505,9 @@ export class ReportScheduler {
     if (schedule.distribution.storage?.enabled) {
       try {
         const location = await this.uploadToStorage(report, schedule.distribution.storage,)
-        results.storage = { success: true, location, }
+        ;(results as any).storage = { success: true, location, }
       } catch (error) {
-        results.storage = {
+        ;(results as any).storage = {
           success: false,
           error: error instanceof Error ? error.message : 'Storage upload failed',
         }
@@ -515,9 +518,9 @@ export class ReportScheduler {
     if (schedule.distribution.dashboard?.enabled) {
       try {
         await this.notifyDashboard(report, schedule.distribution.dashboard,)
-        results.dashboard = { success: true, }
+        ;(results as any).dashboard = { success: true, }
       } catch (error) {
-        results.dashboard = {
+        ;(results as any).dashboard = {
           success: false,
           error: error instanceof Error ? error.message : 'Dashboard notification failed',
         }
@@ -551,7 +554,7 @@ export class ReportScheduler {
 
   // Helper methods for distribution (mock implementations)
   private async sendEmailReport(report: GeneratedReport, config: unknown,): Promise<void> {
-    console.log(`📧 Sending email report to ${config.recipients.join(', ',)}`,)
+    console.log(`📧 Sending email report to ${(config as any).recipients.join(', ',)}`,)
     // Would implement actual email sending
   }
 
@@ -559,15 +562,15 @@ export class ReportScheduler {
     report: GeneratedReport,
     config: unknown,
   ): Promise<number> {
-    console.log(`🔗 Sending webhook notification to ${config.url}`,)
+    console.log(`🔗 Sending webhook notification to ${(config as any).url}`,)
     // Would implement actual webhook call
     return 200
   }
 
   private async uploadToStorage(report: GeneratedReport, config: unknown,): Promise<string> {
-    console.log(`☁️ Uploading report to ${config.location}`,)
+    console.log(`☁️ Uploading report to ${(config as any).location}`,)
     // Would implement actual storage upload
-    return `${config.location}/${report.id}`
+    return `${(config as any).location}/${report.id}`
   }
 
   private async notifyDashboard(report: GeneratedReport, _config: unknown,): Promise<void> {

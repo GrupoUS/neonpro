@@ -576,7 +576,7 @@ export class RemediationEngine {
   /**
    * Process auto-remediation queue
    */
-  private async startQueueProcessor(): void {
+  private async startQueueProcessor(): Promise<void> {
     setInterval(async () => {
       if (this.isProcessingQueue || this.autoRemediationQueue.length === 0) {
         return
