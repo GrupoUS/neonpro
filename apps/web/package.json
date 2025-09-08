@@ -31,7 +31,6 @@
     "@hookform/resolvers": "^3.10.0",
     "@neonpro/database": "workspace:*",
     "@neonpro/shared": "workspace:*",
-    "@neonpro/ui": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "@prisma/client": "^5.7.1",
     "@radix-ui/react-avatar": "^1.0.4",

@@ -2,9 +2,9 @@
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { AlertTriangle, Bot, CheckCircle, User } from "lucide-react";
 import { useMemo } from "react";
+import { cn } from "../../lib/utils";
 import { ConfidenceIndicator } from "./confidence-indicator";
 
 export interface Message {

@@ -14,7 +14,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from "../ui";
 import { cn } from "@neonpro/utils";
 import {
   AlertTriangle,

@@ -23,7 +23,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import {
   Activity,
   AlertCircle,

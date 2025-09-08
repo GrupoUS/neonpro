@@ -13,7 +13,7 @@ import {
   CardTitle,
   Input,
   Separator,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import {
   CheckCircle,
   Clock,

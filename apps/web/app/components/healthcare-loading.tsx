@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, Progress } from "@neonpro/ui";
+import { Card, CardContent, Progress } from "@/components/ui";
 import { motion } from "framer-motion";
 import { Activity, Heart, Shield, Stethoscope } from "lucide-react";
 

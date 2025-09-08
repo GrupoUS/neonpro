@@ -1,0 +1,372 @@
+/**
+ * Consolidated Patient Management API
+ * Handles all patient-related operations: CRUD, search, profile management
+ * Consolidates: profile, search, timeline, insights, consent endpoints
+ *
+ * For aesthetic clinic patient management and consultation tracking
+ */
+
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+
+interface PatientRequest {
+  action?: "search" | "profile" | "timeline" | "insights" | "data-consent";
+  query?: string;
+  filters?: {
+    ageRange?: [number, number];
+    gender?: "M" | "F" | "Other";
+    status?: "active" | "inactive" | "pending";
+    lastVisit?: string;
+  };
+  patientData?: {
+    name: string;
+    email: string;
+    phone: string;
+    cpf: string;
+    birthDate: string;
+    gender: "M" | "F" | "Other";
+    address?: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+    };
+    medicalHistory?: string[];
+    allergies?: string[];
+    medications?: string[];
+  };
+  dataConsent?: {
+    dataProcessing: boolean;
+    marketing: boolean;
+    consentDate: string;
+  };
+}
+
+interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  cpf: string;
+  birthDate: string;
+  gender: "M" | "F" | "Other";
+  status: "active" | "inactive" | "pending";
+  createdAt: string;
+  updatedAt: string;
+  lastVisit?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  medicalHistory?: string[];
+  allergies?: string[];
+  medications?: string[];
+  dataConsent: {
+    dataProcessing: boolean;
+    marketing: boolean;
+    consentDate: string;
+    ipAddress: string;
+  };
+  insights?: {
+    riskScore: number;
+    treatmentRecommendations: string[];
+    nextAppointmentSuggestion: string;
+    complianceStatus: "compliant" | "needs_attention" | "non_compliant";
+  };
+  timeline?: {
+    id: string;
+    type: "appointment" | "treatment" | "note" | "consent_update";
+    date: string;
+    description: string;
+    professional?: string;
+    metadata?: Record<string, unknown>;
+  }[];
+}
+
+interface PatientResponse {
+  success: boolean;
+  action?: string;
+  data?: {
+    patients?: Patient[];
+    patient?: Patient;
+    total?: number;
+    page?: number;
+    insights?: Patient["insights"];
+    timeline?: Patient["timeline"];
+    lgpdStatus?: {
+      compliant: boolean;
+      lastUpdate: string;
+      requiredActions: string[];
+    };
+  };
+  message?: string;
+}
+
+const DEFAULT_CONSENT: Patient["dataConsent"] = {
+  dataProcessing: false,
+  marketing: false,
+  consentDate: new Date().toISOString(),
+  ipAddress: "",
+};
+
+// GET /api/patients - List patients with optional search and filters
+// GET /api/patients?action=search&query=... - Search patients
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const action = searchParams.get("action");
+    const query = searchParams.get("query");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
+    switch (action) {
+      case "search":
+        return handlePatientSearch({ query, page, limit });
+
+      default:
+        return handlePatientList({ page, limit, searchParams });
+    }
+  } catch (error) {
+    console.error("Patients API error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+// POST /api/patients - Create new patient
+export async function POST(request: NextRequest) {
+  try {
+    const body: PatientRequest = await request.json();
+
+    if (!body.patientData) {
+      return NextResponse.json(
+        { success: false, message: "Patient data required" },
+        { status: 400 },
+      );
+    }
+
+    return handlePatientCreate(body);
+  } catch (error) {
+    console.error("Patients API POST error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+// PUT /api/patients - Update patient
+export async function PUT(request: NextRequest) {
+  try {
+    const body: PatientRequest & { patientId: string; } = await request.json();
+
+    if (!body.patientId) {
+      return NextResponse.json(
+        { success: false, message: "Patient ID required" },
+        { status: 400 },
+      );
+    }
+
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const requestIp = forwardedFor?.split(",")[0]?.trim() || "";
+
+    return handlePatientUpdate(body, { requestIp });
+  } catch (error) {
+    console.error("Patients API PUT error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+// Handler functions
+async function handlePatientList(params: {
+  page: number;
+  limit: number;
+  searchParams: URLSearchParams;
+}): Promise<NextResponse<PatientResponse>> {
+  // Mock patient data - in production would query database
+  const mockPatients: Patient[] = [
+    {
+      id: "patient-1",
+      name: "Maria Silva",
+      email: "maria.silva@email.com",
+      phone: "+55 11 99999-9999",
+      cpf: "123.456.789-00",
+      birthDate: "1985-03-15",
+      gender: "F",
+      status: "active",
+      createdAt: "2024-01-15T10:00:00Z",
+      updatedAt: "2024-01-20T14:30:00Z",
+      lastVisit: "2024-01-20T14:30:00Z",
+      dataConsent: {
+        dataProcessing: true,
+        marketing: false,
+        consentDate: "2024-01-15T10:00:00Z",
+        ipAddress: "192.168.1.1",
+      },
+    },
+    {
+      id: "patient-2",
+      name: "João Santos",
+      email: "joao.santos@email.com",
+      phone: "+55 11 88888-8888",
+      cpf: "987.654.321-00",
+      birthDate: "1990-07-22",
+      gender: "M",
+      status: "active",
+      createdAt: "2024-01-10T09:00:00Z",
+      updatedAt: "2024-01-18T16:45:00Z",
+      lastVisit: "2024-01-18T16:45:00Z",
+      dataConsent: {
+        dataProcessing: true,
+        marketing: true,
+        consentDate: "2024-01-10T09:00:00Z",
+        ipAddress: "192.168.1.2",
+      },
+    },
+  ];
+
+  const startIndex = (params.page - 1) * params.limit;
+  const endIndex = startIndex + params.limit;
+  const paginatedPatients = mockPatients.slice(startIndex, endIndex);
+
+  return NextResponse.json({
+    success: true,
+    data: {
+      patients: paginatedPatients,
+      total: mockPatients.length,
+      page: params.page,
+    },
+  });
+}
+
+async function handlePatientSearch(params: {
+  query?: string | null;
+  page: number;
+  limit: number;
+}): Promise<NextResponse<PatientResponse>> {
+  // Mock search functionality - in production would use database search
+  const mockResults: Patient[] = params.query
+    ? [
+      {
+        id: "patient-search-1",
+        name: `Resultado para: ${params.query}`,
+        email: "resultado@email.com",
+        phone: "+55 11 77777-7777",
+        cpf: "111.222.333-44",
+        birthDate: "1988-05-10",
+        gender: "F",
+        status: "active",
+        createdAt: "2024-01-12T11:00:00Z",
+        updatedAt: "2024-01-19T13:20:00Z",
+        dataConsent: {
+          dataProcessing: true,
+          marketing: false,
+          consentDate: "2024-01-12T11:00:00Z",
+          ipAddress: "192.168.1.3",
+        },
+      },
+    ]
+    : [];
+
+  return NextResponse.json({
+    success: true,
+    action: "search",
+    data: {
+      patients: mockResults,
+      total: mockResults.length,
+      page: params.page,
+    },
+  });
+}
+
+async function handlePatientCreate(body: PatientRequest): Promise<NextResponse<PatientResponse>> {
+  // Mock patient creation - in production would save to database
+  const nowIso = new Date().toISOString();
+  const serverAssignedId = `patient-${Date.now()}`;
+  const clientConsent = body.dataConsent ?? {};
+
+  // Spread client-provided data first, then explicitly set server-controlled fields
+  const patientData = (body.patientData ?? {}) as Partial<Patient>;
+  const newPatient: Patient = {
+    // Required fields with non-empty defaults
+    name: patientData.name || "MVP Patient",
+    email: patientData.email || "mvp@example.com",
+    phone: patientData.phone || "+55 11 0000-0000",
+    birthDate: patientData.birthDate || "1990-01-01",
+    // Optional fields
+    address: patientData.address,
+    medicalHistory: patientData.medicalHistory,
+    // Spread remaining client data (excluding conflicting fields)
+    ...patientData,
+    // Server-controlled fields (override any client data)
+    id: serverAssignedId,
+    cpf: "000.000.000-00", // MVP default
+    gender: "Other",
+    status: "pending",
+    createdAt: nowIso,
+    updatedAt: nowIso,
+    dataConsent: {
+      dataProcessing: true,
+      marketing: false,
+      consentDate: nowIso,
+      ipAddress: "192.168.1.100", // Would get from request
+    },
+  };
+
+  return NextResponse.json({
+    success: true,
+    data: { patient: newPatient },
+    message: "Patient created successfully",
+  });
+}
+
+async function handlePatientUpdate(
+  body: PatientRequest & { patientId: string; },
+  opts?: { requestIp?: string; existingPatient?: Patient | null; },
+): Promise<NextResponse<PatientResponse>> {
+  // Mock patient update - in production would update database
+  const clientConsent = body.dataConsent ?? {};
+  const existingPatient = opts?.existingPatient ?? null;
+  const requestIp = opts?.requestIp || "";
+
+  const mergedConsent: Patient["dataConsent"] = {
+    ...DEFAULT_CONSENT,
+    ...existingPatient?.dataConsent,
+    ...clientConsent,
+    ipAddress: requestIp,
+  };
+
+  const patientData = (body.patientData ?? {}) as Partial<Patient>;
+  const updatedPatient: Patient = {
+    // Required fields with defaults
+    name: patientData.name || "Updated Patient",
+    email: patientData.email || "updated@example.com",
+    phone: patientData.phone || "+55 11 0000-0001",
+    cpf: patientData.cpf || "000.000.000-01",
+    birthDate: patientData.birthDate || "1990-01-01",
+    gender: patientData.gender || "Other",
+    // Spread remaining client data
+    ...patientData,
+    // Server-controlled fields (override client data)
+    id: body.patientId,
+    status: "active",
+    createdAt: "2024-01-15T10:00:00Z", // Would come from database
+    updatedAt: new Date().toISOString(),
+    dataConsent: mergedConsent,
+  };
+
+  return NextResponse.json({
+    success: true,
+    data: { patient: updatedPatient },
+    message: "Patient updated successfully",
+  });
+}
+
+export const dynamic = "force-dynamic";

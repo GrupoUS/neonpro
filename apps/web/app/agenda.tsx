@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDate, formatTime } from "@/lib/utils";
-import { Button, Card } from "@neonpro/ui";
+import { Button, Card } from "@/components/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,

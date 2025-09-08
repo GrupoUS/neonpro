@@ -6,7 +6,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
-    "@neonpro/ui",
     "@neonpro/brazilian-healthcare-ui",
     "@neonpro/types",
     "@neonpro/utils",
@@ -16,7 +15,7 @@ const nextConfig = {
   experimental: {},
   // Only skip TypeScript checking if explicitly allowed (defaults to false for type safety)
   typescript: {
-    ignoreBuildErrors: process.env.NEXT_ALLOW_IGNORE_TS_ERRORS === 'true',
+    ignoreBuildErrors: process.env.NEXT_ALLOW_IGNORE_TS_ERRORS === "true",
   },
   // Skip problematic API routes during build
   generateBuildId: async () => {

@@ -20,8 +20,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./*"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
+
       "@neonpro/utils": ["./packages/utils/src"],
       "@neonpro/utils/*": ["./packages/utils/src/*"],
       "@neonpro/database": ["./packages/database/src"],
@@ -71,9 +70,7 @@
     {
       "path": "./apps/api"
     },
-    {
-      "path": "./packages/ui"
-    },
+
     {
       "path": "./packages/utils"
     },

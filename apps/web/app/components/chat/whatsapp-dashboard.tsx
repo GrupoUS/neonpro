@@ -52,7 +52,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from "@/components/ui";
 
 // Custom components
 import { WhatsappChat } from "./whatsapp-chat";

@@ -26,7 +26,6 @@ export default defineConfig({
             "apps/web/tests/components/**/*.test.{ts,tsx}",
             "apps/web/tests/hooks/**/*.test.{ts,tsx}",
             "apps/api/src/**/*.test.{ts}",
-            "packages/ui/tests/**/*.test.{ts,tsx}",
             "packages/utils/tests/**/*.test.{ts}",
             "packages/core-services/tests/**/*.test.{ts}",
             "packages/shared/tests/**/*.test.{ts,tsx}",
@@ -43,18 +42,20 @@ export default defineConfig({
           hookTimeout: 5_000,
           coverage: {
             provider: "v8",
-            reporter: ["text", "json"],
+            reporter: ["text", "json", "json-summary"],
             include: [
-              "apps/web/tests/**",
-              "packages/ui/**",
-              "packages/utils/**",
-              "tools/tests/**",
+              "apps/web/app/**/*.{ts,tsx}",
+              "apps/web/components/**/*.{ts,tsx}",
+              "apps/api/src/**/*.{ts,tsx}",
+              "packages/*/src/**/*.{ts,tsx}",
             ],
             exclude: [
               "packages/health-dashboard/**",
               "**/dist/**",
+              "**/build/**",
               "**/.next/**",
               "**/.turbo/**",
+              "**/tests/**",
             ],
             thresholds: {
               global: { branches: 80, functions: 85, lines: 85, statements: 85 },
@@ -71,7 +72,6 @@ export default defineConfig({
           poolOptions: { forks: { singleFork: false, maxForks: 2 } },
           include: [
             "apps/web/tests/integration/**/*.test.{ts,tsx}",
-            "packages/*/tests/integration/**/*.test.{ts,tsx}",
           ],
           testTimeout: 15_000,
           hookTimeout: 10_000,
@@ -79,7 +79,7 @@ export default defineConfig({
           retry: 1,
           coverage: {
             provider: "v8",
-            reporter: ["text", "json", "html"],
+            reporter: ["text", "json", "json-summary", "html"],
             reportsDirectory: "coverage/integration",
             include: [
               "apps/web/app/**/*.{ts,tsx}",
@@ -147,7 +147,6 @@ export default defineConfig({
           "@testing-library/react",
           "@testing-library/jest-dom",
           "@testing-library/user-event",
-          "@neonpro/ui",
           "@neonpro/shared",
           "@neonpro/utils",
         ],
@@ -187,12 +186,13 @@ export default defineConfig({
         hookTimeout: 5_000,
         coverage: {
           provider: "v8",
-          reporter: ["text", "json"],
+          reportsDirectory: "coverage/unit",
+          reporter: ["text", "json", "json-summary", "clover", "lcov", "html"],
           include: [
-            "apps/web/tests/**",
-            "packages/ui/**",
-            "packages/utils/**",
-            "tools/tests/**",
+            "apps/web/app/**/*.{ts,tsx}",
+            "apps/web/components/**/*.{ts,tsx}",
+            "apps/api/src/**/*.{ts,tsx}",
+            "packages/*/src/**/*.{ts,tsx}",
           ],
           exclude: [
             "packages/health-dashboard/**",
@@ -200,6 +200,7 @@ export default defineConfig({
             "**/build/**",
             "**/.next/**",
             "**/.turbo/**",
+            "**/tests/**",
           ],
           thresholds: {
             global: { branches: 80, functions: 85, lines: 85, statements: 85 },
@@ -224,7 +225,7 @@ export default defineConfig({
         retry: 1,
         coverage: {
           provider: "v8",
-          reporter: ["text", "json", "html"],
+          reporter: ["text", "json", "json-summary", "html"],
           reportsDirectory: "coverage/integration",
           include: [
             "apps/web/app/**/*.{ts,tsx}",
@@ -247,31 +248,43 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
-      { find: /^@\//, replacement: path.resolve(__dirname, "./apps/web/") },
-      { find: /^@$/, replacement: path.resolve(__dirname, "./apps/web") },
-      { find: /^@\/lib(.*)?$/, replacement: path.resolve(__dirname, "./apps/web/lib") + "$1" },
-      {
-        find: /^@\/components(.*)?$/,
-        replacement: path.resolve(__dirname, "./apps/web/components") + "$1",
-      },
+      // Specific first: ensure deep alias wins before generic "@/"
+      { find: /^@\/lib\/utils$/, replacement: path.resolve(__dirname, "./apps/web/lib/utils.ts") },
+      { find: /^@\/components/, replacement: path.resolve(__dirname, "./apps/web/components") },
+      { find: /^@\/lib/, replacement: path.resolve(__dirname, "apps/web/lib") },
+
+      // Generic app alias (kept after specifics)
+      { find: /^@\//, replacement: path.resolve(__dirname, "apps/web") + "/" },
+
+      // Consolidated UI alias → local barrel
       {
         find: /^@neonpro\/ui$/,
-        replacement: path.resolve(__dirname, "./packages/ui/src/index.ts"),
+        replacement: path.resolve(__dirname, "./apps/web/components/ui/index.ts"),
       },
+      {
+        find: /^@neonpro\/ui\//,
+        replacement: path.resolve(__dirname, "./apps/web/components/ui/"),
+      },
+
+      // Specific files
       {
         find: "@/lib/query/query-utils.ts",
         replacement: path.resolve(__dirname, "./apps/web/lib/query/query-utils.ts"),
       },
+
+      // React resolutions for isolation
       { find: "react", replacement: path.resolve(__dirname, "./node_modules/react") },
       { find: "react-dom", replacement: path.resolve(__dirname, "./node_modules/react-dom") },
     ],
   },
+  // Vite-only option; ignore during Vitest config parsing
   optimizeDeps: {
     include: [
       "react",
       "react-dom",
       "@testing-library/react",
       "@testing-library/jest-dom",
+      "@testing-library/user-event",
       "zod",
       "@tanstack/react-query",
     ],

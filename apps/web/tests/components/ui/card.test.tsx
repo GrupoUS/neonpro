@@ -14,12 +14,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../../../packages/ui/src/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 
 // Mock theme provider
 const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (

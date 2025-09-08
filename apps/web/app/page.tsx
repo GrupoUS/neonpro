@@ -3,7 +3,7 @@
 import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { usePatients } from "@/hooks/usePatients";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui";
 import { Building2, Calendar, Shield, TestTube, User } from "lucide-react";
 import Link from "next/link";
 import { PatientsList } from "../components/PatientsList";

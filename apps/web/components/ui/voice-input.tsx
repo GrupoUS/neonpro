@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Mic, Square } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "../../lib/utils";
 import { ConfidenceIndicator } from "./confidence-indicator";
 
 interface VoiceInputProps {

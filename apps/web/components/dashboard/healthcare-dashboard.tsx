@@ -9,7 +9,7 @@
 import { AuditEventType, AuditSeverity, UnifiedAuditService } from "@neonpro/security";
 // ✅ Healthcare domain imports
 import { validateHealthcareAccess } from "@neonpro/security/auth";
-import { useHealthcarePermissions } from "@neonpro/ui";
+import { useHealthcarePermissions } from "../ui";
 // ✅ Type imports
 import type { HealthcareDashboardData } from "@neonpro/types/healthcare";
 
@@ -33,7 +33,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from "../ui";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";

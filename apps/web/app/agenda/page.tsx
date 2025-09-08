@@ -15,7 +15,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from "@/components/ui";
 // AppointmentCalendar component not available - will create mock
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

@@ -3,8 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import React from "react";
+import { cn } from "../../lib/utils";
 
 // Confidence thresholds for healthcare AI operations
 export const ConfidenceThresholds = {

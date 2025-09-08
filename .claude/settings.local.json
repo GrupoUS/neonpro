@@ -27,7 +27,9 @@
       "mcp__serena__replace_symbol_body",
       "Bash(pnpm run:*)",
       "mcp__desktop-commander__list_directory",
-      "mcp__archon__list_projects"
+      "mcp__archon__list_projects",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ]
   },
   "allowedToolsUnguarded": [

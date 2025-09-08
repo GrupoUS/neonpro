@@ -24,7 +24,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import {
   Activity,
   AlertCircle,

@@ -37,7 +37,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 

@@ -4,10 +4,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import type { ErrorInfo, ReactNode } from "react";
 import type React from "react";
 import { Component } from "react";
+import { cn } from "../../lib/utils";
 
 // AI-specific error types for healthcare contexts
 export enum AIErrorType {

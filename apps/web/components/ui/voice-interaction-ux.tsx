@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // import { Progress } from "@/components/ui/progress"; // Unused import
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "../../lib/utils";
 import { ConfidencePatterns } from "./confidence-patterns";
 
 // Voice interaction modes

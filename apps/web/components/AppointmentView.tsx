@@ -1,6 +1,17 @@
 "use client";
 
 import {
+  AlertCircle,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  Edit,
+  Plus,
+  User,
+  XCircle,
+} from "lucide-react";
+import { useCallback, useState } from "react";
+import {
   Badge,
   Button,
   Calendar,
@@ -23,18 +34,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@neonpro/ui";
-import {
-  AlertCircle,
-  Calendar as CalendarIcon,
-  CheckCircle,
-  Clock,
-  Edit,
-  Plus,
-  User,
-  XCircle,
-} from "lucide-react";
-import { useCallback, useState } from "react";
+} from "@/components/ui";
 import type { Appointment, Professional } from "./types/healthcare";
 
 // Extended interfaces for AppointmentView specific needs

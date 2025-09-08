@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 import {
   Maximize2,
   MessageCircle,
@@ -18,6 +17,7 @@ import {
   X,
 } from "lucide-react"; // removed unused PhoneOff, Settings imports
 import { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "../../lib/utils";
 
 // import { ConfidenceIndicator } from "./confidence-indicator"; // Unused import
 import { MessageRenderer } from "./message-renderer";

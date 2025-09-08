@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import { Briefcase, Building2, Check, Shield, Star, Users, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";

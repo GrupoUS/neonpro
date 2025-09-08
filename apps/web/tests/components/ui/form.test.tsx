@@ -22,7 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../../../packages/ui/src/components/ui/form";
+} from "@/components/ui";
 
 // Mock Brazilian validation functions
 vi.mock(

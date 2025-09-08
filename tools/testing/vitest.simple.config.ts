@@ -85,7 +85,7 @@ export default defineConfig({
       "@/providers": path.resolve(__dirname, "../../providers"),
       "@/types": path.resolve(__dirname, "../../lib/types"),
       "@/utils": path.resolve(__dirname, "../../packages/utils/src"),
-      "@neonpro/ui": path.resolve(__dirname, "../../packages/ui/src"),
+
       "@neonpro/utils": path.resolve(__dirname, "../../packages/utils/src"),
       "@neonpro/types": path.resolve(__dirname, "../../packages/types/src"),
     },

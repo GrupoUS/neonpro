@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@neonpro/ui";
+} from "@/components/ui";
 import { Activity, Camera, Edit, Lock, Save, Shield } from "lucide-react";
 import { useState } from "react";
 

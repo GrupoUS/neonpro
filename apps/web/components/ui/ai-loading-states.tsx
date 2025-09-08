@@ -2,8 +2,8 @@
 
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
+import { cn } from "../../lib/utils";
 
 // AI-specific loading states for healthcare workflows
 interface AILoadingStatesProps {

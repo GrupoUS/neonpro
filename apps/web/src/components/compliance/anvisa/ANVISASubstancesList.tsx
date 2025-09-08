@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@neonpro/ui";
-import { Badge, Button, Input } from "@neonpro/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { Badge, Button, Input } from "@/components/ui";
 import React from "react";
 // Using native select for simplicity to avoid type conflicts
 import { Filter, Search } from "lucide-react";

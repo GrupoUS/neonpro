@@ -9,6 +9,7 @@ export {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -23,7 +24,6 @@ export { Form } from "./form";
 export { Input } from "./input";
 export { Label } from "./label";
 export { Popover, PopoverContent, PopoverTrigger } from "./popover";
-export { Progress } from "./progress";
 export { ScrollArea } from "./scroll-area";
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 export { Separator } from "./separator";
@@ -40,7 +40,7 @@ export { useToast } from "./use-toast";
 export { toast } from "./use-toast";
 
 // Alert Components
-export { Alert } from "./alert";
+export { Alert, AlertDescription } from "./alert";
 
 // Loading & State Components
 export { EmptyState } from "./empty-state";

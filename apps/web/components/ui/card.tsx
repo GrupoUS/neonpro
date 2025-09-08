@@ -2,7 +2,7 @@ import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 const cardVariants = cva(
   "flex flex-col gap-6 rounded-xl border text-card-foreground transition-all duration-200 relative",

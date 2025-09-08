@@ -102,17 +102,6 @@
       "outputs": ["dist/**"]
     },
 
-    "@neonpro/ui#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "styles/**/*.{css,scss}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["dist/**"]
-    },
-
     "@neonpro/core-services#build": {
       "dependsOn": [
         "@neonpro/types#build",

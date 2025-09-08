@@ -1,6 +1,20 @@
 "use client";
 
 import {
+  Activity,
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  FileText,
+  PieChart,
+  Star,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
+import {
   Alert,
   AlertDescription,
   Avatar,
@@ -18,21 +32,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
-import {
-  Activity,
-  AlertCircle,
-  BarChart3,
-  Calendar,
-  Clock,
-  DollarSign,
-  FileText,
-  PieChart,
-  Star,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
+} from "@/components/ui";
 
 interface ClinicMetrics {
   totalPatients: number;
