@@ -28,7 +28,7 @@ import {
   Settings,
   Shield,
 } from 'lucide-react'
-import { Suspense, useState, } from 'react'
+import React, { Suspense, useState, } from 'react'
 
 // Import all dashboards
 import { DASHBOARD_REGISTRY, } from './ai-powered'

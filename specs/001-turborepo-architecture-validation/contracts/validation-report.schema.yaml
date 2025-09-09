@@ -1,0 +1,29 @@
+# OpenAPI fragment representing the validation report contract (Phase 1)
+openapi: 3.1.0
+info:
+  title: NeonPro Turborepo Validation Report
+  version: 0.1.0
+components:
+  schemas:
+    ValidationReport:
+      type: object
+      properties:
+        context:
+          type: object
+        checks:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              file: { type: string }
+              rule_ref: { type: string }
+              status: { type: string, enum: [PASS, FAIL] }
+              notes: { type: string }
+              fix: { type: string }
+        summary:
+          type: object
+          properties:
+            overall: { type: string, enum: [PASS, FAIL] }
+            sections:
+              type: object

@@ -5,10 +5,10 @@
  * Validates environment on client mount and handles errors gracefully
  */
 
-import { initializeGlobalErrorHandler, } from '@/lib/global-error-handler'
-import { initializeClient, } from '@/lib/init'
-import type { StartupValidationResult, } from '@/lib/startup'
 import { useEffect, useState, } from 'react'
+import { initializeGlobalErrorHandler, } from '../lib/global-error-handler'
+import { initializeClient, } from '../lib/init'
+import type { StartupValidationResult, } from '../lib/startup'
 
 interface ClientInitProps {
   children: React.ReactNode

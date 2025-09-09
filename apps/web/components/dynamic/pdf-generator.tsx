@@ -2,6 +2,7 @@
 
 import { LoadingWithMessage, } from '@/components/ui/loading-skeleton'
 import dynamic from 'next/dynamic'
+import type React from 'react'
 import { Suspense, useCallback, useState, } from 'react'
 
 // TODO: Create missing PDF modules

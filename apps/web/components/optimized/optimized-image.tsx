@@ -237,7 +237,7 @@ export function OptimizedImage({
 export function PatientPhoto(props: Omit<OptimizedImageProps, 'medicalImageType'>,) {
   return (
     <OptimizedImage
-      {...props}
+      {...(props as any)}
       medicalImageType="patient-photo"
       className={cn('rounded-full', props.className,)}
     />
@@ -247,7 +247,7 @@ export function PatientPhoto(props: Omit<OptimizedImageProps, 'medicalImageType'
 export function MedicalChart(props: Omit<OptimizedImageProps, 'medicalImageType'>,) {
   return (
     <OptimizedImage
-      {...props}
+      {...(props as any)}
       medicalImageType="chart"
       priority
       className={cn('rounded-lg shadow-sm', props.className,)}
@@ -258,7 +258,7 @@ export function MedicalChart(props: Omit<OptimizedImageProps, 'medicalImageType'
 export function XRayImage(props: Omit<OptimizedImageProps, 'medicalImageType'>,) {
   return (
     <OptimizedImage
-      {...props}
+      {...(props as any)}
       medicalImageType="xray"
       priority
       quality={100}
@@ -270,7 +270,7 @@ export function XRayImage(props: Omit<OptimizedImageProps, 'medicalImageType'>,)
 export function ScanImage(props: Omit<OptimizedImageProps, 'medicalImageType'>,) {
   return (
     <OptimizedImage
-      {...props}
+      {...(props as any)}
       medicalImageType="scan"
       priority
       quality={100}
@@ -282,7 +282,7 @@ export function ScanImage(props: Omit<OptimizedImageProps, 'medicalImageType'>,)
 export function DocumentImage(props: Omit<OptimizedImageProps, 'medicalImageType'>,) {
   return (
     <OptimizedImage
-      {...props}
+      {...(props as any)}
       medicalImageType="document"
       className={cn('rounded border shadow-sm', props.className,)}
     />

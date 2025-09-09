@@ -2,7 +2,7 @@
 
 import { LoadingWithMessage, } from '@/components/ui/loading-skeleton'
 import dynamic from 'next/dynamic'
-import { Suspense, useCallback, useState, } from 'react'
+import React, { Suspense, useCallback, useState, } from 'react'
 
 // TODO: Create missing excel modules
 // const ExcelImporter = dynamic(

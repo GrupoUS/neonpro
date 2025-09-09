@@ -140,5 +140,4 @@ export const FASE4_COMPONENT_REGISTRY = {
 // =============================================================================
 // 🤖 HEALTHCARE AI AGENT CHAT COMPONENT EXPORT
 // =============================================================================
-
-// export { AgentChat, } from './AgentChat' // TODO: File not found
+// AgentChat component has been removed - no active imports found in codebase

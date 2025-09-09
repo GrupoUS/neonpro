@@ -166,7 +166,7 @@ export default function QRHandoffGenerator({
   const [handoffState, setHandoffState,] = useState<QRHandoffState>({ status: 'idle', },)
   const [timeRemaining, setTimeRemaining,] = useState(0,)
   const [networkStatus, setNetworkStatus,] = useState<'online' | 'offline' | 'limited'>('online',)
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | null>(null,)
   const deviceFingerprint = useDeviceFingerprint()
   const { generateHandoffToken, } = useTokenService()
 
@@ -202,7 +202,10 @@ export default function QRHandoffGenerator({
 
         if (remaining === 0) {
           setHandoffState(prev => ({ ...prev, status: 'expired', }))
-          clearInterval(intervalRef.current,)
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current,)
+            intervalRef.current = null
+          }
         } else {
           setTimeRemaining(remaining,)
         }
@@ -404,29 +407,31 @@ export default function QRHandoffGenerator({
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          {(handoffState.status === 'idle' || handoffState.status === 'error'
-            || handoffState.status === 'expired') && (
-            <Button
-              onClick={handleGenerateQR}
-              disabled={handoffState.status === 'generating' || networkStatus === 'offline'}
-              className="flex-1"
-              variant={emergencyMode ? 'destructive' : 'default'}
-            >
-              {handoffState.status === 'generating'
-                ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                )
-                : (
-                  <>
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Generate QR Code
-                  </>
-                )}
-            </Button>
-          )}
+          {handoffState.status === 'generating'
+            ? (
+              <Button
+                disabled
+                className="flex-1"
+                variant={emergencyMode ? 'destructive' : 'default'}
+              >
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Generating...
+              </Button>
+            )
+            : (handoffState.status === 'idle' || handoffState.status === 'error'
+                || handoffState.status === 'expired')
+            ? (
+              <Button
+                onClick={handleGenerateQR}
+                disabled={networkStatus === 'offline'}
+                className="flex-1"
+                variant={emergencyMode ? 'destructive' : 'default'}
+              >
+                <QrCode className="h-4 w-4 mr-2" />
+                Generate QR Code
+              </Button>
+            )
+            : null}
 
           {handoffState.status === 'active' && (
             <Button

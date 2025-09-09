@@ -181,7 +181,7 @@ const useRealTimeSync = (userId: string, enabled: boolean = true,) => {
         .gte('last_active', new Date(Date.now() - 24 * 60 * 60 * 1000,).toISOString(),)
 
       if (sessions) {
-        const deviceSessions: DeviceSession[] = sessions.map(session => ({
+        const deviceSessions: DeviceSession[] = (sessions || []).map((session: any,) => ({
           id: session.id,
           deviceType: session.device_type,
           deviceFingerprint: session.device_fingerprint,
@@ -205,7 +205,7 @@ const useRealTimeSync = (userId: string, enabled: boolean = true,) => {
         .limit(20,)
 
       if (recentActivities) {
-        const syncActivities: SyncActivity[] = recentActivities.map(activity => ({
+        const syncActivities: SyncActivity[] = (recentActivities || []).map((activity: any,) => ({
           id: activity.id,
           action: activity.action,
           deviceId: activity.device_id,
@@ -223,33 +223,35 @@ const useRealTimeSync = (userId: string, enabled: boolean = true,) => {
 
   const handleSessionChange = (payload: Record<string, unknown>,) => {
     const { eventType, new: newRecord, old: oldRecord, } = payload
+    const newRecordTyped = newRecord as any
+    const oldRecordTyped = oldRecord as any
 
     setDevices(prev => {
       switch (eventType) {
         case 'INSERT':
           return [...prev, {
-            id: newRecord.id,
-            deviceType: newRecord.device_type,
-            deviceFingerprint: newRecord.device_fingerprint,
-            lastActive: new Date(newRecord.last_active,).getTime(),
-            isCurrentDevice: newRecord.is_current,
-            syncStatus: newRecord.sync_status,
-            conflictCount: newRecord.conflict_count || 0,
-            location: newRecord.location,
+            id: newRecordTyped.id,
+            deviceType: newRecordTyped.device_type,
+            deviceFingerprint: newRecordTyped.device_fingerprint,
+            lastActive: new Date(newRecordTyped.last_active,).getTime(),
+            isCurrentDevice: newRecordTyped.is_current,
+            syncStatus: newRecordTyped.sync_status,
+            conflictCount: newRecordTyped.conflict_count || 0,
+            location: newRecordTyped.location,
           },]
         case 'UPDATE':
           return prev.map(device =>
-            device.id === newRecord.id
+            device.id === newRecordTyped.id
               ? {
                 ...device,
-                lastActive: new Date(newRecord.last_active,).getTime(),
-                syncStatus: newRecord.sync_status,
-                conflictCount: newRecord.conflict_count || 0,
+                lastActive: new Date(newRecordTyped.last_active,).getTime(),
+                syncStatus: newRecordTyped.sync_status,
+                conflictCount: newRecordTyped.conflict_count || 0,
               }
               : device
           )
         case 'DELETE':
-          return prev.filter(device => device.id !== oldRecord.id)
+          return prev.filter(device => device.id !== oldRecordTyped.id)
         default:
           return prev
       }
@@ -258,15 +260,16 @@ const useRealTimeSync = (userId: string, enabled: boolean = true,) => {
 
   const handleActivityChange = (payload: Record<string, unknown>,) => {
     const { eventType, new: newRecord, } = payload
+    const newRecordTyped = newRecord as any
 
     if (eventType === 'INSERT') {
       setActivities(prev => [{
-        id: newRecord.id,
-        action: newRecord.action,
-        deviceId: newRecord.device_id,
-        timestamp: new Date(newRecord.created_at,).getTime(),
-        status: newRecord.status,
-        progress: newRecord.progress,
+        id: newRecordTyped.id,
+        action: newRecordTyped.action,
+        deviceId: newRecordTyped.device_id,
+        timestamp: new Date(newRecordTyped.created_at,).getTime(),
+        status: newRecordTyped.status,
+        progress: newRecordTyped.progress,
       }, ...prev.slice(0, 19,),])
     }
   }
@@ -324,7 +327,7 @@ export default function SessionSyncManager({
   useEffect(() => {
     const conflicts = devices.filter(d => d.syncStatus === 'conflict')
     if (conflicts.length > 0) {
-      onConflictDetected?.(conflicts,)
+      onConflictDetected?.(conflicts as any,)
     }
   }, [devices, onConflictDetected,],)
 

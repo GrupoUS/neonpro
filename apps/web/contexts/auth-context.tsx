@@ -2,7 +2,7 @@
 
 'use client'
 
-import { createClient, } from '@/app/utils/supabase/client'
+import { createClient, } from '@/lib/supabase'
 import type { AuthError, Session, User, } from '@supabase/supabase-js'
 import { createContext, useContext, useEffect, useState, } from 'react'
 import type { ReactNode, } from 'react'

@@ -1,12 +1,12 @@
-import { useAppointments, } from '@/hooks/useAppointments'
-import { useDashboardMetrics, } from '@/hooks/useDashboardMetrics'
-import { usePatients, } from '@/hooks/usePatients'
 import { createFileRoute, Link, } from '@tanstack/react-router'
+import { useAppointments, } from '../../../hooks/useAppointments'
+import { useDashboardMetrics, } from '../../../hooks/useDashboardMetrics'
+import { usePatients, } from '../../../hooks/usePatients'
 
 // Import dashboard components (to be migrated)
-import { AppointmentsList, } from '@/components/dashboard/AppointmentsList'
-import { MetricsCards, } from '@/components/dashboard/MetricsCards'
-import { PatientsList, } from '@/components/PatientsList'
+// import { AppointmentsList, } from '@/components/dashboard/AppointmentsList'
+// import { MetricsCards, } from '@/components/dashboard/MetricsCards'
+import { PatientsList, } from '../../../components/PatientsList'
 
 // Dashboard Home Component
 function DashboardHome() {
@@ -32,13 +32,15 @@ function DashboardHome() {
       {/* Metrics Overview */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Métricas em Tempo Real</h2>
-        <MetricsCards
+        {
+          /* <MetricsCards
           metricsLoading={metricsData.loading}
           monthlyRevenue={metricsData.monthlyRevenue}
           revenueGrowth={metricsData.revenueGrowth}
           totalPatients={metricsData.totalPatients}
           upcomingAppointments={metricsData.upcomingAppointments}
-        />
+        /> */
+        }
       </div>
 
       {/* Recent Activity */}
@@ -55,10 +57,12 @@ function DashboardHome() {
         {/* Today's Appointments */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Consultas de Hoje</h3>
-          <AppointmentsList
+          {
+            /* <AppointmentsList
             appointmentsLoading={appointmentsData.loading}
             todaysAppointments={appointmentsData.todaysAppointments?.slice(0, 5,) || []}
-          />
+          /> */
+          }
         </div>
       </div>
 

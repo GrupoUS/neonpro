@@ -1,13 +1,13 @@
 'use client'
 
-import { Avatar, AvatarFallback, } from '@/components/ui/avatar'
-import { Badge, } from '@/components/ui/badge'
-import { Button, } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
-import { Skeleton, } from '@/components/ui/skeleton'
+import { useRouter, } from '@tanstack/react-router'
 import { ArrowRight, Users, } from 'lucide-react'
-import { useRouter, } from 'next/navigation'
 import { DASHBOARD_CONSTANTS, PATIENT_SKELETON_INDEXES, } from './constants'
+import { Avatar, AvatarFallback, } from './ui/avatar'
+import { Badge, } from './ui/badge'
+import { Button, } from './ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from './ui/card'
+import { Skeleton, } from './ui/skeleton'
 
 interface Patient {
   id: string
@@ -28,7 +28,7 @@ export function PatientsList({
   const router = useRouter()
 
   const handleViewAllPatients = () => {
-    router.push('/pacientes',)
+    router.navigate({ to: '/patients', },)
   }
 
   const getPatientInitial = (patient: Patient,) => {

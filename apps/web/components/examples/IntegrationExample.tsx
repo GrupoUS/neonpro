@@ -30,6 +30,19 @@ type CreateAppointment = z.infer<typeof CreateAppointmentSchema>
 type CreatePatient = z.infer<typeof CreatePatientSchema>
 type Login = z.infer<typeof LoginRequestSchema>
 type Patient = z.infer<typeof PatientBaseSchema>
+
+// Type guard for safe Patient validation
+const isPatient = (obj: unknown,): obj is Patient => {
+  return (
+    typeof obj === 'object'
+    && obj !== null
+    && typeof (obj as any).id === 'string'
+    && typeof (obj as any).first_name === 'string'
+    && typeof (obj as any).last_name === 'string'
+    && typeof (obj as any).email === 'string'
+  )
+}
+
 import { useState, } from 'react'
 import { toast, } from 'sonner'
 
@@ -217,18 +230,20 @@ export function IntegrationExample() {
                   : patients?.data && Array.isArray(patients.data,) && patients.data.length > 0
                   ? (
                     <div className="space-y-2">
-                      {(patients.data as Patient[]).map((patient,) => (
-                        <div
-                          className="rounded border bg-white p-3"
-                          key={patient.id}
-                        >
-                          <p>
-                            <strong>{patient.first_name} {patient.last_name}</strong>
-                          </p>
-                          <p className="text-gray-600 text-sm">{patient.email}</p>
-                          <p className="text-gray-500 text-xs">ID: {patient.id}</p>
-                        </div>
-                      ))}
+                      {Array.isArray(patients.data,)
+                        ? patients.data.filter(isPatient,).map((patient,) => (
+                          <div
+                            className="rounded border bg-white p-3"
+                            key={patient.id}
+                          >
+                            <p>
+                              <strong>{patient.first_name} {patient.last_name}</strong>
+                            </p>
+                            <p className="text-gray-600 text-sm">{patient.email}</p>
+                            <p className="text-gray-500 text-xs">ID: {patient.id}</p>
+                          </div>
+                        ))
+                        : []}
                     </div>
                   )
                   : <p className="text-gray-600">Nenhum paciente encontrado.</p>}
@@ -248,8 +263,9 @@ export function IntegrationExample() {
                   </h2>
                   <button
                     className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-                    disabled={createAppointmentMutation.isPending || !patients?.data
-                      || !(patients.data as unknown as any[])?.length}
+                    disabled={createAppointmentMutation.isPending
+                      || !Array.isArray(patients?.data,)
+                      || patients.data.length === 0}
                     onClick={handleCreateTestAppointment}
                   >
                     {createAppointmentMutation.isPending

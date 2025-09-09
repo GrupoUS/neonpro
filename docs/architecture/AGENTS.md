@@ -36,7 +36,6 @@ tags:
   - "Use short bullets"
   - "Include relative paths in backticks"
   - "Provide shell commands in fenced code blocks when applicable"
-
 ---
 
 # neonpro-architecture-orchestration-guide

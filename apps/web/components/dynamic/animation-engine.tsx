@@ -2,6 +2,7 @@
 
 import { LoadingWithMessage, } from '@/components/ui/loading-skeleton'
 import dynamic from 'next/dynamic'
+import type React from 'react'
 import { Suspense, useCallback, useState, } from 'react'
 
 // Dynamic imports for Framer Motion
@@ -141,7 +142,7 @@ export function DynamicAnimatedContainer({
         } as any}
         className={className}
       >
-        {children}
+        {children as any}
       </MotionDiv>
     </Suspense>
   )
@@ -167,7 +168,7 @@ export function DynamicPageTransition({
             ease: HealthcareAnimations.gentle.ease as any,
           } as any}
         >
-          {children}
+          {children as any}
         </MotionDiv>
       </AnimatePresence>
     </Suspense>

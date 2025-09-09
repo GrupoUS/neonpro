@@ -2,14 +2,32 @@ import type * as React from 'react'
 
 import { cn, } from '@/lib/utils'
 
-function Card({ className, ...props }: React.ComponentProps<'div'>,) {
+function Card({
+  className,
+  urgency,
+  variant,
+  ...props
+}: React.ComponentProps<'div'> & {
+  urgency?: 'low' | 'medium' | 'high' | 'critical' | 'warning' | 'info' | 'emergency'
+  variant?: 'patient' | 'appointment' | 'professional' | 'alert' | 'emergency'
+},) {
+  const variantClass = variant === 'patient'
+    ? 'border-primary/30'
+    : variant === 'emergency'
+    ? 'animate-pulse-healthcare'
+    : undefined
+
+  const urgencyAttr = urgency ? { 'data-urgency': urgency, } : {}
+
   return (
     <div
       data-slot="card"
       className={cn(
         'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        variantClass,
         className,
       )}
+      {...urgencyAttr}
       {...props}
     />
   )

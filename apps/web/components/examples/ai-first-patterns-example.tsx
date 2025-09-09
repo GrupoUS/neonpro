@@ -293,7 +293,7 @@ function AIFirstWorkflow() {
 
                     <Alert>
                       <AlertDescription>
-                        <strong>Resultado:</strong> {String(aiResults.result)}
+                        <strong>Resultado:</strong> {String(aiResults.result,)}
                       </AlertDescription>
                     </Alert>
 
@@ -707,4 +707,4 @@ function ComponentDocumentation() {
   )
 }
 
-export { AIFirstPatternsExample }
+export { AIFirstPatternsExample, }

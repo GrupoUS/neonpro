@@ -1,7 +1,13 @@
 import { afterEach, vi, } from 'vitest'
 import '@testing-library/jest-dom/vitest'
+// Import Supabase mock to prevent GoTrueClient multi-instance warnings
+import './tools/testing/setup/supabase-mock'
 import { QueryClient, } from '@tanstack/react-query'
 import { cleanup, } from '@testing-library/react'
+
+// NOTE: Avoid mocking React here; mocking can break internals and lead to invalid hook calls.
+// Keeping real modules to ensure a single, consistent React instance managed by Vite/Vitest resolve config.
+
 import React from 'react' // Bun-safe, minimal Vitest setup for NeonPro
  // - No spying on Node core modules (ESM limitation)
 // - Provide globals, clean console, env, crypto, fetch, and Supabase mocks

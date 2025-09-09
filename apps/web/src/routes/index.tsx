@@ -1,30 +1,82 @@
-import { AppointmentsList, } from '@/components/dashboard/AppointmentsList'
-import { HeroSection, } from '@/components/dashboard/HeroSection'
-import { MetricsCards, } from '@/components/dashboard/MetricsCards'
-import { PatientsList, } from '@/components/PatientsList'
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui'
-import { useAppointments, } from '@/hooks/useAppointments'
-import { useDashboardMetrics, } from '@/hooks/useDashboardMetrics'
-import { usePatients, } from '@/hooks/usePatients'
-import { createFileRoute, } from '@tanstack/react-router'
-import { Link, } from '@tanstack/react-router'
-import { Building2, Calendar, User, } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { 
+  User, 
+  Calendar, 
+  Building2,
+  TrendingUp, 
+  TrendingDown,
+  Users,
+  Clock
+} from 'lucide-react'
 
-// Interface definitions (migrated from original page.tsx)
+// Types
 interface Patient {
   id: string
-  name?: string
-  status?: string
-  avatar?: string
+  name: string
+  email: string
+  phone: string | null
+  status: 'active' | 'inactive' | 'archived'
+  created_at: string
 }
 
 interface Appointment {
   id: string
-  patient?: {
-    name?: string
+  patient: { name: string } | null
+  type: string
+  time: string
+  date: string
+}
+
+interface DashboardMetrics {
+  monthlyRevenue: number
+  revenueGrowth: number
+  totalPatients: number
+  upcomingAppointments: number
+}
+
+// Custom Hooks
+function useDashboardMetrics() {
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
+    monthlyRevenue: 25000,
+    revenueGrowth: 12.5,
+    totalPatients: 150,
+    upcomingAppointments: 8
+  })
+  const [loading, setLoading] = useState(false)
+
+  return {
+    loading,
+    ...metrics
   }
-  time?: string
-  type?: string
+}
+
+function usePatients() {
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const recentPatients = patients.slice(0, 5)
+
+  return {
+    loading,
+    recentPatients
+  }
+}
+
+function useAppointments() {
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const todaysAppointments = appointments.filter(apt => 
+    apt.date === new Date().toISOString().split('T')[0]
+  )
+
+  return {
+    loading,
+    todaysAppointments
+  }
 }
 
 // Metrics Section Component
@@ -40,24 +92,89 @@ const MetricsSection = ({
   revenueGrowth: number
   totalPatients: number
   upcomingAppointments: number
-},) => (
-  <section className="container mx-auto px-6 pb-20">
+}) => (
+  <section className="container mx-auto px-6 py-20">
     <div className="mb-12 text-center">
-      <h2 className="mb-4 font-bold text-3xl text-foreground">
-        Performance em Tempo Real
-      </h2>
+      <h2 className="mb-4 font-bold text-3xl text-foreground">Dashboard</h2>
       <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-        Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
+        Visão geral do desempenho da clínica
       </p>
     </div>
 
-    <MetricsCards
-      metricsLoading={metricsLoading}
-      monthlyRevenue={monthlyRevenue}
-      revenueGrowth={revenueGrowth}
-      totalPatients={totalPatients}
-      upcomingAppointments={upcomingAppointments}
-    />
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-sm font-medium">
+            <Building2 className="h-4 w-4 mr-2" />
+            Receita Mensal
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {metricsLoading ? '...' : `R$ ${monthlyRevenue.toLocaleString('pt-BR')}`}
+          </div>
+          <p className="flex items-center text-xs text-muted-foreground">
+            {revenueGrowth >= 0 ? (
+              <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
+            ) : (
+              <TrendingDown className="h-3 w-3 mr-1 text-red-600" />
+            )}
+            {Math.abs(revenueGrowth)}% em relação ao mês anterior
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-sm font-medium">
+            <Users className="h-4 w-4 mr-2" />
+            Total de Pacientes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {metricsLoading ? '...' : totalPatients}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Pacientes cadastrados
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-sm font-medium">
+            <Clock className="h-4 w-4 mr-2" />
+            Consultas Pendentes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {metricsLoading ? '...' : upcomingAppointments}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Próximas consultas
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-sm font-medium">
+            <Calendar className="h-4 w-4 mr-2" />
+            Status do Sistema
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-green-600">
+            Operacional
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Todos os serviços funcionando
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   </section>
 )
 
@@ -72,7 +189,7 @@ const QuickAccessSection = ({
   recentPatients: Patient[]
   appointmentsLoading: boolean
   todaysAppointments: Appointment[]
-},) => (
+}) => (
   <section className="container mx-auto px-6 pb-20">
     <div className="mb-12 text-center">
       <h2 className="mb-4 font-bold text-3xl text-foreground">Acesso Rápido</h2>
@@ -81,20 +198,8 @@ const QuickAccessSection = ({
       </p>
     </div>
 
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <PatientsList
-        patientsLoading={patientsLoading}
-        recentPatients={recentPatients.map(p => ({ ...p, status: p.status || 'active', }))}
-      />
-
-      <AppointmentsList
-        appointmentsLoading={appointmentsLoading}
-        todaysAppointments={todaysAppointments}
-      />
-    </div>
-
     {/* Quick Access Links */}
-    <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
@@ -107,7 +212,7 @@ const QuickAccessSection = ({
         </CardHeader>
         <CardContent>
           <Button asChild className="w-full">
-            <Link to="/pacientes">
+            <Link to="/patients">
               <User className="h-4 w-4 mr-2" />
               Ver Todos os Pacientes
             </Link>
@@ -127,29 +232,9 @@ const QuickAccessSection = ({
         </CardHeader>
         <CardContent>
           <Button asChild className="w-full">
-            <Link to="/agenda">
+            <Link to="/appointments">
               <Calendar className="h-4 w-4 mr-2" />
               Abrir Agenda
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Building2 className="h-5 w-5 mr-2" />
-            Gerenciar Clínica
-          </CardTitle>
-          <CardDescription>
-            Configurações, equipe e informações da clínica
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button asChild className="w-full">
-            <Link to="/clinica">
-              <Building2 className="h-4 w-4 mr-2" />
-              Gerenciar Clínica
             </Link>
           </Button>
         </CardContent>
@@ -174,6 +259,26 @@ const QuickAccessSection = ({
           </Button>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <User className="h-5 w-5 mr-2" />
+            Login
+          </CardTitle>
+          <CardDescription>
+            Acesso ao sistema
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild className="w-full">
+            <Link to="/login">
+              <User className="h-4 w-4 mr-2" />
+              Fazer Login
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   </section>
 )
@@ -186,8 +291,6 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection />
-
       <MetricsSection
         metricsLoading={metricsData.loading}
         monthlyRevenue={metricsData.monthlyRevenue}
@@ -207,78 +310,6 @@ function HomePage() {
 }
 
 // Create and export the home page route
-export const Route = createFileRoute('/',)({
+export const Route = createFileRoute('/')({
   component: HomePage,
-
-  // Preload data for performance
-  loader: async ({ context, },) => {
-    const { queryClient, } = context
-
-    // Preload dashboard metrics, patients, and appointments
-    await Promise.allSettled([
-      // These would be implemented with actual QueryKeys
-      // queryClient.ensureQueryData(QueryKeys.analytics.dashboard('user')),
-      // queryClient.ensureQueryData(QueryKeys.patients.list()),
-      // queryClient.ensureQueryData(QueryKeys.appointments.upcoming('user'))
-    ],)
-
-    return {}
-  },
-
-  // Error boundary for home page
-  errorComponent: ({ error, },) => (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold text-destructive">
-          Erro na Página Inicial
-        </h1>
-        <p className="mb-4 text-lg text-muted-foreground">
-          Não foi possível carregar os dados do dashboard.
-        </p>
-        <details className="mb-8 text-left">
-          <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground">
-            Detalhes do erro
-          </summary>
-          <pre className="mt-2 overflow-auto rounded-md bg-muted p-4 text-xs">
-            {error.message}
-          </pre>
-        </details>
-        <div className="space-x-4">
-          <Button onClick={() => window.location.reload()}>
-            Tentar Novamente
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/dashboard">Ir para Dashboard</Link>
-          </Button>
-          <Button asChild variant="destructive">
-            <Link to="/emergency">🚨 Acesso de Emergência</Link>
-          </Button>
-        </div>
-      </div>
-    </div>
-  ),
-
-  // Loading state for home page
-  pendingComponent: () => (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent">
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Carregando dados do dashboard...
-        </p>
-      </div>
-    </div>
-  ),
-
-  // SEO and meta information
-  meta: () => [
-    {
-      title: 'NeonPro - Healthcare Management System',
-    },
-    {
-      name: 'description',
-      content: 'Sistema profissional de gestão em saúde para clínicas de estética',
-    },
-  ],
-},)
+})

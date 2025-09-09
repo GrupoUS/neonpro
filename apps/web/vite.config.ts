@@ -12,15 +12,6 @@ export default defineConfig({
     react({
       // Enable React DevTools in development
       include: '**/*.{jsx,tsx}',
-      babel: {
-        plugins: [
-          // Optimize for healthcare performance
-          ['babel-plugin-styled-components', {
-            displayName: true,
-            ssr: false,
-          },],
-        ],
-      },
     },),
 
     // TanStack Router with file-based routing
@@ -30,9 +21,7 @@ export default defineConfig({
       routeFileIgnorePrefix: '-',
       quoteStyle: 'single',
       // Healthcare-specific route configuration
-      experimental: {
-        enableCodeSplitting: true, // Critical for large healthcare app
-      },
+      autoCodeSplitting: true, // Critical for large healthcare app
     },),
   ],
 

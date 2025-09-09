@@ -14,7 +14,7 @@ type: "always_apply"
 **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization.
 **GOAL-ORIENTED EXECUTION**: Strive to work through all steps toward problem resolution while respecting user/operator interrupts and system constraints.
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
-- **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
+- **MANDATORY**: Follow Archon as the single source of truth for tasks and knowledge; use the native augment task manager actively to create atomic tasks and track phased execution for everything requested.
 - **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_
 - **MANDATORY** use of `supabase mcp` for database operations
 - **MANDATORY** use of `archon mcp` for task and knowledge management
@@ -22,9 +22,9 @@ type: "always_apply"
 - **MANDATORY** invoke `sequential-thinking` first and then the `think` native tool before any other action; under ULTRATHINK, always use `think` to produce a 5‑step breakdown of next steps/strategies to clarify order and purpose.
 - **MANDATORY** Use Tavily MCP for all web searches (real-time info, trends, tech updates). DO NOT use native search tools (e.g., Search View, grep, file_search). Use Serena MCP for all codebase search and analysis.
 - **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
-- **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
+- **GRACEFUL EXECUTION**: Continue through steps systematically while supporting checkpointing, safe rollback/cleanup, and resumability for long-running tasks.
 - **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
-- **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.
+- **TASK COMPLETION CRITERIA**: Task completes when the goal is achieved, the user/operator explicitly cancels, or no further progress is possible.
 - **CRITICAL:This project uses Archon for knowledge management, task tracking, and project organization.**
 - Project uses A.P.T.E methodology (Analyze → Plan → Think → Execute) with quality standard ≥9.5/10, prefers Bun over npm for 3-5x performance improvements
 

@@ -4,10 +4,10 @@ import { TanStackRouterDevtools, } from '@tanstack/router-devtools'
 import * as React from 'react'
 
 // Import healthcare components (migrated from app/)
-import { ClientInit, } from '@/components/ClientInit'
-import { HealthcareErrorBoundary, } from '@/components/ErrorBoundary'
-import { Toaster, } from '@/components/ui/toaster'
-import { RealAuthProvider, } from '@/contexts/RealAuthContext'
+import { ClientInit, } from '../../components/ClientInit'
+import { HealthcareErrorBoundary, } from '../../components/ErrorBoundary'
+import { Toaster, } from '../../components/ui/toaster'
+import { RealAuthProvider, } from '../../contexts/RealAuthContext'
 
 // Healthcare root context type
 export interface HealthcareRootContext {

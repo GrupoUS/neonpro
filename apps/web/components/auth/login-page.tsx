@@ -8,7 +8,7 @@
 
 'use client'
 
-import { LoginForm, } from '@/app/login/login-form'
+import { LoginForm, } from '@/features/auth'
 import { useSearch, } from '@tanstack/react-router'
 import { Heart, } from 'lucide-react'
 import Link from 'next/link'
