@@ -73,10 +73,32 @@ export interface DistributionResults {
   dashboard?: { success: boolean; error?: string }
 }
 
+// Add explicit types for compliance data items
+export interface ScoreItem {
+  score: number
+  framework: ComplianceFramework
+  [key: string]: unknown
+}
+
+export interface ViolationItem {
+  id?: string
+  severity?: 'critical' | 'major' | 'minor' | string
+  status?: 'open' | 'resolved' | string
+  framework?: ComplianceFramework
+  [key: string]: unknown
+}
+
+export interface TestResultItem {
+  name?: string
+  passed?: boolean
+  details?: unknown
+}
+
 export class ReportScheduler {
   private schedules: Map<string, ReportSchedule> = new Map()
   private runningExecutions: Map<string, boolean> = new Map()
   private reportGenerator: ComplianceReportGenerator
+  private intervalId?: ReturnType<typeof setInterval>
 
   constructor() {
     this.reportGenerator = new ComplianceReportGenerator()
@@ -265,7 +287,7 @@ export class ReportScheduler {
         endTime,
         duration,
         success: false,
-        distributionResults: {} as DistributionResults, // explicit typing
+        distributionResults: {} as DistributionResults, // empty for error case
         error: error instanceof Error ? error.message : 'Unknown error',
       }
     } finally {
@@ -308,8 +330,13 @@ export class ReportScheduler {
   startScheduler(): void {
     console.log('🕒 Starting report scheduler daemon',)
 
+    // Avoid duplicate intervals if called twice
+    if (this.intervalId) {
+      clearInterval(this.intervalId,)
+    }
+
     // Check for due schedules every minute
-    setInterval(async () => {
+    this.intervalId = setInterval(async () => {
       await this.processDueSchedules()
     }, 60_000,) // 60 seconds
   }
@@ -319,7 +346,10 @@ export class ReportScheduler {
    */
   stopScheduler(): void {
     console.log('⏹️ Stopping report scheduler daemon',)
-    // Would clear intervals and stop processing
+    if (this.intervalId) {
+      clearInterval(this.intervalId,)
+      this.intervalId = undefined
+    }
   }
 
   /**
@@ -393,13 +423,35 @@ export class ReportScheduler {
    * Collect compliance data for report generation
    */
   private async collectComplianceData(frameworks: ComplianceFramework[],): Promise<unknown> {
-    const scores: any[] = []
-    const violations: any[] = []
-    const testResults: any[] = []
+    const scores: ScoreItem[] = []
+    const violations: ViolationItem[] = []
+    const testResults: TestResultItem[] = []
 
     for (const framework of frameworks) {
-      const frameworkScores = await complianceService.fetchComplianceScores(framework,)
-      const frameworkViolations = await complianceService.fetchViolations({ framework, },)
+      // Safely normalize external service responses to our explicit item types.
+      const rawScores = await complianceService.fetchComplianceScores(framework,)
+      const frameworkScores = (rawScores as unknown[]).map((item,) => {
+        const anyItem = item as any
+        return {
+          // ensure numeric score, fallback to 0 if missing
+          score: typeof anyItem?.score === 'number' ? anyItem.score : 0,
+          framework,
+          // keep other fields from the original item (index signature allows this)
+          ...anyItem,
+        } as ScoreItem
+      },)
+
+      const rawViolations = await complianceService.fetchViolations({ framework, },)
+      const frameworkViolations = (rawViolations as unknown[]).map((item,) => {
+        const anyItem = item as any
+        return {
+          id: anyItem?.id,
+          severity: anyItem?.severity,
+          status: anyItem?.status,
+          framework,
+          ...anyItem,
+        } as ViolationItem
+      },)
 
       scores.push(...frameworkScores,)
       violations.push(...frameworkViolations,)
@@ -468,7 +520,7 @@ export class ReportScheduler {
     report: GeneratedReport,
     schedule: ReportSchedule,
   ): Promise<DistributionResults> {
-    const results: DistributionResults = {} as DistributionResults
+    const results: Partial<DistributionResults> = {}
 
     // Email distribution
     if (schedule.distribution.email?.enabled) {
@@ -529,7 +581,7 @@ export class ReportScheduler {
       }
     }
 
-    return results
+    return results as DistributionResults
   }
 
   /**
@@ -549,7 +601,7 @@ export class ReportScheduler {
       endTime,
       duration: endTime.getTime() - startTime.getTime(),
       success: true,
-      distributionResults: {} as DistributionResults, // explicit typing
+      distributionResults: {} as DistributionResults, // empty for skipped case
       error: `Skipped: ${reason}`,
     }
   }
@@ -565,24 +617,8 @@ export class ReportScheduler {
     config: unknown,
   ): Promise<number> {
     console.log(`🔗 Sending webhook notification to ${(config as any).url}`,)
-    // Would implement actual webhook call
-    return 200
-  }
-
-  private async uploadToStorage(report: GeneratedReport, config: unknown,): Promise<string> {
-    console.log(`☁️ Uploading report to ${(config as any).location}`,)
-    // Would implement actual storage upload
-    return `${(config as any).location}/${report.id}`
-  }
-
-  private async notifyDashboard(report: GeneratedReport, _config: unknown,): Promise<void> {
-    console.log(`📊 Notifying dashboard about new report`,)
-    // Would implement dashboard notification
-  }
-
-  // Database operations (mock implementations)
-  private async saveSchedule(_schedule: ReportSchedule,): Promise<void> {
-    // Would save to actual database
+    // TODO: Implement webhook notification logic
+    return 200 // Return success status code
   }
 
   private async removeSchedule(_scheduleId: string,): Promise<void> {
@@ -592,6 +628,20 @@ export class ReportScheduler {
   private async loadSchedules(): Promise<ReportSchedule[]> {
     // Would load from actual database
     return []
+  }
+
+  private async saveSchedule(_schedule: ReportSchedule,): Promise<void> {
+    // Would save to actual database
+  }
+
+  private async uploadToStorage(_report: GeneratedReport, _config: unknown,): Promise<string> {
+    // Would upload to actual storage (S3, etc.)
+    return 'https://storage.example.com/reports/report-123.pdf'
+  }
+
+  private async notifyDashboard(_report: GeneratedReport, _config: unknown,): Promise<void> {
+    // Would notify dashboard about new report
+    console.log('📊 Notifying dashboard about new report',)
   }
 
   // Analysis helper methods

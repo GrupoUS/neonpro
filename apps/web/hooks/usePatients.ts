@@ -1,8 +1,8 @@
 'use client'
 
-import { createClient, } from '@/app/utils/supabase/client'
-import type { Database, } from '@/types/supabase'
 import { useCallback, useEffect, useMemo, useState, } from 'react'
+import { supabase, } from '../lib/supabase'
+import type { Database, } from '../types/supabase'
 
 type Patient = Database['public']['Tables']['patients']['Row']
 
@@ -23,7 +23,7 @@ export function usePatients(): PatientsHook {
   const [error, setError,] = useState<Error | null>(null,)
   const [searchQuery, setSearchQuery,] = useState('',)
 
-  const supabase = createClient()
+  // Using imported supabase client
 
   const fetchPatients = useCallback(async () => {
     try {

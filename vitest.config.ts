@@ -15,7 +15,7 @@ export default defineConfig({
         test: {
           name: 'unit',
           globals: true,
-          environment: 'happy-dom',
+          environment: 'jsdom',
           setupFiles: ['./vitest.setup.ts',],
           isolate: true,
           pool: 'threads',
@@ -151,23 +151,74 @@ export default defineConfig({
     server: {
       deps: {
         inline: [
+          // Inline test utils and shared code, but never core React to avoid duplicate instances
+          '@testing-library/react',
+          '@testing-library/jest-dom',
+          '@testing-library/user-event',
+
+          '@neonpro/shared',
+          '@neonpro/utils',
+        ],
+        // Explicitly exclude React family from dep optimization to ensure single instance from root
+        exclude: [
           'react',
           'react-dom',
           'react/jsx-runtime',
-          '@tanstack/react-query',
-          '@testing-library/react',
-          '@testing-library/dom',
-          '@testing-library/jest-dom',
-          '@testing-library/user-event',
-          '@neonpro/shared',
-          '@neonpro/utils',
+          'react-dom/client',
+          'scheduler',
         ],
       },
     },
   },
   resolve: {
-    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    preserveSymlinks: false,
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime',], // keep dedupe for safety
     alias: [
+      // Map internal packages to source to avoid Node require path differences and ensure Vite aliasing applies
+      {
+        find: /^@neonpro\/shared$/,
+        replacement: path.resolve(__dirname, 'packages/shared/src/index.ts',),
+      },
+      {
+        find: /^@neonpro\/shared\/(.*)$/,
+        replacement: (id: string,) =>
+          path.resolve(__dirname, 'packages/shared/src', id.replace(/^@neonpro\/shared\//, '',),),
+      },
+
+      // Force single React instance for all packages
+      { find: /^react$/, replacement: path.resolve(__dirname, 'node_modules/react',), },
+      { find: /^react-dom$/, replacement: path.resolve(__dirname, 'node_modules/react-dom',), },
+      {
+        find: /^react\/jsx-runtime$/,
+        replacement: path.resolve(__dirname, 'node_modules/react/jsx-runtime.js',),
+      },
+
+      // Collapse any absolute .pnpm store React paths to root React to guarantee singleton
+      {
+        find: /node_modules\/\.pnpm\/react@[^/]+\/node_modules\/react(\/.*)?$/,
+        replacement: path.resolve(__dirname, 'node_modules/react',),
+      },
+      {
+        find: /node_modules\/\.pnpm\/react-dom@[^/]+\/node_modules\/react-dom(\/.*)?$/,
+        replacement: path.resolve(__dirname, 'node_modules/react-dom',),
+      },
+
+      // Normalize deep CJS development imports to single ESM entry to prevent duplicate React instances
+      { find: /^react\/cjs\/react\.development\.js$/, replacement: 'react', },
+      { find: /^react\/cjs\/react\.production\.min\.js$/, replacement: 'react', },
+      {
+        find: /^react-dom\/cjs\/react-dom-client\.development\.js$/,
+        replacement: 'react-dom/client',
+      },
+      {
+        find: /^react-dom\/cjs\/react-dom-client\.production\.min\.js$/,
+        replacement: 'react-dom/client',
+      },
+      { find: /^react-dom\/cjs\/react-dom\.development\.js$/, replacement: 'react-dom', },
+      { find: /^react-dom\/cjs\/react-dom\.production\.min\.js$/, replacement: 'react-dom', },
+      { find: /^scheduler\/cjs\/scheduler\.development\.js$/, replacement: 'scheduler', },
+      { find: /^scheduler\/cjs\/scheduler\.production\.min\.js$/, replacement: 'scheduler', },
+
       // Specific first: ensure deep alias wins before generic "@/"
       {
         find: /^@\/lib\/utils$/,
@@ -200,12 +251,17 @@ export default defineConfig({
         replacement: path.resolve(__dirname, './apps/web/components/ui/',),
       },
 
+      // Force single instance for tanstack react-query
+      {
+        find: /^@tanstack\/react-query$/,
+        replacement: path.resolve(__dirname, 'node_modules/@tanstack/react-query',),
+      },
+
       // Specific files
       {
         find: '@/lib/query/query-utils.ts',
         replacement: path.resolve(__dirname, './apps/web/lib/query/query-utils.ts',),
       },
-
       // React resolutions for isolation
       // Avoid forcing React runtime aliases; let Vitest resolve from root to prevent dispatcher mismatch
       // Keep only react-query alias if needed
@@ -214,13 +270,28 @@ export default defineConfig({
   // Vite-only option; ignore during Vitest config parsing
   optimizeDeps: {
     include: [
-      'react',
-      'react-dom',
       '@testing-library/react',
       '@testing-library/jest-dom',
       '@testing-library/user-event',
       'zod',
-      '@tanstack/react-query',
     ],
+    exclude: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react-dom/client',
+      'scheduler',
+    ],
+  },
+  ssr: {
+    // Bundle these so Vite/Vitest apply alias/dedupe uniformly and avoid Node resolving a separate React copy under .pnpm
+    noExternal: [
+      /^@neonpro\//,
+      /^@tanstack\//,
+      /^react($|\/)/,
+      /^react-dom($|\/)/,
+      /^scheduler($|\/)/,
+    ],
+    external: [],
   },
 },)

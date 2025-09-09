@@ -37,22 +37,50 @@ function Button({
   variant,
   size,
   asChild = false,
+  isLoading = false,
+  loadingText,
+  urgency,
   ...props
 }:
   & React.ComponentProps<'button'>
   & VariantProps<typeof buttonVariants>
   & {
     asChild?: boolean
+    isLoading?: boolean
+    loadingText?: string
+    urgency?: 'low' | 'medium' | 'high' | 'critical'
   },)
 {
   const Comp = asChild ? Slot : 'button'
 
+  // Map healthcare urgency to variant hints via data attributes
+  const dataAttrs: Record<string, string | undefined> = {
+    'data-urgency': urgency,
+  }
+
+  const isDisabled = props.disabled || isLoading
+
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className, },),)}
+      aria-busy={isLoading ? 'true' : undefined}
+      disabled={isDisabled}
+      className={cn(
+        buttonVariants({ variant, size, className, },),
+        urgency === 'critical' && 'bg-healthcare-critical',
+      )}
+      {...dataAttrs}
       {...props}
-    />
+    >
+      {isLoading && (
+        <span
+          data-testid="loading-spinner"
+          aria-hidden="true"
+          className="animate-spin inline-block size-4 rounded-full border-2 border-current border-r-transparent"
+        />
+      )}
+      {isLoading && loadingText ? loadingText : props.children}
+    </Comp>
   )
 }
 

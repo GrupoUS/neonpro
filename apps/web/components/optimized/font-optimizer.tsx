@@ -215,23 +215,24 @@ interface FontLoadingProviderProps {
 export function FontLoadingProvider({ children, }: FontLoadingProviderProps,) {
   return (
     <div className={FontOptimizer.getClassNames()}>
-      <style jsx global>
-        {`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         /* Prevent FOUT during font loading */
         .font-loading {
           visibility: hidden;
         }
-        
+
         .fonts-loaded {
           visibility: visible;
         }
-        
+
         /* Optimize CLS prevention */
         html {
           font-family: ${inter.style.fontFamily}, ui-sans-serif, system-ui, sans-serif;
           font-display: swap;
         }
-        
+
         /* Healthcare-specific font optimizations */
         .medical-text {
           font-variant-numeric: tabular-nums;
@@ -250,8 +251,9 @@ export function FontLoadingProvider({ children, }: FontLoadingProviderProps,) {
           font-variant-numeric: tabular-nums;
           font-feature-settings: "tnum" 1;
         }
-      `}
-      </style>
+        `,
+        }}
+      />
       {children}
     </div>
   )

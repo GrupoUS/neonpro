@@ -1,6 +1,16 @@
-// Re-export types from shared packages
-export type * from '@neonpro/database'
-export type * from '@neonpro/types'
+// Re-export types from shared packages (specific exports to avoid conflicts)
+// export type * from '@neonpro/database'
+// export type * from '@neonpro/types'
+
+// Import specific types when needed
+import type {
+  Appointment as DatabaseAppointment,
+  Database as DatabaseType,
+  Patient as DatabasePatient,
+} from '@neonpro/database'
+
+// Re-export with aliases to avoid conflicts
+export type { DatabaseAppointment, DatabasePatient, DatabaseType, }
 
 // Frontend-specific API types
 export interface ApiResponse<T = unknown,> {

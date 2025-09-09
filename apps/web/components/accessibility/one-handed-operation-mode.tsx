@@ -602,7 +602,7 @@ export function OneHandedOperationSettings() {
   } = useOneHandedOperation()
 
   const [activeTab, setActiveTab,] = useState('basic',)
-  const [/* showAdvanced */] /* setShowAdvanced */ = useState(false,)
+  const [_showAdvanced, _setShowAdvanced,] = useState(false,)
 
   const currentLayout = getOptimizedLayout()
 

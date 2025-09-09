@@ -4,7 +4,7 @@ import { Badge, } from '@/components/ui/badge'
 import { Button, } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 import { ExternalChatWidget, } from '@/components/ui/external-chat-widget'
-import { useChatHandoff, } from '@/hooks/use-chat-handoff'
+import { type ChatMessage, useChatHandoff, } from '@/hooks/use-chat-handoff'
 import { useCallback, useState, } from 'react'
 
 export function ExternalChatExample() {
@@ -110,10 +110,15 @@ export function ExternalChatExample() {
     try {
       // Apply 8-second timeout to AI response
       const aiResponse = await withTimeout(simulateAIResponse(message,), 8000,)
-      const processedResponse = processAIResponse(message, {
-        ...aiResponse,
+
+      // Create properly typed ChatMessage without mutating original aiResponse
+      const chatMessage: ChatMessage = {
         content: aiResponse.response,
-      },)
+        confidence: aiResponse.confidence,
+        requiresHumanHandoff: aiResponse.requiresHumanHandoff,
+      }
+
+      const processedResponse = processAIResponse(message, chatMessage,)
 
       if (processedResponse.shouldHandoff) {
         const handoffMsg = getHandoffMessage(processedResponse.reason,)

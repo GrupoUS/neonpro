@@ -3,9 +3,9 @@ import { createFileRoute, Outlet, redirect, } from '@tanstack/react-router'
 import * as React from 'react'
 
 // Import healthcare dashboard components (migrated from app/)
-import { Header, } from '@/components/header'
 import { HealthcareSidebar, } from '@/components/healthcare-sidebar'
-import { QueryKeys, } from '@/providers/query-provider'
+import { Header, } from '@/components/layouts/header'
+import { QueryKeys, } from '../../providers/query-provider'
 
 // Dashboard Layout Component
 function DashboardLayout() {

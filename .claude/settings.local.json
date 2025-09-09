@@ -38,7 +38,12 @@
       "Bash(npx tsc:*)",
       "Bash(rm:*)",
       "Bash(chmod:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)",
+      "mcp__shadcn-ui__get_component",
+      "Bash(pnpm --filter=@neonpro/web build)",
+      "Bash(pnpm --filter=@neonpro/web routes:generate)"
     ]
   },
   "enabledMcpjsonServers": [

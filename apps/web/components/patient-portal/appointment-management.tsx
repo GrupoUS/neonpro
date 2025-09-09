@@ -18,7 +18,7 @@ import {
   Video,
   XCircle,
 } from 'lucide-react'
-import { useState, } from 'react'
+import React, { useState, } from 'react'
 import {
   Badge,
   Button,
@@ -149,7 +149,7 @@ function AppointmentCard({
   appointment,
   isPast = false,
 }: {
-  appointment: unknown
+  appointment: any
   isPast?: boolean
 },) {
   const getStatusColor = (status: string,) => {
@@ -209,25 +209,25 @@ function AppointmentCard({
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold text-lg">
-                  {appointment.treatment}
+                  {(appointment as any).treatment}
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  {formatDate(appointment.date,)} às {appointment.time}
+                  {formatDate((appointment as any).date,)} às {(appointment as any).time}
                 </p>
               </div>
               <Badge
                 className={cn(
                   'flex items-center space-x-1',
-                  getStatusColor(appointment.status,),
+                  getStatusColor((appointment as any).status,),
                 )}
               >
-                {getStatusIcon(appointment.status,)}
+                {getStatusIcon((appointment as any).status,)}
                 <span className="capitalize">
-                  {appointment.status === 'confirmed'
+                  {(appointment as any).status === 'confirmed'
                     ? 'Confirmado'
-                    : appointment.status === 'pending'
+                    : (appointment as any).status === 'pending'
                     ? 'Pendente'
-                    : appointment.status === 'cancelled'
+                    : (appointment as any).status === 'cancelled'
                     ? 'Cancelado'
                     : 'Concluído'}
                 </span>
@@ -238,20 +238,20 @@ function AppointmentCard({
             <div className="grid gap-2 sm:grid-cols-2">
               <div className="flex items-center space-x-2 text-sm">
                 <User className="h-4 w-4 text-muted-foreground" />
-                <span>{appointment.doctor}</span>
+                <span>{(appointment as any).doctor}</span>
               </div>
 
-              {appointment.clinic && (
+              {(appointment as any).clinic && (
                 <div className="flex items-center space-x-2 text-sm">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{appointment.clinic}</span>
+                  <span>{(appointment as any).clinic}</span>
                 </div>
               )}
 
-              {appointment.duration && (
+              {(appointment as any).duration && (
                 <div className="flex items-center space-x-2 text-sm">
                   <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span>{appointment.duration} minutos</span>
+                  <span>{(appointment as any).duration} minutos</span>
                 </div>
               )}
 
@@ -293,7 +293,7 @@ function AppointmentCard({
             )}
 
             {/* Past appointment feedback */}
-            {isPast && appointment.rating && (
+            {isPast && (appointment as any).rating && (
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-1">
                   <span className="text-sm">Avaliação:</span>
@@ -302,7 +302,7 @@ function AppointmentCard({
                       <span
                         className={cn(
                           'text-sm',
-                          i < appointment.rating
+                          i < (appointment as any).rating
                             ? 'text-accent'
                             : 'text-gray-300',
                         )}
@@ -313,9 +313,9 @@ function AppointmentCard({
                     ))}
                   </div>
                 </div>
-                {appointment.feedback && (
+                {(appointment as any).feedback && (
                   <p className="text-muted-foreground text-sm italic">
-                    &quot;{appointment.feedback}&quot;
+                    &quot;{(appointment as any).feedback}&quot;
                   </p>
                 )}
               </div>
@@ -325,7 +325,7 @@ function AppointmentCard({
           {/* Actions */}
           {!isPast && (
             <div className="flex flex-col space-y-2 lg:flex-row lg:space-x-2 lg:space-y-0">
-              {appointment.isVirtual && (
+              {(appointment as any).isVirtual && (
                 <Button className="bg-green-600 hover:bg-green-700" size="sm">
                   <Video className="h-4 w-4" />
                   Entrar na Consulta
@@ -337,14 +337,14 @@ function AppointmentCard({
                 Contato
               </Button>
 
-              {appointment.canReschedule && (
+              {(appointment as any).canReschedule && (
                 <Button size="sm" variant="outline">
                   <Edit className="h-4 w-4" />
                   Reagendar
                 </Button>
               )}
 
-              {appointment.canCancel && (
+              {(appointment as any).canCancel && (
                 <Button
                   className="border-red-200 text-red-600 hover:bg-red-50"
                   size="sm"
@@ -355,7 +355,7 @@ function AppointmentCard({
                 </Button>
               )}
 
-              {!appointment.reminderSet && (
+              {!(appointment as any).reminderSet && (
                 <Button size="sm" variant="outline">
                   <Bell className="h-4 w-4" />
                   Lembrete

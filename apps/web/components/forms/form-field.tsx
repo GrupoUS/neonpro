@@ -76,14 +76,27 @@ export const FormField: React.FC<FormFieldProps> = ({
   'data-testid': testId,
 },) => {
   const hasError = Boolean(error,)
-  const isValid: boolean = !hasError && Boolean(value,) && !loading
+  const isValid: boolean = !hasError && (value !== null && value !== undefined && value !== '')
+    && !loading
 
   const baseInputProps = {
     id,
     name,
-    value: (value as string) || '',
+    value: typeof value === 'number'
+      ? value.toString()
+      : (typeof value === 'string' && value !== '' ? value : ''),
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,) => {
-      onChange?.(type === 'number' ? parseFloat(e.target.value,) : e.target.value,)
+      if (type === 'number') {
+        const inputValue = e.target.value
+        if (inputValue === '') {
+          onChange?.()
+        } else {
+          const numValue = parseFloat(inputValue,)
+          onChange?.(isNaN(numValue,) ? undefined : numValue,)
+        }
+      } else {
+        onChange?.(e.target.value,)
+      }
     },
     onBlur,
     disabled: disabled || loading,

@@ -201,12 +201,12 @@ export function MainNavigation() {
               <div className="flex-shrink-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
                   <span className="font-medium text-primary-foreground text-sm">
-                    {user?.name?.charAt(0,).toUpperCase() || 'U'}
+                    {(user as any)?.name?.charAt(0,).toUpperCase() || 'U'}
                   </span>
                 </div>
               </div>
               <div className="ml-3">
-                <p className="font-medium text-sm">{user?.name || 'Usuário'}</p>
+                <p className="font-medium text-sm">{(user as any)?.name || 'Usuário'}</p>
                 <p className="text-muted-foreground text-xs">
                   {user?.role === 'clinic_owner'
                     ? 'Proprietário'
@@ -301,11 +301,11 @@ export function MainNavigation() {
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                       <span className="font-medium text-primary-foreground">
-                        {user?.name?.charAt(0,).toUpperCase() || 'U'}
+                        {(user as any)?.name?.charAt(0,).toUpperCase() || 'U'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium">{user?.name || 'Usuário'}</p>
+                      <p className="font-medium">{(user as any)?.name || 'Usuário'}</p>
                       <p className="text-muted-foreground text-sm">
                         {user?.role === 'clinic_owner'
                           ? 'Proprietário'

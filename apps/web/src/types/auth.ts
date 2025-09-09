@@ -1,3 +1,23 @@
+import type { QueryClient, } from '@tanstack/react-query'
+
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  role: 'admin' | 'professional' | 'receptionist'
+  clinicId?: string
+  isEmailVerified: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AuthSession {
+  user: AuthUser
+  accessToken: string
+  refreshToken: string
+  expiresAt: string
+}
+
 export interface AuthContextType {
   user: AuthUser | null
   session: AuthSession | null
@@ -18,5 +38,4 @@ export interface ThemeContextType {
   setTheme: (theme: 'light' | 'dark' | 'system',) => void
 }
 
-// Re-export for convenience
-export type { AuthSession, AuthUser, } from './api'
+// Types are defined directly in this file

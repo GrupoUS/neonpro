@@ -324,7 +324,7 @@ function ContentCard({
     <Card
       className={cn(
         'cursor-pointer border-l-4 transition-all hover:shadow-md',
-        getPriorityColor(content.priority,),
+        getPriorityColor(content.priority || 'medium',),
       )}
     >
       <CardContent className="p-4" onClick={() => onView(content,)}>
@@ -352,7 +352,7 @@ function ContentCard({
             <div className="flex items-center space-x-4 text-muted-foreground text-xs">
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3" />
-                <span>{content.duration || content.readTime}</span>
+                <span>{(content as any).duration || (content as any).readTime}</span>
               </div>
 
               {content.rating && (

@@ -490,6 +490,8 @@ export function MobileMetricCard({
       icon={Icon}
       progress={percentage}
       status={status}
+      isOnline
+      hasCachedData={false}
     />
   )
 }
@@ -545,8 +547,10 @@ export function MobileAlertCard({
       value={count}
       description={description}
       icon={AlertTriangle}
-      status={getAlertStatus() as unknown}
+      status={getAlertStatus() as 'error' | 'info' | 'warning' | 'success' | undefined}
       badge={getSeverityLabel()}
+      isOnline
+      hasCachedData={false}
     />
   )
 }

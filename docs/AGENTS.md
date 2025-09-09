@@ -2,37 +2,38 @@
 
 title: "📚 Documentation Orchestrator (docs/) — v2"
 applyTo:
-  - "docs/**"
 
-  - llm:
-  - mandatory_sequence:
-  - sequential-thinking
-  - task-management
-  - codebase-analysis
-    pre_read:
-  - path: "docs/AGENTS.md"
-    reason: "Root orchestrator for the docs folder"
-  - path: "docs/memory.md"
-    reason: "Mandatory memory protocol"
-  - path: "docs/agents/AGENTS.md"
-    reason: "Agent system and coordination"
-  - path: "docs/rules/coding-standards.md"
-    reason: "Project coding standards"
-    retrieval_hints:
-    prefer:
-    - "docs/**/AGENTS.md"
-    - "docs/**/README.md"
-      avoid:
-    - "images/**"
-    - "*.pdf"
-    - guardrails:
-      tone: "concise, professional, English"
-      formatting: "Markdown with clear headings and short lists"
-      stop_criteria: "finish only when the task is 100% resolved"
-      output_preferences:
-  - "Use short bullets"
-  - "Include relative paths in backticks"
-  - "Provide shell commands in fenced code blocks when applicable"
+- "docs/**"
+
+- llm:
+- mandatory_sequence:
+- sequential-thinking
+- task-management
+- codebase-analysis
+  pre_read:
+- path: "docs/AGENTS.md"
+  reason: "Root orchestrator for the docs folder"
+- path: "docs/memory.md"
+  reason: "Mandatory memory protocol"
+- path: "docs/agents/AGENTS.md"
+  reason: "Agent system and coordination"
+- path: "docs/rules/coding-standards.md"
+  reason: "Project coding standards"
+  retrieval_hints:
+  prefer:
+  - "docs/**/AGENTS.md"
+  - "docs/**/README.md"
+    avoid:
+  - "images/**"
+  - "*.pdf"
+  - guardrails:
+    tone: "concise, professional, English"
+    formatting: "Markdown with clear headings and short lists"
+    stop_criteria: "finish only when the task is 100% resolved"
+    output_preferences:
+- "Use short bullets"
+- "Include relative paths in backticks"
+- "Provide shell commands in fenced code blocks when applicable"
 
 # Machine-readable index to guide retrieval priority per domain
 

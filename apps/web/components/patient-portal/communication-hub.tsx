@@ -22,7 +22,7 @@ import {
   User,
   Video,
 } from 'lucide-react'
-import { useState, } from 'react'
+import React, { useState, } from 'react'
 import {
   Badge,
   Button,
@@ -221,7 +221,7 @@ function ConversationList({
   conversations,
   onSelectConversation,
   selectedId,
-}: unknown,) {
+}: any,) {
   const formatTime = (timestamp: string,) => {
     const date = new Date(timestamp,)
     const now = new Date()
@@ -258,7 +258,7 @@ function ConversationList({
 
   return (
     <div className="space-y-2">
-      {conversations.map((conversation: unknown,) => (
+      {conversations.map((conversation: any,) => (
         <Card
           className={cn(
             'cursor-pointer border-l-4 transition-all hover:shadow-md',
@@ -317,7 +317,7 @@ function ConversationList({
   )
 }
 
-function ChatWindow({ conversation, }: unknown,) {
+function ChatWindow({ conversation, }: any,) {
   const [message, setMessage,] = useState('',)
   // const [_showCallOptions, _setShowCallOptions] = useState(false);
 
@@ -394,7 +394,7 @@ function ChatWindow({ conversation, }: unknown,) {
 
       {/* Messages */}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {conversation.messages.map((msg: unknown,) => (
+        {conversation.messages.map((msg: any,) => (
           <div
             className={cn(
               'flex',
@@ -464,7 +464,7 @@ function ChatWindow({ conversation, }: unknown,) {
   )
 }
 
-function NotificationsList({ notifications, }: unknown,) {
+function NotificationsList({ notifications, }: any,) {
   const getNotificationIcon = (type: string,) => {
     switch (type) {
       case 'appointment': {
@@ -501,7 +501,7 @@ function NotificationsList({ notifications, }: unknown,) {
 
   return (
     <div className="space-y-3">
-      {notifications.map((notification: unknown,) => (
+      {notifications.map((notification: any,) => (
         <Card
           className={cn(
             'cursor-pointer transition-all hover:shadow-md',
@@ -559,10 +559,10 @@ function NotificationsList({ notifications, }: unknown,) {
   )
 }
 
-function EmergencyContacts({ contacts, }: unknown,) {
+function EmergencyContacts({ contacts, }: any,) {
   return (
     <div className="space-y-4">
-      {contacts.map((contact: unknown,) => (
+      {contacts.map((contact: any,) => (
         <Card className="border-l-4 border-l-red-500" key={contact.id}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">

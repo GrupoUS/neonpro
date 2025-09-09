@@ -109,7 +109,7 @@ const useConflictDetection = (userId: string,) => {
 
     setIsLoading(true,)
     try {
-      const { data: conflictData, error, } = await supabase
+      const { data: conflictData, error, } = await (supabase as any)
         .from('sync_conflicts',)
         .select(`
           *,
@@ -122,7 +122,7 @@ const useConflictDetection = (userId: string,) => {
 
       if (error) throw error
 
-      const formattedConflicts: ConflictData[] = conflictData?.map(conflict => ({
+      const formattedConflicts: ConflictData[] = (conflictData || []).map((conflict: any,) => ({
         id: conflict.id,
         entityType: conflict.entity_type,
         entityId: conflict.entity_id,
@@ -167,7 +167,7 @@ const useConflictDetection = (userId: string,) => {
 
   const resolveConflict = useCallback(async (conflictId: string, resolution: ResolutionAction,) => {
     try {
-      const { error, } = await supabase
+      const { error, } = await (supabase as any)
         .from('sync_conflicts',)
         .update({
           status: 'resolved',
@@ -277,7 +277,6 @@ export default function ConflictResolver({
   userId = '',
   conflicts: externalConflicts,
   onConflictResolved,
-  _onConflictDismissed, // Unused parameter
   autoResolveEnabled = true,
 }: ConflictResolverProps,) {
   const [_selectedConflict, setSelectedConflict,] = useState<ConflictData | null>(null,) // Unused variable
@@ -364,7 +363,7 @@ export default function ConflictResolver({
         }
         resolution = {
           type: 'manual_edit',
-          mergedData: manualResolutionData,
+          mergedData: (manualResolutionData as Record<string, unknown>) || {},
           reason: 'User manually merged versions',
         }
         break

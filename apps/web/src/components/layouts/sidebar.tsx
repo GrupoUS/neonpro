@@ -2,9 +2,8 @@
 
 import { cn, } from '@/lib/utils'
 import { Dialog, Transition, } from '@headlessui/react'
+import { Link, useLocation, } from '@tanstack/react-router'
 import { Calendar, Home, Shield, User, Users, X, } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, } from 'next/navigation'
 import { Fragment, } from 'react'
 
 const navigation = [
@@ -21,7 +20,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose, }: SidebarProps,) {
-  const pathname = usePathname()
+  const location = useLocation()
+  const pathname = location.pathname
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">

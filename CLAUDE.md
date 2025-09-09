@@ -253,8 +253,6 @@ phase_3_planning_design:
 **🔧 MCP**: desktop-commander + serena
 
 - Use `desktop-commander` to run quality check commands
-- Run `bun run next:lint:web` for Next.js linting
-- Run `bun run type-check` to verify TypeScript compilation
 - Use `serena` to analyze code quality and identify issues
 - Always look for big picture, and Fix all errors or warnings before finalizing tasks.
 - Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later
@@ -287,9 +285,10 @@ validation:
 ### 6. **Memory Documentation Protocol** 📝
 
 **🔧 MCP**: desktop-commander + archon
-  - Use `archon` to create/update project documents and knowledge base
-  - Create `mistakes/[error-category].md` if mistakes corrected
-  - Create `features/[feature-name].md` for new features or modified behavior
+
+- Use `archon` to create/update project documents and knowledge base
+- Create `mistakes/[error-category].md` if mistakes corrected
+- Create `features/[feature-name].md` for new features or modified behavior
 - **Test Documentation**: Document new test patterns, mocks, utilities
 - Store learnings in archon knowledge base for future retrieval
 - Confirmation: Explicitly note in your thoughts whether updates were made or not.

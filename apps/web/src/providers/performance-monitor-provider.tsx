@@ -94,8 +94,14 @@ export function PerformanceMonitorProvider({
       try {
         // Dynamic import to avoid SSR issues and optimize bundle
         const { HealthcarePerformanceMonitor, } =
-          (await import('@neonpro/monitoring').catch(() => ({} as any))) as {
-            HealthcarePerformanceMonitor: new(config: any,) => HealthcarePerformanceMonitor
+          (await import('@neonpro/monitoring').catch(() => ({
+            HealthcarePerformanceMonitor: class MockMonitor {
+              start() {}
+              stop() {}
+              trackMetric() {}
+            },
+          }))) as {
+            HealthcarePerformanceMonitor: new(config: any,) => any
           }
 
         // Healthcare-optimized configuration

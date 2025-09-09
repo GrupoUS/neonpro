@@ -117,7 +117,7 @@ export function AIAssistantDashboardExample() {
       setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
       setSelectedResult(vizResult.id,)
 
-      result.type = 'chart'
+      result.type = vizResult.type as 'text' | 'export' | 'table' | 'chart'
       result.response = 'Gráfico gerado com sucesso. Visualize na aba "Resultados".'
     } else if (
       query.toLowerCase().includes('tabela',) || query.toLowerCase().includes('relatório',)
@@ -157,7 +157,7 @@ export function AIAssistantDashboardExample() {
       setQueryResults(prev => [vizResult, ...prev.slice(0, 9,),])
       setSelectedResult(vizResult.id,)
 
-      result.type = 'chart'
+      result.type = vizResult.type as 'text' | 'export' | 'table' | 'chart'
       result.response = 'Dashboard completo gerado. Visualize na aba "Resultados".'
     }
 
