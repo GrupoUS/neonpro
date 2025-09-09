@@ -1,94 +1,52 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "ES2022"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": ".",
-    "types": ["vitest/globals"],
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
     "paths": {
-      "@/*": ["./*"],
-
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/database": ["./packages/database/src"],
-      "@neonpro/database/*": ["./packages/database/src/*"],
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/config": ["./packages/config"],
-      "@neonpro/config/*": ["./packages/config/*"],
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"]
-    },
-    "strictNullChecks": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "@/*": ["./src/*"],
+      "@models/*": ["./src/models/*"],
+      "@services/*": ["./src/services/*"],
+      "@cli/*": ["./src/cli/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@tests/*": ["./tests/*"]
+    }
   },
-  "include": ["vitest.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
   "exclude": [
     "node_modules",
-    ".next",
     "dist",
-    "out",
-    "build",
-    "coverage",
-    "apps/**/*",
-    "packages/**/*",
-    "tools/**/*",
-    "e2e/**/*",
-    "tests/**/*",
-    "playwright-report/**/*",
-    "test-results/**/*",
-    "tools/testing/reports/**/*",
-    "**/*.test.*",
-    "**/*.spec.*",
-    "**/__tests__/**",
-    "supabase/migrations/**",
-    "**/.turbo/**",
-    "**/.cache/**",
-    "bun.lock",
-    "**/*.log"
+    "**/*.js"
   ],
-  "references": [
-    {
-      "path": "./apps/api"
-    },
-
-    {
-      "path": "./packages/utils"
-    },
-    {
-      "path": "./packages/database"
-    },
-    {
-      "path": "./packages/types"
-    },
-    {
-      "path": "./packages/shared"
-    },
-
-    {
-      "path": "./packages/core-services"
-    },
-    {
-      "path": "./packages/security"
-    }
-  ]
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

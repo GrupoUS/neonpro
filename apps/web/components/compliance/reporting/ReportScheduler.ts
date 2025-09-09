@@ -431,25 +431,42 @@ export class ReportScheduler {
       // Safely normalize external service responses to our explicit item types.
       const rawScores = await complianceService.fetchComplianceScores(framework,)
       const frameworkScores = (rawScores as unknown[]).map((item,) => {
-        const anyItem = item as any
+        const raw = item as unknown
+        const record = typeof raw === 'object' && raw !== null
+          ? (raw as Record<string, unknown>)
+          : {}
+
+        const score = typeof record['score'] === 'number' ? (record['score'] as number) : 0
+
         return {
-          // ensure numeric score, fallback to 0 if missing
-          score: typeof anyItem?.score === 'number' ? anyItem.score : 0,
-          framework,
           // keep other fields from the original item (index signature allows this)
-          ...anyItem,
+          ...record,
+          score,
+          framework,
         } as ScoreItem
       },)
 
       const rawViolations = await complianceService.fetchViolations({ framework, },)
       const frameworkViolations = (rawViolations as unknown[]).map((item,) => {
-        const anyItem = item as any
+        const raw = item as unknown
+        const record = typeof raw === 'object' && raw !== null
+          ? (raw as Record<string, unknown>)
+          : {}
+
+        const id = typeof record['id'] === 'string' ? (record['id'] as string) : undefined
+        const severity = typeof record['severity'] === 'string'
+          ? (record['severity'] as 'critical' | 'major' | 'minor' | string)
+          : undefined
+        const status = typeof record['status'] === 'string'
+          ? (record['status'] as string)
+          : undefined
+
         return {
-          id: anyItem?.id,
-          severity: anyItem?.severity,
-          status: anyItem?.status,
+          ...record,
+          id,
+          severity,
+          status,
           framework,
-          ...anyItem,
         } as ViolationItem
       },)
 
@@ -525,7 +542,7 @@ export class ReportScheduler {
     // Email distribution
     if (schedule.distribution.email?.enabled) {
       try {
-        await (this.sendEmailReport as any)(report, schedule.distribution.email,)
+        await (this.sendEmailReport)(report, schedule.distribution.email,)
         results.email = {
           success: true,
           recipients: schedule.distribution.email.recipients,
@@ -608,7 +625,11 @@ export class ReportScheduler {
 
   // Helper methods for distribution (mock implementations)
   private async sendEmailReport(report: GeneratedReport, config: unknown,): Promise<void> {
-    console.log(`📧 Sending email report to ${(config as any).recipients.join(', ',)}`,)
+    const cfg = typeof config === 'object' && config !== null
+      ? (config as Record<string, unknown>)
+      : {}
+    const recipients = Array.isArray(cfg.recipients,) ? cfg.recipients.map(String,) : []
+    console.log(`📧 Sending email report to ${recipients.join(', ',)}`,)
     // Would implement actual email sending
   }
 
@@ -616,7 +637,11 @@ export class ReportScheduler {
     report: GeneratedReport,
     config: unknown,
   ): Promise<number> {
-    console.log(`🔗 Sending webhook notification to ${(config as any).url}`,)
+    const cfg = typeof config === 'object' && config !== null
+      ? (config as Record<string, unknown>)
+      : {}
+    const url = typeof cfg.url === 'string' ? cfg.url : 'unknown'
+    console.log(`🔗 Sending webhook notification to ${url}`,)
     // TODO: Implement webhook notification logic
     return 200 // Return success status code
   }

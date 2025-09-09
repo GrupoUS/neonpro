@@ -1,3 +1,5 @@
+import type {
+  LucideProps} from 'lucide-react';
 import {
   AlertCircle,
   BarChart3,
@@ -22,7 +24,6 @@ import {
   Home,
   Info,
   LogOut,
-  LucideProps,
   Mail,
   MapPin,
   Menu,

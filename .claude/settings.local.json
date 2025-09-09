@@ -74,7 +74,8 @@
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
       "mcp__archon__update_task",
-      "mcp__Tavily__tavily-search"
+      "mcp__Tavily__tavily-search",
+      "mcp__Sequential_Thinking__sequentialthinking"
     ],
     "deny": [
       "Edit",

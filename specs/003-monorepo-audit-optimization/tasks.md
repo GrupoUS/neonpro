@@ -38,6 +38,7 @@
 ## Path Conventions
 
 Single project structure (audit tool):
+
 - **Source**: `src/` at repository root
 - **Tests**: `tests/` with contract/, integration/, unit/ subdirectories
 - **CLI**: `src/cli/` for command-line interface
@@ -65,7 +66,7 @@ Single project structure (audit tool):
 **CRITICAL: Based on quickstart scenarios, MUST FAIL before implementation**
 
 - [ ] **T009** [P] Integration test basic file discovery workflow in tests/integration/file-discovery.integration.test.ts
-- [ ] **T010** [P] Integration test dependency analysis with circular detection in tests/integration/dependency-analysis.integration.test.ts  
+- [ ] **T010** [P] Integration test dependency analysis with circular detection in tests/integration/dependency-analysis.integration.test.ts
 - [ ] **T011** [P] Integration test architecture validation against docs in tests/integration/architecture-validation.integration.test.ts
 - [ ] **T012** [P] Integration test usage analysis and unused file detection in tests/integration/usage-analysis.integration.test.ts
 - [ ] **T013** [P] Integration test cleanup planning with risk assessment in tests/integration/cleanup-planning.integration.test.ts
@@ -79,7 +80,7 @@ Single project structure (audit tool):
 - [ ] **T018** [P] AuditReport model with ExecutionSummary, AnalysisResults, ComplianceResults in src/models/AuditReport.ts
 - [ ] **T019** [P] CleanupAction model with ImpactAssessment, ActionStatus, RiskLevel in src/models/CleanupAction.ts
 
-## Phase 3.5: Service Layer Implementation 
+## Phase 3.5: Service Layer Implementation
 
 - [ ] **T020** FileScanner service implementing IFileScanner with recursive traversal, progress tracking in src/services/FileScanner.ts
 - [ ] **T021** DependencyAnalyzer service implementing IDependencyAnalyzer with AST parsing, circular detection in src/services/DependencyAnalyzer.ts
@@ -96,7 +97,7 @@ Single project structure (audit tool):
 ## Phase 3.7: Integration Layer
 
 - [ ] **T028** Structured logging system with JSON format, error context, operation tracking in src/lib/logger.ts
-- [ ] **T029** Progress tracking and real-time reporting system in src/lib/progress.ts  
+- [ ] **T029** Progress tracking and real-time reporting system in src/lib/progress.ts
 - [ ] **T030** Configuration management for options, defaults, validation in src/lib/config.ts
 - [ ] **T031** Performance monitoring with metrics collection, memory tracking in src/lib/performance.ts
 
@@ -111,8 +112,9 @@ Single project structure (audit tool):
 ## Dependencies
 
 **Phase Dependencies:**
+
 - Setup (T001-T003) before all others
-- Contract Tests (T004-T008) before Models (T015-T019)  
+- Contract Tests (T004-T008) before Models (T015-T019)
 - Integration Tests (T009-T014) before Services (T020-T024)
 - Models (T015-T019) before Services (T020-T024)
 - Services (T020-T024) before CLI (T025-T027)
@@ -120,14 +122,16 @@ Single project structure (audit tool):
 - Polish (T032-T036) requires all implementation complete
 
 **Sequential Dependencies within Services:**
+
 - T020 (FileScanner) blocks T021 (DependencyAnalyzer)
-- T021 (DependencyAnalyzer) blocks T022 (ArchitectureValidator)  
+- T021 (DependencyAnalyzer) blocks T022 (ArchitectureValidator)
 - T022 (ArchitectureValidator) blocks T023 (CleanupEngine)
 - T023 (CleanupEngine) blocks T024 (ReportGenerator)
 
 ## Parallel Execution Examples
 
 ### Contract Tests Phase (All can run together):
+
 ```
 Task: "Contract test FileScanner.scan() in tests/contract/file-scanner.contract.test.ts"
 Task: "Contract test DependencyAnalyzer.buildGraph() in tests/contract/dependency-analyzer.contract.test.ts"  
@@ -137,6 +141,7 @@ Task: "Contract test ReportGenerator.generateAuditReport() in tests/contract/rep
 ```
 
 ### Integration Tests Phase (All can run together):
+
 ```
 Task: "Integration test file discovery in tests/integration/file-discovery.integration.test.ts"
 Task: "Integration test dependency analysis in tests/integration/dependency-analysis.integration.test.ts"
@@ -147,6 +152,7 @@ Task: "Integration test full workflow in tests/integration/full-workflow.integra
 ```
 
 ### Models Phase (All can run together):
+
 ```
 Task: "CodeAsset model with enums in src/models/CodeAsset.ts"
 Task: "DependencyGraph model in src/models/DependencyGraph.ts"
@@ -156,6 +162,7 @@ Task: "CleanupAction model in src/models/CleanupAction.ts"
 ```
 
 ### Polish Phase (Most can run together):
+
 ```
 Task: "Unit tests in tests/unit/"
 Task: "Performance benchmarks in tests/performance/"
@@ -178,7 +185,7 @@ _Applied during main() execution_
 
 1. **From Contracts (5 files)**:
    - file-scanner.contract.ts → T004 contract test [P]
-   - dependency-analyzer.contract.ts → T005 contract test [P] 
+   - dependency-analyzer.contract.ts → T005 contract test [P]
    - architecture-validator.contract.ts → T006 contract test [P]
    - cleanup-engine.contract.ts → T007 contract test [P]
    - report-generator.contract.ts → T008 contract test [P]
@@ -193,7 +200,7 @@ _Applied during main() execution_
 3. **From Quickstart Scenarios (6 scenarios)**:
    - File Discovery → T009 integration test [P]
    - Dependency Analysis → T010 integration test [P]
-   - Architecture Validation → T011 integration test [P]  
+   - Architecture Validation → T011 integration test [P]
    - Usage Analysis → T012 integration test [P]
    - Cleanup Planning → T013 integration test [P]
    - Full Workflow → T014 integration test [P]
@@ -202,7 +209,7 @@ _Applied during main() execution_
    - FileScanner → T020 implementation
    - DependencyAnalyzer → T021 implementation (after T020)
    - ArchitectureValidator → T022 implementation (after T021)
-   - CleanupEngine → T023 implementation (after T022)  
+   - CleanupEngine → T023 implementation (after T022)
    - ReportGenerator → T024 implementation (after T023)
 
 ## Validation Checklist

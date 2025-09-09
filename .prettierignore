@@ -1,27 +1,9 @@
-# Build outputs
-node_modules/
 dist/
-build/
-out/
-.next/
-.turbo/
-.vercel/
+node_modules/
 coverage/
-playwright-report/
-
-# Logs
-*.log
-logs/
-
-# IDE
-.vscode/
-.idea/
-.claude/
-
-# Project specific - not maintained by formatters
-.serena/
-
-# Testing reports
-tools/testing/reports/assets/
-tools/e2e/reports/
-tools/reports/
+*.md
+*.json
+package-lock.json
+bun.lockb
+.git/
+.turbo/
