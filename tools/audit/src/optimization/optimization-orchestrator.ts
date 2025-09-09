@@ -1246,7 +1246,7 @@ export class OptimizationOrchestrator extends EventEmitter {
    * Utility methods
    */
   private generateSessionId(): string {
-    return `opt_${Date.now()}_${Math.random().toString(36,).substr(2, 9,)}`
+    return `opt_${Date.now()}_${Math.random().toString(36,).slice(2, 11)}`
   }
 
   private getStrategyPhaseCount(strategyName: string,): number {
