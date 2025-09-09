@@ -651,7 +651,7 @@ export class TypeSystemEnhancer extends EventEmitter {
       if (Node.isTypeReference(node,) && node.getText() === 'any') {
         const location = node.getStartLineNumber()
         issues.push({
-          id: `any-usage-${Date.now()}-${Math.random().toString(36,).substr(2, 6,)}`,
+          id: `any-usage-${Date.now()}-${Math.random().toString(36,).substring(2, 8)}`,
           type: 'any-usage',
           severity: 'high',
           location: {
