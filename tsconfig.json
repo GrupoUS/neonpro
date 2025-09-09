@@ -38,8 +38,12 @@
     }
   },
   "include": [
+    "apps/**/*",
+    "packages/**/*",
     "src/**/*",
-    "tests/**/*"
+    "tests/**/*",
+    "*.ts",
+    "*.tsx"
   ],
   "exclude": [
     "node_modules",
