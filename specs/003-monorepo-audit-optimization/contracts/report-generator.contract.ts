@@ -4,6 +4,10 @@
  * Generated: 2025-09-09
  */
 
+// Cross-contract imports
+import type { FileInfo, ProblemFile, } from './file-scanner.contract'
+import type { CircularDependency, } from './dependency-analyzer.contract'
+
 // Core Types
 export interface ReportOptions {
   /** Report format to generate */
@@ -51,11 +55,11 @@ export interface ExecutionSummary {
   /** Overall audit status */
   overallStatus: AuditStatus
   /** Configuration used */
-  configurationUsed: AuditConfiguration
+  configurationUsed: Record<string, unknown>
   /** Errors encountered */
-  errors: ExecutionError[]
+  errors: Array<{ message: string }>
   /** Warnings generated */
-  warnings: ExecutionWarning[]
+  warnings: Array<{ message: string }>
 }
 
 export interface AnalysisResults {
@@ -152,6 +156,17 @@ export interface FileDiscoveryResults {
   problemFiles: ProblemFile[]
 }
 
+export interface FileInfo {
+  path: string
+  size: number
+  modifiedAt: Date
+}
+
+export interface ProblemFile {
+  path: string
+  reason: string
+}
+
 export interface DependencyAnalysisResults {
   /** Total dependencies found */
   totalDependencies: number
@@ -165,6 +180,27 @@ export interface DependencyAnalysisResults {
   importExportAnalysis: ImportExportAnalysis
   /** External dependencies */
   externalDependencies: ExternalDependencyInfo[]
+}
+
+export interface CircularDependencyInfo {
+  nodes: string[]
+  severity: 'low' | 'medium' | 'high' | 'critical'
+}
+
+export interface DepthStatistics {
+  maxDepth: number
+  avgDepth: number
+}
+
+export interface ImportExportAnalysis {
+  totalImports: number
+  totalExports: number
+}
+
+export interface ExternalDependencyInfo {
+  name: string
+  version: string
+  usageCount: number
 }
 
 export interface ArchitectureValidationResults {

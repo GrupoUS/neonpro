@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import { Command, } from 'commander'
 import ora from 'ora'
+import type { Ora } from 'ora'
 import { ArchitectureValidator, } from '../../services/ArchitectureValidator.js'
 import { CleanupEngine, } from '../../services/CleanupEngine.js'
 import { DependencyAnalyzer, } from '../../services/DependencyAnalyzer.js'
@@ -30,13 +31,24 @@ export const auditCommand = new Command('audit',)
     console.log('',)
 
     const startTime = Date.now()
-    let spinner: any
+    const startTimeHr = process.hrtime.bigint()
+    let spinner: Ora | undefined
+
+    // Performance tracking variables
+    let fileScanStartTime = 0n
+    let fileScanEndTime = 0n
+    let dependencyAnalysisStartTime = 0n
+    let dependencyAnalysisEndTime = 0n
+    let architectureValidationStartTime = 0n
+    let architectureValidationEndTime = 0n
+    const initialCpuUsage = process.cpuUsage()
 
     try {
       // Phase 1: File Scanning
       let scanResult: any = null
       if (!options.skipScan) {
         spinner = ora('📁 Scanning files...',).start()
+        fileScanStartTime = process.hrtime.bigint()
 
         const scanner = new FileScanner()
         const includePatterns = options.include.split(',',).map((p: string,) => p.trim())
@@ -52,6 +64,7 @@ export const auditCommand = new Command('audit',)
           extractMetadata: true,
         },)
 
+        fileScanEndTime = process.hrtime.bigint()
         spinner.succeed(`📁 Scanned ${scanResult.assets.length} files`,)
       }
 
@@ -59,6 +72,7 @@ export const auditCommand = new Command('audit',)
       let dependencyResult: any = null
       if (!options.skipDependencies && scanResult) {
         spinner = ora('🔗 Analyzing dependencies...',).start()
+        dependencyAnalysisStartTime = process.hrtime.bigint()
 
         const analyzer = new DependencyAnalyzer()
         const analyzeOptions = {
@@ -71,6 +85,7 @@ export const auditCommand = new Command('audit',)
 
         dependencyResult = await analyzer.buildGraph(scanResult.assets, analyzeOptions,)
 
+        dependencyAnalysisEndTime = process.hrtime.bigint()
         const circularCount = analyzer.detectCircularDependencies(dependencyResult,).length
         const unusedCount = analyzer.findUnusedAssets(dependencyResult,).length
 
@@ -83,6 +98,7 @@ export const auditCommand = new Command('audit',)
       let validationResult: any = null
       if (!options.skipValidation && scanResult) {
         spinner = ora('🏗️ Validating architecture...',).start()
+        architectureValidationStartTime = process.hrtime.bigint()
 
         const validator = new ArchitectureValidator()
         const docPaths = options.docs.split(',',).map((p: string,) => p.trim())
@@ -98,6 +114,7 @@ export const auditCommand = new Command('audit',)
 
         validationResult = await validator.validateAssets(scanResult.assets, validationOptions,)
 
+        architectureValidationEndTime = process.hrtime.bigint()
         const errorCount = validationResult.violations.filter((v: any,) =>
           v.severity === 'error'
         ).length
@@ -155,6 +172,29 @@ export const auditCommand = new Command('audit',)
 
       const reportGenerator = new ReportGenerator()
 
+      // Calculate real performance metrics
+      const endTimeHr = process.hrtime.bigint()
+      const totalExecutionTimeMs = Date.now() - startTime
+      const totalExecutionTimeNs = Number(endTimeHr - startTimeHr)
+      const finalCpuUsage = process.cpuUsage(initialCpuUsage)
+      const memoryUsage = process.memoryUsage()
+
+      const fileScanTimeMs = fileScanStartTime && fileScanEndTime 
+        ? Number(fileScanEndTime - fileScanStartTime) / 1000000 : 0
+      const dependencyAnalysisTimeMs = dependencyAnalysisStartTime && dependencyAnalysisEndTime
+        ? Number(dependencyAnalysisEndTime - dependencyAnalysisStartTime) / 1000000 : 0
+      const architectureValidationTimeMs = architectureValidationStartTime && architectureValidationEndTime
+        ? Number(architectureValidationEndTime - architectureValidationStartTime) / 1000000 : 0
+
+      const filesProcessedPerSecond = scanResult && fileScanTimeMs > 0
+        ? scanResult.assets.length / (fileScanTimeMs / 1000) : 0
+      const dependenciesAnalyzedPerSecond = dependencyResult && dependencyAnalysisTimeMs > 0
+        ? dependencyResult.nodes.size / (dependencyAnalysisTimeMs / 1000) : 0
+
+      // CPU usage as percentage (user + system time per total execution time)
+      const totalCpuTimeMs = (finalCpuUsage.user + finalCpuUsage.system) / 1000
+      const cpuUsagePercentage = totalExecutionTimeMs > 0 ? (totalCpuTimeMs / totalExecutionTimeMs) * 100 : 0
+
       // Prepare audit data
       const auditData = {
         fileResults: scanResult,
@@ -162,17 +202,15 @@ export const auditCommand = new Command('audit',)
         architectureResults: validationResult,
         cleanupResults: cleanupResult,
         performanceMetrics: {
-          totalExecutionTime: Date.now() - startTime,
-          memoryUsage: process.memoryUsage().heapUsed,
-          peakMemoryUsage: process.memoryUsage().heapTotal,
-          filesProcessedPerSecond: scanResult
-            ? scanResult.assets.length / ((Date.now() - startTime) / 1000)
-            : 0,
-          fileScanTime: 0,
-          dependencyAnalysisTime: 0,
-          architectureValidationTime: 0,
-          dependenciesAnalyzedPerSecond: 0,
-          cpuUsage: 0,
+          totalExecutionTime: totalExecutionTimeMs,
+          memoryUsage: memoryUsage.heapUsed,
+          peakMemoryUsage: memoryUsage.heapTotal,
+          filesProcessedPerSecond: Math.round(filesProcessedPerSecond * 100) / 100,
+          fileScanTime: Math.round(fileScanTimeMs * 100) / 100,
+          dependencyAnalysisTime: Math.round(dependencyAnalysisTimeMs * 100) / 100,
+          architectureValidationTime: Math.round(architectureValidationTimeMs * 100) / 100,
+          dependenciesAnalyzedPerSecond: Math.round(dependenciesAnalyzedPerSecond * 100) / 100,
+          cpuUsage: Math.round(cpuUsagePercentage * 100) / 100,
         },
       }
 

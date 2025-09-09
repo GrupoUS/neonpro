@@ -434,13 +434,10 @@ export class ConfigManager extends EventEmitter {
 
           if (resolvedPath.endsWith('.json',)) {
             config = JSON.parse(content,)
-          } else if (resolvedPath.endsWith('.js',) || resolvedPath.endsWith('.mjs',)) {
-            // Dynamic import for ES modules
-            delete require.cache[resolvedPath]
-            const module = require(resolvedPath,)
-            config = module.default || module
           } else {
-            throw new Error(`Unsupported config file format: ${resolvedPath}`,)
+            throw new Error(
+              `Only JSON configuration files are supported for security reasons. Found: ${resolvedPath}`,
+            )
           }
 
           logger.info(`Loaded configuration from file: ${resolvedPath}`, {

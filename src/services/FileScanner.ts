@@ -78,7 +78,7 @@ export class FileScanner implements IFileScanner {
             skippedFiles++
           }
         } catch (error) {
-          const msg = error instanceof Error ? error.message : String(error)
+          const msg = error instanceof Error ? error.message : String(error,)
           warnings.push({
             type: 'access_denied',
             path: filePath,
@@ -107,7 +107,7 @@ export class FileScanner implements IFileScanner {
       }
     } catch (error) {
       // Convert error to warning and return partial results
-      const msg = error instanceof Error ? error.message : String(error)
+      const msg = error instanceof Error ? error.message : String(error,)
       warnings.push({
         type: 'access_denied',
         path: options.baseDirectory,
@@ -283,7 +283,7 @@ export class FileScanner implements IFileScanner {
             skippedFiles++
           }
         } catch (error) {
-          const msg = error instanceof Error ? error.message : String(error)
+          const msg = error instanceof Error ? error.message : String(error,)
           warnings.push({
             type: 'access_denied',
             path: filePath,
@@ -426,7 +426,7 @@ export class FileScanner implements IFileScanner {
         metadata,
       } as CodeAsset
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error)
+      const msg = error instanceof Error ? error.message : String(error,)
       throw new Error(`Failed to process file ${filePath}: ${msg}`,)
     }
   }

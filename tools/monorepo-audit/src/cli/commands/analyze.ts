@@ -16,6 +16,7 @@ export const analyzeCommand = new Command('analyze',)
   .option('--unused', 'Find unused assets',)
   .option('--importance', 'Calculate importance scores',)
   .option('--graph-viz', 'Generate GraphViz DOT output',)
+  .option('-v, --verbose', 'Enable verbose output', false)
   .action(async (path: string, options: any,) => {
     const spinner = ora('Analyzing dependencies...',).start()
 
@@ -43,7 +44,7 @@ export const analyzeCommand = new Command('analyze',)
       const analyzeOptions = {
         followDynamicImports: true,
         includeTypeImports: false,
-        maxTransitiveDepth: parseInt(options.maxDepth,),
+        maxTransitiveDepth: parseInt(options.maxDepth, 10) || 10,
         detectCircularDependencies: options.circular,
         supportedExtensions: ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts',],
       }

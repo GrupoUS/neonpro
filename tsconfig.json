@@ -27,6 +27,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
+    "types": ["vitest", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"],
       "@models/*": ["./src/models/*"],

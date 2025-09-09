@@ -134,7 +134,7 @@ export class DependencyGraph {
     const roots: string[] = []
 
     this.nodes.forEach((_node, path,) => {
-      const node = this.nodes.get(path)!
+      const node = this.nodes.get(path,)!
       if (node.incomingEdges.length === 0) {
         roots.push(path,)
       }
@@ -151,7 +151,7 @@ export class DependencyGraph {
     const leaves: string[] = []
 
     this.nodes.forEach((_node, path,) => {
-      const node = this.nodes.get(path)!
+      const node = this.nodes.get(path,)!
       if (node.outgoingEdges.length === 0) {
         leaves.push(path,)
       }
@@ -167,7 +167,7 @@ export class DependencyGraph {
     const orphaned: string[] = []
 
     this.nodes.forEach((_node, path,) => {
-      const node = this.nodes.get(path)!
+      const node = this.nodes.get(path,)!
       if (node.incomingEdges.length === 0 && !this.isEntryPoint(path,)) {
         orphaned.push(path,)
       }
@@ -236,7 +236,7 @@ export class DependencyGraph {
    */
   public calculateNodeImportance(): void {
     this.nodes.forEach((_node, path,) => {
-      const node = this.nodes.get(path)!
+      const node = this.nodes.get(path,)!
       const incomingWeight = node.incomingEdges.length * 2 // Higher weight for dependents
       const outgoingWeight = node.outgoingEdges.length * 1
       const totalConnections = incomingWeight + outgoingWeight

@@ -4,6 +4,8 @@
  * Generated: 2025-09-09
  */
 
+import type { CodeAsset, } from './file-scanner.contract'
+
 // Core Types
 export interface ValidationOptions {
   /** Architecture documents to validate against */
@@ -162,7 +164,13 @@ export interface ValidationMetrics {
 }
 
 // Enumerations
-export type ValidationStatus = 'compliant' | 'violations_found' | 'validation_failed'
+export type ValidationStatus =
+  | 'compliant'
+  | 'violations_found'
+  | 'validation_failed'
+  | 'passed'
+  | 'failed'
+  | 'warning'
 
 export type RuleSeverity = 'error' | 'warning' | 'info'
 
@@ -354,13 +362,15 @@ export interface IArchitectureValidator {
 
 export interface AutoFixOptions {
   /** Minimum confidence level for auto-fixes */
-  minConfidence: FixConfidence
+  minConfidence?: FixConfidence
   /** Whether to require manual review */
-  requireReview: boolean
+  requireReview?: boolean
   /** Maximum number of files to fix in batch */
-  maxFilesToFix: number
+  maxFilesToFix?: number
   /** Whether to create backup before fixing */
-  createBackup: boolean
+  createBackup?: boolean
+  /** Dry run without applying changes */
+  dryRun?: boolean
 }
 
 export interface FixResult {

@@ -4,6 +4,8 @@
  * Generated: 2025-09-09
  */
 
+import type { CodeAsset, } from './file-scanner.contract'
+
 // Core Types
 export interface AnalyzerOptions {
   /** Whether to follow dynamic imports */

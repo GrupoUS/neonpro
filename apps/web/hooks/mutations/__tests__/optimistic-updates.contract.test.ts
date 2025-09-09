@@ -17,7 +17,6 @@ import {
   createOptimisticUpdate,
   healthcareOptimisticUpdates as _healthcareOptimisticUpdates, // changed: import under alias
   patientOptimisticUpdates,
-  professionalOptimisticUpdates,
   rollbackOptimisticUpdate,
   validateOptimisticUpdate,
 } from '../healthcare-optimistic-updates'
@@ -516,7 +515,9 @@ describe('OptimisticUpdateStrategy Contract', () => {
         rollbackData: { id: 'test-123', name: 'Original', },
       }
 
-      const result = createOptimisticUpdate(queryClient, updateConfig,)
+      // Pass third argument (options) to match function signature
+      // createOptimisticUpdate expects an array for the config parameter
+      const result = createOptimisticUpdate(queryClient, [updateConfig,], {},)
 
       expect(result,).toHaveProperty('rollback',)
       expect(typeof result.rollback,).toBe('function',)

@@ -1368,9 +1368,11 @@ export enum Status${typeId} {
     },)
 
     // General recommendations
-    const avgMemory = this.results
-      .flatMap(s => s.results)
-      .reduce((sum, r,) => sum + r.memoryPeak, 0,) / this.results.flatMap(s => s.results).length
+    const flatResults = this.results.flatMap(s => s.results)
+    const totalResults = flatResults.length
+    const avgMemory = totalResults === 0
+      ? 0
+      : flatResults.reduce((sum, r,) => sum + r.memoryPeak, 0,) / totalResults
 
     if (avgMemory > PERFORMANCE_TARGETS.maxMemoryUsageMB * 0.8) {
       recommendations.push(

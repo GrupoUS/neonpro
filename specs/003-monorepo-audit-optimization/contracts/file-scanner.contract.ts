@@ -83,6 +83,13 @@ export interface CodeAsset {
   packageName?: string
   /** Initial metadata discovered during scan */
   metadata: Record<string, unknown>
+  /** Optional analysis additions used in tests */
+  dependencies: string[]
+  exports?: string[]
+  layer?: string
+  content?: string
+  lineCount?: number
+  complexity?: number
 }
 
 export type AssetType =
@@ -94,6 +101,7 @@ export type AssetType =
   | 'config'
   | 'documentation'
   | 'types'
+  | 'typescript'
   | 'unknown'
 
 // Service Interface

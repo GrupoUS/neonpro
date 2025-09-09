@@ -5,6 +5,7 @@
  * Generated: 2025-09-09
  */
 
+import { randomBytes, } from 'crypto'
 import type { ImpactAssessment, } from './types'
 import { ActionStatus, ActionType, RiskLevel, } from './types'
 
@@ -200,7 +201,7 @@ export class CleanupAction {
    */
   private static generateActionId(): string {
     const timestamp = Date.now().toString(36,)
-    const random = Math.random().toString(36,).slice(2, 5,)
+    const random = randomBytes(6,).toString('hex',)
     return `action_${timestamp}_${random}`
   }
 

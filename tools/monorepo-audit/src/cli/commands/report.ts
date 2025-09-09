@@ -5,7 +5,7 @@ import { promises as fs, } from 'fs'
 import ora from 'ora'
 import path from 'path'
 import { ReportGenerator, } from '../../services/ReportGenerator.js'
-import { AuditReport, ExportOptions, ReportFormat, } from '../../types/index.js'
+import { AuditReport, ReportFormat, } from '../../types/index.js'
 
 interface GenerateOptions {
   format?: string
@@ -16,7 +16,7 @@ interface GenerateOptions {
   projectName?: string
 }
 
-interface ExportOptions {
+interface ExportCliOptions {
   format?: string
   outputDir?: string
   inputFile?: string
@@ -75,7 +75,7 @@ Examples:
     .option('-o, --output-dir <path>', 'Output directory', './reports',)
     .option('-i, --input-file <path>', 'Input report file', 'reports/audit-report.json',)
     .option('-t, --template <path>', 'Custom export template',)
-    .action(async (options: ExportOptions,) => {
+    .action(async (options: ExportCliOptions,) => {
       await handleReportExport(options,)
     },)
 
@@ -192,7 +192,7 @@ async function handleReportGenerate(options: GenerateOptions,): Promise<void> {
     },)
 
     // Export report
-    const exportOptions: ExportOptions = {
+    const exportOptions = {
       outputDirectory: outputDir,
       filename: `audit-report.${format}`,
       format,
@@ -247,7 +247,7 @@ async function handleReportGenerate(options: GenerateOptions,): Promise<void> {
   }
 }
 
-async function handleReportExport(options: ExportOptions,): Promise<void> {
+async function handleReportExport(options: ExportCliOptions,): Promise<void> {
   console.log(chalk.cyan('📤 Exporting Report',),)
   console.log(chalk.gray('═'.repeat(50,),),)
 
@@ -289,8 +289,8 @@ async function handleReportExport(options: ExportOptions,): Promise<void> {
 
     spinner.text = `Exporting to ${format.toUpperCase()}...`
 
-    // Export report
-    const exportOptions: ExportOptions = {
+    // Export report  
+    const exportOptions = {
       outputDirectory: outputDir,
       filename: `exported-report.${format}`,
       format,

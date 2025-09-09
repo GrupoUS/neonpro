@@ -458,13 +458,72 @@ export interface ExecutiveSummary {
   /** Metrics summary */
   metricsSummary: Record<string, number>
 }
+export interface DetailedFinding {
+  /** Finding identifier */
+  id: string
+  /** Finding category */
+  category: string
+  /** Finding description */
+  description: string
+  /** Severity level */
+  severity: 'info' | 'warning' | 'error' | 'critical'
+  /** Affected file paths */
+  affectedFiles: string[]
+  /** Source location details */
+  location?: {
+    file: string
+    line: number
+    column: number
+  }
+  /** Suggested resolution */
+  resolution?: string
+}
+
+export interface TechnicalMetrics {
+  /** Code complexity metrics */
+  complexityMetrics: {
+    averageComplexity: number
+    maxComplexity: number
+    filesAboveThreshold: number
+  }
+  /** Performance metrics */
+  performanceMetrics: {
+    executionTime: number
+    memoryUsage: number
+    throughput: number
+  }
+  /** Quality indicators */
+  qualityIndicators: {
+    testCoverage: number
+    documentationCoverage: number
+    codeSmells: number
+  }
+}
+
+export interface ImplementationDetails {
+  /** Implementation approach */
+  approach: string
+  /** Technologies used */
+  technologies: string[]
+  /** Architecture patterns */
+  architecturePatterns: string[]
+  /** Configuration details */
+  configuration: Record<string, unknown>
+  /** Dependencies and versions */
+  dependencies: {
+    name: string
+    version: string
+    type: 'runtime' | 'dev' | 'peer'
+  }[]
+}
+
 export interface TechnicalReport {
   /** Detailed findings */
-  detailedFindings: any
+  detailedFindings: DetailedFinding[]
   /** Technical metrics */
-  technicalMetrics: any
+  technicalMetrics: TechnicalMetrics
   /** Implementation details */
-  implementationDetails: any
+  implementationDetails: ImplementationDetails
 }
 export interface TechnicalReportOptions {
   /** Include code samples */

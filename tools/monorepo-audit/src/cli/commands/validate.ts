@@ -4,6 +4,15 @@ import ora from 'ora'
 import { ArchitectureValidator, } from '../../services/ArchitectureValidator.js'
 import { FileScanner, } from '../../services/FileScanner.js'
 
+function escapeHtml(text: string,): string {
+  return text
+    .replace(/&/g, '&amp;',)
+    .replace(/</g, '&lt;',)
+    .replace(/>/g, '&gt;',)
+    .replace(/"/g, '&quot;',)
+    .replace(/'/g, '&#39;',)
+}
+
 export const validateCommand = new Command('validate',)
   .description('Validate architecture and coding standards',)
   .argument('[path]', 'Path to validate', process.cwd(),)
@@ -137,26 +146,52 @@ export const validateCommand = new Command('validate',)
       if (options.autoFix && result.violations.some((v: any,) => v.suggestedFix)) {
         spinner.start('Applying automatic fixes...',)
 
-        const fixableViolations = result.violations.filter((v: any,) => v.suggestedFix)
-        const fixResults = await validator.applyAutoFixes(fixableViolations, {
-          enableAutoFix: true,
-          dryRun: false,
-        },)
-
-        const successfulFixes = fixResults.filter(r => r.applied).length
-        spinner.succeed(`Applied ${successfulFixes}/${fixResults.length} automatic fixes`,)
-
-        if (successfulFixes > 0) {
-          console.log(chalk.green(`\n✨ Fixed ${successfulFixes} issues automatically`,),)
-
-          // Show what was fixed
-          fixResults.filter(r => r.applied).slice(0, 5,).forEach(fix => {
-            console.log(`  ✓ ${fix.description} in ${fix.filePath}`,)
+        try {
+          const fixableViolations = result.violations.filter((v: any,) => v.suggestedFix)
+          const fixResults = await validator.applyAutoFixes(fixableViolations, {
+            enableAutoFix: true,
+            dryRun: false,
           },)
 
-          if (successfulFixes > 5) {
-            console.log(`  ... and ${successfulFixes - 5} more fixes`,)
+          const successfulFixes = fixResults.filter(r => r.applied).length
+          const failedFixes = fixResults.filter(r => !r.applied && r.error).length
+          
+          if (failedFixes > 0) {
+            spinner.warn(`Applied ${successfulFixes}/${fixResults.length} automatic fixes (${failedFixes} failed)`,)
+            
+            // Show failed fixes
+            const failedFixResults = fixResults.filter(r => !r.applied && r.error)
+            if (failedFixResults.length > 0) {
+              console.log(chalk.yellow(`\n⚠️  Failed to apply ${failedFixes} fixes:`,),)
+              failedFixResults.slice(0, 3,).forEach(fix => {
+                console.log(`  ✗ ${fix.description} in ${fix.filePath}`,)
+                console.log(`    ${chalk.gray(`Error: ${fix.error}`)}`,)
+              },)
+              
+              if (failedFixResults.length > 3) {
+                console.log(`  ... and ${failedFixResults.length - 3} more failed fixes`,)
+              }
+            }
+          } else {
+            spinner.succeed(`Applied ${successfulFixes}/${fixResults.length} automatic fixes`,)
           }
+
+          if (successfulFixes > 0) {
+            console.log(chalk.green(`\n✨ Fixed ${successfulFixes} issues automatically`,),)
+
+            // Show what was fixed
+            fixResults.filter(r => r.applied).slice(0, 5,).forEach(fix => {
+              console.log(`  ✓ ${fix.description} in ${fix.filePath}`,)
+            },)
+
+            if (successfulFixes > 5) {
+              console.log(`  ... and ${successfulFixes - 5} more fixes`,)
+            }
+          }
+        } catch (error) {
+          spinner.fail('Auto-fix operation failed',)
+          console.error(chalk.red(`❌ Auto-fix error: ${error instanceof Error ? error.message : String(error,)}`,),)
+          console.log(chalk.yellow('⚠️  Continuing with validation results (auto-fix disabled)...',),)
         }
       }
 
@@ -244,7 +279,7 @@ function wrapInHtml(content: string,): string {
 <body>
     <h1>Architecture Validation Report</h1>
     <div id="content">
-${content.split('\n',).map(line => `        <p>${line}</p>`).join('\n',)}
+${content.split('\n',).map(line => `        <p>${escapeHtml(line,)}</p>`).join('\n',)}
     </div>
 </body>
 </html>`

@@ -45,8 +45,7 @@ export const healthcareOptimisticUpdates = {
       const previousData = queryClient.getQueryData(queryKey,)
 
       // Apply optimistic update with actual data
-      const currentData = queryClient.getQueryData(queryKey,)
-      const updatedData = currentData ? { ...currentData, ...updateData, } : updateData
+      const updatedData = previousData ? { ...previousData, ...updateData, } : updateData
       queryClient.setQueryData(queryKey, updatedData,)
 
       // Return rollback function
@@ -387,7 +386,15 @@ export const healthcareOptimisticUpdates = {
       // Add to new calendar
       queryClient.setQueryData(newCalendarKey, (old: any,) => {
         if (!old) return []
-        const appointmentData = queryClient.getQueryData(detailQueryKey,)
+
+        // Find appointment in old calendar data or use detail data
+        const appointmentFromOldCalendar = Array.isArray(previousOldCalendarData,)
+          ? previousOldCalendarData.find(
+            (appointment: any,) => appointment.id === rescheduleData.appointmentId,
+          )
+          : null
+        const appointmentData = appointmentFromOldCalendar || previousDetailData
+
         if (appointmentData) {
           return [...old, {
             ...appointmentData,
@@ -453,11 +460,10 @@ export const healthcareOptimisticUpdates = {
       }
 
       const queryKey = ['professionals', 'detail', professionalId,]
-      const previousData = queryClient.getQueryData(queryKey,)
+      const previousData = queryClient.getQueryData(queryKey,) || {}
 
       // Apply optimistic update with actual data
-      const currentData = queryClient.getQueryData(queryKey,) || {}
-      const updatedData = { ...currentData, ...updateData, }
+      const updatedData = { ...previousData, ...updateData, }
       queryClient.setQueryData(queryKey, updatedData,)
 
       return {
@@ -560,7 +566,7 @@ export const healthcareOptimisticUpdates = {
       }
     },
 
-    create: <T,>(
+    makeOptimisticCreator: <T,>(
       queryClient: QueryClient,
       queryKey: any[],
       updater: (old: T | undefined,) => T | undefined,
@@ -577,14 +583,27 @@ export const healthcareOptimisticUpdates = {
       }
     },
 
+    create: <T,>(
+      queryClient: QueryClient,
+      queryKey: any[],
+      updater: (old: T | undefined,) => T | undefined,
+    ): OptimisticUpdateResult => {
+      const previousData = queryClient.getQueryData(queryKey,)
+      queryClient.setQueryData(queryKey, updater,)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(queryKey, previousData,)
+        },
+      }
+    },
+
     createOptimisticUpdate: <T,>(
       queryClient: QueryClient,
       queryKey: any[],
       updater: (old: T | undefined,) => T | undefined,
     ): OptimisticUpdateResult => {
-      const previousData = queryClient.getQueryData<T>(queryKey,)
-
-      // Apply optimistic update
+      const previousData = queryClient.getQueryData(queryKey,)
       queryClient.setQueryData(queryKey, updater,)
 
       return {
@@ -600,7 +619,7 @@ export const healthcareOptimisticUpdates = {
       }
     },
 
-    validate: (data: any,): boolean => {
+    isValidOptimisticData: (data: any,): boolean => {
       if (!data || typeof data !== 'object') {
         return false
       }
@@ -617,21 +636,12 @@ export const healthcareOptimisticUpdates = {
       return true
     },
 
+    validate: (data: any,): boolean => {
+      return healthcareOptimisticUpdates.utils.isValidOptimisticData(data,)
+    },
+
     validateOptimisticUpdate: (data: any,): boolean => {
-      if (!data || typeof data !== 'object') {
-        return false
-      }
-
-      // Check for required properties
-      if (!data.queryKey || !Array.isArray(data.queryKey,) || data.queryKey.length === 0) {
-        return false
-      }
-
-      if (data.data === null || data.data === undefined) {
-        return false
-      }
-
-      return true
+      return healthcareOptimisticUpdates.utils.isValidOptimisticData(data,)
     },
 
     rollbackOptimisticUpdate: (
