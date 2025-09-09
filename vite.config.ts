@@ -8,6 +8,10 @@ export default defineConfig(() => ({
     host: "::",
     port: 8080,
   },
+  esbuild: {
+    jsx: 'automatic' as const,
+    jsxImportSource: 'react',
+  },
   plugins: [react()],
   resolve: {
     alias: {
