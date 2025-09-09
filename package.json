@@ -25,7 +25,11 @@
     "format:check": "prettier --check src/",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist/",
-    "audit-tool": "node dist/cli/audit-tool.js"
+    "audit-tool": "node dist/cli/audit-tool.js",
+    "constitutional:quick": "cd tools/audit && npx tsx src/cli/index.ts quick --target . --verbose",
+    "constitutional:full": "cd tools/audit && npx tsx src/cli/index.ts constitutional --target . --verbose", 
+    "constitutional:benchmark": "cd tools/audit && npx tsx src/cli/index.ts benchmark --target . --verbose",
+    "constitutional:setup": "cd tools/audit && chmod +x .githooks/pre-commit && git config core.hooksPath tools/audit/.githooks"
   },
   "keywords": [
     "monorepo",

@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-import { afterEach } from 'vitest'
-import '@testing-library/jest-dom'
-import { cleanup } from '@testing-library/react'
-=======
 import { afterEach, vi } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 // Import Supabase mock to prevent GoTrueClient multi-instance warnings
 import './tools/testing/setup/supabase-mock'
-import { QueryClient, } from '@tanstack/react-query'
-import { cleanup, } from '@testing-library/react'
->>>>>>> 004-tanstack-query-integration
+import { QueryClient } from '@tanstack/react-query'
+import { cleanup } from '@testing-library/react'
 
 afterEach(() => {
 <<<<<<< HEAD

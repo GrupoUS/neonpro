@@ -1,0 +1,80 @@
+{
+  "name": "neonpro-audit-production",
+  "version": "1.0.0",
+  "environment": "production",
+  "logging": {
+    "level": "info",
+    "format": "structured",
+    "outputs": ["file", "stdout"],
+    "rotation": {
+      "enabled": true,
+      "maxFiles": 30,
+      "maxSize": "100MB"
+    },
+    "paths": {
+      "audit": "/var/log/neonpro-audit/audit.log",
+      "performance": "/var/log/neonpro-audit/performance.log",
+      "error": "/var/log/neonpro-audit/error.log"
+    }
+  },
+  "performance": {
+    "maxMemoryUsage": "1800MB",
+    "maxProcessingTime": "14400000",
+    "enableProfiling": true,
+    "metricsCollection": true,
+    "healthCheckInterval": 30000
+  },
+  "constitutional": {
+    "enforceFileLimit": true,
+    "minFileCount": 10000,
+    "maxMemoryBytes": 2147483648,
+    "maxTimeMs": 14400000,
+    "qualityThreshold": 9.5,
+    "enableStrictMode": true
+  },
+  "security": {
+    "auditTrail": {
+      "enabled": true,
+      "retention": "365d",
+      "encryption": "AES-256-GCM"
+    },
+    "accessControl": {
+      "enabled": true,
+      "allowedPaths": [],
+      "deniedPaths": ["/etc", "/root", "/var/lib"]
+    },
+    "inputValidation": {
+      "maxPathLength": 4096,
+      "allowedExtensions": [".ts", ".tsx", ".js", ".jsx", ".json", ".md"],
+      "sanitizeInputs": true
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "endpoints": {
+      "health": "/health",
+      "metrics": "/metrics",
+      "status": "/status"
+    },
+    "alerts": {
+      "memoryThreshold": 0.8,
+      "errorRate": 0.05,
+      "responseTime": 5000
+    }
+  },
+  "reporting": {
+    "formats": ["json", "html", "csv"],
+    "compression": true,
+    "retention": "30d",
+    "storage": {
+      "type": "filesystem",
+      "path": "/var/lib/neonpro-audit/reports"
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "type": "memory",
+    "maxSize": "500MB",
+    "ttl": 3600000
+  }
+}

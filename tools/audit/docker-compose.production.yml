@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  neonpro-audit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: neonpro-audit-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - CONFIG_PATH=/app/config/production.json
+      - LOG_LEVEL=info
+    volumes:
+      - audit_logs:/var/log/neonpro-audit
+      - audit_reports:/var/lib/neonpro-audit/reports
+      - /etc/localtime:/etc/localtime:ro
+      # Mount target directories as read-only
+      - ${AUDIT_TARGET_PATH:-/workspace}:/workspace:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - audit_network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.audit.rule=Host(`audit.neonpro.local`)"
+      - "traefik.http.services.audit.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "node", "src/cli/index.ts", "--help"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Log aggregation service
+  fluentd:
+    image: fluentd:v1.16-1
+    container_name: neonpro-audit-logs
+    restart: unless-stopped
+    volumes:
+      - audit_logs:/var/log/neonpro-audit:ro
+      - ./config/fluentd.conf:/fluentd/etc/fluent.conf:ro
+    ports:
+      - "24224:24224"
+    networks:
+      - audit_network
+
+  # Monitoring service
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: neonpro-audit-metrics
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - audit_network
+
+volumes:
+  audit_logs:
+    driver: local
+  audit_reports:
+    driver: local
+  prometheus_data:
+    driver: local
+
+networks:
+  audit_network:
+    driver: bridge

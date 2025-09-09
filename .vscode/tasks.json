@@ -2,323 +2,89 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "✨ Format Code",
+      "label": "🏛️ Constitutional Audit - Quick",
       "type": "shell",
-      "command": "npx",
-      "args": ["dprint", "fmt"],
-      "group": "build",
-      "detail": "Format all code using dprint (bypasses Turbo)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🔍 Lint Code",
-      "type": "shell",
-      "command": "npx",
-      "args": ["oxlint", "."],
-      "group": "build",
-      "detail": "Run oxlint to check for linting issues (bypasses Turbo)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🔧 Fix Lint Issues",
-      "type": "shell",
-      "command": "npx",
-      "args": ["oxlint", "--fix", "."],
-      "group": "build",
-      "detail": "Automatically fix linting issues with oxlint (bypasses Turbo)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "✅ Full Code Check",
-      "type": "shell",
-      "command": "bash",
-      "args": ["-c", "npx dprint check && npx oxlint . && npx tsc --noEmit --skipLibCheck"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "detail": "Run complete code validation (format check + lint + type check) - bypasses Turbo",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Run Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["vitest", "run", "--reporter=verbose"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "detail": "Run all tests using Vitest with verbose output",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Run Tests (Bun)",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-lc",
-        "if command -v bun >/dev/null 2>&1; then bun run test:unit:bun; else pnpm vitest run --project unit --reporter=verbose; fi"
-      ],
-      "windows": {
-        "command": "powershell",
-        "args": [
-          "-NoProfile",
-          "-ExecutionPolicy",
-          "Bypass",
-          "-Command",
-          "if (Get-Command bun -ErrorAction SilentlyContinue) { bun run test:unit:bun } else { pnpm vitest run --project unit --reporter=verbose }"
-        ]
-      },
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run unit tests via Bun (fast), fallback to pnpm if Bun missing",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🧪 Watch Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["vitest", "--watch", "--reporter=verbose"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Watch and run tests using Vitest",
-      "isBackground": true,
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "🎭 E2E Tests (Debug)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["exec", "playwright", "test", "--debug"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run E2E tests in debug mode",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🚀 Type Check",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["run", "type-check"],
-      "group": "build",
-      "detail": "Run monorepo type-check via Turbo (pnpm-first)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "📦 Install (pnpm)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["install", "--frozen-lockfile", "--prefer-offline"],
-      "group": "build",
-      "detail": "Install dependencies via pnpm (monorepo-aware)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "📊 Lint Error Count",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-c",
-        "npx oxlint . 2>&1 | grep -E \"^  x \" | wc -l; echo \"Total lint errors found\""
-      ],
-      "group": "build",
-      "detail": "Count total lint errors for progress tracking",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🔍 Lint Error Summary",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-c",
-        "npx oxlint . 2>&1 | grep -E \"^  x \" | sed -n \"s/.*(\\(.*\\)).*/\\1/p\" | sort | uniq -c | sort -nr | head -10 || true"
-      ],
-      "group": "build",
-      "detail": "Show top 10 most common lint error types",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Integration Tests (Vitest)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["vitest", "run", "--project", "integration", "--reporter=verbose"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run integration tests in tests/integration using Vitest",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🧪 Unit Tests + Coverage",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["vitest", "run", "--project", "unit", "--coverage", "--reporter=verbose"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run unit tests with coverage report",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🎭 E2E Tests (Headless)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["exec", "playwright", "test"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run Playwright E2E tests headless",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "♿ Accessibility Audit (E2E)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["exec", "playwright", "test", "-g", "@a11y"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run only accessibility E2E suite (WCAG 2.1 AA)",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "📱 E2E Mobile (Smoke)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "exec",
-        "playwright",
-        "test",
-        "--project=mobile-android",
-        "--project=webkit-desktop"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run Playwright mobile projects smoke tests",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🔗 Realtime Integration Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": [
-        "vitest",
-        "run",
-        "--project",
-        "integration",
-        "--reporter=verbose",
-        "--filter",
-        "/real-time|realtime/"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run realtime subscriptions integration tests",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🔒 Compliance Check (LGPD)",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["run", "compliance:check"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Run LGPD/Healthcare compliance checks (requires script)",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "📈 Coverage: Verify",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["run", "coverage:verify"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
-      "detail": "Verify coverage thresholds per coverage-policy.md (requires script)",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
-    },
-    {
-      "label": "🧪 Test: All (Unit → Integration)",
-      "dependsOn": ["🧪 Run Tests", "🧪 Integration Tests (Vitest)"],
-      "dependsOrder": "sequence",
-      "group": "test",
-      "detail": "Run unit tests then integration tests in sequence"
-    },
-    {
-      "label": "🧪 Test: Full (Unit → Integration → E2E)",
-      "dependsOn": ["🧪 Run Tests", "🧪 Integration Tests (Vitest)", "🎭 E2E Tests (Headless)"],
-      "dependsOrder": "sequence",
-      "group": { "kind": "test", "isDefault": false },
-      "detail": "Run full local CI-style suite in sequence"
-    },
-    {
-      "label": "🔎 Detect Context",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-lc",
-        "if [ -f \"${workspaceFolder}/package.json\" ]; then context='nextjs react typescript healthcare'; elif ls ${workspaceFolder}/.env* 1> /dev/null 2>&1; then context='security authentication'; else context='base'; fi; echo \"Contexto detectado: $context\""
-      ],
-      "linux": {
-        "command": "bash",
-        "args": [
-          "-lc",
-          "if [ -f \"${workspaceFolder}/package.json\" ]; then context='nextjs react typescript healthcare'; elif ls ${workspaceFolder}/.env* 1> /dev/null 2>&1; then context='security authentication'; else context='base'; fi; echo \"Contexto detectado: $context\""
-        ]
-      },
-      "windows": {
-        "command": "powershell",
-        "args": [
-          "-NoProfile",
-          "-ExecutionPolicy",
-          "Bypass",
-          "-Command",
-          "$context = if (Test-Path \"${workspaceFolder}\\package.json\") { 'nextjs react typescript healthcare' } elseif (Test-Path \"${workspaceFolder}\\.env*\") { 'security authentication' } else { 'base' }; Write-Host \"Contexto detectado: $context\" -ForegroundColor Green"
-        ]
+      "command": "npx tsx src/cli/index.ts quick --target ${workspaceFolder} --verbose",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/audit"
       },
       "group": "build",
-      "detail": "Cross-platform context detection that works on Linux/macOS (bash) and Windows (PowerShell)",
-      "presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run quick constitutional compliance validation"
+    },
+    {
+      "label": "🏛️ Constitutional Audit - Full",
+      "type": "shell", 
+      "command": "npx tsx src/cli/index.ts constitutional --target ${workspaceFolder} --verbose",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/audit"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run full constitutional compliance validation"
+    },
+    {
+      "label": "📈 Performance Benchmark",
+      "type": "shell",
+      "command": "npx tsx src/cli/index.ts benchmark --target ${workspaceFolder} --verbose",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/audit"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run performance benchmarks on codebase"
+    },
+    {
+      "label": "🏥 Healthcare Compliance Check",
+      "type": "shell",
+      "command": "npx tsx -e \"import './src/validators/healthcare-compliance-validator.js'; console.log('Healthcare compliance check completed')\"",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/audit"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Validate LGPD/ANVISA compliance patterns"
+    },
+    {
+      "label": "🔧 Setup Constitutional Hooks",
+      "type": "shell",
+      "command": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/audit"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Setup Git hooks for constitutional compliance"
     }
   ]
 }

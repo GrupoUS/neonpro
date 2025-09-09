@@ -4,7 +4,6 @@ last_updated: 2025-09-06
 form: reference
 tags: [architecture, flows, compliance, healthcare]
 related:
-
 - ../AGENTS.md
 - ../rules/coding-standards.md
 - ../memory.md

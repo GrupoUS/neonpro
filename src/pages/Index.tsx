@@ -6,7 +6,7 @@ const Index = () => {
         <p className="text-lg text-muted-foreground">Sistema para Clínicas de Estética</p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
