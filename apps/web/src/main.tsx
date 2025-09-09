@@ -10,8 +10,12 @@ import { routeTree, } from './routeTree.gen'
 // Import the root context type
 import type { HealthcareRootContext, } from './routes/__root'
 // Import auth providers
-import { AuthProvider } from '../contexts/auth-context'
-import { RouterAuthProvider, createRouterContext, useRouterAuth } from './providers/RouterAuthProvider'
+import { AuthProvider, } from '../contexts/auth-context'
+import {
+  createRouterContext,
+  RouterAuthProvider,
+  useRouterAuth,
+} from './providers/RouterAuthProvider'
 
 // Import global styles
 import './styles/globals.css'
@@ -53,15 +57,15 @@ const queryClient = new QueryClient({
 // Router wrapper component that provides auth context
 function RouterWithAuth() {
   const routerAuth = useRouterAuth()
-  const routerContext = createRouterContext(routerAuth)
-  
+  const routerContext = createRouterContext(routerAuth,)
+
   const router = createRouter({
     routeTree,
     context: {
       queryClient,
       ...routerContext,
     } satisfies HealthcareRootContext,
-  })
+  },)
 
   return <RouterProvider router={router} />
 }

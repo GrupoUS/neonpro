@@ -6,7 +6,7 @@ import * as React from 'react'
 import { HealthcareSidebar, } from '@/components/healthcare-sidebar'
 import { Header, } from '@/components/layouts/header'
 import { QueryKeys, } from '../../providers/query-provider'
-import { authGuards } from '../lib/auth-utils'
+import { authGuards, } from '../lib/auth-utils'
 
 // Dashboard Layout Component
 function DashboardLayout() {
