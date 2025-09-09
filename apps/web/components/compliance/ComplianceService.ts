@@ -3,7 +3,7 @@
  * Handles data fetching, real-time updates, and compliance scoring
  */
 
-import { createClient, } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase'
 import type {
   ComplianceConfig,
   ComplianceFramework,
