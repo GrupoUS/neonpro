@@ -63,7 +63,7 @@ export interface EmergencyPatientCache {
   };
 }
 
-class EmergencyCache {
+export class EmergencyCache {
   private static instance: EmergencyCache;
   private cache: Map<string, EmergencyCacheEntry>;
   private indexedDB: IDBDatabase | null = null;

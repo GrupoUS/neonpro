@@ -12,7 +12,7 @@
 
 /* eslint-disable no-unused-vars */
 import type { Context, } from 'hono'
-import { afterEach, beforeEach, describe, expect, it, vi, } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the Hono app and auth routes
 // Mock authentication service

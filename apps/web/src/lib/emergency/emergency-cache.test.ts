@@ -7,7 +7,10 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmergencyCache, type EmergencyPatientCache } from "./emergency-cache";
+import { EmergencyCache, type EmergencyPatientCache } from "@/lib/emergency/emergency-cache";
+import * as EmergencyModule from "@/lib/emergency/emergency-cache";
+// eslint-disable-next-line no-console
+console.log("[debug] emergency-cache exports:", Object.keys(EmergencyModule));
 
 type IEmergencyCacheAny = EmergencyCache;
 
