@@ -5,14 +5,14 @@
  * Generated: 2025-09-09
  */
 
-import { exec, spawn, } from 'child_process'
-import { promisify, } from 'util'
+import { exec, spawn, } from 'node:child_process'
+import { promisify, } from 'node:util'
 import { afterEach, beforeEach, describe, expect, it, } from 'vitest'
 
 const execAsync = promisify(exec,)
 
 describe('CLI Validation Integration Tests', () => {
-  let testTimeout = 10000 // 10 second timeout for CLI operations
+  let testTimeout = 10_000 // 10 second timeout for CLI operations
 
   beforeEach(() => {
     // Setup test environment

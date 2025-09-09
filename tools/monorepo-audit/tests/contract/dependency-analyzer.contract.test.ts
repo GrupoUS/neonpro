@@ -19,7 +19,7 @@ import {
   DEFAULT_ANALYZER_OPTIONS,
 } from '../../specs/contracts/dependency-analyzer.contract.js'
 import type { CodeAsset, } from '../../specs/contracts/file-scanner.contract.js'
-import { DependencyAnalyzer } from '../../src/services/DependencyAnalyzer.js'
+import { DependencyAnalyzer, } from '../../src/services/DependencyAnalyzer.js'
 
 describe('DependencyAnalyzer Contract Tests', () => {
   let analyzer: IDependencyAnalyzer

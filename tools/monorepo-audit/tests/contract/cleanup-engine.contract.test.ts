@@ -14,7 +14,8 @@ import type {
   PlanValidationResult,
   ProgressUpdate,
   RollbackOperation,
-} from '../../specs/003-monorepo-audit-optimization/contracts/cleanup-engine.contract'
+} from '../../specs/contracts/cleanup-engine.contract.js'
+import { CleanupEngine, } from '../../src/services/CleanupEngine.js'
 
 describe('CleanupEngine Contract Tests', () => {
   let cleanupEngine: ICleanupEngine

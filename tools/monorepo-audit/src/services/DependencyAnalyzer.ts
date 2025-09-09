@@ -1,20 +1,27 @@
-import { Project, SourceFile, Node, ImportDeclaration, ExportDeclaration, SyntaxKind } from 'ts-morph'
-import { promises as fs } from 'fs'
+import { promises as fs, } from 'fs'
 import path from 'path'
-import { CodeAsset, DependencyGraph, GraphNode, GraphEdge } from '../models/types.js'
 import {
-  IDependencyAnalyzer,
+  ExportDeclaration,
+  ImportDeclaration,
+  Node,
+  Project,
+  SourceFile,
+  SyntaxKind,
+} from 'ts-morph'
+import {
   AnalyzerOptions,
   AssetDependencies,
   CircularDependency,
-  GraphValidationIssue,
-  ImportStatement,
-  ExportStatement,
   CircularSeverity,
-  ResolutionStrategy,
+  ExportStatement,
+  GraphValidationIssue,
+  IDependencyAnalyzer,
   ImpactLevel,
+  ImportStatement,
+  ResolutionStrategy,
   ValidationIssueType,
 } from '../../specs/contracts/dependency-analyzer.contract.js'
+import { CodeAsset, DependencyGraph, GraphEdge, GraphNode, } from '../models/types.js'
 
 /**
  * Analyzes code dependencies and builds dependency graphs
@@ -35,7 +42,7 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
         strict: false,
         skipLibCheck: true,
       },
-    })
+    },)
   }
 
   /**
@@ -61,7 +68,7 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
         id: asset.path,
         path: asset.path,
         type: asset.type,
-        name: path.basename(asset.path, path.extname(asset.path)),
+        name: path.basename(asset.path, path.extname(asset.path,),),
         dependencies: [],
         dependents: [],
         importanceScore: 0,
@@ -71,18 +78,18 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
           exports: [],
           imports: [],
         },
-      })
+      },)
     }
 
     // Analyze dependencies for each asset
     for (const asset of assets) {
-      if (!this.shouldAnalyzeFile(asset.path, options.supportedExtensions)) {
+      if (!this.shouldAnalyzeFile(asset.path, options.supportedExtensions,)) {
         continue
       }
 
       try {
-        const dependencies = await this.analyzeAsset(asset.path, options)
-        const sourceNode = nodes.get(asset.path)
+        const dependencies = await this.analyzeAsset(asset.path, options,)
+        const sourceNode = nodes.get(asset.path,)
 
         if (sourceNode) {
           sourceNode.dependencies = dependencies.directDependencies
@@ -91,7 +98,7 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
 
           // Create edges for direct dependencies
           for (const depPath of dependencies.directDependencies) {
-            const targetNode = nodes.get(depPath)
+            const targetNode = nodes.get(depPath,)
             if (targetNode) {
               // Add edge
               edges.push({
@@ -100,32 +107,32 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
                 type: 'import',
                 weight: 1,
                 metadata: {},
-              })
+              },)
 
               // Update dependents
-              if (!targetNode.dependents.includes(asset.path)) {
-                targetNode.dependents.push(asset.path)
+              if (!targetNode.dependents.includes(asset.path,)) {
+                targetNode.dependents.push(asset.path,)
               }
             }
           }
         }
       } catch (error) {
-        console.warn(`Failed to analyze ${asset.path}:`, error)
+        console.warn(`Failed to analyze ${asset.path}:`, error,)
       }
     }
 
-    const graph: DependencyGraph = { nodes, edges, metadata }
+    const graph: DependencyGraph = { nodes, edges, metadata, }
 
     // Detect circular dependencies if enabled
     if (options.detectCircularDependencies) {
-      graph.metadata.circularDependencies = this.detectCircularDependencies(graph)
+      graph.metadata.circularDependencies = this.detectCircularDependencies(graph,)
     }
 
     // Calculate importance scores
-    const scoredGraph = this.calculateImportanceScores(graph)
+    const scoredGraph = this.calculateImportanceScores(graph,)
 
     // Find unused assets
-    scoredGraph.metadata.unusedAssets = this.findUnusedAssets(scoredGraph)
+    scoredGraph.metadata.unusedAssets = this.findUnusedAssets(scoredGraph,)
 
     return scoredGraph
   }
@@ -137,9 +144,9 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     assetPath: string,
     options: AnalyzerOptions,
   ): Promise<AssetDependencies> {
-    const sourceFile = await this.getSourceFile(assetPath)
+    const sourceFile = await this.getSourceFile(assetPath,)
     if (!sourceFile) {
-      throw new Error(`Could not parse file: ${assetPath}`)
+      throw new Error(`Could not parse file: ${assetPath}`,)
     }
 
     const directDependencies: string[] = []
@@ -150,32 +157,32 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     const imports = sourceFile.getImportDeclarations()
     for (const importDecl of imports) {
       const moduleSpecifier = importDecl.getModuleSpecifierValue()
-      const resolvedPath = this.resolveImportPath(assetPath, moduleSpecifier)
+      const resolvedPath = this.resolveImportPath(assetPath, moduleSpecifier,)
 
       if (resolvedPath) {
-        directDependencies.push(resolvedPath)
+        directDependencies.push(resolvedPath,)
       }
 
       const importStatement: ImportStatement = {
         specifier: moduleSpecifier,
         resolvedPath,
         isTypeOnly: importDecl.isTypeOnly(),
-        namedImports: this.extractNamedImports(importDecl),
+        namedImports: this.extractNamedImports(importDecl,),
         defaultImport: importDecl.getDefaultImport()?.getText(),
         namespaceImport: importDecl.getNamespaceImport()?.getText(),
       }
-      importStatements.push(importStatement)
+      importStatements.push(importStatement,)
     }
 
     // Process dynamic imports if enabled
     if (options.followDynamicImports) {
-      const dynamicImports = this.findDynamicImports(sourceFile)
+      const dynamicImports = this.findDynamicImports(sourceFile,)
       for (const dynamicImport of dynamicImports) {
-        const resolvedPath = this.resolveImportPath(assetPath, dynamicImport.specifier)
-        if (resolvedPath && !directDependencies.includes(resolvedPath)) {
-          directDependencies.push(resolvedPath)
+        const resolvedPath = this.resolveImportPath(assetPath, dynamicImport.specifier,)
+        if (resolvedPath && !directDependencies.includes(resolvedPath,)) {
+          directDependencies.push(resolvedPath,)
         }
-        importStatements.push(dynamicImport)
+        importStatements.push(dynamicImport,)
       }
     }
 
@@ -186,16 +193,16 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
       const exportStatement: ExportStatement = {
         specifier: moduleSpecifier,
         isReexport: !!moduleSpecifier,
-        namedExports: this.extractNamedExports(exportDecl),
+        namedExports: this.extractNamedExports(exportDecl,),
         isDefaultExport: exportDecl.hasDefaultExport(),
         isNamespaceExport: exportDecl.hasNamespaceExport(),
       }
-      exportStatements.push(exportStatement)
+      exportStatements.push(exportStatement,)
     }
 
     return {
       assetPath,
-      directDependencies: [...new Set(directDependencies)],
+      directDependencies: [...new Set(directDependencies,),],
       directDependents: [],
       transitiveDependencies: [],
       importStatements,
@@ -206,49 +213,49 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
   /**
    * Detect circular dependencies using DFS
    */
-  public detectCircularDependencies(graph: DependencyGraph): CircularDependency[] {
+  public detectCircularDependencies(graph: DependencyGraph,): CircularDependency[] {
     const visited = new Set<string>()
     const recursionStack = new Set<string>()
     const cycles: CircularDependency[] = []
 
-    const dfs = (nodeId: string, path: string[]): void => {
-      if (recursionStack.has(nodeId)) {
+    const dfs = (nodeId: string, path: string[],): void => {
+      if (recursionStack.has(nodeId,)) {
         // Found a cycle
-        const cycleStart = path.indexOf(nodeId)
-        const cycle = path.slice(cycleStart).concat(nodeId)
-        
+        const cycleStart = path.indexOf(nodeId,)
+        const cycle = path.slice(cycleStart,).concat(nodeId,)
+
         cycles.push({
           cycle,
-          severity: this.assessCircularSeverity(cycle, graph),
-          resolutionStrategies: this.generateResolutionStrategies(cycle, graph),
-          breakingImpact: this.assessBreakingImpact(cycle, graph),
-        })
+          severity: this.assessCircularSeverity(cycle, graph,),
+          resolutionStrategies: this.generateResolutionStrategies(cycle, graph,),
+          breakingImpact: this.assessBreakingImpact(cycle, graph,),
+        },)
         return
       }
 
-      if (visited.has(nodeId)) {
+      if (visited.has(nodeId,)) {
         return
       }
 
-      visited.add(nodeId)
-      recursionStack.add(nodeId)
-      path.push(nodeId)
+      visited.add(nodeId,)
+      recursionStack.add(nodeId,)
+      path.push(nodeId,)
 
-      const node = graph.nodes.get(nodeId)
+      const node = graph.nodes.get(nodeId,)
       if (node) {
         for (const depId of node.dependencies) {
-          dfs(depId, [...path])
+          dfs(depId, [...path,],)
         }
       }
 
-      recursionStack.delete(nodeId)
+      recursionStack.delete(nodeId,)
       path.pop()
     }
 
     // Start DFS from all nodes
     for (const nodeId of graph.nodes.keys()) {
-      if (!visited.has(nodeId)) {
-        dfs(nodeId, [])
+      if (!visited.has(nodeId,)) {
+        dfs(nodeId, [],)
       }
     }
 
@@ -258,7 +265,7 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
   /**
    * Calculate importance scores using PageRank-like algorithm
    */
-  public calculateImportanceScores(graph: DependencyGraph): DependencyGraph {
+  public calculateImportanceScores(graph: DependencyGraph,): DependencyGraph {
     const dampingFactor = 0.85
     const epsilon = 0.0001
     const maxIterations = 100
@@ -276,28 +283,28 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
       const newScores = new Map<string, number>()
       let converged = true
 
-      for (const [nodeId, node] of graph.nodes) {
+      for (const [nodeId, node,] of graph.nodes) {
         let score = (1 - dampingFactor) / nodeCount
 
         // Add contributions from nodes that depend on this node
         for (const dependentId of node.dependents) {
-          const dependent = graph.nodes.get(dependentId)
+          const dependent = graph.nodes.get(dependentId,)
           if (dependent && dependent.dependencies.length > 0) {
             score += dampingFactor * (dependent.importanceScore / dependent.dependencies.length)
           }
         }
 
-        newScores.set(nodeId, score)
+        newScores.set(nodeId, score,)
 
         // Check convergence
-        if (Math.abs(score - node.importanceScore) > epsilon) {
+        if (Math.abs(score - node.importanceScore,) > epsilon) {
           converged = false
         }
       }
 
       // Update scores
-      for (const [nodeId, score] of newScores) {
-        const node = graph.nodes.get(nodeId)
+      for (const [nodeId, score,] of newScores) {
+        const node = graph.nodes.get(nodeId,)
         if (node) {
           node.importanceScore = score
         }
@@ -309,17 +316,18 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     }
 
     return graph
-  }  /**
+  } /**
    * Find unused assets (no incoming dependencies)
    */
-  public findUnusedAssets(graph: DependencyGraph): string[] {
+
+  public findUnusedAssets(graph: DependencyGraph,): string[] {
     const unusedAssets: string[] = []
 
-    for (const [nodeId, node] of graph.nodes) {
+    for (const [nodeId, node,] of graph.nodes) {
       // Consider asset unused if it has no dependents
       // Exception: entry points (routes, main files) are never unused
-      if (node.dependents.length === 0 && !this.isEntryPoint(node)) {
-        unusedAssets.push(nodeId)
+      if (node.dependents.length === 0 && !this.isEntryPoint(node,)) {
+        unusedAssets.push(nodeId,)
       }
     }
 
@@ -337,86 +345,88 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     const visited = new Set<string>()
     const result: string[] = []
 
-    const traverse = (nodeId: string, depth: number): void => {
-      if (depth >= maxDepth || visited.has(nodeId)) {
+    const traverse = (nodeId: string, depth: number,): void => {
+      if (depth >= maxDepth || visited.has(nodeId,)) {
         return
       }
 
-      visited.add(nodeId)
-      const node = graph.nodes.get(nodeId)
+      visited.add(nodeId,)
+      const node = graph.nodes.get(nodeId,)
 
       if (node) {
         for (const depId of node.dependencies) {
-          if (!visited.has(depId)) {
-            result.push(depId)
-            traverse(depId, depth + 1)
+          if (!visited.has(depId,)) {
+            result.push(depId,)
+            traverse(depId, depth + 1,)
           }
         }
       }
     }
 
-    traverse(assetPath, 0)
-    return [...new Set(result)]
+    traverse(assetPath, 0,)
+    return [...new Set(result,),]
   }
 
   /**
    * Validate graph integrity and detect issues
    */
-  public validateGraph(graph: DependencyGraph): GraphValidationIssue[] {
+  public validateGraph(graph: DependencyGraph,): GraphValidationIssue[] {
     const issues: GraphValidationIssue[] = []
 
     // Check for missing dependencies
     for (const edge of graph.edges) {
-      if (!graph.nodes.has(edge.target)) {
+      if (!graph.nodes.has(edge.target,)) {
         issues.push({
           type: 'missing_dependency' as ValidationIssueType,
           severity: 'error',
           description: `Missing dependency: ${edge.target}`,
-          affectedAssets: [edge.source],
+          affectedAssets: [edge.source,],
           suggestedFix: `Check if ${edge.target} exists and is included in the analysis`,
-        })
+        },)
       }
     }
 
     // Check for orphaned nodes
-    for (const [nodeId, node] of graph.nodes) {
+    for (const [nodeId, node,] of graph.nodes) {
       if (node.dependencies.length === 0 && node.dependents.length === 0) {
-        if (!this.isEntryPoint(node)) {
+        if (!this.isEntryPoint(node,)) {
           issues.push({
             type: 'orphaned_asset' as ValidationIssueType,
             severity: 'warning',
             description: `Orphaned asset: ${nodeId}`,
-            affectedAssets: [nodeId],
+            affectedAssets: [nodeId,],
             suggestedFix: 'Consider removing this unused asset',
-          })
+          },)
         }
       }
     }
 
     // Check for inconsistent edge relationships
     for (const edge of graph.edges) {
-      const sourceNode = graph.nodes.get(edge.source)
-      const targetNode = graph.nodes.get(edge.target)
+      const sourceNode = graph.nodes.get(edge.source,)
+      const targetNode = graph.nodes.get(edge.target,)
 
       if (sourceNode && targetNode) {
         // Check if dependency is recorded in source node
-        if (!sourceNode.dependencies.includes(edge.target)) {
+        if (!sourceNode.dependencies.includes(edge.target,)) {
           issues.push({
             type: 'inconsistent_graph' as ValidationIssueType,
             severity: 'error',
-            description: `Edge exists but dependency not recorded in source node: ${edge.source} -> ${edge.target}`,
-            affectedAssets: [edge.source, edge.target],
-          })
+            description:
+              `Edge exists but dependency not recorded in source node: ${edge.source} -> ${edge.target}`,
+            affectedAssets: [edge.source, edge.target,],
+          },)
         }
 
         // Check if dependent is recorded in target node
-        if (!targetNode.dependents.includes(edge.source)) {
+        if (!targetNode.dependents.includes(edge.source,)) {
           issues.push({
             type: 'inconsistent_graph' as ValidationIssueType,
             severity: 'error',
-            description: `Edge exists but dependent not recorded in target node: ${edge.source} -> ${edge.target}`,
-            affectedAssets: [edge.source, edge.target],
-          })
+            description:
+              `Edge exists but dependent not recorded in target node: ${edge.source} -> ${edge.target}`,
+            affectedAssets: [edge.source, edge.target,],
+          },)
         }
       }
     }
@@ -426,44 +436,44 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
 
   // Private helper methods
 
-  private async getSourceFile(filePath: string): Promise<SourceFile | null> {
+  private async getSourceFile(filePath: string,): Promise<SourceFile | null> {
     try {
-      if (this.sourceFileCache.has(filePath)) {
-        return this.sourceFileCache.get(filePath)!
+      if (this.sourceFileCache.has(filePath,)) {
+        return this.sourceFileCache.get(filePath,)!
       }
 
-      const content = await fs.readFile(filePath, 'utf-8')
-      const sourceFile = this.project.createSourceFile(filePath, content, { overwrite: true })
-      this.sourceFileCache.set(filePath, sourceFile)
+      const content = await fs.readFile(filePath, 'utf-8',)
+      const sourceFile = this.project.createSourceFile(filePath, content, { overwrite: true, },)
+      this.sourceFileCache.set(filePath, sourceFile,)
       return sourceFile
     } catch (error) {
       return null
     }
   }
 
-  private shouldAnalyzeFile(filePath: string, supportedExtensions: string[]): boolean {
-    const ext = path.extname(filePath)
-    return supportedExtensions.includes(ext)
+  private shouldAnalyzeFile(filePath: string, supportedExtensions: string[],): boolean {
+    const ext = path.extname(filePath,)
+    return supportedExtensions.includes(ext,)
   }
 
-  private resolveImportPath(fromPath: string, specifier: string): string | null {
+  private resolveImportPath(fromPath: string, specifier: string,): string | null {
     try {
       // Handle relative imports
-      if (specifier.startsWith('.')) {
-        const resolvedPath = path.resolve(path.dirname(fromPath), specifier)
-        
+      if (specifier.startsWith('.',)) {
+        const resolvedPath = path.resolve(path.dirname(fromPath,), specifier,)
+
         // Try different extensions
-        const extensions = ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts']
+        const extensions = ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts',]
         for (const ext of extensions) {
           const withExt = resolvedPath + ext
           try {
-            require.resolve(withExt)
+            require.resolve(withExt,)
             return withExt
           } catch {
             // Try with index file
-            const indexPath = path.join(resolvedPath, 'index' + ext)
+            const indexPath = path.join(resolvedPath, 'index' + ext,)
             try {
-              require.resolve(indexPath)
+              require.resolve(indexPath,)
               return indexPath
             } catch {
               continue
@@ -480,25 +490,25 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     }
   }
 
-  private extractNamedImports(importDecl: ImportDeclaration): string[] {
+  private extractNamedImports(importDecl: ImportDeclaration,): string[] {
     const namedImports = importDecl.getNamedImports()
     return namedImports.map(ni => ni.getName())
   }
 
-  private extractNamedExports(exportDecl: ExportDeclaration): string[] {
+  private extractNamedExports(exportDecl: ExportDeclaration,): string[] {
     const namedExports = exportDecl.getNamedExports()
     return namedExports.map(ne => ne.getName())
   }
 
-  private findDynamicImports(sourceFile: SourceFile): ImportStatement[] {
+  private findDynamicImports(sourceFile: SourceFile,): ImportStatement[] {
     const dynamicImports: ImportStatement[] = []
-    
+
     sourceFile.forEachDescendant(node => {
-      if (Node.isCallExpression(node)) {
+      if (Node.isCallExpression(node,)) {
         const expression = node.getExpression()
-        if (Node.isIdentifier(expression) && expression.getText() === 'import') {
+        if (Node.isIdentifier(expression,) && expression.getText() === 'import') {
           const args = node.getArguments()
-          if (args.length > 0 && Node.isStringLiteral(args[0])) {
+          if (args.length > 0 && Node.isStringLiteral(args[0],)) {
             const specifier = args[0].getLiteralValue()
             dynamicImports.push({
               specifier,
@@ -507,17 +517,18 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
               namedImports: [],
               defaultImport: undefined,
               namespaceImport: undefined,
-            })
+            },)
           }
         }
       }
-    })
+    },)
 
     return dynamicImports
-  }  private assessCircularSeverity(cycle: string[], graph: DependencyGraph): CircularSeverity {
+  }
+  private assessCircularSeverity(cycle: string[], graph: DependencyGraph,): CircularSeverity {
     // Assess severity based on cycle characteristics
     const cycleLength = cycle.length - 1 // Exclude duplicate at end
-    
+
     if (cycleLength <= 2) {
       return 'high' as CircularSeverity
     } else if (cycleLength <= 4) {
@@ -527,30 +538,33 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     }
   }
 
-  private generateResolutionStrategies(cycle: string[], graph: DependencyGraph): ResolutionStrategy[] {
+  private generateResolutionStrategies(
+    cycle: string[],
+    graph: DependencyGraph,
+  ): ResolutionStrategy[] {
     const strategies: ResolutionStrategy[] = []
 
     // Extract to common dependency
-    strategies.push('extract_common_dependency' as ResolutionStrategy)
+    strategies.push('extract_common_dependency' as ResolutionStrategy,)
 
     // Dependency injection
-    strategies.push('dependency_injection' as ResolutionStrategy)
+    strategies.push('dependency_injection' as ResolutionStrategy,)
 
     // Interface segregation
-    strategies.push('interface_segregation' as ResolutionStrategy)
+    strategies.push('interface_segregation' as ResolutionStrategy,)
 
     return strategies
   }
 
-  private assessBreakingImpact(cycle: string[], graph: DependencyGraph): ImpactLevel {
+  private assessBreakingImpact(cycle: string[], graph: DependencyGraph,): ImpactLevel {
     // Assess impact based on importance scores and dependent count
     let maxScore = 0
     let totalDependents = 0
 
     for (const nodePath of cycle) {
-      const node = graph.nodes.get(nodePath)
+      const node = graph.nodes.get(nodePath,)
       if (node) {
-        maxScore = Math.max(maxScore, node.importanceScore)
+        maxScore = Math.max(maxScore, node.importanceScore,)
         totalDependents += node.dependents.length
       }
     }
@@ -564,10 +578,10 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     }
   }
 
-  private isEntryPoint(node: GraphNode): boolean {
+  private isEntryPoint(node: GraphNode,): boolean {
     // Determine if a node is an entry point (should never be considered unused)
-    const basename = path.basename(node.path, path.extname(node.path))
-    
+    const basename = path.basename(node.path, path.extname(node.path,),)
+
     // Common entry point patterns
     const entryPatterns = [
       'main',
@@ -590,18 +604,16 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     ]
 
     // Check if it's in a routes directory
-    const isInRoutesDir = node.path.includes('/routes/') || 
-                         node.path.includes('/pages/') ||
-                         node.path.includes('/app/')
+    const isInRoutesDir = node.path.includes('/routes/',)
+      || node.path.includes('/pages/',)
+      || node.path.includes('/app/',)
 
     // Check patterns
-    const matchesEntryPattern = entryPatterns.some(pattern => 
-      basename.toLowerCase().includes(pattern)
+    const matchesEntryPattern = entryPatterns.some(pattern =>
+      basename.toLowerCase().includes(pattern,)
     )
-    
-    const matchesRoutePattern = routePatterns.some(pattern => 
-      pattern.test(basename)
-    )
+
+    const matchesRoutePattern = routePatterns.some(pattern => pattern.test(basename,))
 
     return matchesEntryPattern || matchesRoutePattern || isInRoutesDir
   }

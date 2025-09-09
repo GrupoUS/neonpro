@@ -6,8 +6,8 @@
  * Generated: 2025-09-09
  */
 
-import { existsSync, mkdirSync, rmSync, writeFileSync, } from 'fs'
-import { resolve, } from 'path'
+import { existsSync, mkdirSync, rmSync, writeFileSync, } from 'node:fs'
+import { resolve, } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi, } from 'vitest'
 
 describe('Complete Workflow Integration Tests', () => {
@@ -66,7 +66,7 @@ describe('Complete Workflow Integration Tests', () => {
         const executionTime = Date.now() - startTime
 
         // Performance requirement: <30s for 10k files (our test has fewer)
-        expect(executionTime,).toBeLessThan(30000,)
+        expect(executionTime,).toBeLessThan(30_000,)
 
         // Validate scan results structure
         expect(scanResult,).toMatchObject({
@@ -430,7 +430,7 @@ describe('Complete Workflow Integration Tests', () => {
         const executionTime = Date.now() - startTime
 
         // Should meet performance requirements
-        expect(executionTime,).toBeLessThan(30000,) // <30s for 10k files
+        expect(executionTime,).toBeLessThan(30_000,) // <30s for 10k files
         expect(result.metrics.peakMemoryUsage,).toBeLessThan(500_000_000,) // <500MB
       },).rejects.toThrow() // Expected to fail
     })
@@ -673,7 +673,7 @@ function createMockAuditData() {
       },
       metrics: {
         executionTimeMs: 2500,
-        peakMemoryUsage: 50000000,
+        peakMemoryUsage: 50_000_000,
       },
     },
     analysis: {

@@ -5,13 +5,8 @@
  * Generated: 2025-09-09
  */
 
-import {
-  ArchitectureStandard,
-  DocumentType,
-  RuleException,
-  RuleSeverity,
-  ValidationRule,
-} from './types'
+import type { ArchitectureStandard, DocumentType, RuleException, ValidationRule, } from './types'
+import { RuleSeverity, } from './types'
 
 export class ArchitectureDocument {
   public readonly filePath: string
@@ -134,7 +129,7 @@ export class ArchitectureDocument {
 
       // Section headers
       if (trimmed.startsWith('## ',)) {
-        currentSection = trimmed.substring(3,)
+        currentSection = trimmed.slice(3,)
         continue
       }
 
@@ -156,11 +151,11 @@ export class ArchitectureDocument {
           }
         } else if (trimmed.startsWith('  - ',) && currentStandard) {
           // Standard details
-          const detail = trimmed.substring(4,)
+          const detail = trimmed.slice(4,)
           if (detail.startsWith('Scope:',)) {
-            currentStandard.scope = [detail.substring(6,).trim(),]
+            currentStandard.scope = [detail.slice(6,).trim(),]
           } else if (detail.startsWith('Example:',)) {
-            currentStandard.examples = [detail.substring(8,).trim(),]
+            currentStandard.examples = [detail.slice(8,).trim(),]
           } else {
             currentStandard.description += ' ' + detail
           }

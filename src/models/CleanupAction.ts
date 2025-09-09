@@ -5,7 +5,8 @@
  * Generated: 2025-09-09
  */
 
-import { ActionStatus, ActionType, ImpactAssessment, RiskLevel, } from './types'
+import type { ImpactAssessment, } from './types'
+import { ActionStatus, ActionType, RiskLevel, } from './types'
 
 export class CleanupAction {
   public readonly actionId: string
@@ -199,7 +200,7 @@ export class CleanupAction {
    */
   private static generateActionId(): string {
     const timestamp = Date.now().toString(36,)
-    const random = Math.random().toString(36,).substr(2, 5,)
+    const random = Math.random().toString(36,).slice(2, 5,)
     return `action_${timestamp}_${random}`
   }
 

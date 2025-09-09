@@ -5,13 +5,8 @@
  * Generated: 2025-09-09
  */
 
-import {
-  ArchitectureViolation,
-  AssetMetadata,
-  AssetType,
-  ComplianceStatus,
-  UsageStatus,
-} from './types'
+import type { ArchitectureViolation, AssetMetadata, } from './types'
+import { AssetType, ComplianceStatus, UsageStatus, } from './types'
 
 export class CodeAsset {
   public readonly path: string
@@ -36,7 +31,7 @@ export class CodeAsset {
     this.type = type
     this.size = size
     this.lastModified = lastModified
-    this.usageStatus = UsageStatus.UNKNOWN
+    this.usageStatus = UsageStatus.UNUSED
     this.dependencies = []
     this.dependents = []
     this.complianceStatus = ComplianceStatus.UNKNOWN

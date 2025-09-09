@@ -5,8 +5,8 @@
  * Generated: 2025-09-09
  */
 
-import { exec, } from 'child_process'
-import { promisify, } from 'util'
+import { exec, } from 'node:child_process'
+import { promisify, } from 'node:util'
 import { afterEach, beforeEach, describe, expect, it, } from 'vitest'
 
 const execAsync = promisify(exec,)

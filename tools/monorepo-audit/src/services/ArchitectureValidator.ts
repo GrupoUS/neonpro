@@ -1,24 +1,24 @@
-import { Project, SourceFile, Node, SyntaxKind, ImportDeclaration } from 'ts-morph'
-import { promises as fs } from 'fs'
+import { promises as fs, } from 'fs'
 import path from 'path'
-import { CodeAsset, ArchitectureDocument } from '../models/types.js'
+import { ImportDeclaration, Node, Project, SourceFile, SyntaxKind, } from 'ts-morph'
 import {
-  IArchitectureValidator,
-  ValidationOptions,
-  ValidationResult,
   ArchitectureViolation,
-  ValidationStatus,
+  AutoFix,
+  AutoFixOptions,
+  CodeLocation,
   ComplianceSummary,
-  ValidationMetrics,
+  FixResult,
+  IArchitectureValidator,
+  ImpactAssessment,
   Recommendation,
   RuleSeverity,
+  ValidationMetrics,
+  ValidationOptions,
+  ValidationResult,
+  ValidationStatus,
   ViolationCategory,
-  CodeLocation,
-  AutoFix,
-  ImpactAssessment,
-  AutoFixOptions,
-  FixResult,
 } from '../../specs/contracts/architecture-validator.contract.js'
+import { ArchitectureDocument, CodeAsset, } from '../models/types.js'
 
 /**
  * Validates code architecture against defined standards and patterns
@@ -39,7 +39,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
         strict: false,
         skipLibCheck: true,
       },
-    })
+    },)
   }
 
   /**
@@ -53,53 +53,53 @@ export class ArchitectureValidator implements IArchitectureValidator {
     const violations: ArchitectureViolation[] = []
 
     // Load architecture documents first
-    this.architectureDocuments = await this.loadArchitectureDocuments(options.documentPaths)
+    this.architectureDocuments = await this.loadArchitectureDocuments(options.documentPaths,)
 
     // Validate each asset individually
     for (const asset of assets) {
       try {
-        const assetViolations = await this.validateAsset(asset.path, options)
-        violations.push(...assetViolations)
+        const assetViolations = await this.validateAsset(asset.path, options,)
+        violations.push(...assetViolations,)
       } catch (error) {
-        console.warn(`Failed to validate asset ${asset.path}:`, error)
+        console.warn(`Failed to validate asset ${asset.path}:`, error,)
       }
     }
 
     // Perform framework-specific validations
     if (options.validateTurborepoStandards) {
-      const turborepoViolations = await this.validateTurborepoCompliance(assets)
-      violations.push(...turborepoViolations)
+      const turborepoViolations = await this.validateTurborepoCompliance(assets,)
+      violations.push(...turborepoViolations,)
     }
 
     if (options.validateHonoPatterns) {
-      const honoViolations = await this.validateHonoPatterns(assets)
-      violations.push(...honoViolations)
+      const honoViolations = await this.validateHonoPatterns(assets,)
+      violations.push(...honoViolations,)
     }
 
     if (options.validateTanStackRouterPatterns) {
-      const routerViolations = await this.validateTanStackRouterPatterns(assets)
-      violations.push(...routerViolations)
+      const routerViolations = await this.validateTanStackRouterPatterns(assets,)
+      violations.push(...routerViolations,)
     }
 
     // Filter by severity
     const filteredViolations = violations.filter(v =>
-      options.includeSeverities.includes(v.severity)
+      options.includeSeverities.includes(v.severity,)
     )
 
     const endTime = Date.now()
 
     // Build result
     const result: ValidationResult = {
-      overallStatus: this.calculateOverallStatus(filteredViolations),
+      overallStatus: this.calculateOverallStatus(filteredViolations,),
       violations: filteredViolations,
-      complianceSummary: this.buildComplianceSummary(filteredViolations, assets.length),
+      complianceSummary: this.buildComplianceSummary(filteredViolations, assets.length,),
       metrics: {
         totalAssetsValidated: assets.length,
         totalViolations: filteredViolations.length,
         validationDuration: endTime - startTime,
-        rulesEvaluated: this.countUniqueRules(filteredViolations),
+        rulesEvaluated: this.countUniqueRules(filteredViolations,),
       },
-      recommendations: this.generateRecommendations(filteredViolations),
+      recommendations: this.generateRecommendations(filteredViolations,),
     }
 
     return result
@@ -113,7 +113,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
     options: ValidationOptions,
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
-    const sourceFile = await this.getSourceFile(assetPath)
+    const sourceFile = await this.getSourceFile(assetPath,)
 
     if (!sourceFile) {
       return violations
@@ -121,13 +121,13 @@ export class ArchitectureValidator implements IArchitectureValidator {
 
     // Apply architecture document rules
     for (const doc of this.architectureDocuments) {
-      const docViolations = await this.validateAgainstDocument(sourceFile, assetPath, doc)
-      violations.push(...docViolations)
+      const docViolations = await this.validateAgainstDocument(sourceFile, assetPath, doc,)
+      violations.push(...docViolations,)
     }
 
     // Apply general coding standards
-    const standardViolations = await this.validateCodingStandards(sourceFile, assetPath)
-    violations.push(...standardViolations)
+    const standardViolations = await this.validateCodingStandards(sourceFile, assetPath,)
+    violations.push(...standardViolations,)
 
     return violations
   }
@@ -136,19 +136,19 @@ export class ArchitectureValidator implements IArchitectureValidator {
    * Load and parse architecture documents
    */
   public async loadArchitectureDocuments(
-    documentPaths: string[]
+    documentPaths: string[],
   ): Promise<ArchitectureDocument[]> {
     const documents: ArchitectureDocument[] = []
 
     for (const docPath of documentPaths) {
       try {
-        if (await this.fileExists(docPath)) {
-          const content = await fs.readFile(docPath, 'utf-8')
-          const document = this.parseArchitectureDocument(docPath, content)
-          documents.push(document)
+        if (await this.fileExists(docPath,)) {
+          const content = await fs.readFile(docPath, 'utf-8',)
+          const document = this.parseArchitectureDocument(docPath, content,)
+          documents.push(document,)
         }
       } catch (error) {
-        console.warn(`Failed to load architecture document ${docPath}:`, error)
+        console.warn(`Failed to load architecture document ${docPath}:`, error,)
       }
     }
 
@@ -159,21 +159,21 @@ export class ArchitectureValidator implements IArchitectureValidator {
    * Check Turborepo workspace compliance
    */
   public async validateTurborepoCompliance(
-    assets: CodeAsset[]
+    assets: CodeAsset[],
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
     // Check for proper workspace structure
-    const workspaceViolations = this.validateWorkspaceStructure(assets)
-    violations.push(...workspaceViolations)
+    const workspaceViolations = this.validateWorkspaceStructure(assets,)
+    violations.push(...workspaceViolations,)
 
     // Check for turborepo.json configuration
-    const turboConfigViolations = await this.validateTurboConfiguration(assets)
-    violations.push(...turboConfigViolations)
+    const turboConfigViolations = await this.validateTurboConfiguration(assets,)
+    violations.push(...turboConfigViolations,)
 
     // Check package.json dependencies
-    const dependencyViolations = await this.validateTurboDependencies(assets)
-    violations.push(...dependencyViolations)
+    const dependencyViolations = await this.validateTurboDependencies(assets,)
+    violations.push(...dependencyViolations,)
 
     return violations
   }
@@ -182,16 +182,16 @@ export class ArchitectureValidator implements IArchitectureValidator {
    * Check Hono routing pattern compliance
    */
   public async validateHonoPatterns(
-    assets: CodeAsset[]
+    assets: CodeAsset[],
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
     for (const asset of assets) {
-      if (this.isHonoRouteFile(asset)) {
-        const sourceFile = await this.getSourceFile(asset.path)
+      if (this.isHonoRouteFile(asset,)) {
+        const sourceFile = await this.getSourceFile(asset.path,)
         if (sourceFile) {
-          const honoViolations = this.validateHonoRouteFile(sourceFile, asset.path)
-          violations.push(...honoViolations)
+          const honoViolations = this.validateHonoRouteFile(sourceFile, asset.path,)
+          violations.push(...honoViolations,)
         }
       }
     }
@@ -203,16 +203,16 @@ export class ArchitectureValidator implements IArchitectureValidator {
    * Check TanStack Router pattern compliance
    */
   public async validateTanStackRouterPatterns(
-    assets: CodeAsset[]
+    assets: CodeAsset[],
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
     for (const asset of assets) {
-      if (this.isTanStackRouteFile(asset)) {
-        const sourceFile = await this.getSourceFile(asset.path)
+      if (this.isTanStackRouteFile(asset,)) {
+        const sourceFile = await this.getSourceFile(asset.path,)
         if (sourceFile) {
-          const routerViolations = this.validateTanStackRouteFile(sourceFile, asset.path)
-          violations.push(...routerViolations)
+          const routerViolations = this.validateTanStackRouteFile(sourceFile, asset.path,)
+          violations.push(...routerViolations,)
         }
       }
     }
@@ -224,9 +224,9 @@ export class ArchitectureValidator implements IArchitectureValidator {
    * Generate compliance report
    */
   public async generateComplianceReport(
-    validationResult: ValidationResult
+    validationResult: ValidationResult,
   ): Promise<string> {
-    const { violations, complianceSummary, metrics } = validationResult
+    const { violations, complianceSummary, metrics, } = validationResult
 
     let report = '# Architecture Compliance Report\n\n'
 
@@ -239,8 +239,8 @@ export class ArchitectureValidator implements IArchitectureValidator {
 
     // Violations by Severity
     report += '## Violations by Severity\n'
-    const severityGroups = this.groupViolationsBySeverity(violations)
-    for (const [severity, count] of Object.entries(severityGroups)) {
+    const severityGroups = this.groupViolationsBySeverity(violations,)
+    for (const [severity, count,] of Object.entries(severityGroups,)) {
       report += `- ${severity}: ${count}\n`
     }
     report += '\n'
@@ -250,15 +250,16 @@ export class ArchitectureValidator implements IArchitectureValidator {
     for (const violation of violations) {
       report += `### ${violation.ruleName} (${violation.severity})\n`
       report += `**File:** ${violation.filePath}\n`
-      report += `**Location:** Line ${violation.location.line}, Column ${violation.location.column}\n`
+      report +=
+        `**Location:** Line ${violation.location.line}, Column ${violation.location.column}\n`
       report += `**Description:** ${violation.description}\n`
       report += `**Expected:** ${violation.expected}\n`
       report += `**Actual:** ${violation.actual}\n`
-      
+
       if (violation.suggestedFix) {
         report += `**Suggested Fix:** ${violation.suggestedFix.description}\n`
       }
-      
+
       report += '\n'
     }
 
@@ -272,9 +273,10 @@ export class ArchitectureValidator implements IArchitectureValidator {
     }
 
     return report
-  }  /**
+  } /**
    * Apply automatic fixes for violations
    */
+
   public async applyAutoFixes(
     violations: ArchitectureViolation[],
     options: AutoFixOptions,
@@ -287,13 +289,13 @@ export class ArchitectureValidator implements IArchitectureValidator {
       }
 
       try {
-        const success = await this.applyAutoFix(violation)
+        const success = await this.applyAutoFix(violation,)
         results.push({
           violationId: violation.violationId,
           applied: success,
           description: violation.suggestedFix.description,
           filePath: violation.filePath,
-        })
+        },)
       } catch (error) {
         results.push({
           violationId: violation.violationId,
@@ -301,7 +303,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
           description: violation.suggestedFix.description,
           filePath: violation.filePath,
           error: error instanceof Error ? error.message : 'Unknown error',
-        })
+        },)
       }
     }
 
@@ -310,34 +312,34 @@ export class ArchitectureValidator implements IArchitectureValidator {
 
   // Private helper methods
 
-  private async getSourceFile(filePath: string): Promise<SourceFile | null> {
+  private async getSourceFile(filePath: string,): Promise<SourceFile | null> {
     try {
-      const content = await fs.readFile(filePath, 'utf-8')
-      return this.project.createSourceFile(filePath, content, { overwrite: true })
+      const content = await fs.readFile(filePath, 'utf-8',)
+      return this.project.createSourceFile(filePath, content, { overwrite: true, },)
     } catch {
       return null
     }
   }
 
-  private async fileExists(filePath: string): Promise<boolean> {
+  private async fileExists(filePath: string,): Promise<boolean> {
     try {
-      await fs.access(filePath)
+      await fs.access(filePath,)
       return true
     } catch {
       return false
     }
   }
 
-  private parseArchitectureDocument(filePath: string, content: string): ArchitectureDocument {
+  private parseArchitectureDocument(filePath: string, content: string,): ArchitectureDocument {
     // Basic markdown parsing for architecture documents
-    const lines = content.split('\n')
+    const lines = content.split('\n',)
     const rules: any[] = []
-    
+
     // Extract rules from document (simplified implementation)
     // In a real implementation, this would be more sophisticated
     return {
-      id: path.basename(filePath, path.extname(filePath)),
-      title: this.extractTitle(content) || 'Architecture Document',
+      id: path.basename(filePath, path.extname(filePath,),),
+      title: this.extractTitle(content,) || 'Architecture Document',
       version: '1.0.0',
       rules,
       metadata: {
@@ -348,12 +350,12 @@ export class ArchitectureValidator implements IArchitectureValidator {
     }
   }
 
-  private extractTitle(content: string): string | null {
-    const titleMatch = content.match(/^#\s+(.+)$/m)
+  private extractTitle(content: string,): string | null {
+    const titleMatch = content.match(/^#\s+(.+)$/m,)
     return titleMatch ? titleMatch[1] : null
   }
 
-  private calculateOverallStatus(violations: ArchitectureViolation[]): ValidationStatus {
+  private calculateOverallStatus(violations: ArchitectureViolation[],): ValidationStatus {
     const errorCount = violations.filter(v => v.severity === 'error').length
     const warningCount = violations.filter(v => v.severity === 'warning').length
 
@@ -363,31 +365,33 @@ export class ArchitectureValidator implements IArchitectureValidator {
   }
 
   private buildComplianceSummary(
-    violations: ArchitectureViolation[], 
-    totalAssets: number
+    violations: ArchitectureViolation[],
+    totalAssets: number,
   ): ComplianceSummary {
-    const violatedAssets = new Set(violations.map(v => v.filePath)).size
+    const violatedAssets = new Set(violations.map(v => v.filePath),).size
     const compliantAssets = totalAssets - violatedAssets
-    const complianceScore = totalAssets > 0 ? Math.round((compliantAssets / totalAssets) * 100) : 100
+    const complianceScore = totalAssets > 0
+      ? Math.round((compliantAssets / totalAssets) * 100,)
+      : 100
 
     return {
       complianceScore,
-      totalRulesEvaluated: this.countUniqueRules(violations),
+      totalRulesEvaluated: this.countUniqueRules(violations,),
       rulesPassed: 0, // Would need more sophisticated tracking
-      rulesFailed: this.countUniqueRules(violations),
+      rulesFailed: this.countUniqueRules(violations,),
       totalAssets,
       compliantAssets,
       violatedAssets,
     }
   }
 
-  private countUniqueRules(violations: ArchitectureViolation[]): number {
-    return new Set(violations.map(v => v.ruleId)).size
+  private countUniqueRules(violations: ArchitectureViolation[],): number {
+    return new Set(violations.map(v => v.ruleId),).size
   }
 
-  private generateRecommendations(violations: ArchitectureViolation[]): Recommendation[] {
+  private generateRecommendations(violations: ArchitectureViolation[],): Recommendation[] {
     const recommendations: Recommendation[] = []
-    const severityGroups = this.groupViolationsBySeverity(violations)
+    const severityGroups = this.groupViolationsBySeverity(violations,)
 
     if (severityGroups.error > 0) {
       recommendations.push({
@@ -396,7 +400,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
         priority: 'high' as any,
         effort: 'medium' as any,
         impact: 'high' as any,
-      })
+      },)
     }
 
     if (severityGroups.warning > 5) {
@@ -406,31 +410,32 @@ export class ArchitectureValidator implements IArchitectureValidator {
         priority: 'medium' as any,
         effort: 'low' as any,
         impact: 'medium' as any,
-      })
+      },)
     }
 
     return recommendations
   }
 
-  private groupViolationsBySeverity(violations: ArchitectureViolation[]): Record<string, number> {
+  private groupViolationsBySeverity(violations: ArchitectureViolation[],): Record<string, number> {
     const groups: Record<string, number> = {}
-    
+
     for (const violation of violations) {
       groups[violation.severity] = (groups[violation.severity] || 0) + 1
     }
-    
+
     return groups
-  }  private async validateAgainstDocument(
+  }
+  private async validateAgainstDocument(
     sourceFile: SourceFile,
     filePath: string,
-    document: ArchitectureDocument
+    document: ArchitectureDocument,
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
     // Apply document rules (simplified implementation)
     for (const rule of document.rules) {
-      const ruleViolations = await this.applyRule(sourceFile, filePath, rule)
-      violations.push(...ruleViolations)
+      const ruleViolations = await this.applyRule(sourceFile, filePath, rule,)
+      violations.push(...ruleViolations,)
     }
 
     return violations
@@ -438,24 +443,24 @@ export class ArchitectureValidator implements IArchitectureValidator {
 
   private async validateCodingStandards(
     sourceFile: SourceFile,
-    filePath: string
+    filePath: string,
   ): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
     // Check for basic coding standards
-    violations.push(...this.checkImportOrder(sourceFile, filePath))
-    violations.push(...this.checkNamingConventions(sourceFile, filePath))
-    violations.push(...this.checkFileStructure(sourceFile, filePath))
+    violations.push(...this.checkImportOrder(sourceFile, filePath,),)
+    violations.push(...this.checkNamingConventions(sourceFile, filePath,),)
+    violations.push(...this.checkFileStructure(sourceFile, filePath,),)
 
     return violations
   }
 
-  private validateWorkspaceStructure(assets: CodeAsset[]): ArchitectureViolation[] {
+  private validateWorkspaceStructure(assets: CodeAsset[],): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
 
     // Check for apps/ and packages/ structure
-    const hasAppsDir = assets.some(asset => asset.path.includes('/apps/'))
-    const hasPackagesDir = assets.some(asset => asset.path.includes('/packages/'))
+    const hasAppsDir = assets.some(asset => asset.path.includes('/apps/',))
+    const hasPackagesDir = assets.some(asset => asset.path.includes('/packages/',))
 
     if (!hasAppsDir) {
       violations.push(this.createViolation({
@@ -464,11 +469,11 @@ export class ArchitectureValidator implements IArchitectureValidator {
         severity: 'warning',
         category: 'structure',
         filePath: 'root',
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Missing apps/ directory for Turborepo workspace',
         expected: 'apps/ directory containing application packages',
         actual: 'No apps/ directory found',
-      }))
+      },),)
     }
 
     if (!hasPackagesDir) {
@@ -478,22 +483,22 @@ export class ArchitectureValidator implements IArchitectureValidator {
         severity: 'info',
         category: 'structure',
         filePath: 'root',
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Missing packages/ directory for shared packages',
         expected: 'packages/ directory containing shared packages',
         actual: 'No packages/ directory found',
-      }))
+      },),)
     }
 
     return violations
   }
 
-  private async validateTurboConfiguration(assets: CodeAsset[]): Promise<ArchitectureViolation[]> {
+  private async validateTurboConfiguration(assets: CodeAsset[],): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
-    const turboConfig = assets.find(asset => 
-      path.basename(asset.path) === 'turbo.json' || 
-      path.basename(asset.path) === 'turborepo.json'
+    const turboConfig = assets.find(asset =>
+      path.basename(asset.path,) === 'turbo.json'
+      || path.basename(asset.path,) === 'turborepo.json'
     )
 
     if (!turboConfig) {
@@ -503,27 +508,27 @@ export class ArchitectureValidator implements IArchitectureValidator {
         severity: 'error',
         category: 'configuration',
         filePath: 'root',
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Missing Turborepo configuration file',
         expected: 'turbo.json file in root directory',
         actual: 'No turbo.json file found',
-      }))
+      },),)
     }
 
     return violations
   }
 
-  private async validateTurboDependencies(assets: CodeAsset[]): Promise<ArchitectureViolation[]> {
+  private async validateTurboDependencies(assets: CodeAsset[],): Promise<ArchitectureViolation[]> {
     const violations: ArchitectureViolation[] = []
 
-    const packageJsonFiles = assets.filter(asset => path.basename(asset.path) === 'package.json')
-    
+    const packageJsonFiles = assets.filter(asset => path.basename(asset.path,) === 'package.json')
+
     for (const pkgFile of packageJsonFiles) {
       try {
-        const content = await fs.readFile(pkgFile.path, 'utf-8')
-        const pkg = JSON.parse(content)
-        
-        if (pkgFile.path.endsWith('package.json') && !pkgFile.path.includes('node_modules')) {
+        const content = await fs.readFile(pkgFile.path, 'utf-8',)
+        const pkg = JSON.parse(content,)
+
+        if (pkgFile.path.endsWith('package.json',) && !pkgFile.path.includes('node_modules',)) {
           // Check for turbo dependency in root package.json
           if (!pkg.devDependencies?.turbo && !pkg.dependencies?.turbo) {
             violations.push(this.createViolation({
@@ -532,11 +537,11 @@ export class ArchitectureValidator implements IArchitectureValidator {
               severity: 'warning',
               category: 'dependency',
               filePath: pkgFile.path,
-              location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+              location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
               description: 'Missing Turborepo dependency',
               expected: 'turbo package in devDependencies',
               actual: 'No turbo dependency found',
-            }))
+            },),)
           }
         }
       } catch (error) {
@@ -547,64 +552,68 @@ export class ArchitectureValidator implements IArchitectureValidator {
           severity: 'error',
           category: 'syntax',
           filePath: pkgFile.path,
-          location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+          location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
           description: 'Invalid JSON syntax in package.json',
           expected: 'Valid JSON format',
           actual: 'Malformed JSON',
-        }))
+        },),)
       }
     }
 
     return violations
   }
 
-  private isHonoRouteFile(asset: CodeAsset): boolean {
+  private isHonoRouteFile(asset: CodeAsset,): boolean {
     // Check if file is likely a Hono route file
-    return asset.path.includes('/routes/') || 
-           asset.path.includes('/api/') ||
-           asset.type === 'route'
+    return asset.path.includes('/routes/',)
+      || asset.path.includes('/api/',)
+      || asset.type === 'route'
   }
 
-  private validateHonoRouteFile(sourceFile: SourceFile, filePath: string): ArchitectureViolation[] {
+  private validateHonoRouteFile(
+    sourceFile: SourceFile,
+    filePath: string,
+  ): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
 
     // Check for Hono import
     const imports = sourceFile.getImportDeclarations()
-    const hasHonoImport = imports.some(imp => 
-      imp.getModuleSpecifierValue().includes('hono')
-    )
+    const hasHonoImport = imports.some(imp => imp.getModuleSpecifierValue().includes('hono',))
 
-    if (this.looksLikeRouteFile(sourceFile) && !hasHonoImport) {
+    if (this.looksLikeRouteFile(sourceFile,) && !hasHonoImport) {
       violations.push(this.createViolation({
         ruleId: 'hono-import-missing',
         ruleName: 'Missing Hono Import',
         severity: 'warning',
         category: 'import',
         filePath,
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Route file should import from Hono',
         expected: "import { Hono } from 'hono'",
         actual: 'No Hono import found',
-      }))
+      },),)
     }
 
     return violations
   }
 
-  private isTanStackRouteFile(asset: CodeAsset): boolean {
+  private isTanStackRouteFile(asset: CodeAsset,): boolean {
     // Check if file is likely a TanStack Router route file
-    return asset.path.includes('/routes/') && 
-           (asset.path.endsWith('.tsx') || asset.path.endsWith('.ts')) &&
-           asset.type === 'route'
+    return asset.path.includes('/routes/',)
+      && (asset.path.endsWith('.tsx',) || asset.path.endsWith('.ts',))
+      && asset.type === 'route'
   }
 
-  private validateTanStackRouteFile(sourceFile: SourceFile, filePath: string): ArchitectureViolation[] {
+  private validateTanStackRouteFile(
+    sourceFile: SourceFile,
+    filePath: string,
+  ): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
 
     // Check for TanStack Router imports
     const imports = sourceFile.getImportDeclarations()
-    const hasRouterImport = imports.some(imp => 
-      imp.getModuleSpecifierValue().includes('@tanstack/react-router')
+    const hasRouterImport = imports.some(imp =>
+      imp.getModuleSpecifierValue().includes('@tanstack/react-router',)
     )
 
     if (!hasRouterImport) {
@@ -614,11 +623,11 @@ export class ArchitectureValidator implements IArchitectureValidator {
         severity: 'warning',
         category: 'import',
         filePath,
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Route file should import from TanStack Router',
         expected: "import { createRoute } from '@tanstack/react-router'",
         actual: 'No TanStack Router import found',
-      }))
+      },),)
     }
 
     return violations
@@ -627,128 +636,132 @@ export class ArchitectureValidator implements IArchitectureValidator {
   private async applyRule(
     sourceFile: SourceFile,
     filePath: string,
-    rule: any
+    rule: any,
   ): Promise<ArchitectureViolation[]> {
     // Simplified rule application
     // In a real implementation, this would be much more sophisticated
     return []
   }
 
-  private checkImportOrder(sourceFile: SourceFile, filePath: string): ArchitectureViolation[] {
+  private checkImportOrder(sourceFile: SourceFile, filePath: string,): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
     const imports = sourceFile.getImportDeclarations()
 
     // Simple check for import order (external -> internal -> relative)
     let lastImportType = 'external'
-    
+
     for (const imp of imports) {
       const specifier = imp.getModuleSpecifierValue()
-      const currentType = this.categorizeImport(specifier)
-      
-      if (this.isImportOrderViolation(lastImportType, currentType)) {
+      const currentType = this.categorizeImport(specifier,)
+
+      if (this.isImportOrderViolation(lastImportType, currentType,)) {
         violations.push(this.createViolation({
           ruleId: 'import-order',
           ruleName: 'Import Order',
           severity: 'info',
           category: 'style',
           filePath,
-          location: this.getNodeLocation(imp),
+          location: this.getNodeLocation(imp,),
           description: 'Imports should be ordered: external, internal, relative',
           expected: 'Proper import ordering',
           actual: `${currentType} import after ${lastImportType}`,
-        }))
+        },),)
       }
-      
+
       lastImportType = currentType
     }
 
     return violations
-  }  private checkNamingConventions(sourceFile: SourceFile, filePath: string): ArchitectureViolation[] {
+  }
+  private checkNamingConventions(
+    sourceFile: SourceFile,
+    filePath: string,
+  ): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
 
     // Check file naming convention
-    const fileName = path.basename(filePath, path.extname(filePath))
-    if (this.isComponent(sourceFile) && !this.isPascalCase(fileName)) {
+    const fileName = path.basename(filePath, path.extname(filePath,),)
+    if (this.isComponent(sourceFile,) && !this.isPascalCase(fileName,)) {
       violations.push(this.createViolation({
         ruleId: 'component-naming-convention',
         ruleName: 'Component Naming Convention',
         severity: 'warning',
         category: 'naming',
         filePath,
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'Component files should use PascalCase naming',
         expected: 'PascalCase filename',
         actual: `${fileName} (not PascalCase)`,
-      }))
+      },),)
     }
 
     return violations
   }
 
-  private checkFileStructure(sourceFile: SourceFile, filePath: string): ArchitectureViolation[] {
+  private checkFileStructure(sourceFile: SourceFile, filePath: string,): ArchitectureViolation[] {
     const violations: ArchitectureViolation[] = []
 
     // Check for proper file organization
-    if (this.isInWrongDirectory(filePath)) {
+    if (this.isInWrongDirectory(filePath,)) {
       violations.push(this.createViolation({
         ruleId: 'file-organization',
         ruleName: 'File Organization',
         severity: 'info',
         category: 'structure',
         filePath,
-        location: { line: 1, column: 1, endLine: 1, endColumn: 1 },
+        location: { line: 1, column: 1, endLine: 1, endColumn: 1, },
         description: 'File may be in incorrect directory',
         expected: 'Files organized by feature or type',
         actual: 'File in unexpected location',
-      }))
+      },),)
     }
 
     return violations
   }
 
-  private looksLikeRouteFile(sourceFile: SourceFile): boolean {
+  private looksLikeRouteFile(sourceFile: SourceFile,): boolean {
     // Check if source file contains route-like patterns
     const text = sourceFile.getFullText()
-    return text.includes('.get(') || 
-           text.includes('.post(') || 
-           text.includes('.put(') || 
-           text.includes('.delete(') ||
-           text.includes('app.route')
+    return text.includes('.get(',)
+      || text.includes('.post(',)
+      || text.includes('.put(',)
+      || text.includes('.delete(',)
+      || text.includes('app.route',)
   }
 
-  private categorizeImport(specifier: string): string {
-    if (specifier.startsWith('.')) return 'relative'
-    if (specifier.startsWith('@/') || specifier.startsWith('~/')) return 'internal'
+  private categorizeImport(specifier: string,): string {
+    if (specifier.startsWith('.',)) return 'relative'
+    if (specifier.startsWith('@/',) || specifier.startsWith('~/',)) return 'internal'
     return 'external'
   }
 
-  private isImportOrderViolation(lastType: string, currentType: string): boolean {
-    const order = ['external', 'internal', 'relative']
-    return order.indexOf(currentType) < order.indexOf(lastType)
+  private isImportOrderViolation(lastType: string, currentType: string,): boolean {
+    const order = ['external', 'internal', 'relative',]
+    return order.indexOf(currentType,) < order.indexOf(lastType,)
   }
 
-  private isComponent(sourceFile: SourceFile): boolean {
+  private isComponent(sourceFile: SourceFile,): boolean {
     const text = sourceFile.getFullText()
-    return text.includes('export default function') ||
-           text.includes('export const') && text.includes('React') ||
-           text.includes('JSX.Element') ||
-           text.includes('FC<')
+    return text.includes('export default function',)
+      || text.includes('export const',) && text.includes('React',)
+      || text.includes('JSX.Element',)
+      || text.includes('FC<',)
   }
 
-  private isPascalCase(str: string): boolean {
-    return /^[A-Z][a-zA-Z0-9]*$/.test(str)
+  private isPascalCase(str: string,): boolean {
+    return /^[A-Z][a-zA-Z0-9]*$/.test(str,)
   }
 
-  private isInWrongDirectory(filePath: string): boolean {
+  private isInWrongDirectory(filePath: string,): boolean {
     // Simplified check - in real implementation would be more sophisticated
-    const fileName = path.basename(filePath)
-    const dirName = path.dirname(filePath)
-    
+    const fileName = path.basename(filePath,)
+    const dirName = path.dirname(filePath,)
+
     // Components should be in components directory
-    if (fileName.includes('Component') && !dirName.includes('components')) {
+    if (fileName.includes('Component',) && !dirName.includes('components',)) {
       return true
     }
-    
+
     return false
   }
 
@@ -763,9 +776,9 @@ export class ArchitectureValidator implements IArchitectureValidator {
     expected: string
     actual: string
     suggestedFix?: AutoFix
-  }): ArchitectureViolation {
+  },): ArchitectureViolation {
     return {
-      violationId: `${params.ruleId}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      violationId: `${params.ruleId}-${Date.now()}-${Math.random().toString(36,).slice(2,)}`,
       ruleId: params.ruleId,
       ruleName: params.ruleName,
       severity: params.severity,
@@ -776,16 +789,16 @@ export class ArchitectureValidator implements IArchitectureValidator {
       expected: params.expected,
       actual: params.actual,
       suggestedFix: params.suggestedFix,
-      impact: this.assessImpact(params.severity),
+      impact: this.assessImpact(params.severity,),
     }
   }
 
-  private getNodeLocation(node: Node): CodeLocation {
+  private getNodeLocation(node: Node,): CodeLocation {
     const start = node.getStart()
     const sourceFile = node.getSourceFile()
-    const lineAndColumn = sourceFile.getLineAndColumnAtPos(start)
+    const lineAndColumn = sourceFile.getLineAndColumnAtPos(start,)
     const end = node.getEnd()
-    const endLineAndColumn = sourceFile.getLineAndColumnAtPos(end)
+    const endLineAndColumn = sourceFile.getLineAndColumnAtPos(end,)
 
     return {
       line: lineAndColumn.line,
@@ -795,7 +808,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
     }
   }
 
-  private assessImpact(severity: RuleSeverity): ImpactAssessment {
+  private assessImpact(severity: RuleSeverity,): ImpactAssessment {
     const baseImpact: ImpactAssessment = {
       maintainability: 'low',
       performance: 'low',
@@ -823,11 +836,11 @@ export class ArchitectureValidator implements IArchitectureValidator {
     }
   }
 
-  private async applyAutoFix(violation: ArchitectureViolation): Promise<boolean> {
+  private async applyAutoFix(violation: ArchitectureViolation,): Promise<boolean> {
     if (!violation.suggestedFix) return false
 
     try {
-      const sourceFile = await this.getSourceFile(violation.filePath)
+      const sourceFile = await this.getSourceFile(violation.filePath,)
       if (!sourceFile) return false
 
       // Apply the auto-fix (simplified implementation)
@@ -835,37 +848,37 @@ export class ArchitectureValidator implements IArchitectureValidator {
         case 'replace':
           // Replace text at location
           const start = sourceFile.getPositionOfLineAndColumn(
-            violation.location.line, 
-            violation.location.column
+            violation.location.line,
+            violation.location.column,
           )
           const end = sourceFile.getPositionOfLineAndColumn(
             violation.location.endLine || violation.location.line,
-            violation.location.endColumn || violation.location.column
+            violation.location.endColumn || violation.location.column,
           )
-          
-          sourceFile.replaceText([start, end], violation.suggestedFix.newText || '')
+
+          sourceFile.replaceText([start, end,], violation.suggestedFix.newText || '',)
           break
 
         case 'insert':
           // Insert text at location
           const insertPos = sourceFile.getPositionOfLineAndColumn(
             violation.location.line,
-            violation.location.column
+            violation.location.column,
           )
-          sourceFile.insertText(insertPos, violation.suggestedFix.newText || '')
+          sourceFile.insertText(insertPos, violation.suggestedFix.newText || '',)
           break
 
         case 'remove':
           // Remove text at location
           const removeStart = sourceFile.getPositionOfLineAndColumn(
             violation.location.line,
-            violation.location.column
+            violation.location.column,
           )
           const removeEnd = sourceFile.getPositionOfLineAndColumn(
             violation.location.endLine || violation.location.line,
-            violation.location.endColumn || violation.location.column
+            violation.location.endColumn || violation.location.column,
           )
-          sourceFile.removeText(removeStart, removeEnd - removeStart)
+          sourceFile.removeText(removeStart, removeEnd - removeStart,)
           break
 
         default:
@@ -876,7 +889,7 @@ export class ArchitectureValidator implements IArchitectureValidator {
       await sourceFile.save()
       return true
     } catch (error) {
-      console.error('Failed to apply auto-fix:', error)
+      console.error('Failed to apply auto-fix:', error,)
       return false
     }
   }

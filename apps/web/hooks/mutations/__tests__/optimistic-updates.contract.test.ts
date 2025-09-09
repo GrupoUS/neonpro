@@ -15,12 +15,15 @@ import type { OptimisticUpdateStrategy, } from '/home/vibecoder/neonpro/specs/00
 import {
   appointmentOptimisticUpdates,
   createOptimisticUpdate,
-  healthcareOptimisticUpdates,
+  healthcareOptimisticUpdates as _healthcareOptimisticUpdates, // changed: import under alias
   patientOptimisticUpdates,
   professionalOptimisticUpdates,
   rollbackOptimisticUpdate,
   validateOptimisticUpdate,
 } from '../healthcare-optimistic-updates'
+
+// Cast to `any` in tests until implementation export/type includes `professional` and other props
+const healthcareOptimisticUpdates: any = _healthcareOptimisticUpdates
 
 describe('OptimisticUpdateStrategy Contract', () => {
   let queryClient: QueryClient
@@ -100,18 +103,19 @@ describe('OptimisticUpdateStrategy Contract', () => {
       // This test MUST FAIL - patient.update not implemented yet
       const updateFn = healthcareOptimisticUpdates.patient.update
 
-      // Mock query client methods
-      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
-        undefined
-      )
-      const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries',).mockResolvedValue()
-
       const patientData = {
         id: 'patient-123',
         name: 'João Silva',
         email: 'joao@example.com',
         phone: '11999999999',
       }
+
+      // Mock query client methods
+      const getQueryDataSpy = vi.spyOn(queryClient, 'getQueryData',).mockReturnValue(patientData,)
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
+        undefined
+      )
+      const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries',).mockResolvedValue()
 
       const updateData = { name: 'João Santos', }
 
@@ -255,10 +259,6 @@ describe('OptimisticUpdateStrategy Contract', () => {
       // This test MUST FAIL - appointment.update not implemented yet
       const updateFn = healthcareOptimisticUpdates.appointment.update
 
-      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
-        undefined
-      )
-
       const appointmentData = {
         id: 'appointment-123',
         patientId: 'patient-456',
@@ -267,6 +267,13 @@ describe('OptimisticUpdateStrategy Contract', () => {
         time: '14:00',
         status: 'scheduled',
       }
+
+      const getQueryDataSpy = vi.spyOn(queryClient, 'getQueryData',).mockReturnValue(
+        appointmentData,
+      )
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
+        undefined
+      )
 
       const updateData = { time: '15:00', notes: 'Updated appointment time', }
 
@@ -408,16 +415,19 @@ describe('OptimisticUpdateStrategy Contract', () => {
       // This test MUST FAIL - professional.update not implemented yet
       const updateFn = healthcareOptimisticUpdates.professional.update
 
-      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
-        undefined
-      )
-
       const professionalData = {
         id: 'prof-123',
         name: 'Dr. Ana Silva',
         specialization: 'dermatology',
         license: 'CRM-12345',
       }
+
+      const getQueryDataSpy = vi.spyOn(queryClient, 'getQueryData',).mockReturnValue(
+        professionalData,
+      )
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData',).mockImplementation(() =>
+        undefined
+      )
 
       const updateData = { phone: '11777777777', }
 

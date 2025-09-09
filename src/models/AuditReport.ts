@@ -6,15 +6,14 @@
  */
 
 import { CleanupAction, } from './CleanupAction'
-import {
+import type {
   AuditFinding,
   AuditSummary,
   AuditWarning,
-  FindingSeverity,
-  FindingType,
   OptimizationMetrics,
   RollbackInformation,
 } from './types'
+import { FindingSeverity, FindingType, } from './types'
 
 export class AuditReport {
   public readonly reportId: string
@@ -232,7 +231,7 @@ ${autoFixableCount > 0 ? `🔧 ${autoFixableCount} issues can be automatically f
    */
   private static generateReportId(): string {
     const timestamp = Date.now().toString(36,)
-    const random = Math.random().toString(36,).substr(2, 5,)
+    const random = Math.random().toString(36,).slice(2, 5,)
     return `audit_${timestamp}_${random}`
   }
 

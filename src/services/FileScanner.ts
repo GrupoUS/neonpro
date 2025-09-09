@@ -5,9 +5,9 @@
  * Generated: 2025-09-09
  */
 
-import { promises as fs, } from 'fs'
 import { glob, } from 'glob'
-import { extname, join, relative, resolve, } from 'path'
+import { promises as fs, } from 'node:fs'
+import { extname, join, relative, resolve, } from 'node:path'
 import type {
   AssetType,
   CodeAsset,
@@ -78,10 +78,11 @@ export class FileScanner implements IFileScanner {
             skippedFiles++
           }
         } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error)
           warnings.push({
             type: 'access_denied',
             path: filePath,
-            message: `Failed to process file: ${error.message}`,
+            message: `Failed to process file: ${msg}`,
             critical: false,
           },)
           skippedFiles++
@@ -106,10 +107,11 @@ export class FileScanner implements IFileScanner {
       }
     } catch (error) {
       // Convert error to warning and return partial results
+      const msg = error instanceof Error ? error.message : String(error)
       warnings.push({
         type: 'access_denied',
         path: options.baseDirectory,
-        message: `Scan failed: ${error.message}`,
+        message: `Scan failed: ${msg}`,
         critical: true,
       },)
 
@@ -281,10 +283,11 @@ export class FileScanner implements IFileScanner {
             skippedFiles++
           }
         } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error)
           warnings.push({
             type: 'access_denied',
             path: filePath,
-            message: `Failed to process: ${error.message}`,
+            message: `Failed to process: ${msg}`,
             critical: false,
           },)
           skippedFiles++
@@ -341,7 +344,7 @@ export class FileScanner implements IFileScanner {
         peakMemoryUsage: process.memoryUsage().heapUsed,
       }
 
-      if (error.message.includes('cancelled',)) {
+      if (error instanceof Error && error.message.includes('cancelled',)) {
         warnings.push({
           type: 'access_denied',
           path: options.baseDirectory,
@@ -368,8 +371,9 @@ export class FileScanner implements IFileScanner {
           ignore: options.excludePatterns,
           follow: options.followSymlinks,
           dot: options.includeHidden,
-          maxDepth: options.maxDepth === -1 ? undefined : options.maxDepth,
-        },)
+          // Cast to any to satisfy exactOptionalPropertyTypes, undefined is allowed at runtime
+          maxDepth: (options.maxDepth === -1 ? undefined : options.maxDepth) as any,
+        } as any,)
 
         allFiles.push(...files,)
       } catch (error) {
@@ -388,7 +392,7 @@ export class FileScanner implements IFileScanner {
   private async processFile(
     filePath: string,
     baseDir: string,
-    options: ScanOptions,
+    _options: ScanOptions,
   ): Promise<CodeAsset | null> {
     try {
       const stats = await fs.stat(filePath,)
@@ -412,16 +416,18 @@ export class FileScanner implements IFileScanner {
 
       return {
         path: filePath,
-        extension: extension.substring(1,), // Remove leading dot
+        extension: extension.slice(1,), // Remove leading dot
         size: stats.size,
         lastModified: stats.mtime,
         type: assetType,
         location,
-        packageName,
+        // Satisfy exactOptionalPropertyTypes by omitting undefined
+        ...(packageName ? { packageName, } : {}),
         metadata,
-      }
+      } as CodeAsset
     } catch (error) {
-      throw new Error(`Failed to process file ${filePath}: ${error.message}`,)
+      const msg = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to process file ${filePath}: ${msg}`,)
     }
   }
 
@@ -568,9 +574,9 @@ export class FileScanner implements IFileScanner {
    */
   private async calculateContentHash(filePath: string,): Promise<string | undefined> {
     try {
-      const crypto = await import('crypto')
+      const crypto = await import('node:crypto')
       const content = await fs.readFile(filePath,)
-      return crypto.createHash('sha256',).update(content,).digest('hex',).substring(0, 16,)
+      return crypto.createHash('sha256',).update(content,).digest('hex',).slice(0, 16,)
     } catch (error) {
       return undefined
     }

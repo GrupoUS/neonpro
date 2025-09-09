@@ -14,7 +14,7 @@ import type {
   ValidationResult,
 } from '../../specs/contracts/architecture-validator.contract.js'
 import type { CodeAsset, } from '../../specs/contracts/file-scanner.contract.js'
-import { ArchitectureValidator } from '../../src/services/ArchitectureValidator.js'
+import { ArchitectureValidator, } from '../../src/services/ArchitectureValidator.js'
 
 describe('ArchitectureValidator Contract Tests', () => {
   let validator: IArchitectureValidator

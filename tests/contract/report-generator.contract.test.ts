@@ -130,9 +130,9 @@ describe('ReportGenerator Contract Tests', () => {
 
       const report = await reportGenerator.generateAuditReport(mockAuditData, options,)
 
-      // Report should contain requested sections
-      expect(report.content,).toContain('executive_summary' || 'Executive Summary',)
-      expect(report.content,).toContain('performance_metrics' || 'Performance Metrics',)
+      // Report should contain requested sections (support snake_case or Title Case)
+      expect(report.content,).toMatch(/executive_summary|Executive Summary/,)
+      expect(report.content,).toMatch(/performance_metrics|Performance Metrics/,)
     })
   })
 

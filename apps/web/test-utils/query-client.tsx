@@ -4,7 +4,7 @@
  */
 
 import { QueryClient, QueryClientProvider, } from '@tanstack/react-query'
-import { ReactNode, } from 'react'
+import React, { ReactNode, } from 'react'
 import { healthcareQueryConfig, } from '../lib/config/healthcare-query-config'
 
 /**
@@ -89,6 +89,9 @@ export function createQueryWrapper(queryClient: QueryClient,) {
     )
   }
 }
+
+// Alias for compatibility
+export const createWrapper = createQueryWrapper
 
 /**
  * Healthcare-specific query wrapper

@@ -14,7 +14,8 @@ import type {
   IReportGenerator,
   ReportOptions,
   TechnicalReport,
-} from '../../specs/003-monorepo-audit-optimization/contracts/report-generator.contract'
+} from '../../specs/contracts/report-generator.contract.js'
+import { ReportGenerator, } from '../../src/services/ReportGenerator.js'
 
 describe('ReportGenerator Contract Tests', () => {
   let reportGenerator: IReportGenerator

@@ -5,9 +5,9 @@
  * Generated: 2025-09-09
  */
 
-import { exec, } from 'child_process'
-import { promises as fs, } from 'fs'
-import { promisify, } from 'util'
+import { exec, } from 'node:child_process'
+import { promises as fs, } from 'node:fs'
+import { promisify, } from 'node:util'
 import { afterEach, beforeEach, describe, expect, it, } from 'vitest'
 
 const execAsync = promisify(exec,)
@@ -146,7 +146,7 @@ describe('File Discovery Integration Tests', () => {
         const executionTime = endTime - startTime
 
         // From quickstart: Scan completion under 30 seconds for 10k files
-        expect(executionTime,).toBeLessThan(30000,) // 30 seconds
+        expect(executionTime,).toBeLessThan(30_000,) // 30 seconds
 
         // Should report performance metrics
         expect(stdout,).toMatch(/scan completed in \d+/i,)
@@ -155,7 +155,7 @@ describe('File Discovery Integration Tests', () => {
         console.log('✅ Expected failure - CLI performance optimization not implemented yet',)
         expect(true,).toBe(false,) // Force failure for TDD
       }
-    }, 35000,) // 35 second timeout for performance test
+    }, 35_000,) // 35 second timeout for performance test
 
     it('should report scan performance metrics', async () => {
       // This will FAIL until CLI performance reporting is implemented

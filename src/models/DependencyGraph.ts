@@ -5,14 +5,8 @@
  * Generated: 2025-09-09
  */
 
-import {
-  CircularDependency,
-  CircularSeverity,
-  DependencyType,
-  GraphEdge,
-  GraphLayer,
-  GraphNode,
-} from './types'
+import type { CircularDependency, DependencyType, GraphEdge, GraphLayer, GraphNode, } from './types'
+import { CircularSeverity, } from './types'
 
 export class DependencyGraph {
   public nodes: Map<string, GraphNode>
@@ -139,7 +133,8 @@ export class DependencyGraph {
   public getRootNodes(): string[] {
     const roots: string[] = []
 
-    this.nodes.forEach((node, path,) => {
+    this.nodes.forEach((_node, path,) => {
+      const node = this.nodes.get(path)!
       if (node.incomingEdges.length === 0) {
         roots.push(path,)
       }
@@ -155,7 +150,8 @@ export class DependencyGraph {
   public getLeafNodes(): string[] {
     const leaves: string[] = []
 
-    this.nodes.forEach((node, path,) => {
+    this.nodes.forEach((_node, path,) => {
+      const node = this.nodes.get(path)!
       if (node.outgoingEdges.length === 0) {
         leaves.push(path,)
       }
@@ -170,7 +166,8 @@ export class DependencyGraph {
   public getOrphanedNodes(): string[] {
     const orphaned: string[] = []
 
-    this.nodes.forEach((node, path,) => {
+    this.nodes.forEach((_node, path,) => {
+      const node = this.nodes.get(path)!
       if (node.incomingEdges.length === 0 && !this.isEntryPoint(path,)) {
         orphaned.push(path,)
       }
@@ -238,7 +235,8 @@ export class DependencyGraph {
    * Calculate importance score for each node based on incoming/outgoing connections
    */
   public calculateNodeImportance(): void {
-    this.nodes.forEach((node, path,) => {
+    this.nodes.forEach((_node, path,) => {
+      const node = this.nodes.get(path)!
       const incomingWeight = node.incomingEdges.length * 2 // Higher weight for dependents
       const outgoingWeight = node.outgoingEdges.length * 1
       const totalConnections = incomingWeight + outgoingWeight
@@ -265,7 +263,7 @@ export class DependencyGraph {
     const sharedLayer: string[] = []
     const rootLayer: string[] = []
 
-    this.nodes.forEach((node, path,) => {
+    this.nodes.forEach((_node, path,) => {
       if (path.includes('/apps/',)) {
         appLayer.push(path,)
       } else if (path.includes('/packages/',)) {
@@ -318,7 +316,7 @@ export class DependencyGraph {
   /**
    * Generate resolution strategies for circular dependency
    */
-  private generateResolutionStrategies(cycle: string[],): any[] {
+  private generateResolutionStrategies(_cycle: string[],): any[] {
     // Simplified resolution strategies
     return [
       {

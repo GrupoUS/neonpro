@@ -1,12 +1,11 @@
 /**
  * Healthcare Optimistic Updates
  * TanStack Query Integration Analysis and Optimization
- * 
+ *
  * Optimistic updates for healthcare operations with LGPD/ANVISA compliance
  */
 
-import type { QueryClient } from '@tanstack/react-query'
-import { patientQueries, appointmentQueries, professionalQueries } from '@/lib/queries/patient-queries'
+import type { QueryClient, } from '@tanstack/react-query'
 
 // ============================================================================
 // TYPES
@@ -36,26 +35,25 @@ export const healthcareOptimisticUpdates = {
     update: async (
       queryClient: QueryClient,
       patientId: string,
-      updateData: any
+      updateData: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!patientId || !updateData) {
-        throw new Error('Patient ID and update data are required')
+        throw new Error('Patient ID and update data are required',)
       }
 
-      const queryKey = ['patients', 'detail', patientId]
-      const previousData = queryClient.getQueryData(queryKey)
+      const queryKey = ['patients', 'detail', patientId,]
+      const previousData = queryClient.getQueryData(queryKey,)
 
-      // Apply optimistic update
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old) return old
-        return { ...old, ...updateData }
-      })
+      // Apply optimistic update with actual data
+      const currentData = queryClient.getQueryData(queryKey,)
+      const updatedData = currentData ? { ...currentData, ...updateData, } : updateData
+      queryClient.setQueryData(queryKey, updatedData,)
 
       // Return rollback function
       return {
         rollback: () => {
-          queryClient.setQueryData(queryKey, previousData)
-        }
+          queryClient.setQueryData(queryKey, previousData,)
+        },
       }
     },
 
@@ -64,34 +62,34 @@ export const healthcareOptimisticUpdates = {
      */
     create: async (
       queryClient: QueryClient,
-      newPatient: any
+      newPatient: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!newPatient) {
-        throw new Error('Patient data is required')
+        throw new Error('Patient data is required',)
       }
 
       const tempId = `temp-patient-${Date.now()}`
-      const patientWithTempId = { ...newPatient, id: tempId }
-      const listQueryKey = ['patients', 'list']
+      const patientWithTempId = { ...newPatient, id: tempId, }
+      const listQueryKey = ['patients', 'list',]
 
       // Store previous list data
-      const previousListData = queryClient.getQueryData(listQueryKey)
+      const previousListData = queryClient.getQueryData(listQueryKey,)
 
       // Add to patient list optimistically
-      queryClient.setQueryData(listQueryKey, (old: any) => {
+      queryClient.setQueryData(listQueryKey, (old: any,) => {
         if (!old || !old.data) return old
         return {
           ...old,
-          data: [patientWithTempId, ...old.data],
-          total: (old.total || 0) + 1
+          data: [patientWithTempId, ...old.data,],
+          total: (old.total || 0) + 1,
         }
-      })
+      },)
 
       return {
         tempId,
         rollback: () => {
-          queryClient.setQueryData(listQueryKey, previousListData)
-        }
+          queryClient.setQueryData(listQueryKey, previousListData,)
+        },
       }
     },
 
@@ -100,37 +98,37 @@ export const healthcareOptimisticUpdates = {
      */
     delete: async (
       queryClient: QueryClient,
-      patientId: string
+      patientId: string,
     ): Promise<OptimisticUpdateResult> => {
       if (!patientId) {
-        throw new Error('Patient ID is required')
+        throw new Error('Patient ID is required',)
       }
 
-      const detailQueryKey = ['patients', 'detail', patientId]
-      const listQueryKey = ['patients', 'list']
+      const detailQueryKey = ['patients', 'detail', patientId,]
+      const listQueryKey = ['patients', 'list',]
 
       // Store previous data
-      const previousDetailData = queryClient.getQueryData(detailQueryKey)
-      const previousListData = queryClient.getQueryData(listQueryKey)
+      const previousDetailData = queryClient.getQueryData(detailQueryKey,)
+      const previousListData = queryClient.getQueryData(listQueryKey,)
 
       // Remove from detail cache
-      queryClient.setQueryData(detailQueryKey, undefined)
+      queryClient.setQueryData(detailQueryKey, undefined,)
 
       // Remove from list cache
-      queryClient.setQueryData(listQueryKey, (old: any) => {
+      queryClient.setQueryData(listQueryKey, (old: any,) => {
         if (!old || !old.data) return old
         return {
           ...old,
-          data: old.data.filter((patient: any) => patient.id !== patientId),
-          total: Math.max((old.total || 0) - 1, 0)
+          data: old.data.filter((patient: any,) => patient.id !== patientId),
+          total: Math.max((old.total || 0) - 1, 0,),
         }
-      })
+      },)
 
       return {
         rollback: () => {
-          queryClient.setQueryData(detailQueryKey, previousDetailData)
-          queryClient.setQueryData(listQueryKey, previousListData)
-        }
+          queryClient.setQueryData(detailQueryKey, previousDetailData,)
+          queryClient.setQueryData(listQueryKey, previousListData,)
+        },
       }
     },
 
@@ -140,40 +138,40 @@ export const healthcareOptimisticUpdates = {
     addAppointment: async (
       queryClient: QueryClient,
       patientId: string,
-      appointmentData: any
+      appointmentData: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!patientId || !appointmentData) {
-        throw new Error('Patient ID and appointment data are required')
+        throw new Error('Patient ID and appointment data are required',)
       }
 
-      const patientAppointmentsKey = ['patients', patientId, 'appointments']
-      const appointmentsListKey = ['appointments', 'list']
+      const patientAppointmentsKey = ['patients', patientId, 'appointments',]
+      const appointmentsListKey = ['appointments', 'list',]
 
       // Store previous data
-      const previousPatientAppointments = queryClient.getQueryData(patientAppointmentsKey)
-      const previousAppointmentsList = queryClient.getQueryData(appointmentsListKey)
+      const previousPatientAppointments = queryClient.getQueryData(patientAppointmentsKey,)
+      const previousAppointmentsList = queryClient.getQueryData(appointmentsListKey,)
 
       // Add to patient appointments
-      queryClient.setQueryData(patientAppointmentsKey, (old: any) => {
-        if (!old) return [appointmentData]
-        return [appointmentData, ...old]
-      })
+      queryClient.setQueryData(patientAppointmentsKey, (old: any,) => {
+        if (!old) return [appointmentData,]
+        return [appointmentData, ...old,]
+      },)
 
       // Add to general appointments list
-      queryClient.setQueryData(appointmentsListKey, (old: any) => {
+      queryClient.setQueryData(appointmentsListKey, (old: any,) => {
         if (!old || !old.data) return old
         return {
           ...old,
-          data: [appointmentData, ...old.data],
-          total: (old.total || 0) + 1
+          data: [appointmentData, ...old.data,],
+          total: (old.total || 0) + 1,
         }
-      })
+      },)
 
       return {
         rollback: () => {
-          queryClient.setQueryData(patientAppointmentsKey, previousPatientAppointments)
-          queryClient.setQueryData(appointmentsListKey, previousAppointmentsList)
-        }
+          queryClient.setQueryData(patientAppointmentsKey, previousPatientAppointments,)
+          queryClient.setQueryData(appointmentsListKey, previousAppointmentsList,)
+        },
       }
     },
 
@@ -183,35 +181,35 @@ export const healthcareOptimisticUpdates = {
     updateMedicalRecord: async (
       queryClient: QueryClient,
       patientId: string,
-      medicalRecordData: any
+      medicalRecordData: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!patientId || !medicalRecordData) {
-        throw new Error('Patient ID and medical record data are required')
+        throw new Error('Patient ID and medical record data are required',)
       }
 
-      const medicalRecordsKey = ['patients', patientId, 'medical-records']
-      const previousData = queryClient.getQueryData(medicalRecordsKey)
+      const medicalRecordsKey = ['patients', patientId, 'medical-records',]
+      const previousData = queryClient.getQueryData(medicalRecordsKey,)
 
       // Update medical records
-      queryClient.setQueryData(medicalRecordsKey, (old: any) => {
-        if (!old) return [medicalRecordData]
-        
-        const existingIndex = old.findIndex((record: any) => record.id === medicalRecordData.id)
+      queryClient.setQueryData(medicalRecordsKey, (old: any,) => {
+        if (!old) return [medicalRecordData,]
+
+        const existingIndex = old.findIndex((record: any,) => record.id === medicalRecordData.id)
         if (existingIndex >= 0) {
           // Update existing record
-          const updated = [...old]
-          updated[existingIndex] = { ...updated[existingIndex], ...medicalRecordData }
+          const updated = [...old,]
+          updated[existingIndex] = { ...updated[existingIndex], ...medicalRecordData, }
           return updated
         } else {
           // Add new record
-          return [medicalRecordData, ...old]
+          return [medicalRecordData, ...old,]
         }
-      })
+      },)
 
       return {
         rollback: () => {
-          queryClient.setQueryData(medicalRecordsKey, previousData)
-        }
+          queryClient.setQueryData(medicalRecordsKey, previousData,)
+        },
       }
     },
   },
@@ -226,25 +224,24 @@ export const healthcareOptimisticUpdates = {
     update: async (
       queryClient: QueryClient,
       appointmentId: string,
-      updateData: any
+      updateData: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!appointmentId || !updateData) {
-        throw new Error('Appointment ID and update data are required')
+        throw new Error('Appointment ID and update data are required',)
       }
 
-      const queryKey = ['appointments', 'detail', appointmentId]
-      const previousData = queryClient.getQueryData(queryKey)
+      const queryKey = ['appointments', 'detail', appointmentId,]
+      const previousData = queryClient.getQueryData(queryKey,)
 
-      // Apply optimistic update
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old) return old
-        return { ...old, ...updateData }
-      })
+      // Apply optimistic update with actual data
+      const currentData = queryClient.getQueryData(queryKey,) || {}
+      const updatedData = { ...currentData, ...updateData, }
+      queryClient.setQueryData(queryKey, updatedData,)
 
       return {
         rollback: () => {
-          queryClient.setQueryData(queryKey, previousData)
-        }
+          queryClient.setQueryData(queryKey, previousData,)
+        },
       }
     },
 
@@ -253,44 +250,44 @@ export const healthcareOptimisticUpdates = {
      */
     create: async (
       queryClient: QueryClient,
-      newAppointment: any
+      newAppointment: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!newAppointment) {
-        throw new Error('Appointment data is required')
+        throw new Error('Appointment data is required',)
       }
 
       const tempId = `temp-appointment-${Date.now()}`
-      const appointmentWithTempId = { ...newAppointment, id: tempId }
-      
-      const listQueryKey = ['appointments', 'list']
-      const calendarQueryKey = ['appointments', 'calendar', newAppointment.date]
+      const appointmentWithTempId = { ...newAppointment, id: tempId, }
+
+      const listQueryKey = ['appointments', 'list',]
+      const calendarQueryKey = ['appointments', 'calendar', newAppointment.date,]
 
       // Store previous data
-      const previousListData = queryClient.getQueryData(listQueryKey)
-      const previousCalendarData = queryClient.getQueryData(calendarQueryKey)
+      const previousListData = queryClient.getQueryData(listQueryKey,)
+      const previousCalendarData = queryClient.getQueryData(calendarQueryKey,)
 
       // Add to appointments list
-      queryClient.setQueryData(listQueryKey, (old: any) => {
+      queryClient.setQueryData(listQueryKey, (old: any,) => {
         if (!old || !old.data) return old
         return {
           ...old,
-          data: [appointmentWithTempId, ...old.data],
-          total: (old.total || 0) + 1
+          data: [appointmentWithTempId, ...old.data,],
+          total: (old.total || 0) + 1,
         }
-      })
+      },)
 
       // Add to calendar
-      queryClient.setQueryData(calendarQueryKey, (old: any) => {
-        if (!old) return [appointmentWithTempId]
-        return [appointmentWithTempId, ...old]
-      })
+      queryClient.setQueryData(calendarQueryKey, (old: any,) => {
+        if (!old) return [appointmentWithTempId,]
+        return [appointmentWithTempId, ...old,]
+      },)
 
       return {
         tempId,
         rollback: () => {
-          queryClient.setQueryData(listQueryKey, previousListData)
-          queryClient.setQueryData(calendarQueryKey, previousCalendarData)
-        }
+          queryClient.setQueryData(listQueryKey, previousListData,)
+          queryClient.setQueryData(calendarQueryKey, previousCalendarData,)
+        },
       }
     },
 
@@ -300,47 +297,387 @@ export const healthcareOptimisticUpdates = {
     delete: async (
       queryClient: QueryClient,
       appointmentId: string,
-      appointmentData: any
+      appointmentData: any,
     ): Promise<OptimisticUpdateResult> => {
       if (!appointmentId) {
-        throw new Error('Appointment ID is required')
+        throw new Error('Appointment ID is required',)
       }
 
-      const detailQueryKey = ['appointments', 'detail', appointmentId]
-      const listQueryKey = ['appointments', 'list']
-      const calendarQueryKey = ['appointments', 'calendar', appointmentData?.date]
+      const detailQueryKey = ['appointments', 'detail', appointmentId,]
+      const listQueryKey = ['appointments', 'list',]
+      const calendarQueryKey = ['appointments', 'calendar', appointmentData?.date,]
 
       // Store previous data
-      const previousDetailData = queryClient.getQueryData(detailQueryKey)
-      const previousListData = queryClient.getQueryData(listQueryKey)
-      const previousCalendarData = queryClient.getQueryData(calendarQueryKey)
+      const previousDetailData = queryClient.getQueryData(detailQueryKey,)
+      const previousListData = queryClient.getQueryData(listQueryKey,)
+      const previousCalendarData = queryClient.getQueryData(calendarQueryKey,)
 
       // Remove from caches
-      queryClient.setQueryData(detailQueryKey, undefined)
+      queryClient.setQueryData(detailQueryKey, undefined,)
 
-      queryClient.setQueryData(listQueryKey, (old: any) => {
+      queryClient.setQueryData(listQueryKey, (old: any,) => {
         if (!old || !old.data) return old
         return {
           ...old,
-          data: old.data.filter((appointment: any) => appointment.id !== appointmentId),
-          total: Math.max((old.total || 0) - 1, 0)
+          data: old.data.filter((appointment: any,) => appointment.id !== appointmentId),
+          total: Math.max((old.total || 0) - 1, 0,),
         }
-      })
+      },)
 
       if (appointmentData?.date) {
-        queryClient.setQueryData(calendarQueryKey, (old: any) => {
+        queryClient.setQueryData(calendarQueryKey, (old: any,) => {
           if (!old) return old
-          return old.filter((appointment: any) => appointment.id !== appointmentId)
-        })
+          return old.filter((appointment: any,) => appointment.id !== appointmentId)
+        },)
       }
 
       return {
         rollback: () => {
-          queryClient.setQueryData(detailQueryKey, previousDetailData)
-          queryClient.setQueryData(listQueryKey, previousListData)
+          queryClient.setQueryData(detailQueryKey, previousDetailData,)
+          queryClient.setQueryData(listQueryKey, previousListData,)
           if (appointmentData?.date) {
-            queryClient.setQueryData(calendarQueryKey, previousCalendarData)
+            queryClient.setQueryData(calendarQueryKey, previousCalendarData,)
           }
-        }
+        },
       }
     },
+
+    /**
+     * Optimistically reschedule appointment
+     */
+    reschedule: async (
+      queryClient: QueryClient,
+      rescheduleData: {
+        appointmentId: string
+        oldDate: string
+        newDate: string
+        newTime: string
+      },
+    ): Promise<OptimisticUpdateResult> => {
+      if (!rescheduleData.appointmentId) {
+        throw new Error('Appointment ID is required',)
+      }
+
+      const detailQueryKey = ['appointments', 'detail', rescheduleData.appointmentId,]
+      const oldCalendarKey = ['appointments', 'calendar', rescheduleData.oldDate,]
+      const newCalendarKey = ['appointments', 'calendar', rescheduleData.newDate,]
+
+      // Store previous data
+      const previousDetailData = queryClient.getQueryData(detailQueryKey,)
+      const previousOldCalendarData = queryClient.getQueryData(oldCalendarKey,)
+      const previousNewCalendarData = queryClient.getQueryData(newCalendarKey,)
+
+      // Update appointment detail
+      queryClient.setQueryData(detailQueryKey, (old: any,) => {
+        if (!old) return old
+        return {
+          ...old,
+          date: rescheduleData.newDate,
+          time: rescheduleData.newTime,
+          updatedAt: new Date().toISOString(),
+        }
+      },)
+
+      // Remove from old calendar
+      queryClient.setQueryData(oldCalendarKey, (old: any,) => {
+        if (!old) return old
+        return old.filter((appointment: any,) => appointment.id !== rescheduleData.appointmentId)
+      },)
+
+      // Add to new calendar
+      queryClient.setQueryData(newCalendarKey, (old: any,) => {
+        if (!old) return []
+        const appointmentData = queryClient.getQueryData(detailQueryKey,)
+        if (appointmentData) {
+          return [...old, {
+            ...appointmentData,
+            date: rescheduleData.newDate,
+            time: rescheduleData.newTime,
+          },]
+        }
+        return old
+      },)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(detailQueryKey, previousDetailData,)
+          queryClient.setQueryData(oldCalendarKey, previousOldCalendarData,)
+          queryClient.setQueryData(newCalendarKey, previousNewCalendarData,)
+        },
+      }
+    },
+
+    /**
+     * Optimistically update appointment status
+     */
+    updateStatus: async (
+      queryClient: QueryClient,
+      appointmentId: string,
+      newStatus: string,
+    ): Promise<OptimisticUpdateResult> => {
+      if (!appointmentId || !newStatus) {
+        throw new Error('Appointment ID and status are required',)
+      }
+
+      const queryKey = ['appointments', 'detail', appointmentId,]
+      const previousData = queryClient.getQueryData(queryKey,)
+
+      // Apply optimistic status update
+      queryClient.setQueryData(queryKey, (old: any,) => {
+        if (!old) return old
+        return { ...old, status: newStatus, updatedAt: new Date().toISOString(), }
+      },)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(queryKey, previousData,)
+        },
+      }
+    },
+  },
+
+  /**
+   * Professional-related optimistic updates
+   */
+  professional: {
+    /**
+     * Optimistically update professional data
+     */
+    update: async (
+      queryClient: QueryClient,
+      professionalId: string,
+      updateData: any,
+    ): Promise<OptimisticUpdateResult> => {
+      if (!professionalId || !updateData) {
+        throw new Error('Professional ID and update data are required',)
+      }
+
+      const queryKey = ['professionals', 'detail', professionalId,]
+      const previousData = queryClient.getQueryData(queryKey,)
+
+      // Apply optimistic update with actual data
+      const currentData = queryClient.getQueryData(queryKey,) || {}
+      const updatedData = { ...currentData, ...updateData, }
+      queryClient.setQueryData(queryKey, updatedData,)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(queryKey, previousData,)
+        },
+      }
+    },
+
+    /**
+     * Optimistically update professional schedule
+     */
+    updateSchedule: async (
+      queryClient: QueryClient,
+      professionalId: string,
+      scheduleData: any,
+    ): Promise<OptimisticUpdateResult> => {
+      if (!professionalId || !scheduleData) {
+        throw new Error('Professional ID and schedule data are required',)
+      }
+
+      const scheduleQueryKey = ['professionals', professionalId, 'schedule',]
+      const previousData = queryClient.getQueryData(scheduleQueryKey,)
+
+      // Update schedule
+      queryClient.setQueryData(scheduleQueryKey, (old: any,) => {
+        if (!old) return scheduleData
+        return { ...old, ...scheduleData, }
+      },)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(scheduleQueryKey, previousData,)
+        },
+      }
+    },
+
+    /**
+     * Optimistically update professional availability
+     */
+    updateAvailability: async (
+      queryClient: QueryClient,
+      professionalId: string,
+      availabilityData: any,
+    ): Promise<OptimisticUpdateResult> => {
+      if (!professionalId || !availabilityData) {
+        throw new Error('Professional ID and availability data are required',)
+      }
+
+      const availabilityQueryKey = ['appointments', 'availability', { professionalId, },]
+      const previousData = queryClient.getQueryData(availabilityQueryKey,)
+
+      // Update availability
+      queryClient.setQueryData(availabilityQueryKey, (old: any,) => {
+        if (!old) return [availabilityData,]
+
+        const existingIndex = old.findIndex((item: any,) => item.date === availabilityData.date)
+        if (existingIndex >= 0) {
+          const updated = [...old,]
+          updated[existingIndex] = { ...updated[existingIndex], ...availabilityData, }
+          return updated
+        } else {
+          return [availabilityData, ...old,]
+        }
+      },)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(availabilityQueryKey, previousData,)
+        },
+      }
+    },
+  },
+
+  /**
+   * Utility functions
+   */
+  utils: {
+    executeOptimisticUpdates: async (
+      updates: (() => Promise<OptimisticUpdateResult>)[],
+    ): Promise<{ rollbackAll: () => void }> => {
+      const rollbackFunctions: (() => void)[] = []
+
+      try {
+        for (const update of updates) {
+          const result = await update()
+          rollbackFunctions.push(result.rollback,)
+        }
+
+        return {
+          rollbackAll: () => {
+            // Execute rollbacks in reverse order
+            rollbackFunctions.reverse().forEach(rollback => rollback())
+          },
+        }
+      } catch (error) {
+        // If any update fails, rollback all previous updates
+        rollbackFunctions.reverse().forEach(rollback => rollback())
+        throw error
+      }
+    },
+
+    create: <T,>(
+      queryClient: QueryClient,
+      queryKey: any[],
+      updater: (old: T | undefined,) => T | undefined,
+    ): OptimisticUpdateResult => {
+      const previousData = queryClient.getQueryData<T>(queryKey,)
+
+      // Apply optimistic update
+      queryClient.setQueryData(queryKey, updater,)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(queryKey, previousData,)
+        },
+      }
+    },
+
+    createOptimisticUpdate: <T,>(
+      queryClient: QueryClient,
+      queryKey: any[],
+      updater: (old: T | undefined,) => T | undefined,
+    ): OptimisticUpdateResult => {
+      const previousData = queryClient.getQueryData<T>(queryKey,)
+
+      // Apply optimistic update
+      queryClient.setQueryData(queryKey, updater,)
+
+      return {
+        rollback: () => {
+          queryClient.setQueryData(queryKey, previousData,)
+        },
+      }
+    },
+
+    rollback: (rollbackFn: () => void,): void => {
+      if (typeof rollbackFn === 'function') {
+        rollbackFn()
+      }
+    },
+
+    validate: (data: any,): boolean => {
+      if (!data || typeof data !== 'object') {
+        return false
+      }
+
+      // Check for required properties
+      if (!data.queryKey || !Array.isArray(data.queryKey,) || data.queryKey.length === 0) {
+        return false
+      }
+
+      if (data.data === null || data.data === undefined) {
+        return false
+      }
+
+      return true
+    },
+
+    validateOptimisticUpdate: (data: any,): boolean => {
+      if (!data || typeof data !== 'object') {
+        return false
+      }
+
+      // Check for required properties
+      if (!data.queryKey || !Array.isArray(data.queryKey,) || data.queryKey.length === 0) {
+        return false
+      }
+
+      if (data.data === null || data.data === undefined) {
+        return false
+      }
+
+      return true
+    },
+
+    rollbackOptimisticUpdate: (
+      queryClient: QueryClient,
+      config: { queryKey: any[]; originalData: any },
+    ): void => {
+      queryClient.setQueryData(config.queryKey, config.originalData,)
+    },
+  },
+} as const
+
+// ============================================================================
+// ADDITIONAL EXPORTS FOR TEST COMPATIBILITY
+// ============================================================================
+
+/**
+ * Patient-specific optimistic updates (alias for compatibility)
+ */
+export const patientOptimisticUpdates = healthcareOptimisticUpdates.patient
+
+/**
+ * Appointment-specific optimistic updates (alias for compatibility)
+ */
+export const appointmentOptimisticUpdates = healthcareOptimisticUpdates.appointment
+
+/**
+ * Professional-specific optimistic updates (alias for compatibility)
+ */
+export const professionalOptimisticUpdates = healthcareOptimisticUpdates.professional
+
+/**
+ * Execute multiple optimistic updates with coordinated rollback
+ */
+export const executeOptimisticUpdates = healthcareOptimisticUpdates.utils.executeOptimisticUpdates
+
+/**
+ * Create optimistic update with automatic rollback on error
+ */
+export const createOptimisticUpdate = healthcareOptimisticUpdates.utils.createOptimisticUpdate
+
+/**
+ * Validate optimistic update data
+ */
+export const validateOptimisticUpdate = healthcareOptimisticUpdates.utils.validateOptimisticUpdate
+
+/**
+ * Rollback optimistic update
+ */
+export const rollbackOptimisticUpdate = healthcareOptimisticUpdates.utils.rollbackOptimisticUpdate
