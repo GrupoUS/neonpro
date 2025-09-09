@@ -96,10 +96,10 @@ tmp/
 .temp/
 .tmp/
 
-# Package manager files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Package manager files (do not ignore lockfiles; needed for deterministic installs)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
 # Monorepo specific
 packages/*/node_modules/

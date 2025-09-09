@@ -1,4 +1,16 @@
 {
-	"projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
-	"orgId": "team_bjVDLqo42Gb3p28RelxJia6x"
+  "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
+  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "projectName": "neonpro",
+  "settings": {
+    "createdAt": 1750299142397,
+    "framework": "nextjs",
+    "devCommand": "npm run dev",
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": ".next",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
 }

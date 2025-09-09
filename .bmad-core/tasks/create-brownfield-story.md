@@ -4,10 +4,7 @@
 
 ## Purpose
 
-Create detailed, implementation-ready stories for brownfield projects where traditional sharded
-PRD/architecture documents may not exist. This task bridges the gap between various documentation
-formats (document-project output, brownfield PRDs, epics, or user documentation) and executable
-stories for the Dev agent.
+Create detailed, implementation-ready stories for brownfield projects where traditional sharded PRD/architecture documents may not exist. This task bridges the gap between various documentation formats (document-project output, brownfield PRDs, epics, or user documentation) and executable stories for the Dev agent.
 
 ## When to Use This Task
 
@@ -60,8 +57,7 @@ Based on available documentation:
 
 #### 1.2 Gather Essential Context
 
-CRITICAL: For brownfield stories, you MUST gather enough context for safe implementation. Be
-prepared to ask the user for missing information.
+CRITICAL: For brownfield stories, you MUST gather enough context for safe implementation. Be prepared to ask the user for missing information.
 
 **Required Information Checklist:**
 
@@ -116,7 +112,9 @@ Start with the story template, filling in what's known:
 
 ## Story
 
-As a {{user_type}}, I want {{enhancement_capability}}, so that {{value_delivered}}.
+As a {{user_type}},
+I want {{enhancement_capability}},
+so that {{value_delivered}}.
 
 ## Context Source
 

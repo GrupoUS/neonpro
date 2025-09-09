@@ -1,9 +1,0 @@
-{
-  "status": "failed",
-  "failedTests": [
-    "43b36be625b2ac3e2811-4539b4bf1efa92b46fb6",
-    "43b36be625b2ac3e2811-8a4e363cb4e5e5e760e7"
-  ],
-  "_note": "Migrated from D:/neonpro/e2e/test-results-minimal/.last-run.json",
-  "_migration_date": "2025-01-23"
-}

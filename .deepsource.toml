@@ -13,7 +13,6 @@ exclude_patterns = [
   "**/.turbo/**",
   "**/.next/**",
   "**/.vercel/**",
-  "**/.husky/**",
   "**/.trunk/**",
   "**/.vscode/**",
   "**/.idea/**",

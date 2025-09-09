@@ -1,8 +1,0 @@
-{
-  "extends": "../typescript-config/base.json",
-  "references": [
-    {
-      "path": "../types"
-    }
-  ]
-}

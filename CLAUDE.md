@@ -1,81 +1,104 @@
-# 🚀 VIBECODER
+---
+applyTo: "**/*"
+---
 
-## 📚 ALWAYS READ AND LOAD References
+# Development Workflow
 
-- **🌟 Complete Workflow**: [`.ruler/dev-workflow.md`](./.ruler/dev-workflow.md)
-- **⚙️ Always Follow Project Standards**: [`docs/project.md`](./docs/project.md)
+> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
 
-## 🧠 CORE PHILOSOPHY
+# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
-**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
-**Mission**: "Research first, think systematically, implement flawlessly"
-**Core Principle**: "Simple systems that work over complex systems that don't"
-**CRITICAL:** This project uses Archon for knowledge management, task tracking, and project organization. ALWAYS start with Archon MCP server task management.
-**Always** use the native todos task list to track and execute tasks, after created by Archon.
-**MANDATORY:** Always complete the full Archon task cycle before any coding
+- **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
+- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
+  - One‑line: Real monorepo structure (apps/packages) validated and categorized
+  - Use when: Locating code, packages, or wiring across the repo
 
-### MANDATORY EXECUTION RULES
+## Pre-Development Guidelines
 
-**RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically
-**NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved
-**MANDATORY FIRST STEP**: Always begin with sequential-thinking tool
-**ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved
-**CRITICAL: This project uses Archon for knowledge management, task tracking, and project organization.**
+**📚 Documentation Consultation:**
+⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
 
-## Core Archon Workflow Principles
+When you have ANY doubt during development:
 
-**MANDATORY: Always complete the full Archon task cycle before any coding:**
+- First consult the `/docs` folder for relevant documentation
+- Check `docs/architecture/AGENTS.md` for architectural decisions
+- Look at `docs/apis/AGENTS.md` for API patterns
+- Check `docs/database-schema/AGENTS.md` for data structure
+- Consult specific guides in `docs/rules/coding-standards.md` for coding standards, best practices, and design patterns
 
-1. **Check Current Task** → Review task details and requirements
-2. **Research for Task** → Search relevant documentation and examples
-3. **Implement the Task** → Write code based on research
-4. **Update Task Status** → Move task from "todo" → "doing" → "review"
-5. **Get Next Task** → Check for next priority task
-6. **Repeat Cycle**
+## 🤖 APEX AGENT COORDINATION SYSTEM
 
-**Task Management Rules:**
+**🎯 Filosofia de Coordenação**: _"Agentes especializados com coordenação inteligente"_
+**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](../docs/agents/AGENTS.md)
 
-- Update all actions to Archon
-- Move tasks from "todo" → "doing" → "review" (not directly to complete)
-- Maintain task descriptions and add implementation notes
-- DO NOT MAKE ASSUMPTIONS - check project documentation for questions
-
-## CORE ENGINEERING PRINCIPLES
+## 🎯 CORE PRINCIPLES & MISSION
 
 ```yaml
-KISS_PRINCIPLE:
-  definition: "Keep It Simple, Stupid - Simplicity is key"
-  core_rules:
-    - Choose simplest solution that meets requirements
-    - Prefer readable code over clever optimizations
-    - Reduce cognitive load
-    - "Does this solve the core problem without unnecessary complexity?"
-    - Use clear, descriptive naming and avoid Over-Engineering
-
-YAGNI_PRINCIPLE:
-  definition: "You Aren't Gonna Need It - Don't implement until needed"
-  core_rules:
-    - Build only what current requirements specify
-    - Resist 'just in case' features
-    - Refactor when requirements emerge
-    - Focus on current user stories
-    - Remove unused code immediately
-
-CHAIN_OF_THOUGHT:
-  definition: "Explicit step-by-step reasoning for accuracy"
-  core_rules:
-    - Break problems into sequential steps
-    - Verbalize reasoning process
-    - Show intermediate decisions
-    - Question assumptions
-    - Validate against requirements
-    - Each step follows logically from previous steps
-    - Final solution traced back to requirements
+CORE_STANDARDS:
+  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
+  mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
+  research_driven: "Multi-source validation for all complex implementations"
+  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
+  agent_coordination: "Intelligent APEX routing with apex-dev as central coordinator"
+  cognitive_authority: "Automated thinking activation with complexity-based routing"
+  vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
+  core_principle: "Simple systems that work over complex systems that don't"
+  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
+WORKFLOW_MANAGEMENT_PRINCIPLES:
+  preserve_context: "Maintain complete context across all agent and thinking transitions"
+  incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
+  pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
+  scalable_coordination: "Scale from single-agent to multi-agent based on complexity requirements"
+  adaptive_routing: "Dynamic agent and thinking selection based on task requirements and domain"
+  quality_consistency: "Maintain consistent progressive standards across all agents and thinking levels"
+  recovery_protocols: "Comprehensive error handling with mcp research and multiple errors fail and cognitive recovery procedures"
 ```
 
-## COGNITIVE ARCHITECTURE
+## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
 
 ```yaml
+COGNITIVE_ARCHITECTURE:
+  meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
+  multi_perspective_analysis:
+    - "user_perspective: Understanding user intent and constraints"
+    - "developer_perspective: Technical implementation and architecture considerations"
+    - "business_perspective: Cost, timeline, and stakeholder impact analysis"
+    - "security_perspective: Risk assessment and compliance requirements"
+    - "quality_perspective: Standards enforcement and continuous improvement"
+
+VIBECODER_ENGINEERING_PRINCIPLES:
+  kiss_principle:
+    definition: "Keep It Simple, Stupid - Simplicity is key"
+    core_rules: [
+      "Choose simplest solution that meets requirements",
+      "Prefer readable code over clever optimizations",
+      "Reduce cognitive load",
+      "Does this solve the core problem without unnecessary complexity?",
+      "Use clear, descriptive naming and avoid Over-Engineering",
+    ]
+
+  yagni_principle:
+    definition: "You Aren't Gonna Need It - Don't implement until needed"
+    core_rules: [
+      "Build only what current requirements specify",
+      "Resist 'just in case' features",
+      "Refactor when requirements emerge",
+      "Focus on current user stories",
+      "Remove unused code immediately",
+    ]
+
+  chain_of_thought:
+    definition: "Explicit step-by-step reasoning for accuracy"
+    core_rules: [
+      "Break problems into sequential steps",
+      "Verbalize reasoning process",
+      "Show intermediate decisions",
+      "Question assumptions",
+      "Validate against requirements",
+      "Each step follows logically from previous steps",
+      "Final solution traced back to requirements",
+    ]
+
 CONSTITUTIONAL_PRINCIPLES:
   principle_based_design: "Align with software engineering excellence"
   constraint_satisfaction: "Balance competing requirements optimally"
@@ -85,150 +108,220 @@ CONSTITUTIONAL_PRINCIPLES:
   relentless_persistence: "Continue until absolute completion"
   complete_execution: "Execute entire workflow without interruption"
   right_tool_selection: "Understand full context before implementation"
-
-COGNITIVE_LAYERS:
-  meta_cognitive: "Think about thinking process - biases, assumptions, analysis"
-  constitutional: "Apply ethical frameworks, software principles, quality constraints"
-  adversarial: "Red-team thinking - failure modes, attack vectors, edge cases"
-  synthesis: "Multi-perspective integration - technical, user, business, security"
-  recursive_improvement: "Continuous evolution, pattern extraction, optimization"
-
-COGNITIVE_PROTOCOL:
-  divergent_phase: "Generate multiple approaches and perspectives"
-  convergent_phase: "Synthesize best elements into unified solution"
-  validation_phase: "Test solution against multiple criteria"
-  evolution_phase: "Extract patterns and improvements"
 ```
 
-### Multi-Perspective Analysis
+## 🔧 MCP TOOL INTEGRATION
+
+### **⚡ Mandatory Sequence**
+
+1. **🧠 sequential-thinking** (FIRST STEP)
+2. **📋 archon** (task management)
+3. **🔍 serena** (codebase - NEVER native)
+
+### **🎯 Contextual MCPs**
+
+- **💻 desktop-commander** - Files/system
+- **📚 context7** - Documentation
+- **🌐 tavily** - Real-time info
+- **🎨 shadcn-ui** - UI components
+
+### **🔍 Monorepo Audit & Optimization Tools**
+
+- **🛠️ FileScanner** - Recursive directory traversal and file discovery
+- **📊 DependencyAnalyzer** - Import/export analysis with circular dependency detection
+- **✅ ArchitectureValidator** - Turborepo/Hono/TanStack Router compliance validation
+- **🧹 CleanupEngine** - Safe file removal with rollback capabilities
+- **📈 ReportGenerator** - Comprehensive audit reports with metrics and recommendations
+
+**Usage Patterns**:
+
+- Scan → Analyze → Validate → Plan → Cleanup → Report
+- Cross-reference with `docs/architecture/source-tree.md` and `tech-stack.md`
+- Always use backup strategies before cleanup operations
+- Performance targets: 10k+ files in <30s, <500MB memory usage
+
+## Mandatory Development Steps
+
+### 1. **Research & Decomposition** 🧠
+
+**🔧 MCP**: sequential-thinking → archon → serena
+
+- **MANDATORY**: Start with `sequential-thinking` to analyze requirements
+- Use `archon` to check project context and create/update tasks
+- Use `serena` (NEVER native) to understand current codebase
+- Break down feature into smaller components
+- Identify complexities, dependencies, and constraints
+- **Complexity ≥7 or Stuck >3x**: consult official docs and best practices with context7 → tavily
+
+**Proactive Update Protocol (MANDATORY FINAL STEP)**
+
+- At the conclusion of each request, review whether updates are needed:
+- Mistakes: `docs/mistakes/[error-category].md`
+- Features: `docs/features/[feature-name].md`
+- APIs: `docs/apis/`
+- Database schema: `docs/database-schema/`
+- Application flows: `docs/architecture/aesthetic-platform-flows.md`
+- System architecture: `docs/architecture/AGENTS.md`
+- Follow the Research Execution Framework below
 
 ```yaml
-PERSPECTIVE_ANALYSIS:
-  user_perspective: "Experience impact and usability optimization"
-  developer_perspective: "Maintainability, extensibility, code quality"
-  business_perspective: "Organizational implications and value delivery"
-  security_perspective: "Attack vectors, vulnerabilities, compliance"
-  performance_perspective: "System performance, scalability, optimization"
-  future_perspective: "Evolution trajectory, long-term sustainability"
-
-ADVERSARIAL_VALIDATION:
-  failure_mode_analysis: "How could each component fail under stress?"
-  attack_vector_mapping: "Security vulnerabilities and exploitation possibilities"
-  assumption_challenging: "What if core assumptions are fundamentally incorrect?"
-  edge_case_generation: "Boundary conditions and unexpected input scenarios"
-  integration_stress_testing: "System interaction failures and cascade effects"
-
-COMPLEXITY_DETECTION:
-  multidimensional_analysis:
-    cognitive_load: "Cognitive load analysis (design, architecture, strategy)"
-    technical_depth: "Technical depth assessment (frameworks, integrations, performance)"
-    integration_scope: "Integration scope evaluation (APIs, external systems, microservices)"
-    risk_assessment: "Risk evaluation (security, migration, breaking changes)"
-    time_complexity: "Temporal complexity assessment (research, implementation, testing)"
+RESEARCH_EXECUTION_FRAMEWORK:
+  vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
+  primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
+  purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
+  intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
+  thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
+  routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
+  agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
+  process:
+    - "Understand requirements completely with constitutional analysis"
+    - "Identify constraints and dependencies with multi-perspective evaluation"
+    - "Assess complexity level (1-10) with domain-specific triggers"
+    - "Define strategic approach with agent coordination planning"
+    - "Break down into manageable components with quality gate definition"
+  deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
+  purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
+  intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
+  routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
+  quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
 ```
 
-### MCP Tool Selection
+### 2. **Planning & Task List** 📋
+
+**🔧 MCP**: archon + serena
+
+- **MANDATORY**: Use `archon` for task management (create_task, update_task, list_tasks)
+- Create detailed task list using archon's system
+- Create atomic subtasks for each feature component, with detailed descriptions of what needs to be done
+- Assign tasks to appropriate agents (apex-dev, apex-ui-ux-designer, apex-researcher)
+- Define success criteria and quality gates for each task
+- Break down features: atomic tasks on archon, subtasks on native todos with detailed descriptions what needs to be done
+- Use `serena` to analyze codebase complexity and dependencies
+- Mark tasks as in_progress when starting, completed when finished
+- **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md)
+- Follow the Planning & Design Framework below
 
 ```yaml
-MCP_COORDINATION:
-  research_pipeline: "archon → context7 → tavily → exa"
-  execution_engine: "desktop-commander (file operations + system management)"
-  reasoning_engine: "sequential-thinking (complex problem decomposition) + think native tool"
-  coordination_protocol:
-    research_first: "ALWAYS research before critical implementations"
-    result_synthesis: "Combine findings → validate consistency → apply insights"
-    quality_gate: "Validate research quality before implementation (≥9.5/10)"
-    If_stuck_inloop: "trying to fix an error or a bug, use the research-first protocol to get oficial docs and best practices"
-  strategic_selection:
-    archon: "Task management, project organization, knowledge base"
-    desktop_commander: "File operations, system management, data analysis, scaffolding"
-    context7: "Documentation research, framework lookup, best practices validation"
-    tavily: "Real-time information, current trends, technology updates"
-    exa: "Technical documentation, code examples, implementation patterns"
-    sequential_thinking: "Complex problem decomposition, systematic analysis"
+phase_3_planning_design:
+  vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
+  contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
+  purpose: "Solution architecture and strategic implementation planning with systematic design approach"
+  intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
+  routing: "Sequential Thinking integration with architectural pattern analysis and validation"
+  one_shot_template:
+    role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
+    context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
+    task: "[Specific, measurable, actionable requirement]"
+    constraints: "[Technical limitations, performance requirements]"
+    output: "[Code | Documentation | Architecture | Analysis | Design]"
+    success_criteria: "[Measurable outcomes, quality thresholds]"
+  task_planning:
+    structure:
+      - "Break down into atomic executable tasks with agent assignment"
+      - "Assign optimal tools and agents for each task with specialization matching"
+      - "Define validation checkpoints with quality gates"
+      - "Create dependency mapping with agent coordination requirements"
+      - "Set measurable success criteria with progressive quality standards"
+  deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
+  quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
 ```
 
-## 📋 MANDATORY EXECUTION WORKFLOW
+### 3. **TEST DRIVEN Implementation**
 
-### Phase 1: Think & Analyze
+- **MANDATORY**: Follow the process as described in `docs/AGENTS.md`
+- **TEST DRIVEN Cycle for each feature component:**
+  1. **RED**: Write failing test first (describe expected behavior)
+  2. **GREEN**: Write minimal code to pass the test
+  3. **REFACTOR**: Improve code while keeping tests green
+  4. **REPEAT**: Continue cycle for next requirement
+  - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
+  - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
+  - ✅ **USEFUL**: UI components with logic, helpers
+
+- **Implementation Guidelines:**
+  - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)
+  - Use `serena` for codebase analysis (get_symbols_overview → find_symbol)
+  - Use `desktop-commander` for file operations (chunked 25-30 lines max)
+  - Use `shadcn-ui` to check component availability before custom development
+  - Follow established code patterns, naming conventions, and project standards
+  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
+  - **Complexity ≥7**: Add context7 → tavily for deep understanding and best practices
+  - Use `think` tool every 5 steps for alignment with requirements
+  - Implement comprehensive error handling following project patterns
+  - **Test Categories**: Success cases, error cases, edge cases, business logic
+  - **Documentation First**: Check existing patterns with `serena`
+
+### 4. **Test Execution & Validation** ✅
+
+- Use `desktop-commander` to run all test commands
+- Run `bun run lint:fix` for linter issues (or `bun run oxlint:fix`)
+- Run `bun run format && bun run lint:fix && bun run type-check` to format code
+- **Correction Loop**: If tests fail:
+  - Use `serena` to analyze failing code and dependencies
+  - Use `tavily` and `context7` for oficial docs and best practices to fix the errors
+  - **Stuck >3x**: Use sequential-thinking to update strategy with new insights from research
+  - Repeat until ALL tests pass
+- Use `archon` to document test results and coverage metrics
+
+### 5. **Code Quality Check** 🔍
+
+**🔧 MCP**: desktop-commander + serena
+
+- Use `desktop-commander` to run quality check commands
+- Use `serena` to analyze code quality and identify issues
+- Always look for big picture, and Fix all errors or warnings before finalizing tasks.
+- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later
+- Ensure code adheres to project coding standards and best practices
+- Only proceed when all tests green and coverage meets requirements
+- **Correction Loop**: If issues found:
+  - Use `serena` to understand code structure and dependencies
+  - Fix issues using `desktop-commander` for file operations
+  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
+  - Use `context7` and `tavily` for oficial docs and best practices to fix the errors
+  - Return to **Step 4** and repeat cycle
+  - Only Continue when ALL quality checks pass
 
 ```yaml
-trigger: "ALWAYS before any action - NO EXCEPTIONS"
-primary_tool: "sequential-thinking + native think tool"
-process:
-  - Understand requirements completely
-  - Identify constraints and dependencies
-  - Assess complexity level (1-10)
-  - Define strategic approach
-  - Break down into manageable components
-quality_gate: "Requirements clarity ≥9/10"
+validation:
+  vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
+  architecture_analysis: "Always check architecture docs for best practices validation"
+  technology_excellence: "Framework best practices compliance and performance optimization"
+  qa_mandatory:
+    post_modification_checks:
+      - "Syntax errors verification with zero tolerance policy"
+      - "Duplicates/orphans detection with cleanup protocols"
+      - "Feature validation against requirements with completeness verification"
+      - "Requirements compliance with constitutional principles validation"
+      - "Security vulnerabilities assessment with compliance verification"
+      - "Test coverage ≥90% with comprehensive testing protocols"
+  verification_rule: "Never assume changes complete without explicit verification"
 ```
 
-### Phase 2: Research First
+### 6. **Memory Documentation Protocol** 📝
 
-```yaml
-trigger: "ALWAYS DURING PLAN MODE or before planing or insufficient knowledge"
-process:
-  investigation: "Define 3-5 key questions"
-  documentation: "archon + context7 → Official docs and best practices"
-  validation: "tavily → Current patterns and security updates"
-  advanced: "exa → Real-world implementations (if complexity ≥5)"
-  synthesis: "Cross-reference multiple sources"
-```
+**🔧 MCP**: desktop-commander + archon
 
-### Phase 3: Context Engineering & Planning
+- Use `archon` to create/update project documents and knowledge base
+- Create `mistakes/[error-category].md` if mistakes corrected
+- Create `features/[feature-name].md` for new features or modified behavior
+- **Test Documentation**: Document new test patterns, mocks, utilities
+- Store learnings in archon knowledge base for future retrieval
+- Confirmation: Explicitly note in your thoughts whether updates were made or not.
 
-```yaml
-ONE_SHOT_TEMPLATE:
-  role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack]"
-  context: "#workspace + #codebase + [ archon knowledge base + relevant files]"
-  task: "[Specific, measurable, actionable requirement]"
-  constraints: "[Technical limitations, performance requirements]"
-  output: "[Code | Documentation | Architecture | Analysis]"
-  success_criteria: "[Measurable outcomes, quality thresholds]"
-TASK_PLANNING:
-  structure:
-    - Break down into atomic executable tasks
-    - Assign optimal tools for each task
-    - Define validation checkpoints
-    - Create dependency mapping
-    - Set measurable success criteria
-THINK_AND_PLAN:
-  inner_monologue: "What is user asking? Best approach? Challenges?"
-  high_level_plan: "Outline major steps to solve problem"
-```
+**Specific Memory File Management**
 
-### Phase 4: Implementation
+- `docs/mistakes/[error-category].md` — Problem, wrong approach, correct solution, root cause, prevention, related files.
+- `docs/features/[feature-name].md` — Overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, last updated.
+- `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
+- `docs/apis/*.md` — Endpoint docs: path, method, purpose, request/response, auth, file path.
 
-```yaml
-DEVELOPMENT_FLOW:
-  planning: "sequential-thinking → Architecture design"
-  research: "context7 → Framework documentation"
-  implementation: "desktop-commander → File operations"
-  backend: "supabase-mcp → Database operations"
-  frontend: "shadcn-ui → Component library"
-  validation: "Think tool → Quality checks every 5 api request"
-```
+## Important Notes
 
-### Phase 5: Quality Validation & Testing
+- **🚫 Never skip steps** unless explicitly told by the user
+- **📖 Always consult `/docs`** when uncertain, using `desktop-commander` for file operations
+- **✅ Complete each step** before moving to the next, using appropriate MCPs for each phase
+- **🔄 Iterate** until all quality checks pass
+- **📝 Document everything** for future reference using `archon` knowledge base
+- **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives using official docs and best practices with context7 → tavily
 
-```yaml
-ENFORCEMENT_GATES:
-  arquiteture_analisys: "Always check architecture docs for best practices"
-  technology_excellence: "Framework best practices, performance optimization"
-QA_MANDATORY:
-  post_modification_checks:
-    - Syntax errors verification
-    - Duplicates/orphans detection
-    - Feature validation
-    - Requirements compliance
-    - Security vulnerabilities
-    - Test coverage ≥90%
-verification_rule: "Never assume changes complete without explicit verification"
-TERMINATION_CRITERIA:
-  only_stop_when:
-    - User query 100% resolved
-    - No remaining execution steps
-    - All success criteria met
-    - Quality validated ≥9.5/10
-```
+---

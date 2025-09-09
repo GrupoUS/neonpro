@@ -21,7 +21,7 @@ The `dprint` package requires platform-specific binaries. On Windows, it needs `
 
 ### 1. Updated Workflow Documentation
 
-- Modified `.ruler/dev-workflow.md` to remove the chained command `npx oxlint apps packages --fix && npx dprint fmt`
+- Modified `docs/AGENTS.md` to remove the chained command `npx oxlint apps packages --fix && npx dprint fmt`
 - Split into separate commands:
   - `npx oxlint apps packages --fix` (working)
   - Added note about dprint requiring platform-specific dependency
@@ -55,7 +55,7 @@ npx pnpm@latest add --save-dev @dprint/win32-x64
 
 ## Related Files
 
-- `.ruler/dev-workflow.md` - Updated workflow steps
+- `docs/AGENTS.md` - Updated workflow steps
 - `package.json` - May need platform-specific dependency addition
 
 ## Date

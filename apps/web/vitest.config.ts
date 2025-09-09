@@ -1,25 +1,49 @@
-/// <reference types="vitest" />
+import path from 'path'
+import { defineConfig, } from 'vitest/config'
 
-import path from "node:path";
-import { defineConfig } from "vitest/config";
-
-/**
- * Web App Vitest Configuration
- */
 export default defineConfig({
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: ["../../vitest.setup.ts"],
-  },
-
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "."),
-      "@/lib": path.resolve(__dirname, "./lib"),
-      "@/components": path.resolve(__dirname, "./components"),
-      "@/hooks": path.resolve(__dirname, "./hooks"),
-      "@neonpro/shared": path.resolve(__dirname, "../../packages/shared/src"),
+      '@': path.resolve(__dirname, './src',),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src',),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src',),
+      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src',),
     },
   },
-});
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts',],
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'lib/**/*.{test,spec}.{ts,tsx}',
+      'tests/**/*.{test,spec}.{ts,tsx}',
+    ],
+    exclude: [
+      'tests/integration/**',
+      'tests/e2e/**',
+      'tests/performance/**',
+      'lib/integration/**',
+      'lib/e2e/**',
+      'lib/performance/**',
+      'lib/benchmarks/**',
+    ],
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    deps: {
+      inline: [
+        /@neonpro\/shared/,
+        /@neonpro\/utils/,
+      ],
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html',],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.d.ts',
+      ],
+    },
+  },
+},)

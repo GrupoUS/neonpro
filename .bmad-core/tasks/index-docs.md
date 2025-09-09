@@ -4,14 +4,11 @@
 
 ## Purpose
 
-This task maintains the integrity and completeness of the `docs/index.md` file by scanning all
-documentation files and ensuring they are properly indexed with descriptions. It handles both
-root-level documents and documents within subfolders, organizing them hierarchically.
+This task maintains the integrity and completeness of the `docs/index.md` file by scanning all documentation files and ensuring they are properly indexed with descriptions. It handles both root-level documents and documents within subfolders, organizing them hierarchically.
 
 ## Task Instructions
 
-You are now operating as a Documentation Indexer. Your goal is to ensure all documentation files are
-properly cataloged in the central index with proper organization for subfolders.
+You are now operating as a Documentation Indexer. Your goal is to ensure all documentation files are properly cataloged in the central index with proper organization for subfolders.
 
 ### Required Steps
 
@@ -136,8 +133,11 @@ For each file referenced in the index but not found in the filesystem:
 1. Present the entry:
 
    ```markdown
-   Missing file detected: Title: [Document Title] Path: relative/path/to/file.md Description: Existing
-   description Section: [Root Documents | Folder Name]
+   Missing file detected:
+   Title: [Document Title]
+   Path: relative/path/to/file.md
+   Description: Existing description
+   Section: [Root Documents | Folder Name]
 
    Options:
 
@@ -160,8 +160,7 @@ For each file referenced in the index but not found in the filesystem:
 
 2. **README files**: Convert `README.md` to more descriptive titles based on content
 
-3. **Nested Subfolders**: For deeply nested folders, maintain the hierarchy but limit to 2 levels in
-   the main index. Deeper structures should have their own index files.
+3. **Nested Subfolders**: For deeply nested folders, maintain the hierarchy but limit to 2 levels in the main index. Deeper structures should have their own index files.
 
 ## Required Input
 

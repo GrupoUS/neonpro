@@ -1,0 +1,74 @@
+{
+  "name": "@neonpro/monorepo-audit-tool",
+  "version": "1.0.0",
+  "description": "Monorepo architecture audit and optimization tool for NeonPro",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "audit-tool": "./dist/cli/index.js",
+    "monorepo-audit": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist/",
+    "docs/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc --project tsconfig.build.json && npm run build:chmod",
+    "build:production": "NODE_ENV=production npm run build",
+    "build:chmod": "chmod +x dist/cli/index.js",
+    "clean": "rm -rf dist/",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ tests/",
+    "lint:fix": "eslint src/ tests/ --fix",
+    "type-check": "tsc --noEmit --project tsconfig.build.json",
+    "format": "prettier --write src/ tests/ docs/",
+    "format:check": "prettier --check src/ tests/ docs/",
+    "quality": "npm run type-check && npm run lint && npm run format:check",
+    "prepublishOnly": "npm run quality && npm run build:production && npm run test",
+    "prepack": "npm run build:production",
+    "postinstall": "node dist/scripts/postinstall.js || true",
+    "benchmark": "node dist/benchmarks/performance.benchmark.js",
+    "cli": "node dist/cli/index.js",
+    "start": "npm run cli"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.8.4",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "ora": "^7.0.1",
+    "ts-morph": "^20.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.7.2",
+    "vitest": "^1.1.0"
+  },
+  "keywords": [
+    "monorepo",
+    "audit",
+    "optimization",
+    "turborepo",
+    "architecture",
+    "cleanup"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
+}

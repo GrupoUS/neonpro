@@ -119,6 +119,24 @@ neonpro/
 
 **🛡️ Security & Compliance**
 
+## 🧪 Testing & Linting Standards
+
+- Preferred test command: `bun run test`.
+  - This orchestrates package tests via Turborepo and uses Vitest where configured.
+  - Guard: do not use `bun test` in this monorepo. Bun’s test runner will scan raw files and does not provide Vitest globals (e.g., `vi.mock`) or Playwright harness; it will produce false failures.
+
+- Empty packages: test scripts are configured with `--passWithNoTests` so the pipeline doesn’t fail when a package has no tests yet.
+
+- Linting Next.js app: use the scoped helper to avoid root resolution errors:
+  - `bun run next:lint:web` (alias for `next lint --dir apps/web`).
+  - The generic `next lint` at the repo root will fail because there is no app/pages directory in the monorepo root.
+
+- Type checking: use `bun run type-check` (scoped via Turbo), or per‑app `pnpm -w --filter @neonpro/web tsc --noEmit`.
+
+- E2E tests (Playwright): kept separate from default `test` runs.
+  - To prepare a CI runner or dev machine for E2E, install browsers: `npx playwright install --with-deps`.
+  - CI has an optional step to install Playwright browsers when the workflow is dispatched with `run_e2e=true`.
+
 - **Row Level Security (RLS)** - Database-level authorization
 - **Zero-Trust Architecture** - Never trust, always verify
 - **Advanced Session Management** - Multi-device security monitoring
@@ -148,7 +166,7 @@ neonpro/
 - **WhatsApp Business Integration**: Automated patient communication
 - **Real-time Notifications**: Instant updates across all devices
 - **Responsive Design**: Optimized for mobile aesthetic clinic workflows
-- **Accessibility Compliance**: WCAG 2.1 AA+ certified
+- **Accessibility Compliance**: WCAG 2.1 AA certified
 
 ## 🛡️ Conformidade Brasileira para Estética Avançada
 
@@ -286,12 +304,37 @@ pnpm run type-check         # TypeScript validation
 pnpm run format             # Code formatting
 ```
 
+### CI/CD Validation Pipeline
+
+Our GitHub Actions CI pipeline enforces strict quality gates that **block PRs on failures**:
+
+```bash
+# Core CI validation commands (run automatically on PRs)
+npx dprint check             # Code formatting validation
+npx oxlint .                 # Linting with zero tolerance for errors
+pnpm vitest run --project unit  # Unit test execution
+```
+
+**Quality Standards:**
+
+- ✅ **Zero lint errors** - Warnings allowed, errors block deployment
+- ✅ **TypeScript compilation** - Must pass without errors
+- ✅ **Unit test coverage** - Minimum 85% coverage required
+- ✅ **Security compliance** - Automated vulnerability scanning
+- ✅ **Performance gates** - Quality score ≥7.0/10 required
+
+**PR Requirements:**
+
+- All CI checks must pass before merge
+- Quality gates enforce ≥9.5/10 standard for production
+- Automatic deployment to Vercel on main branch merge
+
 ### Testes Específicos para Estética Avançada
 
 - **Compliance Validation**: Automated LGPD/ANVISA/CFM testing
 - **Performance Testing**: Aesthetic clinic-grade response time validation
 - **Security Testing**: Penetration testing for medical data protection
-- **Accessibility Testing**: WCAG 2.1 AA+ compliance verification
+- **Accessibility Testing**: WCAG 2.1 AA compliance verification
 
 ## 📱 Progressive Web App (PWA)
 

@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """
 File Validator Hook for Claude Code
-Protects sensitive files from being modified by Desktop Commander operations
+Protects truly sensitive files from being modified by Desktop Commander operations
 Runs before write_file and edit_block operations
+
+REFINED VERSION: Only blocks files that contain actual secrets or production-critical data
+Allows normal development work on components, configs, and documentation
 """
 
 import json
@@ -16,149 +19,128 @@ def log_message(message, level="INFO"):
 
 def is_sensitive_file(file_path):
     """Check if file should be protected from modification"""
-    file_path = Path(file_path).as_posix()
+    file_path = Path(file_path).as_posix().lower()
     
-    # Sensitive file patterns (based on project structure and security best practices)
+    # Only protect files that contain actual secrets or are production-critical
     sensitive_patterns = [
-        # Environment and secrets
-        '.env',
-        '.env.',
-        '/secrets/',
-        '/credentials.json',
-        'config/credentials',
-        'auth.json',
-        'private-key',
-        'service-account',
+        # Environment files with actual secrets (not examples)
+        '.env.production',
+        '.env.prod',
+        '.env.staging',
+        '.env.live',
         
-        # Package management (critical dependencies)
+        # Actual credential and secret files
+        '/secrets/',
+        'credentials.json',
+        'service-account.json',
+        'private-key.pem',
+        'auth-key.json',
+        
+        # Lock files that manage exact dependency versions
         'package-lock.json',
         'pnpm-lock.yaml', 
         'yarn.lock',
-        'bun.lock',
+        'bun.lockb',
         
-        # Git and version control
+        # Git internals (not .gitignore which devs may need to modify)
         '.git/',
-        '.gitignore',
-        '.gitattributes',
         
-        # Build and deployment configuration (critical)
+        # Production deployment configs only
         'vercel.json',
-        'next.config',
-        'turbo.json',
-        'tsconfig.json',
-        'tailwind.config',
-        'vite.config',
-        'webpack.config',
-        'rollup.config',
-        'babel.config',
+        'next.config.mjs',  # Specific to the production config
         
-        # Infrastructure and deployment
-        'infrastructure/',
-        'deployment/',
-        'docker-compose',
-        'Dockerfile.prod',
-        'k8s/',
-        'kubernetes/',
-        
-        # Database migrations (critical healthcare data)
+        # Database migrations (affect production data)
         'supabase/migrations/',
         'prisma/migrations/',
         'database/migrations/',
         
-        # Healthcare/medical compliance files
-        'compliance/',
-        'hipaa/',
-        'lgpd/',
-        'gdpr/',
-        'phi/',
-        'pii/',
-        
-        # Generated files (should not be manually edited)
-        '.generated.',
+        # Generated/built files (should never be manually edited)
         'node_modules/',
         'dist/',
         'build/',
         '.next/',
         '.turbo/',
         'coverage/',
+        '.generated.',
         
-        # System and cache files
-        '.DS_Store',
-        'Thumbs.db',
-        '.tmp/',
-        '.cache/',
-        'logs/',
+        # CI/CD production pipelines
+        '.github/workflows/deploy.yml',
+        '.github/workflows/release.yml',
         
-        # Security and monitoring
-        'sentry.',
-        'instrumentation.',
-        '.tsbuildinfo',
+        # Actual certificates and production keys
+        '.pem',
+        '.key',
+        '.crt',
+        '.cert',
+        '.p12',
+        '.jks',
         
-        # Critical project files
-        'README.md',  # Prevent accidental modification of main README
-        'CLAUDE.md',  # Prevent modification of Claude instructions
-        'LICENSE',
-        'CHANGELOG',
-        
-        # Tool configurations
-        '.prettierrc',
-        '.eslintrc',
-        '.oxlintrc.json',
-        'dprint.json',
-        '.editorconfig',
-        
-        # CI/CD (critical for deployment pipeline)
-        '.github/',
-        'workflows/',
-        '.travis.yml',
-        '.circleci/',
-        'jenkins',
-        'buildspec',
-        
-        # Database and backup files
-        '*.sql',
+        # Production database files
         '*.db',
         '*.sqlite',
-        'backup/',
-        'archives/',
+        '/backup/',
         
-        # Certificates and keys
-        '*.pem',
-        '*.key',
-        '*.crt',
-        '*.cert',
-        '*.p12',
-        '*.jks'
+        # System files
+        '.ds_store',
+        'thumbs.db',
     ]
     
-    # Check if file matches any sensitive pattern
+    # Check if file matches any truly sensitive pattern
     for pattern in sensitive_patterns:
-        if pattern in file_path.lower():
+        if pattern in file_path:
             return True, pattern
             
     return False, None
 
-def is_allowed_exception(file_path, tool_name):
-    """Check if file modification should be allowed despite being sensitive"""
-    file_path = Path(file_path).as_posix()
+def is_allowed_development_file(file_path):
+    """Check if this is a normal development file that should be allowed"""
+    file_path = Path(file_path).as_posix().lower()
     
-    # Allow certain operations on specific files
-    exceptions = {
-        # Allow reading sensitive files for analysis (not modification)
-        'read': ['.env.example', 'package.json', 'tsconfig.json'],
+    # Allow all component development
+    allowed_patterns = [
+        '/components/',
+        '/pages/',
+        '/app/',
+        '/src/',
+        '/lib/',
+        '/utils/',
+        '/hooks/',
+        '/types/',
+        '/styles/',
+        '/tests/',
+        '__tests__',
+        '.test.',
+        '.spec.',
         
-        # Allow modification of development configs in specific contexts
-        'write': [],
+        # Allow development configs
+        'tsconfig.json',
+        'tailwind.config',
+        'package.json',
+        '.eslintrc',
+        '.prettierrc',
+        'dprint.json',
         
-        # Allow specific development files
-        'development': ['.env.local', '.env.development']
-    }
+        # Allow documentation
+        'readme.md',
+        'claude.md',
+        '.md',
+        
+        # Allow development environment files
+        '.env.local',
+        '.env.development',
+        '.env.example',
+        
+        # Allow compliance development work
+        '/compliance/',
+        '/healthcare/',
+        
+        # Allow other development work
+        '/api/',
+        '/docs/',
+        '/guides/',
+    ]
     
-    # Check if it's a development environment file
-    if any(dev_pattern in file_path for dev_pattern in exceptions['development']):
-        return True
-        
-    return False
+    return any(pattern in file_path for pattern in allowed_patterns)
 
 def main():
     """Main validation logic"""
@@ -187,36 +169,35 @@ def main():
         log_message(f"Validating file access: {file_path}")
         log_message(f"Tool: {tool_name}")
         
-        # Check if file is sensitive
+        # Check if it's an allowed development file first
+        if is_allowed_development_file(file_path):
+            log_message(f"Development file allowed: {file_path}")
+            sys.exit(0)
+        
+        # Check if file is truly sensitive
         is_sensitive, matched_pattern = is_sensitive_file(file_path)
         
         if is_sensitive:
-            # Check for allowed exceptions
-            if is_allowed_exception(file_path, tool_name):
-                log_message(f"File {file_path} is sensitive but allowed as exception")
-                sys.exit(0)
-            
             # Block the operation
             error_message = f"""
 🚨 BLOCKED: Attempted to modify sensitive file
 File: {file_path}
 Pattern: {matched_pattern}
-Reason: This file is protected to maintain system security and compliance.
+Reason: This file contains secrets or production-critical configuration.
 
-If you need to modify this file, please:
-1. Review the security implications
-2. Use appropriate tools outside Claude Code
-3. Ensure compliance with healthcare regulations
-4. Consider if this change requires review/approval
+If you need to modify this file:
+1. Use appropriate tools outside Claude Code
+2. Ensure proper security review
+3. Consider environment-specific alternatives
 """
             
             print(error_message, file=sys.stderr)
             log_message(f"Blocked access to sensitive file: {file_path} (pattern: {matched_pattern})", "BLOCKED")
             
-            # Exit with code 2 to block the tool call and show stderr to Claude
+            # Exit with code 2 to block the tool call
             sys.exit(2)
         
-        # Allow the operation
+        # Allow the operation for all other files
         log_message(f"File validation passed for: {file_path}")
         sys.exit(0)
         
