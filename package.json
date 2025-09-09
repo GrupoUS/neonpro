@@ -7,6 +7,7 @@
     "audit-tool": "./dist/cli/audit-tool.js"
   },
   "type": "module",
+  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -18,10 +19,10 @@
     "test:integration": "bun test tests/integration",
     "test:unit": "bun test tests/unit",
     "test:performance": "bun test tests/performance",
-    "lint": "eslint src/ tests/ --ext .ts",
-    "lint:fix": "eslint src/ tests/ --ext .ts --fix",
-    "format": "prettier --write src/ tests/",
-    "format:check": "prettier --check src/ tests/",
+    "lint": "eslint src/ --ext .ts",
+    "lint:fix": "eslint src/ --ext .ts --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist/",
     "audit-tool": "node dist/cli/audit-tool.js"
@@ -41,6 +42,7 @@
   "author": "Development Team",
   "license": "MIT",
   "dependencies": {
+<<<<<<< HEAD
     "@hono/node-server": "^1.19.1",
     "@playwright/test": "^1.55.0",
     "@supabase/supabase-js": "^2.57.3",
@@ -77,12 +79,43 @@
     "@types/node": "^24.3.1",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
+=======
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "ioredis": "^5.7.0",
+    "ora": "^8.0.1",
+    "ts-morph": "^21.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/minimatch": "^6.0.0",
+    "@types/node": "^20.10.5",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/coverage-v8": "3.2.4",
+    "ajv": "^8.17.1",
+>>>>>>> 004-tanstack-query-integration
     "bun-types": "^1.0.20",
     "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "oxlint": "^1.14.0",
     "prettier": "^3.1.1",
+<<<<<<< HEAD
     "typescript": "^5.9.2"
+=======
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4",
+    "yaml": "^2.8.1"
+>>>>>>> 004-tanstack-query-integration
   },
   "performance": {
     "targets": {

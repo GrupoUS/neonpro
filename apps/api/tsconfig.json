@@ -1,0 +1,77 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "lib": ["ESNext"],
+    "types": ["node", "vitest/globals", "./src/types/shims"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/middleware/*": ["./src/middleware/*"],
+      "@/routes/*": ["./src/routes/*"],
+
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/core-services": ["../../packages/core-services/src"],
+      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/cache": ["../../packages/cache/src"],
+      "@neonpro/cache/*": ["../../packages/cache/src/*"],
+      "@neonpro/enterprise": ["../../packages/enterprise/src"],
+      "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.json",
+    "src/types/shims.d.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    {
+      "path": "../../packages/types"
+    },
+    {
+      "path": "../../packages/utils"
+    },
+    {
+      "path": "../../packages/core-services"
+    },
+
+    {
+      "path": "../../packages/security"
+    },
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/database"
+    }
+  ]
+}
