@@ -265,7 +265,7 @@ export class PerformanceOptimizer extends EventEmitter {
       throw new Error(`Performance profile not found: ${profileId}`,)
     }
 
-    const planId = `plan_${Date.now()}_${Math.random().toString(36,).substr(2, 9,)}`
+    const planId = `plan_${Date.now()}_${Math.random().toString(36,).slice(2, 11)}`
 
     this.emit('planning:started', { planId, profileId, },)
 
