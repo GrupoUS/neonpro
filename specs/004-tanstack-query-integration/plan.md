@@ -62,7 +62,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 **Architecture**:
 
 - EVERY feature as library? Yes (monorepo packages: @neonpro/ui, @neonpro/shared, etc.) ✅
-- Libraries listed: 
+- Libraries listed:
   - @neonpro/shared (API client, types, utilities)
   - @neonpro/ui (shadcn/ui components)
   - @neonpro/database (Supabase client, schemas)

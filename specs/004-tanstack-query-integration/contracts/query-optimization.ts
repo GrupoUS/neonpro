@@ -3,7 +3,7 @@
  * TanStack Query Integration Analysis and Optimization
  */
 
-import { QueryOptions, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
+import { QueryOptions, UseMutationResult, UseQueryResult, } from '@tanstack/react-query'
 
 // ============================================================================
 // Query Pattern Contracts
@@ -13,7 +13,7 @@ import { QueryOptions, UseQueryResult, UseMutationResult } from '@tanstack/react
  * Enhanced Query Factory Contract
  * Provides type-safe query options with healthcare-specific configurations
  */
-export interface QueryFactory<TData, TError = Error> {
+export interface QueryFactory<TData, TError = Error,> {
   queryKey: readonly unknown[]
   queryFn: () => Promise<TData>
   staleTime?: number
@@ -27,24 +27,24 @@ export interface QueryFactory<TData, TError = Error> {
  */
 export interface HealthcareQueryConfig {
   patient: {
-    staleTime: number  // 2 minutes for patient safety
-    gcTime: number     // 5 minutes for LGPD compliance
+    staleTime: number // 2 minutes for patient safety
+    gcTime: number // 5 minutes for LGPD compliance
   }
   appointment: {
-    staleTime: number  // 1 minute for real-time scheduling
-    gcTime: number     // 10 minutes for operational data
+    staleTime: number // 1 minute for real-time scheduling
+    gcTime: number // 10 minutes for operational data
   }
   audit: {
-    staleTime: number  // 0 for compliance requirements
-    gcTime: number     // 2 minutes minimal retention
+    staleTime: number // 0 for compliance requirements
+    gcTime: number // 2 minutes minimal retention
   }
   professional: {
-    staleTime: number  // 10 minutes for stable data
-    gcTime: number     // 30 minutes for professional info
+    staleTime: number // 10 minutes for stable data
+    gcTime: number // 30 minutes for professional info
   }
   service: {
-    staleTime: number  // 30 minutes for service catalog
-    gcTime: number     // 60 minutes for configuration data
+    staleTime: number // 30 minutes for service catalog
+    gcTime: number // 60 minutes for configuration data
   }
 }
 
@@ -54,21 +54,21 @@ export interface HealthcareQueryConfig {
  */
 export interface QueryOptionsFactory {
   patient: {
-    detail: (id: string) => QueryFactory<Patient>
-    list: (filters?: PatientFilters) => QueryFactory<PaginatedResponse<Patient>>
-    appointments: (patientId: string) => QueryFactory<Appointment[]>
-    medicalRecords: (patientId: string) => QueryFactory<MedicalRecord[]>
+    detail: (id: string,) => QueryFactory<Patient>
+    list: (filters?: PatientFilters,) => QueryFactory<PaginatedResponse<Patient>>
+    appointments: (patientId: string,) => QueryFactory<Appointment[]>
+    medicalRecords: (patientId: string,) => QueryFactory<MedicalRecord[]>
   }
   appointment: {
-    detail: (id: string) => QueryFactory<Appointment>
-    list: (filters?: AppointmentFilters) => QueryFactory<PaginatedResponse<Appointment>>
-    calendar: (date: string) => QueryFactory<Appointment[]>
-    availability: (params: AvailabilityParams) => QueryFactory<TimeSlot[]>
+    detail: (id: string,) => QueryFactory<Appointment>
+    list: (filters?: AppointmentFilters,) => QueryFactory<PaginatedResponse<Appointment>>
+    calendar: (date: string,) => QueryFactory<Appointment[]>
+    availability: (params: AvailabilityParams,) => QueryFactory<TimeSlot[]>
   }
   professional: {
-    detail: (id: string) => QueryFactory<Professional>
-    list: (filters?: ProfessionalFilters) => QueryFactory<PaginatedResponse<Professional>>
-    schedule: (professionalId: string) => QueryFactory<Schedule>
+    detail: (id: string,) => QueryFactory<Professional>
+    list: (filters?: ProfessionalFilters,) => QueryFactory<PaginatedResponse<Professional>>
+    schedule: (professionalId: string,) => QueryFactory<Schedule>
   }
 }
 
@@ -85,19 +85,19 @@ export interface PrefetchStrategy {
    * Prefetch patient workflow data
    * Loads patient details, appointments, and medical records
    */
-  prefetchPatientWorkflow: (patientId: string) => Promise<void>
-  
+  prefetchPatientWorkflow: (patientId: string,) => Promise<void>
+
   /**
    * Warm scheduling cache
    * Preloads availability and calendar data for appointment scheduling
    */
-  warmSchedulingCache: (professionalId: string, date: string) => Promise<void>
-  
+  warmSchedulingCache: (professionalId: string, date: string,) => Promise<void>
+
   /**
    * Emergency access prefetch
    * Immediately loads critical patient data for emergency scenarios
    */
-  emergencyPrefetch: (patientId: string) => Promise<void>
+  emergencyPrefetch: (patientId: string,) => Promise<void>
 }
 
 /**
@@ -108,10 +108,10 @@ export interface CacheManager {
   /**
    * Invalidate healthcare-specific cache patterns
    */
-  invalidatePatientData: (patientId: string) => Promise<void>
-  invalidateAppointmentData: (appointmentId: string) => Promise<void>
-  invalidateScheduleData: (professionalId: string, date: string) => Promise<void>
-  
+  invalidatePatientData: (patientId: string,) => Promise<void>
+  invalidateAppointmentData: (appointmentId: string,) => Promise<void>
+  invalidateScheduleData: (professionalId: string, date: string,) => Promise<void>
+
   /**
    * Cache health monitoring
    */
@@ -159,22 +159,22 @@ export interface PerformanceMonitor {
   /**
    * Track query performance metrics
    */
-  trackQueryPerformance: (queryKey: unknown[], duration: number) => void
-  
+  trackQueryPerformance: (queryKey: unknown[], duration: number,) => void
+
   /**
    * Monitor cache performance
    */
-  trackCachePerformance: (operation: 'hit' | 'miss' | 'invalidate', queryKey: unknown[]) => void
-  
+  trackCachePerformance: (operation: 'hit' | 'miss' | 'invalidate', queryKey: unknown[],) => void
+
   /**
    * Get performance report
    */
   getPerformanceReport: () => PerformanceReport
-  
+
   /**
    * Set performance alerts
    */
-  setPerformanceAlert: (metric: keyof PerformanceMetrics, threshold: number) => void
+  setPerformanceAlert: (metric: keyof PerformanceMetrics, threshold: number,) => void
 }
 
 /**
@@ -195,17 +195,21 @@ export interface PerformanceReport {
  * Optimistic Update Contract
  * Defines optimistic update patterns for healthcare operations
  */
-export interface OptimisticUpdateStrategy<TData, TVariables> {
+export interface OptimisticUpdateStrategy<TData, TVariables,> {
   /**
    * Optimistic update function
    */
-  onMutate: (variables: TVariables) => Promise<{ previousData: TData | undefined }>
-  
+  onMutate: (variables: TVariables,) => Promise<{ previousData: TData | undefined }>
+
   /**
    * Error rollback function
    */
-  onError: (error: Error, variables: TVariables, context: { previousData: TData | undefined }) => void
-  
+  onError: (
+    error: Error,
+    variables: TVariables,
+    context: { previousData: TData | undefined },
+  ) => void
+
   /**
    * Settlement function (always runs)
    */
@@ -242,22 +246,22 @@ export interface LGPDCompliance {
   /**
    * Validate data access consent
    */
-  validateConsent: (userId: string, dataType: string) => Promise<boolean>
-  
+  validateConsent: (userId: string, dataType: string,) => Promise<boolean>
+
   /**
    * Log data access for audit trail
    */
-  logDataAccess: (userId: string, dataType: string, operation: string) => Promise<void>
-  
+  logDataAccess: (userId: string, dataType: string, operation: string,) => Promise<void>
+
   /**
    * Check data retention policy
    */
-  checkRetentionPolicy: (dataType: string) => number
-  
+  checkRetentionPolicy: (dataType: string,) => number
+
   /**
    * Handle right to erasure
    */
-  handleDataErasure: (userId: string, dataType: string) => Promise<void>
+  handleDataErasure: (userId: string, dataType: string,) => Promise<void>
 }
 
 /**
@@ -268,17 +272,17 @@ export interface ANVISACompliance {
   /**
    * Validate data integrity
    */
-  validateDataIntegrity: (data: unknown) => boolean
-  
+  validateDataIntegrity: (data: unknown,) => boolean
+
   /**
    * Log medical device operations
    */
-  logMedicalOperation: (operation: string, data: unknown) => Promise<void>
-  
+  logMedicalOperation: (operation: string, data: unknown,) => Promise<void>
+
   /**
    * Validate access control
    */
-  validateAccessControl: (userId: string, resource: string) => Promise<boolean>
+  validateAccessControl: (userId: string, resource: string,) => Promise<boolean>
 }
 
 /**
@@ -289,22 +293,22 @@ export interface AuditLogger {
   /**
    * Log query operations
    */
-  logQueryOperation: (queryKey: unknown[], operation: string, userId: string) => Promise<void>
-  
+  logQueryOperation: (queryKey: unknown[], operation: string, userId: string,) => Promise<void>
+
   /**
    * Log cache operations
    */
-  logCacheOperation: (operation: string, queryKey: unknown[], userId: string) => Promise<void>
-  
+  logCacheOperation: (operation: string, queryKey: unknown[], userId: string,) => Promise<void>
+
   /**
    * Log performance metrics
    */
-  logPerformanceMetrics: (metrics: PerformanceMetrics) => Promise<void>
-  
+  logPerformanceMetrics: (metrics: PerformanceMetrics,) => Promise<void>
+
   /**
    * Get audit trail
    */
-  getAuditTrail: (filters: AuditFilters) => Promise<AuditEntry[]>
+  getAuditTrail: (filters: AuditFilters,) => Promise<AuditEntry[]>
 }
 
 // ============================================================================
@@ -319,18 +323,18 @@ export interface DeveloperUtilities {
   /**
    * Debug query state
    */
-  debugQuery: (queryKey: unknown[]) => QueryDebugInfo
-  
+  debugQuery: (queryKey: unknown[],) => QueryDebugInfo
+
   /**
    * Monitor query performance
    */
   monitorPerformance: () => PerformanceMetrics
-  
+
   /**
    * Analyze cache health
    */
   analyzeCacheHealth: () => CacheHealthMetrics
-  
+
   /**
    * Generate performance report
    */
@@ -398,7 +402,7 @@ export interface Professional {
 }
 
 // Utility Types
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse<T,> {
   data: T[]
   meta: {
     total: number
@@ -436,13 +440,36 @@ export interface AppointmentFilters {
   limit?: number
 }
 
+export interface ProfessionalFilters {
+  query?: string
+  specialization?: string
+  clinicId?: string
+  license?: string
+  page?: number
+  limit?: number
+}
+
 // Operation Data Types
 export interface CreatePatientData extends Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> {}
-export interface UpdatePatientData extends Partial<CreatePatientData> { id: string }
-export interface CreateAppointmentData extends Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'> {}
-export interface UpdateAppointmentData extends Partial<CreateAppointmentData> { id: string }
-export interface RescheduleAppointmentData { id: string; newScheduledAt: string; reason?: string }
-export interface CancelAppointmentData { id: string; reason: string; cancelledBy: string }
+export interface UpdatePatientData extends Partial<CreatePatientData> {
+  id: string
+}
+export interface CreateAppointmentData
+  extends Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>
+{}
+export interface UpdateAppointmentData extends Partial<CreateAppointmentData> {
+  id: string
+}
+export interface RescheduleAppointmentData {
+  id: string
+  newScheduledAt: string
+  reason?: string
+}
+export interface CancelAppointmentData {
+  id: string
+  reason: string
+  cancelledBy: string
+}
 
 // Additional Types
 export interface Address {

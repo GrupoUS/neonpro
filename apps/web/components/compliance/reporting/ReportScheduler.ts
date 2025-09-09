@@ -513,17 +513,33 @@ export class ReportScheduler {
   private passesFilters(data: unknown, filters?: ReportSchedule['filters'],): boolean {
     if (!filters) return true
 
-    if (filters.minimumScore && (data as any).summary.overallScore < filters.minimumScore) {
+    // Safely extract numeric summary fields from unknown `data` without using `any`.
+    const obj = typeof data === 'object' && data !== null
+      ? (data as Record<string, unknown>)
+      : {}
+
+    const summary = typeof obj.summary === 'object' && obj.summary !== null
+      ? (obj.summary as Record<string, unknown>)
+      : {}
+
+    const overallScore = typeof summary.overallScore === 'number' ? summary.overallScore : 0
+    const totalViolations = typeof summary.totalViolations === 'number'
+      ? summary.totalViolations
+      : 0
+    const criticalViolations = typeof summary.criticalViolations === 'number'
+      ? summary.criticalViolations
+      : 0
+
+    // Use explicit undefined checks to allow 0 as a valid threshold
+    if (filters.minimumScore !== undefined && overallScore < filters.minimumScore) {
       return false
     }
 
-    if (
-      filters.maximumViolations && (data as any).summary.totalViolations > filters.maximumViolations
-    ) {
+    if (filters.maximumViolations !== undefined && totalViolations > filters.maximumViolations) {
       return false
     }
 
-    if (filters.criticalViolationsOnly && (data as any).summary.criticalViolations === 0) {
+    if (filters.criticalViolationsOnly && criticalViolations === 0) {
       return false
     }
 

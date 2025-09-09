@@ -21,12 +21,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
-      "@/lib/*": ["./src/lib/*"],
+      "@/lib/*": ["./lib/*", "./src/lib/*"],
       "@/styles/*": ["./src/styles/*"],
       "@/types/*": ["./src/types/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/utils/*": ["./src/utils/*"],
+      "@/hooks/*": ["./src/hooks/*", "./hooks/*"],
+      "@/utils/*": ["./src/utils/*", "./utils/*"],
       "@/features/*": ["./src/features/*"],
+      "@/test-utils/*": ["./test-utils/*"],
 
       "@neonpro/types": ["../../packages/types/src"],
       "@neonpro/types/*": ["../../packages/types/src/*"],
