@@ -8,56 +8,56 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PatientsRouteImport } from './routes/patients'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as AppointmentsRouteImport } from './routes/appointments'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PatientsIndexRouteImport } from './routes/patients/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as PatientsNewRouteImport } from './routes/patients/new'
+import { Route as rootRouteImport, } from './routes/__root'
+import { Route as AppointmentsRouteImport, } from './routes/appointments'
+import { Route as DashboardRouteImport, } from './routes/dashboard'
+import { Route as DashboardIndexRouteImport, } from './routes/dashboard/index'
+import { Route as IndexRouteImport, } from './routes/index'
+import { Route as LoginRouteImport, } from './routes/login'
+import { Route as PatientsRouteImport, } from './routes/patients'
+import { Route as PatientsIndexRouteImport, } from './routes/patients/index'
+import { Route as PatientsNewRouteImport, } from './routes/patients/new'
 
 const PatientsRoute = PatientsRouteImport.update({
   id: '/patients',
   path: '/patients',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any,)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any,)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any,)
 const AppointmentsRoute = AppointmentsRouteImport.update({
   id: '/appointments',
   path: '/appointments',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any,)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any,)
 const PatientsIndexRoute = PatientsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PatientsRoute,
-} as any)
+} as any,)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
-} as any)
+} as any,)
 const PatientsNewRoute = PatientsNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => PatientsRoute,
-} as any)
+} as any,)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -222,5 +222,5 @@ const rootRouteChildren: RootRouteChildren = {
   PatientsRoute: PatientsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
+  ._addFileChildren(rootRouteChildren,)
   ._addFileTypes<FileRouteTypes>()

@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertTriangle } from 'lucide-react'
+import { createFileRoute, Link, } from '@tanstack/react-router'
+import { AlertTriangle, } from 'lucide-react'
 
 function UnauthorizedPage() {
   return (
@@ -14,12 +14,13 @@ function UnauthorizedPage() {
             Você não tem permissão para acessar esta página.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Entre em contato com o administrador do sistema se você acredita que deveria ter acesso a esta funcionalidade.
+            Entre em contato com o administrador do sistema se você acredita que deveria ter acesso
+            a esta funcionalidade.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/dashboard"
@@ -40,6 +41,6 @@ function UnauthorizedPage() {
   )
 }
 
-export const Route = createFileRoute('/unauthorized')({
+export const Route = createFileRoute('/unauthorized',)({
   component: UnauthorizedPage,
-})
+},)

@@ -125,6 +125,21 @@ CONSTITUTIONAL_PRINCIPLES:
 - **🌐 tavily** - Real-time info
 - **🎨 shadcn-ui** - UI components
 
+### **🔍 Monorepo Audit & Optimization Tools**
+
+- **🛠️ FileScanner** - Recursive directory traversal and file discovery
+- **📊 DependencyAnalyzer** - Import/export analysis with circular dependency detection
+- **✅ ArchitectureValidator** - Turborepo/Hono/TanStack Router compliance validation
+- **🧹 CleanupEngine** - Safe file removal with rollback capabilities
+- **📈 ReportGenerator** - Comprehensive audit reports with metrics and recommendations
+
+**Usage Patterns**:
+
+- Scan → Analyze → Validate → Plan → Cleanup → Report
+- Cross-reference with `docs/architecture/source-tree.md` and `tech-stack.md`
+- Always use backup strategies before cleanup operations
+- Performance targets: 10k+ files in <30s, <500MB memory usage
+
 ## Mandatory Development Steps
 
 ### 1. **Research & Decomposition** 🧠

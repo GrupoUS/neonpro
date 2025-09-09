@@ -18,12 +18,12 @@ export interface PrescriptionFormData {
 
 export interface DrugInteractionResult {
   hasInteractions: boolean
-  interactions: Array<{
+  interactions: {
     severity: 'minor' | 'moderate' | 'major' | 'contraindicated'
     drugs: string[]
     description: string
     recommendation: string
-  }>
+  }[]
 }
 
 export class PrescriptionPage extends BasePage {

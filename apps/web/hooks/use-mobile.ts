@@ -167,7 +167,7 @@ export function useAgentChat() {
         }
 
         recognition.current.onresult = (event: SpeechRecognitionEvent,) => {
-          const { results: results, } = event
+          const { results, } = event
           let finalTranscript = ''
           let interimTranscript = ''
 

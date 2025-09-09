@@ -1,0 +1,40 @@
+# Source files
+src/
+tests/
+specs/
+benchmarks/
+
+# Development files
+.vscode/
+.idea/
+*.log
+test-results.log
+coverage/
+
+# Configuration files
+.eslintrc.*
+.prettierrc.*
+vitest*.config.*
+tsconfig.json
+
+# Build artifacts that shouldn't be published
+node_modules/
+.audit-backups/
+
+# Development scripts
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation that's not needed in package
+docs/QUALITY_ASSESSMENT.md
+docs/DEVELOPMENT.md
+
+# Keep these files
+!dist/
+!docs/USER_GUIDE.md
+!docs/API_REFERENCE.md
+!README.md
+!CHANGELOG.md
+!LICENSE
+!package.json

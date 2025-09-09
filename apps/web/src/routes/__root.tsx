@@ -7,7 +7,7 @@ import * as React from 'react'
 import { ClientInit, } from '../../components/ClientInit'
 import { HealthcareErrorBoundary, } from '../../components/ErrorBoundary'
 import { Toaster, } from '../../components/ui/toaster'
-import { AuthProvider, useAuthContext } from '../../contexts/auth-context'
+import { AuthProvider, useAuthContext, } from '../../contexts/auth-context'
 
 // Healthcare root context type - updated for Supabase auth
 export interface HealthcareRootContext {
