@@ -1,11 +1,13 @@
 /**
  * ProtectedRoute - Componente para proteger rotas que requerem autenticação
- * Redireciona usuários não autenticados para login
+ * DISABLED: Using TanStack Router authentication instead
+ * This component is kept for backward compatibility but not used in current app
  */
 
 'use client'
 
-import { useRouter, } from 'next/navigation'
+// DISABLED: Using TanStack Router instead of Next.js
+// import { useRouter, } from 'next/navigation'
 import type React from 'react'
 import type { ReactNode, } from 'react'
 import { useAuth, } from './auth-provider'
@@ -58,7 +60,11 @@ export function ProtectedRoute({
   requiredPermissions = [],
 }: ProtectedRouteProps,) {
   const { user, isAuthenticated, isLoading, } = useAuth()
-  const router = useRouter()
+  // DISABLED: Using TanStack Router authentication instead
+  // const router = useRouter()
+
+  // Legacy component - return children directly for backward compatibility
+  // TanStack Router handles route protection natively
 
   // Ainda carregando
   if (isLoading) {

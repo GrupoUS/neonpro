@@ -14,28 +14,29 @@ This unified approach combines what would traditionally be separate backend and 
 ### Starter Template or Existing Project
 
 **Project Type**: Greenfield project with custom Turborepo monorepo architecture\
-**Framework Choice**: Next.js 15 + React 19 with Supabase backend\
+**Framework Choice**: TanStack Router + Vite + React 19 with Supabase backend\
 **Architectural Constraints**: Brazilian healthcare compliance requirements (LGPD, ANVISA)\
 **Specialized Requirements**: Portuguese-optimized AI integration and aesthetic clinic workflows
 
 ### Change Log
 
-| Date       | Version | Description                                                   | Author           |
-| ---------- | ------- | ------------------------------------------------------------- | ---------------- |
-| 2025-09-06 | 2.1.0   | Aligned with real 8-package MVP structure and Turborepo 2.5.6 | AI IDE Agent     |
-| 2025-09-06 | 2.0.0   | Enhanced with fullstack architecture template structure       | AI IDE Agent     |
-| 2024-12-01 | 1.0.0   | Initial architecture document                                 | Development Team |
+| Date       | Version | Description                                                                              | Author           |
+| ---------- | ------- | ---------------------------------------------------------------------------------------- | ---------------- |
+| 2025-09-09 | 2.2.0   | Migrated from Next.js to TanStack Router + Vite for improved type safety and performance | AI IDE Agent     |
+| 2025-09-06 | 2.1.0   | Aligned with real 8-package MVP structure and Turborepo 2.5.6                            | AI IDE Agent     |
+| 2025-09-06 | 2.0.0   | Enhanced with fullstack architecture template structure                                  | AI IDE Agent     |
+| 2024-12-01 | 1.0.0   | Initial architecture document                                                            | Development Team |
 
 ## High Level Architecture
 
 ### Technical Summary
 
-NeonPro employs a modern Jamstack architecture with Turborepo monorepo organization (2 apps + 8 packages), specifically designed for Brazilian aesthetic clinics. The system combines Next.js 15 frontend with Hono.dev API backend on Vercel Functions, integrated with Supabase PostgreSQL and OpenAI GPT-4 for Portuguese-optimized AI features. The architecture emphasizes real-time capabilities through WebSocket subscriptions, comprehensive LGPD compliance automation, and specialized healthcare workflows. This simplified 8-package MVP structure achieves the PRD goals of eliminating operational inefficiencies through AI prediction while maintaining full regulatory compliance with Brazilian healthcare standards.
+NeonPro employs a modern Jamstack architecture with Turborepo monorepo organization (2 apps + 8 packages), specifically designed for Brazilian aesthetic clinics. The system combines TanStack Router + Vite frontend with Hono.dev API backend on Vercel Functions, integrated with Supabase PostgreSQL and OpenAI GPT-4 for Portuguese-optimized AI features. The architecture emphasizes real-time capabilities through WebSocket subscriptions, comprehensive LGPD compliance automation, and specialized healthcare workflows. This simplified 8-package MVP structure achieves the PRD goals of eliminating operational inefficiencies through AI prediction while maintaining full regulatory compliance with Brazilian healthcare standards.
 
 ### Platform and Infrastructure Choice
 
 **Platform**: Vercel + Supabase\
-**Key Services**: Next.js hosting, Hono API (Vercel Functions), PostgreSQL database, Real-time subscriptions, File storage\
+**Key Services**: TanStack Router + Vite hosting, Hono API (Vercel Functions), PostgreSQL database, Real-time subscriptions, File storage\
 **Deployment Host and Regions**: Vercel Edge Network with South America (São Paulo) region priority
 
 **Rationale**: This combination provides optimal performance for Brazilian users while offering built-in authentication, real-time capabilities, and LGPD-compliant data handling. Supabase's PostgreSQL with Row Level Security aligns perfectly with healthcare data protection requirements.
@@ -46,7 +47,7 @@ NeonPro employs a modern Jamstack architecture with Turborepo monorepo organizat
 **Monorepo Tool**: Turborepo 2.5.6 with pnpm workspaces\
 **Package Organization**: MVP simplified architecture (8 essential packages) organized by functionality:
 
-- **Apps (2)**: web (Next.js 15), api (Hono.dev)
+- **Apps (2)**: web (TanStack Router + Vite), api (Hono.dev)
 - **Packages (8)**: types, ui, database, core-services, security, shared, utils, config
 
 ### High Level Architecture Diagram
@@ -54,7 +55,7 @@ NeonPro employs a modern Jamstack architecture with Turborepo monorepo organizat
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
-        WEB[Next.js 15 + React 19]
+        WEB[TanStack Router + Vite + React 19]
         UI[shadcn/ui Components]
         PWA[Progressive Web App]
     end
@@ -106,7 +107,7 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Category             | Technology                          | Version      | Purpose                              | Rationale                                                            |
 | -------------------- | ----------------------------------- | ------------ | ------------------------------------ | -------------------------------------------------------------------- |
 | Frontend Language    | TypeScript                          | 5.7.2        | Type-safe development                | Essential for healthcare data integrity and developer productivity   |
-| Frontend Framework   | Next.js                             | 15.x         | React-based fullstack framework      | App Router provides optimal performance and SEO for clinic websites  |
+| Frontend Framework   | TanStack Router + Vite              | Latest       | Type-safe routing + fast build tool  | Type-safe routing with file-based patterns and Vite's fast HMR       |
 | UI Component Library | shadcn/ui                           | v4           | Modern component system              | Accessible, customizable components with healthcare-specific styling |
 | State Management     | Zustand + React Server Components   | Latest       | Client and server state              | Minimal overhead with server-first approach for healthcare data      |
 | Backend Language     | TypeScript                          | 5.7.2        | Unified language across stack        | Reduces context switching and ensures type safety                    |
@@ -120,7 +121,7 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Backend Testing      | Vitest + Supertest                  | Latest       | API and database testing             | Unified testing framework across stack                               |
 | E2E Testing          | Playwright                          | Latest       | End-to-end testing                   | Cross-browser testing for clinic workflows                           |
 | Build Tool           | Turborepo                           | 2.5.6        | Monorepo build orchestration         | Efficient builds across 8 essential packages                         |
-| Bundler              | Next.js built-in                    | 15.x         | Webpack-based bundling               | Optimized for React and TypeScript                                   |
+| Bundler              | Vite                                | ^5.2.0       | Modern build tool                    | Fast HMR, optimized builds, modern tooling                           |
 | IaC Tool             | Vercel CLI + Supabase CLI           | Latest       | Infrastructure as Code               | Declarative deployment and environment management                    |
 | CI/CD                | GitHub Actions                      | Latest       | Automated deployment                 | Integrated with Vercel and Supabase                                  |
 | Monitoring           | Vercel Analytics + Supabase Metrics | Latest       | Performance and usage monitoring     | Built-in monitoring for fullstack applications                       |
@@ -410,19 +411,19 @@ components:
 
 Based on the architectural patterns and tech stack, the system is organized into logical components across the fullstack.
 
-### Frontend Application (Next.js)
+### Frontend Application (TanStack Router + Vite)
 
 **Responsibility**: User interface for aesthetic clinic operations with Brazilian healthcare compliance
 
 **Key Interfaces**:
 
-- React Server Components for data fetching
-- Client Components for interactive features
-- API Routes for backend integration
+- File-based routing with type-safe navigation
+- React components with modern hooks
+- TanStack Query for server state management
 
 **Dependencies**: Supabase client, shadcn/ui components, Zustand stores
 
-**Technology Stack**: Next.js 15, React 19, TypeScript, Tailwind CSS
+**Technology Stack**: TanStack Router, Vite, React 19, TypeScript, Tailwind CSS
 
 ### Universal AI Chat Component
 
@@ -753,6 +754,15 @@ CREATE POLICY "appointments_access" ON appointments
 
 ```
 src/
+├── routes/                     # TanStack Router file-based routing
+│   ├── __root.tsx              # Root route with layout
+│   ├── index.tsx               # Homepage route
+│   ├── login.tsx               # Login route
+│   ├── dashboard/              # Protected dashboard routes
+│   │   ├── index.tsx
+│   │   ├── patients/
+│   │   └── appointments/
+│   └── _layout.tsx             # Layout route
 ├── components/
 │   ├── ui/                     # shadcn/ui base components
 │   ├── healthcare/             # Healthcare-specific components
@@ -862,86 +872,104 @@ interface AppState {
 
 #### State Management Patterns
 
-- **Server State**: React Server Components for initial data loading
+- **Server State**: TanStack Query for server state management and caching
 - **Client State**: Zustand stores for UI state and optimistic updates
 - **Real-time State**: Supabase subscriptions for live data updates
 - **Form State**: React Hook Form with Zod validation
-- **Cache State**: SWR for client-side caching and revalidation
+- **Route State**: TanStack Router for type-safe route parameters and search params
 
 ### Routing Architecture
 
 #### Route Organization
 
 ```
-app/
-├── (auth)/                     # Authentication routes
-│   ├── login/
-│   ├── register/
-│   └── forgot-password/
-├── (dashboard)/                # Protected dashboard routes
+src/routes/
+├── __root.tsx                  # Root route with layout and providers
+├── index.tsx                   # Homepage route
+├── login.tsx                   # Authentication route
+├── _layout.tsx                 # Shared layout route
+├── dashboard/
+│   ├── index.tsx              # Dashboard overview
 │   ├── patients/
-│   │   ├── page.tsx           # Patient list
-│   │   ├── [id]/              # Patient details
-│   │   └── new/               # New patient form
+│   │   ├── index.tsx          # Patient list
+│   │   ├── $id.tsx            # Patient details (dynamic route)
+│   │   └── new.tsx            # New patient form
 │   ├── appointments/
-│   │   ├── page.tsx           # Appointment calendar
-│   │   ├── [id]/              # Appointment details
-│   │   └── schedule/          # Schedule new appointment
+│   │   ├── index.tsx          # Appointment calendar
+│   │   ├── $id.tsx            # Appointment details
+│   │   └── schedule.tsx       # Schedule new appointment
 │   ├── ai-chat/
-│   │   ├── page.tsx           # AI chat interface
-│   │   └── sessions/          # Chat session history
+│   │   ├── index.tsx          # AI chat interface
+│   │   └── sessions/
+│   │       └── index.tsx      # Chat session history
 │   ├── analytics/
-│   │   ├── page.tsx           # Analytics dashboard
-│   │   └── reports/           # Detailed reports
+│   │   ├── index.tsx          # Analytics dashboard
+│   │   └── reports/
+│   │       └── index.tsx      # Detailed reports
 │   └── compliance/
-│       ├── page.tsx           # LGPD compliance center
-│       ├── consents/          # Consent management
-│       └── audit/             # Audit logs
-├── api/                        # API routes
-│   ├── patients/
-│   ├── appointments/
-│   ├── ai/
-│   └── compliance/
-└── globals.css                # Global styles
+│       ├── index.tsx          # LGPD compliance center
+│       ├── consents/
+│       │   └── index.tsx      # Consent management
+│       └── audit/
+│           └── index.tsx      # Audit logs
+└── routeTree.gen.ts           # Auto-generated route tree
 ```
 
 #### Protected Route Pattern
 
 ```typescript
-import { createServerComponentClient, } from '@supabase/auth-helpers-nextjs'
-import { cookies, } from 'next/headers'
-import { redirect, } from 'next/navigation'
+import { createBrowserClient, } from '@supabase/ssr'
+import { createFileRoute, redirect, } from '@tanstack/react-router'
 
-export default async function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode
-},) {
-  const supabase = createServerComponentClient({ cookies, },)
+// Route-level authentication check
+export const Route = createFileRoute('/dashboard',)({
+  beforeLoad: async ({ location, },) => {
+    const supabase = createBrowserClient(
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_ANON_KEY!,
+    )
 
-  const {
-    data: { session, },
-  } = await supabase.auth.getSession()
+    const {
+      data: { session, },
+    } = await supabase.auth.getSession()
 
-  if (!session) {
-    redirect('/login',)
-  }
+    if (!session) {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      },)
+    }
 
-  // Check professional status
-  const { data: professional, } = await supabase
-    .from('professionals',)
-    .select('*',)
-    .eq('user_id', session.user.id,)
-    .single()
+    // Check professional status
+    const { data: professional, } = await supabase
+      .from('professionals',)
+      .select('*',)
+      .eq('user_id', session.user.id,)
+      .single()
 
-  if (!professional || !professional.is_active) {
-    redirect('/unauthorized',)
-  }
+    if (!professional || !professional.is_active) {
+      throw redirect({
+        to: '/unauthorized',
+      },)
+    }
+
+    return {
+      user: session.user,
+      professional,
+    }
+  },
+  component: DashboardLayout,
+},)
+
+function DashboardLayout() {
+  const { user, professional, } = Route.useLoaderData()
 
   return (
-    <DashboardLayout user={session.user} professional={professional}>
-      {children}
-    </DashboardLayout>
+    <div className="min-h-screen bg-background">
+      {/* Dashboard content */}
+    </div>
   )
 }
 ```
@@ -1446,15 +1474,13 @@ neonpro/
 │       ├── deploy-staging.yaml
 │       └── deploy-production.yaml
 ├── apps/                       # Application packages
-│   ├── web/                    # Next.js Frontend Application
+│   ├── web/                    # TanStack Router + Vite Frontend Application
 │   │   ├── src/
-│   │   │   ├── app/            # App Router (Next.js 15)
-│   │   │   │   ├── (auth)/     # Authentication routes
-│   │   │   │   ├── (dashboard)/ # Protected dashboard routes
-│   │   │   │   ├── api/        # API routes
-│   │   │   │   ├── globals.css # Global styles
-│   │   │   │   ├── layout.tsx  # Root layout
-│   │   │   │   └── page.tsx    # Landing page
+│   │   │   ├── routes/         # File-based routing (TanStack Router)
+│   │   │   │   ├── __root.tsx  # Root route with layout
+│   │   │   │   ├── index.tsx   # Homepage route
+│   │   │   │   ├── login.tsx   # Authentication route
+│   │   │   │   └── dashboard/  # Protected dashboard routes
 │   │   │   ├── components/     # React components
 │   │   │   │   ├── ui/         # shadcn/ui components
 │   │   │   │   ├── healthcare/ # Healthcare-specific components
@@ -1469,8 +1495,9 @@ neonpro/
 │   │   │   └── types/          # Frontend-specific types
 │   │   ├── public/             # Static assets
 │   │   ├── tests/              # Frontend tests
-│   │   ├── next.config.js      # Next.js configuration
+│   │   ├── vite.config.ts      # Vite configuration
 │   │   ├── tailwind.config.ts  # Tailwind configuration
+│   │   ├── routeTree.gen.ts    # Auto-generated TanStack Router tree
 │   │   └── package.json
 │   └── api/                    # Backend API Application
 │       ├── src/
@@ -1702,8 +1729,9 @@ NEXTAUTH_URL=http://localhost:3000
 
 - **Platform**: Vercel Edge Network
 - **Build Command**: `pnpm build`
-- **Output Directory**: `.next`
+- **Output Directory**: `dist`
 - **CDN/Edge**: Automatic edge caching with South America priority
+- **Build Tool**: Vite with optimized production builds
 
 **Backend Deployment:**
 
@@ -2485,8 +2513,8 @@ export async function handleRequest(req: Request,): Promise<Response> {
 
 ---
 
-**Architecture Stack**: Next.js 15 + Supabase + OpenAI GPT-4 + shadcn/ui\
+**Architecture Stack**: TanStack Router + Vite + Supabase + OpenAI GPT-4 + shadcn/ui\
 **Quality Validated**: ✅ 9.5/10 KISS + YAGNI + Constitutional Principles Applied\
 **Target Market**: Brazilian Aesthetic Clinics with All Professional Types\
-**Status**: Enhanced with Fullstack Architecture Template Structure\
-**Version**: 2.0.0 - Template-Enhanced Architecture Document
+**Status**: Migrated to TanStack Router + Vite for improved type safety and performance\
+**Version**: 2.2.0 - TanStack Router Migration Complete

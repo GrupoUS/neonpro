@@ -9,9 +9,8 @@
 'use client'
 
 import { LoginForm, } from '@/features/auth'
-import { useSearch, } from '@tanstack/react-router'
+import { Link, useSearch, } from '@tanstack/react-router'
 import { Heart, } from 'lucide-react'
-import Link from 'next/link'
 
 export function LoginPage() {
   const search = useSearch({ from: '/login', },)

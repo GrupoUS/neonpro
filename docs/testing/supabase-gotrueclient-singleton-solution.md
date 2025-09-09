@@ -3,6 +3,7 @@
 ## Problem Description
 
 During integration tests, multiple GoTrueClient instances were being created, causing warnings:
+
 ```
 Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key.
 ```
@@ -10,6 +11,7 @@ Multiple GoTrueClient instances detected in the same browser context. It is not 
 ## Root Cause
 
 The issue occurred because:
+
 1. Multiple test files were creating separate Supabase client instances
 2. Each Supabase client internally creates its own GoTrueClient instance
 3. The mock setup wasn't being properly imported in the main test configuration
@@ -34,16 +36,16 @@ const createMockSupabaseClient = () => {
 // Mock the GoTrueClient directly to prevent multiple instances warning
 vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
   let singletonGoTrueClient: unknown
-  
+
   return {
     GoTrueClient: vi.fn().mockImplementation(() => {
       if (singletonGoTrueClient) {
         return singletonGoTrueClient
       }
       // ... singleton implementation
-    })
+    },),
   }
-})
+},)
 ```
 
 ### 2. Global Mock Import
@@ -64,15 +66,15 @@ Implemented warning suppression for any remaining GoTrueClient messages:
 ```typescript
 const originalConsoleWarn = console.warn
 console.warn = (...args: any[]) => {
-  const message = args.join(' ')
+  const message = args.join(' ',)
   if (
-    message.includes('Multiple GoTrueClient instances detected') ||
-    message.includes('GoTrueClient') ||
-    message.includes('Multiple instances of auth client')
+    message.includes('Multiple GoTrueClient instances detected',)
+    || message.includes('GoTrueClient',)
+    || message.includes('Multiple instances of auth client',)
   ) {
     return // Suppress these warnings
   }
-  originalConsoleWarn.apply(console, args)
+  originalConsoleWarn.apply(console, args,)
 }
 ```
 
@@ -84,6 +86,7 @@ After implementing the solution:
 ✅ **After**: 0 warnings - completely eliminated
 
 Test execution results:
+
 ```
 Test Files  10 passed (10)
 Tests  129 passed (129)
@@ -119,6 +122,7 @@ Duration  4.70s
 ## Testing Commands
 
 To verify the solution:
+
 ```bash
 # Run integration tests to check for warnings
 bunx vitest run apps/web/tests/integration --reporter=verbose

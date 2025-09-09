@@ -3,8 +3,9 @@
 // Enterprise-grade API gateway with authentication, rate limiting, and routing
 // ================================================
 
-import { NextResponse, } from 'next/server'
-import type { NextRequest, } from 'next/server'
+// DISABLED: Using TanStack Router instead of Next.js
+// import { NextResponse, } from 'next/server'
+// import type { NextRequest, } from 'next/server'
 
 // ================================================
 // TYPES AND INTERFACES

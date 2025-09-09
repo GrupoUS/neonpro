@@ -3,9 +3,9 @@
  * Simplified tests to verify monitoring infrastructure components exist
  */
 
-import { existsSync, } from 'node:fs'
-import { join, } from 'node:path'
-import { describe, expect, it, } from 'vitest'
+const { existsSync, } = require('node:fs',)
+const { join, } = require('node:path',)
+const { describe, expect, it, } = require('vitest',)
 
 describe('tASK-001 Infrastructure Verification', () => {
   describe('component Exports Verification', () => {

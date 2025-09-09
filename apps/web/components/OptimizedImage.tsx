@@ -2,11 +2,10 @@
 
 /**
  * Optimized Image Component for NeonPro
- * Production-ready image optimization with Next.js Image
+ * Production-ready image optimization with standard HTML img
  */
 
 import { cn, } from '@/lib/utils'
-import Image from 'next/image'
 import { useState, } from 'react'
 
 interface OptimizedImageProps {
@@ -113,20 +112,24 @@ export function OptimizedImage({
 
   if (fill) {
     return (
-      <Image
+      <img
         {...imageProps}
-        fill
-        sizes={sizes}
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          ...imageProps.style,
+        }}
       />
     )
   }
 
   return (
-    <Image
+    <img
       {...imageProps}
       width={width}
       height={height}
-      sizes={sizes}
     />
   )
 }

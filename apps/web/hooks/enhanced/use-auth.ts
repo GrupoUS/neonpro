@@ -41,7 +41,7 @@ import type {
   UserPermission,
   UserRole,
 } from '@neonpro/shared/schemas'
-import { useRouter, } from 'next/navigation'
+import { useRouter, } from '@tanstack/react-router'
 import { useCallback, useMemo, } from 'react'
 // Import our enhanced query utilities
 import { QueryKeys, useHealthcareQueryUtils, } from '../../lib/query/query-utils'

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import { Link } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { supabase } from '@/lib/supabase'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { supabase, } from '@/lib/supabase'
+import { Link, } from '@tanstack/react-router'
+import { useEffect, useState, } from 'react'
 
 interface Patient {
   id: string
@@ -18,42 +18,42 @@ interface Patient {
 }
 
 export function PatientsList() {
-  const [patients, setPatients] = useState<Patient[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [patients, setPatients,] = useState<Patient[]>([],)
+  const [loading, setLoading,] = useState(true,)
+  const [error, setError,] = useState<string | null>(null,)
 
   useEffect(() => {
     async function fetchPatients() {
       try {
-        const { data, error } = await supabase
-          .from('patients')
-          .select('*')
-          .order('created_at', { ascending: false })
+        const { data, error, } = await supabase
+          .from('patients',)
+          .select('*',)
+          .order('created_at', { ascending: false, },)
 
         if (error) throw error
 
         // Map database fields to Patient interface
         const mappedPatients = data?.map(patient => ({
           ...patient,
-          status: 'active' as const // Default status since it might not exist in DB
+          status: 'active' as const, // Default status since it might not exist in DB
         })) || []
 
-        setPatients(mappedPatients)
+        setPatients(mappedPatients,)
       } catch (error) {
-        console.error('Error fetching patients:', error)
-        setError('Erro ao carregar pacientes')
+        console.error('Error fetching patients:', error,)
+        setError('Erro ao carregar pacientes',)
       } finally {
-        setLoading(false)
+        setLoading(false,)
       }
     }
 
     fetchPatients()
-  }, [])
+  }, [],)
 
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(6,),].map((_, i,) => (
           <Card key={i} className="animate-pulse">
             <CardHeader>
               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -96,9 +96,9 @@ export function PatientsList() {
           <Link to="/patients/new">Novo Paciente</Link>
         </Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {patients.map((patient) => (
+        {patients.map((patient,) => (
           <Card key={patient.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="text-lg">{patient.name}</CardTitle>
@@ -107,19 +107,31 @@ export function PatientsList() {
             <CardContent>
               <div className="space-y-2 text-sm">
                 {patient.phone && (
-                  <p><span className="font-medium">Telefone:</span> {patient.phone}</p>
+                  <p>
+                    <span className="font-medium">Telefone:</span> {patient.phone}
+                  </p>
                 )}
                 {patient.date_of_birth && (
-                  <p><span className="font-medium">Nascimento:</span> {new Date(patient.date_of_birth).toLocaleDateString('pt-BR')}</p>
+                  <p>
+                    <span className="font-medium">Nascimento:</span>{' '}
+                    {new Date(patient.date_of_birth,).toLocaleDateString('pt-BR',)}
+                  </p>
                 )}
                 <div className="flex justify-between items-center mt-4">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    patient.status === 'active' ? 'bg-green-100 text-green-800' :
-                    patient.status === 'inactive' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {patient.status === 'active' ? 'Ativo' :
-                     patient.status === 'inactive' ? 'Inativo' : 'Arquivado'}
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      patient.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : patient.status === 'inactive'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {patient.status === 'active'
+                      ? 'Ativo'
+                      : patient.status === 'inactive'
+                      ? 'Inativo'
+                      : 'Arquivado'}
                   </span>
                   <Button variant="outline" size="sm" asChild>
                     <Link to={`/patients/${patient.id}`}>Ver Detalhes</Link>

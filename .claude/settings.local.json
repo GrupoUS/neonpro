@@ -1,49 +1,89 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "mcp__desktop-commander__force_terminate",
-      "mcp__Sequential_Thinking__sequentialthinking",
-      "mcp__archon__get_project",
-      "mcp__serena__list_dir",
+      "TodoWrite",
+      "mcp__desktop-commander__list_directory",
       "mcp__desktop-commander__read_file",
-      "mcp__archon__list_tasks",
-      "mcp__archon__create_task",
-      "mcp__archon__update_task",
-      "mcp__desktop-commander__write_file",
-      "mcp__desktop-commander__create_directory",
-      "mcp__archon__get_task",
-      "mcp__Tavily__tavily-search",
-      "mcp__desktop-commander__edit_block",
+      "mcp__desktop-commander__search_code",
       "mcp__desktop-commander__start_process",
-      "mcp__serena__search_for_pattern",
+      "mcp__desktop-commander__read_process_output",
+      "mcp__desktop-commander__write_file",
+      "mcp__desktop-commander__get_file_info",
+      "mcp__desktop-commander__move_file",
+      "mcp__desktop-commander__edit_block",
+      "mcp__desktop-commander__search_files",
+      "mcp__desktop-commander__create_directory",
+      "mcp__desktop-commander__force_terminate",
+      "mcp__desktop-commander__list_sessions",
+      "mcp__desktop-commander__interact_with_process",
+      "mcp__context7__get-library-docs",
+      "mcp__tavily__searchQNA",
+      "mcp__tavily__searchContext",
+      "mcp__sequential-thinking__sequentialthinking",
       "mcp__serena__search_for_pattern",
       "mcp__serena__find_file",
-      "mcp__serena__find_symbol",
-      "mcp__desktop-commander__read_process_output",
-      "mcp__desktop-commander__start_search",
-      "mcp__desktop-commander__get_more_search_results",
-      "mcp__serena__get_symbols_overview",
-      "mcp__serena__find_symbol",
-      "mcp__serena__replace_symbol_body",
-      "Bash(pnpm run:*)",
-      "mcp__desktop-commander__list_directory",
-      "mcp__archon__list_projects",
-      "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs",
-      "WebFetch(domain:turborepo.com)",
-      "Bash(bun run:*)",
-      "Bash(bun run:*)",
-      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run type-check --filter=@neonpro/web)",
-      "mcp__desktop-commander__move_file",
-      "Bash(npx tsc:*)",
-      "Bash(rm:*)",
-      "Bash(chmod:*)",
-      "Bash(node:*)",
-      "Bash(pnpm build:*)",
-      "Bash(pnpm test:*)",
+      "mcp__serena__list_dir",
+      "mcp__supabase-mcp__list_projects",
+      "mcp__supabase-mcp__execute_sql",
+      "mcp__supabase-mcp__get_project",
+      "mcp__supabase-mcp__get_project_url",
+      "mcp__supabase-mcp__get_anon_key",
+      "mcp__supabase-mcp__list_tables",
+      "mcp__supabase-mcp__apply_migration",
+      "mcp__tavily__tavily-search",
       "mcp__shadcn-ui__get_component",
-      "Bash(pnpm --filter=@neonpro/web build)",
-      "Bash(pnpm --filter=@neonpro/web routes:generate)"
+      "mcp__context7__resolve-library-id",
+      "mcp__serena__find_symbol",
+      "mcp__serena__get_symbols_overview",
+      "mcp__supabase-mcp__get_advisors",
+      "mcp__supabase-mcp__get_logs",
+      "mcp__shadcn-ui__list_components",
+      "mcp__shadcn-ui__get_component_demo",
+      "mcp__shadcn-ui__get_component_metadata",
+      "mcp__serena__read_memory",
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__replace_symbol_body",
+      "mcp__serena__insert_before_symbol",
+      "mcp__serena__insert_after_symbol",
+      "mcp__archon__manage_project",
+      "mcp__archon__manage_task",
+      "mcp__serena__write_memory",
+      "mcp__desktop-commander__get_config",
+      "mcp__archon__get_available_sources",
+      "mcp__archon__perform_rag_query",
+      "mcp__archon__search_code_examples",
+      "mcp__archon__manage_document",
+      "mcp__serena__list_memories",
+      "mcp__tavily__tavily-extract",
+      "mcp__archon__health_check",
+      "mcp__archon__session_info",
+      "mcp__archon__list_tasks",
+      "mcp__archon__get_task",
+      "mcp__archon__create_task",
+      "mcp__archon__list_projects",
+      "mcp__archon__get_project",
+      "mcp__archon__create_project",
+      "mcp__archon__create_document",
+      "mcp__archon__create_version",
+      "mcp__archon__list_documents",
+      "mcp__archon__update_document",
+      "mcp__archon__get_document",
+      "mcp__supabase-mcp__search_docs",
+      "mcp__vercel__get_project",
+      "mcp__vercel__list_teams",
+      "mcp__vercel__list_projects",
+      "mcp__archon__update_task"
+    ],
+    "deny": [
+      "Edit",
+      "Read",
+      "Write",
+      "Bash",
+      "NotebookRead",
+      "NotebookEdit",
+      "WebSearch",
+      "WebFetch"
     ]
   },
   "enabledMcpjsonServers": [
@@ -244,50 +284,6 @@
             "Environment validation via guard-nonprod-only.py",
             "User confirmation with search pattern",
             "Pattern validation and security checks"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Bash(git ls-tree:*)",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  GIT LS-TREE WARNING ⚠️\n\nThis will execute git ls-tree command which can:\n• Access repository structure and file information\n• Potentially expose sensitive file paths\n• Consume system resources for large repositories\n• Reveal repository architecture\n\nEnvironment: {environment}\nCommand: git ls-tree with flags\n\nNote: Dangerous flags like -p, --patch, -S, -G are restricted.\nOnly safer flags like --name-only are allowed.\n\nConfirm you want to execute this git command?",
-        "metadata": {
-          "description": "Git ls-tree execution with security protection and flag validation",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation that rejects dangerous flags"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "Dangerous flag validation (blocks -p, --patch, -S, -G)",
-            "User confirmation with command details",
-            "Repository access validation"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Bash(git log:*)",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  GIT LOG WARNING ⚠️\n\nThis will execute git log command which can:\n• Access commit history and potentially sensitive information\n• Expose author information and commit messages\n• Consume system resources for large repositories\n• Reveal development patterns and repository history\n\nEnvironment: {environment}\nCommand: git log with flags\n\nNote: Dangerous flags like -p, --patch, -S, -G are restricted.\nOnly safer flags like --oneline, --name-only are allowed.\n\nConfirm you want to execute this git command?",
-        "metadata": {
-          "description": "Git log execution with security protection and flag validation",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation that rejects dangerous flags"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "Dangerous flag validation (blocks -p, --patch, -S, -G)",
-            "User confirmation with command details",
-            "Repository access validation"
           ]
         }
       }

@@ -3,7 +3,7 @@
  * Handles data fetching, real-time updates, and compliance scoring
  */
 
-import { supabase } from '@/lib/supabase'
+import { supabase as supabaseClient, } from '@/lib/supabase'
 import type {
   ComplianceConfig,
   ComplianceFramework,
@@ -12,7 +12,7 @@ import type {
 } from './types'
 
 export class ComplianceService {
-  private supabase = createClient()
+  private supabase = supabaseClient
   private listeners: Map<string, Set<(data: unknown,) => void>> = new Map()
 
   /**

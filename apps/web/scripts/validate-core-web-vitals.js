@@ -52,14 +52,10 @@ const IMPLEMENTED_OPTIMIZATIONS = [
   },
   {
     name: '🔄 Dynamic Imports for Heavy Dependencies',
-    status: '✅ IMPLEMENTED',
+    status: '🚧 PLANNED',
     impact: 'High - PDF, Excel, Stripe, Framer Motion, Html2canvas lazy loaded',
     files: [
-      'pdf-generator.tsx',
-      'excel-processor.tsx',
-      'payment-processor.tsx',
-      'animation-engine.tsx',
-      'image-processor.tsx',
+      'Note: Dynamic import placeholders removed during cleanup',
     ],
   },
   {
@@ -107,11 +103,6 @@ const expectedFiles = [
   'scripts/analyze-bundle.js',
   'scripts/next-config-optimizations.mjs',
   'components/ui/loading-skeleton.tsx',
-  'components/dynamic/pdf-generator.tsx',
-  'components/dynamic/excel-processor.tsx',
-  'components/dynamic/payment-processor.tsx',
-  'components/dynamic/animation-engine.tsx',
-  'components/dynamic/image-processor.tsx',
   'components/optimized/optimized-image.tsx',
   'components/optimized/font-optimizer.tsx',
   '.lighthouserc.js',

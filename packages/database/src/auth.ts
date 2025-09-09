@@ -5,8 +5,9 @@
  */
 
 import type { Session, User, } from '@supabase/supabase-js'
-import { cookies, } from 'next/headers'
-import { redirect, } from 'next/navigation'
+// DISABLED: Using TanStack Router instead of Next.js
+// import { cookies, } from 'next/headers'
+// import { redirect, } from 'next/navigation'
 import { cache, } from 'react'
 import { createServerClient, } from './client'
 

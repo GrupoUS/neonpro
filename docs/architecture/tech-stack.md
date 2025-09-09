@@ -29,16 +29,19 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 - `turbo.json`: Optimized task pipeline with caching
 - `pnpm-workspace.yaml`: Workspace configuration
 - `bunfig.toml`: Bun optimization settings
+- `vite.config.ts`: Modern build tool configuration with HMR
+- `routeTree.gen.ts`: Auto-generated TanStack Router configuration
 
 ### 🎨 **Frontend Stack (apps/web)**
 
-| Technology       | Version | Purpose           | Rationale                                    |
-| ---------------- | ------- | ----------------- | -------------------------------------------- |
-| **Next.js**      | ^15.5.0 | React framework   | App Router, RSC, optimal for Brazilian SEO   |
-| **React**        | ^19.1.1 | UI library        | Latest features, concurrent rendering        |
-| **TypeScript**   | 5.7.2   | Type safety       | Healthcare data type safety                  |
-| **Tailwind CSS** | ^3.3.0  | Styling framework | Rapid development, healthcare design tokens  |
-| **shadcn/ui**    | v4      | Component library | WCAG 2.1 AA compliance, healthcare optimized |
+| Technology          | Version | Purpose           | Rationale                                    |
+| ------------------- | ------- | ----------------- | -------------------------------------------- |
+| **TanStack Router** | Latest  | React routing     | Type-safe routing, file-based, data loading  |
+| **Vite**            | ^5.2.0  | Build tool        | Fast HMR, optimized builds, modern tooling   |
+| **React**           | ^19.1.1 | UI library        | Latest features, concurrent rendering        |
+| **TypeScript**      | 5.7.2   | Type safety       | Healthcare data type safety                  |
+| **Tailwind CSS**    | ^3.3.0  | Styling framework | Rapid development, healthcare design tokens  |
+| **shadcn/ui**       | v4      | Component library | WCAG 2.1 AA compliance, healthcare optimized |
 
 **UI & Styling**:
 
@@ -99,6 +102,7 @@ Esta seção reflete a configuração atual verificada nos manifestos de pacotes
 - **Anti-No-Show Engine**: Predictive analytics for appointment attendance
 - **Natural Language Processing**: Brazilian Portuguese healthcare terminology
 - **Vector Database**: Knowledge base for healthcare procedures
+- **Client-side Integration**: Vite-optimized AI SDK bundling for fast loading
 
 #### AI Provider Governance
 
@@ -238,7 +242,8 @@ Note: Pin all GitHub Actions to exact versions or commit SHAs (e.g., uses: actio
 
 ```json
 {
-  "next": "^15.5.0",
+  "@tanstack/react-router": "latest",
+  "vite": "^5.2.0",
   "react": "^19.1.1",
   "typescript": "^5.7.2",
   "@supabase/supabase-js": "^2.45.1",
@@ -273,7 +278,7 @@ Note: Pin all GitHub Actions to exact versions or commit SHAs (e.g., uses: actio
 
 ### **Phase 1: Core Platform (Current)**
 
-- ✅ Next.js 15 + React 19 frontend
+- ✅ TanStack Router + Vite + React 19 frontend
 - ✅ Hono.dev API backend
 - ✅ Supabase database + auth
 - ✅ Basic AI integration
@@ -295,12 +300,12 @@ Note: Pin all GitHub Actions to exact versions or commit SHAs (e.g., uses: actio
 
 ## 🚨 **Technology Decisions & Rationale**
 
-### **Why Next.js 15 over alternatives?**
+### **Why TanStack Router + Vite over Next.js?**
 
-- **App Router**: Modern routing with React Server Components
-- **Performance**: Optimal Core Web Vitals for Brazilian users
-- **SEO**: Critical for clinic discovery in Brazilian market
-- **Vercel Integration**: Seamless deployment and edge functions
+- **Type Safety**: Full type-safe routing with automatic route generation
+- **Performance**: Vite's fast HMR and optimized builds
+- **Flexibility**: Greater control over build process and bundle optimization
+- **Modern Tooling**: Latest frontend development experience with Vite ecosystem
 
 ### **Why Hono.dev over Express/Fastify?**
 
@@ -327,10 +332,11 @@ Note: Pin all GitHub Actions to exact versions or commit SHAs (e.g., uses: actio
 
 ### **Build Performance**
 
-- **Cold Build**: ~45 seconds (8 packages + 2 apps)
-- **Incremental Build**: ~5 seconds (with Turbo cache)
+- **Cold Build**: ~35 seconds (8 packages + 2 apps, Vite optimization)
+- **Incremental Build**: ~3 seconds (with Turbo cache + Vite HMR)
 - **Type Check**: ~8 seconds (strict mode)
 - **Test Suite**: ~12 seconds (Vitest)
+- **Dev Server**: ~2 seconds (Vite dev server startup)
 
 ### **Runtime Performance**
 

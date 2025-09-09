@@ -8,13 +8,7 @@ import { defineConfig, } from 'vite'
 // Healthcare-specific Vite configuration for NeonPro
 export default defineConfig({
   plugins: [
-    // React support with optimizations
-    react({
-      // Enable React DevTools in development
-      include: '**/*.{jsx,tsx}',
-    },),
-
-    // TanStack Router with file-based routing
+    // TanStack Router with file-based routing (must come before React)
     TanStackRouterVite({
       routesDirectory: './src/routes',
       generatedRouteTree: './src/routeTree.gen.ts',
@@ -22,6 +16,12 @@ export default defineConfig({
       quoteStyle: 'single',
       // Healthcare-specific route configuration
       autoCodeSplitting: true, // Critical for large healthcare app
+    },),
+
+    // React support with optimizations
+    react({
+      // Enable React DevTools in development
+      include: '**/*.{jsx,tsx}',
     },),
   ],
 

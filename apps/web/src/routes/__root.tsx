@@ -7,9 +7,9 @@ import * as React from 'react'
 import { ClientInit, } from '../../components/ClientInit'
 import { HealthcareErrorBoundary, } from '../../components/ErrorBoundary'
 import { Toaster, } from '../../components/ui/toaster'
-import { RealAuthProvider, } from '../../contexts/RealAuthContext'
+import { AuthProvider, useAuthContext } from '../../contexts/auth-context'
 
-// Healthcare root context type
+// Healthcare root context type - updated for Supabase auth
 export interface HealthcareRootContext {
   queryClient: QueryClient
   auth: {
@@ -21,6 +21,7 @@ export interface HealthcareRootContext {
     } | null
     isLoading: boolean
     isAuthenticated: boolean
+    session: any
   }
   healthcare: {
     clinicId: string | null
@@ -37,8 +38,8 @@ function RootComponent() {
       <HealthcareErrorBoundary showDetails={false}>
         {/* Client Initialization */}
         <ClientInit>
-          {/* Authentication Provider */}
-          <RealAuthProvider>
+          {/* Supabase Authentication Provider */}
+          <AuthProvider>
             <div className="min-h-screen bg-background font-sans antialiased">
               {/* Main Application Content */}
               <Outlet />
@@ -53,7 +54,7 @@ function RootComponent() {
                 </div>
               </div>
             </div>
-          </RealAuthProvider>
+          </AuthProvider>
         </ClientInit>
       </HealthcareErrorBoundary>
 

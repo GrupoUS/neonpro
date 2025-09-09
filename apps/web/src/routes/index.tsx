@@ -1,16 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-  User, 
-  Calendar, 
-  Building2,
-  TrendingUp, 
-  TrendingDown,
-  Users,
-  Clock
-} from 'lucide-react'
+import { Button, } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card'
+import { createFileRoute, Link, } from '@tanstack/react-router'
+import { Building2, Calendar, Clock, TrendingDown, TrendingUp, User, Users, } from 'lucide-react'
+import { useEffect, useState, } from 'react'
 
 // Types
 interface Patient {
@@ -39,43 +31,43 @@ interface DashboardMetrics {
 
 // Custom Hooks
 function useDashboardMetrics() {
-  const [metrics, setMetrics] = useState<DashboardMetrics>({
-    monthlyRevenue: 25000,
+  const [metrics, setMetrics,] = useState<DashboardMetrics>({
+    monthlyRevenue: 25_000,
     revenueGrowth: 12.5,
     totalPatients: 150,
-    upcomingAppointments: 8
-  })
-  const [loading, setLoading] = useState(false)
+    upcomingAppointments: 8,
+  },)
+  const [loading, setLoading,] = useState(false,)
 
   return {
     loading,
-    ...metrics
+    ...metrics,
   }
 }
 
 function usePatients() {
-  const [patients, setPatients] = useState<Patient[]>([])
-  const [loading, setLoading] = useState(false)
+  const [patients, setPatients,] = useState<Patient[]>([],)
+  const [loading, setLoading,] = useState(false,)
 
-  const recentPatients = patients.slice(0, 5)
+  const recentPatients = patients.slice(0, 5,)
 
   return {
     loading,
-    recentPatients
+    recentPatients,
   }
 }
 
 function useAppointments() {
-  const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false)
+  const [appointments, setAppointments,] = useState<Appointment[]>([],)
+  const [loading, setLoading,] = useState(false,)
 
-  const todaysAppointments = appointments.filter(apt => 
-    apt.date === new Date().toISOString().split('T')[0]
+  const todaysAppointments = appointments.filter(apt =>
+    apt.date === new Date().toISOString().split('T',)[0]
   )
 
   return {
     loading,
-    todaysAppointments
+    todaysAppointments,
   }
 }
 
@@ -92,7 +84,7 @@ const MetricsSection = ({
   revenueGrowth: number
   totalPatients: number
   upcomingAppointments: number
-}) => (
+},) => (
   <section className="container mx-auto px-6 py-20">
     <div className="mb-12 text-center">
       <h2 className="mb-4 font-bold text-3xl text-foreground">Dashboard</h2>
@@ -111,15 +103,13 @@ const MetricsSection = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {metricsLoading ? '...' : `R$ ${monthlyRevenue.toLocaleString('pt-BR')}`}
+            {metricsLoading ? '...' : `R$ ${monthlyRevenue.toLocaleString('pt-BR',)}`}
           </div>
           <p className="flex items-center text-xs text-muted-foreground">
-            {revenueGrowth >= 0 ? (
-              <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
-            ) : (
-              <TrendingDown className="h-3 w-3 mr-1 text-red-600" />
-            )}
-            {Math.abs(revenueGrowth)}% em relação ao mês anterior
+            {revenueGrowth >= 0
+              ? <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
+              : <TrendingDown className="h-3 w-3 mr-1 text-red-600" />}
+            {Math.abs(revenueGrowth,)}% em relação ao mês anterior
           </p>
         </CardContent>
       </Card>
@@ -189,7 +179,7 @@ const QuickAccessSection = ({
   recentPatients: Patient[]
   appointmentsLoading: boolean
   todaysAppointments: Appointment[]
-}) => (
+},) => (
   <section className="container mx-auto px-6 pb-20">
     <div className="mb-12 text-center">
       <h2 className="mb-4 font-bold text-3xl text-foreground">Acesso Rápido</h2>
@@ -310,6 +300,6 @@ function HomePage() {
 }
 
 // Create and export the home page route
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/',)({
   component: HomePage,
-})
+},)

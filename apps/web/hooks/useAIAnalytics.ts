@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient, } from '@/lib/supabase/client'
+import { supabase, } from '@/lib/supabase'
 import type {
   AIActionType,
   AIAdoptionMetrics,
@@ -43,7 +43,7 @@ const AI_FEATURE_ROI_MULTIPLIERS = {
 } as const
 
 export function useAIAnalytics(config: AIAnalyticsConfig = {},) {
-  const supabase = createClient()
+  // Using imported supabase client
   const [aiUsageStats, setAIUsageStats,] = useState<AIUsageStats>({
     totalSessions: 0,
     activeFeatures: 0,

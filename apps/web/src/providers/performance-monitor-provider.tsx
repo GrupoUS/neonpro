@@ -223,7 +223,9 @@ export function PerformanceMonitorProvider({
 
   // Listen for URL changes to update workflow context
   useEffect(() => {
-    if (!monitor || typeof window === 'undefined') return
+    if (!monitor || typeof window === 'undefined') {
+      return
+    }
 
     const handleUrlChange = () => {
       const newWorkflowType = detectWorkflowFromUrl()

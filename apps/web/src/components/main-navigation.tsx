@@ -1,13 +1,13 @@
-import { Link, useLocation } from '@tanstack/react-router'
-import { 
-  CalendarIcon, 
-  UsersIcon, 
-  FileTextIcon, 
+import { cn, } from '@/lib/utils'
+import { Link, useLocation, } from '@tanstack/react-router'
+import {
   BarChart3Icon,
+  CalendarIcon,
   CreditCardIcon,
-  HomeIcon 
+  FileTextIcon,
+  HomeIcon,
+  UsersIcon,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 const navigationItems = [
   {
@@ -41,15 +41,15 @@ interface MainNavigationProps {
   className?: string
 }
 
-export function MainNavigation({ className }: MainNavigationProps) {
+export function MainNavigation({ className, }: MainNavigationProps,) {
   const location = useLocation()
   const pathname = location.pathname
 
   return (
-    <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)}>
-      {navigationItems.map((item) => {
-        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-        
+    <nav className={cn('flex items-center space-x-4 lg:space-x-6', className,)}>
+      {navigationItems.map((item,) => {
+        const isActive = pathname === item.href || pathname.startsWith(item.href + '/',)
+
         return (
           <Link
             key={item.href}
@@ -58,14 +58,14 @@ export function MainNavigation({ className }: MainNavigationProps) {
               'flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary',
               isActive
                 ? 'text-primary'
-                : 'text-muted-foreground'
+                : 'text-muted-foreground',
             )}
           >
             <item.icon className="h-4 w-4" />
             <span>{item.title}</span>
           </Link>
         )
-      })}
+      },)}
     </nav>
   )
 }

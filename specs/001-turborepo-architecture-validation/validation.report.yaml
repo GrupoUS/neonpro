@@ -1,0 +1,120 @@
+# NeonPro Turborepo Validation Report
+context:
+  generated_at: "2025-09-09"
+  repo_root: "/home/vibecoder/neonpro"
+  docs_refs:
+    - id: turborepo.structuring
+      title: Structuring a repository
+      url: https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository
+    - id: turborepo.tasks
+      title: Configuring tasks
+      url: https://turbo.build/repo/docs/crafting-your-repository/configuring-tasks
+    - id: turborepo.turbojson
+      title: Configuring turbo.json
+      url: https://turbo.build/repo/docs/reference/configuration
+    - id: turborepo.developing
+      title: Developing applications
+      url: https://turbo.build/repo/docs/crafting-your-repository/developing-applications
+    - id: turborepo.typescript
+      title: TypeScript best practices
+      url: https://turbo.build/repo/docs/guides/tools/typescript
+
+checks:
+  - id: structure-apps-packages
+    file: "/home/vibecoder/neonpro"
+    rule_ref: turborepo.structuring
+    status: PASS
+    notes: "Monorepo uses apps/* and packages/* per source-tree.md; apps/api and apps/web present; packages include core-services,database,types,shared,config,utils,security."
+    fix: "n/a"
+
+  - id: workspace-config-pnpm
+    file: "/home/vibecoder/neonpro/pnpm-workspace.yaml"
+    rule_ref: turborepo.structuring
+    status: PASS
+    notes: "Workspace globs include apps/*, packages/*, tools/*; aligns with Turborepo guidance for workspaces."
+    fix: "n/a"
+
+  - id: internal-packages-namespace
+    file: "/home/vibecoder/neonpro/packages/*/package.json"
+    rule_ref: turborepo.structuring
+    status: PASS
+    notes: "Internal packages are namespaced with @neonpro/* and referenced via workspace:* versions."
+    fix: "n/a"
+
+  - id: ts-build-compiler-in-packages
+    file: "/home/vibecoder/neonpro/packages/**/package.json"
+    rule_ref: turborepo.typescript
+    status: PASS
+    notes: "Packages primarily use tsc/tsup; aligns with guidance to compile packages with tsc."
+    fix: "If any package lacks build script, add \"build\": \"tsc\" and proper tsconfig."
+
+  - id: turbo-pipeline-build-deps
+    file: "/home/vibecoder/neonpro/turbo.json"
+    rule_ref: turborepo.turbojson
+    status: PASS
+    notes: "build dependsOn ^build; package-scoped tasks declare inputs/outputs; outputs include dist/** and .next/**; env filtered."
+    fix: "n/a"
+
+  - id: turbo-package-builds-declare
+    file: "/home/vibecoder/neonpro/turbo.json"
+    rule_ref: turborepo.tasks
+    status: PASS
+    notes: "Per-package tasks declared: @neonpro/types#build, database#build, shared#build, utils#build, security#build, core-services#build with correct dependencies."
+    fix: "n/a"
+
+  - id: turbo-type-check-depends-on-build
+    file: "/home/vibecoder/neonpro/turbo.json"
+    rule_ref: turborepo.tasks
+    status: PASS
+    notes: "type-check dependsOn ^build; caches tsbuildinfo; proper inputs configured."
+    fix: "n/a"
+
+  - id: scripts-wire-turbo-root
+    file: "/home/vibecoder/neonpro/package.json"
+    rule_ref: turborepo.tasks
+    status: PASS
+    notes: "Root scripts call turbo run for build/dev/test/lint/format/type-check; aligns with best practice."
+    fix: "n/a"
+
+  - id: app-scripts-present
+    file: "/home/vibecoder/neonpro/apps/**/package.json"
+    rule_ref: turborepo.developing
+    status: PASS
+    notes: "apps/api has dev/build/start/type-check/test; apps/web has dev/build/start/lint/type-check/test."
+    fix: "n/a"
+
+  - id: env-handling
+    file: "/home/vibecoder/neonpro/turbo.json"
+    rule_ref: turborepo.turbojson
+    status: PASS
+    notes: "globalEnv configured; task env whitelisted; remoteCache enabled with signature."
+    fix: "n/a"
+
+  - id: tsconfig-paths-references
+    file: "/home/vibecoder/neonpro/tsconfig.json"
+    rule_ref: turborepo.typescript
+    status: WARN
+    notes: "Root tsconfig uses paths mapping to packages/src and references to apps and packages. Include/exclude exclude apps/** and packages/** which can break type-check at root."
+    fix: "Consider a separate tsconfig.base.json for shared options and per-package tsconfig; ensure monorepo type-check via turbo run type-check with project references and not excluding packages."
+
+  - id: cache-inputs-precision
+    file: "/home/vibecoder/neonpro/turbo.json"
+    rule_ref: turborepo.turbojson
+    status: PASS
+    notes: "Inputs for tasks are explicit; build excludes tests; outputLogs configured."
+    fix: "n/a"
+
+  - id: tooling-consistency
+    file: "/home/vibecoder/neonpro"
+    rule_ref: turborepo.structuring
+    status: INFO
+    notes: "Repo uses Bun + pnpm; ensure turbo detects package manager. preinstall echoes Bun but packageManager is pnpm@8.15.0 at root; acceptable but document standard."
+    fix: "Document in CONTRIBUTING.md which package manager to use; recommend pnpm for workspace with Bun for scripts."
+
+summary:
+  overall: PASS
+  sections:
+    structure: PASS
+    dependencies: PASS
+    tasks: PASS
+    best_practices: WARN

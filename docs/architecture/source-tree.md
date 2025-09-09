@@ -16,20 +16,25 @@ neonpro/
 │   │   │   └── 📁 lib/                  # Shared utilities
 │   │   └── 📄 vitest.config.ts         # Test configuration
 │   │
-│   └── 📁 web/                          # Frontend Application  
+│   └── 📁 web/                          # Frontend Application (TanStack Router + Vite)
 │       ├── 📄 package.json              # Dependencies & scripts
-│       ├── 📁 app/                      # Next.js App Router (LEGACY)
-│       ├── 📁 src/                      # TanStack Router (NEW)
+│       ├── 📁 src/                      # TanStack Router Application (NEW)
 │       │   ├── 📄 main.tsx              # Application entry point
-│       │   ├── 📁 routes/               # File-based routing
+│       │   ├── 📁 routes/               # File-based routing (TanStack Router)
 │       │   ├── 📁 components/           # React components
+│       │   │   └── 📁 ui/               # shadcn/ui components (complete)
 │       │   ├── 📁 hooks/                # Custom hooks
 │       │   ├── 📁 contexts/             # React contexts
 │       │   ├── 📁 providers/            # Context providers
+│       │   ├── 📁 features/             # Feature-based components
 │       │   ├── 📁 lib/                  # Utilities & configs
-│       │   └── 📁 styles/               # CSS & styling
+│       │   │   ├── 📄 supabase.ts       # Supabase client
+│       │   │   └── 📄 toast-helpers.ts  # Toast utilities
+│       │   ├── 📁 styles/               # CSS & styling
+│       │   └── 📁 test/                 # Test setup & utilities
 │       ├── 📄 vite.config.ts           # Vite configuration
-│       └── 📄 tailwind.config.ts       # Tailwind CSS config
+│       ├── 📄 tailwind.config.ts       # Tailwind CSS config
+│       └── 📄 index.html               # Vite HTML entry point
 │
 ├── 📁 packages/                          # Shared packages
 │   ├── 📁 ui/                           # Shared UI components

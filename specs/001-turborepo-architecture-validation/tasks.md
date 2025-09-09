@@ -45,7 +45,7 @@
       File: /home/vibecoder/neonpro/specs/001-turborepo-architecture-validation/validation.report.yaml
       Sections: context, checks[], summary.overall, summary.sections
 - [ ] T007 Implement repository structure analysis
-      Files: /home/vibecoder/neonpro/turbo.json, /home/vibecoder/neonpro/package.json, apps/*, packages/*
+      Files: /home/vibecoder/neonpro/turbo.json, /home/vibecoder/neonpro/package.json, apps/_, packages/_
       Task: Document PASS/FAIL per structure rule with references to Turborepo docs
 - [ ] T008 Implement dependency management analysis
       Files: package.json manifests across repo

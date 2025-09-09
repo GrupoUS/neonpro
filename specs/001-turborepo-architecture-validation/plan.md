@@ -259,3 +259,28 @@ _This checklist is updated during execution flow_
 ---
 
 _Based on Constitution v2.1.1 - See `/memory/constitution.md`_
+
+
+## Quality Gates ✅ (2025-09-09)
+
+Summary:
+- Formatter (dprint): PASS — repository formatted
+- Lint (oxlint): PASS — 0 errors, 519 warnings (non-blocking)
+- Type-check (tsc --noEmit --skipLibCheck): PASS
+
+How to re-run locally:
+```bash
+# Option A: VS Code Task
+# Run task: "✅ Full Code Check"
+
+# Option B: CLI (equivalent)
+npx dprint check && npx oxlint . && npx tsc --noEmit --skipLibCheck
+```
+
+Notes:
+- Warnings include no-explicit-any, no-unused-vars, and React Hooks deps hints; they’re informational and can be triaged incrementally without blocking this validation feature.
+
+Progress Update:
+- Phase 3: Tasks generated — DONE (tasks.md present)
+- Phase 4: Implementation complete — DONE (validation.report.yaml, manual-checklist.md, formatting fixes)
+- Phase 5: Validation passed — DONE (All quality gates green)

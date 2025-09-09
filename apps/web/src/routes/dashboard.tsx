@@ -6,6 +6,7 @@ import * as React from 'react'
 import { HealthcareSidebar, } from '@/components/healthcare-sidebar'
 import { Header, } from '@/components/layouts/header'
 import { QueryKeys, } from '../../providers/query-provider'
+import { authGuards } from '../lib/auth-utils'
 
 // Dashboard Layout Component
 function DashboardLayout() {
@@ -129,45 +130,8 @@ export const Route = createFileRoute('/dashboard',)({
     </div>
   ),
 
-  // Authentication requirement
-  beforeLoad: async ({ context, location, },) => {
-    try {
-      // Check if user is authenticated
-      if (!context.auth.isAuthenticated) {
-        console.log('Dashboard access denied: User not authenticated',)
-        throw redirect({
-          to: '/auth/login',
-          search: {
-            redirect: location.href,
-          },
-        },)
-      }
-
-      // Additional checks could be added here:
-      // - Role-based access control
-      // - Healthcare facility membership
-      // - Emergency access override
-
-      return context
-    } catch (error) {
-      // Handle authentication errors
-      if (error && typeof error === 'object' && 'to' in error) {
-        // This is a redirect, re-throw it
-        throw error
-      }
-
-      console.error('Dashboard authentication error:', error,)
-
-      // For any other authentication errors, redirect to login
-      throw redirect({
-        to: '/auth/login',
-        search: {
-          redirect: location.href,
-          error: 'auth_error',
-        },
-      },)
-    }
-  },
+  // Authentication requirement using TanStack Router auth guards
+  beforeLoad: authGuards.requireAuth,
 
   // SEO and meta
   meta: () => [

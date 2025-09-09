@@ -12,6 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { Link, useRouterState, } from '@tanstack/react-router'
 import {
   BarChart3,
   Bell,
@@ -23,8 +24,6 @@ import {
   User,
   Users,
 } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, } from 'next/navigation'
 import type * as React from 'react'
 
 interface LayoutProps {
@@ -87,7 +86,8 @@ const settingsNavItems: NavItem[] = [
 ]
 
 function AppSidebar() {
-  const pathname = usePathname()
+  const routerState = useRouterState()
+  const pathname = routerState.location.pathname
 
   return (
     <Sidebar>

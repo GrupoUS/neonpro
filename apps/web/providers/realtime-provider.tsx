@@ -10,7 +10,7 @@
 
 import { defaultRealtimeConfig, RealtimeQueryManager, } from '@/lib/query/realtime-query-utils'
 import type { RealtimeQueryConfig, } from '@/lib/query/realtime-query-utils'
-import { createClient, } from '@/lib/supabase/client'
+import { supabase, } from '@/lib/supabase'
 import type { SupabaseClient, } from '@supabase/supabase-js'
 import { useQueryClient, } from '@tanstack/react-query'
 import { createContext, useContext, useEffect, useRef, useState, } from 'react'

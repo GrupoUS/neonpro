@@ -17,6 +17,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { cn, } from '@/lib/utils'
+import { Link, useRouterState, } from '@tanstack/react-router'
 import {
   Activity,
   BarChart3,
@@ -31,8 +32,6 @@ import {
   User,
   Users,
 } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, } from 'next/navigation'
 import { useEffect, useState, } from 'react'
 
 interface NavigationItem {
@@ -153,7 +152,8 @@ interface MobileNavigationProps {
 
 export function MobileNavigation({ className, }: MobileNavigationProps,) {
   const [isOpen, setIsOpen,] = useState(false,)
-  const pathname = usePathname()
+  const routerState = useRouterState()
+  const pathname = routerState.location.pathname
 
   // Close navigation when route changes
   useEffect(() => {
@@ -297,7 +297,8 @@ export function MobileNavigation({ className, }: MobileNavigationProps,) {
 
 // Quick Access Bottom Navigation for Mobile
 export function MobileBottomNavigation() {
-  const pathname = usePathname()
+  const routerState = useRouterState()
+  const pathname = routerState.location.pathname
 
   const quickItems = [
     {

@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient, } from '@/lib/supabase/client'
+import { supabase, } from '@/lib/supabase'
 import type {
   HealthStatus,
   SystemComponent,
@@ -83,7 +83,7 @@ const HEALTH_CHECK_CONFIGS = {
 } as const
 
 export function useSystemHealth(config: SystemHealthConfig = {},) {
-  const supabase = createClient()
+  // Using imported supabase client
   const [systemHealthSummary, setSystemHealthSummary,] = useState<SystemHealthSummary>({
     overall_health: 'healthy',
     total_components: 0,

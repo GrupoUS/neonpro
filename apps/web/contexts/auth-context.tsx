@@ -4,6 +4,7 @@
 
 import { createClient, } from '@/lib/supabase'
 import type { AuthError, Session, User, } from '@supabase/supabase-js'
+import { useRouter, } from '@tanstack/react-router'
 import { createContext, useContext, useEffect, useState, } from 'react'
 import type { ReactNode, } from 'react'
 
@@ -54,6 +55,7 @@ interface AuthProviderProps {
 
 // Provider component
 export function AuthProvider({ children, }: AuthProviderProps,) {
+  const router = useRouter()
   const [user, setUser,] = useState<User | null>()
   const [session, setSession,] = useState<Session | null>()
   const [loading, setLoading,] = useState(true,)
@@ -93,17 +95,27 @@ export function AuthProvider({ children, }: AuthProviderProps,) {
 
       if (event === 'SIGNED_IN') {
         // Redirect to dashboard after successful sign in
-        window.location.href = '/dashboard'
+        try {
+          await router.navigate({ to: '/dashboard', },)
+        } catch {
+          // Fallback if navigation fails
+          console.warn('TanStack Router navigation failed, using fallback',)
+        }
       } else if (event === 'SIGNED_OUT') {
         // Redirect to login after sign out
-        window.location.href = '/login'
+        try {
+          await router.navigate({ to: '/login', },)
+        } catch {
+          // Fallback if navigation fails
+          console.warn('TanStack Router navigation failed, using fallback',)
+        }
       }
 
       setLoading(false,)
     },)
 
     return () => subscription.unsubscribe()
-  }, [supabase.auth,],) // Auth methods
+  }, [supabase.auth, router,],) // Auth methods
   const signIn = async (email: string, password: string,) => {
     setLoading(true,)
     try {
@@ -244,8 +256,13 @@ export function AuthProvider({ children, }: AuthProviderProps,) {
                     setSession(sessionData.session,)
                     setUser(sessionData.session.user,)
 
-                    // Redirect to dashboard immediately
-                    window.location.href = '/dashboard'
+                    // Redirect to dashboard immediately using TanStack Router
+                    try {
+                      router.navigate({ to: '/dashboard', },)
+                    } catch {
+                      // Fallback if navigation fails
+                      console.warn('TanStack Router navigation failed during OAuth',)
+                    }
                   }
 
                   resolve({ data: sessionData, error: undefined, },)
@@ -314,6 +331,15 @@ export function AuthProvider({ children, }: AuthProviderProps,) {
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+// Hook to use auth context
+export function useAuthContext() {
+  const context = useContext(AuthContext,)
+  if (context === undefined) {
+    throw new Error('useAuthContext must be used within an AuthProvider',)
+  }
+  return context
 }
 
 // Hook to use auth context

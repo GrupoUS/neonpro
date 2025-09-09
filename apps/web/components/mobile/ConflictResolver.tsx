@@ -22,8 +22,8 @@ import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card'
 import { ScrollArea, } from '@/components/ui/scroll-area'
 // import { Separator } from "@/components/ui/separator"; // Unused import
 import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs'
+import { supabase, } from '@/lib/supabase'
 import { cn, } from '@/lib/utils'
-import { createClient, } from '@/utils/supabase/client'
 import {
   AlertCircle,
   AlertTriangle,
@@ -102,7 +102,7 @@ export interface ConflictResolverProps {
 const useConflictDetection = (userId: string,) => {
   const [conflicts, setConflicts,] = useState<ConflictData[]>([],)
   const [isLoading, setIsLoading,] = useState(false,)
-  const supabase = createClient()
+  // Using imported supabase client
 
   const fetchConflicts = useCallback(async () => {
     if (!userId) return

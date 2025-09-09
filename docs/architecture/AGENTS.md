@@ -5,7 +5,6 @@ last_updated: 2025-09-02
 language: en
 form: "orchestrator"
 tags:
-
 - orchestration
 - architecture
   applyTo:

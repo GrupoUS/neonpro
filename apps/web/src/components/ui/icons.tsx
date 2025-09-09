@@ -1,46 +1,46 @@
-import { 
-  LucideProps, 
-  User, 
-  Users, 
-  Calendar, 
-  FileText, 
-  BarChart3, 
-  CreditCard, 
-  Home,
-  Settings,
-  LogOut,
-  Eye,
-  EyeOff,
-  Check,
-  X,
+import {
   AlertCircle,
-  Info,
+  BarChart3,
+  Bell,
+  Calendar,
+  Check,
   ChevronDown,
-  ChevronUp,
   ChevronLeft,
   ChevronRight,
-  Search,
-  Plus,
-  Minus,
-  Edit,
-  Trash2,
+  ChevronUp,
+  Clock,
+  CreditCard,
   Download,
-  Upload,
-  Save,
-  Phone,
+  Edit,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  FileText,
+  Filter,
+  Heart,
+  HelpCircle,
+  Home,
+  Info,
+  LogOut,
+  LucideProps,
   Mail,
   MapPin,
-  Clock,
-  Star,
-  Heart,
-  ThumbsUp,
-  Share,
-  Filter,
-  Sort,
   Menu,
-  Bell,
-  HelpCircle,
-  ExternalLink
+  Minus,
+  Phone,
+  Plus,
+  Save,
+  Search,
+  Settings,
+  Share,
+  Sort,
+  Star,
+  ThumbsUp,
+  Trash2,
+  Upload,
+  User,
+  Users,
+  X,
 } from 'lucide-react'
 
 export type IconProps = LucideProps
@@ -49,7 +49,7 @@ export type IconProps = LucideProps
 export const UserIcon = User
 export const UsersIcon = Users
 
-// Navigation Icons  
+// Navigation Icons
 export const HomeIcon = Home
 export const CalendarIcon = Calendar
 export const FileTextIcon = FileText
@@ -142,5 +142,5 @@ export const Icons = {
   menu: MenuIcon,
   bell: BellIcon,
   helpCircle: HelpCircleIcon,
-  externalLink: ExternalLinkIcon
+  externalLink: ExternalLinkIcon,
 }

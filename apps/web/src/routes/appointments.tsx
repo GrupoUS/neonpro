@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, } from '@tanstack/react-router'
+import { authGuards, } from '../lib/auth-utils'
 
 function AppointmentsPage() {
   return (
@@ -13,6 +14,7 @@ function AppointmentsPage() {
   )
 }
 
-export const Route = createFileRoute('/appointments')({
+export const Route = createFileRoute('/appointments',)({
   component: AppointmentsPage,
-})
+  beforeLoad: authGuards.requireAuth,
+},)

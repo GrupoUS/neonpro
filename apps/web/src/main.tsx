@@ -9,6 +9,9 @@ import ReactDOM from 'react-dom/client'
 import { routeTree, } from './routeTree.gen'
 // Import the root context type
 import type { HealthcareRootContext, } from './routes/__root'
+// Import auth providers
+import { AuthProvider } from '../contexts/auth-context'
+import { RouterAuthProvider, createRouterContext, useRouterAuth } from './providers/RouterAuthProvider'
 
 // Import global styles
 import './styles/globals.css'
@@ -47,42 +50,38 @@ const queryClient = new QueryClient({
   },
 },)
 
-// Create a new router instance with proper context typing
-const router = createRouter({
-  routeTree,
-  context: {
-    queryClient,
-    // Healthcare context will be initialized by auth providers
-    auth: {
-      user: null,
-      isLoading: false,
-      isAuthenticated: false,
-    },
-    healthcare: {
-      clinicId: null,
-      isEmergencyMode: false,
-      complianceMode: 'strict' as const,
-    },
-  } satisfies HealthcareRootContext,
-},)
+// Router wrapper component that provides auth context
+function RouterWithAuth() {
+  const routerAuth = useRouterAuth()
+  const routerContext = createRouterContext(routerAuth)
+  
+  const router = createRouter({
+    routeTree,
+    context: {
+      queryClient,
+      ...routerContext,
+    } satisfies HealthcareRootContext,
+  })
 
-// Register the router instance for type safety
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
+  return <RouterProvider router={router} />
 }
+
+// Router type safety will be handled by individual router instances
 
 // Healthcare application root
 function HealthcareApp() {
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools
-          buttonPosition="bottom-right"
-          initialIsOpen={false}
-        />
+        <AuthProvider>
+          <RouterAuthProvider>
+            <RouterWithAuth />
+            <ReactQueryDevtools
+              buttonPosition="bottom-right"
+              initialIsOpen={false}
+            />
+          </RouterAuthProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </React.StrictMode>
   )
