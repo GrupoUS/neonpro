@@ -90,14 +90,18 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Asset Validation', () => {
     it('should implement validateAssets method', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.validateAssets,).toBeDefined()
       expect(typeof validator.validateAssets,).toBe('function',)
     })
 
     it('should validate assets against architecture standards', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const result = await validator.validateAssets(mockCodeAssets, defaultOptions,)
 
@@ -111,7 +115,9 @@ describe('ArchitectureValidator Contract Tests', () => {
     })
 
     it('should identify architecture violations', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const result = await validator.validateAssets(mockCodeAssets, defaultOptions,)
 
@@ -129,7 +135,9 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Framework-Specific Validation', () => {
     it('should implement Turborepo compliance validation', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.validateTurborepoCompliance,).toBeDefined()
       expect(typeof validator.validateTurborepoCompliance,).toBe('function',)
@@ -139,7 +147,9 @@ describe('ArchitectureValidator Contract Tests', () => {
     })
 
     it('should implement Hono pattern validation', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.validateHonoPatterns,).toBeDefined()
       expect(typeof validator.validateHonoPatterns,).toBe('function',)
@@ -149,7 +159,9 @@ describe('ArchitectureValidator Contract Tests', () => {
     })
 
     it('should implement TanStack Router pattern validation', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.validateTanStackRouterPatterns,).toBeDefined()
       expect(typeof validator.validateTanStackRouterPatterns,).toBe('function',)
@@ -159,7 +171,9 @@ describe('ArchitectureValidator Contract Tests', () => {
     })
 
     it('should validate Hono routing patterns correctly', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const honoAssets = mockCodeAssets.filter(asset => asset.dependencies.includes('hono',))
       const violations = await validator.validateHonoPatterns(honoAssets,)
@@ -176,14 +190,18 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Document Loading and Parsing', () => {
     it('should implement loadArchitectureDocuments method', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.loadArchitectureDocuments,).toBeDefined()
       expect(typeof validator.loadArchitectureDocuments,).toBe('function',)
     })
 
     it('should load and parse architecture documents', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const documentPaths = ['/docs/architecture.md', '/docs/standards.md',]
       const documents = await validator.loadArchitectureDocuments(documentPaths,)
@@ -203,14 +221,18 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Auto-Fix Functionality', () => {
     it('should implement applyAutoFixes method', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.applyAutoFixes,).toBeDefined()
       expect(typeof validator.applyAutoFixes,).toBe('function',)
     })
 
     it('should apply automatic fixes to violations', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const result = await validator.validateAssets(mockCodeAssets, defaultOptions,)
       const fixableViolations = result.violations.filter(v => v.suggestedFix)
@@ -224,14 +246,18 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Compliance Reporting', () => {
     it('should implement generateComplianceReport method', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.generateComplianceReport,).toBeDefined()
       expect(typeof validator.generateComplianceReport,).toBe('function',)
     })
 
     it('should generate formatted compliance reports', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const result = await validator.validateAssets(mockCodeAssets, defaultOptions,)
       const report = await validator.generateComplianceReport(result,)
@@ -248,14 +274,18 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Single Asset Validation', () => {
     it('should implement validateAsset method', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       expect(validator.validateAsset,).toBeDefined()
       expect(typeof validator.validateAsset,).toBe('function',)
     })
 
     it('should validate individual assets', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const assetPath = '/apps/api/src/routes/users.ts'
       const violations = await validator.validateAsset(assetPath, defaultOptions,)
@@ -271,7 +301,9 @@ describe('ArchitectureValidator Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid document paths gracefully', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const invalidOptions = {
         ...defaultOptions,
@@ -284,13 +316,13 @@ describe('ArchitectureValidator Contract Tests', () => {
     })
 
     it('should handle malformed architecture documents', async () => {
-      if (!validator) return
+      if (!validator) {
+        return
+      }
 
       const malformedPaths = ['/docs/malformed.md',]
 
-      await expect(
-        validator.loadArchitectureDocuments(malformedPaths,),
-      ).rejects.toThrow()
+      await expect(validator.loadArchitectureDocuments(malformedPaths,),).rejects.toThrow()
     })
   })
 

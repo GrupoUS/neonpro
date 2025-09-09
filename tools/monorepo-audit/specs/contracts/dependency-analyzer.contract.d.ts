@@ -3,8 +3,6 @@
  * Purpose: Build dependency graphs and analyze import relationships
  * Generated: 2025-09-09
  */
-
-import { CodeAsset, } from '../models/CodeAsset'
 export interface AnalyzerOptions {
   /** Whether to follow dynamic imports */
   followDynamicImports: boolean

@@ -3,8 +3,6 @@
  * Purpose: Validate code assets against architectural documentation and standards
  * Generated: 2025-09-09
  */
-
-import type { CodeAsset, } from './file-scanner.contract'
 export interface ValidationOptions {
   /** Architecture documents to validate against */
   documentPaths: string[]

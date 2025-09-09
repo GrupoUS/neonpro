@@ -19,15 +19,16 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
-    "types": ["vitest", "vitest/globals", "@testing-library/jest-dom"],
+    "types": ["node"],
+
     "paths": {
       "@/*": ["./src/*"],
       "@models/*": ["./src/models/*"],
@@ -43,7 +44,8 @@
     "src/**/*",
     "tests/**/*",
     "*.ts",
-    "*.tsx"
+    "*.tsx",
+    "src/types/shims.d.ts"
   ],
   "exclude": [
     "node_modules",

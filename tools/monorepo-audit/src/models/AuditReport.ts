@@ -78,9 +78,9 @@ export class AuditReport {
    * Get critical findings (high and critical severity)
    */
   public getCriticalFindings(): AuditFinding[] {
-    return this.findings.filter(finding =>
-      finding.severity === FindingSeverity.CRITICAL
-      || finding.severity === FindingSeverity.HIGH
+    return this.findings.filter(
+      finding =>
+        finding.severity === FindingSeverity.CRITICAL || finding.severity === FindingSeverity.HIGH,
     )
   }
 
@@ -165,8 +165,9 @@ ${autoFixableCount > 0 ? `🔧 ${autoFixableCount} issues can be automatically f
   private updateSummaryFromFindings(): void {
     this.summary.violationsFound = this.findings.length
     this.summary.unusedFilesFound = this.getFindingsByType(FindingType.UNUSED_FILE,).length
-    this.summary.orphanedFilesFound =
-      this.getFindingsByType(FindingType.ORPHANED_DEPENDENCY,).length
+    this.summary.orphanedFilesFound = this.getFindingsByType(
+      FindingType.ORPHANED_DEPENDENCY,
+    ).length
     this.summary.redundantFilesFound = this.getFindingsByType(FindingType.REDUNDANT_CODE,).length
   }
 
@@ -174,9 +175,10 @@ ${autoFixableCount > 0 ? `🔧 ${autoFixableCount} issues can be automatically f
    * Update summary based on actions
    */
   private updateSummaryFromActions(): void {
-    this.summary.filesRemoved = this.actions.filter(action =>
-      action.status === 'executed'
-      && (action.type === 'delete_file' || action.type === 'delete_directory')
+    this.summary.filesRemoved = this.actions.filter(
+      action =>
+        action.status === 'executed'
+        && (action.type === 'delete_file' || action.type === 'delete_directory'),
     ).length
 
     this.summary.spaceReclaimed = this.actions

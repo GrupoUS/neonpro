@@ -95,9 +95,9 @@ export class PerformanceMonitor extends EventEmitter {
 
   private initializeGCMonitoring(): void {
     try {
-      this.gcObserver = new PerformanceObserver((list,) => {
+      this.gcObserver = new PerformanceObserver(list => {
         const entries = list.getEntries()
-        entries.forEach((entry,) => {
+        entries.forEach(entry => {
           if (entry.entryType === 'gc') {
             const gcMetric: GCMetrics = {
               count: 1,
@@ -149,7 +149,7 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   private measureEventLoopLag(): Promise<number> {
-    return new Promise((resolve,) => {
+    return new Promise(resolve => {
       const start = performance.now()
       setImmediate(() => {
         const lag = performance.now() - start
@@ -159,7 +159,9 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   public startMonitoring(intervalMs: number = 5000,): void {
-    if (this.isMonitoring) return
+    if (this.isMonitoring) {
+      return
+    }
 
     this.isMonitoring = true
     logger.info('Performance monitoring started', {
@@ -188,7 +190,9 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   public stopMonitoring(): void {
-    if (!this.isMonitoring) return
+    if (!this.isMonitoring) {
+      return
+    }
 
     this.isMonitoring = false
 
@@ -317,7 +321,9 @@ export class PerformanceMonitor extends EventEmitter {
         type: 'operation',
         severity: operation.duration > this.thresholds.operationDuration * 2 ? 'high' : 'medium',
         message: `Long operation detected: ${operation.name} took ${
-          operation.duration.toFixed(2,)
+          operation.duration.toFixed(
+            2,
+          )
         }ms`,
         value: operation.duration,
         threshold: this.thresholds.operationDuration,
@@ -365,11 +371,11 @@ export class PerformanceMonitor extends EventEmitter {
 
       if (result instanceof Promise) {
         return result
-          .then((value,) => {
+          .then(value => {
             this.endOperation(operationId,)
             return value
           },)
-          .catch((error,) => {
+          .catch(error => {
             this.endOperation(operationId,)
             throw error
           },)
@@ -418,9 +424,9 @@ export class PerformanceMonitor extends EventEmitter {
     const alerts: PerformanceAlert[] = []
 
     // Calculate summary statistics
-    const operationDurations = completedOperations.map(op => op.duration!).filter(d =>
-      d !== undefined
-    )
+    const operationDurations = completedOperations
+      .map(op => op.duration!)
+      .filter(d => d !== undefined)
     const memoryDeltas = completedOperations.map(op => op.memoryDelta?.heapUsed || 0)
     const eventLoopLags = this.metricsHistory.map(m => m.eventLoopLag)
 
@@ -430,11 +436,11 @@ export class PerformanceMonitor extends EventEmitter {
         ? operationDurations.reduce((sum, d,) => sum + d, 0,) / operationDurations.length
         : 0,
       longestOperation: completedOperations.reduce(
-        (longest, op,) => (op.duration! > (longest?.duration || 0)) ? op : longest,
+        (longest, op,) => (op.duration! > (longest?.duration || 0) ? op : longest),
         completedOperations[0],
       )?.name || 'N/A',
       shortestOperation: completedOperations.reduce(
-        (shortest, op,) => (op.duration! < (shortest?.duration || Infinity)) ? op : shortest,
+        (shortest, op,) => (op.duration! < (shortest?.duration || Infinity) ? op : shortest),
         completedOperations[0],
       )?.name || 'N/A',
       totalMemoryUsed: memoryDeltas.reduce((sum, delta,) => sum + Math.max(0, delta,), 0,),
@@ -479,13 +485,19 @@ export class PerformanceMonitor extends EventEmitter {
     if (summary.peakMemoryUsage > this.thresholds.memoryUsage * 1024 * 1024) {
       recommendations.push(
         `Consider optimizing memory usage. Peak usage: ${
-          (summary.peakMemoryUsage / 1024 / 1024).toFixed(2,)
+          (
+            summary.peakMemoryUsage
+            / 1024
+            / 1024
+          ).toFixed(2,)
         }MB`,
       )
     }
 
     // Operation duration recommendations
-    const longOperations = operations.filter(op => op.duration! > this.thresholds.operationDuration)
+    const longOperations = operations.filter(
+      op => op.duration! > this.thresholds.operationDuration,
+    )
     if (longOperations.length > 0) {
       recommendations.push(
         `${longOperations.length} operations exceeded duration threshold. Consider optimization.`,
@@ -496,7 +508,9 @@ export class PerformanceMonitor extends EventEmitter {
     if (summary.avgEventLoopLag > this.thresholds.eventLoopLag) {
       recommendations.push(
         `High average event loop lag (${
-          summary.avgEventLoopLag.toFixed(2,)
+          summary.avgEventLoopLag.toFixed(
+            2,
+          )
         }ms). Consider using worker threads for CPU-intensive tasks.`,
       )
     }
@@ -520,7 +534,9 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   private analyzeMemoryTrend(): 'increasing' | 'decreasing' | 'stable' {
-    if (this.metricsHistory.length < 10) return 'stable'
+    if (this.metricsHistory.length < 10) {
+      return 'stable'
+    }
 
     const recent = this.metricsHistory.slice(-10,)
     const older = this.metricsHistory.slice(-20, -10,)
@@ -532,19 +548,27 @@ export class PerformanceMonitor extends EventEmitter {
 
     const threshold = 10 * 1024 * 1024 // 10MB threshold
 
-    if (recentAvg - olderAvg > threshold) return 'increasing'
-    if (olderAvg - recentAvg > threshold) return 'decreasing'
+    if (recentAvg - olderAvg > threshold) {
+      return 'increasing'
+    }
+    if (olderAvg - recentAvg > threshold) {
+      return 'decreasing'
+    }
     return 'stable'
   }
 
   public exportReport(report: PerformanceReport, format: 'json' | 'csv' = 'json',): string {
     if (format === 'json') {
-      return JSON.stringify(report, (key, value,) => {
-        if (value instanceof Map) {
-          return Object.fromEntries(value,)
-        }
-        return value
-      }, 2,)
+      return JSON.stringify(
+        report,
+        (key, value,) => {
+          if (value instanceof Map) {
+            return Object.fromEntries(value,)
+          }
+          return value
+        },
+        2,
+      )
     }
 
     if (format === 'csv') {
@@ -554,7 +578,9 @@ export class PerformanceMonitor extends EventEmitter {
         const memoryDeltaMB = (op.memoryDelta?.heapUsed || 0) / 1024 / 1024
         csvLines.push(
           `"${op.name}",${op.duration?.toFixed(2,)},${memoryDeltaMB.toFixed(2,)},"${
-            op.tags.join(';',)
+            op.tags.join(
+              ';',
+            )
           }"`,
         )
       },)

@@ -491,7 +491,7 @@ function createTestMonorepoStructure(basePath: string,): void {
         name: 'test-monorepo',
         workspaces: ['apps/*', 'packages/*',],
         devDependencies: {
-          'turbo': '^1.0.0',
+          turbo: '^1.0.0',
         },
       },
       null,
@@ -505,7 +505,7 @@ function createTestMonorepoStructure(basePath: string,): void {
       {
         name: '@test/web',
         dependencies: {
-          'react': '^18.0.0',
+          react: '^18.0.0',
           '@test/ui': 'workspace:*',
           '@test/shared': 'workspace:*',
         },
@@ -521,7 +521,7 @@ function createTestMonorepoStructure(basePath: string,): void {
       {
         name: '@test/ui',
         dependencies: {
-          'react': '^18.0.0',
+          react: '^18.0.0',
           '@test/shared': 'workspace:*',
         },
       },

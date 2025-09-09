@@ -21,16 +21,19 @@
 ### Installation Steps
 
 1. **Navigate to the tool directory**:
+
    ```bash
    cd tools/monorepo-audit
    ```
 
 2. **Install dependencies**:
+
    ```bash
    bun install
    ```
 
 3. **Verify installation**:
+
    ```bash
    bun run cli --version
    ```
@@ -53,7 +56,7 @@ bun run cli audit --dry-run --output-dir ./first-audit
 # Step 2: Review the generated report (opens in browser)
 open ./first-audit/audit-report.html
 
-# Step 3: If satisfied, run actual audit  
+# Step 3: If satisfied, run actual audit
 bun run cli audit --output-dir ./first-audit
 
 # Step 4: Review cleanup recommendations
@@ -171,17 +174,8 @@ Create `audit.config.json` in your project root:
     "rootPath": ".",
     "appsDir": "apps",
     "packagesDir": "packages",
-    "includePatterns": [
-      "**/*.{ts,tsx,js,jsx}",
-      "**/*.json",
-      "**/*.md"
-    ],
-    "excludePatterns": [
-      "**/node_modules/**",
-      "**/.git/**",
-      "**/dist/**",
-      "**/.next/**"
-    ]
+    "includePatterns": ["**/*.{ts,tsx,js,jsx}", "**/*.json", "**/*.md"],
+    "excludePatterns": ["**/node_modules/**", "**/.git/**", "**/dist/**", "**/.next/**"]
   },
   "analysis": {
     "maxDepth": 10,
@@ -300,7 +294,7 @@ bun run cli scan --workspace-path /path/to/your/workspace
 # Reduce parallelism
 bun run cli audit --config-path ./low-memory.config.json
 
-# Or use Node.js memory flags  
+# Or use Node.js memory flags
 NODE_OPTIONS="--max-old-space-size=4096" bun run cli audit
 ```
 
@@ -328,7 +322,7 @@ Enable comprehensive debugging:
 # Full debug output
 DEBUG=audit:* bun run cli audit --verbose
 
-# Specific component debugging  
+# Specific component debugging
 DEBUG=audit:scanner bun run cli scan --verbose
 DEBUG=audit:analyzer bun run cli analyze --verbose
 DEBUG=audit:validator bun run cli validate --verbose
@@ -342,6 +336,7 @@ bun run cli audit --profile --output-profile audit-profile.json
 When reporting issues, please include:
 
 1. **Environment Information**:
+
    ```bash
    bun --version
    node --version
@@ -349,6 +344,7 @@ When reporting issues, please include:
    ```
 
 2. **Configuration**:
+
    ```bash
    cat audit.config.json
    ```

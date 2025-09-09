@@ -85,10 +85,13 @@ export class Logger {
   }
 
   private getCurrentContext(): LogContext {
-    return this.contextStack.reduce((acc, context,) => ({
-      ...acc,
-      ...context,
-    }), {},)
+    return this.contextStack.reduce(
+      (acc, context,) => ({
+        ...acc,
+        ...context,
+      }),
+      {},
+    )
   }
 
   private createLogEntry(
@@ -128,13 +131,14 @@ export class Logger {
       case 'json':
         return JSON.stringify(entry,)
 
-      case 'text':
+      case 'text': {
         const timestamp = entry.timestamp
         const level = LogLevel[entry.level]
         const component = entry.context.component || 'UNKNOWN'
         const operation = entry.context.operation || ''
         const prefix = operation ? `[${component}:${operation}]` : `[${component}]`
         return `${timestamp} ${level.padEnd(5,)} ${prefix} ${entry.message}`
+      }
 
       case 'pretty':
         return this.prettyFormatLogEntry(entry,)
@@ -191,7 +195,9 @@ export class Logger {
   }
 
   private writeToFile(entry: LogEntry,): void {
-    if (!this.config.enableFile) return
+    if (!this.config.enableFile) {
+      return
+    }
 
     const logFileName = `audit-tool-${new Date().toISOString().split('T',)[0]}.log`
     const logFilePath = path.join(this.config.logDirectory, logFileName,)
@@ -223,7 +229,8 @@ export class Logger {
   private cleanupOldLogs(): void {
     try {
       const fs = require('fs',)
-      const files = fs.readdirSync(this.config.logDirectory,)
+      const files = fs
+        .readdirSync(this.config.logDirectory,)
         .filter((file: string,) => file.endsWith('.log',))
         .map((file: string,) => ({
           name: file,
@@ -244,7 +251,9 @@ export class Logger {
   }
 
   private writeToConsole(entry: LogEntry,): void {
-    if (!this.config.enableConsole) return
+    if (!this.config.enableConsole) {
+      return
+    }
 
     const formattedEntry = this.formatLogEntry(entry,)
 
@@ -265,7 +274,9 @@ export class Logger {
     }
   }
   private log(level: LogLevel, message: string, context: LogContext = {}, error?: Error,): void {
-    if (!this.shouldLog(level,)) return
+    if (!this.shouldLog(level,)) {
+      return
+    }
 
     const entry = this.createLogEntry(level, message, context, error,)
 
@@ -365,7 +376,7 @@ export class Logger {
           this.endPerformanceTimer(timerName, context,)
           this.info(`Completed ${operation}`, context,)
         },)
-        .catch((error,) => {
+        .catch(error => {
           this.endPerformanceTimer(timerName, context,)
           this.error(`Failed ${operation}`, context, error,)
           throw error

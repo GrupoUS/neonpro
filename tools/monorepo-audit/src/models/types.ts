@@ -26,6 +26,7 @@ export enum UsageStatus {
   ORPHANED = 'orphaned', // Dependencies missing
   REDUNDANT = 'redundant', // Duplicate functionality
   TEMPORARY = 'temporary', // Temp/backup files
+  UNKNOWN = 'unknown', // Status not yet determined
 }
 
 export enum ComplianceStatus {

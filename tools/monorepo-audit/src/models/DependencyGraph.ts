@@ -245,8 +245,8 @@ export class DependencyGraph {
 
       // Normalize to 0-100 scale
       const maxConnections = Math.max(
-        ...Array.from(this.nodes.values(),).map(n =>
-          n.incomingEdges.length * 2 + n.outgoingEdges.length
+        ...Array.from(this.nodes.values(),).map(
+          n => n.incomingEdges.length * 2 + n.outgoingEdges.length,
         ),
       )
 
@@ -354,8 +354,10 @@ export class DependencyGraph {
     const orphanedCount = this.orphanedNodes.length
     const rootCount = this.rootNodes.length
 
-    const totalDependencies = Array.from(this.nodes.values(),)
-      .reduce((sum, node,) => sum + node.outgoingEdges.length, 0,)
+    const totalDependencies = Array.from(this.nodes.values(),).reduce(
+      (sum, node,) => sum + node.outgoingEdges.length,
+      0,
+    )
     const avgDependencies = nodeCount > 0 ? totalDependencies / nodeCount : 0
 
     // Calculate max depth (simplified)

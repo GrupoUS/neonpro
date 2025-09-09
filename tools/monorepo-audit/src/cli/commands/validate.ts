@@ -81,7 +81,9 @@ export const validateCommand = new Command('validate',)
       )
       console.log(
         `  Compliance score: ${
-          getScoreColor(result.complianceSummary.complianceScore,)
+          getScoreColor(
+            result.complianceSummary.complianceScore,
+          )
         }${result.complianceSummary.complianceScore}%`,
       )
       console.log(`  Assets validated: ${chalk.green(result.metrics.totalAssetsValidated,)}`,)
@@ -92,9 +94,15 @@ export const validateCommand = new Command('validate',)
       const warningCount = result.violations.filter((v: any,) => v.severity === 'warning').length
       const infoCount = result.violations.filter((v: any,) => v.severity === 'info').length
 
-      if (errorCount > 0) console.log(`  Errors: ${chalk.red(errorCount,)}`,)
-      if (warningCount > 0) console.log(`  Warnings: ${chalk.yellow(warningCount,)}`,)
-      if (infoCount > 0) console.log(`  Info: ${chalk.blue(infoCount,)}`,)
+      if (errorCount > 0) {
+        console.log(`  Errors: ${chalk.red(errorCount,)}`,)
+      }
+      if (warningCount > 0) {
+        console.log(`  Warnings: ${chalk.yellow(warningCount,)}`,)
+      }
+      if (infoCount > 0) {
+        console.log(`  Info: ${chalk.blue(infoCount,)}`,)
+      }
 
       // Show violations
       if (result.violations.length > 0) {
@@ -106,20 +114,25 @@ export const validateCommand = new Command('validate',)
           .slice(0, 5,)
 
         topCategories.forEach(([category, violations,],) => {
-          console.log(`  ${chalk.cyan(category,)}: ${(violations as any).length} issues`,) // Show a few examples
-          (violations as any,).slice(0, 3,).forEach((violation: any,) => {
-            const severityColor = violation.severity === 'error'
-              ? chalk.red
-              : violation.severity === 'warning'
-              ? chalk.yellow
-              : chalk.blue
-            console.log(
-              `    ${severityColor('•',)} ${violation.ruleName}: ${violation.description}`,
+          console
+            .log(`  ${chalk.cyan(category,)}: ${(violations as any).length} issues`,)(
+              // Show a few examples
+              violations as any,
             )
-            console.log(
-              `      ${chalk.gray(`File: ${violation.filePath}:${violation.location.line}`,)}`,
-            )
-          },)
+            .slice(0, 3,)
+            .forEach((violation: any,) => {
+              const severityColor = violation.severity === 'error'
+                ? chalk.red
+                : violation.severity === 'warning'
+                ? chalk.yellow
+                : chalk.blue
+              console.log(
+                `    ${severityColor('•',)} ${violation.ruleName}: ${violation.description}`,
+              )
+              console.log(
+                `      ${chalk.gray(`File: ${violation.filePath}:${violation.location.line}`,)}`,
+              )
+            },)
 
           if ((violations as any).length > 3) {
             console.log(`    ${chalk.gray(`... and ${(violations as any).length - 3} more`,)}`,)
@@ -155,19 +168,21 @@ export const validateCommand = new Command('validate',)
 
           const successfulFixes = fixResults.filter(r => r.applied).length
           const failedFixes = fixResults.filter(r => !r.applied && r.error).length
-          
+
           if (failedFixes > 0) {
-            spinner.warn(`Applied ${successfulFixes}/${fixResults.length} automatic fixes (${failedFixes} failed)`,)
-            
+            spinner.warn(
+              `Applied ${successfulFixes}/${fixResults.length} automatic fixes (${failedFixes} failed)`,
+            )
+
             // Show failed fixes
             const failedFixResults = fixResults.filter(r => !r.applied && r.error)
             if (failedFixResults.length > 0) {
               console.log(chalk.yellow(`\n⚠️  Failed to apply ${failedFixes} fixes:`,),)
               failedFixResults.slice(0, 3,).forEach(fix => {
                 console.log(`  ✗ ${fix.description} in ${fix.filePath}`,)
-                console.log(`    ${chalk.gray(`Error: ${fix.error}`)}`,)
+                console.log(`    ${chalk.gray(`Error: ${fix.error}`,)}`,)
               },)
-              
+
               if (failedFixResults.length > 3) {
                 console.log(`  ... and ${failedFixResults.length - 3} more failed fixes`,)
               }
@@ -180,9 +195,12 @@ export const validateCommand = new Command('validate',)
             console.log(chalk.green(`\n✨ Fixed ${successfulFixes} issues automatically`,),)
 
             // Show what was fixed
-            fixResults.filter(r => r.applied).slice(0, 5,).forEach(fix => {
-              console.log(`  ✓ ${fix.description} in ${fix.filePath}`,)
-            },)
+            fixResults
+              .filter(r => r.applied)
+              .slice(0, 5,)
+              .forEach(fix => {
+                console.log(`  ✓ ${fix.description} in ${fix.filePath}`,)
+              },)
 
             if (successfulFixes > 5) {
               console.log(`  ... and ${successfulFixes - 5} more fixes`,)
@@ -190,8 +208,14 @@ export const validateCommand = new Command('validate',)
           }
         } catch (error) {
           spinner.fail('Auto-fix operation failed',)
-          console.error(chalk.red(`❌ Auto-fix error: ${error instanceof Error ? error.message : String(error,)}`,),)
-          console.log(chalk.yellow('⚠️  Continuing with validation results (auto-fix disabled)...',),)
+          console.error(
+            chalk.red(
+              `❌ Auto-fix error: ${error instanceof Error ? error.message : String(error,)}`,
+            ),
+          )
+          console.log(
+            chalk.yellow('⚠️  Continuing with validation results (auto-fix disabled)...',),
+          )
         }
       }
 
@@ -245,8 +269,12 @@ function getStatusColor(status: string,): chalk.Chalk {
 }
 
 function getScoreColor(score: number,): chalk.Chalk {
-  if (score >= 80) return chalk.green
-  if (score >= 60) return chalk.yellow
+  if (score >= 80) {
+    return chalk.green
+  }
+  if (score >= 60) {
+    return chalk.yellow
+  }
   return chalk.red
 }
 
@@ -279,7 +307,12 @@ function wrapInHtml(content: string,): string {
 <body>
     <h1>Architecture Validation Report</h1>
     <div id="content">
-${content.split('\n',).map(line => `        <p>${escapeHtml(line,)}</p>`).join('\n',)}
+${
+    content
+      .split('\n',)
+      .map(line => `        <p>${escapeHtml(line,)}</p>`)
+      .join('\n',)
+  }
     </div>
 </body>
 </html>`

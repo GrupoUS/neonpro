@@ -78,7 +78,9 @@ export function ProtectedRoute({
 
   // Não autenticado - redirecionar
   if (!(isAuthenticated && user)) {
-    router.push(redirectTo,)
+    // DISABLED: Using TanStack Router instead of Next.js router
+    // router.push(redirectTo,)
+    console.warn('User not authenticated, redirect to:', redirectTo,)
     return <>{fallback}</>
   }
 

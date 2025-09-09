@@ -53,10 +53,7 @@ describe('CleanupEngine Contract Tests', () => {
       '/packages/shared/src/redundant-helper.ts',
     ]
 
-    mockOrphanedAssets = [
-      '/orphaned-file.ts',
-      '/docs/outdated-readme.md',
-    ]
+    mockOrphanedAssets = ['/orphaned-file.ts', '/docs/outdated-readme.md',]
   },)
 
   afterEach(() => {
@@ -65,14 +62,18 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Cleanup Plan Creation', () => {
     it('should implement createCleanupPlan method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.createCleanupPlan,).toBeDefined()
       expect(typeof cleanupEngine.createCleanupPlan,).toBe('function',)
     })
 
     it('should create cleanup plan from asset lists', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const plan = await cleanupEngine.createCleanupPlan(
         mockUnusedAssets,
@@ -93,7 +94,9 @@ describe('CleanupEngine Contract Tests', () => {
     })
 
     it('should create appropriate cleanup actions', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const plan = await cleanupEngine.createCleanupPlan(
         mockUnusedAssets,
@@ -108,7 +111,7 @@ describe('CleanupEngine Contract Tests', () => {
       expect(plan.actions.length,).toBeGreaterThanOrEqual(totalAssets,)
 
       // Each action should have required properties
-      plan.actions.forEach((action,) => {
+      plan.actions.forEach(action => {
         expect(typeof action.actionId,).toBe('string',)
         expect([
           'delete_file',
@@ -139,14 +142,18 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Plan Validation', () => {
     it('should implement validateCleanupPlan method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.validateCleanupPlan,).toBeDefined()
       expect(typeof cleanupEngine.validateCleanupPlan,).toBe('function',)
     })
 
     it('should validate cleanup plan safety', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const plan = await cleanupEngine.createCleanupPlan(
         mockUnusedAssets,
@@ -166,7 +173,9 @@ describe('CleanupEngine Contract Tests', () => {
     })
 
     it('should identify risky operations', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const riskyAssets = ['/src/index.ts', '/package.json',]
       const plan = await cleanupEngine.createCleanupPlan(riskyAssets, [], [], defaultOptions,)
@@ -179,14 +188,18 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Cleanup Execution', () => {
     it('should implement executeCleanupPlan method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.executeCleanupPlan,).toBeDefined()
       expect(typeof cleanupEngine.executeCleanupPlan,).toBe('function',)
     })
 
     it('should execute cleanup plan with progress tracking', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const plan = await cleanupEngine.createCleanupPlan(
         mockUnusedAssets,
@@ -196,7 +209,7 @@ describe('CleanupEngine Contract Tests', () => {
       )
 
       const progressUpdates: ProgressUpdate[] = []
-      const execution = await cleanupEngine.executeCleanupPlan(plan, (update,) => {
+      const execution = await cleanupEngine.executeCleanupPlan(plan, update => {
         progressUpdates.push(update,)
       },)
 
@@ -219,28 +232,33 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Rollback Operations', () => {
     it('should implement createRollback method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.createRollback,).toBeDefined()
       expect(typeof cleanupEngine.createRollback,).toBe('function',)
     })
 
     it('should implement executeRollback method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.executeRollback,).toBeDefined()
       expect(typeof cleanupEngine.executeRollback,).toBe('function',)
     })
 
     it('should create rollback operation from execution', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
-      const plan = await cleanupEngine.createCleanupPlan(
-        mockUnusedAssets,
-        [],
-        [],
-        { ...defaultOptions, dryRun: true, createBackups: true, },
-      )
+      const plan = await cleanupEngine.createCleanupPlan(mockUnusedAssets, [], [], {
+        ...defaultOptions,
+        dryRun: true,
+        createBackups: true,
+      },)
 
       const execution = await cleanupEngine.executeCleanupPlan(plan,)
       const rollback = await cleanupEngine.createRollback(execution.planId,)
@@ -258,28 +276,32 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Execution Management', () => {
     it('should implement getExecutionStatus method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.getExecutionStatus,).toBeDefined()
       expect(typeof cleanupEngine.getExecutionStatus,).toBe('function',)
     })
 
     it('should implement cancelExecution method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.cancelExecution,).toBeDefined()
       expect(typeof cleanupEngine.cancelExecution,).toBe('function',)
     })
 
     it('should track execution status correctly', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
-      const plan = await cleanupEngine.createCleanupPlan(
-        mockUnusedAssets,
-        [],
-        [],
-        { ...defaultOptions, dryRun: true, },
-      )
+      const plan = await cleanupEngine.createCleanupPlan(mockUnusedAssets, [], [], {
+        ...defaultOptions,
+        dryRun: true,
+      },)
 
       const execution = await cleanupEngine.executeCleanupPlan(plan,)
       const status = await cleanupEngine.getExecutionStatus(execution.planId,)
@@ -294,14 +316,18 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Temporary File Management', () => {
     it('should implement cleanupTemporaryFiles method', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       expect(cleanupEngine.cleanupTemporaryFiles,).toBeDefined()
       expect(typeof cleanupEngine.cleanupTemporaryFiles,).toBe('function',)
     })
 
     it('should clean up old temporary files', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const result = await cleanupEngine.cleanupTemporaryFiles(7,)
 
@@ -314,7 +340,9 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid file paths gracefully', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const invalidAssets = ['/nonexistent/file.ts',]
 
@@ -324,7 +352,9 @@ describe('CleanupEngine Contract Tests', () => {
     })
 
     it('should handle permission errors during execution', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const restrictedAssets = ['/system/restricted-file.ts',]
       const plan = await cleanupEngine.createCleanupPlan(restrictedAssets, [], [], defaultOptions,)
@@ -333,7 +363,7 @@ describe('CleanupEngine Contract Tests', () => {
 
       // Should complete but report errors
       expect(execution.errors.length,).toBeGreaterThan(0,)
-      execution.errors.forEach((error,) => {
+      execution.errors.forEach(error => {
         expect([
           'file_not_found',
           'permission_denied',
@@ -352,7 +382,9 @@ describe('CleanupEngine Contract Tests', () => {
 
   describe('Safety Features', () => {
     it('should create backups when enabled', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const backupOptions = { ...defaultOptions, createBackups: true, dryRun: false, }
       const plan = await cleanupEngine.createCleanupPlan(mockUnusedAssets, [], [], backupOptions,)
@@ -361,14 +393,16 @@ describe('CleanupEngine Contract Tests', () => {
       const backupActions = plan.actions.filter(action => action.type === 'create_backup')
       expect(backupActions.length,).toBeGreaterThan(0,)
 
-      backupActions.forEach((action,) => {
+      backupActions.forEach(action => {
         expect(action.rollbackPossible,).toBe(true,)
         expect(typeof action.backupPath,).toBe('string',)
       },)
     })
 
     it('should respect dry-run mode', async () => {
-      if (!cleanupEngine) return
+      if (!cleanupEngine) {
+        return
+      }
 
       const dryRunOptions = { ...defaultOptions, dryRun: true, }
       const plan = await cleanupEngine.createCleanupPlan(mockUnusedAssets, [], [], dryRunOptions,)

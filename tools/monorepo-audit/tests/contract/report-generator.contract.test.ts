@@ -80,14 +80,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Audit Report Generation', () => {
     it('should implement generateAuditReport method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.generateAuditReport,).toBeDefined()
       expect(typeof reportGenerator.generateAuditReport,).toBe('function',)
     })
 
     it('should generate comprehensive audit report', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const report = await reportGenerator.generateAuditReport(mockAuditData, defaultOptions,)
 
@@ -107,7 +111,9 @@ describe('ReportGenerator Contract Tests', () => {
     })
 
     it('should generate reports in different formats', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const formats: ['html', 'markdown', 'json',] = ['html', 'markdown', 'json',]
 
@@ -122,7 +128,9 @@ describe('ReportGenerator Contract Tests', () => {
     })
 
     it('should include requested sections only', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const options = {
         ...defaultOptions,
@@ -139,14 +147,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Executive Summary Generation', () => {
     it('should implement generateExecutiveSummary method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.generateExecutiveSummary,).toBeDefined()
       expect(typeof reportGenerator.generateExecutiveSummary,).toBe('function',)
     })
 
     it('should generate concise executive summary', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const summary = await reportGenerator.generateExecutiveSummary(mockAuditData,)
 
@@ -165,14 +177,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Technical Report Generation', () => {
     it('should implement generateTechnicalReport method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.generateTechnicalReport,).toBeDefined()
       expect(typeof reportGenerator.generateTechnicalReport,).toBe('function',)
     })
 
     it('should generate detailed technical report', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const techOptions = { includeCode: true, includeMetrics: true, includeCharts: true, }
       const techReport = await reportGenerator.generateTechnicalReport(mockAuditData, techOptions,)
@@ -188,14 +204,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Comparison Report Generation', () => {
     it('should implement generateComparisonReport method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.generateComparisonReport,).toBeDefined()
       expect(typeof reportGenerator.generateComparisonReport,).toBe('function',)
     })
 
     it('should generate before/after comparison report', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const beforeData = {
         ...mockAuditData,
@@ -216,14 +236,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Report Export Functionality', () => {
     it('should implement exportReport method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.exportReport,).toBeDefined()
       expect(typeof reportGenerator.exportReport,).toBe('function',)
     })
 
     it('should export reports to different formats', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const report = await reportGenerator.generateAuditReport(mockAuditData, defaultOptions,)
       const outputPath = '/tmp/test-report'
@@ -241,14 +265,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Dashboard Generation', () => {
     it('should implement generateDashboard method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.generateDashboard,).toBeDefined()
       expect(typeof reportGenerator.generateDashboard,).toBe('function',)
     })
 
     it('should generate interactive HTML dashboard', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const dashboard = await reportGenerator.generateDashboard(mockAuditData,)
 
@@ -268,14 +296,18 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Template Management', () => {
     it('should implement createTemplate method', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       expect(reportGenerator.createTemplate,).toBeDefined()
       expect(typeof reportGenerator.createTemplate,).toBe('function',)
     })
 
     it('should create custom report templates', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const templateConfig = {
         sections: ['executive_summary', 'technical_details',],
@@ -292,7 +324,9 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid audit data gracefully', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const invalidData = null as any
 
@@ -302,18 +336,20 @@ describe('ReportGenerator Contract Tests', () => {
     })
 
     it('should handle invalid output paths gracefully', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const report = await reportGenerator.generateAuditReport(mockAuditData, defaultOptions,)
       const invalidPath = '/nonexistent/path/report.html'
 
-      await expect(
-        reportGenerator.exportReport(report, 'html', invalidPath,),
-      ).rejects.toThrow()
+      await expect(reportGenerator.exportReport(report, 'html', invalidPath,),).rejects.toThrow()
     })
 
     it('should handle unsupported formats gracefully', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const report = await reportGenerator.generateAuditReport(mockAuditData, defaultOptions,)
       const unsupportedFormat = 'unsupported' as any
@@ -326,7 +362,9 @@ describe('ReportGenerator Contract Tests', () => {
 
   describe('Performance Requirements', () => {
     it('should generate reports within reasonable time limits', async () => {
-      if (!reportGenerator) return
+      if (!reportGenerator) {
+        return
+      }
 
       const largeAuditData = {
         ...mockAuditData,

@@ -441,13 +441,15 @@ export class ReportGenerator implements IReportGenerator {
     const unusedFiles = this.extractUnusedFiles(auditData.fileResults,)
     const violations = this.extractArchitectureViolations(auditData.architectureResults,)
 
-    if (totalFiles === 0) return 100
+    if (totalFiles === 0) {
+      return 100
+    }
 
     const unusedRatio = unusedFiles / totalFiles
     const violationRatio = violations.length / totalFiles
 
     // Simple scoring algorithm (can be made more sophisticated)
-    let score = 100 - (unusedRatio * 30) - (violationRatio * 40)
+    const score = 100 - unusedRatio * 30 - violationRatio * 40
     return Math.max(0, Math.min(100, Math.round(score,),),)
   }
 
@@ -455,14 +457,16 @@ export class ReportGenerator implements IReportGenerator {
     const violations = this.extractArchitectureViolations(architectureResults,)
     const totalRules = architectureResults?.totalRules || 100
 
-    if (totalRules === 0) return 100
+    if (totalRules === 0) {
+      return 100
+    }
 
     const errorCount = violations.filter((v: any,) => v.severity === 'error').length
     const warningCount = violations.filter((v: any,) => v.severity === 'warning').length
 
     // Weight errors more heavily
-    const penaltyScore = (errorCount * 5) + (warningCount * 2)
-    const score = Math.max(0, 100 - (penaltyScore / totalRules * 100),)
+    const penaltyScore = errorCount * 5 + warningCount * 2
+    const score = Math.max(0, 100 - (penaltyScore / totalRules) * 100,)
 
     return Math.round(score,)
   }
@@ -472,7 +476,9 @@ export class ReportGenerator implements IReportGenerator {
     const unusedFiles = this.extractUnusedFiles(auditData.fileResults,)
     const circularDeps = this.extractCircularDependencies(auditData.dependencyResults,)
 
-    if (totalFiles === 0) return 100
+    if (totalFiles === 0) {
+      return 100
+    }
 
     const efficiency = ((totalFiles - unusedFiles - circularDeps.length) / totalFiles) * 100
     return Math.max(0, Math.min(100, Math.round(efficiency,),),)
@@ -810,7 +816,9 @@ export class ReportGenerator implements IReportGenerator {
   private groupViolationsByCategory(violations: any[],): any {
     return violations.reduce((acc: any, violation: any,) => {
       const category = violation.category || 'Other'
-      if (!acc[category]) acc[category] = []
+      if (!acc[category]) {
+        acc[category] = []
+      }
       acc[category].push(violation,)
       return acc
     }, {},)
@@ -819,7 +827,9 @@ export class ReportGenerator implements IReportGenerator {
   private groupViolationsBySeverity(violations: any[],): any {
     return violations.reduce((acc: any, violation: any,) => {
       const severity = violation.severity || 'info'
-      if (!acc[severity]) acc[severity] = []
+      if (!acc[severity]) {
+        acc[severity] = []
+      }
       acc[severity].push(violation,)
       return acc
     }, {},)
@@ -847,7 +857,8 @@ export class ReportGenerator implements IReportGenerator {
   private analyzePerformanceBottlenecks(performanceMetrics: PerformanceMetrics,): any {
     const bottlenecks = []
 
-    if (performanceMetrics.memoryUsage > 500 * 1024 * 1024) { // > 500MB
+    if (performanceMetrics.memoryUsage > 500 * 1024 * 1024) {
+      // > 500MB
       bottlenecks.push({
         type: 'memory',
         severity: 'high',
@@ -871,7 +882,9 @@ export class ReportGenerator implements IReportGenerator {
   private categorizeUnusedFiles(unusedFiles: any[],): any {
     return unusedFiles.reduce((acc: any, file: any,) => {
       const ext = file.path.split('.',).pop() || 'unknown'
-      if (!acc[ext]) acc[ext] = { count: 0, size: 0, }
+      if (!acc[ext]) {
+        acc[ext] = { count: 0, size: 0, }
+      }
       acc[ext].count++
       acc[ext].size += file.size
       return acc
@@ -1049,19 +1062,23 @@ export class ReportGenerator implements IReportGenerator {
     const unusedFiles = this.extractUnusedFiles(auditData.fileResults,)
     const totalFiles = this.extractTotalFiles(auditData.fileResults,)
 
-    if (totalFiles === 0) return 100
+    if (totalFiles === 0) {
+      return 100
+    }
 
     const violationRatio = violations.length / totalFiles
     const unusedRatio = unusedFiles / totalFiles
 
-    return Math.max(0, Math.round(100 - (violationRatio * 40) - (unusedRatio * 20),),)
+    return Math.max(0, Math.round(100 - violationRatio * 40 - unusedRatio * 20,),)
   }
 
   private calculateTechnicalDebt(auditData: AuditData,): number {
     const violations = this.extractArchitectureViolations(auditData.architectureResults,)
     const totalFiles = this.extractTotalFiles(auditData.fileResults,)
 
-    if (totalFiles === 0) return 0
+    if (totalFiles === 0) {
+      return 0
+    }
 
     const errorWeight = 3
     const warningWeight = 1
@@ -1077,7 +1094,9 @@ export class ReportGenerator implements IReportGenerator {
     const circularDeps = this.extractCircularDependencies(auditData.dependencyResults,)
     const totalFiles = this.extractTotalFiles(auditData.fileResults,)
 
-    if (totalFiles === 0) return 0
+    if (totalFiles === 0) {
+      return 0
+    }
 
     return Math.min(1, circularDeps.length / totalFiles,) // Simplified complexity measure
   }
@@ -1090,14 +1109,16 @@ export class ReportGenerator implements IReportGenerator {
 
     // Higher edge-to-node ratio indicates lower modularity
     const ratio = totalEdges / totalNodes
-    return Math.max(0, Math.min(1, 1 - (ratio / 10),),)
+    return Math.max(0, Math.min(1, 1 - ratio / 10,),)
   }
 
   private calculateCoupling(auditData: AuditData,): number {
     const circularDeps = this.extractCircularDependencies(auditData.dependencyResults,)
     const totalFiles = this.extractTotalFiles(auditData.fileResults,)
 
-    if (totalFiles === 0) return 0
+    if (totalFiles === 0) {
+      return 0
+    }
 
     return Math.min(1, circularDeps.length / totalFiles,)
   }
@@ -1107,9 +1128,11 @@ export class ReportGenerator implements IReportGenerator {
     const unusedFiles = this.extractUnusedFiles(auditData.fileResults,)
     const totalFiles = this.extractTotalFiles(auditData.fileResults,)
 
-    if (totalFiles === 0) return 1
+    if (totalFiles === 0) {
+      return 1
+    }
 
-    return Math.max(0, 1 - (unusedFiles / totalFiles),)
+    return Math.max(0, 1 - unusedFiles / totalFiles,)
   }
 
   private analyzeBuildPerformance(auditData: AuditData,): any {
@@ -1258,9 +1281,12 @@ export class ReportGenerator implements IReportGenerator {
     <section class="section">
         <h2>Key Findings</h2>
         ${
-      report.executiveSummary.keyFindings.map((finding: any,) =>
-        `<div class="finding ${finding.severity}">${finding.description}</div>`
-      ).join('',)
+      report.executiveSummary.keyFindings
+        .map(
+          (finding: any,) =>
+            `<div class="finding ${finding.severity}">${finding.description}</div>`,
+        )
+        .join('',)
     }
     </section>
     
@@ -1268,9 +1294,11 @@ export class ReportGenerator implements IReportGenerator {
         <h2>Recommendations</h2>
         <ul>
         ${
-      report.executiveSummary.recommendations.map((rec: any,) =>
-        `<li><strong>${rec.description}</strong> (Priority: ${rec.priority})</li>`
-      ).join('',)
+      report.executiveSummary.recommendations
+        .map(
+          (rec: any,) => `<li><strong>${rec.description}</strong> (Priority: ${rec.priority})</li>`,
+        )
+        .join('',)
     }
         </ul>
     </section>
@@ -1305,10 +1333,12 @@ export class ReportGenerator implements IReportGenerator {
 
   private formatBytes(bytes: number,): string {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB',]
-    if (bytes === 0) return '0 Bytes'
+    if (bytes === 0) {
+      return '0 Bytes'
+    }
 
     const i = Math.floor(Math.log(bytes,) / Math.log(1024,),)
-    return `${Math.round(bytes / Math.pow(1024, i,) * 100,) / 100} ${sizes[i]}`
+    return `${Math.round((bytes / Math.pow(1024, i,)) * 100,) / 100} ${sizes[i]}`
   }
 
   /**

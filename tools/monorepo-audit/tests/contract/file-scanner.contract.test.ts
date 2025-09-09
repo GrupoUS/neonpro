@@ -127,8 +127,8 @@ describe('FileScanner Contract Tests', () => {
       expect(async () => {
         const result = await fileScanner.scan(shallowOptions,)
         // Validate that no files deeper than maxDepth are included
-        const deepFiles = result.assets.filter(asset =>
-          asset.path.split('/',).length > testOptions.baseDirectory.split('/',).length + 2
+        const deepFiles = result.assets.filter(
+          asset => asset.path.split('/',).length > testOptions.baseDirectory.split('/',).length + 2,
         )
         expect(deepFiles,).toHaveLength(0,)
       },).rejects.toThrow() // Expected to fail
@@ -206,8 +206,8 @@ describe('FileScanner Contract Tests', () => {
 
       expect(async () => {
         const result = await fileScanner.scan(customOptions,)
-        const excludedFiles = result.assets.filter(asset =>
-          asset.path.match(/\.(log|tmp)$/,) || asset.path.includes('/temp/',)
+        const excludedFiles = result.assets.filter(
+          asset => asset.path.match(/\.(log|tmp)$/,) || asset.path.includes('/temp/',),
         )
         expect(excludedFiles,).toHaveLength(0,)
       },).rejects.toThrow()
@@ -249,10 +249,14 @@ describe('FileScanner Contract Tests', () => {
         await fileScanner.scanWithProgress(testOptions, mockProgressCallback,)
 
         if (progressUpdates.length > 1) {
-          const timeBetweenUpdates = progressUpdates.map((_, index,) => {
-            if (index === 0) return 0
-            return Date.now() - startTime
-          },).filter(time => time > 0)
+          const timeBetweenUpdates = progressUpdates
+            .map((_, index,) => {
+              if (index === 0) {
+                return 0
+              }
+              return Date.now() - startTime
+            },)
+            .filter(time => time > 0)
 
           timeBetweenUpdates.forEach(interval => {
             expect(interval,).toBeGreaterThanOrEqual(

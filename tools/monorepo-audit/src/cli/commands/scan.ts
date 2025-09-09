@@ -95,10 +95,12 @@ export const scanCommand = new Command('scan',)
 
 function formatBytes(bytes: number,): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB',]
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) {
+    return '0 Bytes'
+  }
 
   const i = Math.floor(Math.log(bytes,) / Math.log(1024,),)
-  return `${Math.round(bytes / Math.pow(1024, i,) * 100,) / 100} ${sizes[i]}`
+  return `${Math.round((bytes / Math.pow(1024, i,)) * 100,) / 100} ${sizes[i]}`
 }
 
 function getFileTypeDistribution(assets: any[],): Record<string, number> {
@@ -115,29 +117,42 @@ function getFileTypeDistribution(assets: any[],): Record<string, number> {
 function extractFileExtension(filePath: string,): string {
   // Get the basename to avoid issues with directory paths containing dots
   const basename = path.basename(filePath,)
-  
+
   // Handle files without extensions
   if (!basename.includes('.',) || basename.startsWith('.',)) {
-    return basename.startsWith('.') ? 'dotfiles' : 'no-extension'
+    return basename.startsWith('.',) ? 'dotfiles' : 'no-extension'
   }
-  
+
   // Get the raw extension using path.extname
   const rawExt = path.extname(basename,).toLowerCase()
-  
+
   // Handle compound extensions for common cases
   const compoundExtensions = [
-    '.d.ts', '.test.ts', '.test.tsx', '.test.js', '.test.jsx',
-    '.spec.ts', '.spec.tsx', '.spec.js', '.spec.jsx',
-    '.config.js', '.config.ts', '.config.mjs', '.config.cjs',
-    '.min.js', '.min.css', '.bundle.js', '.bundle.css',
+    '.d.ts',
+    '.test.ts',
+    '.test.tsx',
+    '.test.js',
+    '.test.jsx',
+    '.spec.ts',
+    '.spec.tsx',
+    '.spec.js',
+    '.spec.jsx',
+    '.config.js',
+    '.config.ts',
+    '.config.mjs',
+    '.config.cjs',
+    '.min.js',
+    '.min.css',
+    '.bundle.js',
+    '.bundle.css',
   ]
-  
+
   for (const compound of compoundExtensions) {
     if (basename.toLowerCase().endsWith(compound,)) {
       return compound
     }
   }
-  
+
   // Return the simple extension, removing the leading dot
   return rawExt ? rawExt.slice(1,) : 'no-extension'
 }
@@ -149,7 +164,8 @@ function generateTextOutput(result: any,): string {
   output += `Errors: ${result.errors.length}\n\n`
 
   output += `Files:\n`
-  for (const asset of result.assets.slice(0, 100,)) { // Limit to first 100
+  for (const asset of result.assets.slice(0, 100,)) {
+    // Limit to first 100
     output += `  ${asset.path} (${formatBytes(asset.size,)})\n`
   }
 

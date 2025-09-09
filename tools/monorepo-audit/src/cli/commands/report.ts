@@ -289,7 +289,7 @@ async function handleReportExport(options: ExportCliOptions,): Promise<void> {
 
     spinner.text = `Exporting to ${format.toUpperCase()}...`
 
-    // Export report  
+    // Export report
     const exportOptions = {
       outputDirectory: outputDir,
       filename: `exported-report.${format}`,
@@ -525,7 +525,9 @@ async function handleDashboard(options: DashboardOptions,): Promise<void> {
 }
 
 function formatBytes(bytes: number,): string {
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) {
+    return '0 Bytes'
+  }
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB',]
   const i = Math.floor(Math.log(bytes,) / Math.log(k,),)

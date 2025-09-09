@@ -119,13 +119,16 @@ async function handleCleanupPlan(options: CleanupOptions,): Promise<void> {
     console.log(chalk.yellow(`🗂️  Total Operations: ${plan.operations.length}`,),)
 
     // Group operations by type
-    const operationsByType = plan.operations.reduce((acc, op,) => {
-      if (!acc[op.type]) {
-        acc[op.type] = []
-      }
-      acc[op.type].push(op,)
-      return acc
-    }, {} as Record<string, any[]>,)
+    const operationsByType = plan.operations.reduce(
+      (acc, op,) => {
+        if (!acc[op.type]) {
+          acc[op.type] = []
+        }
+        acc[op.type].push(op,)
+        return acc
+      },
+      {} as Record<string, any[]>,
+    )
 
     // Display operations by type
     for (const [type, operations,] of Object.entries(operationsByType,)) {
@@ -385,7 +388,9 @@ function getOperationIcon(type: string,): string {
 }
 
 function formatBytes(bytes: number,): string {
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) {
+    return '0 Bytes'
+  }
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB',]
   const i = Math.min(Math.floor(Math.log(bytes,) / Math.log(k,),), sizes.length - 1,)

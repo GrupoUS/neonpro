@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "lib": ["ESNext"],
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals", "./src/types/shims"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -48,6 +48,7 @@
   "include": [
     "src/**/*",
     "src/**/*.json",
+    "src/types/shims.d.ts",
     "vitest.config.ts",
     "vitest.setup.ts"
   ],

@@ -211,12 +211,7 @@ export class CleanupAction {
     justification: string,
     impactAssessment: ImpactAssessment,
   ): CleanupAction {
-    return new CleanupAction(
-      ActionType.DELETE_FILE,
-      filePath,
-      justification,
-      impactAssessment,
-    )
+    return new CleanupAction(ActionType.DELETE_FILE, filePath, justification, impactAssessment,)
   }
 
   /**
@@ -227,12 +222,7 @@ export class CleanupAction {
     justification: string,
     impactAssessment: ImpactAssessment,
   ): CleanupAction {
-    return new CleanupAction(
-      ActionType.MOVE_FILE,
-      sourcePath,
-      justification,
-      impactAssessment,
-    )
+    return new CleanupAction(ActionType.MOVE_FILE, sourcePath, justification, impactAssessment,)
   }
 
   /**
@@ -249,12 +239,7 @@ export class CleanupAction {
       requiresManualReview: false,
     }
 
-    return new CleanupAction(
-      ActionType.CREATE_BACKUP,
-      targetPath,
-      justification,
-      impactAssessment,
-    )
+    return new CleanupAction(ActionType.CREATE_BACKUP, targetPath, justification, impactAssessment,)
   }
 
   /**

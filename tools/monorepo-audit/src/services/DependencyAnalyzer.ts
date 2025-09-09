@@ -583,16 +583,7 @@ export class DependencyAnalyzer implements IDependencyAnalyzer {
     const basename = path.basename(node.path, path.extname(node.path,),)
 
     // Common entry point patterns
-    const entryPatterns = [
-      'main',
-      'index',
-      'app',
-      'entry',
-      'root',
-      '_app',
-      '_document',
-      'layout',
-    ]
+    const entryPatterns = ['main', 'index', 'app', 'entry', 'root', '_app', '_document', 'layout',]
 
     // Route patterns (common in Next.js, React Router, etc.)
     const routePatterns = [

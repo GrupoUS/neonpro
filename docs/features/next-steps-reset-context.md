@@ -16,9 +16,9 @@ This document captures exactly what remains and how to get the repo green (forma
 
 ## High-Priority Goals
 
-1) Green code quality gates (format, lint, type-check) without loosening global strictness.
-2) Keep unit tests passing; contract/integration tests may fail at runtime but must typecheck.
-3) Unlock Vercel Preview build once repo is green.
+1. Green code quality gates (format, lint, type-check) without loosening global strictness.
+2. Keep unit tests passing; contract/integration tests may fail at runtime but must typecheck.
+3. Unlock Vercel Preview build once repo is green.
 
 ## Blocking Issues (from last full check)
 
@@ -139,6 +139,7 @@ pnpm vitest run --project unit --reporter=verbose
 ## Quick Status Re-check
 
 Use the VS Code tasks:
+
 - "✨ Format Code"
 - "🔧 Fix Lint Issues"
 - "✅ Full Code Check"

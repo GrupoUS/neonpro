@@ -36,7 +36,7 @@ setupAuditCommand(program,) // Complete workflow command
 // Error handling
 program.configureHelp({
   sortSubcommands: true,
-  subcommandTerm: (cmd,) => cmd.name(),
+  subcommandTerm: cmd => cmd.name(),
 },)
 
 // Custom help
@@ -53,7 +53,7 @@ program.on('--help', () => {
 },)
 
 // Handle unknown commands
-program.on('command:*', (operands,) => {
+program.on('command:*', operands => {
   console.error(chalk.red(`Unknown command: ${operands[0]}`,),)
   console.log('Use --help to see available commands',)
   process.exit(1,)
@@ -65,7 +65,7 @@ process.on('unhandledRejection', (reason, promise,) => {
   process.exit(1,)
 },)
 
-process.on('uncaughtException', (error,) => {
+process.on('uncaughtException', error => {
   console.error(chalk.red('Uncaught Exception:',), error,)
   process.exit(1,)
 },)

@@ -4,6 +4,122 @@
  * Generated: 2025-09-09
  */
 
+// Missing type definitions
+export interface AuditConfiguration {
+  /** Configuration options */
+  [key: string]: unknown
+}
+
+export interface ExecutionError {
+  /** Error message */
+  message: string
+  /** Error code */
+  code?: string
+  /** Stack trace */
+  stack?: string
+}
+
+export interface ExecutionWarning {
+  /** Warning message */
+  message: string
+  /** Warning type */
+  type: string
+  /** Severity level */
+  severity: 'low' | 'medium' | 'high'
+}
+
+export interface FileInfo {
+  /** File path */
+  path: string
+  /** File size */
+  size: number
+  /** Last modified date */
+  lastModified: Date
+}
+
+export interface ProblemFile {
+  /** File path */
+  path: string
+  /** Issues found */
+  issues: string[]
+  /** Severity */
+  severity: 'low' | 'medium' | 'high'
+}
+
+export interface CircularDependencyInfo {
+  /** Cycle paths */
+  cycle: string[]
+  /** Severity */
+  severity: 'low' | 'medium' | 'high'
+}
+
+export interface DepthStatistics {
+  /** Average depth */
+  averageDepth: number
+  /** Maximum depth */
+  maxDepth: number
+}
+
+export interface ImportExportAnalysis {
+  /** Total imports */
+  totalImports: number
+  /** Total exports */
+  totalExports: number
+}
+
+export interface ExternalDependencyInfo {
+  /** Package name */
+  name: string
+  /** Version */
+  version: string
+  /** Usage count */
+  usageCount: number
+}
+
+export interface UsagePattern {
+  /** Pattern name */
+  name: string
+  /** Pattern description */
+  description: string
+  /** Files matching pattern */
+  files: string[]
+}
+
+export interface DeadCodeAnalysis {
+  /** Dead code files */
+  deadFiles: string[]
+  /** Unused exports */
+  unusedExports: string[]
+}
+
+export interface ComplexityMetrics {
+  /** Average complexity */
+  averageComplexity: number
+  /** Maximum complexity */
+  maxComplexity: number
+}
+
+export interface MaintainabilityMetrics {
+  /** Maintainability index */
+  index: number
+  /** Technical debt ratio */
+  technicalDebtRatio: number
+}
+
+export interface TestCoverageMetrics {
+  /** Line coverage percentage */
+  lineCoverage: number
+  /** Branch coverage percentage */
+  branchCoverage: number
+}
+
+export interface DocumentationMetrics {
+  /** Documentation coverage percentage */
+  coverage: number
+  /** Missing documentation count */
+  missingDocs: number
+}
+
 // Core Types
 export interface ReportOptions {
   /** Report format to generate */

@@ -303,7 +303,8 @@ export class ConfigManager extends EventEmitter {
       const deps = config.dependencies
 
       if (
-        deps.importanceThreshold && (deps.importanceThreshold < 0 || deps.importanceThreshold > 1)
+        deps.importanceThreshold
+        && (deps.importanceThreshold < 0 || deps.importanceThreshold > 1)
       ) {
         errors.push({
           path: 'dependencies.importanceThreshold',
@@ -346,7 +347,8 @@ export class ConfigManager extends EventEmitter {
       }
 
       if (
-        perf.operationTimeout && (perf.operationTimeout < 1000 || perf.operationTimeout > 300000)
+        perf.operationTimeout
+        && (perf.operationTimeout < 1000 || perf.operationTimeout > 300000)
       ) {
         errors.push({
           path: 'performance.operationTimeout',
@@ -447,9 +449,13 @@ export class ConfigManager extends EventEmitter {
 
           return config
         } catch (error) {
-          logger.error(`Failed to load config file: ${resolvedPath}`, {
-            component: 'ConfigManager',
-          }, error as Error,)
+          logger.error(
+            `Failed to load config file: ${resolvedPath}`,
+            {
+              component: 'ConfigManager',
+            },
+            error as Error,
+          )
           return {}
         }
       },
@@ -468,13 +474,12 @@ export class ConfigManager extends EventEmitter {
 
         for (const envKey of envVars) {
           const value = process.env[envKey]
-          if (value === undefined) continue
+          if (value === undefined) {
+            continue
+          }
 
           // Convert env key to config path
-          const configPath = envKey
-            .substring(prefix.length,)
-            .toLowerCase()
-            .split('_',)
+          const configPath = envKey.substring(prefix.length,).toLowerCase().split('_',)
 
           // Set nested value
           let current = config
@@ -490,11 +495,15 @@ export class ConfigManager extends EventEmitter {
 
           // Type conversion
           let parsedValue: any = value
-          if (value === 'true') parsedValue = true
-          else if (value === 'false') parsedValue = false
-          else if (/^\d+$/.test(value,)) parsedValue = parseInt(value, 10,)
-          else if (/^\d*\.\d+$/.test(value,)) parsedValue = parseFloat(value,)
-          else if (value.startsWith('[',) && value.endsWith(']',)) {
+          if (value === 'true') {
+            parsedValue = true
+          } else if (value === 'false') {
+            parsedValue = false
+          } else if (/^\d+$/.test(value,)) {
+            parsedValue = parseInt(value, 10,)
+          } else if (/^\d*\.\d+$/.test(value,)) {
+            parsedValue = parseFloat(value,)
+          } else if (value.startsWith('[',) && value.endsWith(']',)) {
             try {
               parsedValue = JSON.parse(value,)
             } catch {
@@ -546,10 +555,15 @@ export class ConfigManager extends EventEmitter {
 
               // Type conversion
               let parsedValue: any = value
-              if (value === 'true') parsedValue = true
-              else if (value === 'false') parsedValue = false
-              else if (/^\d+$/.test(value,)) parsedValue = parseInt(value, 10,)
-              else if (/^\d*\.\d+$/.test(value,)) parsedValue = parseFloat(value,)
+              if (value === 'true') {
+                parsedValue = true
+              } else if (value === 'false') {
+                parsedValue = false
+              } else if (/^\d+$/.test(value,)) {
+                parsedValue = parseInt(value, 10,)
+              } else if (/^\d*\.\d+$/.test(value,)) {
+                parsedValue = parseFloat(value,)
+              }
 
               current[finalKey] = parsedValue
               i++ // Skip the value argument
@@ -618,7 +632,9 @@ export class ConfigManager extends EventEmitter {
   }
 
   private watchFile(filePath: string,): void {
-    if (this.watchedFiles.has(filePath,)) return
+    if (this.watchedFiles.has(filePath,)) {
+      return
+    }
 
     this.watchedFiles.add(filePath,)
 
@@ -653,9 +669,13 @@ export class ConfigManager extends EventEmitter {
         const sourceConfig = source.load()
         Object.assign(newConfig, this.deepMerge(newConfig, sourceConfig,),)
       } catch (error) {
-        logger.error(`Failed to load configuration source: ${source.name}`, {
-          component: 'ConfigManager',
-        }, error as Error,)
+        logger.error(
+          `Failed to load configuration source: ${source.name}`,
+          {
+            component: 'ConfigManager',
+          },
+          error as Error,
+        )
       }
     }
 

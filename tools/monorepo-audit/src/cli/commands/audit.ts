@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { Command, } from 'commander'
 import ora from 'ora'
-import type { Ora } from 'ora'
+import type { Ora, } from 'ora'
 import { ArchitectureValidator, } from '../../services/ArchitectureValidator.js'
 import { CleanupEngine, } from '../../services/CleanupEngine.js'
 import { DependencyAnalyzer, } from '../../services/DependencyAnalyzer.js'
@@ -115,11 +115,11 @@ export const auditCommand = new Command('audit',)
         validationResult = await validator.validateAssets(scanResult.assets, validationOptions,)
 
         architectureValidationEndTime = process.hrtime.bigint()
-        const errorCount = validationResult.violations.filter((v: any,) =>
-          v.severity === 'error'
+        const errorCount = validationResult.violations.filter(
+          (v: any,) => v.severity === 'error',
         ).length
-        const warningCount = validationResult.violations.filter((v: any,) =>
-          v.severity === 'warning'
+        const warningCount = validationResult.violations.filter(
+          (v: any,) => v.severity === 'warning',
         ).length
 
         spinner.succeed(
@@ -175,25 +175,33 @@ export const auditCommand = new Command('audit',)
       // Calculate real performance metrics
       const endTimeHr = process.hrtime.bigint()
       const totalExecutionTimeMs = Date.now() - startTime
-      const totalExecutionTimeNs = Number(endTimeHr - startTimeHr)
-      const finalCpuUsage = process.cpuUsage(initialCpuUsage)
+      const totalExecutionTimeNs = Number(endTimeHr - startTimeHr,)
+      const finalCpuUsage = process.cpuUsage(initialCpuUsage,)
       const memoryUsage = process.memoryUsage()
 
-      const fileScanTimeMs = fileScanStartTime && fileScanEndTime 
-        ? Number(fileScanEndTime - fileScanStartTime) / 1000000 : 0
+      const fileScanTimeMs = fileScanStartTime && fileScanEndTime
+        ? Number(fileScanEndTime - fileScanStartTime,) / 1000000
+        : 0
       const dependencyAnalysisTimeMs = dependencyAnalysisStartTime && dependencyAnalysisEndTime
-        ? Number(dependencyAnalysisEndTime - dependencyAnalysisStartTime) / 1000000 : 0
-      const architectureValidationTimeMs = architectureValidationStartTime && architectureValidationEndTime
-        ? Number(architectureValidationEndTime - architectureValidationStartTime) / 1000000 : 0
+        ? Number(dependencyAnalysisEndTime - dependencyAnalysisStartTime,) / 1000000
+        : 0
+      const architectureValidationTimeMs =
+        architectureValidationStartTime && architectureValidationEndTime
+          ? Number(architectureValidationEndTime - architectureValidationStartTime,) / 1000000
+          : 0
 
       const filesProcessedPerSecond = scanResult && fileScanTimeMs > 0
-        ? scanResult.assets.length / (fileScanTimeMs / 1000) : 0
+        ? scanResult.assets.length / (fileScanTimeMs / 1000)
+        : 0
       const dependenciesAnalyzedPerSecond = dependencyResult && dependencyAnalysisTimeMs > 0
-        ? dependencyResult.nodes.size / (dependencyAnalysisTimeMs / 1000) : 0
+        ? dependencyResult.nodes.size / (dependencyAnalysisTimeMs / 1000)
+        : 0
 
       // CPU usage as percentage (user + system time per total execution time)
       const totalCpuTimeMs = (finalCpuUsage.user + finalCpuUsage.system) / 1000
-      const cpuUsagePercentage = totalExecutionTimeMs > 0 ? (totalCpuTimeMs / totalExecutionTimeMs) * 100 : 0
+      const cpuUsagePercentage = totalExecutionTimeMs > 0
+        ? (totalCpuTimeMs / totalExecutionTimeMs) * 100
+        : 0
 
       // Prepare audit data
       const auditData = {
@@ -205,12 +213,12 @@ export const auditCommand = new Command('audit',)
           totalExecutionTime: totalExecutionTimeMs,
           memoryUsage: memoryUsage.heapUsed,
           peakMemoryUsage: memoryUsage.heapTotal,
-          filesProcessedPerSecond: Math.round(filesProcessedPerSecond * 100) / 100,
-          fileScanTime: Math.round(fileScanTimeMs * 100) / 100,
-          dependencyAnalysisTime: Math.round(dependencyAnalysisTimeMs * 100) / 100,
-          architectureValidationTime: Math.round(architectureValidationTimeMs * 100) / 100,
-          dependenciesAnalyzedPerSecond: Math.round(dependenciesAnalyzedPerSecond * 100) / 100,
-          cpuUsage: Math.round(cpuUsagePercentage * 100) / 100,
+          filesProcessedPerSecond: Math.round(filesProcessedPerSecond * 100,) / 100,
+          fileScanTime: Math.round(fileScanTimeMs * 100,) / 100,
+          dependencyAnalysisTime: Math.round(dependencyAnalysisTimeMs * 100,) / 100,
+          architectureValidationTime: Math.round(architectureValidationTimeMs * 100,) / 100,
+          dependenciesAnalyzedPerSecond: Math.round(dependenciesAnalyzedPerSecond * 100,) / 100,
+          cpuUsage: Math.round(cpuUsagePercentage * 100,) / 100,
         },
       }
 
@@ -265,7 +273,9 @@ export const auditCommand = new Command('audit',)
         const unusedAssets = dependencyResult.metadata.unusedAssets?.length || 0
         console.log(
           `  🔗 Dependencies: ${chalk.green(dependencyResult.nodes.size,)} nodes, ${
-            chalk.green(dependencyResult.edges.length,)
+            chalk.green(
+              dependencyResult.edges.length,
+            )
           } edges`,
         )
         if (circularDeps > 0) {
@@ -277,15 +287,17 @@ export const auditCommand = new Command('audit',)
       }
 
       if (validationResult) {
-        const errors = validationResult.violations.filter((v: any,) =>
-          v.severity === 'error'
+        const errors = validationResult.violations.filter(
+          (v: any,) => v.severity === 'error',
         ).length
-        const warnings = validationResult.violations.filter((v: any,) =>
-          v.severity === 'warning'
+        const warnings = validationResult.violations.filter(
+          (v: any,) => v.severity === 'warning',
         ).length
         console.log(
           `  🏗️ Architecture: ${
-            chalk.green(validationResult.complianceSummary.complianceScore,)
+            chalk.green(
+              validationResult.complianceSummary.complianceScore,
+            )
           }% compliant`,
         )
         if (errors > 0) {
@@ -315,7 +327,9 @@ export const auditCommand = new Command('audit',)
         console.log(`  📊 Dashboard: ${chalk.cyan(dashboardPath,)}`,)
       }
     } catch (error) {
-      if (spinner) spinner.fail('Audit failed',)
+      if (spinner) {
+        spinner.fail('Audit failed',)
+      }
       console.error(chalk.red('Error:',), error instanceof Error ? error.message : error,)
       process.exit(1,)
     }
@@ -323,8 +337,10 @@ export const auditCommand = new Command('audit',)
 
 function formatBytes(bytes: number,): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB',]
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) {
+    return '0 Bytes'
+  }
 
   const i = Math.floor(Math.log(bytes,) / Math.log(1024,),)
-  return `${Math.round(bytes / Math.pow(1024, i,) * 100,) / 100} ${sizes[i]}`
+  return `${Math.round((bytes / Math.pow(1024, i,)) * 100,) / 100} ${sizes[i]}`
 }

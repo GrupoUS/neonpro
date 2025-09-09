@@ -28,9 +28,7 @@ export class CleanupEngine implements ICleanupEngine {
   private rollbacks: Map<string, RollbackOperation> = new Map()
   private activeExecutions: Set<string> = new Set()
 
-  constructor(
-    private readonly backupBasePath: string = './.audit-backups',
-  ) {}
+  constructor(private readonly backupBasePath: string = './.audit-backups',) {}
 
   /**
    * Create cleanup plan from audit findings
@@ -211,8 +209,8 @@ export class CleanupEngine implements ICleanupEngine {
       execution.completedAt = new Date()
       if (execution.status === 'running') {
         execution.status = execution.actionsFailed > 0
-          ? 'completed_with_errors' as ExecutionStatus
-          : 'completed' as ExecutionStatus
+          ? ('completed_with_errors' as ExecutionStatus)
+          : ('completed' as ExecutionStatus)
       }
     } catch (error) {
       execution.status = 'failed' as ExecutionStatus
@@ -304,8 +302,8 @@ export class CleanupEngine implements ICleanupEngine {
 
       execution.completedAt = new Date()
       execution.status = execution.filesFailed > 0
-        ? 'completed_with_errors' as RollbackStatus
-        : 'completed' as RollbackStatus
+        ? ('completed_with_errors' as RollbackStatus)
+        : ('completed' as RollbackStatus)
     } catch (error) {
       execution.status = 'failed' as RollbackStatus
       execution.errors.push({
@@ -484,13 +482,7 @@ export class CleanupEngine implements ICleanupEngine {
     }
 
     // Important configuration files
-    const importantPatterns = [
-      /\.env/,
-      /\.config\./,
-      /webpack\./,
-      /vite\./,
-      /rollup\./,
-    ]
+    const importantPatterns = [/\.env/, /\.config\./, /webpack\./, /vite\./, /rollup\./,]
 
     if (importantPatterns.some(pattern => pattern.test(filePath,))) {
       return 'medium'
@@ -512,7 +504,8 @@ export class CleanupEngine implements ICleanupEngine {
     }
 
     const totalSize = actions.reduce((sum, a,) => sum + a.estimatedSize, 0,)
-    if (totalSize > 100 * 1024 * 1024) { // > 100MB
+    if (totalSize > 100 * 1024 * 1024) {
+      // > 100MB
       factors.push(`Large total cleanup size: ${this.formatBytes(totalSize,)}`,)
     }
 
@@ -523,10 +516,7 @@ export class CleanupEngine implements ICleanupEngine {
     return factors
   }
 
-  private generatePlanRecommendations(
-    plan: CleanupPlan,
-    issues: ValidationIssue[],
-  ): string[] {
+  private generatePlanRecommendations(plan: CleanupPlan, issues: ValidationIssue[],): string[] {
     const recommendations: string[] = []
 
     if (issues.some(i => i.severity === 'error')) {
@@ -542,7 +532,8 @@ export class CleanupEngine implements ICleanupEngine {
       recommendations.push('Consider processing in smaller batches to reduce risk',)
     }
 
-    if (plan.spaceToReclaim > 1024 * 1024 * 1024) { // > 1GB
+    if (plan.spaceToReclaim > 1024 * 1024 * 1024) {
+      // > 1GB
       recommendations.push('Verify sufficient backup storage space is available',)
     }
 
@@ -680,10 +671,12 @@ export class CleanupEngine implements ICleanupEngine {
 
   private formatBytes(bytes: number,): string {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB',]
-    if (bytes === 0) return '0 Bytes'
+    if (bytes === 0) {
+      return '0 Bytes'
+    }
 
     const i = Math.floor(Math.log(bytes,) / Math.log(1024,),)
-    return `${Math.round(bytes / Math.pow(1024, i,) * 100,) / 100} ${sizes[i]}`
+    return `${Math.round((bytes / Math.pow(1024, i,)) * 100,) / 100} ${sizes[i]}`
   }
 
   /**

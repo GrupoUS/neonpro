@@ -16,7 +16,7 @@ export const analyzeCommand = new Command('analyze',)
   .option('--unused', 'Find unused assets',)
   .option('--importance', 'Calculate importance scores',)
   .option('--graph-viz', 'Generate GraphViz DOT output',)
-  .option('-v, --verbose', 'Enable verbose output', false)
+  .option('-v, --verbose', 'Enable verbose output', false,)
   .action(async (path: string, options: any,) => {
     const spinner = ora('Analyzing dependencies...',).start()
 
@@ -44,7 +44,7 @@ export const analyzeCommand = new Command('analyze',)
       const analyzeOptions = {
         followDynamicImports: true,
         includeTypeImports: false,
-        maxTransitiveDepth: parseInt(options.maxDepth, 10) || 10,
+        maxTransitiveDepth: parseInt(options.maxDepth, 10,) || 10,
         detectCircularDependencies: options.circular,
         supportedExtensions: ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts',],
       }
@@ -82,11 +82,13 @@ export const analyzeCommand = new Command('analyze',)
       if (options.importance) {
         spinner.text = 'Calculating importance scores...'
         const scoredGraph = analyzer.calculateImportanceScores(dependencyGraph,)
-        results.importanceScores = Array.from(scoredGraph.nodes.entries(),).map(([id, node,],) => ({
-          assetPath: id,
-          score: node.importanceScore,
-          dependents: node.dependents.length,
-        })).sort((a, b,) => b.score - a.score)
+        results.importanceScores = Array.from(scoredGraph.nodes.entries(),)
+          .map(([id, node,],) => ({
+            assetPath: id,
+            score: node.importanceScore,
+            dependents: node.dependents.length,
+          }))
+          .sort((a, b,) => b.score - a.score)
       }
 
       spinner.succeed('Dependency analysis completed',)
@@ -187,7 +189,9 @@ function generateTextOutput(results: any,): string {
     output += `Top 20 Most Important Assets:\n`
     results.importanceScores.slice(0, 20,).forEach((item: any, i: number,) => {
       output += `  ${(i + 1).toString().padStart(2,)}. ${item.assetPath} (${
-        item.score.toFixed(4,)
+        item.score.toFixed(
+          4,
+        )
       })\n`
     },)
   }

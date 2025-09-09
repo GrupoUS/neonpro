@@ -91,54 +91,81 @@ export class ErrorClassifier {
     { category: ErrorCategory; severity: ErrorSeverity }
   >([
     // Network errors
-    [/ENOTFOUND|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENETUNREACH/i, {
-      category: ErrorCategory.NETWORK,
-      severity: ErrorSeverity.MEDIUM,
-    },],
-    [/fetch.*failed|network.*error|connection.*error/i, {
-      category: ErrorCategory.NETWORK,
-      severity: ErrorSeverity.MEDIUM,
-    },],
+    [
+      /ENOTFOUND|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENETUNREACH/i,
+      {
+        category: ErrorCategory.NETWORK,
+        severity: ErrorSeverity.MEDIUM,
+      },
+    ],
+    [
+      /fetch.*failed|network.*error|connection.*error/i,
+      {
+        category: ErrorCategory.NETWORK,
+        severity: ErrorSeverity.MEDIUM,
+      },
+    ],
 
     // File system errors
-    [/ENOENT|EACCES|EPERM|EEXIST|EMFILE|ENFILE/i, {
-      category: ErrorCategory.FILE_SYSTEM,
-      severity: ErrorSeverity.MEDIUM,
-    },],
-    [/no such file|permission denied|access denied|file not found/i, {
-      category: ErrorCategory.FILE_SYSTEM,
-      severity: ErrorSeverity.MEDIUM,
-    },],
+    [
+      /ENOENT|EACCES|EPERM|EEXIST|EMFILE|ENFILE/i,
+      {
+        category: ErrorCategory.FILE_SYSTEM,
+        severity: ErrorSeverity.MEDIUM,
+      },
+    ],
+    [
+      /no such file|permission denied|access denied|file not found/i,
+      {
+        category: ErrorCategory.FILE_SYSTEM,
+        severity: ErrorSeverity.MEDIUM,
+      },
+    ],
 
     // Memory errors
-    [/out of memory|maximum call stack|heap.*exceeded/i, {
-      category: ErrorCategory.MEMORY,
-      severity: ErrorSeverity.CRITICAL,
-    },],
+    [
+      /out of memory|maximum call stack|heap.*exceeded/i,
+      {
+        category: ErrorCategory.MEMORY,
+        severity: ErrorSeverity.CRITICAL,
+      },
+    ],
 
     // Parsing errors
-    [/syntax.*error|parse.*error|invalid.*json|malformed/i, {
-      category: ErrorCategory.PARSING,
-      severity: ErrorSeverity.LOW,
-    },],
+    [
+      /syntax.*error|parse.*error|invalid.*json|malformed/i,
+      {
+        category: ErrorCategory.PARSING,
+        severity: ErrorSeverity.LOW,
+      },
+    ],
 
     // Timeout errors
-    [/timeout|timed out|deadline exceeded/i, {
-      category: ErrorCategory.TIMEOUT,
-      severity: ErrorSeverity.MEDIUM,
-    },],
+    [
+      /timeout|timed out|deadline exceeded/i,
+      {
+        category: ErrorCategory.TIMEOUT,
+        severity: ErrorSeverity.MEDIUM,
+      },
+    ],
 
     // Validation errors
-    [/validation.*error|invalid.*input|schema.*error/i, {
-      category: ErrorCategory.VALIDATION,
-      severity: ErrorSeverity.LOW,
-    },],
+    [
+      /validation.*error|invalid.*input|schema.*error/i,
+      {
+        category: ErrorCategory.VALIDATION,
+        severity: ErrorSeverity.LOW,
+      },
+    ],
 
     // Configuration errors
-    [/config.*error|setting.*error|invalid.*configuration/i, {
-      category: ErrorCategory.CONFIGURATION,
-      severity: ErrorSeverity.HIGH,
-    },],
+    [
+      /config.*error|setting.*error|invalid.*configuration/i,
+      {
+        category: ErrorCategory.CONFIGURATION,
+        severity: ErrorSeverity.HIGH,
+      },
+    ],
   ],)
 
   static classify(error: Error, context: ErrorContext,): ClassifiedError {
@@ -182,7 +209,9 @@ export class ErrorClassifier {
   }
 
   private static isRecoverable(category: ErrorCategory, severity: ErrorSeverity,): boolean {
-    if (severity === ErrorSeverity.CRITICAL) return false
+    if (severity === ErrorSeverity.CRITICAL) {
+      return false
+    }
 
     const recoverableCategories = [
       ErrorCategory.NETWORK,
@@ -210,8 +239,12 @@ export class ErrorClassifier {
     severity: ErrorSeverity,
     isRecoverable: boolean,
   ): RecoveryStrategy {
-    if (!isRecoverable) return RecoveryStrategy.ABORT
-    if (severity === ErrorSeverity.CRITICAL) return RecoveryStrategy.ABORT
+    if (!isRecoverable) {
+      return RecoveryStrategy.ABORT
+    }
+    if (severity === ErrorSeverity.CRITICAL) {
+      return RecoveryStrategy.ABORT
+    }
 
     switch (category) {
       case ErrorCategory.NETWORK:
@@ -316,7 +349,8 @@ export class RetryMechanism {
 
         // Check if error is retryable
         if (
-          !classifiedError.retryable || !config.retryableErrors.includes(classifiedError.category,)
+          !classifiedError.retryable
+          || !config.retryableErrors.includes(classifiedError.category,)
         ) {
           logger.debug(`Error not retryable: ${classifiedError.category}`, {
             component: 'RetryMechanism',
@@ -328,16 +362,20 @@ export class RetryMechanism {
 
         // Don't retry on last attempt
         if (attempt === config.maxAttempts) {
-          logger.error(`Operation failed after ${attempt} attempts`, {
-            component: 'RetryMechanism',
-            operation: context.operation,
-            metadata: {
-              attempts: attempt,
-              errorCategory: classifiedError.category,
-              errorSeverity: classifiedError.severity,
+          logger.error(
+            `Operation failed after ${attempt} attempts`,
+            {
+              component: 'RetryMechanism',
+              operation: context.operation,
+              metadata: {
+                attempts: attempt,
+                errorCategory: classifiedError.category,
+                errorSeverity: classifiedError.severity,
+              },
+              ...context.userContext,
             },
-            ...context.userContext,
-          }, error as Error,)
+            error as Error,
+          )
           throw classifiedError
         }
 
@@ -401,8 +439,10 @@ export class CircuitBreaker extends EventEmitter {
   }
 
   private shouldAttemptReset(): boolean {
-    return this.state === CircuitBreakerState.OPEN
+    return (
+      this.state === CircuitBreakerState.OPEN
       && Date.now() - this.lastFailureTime >= this.config.resetTimeoutMs
+    )
   }
 
   private onSuccess(): void {
@@ -532,7 +572,7 @@ export class ErrorHandler extends EventEmitter {
     if (!this.circuitBreakers.has(name,)) {
       const circuitBreaker = new CircuitBreaker(name, this.config.defaultCircuitBreaker,)
 
-      circuitBreaker.on('stateChange', (state,) => {
+      circuitBreaker.on('stateChange', state => {
         this.emit('circuitBreakerStateChange', { name, state, },)
       },)
 
@@ -543,7 +583,9 @@ export class ErrorHandler extends EventEmitter {
   }
 
   private recordError(error: ClassifiedError,): void {
-    if (!this.config.reportMetrics) return
+    if (!this.config.reportMetrics) {
+      return
+    }
 
     const key = `${error.category}_${error.severity}`
     const current = this.errorMetrics.get(key,) || { count: 0, lastOccurrence: 0, }
@@ -557,7 +599,9 @@ export class ErrorHandler extends EventEmitter {
   }
 
   private logError(error: ClassifiedError,): void {
-    if (!this.config.logErrors) return
+    if (!this.config.logErrors) {
+      return
+    }
 
     const context = {
       component: 'ErrorHandler',
@@ -662,11 +706,15 @@ export class ErrorHandler extends EventEmitter {
           this.emit('fallbackUsed', { context, result, },)
           return result
         } catch (fallbackError) {
-          logger.error(`Fallback function failed for ${context.operation}`, {
-            component: 'ErrorHandler',
-            operation: context.operation,
-            ...context.userContext,
-          }, fallbackError as Error,)
+          logger.error(
+            `Fallback function failed for ${context.operation}`,
+            {
+              component: 'ErrorHandler',
+              operation: context.operation,
+              ...context.userContext,
+            },
+            fallbackError as Error,
+          )
 
           if (fallbackConfig.fallbackValue !== undefined) {
             this.emit('fallbackUsed', { context, result: fallbackConfig.fallbackValue, },)

@@ -38,7 +38,7 @@ export class FileScanner implements IFileScanner {
     const assets: CodeAsset[] = []
     const warnings: ScanWarning[] = []
     let filesProcessed = 0
-    let directoriesProcessed = 0
+    const directoriesProcessed = 0
     let skippedFiles = 0
 
     try {
@@ -81,7 +81,9 @@ export class FileScanner implements IFileScanner {
           warnings.push({
             type: 'access_denied',
             path: filePath,
-            message: `Failed to process file: ${error.message}`,
+            message: `Failed to process file: ${
+              error instanceof Error ? error.message : String(error,)
+            }`,
             critical: false,
           },)
           skippedFiles++
@@ -109,7 +111,7 @@ export class FileScanner implements IFileScanner {
       warnings.push({
         type: 'access_denied',
         path: options.baseDirectory,
-        message: `Scan failed: ${error.message}`,
+        message: `Scan failed: ${error instanceof Error ? error.message : String(error,)}`,
         critical: true,
       },)
 
@@ -153,9 +155,9 @@ export class FileScanner implements IFileScanner {
   public getDefaultOptions(baseDirectory: string,): ScanOptions {
     return {
       baseDirectory: resolve(baseDirectory,),
-      maxDepth: DEFAULT_SCAN_OPTIONS.maxDepth || -1,
-      includePatterns: DEFAULT_SCAN_OPTIONS.includePatterns || ['**/*',],
-      excludePatterns: DEFAULT_SCAN_OPTIONS.excludePatterns || [
+      maxDepth: DEFAULT_SCAN_OPTIONS.maxDepth ?? -1,
+      includePatterns: DEFAULT_SCAN_OPTIONS.includePatterns ?? ['**/*',],
+      excludePatterns: DEFAULT_SCAN_OPTIONS.excludePatterns ?? [
         'node_modules/**',
         '.git/**',
         'dist/**',
@@ -165,8 +167,8 @@ export class FileScanner implements IFileScanner {
         '.turbo/**',
         '.next/**',
       ],
-      followSymlinks: DEFAULT_SCAN_OPTIONS.followSymlinks || false,
-      includeHidden: DEFAULT_SCAN_OPTIONS.includeHidden || false,
+      followSymlinks: DEFAULT_SCAN_OPTIONS.followSymlinks ?? false,
+      includeHidden: DEFAULT_SCAN_OPTIONS.includeHidden ?? false,
     }
   }
 
@@ -255,7 +257,7 @@ export class FileScanner implements IFileScanner {
     const assets: CodeAsset[] = []
     const warnings: ScanWarning[] = []
     let filesProcessed = 0
-    let directoriesProcessed = 0
+    const directoriesProcessed = 0
     let skippedFiles = 0
 
     try {
@@ -285,7 +287,9 @@ export class FileScanner implements IFileScanner {
           warnings.push({
             type: 'access_denied',
             path: filePath,
-            message: `Failed to process: ${error.message}`,
+            message: `Failed to process: ${
+              error instanceof Error ? error.message : String(error,)
+            }`,
             critical: false,
           },)
           skippedFiles++
@@ -293,7 +297,8 @@ export class FileScanner implements IFileScanner {
 
         // Update progress at minimum intervals
         if (
-          currentTime - lastProgressUpdate >= PERFORMANCE_REQUIREMENTS.MIN_PROGRESS_UPDATE_INTERVAL
+          currentTime - lastProgressUpdate
+            >= PERFORMANCE_REQUIREMENTS.MIN_PROGRESS_UPDATE_INTERVAL
         ) {
           const progress: ScanProgress = {
             filesFound: filesProcessed,
@@ -365,13 +370,26 @@ export class FileScanner implements IFileScanner {
 
     for (const pattern of includePatterns) {
       try {
-        const files = await glob(pattern, {
+        const globOptions: any = {
           ignore: options.excludePatterns,
-          follow: options.followSymlinks,
-          dot: options.includeHidden,
-          maxDepth: options.maxDepth === -1 ? undefined : options.maxDepth,
-        },)
+        }
 
+        // Only set follow if explicitly enabled
+        if (options.followSymlinks) {
+          globOptions.follow = true
+        }
+
+        // Only set dot if explicitly enabled
+        if (options.includeHidden) {
+          globOptions.dot = true
+        }
+
+        // Only set maxDepth if not unlimited (-1)
+        if (options.maxDepth !== -1) {
+          globOptions.maxDepth = options.maxDepth
+        }
+
+        const files = await glob(pattern, globOptions,)
         allFiles.push(...files,)
       } catch (error) {
         // Continue with other patterns if one fails
@@ -422,7 +440,11 @@ export class FileScanner implements IFileScanner {
         metadata,
       }
     } catch (error) {
-      throw new Error(`Failed to process file ${filePath}: ${error.message}`,)
+      throw new Error(
+        `Failed to process file ${filePath}: ${
+          error instanceof Error ? error.message : String(error,)
+        }`,
+      )
     }
   }
 
@@ -435,16 +457,20 @@ export class FileScanner implements IFileScanner {
 
     // Test files
     if (
-      fileName.includes('.test.',) || fileName.includes('.spec.',)
-      || relativePath.includes('__tests__',) || relativePath.includes('/test/',)
+      fileName.includes('.test.',)
+      || fileName.includes('.spec.',)
+      || relativePath.includes('__tests__',)
+      || relativePath.includes('/test/',)
     ) {
       return 'test'
     }
 
     // Configuration files
     if (
-      fileName.includes('config',) || fileName.includes('.json',)
-      || fileName.includes('.yml',) || fileName.includes('.yaml',)
+      fileName.includes('config',)
+      || fileName.includes('.json',)
+      || fileName.includes('.yml',)
+      || fileName.includes('.yaml',)
       || ['package.json', 'turbo.json', 'tsconfig.json', '.eslintrc.js',].some(name =>
         fileName.endsWith(name,)
       )
@@ -515,7 +541,8 @@ export class FileScanner implements IFileScanner {
     let currentDir = filePath
 
     // Traverse up the directory tree looking for package.json
-    for (let i = 0; i < 5; i++) { // Limit traversal to prevent infinite loops
+    for (let i = 0; i < 5; i++) {
+      // Limit traversal to prevent infinite loops
       currentDir = join(currentDir, '..',)
       const packageJsonPath = join(currentDir, 'package.json',)
 

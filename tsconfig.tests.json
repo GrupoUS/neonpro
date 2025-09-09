@@ -4,7 +4,8 @@
     "rootDir": ".",
     "outDir": "./dist-tests",
     "declaration": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["vitest", "vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "tests/**/*"

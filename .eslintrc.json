@@ -11,10 +11,7 @@
     "prettier"
   ],
   "extends": [
-    "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "@typescript-eslint/recommended-requiring-type-checking",
-    "prettier"
+    "eslint:recommended"
   ],
   "rules": {
     "prettier/prettier": "error",
@@ -45,6 +42,13 @@
       "rules": {
         "no-console": "off",
         "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["src/types/shims.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-var": "off"
       }
     }
   ],

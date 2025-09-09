@@ -87,14 +87,18 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Basic Graph Construction', () => {
     it('should implement buildGraph method with correct signature', async () => {
-      if (!analyzer) return // Skip until implementation exists
+      if (!analyzer) {
+        return
+      } // Skip until implementation exists
 
       expect(analyzer.buildGraph,).toBeDefined()
       expect(typeof analyzer.buildGraph,).toBe('function',)
     })
 
     it('should build dependency graph from code assets', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
 
@@ -110,7 +114,9 @@ describe('DependencyAnalyzer Contract Tests', () => {
     })
 
     it('should create correct graph nodes for each asset', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
 
@@ -133,14 +139,18 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Circular Dependency Detection', () => {
     it('should implement detectCircularDependencies method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.detectCircularDependencies,).toBeDefined()
       expect(typeof analyzer.detectCircularDependencies,).toBe('function',)
     })
 
     it('should detect circular dependencies in graph', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const cycles = analyzer.detectCircularDependencies(graph,)
@@ -158,7 +168,9 @@ describe('DependencyAnalyzer Contract Tests', () => {
     })
 
     it('should handle graph with no circular dependencies', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const cycles = analyzer.detectCircularDependencies(graph,)
@@ -171,14 +183,18 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Asset Analysis', () => {
     it('should implement analyzeAsset method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.analyzeAsset,).toBeDefined()
       expect(typeof analyzer.analyzeAsset,).toBe('function',)
     })
 
     it('should analyze specific asset dependencies', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const assetPath = '/apps/web/src/App.tsx'
       const dependencies = await analyzer.analyzeAsset(assetPath, defaultOptions,)
@@ -193,12 +209,14 @@ describe('DependencyAnalyzer Contract Tests', () => {
     })
 
     it('should parse import statements correctly', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const assetPath = '/apps/web/src/App.tsx'
       const dependencies = await analyzer.analyzeAsset(assetPath, defaultOptions,)
 
-      dependencies.importStatements.forEach((importStmt,) => {
+      dependencies.importStatements.forEach(importStmt => {
         expect(importStmt.imported,).toBeInstanceOf(Array,)
         expect(typeof importStmt.source,).toBe('string',)
         expect(['default', 'named', 'namespace', 'side_effect',],).toContain(importStmt.importType,)
@@ -210,21 +228,25 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Importance Score Calculation', () => {
     it('should implement calculateImportanceScores method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.calculateImportanceScores,).toBeDefined()
       expect(typeof analyzer.calculateImportanceScores,).toBe('function',)
     })
 
     it('should calculate importance scores for all nodes', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const updatedGraph = analyzer.calculateImportanceScores(graph,)
 
       expect(updatedGraph.nodes.size,).toBe(graph.nodes.size,)
 
-      updatedGraph.nodes.forEach((node,) => {
+      updatedGraph.nodes.forEach(node => {
         expect(typeof node.importance,).toBe('number',)
         expect(node.importance,).toBeGreaterThanOrEqual(0,)
         expect(node.importance,).toBeLessThanOrEqual(100,)
@@ -234,20 +256,24 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Unused Assets Detection', () => {
     it('should implement findUnusedAssets method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.findUnusedAssets,).toBeDefined()
       expect(typeof analyzer.findUnusedAssets,).toBe('function',)
     })
 
     it('should identify unused assets in graph', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const unusedAssets = analyzer.findUnusedAssets(graph,)
 
       expect(unusedAssets,).toBeInstanceOf(Array,)
-      unusedAssets.forEach((assetPath,) => {
+      unusedAssets.forEach(assetPath => {
         expect(typeof assetPath,).toBe('string',)
         expect(graph.nodes.has(assetPath,),).toBe(true,)
       },)
@@ -256,14 +282,18 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Graph Validation', () => {
     it('should implement validateGraph method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.validateGraph,).toBeDefined()
       expect(typeof analyzer.validateGraph,).toBe('function',)
     })
 
     it('should validate graph integrity', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const issues = analyzer.validateGraph(graph,)
@@ -288,7 +318,9 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Performance Requirements', () => {
     it('should analyze large codebases within time constraints', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       // Generate larger mock dataset (1000 files)
       const largeAssetSet = Array.from({ length: 1000, }, (_, i,) => ({
@@ -326,14 +358,18 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Transitive Dependencies', () => {
     it('should implement getTransitiveDependencies method', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       expect(analyzer.getTransitiveDependencies,).toBeDefined()
       expect(typeof analyzer.getTransitiveDependencies,).toBe('function',)
     })
 
     it('should find transitive dependencies with depth control', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
       const graph = await analyzer.buildGraph(mockCodeAssets, defaultOptions,)
       const assetPath = '/apps/web/src/main.tsx'
@@ -342,7 +378,7 @@ describe('DependencyAnalyzer Contract Tests', () => {
       const transitiveDeps = analyzer.getTransitiveDependencies(assetPath, graph, maxDepth,)
 
       expect(transitiveDeps,).toBeInstanceOf(Array,)
-      transitiveDeps.forEach((depPath,) => {
+      transitiveDeps.forEach(depPath => {
         expect(typeof depPath,).toBe('string',)
       },)
     })
@@ -350,33 +386,36 @@ describe('DependencyAnalyzer Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid asset paths gracefully', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
-      await expect(
-        analyzer.analyzeAsset('/nonexistent/path.ts', defaultOptions,),
-      ).rejects.toThrow()
+      await expect(analyzer.analyzeAsset('/nonexistent/path.ts', defaultOptions,),).rejects
+        .toThrow()
     })
 
     it('should handle malformed code assets', async () => {
-      if (!analyzer) return
+      if (!analyzer) {
+        return
+      }
 
-      const malformedAssets = [{
-        path: '/invalid/syntax.ts',
-        size: 100,
-        lastModified: new Date(),
-        type: 'typescript' as const,
-        packageName: 'test',
-        layer: 'app',
-        dependencies: [],
-        exports: [],
-        content: 'invalid syntax }{[',
-        lineCount: 1,
-        complexity: 1,
-      },]
+      const malformedAssets = [
+        {
+          path: '/invalid/syntax.ts',
+          size: 100,
+          lastModified: new Date(),
+          type: 'typescript' as const,
+          packageName: 'test',
+          layer: 'app',
+          dependencies: [],
+          exports: [],
+          content: 'invalid syntax }{[',
+          lineCount: 1,
+          complexity: 1,
+        },
+      ]
 
-      await expect(
-        analyzer.buildGraph(malformedAssets, defaultOptions,),
-      ).rejects.toThrow()
+      await expect(analyzer.buildGraph(malformedAssets, defaultOptions,),).rejects.toThrow()
     })
   })
 

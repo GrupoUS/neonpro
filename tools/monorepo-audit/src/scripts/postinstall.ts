@@ -33,12 +33,7 @@ console.log('',)
 const fs = await import('fs')
 const path = await import('path')
 
-const indicators = [
-  'turbo.json',
-  'lerna.json',
-  'rush.json',
-  'package.json',
-]
+const indicators = ['turbo.json', 'lerna.json', 'rush.json', 'package.json',]
 
 const foundIndicators: string[] = []
 const cwd = process.cwd()

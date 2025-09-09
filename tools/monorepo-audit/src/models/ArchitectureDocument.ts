@@ -22,12 +22,7 @@ export class ArchitectureDocument {
   public readonly lastUpdated: Date
   public readonly version: string
 
-  constructor(
-    filePath: string,
-    type: DocumentType,
-    lastUpdated: Date,
-    version: string = '1.0.0',
-  ) {
+  constructor(filePath: string, type: DocumentType, lastUpdated: Date, version: string = '1.0.0',) {
     this.filePath = filePath
     this.type = type
     this.lastUpdated = lastUpdated
@@ -76,10 +71,11 @@ export class ArchitectureDocument {
    * Check if a file path has an exception for a specific rule
    */
   public hasException(ruleId: string, filePath: string,): boolean {
-    return this.exceptions.some(exception =>
-      exception.ruleId === ruleId
-      && exception.appliesTo.some(pattern => new RegExp(pattern,).test(filePath,))
-      && (!exception.expiresAt || exception.expiresAt > new Date())
+    return this.exceptions.some(
+      exception =>
+        exception.ruleId === ruleId
+        && exception.appliesTo.some(pattern => new RegExp(pattern,).test(filePath,))
+        && (!exception.expiresAt || exception.expiresAt > new Date()),
     )
   } /**
    * Get standards that apply to a specific file path

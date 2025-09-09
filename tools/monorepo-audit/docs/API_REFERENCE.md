@@ -518,10 +518,10 @@ try {
 
 // Using error handler service
 const errorHandler = new ErrorHandler()
-const result = await errorHandler.retry(
-  () => scanner.scan(options,),
-  { maxRetries: 3, backoffMs: 1000, },
-)
+const result = await errorHandler.retry(() => scanner.scan(options,), {
+  maxRetries: 3,
+  backoffMs: 1000,
+},)
 ```
 
 ### Return Types

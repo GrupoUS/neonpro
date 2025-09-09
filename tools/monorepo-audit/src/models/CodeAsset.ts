@@ -146,11 +146,13 @@ export class CodeAsset {
    * Check if this is a test file
    */
   public isTestFile(): boolean {
-    return this.type === AssetType.TEST
+    return (
+      this.type === AssetType.TEST
       || this.path.includes('.test.',)
       || this.path.includes('.spec.',)
       || this.path.includes('/__tests__/',)
       || this.path.includes('/test/',)
+    )
   }
 
   /**

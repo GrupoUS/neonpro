@@ -20,7 +20,7 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "build": "npm run clean && tsc && npm run build:chmod",
+    "build": "npm run clean && tsc --project tsconfig.build.json && npm run build:chmod",
     "build:production": "NODE_ENV=production npm run build",
     "build:chmod": "chmod +x dist/cli/index.js",
     "clean": "rm -rf dist/",
@@ -32,7 +32,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ tests/",
     "lint:fix": "eslint src/ tests/ --fix",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit --project tsconfig.build.json",
     "format": "prettier --write src/ tests/ docs/",
     "format:check": "prettier --check src/ tests/ docs/",
     "quality": "npm run type-check && npm run lint && npm run format:check",
@@ -53,13 +53,13 @@
     "ts-morph": "^20.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
     "@types/fs-extra": "^11.0.4",
-    "typescript": "^5.7.2",
-    "vitest": "^1.1.0",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0"
+    "typescript": "^5.7.2",
+    "vitest": "^1.1.0"
   },
   "keywords": [
     "monorepo",
