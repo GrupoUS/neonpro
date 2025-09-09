@@ -1,18 +1,23 @@
-import { SystemValidator, ValidationResult, Performance, SecurityResult } from '../core/system-validator';
-import { TanStackRouterValidator } from './tanstack-router-validator';
-import { SupabaseValidator } from './supabase-validator';
-import { ViteValidator } from './vite-validator';
-import { React19Validator } from './react19-validator';
-import { readdir, readFile, access, constants } from 'fs/promises';
-import { join, relative } from 'path';
-import { performance } from 'perf_hooks';
+import { access, constants, readdir, readFile, } from 'fs/promises'
+import { join, relative, } from 'path'
+import { performance, } from 'perf_hooks'
+import {
+  Performance,
+  SecurityResult,
+  SystemValidator,
+  ValidationResult,
+} from '../core/system-validator'
+import { React19Validator, } from './react19-validator'
+import { SupabaseValidator, } from './supabase-validator'
+import { TanStackRouterValidator, } from './tanstack-router-validator'
+import { ViteValidator, } from './vite-validator'
 
 /**
  * HealthcareComplianceValidator - Constitutional TDD Master Healthcare Compliance Orchestrator
- * 
+ *
  * Coordinates all specialized validators and provides comprehensive healthcare compliance
  * assessment for NeonPro healthcare management system with LGPD/ANVISA requirements.
- * 
+ *
  * Constitutional Requirements:
  * - Process 10k+ files in <4 hours
  * - Memory usage <2GB
@@ -23,276 +28,307 @@ import { performance } from 'perf_hooks';
  */
 
 interface HealthcareComplianceConfig {
-  lgpd: LGPDConfig;
-  anvisa: ANVISAConfig;
-  dataClassification: DataClassificationConfig;
-  auditRequirements: AuditRequirementsConfig;
-  performanceRequirements: PerformanceRequirementsConfig;
-  accessibilityRequirements: AccessibilityRequirementsConfig;
+  lgpd: LGPDConfig
+  anvisa: ANVISAConfig
+  dataClassification: DataClassificationConfig
+  auditRequirements: AuditRequirementsConfig
+  performanceRequirements: PerformanceRequirementsConfig
+  accessibilityRequirements: AccessibilityRequirementsConfig
 }
 
 interface LGPDConfig {
-  version: '2018' | '2020' | '2024';
-  scope: 'full' | 'healthcare' | 'minimal';
-  dataSubjectRights: DataSubjectRight[];
-  lawfulBasis: LawfulBasis[];
-  dataMinimization: boolean;
-  consentManagement: boolean;
-  dataPortability: boolean;
-  rightToErasure: boolean;
-  auditLogging: boolean;
+  version: '2018' | '2020' | '2024'
+  scope: 'full' | 'healthcare' | 'minimal'
+  dataSubjectRights: DataSubjectRight[]
+  lawfulBasis: LawfulBasis[]
+  dataMinimization: boolean
+  consentManagement: boolean
+  dataPortability: boolean
+  rightToErasure: boolean
+  auditLogging: boolean
 }
 
 interface ANVISAConfig {
-  regulationScope: 'clinic' | 'hospital' | 'pharmacy' | 'laboratory' | 'all';
-  healthcareProviderTypes: HealthcareProviderType[];
-  medicalDataTypes: MedicalDataType[];
-  prescriptionManagement: boolean;
-  patientSafety: boolean;
-  clinicalWorkflow: boolean;
-  regulatoryReporting: boolean;
-  dataTraceability: boolean;
+  regulationScope: 'clinic' | 'hospital' | 'pharmacy' | 'laboratory' | 'all'
+  healthcareProviderTypes: HealthcareProviderType[]
+  medicalDataTypes: MedicalDataType[]
+  prescriptionManagement: boolean
+  patientSafety: boolean
+  clinicalWorkflow: boolean
+  regulatoryReporting: boolean
+  dataTraceability: boolean
 }
 
 interface DataClassificationConfig {
-  publicData: string[];
-  personalData: string[];
-  sensitivePersonalData: string[];
-  healthcareData: string[];
-  specialCategories: SpecialCategory[];
-  retentionPeriods: RetentionPeriod[];
+  publicData: string[]
+  personalData: string[]
+  sensitivePersonalData: string[]
+  healthcareData: string[]
+  specialCategories: SpecialCategory[]
+  retentionPeriods: RetentionPeriod[]
 }
 
 interface AuditRequirementsConfig {
-  dataAccess: boolean;
-  dataModification: boolean;
-  userAuthentication: boolean;
-  systemChanges: boolean;
-  exportOperations: boolean;
-  deleteOperations: boolean;
-  retentionPeriod: number; // in years
-  logFormat: 'json' | 'xml' | 'csv';
+  dataAccess: boolean
+  dataModification: boolean
+  userAuthentication: boolean
+  systemChanges: boolean
+  exportOperations: boolean
+  deleteOperations: boolean
+  retentionPeriod: number // in years
+  logFormat: 'json' | 'xml' | 'csv'
 }
 
 interface PerformanceRequirementsConfig {
-  brazilianNetworkOptimization: boolean;
-  mobileOptimization: boolean;
-  offlineCapability: boolean;
-  clinicWorkflowOptimization: boolean;
-  emergencyAccessOptimization: boolean;
-  maxLoadTime: number; // in seconds
-  maxBundleSize: number; // in MB
+  brazilianNetworkOptimization: boolean
+  mobileOptimization: boolean
+  offlineCapability: boolean
+  clinicWorkflowOptimization: boolean
+  emergencyAccessOptimization: boolean
+  maxLoadTime: number // in seconds
+  maxBundleSize: number // in MB
 }
 
 interface AccessibilityRequirementsConfig {
-  wcagLevel: 'A' | 'AA' | 'AAA';
-  anvisaCompliance: boolean;
-  healthcareSpecificRequirements: boolean;
-  emergencyAccessibility: boolean;
-  assistiveTechnology: boolean;
-  multilingualSupport: boolean;
+  wcagLevel: 'A' | 'AA' | 'AAA'
+  anvisaCompliance: boolean
+  healthcareSpecificRequirements: boolean
+  emergencyAccessibility: boolean
+  assistiveTechnology: boolean
+  multilingualSupport: boolean
 }
 
-type DataSubjectRight = 'access' | 'rectification' | 'erasure' | 'portability' | 'objection' | 'restriction';
-type LawfulBasis = 'consent' | 'contract' | 'legal_obligation' | 'vital_interests' | 'public_task' | 'legitimate_interests';
-type HealthcareProviderType = 'doctor' | 'nurse' | 'pharmacist' | 'therapist' | 'admin' | 'technician';
-type MedicalDataType = 'patient_record' | 'prescription' | 'diagnosis' | 'treatment' | 'appointment' | 'lab_result';
-type SpecialCategory = 'genetic' | 'biometric' | 'health' | 'racial' | 'political' | 'religious' | 'sexual_orientation';
+type DataSubjectRight =
+  | 'access'
+  | 'rectification'
+  | 'erasure'
+  | 'portability'
+  | 'objection'
+  | 'restriction'
+type LawfulBasis =
+  | 'consent'
+  | 'contract'
+  | 'legal_obligation'
+  | 'vital_interests'
+  | 'public_task'
+  | 'legitimate_interests'
+type HealthcareProviderType =
+  | 'doctor'
+  | 'nurse'
+  | 'pharmacist'
+  | 'therapist'
+  | 'admin'
+  | 'technician'
+type MedicalDataType =
+  | 'patient_record'
+  | 'prescription'
+  | 'diagnosis'
+  | 'treatment'
+  | 'appointment'
+  | 'lab_result'
+type SpecialCategory =
+  | 'genetic'
+  | 'biometric'
+  | 'health'
+  | 'racial'
+  | 'political'
+  | 'religious'
+  | 'sexual_orientation'
 
 interface RetentionPeriod {
-  dataType: string;
-  period: number; // in years
-  lawfulBasis: string;
+  dataType: string
+  period: number // in years
+  lawfulBasis: string
 }
 
 interface CrossValidatorAnalysis {
-  tanstackRouter: any;
-  supabase: any;
-  vite: any;
-  react19: any;
-  consistencyScore: number;
-  conflictingPatterns: string[];
-  synergisticPatterns: string[];
-  gapAnalysis: string[];
+  tanstackRouter: any
+  supabase: any
+  vite: any
+  react19: any
+  consistencyScore: number
+  conflictingPatterns: string[]
+  synergisticPatterns: string[]
+  gapAnalysis: string[]
 }
 
 interface ComplianceGapAnalysis {
-  lgpdGaps: LGPDGap[];
-  anvisaGaps: ANVISAGap[];
-  technicalGaps: TechnicalGap[];
-  processGaps: ProcessGap[];
-  documentationGaps: DocumentationGap[];
+  lgpdGaps: LGPDGap[]
+  anvisaGaps: ANVISAGap[]
+  technicalGaps: TechnicalGap[]
+  processGaps: ProcessGap[]
+  documentationGaps: DocumentationGap[]
 }
 
 interface LGPDGap {
-  article: string;
-  requirement: string;
-  currentImplementation: string;
-  gapSeverity: 'low' | 'medium' | 'high' | 'critical';
-  remediation: string;
-  timeline: string;
-  priority: number;
+  article: string
+  requirement: string
+  currentImplementation: string
+  gapSeverity: 'low' | 'medium' | 'high' | 'critical'
+  remediation: string
+  timeline: string
+  priority: number
 }
 
 interface ANVISAGap {
-  regulation: string;
-  requirement: string;
-  currentImplementation: string;
-  gapSeverity: 'low' | 'medium' | 'high' | 'critical';
-  remediation: string;
-  timeline: string;
-  priority: number;
+  regulation: string
+  requirement: string
+  currentImplementation: string
+  gapSeverity: 'low' | 'medium' | 'high' | 'critical'
+  remediation: string
+  timeline: string
+  priority: number
 }
 
 interface TechnicalGap {
-  component: 'routing' | 'database' | 'build' | 'ui' | 'general';
-  issue: string;
-  impact: 'low' | 'medium' | 'high' | 'critical';
-  remediation: string;
-  effort: 'low' | 'medium' | 'high';
+  component: 'routing' | 'database' | 'build' | 'ui' | 'general'
+  issue: string
+  impact: 'low' | 'medium' | 'high' | 'critical'
+  remediation: string
+  effort: 'low' | 'medium' | 'high'
 }
 
 interface ProcessGap {
-  process: string;
-  issue: string;
-  impact: 'low' | 'medium' | 'high' | 'critical';
-  remediation: string;
-  stakeholders: string[];
+  process: string
+  issue: string
+  impact: 'low' | 'medium' | 'high' | 'critical'
+  remediation: string
+  stakeholders: string[]
 }
 
 interface DocumentationGap {
-  document: string;
-  issue: string;
-  impact: 'low' | 'medium' | 'high' | 'critical';
-  remediation: string;
+  document: string
+  issue: string
+  impact: 'low' | 'medium' | 'high' | 'critical'
+  remediation: string
 }
 
 interface ComplianceRecommendation {
-  category: 'lgpd' | 'anvisa' | 'technical' | 'process' | 'documentation';
-  priority: 'immediate' | 'high' | 'medium' | 'low';
-  title: string;
-  description: string;
-  implementation: string;
-  timeline: string;
-  effort: 'low' | 'medium' | 'high';
-  compliance_impact: number; // 1-100
-  business_impact: 'low' | 'medium' | 'high';
-  dependencies: string[];
+  category: 'lgpd' | 'anvisa' | 'technical' | 'process' | 'documentation'
+  priority: 'immediate' | 'high' | 'medium' | 'low'
+  title: string
+  description: string
+  implementation: string
+  timeline: string
+  effort: 'low' | 'medium' | 'high'
+  compliance_impact: number // 1-100
+  business_impact: 'low' | 'medium' | 'high'
+  dependencies: string[]
 }
 
 interface HealthcareComplianceValidationResult extends ValidationResult {
   configuration: {
-    valid: boolean;
-    lgpdConfig: LGPDConfig | null;
-    anvisaConfig: ANVISAConfig | null;
-    dataClassification: DataClassificationConfig | null;
-    issues: string[];
-  };
-  crossValidatorAnalysis: CrossValidatorAnalysis;
+    valid: boolean
+    lgpdConfig: LGPDConfig | null
+    anvisaConfig: ANVISAConfig | null
+    dataClassification: DataClassificationConfig | null
+    issues: string[]
+  }
+  crossValidatorAnalysis: CrossValidatorAnalysis
   lgpdCompliance: {
-    overallScore: number;
-    article5Score: number;    // Data subject definitions
-    article6Score: number;    // Processing principles
-    article7Score: number;    // Lawful basis
-    article8Score: number;    // Consent
-    article9Score: number;    // Special categories
-    article15Score: number;   // Data subject rights
-    article37Score: number;   // Data protection officer
-    article44Score: number;   // International transfers
-    criticalNonCompliance: string[];
-    recommendations: ComplianceRecommendation[];
-  };
+    overallScore: number
+    article5Score: number // Data subject definitions
+    article6Score: number // Processing principles
+    article7Score: number // Lawful basis
+    article8Score: number // Consent
+    article9Score: number // Special categories
+    article15Score: number // Data subject rights
+    article37Score: number // Data protection officer
+    article44Score: number // International transfers
+    criticalNonCompliance: string[]
+    recommendations: ComplianceRecommendation[]
+  }
   anvisaCompliance: {
-    overallScore: number;
-    healthcareWorkflowScore: number;
-    patientSafetyScore: number;
-    prescriptionManagementScore: number;
-    regulatoryReportingScore: number;
-    dataTraceabilityScore: number;
-    clinicalGovernanceScore: number;
-    criticalNonCompliance: string[];
-    recommendations: ComplianceRecommendation[];
-  };
-  gapAnalysis: ComplianceGapAnalysis;
+    overallScore: number
+    healthcareWorkflowScore: number
+    patientSafetyScore: number
+    prescriptionManagementScore: number
+    regulatoryReportingScore: number
+    dataTraceabilityScore: number
+    clinicalGovernanceScore: number
+    criticalNonCompliance: string[]
+    recommendations: ComplianceRecommendation[]
+  }
+  gapAnalysis: ComplianceGapAnalysis
   riskAssessment: {
-    dataProtectionRisks: RiskAssessment[];
-    operationalRisks: RiskAssessment[];
-    complianceRisks: RiskAssessment[];
-    technicalRisks: RiskAssessment[];
-    overallRiskScore: number;
-  };
+    dataProtectionRisks: RiskAssessment[]
+    operationalRisks: RiskAssessment[]
+    complianceRisks: RiskAssessment[]
+    technicalRisks: RiskAssessment[]
+    overallRiskScore: number
+  }
   actionPlan: {
-    immediate: ComplianceRecommendation[];
-    shortTerm: ComplianceRecommendation[]; // 0-3 months
-    mediumTerm: ComplianceRecommendation[]; // 3-12 months
-    longTerm: ComplianceRecommendation[]; // 12+ months
-  };
+    immediate: ComplianceRecommendation[]
+    shortTerm: ComplianceRecommendation[] // 0-3 months
+    mediumTerm: ComplianceRecommendation[] // 3-12 months
+    longTerm: ComplianceRecommendation[] // 12+ months
+  }
   performance: Performance & {
     validatorPerformance: {
-      tanstackRouter: number;
-      supabase: number;
-      vite: number;
-      react19: number;
-      crossAnalysis: number;
-    };
-    complianceProcessingTime: number;
-  };
+      tanstackRouter: number
+      supabase: number
+      vite: number
+      react19: number
+      crossAnalysis: number
+    }
+    complianceProcessingTime: number
+  }
   security: SecurityResult & {
     dataProtectionSecurity: {
-      encryptionCompliance: boolean;
-      accessControlCompliance: boolean;
-      auditLoggingCompliance: boolean;
-      dataMinimizationCompliance: boolean;
-      score: number;
-    };
+      encryptionCompliance: boolean
+      accessControlCompliance: boolean
+      auditLoggingCompliance: boolean
+      dataMinimizationCompliance: boolean
+      score: number
+    }
     healthcareSecurityCompliance: {
-      patientDataProtection: boolean;
-      medicalRecordSecurity: boolean;
-      prescriptionSecurity: boolean;
-      clinicalWorkflowSecurity: boolean;
-      emergencyAccessSecurity: boolean;
-      score: number;
-    };
-  };
+      patientDataProtection: boolean
+      medicalRecordSecurity: boolean
+      prescriptionSecurity: boolean
+      clinicalWorkflowSecurity: boolean
+      emergencyAccessSecurity: boolean
+      score: number
+    }
+  }
   healthcareCompliance: {
-    overallScore: number;
-    lgpdScore: number;
-    anvisaScore: number;
-    technicalComplianceScore: number;
-    processComplianceScore: number;
-    documentationScore: number;
-    criticalIssues: string[];
-    recommendations: string[];
+    overallScore: number
+    lgpdScore: number
+    anvisaScore: number
+    technicalComplianceScore: number
+    processComplianceScore: number
+    documentationScore: number
+    criticalIssues: string[]
+    recommendations: string[]
     certificationReadiness: {
-      lgpd: boolean;
-      anvisa: boolean;
-      iso27001: boolean;
-      hitech: boolean;
-    };
-  };
+      lgpd: boolean
+      anvisa: boolean
+      iso27001: boolean
+      hitech: boolean
+    }
+  }
 }
 
 interface RiskAssessment {
-  category: string;
-  risk: string;
-  likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
-  impact: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
-  riskScore: number; // 1-25 (likelihood * impact)
-  mitigation: string[];
-  residualRisk: number;
-  owner: string;
+  category: string
+  risk: string
+  likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high'
+  impact: 'very_low' | 'low' | 'medium' | 'high' | 'very_high'
+  riskScore: number // 1-25 (likelihood * impact)
+  mitigation: string[]
+  residualRisk: number
+  owner: string
 }
 
 export class HealthcareComplianceValidator extends SystemValidator {
-  private config: HealthcareComplianceConfig | null = null;
-  private validationStartTime: number = 0;
-  
+  private config: HealthcareComplianceConfig | null = null
+  private validationStartTime: number = 0
+
   // Specialized validators
-  private tanstackValidator = new TanStackRouterValidator();
-  private supabaseValidator = new SupabaseValidator();
-  private viteValidator = new ViteValidator();
-  private react19Validator = new React19Validator();
-  
+  private tanstackValidator = new TanStackRouterValidator()
+  private supabaseValidator = new SupabaseValidator()
+  private viteValidator = new ViteValidator()
+  private react19Validator = new React19Validator()
+
   // LGPD Articles and Requirements Mapping
   private readonly lgpdRequirements = {
     article5: {
@@ -301,8 +337,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Clear definition of personal data',
         'Identification of data subjects',
         'Special category data identification',
-        'Data minimization principles'
-      ]
+        'Data minimization principles',
+      ],
     },
     article6: {
       title: 'Personal Data Processing Principles',
@@ -314,8 +350,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Security',
         'Prevention',
         'Non-discrimination',
-        'Accountability'
-      ]
+        'Accountability',
+      ],
     },
     article7: {
       title: 'Lawful Basis for Processing',
@@ -324,8 +360,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Compliance with legal obligation',
         'Legitimate interests',
         'Vital interests protection',
-        'Public interest or official authority'
-      ]
+        'Public interest or official authority',
+      ],
     },
     article8: {
       title: 'Consent Requirements',
@@ -334,8 +370,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Informed consent',
         'Unambiguous consent',
         'Specific consent',
-        'Consent withdrawal mechanism'
-      ]
+        'Consent withdrawal mechanism',
+      ],
     },
     article9: {
       title: 'Special Categories of Personal Data',
@@ -344,8 +380,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Genetic data protection',
         'Biometric data protection',
         'Explicit consent for health data',
-        'Healthcare provider processing rights'
-      ]
+        'Healthcare provider processing rights',
+      ],
     },
     article15: {
       title: 'Data Subject Rights',
@@ -355,11 +391,11 @@ export class HealthcareComplianceValidator extends SystemValidator {
         'Right to erasure',
         'Right to data portability',
         'Right to object',
-        'Right to restriction of processing'
-      ]
-    }
-  };
-  
+        'Right to restriction of processing',
+      ],
+    },
+  }
+
   // ANVISA Healthcare Requirements
   private readonly anvisaRequirements = {
     healthcareWorkflow: [
@@ -369,7 +405,7 @@ export class HealthcareComplianceValidator extends SystemValidator {
       'Medical record management',
       'Prescription and medication management',
       'Clinical decision support',
-      'Healthcare provider workflow optimization'
+      'Healthcare provider workflow optimization',
     ],
     patientSafety: [
       'Patient identification verification',
@@ -378,7 +414,7 @@ export class HealthcareComplianceValidator extends SystemValidator {
       'Clinical decision support',
       'Error reporting and management',
       'Patient data integrity',
-      'Emergency access procedures'
+      'Emergency access procedures',
     ],
     regulatoryCompliance: [
       'Healthcare provider licensing verification',
@@ -387,20 +423,20 @@ export class HealthcareComplianceValidator extends SystemValidator {
       'Clinical audit trails',
       'Regulatory reporting capabilities',
       'Data retention compliance',
-      'Quality assurance processes'
-    ]
-  };
-
-  constructor() {
-    super();
+      'Quality assurance processes',
+    ],
   }
 
-  async validate(projectPath: string): Promise<HealthcareComplianceValidationResult> {
-    this.validationStartTime = performance.now();
-    
-    console.log('🏥 Starting comprehensive healthcare compliance validation...');
-    console.log('📋 Orchestrating specialized validators for LGPD/ANVISA compliance...');
-    
+  constructor() {
+    super()
+  }
+
+  async validate(projectPath: string,): Promise<HealthcareComplianceValidationResult> {
+    this.validationStartTime = performance.now()
+
+    console.log('🏥 Starting comprehensive healthcare compliance validation...',)
+    console.log('📋 Orchestrating specialized validators for LGPD/ANVISA compliance...',)
+
     const result: HealthcareComplianceValidationResult = {
       valid: false,
       errors: [],
@@ -414,16 +450,16 @@ export class HealthcareComplianceValidator extends SystemValidator {
           supabase: 0,
           vite: 0,
           react19: 0,
-          crossAnalysis: 0
+          crossAnalysis: 0,
         },
-        complianceProcessingTime: 0
+        complianceProcessingTime: 0,
       },
       configuration: {
         valid: false,
         lgpdConfig: null,
         anvisaConfig: null,
         dataClassification: null,
-        issues: []
+        issues: [],
       },
       crossValidatorAnalysis: {
         tanstackRouter: null,
@@ -433,7 +469,7 @@ export class HealthcareComplianceValidator extends SystemValidator {
         consistencyScore: 0,
         conflictingPatterns: [],
         synergisticPatterns: [],
-        gapAnalysis: []
+        gapAnalysis: [],
       },
       lgpdCompliance: {
         overallScore: 0,
@@ -446,7 +482,7 @@ export class HealthcareComplianceValidator extends SystemValidator {
         article37Score: 0,
         article44Score: 0,
         criticalNonCompliance: [],
-        recommendations: []
+        recommendations: [],
       },
       anvisaCompliance: {
         overallScore: 0,
@@ -457,27 +493,27 @@ export class HealthcareComplianceValidator extends SystemValidator {
         dataTraceabilityScore: 0,
         clinicalGovernanceScore: 0,
         criticalNonCompliance: [],
-        recommendations: []
+        recommendations: [],
       },
       gapAnalysis: {
         lgpdGaps: [],
         anvisaGaps: [],
         technicalGaps: [],
         processGaps: [],
-        documentationGaps: []
+        documentationGaps: [],
       },
       riskAssessment: {
         dataProtectionRisks: [],
         operationalRisks: [],
         complianceRisks: [],
         technicalRisks: [],
-        overallRiskScore: 0
+        overallRiskScore: 0,
       },
       actionPlan: {
         immediate: [],
         shortTerm: [],
         mediumTerm: [],
-        longTerm: []
+        longTerm: [],
       },
       security: {
         score: 0,
@@ -488,7 +524,7 @@ export class HealthcareComplianceValidator extends SystemValidator {
           accessControlCompliance: false,
           auditLoggingCompliance: false,
           dataMinimizationCompliance: false,
-          score: 0
+          score: 0,
         },
         healthcareSecurityCompliance: {
           patientDataProtection: false,
@@ -496,8 +532,8 @@ export class HealthcareComplianceValidator extends SystemValidator {
           prescriptionSecurity: false,
           clinicalWorkflowSecurity: false,
           emergencyAccessSecurity: false,
-          score: 0
-        }
+          score: 0,
+        },
       },
       healthcareCompliance: {
         overallScore: 0,
@@ -512,59 +548,65 @@ export class HealthcareComplianceValidator extends SystemValidator {
           lgpd: false,
           anvisa: false,
           iso27001: false,
-          hitech: false
-        }
-      }
-    };
+          hitech: false,
+        },
+      },
+    }
 
     try {
       // 1. Load healthcare compliance configuration
-      await this.loadHealthcareComplianceConfiguration(projectPath, result);
-      
+      await this.loadHealthcareComplianceConfiguration(projectPath, result,)
+
       // 2. Run all specialized validators
-      await this.runSpecializedValidators(projectPath, result);
-      
+      await this.runSpecializedValidators(projectPath, result,)
+
       // 3. Perform cross-validator analysis
-      await this.performCrossValidatorAnalysis(result);
-      
+      await this.performCrossValidatorAnalysis(result,)
+
       // 4. Assess LGPD compliance
-      await this.assessLGPDCompliance(result);
-      
+      await this.assessLGPDCompliance(result,)
+
       // 5. Assess ANVISA compliance
-      await this.assessANVISACompliance(result);
-      
+      await this.assessANVISACompliance(result,)
+
       // 6. Perform gap analysis
-      await this.performGapAnalysis(result);
-      
+      await this.performGapAnalysis(result,)
+
       // 7. Conduct risk assessment
-      await this.conductRiskAssessment(result);
-      
+      await this.conductRiskAssessment(result,)
+
       // 8. Generate action plan
-      await this.generateActionPlan(result);
-      
+      await this.generateActionPlan(result,)
+
       // 9. Assess overall healthcare compliance
-      await this.assessOverallHealthcareCompliance(result);
-      
+      await this.assessOverallHealthcareCompliance(result,)
+
       // 10. Validate security compliance
-      await this.validateSecurityCompliance(result);
-      
+      await this.validateSecurityCompliance(result,)
+
       // Calculate overall validity
-      result.valid = this.calculateOverallValidity(result);
-      
+      result.valid = this.calculateOverallValidity(result,)
     } catch (error) {
-      result.errors.push(`Healthcare compliance validation failed: ${error.message}`);
+      result.errors.push(`Healthcare compliance validation failed: ${error.message}`,)
     }
 
     // Performance metrics
-    const endTime = performance.now();
-    result.performance.duration = endTime - this.validationStartTime;
-    result.performance.memoryUsage = process.memoryUsage().heapUsed;
-    result.performance.complianceProcessingTime = result.performance.duration;
-    
-    console.log(`✅ Healthcare compliance validation completed in ${result.performance.duration.toFixed(2)}ms`);
-    console.log(`🏥 Overall healthcare compliance score: ${result.healthcareCompliance.overallScore}/100`);
-    console.log(`📊 LGPD compliance score: ${result.lgpdCompliance.overallScore}/100`);
-    console.log(`🏛️ ANVISA compliance score: ${result.anvisaCompliance.overallScore}/100`);
-    
-    return result;
+    const endTime = performance.now()
+    result.performance.duration = endTime - this.validationStartTime
+    result.performance.memoryUsage = process.memoryUsage().heapUsed
+    result.performance.complianceProcessingTime = result.performance.duration
+
+    console.log(
+      `✅ Healthcare compliance validation completed in ${
+        result.performance.duration.toFixed(2,)
+      }ms`,
+    )
+    console.log(
+      `🏥 Overall healthcare compliance score: ${result.healthcareCompliance.overallScore}/100`,
+    )
+    console.log(`📊 LGPD compliance score: ${result.lgpdCompliance.overallScore}/100`,)
+    console.log(`🏛️ ANVISA compliance score: ${result.anvisaCompliance.overallScore}/100`,)
+
+    return result
   }
+}

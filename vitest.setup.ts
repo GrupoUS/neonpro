@@ -1,15 +1,11 @@
-import { afterEach, vi } from 'vitest'
+import { afterEach, vi, } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 // Import Supabase mock to prevent GoTrueClient multi-instance warnings
 import './tools/testing/setup/supabase-mock'
-import { QueryClient } from '@tanstack/react-query'
-import { cleanup } from '@testing-library/react'
+import { QueryClient, } from '@tanstack/react-query'
+import { cleanup, } from '@testing-library/react'
 
 afterEach(() => {
-<<<<<<< HEAD
-  cleanup()
-})
-=======
   // Ensure DOM is cleaned to avoid duplicate elements between tests
   try {
     cleanup()
@@ -1009,4 +1005,3 @@ if (!(globalThis as any).mockPatientsHook) {
     headers: { 'content-type': 'application/json', },
   },)
 },)
->>>>>>> 004-tanstack-query-integration

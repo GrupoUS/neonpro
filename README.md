@@ -146,6 +146,7 @@ neonpro/
 ### Build & Development Configuration
 
 **Turborepo Pipeline**:
+
 ```json
 {
   "pipeline": {
@@ -180,6 +181,7 @@ neonpro/
 | **shadcn/ui**       | v4      | Component library | WCAG 2.1 AA compliance, healthcare optimized |
 
 **UI & Styling**:
+
 - **Radix UI**: Accessible primitives for healthcare interfaces
 - **Lucide React**: Icon library with healthcare-specific icons
 - **Framer Motion**: Smooth animations for better UX
@@ -187,6 +189,7 @@ neonpro/
 - **tailwind-merge**: Efficient class merging
 
 **Forms & Validation**:
+
 - **React Hook Form** ^7.62.0: Performance-focused form handling
 - **Zod** ^3.23.8: Runtime schema validation for healthcare data
 - **@hookform/resolvers**: Zod integration with React Hook Form
@@ -201,6 +204,7 @@ neonpro/
 | **@hono/zod-validator** | ^0.2.2  | Request validation | Type-safe API validation           |
 
 **Why Hono.dev over Express/Fastify?**
+
 - **Performance**: 3x faster than Express
 - **Type Safety**: Built-in TypeScript support
 - **Edge-compatible**: Optimized for Vercel Functions
@@ -216,6 +220,7 @@ neonpro/
 | **Supabase Realtime** | Included | Live updates         | Real-time appointment updates, notifications |
 
 **Data Management**:
+
 - **Row Level Security (RLS)**: Database-level data isolation
 - **Audit Logging**: Comprehensive healthcare data access tracking
 - **LGPD Compliance**: Built-in data protection and consent management
@@ -231,6 +236,7 @@ neonpro/
 | **TensorFlow.js**    | Latest                   | Client-side ML    | Anti-No-Show prediction engine                |
 
 **AI Features Implementation**:
+
 - **Universal AI Chat**: Portuguese-optimized conversational AI
 - **Anti-No-Show Engine**: Predictive analytics for appointment attendance
 - **Natural Language Processing**: Brazilian Portuguese healthcare terminology
@@ -273,6 +279,7 @@ neonpro/
 | **MSW**             | ^2.10.5 | API mocking       | Realistic API testing                        |
 
 **Quality Tools**:
+
 - **Oxlint** ^1.13.0: Fast linting with healthcare-specific rules
 - **dprint** ^0.50.0: Code formatting
 - **TypeScript**: Strict mode for type safety
@@ -294,6 +301,7 @@ neonpro/
 | **GitHub Actions** | actions@v4/SHA | CI/CD            | Pinned actions reduce supply-chain risk      |
 
 **Deployment Configuration**:
+
 - **Region**: gru1 (São Paulo) for Brazilian latency optimization
 - **Runtime**: Node.js 20 with edge function support
 - **Security Headers**: CSP, HSTS, X-Frame-Options configured
@@ -312,6 +320,7 @@ neonpro/
 ### 🤖 AI-Powered Intelligence
 
 #### Universal AI Chat
+
 - **Chat inteligente em português** para pacientes e equipe
 - **Agendamento por linguagem natural**: "Quero agendar limpeza de pele na próxima terça"
 - **FAQ automatizado** sobre procedimentos e cuidados
@@ -319,12 +328,14 @@ neonpro/
 - **Consultas ao histórico** do paciente em linguagem natural
 
 #### Engine Anti-No-Show
+
 - **Análise preditiva** de risco de falta para cada agendamento
 - **Intervenções personalizadas** via SMS, WhatsApp e ligações
 - **Lembretes inteligentes** com timing otimizado por perfil
 - **Reagendamento proativo** para casos de alto risco
 
 #### Additional AI Features
+
 - **Behavioral Patient Segmentation**: Personalized care paths based on patient behavior
 - **Revenue Optimization**: AI-driven pricing and package recommendations
 - **Clinical Decision Support**: Evidence-based treatment suggestions
@@ -351,6 +362,7 @@ neonpro/
 ### Compliance Features Implementation
 
 #### LGPD Compliance
+
 - **Gestão de consentimento** granular e automatizada
 - **Auditoria completa** de acesso e modificações de dados
 - **Retenção automática** seguindo normas de prontuários médicos
@@ -361,6 +373,7 @@ neonpro/
 - **Breach Notification**: Automated LGPD-compliant incident reporting
 
 #### ANVISA/CFM Compliance
+
 - **Validação de equipamentos** e produtos conforme ANVISA
 - **Relatórios regulatórios** gerados automaticamente
 - **Medical Practice Standards**: CFM regulation adherence
@@ -501,7 +514,7 @@ pnpm test          # Run all tests
 - **Preferred test command**: `bun run test`
   - Orchestrates package tests via Turborepo and uses Vitest where configured
   - **Guard**: Do not use `bun test` in this monorepo - it will scan raw files and produce false failures
-  
+
 - **Empty packages**: Test scripts configured with `--passWithNoTests` for pipeline compatibility
 
 - **Linting Next.js app**: Use scoped helper to avoid root resolution errors:
@@ -689,7 +702,7 @@ const securityHeaders = [
       "object-src 'none'",
       'block-all-mixed-content',
       'upgrade-insecure-requests',
-    ].join('; '),
+    ].join('; ',),
   },
   {
     key: 'Strict-Transport-Security',
@@ -731,6 +744,7 @@ const securityHeaders = [
 ### Performance Metrics
 
 **Build Performance**:
+
 - **Cold Build**: ~35 seconds (8 packages + 2 apps, Vite optimization)
 - **Incremental Build**: ~3 seconds (with Turbo cache + Vite HMR)
 - **Type Check**: ~8 seconds (strict mode)
@@ -738,12 +752,14 @@ const securityHeaders = [
 - **Dev Server**: ~2 seconds (Vite dev server startup)
 
 **Runtime Performance**:
+
 - **First Contentful Paint**: <1.5s (Brazilian users)
 - **Largest Contentful Paint**: <2.5s
 - **Cumulative Layout Shift**: <0.1
 - **Time to Interactive**: <3s
 
 **Bundle Sizes**:
+
 - **Frontend Bundle**: ~180KB gzipped
 - **API Bundle**: ~45KB
 - **Shared Packages**: ~25KB each
@@ -794,25 +810,27 @@ pnpm run build
 
 ```typescript
 // Internal packages
-import type { Patient } from '@neonpro/types'
-import { Button } from '@neonpro/ui'
-import { formatDate } from '@neonpro/utils'
+import type { Patient, } from '@neonpro/types'
+import { Button, } from '@neonpro/ui'
+import { formatDate, } from '@neonpro/utils'
 
 // Local imports
-import { Header } from '@/components/header'
-import { useAuth } from '@/hooks/useAuth'
-import { cn } from '@/lib/utils'
+import { Header, } from '@/components/header'
+import { useAuth, } from '@/hooks/useAuth'
+import { cn, } from '@/lib/utils'
 ```
 
 ### File Naming Conventions
 
 **Components**:
+
 - **React Components**: PascalCase (`PatientCard.tsx`)
 - **Hooks**: camelCase with `use` prefix (`usePatients.ts`)
 - **Utilities**: camelCase (`formatCurrency.ts`)
 - **Types**: PascalCase (`Patient.ts`, `ApiResponse.ts`)
 
 **Directories**:
+
 - **kebab-case**: `patient-portal/`, `health-records/`
 - **camelCase**: For JavaScript concepts (`components/`, `hooks/`)
 

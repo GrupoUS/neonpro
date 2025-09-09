@@ -5,9 +5,15 @@
  * Comprehensive system observability with healthcare compliance.
  */
 
-import HealthMonitor, { HealthMetrics, HealthStatus, HealthAlert } from './health-monitor'
-import Logger, { LogLevel, LogEntry, LoggerConfig, createLogger } from './logger'
-import ErrorTracker, { ErrorSeverity, ErrorCategory, ClassifiedError, ErrorStats, ErrorContext } from './error-tracker'
+import ErrorTracker, {
+  ClassifiedError,
+  ErrorCategory,
+  ErrorContext,
+  ErrorSeverity,
+  ErrorStats,
+} from './error-tracker'
+import HealthMonitor, { HealthAlert, HealthMetrics, HealthStatus, } from './health-monitor'
+import Logger, { createLogger, LogEntry, LoggerConfig, LogLevel, } from './logger'
 
 /**
  * Integrated monitoring system
@@ -28,22 +34,24 @@ export class MonitoringSystem {
     errorTracking?: {
       maxStoredErrors?: number
     }
-  } = {}) {
+  } = {},) {
     // Initialize logger first
-    this.logger = createLogger(config.logging || {
-      level: 'info',
-      format: 'json',
-      outputs: ['console'],
-    })
+    this.logger = createLogger(
+      config.logging || {
+        level: 'info',
+        format: 'json',
+        outputs: ['console',],
+      },
+    )
 
     // Initialize health monitor
-    this.healthMonitor = new HealthMonitor(config.health || {})
-    
+    this.healthMonitor = new HealthMonitor(config.health || {},)
+
     // Initialize error tracker
     this.errorTracker = new ErrorTracker({
       maxStoredErrors: config.errorTracking?.maxStoredErrors,
-      logger: this.logger
-    })
+      logger: this.logger,
+    },)
 
     this.setupEventHandlers()
   }
@@ -53,7 +61,7 @@ export class MonitoringSystem {
    */
   start(): void {
     this.healthMonitor.start()
-    this.logger.info('Monitoring system started', 'MonitoringSystem')
+    this.logger.info('Monitoring system started', 'MonitoringSystem',)
   }
 
   /**
@@ -61,7 +69,7 @@ export class MonitoringSystem {
    */
   stop(): void {
     this.healthMonitor.stop()
-    this.logger.info('Monitoring system stopped', 'MonitoringSystem')
+    this.logger.info('Monitoring system stopped', 'MonitoringSystem',)
   }
 
   /**
@@ -74,16 +82,16 @@ export class MonitoringSystem {
   } {
     return {
       health: this.healthMonitor.getHealthStatus(),
-      errors: this.errorTracker.getErrorStats(60 * 60 * 1000), // Last hour
-      uptime: process.uptime() * 1000
+      errors: this.errorTracker.getErrorStats(60 * 60 * 1000,), // Last hour
+      uptime: process.uptime() * 1000,
     }
   }
 
   /**
    * Track error with full monitoring integration
    */
-  trackError(error: Error, context: Partial<ErrorContext> = {}): ClassifiedError {
-    return this.errorTracker.trackError(error, context)
+  trackError(error: Error, context: Partial<ErrorContext> = {},): ClassifiedError {
+    return this.errorTracker.trackError(error, context,)
   }
 
   /**
@@ -95,17 +103,17 @@ export class MonitoringSystem {
     component: string,
     compliance: boolean,
     requirement?: string,
-    impact?: string
+    impact?: string,
   ): void {
-    this.logger.constitutional(level, message, component, compliance, requirement, impact)
+    this.logger.constitutional(level, message, component, compliance, requirement, impact,)
   }
 
   /**
    * Update file count for constitutional monitoring
    */
-  updateFileCount(count: number): void {
-    this.healthMonitor.updateFileCount(count)
-    this.logger.info(`File count updated: ${count}`, 'MonitoringSystem', { fileCount: count })
+  updateFileCount(count: number,): void {
+    this.healthMonitor.updateFileCount(count,)
+    this.logger.info(`File count updated: ${count}`, 'MonitoringSystem', { fileCount: count, },)
   }
 
   /**
@@ -113,18 +121,18 @@ export class MonitoringSystem {
    */
   private setupEventHandlers(): void {
     // Health monitor events
-    this.healthMonitor.on('alert:created', (alert: HealthAlert) => {
+    this.healthMonitor.on('alert:created', (alert: HealthAlert,) => {
       this.logger.warn(`Health alert: ${alert.message}`, alert.component, {
         alertId: alert.id,
         severity: alert.severity,
         metric: alert.metric,
         value: alert.value,
-        threshold: alert.threshold
-      })
-    })
+        threshold: alert.threshold,
+      },)
+    },)
 
     // Error tracker events
-    this.errorTracker.on('error:tracked', (error: ClassifiedError) => {
+    this.errorTracker.on('error:tracked', (error: ClassifiedError,) => {
       if (error.severity === 'critical') {
         this.logger.critical(
           `Critical error tracked: ${error.message}`,
@@ -132,22 +140,22 @@ export class MonitoringSystem {
           {
             errorId: error.id,
             category: error.category,
-            tags: error.tags
-          }
+            tags: error.tags,
+          },
         )
       }
-    })
+    },)
 
-    this.errorTracker.on('error:recovered', (error: ClassifiedError) => {
+    this.errorTracker.on('error:recovered', (error: ClassifiedError,) => {
       this.logger.info(
         `Error recovered: ${error.message}`,
         'ErrorTracker',
         {
           errorId: error.id,
-          recovery: error.recovery
-        }
+          recovery: error.recovery,
+        },
       )
-    })
+    },)
   }
 
   /**
@@ -182,26 +190,21 @@ export class MonitoringSystem {
 }
 
 // Export individual components
-export {
-  HealthMonitor,
-  Logger,
-  ErrorTracker,
-  createLogger
-}
+export { createLogger, ErrorTracker, HealthMonitor, Logger, }
 
 // Export types
 export type {
+  ClassifiedError,
+  ErrorCategory,
+  ErrorContext,
+  ErrorSeverity,
+  ErrorStats,
+  HealthAlert,
   HealthMetrics,
   HealthStatus,
-  HealthAlert,
-  LogLevel,
   LogEntry,
   LoggerConfig,
-  ErrorSeverity,
-  ErrorCategory,
-  ClassifiedError,
-  ErrorStats,
-  ErrorContext
+  LogLevel,
 }
 
 // Export default monitoring system

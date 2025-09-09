@@ -5,9 +5,9 @@
  * Monitors system vitals and enforces constitutional compliance.
  */
 
-import { EventEmitter } from 'events'
+import { EventEmitter, } from 'events'
 import * as os from 'os'
-import { performance } from 'perf_hooks'
+import { performance, } from 'perf_hooks'
 
 export interface HealthMetrics {
   timestamp: number
@@ -57,26 +57,28 @@ export class HealthMonitor extends EventEmitter {
   private alerts: HealthAlert[] = []
   private metrics: HealthMetrics[] = []
   private intervalId?: NodeJS.Timeout
-  
+
   // Constitutional limits
   private readonly CONSTITUTIONAL_MEMORY_LIMIT = 2 * 1024 * 1024 * 1024 // 2GB
   private readonly CONSTITUTIONAL_TIME_LIMIT = 4 * 60 * 60 * 1000 // 4 hours
   private readonly MIN_FILE_COUNT = 10000
 
-  constructor(private config: {
-    interval?: number
-    retentionCount?: number
-    memoryThreshold?: number
-    cpuThreshold?: number
-  } = {}) {
+  constructor(
+    private config: {
+      interval?: number
+      retentionCount?: number
+      memoryThreshold?: number
+      cpuThreshold?: number
+    } = {},
+  ) {
     super()
-    
+
     this.config = {
       interval: 30000, // 30 seconds
       retentionCount: 100,
       memoryThreshold: 0.8,
       cpuThreshold: 0.9,
-      ...config
+      ...config,
     }
   }
 
@@ -90,9 +92,9 @@ export class HealthMonitor extends EventEmitter {
 
     this.intervalId = setInterval(() => {
       this.collectMetrics()
-    }, this.config.interval)
+    }, this.config.interval,)
 
-    this.emit('monitor:started')
+    this.emit('monitor:started',)
   }
 
   /**
@@ -100,11 +102,11 @@ export class HealthMonitor extends EventEmitter {
    */
   stop(): void {
     if (this.intervalId) {
-      clearInterval(this.intervalId)
+      clearInterval(this.intervalId,)
       this.intervalId = undefined
     }
 
-    this.emit('monitor:stopped')
+    this.emit('monitor:stopped',)
   }
 
   /**
@@ -112,12 +114,12 @@ export class HealthMonitor extends EventEmitter {
    */
   getHealthStatus(): HealthStatus {
     const currentMetrics = this.getCurrentMetrics()
-    const status = this.determineHealthStatus(currentMetrics)
-    
+    const status = this.determineHealthStatus(currentMetrics,)
+
     return {
       status,
       metrics: currentMetrics,
-      alerts: this.getActiveAlerts()
+      alerts: this.getActiveAlerts(),
     }
   }
 
@@ -126,7 +128,7 @@ export class HealthMonitor extends EventEmitter {
     const systemMemory = {
       total: os.totalmem(),
       free: os.freemem(),
-      used: os.totalmem() - os.freemem()
+      used: os.totalmem() - os.freemem(),
     }
 
     const currentTime = Date.now()
@@ -137,48 +139,48 @@ export class HealthMonitor extends EventEmitter {
       uptime: currentTime - this.startTime,
       memory: {
         ...systemMemory,
-        percentage: (systemMemory.used / systemMemory.total) * 100
+        percentage: (systemMemory.used / systemMemory.total) * 100,
       },
       cpu: {
         usage: os.cpus().map(cpu => {
-          const total = Object.values(cpu.times).reduce((acc, time) => acc + time, 0)
+          const total = Object.values(cpu.times,).reduce((acc, time,) => acc + time, 0,)
           const idle = cpu.times.idle
           return ((total - idle) / total) * 100
-        }),
-        load: os.loadavg()
+        },),
+        load: os.loadavg(),
       },
       process: {
         pid: process.pid,
         memory: memoryUsage,
-        uptime: processUptime
+        uptime: processUptime,
       },
       constitutional: {
-        compliance: this.checkConstitutionalCompliance(memoryUsage, processUptime),
+        compliance: this.checkConstitutionalCompliance(memoryUsage, processUptime,),
         fileCount: 0, // Will be updated by external systems
         memoryCompliance: memoryUsage.heapUsed < this.CONSTITUTIONAL_MEMORY_LIMIT,
-        timeCompliance: processUptime < this.CONSTITUTIONAL_TIME_LIMIT
-      }
+        timeCompliance: processUptime < this.CONSTITUTIONAL_TIME_LIMIT,
+      },
     }
   }
 
-  private checkConstitutionalCompliance(memoryUsage: NodeJS.MemoryUsage, uptime: number): boolean {
-    return memoryUsage.heapUsed < this.CONSTITUTIONAL_MEMORY_LIMIT &&
-           uptime < this.CONSTITUTIONAL_TIME_LIMIT
+  private checkConstitutionalCompliance(memoryUsage: NodeJS.MemoryUsage, uptime: number,): boolean {
+    return memoryUsage.heapUsed < this.CONSTITUTIONAL_MEMORY_LIMIT
+      && uptime < this.CONSTITUTIONAL_TIME_LIMIT
   }
 
   private collectMetrics(): void {
     const metrics = this.getCurrentMetrics()
-    
-    this.metrics.push(metrics)
+
+    this.metrics.push(metrics,)
     if (this.metrics.length > (this.config.retentionCount || 100)) {
       this.metrics.shift()
     }
 
-    this.checkAlerts(metrics)
-    this.emit('metrics:collected', metrics)
+    this.checkAlerts(metrics,)
+    this.emit('metrics:collected', metrics,)
   }
 
-  private determineHealthStatus(metrics: HealthMetrics): 'healthy' | 'warning' | 'critical' {
+  private determineHealthStatus(metrics: HealthMetrics,): 'healthy' | 'warning' | 'critical' {
     const criticalAlerts = this.alerts.filter(a => a.severity === 'critical')
     const warningAlerts = this.alerts.filter(a => a.severity === 'warning')
 
@@ -193,49 +195,51 @@ export class HealthMonitor extends EventEmitter {
     return 'healthy'
   }
 
-  private checkAlerts(metrics: HealthMetrics): void {
+  private checkAlerts(metrics: HealthMetrics,): void {
     // Memory alerts
     if (metrics.memory.percentage > (this.config.memoryThreshold || 0.8) * 100) {
       this.createAlert({
         severity: metrics.memory.percentage > 95 ? 'critical' : 'warning',
-        message: `High memory usage: ${metrics.memory.percentage.toFixed(1)}%`,
+        message: `High memory usage: ${metrics.memory.percentage.toFixed(1,)}%`,
         component: 'memory',
         metric: 'memory.percentage',
         value: metrics.memory.percentage,
-        threshold: (this.config.memoryThreshold || 0.8) * 100
-      })
+        threshold: (this.config.memoryThreshold || 0.8) * 100,
+      },)
     }
 
     // Constitutional compliance alerts
     if (!metrics.constitutional.memoryCompliance) {
       this.createAlert({
         severity: 'critical',
-        message: `Constitutional memory limit exceeded: ${(metrics.process.memory.heapUsed / 1024 / 1024 / 1024).toFixed(2)}GB`,
+        message: `Constitutional memory limit exceeded: ${
+          (metrics.process.memory.heapUsed / 1024 / 1024 / 1024).toFixed(2,)
+        }GB`,
         component: 'constitutional',
         metric: 'memory',
         value: metrics.process.memory.heapUsed,
-        threshold: this.CONSTITUTIONAL_MEMORY_LIMIT
-      })
+        threshold: this.CONSTITUTIONAL_MEMORY_LIMIT,
+      },)
     }
   }
 
-  private createAlert(alert: Omit<HealthAlert, 'id' | 'timestamp'>): void {
+  private createAlert(alert: Omit<HealthAlert, 'id' | 'timestamp'>,): void {
     const fullAlert: HealthAlert = {
-      id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `alert_${Date.now()}_${Math.random().toString(36,).substr(2, 9,)}`,
       timestamp: Date.now(),
-      ...alert
+      ...alert,
     }
 
-    const existingAlert = this.alerts.find(a => 
-      a.component === fullAlert.component && 
-      a.metric === fullAlert.metric &&
-      a.severity === fullAlert.severity &&
-      Date.now() - a.timestamp < 60000
+    const existingAlert = this.alerts.find(a =>
+      a.component === fullAlert.component
+      && a.metric === fullAlert.metric
+      && a.severity === fullAlert.severity
+      && Date.now() - a.timestamp < 60000
     )
 
     if (!existingAlert) {
-      this.alerts.push(fullAlert)
-      this.emit('alert:created', fullAlert)
+      this.alerts.push(fullAlert,)
+      this.emit('alert:created', fullAlert,)
     }
 
     const oneHourAgo = Date.now() - (60 * 60 * 1000)
@@ -248,19 +252,19 @@ export class HealthMonitor extends EventEmitter {
   }
 
   getMetricsHistory(): HealthMetrics[] {
-    return [...this.metrics]
+    return [...this.metrics,]
   }
 
   clearAlerts(): void {
     this.alerts = []
-    this.emit('alerts:cleared')
+    this.emit('alerts:cleared',)
   }
 
-  updateFileCount(count: number): void {
+  updateFileCount(count: number,): void {
     if (this.metrics.length > 0) {
       const lastMetrics = this.metrics[this.metrics.length - 1]
       lastMetrics.constitutional.fileCount = count
-      
+
       if (count < this.MIN_FILE_COUNT) {
         this.createAlert({
           severity: 'warning',
@@ -268,8 +272,8 @@ export class HealthMonitor extends EventEmitter {
           component: 'constitutional',
           metric: 'fileCount',
           value: count,
-          threshold: this.MIN_FILE_COUNT
-        })
+          threshold: this.MIN_FILE_COUNT,
+        },)
       }
     }
   }

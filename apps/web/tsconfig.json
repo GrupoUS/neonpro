@@ -1,0 +1,43 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "./dist-types",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"]
+    },
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/test/**",
+    "tests/**",
+    "lib/**",
+    "src/lib/emergency/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+}

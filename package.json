@@ -27,7 +27,7 @@
     "clean": "rm -rf dist/",
     "audit-tool": "node dist/cli/audit-tool.js",
     "constitutional:quick": "cd tools/audit && npx tsx src/cli/index.ts quick --target . --verbose",
-    "constitutional:full": "cd tools/audit && npx tsx src/cli/index.ts constitutional --target . --verbose", 
+    "constitutional:full": "cd tools/audit && npx tsx src/cli/index.ts constitutional --target . --verbose",
     "constitutional:benchmark": "cd tools/audit && npx tsx src/cli/index.ts benchmark --target . --verbose",
     "constitutional:setup": "cd tools/audit && chmod +x .githooks/pre-commit && git config core.hooksPath tools/audit/.githooks"
   },
@@ -46,44 +46,6 @@
   "author": "Development Team",
   "license": "MIT",
   "dependencies": {
-<<<<<<< HEAD
-    "@hono/node-server": "^1.19.1",
-    "@playwright/test": "^1.55.0",
-    "@supabase/supabase-js": "^2.57.3",
-    "@tanstack/react-query": "^5.87.1",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@trigger.dev/sdk": "^4.0.2",
-    "@types/react-dom": "^19.1.9",
-    "@types/testing-library__jest-dom": "^6.0.0",
-    "@vitejs/plugin-react-swc": "^4.0.1",
-    "@vitest/ui": "^3.2.4",
-    "autoprefixer": "^10.4.21",
-    "chalk": "^5.3.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "commander": "^11.1.0",
-    "fs-extra": "^11.2.0",
-    "hono": "^4.9.6",
-    "lovable-tagger": "^1.1.9",
-    "lucide-react": "^0.543.0",
-    "ora": "^8.0.1",
-    "postcss": "^8.5.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.2",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.13",
-    "tailwindcss-animate": "^1.0.7",
-    "ts-morph": "^21.0.1",
-    "vitest": "^3.2.4"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.3.1",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-=======
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
@@ -106,20 +68,15 @@
     "@typescript-eslint/parser": "^6.21.0",
     "@vitest/coverage-v8": "3.2.4",
     "ajv": "^8.17.1",
->>>>>>> 004-tanstack-query-integration
     "bun-types": "^1.0.20",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-prettier": "^5.5.4",
     "oxlint": "^1.14.0",
     "prettier": "^3.1.1",
-<<<<<<< HEAD
-    "typescript": "^5.9.2"
-=======
     "typescript": "^5.7.2",
     "vitest": "^3.2.4",
     "yaml": "^2.8.1"
->>>>>>> 004-tanstack-query-integration
   },
   "performance": {
     "targets": {

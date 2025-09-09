@@ -1,14 +1,22 @@
 import '@testing-library/jest-dom'
 import { cleanup, } from '@testing-library/react'
 import React from 'react' // Expose React globally to fix "React is not defined" errors
-import { afterEach, vi, } from 'vitest'
+import { afterAll, afterEach, beforeAll, vi, } from 'vitest'
 import 'fake-indexeddb/auto'
 ;(globalThis as any).React = React
 ;(global as any).React = React
 
+beforeAll(() => {
+  vi.useFakeTimers()
+},)
+
 // Clean up after each test
 afterEach(() => {
   cleanup()
+},)
+
+afterAll(() => {
+  vi.useRealTimers()
 },)
 
 // Mock environment variables

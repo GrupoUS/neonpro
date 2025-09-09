@@ -1,182 +1,461 @@
-# 📁 NeonPro Source Tree Structure
+---
+title: "NeonPro Source Tree Organization"
+last_updated: 2025-09-09
+form: reference
+tags: [codebase, organization, monorepo, navigation]
+related:
+  - ./architecture.md
+  - ./tech-stack.md
+  - ../AGENTS.md
+---
 
-**Real monorepo structure (apps/packages) validated and categorized**
+# NeonPro Source Tree Organization
 
-## 🌳 **Estrutura de Diretórios Principal**
+This document provides detailed guidance on HOW the NeonPro codebase is organized, including directory structure rationale, package dependencies, file naming conventions, and developer navigation principles.
+
+## Monorepo Structure Overview
+
+NeonPro uses a **Turborepo-based monorepo** with 2 applications and 7 shared packages, optimized for Brazilian healthcare compliance and rapid development.
 
 ```
 neonpro/
-├── 📁 apps/                              # Aplicações principais
-│   ├── 📁 api/                           # Backend Hono.dev
-│   │   ├── 📄 package.json               # Dependencies & scripts
-│   │   ├── 📁 src/
-│   │   │   ├── 📄 index.ts              # Main Hono app entry
-│   │   │   ├── 📁 routes/               # API route handlers
-│   │   │   ├── 📁 middleware/           # Healthcare security middleware
-│   │   │   └── 📁 lib/                  # Shared utilities
-│   │   └── 📄 vitest.config.ts         # Test configuration
+├── 📁 apps/                              # Application Layer (2 apps)
+│   ├── 📁 api/                           # Backend API (Hono.dev + Supabase Functions)
+│   │   ├── 📄 package.json               # API dependencies & scripts
+│   │   ├── 📄 tsconfig.json              # TypeScript configuration
+│   │   └── 📁 src/                       # API source code
+│   │       ├── 📁 types/                 # API-specific types
+│   │       └── 📁 __tests__/             # API test suites
+│   │           ├── 📁 auth/              # Authentication tests
+│   │           └── 📁 routes/            # Route handler tests
 │   │
-│   └── 📁 web/                          # Frontend Application (TanStack Router + Vite)
-│       ├── 📄 package.json              # Dependencies & scripts
-│       ├── 📁 src/                      # TanStack Router Application (NEW)
-│       │   ├── 📄 main.tsx              # Application entry point
-│       │   ├── 📁 routes/               # File-based routing (TanStack Router)
-│       │   ├── 📁 components/           # React components
-│       │   │   └── 📁 ui/               # shadcn/ui components (complete)
-│       │   ├── 📁 hooks/                # Custom hooks
-│       │   ├── 📁 contexts/             # React contexts
-│       │   ├── 📁 providers/            # Context providers
-│       │   ├── 📁 features/             # Feature-based components
-│       │   ├── 📁 lib/                  # Utilities & configs
-│       │   │   ├── 📄 supabase.ts       # Supabase client
-│       │   │   └── 📄 toast-helpers.ts  # Toast utilities
-│       │   ├── 📁 styles/               # CSS & styling
-│       │   └── 📁 test/                 # Test setup & utilities
-│       ├── 📄 vite.config.ts           # Vite configuration
-│       ├── 📄 tailwind.config.ts       # Tailwind CSS config
-│       └── 📄 index.html               # Vite HTML entry point
+│   └── 📁 web/                           # Frontend Application (TanStack Router + Vite)
+│       ├── 📄 package.json               # Web dependencies & scripts
+│       ├── 📄 vite.config.ts             # Vite build configuration
+│       ├── 📄 vitest.config.ts           # Test configuration
+│       ├── 📄 index.html                 # HTML entry point
+│       ├── 📁 .tanstack/                 # TanStack Router cache
+│       └── 📁 src/                       # Frontend source code
+│           ├── 📄 main.tsx               # Application entry point
+│           ├── 📄 App.tsx                # Root App component
+│           ├── 📄 routeTree.gen.ts       # Auto-generated route tree
+│           ├── 📄 nav-items.tsx          # Navigation configuration
+│           ├── 📄 index.css              # Global styles
+│           ├── 📁 routes/                # File-based routing (TanStack Router)
+│           │   ├── 📄 __root.tsx         # Root layout route
+│           │   └── 📄 index.tsx          # Homepage route
+│           ├── 📁 components/            # React components
+│           │   └── 📁 ui/                # shadcn/ui components
+│           ├── 📁 pages/                 # Page components
+│           ├── 📁 types/                 # Frontend-specific types
+│           ├── 📁 test/                  # Test utilities & setup
+│           └── 📁 integrations/          # External service integrations
+│               └── 📁 supabase/          # Supabase client & types
 │
-├── 📁 packages/                          # Shared packages
-│   ├── 📁 ui/                           # Shared UI components
-│   ├── 📁 utils/                        # Shared utilities
-│   ├── 📁 database/                     # Database schemas & migrations
-│   ├── 📁 shared/                       # Shared types & constants
-│   ├── 📁 security/                     # Healthcare security utilities
-│   └── 📁 types/                        # Shared TypeScript types
+├── 📁 packages/                          # Shared Package Layer (7 packages)
+│   ├── 📁 types/                         # @neonpro/types - TypeScript definitions
+│   ├── 📁 database/                      # @neonpro/database - Supabase schemas
+│   │   ├── 📁 src/                       # Database utilities
+│   │   │   └── 📁 types/                 # Generated database types
+│   │   └── 📁 scripts/                   # Database scripts
+│   │       └── 📁 healthcare/            # Healthcare-specific scripts
+│   ├── 📁 shared/                        # @neonpro/shared - Common utilities
+│   │   └── 📁 src/                       # Shared source code
+│   │       ├── 📁 auth/                  # Authentication utilities
+│   │       └── 📁 templates/             # Template components
+│   ├── 📁 utils/                         # @neonpro/utils - Utility functions
+│   │   └── 📁 src/                       # Utility source code
+│   │       ├── 📁 auth/                  # Auth utilities
+│   │       ├── 📁 components/            # Component utilities
+│   │       ├── 📁 analytics/             # Analytics utilities
+│   │       ├── 📁 performance/           # Performance utilities
+│   │       └── 📁 compliance/            # LGPD/ANVISA compliance
+│   ├── 📁 security/                      # @neonpro/security - Security utilities
+│   ├── 📁 core-services/                 # @neonpro/core-services - Business logic
+│   │   └── 📁 src/                       # Service source code
+│   │       └── 📁 services/              # Business service implementations
+│   └── 📁 config/                        # @neonpro/config - Shared configurations
 │
-├── 📁 docs/                             # Project documentation
-│   ├── 📄 AGENTS.md                     # Agent coordination system
-│   ├── 📁 architecture/                 # Architecture documentation
-│   ├── 📁 apis/                         # API documentation
-│   ├── 📁 rules/                        # Coding standards & rules
-│   └── 📁 database-schema/              # Database documentation
+├── 📁 tools/                             # Development & Testing Tools
+│   ├── 📁 audit/                         # Monorepo audit tools
+│   ├── 📁 monorepo-audit/                # Advanced audit utilities
+│   └── 📁 testing/                       # Testing utilities & configurations
 │
-├── 📁 tools/                            # Development tools
-├── 📁 .github/                          # GitHub workflows & templates
-├── 📁 .claude/                          # Claude configuration
-├── 📄 turbo.json                        # Turborepo configuration
-├── 📄 package.json                      # Root package configuration
-└── 📄 pnpm-workspace.yaml               # PNPM workspace config
+├── 📁 docs/                              # Project Documentation
+│   ├── 📄 AGENTS.md                      # Agent coordination system
+│   ├── 📁 architecture/                  # Architecture documentation
+│   ├── 📁 apis/                          # API documentation
+│   ├── 📁 rules/                         # Coding standards & rules
+│   └── 📁 database-schema/               # Database documentation
+│
+├── 📁 .github/                           # GitHub workflows & templates
+├── 📁 .vscode/                           # VS Code workspace settings
+├── 📁 .husky/                            # Git hooks
+├── 📄 turbo.json                         # Turborepo configuration
+├── 📄 package.json                       # Root package configuration
+├── 📄 pnpm-workspace.yaml                # PNPM workspace definition
+├── 📄 tsconfig.json                      # Root TypeScript configuration
+├── 📄 vitest.config.ts                   # Global test configuration
+└── 📄 README.md                          # Project overview
 ```
 
-## 🎯 **Quando Usar Esta Estrutura**
+## Organization Principles
 
-### **Localização de Código**
+### Directory Structure Rationale
 
-- **Backend API**: `apps/api/src/` - Todas as APIs Hono
-- **Frontend**: `apps/web/src/` - Aplicação React + TanStack Router
-- **Componentes Compartilhados**: `packages/ui/src/` - UI components
-- **Utilitários**: `packages/utils/src/` - Funções utilitárias
-- **Tipos**: `packages/types/src/` - TypeScript definitions
+**Application Layer (`apps/`)**:
+- **Separation of Concerns**: Frontend (`web`) and backend (`api`) are completely isolated
+- **Technology Alignment**: Each app uses its optimal technology stack
+- **Independent Deployment**: Apps can be deployed separately with different strategies
+- **Scalability**: New applications can be added without affecting existing ones
 
-### **Wiring Entre Repos**
+**Package Layer (`packages/`)**:
+- **Dependency Hierarchy**: Packages follow a clear dependency chain (types → database → shared → utils/security → core-services)
+- **Single Responsibility**: Each package has a focused, well-defined purpose
+- **Reusability**: Packages can be shared across applications and potentially extracted as standalone libraries
+- **Brazilian Compliance**: Security and compliance concerns are isolated in dedicated packages
 
-- **Workspace Dependencies**: Use `workspace:*` no package.json
-- **Imports**: Use aliases configurados (`@neonpro/ui`, `@neonpro/utils`)
-- **Build**: Turborepo gerencia dependências entre packages
+**Tool Layer (`tools/`)**:
+- **Development Efficiency**: Specialized tools for monorepo management and quality assurance
+- **Automation**: Scripts and utilities for common development tasks
+- **Quality Gates**: Audit and testing tools ensure code quality and architectural compliance
 
-## 🔧 **Configurações de Build**
+### Package Dependency Chain
 
-### **Turborepo Pipeline**
+```mermaid
+graph TD
+    A[types] --> B[database]
+    A --> C[shared]
+    A --> D[utils]
+    A --> E[security]
+    B --> F[core-services]
+    C --> F
+    D --> F
+    E --> F
+
+    F --> G[apps/api]
+    F --> H[apps/web]
+
+    style A fill:#e1f5fe
+    style F fill:#f3e5f5
+    style G fill:#e8f5e8
+    style H fill:#e8f5e8
+```
+
+**Dependency Rules**:
+1. **Foundation Layer**: `types` has no dependencies (pure TypeScript definitions)
+2. **Infrastructure Layer**: `database`, `shared`, `utils`, `security` depend only on `types`
+3. **Service Layer**: `core-services` depends on all infrastructure packages
+4. **Application Layer**: Apps depend on all packages as needed
+5. **No Circular Dependencies**: Strict enforcement through Turborepo configuration
+
+### Code Location Guidelines
+
+| What You're Looking For | Primary Location | Secondary Location |
+|-------------------------|------------------|-------------------|
+| **API Endpoints** | `apps/api/src/` | - |
+| **React Components** | `apps/web/src/components/` | `packages/shared/src/` (reusable) |
+| **Business Logic** | `packages/core-services/src/` | `apps/*/src/` (app-specific) |
+| **Type Definitions** | `packages/types/src/` | `apps/*/src/types/` (app-specific) |
+| **Database Schemas** | `packages/database/src/` | - |
+| **Utility Functions** | `packages/utils/src/` | `apps/*/src/lib/` (app-specific) |
+| **Security/Compliance** | `packages/security/src/` | `packages/utils/src/compliance/` |
+| **Configuration** | `packages/config/` | Root config files |
+| **Tests** | `apps/*/src/__tests__/` | `packages/*/src/*.test.ts` |
+| **Documentation** | `docs/` | `README.md` files in packages |
+
+## Workspace Configuration
+
+### Turborepo Build Pipeline
+
+The build system follows a **dependency-first approach** where packages build in the correct order based on their dependencies:
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^build"]
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "build/**"],
+      "cache": true
     }
   }
 }
 ```
 
-### **Package Manager**
+**Build Order** (automatically managed by Turborepo):
+1. `@neonpro/types` (no dependencies)
+2. `@neonpro/database`, `@neonpro/shared`, `@neonpro/utils`, `@neonpro/security` (parallel)
+3. `@neonpro/core-services` (depends on all above)
+4. `apps/api`, `apps/web` (parallel, depend on packages as needed)
 
-- **Primary**: PNPM (performance + efficiency)
-- **Fallback**: Bun (3-5x faster for scripts)
-- **Workspace**: Shared dependencies in root
+### Package Manager Strategy
 
-## 📦 **Package Dependencies**
+- **Primary**: **PNPM** (performance + disk efficiency)
+  - Symlinked node_modules for space efficiency
+  - Strict dependency resolution
+  - Workspace protocol support (`workspace:*`)
+- **Development**: **Bun** (3-5x faster for scripts)
+  - Used for test execution and development scripts
+  - Faster package installation in development
+- **Workspace Benefits**:
+  - Shared dependencies hoisted to root
+  - Consistent versions across packages
+  - Efficient CI/CD caching
 
-### **Apps**
+## Package Dependencies & Relationships
 
-- **api**: Independente, apenas packages internos
-- **web**: Depende de todos os packages compartilhados
+### Application Dependencies
 
-### **Packages**
+**`apps/api`** (Backend API):
+```json
+{
+  "dependencies": {
+    "@neonpro/types": "workspace:*",
+    "@neonpro/database": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/security": "workspace:*"
+  }
+}
+```
 
-- **ui**: Depende de utils, types
-- **database**: Independente (Prisma schemas)
-- **shared**: Depende de types
-- **utils**: Independente
-- **types**: Base para todos
+**`apps/web`** (Frontend Application):
+```json
+{
+  "dependencies": {
+    "@neonpro/types": "workspace:*",
+    "@neonpro/shared": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@neonpro/core-services": "workspace:*"
+  }
+}
+```
 
-## 🎨 **Padrões de Importação**
+### Package Dependencies Matrix
 
+| Package | Depends On | Used By | Purpose |
+|---------|------------|---------|---------|
+| **types** | None | All packages & apps | TypeScript definitions, interfaces |
+| **database** | types | core-services, api | Supabase schemas, database utilities |
+| **shared** | types | utils, core-services, web | Common components, auth utilities |
+| **utils** | types | core-services, web | Utility functions, formatters |
+| **security** | types, database | core-services, api | Security utilities, LGPD compliance |
+| **core-services** | All above | api, web | Business logic, service layer |
+| **config** | None | All packages & apps | Shared configurations |
+
+### Import Patterns & Conventions
+
+**Package Imports** (External dependencies):
 ```typescript
-// Internal packages
-import type { Patient, } from '@neonpro/types'
-import { Button, } from '@neonpro/ui'
-import { formatDate, } from '@neonpro/utils'
+// Type-only imports (preferred for types)
+import type { Patient, Appointment } from '@neonpro/types'
+import type { Database } from '@neonpro/database'
 
-// Local imports
-import { Header, } from '@/components/header'
-import { useAuth, } from '@/hooks/useAuth'
-import { cn, } from '@/lib/utils'
+// Runtime imports
+import { formatCurrency, formatDate } from '@neonpro/utils'
+import { PatientService } from '@neonpro/core-services'
+import { encryptPII } from '@neonpro/security'
 ```
 
-## 🚀 **Scripts de Desenvolvimento**
+**Local Imports** (Within same app/package):
+```typescript
+// Relative imports for local files
+import { Header } from '../components/Header'
+import { useAuth } from '../hooks/useAuth'
 
+// Alias imports (configured in tsconfig.json)
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import type { AppRouter } from '@/types/router'
+```
+
+**Import Order Convention**:
+1. External libraries (React, etc.)
+2. Internal packages (`@neonpro/*`)
+3. Local relative imports
+4. Type-only imports at the end
+
+## Development Workflow Scripts
+
+### Monorepo Commands
+
+**Development**:
 ```bash
-# Development
-pnpm dev           # Start all apps in dev mode
-pnpm dev:web       # Start only web app
-pnpm dev:api       # Start only API
+# Start all applications in development mode
+pnpm dev
 
-# Build
-pnpm build         # Build all packages + apps
-pnpm build:web     # Build web app only
+# Start specific applications
+pnpm --filter @neonpro/web dev
+pnpm --filter @neonpro/api dev
 
-# Quality
-pnpm lint          # Lint all packages
-pnpm type-check    # TypeScript check all
-pnpm test          # Run all tests
+# Start with specific package rebuilding
+pnpm dev --filter @neonpro/web...
 ```
 
-## 📋 **File Naming Conventions**
+**Building**:
+```bash
+# Build all packages and applications (respects dependency order)
+pnpm build
 
-### **Components**
+# Build specific package and its dependencies
+pnpm --filter @neonpro/core-services... build
 
-- **React Components**: PascalCase (`PatientCard.tsx`)
-- **Hooks**: camelCase with `use` prefix (`usePatients.ts`)
-- **Utilities**: camelCase (`formatCurrency.ts`)
-- **Types**: PascalCase (`Patient.ts`, `ApiResponse.ts`)
+# Build only applications (assumes packages are built)
+pnpm --filter "./apps/*" build
+```
 
-### **Directories**
+**Quality Assurance**:
+```bash
+# Run all quality checks
+pnpm lint && pnpm type-check && pnpm test
 
-- **kebab-case**: `patient-portal/`, `health-records/`
-- **camelCase**: Para JavaScript concepts (`components/`, `hooks/`)
+# Lint with auto-fix
+pnpm lint:fix
 
-## 🔍 **Navegação Rápida**
+# Format code
+pnpm format
 
-| Funcionalidade     | Localização            | Propósito             |
-| ------------------ | ---------------------- | --------------------- |
-| **API Routes**     | `apps/api/src/routes/` | Endpoints Hono        |
-| **React Pages**    | `apps/web/src/routes/` | TanStack Router pages |
-| **UI Components**  | `packages/ui/src/`     | Shared components     |
-| **Business Logic** | `apps/web/src/hooks/`  | Custom hooks          |
-| **Database**       | `packages/database/`   | Schemas & migrations  |
-| **Config Files**   | Root + app directories | Build & tool configs  |
+# Run tests with coverage
+pnpm test:coverage
+```
+
+### Package-Specific Scripts
+
+Each package includes standardized scripts:
+- `build`: Compile TypeScript to `dist/`
+- `dev`: Watch mode for development
+- `test`: Run package-specific tests
+- `lint`: ESLint checking
+- `type-check`: TypeScript validation
+
+## File Naming Conventions
+
+### Components & Code Files
+
+| File Type | Convention | Example | Location |
+|-----------|------------|---------|----------|
+| **React Components** | PascalCase | `PatientCard.tsx` | `components/` |
+| **Custom Hooks** | camelCase + `use` prefix | `usePatientData.ts` | `hooks/` |
+| **Utility Functions** | camelCase | `formatCurrency.ts` | `utils/` |
+| **Type Definitions** | PascalCase | `Patient.ts` | `types/` |
+| **API Routes** | kebab-case | `patient-profile.ts` | `routes/` |
+| **Test Files** | Same as source + `.test` | `PatientCard.test.tsx` | `__tests__/` |
+| **Configuration** | kebab-case | `vite.config.ts` | Root level |
+
+### Directory Naming
+
+| Directory Type | Convention | Example | Rationale |
+|----------------|------------|---------|-----------|
+| **Feature Modules** | kebab-case | `patient-management/` | URL-friendly, readable |
+| **Technical Concepts** | camelCase | `components/`, `hooks/` | JavaScript convention |
+| **Package Names** | kebab-case | `core-services/` | NPM convention |
+| **Configuration** | dot-prefix | `.github/`, `.vscode/` | Hidden/config files |
+
+### Special File Patterns
+
+**Generated Files**:
+- `routeTree.gen.ts` - Auto-generated TanStack Router tree
+- `*.d.ts` - TypeScript declaration files
+- `index.ts` - Package entry points (barrel exports)
+
+**Configuration Files**:
+- `package.json` - Package configuration
+- `tsconfig.json` - TypeScript configuration
+- `vite.config.ts` - Vite build configuration
+- `vitest.config.ts` - Test configuration
+
+## Developer Navigation Guide
+
+### Quick Reference Table
+
+| What You Need | Primary Location | Secondary Location | Notes |
+|---------------|------------------|-------------------|-------|
+| **API Endpoints** | `apps/api/src/` | - | Hono.dev routes |
+| **React Pages** | `apps/web/src/routes/` | `apps/web/src/pages/` | TanStack Router |
+| **UI Components** | `apps/web/src/components/ui/` | `packages/shared/src/` | shadcn/ui + custom |
+| **Business Logic** | `packages/core-services/src/` | `apps/web/src/hooks/` | Services vs hooks |
+| **Type Definitions** | `packages/types/src/` | `apps/*/src/types/` | Shared vs app-specific |
+| **Database Schemas** | `packages/database/src/` | - | Supabase schemas |
+| **Utilities** | `packages/utils/src/` | `apps/*/src/lib/` | Shared vs app-specific |
+| **Security/Compliance** | `packages/security/src/` | `packages/utils/src/compliance/` | LGPD/ANVISA |
+| **Tests** | `apps/*/src/__tests__/` | `packages/*/src/*.test.ts` | App vs package tests |
+| **Configuration** | `packages/config/` | Root config files | Shared vs global |
+
+### Module Organization Patterns
+
+**Feature-Based Organization** (Recommended for large features):
+```
+apps/web/src/
+├── features/
+│   ├── patient-management/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── types/
+│   │   └── index.ts
+│   └── appointment-scheduling/
+│       ├── components/
+│       ├── hooks/
+│       ├── types/
+│       └── index.ts
+```
+
+**Layer-Based Organization** (Current structure):
+```
+apps/web/src/
+├── components/     # All components
+├── hooks/         # All hooks
+├── types/         # All types
+└── routes/        # All routes
+```
+
+### Code Discovery Strategies
+
+**Finding Existing Code**:
+1. **Start with types**: Check `packages/types/src/` for data structures
+2. **Check services**: Look in `packages/core-services/src/` for business logic
+3. **Find components**: Search `apps/web/src/components/` for UI elements
+4. **Review tests**: Check `__tests__/` directories for usage examples
+
+**Adding New Code**:
+1. **Determine scope**: App-specific vs shared across apps
+2. **Choose layer**: Types → Database → Services → Components → Routes
+3. **Follow conventions**: Use established naming and organization patterns
+4. **Update exports**: Add to `index.ts` files for discoverability
+
+## Monorepo Best Practices
+
+### Package Boundaries
+
+**Do**:
+- Keep packages focused on single responsibilities
+- Use workspace dependencies (`workspace:*`) for internal packages
+- Export everything through `index.ts` barrel files
+- Follow semantic versioning for package updates
+
+**Don't**:
+- Create circular dependencies between packages
+- Import directly from package internals (use public API)
+- Mix concerns within a single package
+- Bypass the dependency hierarchy
+
+### Development Efficiency
+
+**Turborepo Optimization**:
+- Use `--filter` to work on specific packages
+- Leverage caching for faster builds
+- Run tasks in parallel when possible
+- Use `--continue` to run all tasks even if some fail
+
+**IDE Configuration**:
+- Configure path mapping in `tsconfig.json`
+- Use workspace-aware extensions
+- Set up debugging for monorepo structure
+- Configure linting rules consistently
 
 ---
 
-**Status**: ✅ **VALIDATED**\
-**Última Atualização**: 2025-01-08\
-**Uso**: Locating code, packages, or wiring across the repo
+**Document Status**: ✅ Enhanced - Detailed Codebase Organization
+**Target Length**: 300-500 lines (Current: ~400 lines)
+**Focus**: HOW code is organized and navigated
+**Last Updated**: 2025-09-09
+**Next Review**: 2025-12-09

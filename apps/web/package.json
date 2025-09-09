@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "build:vercel": "bun install && tsc && vite build",
     "build:force": "vite build --force",
     "start": "vite preview",

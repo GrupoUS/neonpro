@@ -20,7 +20,7 @@
     },
     {
       "label": "🏛️ Constitutional Audit - Full",
-      "type": "shell", 
+      "type": "shell",
       "command": "npx tsx src/cli/index.ts constitutional --target ${workspaceFolder} --verbose",
       "options": {
         "cwd": "${workspaceFolder}/tools/audit"
