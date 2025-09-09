@@ -118,7 +118,7 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
           for (let i = 0; i < concurrentRequests; i++) {
             performanceMonitor.start();
 
-            const requestPromise = fetch("/api/v1/patients", {
+            const requestPromise = fetch("http://localhost:3000/api/v1/patients", {
               headers: {
                 Authorization: "Bearer mock-access-token",
                 "Content-Type": "application/json",

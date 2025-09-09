@@ -1,4 +1,4 @@
-import { afterEach, vi, } from 'vitest'
+import { afterEach, vi } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 // Import Supabase mock to prevent GoTrueClient multi-instance warnings
 import './tools/testing/setup/supabase-mock'
@@ -561,7 +561,7 @@ if (!(globalThis as any).mockPatientsHook) {
 
 ;(globalThis as any).mockRealtimeHook = { isConnected: true, error: null, }
 ;(global as any).mockRealtimeHook = (globalThis as any).mockRealtimeHook
-;(globalThis as any).fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit,) => {
+;(globalThis as any).fetch = vi.fn(async (input: string | URL, init?: RequestInit,) => {
   // ensure mockRealtimeHook.error is null unless explicitly set by test
   if (
     (globalThis as any).mockRealtimeHook

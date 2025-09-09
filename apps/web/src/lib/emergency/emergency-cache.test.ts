@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmergencyCache, type EmergencyPatientCache } from "./emergency-cache";
+import { EmergencyCache, type EmergencyPatientCache } from "@/lib/emergency/emergency-cache";
 
 type IEmergencyCacheAny = EmergencyCache;
 

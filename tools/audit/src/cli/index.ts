@@ -7,7 +7,7 @@
  * This file serves as the executable entry point for the npm package.
  */
 
-import { AuditCLI, } from './audit-cli'
+import { AuditCLI, } from './audit-cli.js'
 
 async function main() {
   const cli = new AuditCLI()
