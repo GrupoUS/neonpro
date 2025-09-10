@@ -2,7 +2,6 @@ import { afterEach, vi, } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 // Import Supabase mock to prevent GoTrueClient multi-instance warnings
 import './tools/testing/setup/supabase-mock'
-import { QueryClient, } from '@tanstack/react-query'
 import { cleanup, } from '@testing-library/react'
 
 afterEach(() => {
@@ -781,6 +780,7 @@ if (!(globalThis as any).mockPatientsHook) {
 
     if (category === 'lgpd') {
       const consent = Boolean(body?.data?.patient?.lgpd_consent,)
+      payload.compliance_status.lgd
       payload.compliance_status.lgpd_compliant = consent
       payload.violations = consent
         ? []

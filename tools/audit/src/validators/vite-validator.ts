@@ -1138,7 +1138,7 @@ export class ViteValidator extends SystemValidator {
       'vite.config.ts',
       'vite.config.js',
       'postcss.config.js',
-      'tailwind.config.js',
+      '.config/build/tailwind.config.js',
       'windi.config.ts',
     ]
 

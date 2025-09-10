@@ -223,7 +223,7 @@
     },
     "test:e2e": {
       "dependsOn": ["build"],
-      "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
+      "inputs": ["**/*.e2e.*", "**/e2e/**", ".config/testing/playwright.config.*"],
       "outputs": ["playwright-report/**", "test-results/**"]
     },
     "test:e2e:install": {
@@ -249,8 +249,8 @@
       "inputs": [
         "**/*.test.*",
         "**/*.spec.*",
-        "**/vitest.config.*",
-        "vitest.setup.*",
+        ".config/testing/vitest.config.*",
+        ".config/testing/vitest.setup.*",
         "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",

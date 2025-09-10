@@ -1,705 +1,377 @@
-# NeonPro Frontend Architecture - Version: 2.0.0
+---
+title: "NeonPro Frontend Architecture"
+last_updated: 2025-09-10
+form: explanation
+tags: [frontend, architecture, decisions, patterns]
+related:
+  - ./front-end-spec.md
+  - ./tech-stack.md
+  - ../prd/prd.md
+  - ../AGENTS.md
+---
+
+# NeonPro Frontend Architecture
 
 ## Overview
 
-This document provides comprehensive architectural guidance for developing the NeonPro frontend - a **Turborepo monorepo** with 3 applications and 20 specialized packages. NeonPro is a SaaS platform for advanced aesthetic clinics serving all aesthetic healthcare professionals in Brazil, featuring Universal AI Chat, Anti-No-Show prediction engine, and comprehensive Brazilian healthcare compliance.
+This document defines the high-level architectural decisions, patterns, and design philosophy for the NeonPro frontend - a **mobile-first aesthetic clinic management platform** built with **Turborepo monorepo architecture**. NeonPro serves advanced aesthetic professionals in Brazil with AI-powered automation, predictive analytics, and intelligent patient engagement.
 
-**Target Audience**: Frontend developers, architects, and technical leads working on NeonPro
+**Target Audience**: Frontend architects, technical leads, and senior developers
+**Scope**: Architectural decisions, system design patterns, and technology rationale
+**Companion Document**: [Frontend Specification](./front-end-spec.md) for implementation details
 
-**Core Principles**:
+## Architectural Principles
 
-- **Accessibility First**: WCAG 2.1 AA compliance mandatory
-- **Performance Optimized**: Core Web Vitals priority (<2s FCP, >90 Lighthouse)
-- **Security by Design**: Protection of sensitive healthcare data with Unified Audit Service
-- **Brazilian Compliance**: LGPD, ANVISA, and aesthetic healthcare regulatory compliance integrated
-- **AI-First Components**: Intelligent interfaces reducing administrative burden
-- **Mobile-First**: Critical information accessible instantly (95% mobile usage)
+### 1. Mobile-First Philosophy
+- **95% mobile usage** by aesthetic professionals and patients
+- Touch-optimized interfaces with minimum 44px touch targets
+- Offline-capable core functions for unreliable connections
+- Progressive Web App (PWA) capabilities for app-like experience
 
-## Prerequisites
+### 2. AI-First Architecture
+- **Universal AI Chat** as primary interaction method
+- Context-aware AI responses based on user role and patient data
+- Predictive UI elements powered by machine learning
+- Intelligent automation reducing administrative burden by 40%
 
-- **Framework Knowledge**: Next.js 15 with App Router and React Server Components
-- **TypeScript**: 5.3+ with strict mode configuration
-- **State Management**: Experience with Zustand and TanStack Query
-- **UI Library**: shadcn/ui v4 component system with healthcare extensions
-- **Styling**: Tailwind CSS 3.4+ with healthcare design tokens
-- **Testing**: Vitest, Testing Library, and Playwright for E2E
-- **Database**: Supabase PostgreSQL + Prisma ORM
-- **Monorepo**: Turborepo workflow and package management
-- **Brazilian Healthcare Compliance**: LGPD, ANVISA, and aesthetic healthcare regulatory requirements
+### 3. Healthcare Compliance by Design
+- **LGPD compliance** built into every component
+- Audit logging for all patient data access
+- Role-based access control (RBAC) at component level
+- Data masking and encryption for sensitive information
 
-## Tech Stack
+### 4. Performance-Driven Design
+- **<2 second page loads** on 3G connections
+- **99.9% uptime** requirement for critical clinic operations
+- Edge-first architecture with global CDN
+- Optimistic UI updates for immediate feedback
 
-| Category           | Technology                            | Purpose                                 |
-| ------------------ | ------------------------------------- | --------------------------------------- |
-| **Framework**      | Next.js 15 + React 19                 | SSR, App Router, Server Components      |
-| **Language**       | TypeScript 5.3+                       | Type safety, strict mode                |
-| **Styling**        | Tailwind CSS + Healthcare Tokens      | Responsive design, accessibility        |
-| **Components**     | shadcn/ui v4                          | Consistent UI components                |
-| **State**          | Zustand + TanStack Query              | Client state + server state             |
-| **Database**       | Supabase + Prisma                     | PostgreSQL with real-time subscriptions |
-| **AI Integration** | Vercel AI SDK + OpenAI GPT-4          | Universal chat, predictions             |
-| **Real-time**      | Supabase Realtime                     | Live updates, notifications             |
-| **Testing**        | Vitest + Testing Library + Playwright | Unit, integration, e2e testing          |
-| **Monitoring**     | Sentry + Vercel Analytics             | Error tracking, performance             |
-| **Compliance**     | LGPD/ANVISA/Aesthetic Healthcare      | Brazilian regulatory compliance         |
-| **Monorepo**       | Turborepo                             | Build orchestration, caching            |
+## Technology Architecture
 
-## Monorepo Architecture
+### Core Stack Rationale
 
-NeonPro uses **Turborepo with 3 applications and 20 specialized packages**:
+**Next.js 15 + React 19**
+- **Why**: Server Components reduce bundle size, App Router provides file-based routing
+- **Benefits**: Automatic code splitting, built-in performance optimizations, Vercel integration
+- **Trade-offs**: Learning curve for Server Components, limited client-side state
 
-### Applications (3)
+**TypeScript 5.0+ Strict Mode**
+- **Why**: Healthcare data requires absolute type safety
+- **Benefits**: Compile-time error detection, excellent IDE support, self-documenting code
+- **Implementation**: Strict null checks, no implicit any, path mapping for monorepo
+
+**Tailwind CSS + shadcn/ui**
+- **Why**: Rapid development, consistent design system, accessibility built-in
+- **Benefits**: Utility-first approach, responsive design, dark mode support
+- **Customization**: Healthcare-specific color tokens, Portuguese typography optimization
+
+**Supabase + Prisma**
+- **Why**: Real-time subscriptions, built-in auth, PostgreSQL compatibility
+- **Benefits**: Type-safe database queries, automatic migrations, row-level security
+- **Architecture**: Edge functions for business logic, real-time for live updates
+
+## System Architecture Patterns
+
+### 1. Monorepo Structure
 
 ```
 apps/
-├── web/              # Next.js 15 Frontend Application
+├── web/              # Next.js Frontend (Primary)
 ├── api/              # Hono.dev Backend API
+└── mobile/           # Future React Native app
+
+packages/
+├── @neonpro/ui                    # Core UI components
+├── @neonpro/brazilian-healthcare-ui # Healthcare-specific components
+├── @neonpro/database              # Supabase + Prisma integration
+├── @neonpro/auth                  # Authentication utilities
+├── @neonpro/ai                    # AI integration layer
+├── @neonpro/analytics             # Analytics and tracking
+├── @neonpro/compliance            # LGPD compliance utilities
+└── @neonpro/utils                 # Shared utilities
 ```
 
-### Package Categories (20 packages)
+**Benefits**:
+- Shared code between applications
+- Consistent versioning and dependencies
+- Atomic commits across related changes
+- Efficient CI/CD with selective builds
 
-#### UI & Components (4 packages)
+### 2. Component Architecture
 
-- `@neonpro/ui` - shadcn/ui + healthcare components
-- `@neonpro/brazilian-healthcare-ui` - Brazilian healthcare UI library
-- `@neonpro/shared` - Shared utilities and helpers
-- `@neonpro/utils` - Common utility functions
+**Atomic Design Methodology**
+- **Atoms**: Basic UI elements (Button, Input, Badge)
+- **Molecules**: Simple combinations (SearchBox, PatientCard)
+- **Organisms**: Complex components (Dashboard, AppointmentScheduler)
+- **Templates**: Page layouts with placeholder content
+- **Pages**: Specific instances with real content
 
-#### Data & Types (3 packages)
-
-- `@neonpro/database` - Primary database package (Supabase + Prisma)
-- `@neonpro/types` - TypeScript type definitions
-- `@neonpro/domain` - Business logic and domain models
-
-#### Core Services (2 packages)
-
-- `@neonpro/core-services` - Business logic services
-- `@neonpro/config` - Configuration management and TypeScript configs
-
-#### Healthcare & Compliance (2 packages)
-
-- `@neonpro/compliance` - LGPD compliance automation
-- `@neonpro/security` - Security utilities and Unified Audit Service
-
-#### AI & Intelligence (2 packages)
-
-- `@neonpro/ai` - AI services and integrations
-- `@neonpro/cache` - Advanced caching solutions
-
-#### Monitoring & Performance (2 packages)
-
-- `@neonpro/monitoring` - System monitoring and alerts
-- `@neonpro/health-dashboard` - System health visualization
-
-#### Infrastructure (3 packages)
-
-- `@neonpro/auth` - Authentication and authorization
-- `@neonpro/integrations` - External service integrations
-- `@neonpro/devops` - DevOps tooling and scripts
-
-#### Enterprise (2 packages)
-
-- `@neonpro/enterprise` - Enterprise features
-- `@neonpro/docs` - Documentation generation
-
-## Quick Start
-
-### Frontend Application Structure (apps/web)
-
-```
-apps/web/
-├── src/
-│   ├── app/                    # Next.js 15 App Router
-│   │   ├── (auth)/            # Authentication routes
-│   │   │   ├── login/         # Login page
-│   │   │   ├── register/      # Registration page
-│   │   │   └── layout.tsx     # Auth layout
-│   │   ├── (dashboard)/       # Protected dashboard routes
-│   │   │   ├── dashboard/     # Main dashboard
-│   │   │   ├── patients/      # Patient management
-│   │   │   ├── appointments/  # Appointment scheduling
-│   │   │   ├── ai-chat/       # Universal AI Chat
-│   │   │   ├── analytics/     # Analytics dashboard
-│   │   │   ├── compliance/    # LGPD compliance dashboard
-│   │   │   └── profile/       # User profile
-│   │   ├── api/               # API routes (Edge functions)
-│   │   │   ├── auth/          # Authentication endpoints
-│   │   │   ├── patients/      # Patient API routes
-│   │   │   ├── appointments/  # Appointment API routes
-│   │   │   └── ai/            # AI integration endpoints
-│   │   ├── globals.css        # Global styles and CSS variables
-│   │   ├── layout.tsx         # Root layout with providers
-│   │   └── page.tsx           # Landing page
-│   ├── components/            # Reusable UI components
-│   │   ├── ui/                # shadcn/ui base components
-│   │   ├── forms/             # Form components with validation
-│   │   ├── layouts/           # Layout components
-│   │   └── healthcare/        # Healthcare-specific components
-│   │       ├── patient-card.tsx
-│   │       ├── appointment-list.tsx
-│   │       ├── ai-chat.tsx
-│   │       ├── no-show-predictor.tsx
-│   │       └── metric-cards.tsx
-│   ├── lib/                   # Utility libraries
-│   │   ├── utils.ts           # Common utilities (cn, etc.)
-│   │   ├── supabase.ts        # Supabase client configuration
-│   │   ├── auth.ts            # Authentication utilities
-│   │   ├── validations.ts     # Zod validation schemas
-│   │   └── hooks/             # Custom React hooks
-│   │       ├── use-auth.ts
-│   │       ├── use-patients.ts
-│   │       ├── use-appointments.ts
-│   │       ├── use-ai-chat.ts
-│   │       └── use-analytics.ts
-│   ├── contexts/              # React contexts
-│   │   ├── auth-context.tsx   # Authentication context
-│   │   ├── api-context.tsx    # API client context
-│   │   └── theme-context.tsx  # Theme and UI context
-│   ├── stores/                # Zustand stores
-│   │   ├── auth-store.ts      # Authentication state
-│   │   ├── patient-store.ts   # Patient management state
-│   │   ├── ui-store.ts        # UI state (modals, notifications)
-│   │   └── ai-store.ts        # AI Chat state
-│   └── types/                 # Frontend-specific types
-│       ├── api.ts             # API response types
-│       ├── auth.ts            # Authentication types
-│       ├── healthcare.ts      # Healthcare domain types
-│       └── ai.ts              # AI integration types
-├── public/                    # Static assets
-├── package.json               # Dependencies and scripts
-├── next.config.mjs            # Next.js configuration
-├── tailwind.config.ts         # Tailwind CSS configuration
-└── tsconfig.json              # TypeScript configuration
-```
-
-### Core Features Architecture
-
-1. **Universal AI Chat**: Context-aware chat system with multi-channel support and emergency detection
-2. **Anti-No-Show Engine**: ML-based prediction with automated interventions and smart notifications
-3. **Unified Dashboard**: Real-time clinic overview with role-based personalization
-4. **Intelligent Scheduling**: Automated appointment optimization with resource management
-5. **Compliance Automation**: LGPD, ANVISA compliance with Unified Audit Service
-6. **Accessibility**: WCAG 2.1 AA compliance with healthcare-specific requirements
-7. **Performance Monitoring**: Real-time metrics and health dashboards
-
-## Examples
-
-### Universal AI Chat Implementation
-
+**Healthcare Component Pattern**
 ```typescript
-// components/healthcare/ai-chat.tsx
-import { UnifiedAuditService, } from '@neonpro/security'
-import { Badge, Button, Card, Input, } from '@neonpro/ui'
-import { useChat, } from 'ai/react'
-
-interface UniversalChatProps {
-  context?: 'patient' | 'appointment' | 'emergency' | 'general'
-  patientId?: string
-  onEmergencyDetected?: (severity: 'low' | 'medium' | 'high',) => void
-}
-
-export function UniversalChat({ context, patientId, onEmergencyDetected, }: UniversalChatProps,) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, } = useChat({
-    api: '/api/ai/chat',
-    body: { context, patientId, },
-    onFinish: async (message,) => {
-      // Audit trail for healthcare compliance
-      await UnifiedAuditService.logAIInteraction({
-        userId: user.id,
-        patientId,
-        context,
-        messageId: message.id,
-        timestamp: new Date(),
-      },)
-
-      // Emergency detection
-      if (message.metadata?.emergencyDetected) {
-        onEmergencyDetected?.(message.metadata.severity,)
-      }
-    },
-  },)
-
-  return (
-    <Card className="h-[600px] flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b">
-        <h3 className="font-semibold">NeonPro AI Assistant</h3>
-        {context && (
-          <Badge variant={context === 'emergency' ? 'destructive' : 'secondary'}>
-            {context}
-          </Badge>
-        )}
-      </div>
-      <ScrollArea className="flex-1 p-4">
-        {messages.map(message => (
-          <ChatMessage
-            key={message.id}
-            message={message}
-            showPatientContext={!!patientId}
-          />
-        ))}
-      </ScrollArea>
-      <form onSubmit={handleSubmit} className="p-4 border-t">
-        <div className="flex space-x-2">
-          <Input
-            value={input}
-            onChange={handleInputChange}
-            placeholder={context === 'emergency'
-              ? 'Descreva a situação de emergência...'
-              : 'Como posso ajudar?'}
-            disabled={isLoading}
-          />
-          <Button type="submit" disabled={isLoading}>
-            Enviar
-          </Button>
-        </div>
-      </form>
-    </Card>
-  )
+interface HealthcareComponentProps {
+  readonly patientId?: string
+  readonly userRole: 'admin' | 'professional' | 'coordinator'
+  readonly lgpdCompliant: boolean
+  readonly onAuditLog?: (action: string) => void
 }
 ```
 
-### Anti-No-Show Prediction Engine
+### 3. State Management Architecture
 
-```typescript
-// components/healthcare/no-show-predictor.tsx
-import { Badge, Button, Card, Progress, } from '@neonpro/ui'
-import { useQuery, } from '@tanstack/react-query'
-import { AlertTriangle, Calendar, MessageSquare, Phone, } from 'lucide-react'
+**Hybrid Approach**
+- **Server State**: TanStack Query for API data, caching, and synchronization
+- **Client State**: Zustand for UI state, user preferences, and temporary data
+- **Form State**: React Hook Form with Zod validation
+- **Real-time State**: Supabase subscriptions for live updates
 
-interface NoShowPredictorProps {
-  appointmentId: string
-}
+**State Flow Pattern**
+1. User action triggers optimistic update
+2. API call initiated with TanStack Query
+3. Real-time subscription updates other clients
+4. Error handling with automatic retry and rollback
 
-export function NoShowPredictor({ appointmentId, }: NoShowPredictorProps,) {
-  const { data: prediction, refetch, } = useQuery({
-    queryKey: ['no-show-prediction', appointmentId,],
-    queryFn: async () => {
-      const response = await fetch(`/api/ai/no-show-prediction/${appointmentId}`,)
-      return response.json()
-    },
-    refetchInterval: 30000, // Update every 30 seconds
-  },)
+### 4. Security Architecture
 
-  if (!prediction) return null
+**Defense in Depth**
+- **Authentication**: Supabase Auth with JWT tokens
+- **Authorization**: Row-level security (RLS) in database
+- **Data Protection**: Client-side encryption for sensitive data
+- **Audit Logging**: Comprehensive logging for compliance
 
-  const getRiskColor = (risk: number,) => {
-    if (risk >= 70) return 'destructive'
-    if (risk >= 40) return 'warning'
-    return 'success'
-  }
+**LGPD Compliance Pattern**
+- Data minimization at component level
+- Consent management integrated into UI
+- Right to erasure with cascading deletes
+- Data portability with structured exports
 
-  const getInterventionActions = (risk: number,) => {
-    if (risk >= 70) return ['call', 'whatsapp', 'sms',]
-    if (risk >= 40) return ['whatsapp', 'sms',]
-    return ['reminder',]
-  }
+## Design System Architecture
 
-  return (
-    <Card className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4" />
-          Predição Anti-No-Show
-        </h3>
-        <Badge variant={getRiskColor(prediction.riskScore,)}>
-          {prediction.riskScore}% risco
-        </Badge>
-      </div>
+### 1. Token-Based Design
 
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span>Probabilidade de Falta</span>
-          <span>{prediction.riskScore}%</span>
-        </div>
-        <Progress
-          value={prediction.riskScore}
-          className={`h-2 ${getRiskColor(prediction.riskScore,)}`}
-        />
-      </div>
+**Color System**
+- **Primary**: Professional trust blue (#2563eb)
+- **Secondary**: Sophisticated purple (#7c3aed)
+- **Accent**: Modern cyan (#06b6d4)
+- **Semantic**: Success, warning, error with healthcare context
 
-      <div className="space-y-2">
-        <h4 className="text-sm font-medium">Fatores de Risco:</h4>
-        <ul className="text-xs space-y-1">
-          {prediction.riskFactors.map((factor: string, index: number,) => (
-            <li key={index} className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-current rounded-full" />
-              {factor}
-            </li>
-          ))}
-        </ul>
-      </div>
+**Typography Scale**
+- **Primary Font**: Inter (optimized for Portuguese)
+- **Monospace**: JetBrains Mono (for data display)
+- **Line Height**: 1.6 (optimal for Portuguese readability)
 
-      <div className="space-y-2">
-        <h4 className="text-sm font-medium">Intervenções Sugeridas:</h4>
-        <div className="flex gap-2">
-          {getInterventionActions(prediction.riskScore,).includes('call',) && (
-            <Button size="sm" variant="outline">
-              <Phone className="h-3 w-3 mr-1" />
-              Ligar
-            </Button>
-          )}
-          {getInterventionActions(prediction.riskScore,).includes('whatsapp',) && (
-            <Button size="sm" variant="outline">
-              <MessageSquare className="h-3 w-3 mr-1" />
-              WhatsApp
-            </Button>
-          )}
-          {getInterventionActions(prediction.riskScore,).includes('reminder',) && (
-            <Button size="sm" variant="outline">
-              <Calendar className="h-3 w-3 mr-1" />
-              Lembrete
-            </Button>
-          )}
-        </div>
-      </div>
-    </Card>
-  )
-}
-```
+### 2. Component System
 
-### Unified Audit Service Integration
+**Base Components** (shadcn/ui)
+- Accessible by default (WCAG 2.1 AA)
+- Consistent API across components
+- Theme-aware with CSS variables
+- Responsive design built-in
 
-```typescript
-// lib/audit.ts - Healthcare Compliance Audit Trail
-import { UnifiedAuditService, } from '@neonpro/security'
-
-export const auditActions = {
-  // Patient data access
-  async logPatientAccess(patientId: string, action: 'view' | 'edit' | 'delete',) {
-    await UnifiedAuditService.logPatientAccess(patientId, getCurrentUserId(), action, {
-      ipAddress: getClientIP(),
-      userAgent: navigator.userAgent,
-      timestamp: new Date(),
-      lgpdConsent: await checkLGPDConsent(patientId,),
-    },)
-  },
-
-  // Appointment actions
-  async logAppointmentAction(appointmentId: string, action: string,) {
-    await UnifiedAuditService.logAppointmentAction(appointmentId, getCurrentUserId(), action, {
-      previousState: await getPreviousAppointmentState(appointmentId,),
-      changes: getAppointmentChanges(),
-      automaticAction: false,
-    },)
-  },
-
-  // AI interactions
-  async logAIInteraction(chatId: string, context: string,) {
-    await UnifiedAuditService.logAIInteraction({
-      userId: getCurrentUserId(),
-      chatId,
-      context,
-      sensitiveDataAccess: context.includes('patient',),
-      complianceFlags: await checkComplianceFlags(context,),
-    },)
-  },
-}
-```
-
-### State Management with Zustand
-
-```typescript
-// stores/patient-store.ts
-import { Appointment, Patient, } from '@neonpro/types'
-import { create, } from 'zustand'
-import { subscribeWithSelector, } from 'zustand/middleware'
-
-interface PatientStore {
-  // State
-  patients: Patient[]
-  selectedPatient: Patient | null
-  appointments: Appointment[]
-  isLoading: boolean
-
-  // Actions
-  setPatients: (patients: Patient[],) => void
-  selectPatient: (patient: Patient,) => void
-  updatePatient: (patientId: string, updates: Partial<Patient>,) => void
-  addAppointment: (appointment: Appointment,) => void
-
-  // Real-time subscriptions
-  subscribeToPatientUpdates: () => void
-  subscribeToAppointmentUpdates: () => void
-}
-
-export const usePatientStore = create<PatientStore>()(
-  subscribeWithSelector((set, get,) => ({
-    patients: [],
-    selectedPatient: null,
-    appointments: [],
-    isLoading: false,
-
-    setPatients: (patients,) => set({ patients, },),
-
-    selectPatient: async (patient,) => {
-      set({ selectedPatient: patient, isLoading: true, },)
-
-      // Audit trail for patient selection
-      await auditActions.logPatientAccess(patient.id, 'view',)
-
-      // Load patient appointments
-      const appointments = await fetchPatientAppointments(patient.id,)
-      set({ appointments, isLoading: false, },)
-    },
-
-    updatePatient: async (patientId, updates,) => {
-      const patients = get().patients.map(p => p.id === patientId ? { ...p, ...updates, } : p)
-      set({ patients, },)
-
-      // Audit trail for patient updates
-      await auditActions.logPatientAccess(patientId, 'edit',)
-    },
-
-    addAppointment: (appointment,) => {
-      set(state => ({
-        appointments: [...state.appointments, appointment,],
-      }))
-    },
-
-    subscribeToPatientUpdates: () => {
-      // Supabase real-time subscription
-      supabase
-        .channel('patients',)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'patients', },
-          (payload,) => {
-            const { eventType, new: newRecord, old: oldRecord, } = payload
-
-            if (eventType === 'UPDATE') {
-              get().updatePatient(newRecord.id, newRecord,)
-            }
-          },
-        )
-        .subscribe()
-    },
-
-    subscribeToAppointmentUpdates: () => {
-      supabase
-        .channel('appointments',)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'appointments', },
-          (payload,) => {
-            if (payload.eventType === 'INSERT') {
-              get().addAppointment(payload.new as Appointment,)
-            }
-          },
-        )
-        .subscribe()
-    },
-  })),
-)
-```
-
-### Custom Hooks
-
-```typescript
-// lib/hooks/use-ai-chat.ts
-import { useChat, } from 'ai/react'
-import { useCallback, useEffect, useState, } from 'react'
-import { auditActions, } from '../audit'
-
-export function useAIChat(context: string, patientId?: string,) {
-  const [emergencyDetected, setEmergencyDetected,] = useState(false,)
-  const [chatMetrics, setChatMetrics,] = useState({
-    responseTime: 0,
-    messageCount: 0,
-    satisfaction: null as number | null,
-  },)
-
-  const chat = useChat({
-    api: '/api/ai/chat',
-    body: { context, patientId, },
-    onFinish: async (message,) => {
-      // Audit healthcare AI interaction
-      await auditActions.logAIInteraction(chat.id, context,)
-
-      // Track performance metrics
-      setChatMetrics(prev => ({
-        ...prev,
-        responseTime: message.metadata?.responseTime || 0,
-        messageCount: prev.messageCount + 1,
-      }))
-
-      // Emergency detection
-      if (message.metadata?.emergency) {
-        setEmergencyDetected(true,)
-      }
-    },
-    onError: async (error,) => {
-      // Log AI errors for monitoring
-      await fetch('/api/monitoring/ai-error', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', },
-        body: JSON.stringify({
-          error: error.message,
-          context,
-          patientId,
-          timestamp: new Date().toISOString(),
-        },),
-      },)
-    },
-  },)
-
-  const clearEmergency = useCallback(() => {
-    setEmergencyDetected(false,)
-  }, [],)
-
-  const rateSatisfaction = useCallback(async (rating: number,) => {
-    setChatMetrics(prev => ({ ...prev, satisfaction: rating, }))
-
-    // Send satisfaction rating to analytics
-    await fetch('/api/analytics/chat-satisfaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', },
-      body: JSON.stringify({
-        chatId: chat.id,
-        rating,
-        context,
-        messageCount: chatMetrics.messageCount,
-      },),
-    },)
-  }, [chat.id, context, chatMetrics.messageCount,],)
-
-  return {
-    ...chat,
-    emergencyDetected,
-    clearEmergency,
-    chatMetrics,
-    rateSatisfaction,
-  }
-}
-```
+**Healthcare Extensions**
+- Patient data components with privacy controls
+- Medical procedure interfaces
+- Appointment scheduling components
+- AI chat interfaces
 
 ## Performance Architecture
 
-### Core Web Vitals Optimization
+### 1. Loading Strategy
 
+**Progressive Enhancement**
+- Critical CSS inlined for first paint
+- Non-critical resources loaded asynchronously
+- Service worker for offline functionality
+- Image optimization with Next.js Image
+
+**Code Splitting Strategy**
+- Route-based splitting with Next.js
+- Component-based splitting for large features
+- Dynamic imports for heavy libraries
+- Preloading for anticipated navigation
+
+### 2. Caching Strategy
+
+**Multi-Layer Caching**
+- **CDN**: Static assets and API responses
+- **Browser**: Service worker for offline access
+- **Memory**: TanStack Query for API data
+- **Database**: Redis for session and computed data
+
+### 3. Real-Time Architecture
+
+**Supabase Realtime**
+- WebSocket connections for live updates
+- Selective subscriptions to reduce bandwidth
+- Automatic reconnection with exponential backoff
+- Conflict resolution for concurrent edits
+
+## Mobile Architecture
+
+### 1. Responsive Design Strategy
+
+**Breakpoint System**
+- **Mobile**: 320px - 768px (primary focus)
+- **Tablet**: 768px - 1024px (secondary)
+- **Desktop**: 1024px+ (administrative tasks)
+
+**Adaptive Components**
+- Navigation: Bottom tabs on mobile, sidebar on desktop
+- Data tables: Card layout on mobile, table on desktop
+- Forms: Single column on mobile, multi-column on desktop
+
+### 2. Touch Interaction Design
+
+**Touch Targets**
+- Minimum 44px for all interactive elements
+- Adequate spacing between touch targets
+- Swipe gestures for common actions
+- Pull-to-refresh for data updates
+
+### 3. Performance Optimization
+
+**Mobile-Specific Optimizations**
+- Reduced bundle size with tree shaking
+- Lazy loading for below-the-fold content
+- Optimized images with WebP format
+- Minimal JavaScript for critical path
+
+## AI Integration Architecture
+
+### 1. Universal AI Chat System
+
+**Context-Aware Architecture**
+- Patient context injection for personalized responses
+- Role-based response filtering
+- Emergency detection with automatic escalation
+- Multi-language support (Portuguese primary)
+
+**Integration Pattern**
 ```typescript
-// next.config.mjs - Performance Configuration
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Performance optimizations
-  compress: true,
-  poweredByHeader: false,
-
-  // Bundle analyzer
-  bundleAnalyzer: process.env.ANALYZE === 'true',
-
-  // Image optimization
-  images: {
-    formats: ['image/webp', 'image/avif',],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840,],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384,],
-  },
-
-  // Experimental features
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ['@neonpro/ui', 'lucide-react',],
-    serverComponentsExternalPackages: ['@neonpro/database',],
-  },
-
-  // Headers for security and performance
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-    ]
-  },
+interface AIContext {
+  userRole: UserRole
+  patientId?: string
+  clinicId: string
+  conversationHistory: Message[]
+  emergencyProtocols: EmergencyProtocol[]
 }
-
-export default nextConfig
 ```
 
-### Performance Targets
+### 2. Predictive UI Components
 
-| Metric                     | Target | Current |
-| -------------------------- | ------ | ------- |
-| **Lighthouse Score**       | >90    | 94      |
-| **First Contentful Paint** | <2s    | 1.4s    |
-| **Time to Interactive**    | <3s    | 2.1s    |
-| **Bundle Size**            | <1MB   | 847KB   |
-| **API Response Time**      | <200ms | 145ms   |
-| **Database Query Time**    | <50ms  | 38ms    |
+**Anti-No-Show Engine**
+- Real-time risk scoring display
+- Automated intervention suggestions
+- Historical pattern visualization
+- Success rate tracking
 
-## Troubleshooting
+**Smart Scheduling**
+- AI-powered time slot recommendations
+- Resource optimization suggestions
+- Conflict detection and resolution
+- Capacity planning insights
 
-### Common Issues
+## Scalability Architecture
 
-- **Issue**: TypeScript compilation errors with strict mode → **Solution**: Enable `skipLibCheck: false` and fix type definitions in packages
-- **Issue**: SSR hydration mismatches in AI Chat → **Solution**: Use `useIsomorphicLayoutEffect` for client-side only effects
-- **Issue**: Slow initial page loads with many packages → **Solution**: Implement progressive loading and optimize Turborepo caching
-- **Issue**: AI chat response delays → **Solution**: Use streaming responses and optimize prompt engineering with context limiting
-- **Issue**: Healthcare compliance validation failures → **Solution**: Check LGPD consent flow and Unified Audit Service configuration
-- **Issue**: Accessibility audit failures → **Solution**: Run automated testing with axe-core and manual testing with screen readers
-- **Issue**: Monorepo build performance → **Solution**: Optimize Turborepo pipeline and use `turbo build --filter=web`
+### 1. Horizontal Scaling
 
-### Performance Optimization
+**Stateless Design**
+- No server-side session storage
+- JWT tokens for authentication
+- Database for persistent state
+- CDN for static asset delivery
 
-- **Bundle Analysis**: Use `@next/bundle-analyzer` to identify large dependencies across packages
-- **Image Optimization**: Leverage Next.js Image component with healthcare-appropriate formats
-- **Database Queries**: Implement query optimization with Prisma and Supabase performance insights
-- **Caching Strategy**: Use `@neonpro/cache` package with appropriate headers for sensitive healthcare data
-- **Package Optimization**: Regular dependency auditing and unused package removal
-- **Turborepo Optimization**: Configure build pipelines and remote caching
+**Microservices Preparation**
+- Domain-driven package organization
+- Clear API boundaries between packages
+- Event-driven communication patterns
+- Independent deployment capabilities
 
-## Related Docs
+### 2. Database Scaling
 
-- [Source Tree Architecture](./source-tree.md) - Complete monorepo structure and package details
-- [Tech Stack Guide](../tech-stack.md) - Detailed technology specifications
-- [Database Schema](../database-schema.md) - Data structure and relationships
-- [API Documentation](../apis/) - Backend integration patterns
-- [Compliance Guide](../compliance/) - Brazilian healthcare regulations
-- [Component Library](../components/) - shadcn/ui healthcare extensions
-- [Performance Monitoring](../monitoring/) - System health and metrics
-- [AI Integration Guide](../ai/) - AI services and prompt engineering
+**Read Replicas**
+- Supabase read replicas for analytics queries
+- Connection pooling for efficient resource usage
+- Query optimization with proper indexing
+- Caching layer for frequently accessed data
 
----
+### 3. CDN and Edge Computing
 
-## Summary
+**Global Distribution**
+- Vercel Edge Network for low latency
+- Edge functions for business logic
+- Regional data compliance (Brazil focus)
+- Automatic failover and load balancing
 
-This comprehensive frontend architecture provides the foundation for building a scalable, accessible, and compliant healthcare SaaS platform using a sophisticated **Turborepo monorepo with 20 specialized packages**.
+## Quality Architecture
 
-### Key Architectural Strengths:
+### 1. Testing Strategy
 
-- **Modular Architecture**: 20 focused packages enabling precise dependency management
-- **Healthcare Compliance**: Unified Audit Service with LGPD/ANVISA compliance automation
-- **AI-First Design**: Universal AI Chat and Anti-No-Show prediction engine
-- **Performance Excellence**: <2s load times with Core Web Vitals optimization
-- **Enterprise Security**: Comprehensive audit trails and data protection
-- **Developer Experience**: Modern Next.js 15 + TypeScript with excellent tooling
-- **Scalability**: Component architecture supporting multi-tenant SaaS requirements
+**Testing Pyramid**
+- **Unit Tests**: Component logic and utilities (70%)
+- **Integration Tests**: API interactions and workflows (20%)
+- **E2E Tests**: Critical user journeys (10%)
 
-The architecture balances technical excellence with healthcare domain requirements, ensuring both developer productivity and regulatory compliance for aesthetic healthcare professionals in Brazil.
+**Healthcare-Specific Testing**
+- LGPD compliance validation
+- Accessibility testing with screen readers
+- Performance testing under load
+- Security penetration testing
 
-**Development Commands:**
+### 2. Monitoring and Observability
 
-```bash
-# Turborepo commands
-pnpm dev                    # Start all applications
-pnpm build                  # Build all packages and apps  
-pnpm dev:web               # Start frontend only
-pnpm build --filter=web    # Build frontend only
-pnpm test                  # Run all tests
-pnpm lint                  # Lint all packages
-pnpm type-check            # TypeScript validation
-```
+**Application Monitoring**
+- Real-time error tracking with Sentry
+- Performance monitoring with Vercel Analytics
+- User behavior tracking with privacy compliance
+- Business metrics dashboard
 
-Follow these architectural guidelines to ensure consistent, maintainable, and high-quality frontend development across the entire NeonPro platform.
+**Health Checks**
+- API endpoint availability
+- Database connection status
+- Third-party service dependencies
+- Real-time subscription health
+
+## Future Architecture Considerations
+
+### 1. Multi-Tenant Architecture
+
+**Clinic Isolation**
+- Database-level tenant separation
+- UI customization per clinic
+- Feature flags for different plans
+- Compliance requirements per region
+
+### 2. International Expansion
+
+**Localization Architecture**
+- i18n framework integration
+- Currency and date formatting
+- Regional compliance modules
+- Multi-language AI training
+
+### 3. Advanced AI Features
+
+**Autonomous Practice Intelligence**
+- Predictive analytics dashboard
+- Automated workflow optimization
+- Intelligent resource allocation
+- Advanced patient insights
+
+## Conclusion
+
+The NeonPro frontend architecture prioritizes mobile-first design, AI integration, and healthcare compliance while maintaining high performance and scalability. The monorepo structure enables code sharing and consistent development practices, while the component-based architecture ensures maintainability and reusability.
+
+Key architectural decisions focus on:
+- **User Experience**: Mobile-first, AI-powered, intuitive interfaces
+- **Compliance**: LGPD, ANVISA, and healthcare regulatory requirements
+- **Performance**: Sub-2-second load times, 99.9% uptime, offline capabilities
+- **Scalability**: Horizontal scaling, microservices preparation, global distribution
+
+This architecture provides a solid foundation for NeonPro's evolution from a smart aesthetic platform to an autonomous practice intelligence system.
+
+## See Also
+
+- [Frontend Specification](./front-end-spec.md) - Implementation details and coding standards
+- [Technology Stack](./tech-stack.md) - Detailed technology choices and rationale
+- [Product Requirements](../prd/prd.md) - Business requirements and user needs
+- [Development Guidelines](../AGENTS.md) - Development workflow and best practices

@@ -866,7 +866,7 @@ export class ConfigurationOptimizer extends EventEmitter {
       '.prettierrc',
       'babel.config.js',
       'jest.config.js',
-      'tailwind.config.js',
+      '.config/build/tailwind.config.js',
     ]
 
     const fileName = path.basename(filePath,).toLowerCase()
