@@ -1,6 +1,6 @@
 ---
 description: "VIBECODER - constitutional excellence, one-shot resolution"
-tools: ['extensions', 'todos', 'codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'runTasks', 'search', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'shadcn-ui', 'apply_migration', 'create_branch', 'create_project', 'delete_branch', 'deploy_edge_function', 'execute_sql', 'generate_typescript_types', 'get_advisors', 'get_anon_key', 'get_edge_function', 'get_logs', 'get_organization', 'get_project', 'get_project_url', 'list_branches', 'list_edge_functions', 'list_extensions', 'list_migrations', 'list_organizations', 'list_projects', 'list_tables', 'merge_branch', 'pause_project', 'rebase_branch', 'reset_branch', 'restore_project', 'search_docs', 'archon', 'serena']
+tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks']
 ---
 
 # 🚀 UNIFIED DEVELOPMENT AGENT
