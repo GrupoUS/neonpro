@@ -656,7 +656,7 @@ export class ViteValidator extends SystemValidator {
       'vite.config.ts',
       'vite.config.js',
       'vite.config.mjs',
-      'vitest.config.ts',
+      '.config/testing/vitest.config.ts',
       'vitest.config.js',
     ]
 

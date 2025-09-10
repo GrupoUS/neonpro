@@ -819,7 +819,7 @@ export class React19Validator extends SystemValidator {
     // Check for React-specific configuration files
     const configFiles = [
       '.eslintrc.js',
-      '.eslintrc.json',
+      '.config/eslint/.eslintrc.json',
       'eslint.config.js',
       'jest.config.js',
       'jest.config.ts',

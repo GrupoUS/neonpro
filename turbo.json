@@ -6,7 +6,7 @@
     "**/tsconfig.json",
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
-    "dprint.json",
+    ".config/dprint/dprint.json",
     "bunfig.toml",
     "bun.lock"
   ],
@@ -115,14 +115,14 @@
     },
 
     "lint": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json", ".eslintrc.*", ".oxlintrc.*"],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", ".config/dprint/dprint.json", ".config/eslint/.eslintrc.*", ".config/oxlint/.oxlintrc.*"],
       "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
       "cache": true,
       "env": ["NODE_OPTIONS"]
     },
     "lint:fix": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "dprint.json", ".eslintrc.*", ".oxlintrc.*"],
+      "inputs": ["**/*.{ts,tsx,js,jsx}", ".config/dprint/dprint.json", ".config/eslint/.eslintrc.*", ".config/oxlint/.oxlintrc.*"],
       "outputs": [".eslintcache", "**/*.tsbuildinfo"],
       "outputLogs": "new-only",
       "cache": true,
@@ -144,8 +144,8 @@
     "format": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        "dprint.json",
-        ".prettierrc*"
+        ".config/dprint/dprint.json",
+        ".config/prettier/.prettierrc*"
       ],
       "outputs": [".dprint.cache"],
       "outputLogs": "new-only",
@@ -154,8 +154,8 @@
     "format:check": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        "dprint.json",
-        ".prettierrc*"
+        ".config/dprint/dprint.json",
+        ".config/prettier/.prettierrc*"
       ],
       "outputs": [".dprint.cache"],
       "outputLogs": "new-only",
@@ -166,8 +166,8 @@
       "inputs": [
         "**/*.test.*",
         "**/*.spec.*",
-        "**/vitest.config.*",
-        "vitest.setup.*",
+        ".config/testing/vitest.config.*",
+        ".config/testing/vitest.setup.*",
         "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -190,8 +190,8 @@
       "inputs": [
         "**/*.test.*",
         "**/*.spec.*",
-        "**/vitest.config.*",
-        "vitest.setup.*",
+        ".config/testing/vitest.config.*",
+        ".config/testing/vitest.setup.*",
         "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -205,8 +205,8 @@
       "inputs": [
         "**/*.test.*",
         "**/*.spec.*",
-        "**/vitest.config.*",
-        "vitest.setup.*",
+        ".config/testing/vitest.config.*",
+        ".config/testing/vitest.setup.*",
         "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -218,7 +218,7 @@
     },
     "test:unit": {
       "dependsOn": ["build"],
-      "inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
+      "inputs": ["**/*.test.*", "**/*.spec.*", ".config/testing/vitest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:e2e": {
