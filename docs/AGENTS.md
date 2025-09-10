@@ -100,7 +100,6 @@ Central guide for humans and LLMs to navigate the entire `docs/` folder with max
 
 Fundamental documents:
 
-- Project Memory: [./memory.md](./memory.md)
 - Coding Standards: [./rules/coding-standards.md](./rules/coding-standards.md)
 
 ## 🧭 Navigation Matrix for LLMs (Machine-readable)
@@ -113,13 +112,10 @@ navigation_matrix:
         - docs/agents/AGENTS.md
         - docs/rules/coding-standards.md
         - docs/architecture/source-tree.md
-        - docs/memory.md
     - goal: "Create/update an API"
       consult:
         - docs/apis/AGENTS.md
         - docs/apis/apis.md
-        - docs/rules/variables-configuration.md
-        - docs/testing/integration-testing.md
     - goal: "Modify schema/tables (Supabase)"
       consult:
         - docs/database-schema/AGENTS.md
