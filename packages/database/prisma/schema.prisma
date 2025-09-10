@@ -1,0 +1,334 @@
+// Prisma schema (skeleton) for NeonPro
+// Docs: https://www.prisma.io/docs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Minimal initial models (non-breaking, extend as needed)
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clinics      Clinic[]
+  auditTrails  AuditTrail[]
+  escalations  EscalationWorkflow[]
+}
+
+model Clinic {
+  id        String    @id @default(uuid())
+  name      String
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  patients  Patient[]
+  appts     Appointment[]
+  auditTrails  AuditTrail[]
+  riskAssessments RiskAssessment[]
+  complianceStatus ComplianceStatus[]
+}model Patient {
+  id        String    @id @default(uuid())
+  clinicId  String
+  clinic    Clinic    @relation(fields: [clinicId], references: [id])
+  fullName  String
+  email     String?   @unique
+  phone     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  appts     Appointment[]
+  auditTrails AuditTrail[]
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+  NO_SHOW
+}
+
+model Appointment {
+  id        String             @id @default(uuid())
+  clinicId  String
+  clinic    Clinic             @relation(fields: [clinicId], references: [id])
+  patientId String
+  patient   Patient            @relation(fields: [patientId], references: [id])
+  startsAt  DateTime
+  status    AppointmentStatus  @default(SCHEDULED)
+  notes     String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+// Governance Models
+
+enum AuditAction {
+  VIEW
+  CREATE
+  UPDATE
+  DELETE
+  EXPORT
+  LOGIN
+  LOGOUT
+}
+
+enum ResourceType {
+  PATIENT_RECORD
+  REPORT
+  SYSTEM_CONFIG
+  USER_ACCOUNT
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILED
+  BLOCKED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}// HIPAA/LGPD Audit Trail - Critical for compliance
+model AuditTrail {
+  id             String      @id @default(uuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  clinicId       String?
+  clinic         Clinic?     @relation(fields: [clinicId], references: [id])
+  patientId      String?
+  patient        Patient?    @relation(fields: [patientId], references: [id])
+  
+  action         AuditAction
+  resource       String      // What was accessed
+  resourceType   ResourceType
+  resourceId     String?     // ID of the accessed resource
+  
+  ipAddress      String
+  userAgent      String
+  sessionId      String?
+  
+  status         AuditStatus
+  riskLevel      RiskLevel   @default(LOW)
+  additionalInfo String?
+  
+  createdAt      DateTime    @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([clinicId, createdAt])
+  @@index([patientId, createdAt])
+  @@index([action, status])
+  @@index([riskLevel, createdAt])
+}enum KPIStatus {
+  ACTIVE
+  ARCHIVED
+  PROVISIONAL
+}
+
+enum ComplianceFramework {
+  HIPAA
+  LGPD
+  GDPR
+  SOC2
+}
+
+enum ComplianceStatusEnum {
+  COMPLIANT
+  NON_COMPLIANT
+  UNDER_REVIEW
+  CRITICAL
+}
+
+// KPI Metrics for dashboard
+model KPIMetric {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  category    String    // e.g., "normalization", "quality", "compliance"
+  
+  currentValue Float
+  targetValue  Float
+  direction   String    // "higher_better", "lower_better", "target_exact"
+  unit        String?   // "%", "count", "score", etc.
+  
+  status      KPIStatus @default(ACTIVE)
+  threshold   Float?    // Warning threshold
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([status, category])
+  @@index([createdAt])
+}// Compliance Status Monitoring
+model ComplianceStatus {
+  id          String                @id @default(uuid())
+  clinicId    String
+  clinic      Clinic                @relation(fields: [clinicId], references: [id])
+  
+  framework   ComplianceFramework
+  score       Float                 // Compliance score (0-100)
+  status      ComplianceStatusEnum
+  violations  Int                   @default(0)
+  lastAudit   DateTime?
+  nextAudit   DateTime?
+  
+  details     Json?                 // Additional compliance details
+  
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  
+  @@unique([clinicId, framework])
+  @@index([status, framework])
+}
+
+// Risk Assessment and Management
+model RiskAssessment {
+  id              String     @id @default(uuid())
+  clinicId        String
+  clinic          Clinic     @relation(fields: [clinicId], references: [id])
+  
+  category        String     // "Security", "Privacy", "Operational", etc.
+  title           String
+  description     String
+  severity        RiskLevel
+  likelihood      RiskLevel
+  impact          RiskLevel
+  
+  status          String     // "Open", "Mitigated", "Accepted", "Transferred"
+  mitigation      String?    // Mitigation strategy
+  owner           String?    // Risk owner
+  dueDate         DateTime?
+  
+  metadata        Json?      // Additional risk data
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  @@index([severity, status])
+  @@index([clinicId, status])
+}enum AIModelStatus {
+  ACTIVE
+  INACTIVE
+  TRAINING
+  DEPRECATED
+}
+
+enum PolicyStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+  UNDER_REVIEW
+}
+
+enum EscalationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum EscalationStatus {
+  OPEN
+  IN_PROGRESS
+  ESCALATED
+  RESOLVED
+  CLOSED
+}
+
+// AI Governance and Model Performance
+model AIGovernanceMetric {
+  id                    String         @id @default(uuid())
+  modelName             String
+  modelVersion          String
+  status                AIModelStatus  @default(ACTIVE)
+  
+  hallucinationRate     Float          // Percentage
+  accuracyScore         Float          // 0-100
+  biasScore             Float?         // Bias detection score
+  complianceScore       Float          // Compliance with regulations
+  
+  requestsProcessed     Int            @default(0)
+  averageResponseTime   Float?         // Milliseconds
+  errorRate             Float          @default(0)
+  
+  lastTrainingDate      DateTime?
+  modelSize             String?        // "7B", "13B", etc.
+  
+  metadata              Json?          // Additional model metadata
+  
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  
+  @@unique([modelName, modelVersion])
+  @@index([status, hallucinationRate])
+}// Policy Management
+model PolicyManagement {
+  id                 String        @id @default(uuid())
+  name               String
+  description        String
+  category           String        // "Security", "Privacy", "Clinical", etc.
+  framework          ComplianceFramework
+  
+  status             PolicyStatus  @default(DRAFT)
+  version            String        @default("1.0")
+  
+  enforcementRate    Float         @default(0) // 0-100%
+  violationCount     Int           @default(0)
+  lastReview         DateTime?
+  nextReview         DateTime?
+  
+  content            String        // Policy content/rules
+  metadata           Json?         // Additional policy data
+  
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  
+  @@index([status, framework])
+  @@index([category, status])
+}
+
+// Escalation Workflow Management
+model EscalationWorkflow {
+  id              String              @id @default(uuid())
+  userId          String
+  user            User                @relation(fields: [userId], references: [id])
+  
+  title           String
+  description     String
+  category        String              // "Security", "Compliance", "Clinical", etc.
+  source          String              // "compliance-audit", "risk-assessment", etc.
+  
+  priority        EscalationPriority
+  status          EscalationStatus    @default(OPEN)
+  
+  assignedTo      String?             // Team or person assigned
+  deadline        DateTime?
+  escalatedAt     DateTime?
+  resolvedAt      DateTime?
+  
+  responseTime    Int?                // Minutes to first response
+  resolutionTime  Int?                // Minutes to resolution
+  
+  notes           String?
+  metadata        Json?               // Additional escalation data
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  @@index([priority, status])
+  @@index([status, deadline])
+  @@index([assignedTo, status])
+}

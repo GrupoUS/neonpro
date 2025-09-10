@@ -1,0 +1,298 @@
+{
+  "$schema": "./compliance-config.schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2025-09-10T00:00:00Z",
+  "environment": "production",
+  
+  "hipaa": {
+    "enabled": true,
+    "version": "164.312",
+    "requirements": {
+      "encryption": {
+        "atRest": {
+          "algorithm": "AES-256-GCM",
+          "keyRotationDays": 90,
+          "enabled": true
+        },
+        "inTransit": {
+          "tlsVersion": "1.2",
+          "cipherSuites": [
+            "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+            "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+          ],
+          "certificateValidation": true
+        }
+      },
+      "accessControl": {
+        "rlsEnabled": true,
+        "roleBasedAccess": true,
+        "minimumNecessaryRule": true,
+        "roles": {
+          "healthcare_admin": {
+            "permissions": ["create", "read", "update", "delete"],
+            "phiAccess": true,
+            "auditRequired": true
+          },
+          "healthcare_provider": {
+            "permissions": ["create", "read", "update"],
+            "phiAccess": true,
+            "restrictedToAssignedPatients": true,
+            "auditRequired": true
+          },
+          "data_analyst": {
+            "permissions": ["read"],
+            "phiAccess": false,
+            "aggregatedDataOnly": true,
+            "auditRequired": false
+          },
+          "compliance_officer": {
+            "permissions": ["read"],
+            "phiAccess": true,
+            "auditPurposeOnly": true,
+            "auditRequired": true
+          }
+        }
+      },
+      "auditLogging": {
+        "enabled": true,
+        "retentionYears": 7,
+        "phiAccessTracking": true,
+        "automaticCleanup": true,
+        "logFields": [
+          "userId",
+          "action", 
+          "resource",
+          "timestamp",
+          "ipAddress",
+          "userAgent",
+          "outcome",
+          "phiAccessed"
+        ]
+      }
+    }
+  },
+  
+  "lgpd": {
+    "enabled": true,
+    "lawVersion": "13.709/2018",
+    "requirements": {
+      "consentManagement": {
+        "enabled": true,
+        "versionTracking": true,
+        "granularConsent": true,
+        "withdrawalSupport": true,
+        "auditTrail": true,
+        "consentTypes": [
+          "data_processing",
+          "marketing", 
+          "research",
+          "sharing"
+        ],
+        "lawfulBasis": [
+          "consent",
+          "contract",
+          "legal_obligation",
+          "vital_interests",
+          "public_task",
+          "legitimate_interests"
+        ]
+      },
+      "dataSubjectRights": {
+        "dataPortability": {
+          "enabled": true,
+          "maxResponseDays": 15,
+          "format": "JSON",
+          "encryptedTransfer": true
+        },
+        "rightToErasure": {
+          "enabled": true,
+          "maxResponseDays": 30,
+          "archiveBeforeDeletion": true,
+          "complianceRetentionCheck": true
+        },
+        "consentWithdrawal": {
+          "enabled": true,
+          "maxPropagationMinutes": 5,
+          "systemWideUpdate": true,
+          "confirmationRequired": true
+        }
+      },
+      "dataMinimization": {
+        "enabled": true,
+        "purposeLimitation": true,
+        "retentionLimits": {
+          "healthcareData": 2555,
+          "auditLogs": 2555,
+          "consentRecords": 2555,
+          "generalData": 365
+        },
+        "automaticCleanup": true
+      }
+    }
+  },
+  
+  "performanceBudgets": {
+    "enabled": true,
+    "environment": "production",
+    "stagingValidation": true,
+    "budgets": {
+      "lcp": {
+        "budget": 2500,
+        "unit": "ms",
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      },
+      "fid": {
+        "budget": 100,
+        "unit": "ms", 
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      },
+      "cls": {
+        "budget": 0.1,
+        "unit": "score",
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      },
+      "ttfb": {
+        "budget": 600,
+        "unit": "ms",
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      },
+      "bundleSize": {
+        "budget": 250,
+        "unit": "kb",
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      },
+      "apiLatency": {
+        "budget": 800,
+        "unit": "ms",
+        "alertThreshold": 0.9,
+        "escalationPath": "ESC-003"
+      }
+    }
+  },
+  
+  "aiGovernance": {
+    "enabled": true,
+    "evaluationMethod": "hybrid",
+    "thresholds": {
+      "maxHallucinationRate": 0.05,
+      "minAccuracy": 0.95,
+      "escalationTrigger": 2
+    },
+    "monitoring": {
+      "reviewCadence": "weekly",
+      "reportingCadence": "monthly",
+      "sampleSize": 100,
+      "manualReviewPercentage": 10,
+      "automatedValidationPercentage": 90
+    },
+    "fallbackStrategies": {
+      "hallucinationDetected": "deterministic_response",
+      "accuracyBelowThreshold": "human_review_queue",
+      "systemOverload": "cached_response"
+    }
+  },
+  
+  "kpiConfiguration": {
+    "baselineSource": "ehr_integration",
+    "measurementWindow": 365,
+    "updateFrequency": "daily",
+    "qualityThresholds": {
+      "noShowRate": {
+        "baseline": "calculated",
+        "phase1Target": 15,
+        "phase2Target": 10,
+        "unit": "percentage",
+        "direction": "lower_better"
+      },
+      "aiAccuracy": {
+        "baseline": 0,
+        "phase1Target": 95,
+        "phase2Target": 97,
+        "unit": "percentage", 
+        "direction": "higher_better"
+      }
+    }
+  },
+  
+  "escalationPaths": {
+    "ESC-001": {
+      "name": "KPI Breach",
+      "triggerCondition": "2_consecutive_periods",
+      "responseTimeHours": 24,
+      "owner": "Product Owner",
+      "actions": [
+        "notify_stakeholders",
+        "schedule_backlog_review",
+        "create_improvement_plan"
+      ]
+    },
+    "ESC-002": {
+      "name": "HIPAA/LGPD Policy Failure", 
+      "triggerCondition": "policy_violation",
+      "responseTimeHours": 4,
+      "owner": "Compliance Officer",
+      "actions": [
+        "immediate_investigation",
+        "system_review",
+        "remediation_plan",
+        "regulatory_notification_if_required"
+      ]
+    },
+    "ESC-003": {
+      "name": "Performance Budget Breach",
+      "triggerCondition": "budget_exceeded",
+      "responseTimeHours": 1, 
+      "owner": "Engineering Lead",
+      "actions": [
+        "performance_analysis",
+        "optimization_plan",
+        "load_balancing_if_needed"
+      ]
+    },
+    "ESC-004": {
+      "name": "AI Hallucination Spike",
+      "triggerCondition": "hallucination_rate_above_threshold",
+      "responseTimeHours": 2,
+      "owner": "AI Steward", 
+      "actions": [
+        "fallback_to_deterministic",
+        "model_evaluation",
+        "prompt_review"
+      ]
+    },
+    "ESC-005": {
+      "name": "System Availability",
+      "triggerCondition": "availability_below_99_percent",
+      "responseTimeMinutes": 15,
+      "owner": "DevOps Lead",
+      "actions": [
+        "incident_response",
+        "status_page_update",
+        "dr_site_activation_if_needed"
+      ]
+    }
+  },
+  
+  "complianceValidation": {
+    "enabled": true,
+    "automatedChecks": true,
+    "scheduledAudits": {
+      "hipaaCompliance": "monthly",
+      "lgpdCompliance": "monthly", 
+      "performanceBudgets": "weekly",
+      "aiGovernance": "weekly",
+      "accessControls": "daily"
+    },
+    "reportingDashboard": {
+      "enabled": true,
+      "refreshInterval": "5m",
+      "alertIntegration": true,
+      "stakeholderNotifications": true
+    }
+  }
+}

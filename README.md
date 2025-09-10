@@ -911,3 +911,35 @@ _Built with ❤️ for healthcare professionals who demand excellence_
 [![📱 Follow Updates](https://img.shields.io/twitter/follow/neonpro?style=social)](https://twitter.com/neonpro)
 
 </div>
+
+---
+
+## 🔑 Environment & Secrets (Vercel)
+
+Defina as variáveis no painel do projeto Vercel (não faça commit de segredos):
+
+- DATABASE_URL (Server/Build) – string de conexão Postgres (pool)
+- DIRECT_URL (Build) – URL direta para migrações Prisma
+- SUPABASE_URL (Server/Build)
+- SUPABASE_ANON_KEY (Server/Build)
+- SUPABASE_SERVICE_ROLE_KEY (Somente Server)
+
+O arquivo `vercel.json` referencia chaves criptografadas no formato `@...` (ex.: `@database_url`). Cadastre os segredos com esses nomes no Vercel para que o build e as Functions os recebam.
+
+## 🗄️ Prisma (Monorepo)
+
+- Schema: `packages/database/prisma/schema.prisma` (inicial sem models para destravar o deploy).
+- Geração do client:
+
+```bash
+pnpm --filter @neonpro/api i        # dispara postinstall → prisma generate
+pnpm --filter @neonpro/api prisma:generate
+```
+
+- Deploy de migrações (quando houver models/migrations):
+
+```bash
+pnpm --filter @neonpro/api prisma:migrate:deploy
+```
+
+> Boas práticas: manter models e migrations versionados no monorepo; usar `DATABASE_URL`/`DIRECT_URL` no Vercel; rodar `migrate deploy` em etapa controlada (preview/prod) antes de ativar endpoints dependentes de DB.
