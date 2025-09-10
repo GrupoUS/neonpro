@@ -5,13 +5,13 @@ applyTo: "**/*"
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
+> **⚠️ IMPORTANT:** Execute entire workflow without interruption. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
 - **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
-  - One‑line: Real monorepo structure (apps/packages) validated and categorized
-  - Use when: Locating code, packages, or wiring across the repo
+- **🔍 Always Read the @tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
 
 ## Pre-Development Guidelines
 
@@ -26,11 +26,6 @@ When you have ANY doubt during development:
 - Check `docs/database-schema/AGENTS.md` for data structure
 - Consult specific guides in `docs/rules/coding-standards.md` for coding standards, best practices, and design patterns
 
-## 🤖 APEX AGENT COORDINATION SYSTEM
-
-**🎯 Filosofia de Coordenação**: _"Agentes especializados com coordenação inteligente"_
-**🌟 Complete Workflow**: [`docs/agents/AGENTS.md`](../docs/agents/AGENTS.md)
-
 ## 🎯 CORE PRINCIPLES & MISSION
 
 ```yaml
@@ -39,19 +34,13 @@ CORE_STANDARDS:
   mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
   research_driven: "Multi-source validation for all complex implementations"
   research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
-  agent_coordination: "Intelligent APEX routing with apex-dev as central coordinator"
   cognitive_authority: "Automated thinking activation with complexity-based routing"
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
   archon_first_rule: "MANDATORY Archon MCP integration for all task management"
-WORKFLOW_MANAGEMENT_PRINCIPLES:
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
   pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
-  scalable_coordination: "Scale from single-agent to multi-agent based on complexity requirements"
-  adaptive_routing: "Dynamic agent and thinking selection based on task requirements and domain"
-  quality_consistency: "Maintain consistent progressive standards across all agents and thinking levels"
-  recovery_protocols: "Comprehensive error handling with mcp research and multiple errors fail and cognitive recovery procedures"
 ```
 
 ## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
@@ -104,7 +93,6 @@ CONSTITUTIONAL_PRINCIPLES:
   constraint_satisfaction: "Balance competing requirements optimally"
   risk_assessment: "Multi-dimensional risk analysis"
   quality_gates: "Define success criteria and validation checkpoints"
-  continuous_improvement: "Iterate based on feedback and metrics"
   relentless_persistence: "Continue until absolute completion"
   complete_execution: "Execute entire workflow without interruption"
   right_tool_selection: "Understand full context before implementation"
@@ -167,7 +155,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
   deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
   purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
   intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
-  routing: "Context7 → Tavily → Archon → Exa chain for complexity, with sequential thinking integration"
+  routing: "Context7 → Tavily → Archon chain for complexity, with sequential thinking integration"
   quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
 ```
 

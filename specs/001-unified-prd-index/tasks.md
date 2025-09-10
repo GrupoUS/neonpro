@@ -143,9 +143,18 @@ Task T034
 - [ ] Open clarification FR-022 represented (aging rule test T010)  
 
 ## Task Count Summary
-Total tasks: 36  
+Total tasks: 40  
+
+## Phase 3.7: Clarification Resolution (Pre-Implementation Finalization)
+- [ ] T037 Resolve FR-022 baseline data source (ingest pilot dataset reference; update spec change_log)  
+- [ ] T038 Implement hallucination hybrid evaluation doc & confirm methodology (FR-023)  
+- [ ] T039 Finalize AI accuracy review cadence documentation (weekly + monthly roll-up) (FR-024)  
+- [ ] T040 Confirm performance budget environment scope & add enforcement note (FR-025)  
+
+(These must be completed before marking "All NEEDS CLARIFICATION resolved" in `plan.md`).  
+
 Parallel-eligible tasks: 22  
-Critical path tasks: T001,T005,T016,T021,T027,T035,T036  
+Critical path tasks: T001,T005,T016,T021,T027,T035,T036,T037,T038,T039,T040  
 
 ## Notes
 - Persistence intentionally excluded (YAGNI)  

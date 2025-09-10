@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --target esnext --clean",
     "start": "node dist/index.js",
+    "postinstall": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
     "type-check": "tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
@@ -15,7 +16,9 @@
     "test:coverage": "vitest --run --coverage",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "dprint fmt"
+    "format": "dprint fmt",
+    "prisma:generate": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
+    "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.15",

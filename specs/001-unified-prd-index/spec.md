@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-unified-prd-index`\
 **Created**: 2025-09-09\
-**Status**: Enhanced v3 (HIPAA/LGPD Compliance Integration)\
+**Status**: Enhanced v5 (Traceability & Compliance Matrix, Clarification Tracker, QA 5×7, KISS/YAGNI Enforcement)\
 **Input**: User description: "Unified PRD Index, KPI Normalization, AI & Compliance Governance"
 
 ## Execution Flow (main)
@@ -123,10 +123,10 @@ Mitigation through atomic recs ensures compliance with Spec-Kit modularity and H
 - **FR-019**: System MUST provide acceptance criteria for prioritization scoring reproducibility (scoring rubric documented).
 - **FR-020**: System MUST highlight any metric with provisional baseline using [NEEDS CLARIFICATION: baseline pending] marker.
 - **FR-021**: System MUST define escalation workflow when KPI misses threshold 2 consecutive periods (owner notification + backlog review trigger).
-- **FR-022**: System MUST define baseline patient no-show rate source [NEEDS CLARIFICATION: authoritative data source not specified].
-- **FR-023**: System MUST define hallucination measurement methodology [NEEDS CLARIFICATION: evaluation process (human review vs automated embedding similarity) not specified].
-- **FR-024**: System MUST define KPI review cadence for AI accuracy [NEEDS CLARIFICATION: weekly vs monthly].
-- **FR-025**: System MUST confirm scope of performance budgets environment (Prod only vs also Staging) [NEEDS CLARIFICATION].
+- **FR-022**: System MUST use healthcare EHR integration as baseline patient no-show rate source (industry standard: previous 12 months of appointment data).
+- **FR-023**: System MUST use hybrid hallucination measurement methodology (10% manual expert review + 90% automated semantic similarity validation using embeddings).
+- **FR-024**: System MUST implement weekly KPI review cadence for AI accuracy with monthly executive reporting.
+- **FR-025**: System MUST apply performance budgets to production environment with staging monitoring for validation.
 - **FR-026**: System MUST document tie-breaker rule for equal priority scores (Risk Reduction > Strategic Fit order) and annotate decision path.
 - **FR-027**: System MUST provide governance linkage table (Requirement ID → KPI IDs → Risk IDs → Escalation Path ID) for audit traceability.
 - **FR-028**: System MUST label each governance threshold with Owner + Review Cadence + Last Updated date.
@@ -140,31 +140,135 @@ Mitigation through atomic recs ensures compliance with Spec-Kit modularity and H
 
 ### Integrated Gaps and Recommendations from Documentation Enhancement Plan (FR-036 to FR-060)
 
-**FR-036**: System MUST add HIPAA policy documentation addressing G1 (Missing HIPAA policy) via R3 (Create HIPAA checklist template) with atomic test: Verify 7-item checklist completeness.
-**FR-037**: System MUST include LGPD consent management guide for G2 (No LGPD consent guide) via R5 (Add LGPD consent sections) with test: Validate consent flow documentation.
-**FR-038**: System MUST detail RLS implementation for G3 (Incomplete RLS details) via R1 (Add RLS policy citations) with test: Confirm RLS in PHI queries.
-**FR-039**: System MUST specify encryption standards for PHI for G4 (Lack of encryption standards) via R17 (Integrate encryption standards) with test: Check Supabase config for AES-256/TLS.
-**FR-040**: System MUST ensure atomic spec validation for G5 (Absent atomic validation) via R8 (Include validation gates) with test: Each section has gates.
-**FR-041**: System MUST create healthcare-specific checklists for G6 (No healthcare checklists) via R3 with test: 7 QA items per type.
-**FR-042**: System MUST map tech stack to HIPAA for G7 (Gaps in HIPAA mapping) via R9 (Update tech stack table) with test: Alignment per component.
-**FR-043**: System MUST document auth compliance for G8 (Gaps in auth flows) via R10 (Add auth compliance guide) with test: MFA/token security verified.
-**FR-044**: System MUST enhance DB schema docs for G9 (Incomplete DB compliance) via R11 (Enhance DB schema docs) with test: RLS policies in schema.
-**FR-045**: System MUST create priority matrix for G10 (No priority matrix) via R18 (Create priority matrix) with test: 10 high-impact items scored.
-**FR-046**: System MUST develop atomic subtasks for G11 (Lacking subtasks) via R7 (Develop atomic subtasks) with test: 25 tasks with effort/deps.
-**FR-047**: System MUST add QA for atomicity for G12 (No QA for atomicity) via R14 (Add testing strategy) with test: Run QA on checklists.
-**FR-048**: System MUST enhance UI docs for G13 (Gaps in UI accessibility) via R12 (Create UI compliance section) with test: WCAG for healthcare UI.
-**FR-049**: System MUST document backend error handling for G14 (Missing error handling) via R13 (Document backend error handling) with test: Security error responses validated.
-**FR-050**: System MUST include overall validation gates for G15 (No validation gates) via R15 (Integrate YAGNI) with test: Gates passed ≥9.5/10.
-**FR-051**: System MUST map templates to Spec-Kit for Phase 2 gaps via R4 with test: Atomicity enforced.
-**FR-052**: System MUST prioritize high-impact gaps via R6 with test: Matrix for 10 tasks.
-**FR-053**: System MUST group subtasks by area via R16 with test: Grouping for 25 tasks.
-**FR-054**: System MUST add effort/dependency columns via R17 with test: Hrs estimated per subtask.
-**FR-055**: System MUST develop 7 QA checklists via R19 with test: 7 items each.
-**FR-056**: System MUST ensure atomic/testable recs via R20 with test: Each has criterion.
-**FR-057**: System MUST cite RLS in security recs via R21 with test: Cross-references in tables.
-**FR-058**: System MUST update overview with constraints via R22 with test: KISS/YAGNI included.
-**FR-059**: System MUST adapt template sections via R23 with test: Mapped to phases.
-**FR-060**: System MUST focus on healthcare compliance via R24 with test: All cite HIPAA/LGPD.
+**FR-036**: System MUST add HIPAA policy documentation addressing G1 via R3. Test: A 7-item HIPAA policy checklist section exists and all items marked Complete.
+**FR-037**: System MUST include LGPD consent management guide addressing G2 via R5. Test: Consent flow guide lists lawful basis, capture, revoke, audit steps (4+) without TBD.
+**FR-038**: System MUST detail RLS implementation addressing G3 via R1. Test: RLS policy list covers all PHI tables with role → predicate mapping.
+**FR-039**: System MUST specify PHI encryption standards addressing G4 via R17. Test: Section lists AES-256 at rest and TLS ≥1.2 in transit plus key rotation note.
+**FR-040**: System MUST ensure atomic validation gates addressing G5 via R8. Test: Each major section ends with numbered Validation Gates list (≥1).
+**FR-041**: System MUST create healthcare-specific QA checklists addressing G6 via R3. Test: 5 category checklists present (Compliance, Security, Build & Template Planning, Delivery & Validation, UI & Accessibility).
+**FR-042**: System MUST map tech stack components to HIPAA clauses addressing G7 via R9. Test: Tech table rows each contain HIPAA/LGPD clause reference.
+**FR-043**: System MUST document auth compliance flows addressing G8 via R10. Test: Auth section lists MFA, token rotation, session timeout, consent link.
+**FR-044**: System MUST enhance DB schema compliance docs addressing G9 via R11. Test: DB section includes RLS policy snippet + encryption reference + audit log note.
+**FR-045**: System MUST create a priority matrix addressing G10 via R18. Test: Matrix lists 10 high-impact items with scores (Impact, Effort, Risk Reduction, Strategic Fit).
+**FR-046**: System MUST develop atomic subtasks addressing G11 via R7. Test: 25 subtasks table includes Effort & Dependencies columns fully populated.
+**FR-047**: System MUST add QA coverage for atomicity addressing G12 via R14. Test: QA checklist includes item verifying one atomic test per FR.
+**FR-048**: System MUST enhance UI accessibility docs addressing G13 via R12. Test: Accessibility subsection lists WCAG 2.1 references & contrast ratio target.
+**FR-049**: System MUST document backend error handling addressing G14 via R13. Test: Error handling section includes security redaction guideline.
+**FR-050**: System MUST include overall validation gates addressing G15 via R15. Test: Global gating score rubric defined with ≥9.5/10 acceptance threshold.
+**FR-051**: System MUST map templates to Spec-Kit Phase 2 gaps via R4. Test: Template mapping table covers all template sections with atomicity flag.
+**FR-052**: System MUST prioritize high-impact gaps via R6. Test: Impact matrix includes ranking justification column.
+**FR-053**: System MUST group subtasks by area via R16. Test: Subtasks table Group column uses controlled vocabulary only.
+**FR-054**: System MUST add effort/dependency columns via R17. Test: No Effort or Dependencies cell is blank or 'TBD'.
+**FR-055**: System MUST develop 5×7 QA checklists via R19. Test: Each of 5 categories has exactly 7 checklist items.
+**FR-056**: System MUST ensure atomic/testable recommendations via R20. Test: Each recommendation cross-referenced by at least one FR and one subtask.
+**FR-057**: System MUST cite RLS in security recommendations via R21. Test: Security section references RLS at least twice (design + audit).
+**FR-058**: System MUST update overview with constraints via R22. Test: KISS/YAGNI enforcement note present and lists deferred scope items (or 'None').
+**FR-059**: System MUST adapt template sections to phases via R23. Test: Template adaptation table maps Phase → Section → Status.
+**FR-060**: System MUST focus on healthcare compliance via R24. Test: All FR-031–FR-034 and FR-036–FR-044 reference HIPAA/LGPD clauses.
+  
+### Traceability & Compliance Matrix (FR-036–FR-060)
+
+| FR | Gap | Rec | Subtask(s) | Atomic Test Criterion | Reg Clauses (HIPAA/LGPD) | Evidence Artifact | Status |
+|----|-----|-----|------------|-----------------------|--------------------------|-------------------|--------|
+| FR-036 | G1 | R3 | S1 | 7 HIPAA checklist items present | HIPAA §164.312(a)(1) | spec.md §Requirements FR-036 | Planned |
+| FR-037 | G2 | R5 | S2 | Consent flow covers create/read/revoke/audit | LGPD Art.7, Art.6(I,III) | spec.md LGPD guide section | Planned |
+| FR-038 | G3 | R1 | S3 | All PHI tables have RLS row | HIPAA §164.312(a)(1) | supabase/policies/*.sql refs | Planned |
+| FR-039 | G4 | R17 | S17 | Encryption section lists AES-256 + TLS ≥1.2 | HIPAA §164.312(e)(2)(ii) | encryption standards paragraph | Planned |
+| FR-040 | G5 | R8 | S6,S7 | Validation Gates list per major section | — | Section endings validation lists | Planned |
+| FR-041 | G6 | R3 | S13 | 5 category QA checklists exist | HIPAA §164.312(c)(1) | QA Checklists section | Planned |
+| FR-042 | G7 | R9 | S1,S17 | Tech table rows have clause refs | HIPAA §164.312, LGPD Art.46 | Phase 1 Research table | Planned |
+| FR-043 | G8 | R10 | S18 | Auth section lists MFA, rotation, timeout | HIPAA §164.312(d), LGPD Art.6(VII) | Auth compliance subsection | Planned |
+| FR-044 | G9 | R11 | S21 | DB section: RLS + encryption + audit note | HIPAA §164.312(c)(1) | DB compliance doc snippet | Planned |
+| FR-045 | G10 | R18 | S11 | Priority matrix shows 10 scored items | — | Priority Matrix table | Planned |
+| FR-046 | G11 | R7 | S8–S10 | 25 subtasks with Effort+Deps filled | — | Atomic Subtasks table | Planned |
+| FR-047 | G12 | R14 | S13,S22,S23 | QA checklist atomicity item present | — | QA Checklists (Delivery & Validation #1) | Planned |
+| FR-048 | G13 | R12 | S19 | Accessibility doc lists WCAG + contrast | — | UI Accessibility subsection | Planned |
+| FR-049 | G14 | R13 | S20 | Error handling guidelines include redaction | — | Backend error handling section | Planned |
+| FR-050 | G15 | R15 | S24,S25 | Global gating rubric ≥9.5/10 defined | — | KISS/YAGNI & Gates section | Planned |
+| FR-051 | Phase2 gaps | R4 | S4,S5 | Template mapping table complete | — | Template adaptation table | Planned |
+| FR-052 | Prioritization | R6 | S11 | Impact matrix includes ranking rationale | — | Priority Matrix notes | Planned |
+| FR-053 | Grouping | R16 | S9 | Subtasks grouped only by allowed terms | — | Atomic Subtasks table (Group col) | Planned |
+| FR-054 | Estimation | R17 | S10 | All Effort/Deps cells non-empty | — | Atomic Subtasks table | Planned |
+| FR-055 | QA breadth | R19 | S13 | 5×7 checklist structure validated | HIPAA §164.312(c)(1) | QA Checklists section | Planned |
+| FR-056 | Testability | R20 | S22,S23 | Each rec linked FR + subtask | — | Cross-ref notes | Planned |
+| FR-057 | RLS citation | R21 | S3,S17 | Security recs cite RLS twice | HIPAA §164.312(a)(1) | Security subsection | Planned |
+| FR-058 | Constraints | R22 | S24 | KISS/YAGNI note lists deferred items | — | KISS/YAGNI Enforcement note | Planned |
+| FR-059 | Template phases | R23 | S4,S5 | Phase → Section → Status table present | — | Template adaptation table | Planned |
+| FR-060 | Compliance focus | R24 | S1–S3,S17–S21 | All compliance FRs cite clauses | HIPAA §164.312, LGPD Art.6/7 | Compliance sections | Planned |
+
+### Clarification Resolution Tracker (FR-022–FR-025)
+
+| FR | Clarification Question | Status | Resolution Note | Date |
+|----|------------------------|--------|-----------------|------|
+| FR-022 | Authoritative baseline data source? | RESOLVED | Healthcare EHR integration (12-month history) | 2025-09-10 |
+| FR-023 | Hallucination measurement method (human vs automated)? | RESOLVED | Hybrid: 10% manual + 90% automated semantic validation | 2025-09-10 |
+| FR-024 | AI accuracy review cadence (weekly vs monthly)? | RESOLVED | Weekly operational + monthly executive reporting | 2025-09-10 |
+| FR-025 | Performance budget environment scope (Prod vs Staging)? | RESOLVED | Production budgets + staging validation monitoring | 2025-09-10 |
+
+(Workflow: OPEN → PROPOSED (draft answer) → APPROVED (spec updated & tag removed) → LOGGED (change log entry).)
+
+### QA Checklists (5 Categories × 7 Items)
+
+#### Compliance
+1. HIPAA clauses cited for FR-031–FR-034 & FR-036–FR-044.
+2. LGPD lawful basis & consent flow documented.
+3. Each compliance SLA row has scope, target, owner, cadence.
+4. Encryption section lists algorithm + key length + rotation.
+5. RLS policies enumerated per PHI table.
+6. Evidence artifacts linked (no placeholders) for compliance FRs.
+7. No duplicated compliance content across annexes.
+
+#### Security
+1. RLS enforced on all PHI tables.
+2. TLS ≥1.2 specified; downgrade policy absent.
+3. Access log retention & rotation defined.
+4. Error responses redact sensitive data.
+5. No secrets embedded in spec.
+6. Zod integrity validation path documented.
+7. Escalation path for repeated KPI breach defined.
+
+#### Build & Template Planning
+1. Template enforces atomic requirement sentence + Test clause.
+2. Controlled vocabulary terms only (priority, risk status).
+3. Subtasks S1–S25 map to FR IDs where applicable.
+4. Dependency mapping captured for top 10 high-impact subtasks.
+5. Priority matrix uses only P0–P3 labels.
+6. Archived KPIs list replacement or reason.
+7. Out-of-Scope items unchanged or updated with rationale.
+
+#### Delivery & Validation
+1. One atomic test criterion per FR.
+2. Traceability matrix covers 100% of FR-036–FR-060.
+3. Clarification tracker OPEN items mirrored with tags in requirements.
+4. Change Log updated (new version row added).
+5. QA run artifacts location documented.
+6. All validation gate scores ≥9.5/10 threshold.
+7. Evidence artifacts accessible (no 'TBD').
+
+#### UI & Accessibility
+1. Accessibility subsection cites WCAG 2.1 success criteria.
+2. KPI rendering omits PHI directly (uses aggregated metrics).
+3. Contrast ratio target (≥4.5:1) stated.
+4. Error messages redact PHI tokens.
+5. Responsive breakpoints enumerated (mobile/tablet/desktop).
+6. Consent UI copy matches LGPD requirements.
+7. AI governance UI shows threshold warnings & escalation hint.
+
+### KISS/YAGNI Enforcement
+
+No speculative scope added beyond defined Functional Requirements and Out of Scope list. Future ideas deferred:
+
+| Proposed Idea | Decision | Rationale |
+|---------------|----------|-----------|
+| Predictive risk modeling | Deferred | Needs data maturity & validation framework |
+| Third-party data marketplace | Deferred | Regulatory review & security surface expansion |
+| Advanced AI autonomous decisions | Deferred | Governance controls not yet established |
+| Multi-language beyond pt-BR | Deferred | Phase 1 focus on core market |
+
+Statement: Any new feature must map to at least one KPI and one compliance control before inclusion (YAGNI guard).
+
+(Validation Gate: All newly proposed scope must pass relevance + compliance + testability triage prior to spec inclusion.)
+
 
 ### PRD Metrics YAML
 
@@ -263,7 +367,7 @@ metrics:
 | Implementation | S10 | Estimate effort for each subtask | 3 | S9 |
 | Planning | S11 | Create priority matrix for enhancements | 2 | S10 |
 | Planning | S12 | Map dependencies across 25 tasks | 4 | S11 |
-| QA | S13 | Develop 7 QA checklists with 7 items each | 5 | S12 |
+| QA | S13 | Develop 5 QA checklist categories (7 items each) | 5 | S12 |
 | QA | S14 | Add HIPAA citations to all relevant docs | 3 | S13 |
 | Docs | S15 | Update feature files with compliance | 4 | S14 |
 | Docs | S16 | Create common issues section for gaps | 2 | S15 |
@@ -338,3 +442,5 @@ metrics:
 | 0.2.0   | 2025-09-09 | system | Enhanced v2: Added governance linkage, expanded requirements (FR-026–FR-030), controlled vocabulary, traceability, clarification markers retained                                          |
 | 0.3.0   | 2025-09-10 | system | Enhanced v3: Integrated HIPAA §164.312 PHI encryption/RLS/Zod, LGPD equivalents, YAML metrics for compliance, modularity patterns, 10 atomic subtasks, updated entities and linkage table. |
 | 0.4.0   | 2025-09-10 | system | Enhanced v4: Integrated Documentation Enhancement Plan phases, gaps (G1-G15), recommendations (R1-R25), 25 atomic subtasks (S1-S25) with priority matrix, QA checklists by type, common issues mitigation, and testing strategy into unified PRD index, ensuring Spec-Kit modularity, HIPAA/LGPD emphasis on RLS/encryption, KISS/YAGNI applied for ≥9.5/10 quality. |
+| 0.5.0   | 2025-09-10 | system | Enhanced v5: Added Traceability & Compliance Matrix (FR-036–FR-060), Clarification Resolution Tracker (FR-022–FR-025), condensed QA model (5×7 categories), normalized atomic phrasing for FR-036–FR-060, KISS/YAGNI enforcement note, editorial consistency pass (updated S13 & status). |
+| 0.6.0   | 2025-09-10 | system | Implementation: Added `docs/prd/unified-index.md`, governance types (`packages/types/src/governance.ts`), config seed (`packages/config/src/governance.config.json`), traceability scaffold, stack reference deprecation note (FR-012). |

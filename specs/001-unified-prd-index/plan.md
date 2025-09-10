@@ -1,122 +1,266 @@
-# Implementation Plan: Unified PRD Index Governance Layer (Enhanced v2)
+# Implementation Plan: Unified PRD Index, KPI Normalization, AI & Compliance Governance
 
-**Branch**: `001-unified-prd-index` | **Date**: 2025-09-10 | **Spec**: `/specs/001-unified-prd-index/spec.md`
+**Branch**: `001-unified-prd-index` | **Date**: 2025-09-10 | **Spec**: `specs/001-unified-prd-index/spec.md`
 **Input**: Feature specification from `/specs/001-unified-prd-index/spec.md`
 
+## Execution Flow (/plan command scope)
+
+```
+1. Load feature spec from Input path
+   → If not found: ERROR "No feature spec at {path}"
+2. Fill Technical Context (scan for NEEDS CLARIFICATION)
+   → Detect Project Type from context (web=frontend+backend, mobile=app+api)
+   → Set Structure Decision based on project type
+3. Evaluate Constitution Check section below
+   → If violations exist: Document in Complexity Tracking
+   → If no justification possible: ERROR "Simplify approach first"
+   → Update Progress Tracking: Initial Constitution Check
+4. Execute Phase 0 → research.md
+   → If NEEDS CLARIFICATION remain: ERROR "Resolve unknowns"
+5. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file (e.g., `CLAUDE.md` for Claude Code, `.github/copilot-instructions.md` for GitHub Copilot, or `GEMINI.md` for Gemini CLI).
+6. Re-evaluate Constitution Check section
+   → If new violations: Refactor design, return to Phase 1
+   → Update Progress Tracking: Post-Design Constitution Check
+7. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
+8. STOP - Ready for /tasks command
+```
+
+**IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
+
+- Phase 2: /tasks command creates tasks.md
+- Phase 3-4: Implementation execution (manual or via tools)
+
 ## Summary
-Canonical governance layer for PRD index: KPI normalization, policy thresholds, escalation paths, risk tracking, deterministic prioritization scoring. Phase 1: in-memory services only (no persistence) enabling contract-first TDD. Research resolved all but external baseline data source.
+
+Primary objective: Produce a single canonical, governance-enforced PRD index consolidating executive summary, personas, features, normalized KPI table (with baseline + phased targets + formulas), risk matrix, roadmap milestones, and compliance/AI governance sections while eliminating duplicated/contradictory legacy fragments.
+
+Technical approach (Phase 0 outcomes):
+- Documentation unification via deterministic structure + controlled vocabulary enforcement.
+- KPI normalization with explicit formula field + provisional baseline tagging + escalation workflow design.
+- Governance integration: AI hallucination threshold (<5% Phase 1) + compliance SLA table (export, deletion, consent revocation) + RLS + encryption references.
+- Traceability matrix connecting Requirements → KPIs → Risks → Governance Controls to enable auditability.
+- KISS/YAGNI enforcement: deferred speculative features (predictive modeling, autonomous AI) until governance maturity.
 
 ## Technical Context
-**Language/Version**: TypeScript 5.7.x
-**Primary Dependencies**: Internal packages (`@neonpro/core-services`, `@neonpro/types`)
-**Storage**: None (ephemeral Phase 1)
-**Testing**: Vitest (contract/unit), future integration tests on persistence introduction
-**Target Platform**: Monorepo (library consumption by API + Web later)
-**Project Type**: web (existing frontend+backend) but confined to core-services package
-**Performance Goals**: Single KPI eval <5ms, sequencing 500 KPIs future <250ms
-**Constraints**: Simplicity (no DB), deterministic scoring, healthcare compliance alignment
-**Scale/Scope**: <40 KPIs, <100 risks, <200 feature scores cycle
+
+**Language/Version**: TypeScript 5.7.x, React 19, Node (Bun runtime for scripts)
+**Primary Dependencies**: React, Vite, TanStack Router, TanStack Query, Supabase (Auth, Postgres, Edge Functions), Hono (API), Zod (validation), shadcn/ui, Tailwind CSS
+**Storage**: PostgreSQL (Supabase managed) with RLS + AES-256 at rest, TLS 1.2+ in transit
+**Testing**: Vitest (unit + integration), Playwright (E2E), Contract tests (REST/Edge endpoints), Coverage gates ≥90% for compliance-critical logic
+**Target Platform**: Web (frontend + backend service layer); deploy via Vercel + Supabase
+**Project Type**: web (frontend + backend) → Monorepo apps/web + apps/api + shared packages
+**Performance Goals**: LCP ≤2.5s (P95), AI governance response latency ≤800ms P95, Realtime event propagation ≤1s, Bundle initial JS ≤250KB gz
+**Constraints**: Maintain KISS (no premature microservices), avoid redundant DTO layers, enforce test-first for contracts, p95 API <200ms for KPI/metadata endpoints
+**Scale/Scope**: Initial target ≤10 internal stakeholders + future scaling to broader clinical ops; ~50–80 PRD entities (features/KPIs/risks) tracked
 
 ## Constitution Check
-PASS (Initial & Post-Design). No deviations needing Complexity Tracking.
 
-### Simplicity
-- Projects touched: 1 (`packages/core-services`) ✅
-- Framework wrappers: none ✅
-- Single data model abstraction: yes ✅
-- Avoided patterns: Repository/UoW deferred ✅
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-### Architecture
-- Library oriented: governance submodule ✅
-- Additional CLI: deferred (YAGNI) ✅
-- Doc updates: quickstart + contracts act as public doc ✅
+**Simplicity**:
 
-### Testing
-- Contract tests precede implementation ✅
-- Order: Contract → Scenario → Unit helper (priority vectors) ✅
-- Real deps only (in-memory) ✅
-- Integration tests deferred (no infra yet) ✅
+- Projects: [#] (max 3 - e.g., api, cli, tests)
+- Using framework directly? (no wrapper classes)
+- Single data model? (no DTOs unless serialization differs)
+- Avoiding patterns? (no Repository/UoW without proven need)
 
-### Observability (Seed)
-Structured log events planned (kpi.evaluated, escalation.triggered, priority.scored). Full pipeline deferred.
+**Architecture**:
 
-### Versioning
-Seed version `0.1.0` internal; contract changes bump MINOR.
+- EVERY feature as library? (no direct app code)
+- Libraries listed: [name + purpose for each]
+- CLI per library: [commands with --help/--version/--format]
+- Library docs: llms.txt format planned?
+
+**Testing (NON-NEGOTIABLE)**:
+
+- RED-GREEN-Refactor cycle enforced? (test MUST fail first)
+- Git commits show tests before implementation?
+- Order: Contract→Integration→E2E→Unit strictly followed?
+- Real dependencies used? (actual DBs, not mocks)
+- Integration tests for: new libraries, contract changes, shared schemas?
+- FORBIDDEN: Implementation before test, skipping RED phase
+
+**Observability**:
+
+- Structured logging included?
+- Frontend logs → backend? (unified stream)
+- Error context sufficient?
+
+**Versioning**:
+
+- Version number assigned? (MAJOR.MINOR.BUILD)
+- BUILD increments on every change?
+- Breaking changes handled? (parallel tests, migration plan)
 
 ## Project Structure
+
+### Documentation (this feature)
+
 ```
-packages/core-services/src/services/governance/
-  kpi-service.ts
-  policy-service.ts
-  escalation-service.ts
-  risk-service.ts
-  prioritization-service.ts
-  __tests__/ (added in tasks phase)
+specs/[###-feature]/
+├── plan.md              # This file (/plan command output)
+├── research.md          # Phase 0 output (/plan command)
+├── data-model.md        # Phase 1 output (/plan command)
+├── quickstart.md        # Phase 1 output (/plan command)
+├── contracts/           # Phase 1 output (/plan command)
+└── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
 ```
-Structure Decision: Use existing package (no new project) to maintain monorepo simplicity.
+
+### Source Code (repository root)
+
+```
+# Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
+
+tests/
+├── contract/
+├── integration/
+└── unit/
+
+# Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
+
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure]
+```
+
+**Structure Decision**: Option 2 (web application) justified by dual-layer (frontend consumption + backend governance indexing) already present in monorepo (`apps/web`, `apps/api`). No additional projects introduced (stays within existing structure).
 
 ## Phase 0: Outline & Research
-Completed → see `research.md` (decision log, risks, test anchors).
+
+1. **Extract unknowns from Technical Context** above:
+   - For each NEEDS CLARIFICATION → research task
+   - For each dependency → best practices task
+   - For each integration → patterns task
+
+2. **Generate and dispatch research agents**:
+   ```
+   For each unknown in Technical Context:
+     Task: "Research {unknown} for {feature context}"
+   For each technology choice:
+     Task: "Find best practices for {tech} in {domain}"
+   ```
+
+3. **Consolidate findings** in `research.md` using format:
+   - Decision: [what was chosen]
+   - Rationale: [why chosen]
+   - Alternatives considered: [what else evaluated]
+
+**Output**: research.md with all NEEDS CLARIFICATION resolved
 
 ## Phase 1: Design & Contracts
-Artifacts produced: `data-model.md`, `contracts.md`, `quickstart.md`. All enhanced with validation, pre/post conditions, acceptance walkthrough.
 
-## Acceptance Criteria Matrix
-| Requirement | Verification Method | Artifact/Test Anchor | Status |
-|-------------|--------------------|----------------------|--------|
-| FR-003 KPI table unified | Contract test register/list | kpi.register.test.ts | Planned |
-| FR-005 AI governance thresholds | Policy attach + evaluatePolicies | policy.attach.test.ts | Planned |
-| FR-007 Priority scoring reproducible | Vector tests | priority.scoring.test.ts | Planned |
-| FR-021 Escalation after 2 breaches | Scenario breach sequence | escalation.breach-sequence.test.ts | Planned |
-| FR-030 Archive rationale required | Archive negative test | kpi.archive.test.ts | Planned |
-| FR-031 PHI encryption metric defined | Spec presence only (Phase 1 no impl) | spec.md YAML metrics | Done |
-| FR-033 Zod validation placeholder | Placeholder test ensures schema stub exists | schema.placeholder.test.ts | Planned |
+_Prerequisites: research.md complete_
 
-## Observability Strategy (Phase 1 Seed)
-| Event | Stage | Emission Style | Future Sink |
-|-------|-------|----------------|-------------|
-| kpi.evaluated | evaluation | console JSON | Structured logger adapter |
-| escalation.triggered | escalation | console JSON | Incident tool adapter |
-| priority.scored | scoring | console JSON | Analytics pipeline |
-Deferred: correlation IDs, tracing spans, metrics exporter.
+1. **Extract entities from feature spec** → `data-model.md`:
+   - Entity name, fields, relationships
+   - Validation rules from requirements
+   - State transitions if applicable
 
-## Test Matrix
-| Layer | Purpose | Representative Files | Tool |
-|-------|---------|----------------------|------|
-| Contract | Public method guarantees | kpi.register.test.ts | Vitest |
-| Scenario | Multi-step behavior (breach→escalation) | escalation.breach-sequence.test.ts | Vitest |
-| Unit | Pure functions (scoring, exposure) | priority.scoring.test.ts | Vitest |
-| Placeholder | Compliance hooks (Zod schema stub) | schema.placeholder.test.ts | Vitest |
+2. **Generate API contracts** from functional requirements:
+   - For each user action → endpoint
+   - Use standard REST/GraphQL patterns
+   - Output OpenAPI/GraphQL schema to `/contracts/`
 
-Coverage Goal Phase 1: ≥85% of governance submodule lines (critical paths). Future ≥90% when persistence added.
+3. **Generate contract tests** from contracts:
+   - One test file per endpoint
+   - Assert request/response schemas
+   - Tests must fail (no implementation yet)
+
+4. **Extract test scenarios** from user stories:
+   - Each story → integration test scenario
+   - Quickstart test = story validation steps
+
+5. **Update agent file incrementally** (O(1) operation):
+   - Run `/scripts/update-agent-context.sh [claude|gemini|copilot]` for your AI assistant
+   - If exists: Add only NEW tech from current plan
+   - Preserve manual additions between markers
+   - Update recent changes (keep last 3)
+   - Keep under 150 lines for token efficiency
+   - Output to repository root
+
+**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
 
 ## Phase 2: Task Planning Approach
-Strategy preserved (see earlier); will generate ~22–26 tasks. Parallel markers on independent pure functions (scoring, exposure, risk map). Not executed here.
+
+_This section describes what the /tasks command will do - DO NOT execute during /plan_
+
+**Task Generation Strategy**:
+
+- Load `/templates/tasks-template.md` as base
+- Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
+- Each contract → contract test task [P]
+- Each entity → model creation task [P]
+- Each user story → integration test task
+- Implementation tasks to make tests pass
+
+**Ordering Strategy**:
+
+- TDD order: Tests before implementation
+- Dependency order: Models before services before UI
+- Mark [P] for parallel execution (independent files)
+
+**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
+
+**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
 ## Phase 3+: Future Implementation
-Out of scope for /plan; will materialize after /tasks output.
+
+_These phases are beyond the scope of the /plan command_
+
+**Phase 3**: Task execution (/tasks command creates tasks.md)\
+**Phase 4**: Implementation (execute tasks.md following constitutional principles)\
+**Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
+
+## Complexity Tracking
+
+_Fill ONLY if Constitution Check has violations that must be justified_
+
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
 
 ## Progress Tracking
+
+_This checklist is updated during execution flow_
+
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command)
 - [x] Phase 1: Design complete (/plan command)
-- [ ] Phase 2: Task planning complete (describe only) ✅ described
-- [ ] Phase 3: Tasks generated (/tasks command)
+- [x] Phase 2: Task planning complete (/plan command - approach described; concrete tasks produced via /tasks already present)
+- [x] Phase 3: Tasks generated (/tasks command output = tasks.md v1)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [x] Initial Constitution Check: PASS
-- [x] Post-Design Constitution Check: PASS
-- [x] All NEEDS CLARIFICATION resolved (except FR-022 data source dependency) *tracked*
-- [x] Complexity deviations documented (none)
 
-## Exit Readiness for /tasks
-- Contracts stable ✅
-- Data model constraints documented ✅
-- Acceptance matrix defined ✅
-- Test anchors enumerated ✅
-- Observability seed defined ✅
+- [x] Initial Constitution Check: PASS (no violations; simplicity maintained)
+- [x] Post-Design Constitution Check: PASS (design retained single data model layer + avoided extra repos)
+- [ ] All NEEDS CLARIFICATION resolved (4 remain: FR-022–FR-025)
+- [ ] Complexity deviations documented (N/A so far)
 
 ---
+
 _Based on Constitution v2.1.1 - See `/memory/constitution.md`_

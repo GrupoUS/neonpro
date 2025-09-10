@@ -1,12 +1,42 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "regions": ["gru1"],
-  "outputDirectory": "apps/web/.next",
-  "installCommand": "corepack enable && corepack prepare pnpm@8.15.8 --activate && pnpm -w install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @neonpro/web run vercel-build",
+  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm -w install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @neonpro/web run build",
+  "outputDirectory": "apps/web/dist",
+  "functions": {
+    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.ts" },
+    { "source": "/((?!api|.*\\..*).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" }
+      ]
+    }
+  ],
   "env": {
     "NODE_ENV": "production",
     "VERCEL": "1",
-    "NEXT_ALLOW_IGNORE_TS_ERRORS": "true"
+    "DATABASE_URL": "@database_url",
+    "DIRECT_URL": "@direct_url",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
   }
 }
