@@ -11,7 +11,7 @@ related:
 
 # NeonPro Source Tree Organization
 
-This document provides detailed guidance on HOW the NeonPro codebase is organized, including directory structure rationale, package dependencies, file naming conventions, and developer navigation principles.
+This document provides detailed guidance on **HOW** the NeonPro codebase is organized, including directory structure rationale, package dependencies, file naming conventions, and developer navigation principles.
 
 ## Monorepo Structure Overview
 
@@ -105,7 +105,6 @@ neonpro/
 
 **Application Layer (`apps/`)**:
 - **Separation of Concerns**: Frontend (`web`) and backend (`api`) are completely isolated
-- **Technology Alignment**: Each app uses its optimal technology stack
 - **Independent Deployment**: Apps can be deployed separately with different strategies
 - **Scalability**: New applications can be added without affecting existing ones
 
@@ -455,7 +454,7 @@ apps/web/src/
 ---
 
 **Document Status**: ✅ Enhanced - Detailed Codebase Organization
-**Target Length**: 300-500 lines (Current: ~400 lines)
+**Target Length**: 300-400 lines (Current: ~380 lines)
 **Focus**: HOW code is organized and navigated
 **Last Updated**: 2025-09-09
 **Next Review**: 2025-12-09

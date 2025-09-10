@@ -176,8 +176,6 @@ npx tsc --noEmit --skipLibCheck
 - **Desktop Commander MCP**: File operations
 
 ### **Quality Standards**
-- Follow `.ruler/dev-workflow.md` guidelines
-- Reference `docs/project.md` for standards
 - Use `/docs/architecture/source-tree.md` for priorities
 - Focus on `/packages` and `/apps` directories
 
