@@ -299,17 +299,6 @@ validation:
 
 ### 6. **Memory Documentation Protocol** 📝
 
-**🔧 MCP**: desktop-commander + archon
-
-- Use `archon` to create/update project documents and knowledge base
-- Create `mistakes/[error-category].md` if mistakes corrected
-- Create `features/[feature-name].md` for new features or modified behavior
-- **Test Documentation**: Document new test patterns, mocks, utilities
-- Store learnings in archon knowledge base for future retrieval
-- Confirmation: Explicitly note in your thoughts whether updates were made or not.
-
-**Specific Memory File Management**
-
 - `docs/mistakes/[error-category].md` — Problem, wrong approach, correct solution, root cause, prevention, related files.
 - `docs/features/[feature-name].md` — Overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, last updated.
 - `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
