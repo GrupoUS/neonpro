@@ -7,9 +7,15 @@
   "outputDirectory": "apps/web/dist",
   "functions": {
     "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
+    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
+    "api/health.ts": { "runtime": "nodejs20.x", "memory": 1024 },
+    "api/v1/health.ts": { "runtime": "nodejs20.x", "memory": 1024 },
+    "api/openapi.json.ts": { "runtime": "nodejs20.x", "memory": 1024 }
   },
   "rewrites": [
+    { "source": "/api/health", "destination": "/api/health.ts" },
+    { "source": "/api/v1/health", "destination": "/api/v1/health.ts" },
+    { "source": "/api/openapi.json", "destination": "/api/openapi.json.ts" },
     { "source": "/api/(.*)", "destination": "/api/index.ts" },
     { "source": "/((?!api|.*\\..*).*)", "destination": "/index.html" }
   ],
