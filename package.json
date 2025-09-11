@@ -1,0 +1,49 @@
+{
+  "name": "neonpro-monorepo",
+  "version": "1.0.0",
+  "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.0.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "overrides": {
+    "esbuild": ">=0.25.0"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
+    "vercel:deploy": "vercel deploy --prod --scope grupous-projects --yes"
+  },
+  "keywords": [
+    "neonpro",
+    "healthcare",
+    "aesthetic-clinic",
+    "turborepo",
+    "monorepo",
+    "vite",
+    "react",
+    "typescript"
+  ],
+  "author": "NeonPro Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "turbo": "^2.5.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2"
+  }
+}

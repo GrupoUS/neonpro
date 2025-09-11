@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 const kokonutGradientButtonVariants = cva(
   [
@@ -15,39 +15,40 @@ const kokonutGradientButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: [
-          "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500",
+        // NeonPro Aesthetic Clinic Pantone Palette Variants
+        primary: [
+          "bg-gradient-to-r from-[#112031] via-[#294359] to-[#112031]",
           "text-white shadow-lg",
           "hover:shadow-xl hover:scale-105",
-          "before:bg-gradient-to-r before:from-blue-600 before:via-purple-600 before:to-pink-600",
+          "before:bg-gradient-to-r before:from-[#294359] before:via-[#AC9469] before:to-[#294359]",
           "before:opacity-0 hover:before:opacity-100",
         ],
-        colorful: [
-          "bg-gradient-to-r from-orange-400 via-red-500 to-pink-500",
+        secondary: [
+          "bg-gradient-to-r from-[#AC9469] via-[#B4AC9C] to-[#AC9469]",
+          "text-[#112031] shadow-lg",
+          "hover:shadow-xl hover:scale-105",
+          "before:bg-gradient-to-r before:from-[#B4AC9C] before:via-[#D2D0C8] before:to-[#B4AC9C]",
+          "before:opacity-0 hover:before:opacity-100",
+        ],
+        accent: [
+          "bg-gradient-to-r from-[#294359] via-[#AC9469] to-[#294359]",
           "text-white shadow-lg",
           "hover:shadow-xl hover:scale-105",
-          "before:bg-gradient-to-r before:from-orange-500 before:via-red-600 before:to-pink-600",
+          "before:bg-gradient-to-r before:from-[#AC9469] before:via-[#112031] before:to-[#AC9469]",
           "before:opacity-0 hover:before:opacity-100",
         ],
-        sunset: [
-          "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500",
-          "text-white shadow-lg",
+        neutral: [
+          "bg-gradient-to-r from-[#B4AC9C] via-[#D2D0C8] to-[#B4AC9C]",
+          "text-[#112031] shadow-lg",
           "hover:shadow-xl hover:scale-105",
-          "before:bg-gradient-to-r before:from-yellow-500 before:via-orange-600 before:to-red-600",
+          "before:bg-gradient-to-r before:from-[#D2D0C8] before:via-[#B4AC9C] before:to-[#D2D0C8]",
           "before:opacity-0 hover:before:opacity-100",
         ],
-        ocean: [
-          "bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600",
-          "text-white shadow-lg",
-          "hover:shadow-xl hover:scale-105",
-          "before:bg-gradient-to-r before:from-cyan-500 before:via-blue-600 before:to-indigo-700",
-          "before:opacity-0 hover:before:opacity-100",
-        ],
-        neon: [
-          "bg-gradient-to-r from-green-400 via-blue-500 to-purple-600",
-          "text-white shadow-lg shadow-green-500/25",
-          "hover:shadow-xl hover:shadow-green-500/40 hover:scale-105",
-          "before:bg-gradient-to-r before:from-green-500 before:via-blue-600 before:to-purple-700",
+        elegant: [
+          "bg-gradient-to-r from-[#112031] via-[#AC9469] to-[#112031]",
+          "text-white shadow-lg shadow-[#AC9469]/25",
+          "hover:shadow-xl hover:shadow-[#AC9469]/40 hover:scale-105",
+          "before:bg-gradient-to-r before:from-[#294359] before:via-[#D2D0C8] before:to-[#294359]",
           "before:opacity-0 hover:before:opacity-100",
         ],
       },
@@ -59,7 +60,7 @@ const kokonutGradientButtonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   }
@@ -75,10 +76,10 @@ export interface KokonutGradientButtonProps
 }
 
 /**
- * KokonutGradientButton - A beautiful gradient button component inspired by KokonutUI design patterns
+ * KokonutGradientButton - A beautiful gradient button component with NeonPro aesthetic clinic branding
  * 
  * Features:
- * - Multiple gradient color variants (default, colorful, sunset, ocean, neon)
+ * - NeonPro Pantone palette gradient variants (primary, secondary, accent, neutral, elegant)
  * - Smooth hover animations with scale and shadow effects
  * - Size variants from small to extra large
  * - Before pseudo-element for enhanced hover states
@@ -87,12 +88,12 @@ export interface KokonutGradientButtonProps
  * 
  * @example
  * ```tsx
- * <KokonutGradientButton variant="neon" size="lg">
- *   Click me!
+ * <KokonutGradientButton variant="elegant" size="lg">
+ *   Agendar Tratamento
  * </KokonutGradientButton>
  * 
- * <KokonutGradientButton variant="sunset" size="sm" disabled>
- *   Disabled button
+ * <KokonutGradientButton variant="secondary" size="sm" disabled>
+ *   Indisponível
  * </KokonutGradientButton>
  * ```
  */

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -38,11 +38,11 @@ export interface AceternityHoverBorderGradientButtonProps
 
 /**
  * AceternityHoverBorderGradientButton - A button component with animated gradient border that rotates around the button
- * and has special hover effects. Based on Aceternity UI's hover-border-gradient component.
+ * and has special hover effects. Customized with NeonPro aesthetic clinic branding.
  * 
  * Features:
  * - Animated gradient border that rotates continuously
- * - Hover effect that triggers a highlight gradient
+ * - Hover effect that triggers NeonPro Pantone palette highlight
  * - Configurable rotation direction and animation duration
  * - Customizable styling via className props
  * - Supports any HTML element via the 'as' prop
@@ -54,7 +54,7 @@ export interface AceternityHoverBorderGradientButtonProps
  *   clockwise={false}
  *   className="px-6 py-3"
  * >
- *   Hover me!
+ *   Consulta Estética
  * </AceternityHoverBorderGradientButton>
  * ```
  */
@@ -79,17 +79,17 @@ export function AceternityHoverBorderGradientButton({
     return directions[nextIndex];
   };
 
+  // NeonPro Pantone palette gradient mappings
   const movingMap: Record<Direction, string> = {
-    TOP: "radial-gradient(20.7% 50% at 50% 0%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
-    LEFT: "radial-gradient(16.6% 43.1% at 0% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
-    BOTTOM:
-      "radial-gradient(20.7% 50% at 50% 100%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
-    RIGHT:
-      "radial-gradient(16.2% 41.199999999999996% at 100% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
+    TOP: "radial-gradient(20.7% 50% at 50% 0%, #AC9469 0%, rgba(172, 148, 105, 0) 100%)",
+    LEFT: "radial-gradient(16.6% 43.1% at 0% 50%, #294359 0%, rgba(41, 67, 89, 0) 100%)",
+    BOTTOM: "radial-gradient(20.7% 50% at 50% 100%, #B4AC9C 0%, rgba(180, 172, 156, 0) 100%)",
+    RIGHT: "radial-gradient(16.2% 41.199999999999996% at 100% 50%, #112031 0%, rgba(17, 32, 49, 0) 100%)",
   };
 
+  // NeonPro highlight with primary accent color
   const highlight =
-    "radial-gradient(75% 181.15942028985506% at 50% 50%, #3275F8 0%, rgba(255, 255, 255, 0) 100%)";
+    "radial-gradient(75% 181.15942028985506% at 50% 50%, #AC9469 0%, rgba(172, 148, 105, 0) 100%)";
 
   useEffect(() => {
     if (!hovered) {
@@ -105,14 +105,14 @@ export function AceternityHoverBorderGradientButton({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={cn(
-        "relative flex rounded-full border content-center bg-black/20 hover:bg-black/10 transition duration-500 dark:bg-white/20 items-center flex-col flex-nowrap gap-10 h-min justify-center overflow-visible p-px decoration-clone w-fit",
+        "relative flex rounded-full border content-center bg-[#112031]/20 hover:bg-[#112031]/10 transition duration-500 dark:bg-[#D2D0C8]/20 items-center flex-col flex-nowrap gap-10 h-min justify-center overflow-visible p-px decoration-clone w-fit",
         containerClassName
       )}
       {...props}
     >
       <div
         className={cn(
-          "w-auto text-white z-10 bg-black px-4 py-2 rounded-[inherit]",
+          "w-auto text-[#D2D0C8] z-10 bg-[#112031] px-4 py-2 rounded-[inherit]",
           className
         )}
       >
@@ -136,7 +136,7 @@ export function AceternityHoverBorderGradientButton({
         }}
         transition={{ ease: "linear", duration: duration ?? 1 }}
       />
-      <div className="bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]" />
+      <div className="bg-[#112031] absolute z-1 flex-none inset-[2px] rounded-[100px]" />
     </Tag>
   );
 }

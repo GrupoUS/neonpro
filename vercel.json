@@ -1,11 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "framework": null,
+  "framework": "vite",
   "regions": ["gru1"],
-  "buildCommand": "cd apps/web && npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund && npm run build",
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "echo 'Skipping root install'",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund",
+  "rootDirectory": "apps/web",
   "cleanUrls": true,
   "trailingSlash": false,
 

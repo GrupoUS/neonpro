@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { KokonutGradientButton, AceternityHoverBorderGradientButton } from '@neonpro/ui';
+import { KokonutGradientButton, AceternityHoverBorderGradientButton } from '@/components/ui';
 
 export function GradientButtonsDemo() {
   return (
