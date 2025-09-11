@@ -22,8 +22,8 @@ export default async function handler(request: Request) {
     features: {
       streaming: true,
       globalDistribution: true,
-      coldStart: '<100ms',
-      memoryLimit: '128MB'
+      coldStart: process.env.EDGE_COLD_START || '<100ms',
+      memoryLimit: process.env.EDGE_MEMORY_LIMIT || '128MB'
     }
   };
 

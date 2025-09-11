@@ -10,6 +10,7 @@
     "cssVariables": true,
     "prefix": ""
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "src/components",
     "utils": "src/lib/utils",
@@ -18,7 +19,7 @@
     "hooks": "src/hooks"
   },
   "registries": {
-    "@kokonutui": "https://kokonutui.com/r/{name}.json"
-  },
-  "iconLibrary": "lucide"
+    "@kokonutui": "https://kokonutui.com/r/{name}.json",
+    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
+  }
 }

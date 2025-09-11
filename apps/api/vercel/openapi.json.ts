@@ -1,6 +1,21 @@
 // Vercel API OpenAPI JSON Endpoint
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+function getBaseUrl(req: VercelRequest): string {
+  // Try to get from environment variable first
+  if (process.env.API_URL) {
+    const url = process.env.API_URL;
+    // Ensure it has protocol
+    return url.startsWith('http') ? `${url}/api` : `https://${url}/api`;
+  }
+  
+  // Fallback to constructing from request headers
+  const host = req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  
+  return `${protocol}://${host}/api`;
+}
+
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,8 +37,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     },
     servers: [
       {
-        url: 'https://neonpro-v2-6udn92859-grupous-projects.vercel.app/api',
-        description: 'Production server (fresh deployment)',
+        url: getBaseUrl(req),
+        description: 'API server',
       },
     ],
     paths: {

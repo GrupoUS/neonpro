@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 // Define expected routes that should have sidebar
 const expectedSidebarRoutes = [
   '/dashboard',
-  '/patients',
+  '/clients',
   '/appointments',
   '/reports',
   '/financial',

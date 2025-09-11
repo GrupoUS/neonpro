@@ -34,7 +34,7 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
     },
     {
       label: 'Clientes',
-      href: '/patients',
+      href: '/clients',
       icon: (
         <IconUsers className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),

@@ -10,7 +10,7 @@ function AppointmentsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('appointments')
-        .select('id, start_time, end_time, status, patient_id, patients!inner(full_name)')
+        .select('id, start_time, end_time, status, client_id, clients!inner(full_name)')
         .order('start_time', { ascending: true })
         .limit(100);
       if (error) throw error;
@@ -47,7 +47,7 @@ function AppointmentsPage() {
                     <TableCell>{new Date(a.start_time).toLocaleString('pt-BR')}</TableCell>
                     <TableCell>{new Date(a.end_time).toLocaleString('pt-BR')}</TableCell>
                     <TableCell>{a.status ?? '—'}</TableCell>
-                    <TableCell>{(a as any).patients?.full_name ?? a.patient_id}</TableCell>
+                    <TableCell>{(a as any).clients?.full_name ?? a.client_id}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

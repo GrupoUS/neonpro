@@ -253,7 +253,7 @@ export default function SignupFormDemo() {
         {/* Subtle Compliance Indicator */}
         <div className='mt-4 text-center'>
           <p className='text-xs text-muted-foreground'>
-            🔒 Plataforma certificada • LGPD • CFM • ANVISA
+            🔒 Plataforma certificada • LGPD
           </p>
         </div>
 

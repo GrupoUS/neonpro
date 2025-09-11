@@ -67,11 +67,8 @@ test.describe('Google OAuth Authentication Flow', () => {
     // Clica no botão Google
     await googleButton.click();
     
-    // Aguarda o processamento
-    await page.waitForTimeout(2000);
-    
-    // Verifica se a mensagem de erro aparece
-    await expect(page.locator('.bg-red-50')).toBeVisible();
+    // Wait for error message to appear instead of fixed timeout
+    await expect(page.locator('.bg-red-50')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('text=An unexpected error occurred')).toBeVisible();
   });
 
@@ -137,11 +134,8 @@ test.describe('Google OAuth Authentication Flow', () => {
     // Clica no botão Google
     await googleButton.click();
     
-    // Aguarda o processamento
-    await page.waitForTimeout(2000);
-    
-    // Verifica se a mensagem de erro de rede aparece
-    await expect(page.locator('text=An unexpected error occurred')).toBeVisible();
+    // Wait for error message to appear instead of fixed timeout
+    await expect(page.locator('text=An unexpected error occurred')).toBeVisible({ timeout: 10000 });
     
     // Verifica se o botão volta ao estado normal
     await expect(googleButton).toBeEnabled();
@@ -152,27 +146,27 @@ test.describe('Google OAuth Authentication Flow', () => {
     let requestCount = 0;
     
     // Conta quantas requisições são feitas
-    await page.route('**/auth/v1/authorize**', route => {
+    await page.route('**/auth/v1/authorize**', async (route) => {
       requestCount++;
-      // Simula delay na resposta
-      setTimeout(() => {
-        route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({ url: 'https://accounts.google.com/oauth/authorize' })
-        });
-      }, 1000);
+      // Use proper async delay instead of unawaited setTimeout
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ url: 'https://accounts.google.com/oauth/authorize' })
+      });
     });
 
     const googleButton = page.locator('button:has-text("Continue with Google")');
     
-    // Clica múltiplas vezes rapidamente
-    await googleButton.click();
-    await googleButton.click();
-    await googleButton.click();
+    // Use clickCount for multiple rapid clicks instead of separate calls
+    await googleButton.click({ clickCount: 3 });
     
-    // Aguarda o processamento
-    await page.waitForTimeout(2000);
+    // Wait for processing to complete based on request count
+    await expect(async () => {
+      expect(requestCount).toBe(1);
+    }).toPass({ timeout: 5000 });
     
     // Verifica se apenas uma requisição foi feita
     expect(requestCount).toBe(1);

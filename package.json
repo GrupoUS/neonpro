@@ -7,10 +7,15 @@
     "audit-tool": "./dist/cli/audit-tool.js"
   },
   "type": "module",
+  "packageManager": "npm@10.0.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "overrides": {
     "esbuild": ">=0.25.0"
   },

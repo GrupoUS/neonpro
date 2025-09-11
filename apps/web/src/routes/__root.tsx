@@ -1,6 +1,7 @@
 import { ConsentBanner } from '@/components/ConsentBanner';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
+import { BeamsBackground } from '@/components/ui/beams-background';
 import SidebarDemo from '@/components/ui/sidebar-demo';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
@@ -14,16 +15,13 @@ import { useEffect } from 'react';
 const queryClient = new QueryClient();
 
 function RootComponent() {
-  // Initialize analytics based on consent
   useAnalytics();
   const router = useRouter();
 
-  // Listen for auth state changes and redirect to dashboard
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          // Only redirect if we're on the root page (use router state, not window)
           if (router.state.location.pathname === '/') {
             router.navigate({ to: '/dashboard' });
           }
@@ -35,40 +33,29 @@ function RootComponent() {
   }, [router]);
 
   const pathname = router.state.location.pathname;
-
-  // Define routes that should NOT show the sidebar (login, sales, auth pages)
   const excludedRoutes = [
-    '/', // Landing/sales page
-    '/login', // Login page
-    '/signup', // Signup page
-    '/signup-demo', // Signup demo page
-    '/auth/callback', // Auth callback
-    '/auth/confirm', // Auth confirmation
-    '/404', // Error page
+    '/', '/login', '/signup', '/signup-demo', '/auth/callback', '/auth/confirm', '/404',
   ];
-
-  // Show sidebar on all routes EXCEPT excluded ones
   const showSidebar = !excludedRoutes.includes(pathname) && !pathname.startsWith('/auth/');
+  const isAuthLike = excludedRoutes.includes(pathname) || pathname.startsWith('/auth/');
+
+  const content = (
+    <main className='flex-1'>
+      <Outlet />
+    </main>
+  );
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          {showSidebar
-            ? (
-              <SidebarDemo>
-                <main className='flex-1'>
-                  <Outlet />
-                </main>
-              </SidebarDemo>
-            )
-            : (
-              <div className='flex min-h-screen flex-col'>
-                <main className='flex-1'>
-                  <Outlet />
-                </main>
-              </div>
-            )}
+          {showSidebar ? (
+            <SidebarDemo>{content}</SidebarDemo>
+          ) : isAuthLike ? (
+            <BeamsBackground>{content}</BeamsBackground>
+          ) : (
+            <div className='flex min-h-screen flex-col'>{content}</div>
+          )}
           <ConsentBanner />
           <Toaster />
           <Sonner />

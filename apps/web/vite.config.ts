@@ -18,6 +18,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   define: {
     // Vite requires these to be defined for Supabase

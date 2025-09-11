@@ -8,7 +8,7 @@ test.describe('Responsive Design and Accessibility', () => {
       await page.goto('/signup-demo');
       await page.waitForLoadState('networkidle');
 
-      // Verifica se o formulário está visível e bem formatado
+      // Checks that the form is visible and properly formatted
       const formContainer = page.locator('div[class*="max-w-md"]');
       await expect(formContainer).toBeVisible();
 
@@ -49,8 +49,12 @@ test.describe('Responsive Design and Accessibility', () => {
       const submitBox = await submitButton.boundingBox();
       const googleBox = await googleButton.boundingBox();
       
-      expect(submitBox?.height).toBeGreaterThanOrEqual(44);
-      expect(googleBox?.height).toBeGreaterThanOrEqual(44);
+      // Assert that boundingBox is not null before checking height
+      expect(submitBox).not.toBeNull();
+      expect(googleBox).not.toBeNull();
+      
+      expect(submitBox!.height).toBeGreaterThanOrEqual(44);
+      expect(googleBox!.height).toBeGreaterThanOrEqual(44);
     });
   });
 

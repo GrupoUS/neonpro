@@ -15,11 +15,11 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as FinancialRouteImport } from './routes/financial'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
@@ -56,11 +56,6 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PatientsRoute = PatientsRouteImport.update({
-  id: '/patients',
-  path: '/patients',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -79,6 +74,11 @@ const FinancialRoute = FinancialRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientsRoute = ClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppointmentsRoute = AppointmentsRouteImport.update({
@@ -111,11 +111,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
+  '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
-  '/patients': typeof PatientsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -129,11 +129,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
+  '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
-  '/patients': typeof PatientsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -148,11 +148,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
+  '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
-  '/patients': typeof PatientsRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -168,11 +168,11 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/appointments'
+    | '/clients'
     | '/dashboard'
     | '/financial'
     | '/governance'
     | '/login'
-    | '/patients'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -186,11 +186,11 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/appointments'
+    | '/clients'
     | '/dashboard'
     | '/financial'
     | '/governance'
     | '/login'
-    | '/patients'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -204,11 +204,11 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/appointments'
+    | '/clients'
     | '/dashboard'
     | '/financial'
     | '/governance'
     | '/login'
-    | '/patients'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -223,11 +223,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AppointmentsRoute: typeof AppointmentsRoute
+  ClientsRoute: typeof ClientsRoute
   DashboardRoute: typeof DashboardRoute
   FinancialRoute: typeof FinancialRoute
   GovernanceRoute: typeof GovernanceRoute
   LoginRoute: typeof LoginRoute
-  PatientsRoute: typeof PatientsRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
@@ -282,13 +282,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/patients': {
-      id: '/patients'
-      path: '/patients'
-      fullPath: '/patients'
-      preLoaderRoute: typeof PatientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -315,6 +308,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clients': {
+      id: '/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof ClientsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/appointments': {
@@ -359,11 +359,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AppointmentsRoute: AppointmentsRoute,
+  ClientsRoute: ClientsRoute,
   DashboardRoute: DashboardRoute,
   FinancialRoute: FinancialRoute,
   GovernanceRoute: GovernanceRoute,
   LoginRoute: LoginRoute,
-  PatientsRoute: PatientsRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,

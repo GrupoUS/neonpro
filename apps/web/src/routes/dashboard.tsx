@@ -71,11 +71,11 @@ function DashboardComponent() {
     },
   });
 
-  const { data: activePatientsCount, isLoading: loadingPatients } = useQuery({
-    queryKey: ['activePatientsCount'],
+  const { data: activeClientsCount, isLoading: loadingClients } = useQuery({
+    queryKey: ['activeClientsCount'],
     queryFn: async () => {
       const { count, error } = await supabase
-        .from('patients')
+        .from('clients')
         .select('id', { count: 'exact', head: true })
         .eq('is_active', true);
       if (error) throw error;
@@ -301,7 +301,7 @@ function DashboardComponent() {
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                {loadingPatients ? '—' : activePatientsCount}
+                {loadingClients ? '—' : activeClientsCount}
               </div>
               <p className='text-xs text-muted-foreground'>
                 Total ativos
