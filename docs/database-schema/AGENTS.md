@@ -18,7 +18,8 @@ llm:
   retrieval_hints:
     prefer:
       - "docs/database-schema/AGENTS.md"
-      - "docs/database-schema/**/README.md"
+      - "docs/database-schema/database-schema-consolidated.md"
+      - "docs/database-schema/tables/tables-consolidated.md"
     avoid:
       - "images/**"
       - "*.pdf"
@@ -40,17 +41,88 @@ Purpose: single source of truth for how to use, extend, and maintain the databas
 
 Current files:
 
-- `AGENTS.md` (this file) — orchestrator and rules
-- `database-schema-consolidated.md` — full architecture, functions, triggers, RLS patterns
-- `tables/README.md` — table docs purpose and conventions
-- `tables/tables-consolidated.md` — table reference (schemas, RLS, indexes)
+- `AGENTS.md` — Database schema orchestrator and standards
+- `database-schema-consolidated.md` — Complete database architecture with Supabase integration
+- `tables/tables-consolidated.md` — Essential table definitions with RLS patterns
+- `migrations/README.md` — Migrations guide and conventions
+- `policies/` — Reusable RLS policy snippets (see `policies/README.md`)
 
-Planned-but-missing (create when needed):
+## NeonPro Database Overview
 
-- `functions.md` — custom SQL/PLpgSQL functions (SECURITY DEFINER/INVOKER, params, returns)
-- `triggers.md` — trigger catalog with table, event, timing, function
-- `relationships.md` — FK map and cascade rules
-- `enums.md` — enum types and allowed values
+**Architecture**: Multi-tenant aesthetic clinic management with Supabase PostgreSQL 17
+**Compliance**: LGPD + ANVISA + CFM requirements built-in
+**Tech Stack**: TanStack Router + Vite + Hono + Supabase + Vercel AI SDK v5.0
+
+### Core Tables
+
+- **patients** - Patient records with LGPD compliance and consent management
+- **appointments** - Scheduling with conflict detection and no-show prediction
+- **professionals** - Healthcare professionals with CFM license validation
+- **clinics** - Multi-tenant clinic management with regulatory compliance
+- **medical_records** - Advanced aesthetic procedures with digital signatures
+- **services** - Procedure catalog with ANVISA classification
+
+### AI Integration Tables
+
+- **ai_chat_sessions** - AI conversations with professional oversight
+- **ai_chat_messages** - PHI-sanitized AI interactions with compliance monitoring
+- **ai_no_show_predictions** - ML-powered appointment risk assessment
+
+### Compliance Tables
+
+- **audit_logs** - Immutable audit trail for all system activities
+- **compliance_tracking** - Automated regulatory compliance monitoring
+- **consent_records** - LGPD consent management and tracking
+
+## Quick Start
+
+```sql
+-- Enable required extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "vector";
+
+-- Enable RLS for healthcare data protection
+ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
+
+-- Create healthcare professional access policy
+CREATE POLICY "professional_clinic_access" ON table_name
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
+      AND p.clinic_id = table_name.clinic_id
+      AND p.is_active = true
+    )
+  );
+```
+
+### LGPD Compliance Example
+
+```sql
+-- Patient with LGPD consent fields
+CREATE TABLE patients (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid NOT NULL REFERENCES clinics(id),
+  full_name text NOT NULL,
+  cpf text UNIQUE, -- Encrypted at rest
+  -- LGPD compliance
+  lgpd_consent_given boolean DEFAULT false,
+  data_retention_until timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+-- RLS policy with consent validation
+CREATE POLICY "professionals_clinic_patients" ON patients
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM professionals p
+      WHERE p.user_id = auth.uid()
+      AND p.clinic_id = patients.clinic_id
+      AND p.is_active = true
+    )
+  );
+```
 
 ## How to work here (Archon-first)
 

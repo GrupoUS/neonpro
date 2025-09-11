@@ -1,8 +1,19 @@
-# Vercel AI SDK v5.0 Best Practices - Version: 1.0.0
+---
+title: "Vercel AI SDK v5.0 Best Practices"
+last_updated: 2025-09-10
+form: reference
+tags: [ai-sdk, vercel, streaming, tools, neonpro]
+related:
+  - ./AGENTS.md
+  - ./apis.md
+  - ../architecture/tech-stack.md
+---
+
+# Vercel AI SDK v5.0 Best Practices
 
 ## Purpose & Scope
 
-This rule establishes production-ready patterns and best practices for using the Vercel AI SDK v5.0, covering the redesigned chat system, agentic loop control, type-safe UI integration, streaming data parts, and advanced tool calling. Based on the major architectural improvements in v5.0.
+Production-ready patterns and best practices for using the Vercel AI SDK v5.0 with the NeonPro aesthetic clinic platform. Covers the redesigned chat system, agentic loop control, type-safe UI integration, streaming data parts, and advanced tool calling with TanStack Router + Vite + Hono integration.
 
 ## Core Principles
 
