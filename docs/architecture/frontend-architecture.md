@@ -54,7 +54,7 @@ This document defines the high-level architectural decisions, patterns, and desi
 
 ### Core Stack Rationale
 
-**Next.js 15 + React 19**
+**TanStack Router + Vite + React 19**
 
 - **Why**: Server Components reduce bundle size, App Router provides file-based routing
 - **Benefits**: Automatic code splitting, built-in performance optimizations, Vercel integration
@@ -84,7 +84,7 @@ This document defines the high-level architectural decisions, patterns, and desi
 
 ```
 apps/
-├── web/              # Next.js Frontend (Primary)
+├── web/              # TanStack Router + Vite Frontend (Primary)
 ├── api/              # Hono.dev Backend API
 └── mobile/           # Future React Native app
 
@@ -201,11 +201,11 @@ interface HealthcareComponentProps {
 - Critical CSS inlined for first paint
 - Non-critical resources loaded asynchronously
 - Service worker for offline functionality
-- Image optimization with Next.js Image
+- Image optimization with Vite static assets
 
 **Code Splitting Strategy**
 
-- Route-based splitting with Next.js
+- Route-based splitting with TanStack Router
 - Component-based splitting for large features
 - Dynamic imports for heavy libraries
 - Preloading for anticipated navigation

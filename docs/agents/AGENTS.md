@@ -85,7 +85,7 @@ triggers: [
   "security",
 ]
 capabilities:
-  - Next.js 15 + React 19 + TypeScript development
+  - TanStack Router + Vite + React 19 + TypeScript development
   - Constitutional principles (KISS/YAGNI/CoT) enforcement
   - Agent coordination and workflow orchestration
   - Production deployment and quality gates

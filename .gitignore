@@ -2,7 +2,7 @@
 # NEONPRO HEALTHCARE - COMPREHENSIVE SECURITY .GITIGNORE
 # =============================================================================
 # NeonPro AI Healthcare Platform - Turborepo Monorepo (2 Apps + 22 Packages)
-# Architecture: Next.js 15 + Hono.dev + Supabase + TypeScript + shadcn/ui
+# Architecture: TanStack Router + Vite + Hono.dev + Supabase + TypeScript + shadcn/ui
 # See: docs/architecture/source-tree.md for full architecture details
 # =============================================================================
 
@@ -288,7 +288,7 @@ jest-results/
 # 📦 BUILD & COMPILATION OUTPUTS
 # =============================================================================
 
-# Next.js (Frontend)
+# Vite + TanStack Router (Frontend)
 .next/
 **/.next/
 out/
@@ -569,7 +569,7 @@ audit-reports/temp/
 # END NEONPRO HEALTHCARE .GITIGNORE
 # =============================================================================
 # Last updated: 2025 - Based on NeonPro Healthcare Architecture v2025
-# Total packages: 22 | Apps: 2 (web, api) | Stack: Next.js 15 + Hono.dev + Supabase
+# Total packages: 22 | Apps: 2 (web, api) | Stack: TanStack Router + Vite + Hono.dev + Supabase
 # =============================================================================
 .env*.local
 .clinerules/byterover-rules.md

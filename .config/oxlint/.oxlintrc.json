@@ -110,7 +110,7 @@
     "max-lines": "off", // Allow longer files for healthcare modules
     "no-nested-ternary": "off", // Allow nested ternary for conditional logic
     "unicorn/no-nested-ternary": "off", // Same as above for unicorn plugin
-    "new-cap": "off", // Allow Next.js font constructors like Inter(), JetBrains_Mono()
+    "new-cap": "off", // Allow font constructors like Inter(), JetBrains_Mono()
     "no-new": "off", // Allow new operators for specific patterns
     "import/no-unassigned-import": "off", // Allow CSS imports and side-effect imports
     "unicorn/prefer-global-this": "off", // Allow window, self, global in appropriate contextsng
@@ -179,7 +179,7 @@
     "unicorn/no-new-array": "warn",
 
     // ===== REACT EXCELLENCE =====
-    "react/jsx-uses-react": "off", // Next.js 17+ doesn't need React import
+    "react/jsx-uses-react": "off", // React 17+ doesn't need React import
     "react/react-in-jsx-scope": "off",
     "react/jsx-key": "error",
     "react/jsx-no-duplicate-props": "error",

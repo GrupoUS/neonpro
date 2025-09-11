@@ -224,4 +224,168 @@ vercel
 
 *Documentação gerada em: $(date)*
 *Metodologia: Systematic TypeScript Error Resolution*
-*Quality Standard: ≥9.5/10 - Achieved*
+*Quality Standard: ≥9.5/10 - Achieved*# 🔐 Environment Variables & Secrets Management
+
+## 📋 Environment Variables Mapping
+
+The following table maps all environment variables to their Vercel project settings categories and rotation requirements:
+
+| Variable Name | Vercel Category | Purpose | Rotation Frequency | Source | Required |
+|---------------|-----------------|---------|-------------------|---------|----------|
+| **Database & Infrastructure** |
+| `DATABASE_URL` | System Environment Variables | PostgreSQL connection (Supabase) | Quarterly | Supabase Project Settings | ✅ Critical |
+| `DIRECT_URL` | System Environment Variables | Direct PostgreSQL connection | Quarterly | Supabase Project Settings | ✅ Critical |
+| `SUPABASE_URL` | System Environment Variables | Supabase API endpoint | Never (unless migration) | Supabase Project Settings | ✅ Critical |
+| `SUPABASE_ANON_KEY` | System Environment Variables | Supabase anonymous key | Quarterly | Supabase Project Settings | ✅ Critical |
+| `SUPABASE_SERVICE_ROLE_KEY` | System Environment Variables | Supabase service role key | Quarterly | Supabase Project Settings | ✅ Critical |
+| **Frontend Configuration** |
+| `VITE_SUPABASE_URL` | System Environment Variables | Frontend Supabase endpoint | Never (unless migration) | Same as SUPABASE_URL | ✅ Critical |
+| `VITE_SUPABASE_ANON_KEY` | System Environment Variables | Frontend Supabase key | Quarterly | Same as SUPABASE_ANON_KEY | ✅ Critical |
+| **Security & Encryption** |
+| `JWT_SECRET` | Encrypted Environment Variables | JWT token signing | Bi-annually | Generate 32+ char random | ✅ Critical |
+| `ENCRYPTION_KEY` | Encrypted Environment Variables | PII data encryption | Annually | Generate 256-bit key | ✅ Critical |
+| **System Configuration** |
+| `NODE_ENV` | System Environment Variables | Runtime environment | Never | Fixed value: "production" | ✅ Critical |
+| `VERCEL` | System Environment Variables | Vercel platform flag | Never | Auto-set by Vercel | ✅ Auto |
+| `LOG_LEVEL` | System Environment Variables | Logging verbosity | As needed | Values: error/warn/info/debug | ⚠️ Optional |
+| `VERCEL_REGION` | System Environment Variables | Deployment region | Rarely | Fixed value: "gru1" | ✅ Critical |
+
+## 🔄 Secret Rotation Schedule
+
+### **Quarterly (Every 3 Months)**
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `DATABASE_URL` credentials
+- `DIRECT_URL` credentials
+
+### **Bi-annually (Every 6 Months)**
+- `JWT_SECRET`
+
+### **Annually (Every 12 Months)**
+- `ENCRYPTION_KEY` (requires data re-encryption)
+
+### **As Needed**
+- `LOG_LEVEL` (for debugging/monitoring)
+
+## 🛠️ Rotation Procedures
+
+### **1. Supabase Keys Rotation**
+```bash
+# Step 1: Generate new keys in Supabase dashboard
+# Go to Settings > API > Project API keys > Generate new key
+
+# Step 2: Update Vercel environment variables
+vercel env rm SUPABASE_ANON_KEY production
+vercel env add SUPABASE_ANON_KEY production
+vercel env rm VITE_SUPABASE_ANON_KEY production  
+vercel env add VITE_SUPABASE_ANON_KEY production
+
+# Step 3: Redeploy to activate new keys
+vercel --prod
+
+# Step 4: Verify API connectivity
+curl -H "apikey: NEW_ANON_KEY" https://YOUR_PROJECT.supabase.co/rest/v1/
+```
+
+### **2. JWT Secret Rotation**
+```bash
+# Step 1: Generate new secret
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Step 2: Update Vercel environment
+vercel env rm JWT_SECRET production
+vercel env add JWT_SECRET production
+
+# Step 3: Force session invalidation (optional)
+# Users will need to re-authenticate
+
+# Step 4: Redeploy
+vercel --prod
+```
+
+### **3. Encryption Key Rotation**
+⚠️ **CRITICAL**: Requires data migration process
+```bash
+# Step 1: Create new encryption key
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Step 2: Deploy with both old and new keys
+vercel env add ENCRYPTION_KEY_NEW production
+vercel --prod
+
+# Step 3: Run data re-encryption migration
+# (Custom script required to re-encrypt existing PII data)
+
+# Step 4: Switch to new key
+vercel env rm ENCRYPTION_KEY production
+vercel env add ENCRYPTION_KEY production  # Use NEW key value
+vercel env rm ENCRYPTION_KEY_NEW production
+```
+
+## 🔒 Security Best Practices
+
+### **Vercel Environment Variable Categories**
+
+1. **System Environment Variables**
+   - Non-sensitive configuration values
+   - Build-time and runtime access
+   - Examples: `NODE_ENV`, `LOG_LEVEL`, `VERCEL_REGION`
+
+2. **Encrypted Environment Variables**
+   - Sensitive secrets encrypted at rest
+   - Runtime access only (not build-time)
+   - Examples: `JWT_SECRET`, `ENCRYPTION_KEY`
+   - Access via Vercel Dashboard: Settings > Environment Variables
+
+### **Access Control**
+- **Production Environment**: Restrict access to authorized team members only
+- **Preview Deployments**: Use separate, limited-scope keys when possible
+- **Development**: Use `.env.local` for local development (never commit)
+
+### **Monitoring & Auditing**
+- **Rotation Logs**: Track all key rotation activities
+- **Access Monitoring**: Monitor API key usage patterns
+- **Failure Alerts**: Set up alerts for authentication failures
+
+## 📋 Environment Setup Checklist
+
+### **Initial Setup**
+- [ ] All required environment variables configured in Vercel
+- [ ] Database credentials from Supabase added
+- [ ] JWT secret generated (32+ characters)
+- [ ] Encryption key generated (256-bit)
+- [ ] Regional settings configured (gru1 for Brazil)
+
+### **Security Validation**
+- [ ] No sensitive values in source code
+- [ ] All secrets use encrypted environment variables category
+- [ ] Production and preview environments use different keys
+- [ ] Rotation schedule documented and scheduled
+
+### **Deployment Validation**
+- [ ] `vercel env ls` shows all required variables
+- [ ] API health check passes with current keys
+- [ ] Frontend can connect to backend services
+- [ ] Database connections working correctly
+
+## 🚨 Emergency Procedures
+
+### **Compromised Key Response**
+1. **Immediate**: Rotate the compromised key using procedures above
+2. **Monitor**: Check access logs for unauthorized usage
+3. **Investigate**: Determine scope of potential exposure
+4. **Document**: Record incident and response actions
+
+### **Service Outage Recovery**
+1. **Verify**: Check environment variable configuration
+2. **Validate**: Test database and API connectivity
+3. **Rollback**: If needed, revert to previous working configuration
+4. **Escalate**: Contact Supabase/Vercel support if platform issue
+
+---
+
+**Security Note**: This documentation contains process information only. Actual secret values must never be stored in documentation or source code.
+
+**Last Updated**: 2025-09-11
+**Next Review**: 2025-12-11
+**Responsible**: DevOps Team

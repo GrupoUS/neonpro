@@ -36,7 +36,7 @@ Break healthcare problems into sequential, traceable steps; Verbalize reasoning 
 
 ### Technology Stack Requirements
 
-- Frontend: Next.js 15 + React 19 (App Router required)
+- Frontend: TanStack Router + Vite + React 19 (File-based routing)
 - Backend: Supabase PostgreSQL with RLS + Hono.dev API
 - AI: OpenAI GPT-4 with Portuguese optimization
 - UI: shadcn/ui with healthcare themes

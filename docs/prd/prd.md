@@ -192,7 +192,7 @@ NeonPro is a revolutionary smart platform designed specifically for aesthetic pr
 
 **Frontend:**
 
-- Next.js 15 with App Router
+- TanStack Router with Vite build system
 - React 19 Server Components
 - TypeScript 5.0+
 - Tailwind CSS + shadcn/ui

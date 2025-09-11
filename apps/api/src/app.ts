@@ -3,27 +3,27 @@ import { cors } from 'hono/cors';
 import { getEnvironmentInfo, validateEnvironment } from './lib/env-validation';
 import { initializeErrorTracking } from './lib/error-tracking';
 import { logger } from './lib/logger';
+import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
 import {
   errorLoggingMiddleware,
   loggingMiddleware,
   performanceLoggingMiddleware,
   securityLoggingMiddleware,
 } from './middleware/logging-middleware';
-import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
-import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
-import {
-  healthRoute,
-  detailedHealthRoute,
-  apiInfoRoute,
-  authStatusRoute,
-  listPatientsRoute,
-  getPatientByIdRoute,
-  listAppointmentsRoute,
-  getPatientAppointmentsRoute
-} from './schemas/openapi-routes';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import patients from './routes/patients';
+import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
+import {
+  apiInfoRoute,
+  authStatusRoute,
+  detailedHealthRoute,
+  getPatientAppointmentsRoute,
+  getPatientByIdRoute,
+  healthRoute,
+  listAppointmentsRoute,
+  listPatientsRoute,
+} from './schemas/openapi-routes';
 
 // Validate environment at startup
 const envValidation = validateEnvironment();
@@ -44,7 +44,7 @@ if (envValidation.warnings.length > 0) {
 }
 
 // Initialize error tracking
-initializeErrorTracking().catch((error) => {
+initializeErrorTracking().catch(error => {
   logger.warn('Error tracking initialization failed', { error: error.message });
 });
 
@@ -60,15 +60,18 @@ logger.info('NeonPro API starting', {
 const app = createOpenAPIApp().basePath('/api');
 
 // CORS configuration
-app.use('*', cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://neonpro.vercel.app', 'https://your-app.vercel.app']
-    : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
-  credentials: true,
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposeHeaders: ['X-Request-ID'],
-}));
+app.use(
+  '*',
+  cors({
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://neonpro.vercel.app', 'https://your-app.vercel.app']
+      : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true,
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposeHeaders: ['X-Request-ID'],
+  }),
+);
 
 // Apply middleware in order
 // Error tracking middleware stack (includes context, performance, security, and error handling)
@@ -131,7 +134,7 @@ app.openapi(authStatusRoute, c =>
     endpoints: {
       login: '/auth/login',
       logout: '/auth/logout',
-      profile: '/auth/profile'
+      profile: '/auth/profile',
     },
     timestamp: new Date().toISOString(),
   }));
@@ -146,13 +149,13 @@ app.openapi(listPatientsRoute, c =>
         cpf: '***.***.***-**',
         email: 'j***@email.com',
         lgpdConsent: true,
-        createdAt: '2024-01-15T10:00:00Z'
-      }
+        createdAt: '2024-01-15T10:00:00Z',
+      },
     ],
     total: 1,
     page: 1,
     hasNext: false,
-    lgpdCompliant: true
+    lgpdCompliant: true,
   }));
 
 app.openapi(getPatientByIdRoute, c =>
@@ -166,7 +169,7 @@ app.openapi(getPatientByIdRoute, c =>
     lgpdConsent: true,
     consentDate: '2024-01-15T10:00:00Z',
     createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-20T15:30:00Z'
+    updatedAt: '2024-01-20T15:30:00Z',
   }));
 
 // OpenAPI-documented appointment routes
@@ -181,12 +184,12 @@ app.openapi(listAppointmentsRoute, c =>
         time: '14:30:00',
         type: 'Consulta',
         status: 'Agendado',
-        createdAt: '2024-01-20T10:00:00Z'
-      }
+        createdAt: '2024-01-20T10:00:00Z',
+      },
     ],
     total: 1,
     page: 1,
-    hasNext: false
+    hasNext: false,
   }));
 
 app.openapi(getPatientAppointmentsRoute, c =>
@@ -199,11 +202,11 @@ app.openapi(getPatientAppointmentsRoute, c =>
         type: 'Consulta',
         status: 'Agendado',
         notes: 'Consulta de rotina',
-        createdAt: '2024-01-20T10:00:00Z'
-      }
+        createdAt: '2024-01-20T10:00:00Z',
+      },
     ],
     total: 1,
-    lgpdCompliant: true
+    lgpdCompliant: true,
   }));
 
 // Standard v1 routes for backward compatibility
@@ -226,7 +229,7 @@ v1.get('/info', c =>
     timestamp: new Date().toISOString(),
   }));
 
-// Keep existing route handlers for backward compatibility  
+// Keep existing route handlers for backward compatibility
 v1.route('/auth', auth);
 v1.route('/patients', patients);
 v1.route('/appointments', appointments);
@@ -236,4 +239,6 @@ app.route('/v1', v1);
 // Setup OpenAPI documentation endpoints
 setupOpenAPIDocumentation(app);
 
-export { app };
+// Export for Vercel deployment (Official Hono + Vercel Pattern)
+// This allows Vercel to automatically convert Hono routes to Vercel Functions
+export default app;

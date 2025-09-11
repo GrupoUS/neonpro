@@ -18,7 +18,7 @@
 
 Based on architecture analysis, the actual stack is:
 
-- **Frontend**: TanStack Router + Vite + React 19 (NOT Next.js)
+- **Frontend**: TanStack Router + Vite + React 19
 - **Styling**: Tailwind CSS + shadcn/ui v4
 - **Backend**: Hono.dev API + Supabase PostgreSQL
 - **AI Integration**: Vercel AI SDK + OpenAI GPT-4

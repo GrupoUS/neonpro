@@ -3,22 +3,17 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
-  "cleanUrls": true,
-  "trailingSlash": false,
-
+  "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
   "functions": {
-    "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/test.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/health.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/v1/health.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/openapi.json.ts": { "runtime": "nodejs20.x", "memory": 1024 }
+    "api/index.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 30
+    }
   },
   "rewrites": [
-    { "source": "/api/test", "destination": "/api/test.ts" },
-    { "source": "/api/health", "destination": "/api/health.ts" },
-    { "source": "/api/v1/health", "destination": "/api/v1/health.ts" },
-    { "source": "/api/openapi.json", "destination": "/api/openapi.json.ts" },
     { "source": "/api/(.*)", "destination": "/api/index.ts" },
     { "source": "/((?!api|.*\\..*).*)", "destination": "/index.html" }
   ],

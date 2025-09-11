@@ -3,7 +3,7 @@
 > **A plataforma definitiva de gestão estética avançada para o mercado brasileiro**\
 > **$820k+ annual ROI | 3-4 month payback | First-to-market AI-native architecture**
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![TanStack Router](https://img.shields.io/badge/TanStack-Router-red)](https://tanstack.com/router)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)](https://www.typescriptlang.org/)
 [![TanStack Router](https://img.shields.io/badge/TanStack-Router-orange)](https://tanstack.com/router)
 [![Vite](https://img.shields.io/badge/Vite-5.2.0-purple)](https://vitejs.dev/)
@@ -256,7 +256,7 @@ neonpro/
 | Technology        | Version                | Purpose                 | Rationale                                 |
 | ----------------- | ---------------------- | ----------------------- | ----------------------------------------- |
 | **Supabase Auth** | ^2.38.5                | Authentication provider | LGPD compliant, healthcare-grade security |
-| **NextAuth.js**   | ^4.24.11               | Auth framework          | Session management, provider integration  |
+| **Supabase Auth** | ^2.38.5                | Auth framework          | Session management, provider integration  |
 | **WebAuthn**      | @simplewebauthn/server | Biometric auth          | Enhanced security for healthcare data     |
 | **JWT**           | jose library           | Token handling          | Secure token validation and generation    |
 | **bcryptjs**      | ^2.4.3                 | Password hashing        | Industry standard password security       |
@@ -517,7 +517,7 @@ pnpm test          # Run all tests
 
 - **Empty packages**: Test scripts configured with `--passWithNoTests` for pipeline compatibility
 
-- **Linting Next.js app**: Use scoped helper to avoid root resolution errors:
+- **Linting Vite app**: Use scoped helper to avoid root resolution errors:
   - `bun run next:lint:web` (alias for `next lint --dir apps/web`)
   - Generic `next lint` at repo root will fail due to monorepo structure
 

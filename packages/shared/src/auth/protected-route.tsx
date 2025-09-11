@@ -6,7 +6,7 @@
 
 'use client';
 
-// DISABLED: Using TanStack Router instead of Next.js
+// NOTE: Using TanStack Router for protected routes
 // import { useRouter, } from 'next/navigation'
 import type React from 'react';
 import type { ReactNode } from 'react';
@@ -78,7 +78,7 @@ export function ProtectedRoute({
 
   // Não autenticado - redirecionar
   if (!(isAuthenticated && user)) {
-    // DISABLED: Using TanStack Router instead of Next.js router
+    // NOTE: Using TanStack Router for protected routes router
     // router.push(redirectTo,)
     console.warn('User not authenticated, redirect to:', redirectTo);
     return <>{fallback}</>;
