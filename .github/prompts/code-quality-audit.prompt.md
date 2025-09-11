@@ -23,6 +23,76 @@ cd /home/vibecoder/neonpro && npx oxlint --quiet
 cd /home/vibecoder/neonpro && npx oxlint --quiet [specific-files]
 ```
 
+### **Phase 2b: Intelligent Test Strategy Orchestration**
+
+This prompt must auto-select and configure the correct testing strategy based on detected code changes.
+
+#### Inputs (provide or auto-derive)
+- `changed_files`: array of repository paths (e.g., from `git diff --name-only origin/main...HEAD`)
+- `diff_stats` (optional): per-file stats to assess impact/criticality
+- `monorepo_map`: inferred from `docs/architecture/source-tree.md`
+
+#### Mandatory Pre‑Reads
+- `docs/architecture/source-tree.md` (structure), `docs/architecture/tech-stack.md` (stack)
+- `docs/testing/testing-responsibility-matrix.md`, `docs/testing/coverage-policy.md`
+- `docs/rules/coding-standards.md` (LGPD/ANVISA/CFM, security)
+- Strategy guides:
+  - `docs/testing/hono-api-testing.md`
+  - `docs/testing/react-test-patterns.md`
+  - `docs/testing/tanstack-router-testing.md`
+  - `docs/testing/supabase-rls-testing.md`
+  - `docs/testing/monorepo-testing-strategies.md`
+
+#### Routing Rules (path → strategy)
+- API (Hono): any changes under `apps/api/**` or shared services used by API → invoke Hono API testing patterns
+- Frontend components/hooks: changes under `apps/web/src/components/**` or `apps/web/src/hooks/**` → React 19 component testing
+- Routes: changes under `apps/web/src/routes/**` or files named `route.tsx/tsx` → TanStack Router testing
+- Database/RLS: SQL migrations, `packages/database/**`, Supabase policies or DB service code → Supabase RLS testing
+- Monorepo-wide: changes affecting multiple apps/packages or root configs → Monorepo testing strategies
+
+#### Responsibility Matrix Application
+Use `testing-responsibility-matrix.md` to determine for each triggered strategy:
+- Mandatory vs optional test types (Unit, Integration, E2E, Performance, Security, Compliance)
+- CI stages to run (Unit → Integration → E2E → Security → Compliance)
+- Coverage thresholds by criticality from `coverage-policy.md` (≥95% critical, ≥85% important, ≥75% useful)
+
+#### Command Planner (examples)
+- API integration (apps/api):
+  - `pnpm --filter @neonpro/api... test:integration`
+- Web unit/integration (apps/web):
+  - `pnpm --filter @neonpro/web... test`
+- Router-specific:
+  - `pnpm --filter @neonpro/web... test -- routes`
+- RLS suite:
+  - `pnpm test:integration --filter "*" -- --run supabase`
+- Monorepo parallel runs:
+  - `pnpm --filter ...^... test:unit` (changed pkg and dependents)
+
+#### Coverage Verification
+- Merge coverage per stage and verify thresholds per `coverage-policy.md`
+- Fail audit if thresholds not met for files marked critical/important
+
+#### Healthcare Compliance Hooks
+- If domains like `patients`, `appointments`, `clinical` changed:
+  - Enforce LGPD checks (no real PII in fixtures, artifact anonymization)
+  - Run E2E compliance checks from `docs/testing/e2e-testing.md` and checklist in `code-review-checklist.md`
+
+#### JSON Orchestrator Output (machine‑readable)
+```json
+{
+  "detected_changes": ["apps/api/src/routes/patients.ts", "apps/web/src/routes/patients/$id.tsx"],
+  "selected_strategies": ["hono_api", "tanstack_router"],
+  "mandatory_tests": ["integration", "e2e", "compliance"],
+  "commands": [
+    "pnpm --filter @neonpro/api... test:integration",
+    "pnpm --filter @neonpro/web... test"
+  ],
+  "coverage_targets": {"critical": 0.95, "important": 0.85, "useful": 0.75},
+  "ci_stages": ["unit", "integration", "e2e", "security", "compliance"]
+}
+```
+
+
 ### **Phase 3: Systematic Fixing Approach**
 
 #### **Priority 1: Critical Security Issues**
@@ -78,7 +148,7 @@ interface MockClient {
   auth: { getUser: Mock<any, any[]>; };
 }
 
-// ✅ After  
+// ✅ After
 interface MockClient {
   from: Mock<unknown, unknown[]>;
   auth: { getUser: Mock<unknown, unknown[]>; };
@@ -104,6 +174,7 @@ import { execSync } from "node:child_process";
 const xssPayloads = [
   'javascript:alert("XSS")',
 ];
+
 
 // ✅ After (Safe Alternative)
 const xssPayloads = [
@@ -180,5 +251,10 @@ npx tsc --noEmit --skipLibCheck
 - Focus on `/packages` and `/apps` directories
 
 ---
+
+### **Testing Guides & Compliance References**
+- **Testing Guides**: `docs/testing/hono-api-testing.md`, `docs/testing/react-test-patterns.md`, `docs/testing/tanstack-router-testing.md`, `docs/testing/supabase-rls-testing.md`, `docs/testing/monorepo-testing-strategies.md`, `docs/testing/testing-responsibility-matrix.md`, `docs/testing/coverage-policy.md`
+- **Compliance**: `docs/rules/coding-standards.md`, `docs/testing/e2e-testing.md`, `docs/testing/code-review-checklist.md`
+
 
 **🎯 EXECUTION COMMAND**: Use this prompt with Augment Agent to execute comprehensive code quality audit and refactoring following all specified procedures and quality gates.

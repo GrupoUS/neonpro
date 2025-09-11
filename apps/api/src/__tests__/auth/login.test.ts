@@ -183,7 +183,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
       } as unknown as Context
 
       const loginHandler = async (c: Context,) => {
-        const { email, password: _password, tenantId, } = await c.req.json()
+        const { email, tenantId, } = await c.req.json()
 
         const user = await mockPrisma.user.findUnique({
           where: { email, tenantId, isActive: true, },
