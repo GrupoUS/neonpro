@@ -6,6 +6,8 @@
   "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
   "outputDirectory": "apps/web/dist",
   "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "functions": {
     "api/index.ts": {
       "runtime": "nodejs20.x",

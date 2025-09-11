@@ -35,7 +35,20 @@ coverage/
 *.log
 .DS_Store
 
-# Force ignore any Next.js related files
+# Force ignore any Next.js related files and artifacts
 **/.next/
 **/next.config.*
 **/next-env.d.ts
+**/_next/
+**/public/favicon.ico
+**/public/vercel.svg
+**/app/
+**/pages/
+
+# Force ignore any cached API responses that might interfere
+**/api/health.json
+**/api/health.html
+**/health.json
+**/health.html
+**/*.next.js
+**/*.next.ts
