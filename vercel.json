@@ -3,7 +3,7 @@
   "version": 2,
   "regions": ["gru1"],
   "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm turbo build --filter=@neonpro/web",
+  "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
   "outputDirectory": "apps/web/dist",
   "functions": {
     "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
