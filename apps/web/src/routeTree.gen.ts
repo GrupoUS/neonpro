@@ -13,6 +13,7 @@ import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PatientsRouteImport } from './routes/patients'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as R404RouteImport } from './routes/404'
@@ -38,6 +39,11 @@ const SignupRoute = SignupRouteImport.update({
 const PatientsRoute = PatientsRouteImport.update({
   id: '/patients',
   path: '/patients',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/login'
     | '/patients'
     | '/signup'
     | '/signup-demo'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/login'
     | '/patients'
     | '/signup'
     | '/signup-demo'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/login'
     | '/patients'
     | '/signup'
     | '/signup-demo'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   R404Route: typeof R404Route
   AppointmentsRoute: typeof AppointmentsRoute
   DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
   PatientsRoute: typeof PatientsRoute
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/patients'
       fullPath: '/patients'
       preLoaderRoute: typeof PatientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   R404Route: R404Route,
   AppointmentsRoute: AppointmentsRoute,
   DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
   PatientsRoute: PatientsRoute,
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,

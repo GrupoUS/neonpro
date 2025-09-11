@@ -2,7 +2,6 @@
 
 import GradientButton from '@/components/ui/gradient-button';
 import ParticleButton from '@/components/ui/particle-button';
-import React from 'react';
 
 export default function KokonutExample() {
   return (

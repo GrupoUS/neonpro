@@ -2,89 +2,11 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "🏛️ Constitutional Audit - Quick",
+      "label": "🧪 Web Tests (apps/web)",
       "type": "shell",
-      "command": "npx tsx src/cli/index.ts quick --target ${workspaceFolder} --verbose",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/audit"
-      },
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "detail": "Run quick constitutional compliance validation"
-    },
-    {
-      "label": "🏛️ Constitutional Audit - Full",
-      "type": "shell",
-      "command": "npx tsx src/cli/index.ts constitutional --target ${workspaceFolder} --verbose",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/audit"
-      },
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "detail": "Run full constitutional compliance validation"
-    },
-    {
-      "label": "📈 Performance Benchmark",
-      "type": "shell",
-      "command": "npx tsx src/cli/index.ts benchmark --target ${workspaceFolder} --verbose",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/audit"
-      },
+      "command": "pnpm --filter @neonpro/web test",
       "group": "test",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "detail": "Run performance benchmarks on codebase"
-    },
-    {
-      "label": "🏥 Healthcare Compliance Check",
-      "type": "shell",
-      "command": "npx tsx -e \"import './src/validators/healthcare-compliance-validator.js'; console.log('Healthcare compliance check completed')\"",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/audit"
-      },
-      "group": "test",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "detail": "Validate LGPD/ANVISA compliance patterns"
-    },
-    {
-      "label": "🔧 Setup Constitutional Hooks",
-      "type": "shell",
-      "command": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/audit"
-      },
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "detail": "Setup Git hooks for constitutional compliance"
+      "problemMatcher": ["$tsc"]
     }
   ]
 }

@@ -10,8 +10,9 @@ import 'fake-indexeddb/auto';
 (globalThis as any).React = React;
 (global as any).React = React;
 
+// Use real timers to avoid interfering with RTL async utilities
 beforeAll(() => {
-  vi.useFakeTimers();
+  vi.useRealTimers();
 });
 
 // Clean up after each test

@@ -57,7 +57,7 @@ export function ConsentBanner() {
               <p className='text-xs text-muted-foreground'>
                 Conforme nossa{' '}
                 <Button asChild variant='link' className='p-0 h-auto text-primary'>
-                  <Link to='/' className='hover:underline'>
+                  <Link to='/privacy' className='hover:underline'>
                     Política de Privacidade
                   </Link>
                 </Button>

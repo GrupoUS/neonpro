@@ -30,12 +30,17 @@ vi.mock('@/contexts/ConsentContext', () => {
 
 describe('ConsentBanner', () => {
   beforeEach(() => {
-    // create a writable spyable property for assign
-    const original = window.location;
-    // @ts-expect-error allow override for tests
-    delete (window as any).location;
-    // @ts-expect-error define mutable location for spying
-    (window as any).location = { ...original, assign: vi.fn(), replace: vi.fn() };
+    // Ensure window.location methods are spy-able
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...window.location,
+        assign: vi.fn(),
+        replace: vi.fn(),
+        href: '/',
+      },
+      writable: true,
+      configurable: true,
+    });
   });
 
   it('uses Router Link for privacy navigation (SPA-safe)', async () => {

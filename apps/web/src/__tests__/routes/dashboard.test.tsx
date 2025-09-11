@@ -1,31 +1,26 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DashboardComponent } from '@/routes/dashboard';
 import React from 'react';
-import { RouterProvider, createRootRoute, createRouter } from '@tanstack/react-router';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { createMemoryHistory } from '@tanstack/history';
+import { routeTree } from '@/routeTree.gen';
 
-function Wrapper({ children }: { children: React.ReactNode }) {
+function Wrapper() {
   const qc = new QueryClient();
-  const root = createRootRoute();
   const router = createRouter({
-    routeTree: root.addChildren([]),
+    routeTree,
     history: createMemoryHistory({ initialEntries: ['/'] }),
   });
   return (
     <QueryClientProvider client={qc}>
-      <RouterProvider router={router}>{children}</RouterProvider>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
 
-describe('DashboardComponent', () => {
+describe('Dashboard route', () => {
   it('renders cards and metrics placeholders without crashing', async () => {
-    render(
-      <Wrapper>
-        <DashboardComponent />
-      </Wrapper>
-    );
+    render(<Wrapper />);
 
     // Headings
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();

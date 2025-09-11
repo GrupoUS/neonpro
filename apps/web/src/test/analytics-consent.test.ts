@@ -24,9 +24,16 @@ describe('LGPD Analytics Consent Integration', () => {
     };
 
     // Mock crypto
-    (globalThis as any).crypto = {
-      randomUUID: () => 'test-uuid-123',
-    };
+    if (!('crypto' in globalThis)) {
+      Object.defineProperty(globalThis, 'crypto', {
+        value: { randomUUID: () => 'test-uuid-123' },
+        configurable: true,
+        writable: false,
+      });
+    } else if (!(globalThis as any).crypto.randomUUID) {
+      // If crypto exists but randomUUID is missing, define it
+      (globalThis as any).crypto.randomUUID = () => 'test-uuid-123';
+    }
   });
 
   describe('Analytics Service', () => {

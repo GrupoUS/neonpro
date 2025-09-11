@@ -3,31 +3,24 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRootRoute, createRouter } from '@tanstack/react-router';
 import { createMemoryHistory } from '@tanstack/history';
 import React from 'react';
-import { Route as AppointmentsRoute } from '@/routes/appointments';
+import { routeTree } from '@/routeTree.gen';
 
-function Wrapper({ children }: { children: React.ReactNode }) {
+function Wrapper() {
   const qc = new QueryClient();
-  const root = createRootRoute();
   const router = createRouter({
-    routeTree: root.addChildren([]),
+    routeTree,
     history: createMemoryHistory({ initialEntries: ['/appointments'] }),
   });
   return (
     <QueryClientProvider client={qc}>
-      <RouterProvider router={router}>{children}</RouterProvider>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
 
 describe('Appointments route', () => {
   it('shows empty state when no appointments', async () => {
-    const Component = (AppointmentsRoute as any).options.component;
-
-    render(
-      <Wrapper>
-        <Component />
-      </Wrapper>
-    );
+    render(<Wrapper />);
 
     await waitFor(() => {
       expect(screen.getByText(/Nenhum agendamento encontrado/i)).toBeInTheDocument();
