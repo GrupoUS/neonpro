@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "regions": ["gru1"],
-  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm -w install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @neonpro/web run build",
+  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
   "functions": {
     "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
@@ -37,6 +37,12 @@
     "DIRECT_URL": "@direct_url",
     "SUPABASE_URL": "@supabase_url",
     "SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+    "VITE_SUPABASE_URL": "@supabase_url",
+    "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "JWT_SECRET": "@jwt_secret",
+    "ENCRYPTION_KEY": "@encryption_key",
+    "LOG_LEVEL": "info",
+    "VERCEL_REGION": "gru1"
   }
 }

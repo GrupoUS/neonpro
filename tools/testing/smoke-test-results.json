@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-09-11T11:47:56.644Z",
+  "baseUrl": "http://localhost:3000",
+  "totalTests": 7,
+  "passed": 0,
+  "failed": 7,
+  "skipped": 0,
+  "duration": 79,
+  "success": false,
+  "tests": [
+    {
+      "name": "Homepage Accessibility",
+      "status": "fail",
+      "duration": 19,
+      "error": "fetch failed"
+    },
+    {
+      "name": "Health Endpoint",
+      "status": "fail",
+      "duration": 9,
+      "error": "fetch failed"
+    },
+    {
+      "name": "Detailed Health Endpoint",
+      "status": "fail",
+      "duration": 10,
+      "error": "fetch failed"
+    },
+    {
+      "name": "OpenAPI Endpoint",
+      "status": "fail",
+      "duration": 10,
+      "error": "fetch failed"
+    },
+    {
+      "name": "Security Headers",
+      "status": "fail",
+      "duration": 10,
+      "error": "fetch failed"
+    },
+    {
+      "name": "CORS Configuration",
+      "status": "fail",
+      "duration": 9,
+      "error": "fetch failed"
+    },
+    {
+      "name": "Performance Validation",
+      "status": "fail",
+      "duration": 11,
+      "error": "fetch failed"
+    }
+  ]
+}

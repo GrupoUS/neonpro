@@ -39,7 +39,7 @@ process.env = {
   NODE_ENV: 'test',
   SUPABASE_URL: process.env.SUPABASE_URL || 'http://localhost:54321',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'test-key',
-  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
+  VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL || 'http://localhost:54321',
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || 'test-service-role-key',
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/test',
   JWT_SECRET: process.env.JWT_SECRET || 'test-secret',

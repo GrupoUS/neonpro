@@ -475,6 +475,22 @@ apps/web/src/
 - Set up debugging for monorepo structure
 - Configure linting rules consistently
 
+## Deployment & Production Considerations
+
+The NeonPro monorepo is optimized for production deployment on Vercel with the following considerations:
+
+**Build Configuration**:
+- Turborepo handles dependency-aware builds
+- Apps build in parallel after packages complete
+- Vercel deployment configured for Vite + TanStack Router stack
+
+**Package Distribution**:
+- `@neonpro/web` → Frontend application (Vercel static hosting)
+- `@neonpro/api` → Backend API (Vercel serverless functions)
+- Shared packages → Bundled into applications during build
+
+**📋 Deployment Guide**: For complete deployment setup, configuration, and production readiness checklist, see [`../features/deploy-vercel.md`](../features/deploy-vercel.md).
+
 ---
 
 **Document Status**: ✅ Enhanced - Detailed Codebase Organization

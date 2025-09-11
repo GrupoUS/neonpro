@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { getEnvironmentInfo, validateEnvironment } from './lib/env-validation';
 import { logger } from './lib/logger';
 import {
@@ -39,6 +40,17 @@ logger.info('NeonPro API starting', {
 // Note: We use basePath('/api') so that requests rewritten from
 // '/api/*' map cleanly to these routes.
 const app = new Hono().basePath('/api');
+
+// CORS configuration
+app.use('*', cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://neonpro.vercel.app', 'https://your-app.vercel.app']
+    : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposeHeaders: ['X-Request-ID'],
+}));
 
 // Apply middleware in order
 app.use('*', errorLoggingMiddleware());

@@ -121,13 +121,12 @@ execute_tavily_research() {
     # Recent developments and updates
 }
 
-# Phase 3: Exa Deep Intelligence (L5+ complexity)
-execute_exa_research() {
-    echo "🎯 Exa: Deep research and academic sources"
-    # Academic papers and research publications
-    # In-depth technical analysis and case studies
-    # Historical context and evolution tracking
-    # Expert interviews and authoritative sources
+# Phase 3: Archon (L5+ complexity)
+execute_archon_research() {
+    echo "🎯 Archon: Deep research database"
+    # Rag research Archon database queries
+    # In-depth technical analysis of tech stack official docs
+    
 }
 
 # Phase 4: Sequential Synthesis

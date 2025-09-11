@@ -550,8 +550,8 @@ export class SupabaseValidator extends SystemValidator {
         const requiredVars = [
           'SUPABASE_URL',
           'SUPABASE_ANON_KEY',
-          'NEXT_PUBLIC_SUPABASE_URL',
-          'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+          'VITE_SUPABASE_URL',
+          'VITE_SUPABASE_ANON_KEY',
         ];
 
         for (const envVar of requiredVars) {
@@ -576,7 +576,7 @@ export class SupabaseValidator extends SystemValidator {
     for (const envVar of required) {
       if (
         !result.configuration.environmentVariables.present.includes(envVar)
-        && !result.configuration.environmentVariables.present.includes(`NEXT_PUBLIC_${envVar}`)
+        && !result.configuration.environmentVariables.present.includes(`VITE_${envVar}`)
       ) {
         result.configuration.environmentVariables.missing.push(envVar);
       }

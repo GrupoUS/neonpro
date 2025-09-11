@@ -410,6 +410,29 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Professional Regulation**: CFM professional standards adherence
 - **Data Residency**: Brazilian data center requirements
 
+### Deployment & Infrastructure Stack
+
+**Vercel Platform** - Hosting & Edge Functions
+
+- **Why**: Brazilian edge locations (São Paulo), React support, edge functions, global CDN
+- **Benefits**: São Paulo region (gru1), automatic HTTPS, preview deployments
+- **Config**: Node.js 20 runtime, edge function optimization
+- **Performance**: <1.5s First Contentful Paint, <2.5s Largest Contentful Paint
+
+**GitHub Actions** - CI/CD Pipeline
+
+- **Why**: Native GitHub integration, extensive marketplace, security features
+- **Benefits**: Workflow automation, security scanning, deployment automation
+- **Security**: Pinned action versions, secret management, supply chain security
+
+**Docker v24.0.7** - Containerization
+
+- **Why**: Consistent environments, reproducible builds, industry standard
+- **Benefits**: Environment consistency, dependency isolation, scalability
+- **Usage**: Development environments, testing isolation, production consistency
+
+**📋 Deployment Documentation**: See comprehensive deployment guide at [`../features/deploy-vercel.md`](../features/deploy-vercel.md) for implementation details, checklist, and production readiness validation.
+
 ## Technology Roadmap & Future Considerations
 
 ### Short-term Improvements (Q1 2025)

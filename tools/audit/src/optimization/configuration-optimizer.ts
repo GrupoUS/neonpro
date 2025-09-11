@@ -579,7 +579,7 @@ export class ConfigurationOptimizer extends EventEmitter {
       '**/tsconfig.json',
       '**/webpack.config.*',
       '**/vite.config.*',
-      '**/next.config.*',
+      '**/vite.config.*',
       '**/nuxt.config.*',
     ];
 

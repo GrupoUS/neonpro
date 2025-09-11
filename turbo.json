@@ -28,10 +28,12 @@
     "LGPD_COMPLIANCE_KEY",
     "ANVISA_API_KEY",
     "CFM_VALIDATION_KEY",
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY",
     "OPENAI_API_KEY",
-    "ANTHROPIC_API_KEY"
+    "ANTHROPIC_API_KEY",
+    "ENCRYPTION_KEY",
+    "JWT_SECRET"
   ],
   "remoteCache": {
     "signature": true,
@@ -48,21 +50,23 @@
         "public/**/*",
         "package.json",
         "tsconfig.json",
-        "next.config.*",
+        "vite.config.*",
         "tailwind.config.*",
         "bunfig.toml",
         "!*/**/__tests__/**",
         "!*/**/*.test.*",
         "!*/**/*.spec.*"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
+      "outputs": ["dist/**", "build/**"],
       "persistent": false,
       "cache": true,
       "env": [
         "NODE_ENV",
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY"
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY"
       ],
       "outputLogs": "hash-only"
     },
@@ -112,6 +116,47 @@
       ],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
+    },
+
+    "@neonpro/web#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "public/**/*",
+        "index.html",
+        "vite.config.ts",
+        "tailwind.config.*",
+        "package.json",
+        "tsconfig.json",
+        "!src/**/__tests__/**",
+        "!src/**/*.test.*",
+        "!src/**/*.spec.*"
+      ],
+      "outputs": ["dist/**"],
+      "env": [
+        "NODE_ENV",
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY"
+      ]
+    },
+
+    "@neonpro/api#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json",
+        "!src/**/__tests__/**",
+        "!src/**/*.test.*",
+        "!src/**/*.spec.*"
+      ],
+      "outputs": ["dist/**"],
+      "env": [
+        "NODE_ENV",
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "DATABASE_URL"
+      ]
     },
 
     "lint": {
@@ -245,8 +290,9 @@
       "persistent": true,
       "env": [
         "NODE_ENV",
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY",
+        "SUPABASE_URL",
         "SUPABASE_SERVICE_ROLE_KEY"
       ]
     },

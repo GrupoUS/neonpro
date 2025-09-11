@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
+import { ConsentProvider } from './contexts/ConsentContext';
 import './index.css';
 
 // Create a new router instance
@@ -18,6 +19,8 @@ declare module '@tanstack/react-router' {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ConsentProvider>
+      <RouterProvider router={router} />
+    </ConsentProvider>
   </React.StrictMode>,
 );
