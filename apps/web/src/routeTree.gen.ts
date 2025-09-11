@@ -12,9 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
 const TestAuthRoute = TestAuthRouteImport.update({
   id: '/test-auth',
@@ -31,9 +35,19 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsRoute = PatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppointmentsRoute = AppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -46,60 +60,104 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/auth/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/patients': typeof PatientsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/404'
+    | '/appointments'
     | '/dashboard'
+    | '/patients'
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
+    | '/auth/callback'
+    | '/auth/confirm'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/404' | '/dashboard' | '/signup' | '/signup-demo' | '/test-auth'
+  to:
+    | '/'
+    | '/404'
+    | '/appointments'
+    | '/dashboard'
+    | '/patients'
+    | '/signup'
+    | '/signup-demo'
+    | '/test-auth'
+    | '/auth/callback'
+    | '/auth/confirm'
   id:
     | '__root__'
     | '/'
     | '/404'
+    | '/appointments'
     | '/dashboard'
+    | '/patients'
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
+    | '/auth/callback'
+    | '/auth/confirm'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  AppointmentsRoute: typeof AppointmentsRoute
   DashboardRoute: typeof DashboardRoute
+  PatientsRoute: typeof PatientsRoute
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
   TestAuthRoute: typeof TestAuthRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,11 +183,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients': {
+      id: '/patients'
+      path: '/patients'
+      fullPath: '/patients'
+      preLoaderRoute: typeof PatientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/appointments': {
+      id: '/appointments'
+      path: '/appointments'
+      fullPath: '/appointments'
+      preLoaderRoute: typeof AppointmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -146,16 +218,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/confirm': {
+      id: '/auth/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  AppointmentsRoute: AppointmentsRoute,
   DashboardRoute: DashboardRoute,
+  PatientsRoute: PatientsRoute,
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,
   TestAuthRoute: TestAuthRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

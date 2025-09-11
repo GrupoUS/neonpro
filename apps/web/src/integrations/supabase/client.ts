@@ -7,19 +7,7 @@ const SUPABASE_URL = 'https://ownkoxryswokcdanrdgj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMDM2MDksImV4cCI6MjA2ODg3OTYwOX0.XFIAUxbnw2dQho1FEU7QBddw1gI7gD3V-ixY98e4t1E';
 
-// Get the base URL for redirects
-const getBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  
-  // Fallback for SSR
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://neonpro.vercel.app';
-  }
-  
-  return 'http://localhost:5173';
-};
+import { getSiteUrl } from '@/lib/site-url';
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
@@ -35,7 +23,82 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       // Configuração de redirecionamento padrão
-      redirectTo: `${getBaseUrl()}/auth/callback`,
+      redirectTo: `${getSiteUrl()}/auth/callback`,
     },
   },
-);
+);// Helper functions for authentication with proper redirects
+
+// Helper para login com OAuth providers
+export const signInWithProvider = async (
+  provider: 'google' | 'github' | 'apple',
+  redirectTo?: string
+) => {
+  const baseUrl = getSiteUrl();
+  const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
+  
+  return supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(finalRedirectTo)}`,
+    },
+  });
+};
+
+// Helper para login com email/password
+export const signInWithEmail = async (
+  email: string,
+  password: string
+) => {
+  return supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+};
+
+// Helper para signup com redirecionamento
+export const signUpWithEmail = async (
+  email: string,
+  password: string,
+  redirectTo?: string
+) => {
+  const baseUrl = getSiteUrl();
+  const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
+  
+  return supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${baseUrl}/auth/confirm?next=${encodeURIComponent(finalRedirectTo)}`,
+    },
+  });
+};
+
+// Helper para reset de senha
+export const resetPassword = async (
+  email: string,
+  redirectTo?: string
+) => {
+  const baseUrl = getSiteUrl();
+  const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
+  
+  return supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${baseUrl}/auth/confirm?next=${encodeURIComponent(finalRedirectTo)}`,
+  });
+};
+
+// Helper para logout
+export const signOut = async () => {
+  return supabase.auth.signOut();
+};
+
+// Helper para verificar se usuário está autenticado
+export const getCurrentUser = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user || null;
+};
+
+// Helper para verificar sessão atual
+export const getCurrentSession = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
+};

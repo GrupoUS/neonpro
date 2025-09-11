@@ -1,13 +1,10 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router';
-import SignupFormDemo from '@/components/ui/signup-form-demo';
+import { createFileRoute } from '@tanstack/react-router';
+import { LoginForm } from '@/components/auth/LoginForm';
 
 export const Route = createFileRoute('/signup')({
   component: Signup,
 });
 
 function Signup() {
-  const router = useRouter();
-  return (
-    <SignupFormDemo navigate={(to) => router.navigate({ to })} />
-  );
+  return <LoginForm />;
 }

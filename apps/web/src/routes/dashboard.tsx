@@ -1,8 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
-import { createFileRoute } from '@tanstack/react-router';
+import { useAuth } from '@/hooks/useAuth';
+import { signOut, supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Activity,
   Bell,
@@ -13,31 +15,213 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+
+function formatBRL(value: number | null | undefined) {
+  const v = typeof value === 'number' ? value : 0;
+  try {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+  } catch {
+    return `R$ ${v.toFixed(2)}`;
+  }
+}
 
 function DashboardComponent() {
-  // Handle OAuth callback and clean up URL
+  const { user, session, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate(); // Redirect to login if not authenticated
   useEffect(() => {
-    const handleOAuthCallback = async () => {
-      // Check if we have OAuth tokens in the URL hash
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
+    if (!loading && !isAuthenticated) {
+      navigate({ to: '/login' });
+    }
+  }, [loading, isAuthenticated, navigate]);
 
-      if (accessToken) {
-        console.log('OAuth callback detected, cleaning up URL...');
-        // Clean up the URL by removing the hash
-        window.history.replaceState({}, document.title, window.location.pathname);
+  // Clean OAuth hash when session established
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const nextUrl = searchParams.get('next');
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
 
-        // Verify the session is established
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          console.log('OAuth session established successfully');
-        }
-      }
-    };
+    if (session && accessToken) {
+      const cleanUrl = nextUrl ? decodeURIComponent(nextUrl) : '/dashboard';
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, [session]);
 
-    handleOAuthCallback();
+  // Data queries
+  const todayRange = useMemo(() => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    return { start: start.toISOString(), end: end.toISOString() };
   }, []);
+
+  const { data: appointmentsTodayCount, isLoading: loadingAppt } = useQuery({
+    queryKey: ['appointmentsTodayCount', todayRange],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .gte('start_time', todayRange.start)
+        .lte('start_time', todayRange.end)
+        .neq('status', 'cancelled');
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const { data: activePatientsCount, isLoading: loadingPatients } = useQuery({
+    queryKey: ['activePatientsCount'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('patients')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_active', true);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const { data: monthlyRevenue, isLoading: loadingRevenue } = useQuery({
+    queryKey: ['monthlyRevenue'],
+    queryFn: async () => {
+      // Sum income transactions for current month
+      const start = new Date();
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+      end.setMilliseconds(-1);
+
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select('amount, transaction_date, transaction_type')
+        .gte('transaction_date', start.toISOString())
+        .lte('transaction_date', end.toISOString())
+        .eq('transaction_type', 'income');
+      if (error) throw error;
+      const total = (data ?? []).reduce((sum, t: any) => sum + (t?.amount ?? 0), 0);
+      return total;
+    },
+  });
+
+  const sevenDays = useMemo(() => {
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    const start = new Date();
+    start.setDate(start.getDate() - 6);
+    start.setHours(0, 0, 0, 0);
+    return { start: start.toISOString(), end: end.toISOString() };
+  }, []);
+
+  const { data: showRate = 0, isLoading: showRateLoading } = useQuery({
+    queryKey: ['showRate7d', sevenDays],
+    queryFn: async () => {
+      // Try analytics_appointments first if exists, else compute from appointments
+      const { data: analytics, error: aErr } = await supabase
+        .from('analytics_appointments')
+        .select('is_completed, is_no_show, status, start_time')
+        .gte('start_time', sevenDays.start)
+        .lte('start_time', sevenDays.end)
+        .limit(1000);
+
+      if (!aErr && analytics && analytics.length > 0) {
+        const completed = analytics.reduce(
+          (acc: number, r: any) => acc + (r.is_completed ? 1 : 0),
+          0,
+        );
+        const noshow = analytics.reduce((acc: number, r: any) => acc + (r.is_no_show ? 1 : 0), 0);
+        const denom = completed + noshow;
+        return denom > 0 ? completed / denom : 0;
+      }
+
+      // Fallback: use appointments.status
+      const { data: appts, error } = await supabase
+        .from('appointments')
+        .select('status, start_time')
+        .gte('start_time', sevenDays.start)
+        .lte('start_time', sevenDays.end)
+        .limit(1000);
+      if (error) throw error;
+      const relevant = (appts ?? []).filter((a: any) =>
+        ['completed', 'no_show', 'cancelled'].includes(a.status ?? '')
+      );
+      const completed = relevant.filter((a: any) => a.status === 'completed').length;
+      const noshow = relevant.filter((a: any) => a.status === 'no_show').length;
+      const denom = completed + noshow;
+      return denom > 0 ? completed / denom : 0;
+    },
+  });
+
+  const { data: recentActivity, isLoading: loadingActivity } = useQuery({
+    queryKey: ['recentActivity'],
+    queryFn: async () => {
+      // Last 5 appointments and patient registrations merged
+      const [apptRes, patientRes] = await Promise.all([
+        supabase
+          .from('appointments')
+          .select('id, start_time, status, created_at, patient_id, service_type_id')
+          .order('created_at', { ascending: false })
+          .limit(5),
+        supabase
+          .from('patients')
+          .select('id, full_name, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5),
+      ]);
+      if (apptRes.error) throw apptRes.error;
+      if (patientRes.error) throw patientRes.error;
+      const items = [
+        ...(apptRes.data ?? []).map(a => ({
+          type: 'appointment' as const,
+          id: a.id,
+          created_at: a.created_at,
+          label: 'Nova consulta agendada',
+          detail: `${
+            new Date(a.start_time).toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          }`,
+        })),
+        ...(patientRes.data ?? []).map(p => ({
+          type: 'patient' as const,
+          id: p.id,
+          created_at: p.created_at,
+          label: 'Novo paciente cadastrado',
+          detail: p.full_name ?? 'Paciente',
+        })),
+      ];
+      return items
+        .filter(x => !!x.created_at)
+        .sort((a, b) => (a.created_at! < b.created_at! ? 1 : -1))
+        .slice(0, 5);
+    },
+  });
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate({ to: '/login' });
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-background'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4'>
+          </div>
+          <p className='text-sm text-muted-foreground'>Carregando dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className='min-h-screen bg-background'>
@@ -52,6 +236,11 @@ function DashboardComponent() {
               <Badge variant='secondary' className='text-xs'>
                 Dashboard
               </Badge>
+              {user && (
+                <Badge variant='outline' className='text-xs'>
+                  {user.email}
+                </Badge>
+              )}
             </div>
 
             <div className='flex items-center space-x-2'>
@@ -61,7 +250,12 @@ function DashboardComponent() {
               <Button variant='ghost' size='sm'>
                 <Settings className='h-4 w-4' />
               </Button>
-              <Button variant='ghost' size='sm'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={handleLogout}
+                title='Sair'
+              >
                 <LogOut className='h-4 w-4' />
               </Button>
             </div>
@@ -90,9 +284,10 @@ function DashboardComponent() {
               <Calendar className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>12</div>
+              <div className='text-2xl font-bold'>{loadingAppt ? '—' : appointmentsTodayCount}</div>
               <p className='text-xs text-muted-foreground'>
-                +2 desde ontem
+                {/* We can compute diff vs yesterday in a future iteration */}
+                Hoje
               </p>
             </CardContent>
           </Card>
@@ -105,9 +300,11 @@ function DashboardComponent() {
               <Users className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>248</div>
+              <div className='text-2xl font-bold'>
+                {loadingPatients ? '—' : activePatientsCount}
+              </div>
               <p className='text-xs text-muted-foreground'>
-                +12% este mês
+                Total ativos
               </p>
             </CardContent>
           </Card>
@@ -120,9 +317,11 @@ function DashboardComponent() {
               <DollarSign className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>R$ 45.231</div>
+              <div className='text-2xl font-bold'>
+                {loadingRevenue ? '—' : formatBRL(monthlyRevenue)}
+              </div>
               <p className='text-xs text-muted-foreground'>
-                +8% desde o mês passado
+                Mês atual
               </p>
             </CardContent>
           </Card>
@@ -130,14 +329,16 @@ function DashboardComponent() {
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
-                Taxa de Conversão
+                Taxa de Presença (7 dias)
               </CardTitle>
               <TrendingUp className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>73%</div>
+              <div className='text-2xl font-bold'>
+                {showRateLoading ? '—' : `${(showRate * 100).toFixed(0)}%`}
+              </div>
               <p className='text-xs text-muted-foreground'>
-                +5% desde a semana passada
+                Com base em consultas concluídas vs. faltas
               </p>
             </CardContent>
           </Card>
@@ -158,32 +359,31 @@ function DashboardComponent() {
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                <div className='flex items-center space-x-4'>
-                  <div className='w-2 h-2 bg-primary rounded-full'></div>
-                  <div className='flex-1'>
-                    <p className='text-sm font-medium'>Nova consulta agendada</p>
-                    <p className='text-xs text-muted-foreground'>Maria Silva - Botox - 14:30</p>
-                  </div>
-                  <Badge variant='secondary'>Há 5 min</Badge>
-                </div>
-
-                <div className='flex items-center space-x-4'>
-                  <div className='w-2 h-2 bg-green-500 rounded-full'></div>
-                  <div className='flex-1'>
-                    <p className='text-sm font-medium'>Pagamento recebido</p>
-                    <p className='text-xs text-muted-foreground'>João Santos - R$ 850,00</p>
-                  </div>
-                  <Badge variant='secondary'>Há 12 min</Badge>
-                </div>
-
-                <div className='flex items-center space-x-4'>
-                  <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
-                  <div className='flex-1'>
-                    <p className='text-sm font-medium'>Novo paciente cadastrado</p>
-                    <p className='text-xs text-muted-foreground'>Ana Costa - Preenchimento</p>
-                  </div>
-                  <Badge variant='secondary'>Há 25 min</Badge>
-                </div>
+                {loadingActivity && <p className='text-xs text-muted-foreground'>Carregando...</p>}
+                {!loadingActivity && (recentActivity?.length ?? 0) === 0 && (
+                  <p className='text-xs text-muted-foreground'>Sem atividades recentes.</p>
+                )}
+                {!loadingActivity
+                  && (recentActivity ?? []).map((item, idx) => (
+                    <div key={item.id + idx} className='flex items-center space-x-4'>
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          item.type === 'appointment' ? 'bg-primary' : 'bg-blue-500'
+                        }`}
+                      >
+                      </div>
+                      <div className='flex-1'>
+                        <p className='text-sm font-medium'>{item.label}</p>
+                        <p className='text-xs text-muted-foreground'>{item.detail}</p>
+                      </div>
+                      <Badge variant='secondary'>
+                        {new Date(item.created_at!).toLocaleTimeString('pt-BR', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </Badge>
+                    </div>
+                  ))}
               </div>
             </CardContent>
           </Card>
@@ -197,11 +397,19 @@ function DashboardComponent() {
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-3'>
-              <Button className='w-full justify-start' variant='outline'>
+              <Button
+                className='w-full justify-start'
+                variant='outline'
+                onClick={() => navigate({ to: '/appointments' })}
+              >
                 <Calendar className='h-4 w-4 mr-2' />
                 Nova Consulta
               </Button>
-              <Button className='w-full justify-start' variant='outline'>
+              <Button
+                className='w-full justify-start'
+                variant='outline'
+                onClick={() => navigate({ to: '/patients' })}
+              >
                 <Users className='h-4 w-4 mr-2' />
                 Cadastrar Paciente
               </Button>
@@ -224,3 +432,5 @@ function DashboardComponent() {
 export const Route = createFileRoute('/dashboard')({
   component: DashboardComponent,
 });
+// Export for tests
+export { DashboardComponent };

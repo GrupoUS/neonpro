@@ -50,12 +50,11 @@ export function LoginForm() {
     setSuccess('');
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
+      const { error } = await (async () => {
+        // Use centralized helper to ensure proper callback + next handling
+        const { signInWithProvider } = await import('@/integrations/supabase/client');
+        return signInWithProvider('google', '/dashboard');
+      })();
 
       if (error) {
         setError(error.message);
