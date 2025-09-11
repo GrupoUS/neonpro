@@ -4,6 +4,7 @@ import { RouterProvider, createRootRoute, createRouter } from '@tanstack/react-r
 import { createMemoryHistory } from '@tanstack/history';
 import React from 'react';
 import { routeTree } from '@/routeTree.gen';
+import { ConsentProvider } from '@/contexts/ConsentContext';
 
 function Wrapper() {
   const qc = new QueryClient();
@@ -13,7 +14,9 @@ function Wrapper() {
   });
   return (
     <QueryClientProvider client={qc}>
-      <RouterProvider router={router} />
+      <ConsentProvider>
+        <RouterProvider router={router} />
+      </ConsentProvider>
     </QueryClientProvider>
   );
 }

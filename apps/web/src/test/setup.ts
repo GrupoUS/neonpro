@@ -75,24 +75,45 @@ vi.mock('@supabase/supabase-js', () => {
     removeAllListeners: vi.fn(),
   };
   const queryBuilder = () => {
-    const qb = {
-      select: vi.fn().mockResolvedValue({ data: [], error: null }),
-      insert: vi.fn().mockResolvedValue({ data: [], error: null }),
-      update: vi.fn().mockResolvedValue({ data: [], error: null }),
-      delete: vi.fn().mockResolvedValue({ data: [], error: null }),
-      upsert: vi.fn().mockResolvedValue({ data: [], error: null }),
+    // Create a chainable, thenable query builder to mimic Supabase Postgrest behavior
+    const baseResponse = { data: [], error: null, count: 0 } as any;
+
+    const qb: any = {
+      // Chainable filters/operators
       eq: vi.fn().mockReturnThis(),
       in: vi.fn().mockReturnThis(),
       ilike: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      not: vi.fn().mockReturnThis(),
+      filter: vi.fn().mockReturnThis(),
+      contains: vi.fn().mockReturnThis(),
+
+      // Modifiers
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
       range: vi.fn().mockReturnThis(),
       single: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn().mockReturnThis(),
-      not: vi.fn().mockReturnThis(),
-      filter: vi.fn().mockReturnThis(),
-      contains: vi.fn().mockReturnThis(),
+
+      // Data methods return a promise-like that resolves to a base response
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockResolvedValue(baseResponse),
+      update: vi.fn().mockResolvedValue(baseResponse),
+      delete: vi.fn().mockResolvedValue(baseResponse),
+      upsert: vi.fn().mockResolvedValue(baseResponse),
+
+      // Thenable to allow `await qb` pattern
+      then: (resolve: (v: any) => any) => resolve(baseResponse),
+      catch: vi.fn().mockImplementation(() => Promise.resolve(baseResponse)),
+      finally: vi.fn().mockImplementation((cb?: () => void) => {
+        cb && cb();
+        return Promise.resolve(baseResponse);
+      }),
     };
+
     return qb;
   };
   const clientMock = {
@@ -108,10 +129,14 @@ vi.mock('@supabase/supabase-js', () => {
         error: null,
       }),
       getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test' } }, error: null }),
-      onAuthStateChange: vi.fn().mockReturnValue({
-        data: {
-          subscription: { unsubscribe: vi.fn() },
-        },
+      onAuthStateChange: vi.fn().mockImplementation((cb?: (event: string, session: any) => void) => {
+        // Simulate a signed-in session by default so dashboard/pages render
+        if (cb) cb('SIGNED_IN', { user: { id: 'test' } });
+        return {
+          data: {
+            subscription: { unsubscribe: vi.fn() },
+          },
+        };
       }),
     },
     channel: vi.fn().mockReturnValue(channelMock),

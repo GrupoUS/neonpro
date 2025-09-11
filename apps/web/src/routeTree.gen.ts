@@ -12,8 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GovernanceRouteImport } from './routes/governance'
+import { Route as FinancialRouteImport } from './routes/financial'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as R404RouteImport } from './routes/404'
@@ -36,6 +41,21 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsRoute = PatientsRouteImport.update({
   id: '/patients',
   path: '/patients',
@@ -44,6 +64,16 @@ const PatientsRoute = PatientsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GovernanceRoute = GovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinancialRoute = FinancialRouteImport.update({
+  id: '/financial',
+  path: '/financial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -82,8 +112,13 @@ export interface FileRoutesByFullPath {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/financial': typeof FinancialRoute
+  '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
+  '/profile': typeof ProfileRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
@@ -95,8 +130,13 @@ export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/financial': typeof FinancialRoute
+  '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
+  '/profile': typeof ProfileRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
@@ -109,8 +149,13 @@ export interface FileRoutesById {
   '/404': typeof R404Route
   '/appointments': typeof AppointmentsRoute
   '/dashboard': typeof DashboardRoute
+  '/financial': typeof FinancialRoute
+  '/governance': typeof GovernanceRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRoute
+  '/profile': typeof ProfileRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
@@ -124,8 +169,13 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/financial'
+    | '/governance'
     | '/login'
     | '/patients'
+    | '/profile'
+    | '/reports'
+    | '/settings'
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
@@ -137,8 +187,13 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/financial'
+    | '/governance'
     | '/login'
     | '/patients'
+    | '/profile'
+    | '/reports'
+    | '/settings'
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
@@ -150,8 +205,13 @@ export interface FileRouteTypes {
     | '/404'
     | '/appointments'
     | '/dashboard'
+    | '/financial'
+    | '/governance'
     | '/login'
     | '/patients'
+    | '/profile'
+    | '/reports'
+    | '/settings'
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
@@ -164,8 +224,13 @@ export interface RootRouteChildren {
   R404Route: typeof R404Route
   AppointmentsRoute: typeof AppointmentsRoute
   DashboardRoute: typeof DashboardRoute
+  FinancialRoute: typeof FinancialRoute
+  GovernanceRoute: typeof GovernanceRoute
   LoginRoute: typeof LoginRoute
   PatientsRoute: typeof PatientsRoute
+  ProfileRoute: typeof ProfileRoute
+  ReportsRoute: typeof ReportsRoute
+  SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
   TestAuthRoute: typeof TestAuthRoute
@@ -196,6 +261,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients': {
       id: '/patients'
       path: '/patients'
@@ -208,6 +294,20 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/governance': {
+      id: '/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof GovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial': {
+      id: '/financial'
+      path: '/financial'
+      fullPath: '/financial'
+      preLoaderRoute: typeof FinancialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -260,8 +360,13 @@ const rootRouteChildren: RootRouteChildren = {
   R404Route: R404Route,
   AppointmentsRoute: AppointmentsRoute,
   DashboardRoute: DashboardRoute,
+  FinancialRoute: FinancialRoute,
+  GovernanceRoute: GovernanceRoute,
   LoginRoute: LoginRoute,
   PatientsRoute: PatientsRoute,
+  ProfileRoute: ProfileRoute,
+  ReportsRoute: ReportsRoute,
+  SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,
   TestAuthRoute: TestAuthRoute,

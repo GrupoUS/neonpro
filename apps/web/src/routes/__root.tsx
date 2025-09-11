@@ -23,8 +23,8 @@ function RootComponent() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          // Only redirect if we're on the root page
-          if (window.location.pathname === '/') {
+          // Only redirect if we're on the root page (use router state, not window)
+          if (router.state.location.pathname === '/') {
             router.navigate({ to: '/dashboard' });
           }
         }
@@ -35,25 +35,40 @@ function RootComponent() {
   }, [router]);
 
   const pathname = router.state.location.pathname;
-  const showSidebar = pathname.startsWith('/dashboard') || pathname.startsWith('/patients') || pathname.startsWith('/appointments');
+
+  // Define routes that should NOT show the sidebar (login, sales, auth pages)
+  const excludedRoutes = [
+    '/', // Landing/sales page
+    '/login', // Login page
+    '/signup', // Signup page
+    '/signup-demo', // Signup demo page
+    '/auth/callback', // Auth callback
+    '/auth/confirm', // Auth confirmation
+    '/404', // Error page
+  ];
+
+  // Show sidebar on all routes EXCEPT excluded ones
+  const showSidebar = !excludedRoutes.includes(pathname) && !pathname.startsWith('/auth/');
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          {showSidebar ? (
-            <SidebarDemo>
-              <main className='flex-1'>
-                <Outlet />
-              </main>
-            </SidebarDemo>
-          ) : (
-            <div className='flex min-h-screen flex-col'>
-              <main className='flex-1'>
-                <Outlet />
-              </main>
-            </div>
-          )}
+          {showSidebar
+            ? (
+              <SidebarDemo>
+                <main className='flex-1'>
+                  <Outlet />
+                </main>
+              </SidebarDemo>
+            )
+            : (
+              <div className='flex min-h-screen flex-col'>
+                <main className='flex-1'>
+                  <Outlet />
+                </main>
+              </div>
+            )}
           <ConsentBanner />
           <Toaster />
           <Sonner />

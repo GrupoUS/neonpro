@@ -28,37 +28,58 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
     {
       label: 'Dashboard',
       href: '/dashboard',
-      icon: <IconBrandTabler className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconBrandTabler className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
-      label: 'Pacientes',
+      label: 'Clientes',
       href: '/patients',
-      icon: <IconUsers className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconUsers className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
       label: 'Agendamentos',
       href: '/appointments',
-      icon: <IconCalendar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconCalendar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
       label: 'Relatórios',
       href: '/reports',
-      icon: <IconChartBar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconChartBar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
       label: 'Financeiro',
       href: '/financial',
-      icon: <IconCreditCard className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconCreditCard className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
+    },
+    {
+      label: 'Governança',
+      href: '/governance',
+      icon: (
+        <IconChartBar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
       label: 'Perfil',
       href: '/profile',
-      icon: <IconUserBolt className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconUserBolt className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
     {
       label: 'Configurações',
       href: '/settings',
-      icon: <IconSettings className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />,
+      icon: (
+        <IconSettings className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+      ),
     },
   ];
 
