@@ -9,9 +9,7 @@ function AuthCallbackComponent() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get the current URL to check for parameters
-        const url = new URL(window.location.href);
-        const nextUrl = url.searchParams.get('next');
+        // Handle OAuth callback - always redirect to dashboard
 
         // Handle the OAuth callback
         const { data, error } = await supabase.auth.getSession();
@@ -20,7 +18,7 @@ function AuthCallbackComponent() {
           console.error('Auth callback error:', error);
           setStatus('error');
           setTimeout(() => {
-            router.navigate({ to: '/login', search: { error: 'auth_callback_failed' } as any });
+            router.navigate({ to: '/' as const, search: { error: 'auth_callback_failed' } as any });
           }, 1500);
           return;
         }
@@ -29,23 +27,22 @@ function AuthCallbackComponent() {
           console.log('Auth callback successful, redirecting to dashboard');
           setStatus('success');
 
-          // Redirect to next URL or default to dashboard
-          const redirectUrl = nextUrl ? decodeURIComponent(nextUrl) : '/dashboard';
+          // Always redirect to dashboard after successful OAuth
           setTimeout(() => {
-            router.navigate({ to: redirectUrl as any });
+            router.navigate({ to: '/dashboard' });
           }, 800);
         } else {
           console.log('No session found, redirecting to login');
           setStatus('error');
           setTimeout(() => {
-            router.navigate({ to: '/login' });
+            router.navigate({ to: '/' as const });
           }, 1500);
         }
       } catch (error) {
         console.error('Auth callback exception:', error);
         setStatus('error');
         setTimeout(() => {
-          router.navigate({ to: '/login', search: { error: 'auth_exception' } as any });
+          router.navigate({ to: '/' as const, search: { error: 'auth_exception' } as any });
         }, 1500);
       }
     };

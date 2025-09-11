@@ -12,7 +12,7 @@ import { getSiteUrl } from '@/lib/site-url';
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase: SupabaseClient<Database> = createClient<Database>(
+export const supabase = createClient<Database>(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY,
   {
@@ -22,11 +22,11 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
         : undefined,
       persistSession: true,
       autoRefreshToken: true,
-      // Configuração de redirecionamento padrão
-      redirectTo: `${getSiteUrl()}/auth/callback`,
+      // Note: Redirects are configured per auth action (e.g., signInWithOAuth options)
     },
   },
-);// Helper functions for authentication with proper redirects
+);
+// Helper functions for authentication with proper redirects
 
 // Helper para login com OAuth providers
 export const signInWithProvider = async (

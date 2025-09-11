@@ -63,7 +63,10 @@
     "setup:monitoring": "./scripts/monitoring/setup-alerts.sh",
     "quality:full": "npm run build && npm run lint && npm run type-check",
     "workflow:ci": "./scripts/dev-workflow.sh quality && ./scripts/dev-workflow.sh test",
-    "workflow:pre-deploy": "./scripts/dev-workflow.sh full"
+    "workflow:pre-deploy": "./scripts/dev-workflow.sh full",
+    "vercel:link": "vercel link --scope grupous-projects --project neonpro --yes",
+    "vercel:deploy": "vercel deploy --prod --scope grupous-projects --yes",
+    "vercel:env:pull": "vercel env pull --environment production .env.local --scope grupous-projects --yes"
   },
   "keywords": [
     "monorepo",

@@ -1,6 +1,7 @@
 import { ConsentBanner } from '@/components/ConsentBanner';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
+import SidebarDemo from '@/components/ui/sidebar-demo';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -33,15 +34,26 @@ function RootComponent() {
     return () => subscription.unsubscribe();
   }, [router]);
 
+  const pathname = router.state.location.pathname;
+  const showSidebar = pathname.startsWith('/dashboard') || pathname.startsWith('/patients') || pathname.startsWith('/appointments');
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <div className='flex min-h-screen flex-col'>
-            <main className='flex-1'>
-              <Outlet />
-            </main>
-          </div>
+          {showSidebar ? (
+            <SidebarDemo>
+              <main className='flex-1'>
+                <Outlet />
+              </main>
+            </SidebarDemo>
+          ) : (
+            <div className='flex min-h-screen flex-col'>
+              <main className='flex-1'>
+                <Outlet />
+              </main>
+            </div>
+          )}
           <ConsentBanner />
           <Toaster />
           <Sonner />

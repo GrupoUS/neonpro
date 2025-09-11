@@ -14,7 +14,8 @@ const buttonVariants = cva(
         outline: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline'
+        link: 'text-primary underline-offset-4 hover:underline',
+        shimmer: 'animate-shimmer border border-border bg-[linear-gradient(110deg,hsl(var(--background)),45%,hsl(var(--primary)),55%,hsl(var(--background)))] bg-[length:200%_100%] text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background'
       },
       size: {
         default: 'h-10 px-4 py-2',

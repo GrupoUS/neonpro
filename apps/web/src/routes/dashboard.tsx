@@ -31,7 +31,7 @@ function DashboardComponent() {
   const navigate = useNavigate(); // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      navigate({ to: '/login' });
+      navigate({ to: '/' as const });
     }
   }, [loading, isAuthenticated, navigate]);
 
@@ -203,7 +203,7 @@ function DashboardComponent() {
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate({ to: '/login' });
+      navigate({ to: '/' as const });
     } catch (error) {
       console.error('Error signing out:', error);
     }
