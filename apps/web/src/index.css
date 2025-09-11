@@ -3,63 +3,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NeonPro Theme - Warm Golden Implementation */
+/* NeonPro Aesthetic Clinic Theme - Pantone Palette */
 @layer base {
   :root {
-    /* Light theme - NeonPro Warm Golden */
-    --background: 0 0% 100%; /* #f7f5f0 */
-    --foreground: 20 14.3% 4.1%; /* #2a251f */
-    --card: 0 0% 100%; /* #fdfcfa */
-    --card-foreground: 20 14.3% 4.1%; /* #2a251f */
-    --popover: 0 0% 100%; /* #fdfcfa */
-    --popover-foreground: 20 14.3% 4.1%; /* #2a251f */
-    --primary: 24 9.8% 10%; /* #ccb070 */
-    --primary-foreground: 60 9.1% 97.8%; /* #2a251f */
-    --secondary: 60 4.8% 95.9%; /* #f0ede5 */
-    --secondary-foreground: 24 9.8% 10%; /* #4a4035 */
-    --muted: 60 4.8% 95.9%; /* #ebe8e0 */
-    --muted-foreground: 25 5.3% 44.7%; /* #6b6258 */
-    --accent: 60 4.8% 95.9%; /* #d19248 */
-    --accent-foreground: 24 9.8% 10%; /* #2a251f */
-    --destructive: 0 84.2% 60.2%; /* #ef4444 */
-    --destructive-foreground: 60 9.1% 97.8%; /* #ffffff */
-    --border: 20 5.9% 90%; /* #e5e1d8 */
-    --input: 20 5.9% 90%; /* #e5e1d8 */
-    --ring: 20 14.3% 4.1%; /* #ccb070 */
-    --chart-1: 12 76% 61%; /* #ccb070 */
-    --chart-2: 173 58% 39%; /* #d19248 */
-    --chart-3: 197 37% 24%; /* #b8803d */
-    --chart-4: 43 74% 66%; /* #9e6f35 */
-    --chart-5: 27 87% 67%; /* #855e2e */
+    /* Light theme - NeonPro Aesthetic Palette */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 199 49% 13%; /* #112031 - Deep Sophisticated Green */
+    --card: 0 0% 100%; /* Pure white cards */
+    --card-foreground: 199 49% 13%; /* #112031 */
+    --popover: 0 0% 100%; /* Pure white */
+    --popover-foreground: 199 49% 13%; /* #112031 */
+    --primary: 199 49% 13%; /* #112031 - PANTONE 5395 C */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 197 26% 27%; /* #294359 - PANTONE 216B C */
+    --secondary-foreground: 0 0% 100%; /* White text */
+    --muted: 36 19% 82%; /* #D2D0C8 - PANTONE 4002 C */
+    --muted-foreground: 199 49% 13%; /* #112031 */
+    --accent: 44 25% 54%; /* #AC9469 - PANTONE 4007 C */
+    --accent-foreground: 0 0% 100%; /* White text */
+    --destructive: 0 84.2% 60.2%; /* Standard red for errors */
+    --destructive-foreground: 0 0% 100%; /* White text */
+    --border: 44 25% 70%; /* #B4AC9C - PANTONE 7535 C */
+    --input: 44 25% 70%; /* #B4AC9C */
+    --ring: 199 49% 13%; /* #112031 */
+    --chart-1: 199 49% 13%; /* #112031 - Deep Green */
+    --chart-2: 197 26% 27%; /* #294359 - Petrol Blue */
+    --chart-3: 44 25% 54%; /* #AC9469 - Aesthetic Gold */
+    --chart-4: 44 25% 70%; /* #B4AC9C - Light Beige */
+    --chart-5: 36 19% 82%; /* #D2D0C8 - Soft Gray */
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Dark theme - NeonPro Warm Golden */
-    --background: 20 14.3% 4.1%; /* #1a1612 */
-    --foreground: 60 9.1% 97.8%; /* #ccb070 */
-    --card: 20 14.3% 4.1%; /* #221e18 */
-    --card-foreground: 60 9.1% 97.8%; /* #ccb070 */
-    --popover: 20 14.3% 4.1%; /* #221e18 */
-    --popover-foreground: 60 9.1% 97.8%; /* #ccb070 */
-    --primary: 60 9.1% 97.8%; /* #d4bc7a */
-    --primary-foreground: 24 9.8% 10%; /* #1a1612 */
-    --secondary: 12 6.5% 15.1%; /* #2e2820 */
-    --secondary-foreground: 60 9.1% 97.8%; /* #c4ad6b */
-    --muted: 12 6.5% 15.1%; /* #332e26 */
-    --muted-foreground: 24 5.4% 63.9%; /* #a89660 */
-    --accent: 12 6.5% 15.1%; /* #c4904a */
-    --accent-foreground: 60 9.1% 97.8%; /* #1a1612 */
-    --destructive: 0 62.8% 30.6%; /* #dc2626 */
-    --destructive-foreground: 60 9.1% 97.8%; /* #ccb070 */
-    --border: 12 6.5% 15.1%; /* #3d3529 */
-    --input: 12 6.5% 15.1%; /* #3d3529 */
-    --ring: 24 5.7% 82.9%; /* #d4bc7a */
-    --chart-1: 220 70% 50%; /* #d4bc7a */
-    --chart-2: 160 60% 45%; /* #d19248 */
-    --chart-3: 30 80% 55%; /* #b8803d */
-    --chart-4: 280 65% 60%; /* #9e6f35 */
-    --chart-5: 340 75% 55%; /* #855e2e */
+    /* Dark theme - NeonPro Aesthetic Palette */
+    --background: 199 49% 13%; /* #112031 - Deep background */
+    --foreground: 36 19% 82%; /* #D2D0C8 - Light text */
+    --card: 197 26% 27%; /* #294359 - Card background */
+    --card-foreground: 36 19% 82%; /* #D2D0C8 */
+    --popover: 197 26% 27%; /* #294359 */
+    --popover-foreground: 36 19% 82%; /* #D2D0C8 */
+    --primary: 44 25% 54%; /* #AC9469 - Gold primary in dark */
+    --primary-foreground: 199 49% 13%; /* #112031 */
+    --secondary: 44 25% 70%; /* #B4AC9C - Light secondary */
+    --secondary-foreground: 199 49% 13%; /* #112031 */
+    --muted: 197 26% 20%; /* Darker muted */
+    --muted-foreground: 44 25% 70%; /* #B4AC9C */
+    --accent: 36 19% 82%; /* #D2D0C8 - Light accent */
+    --accent-foreground: 199 49% 13%; /* #112031 */
+    --destructive: 0 62.8% 30.6%; /* Darker red */
+    --destructive-foreground: 36 19% 82%; /* #D2D0C8 */
+    --border: 197 26% 20%; /* Darker border */
+    --input: 197 26% 20%; /* Darker input */
+    --ring: 44 25% 54%; /* #AC9469 */
+    --chart-1: 44 25% 54%; /* #AC9469 - Gold */
+    --chart-2: 36 19% 82%; /* #D2D0C8 - Light Gray */
+    --chart-3: 44 25% 70%; /* #B4AC9C - Beige */
+    --chart-4: 197 26% 27%; /* #294359 - Petrol */
+    --chart-5: 199 49% 13%; /* #112031 - Deep Green */
   }
 }
 
@@ -82,8 +82,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Healthcare-specific optimizations */
-  .healthcare-focus {
+  /* Aesthetic clinic focus optimizations */
+  .aesthetic-focus {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
@@ -93,14 +93,12 @@
     letter-spacing: -0.01em;
   }
 
-  /* Mobile-first touch targets for aesthetic clinic workflows */
+  /* Mobile-first touch targets for beauty clinic workflows */
   .touch-target {
     min-height: 44px;
     min-width: 44px;
   }
 }
-
-
 
 @layer base {
   * {

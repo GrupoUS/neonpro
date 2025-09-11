@@ -1,5 +1,5 @@
 /**
- * OpenAPI Route Definitions for NeonPro Healthcare API
+ * OpenAPI Route Definitions for NeonPro Aesthetic Clinic API
  * 
  * This module defines OpenAPI route specifications using @hono/zod-openapi
  * for automatic documentation generation and type-safe API contracts.
@@ -10,9 +10,9 @@ import {
   HealthResponseSchema,
   DetailedHealthResponseSchema,
   ApiInfoResponseSchema,
-  PatientsListResponseSchema,
-  PatientDetailResponseSchema,
-  PatientIdParamSchema,
+  ClientsListResponseSchema,
+  ClientDetailResponseSchema,
+  ClientIdParamSchema,
   AppointmentsListResponseSchema,
   AuthStatusResponseSchema,
   CommonResponses
@@ -96,13 +96,13 @@ export const authStatusRoute = createRoute({
   }
 })
 
-// Patient management routes (LGPD compliant)
-export const listPatientsRoute = createRoute({
+// Client management routes (LGPD compliant)
+export const listClientsRoute = createRoute({
   method: 'get',
-  path: '/v1/patients',
-  summary: 'List Patients',
-  description: 'Get a list of active patients with LGPD consent (healthcare professionals only)',
-  tags: ['Patients'],
+  path: '/v1/clients',
+  summary: 'List Clients',
+  description: 'Get a list of active aesthetic clinic clients with LGPD consent (professionals only)',
+  tags: ['Clients'],
   security: [
     {
       BearerAuth: []
@@ -110,10 +110,10 @@ export const listPatientsRoute = createRoute({
   ],
   responses: {
     200: {
-      description: 'List of patients with LGPD consent',
+      description: 'List of clients with LGPD consent',
       content: {
         'application/json': {
-          schema: PatientsListResponseSchema
+          schema: ClientsListResponseSchema
         }
       }
     },
@@ -121,26 +121,26 @@ export const listPatientsRoute = createRoute({
   }
 })
 
-export const getPatientByIdRoute = createRoute({
+export const getClientByIdRoute = createRoute({
   method: 'get',
-  path: '/v1/patients/{patientId}',
-  summary: 'Get Patient Details',
-  description: 'Retrieve detailed information about a specific patient (requires LGPD consent)',
-  tags: ['Patients'],
+  path: '/v1/clients/{clientId}',
+  summary: 'Get Client Details',
+  description: 'Retrieve detailed information about a specific aesthetic clinic client (requires LGPD consent)',
+  tags: ['Clients'],
   security: [
     {
       BearerAuth: []
     }
   ],
   request: {
-    params: PatientIdParamSchema
+    params: ClientIdParamSchema
   },
   responses: {
     200: {
-      description: 'Patient details',
+      description: 'Client details',
       content: {
         'application/json': {
-          schema: PatientDetailResponseSchema
+          schema: ClientDetailResponseSchema
         }
       }
     },
@@ -173,11 +173,11 @@ export const listAppointmentsRoute = createRoute({
   }
 })
 
-export const getPatientAppointmentsRoute = createRoute({
+export const getClientAppointmentsRoute = createRoute({
   method: 'get',
-  path: '/v1/appointments/patient/{patientId}',
-  summary: 'Get Patient Appointments',
-  description: 'Retrieve appointments for a specific patient (requires LGPD consent)',
+  path: '/v1/appointments/client/{clientId}',
+  summary: 'Get Client Appointments',
+  description: 'Retrieve appointments for a specific aesthetic clinic client (requires LGPD consent)',
   tags: ['Appointments'],
   security: [
     {
@@ -185,11 +185,11 @@ export const getPatientAppointmentsRoute = createRoute({
     }
   ],
   request: {
-    params: PatientIdParamSchema
+    params: ClientIdParamSchema
   },
   responses: {
     200: {
-      description: 'Patient appointments',
+      description: 'Client appointments',
       content: {
         'application/json': {
           schema: AppointmentsListResponseSchema

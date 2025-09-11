@@ -7,14 +7,12 @@
     "audit-tool": "./dist/cli/audit-tool.js"
   },
   "type": "module",
-  "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=8.0.0"
   },
-  "pnpm": {
-    "overrides": {
-      "esbuild": ">=0.25.0"
-    }
+  "overrides": {
+    "esbuild": ">=0.25.0"
   },
   "scripts": {
     "build": "tsc",

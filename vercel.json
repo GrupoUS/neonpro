@@ -3,9 +3,9 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
-  "buildCommand": "pnpm turbo build --filter=@neonpro/web",
+  "buildCommand": "cd apps/web && npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund && npm run build",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --no-frozen-lockfile",
+  "installCommand": "cd apps/web && npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund",
   "cleanUrls": true,
   "trailingSlash": false,
 

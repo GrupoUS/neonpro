@@ -12,18 +12,18 @@ import {
 } from './middleware/logging-middleware';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
-import patients from './routes/patients';
+import clients from './routes/clients';
 import metricsApi from './routes/metrics';
 import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
 import {
   apiInfoRoute,
   authStatusRoute,
   detailedHealthRoute,
-  getPatientAppointmentsRoute,
-  getPatientByIdRoute,
+  getClientAppointmentsRoute,
+  getClientByIdRoute,
   healthRoute,
   listAppointmentsRoute,
-  listPatientsRoute,
+  listClientsRoute,
 } from './schemas/openapi-routes';
 
 // Validate environment at startup
@@ -128,12 +128,12 @@ app.openapi(authStatusRoute, c =>
     feature: 'auth',
   }));
 
-// OpenAPI-documented patient routes
-app.openapi(listPatientsRoute, c =>
+// OpenAPI-documented client routes
+app.openapi(listClientsRoute, c =>
   c.json({
     items: [
       {
-        id: 'patient_001',
+        id: 'client_001',
         fullName: 'João Silva',
         email: 'j***@email.com',
         phonePrimary: '+55 11 *****-****',
@@ -148,9 +148,9 @@ app.openapi(listPatientsRoute, c =>
     ],
   }));
 
-app.openapi(getPatientByIdRoute, c =>
+app.openapi(getClientByIdRoute, c =>
   c.json({
-    patient: {
+    client: {
       id: 'patient_001',
       fullName: 'João Silva',
       email: 'joao.silva@email.com',
@@ -174,8 +174,8 @@ app.openapi(listAppointmentsRoute, c =>
         startTime: '2024-02-15T14:30:00Z',
         endTime: '2024-02-15T15:30:00Z',
         status: 'scheduled',
-        patient: {
-          id: 'patient_001',
+        client: {
+          id: 'client_001',
           fullName: 'João Silva',
           email: 'j***@email.com',
           phonePrimary: '+55 11 *****-****',
@@ -194,7 +194,7 @@ app.openapi(listAppointmentsRoute, c =>
     ],
   }));
 
-app.openapi(getPatientAppointmentsRoute, c =>
+app.openapi(getClientAppointmentsRoute, c =>
   c.json({
     items: [
       {
@@ -202,8 +202,8 @@ app.openapi(getPatientAppointmentsRoute, c =>
         startTime: '2024-02-15T14:30:00Z',
         endTime: '2024-02-15T15:30:00Z',
         status: 'scheduled',
-        patient: {
-          id: 'patient_001',
+        client: {
+          id: 'client_001',
           fullName: 'João Silva',
           email: 'j***@email.com',
           phonePrimary: '+55 11 *****-****',
@@ -244,7 +244,7 @@ v1.get('/info', c =>
 
 // Keep existing route handlers for backward compatibility
 v1.route('/auth', auth);
-v1.route('/patients', patients);
+v1.route('/clients', clients);
 v1.route('/appointments', appointments);
 v1.route('/metrics', metricsApi);
 

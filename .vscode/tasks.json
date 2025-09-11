@@ -7,6 +7,12 @@
       "command": "pnpm --filter @neonpro/web test",
       "group": "test",
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "🔎 Web Smoke Test (vite build)",
+      "type": "shell",
+      "command": "pnpm --filter @neonpro/web build",
+      "group": "build"
     }
   ]
 }

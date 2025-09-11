@@ -78,8 +78,7 @@
     "**/*.js",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/__tests__/**",
-    "apps/web/src/lib/emergency/**"
+    "**/__tests__/**"
   ],
   "ts-node": {
     "esm": true,

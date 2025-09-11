@@ -1,8 +1,8 @@
 /**
- * OpenAPI Schema Definitions for NeonPro Healthcare API
+ * OpenAPI Schema Definitions for NeonPro Aesthetic Clinic API
  * 
- * This module defines Zod schemas for all API endpoints with healthcare-specific
- * validation and OpenAPI documentation metadata for LGPD/ANVISA compliance.
+ * This module defines Zod schemas for all API endpoints with aesthetic clinic-specific
+ * validation and OpenAPI documentation metadata for LGPD compliance.
  */
 
 import { z } from '@hono/zod-openapi'
@@ -11,7 +11,7 @@ import { z } from '@hono/zod-openapi'
 export const ErrorResponseSchema = z.object({
   error: z.string().openapi({
     description: 'Error message describing what went wrong',
-    example: 'Patient not found'
+    example: 'Client not found'
   }),
   code: z.string().optional().openapi({
     description: 'Error code for programmatic handling (e.g., LGPD_CONSENT_REQUIRED)',
@@ -112,21 +112,21 @@ export const ProfessionalSchema = z.object({
   })
 }).openapi('Professional')
 
-export const PatientSchema = z.object({
+export const ClientSchema = z.object({
   id: z.string().openapi({
-    description: 'Unique patient identifier (anonymized for LGPD compliance)',
-    example: 'patient_789'
+    description: 'Unique client identifier (anonymized for LGPD compliance)',
+    example: 'client_789'
   }),
   fullName: z.string().openapi({
-    description: 'Patient full name (only accessible with LGPD consent)',
+    description: 'Client full name (only accessible with LGPD consent)',
     example: 'Ana Costa'
   }),
   email: z.string().email().optional().openapi({
-    description: 'Patient email (LGPD protected)',
+    description: 'Client email (LGPD protected)',
     example: 'ana.costa@email.com'
   }),
   phonePrimary: z.string().optional().openapi({
-    description: 'Patient primary phone (LGPD protected)',
+    description: 'Client primary phone (LGPD protected)',
     example: '+55 11 99999-9999'
   }),
   lgpdConsentGiven: z.boolean().openapi({
@@ -134,17 +134,17 @@ export const PatientSchema = z.object({
     example: true
   }),
   isActive: z.boolean().openapi({
-    description: 'Patient active status',
+    description: 'Client active status',
     example: true
   }),
   createdAt: z.string().openapi({
-    description: 'Patient registration timestamp',
+    description: 'Client registration timestamp',
     example: '2025-01-01T10:00:00.000Z'
   }),
   clinic: ClinicSchema.optional().openapi({
     description: 'Associated clinic information'
   })
-}).openapi('Patient')
+}).openapi('Client')
 
 export const AppointmentSchema = z.object({
   id: z.string().openapi({
@@ -163,14 +163,14 @@ export const AppointmentSchema = z.object({
     description: 'Appointment status',
     example: 'scheduled'
   }),
-  patient: PatientSchema.pick({ 
+  client: ClientSchema.pick({ 
     id: true, 
     fullName: true, 
     email: true, 
     phonePrimary: true, 
     lgpdConsentGiven: true 
   }).openapi({
-    description: 'Patient information (LGPD consent validated)'
+    description: 'Client information (LGPD consent validated)'
   }),
   clinic: ClinicSchema.openapi({
     description: 'Clinic information'
@@ -181,31 +181,31 @@ export const AppointmentSchema = z.object({
 }).openapi('Appointment')
 
 // Request parameter schemas
-export const PatientIdParamSchema = z.object({
-  patientId: z.string().min(1).openapi({
+export const ClientIdParamSchema = z.object({
+  clientId: z.string().min(1).openapi({
     param: {
-      name: 'patientId',
+      name: 'clientId',
       in: 'path',
-      description: 'Patient unique identifier'
+      description: 'Client unique identifier'
     },
-    example: 'patient_789',
-    description: 'Must be a valid patient ID with LGPD consent'
+    example: 'client_789',
+    description: 'Must be a valid client ID with LGPD consent'
   })
-}).openapi('PatientIdParam')
+}).openapi('ClientIdParam')
 
 // Response collections
-export const PatientsListResponseSchema = z.object({
-  items: z.array(PatientSchema).openapi({
-    description: 'List of patients with LGPD consent (max 10 items)',
+export const ClientsListResponseSchema = z.object({
+  items: z.array(ClientSchema).openapi({
+    description: 'List of clients with LGPD consent (max 10 items)',
     example: []
   })
-}).openapi('PatientsListResponse')
+}).openapi('ClientsListResponse')
 
-export const PatientDetailResponseSchema = z.object({
-  patient: PatientSchema.openapi({
-    description: 'Patient details (requires LGPD consent)'
+export const ClientDetailResponseSchema = z.object({
+  client: ClientSchema.openapi({
+    description: 'Client details (requires LGPD consent)'
   })
-}).openapi('PatientDetailResponse')
+}).openapi('ClientDetailResponse')
 
 export const AppointmentsListResponseSchema = z.object({
   items: z.array(AppointmentSchema).openapi({
@@ -241,7 +241,7 @@ export const CommonResponses = {
       'application/json': {
         schema: ErrorResponseSchema,
         example: {
-          error: 'Patient has not provided LGPD consent',
+          error: 'Client has not provided LGPD consent',
           code: 'LGPD_CONSENT_REQUIRED',
           timestamp: '2025-01-11T12:00:00.000Z'
         }
