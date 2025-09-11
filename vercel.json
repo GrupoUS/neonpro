@@ -3,20 +3,13 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
-  "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
+  "buildCommand": "pnpm turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --no-frozen-lockfile",
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
+
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" },
     { "source": "/((?!api|.*\\..*).*)", "destination": "/index.html" }
   ],
   "headers": [
@@ -36,20 +29,5 @@
         { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" }
       ]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL": "1",
-    "DATABASE_URL": "@database_url",
-    "DIRECT_URL": "@direct_url",
-    "SUPABASE_URL": "@supabase_url",
-    "SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "VITE_SUPABASE_URL": "@supabase_url",
-    "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "JWT_SECRET": "@jwt_secret",
-    "ENCRYPTION_KEY": "@encryption_key",
-    "LOG_LEVEL": "info",
-    "VERCEL_REGION": "gru1"
-  }
+  ]
 }

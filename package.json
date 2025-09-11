@@ -19,11 +19,15 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "bun test --config .config/testing/vitest.config.ts",
-    "test:contract": "bun test tests/contract --config .config/testing/vitest.config.ts",
-    "test:integration": "bun test tests/integration --config .config/testing/vitest.config.ts",
-    "test:unit": "bun test tests/unit --config .config/testing/vitest.config.ts",
-    "test:performance": "bun test tests/performance --config .config/testing/vitest.config.ts",
+    "test": "vitest",
+    "test:contract": "vitest tests/contract",
+    "test:integration": "vitest tests/integration --config vitest.integration.config.ts",
+    "test:unit": "vitest tests/unit",
+    "test:performance": "vitest tests/performance",
+    "test:supabase": "node scripts/supabase-smoke-tests.js",
+    "test:supabase:connectivity": "vitest tests/integration/supabase-connectivity.test.ts --config vitest.integration.config.ts",
+    "test:supabase:auth": "vitest tests/integration/supabase-auth.test.ts --config vitest.integration.config.ts",
+    "verify:deployment": "node scripts/verify-deployment-config.js",
     "lint": "eslint \"apps/**/*.{ts,tsx,js,jsx}\" \"packages/**/*.{ts,tsx,js,jsx}\" --ext .ts --config .config/eslint/.eslintrc.json",
     "lint:fix": "eslint src/ --ext .ts --fix --config .config/eslint/.eslintrc.json",
     "format": "prettier --write src/ --config .config/prettier/.prettierrc.json",
@@ -109,8 +113,8 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "yaml": "^2.8.1",
-    "web-vitals": "^4.0.0"
+    "web-vitals": "^4.0.0",
+    "yaml": "^2.8.1"
   },
   "performance": {
     "targets": {

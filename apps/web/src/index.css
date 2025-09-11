@@ -3,6 +3,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* NeonPro Theme Variables */
+@layer base {
+  :root {
+    /* Light theme - NeonPro */
+    --background: #e7e5e4;
+    --foreground: #1e293b;
+    --card: #f5f5f4;
+    --card-foreground: #1e293b;
+    --popover: #f5f5f4;
+    --popover-foreground: #1e293b;
+    --primary: #6366f1;
+    --primary-foreground: #ffffff;
+    --secondary: #d6d3d1;
+    --secondary-foreground: #4b5563;
+    --muted: #e7e5e4;
+    --muted-foreground: #6b7280;
+    --accent: #f3e5f5;
+    --accent-foreground: #374151;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #d6d3d1;
+    --input: #d6d3d1;
+    --ring: #6366f1;
+    --chart-1: #6366f1;
+    --chart-2: #4f46e5;
+    --chart-3: #4338ca;
+    --chart-4: #3730a3;
+    --chart-5: #312e81;
+    --radius: 1.25rem;
+  }
+
+  .dark {
+    /* Dark theme - NeonPro */
+    --background: #0D1926;
+    --foreground: #CCB07D;
+    --card: #112031;
+    --card-foreground: #CCB07D;
+    --popover: #0D1926;
+    --popover-foreground: #CCB07D;
+    --primary: #CCB07D;
+    --primary-foreground: #D2D0C8;
+    --secondary: #0D1926;
+    --secondary-foreground: #CCB07D;
+    --muted: #AC9469;
+    --muted-foreground: #D2D0C8;
+    --accent: #484441;
+    --accent-foreground: #CCB07D;
+    --destructive: #ef4444;
+    --destructive-foreground: #1e1b18;
+    --border: #3a3633;
+    --input: #3a3633;
+    --ring: #AC9469;
+    --chart-1: #818cf8;
+    --chart-2: #6366f1;
+    --chart-3: #4f46e5;
+    --chart-4: #4338ca;
+    --chart-5: #3730a3;
+  }
+}
+
 @layer base {
   :root {
     --background: 222.2 84% 4.9%;

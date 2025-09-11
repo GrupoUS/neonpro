@@ -646,30 +646,61 @@ pnpm vitest run --project unit  # Unit test execution
 
 ## 🌐 Deployment & Infrastructure
 
-### Recommended: Vercel Deployment
+### 🚀 **Production Deployment (Vercel)**
+
+NeonPro uses a **hybrid deployment strategy** optimized for performance and reliability:
+
+- **Frontend**: React + Vite SPA deployed as static files
+- **Backend**: Hono.js API deployed as Vercel Edge Functions
+- **Framework**: Configured as `null` to prevent auto-detection conflicts
+- **Region**: Brazil-optimized deployment (GRU1)
 
 ```bash
-# Deploy to Vercel
-pnpm run deploy
+# Quick deployment
+vercel --prod
 
-# Environment-specific deployments
-pnpm run deploy:staging
-pnpm run deploy:production
+# With monitoring
+vercel --prod && ./scripts/simple-smoke-test.sh https://neonpro.vercel.app
 ```
 
-### Alternative Platforms
+### 📚 **Complete Deployment Documentation**
 
-- **Railway** - Full-stack deployment
-- **DigitalOcean App Platform** - Container deployment
-- **AWS** - Enterprise-scale infrastructure
-- **Google Cloud Platform** - Aesthetic health-optimized hosting
+| Document | Purpose | When to Use |
+|----------|---------|-------------|
+| **[Deployment Guide](docs/deployment/vercel-deployment-guide.md)** | Complete setup and configuration | First deployment, configuration changes |
+| **[Troubleshooting Guide](docs/deployment/framework-detection-troubleshooting.md)** | Framework detection issues | API endpoints not working |
+| **[Deployment Checklist](docs/deployment/deployment-checklist.md)** | Pre/post deployment validation | Every deployment |
+| **[Rollback Guide](docs/deployment/rollback-guide.md)** | Emergency procedures | Production issues |
 
-### Infrastructure Features
+### ⚡ **Quick Commands**
 
-- **Global CDN**: Sub-100ms response times worldwide
-- **Auto-scaling**: Handle traffic spikes during health emergencies
-- **99.9% Uptime SLA**: Aesthetic clinic-grade reliability
-- **Data Residency**: Brazil-specific data hosting for compliance
+```bash
+# Deployment
+vercel --prod                           # Deploy to production
+vercel promote [deployment-url]         # Promote specific deployment
+
+# Validation
+./scripts/simple-smoke-test.sh [url]    # Quick health check
+./scripts/smoke-test.sh [url] true      # Comprehensive testing
+
+# Emergency
+vercel rollback [previous-url]          # Immediate rollback
+```
+
+### 🏗️ **Infrastructure Features**
+
+- **Global CDN**: Sub-100ms response times via Vercel Edge Network
+- **Auto-scaling**: Serverless functions handle traffic spikes automatically  
+- **99.9% Uptime SLA**: Enterprise-grade reliability for healthcare
+- **Security**: Healthcare-compliant headers and data protection
+- **Monitoring**: Real-time performance and error tracking
+
+### 🌍 **Alternative Platforms**
+
+- **Railway** - Full-stack deployment with database included
+- **DigitalOcean App Platform** - Container-based deployment
+- **AWS** - Enterprise-scale infrastructure for large clinics
+- **Google Cloud Platform** - Healthcare-optimized hosting options
 
 ## 🔒 Security & Privacy
 

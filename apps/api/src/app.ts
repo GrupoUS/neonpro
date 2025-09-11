@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { getEnvironmentInfo, validateEnvironment } from './lib/env-validation';
+import { getEnvironmentInfo, getDetailedEnvironmentInfo, validateEnvironment } from './lib/env-validation';
 import { initializeErrorTracking } from './lib/error-tracking';
 import { logger } from './lib/logger';
 import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
@@ -13,6 +13,7 @@ import {
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import patients from './routes/patients';
+import metricsApi from './routes/metrics';
 import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
 import {
   apiInfoRoute,
@@ -91,11 +92,6 @@ if (process.env.NODE_ENV !== 'production') {
 app.openapi(healthRoute, c =>
   c.json({
     status: 'ok',
-    name: 'NeonPro API',
-    environment: process.env.NODE_ENV || 'development',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    deployment: 'vercel-fixed',
   }));
 
 // Basic health check for backward compatibility
@@ -128,84 +124,102 @@ app.openapi(apiInfoRoute, c =>
 // OpenAPI-documented auth status route
 app.openapi(authStatusRoute, c =>
   c.json({
-    status: 'available',
-    provider: 'supabase',
-    endpoints: {
-      login: '/auth/login',
-      logout: '/auth/logout',
-      profile: '/auth/profile',
-    },
-    timestamp: new Date().toISOString(),
+    status: 'ok',
+    feature: 'auth',
   }));
 
 // OpenAPI-documented patient routes
 app.openapi(listPatientsRoute, c =>
   c.json({
-    data: [
+    items: [
       {
         id: 'patient_001',
-        name: 'João Silva',
-        cpf: '***.***.***-**',
+        fullName: 'João Silva',
         email: 'j***@email.com',
-        lgpdConsent: true,
+        phonePrimary: '+55 11 *****-****',
+        lgpdConsentGiven: true,
+        isActive: true,
         createdAt: '2024-01-15T10:00:00Z',
+        clinic: {
+          id: 'clinic_001',
+          name: 'Clínica Exemplo'
+        }
       },
     ],
-    total: 1,
-    page: 1,
-    hasNext: false,
-    lgpdCompliant: true,
   }));
 
 app.openapi(getPatientByIdRoute, c =>
   c.json({
-    id: 'patient_001',
-    name: 'João Silva',
-    cpf: '123.456.789-00',
-    email: 'joao.silva@email.com',
-    phone: '+55 11 99999-9999',
-    birthDate: '1990-05-15',
-    lgpdConsent: true,
-    consentDate: '2024-01-15T10:00:00Z',
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-20T15:30:00Z',
+    patient: {
+      id: 'patient_001',
+      fullName: 'João Silva',
+      email: 'joao.silva@email.com',
+      phonePrimary: '+55 11 99999-9999',
+      lgpdConsentGiven: true,
+      isActive: true,
+      createdAt: '2024-01-15T10:00:00Z',
+      clinic: {
+        id: 'clinic_001',
+        name: 'Clínica Exemplo'
+      }
+    },
   }));
 
 // OpenAPI-documented appointment routes
 app.openapi(listAppointmentsRoute, c =>
   c.json({
-    data: [
+    items: [
       {
         id: 'appt_001',
-        patientId: 'patient_001',
-        patientName: 'João Silva',
-        date: '2024-02-15',
-        time: '14:30:00',
-        type: 'Consulta',
-        status: 'Agendado',
-        createdAt: '2024-01-20T10:00:00Z',
+        startTime: '2024-02-15T14:30:00Z',
+        endTime: '2024-02-15T15:30:00Z',
+        status: 'scheduled',
+        patient: {
+          id: 'patient_001',
+          fullName: 'João Silva',
+          email: 'j***@email.com',
+          phonePrimary: '+55 11 *****-****',
+          lgpdConsentGiven: true,
+        },
+        clinic: {
+          id: 'clinic_001',
+          name: 'Clínica Exemplo'
+        },
+        professional: {
+          id: 'prof_001',
+          fullName: 'Dra. Maria Silva',
+          specialization: 'Dermatologia'
+        }
       },
     ],
-    total: 1,
-    page: 1,
-    hasNext: false,
   }));
 
 app.openapi(getPatientAppointmentsRoute, c =>
   c.json({
-    data: [
+    items: [
       {
         id: 'appt_001',
-        date: '2024-02-15',
-        time: '14:30:00',
-        type: 'Consulta',
-        status: 'Agendado',
-        notes: 'Consulta de rotina',
-        createdAt: '2024-01-20T10:00:00Z',
+        startTime: '2024-02-15T14:30:00Z',
+        endTime: '2024-02-15T15:30:00Z',
+        status: 'scheduled',
+        patient: {
+          id: 'patient_001',
+          fullName: 'João Silva',
+          email: 'j***@email.com',
+          phonePrimary: '+55 11 *****-****',
+          lgpdConsentGiven: true,
+        },
+        clinic: {
+          id: 'clinic_001',
+          name: 'Clínica Exemplo'
+        },
+        professional: {
+          id: 'prof_001',
+          fullName: 'Dra. Maria Silva',
+          specialization: 'Dermatologia'
+        }
       },
     ],
-    total: 1,
-    lgpdCompliant: true,
   }));
 
 // Standard v1 routes for backward compatibility
@@ -215,7 +229,7 @@ v1.get('/health', c =>
     version: 'v1',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    environment: getEnvironmentInfo(),
+    environment: getDetailedEnvironmentInfo(),
   }));
 
 v1.get('/info', c =>
@@ -232,6 +246,7 @@ v1.get('/info', c =>
 v1.route('/auth', auth);
 v1.route('/patients', patients);
 v1.route('/appointments', appointments);
+v1.route('/metrics', metricsApi);
 
 app.route('/v1', v1);
 

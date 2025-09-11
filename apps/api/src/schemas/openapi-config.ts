@@ -126,10 +126,12 @@ export function createOpenAPIApp() {
             timestamp: new Date().toISOString()
           },
           400
-        )
+        );
       }
+      // Return undefined for successful validation
+      return undefined;
     }
-  })
+  });
 }
 
 /**

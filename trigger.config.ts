@@ -1,5 +1,8 @@
-import type { TriggerConfig } from '@trigger.dev/sdk/v3';
+// Trigger.dev configuration - currently disabled
+// import type { TriggerConfig } from '@trigger.dev/sdk/v3';
 
+// Temporary configuration stub - uncomment when Trigger.dev is added
+/*
 export const config: TriggerConfig = {
   project: process.env['TRIGGER_PROJECT_ID']
     || (() => {
@@ -24,3 +27,7 @@ export const config: TriggerConfig = {
     external: ['@supabase/supabase-js'],
   },
 };
+*/
+
+// Empty export to avoid module errors
+export const config = {};

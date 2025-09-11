@@ -7,7 +7,6 @@
 
 import { createRoute } from '@hono/zod-openapi'
 import {
-  ErrorResponseSchema,
   HealthResponseSchema,
   DetailedHealthResponseSchema,
   ApiInfoResponseSchema,
@@ -145,19 +144,6 @@ export const getPatientByIdRoute = createRoute({
         }
       }
     },
-    403: {
-      description: 'LGPD consent required',
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-          example: {
-            error: 'Patient has not provided LGPD consent',
-            code: 'LGPD_CONSENT_REQUIRED',
-            timestamp: '2025-01-11T12:00:00.000Z'
-          }
-        }
-      }
-    },
     ...CommonResponses
   }
 })
@@ -207,18 +193,6 @@ export const getPatientAppointmentsRoute = createRoute({
       content: {
         'application/json': {
           schema: AppointmentsListResponseSchema
-        }
-      }
-    },
-    403: {
-      description: 'LGPD consent required',
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-          example: {
-            error: 'Patient data access requires LGPD consent',
-            code: 'LGPD_CONSENT_REQUIRED'
-          }
         }
       }
     },

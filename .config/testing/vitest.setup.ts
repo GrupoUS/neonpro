@@ -1,7 +1,6 @@
 import { afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-// Import Supabase mock to prevent GoTrueClient multi-instance warnings
-import './tools/testing/setup/supabase-mock';
+// Removed broken import: import './tools/testing/setup/supabase-mock';
 import { cleanup } from '@testing-library/react';
 
 afterEach(() => {

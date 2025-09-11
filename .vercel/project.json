@@ -1,16 +1,1 @@
-{
-  "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
-  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
-  "projectName": "neonpro",
-  "settings": {
-    "createdAt": 1750299142397,
-    "framework": null,
-    "devCommand": "pnpm turbo dev --filter=@neonpro/web --filter=@neonpro/api",
-    "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
-    "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
-    "outputDirectory": "apps/web/dist",
-    "rootDirectory": null,
-    "directoryListing": false,
-    "nodeVersion": "20.x"
-  }
-}
+{"projectId":"prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY","orgId":"team_bjVDLqo42Gb3p28RelxJia6x","projectName":"neonpro-v2"}

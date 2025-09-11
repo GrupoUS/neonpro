@@ -35,8 +35,7 @@
     "types": [
       "node",
       "vitest",
-      "vitest/globals",
-      "vite/client"
+      "vitest/globals"
     ],
     "paths": {
       "@/*": [

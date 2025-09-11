@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TestAuthRoute = TestAuthRouteImport.update({
+  id: '/test-auth',
+  path: '/test-auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GovernanceRoute = GovernanceRouteImport.update({
   id: '/governance',
   path: '/governance',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/governance': typeof GovernanceRoute
+  '/test-auth': typeof TestAuthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/governance': typeof GovernanceRoute
+  '/test-auth': typeof TestAuthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/governance': typeof GovernanceRoute
+  '/test-auth': typeof TestAuthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/404' | '/governance'
+  fullPaths: '/' | '/404' | '/governance' | '/test-auth'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/404' | '/governance'
-  id: '__root__' | '/' | '/404' | '/governance'
+  to: '/' | '/404' | '/governance' | '/test-auth'
+  id: '__root__' | '/' | '/404' | '/governance' | '/test-auth'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   GovernanceRoute: typeof GovernanceRoute
+  TestAuthRoute: typeof TestAuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-auth': {
+      id: '/test-auth'
+      path: '/test-auth'
+      fullPath: '/test-auth'
+      preLoaderRoute: typeof TestAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/governance': {
       id: '/governance'
       path: '/governance'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   GovernanceRoute: GovernanceRoute,
+  TestAuthRoute: TestAuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

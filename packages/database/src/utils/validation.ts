@@ -1,5 +1,3 @@
-import type { Database } from '../types/supabase';
-
 /**
  * Validate database schema compatibility
  */
