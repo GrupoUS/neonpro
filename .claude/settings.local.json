@@ -77,7 +77,8 @@
       "mcp__Tavily__tavily-search",
       "mcp__Sequential_Thinking__sequentialthinking",
       "mcp__desktop-commander__start_search",
-      "mcp__serena__activate_project"
+      "mcp__serena__activate_project",
+      "mcp__desktop-commander__get_more_search_results"
     ],
     "deny": [
       "Edit",

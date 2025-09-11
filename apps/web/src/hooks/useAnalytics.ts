@@ -7,7 +7,7 @@ import { analytics } from '../lib/analytics';
  * Automatically handles consent changes and analytics initialization
  */
 export function useAnalytics() {
-  const { hasConsent, consentSettings } = useConsent();
+  const { hasConsent, consentSettings: _consentSettings } = useConsent();
 
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent

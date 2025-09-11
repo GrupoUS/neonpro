@@ -26,12 +26,12 @@ export interface ExitOptions {
  */
 function safeStringify(obj: unknown): string {
   try {
-    return JSON.stringify(obj, (key, value) => {
+    return JSON.stringify(obj, (_key, value) => {
       // Handle circular references
       if (typeof value === 'object' && value !== null) {
         if (WeakSet && typeof WeakSet === 'function') {
           const seen = new WeakSet();
-          return JSON.stringify(obj, (k, v) => {
+          return JSON.stringify(obj, (_k, v) => {
             if (typeof v === 'object' && v !== null) {
               if (seen.has(v)) return '[Circular]';
               seen.add(v);

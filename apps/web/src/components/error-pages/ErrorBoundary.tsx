@@ -4,7 +4,7 @@
  * React Error Boundary that catches JavaScript errors and displays appropriate error pages
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { ServerErrorPage } from './ServerErrorPage';
 
 interface Props {
@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  render() {
+  override render() {
     if (this.state.hasError && this.state.error && this.state.errorId) {
       // Use custom fallback if provided
       if (this.props.fallback) {

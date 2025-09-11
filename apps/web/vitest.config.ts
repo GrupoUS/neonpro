@@ -35,8 +35,8 @@ export default defineConfig({
       optimizer: {
         web: {
           include: [
-            /@neonpro\/shared/,
-            /@neonpro\/utils/,
+            '@neonpro/shared',
+            '@neonpro/utils',
           ],
         },
       },

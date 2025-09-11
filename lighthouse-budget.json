@@ -1,0 +1,159 @@
+[
+  {
+    "path": "/*",
+    "timings": [
+      {
+        "metric": "first-contentful-paint",
+        "budget": 1500,
+        "tolerance": 200
+      },
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2000,
+        "tolerance": 300
+      },
+      {
+        "metric": "speed-index",
+        "budget": 2500,
+        "tolerance": 400
+      },
+      {
+        "metric": "interactive",
+        "budget": 3500,
+        "tolerance": 500
+      },
+      {
+        "metric": "total-blocking-time",
+        "budget": 200,
+        "tolerance": 50
+      },
+      {
+        "metric": "cumulative-layout-shift",
+        "budget": 0.05,
+        "tolerance": 0.02
+      }
+    ],
+    "resourceSizes": [
+      {
+        "resourceType": "document",
+        "budget": 50
+      },
+      {
+        "resourceType": "script",
+        "budget": 500
+      },
+      {
+        "resourceType": "stylesheet",
+        "budget": 100
+      },
+      {
+        "resourceType": "image",
+        "budget": 300
+      },
+      {
+        "resourceType": "font",
+        "budget": 150
+      },
+      {
+        "resourceType": "media",
+        "budget": 100
+      },
+      {
+        "resourceType": "other",
+        "budget": 100
+      },
+      {
+        "resourceType": "total",
+        "budget": 1200
+      }
+    ],
+    "resourceCounts": [
+      {
+        "resourceType": "document",
+        "budget": 1
+      },
+      {
+        "resourceType": "script",
+        "budget": 15
+      },
+      {
+        "resourceType": "stylesheet",
+        "budget": 8
+      },
+      {
+        "resourceType": "image",
+        "budget": 15
+      },
+      {
+        "resourceType": "font",
+        "budget": 4
+      },
+      {
+        "resourceType": "media",
+        "budget": 2
+      },
+      {
+        "resourceType": "other",
+        "budget": 10
+      },
+      {
+        "resourceType": "total",
+        "budget": 50
+      },
+      {
+        "resourceType": "third-party",
+        "budget": 5
+      }
+    ]
+  },
+  {
+    "path": "/dashboard*",
+    "timings": [
+      {
+        "metric": "first-contentful-paint",
+        "budget": 1800,
+        "tolerance": 200
+      },
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2300,
+        "tolerance": 300
+      },
+      {
+        "metric": "speed-index",
+        "budget": 2800,
+        "tolerance": 400
+      },
+      {
+        "metric": "interactive",
+        "budget": 4000,
+        "tolerance": 500
+      },
+      {
+        "metric": "total-blocking-time",
+        "budget": 250,
+        "tolerance": 50
+      }
+    ],
+    "resourceSizes": [
+      {
+        "resourceType": "script",
+        "budget": 750
+      },
+      {
+        "resourceType": "total",
+        "budget": 1500
+      }
+    ],
+    "resourceCounts": [
+      {
+        "resourceType": "script",
+        "budget": 20
+      },
+      {
+        "resourceType": "total",
+        "budget": 60
+      }
+    ]
+  }
+]

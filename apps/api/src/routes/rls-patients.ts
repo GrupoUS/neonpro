@@ -1,8 +1,19 @@
 import { Hono } from 'hono';
+import type { Context } from 'hono';
 import { rlsHealthcareMiddleware, patientAccessMiddleware } from '../middleware/rls-middleware';
 import { lgpdAuditMiddleware } from '../middleware/lgpd-middleware';
+import type { RLSQueryBuilder } from '../lib/supabase-client';
 
-const rlsPatients = new Hono();
+// Define context variables type for better TypeScript support
+type Variables = {
+  rlsQuery: RLSQueryBuilder;
+  userId: string;
+  userRole: string;
+  clinicId?: string;
+  patientId?: string;
+};
+
+const rlsPatients = new Hono<{ Variables: Variables }>();
 
 // Apply RLS and LGPD middleware to all routes
 rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
@@ -12,11 +23,11 @@ rlsPatients.use('*', lgpdAuditMiddleware());
  * Get patients using RLS-aware queries
  * This route demonstrates how to use Supabase RLS instead of Prisma
  */
-rlsPatients.get('/', async c => {
+rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
-    const userId = c.get('userId');
-    const userRole = c.get('userRole');
+    const _userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
+    const _userRole = c.get('userRole');
 
     if (!rlsQuery) {
       return c.json({ error: 'RLS query builder not available' }, 500);
@@ -37,15 +48,15 @@ rlsPatients.get('/', async c => {
     }
 
     // Log successful access
-    console.log(`RLS Patient Access: User ${userId} (${userRole}) accessed ${patients?.length || 0} patients`);
+    console.log(`RLS Patient Access: User ${_userId} (${_userRole}) accessed ${patients?.length || 0} patients`);
 
     return c.json({ 
       patients: patients || [],
       meta: {
         count: patients?.length || 0,
         rlsApplied: true,
-        userId,
-        userRole,
+        userId: _userId,
+        userRole: _userRole,
       }
     });
   } catch (error) {
@@ -57,14 +68,14 @@ rlsPatients.get('/', async c => {
 /**
  * Get specific patient by ID using RLS
  */
-rlsPatients.get('/:patientId', patientAccessMiddleware(), async c => {
+rlsPatients.get('/:patientId', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
   try {
     const patientId = c.req.param('patientId');
     const rlsQuery = c.get('rlsQuery');
     const userId = c.get('userId');
 
     // Use RLS-aware query for single patient
-    const { data: patient, error } = await rlsQuery.client
+    const { data: patient, error } = await (rlsQuery as any).client
       .from('patients')
       .select(`
         *,
@@ -125,11 +136,11 @@ rlsPatients.get('/:patientId', patientAccessMiddleware(), async c => {
 /**
  * Get patient appointments using RLS
  */
-rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async c => {
+rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
   try {
     const patientId = c.req.param('patientId');
     const rlsQuery = c.get('rlsQuery');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
 
     // Query parameters
     const limit = parseInt(c.req.query('limit') || '10');
@@ -155,7 +166,7 @@ rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async c =
     }
 
     // Log successful access
-    console.log(`RLS Appointment Access: User ${userId} accessed ${appointments?.length || 0} appointments for patient ${patientId}`);
+    console.log(`RLS Appointment Access: User ${_userId} accessed ${appointments?.length || 0} appointments for patient ${patientId}`);
 
     return c.json({ 
       appointments: appointments || [],
@@ -164,7 +175,7 @@ rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async c =
         patientId,
         rlsApplied: true,
         filters: { status, startDate, endDate },
-        accessedBy: userId,
+        accessedBy: _userId,
       }
     });
   } catch (error) {
@@ -176,12 +187,12 @@ rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async c =
 /**
  * Get patient consent records using RLS
  */
-rlsPatients.get('/:patientId/consent', patientAccessMiddleware(), async c => {
+rlsPatients.get('/:patientId/consent', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
   try {
     const patientId = c.req.param('patientId');
     const purpose = c.req.query('purpose');
     const rlsQuery = c.get('rlsQuery');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
 
     // Use RLS-aware consent query
     const { data: consentRecords, error } = await rlsQuery.getConsentRecords(patientId, purpose);
@@ -195,7 +206,7 @@ rlsPatients.get('/:patientId/consent', patientAccessMiddleware(), async c => {
     }
 
     // Log successful access
-    console.log(`RLS Consent Access: User ${userId} accessed consent records for patient ${patientId}`);
+    console.log(`RLS Consent Access: User ${_userId} accessed consent records for patient ${patientId}`);
 
     return c.json({ 
       consentRecords: consentRecords || [],
@@ -204,7 +215,7 @@ rlsPatients.get('/:patientId/consent', patientAccessMiddleware(), async c => {
         patientId,
         purpose,
         rlsApplied: true,
-        accessedBy: userId,
+        accessedBy: _userId,
       }
     });
   } catch (error) {

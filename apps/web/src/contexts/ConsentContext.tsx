@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 // LGPD-compliant consent categories
 export interface ConsentPreferences {
@@ -17,11 +17,18 @@ export interface ConsentContextValue {
   acceptAll: () => void;
   rejectOptional: () => void;
   updatePreferences: (preferences: Partial<ConsentPreferences>) => void;
+  grantConsent: (category: keyof ConsentPreferences) => void;
+  
+  // Settings and configuration
+  consentSettings: ConsentPreferences;
+  updateConsentSettings: (settings: Partial<ConsentPreferences>) => void;
+  consentHistory: Array<{timestamp: string; action: string; preferences: ConsentPreferences}>;
   
   // UI state
   showConsentBanner: boolean;
   showPreferencesModal: boolean;
   setShowPreferencesModal: (show: boolean) => void;
+  isConsentBannerVisible: boolean;
 }
 
 const ConsentContext = createContext<ConsentContextValue | undefined>(undefined);
@@ -33,7 +40,7 @@ interface ConsentProviderProps {
   children: ReactNode;
 }
 
-export function ConsentProvider({ children }: ConsentProviderProps): JSX.Element {
+export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.Element {
   const [preferences, setPreferences] = useState<ConsentPreferences>({
     necessary: true,   // Always required for app functionality
     analytics: false,  // Requires explicit consent under LGPD
@@ -43,7 +50,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): JSX.Element
   
   const [showConsentBanner, setShowConsentBanner] = useState(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
-  const [consentVersion, setConsentVersion] = useState<string | null>(null);
+  const [_consentVersion, setConsentVersion] = useState<string | null>(null);
 
   // Load saved preferences on mount
   useEffect(() => {
@@ -155,15 +162,32 @@ export function ConsentProvider({ children }: ConsentProviderProps): JSX.Element
     );
   };
 
+  // Additional consent functions for compatibility
+  const grantConsent = (category: keyof ConsentPreferences) => {
+    updatePreferences({ [category]: true });
+  };
+
+  const updateConsentSettings = (settings: Partial<ConsentPreferences>) => {
+    updatePreferences(settings);
+  };
+
+  // Mock consent history for now (TODO: implement proper history tracking)
+  const consentHistory: Array<{timestamp: string; action: string; preferences: ConsentPreferences}> = [];
+
   const contextValue: ConsentContextValue = {
     preferences,
     hasConsent,
     acceptAll,
     rejectOptional,
     updatePreferences,
+    grantConsent,
+    consentSettings: preferences,
+    updateConsentSettings,
+    consentHistory,
     showConsentBanner,
     showPreferencesModal,
     setShowPreferencesModal,
+    isConsentBannerVisible: showConsentBanner,
   };
 
   return (
@@ -197,5 +221,4 @@ export function canTrackAnalytics(): boolean {
   return false;
 }
 
-// Export consent preferences type for use in other components
-export type { ConsentPreferences };
+// ConsentPreferences already exported at the top of the file

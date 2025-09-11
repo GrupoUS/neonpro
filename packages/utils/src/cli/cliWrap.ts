@@ -5,7 +5,7 @@
  * timeout support, and standardized JSON output format.
  */
 
-import { exitOk, exitError, setupGlobalErrorHandling, type ExitResult } from './exitHelper.js';
+import { exitOk, exitError, setupGlobalErrorHandling } from './exitHelper.js';
 
 export interface CLICommand {
   /** Command name for identification */

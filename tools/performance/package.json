@@ -1,0 +1,19 @@
+{
+  "name": "neonpro-performance-tools",
+  "version": "1.0.0",
+  "description": "Performance measurement tools for NeonPro",
+  "type": "module",
+  "scripts": {
+    "cold-start": "tsx cold-start-measurement.ts",
+    "cold-start:run": "./run-cold-start-measurement.sh",
+    "lighthouse": "lhci autorun",
+    "lighthouse:ci": "lhci autorun --config=../../lighthouserc.js",
+    "performance:check": "npm run lighthouse:ci",
+    "budget:validate": "lhci assert --config=../../lighthouserc.js"
+  },
+  "dependencies": {
+    "@lhci/cli": "^0.15.0",
+    "@types/node": "^20.19.13",
+    "tsx": "^4.20.5"
+  }
+}

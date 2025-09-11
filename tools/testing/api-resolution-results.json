@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-09-11T12:31:07.891Z",
+  "baseUrl": "https://neonpro.vercel.app",
+  "totalTests": 5,
+  "passed": 1,
+  "failed": 4,
+  "success": false,
+  "tests": [
+    {
+      "name": "Web App Still Working",
+      "status": "pass",
+      "duration": 162
+    },
+    {
+      "name": "API Health Endpoint Resolution",
+      "status": "fail",
+      "duration": 209,
+      "error": "API health endpoint still returning web app response - framework mismatch not resolved"
+    },
+    {
+      "name": "API v1 Health Endpoint Resolution",
+      "status": "fail",
+      "duration": 62,
+      "error": "API v1 health endpoint returned 404: Not Found"
+    },
+    {
+      "name": "OpenAPI Endpoint Resolution",
+      "status": "fail",
+      "duration": 109,
+      "error": "OpenAPI endpoint returned 404: Not Found"
+    },
+    {
+      "name": "Environment Validation Working",
+      "status": "fail",
+      "duration": 142,
+      "error": "Cannot test environment validation - v1 health endpoint not accessible"
+    }
+  ],
+  "summary": {
+    "webAppWorking": true,
+    "apiEndpointsResolved": false,
+    "frameworkMismatchFixed": false,
+    "readyForProduction": false
+  }
+}

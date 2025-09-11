@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { getEnvironmentInfo, validateEnvironment } from './lib/env-validation';
+import { initializeErrorTracking } from './lib/error-tracking';
 import { logger } from './lib/logger';
 import {
   errorLoggingMiddleware,
@@ -8,6 +9,7 @@ import {
   performanceLoggingMiddleware,
   securityLoggingMiddleware,
 } from './middleware/logging-middleware';
+import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import patients from './routes/patients';
@@ -29,6 +31,11 @@ if (envValidation.warnings.length > 0) {
     warnings: envValidation.warnings,
   });
 }
+
+// Initialize error tracking
+initializeErrorTracking().catch((error) => {
+  logger.warn('Error tracking initialization failed', { error: error.message });
+});
 
 logger.info('NeonPro API starting', {
   environment: process.env.NODE_ENV,
@@ -53,6 +60,11 @@ app.use('*', cors({
 }));
 
 // Apply middleware in order
+// Error tracking middleware stack (includes context, performance, security, and error handling)
+const errorTrackingStack = getErrorTrackingMiddlewareStack();
+errorTrackingStack.forEach(middleware => app.use('*', middleware));
+
+// Legacy logging middleware (for backward compatibility)
 app.use('*', errorLoggingMiddleware());
 app.use('*', securityLoggingMiddleware());
 app.use('*', loggingMiddleware());

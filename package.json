@@ -11,6 +11,11 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "pnpm": {
+    "overrides": {
+      "esbuild": ">=0.25.0"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
