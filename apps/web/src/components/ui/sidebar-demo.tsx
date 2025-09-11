@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import {
   IconArrowLeft,
   IconBrandTabler,
+  IconBuildingBank,
   IconCalendar,
   IconChartBar,
   IconCreditCard,
@@ -64,7 +65,7 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
       label: 'Governança',
       href: '/governance',
       icon: (
-        <IconChartBar className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+        <IconBuildingBank className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
     },
     {

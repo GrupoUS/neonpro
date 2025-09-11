@@ -24,10 +24,10 @@
     "prepare": "echo 'prepare script temporarily disabled for workspace install'"
   },
   "dependencies": {
-    "@neonpro/config": "workspace:*",
-    "@neonpro/database": "workspace:*",
-    "@neonpro/types": "workspace:*",
-    "@neonpro/utils": "workspace:*",
+    "@neonpro/config": "0.1.0",
+    "@neonpro/database": "0.1.0",
+    "@neonpro/types": "0.1.0",
+    "@neonpro/utils": "0.1.0",
     "@supabase/supabase-js": "^2.57.4",
     "date-fns": "^3.6.0",
     "lru-cache": "^11.2.1",

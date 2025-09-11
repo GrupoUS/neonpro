@@ -43,6 +43,9 @@
         "apps/web/src/*",
         "apps/api/src/*"
       ],
+      "@shared/*": [
+        "packages/shared/src/*"
+      ],
       "@neonpro/*": [
         "packages/*/src"
       ],

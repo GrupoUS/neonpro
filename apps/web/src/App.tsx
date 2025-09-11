@@ -1,5 +1,4 @@
 import { Toaster as Sonner } from '@/components/ui/sonner';
-import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -10,10 +9,8 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
+      {/* Single toast provider mounted via Sonner */}
       <Sonner />
-      {/* Routes are handled by TanStack Router (see src/routes) */}
-      {/* Legacy navItems kept for future integration with route meta/UI components */}
     </TooltipProvider>
   </QueryClientProvider>
 );

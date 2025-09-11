@@ -3,9 +3,9 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
-  "buildCommand": "npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund && npx turbo build --filter=@neonpro/web",
+  "buildCommand": "cd apps/web && npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund && npm run build",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund",
+  "installCommand": "echo 'Skipping root install'",
   "cleanUrls": true,
   "trailingSlash": false,
 

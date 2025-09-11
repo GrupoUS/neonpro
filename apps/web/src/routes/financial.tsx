@@ -1,34 +1,24 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/useAuth';
-import { createFileRoute } from '@tanstack/react-router';
+import { getCurrentSession } from '@/integrations/supabase/client';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { CreditCard, DollarSign, Receipt, TrendingDown, TrendingUp } from 'lucide-react';
 
 export const Route = createFileRoute('/financial')({
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) {
+      throw redirect({
+        to: '/',
+        search: { redirect: '/financial' },
+      });
+    }
+    return { session };
+  },
   component: FinancialPage,
 });
 
 function FinancialPage() {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-2">Acesso Negado</h2>
-          <p className="text-muted-foreground">Você precisa estar logado para acessar esta página.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">

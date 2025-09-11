@@ -3,10 +3,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
-import { createFileRoute } from '@tanstack/react-router';
+import { getCurrentSession } from '@/integrations/supabase/client';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Camera, Mail, Phone, User } from 'lucide-react';
 
 export const Route = createFileRoute('/profile')({
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) {
+      throw redirect({
+        to: '/',
+        search: { redirect: '/profile' },
+      });
+    }
+    return { session };
+  },
   component: ProfilePage,
 });
 

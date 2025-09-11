@@ -1,9 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/useAuth';
-import { createFileRoute } from '@tanstack/react-router';
+import { getCurrentSession } from '@/integrations/supabase/client';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { BarChart3, FileText, PieChart, TrendingUp } from 'lucide-react';
 
 export const Route = createFileRoute('/reports')({
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) {
+      throw redirect({
+        to: '/',
+        search: { redirect: '/reports' },
+      });
+    }
+    return { session };
+  },
   component: ReportsPage,
 });
 

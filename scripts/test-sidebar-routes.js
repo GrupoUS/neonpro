@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 
 /**
  * Sidebar Routes Testing Script
@@ -76,7 +77,9 @@ if (fs.existsSync(routeTreePath)) {
   for (const route of allExpectedRoutes) {
     const routeName = route === '/'
       ? 'Index'
-      : route.substring(1).charAt(0).toUpperCase() + route.substring(2);
+      : route.substring(1).split('/').map(segment => 
+          segment.charAt(0).toUpperCase() + segment.slice(1)
+        ).join('/');
     const routePattern = new RegExp(`'${route}':|${routeName}Route`, 'g');
 
     if (routeTreeContent.match(routePattern)) {

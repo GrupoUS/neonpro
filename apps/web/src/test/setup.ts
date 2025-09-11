@@ -98,12 +98,12 @@ vi.mock('@supabase/supabase-js', () => {
       single: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn().mockReturnThis(),
 
-      // Data methods return a promise-like that resolves to a base response
+      // Data methods return this for chaining
       select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockResolvedValue(baseResponse),
-      update: vi.fn().mockResolvedValue(baseResponse),
-      delete: vi.fn().mockResolvedValue(baseResponse),
-      upsert: vi.fn().mockResolvedValue(baseResponse),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
 
       // Thenable to allow `await qb` pattern
       then: (resolve: (v: any) => any) => resolve(baseResponse),

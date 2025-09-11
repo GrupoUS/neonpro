@@ -2,11 +2,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/useAuth';
-import { createFileRoute } from '@tanstack/react-router';
+import { getCurrentSession } from '@/integrations/supabase/client';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell, Globe, Lock, Palette, Shield, Users } from 'lucide-react';
 
 export const Route = createFileRoute('/settings')({
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) {
+      throw redirect({
+        to: '/',
+        search: { redirect: '/settings' },
+      });
+    }
+    return { session };
+  },
   component: SettingsPage,
 });
 

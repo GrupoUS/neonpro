@@ -4,7 +4,6 @@ import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
 import { BeamsBackground } from '@/components/ui/beams-background';
 import SidebarDemo from '@/components/ui/sidebar-demo';
 import { Toaster as Sonner } from '@/components/ui/sonner';
-import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,9 +55,10 @@ function RootComponent() {
           ) : (
             <div className='flex min-h-screen flex-col'>{content}</div>
           )}
-          <ConsentBanner />
-          <Toaster />
+
+          {/* Single toast provider mounted via Sonner at root */}
           <Sonner />
+          <ConsentBanner />
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>

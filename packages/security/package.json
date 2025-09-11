@@ -51,8 +51,8 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@neonpro/config": "workspace:*",
-    "@neonpro/types": "workspace:*",
+    "@neonpro/config": "0.1.0",
+    "@neonpro/types": "0.1.0",
     "next": ">=14.0.0"
   },
   "files": [
