@@ -6,6 +6,7 @@
   "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
   "outputDirectory": "apps/web/dist",
   "functions": {
+    "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
     "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
   },
   "rewrites": [
