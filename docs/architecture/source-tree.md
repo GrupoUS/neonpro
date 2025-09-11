@@ -104,17 +104,20 @@ neonpro/
 ### Directory Structure Rationale
 
 **Application Layer (`apps/`)**:
+
 - **Separation of Concerns**: Frontend (`web`) and backend (`api`) are completely isolated
 - **Independent Deployment**: Apps can be deployed separately with different strategies
 - **Scalability**: New applications can be added without affecting existing ones
 
 **Package Layer (`packages/`)**:
+
 - **Dependency Hierarchy**: Packages follow a clear dependency chain (types → database → shared → utils/security → core-services)
 - **Single Responsibility**: Each package has a focused, well-defined purpose
 - **Reusability**: Packages can be shared across applications and potentially extracted as standalone libraries
 - **Brazilian Compliance**: Security and compliance concerns are isolated in dedicated packages
 
 **Tool Layer (`tools/`)**:
+
 - **Development Efficiency**: Specialized tools for monorepo management and quality assurance
 - **Automation**: Scripts and utilities for common development tasks
 - **Quality Gates**: Audit and testing tools ensure code quality and architectural compliance
@@ -142,6 +145,7 @@ graph TD
 ```
 
 **Dependency Rules**:
+
 1. **Foundation Layer**: `types` has no dependencies (pure TypeScript definitions)
 2. **Infrastructure Layer**: `database`, `shared`, `utils`, `security` depend only on `types`
 3. **Service Layer**: `core-services` depends on all infrastructure packages
@@ -150,18 +154,18 @@ graph TD
 
 ### Code Location Guidelines
 
-| What You're Looking For | Primary Location | Secondary Location |
-|-------------------------|------------------|-------------------|
-| **API Endpoints** | `apps/api/src/` | - |
-| **React Components** | `apps/web/src/components/` | `packages/shared/src/` (reusable) |
-| **Business Logic** | `packages/core-services/src/` | `apps/*/src/` (app-specific) |
-| **Type Definitions** | `packages/types/src/` | `apps/*/src/types/` (app-specific) |
-| **Database Schemas** | `packages/database/src/` | - |
-| **Utility Functions** | `packages/utils/src/` | `apps/*/src/lib/` (app-specific) |
-| **Security/Compliance** | `packages/security/src/` | `packages/utils/src/compliance/` |
-| **Configuration** | `packages/config/` | Root config files |
-| **Tests** | `apps/*/src/__tests__/` | `packages/*/src/*.test.ts` |
-| **Documentation** | `docs/` | `README.md` files in packages |
+| What You're Looking For | Primary Location              | Secondary Location                 |
+| ----------------------- | ----------------------------- | ---------------------------------- |
+| **API Endpoints**       | `apps/api/src/`               | -                                  |
+| **React Components**    | `apps/web/src/components/`    | `packages/shared/src/` (reusable)  |
+| **Business Logic**      | `packages/core-services/src/` | `apps/*/src/` (app-specific)       |
+| **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/` (app-specific) |
+| **Database Schemas**    | `packages/database/src/`      | -                                  |
+| **Utility Functions**   | `packages/utils/src/`         | `apps/*/src/lib/` (app-specific)   |
+| **Security/Compliance** | `packages/security/src/`      | `packages/utils/src/compliance/`   |
+| **Configuration**       | `packages/config/`            | Root config files                  |
+| **Tests**               | `apps/*/src/__tests__/`       | `packages/*/src/*.test.ts`         |
+| **Documentation**       | `docs/`                       | `README.md` files in packages      |
 
 ## Workspace Configuration
 
@@ -183,6 +187,7 @@ The build system follows a **dependency-first approach** where packages build in
 ```
 
 **Build Order** (automatically managed by Turborepo):
+
 1. `@neonpro/types` (no dependencies)
 2. `@neonpro/database`, `@neonpro/shared`, `@neonpro/utils`, `@neonpro/security` (parallel)
 3. `@neonpro/core-services` (depends on all above)
@@ -207,6 +212,7 @@ The build system follows a **dependency-first approach** where packages build in
 ### Application Dependencies
 
 **`apps/api`** (Backend API):
+
 ```json
 {
   "dependencies": {
@@ -219,6 +225,7 @@ The build system follows a **dependency-first approach** where packages build in
 ```
 
 **`apps/web`** (Frontend Application):
+
 ```json
 {
   "dependencies": {
@@ -232,43 +239,46 @@ The build system follows a **dependency-first approach** where packages build in
 
 ### Package Dependencies Matrix
 
-| Package | Depends On | Used By | Purpose |
-|---------|------------|---------|---------|
-| **types** | None | All packages & apps | TypeScript definitions, interfaces |
-| **database** | types | core-services, api | Supabase schemas, database utilities |
-| **shared** | types | utils, core-services, web | Common components, auth utilities |
-| **utils** | types | core-services, web | Utility functions, formatters |
-| **security** | types, database | core-services, api | Security utilities, LGPD compliance |
-| **core-services** | All above | api, web | Business logic, service layer |
-| **config** | None | All packages & apps | Shared configurations |
+| Package           | Depends On      | Used By                   | Purpose                              |
+| ----------------- | --------------- | ------------------------- | ------------------------------------ |
+| **types**         | None            | All packages & apps       | TypeScript definitions, interfaces   |
+| **database**      | types           | core-services, api        | Supabase schemas, database utilities |
+| **shared**        | types           | utils, core-services, web | Common components, auth utilities    |
+| **utils**         | types           | core-services, web        | Utility functions, formatters        |
+| **security**      | types, database | core-services, api        | Security utilities, LGPD compliance  |
+| **core-services** | All above       | api, web                  | Business logic, service layer        |
+| **config**        | None            | All packages & apps       | Shared configurations                |
 
 ### Import Patterns & Conventions
 
 **Package Imports** (External dependencies):
+
 ```typescript
 // Type-only imports (preferred for types)
-import type { Patient, Appointment } from '@neonpro/types'
-import type { Database } from '@neonpro/database'
+import type { Database } from '@neonpro/database';
+import type { Appointment, Patient } from '@neonpro/types';
 
 // Runtime imports
-import { formatCurrency, formatDate } from '@neonpro/utils'
-import { PatientService } from '@neonpro/core-services'
-import { encryptPII } from '@neonpro/security'
+import { PatientService } from '@neonpro/core-services';
+import { encryptPII } from '@neonpro/security';
+import { formatCurrency, formatDate } from '@neonpro/utils';
 ```
 
 **Local Imports** (Within same app/package):
+
 ```typescript
 // Relative imports for local files
-import { Header } from '../components/Header'
-import { useAuth } from '../hooks/useAuth'
+import { Header } from '../components/Header';
+import { useAuth } from '../hooks/useAuth';
 
 // Alias imports (configured in tsconfig.json)
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import type { AppRouter } from '@/types/router'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { AppRouter } from '@/types/router';
 ```
 
 **Import Order Convention**:
+
 1. External libraries (React, etc.)
 2. Internal packages (`@neonpro/*`)
 3. Local relative imports
@@ -279,6 +289,7 @@ import type { AppRouter } from '@/types/router'
 ### Monorepo Commands
 
 **Development**:
+
 ```bash
 # Start all applications in development mode
 pnpm dev
@@ -292,6 +303,7 @@ pnpm dev --filter @neonpro/web...
 ```
 
 **Building**:
+
 ```bash
 # Build all packages and applications (respects dependency order)
 pnpm build
@@ -304,6 +316,7 @@ pnpm --filter "./apps/*" build
 ```
 
 **Quality Assurance**:
+
 ```bash
 # Run all quality checks
 pnpm lint && pnpm type-check && pnpm test
@@ -321,6 +334,7 @@ pnpm test:coverage
 ### Package-Specific Scripts
 
 Each package includes standardized scripts:
+
 - `build`: Compile TypeScript to `dist/`
 - `dev`: Watch mode for development
 - `test`: Run package-specific tests
@@ -331,33 +345,35 @@ Each package includes standardized scripts:
 
 ### Components & Code Files
 
-| File Type | Convention | Example | Location |
-|-----------|------------|---------|----------|
-| **React Components** | PascalCase | `PatientCard.tsx` | `components/` |
-| **Custom Hooks** | camelCase + `use` prefix | `usePatientData.ts` | `hooks/` |
-| **Utility Functions** | camelCase | `formatCurrency.ts` | `utils/` |
-| **Type Definitions** | PascalCase | `Patient.ts` | `types/` |
-| **API Routes** | kebab-case | `patient-profile.ts` | `routes/` |
-| **Test Files** | Same as source + `.test` | `PatientCard.test.tsx` | `__tests__/` |
-| **Configuration** | kebab-case | `vite.config.ts` | Root level |
+| File Type             | Convention               | Example                | Location      |
+| --------------------- | ------------------------ | ---------------------- | ------------- |
+| **React Components**  | PascalCase               | `PatientCard.tsx`      | `components/` |
+| **Custom Hooks**      | camelCase + `use` prefix | `usePatientData.ts`    | `hooks/`      |
+| **Utility Functions** | camelCase                | `formatCurrency.ts`    | `utils/`      |
+| **Type Definitions**  | PascalCase               | `Patient.ts`           | `types/`      |
+| **API Routes**        | kebab-case               | `patient-profile.ts`   | `routes/`     |
+| **Test Files**        | Same as source + `.test` | `PatientCard.test.tsx` | `__tests__/`  |
+| **Configuration**     | kebab-case               | `vite.config.ts`       | Root level    |
 
 ### Directory Naming
 
-| Directory Type | Convention | Example | Rationale |
-|----------------|------------|---------|-----------|
-| **Feature Modules** | kebab-case | `patient-management/` | URL-friendly, readable |
-| **Technical Concepts** | camelCase | `components/`, `hooks/` | JavaScript convention |
-| **Package Names** | kebab-case | `core-services/` | NPM convention |
-| **Configuration** | dot-prefix | `.github/`, `.vscode/` | Hidden/config files |
+| Directory Type         | Convention | Example                 | Rationale              |
+| ---------------------- | ---------- | ----------------------- | ---------------------- |
+| **Feature Modules**    | kebab-case | `patient-management/`   | URL-friendly, readable |
+| **Technical Concepts** | camelCase  | `components/`, `hooks/` | JavaScript convention  |
+| **Package Names**      | kebab-case | `core-services/`        | NPM convention         |
+| **Configuration**      | dot-prefix | `.github/`, `.vscode/`  | Hidden/config files    |
 
 ### Special File Patterns
 
 **Generated Files**:
+
 - `routeTree.gen.ts` - Auto-generated TanStack Router tree
 - `*.d.ts` - TypeScript declaration files
 - `index.ts` - Package entry points (barrel exports)
 
 **Configuration Files**:
+
 - `package.json` - Package configuration
 - `tsconfig.json` - TypeScript configuration
 - `vite.config.ts` - Vite build configuration
@@ -367,22 +383,23 @@ Each package includes standardized scripts:
 
 ### Quick Reference Table
 
-| What You Need | Primary Location | Secondary Location | Notes |
-|---------------|------------------|-------------------|-------|
-| **API Endpoints** | `apps/api/src/` | - | Hono.dev routes |
-| **React Pages** | `apps/web/src/routes/` | `apps/web/src/pages/` | TanStack Router |
-| **UI Components** | `apps/web/src/components/ui/` | `packages/shared/src/` | shadcn/ui + custom |
-| **Business Logic** | `packages/core-services/src/` | `apps/web/src/hooks/` | Services vs hooks |
-| **Type Definitions** | `packages/types/src/` | `apps/*/src/types/` | Shared vs app-specific |
-| **Database Schemas** | `packages/database/src/` | - | Supabase schemas |
-| **Utilities** | `packages/utils/src/` | `apps/*/src/lib/` | Shared vs app-specific |
-| **Security/Compliance** | `packages/security/src/` | `packages/utils/src/compliance/` | LGPD/ANVISA |
-| **Tests** | `apps/*/src/__tests__/` | `packages/*/src/*.test.ts` | App vs package tests |
-| **Configuration** | `packages/config/` | Root config files | Shared vs global |
+| What You Need           | Primary Location              | Secondary Location               | Notes                  |
+| ----------------------- | ----------------------------- | -------------------------------- | ---------------------- |
+| **API Endpoints**       | `apps/api/src/`               | -                                | Hono.dev routes        |
+| **React Pages**         | `apps/web/src/routes/`        | `apps/web/src/pages/`            | TanStack Router        |
+| **UI Components**       | `apps/web/src/components/ui/` | `packages/shared/src/`           | shadcn/ui + custom     |
+| **Business Logic**      | `packages/core-services/src/` | `apps/web/src/hooks/`            | Services vs hooks      |
+| **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/`              | Shared vs app-specific |
+| **Database Schemas**    | `packages/database/src/`      | -                                | Supabase schemas       |
+| **Utilities**           | `packages/utils/src/`         | `apps/*/src/lib/`                | Shared vs app-specific |
+| **Security/Compliance** | `packages/security/src/`      | `packages/utils/src/compliance/` | LGPD/ANVISA            |
+| **Tests**               | `apps/*/src/__tests__/`       | `packages/*/src/*.test.ts`       | App vs package tests   |
+| **Configuration**       | `packages/config/`            | Root config files                | Shared vs global       |
 
 ### Module Organization Patterns
 
 **Feature-Based Organization** (Recommended for large features):
+
 ```
 apps/web/src/
 ├── features/
@@ -399,6 +416,7 @@ apps/web/src/
 ```
 
 **Layer-Based Organization** (Current structure):
+
 ```
 apps/web/src/
 ├── components/     # All components
@@ -410,12 +428,14 @@ apps/web/src/
 ### Code Discovery Strategies
 
 **Finding Existing Code**:
+
 1. **Start with types**: Check `packages/types/src/` for data structures
 2. **Check services**: Look in `packages/core-services/src/` for business logic
 3. **Find components**: Search `apps/web/src/components/` for UI elements
 4. **Review tests**: Check `__tests__/` directories for usage examples
 
 **Adding New Code**:
+
 1. **Determine scope**: App-specific vs shared across apps
 2. **Choose layer**: Types → Database → Services → Components → Routes
 3. **Follow conventions**: Use established naming and organization patterns
@@ -426,12 +446,14 @@ apps/web/src/
 ### Package Boundaries
 
 **Do**:
+
 - Keep packages focused on single responsibilities
 - Use workspace dependencies (`workspace:*`) for internal packages
 - Export everything through `index.ts` barrel files
 - Follow semantic versioning for package updates
 
 **Don't**:
+
 - Create circular dependencies between packages
 - Import directly from package internals (use public API)
 - Mix concerns within a single package
@@ -440,12 +462,14 @@ apps/web/src/
 ### Development Efficiency
 
 **Turborepo Optimization**:
+
 - Use `--filter` to work on specific packages
 - Leverage caching for faster builds
 - Run tasks in parallel when possible
 - Use `--continue` to run all tasks even if some fail
 
 **IDE Configuration**:
+
 - Configure path mapping in `tsconfig.json`
 - Use workspace-aware extensions
 - Set up debugging for monorepo structure

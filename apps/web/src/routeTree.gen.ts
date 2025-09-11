@@ -8,70 +8,70 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as GovernanceRouteImport } from './routes/governance'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as GovernanceRouteImport } from './routes/governance';
+import { Route as IndexRouteImport } from './routes/index';
 
 const GovernanceRoute = GovernanceRouteImport.update({
   id: '/governance',
   path: '/governance',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/governance': typeof GovernanceRoute
+  '/': typeof IndexRoute;
+  '/governance': typeof GovernanceRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/governance': typeof GovernanceRoute
+  '/': typeof IndexRoute;
+  '/governance': typeof GovernanceRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/governance': typeof GovernanceRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/governance': typeof GovernanceRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/governance'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/governance'
-  id: '__root__' | '/' | '/governance'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/governance';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/governance';
+  id: '__root__' | '/' | '/governance';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  GovernanceRoute: typeof GovernanceRoute
+  IndexRoute: typeof IndexRoute;
+  GovernanceRoute: typeof GovernanceRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/governance': {
-      id: '/governance'
-      path: '/governance'
-      fullPath: '/governance'
-      preLoaderRoute: typeof GovernanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/governance';
+      path: '/governance';
+      fullPath: '/governance';
+      preLoaderRoute: typeof GovernanceRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GovernanceRoute: GovernanceRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

@@ -1,6 +1,5 @@
 # Break down the plan into executable tasks
 
-
 Break down the plan into executable tasks.
 
 This is the third step in the Spec-Driven Development lifecycle.
@@ -23,11 +22,11 @@ Given the context provided as an argument, do this:
 3. Generate tasks following the template:
    - Use `/templates/tasks-template.md` as the base
    - Replace example tasks with actual tasks based on:
-     * **Setup tasks**: Project init, dependencies, linting
-     * **Test tasks [P]**: One per contract, one per integration scenario
-     * **Core tasks**: One per entity, service, CLI command, endpoint
-     * **Integration tasks**: DB connections, middleware, logging
-     * **Polish tasks [P]**: Unit tests, performance, docs
+     - **Setup tasks**: Project init, dependencies, linting
+     - **Test tasks [P]**: One per contract, one per integration scenario
+     - **Core tasks**: One per entity, service, CLI command, endpoint
+     - **Integration tasks**: DB connections, middleware, logging
+     - **Polish tasks [P]**: Unit tests, performance, docs
 
 4. Task generation rules:
    - Each contract file → contract test task marked [P]

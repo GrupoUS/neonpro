@@ -4,21 +4,21 @@
  * This component is kept for backward compatibility but not used in current app
  */
 
-'use client'
+'use client';
 
 // DISABLED: Using TanStack Router instead of Next.js
 // import { useRouter, } from 'next/navigation'
-import type React from 'react'
-import type { ReactNode, } from 'react'
-import { useAuth, } from './auth-provider'
+import type React from 'react';
+import type { ReactNode } from 'react';
+import { useAuth } from './auth-provider';
 
 export interface ProtectedRouteProps {
-  children: ReactNode
-  fallback?: ReactNode
-  redirectTo?: string
-  requireAuth?: boolean
-  requiredRole?: string
-  requiredPermissions?: string[]
+  children: ReactNode;
+  fallback?: ReactNode;
+  redirectTo?: string;
+  requireAuth?: boolean;
+  requiredRole?: string;
+  requiredPermissions?: string[];
 }
 
 /**
@@ -26,10 +26,10 @@ export interface ProtectedRouteProps {
  */
 function DefaultLoadingFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
+    <div className='flex min-h-screen items-center justify-center'>
+      <div className='h-8 w-8 animate-spin rounded-full border-primary border-b-2' />
     </div>
-  )
+  );
 }
 
 /**
@@ -37,15 +37,15 @@ function DefaultLoadingFallback() {
  */
 function DefaultUnauthorizedFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <h1 className="mb-2 font-bold text-2xl text-gray-900">Acesso Negado</h1>
-        <p className="text-gray-600">
+    <div className='flex min-h-screen items-center justify-center'>
+      <div className='text-center'>
+        <h1 className='mb-2 font-bold text-2xl text-gray-900'>Acesso Negado</h1>
+        <p className='text-gray-600'>
           Você não tem permissão para acessar esta página.
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -58,8 +58,8 @@ export function ProtectedRoute({
   requireAuth = true,
   requiredRole,
   requiredPermissions = [],
-}: ProtectedRouteProps,) {
-  const { user, isAuthenticated, isLoading, } = useAuth()
+}: ProtectedRouteProps) {
+  const { user, isAuthenticated, isLoading } = useAuth();
   // DISABLED: Using TanStack Router authentication instead
   // const router = useRouter()
 
@@ -68,25 +68,25 @@ export function ProtectedRoute({
 
   // Ainda carregando
   if (isLoading) {
-    return <>{fallback}</>
+    return <>{fallback}</>;
   }
 
   // Não requer autenticação
   if (!requireAuth) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   // Não autenticado - redirecionar
   if (!(isAuthenticated && user)) {
     // DISABLED: Using TanStack Router instead of Next.js router
     // router.push(redirectTo,)
-    console.warn('User not authenticated, redirect to:', redirectTo,)
-    return <>{fallback}</>
+    console.warn('User not authenticated, redirect to:', redirectTo);
+    return <>{fallback}</>;
   }
 
   // Verificar role obrigatória
   if (requiredRole && user.role !== requiredRole) {
-    return <DefaultUnauthorizedFallback />
+    return <DefaultUnauthorizedFallback />;
   }
 
   // Verificar permissões (implementação básica - pode ser expandida)
@@ -94,76 +94,76 @@ export function ProtectedRoute({
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
     const hasPermissions = user.role === 'admin'
-      || requiredPermissions.every((_permission,) => {
+      || requiredPermissions.every(_permission => {
         // Lógica de permissões específica pode ser implementada aqui
-        return true // Placeholder
-      },)
+        return true; // Placeholder
+      });
 
     if (!hasPermissions) {
-      return <DefaultUnauthorizedFallback />
+      return <DefaultUnauthorizedFallback />;
     }
   }
 
   // Usuário autorizado
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 /**
  * HOC para proteger componentes
  */
-export function withAuth<P extends object,>(
+export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
   options?: Omit<ProtectedRouteProps, 'children'>,
 ) {
-  const WrappedComponent = (props: P,) => {
+  const WrappedComponent = (props: P) => {
     return (
       <ProtectedRoute {...options}>
         <Component {...props} />
       </ProtectedRoute>
-    )
-  }
+    );
+  };
 
-  WrappedComponent.displayName = `withAuth(${Component.displayName || Component.name})`
+  WrappedComponent.displayName = `withAuth(${Component.displayName || Component.name})`;
 
-  return WrappedComponent
+  return WrappedComponent;
 }
 
 /**
  * Hook para verificar permissões
  */
 export function usePermissions() {
-  const { user, } = useAuth()
+  const { user } = useAuth();
 
-  const hasRole = (role: string,): boolean => {
-    return user?.role === role
-  }
+  const hasRole = (role: string): boolean => {
+    return user?.role === role;
+  };
 
-  const hasPermission = (_permission: string,): boolean => {
+  const hasPermission = (_permission: string): boolean => {
     // TODO: Implementar lógica de permissões mais sofisticada
     // Por enquanto, admin tem todas as permissões
     if (user?.role === 'admin') {
-      return true
+      return true;
     }
 
     // Implementar verificação específica de permissões aqui
-    return false
-  }
+    return false;
+  };
 
-  const hasAnyPermission = (permissions: string[],): boolean => {
-    return permissions.some((permission,) => hasPermission(permission,))
-  }
+  const hasAnyPermission = (permissions: string[]): boolean => {
+    return permissions.some(permission => hasPermission(permission));
+  };
 
-  const hasAllPermissions = (permissions: string[],): boolean => {
-    return permissions.every((permission,) => hasPermission(permission,))
-  }
+  const hasAllPermissions = (permissions: string[]): boolean => {
+    return permissions.every(permission => hasPermission(permission));
+  };
 
   return {
     hasRole,
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
-    isAdmin: hasRole('admin',),
-    isUser: hasRole('user',),
-    isHealthcareProfessional: hasRole('healthcare_professional',),
-  }
+    isAdmin: hasRole('admin'),
+    isUser: hasRole('user'),
+    isHealthcareProfessional: hasRole('healthcare_professional'),
+  };
 }

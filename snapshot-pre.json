@@ -1,1 +1,7 @@
-{"fixAlias":"fix-alias-dryrun.json","tsc":"tsc-output.txt","lint":"lint-output.txt","test":"test-output.txt","timestamp":""}
+{
+  "fixAlias": "fix-alias-dryrun.json",
+  "tsc": "tsc-output.txt",
+  "lint": "lint-output.txt",
+  "test": "test-output.txt",
+  "timestamp": ""
+}

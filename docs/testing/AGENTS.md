@@ -51,19 +51,12 @@ Central router for all testing documentation. Start here to choose the right gui
   - Responsibility Matrix: `./testing-responsibility-matrix.md`
 
 ## Navigation
+
 - Test Hono endpoints → `./hono-api-testing.md`
 - Validate TanStack routes → `./tanstack-router-testing.md`
 - Enforce DB RLS → `./supabase-rls-testing.md`
 - Plan monorepo runs → `./monorepo-testing-strategies.md`
 - Assign responsibilities → `./testing-responsibility-matrix.md`
-
-
-
-
-
-
-
-
 
 - Implement unit tests → `./react-test-patterns.md`
 - Add integration tests → `./integration-testing.md`

@@ -24,28 +24,28 @@ Created a comprehensive Supabase mock with singleton pattern in `tools/testing/s
 
 ```typescript
 // Singleton mock Supabase client to prevent "Multiple GoTrueClient instances" warning
-let singletonMockSupabaseClient: unknown
+let singletonMockSupabaseClient: unknown;
 
 const createMockSupabaseClient = () => {
   if (singletonMockSupabaseClient) {
-    return singletonMockSupabaseClient
+    return singletonMockSupabaseClient;
   }
   // ... mock implementation
-}
+};
 
 // Mock the GoTrueClient directly to prevent multiple instances warning
 vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
-  let singletonGoTrueClient: unknown
+  let singletonGoTrueClient: unknown;
 
   return {
     GoTrueClient: vi.fn().mockImplementation(() => {
       if (singletonGoTrueClient) {
-        return singletonGoTrueClient
+        return singletonGoTrueClient;
       }
       // ... singleton implementation
-    },),
-  }
-},)
+    }),
+  };
+});
 ```
 
 ### 2. Global Mock Import
@@ -53,10 +53,10 @@ vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
 Added the mock import to the main Vitest setup file (`vitest.setup.ts`):
 
 ```typescript
-import { afterEach, vi, } from 'vitest'
-import '@testing-library/jest-dom/vitest'
+import { afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 // Import Supabase mock to prevent GoTrueClient multi-instance warnings
-import './tools/testing/setup/supabase-mock'
+import './tools/testing/setup/supabase-mock';
 ```
 
 ### 3. Console Warning Suppression
@@ -64,18 +64,18 @@ import './tools/testing/setup/supabase-mock'
 Implemented warning suppression for any remaining GoTrueClient messages:
 
 ```typescript
-const originalConsoleWarn = console.warn
+const originalConsoleWarn = console.warn;
 console.warn = (...args: any[]) => {
-  const message = args.join(' ',)
+  const message = args.join(' ');
   if (
-    message.includes('Multiple GoTrueClient instances detected',)
-    || message.includes('GoTrueClient',)
-    || message.includes('Multiple instances of auth client',)
+    message.includes('Multiple GoTrueClient instances detected')
+    || message.includes('GoTrueClient')
+    || message.includes('Multiple instances of auth client')
   ) {
-    return // Suppress these warnings
+    return; // Suppress these warnings
   }
-  originalConsoleWarn.apply(console, args,)
-}
+  originalConsoleWarn.apply(console, args);
+};
 ```
 
 ## Validation Results

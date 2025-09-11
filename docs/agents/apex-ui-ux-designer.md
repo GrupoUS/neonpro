@@ -153,73 +153,73 @@ BRAZILIAN_LOCALIZATION:
 
 ```typescript
 // Real-time appointment updates with optimistic UI
-const AppointmentCard = ({ appointmentId, }: { appointmentId: string },) => {
-  const { data: appointment, isLoading, } = useQuery({
-    queryKey: ['appointment', appointmentId,],
-    queryFn: () => fetchAppointment(appointmentId,),
-  },)
+const AppointmentCard = ({ appointmentId }: { appointmentId: string }) => {
+  const { data: appointment, isLoading } = useQuery({
+    queryKey: ['appointment', appointmentId],
+    queryFn: () => fetchAppointment(appointmentId),
+  });
 
   // Real-time subscription for live updates
   useEffect(() => {
     const subscription = supabase
-      .channel(`appointment:${appointmentId}`,)
+      .channel(`appointment:${appointmentId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'appointments',
-      }, (payload,) => {
+      }, payload => {
         // Optimistic UI update with visual feedback
-        updateAppointmentCache(payload.new,)
-      },)
-      .subscribe()
+        updateAppointmentCache(payload.new);
+      })
+      .subscribe();
 
-    return () => subscription.unsubscribe()
-  }, [appointmentId,],)
+    return () => subscription.unsubscribe();
+  }, [appointmentId]);
 
   return (
-    <Card className="relative">
-      {isLoading && <Skeleton className="h-24" />}
+    <Card className='relative'>
+      {isLoading && <Skeleton className='h-24' />}
       <AppointmentDetails appointment={appointment} />
       <NoShowRiskIndicator risk={appointment?.noShowRisk} />
     </Card>
-  )
-}
+  );
+};
 ```
 
 #### 2. WhatsApp Business UI Integration
 
 ```typescript
 // WhatsApp chat interface with Brazilian UX patterns
-const WhatsAppChat = ({ patientId, }: { patientId: string },) => {
-  const { messages, sendMessage, } = useWhatsAppChat(patientId,)
+const WhatsAppChat = ({ patientId }: { patientId: string }) => {
+  const { messages, sendMessage } = useWhatsAppChat(patientId);
 
   return (
-    <div className="flex flex-col h-full bg-whatsapp-bg">
+    <div className='flex flex-col h-full bg-whatsapp-bg'>
       <ChatHeader patient={patient} />
       <MessageList
         messages={messages}
-        className="flex-1 overflow-y-auto p-4"
+        className='flex-1 overflow-y-auto p-4'
       />
       <MessageInput
         onSend={sendMessage}
-        placeholder="Digite sua mensagem..."
-        className="border-t bg-white p-4"
+        placeholder='Digite sua mensagem...'
+        className='border-t bg-white p-4'
       />
     </div>
-  )
-}
+  );
+};
 ```
 
 #### 3. LGPD Compliance UI Components
 
 ```typescript
 // Granular consent management with Brazilian legal requirements
-const LGPDConsentManager = ({ patientId, }: { patientId: string },) => {
-  const { consents, updateConsent, } = useLGPDConsents(patientId,)
+const LGPDConsentManager = ({ patientId }: { patientId: string }) => {
+  const { consents, updateConsent } = useLGPDConsents(patientId);
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">
+    <Card className='p-6'>
+      <h3 className='text-lg font-semibold mb-4'>
         Gerenciamento de Consentimentos
       </h3>
       {CONSENT_TYPES.map(type => (
@@ -227,14 +227,14 @@ const LGPDConsentManager = ({ patientId, }: { patientId: string },) => {
           key={type.id}
           type={type}
           granted={consents[type.id]}
-          onToggle={(granted,) => updateConsent(type.id, granted,)}
+          onToggle={granted => updateConsent(type.id, granted)}
           description={type.description}
           required={type.required}
         />
       ))}
     </Card>
-  )
-}
+  );
+};
 ```
 
 ## 🚀 IMPLEMENTATION GUIDANCE

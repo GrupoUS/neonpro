@@ -5,7 +5,7 @@
  * used throughout the audit system for consistent error handling and recovery.
  */
 
-import { EventEmitter, } from 'events'
+import { EventEmitter } from 'events';
 
 /**
  * Error severity levels for prioritizing response and recovery efforts
@@ -52,21 +52,21 @@ export enum RecoveryStrategy {
  */
 export interface ErrorContext {
   /** Unique error identifier */
-  errorId: string
+  errorId: string;
   /** Timestamp when error occurred */
-  timestamp: Date
+  timestamp: Date;
   /** Component or module where error originated */
-  component: string
+  component: string;
   /** Operation or method being performed */
-  operation: string
+  operation: string;
   /** User or system action that triggered the error */
-  trigger?: string
+  trigger?: string;
   /** Current system state when error occurred */
-  systemState: Record<string, any>
+  systemState: Record<string, any>;
   /** Call stack trace */
-  stackTrace: string
+  stackTrace: string;
   /** Additional metadata */
-  metadata: Record<string, any>
+  metadata: Record<string, any>;
 }
 
 /**
@@ -74,17 +74,17 @@ export interface ErrorContext {
  */
 export interface ErrorClassification {
   /** Error category */
-  category: ErrorCategory
+  category: ErrorCategory;
   /** Severity level */
-  severity: ErrorSeverity
+  severity: ErrorSeverity;
   /** Whether error is recoverable */
-  recoverable: boolean
+  recoverable: boolean;
   /** Recommended recovery strategy */
-  recoveryStrategy: RecoveryStrategy
+  recoveryStrategy: RecoveryStrategy;
   /** Estimated impact score (0-1) */
-  impactScore: number
+  impactScore: number;
   /** Confidence in classification (0-1) */
-  confidence: number
+  confidence: number;
 }
 
 /**
@@ -92,17 +92,17 @@ export interface ErrorClassification {
  */
 export interface RecoveryResult {
   /** Whether recovery succeeded */
-  success: boolean
+  success: boolean;
   /** Strategy used for recovery */
-  strategy: RecoveryStrategy
+  strategy: RecoveryStrategy;
   /** Time taken for recovery attempt */
-  recoveryTime: number
+  recoveryTime: number;
   /** Number of attempts made */
-  attemptCount: number
+  attemptCount: number;
   /** Final error if recovery failed */
-  finalError?: AuditError
+  finalError?: AuditError;
   /** Recovery metadata */
-  metadata: Record<string, any>
+  metadata: Record<string, any>;
 }
 
 /**
@@ -110,21 +110,21 @@ export interface RecoveryResult {
  */
 export interface ErrorReport {
   /** Error context information */
-  context: ErrorContext
+  context: ErrorContext;
   /** Error classification */
-  classification: ErrorClassification
+  classification: ErrorClassification;
   /** Original error details */
-  originalError: Error
+  originalError: Error;
   /** Recovery attempts made */
-  recoveryAttempts: RecoveryResult[]
+  recoveryAttempts: RecoveryResult[];
   /** User-friendly error message */
-  userMessage: string
+  userMessage: string;
   /** Technical error details */
-  technicalDetails: string
+  technicalDetails: string;
   /** Recommended actions */
-  recommendations: string[]
+  recommendations: string[];
   /** Related errors or warnings */
-  relatedErrors: AuditError[]
+  relatedErrors: AuditError[];
 }
 
 /**
@@ -141,28 +141,28 @@ export enum CircuitBreakerState {
  */
 export interface CircuitBreakerConfig {
   /** Failure threshold before opening circuit */
-  failureThreshold: number
+  failureThreshold: number;
   /** Time to wait before attempting recovery */
-  resetTimeout: number
+  resetTimeout: number;
   /** Number of successful calls needed to close circuit */
-  successThreshold: number
+  successThreshold: number;
   /** Timeout for individual operations */
-  operationTimeout: number
+  operationTimeout: number;
   /** Maximum number of calls in half-open state */
-  halfOpenMaxCalls: number
+  halfOpenMaxCalls: number;
 }
 
 /**
  * Base audit error class with enhanced error handling capabilities
  */
 export abstract class AuditError extends Error {
-  public readonly errorId: string
-  public readonly timestamp: Date
-  public readonly category: ErrorCategory
-  public readonly severity: ErrorSeverity
-  public readonly recoverable: boolean
-  public readonly context: ErrorContext
-  public readonly innerError?: Error
+  public readonly errorId: string;
+  public readonly timestamp: Date;
+  public readonly category: ErrorCategory;
+  public readonly severity: ErrorSeverity;
+  public readonly recoverable: boolean;
+  public readonly context: ErrorContext;
+  public readonly innerError?: Error;
 
   constructor(
     message: string,
@@ -172,15 +172,15 @@ export abstract class AuditError extends Error {
     context?: Partial<ErrorContext>,
     innerError?: Error,
   ) {
-    super(message,)
-    this.name = this.constructor.name
+    super(message);
+    this.name = this.constructor.name;
 
-    this.errorId = this.generateErrorId()
-    this.timestamp = new Date()
-    this.category = category
-    this.severity = severity
-    this.recoverable = recoverable
-    this.innerError = innerError
+    this.errorId = this.generateErrorId();
+    this.timestamp = new Date();
+    this.category = category;
+    this.severity = severity;
+    this.recoverable = recoverable;
+    this.innerError = innerError;
 
     this.context = {
       errorId: this.errorId,
@@ -191,23 +191,23 @@ export abstract class AuditError extends Error {
       systemState: context?.systemState || {},
       stackTrace: this.stack || '',
       metadata: context?.metadata || {},
-    }
+    };
 
     // Maintain proper stack trace
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor,)
+      Error.captureStackTrace(this, this.constructor);
     }
   }
 
   private generateErrorId(): string {
-    return `audit_${Date.now()}_${Math.random().toString(36,).substr(2, 9,)}`
+    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
    * Get user-friendly error message
    */
   public getUserMessage(): string {
-    return `An error occurred: ${this.message}`
+    return `An error occurred: ${this.message}`;
   }
 
   /**
@@ -224,7 +224,7 @@ export abstract class AuditError extends Error {
       },
       null,
       2,
-    )
+    );
   }
 
   /**
@@ -247,7 +247,7 @@ export abstract class AuditError extends Error {
           stack: this.innerError.stack,
         }
         : undefined,
-    }
+    };
   }
 }
 
@@ -270,10 +270,10 @@ export class FileSystemError extends AuditError {
       {
         component: 'FileSystem',
         operation,
-        metadata: { filePath, },
+        metadata: { filePath },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -297,10 +297,10 @@ export class PerformanceError extends AuditError {
       {
         component: 'PerformanceMonitor',
         operation: 'metric_validation',
-        metadata: { metric, actual, expected, ratio: actual / expected, },
+        metadata: { metric, actual, expected, ratio: actual / expected },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -330,7 +330,7 @@ export class MemoryError extends AuditError {
         },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -353,10 +353,10 @@ export class DependencyError extends AuditError {
       {
         component: 'DependencyAnalyzer',
         operation: 'dependency_analysis',
-        metadata: { dependencyPath, dependencyType, },
+        metadata: { dependencyPath, dependencyType },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -380,10 +380,10 @@ export class ConfigurationError extends AuditError {
       {
         component: 'ConfigurationManager',
         operation: 'config_validation',
-        metadata: { configKey, configValue, expectedType, },
+        metadata: { configKey, configValue, expectedType },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -406,10 +406,10 @@ export class NetworkError extends AuditError {
       {
         component: 'NetworkClient',
         operation: 'network_request',
-        metadata: { endpoint, statusCode, },
+        metadata: { endpoint, statusCode },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -433,10 +433,10 @@ export class ValidationError extends AuditError {
       {
         component: 'Validator',
         operation: 'validation',
-        metadata: { validationType, invalidValue, validationRules, },
+        metadata: { validationType, invalidValue, validationRules },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -470,7 +470,7 @@ export class ConstitutionalViolationError extends AuditError {
         },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -494,10 +494,10 @@ export class ExternalServiceError extends AuditError {
       {
         component: 'ExternalServiceClient',
         operation,
-        metadata: { serviceName, serviceResponse, },
+        metadata: { serviceName, serviceResponse },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -521,10 +521,10 @@ export class ParsingError extends AuditError {
       {
         component: 'Parser',
         operation: 'code_parsing',
-        metadata: { filePath, lineNumber, columnNumber, },
+        metadata: { filePath, lineNumber, columnNumber },
       },
       innerError,
-    )
+    );
   }
 }
 
@@ -547,80 +547,80 @@ export class SecurityError extends AuditError {
       {
         component: 'SecurityAnalyzer',
         operation: 'security_analysis',
-        metadata: { securityType, riskLevel, },
+        metadata: { securityType, riskLevel },
       },
       innerError,
-    )
+    );
   }
 }
 
 /**
  * Interface for error handlers
  */
-export interface ErrorHandler<T = any,> {
-  canHandle(error: Error,): boolean
-  handle(error: Error, context: ErrorContext,): Promise<T>
-  getRecoveryStrategy(error: Error,): RecoveryStrategy
+export interface ErrorHandler<T = any> {
+  canHandle(error: Error): boolean;
+  handle(error: Error, context: ErrorContext): Promise<T>;
+  getRecoveryStrategy(error: Error): RecoveryStrategy;
 }
 
 /**
  * Interface for error listeners
  */
 export interface ErrorListener {
-  onError(error: AuditError, context: ErrorContext,): Promise<void>
-  onRecovery(error: AuditError, result: RecoveryResult,): Promise<void>
-  onRecoveryFailure(error: AuditError, attempts: RecoveryResult[],): Promise<void>
+  onError(error: AuditError, context: ErrorContext): Promise<void>;
+  onRecovery(error: AuditError, result: RecoveryResult): Promise<void>;
+  onRecoveryFailure(error: AuditError, attempts: RecoveryResult[]): Promise<void>;
 }
 
 /**
  * Error aggregation for batch processing
  */
 export interface ErrorBatch {
-  batchId: string
-  errors: AuditError[]
-  totalCount: number
-  severityDistribution: Record<ErrorSeverity, number>
-  categoryDistribution: Record<ErrorCategory, number>
-  recoverableCount: number
-  timestamp: Date
+  batchId: string;
+  errors: AuditError[];
+  totalCount: number;
+  severityDistribution: Record<ErrorSeverity, number>;
+  categoryDistribution: Record<ErrorCategory, number>;
+  recoverableCount: number;
+  timestamp: Date;
 }
 
 /**
  * Error metrics for monitoring and analysis
  */
 export interface ErrorMetrics {
-  totalErrors: number
-  errorsByCategory: Record<ErrorCategory, number>
-  errorsBySeverity: Record<ErrorSeverity, number>
-  recoverySuccessRate: number
-  averageRecoveryTime: number
-  mostCommonErrors: { error: string; count: number }[]
-  errorTrends: { timestamp: Date; count: number }[]
+  totalErrors: number;
+  errorsByCategory: Record<ErrorCategory, number>;
+  errorsBySeverity: Record<ErrorSeverity, number>;
+  recoverySuccessRate: number;
+  averageRecoveryTime: number;
+  mostCommonErrors: { error: string; count: number }[];
+  errorTrends: { timestamp: Date; count: number }[];
 }
 
 /**
  * State snapshot for rollback capabilities
  */
 export interface StateSnapshot {
-  snapshotId: string
-  timestamp: Date
-  component: string
-  operation: string
-  state: Record<string, any>
-  checksum: string
-  dependencies: string[]
+  snapshotId: string;
+  timestamp: Date;
+  component: string;
+  operation: string;
+  state: Record<string, any>;
+  checksum: string;
+  dependencies: string[];
 }
 
 /**
  * Rollback operation result
  */
 export interface RollbackResult {
-  success: boolean
-  snapshotId: string
-  rollbackTime: number
-  restoredState: Record<string, any>
-  affectedComponents: string[]
-  warnings: string[]
+  success: boolean;
+  snapshotId: string;
+  rollbackTime: number;
+  restoredState: Record<string, any>;
+  affectedComponents: string[];
+  warnings: string[];
 }
 
 /**
@@ -630,63 +630,63 @@ export class ErrorUtils {
   /**
    * Check if error is recoverable based on its type and context
    */
-  static isRecoverable(error: Error,): boolean {
+  static isRecoverable(error: Error): boolean {
     if (error instanceof AuditError) {
-      return error.recoverable
+      return error.recoverable;
     }
 
     // Assess recoverability for native errors
     if (error instanceof TypeError || error instanceof ReferenceError) {
-      return false // Usually programming errors
+      return false; // Usually programming errors
     }
 
-    if (error instanceof RangeError && error.message.includes('Maximum call stack',)) {
-      return false // Stack overflow
+    if (error instanceof RangeError && error.message.includes('Maximum call stack')) {
+      return false; // Stack overflow
     }
 
-    return true // Assume other errors are potentially recoverable
+    return true; // Assume other errors are potentially recoverable
   }
 
   /**
    * Extract error severity from error type and context
    */
-  static getSeverity(error: Error,): ErrorSeverity {
+  static getSeverity(error: Error): ErrorSeverity {
     if (error instanceof AuditError) {
-      return error.severity
+      return error.severity;
     }
 
     // Assess severity for native errors
-    if (error.message.includes('out of memory',) || error.message.includes('heap',)) {
-      return ErrorSeverity.CRITICAL
+    if (error.message.includes('out of memory') || error.message.includes('heap')) {
+      return ErrorSeverity.CRITICAL;
     }
 
     if (error instanceof TypeError || error instanceof ReferenceError) {
-      return ErrorSeverity.HIGH
+      return ErrorSeverity.HIGH;
     }
 
-    return ErrorSeverity.MEDIUM
+    return ErrorSeverity.MEDIUM;
   }
 
   /**
    * Calculate error impact score based on severity, category, and context
    */
-  static calculateImpactScore(error: AuditError, context: ErrorContext,): number {
-    let baseScore = 0
+  static calculateImpactScore(error: AuditError, context: ErrorContext): number {
+    let baseScore = 0;
 
     // Severity contribution (40%)
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        baseScore += 0.4
-        break
+        baseScore += 0.4;
+        break;
       case ErrorSeverity.HIGH:
-        baseScore += 0.3
-        break
+        baseScore += 0.3;
+        break;
       case ErrorSeverity.MEDIUM:
-        baseScore += 0.2
-        break
+        baseScore += 0.2;
+        break;
       case ErrorSeverity.LOW:
-        baseScore += 0.1
-        break
+        baseScore += 0.1;
+        break;
     }
 
     // Category contribution (30%)
@@ -694,51 +694,51 @@ export class ErrorUtils {
       case ErrorCategory.CONSTITUTIONAL:
       case ErrorCategory.SECURITY:
       case ErrorCategory.MEMORY:
-        baseScore += 0.3
-        break
+        baseScore += 0.3;
+        break;
       case ErrorCategory.PERFORMANCE:
       case ErrorCategory.FILESYSTEM:
-        baseScore += 0.2
-        break
+        baseScore += 0.2;
+        break;
       default:
-        baseScore += 0.1
-        break
+        baseScore += 0.1;
+        break;
     }
 
     // Context contribution (30%)
-    const contextScore = context.systemState.criticalOperation ? 0.3 : 0.15
-    baseScore += contextScore
+    const contextScore = context.systemState.criticalOperation ? 0.3 : 0.15;
+    baseScore += contextScore;
 
-    return Math.min(baseScore, 1.0,)
+    return Math.min(baseScore, 1.0);
   }
 
   /**
    * Create standardized error message for users
    */
-  static formatUserMessage(error: AuditError,): string {
+  static formatUserMessage(error: AuditError): string {
     const severityEmoji = {
       [ErrorSeverity.CRITICAL]: '🔴',
       [ErrorSeverity.HIGH]: '🟠',
       [ErrorSeverity.MEDIUM]: '🟡',
       [ErrorSeverity.LOW]: '⚪',
-    }
+    };
 
     return `${severityEmoji[error.severity]} ${
-      error.category.replace('_', ' ',).toUpperCase()
-    }: ${error.message}`
+      error.category.replace('_', ' ').toUpperCase()
+    }: ${error.message}`;
   }
 
   /**
    * Generate error correlation ID for tracking related errors
    */
-  static generateCorrelationId(context: ErrorContext,): string {
+  static generateCorrelationId(context: ErrorContext): string {
     const components = [
       context.component,
       context.operation,
       context.timestamp.getTime().toString(),
-    ]
+    ];
 
-    return components.join('_',).toLowerCase()
+    return components.join('_').toLowerCase();
   }
 }
 
@@ -760,9 +760,9 @@ export enum ErrorEventType {
  * Error event data structure
  */
 export interface ErrorEvent {
-  type: ErrorEventType
-  timestamp: Date
-  error: AuditError
-  context: ErrorContext
-  data?: Record<string, any>
+  type: ErrorEventType;
+  timestamp: Date;
+  error: AuditError;
+  context: ErrorContext;
+  data?: Record<string, any>;
 }

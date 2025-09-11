@@ -46,7 +46,7 @@ Each documented endpoint must include:
 
 ### **Documentation Template**
 
-```markdown
+````markdown
 # <Domain> API Documentation
 
 **Purpose**: Brief description of the domain and its endpoints
@@ -67,16 +67,20 @@ Each documented endpoint must include:
 **Authentication**: Required roles/permissions
 
 **Parameters**:
+
 - `param` (type, required/optional): Description
 
 **Request Body**:
+
 ```json
 {
   "field": "value"
 }
 ```
+````
 
 **Responses**:
+
 - `200 OK`: Success response
 - `400 Bad Request`: Validation errors
 - `401 Unauthorized`: Authentication required
@@ -84,8 +88,8 @@ Each documented endpoint must include:
 **Source Path**: `apps/api/src/routes/endpoint.ts`
 
 **Notes**: Important considerations
-```
 
+```
 ## Current Tech Stack
 
 ### **NeonPro Platform Stack**
@@ -161,3 +165,4 @@ Each documented endpoint must include:
 **Compliance**: LGPD, healthcare data protection, and audit requirements  
 **Target**: Developers implementing and maintaining API documentation  
 **Version**: 3.0.0 - Optimized for orchestration only
+```

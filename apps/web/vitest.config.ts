@@ -1,19 +1,19 @@
-import path from 'path'
-import { defineConfig, } from 'vitest/config'
+import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src',),
-      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src',),
-      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src',),
-      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src',),
+      '@': path.resolve(__dirname, './src'),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
+      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts',],
+    setupFiles: ['./src/test/setup.ts'],
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',
       'lib/**/*.{test,spec}.{ts,tsx}',
@@ -38,7 +38,7 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html',],
+      reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
         'src/test/',
@@ -46,4 +46,4 @@ export default defineConfig({
       ],
     },
   },
-},)
+});

@@ -15,8 +15,8 @@ related:
 
 Complete database architecture for NeonPro aesthetic clinic management platform.
 
-**Tech Stack**: Supabase PostgreSQL 17 + TanStack Router + Vite + Hono  
-**Compliance**: LGPD + ANVISA + CFM requirements built-in  
+**Tech Stack**: Supabase PostgreSQL 17 + TanStack Router + Vite + Hono\
+**Compliance**: LGPD + ANVISA + CFM requirements built-in\
 **Architecture**: Multi-tenant with Row Level Security (RLS)
 
 ## Prerequisites
@@ -29,34 +29,34 @@ Complete database architecture for NeonPro aesthetic clinic management platform.
 
 ```typescript
 // lib/supabase/client.ts - Browser client with RLS
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 }
 
 // lib/supabase/server.ts - Server client with RLS
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr';
 
 export async function createClient() {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     // Cookie configuration for server-side RLS
-  )
+  );
 }
 
 // lib/supabase/admin.ts - Service role client (bypasses RLS)
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
 export function createAdminClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY! // Server-side only
-  )
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // Server-side only
+  );
 }
 ```
 
@@ -370,16 +370,19 @@ AND scheduled_at + INTERVAL '1 hour' * duration_hours > $2;
 ### Common Issues
 
 **RLS Policy Not Working:**
+
 - Verify `auth.uid()` returns expected user ID
 - Check professional-clinic relationships exist
 - Ensure `is_active = true` on professional records
 
 **LGPD Consent Validation Failing:**
+
 - Verify consent records with `status = 'granted'`
 - Check consent expiration dates
 - Validate processing purpose matches consent
 
 **Performance Issues:**
+
 - Add appropriate indexes for RLS policies
 - Use LIMIT clauses for large datasets
 - Monitor query execution plans with EXPLAIN ANALYZE

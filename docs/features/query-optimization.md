@@ -32,41 +32,41 @@ apps/web/
 
 ```typescript
 // apps/web/lib/queries/patient-queries.ts
-import { queryOptions, } from '@tanstack/react-query'
-import { healthcareQueryConfig, } from '../config/healthcare-query-config'
+import { queryOptions } from '@tanstack/react-query';
+import { healthcareQueryConfig } from '../config/healthcare-query-config';
 
 export const patientQueries = {
   // Patient detail query with LGPD-compliant cache times
-  detail: (patientId: string,) =>
+  detail: (patientId: string) =>
     queryOptions({
-      queryKey: ['patients', 'detail', patientId,] as const,
+      queryKey: ['patients', 'detail', patientId] as const,
       queryFn: async (): Promise<Patient> => {
         const response = await apiClient.api.v1.patients[':id'].$get({
-          param: { id: patientId, },
-        },)
-        return response.json()
+          param: { id: patientId },
+        });
+        return response.json();
       },
       staleTime: healthcareQueryConfig.patient.staleTime, // 2 minutes
       gcTime: healthcareQueryConfig.patient.gcTime, // 5 minutes
-    },),
+    }),
 
   // Audit query - always fresh for compliance
-  audit: (patientId: string,) =>
+  audit: (patientId: string) =>
     queryOptions({
-      queryKey: ['audit', 'patient', patientId,] as const,
+      queryKey: ['audit', 'patient', patientId] as const,
       queryFn: async () => {
         const response = await apiClient.api.v1.audit.patient[':id'].$get({
-          param: { id: patientId, },
-        },)
-        return response.json()
+          param: { id: patientId },
+        });
+        return response.json();
       },
       staleTime: 0, // Always fresh
       gcTime: 2 * 60 * 1000, // 2 minutes retention
-    },),
-}
+    }),
+};
 
 // Usage in components
-const { data: patient, } = useQuery(patientQueries.detail(patientId,),)
+const { data: patient } = useQuery(patientQueries.detail(patientId));
 ```
 
 ### 2. Healthcare Configuration
@@ -77,21 +77,21 @@ const { data: patient, } = useQuery(patientQueries.detail(patientId,),)
 // apps/web/lib/config/healthcare-query-config.ts
 export interface HealthcareQueryConfig {
   patient: {
-    staleTime: number // LGPD: Personal data cache limits
-    gcTime: number // LGPD: Data retention limits
-  }
+    staleTime: number; // LGPD: Personal data cache limits
+    gcTime: number; // LGPD: Data retention limits
+  };
   appointment: {
-    staleTime: number // Medical appointment data freshness
-    gcTime: number
-  }
+    staleTime: number; // Medical appointment data freshness
+    gcTime: number;
+  };
   professional: {
-    staleTime: number // Professional license validation
-    gcTime: number
-  }
+    staleTime: number; // Professional license validation
+    gcTime: number;
+  };
   audit: {
-    staleTime: number // Always 0 for audit trails
-    gcTime: number // Minimal retention for audit data
-  }
+    staleTime: number; // Always 0 for audit trails
+    gcTime: number; // Minimal retention for audit data
+  };
 }
 
 export const healthcareQueryConfig: HealthcareQueryConfig = {
@@ -111,7 +111,7 @@ export const healthcareQueryConfig: HealthcareQueryConfig = {
     staleTime: 0, // Always fresh
     gcTime: 2 * 60 * 1000, // 2 minutes minimal retention
   },
-}
+};
 ```
 
 ### 3. Intelligent Prefetching
@@ -122,32 +122,32 @@ export const healthcareQueryConfig: HealthcareQueryConfig = {
 // apps/web/lib/prefetch/healthcare-prefetch-strategy.ts
 export const healthcarePrefetchStrategy = {
   // Prefetch patient workflow data
-  async prefetchPatientWorkflow(queryClient: QueryClient, patientId: string,) {
+  async prefetchPatientWorkflow(queryClient: QueryClient, patientId: string) {
     await Promise.all([
-      queryClient.prefetchQuery(patientQueries.detail(patientId,),),
-      queryClient.prefetchQuery(appointmentQueries.patient(patientId,),),
-      queryClient.prefetchQuery(patientQueries.medicalRecords(patientId,),),
-    ],)
+      queryClient.prefetchQuery(patientQueries.detail(patientId)),
+      queryClient.prefetchQuery(appointmentQueries.patient(patientId)),
+      queryClient.prefetchQuery(patientQueries.medicalRecords(patientId)),
+    ]);
   },
 
   // Prefetch appointment workflow data
-  async prefetchAppointmentWorkflow(queryClient: QueryClient, appointmentId: string,) {
-    const appointment = await queryClient.fetchQuery(appointmentQueries.detail(appointmentId,),)
+  async prefetchAppointmentWorkflow(queryClient: QueryClient, appointmentId: string) {
+    const appointment = await queryClient.fetchQuery(appointmentQueries.detail(appointmentId));
 
     // Prefetch related data based on appointment
     await Promise.all([
-      queryClient.prefetchQuery(patientQueries.detail(appointment.patientId,),),
-      queryClient.prefetchQuery(professionalQueries.detail(appointment.professionalId,),),
-    ],)
+      queryClient.prefetchQuery(patientQueries.detail(appointment.patientId)),
+      queryClient.prefetchQuery(professionalQueries.detail(appointment.professionalId)),
+    ]);
   },
-}
+};
 
 // Usage in components
 useEffect(() => {
   if (patientId) {
-    healthcarePrefetchStrategy.prefetchPatientWorkflow(queryClient, patientId,)
+    healthcarePrefetchStrategy.prefetchPatientWorkflow(queryClient, patientId);
   }
-}, [patientId, queryClient,],)
+}, [patientId, queryClient]);
 ```
 
 ### 4. Optimistic Updates with Healthcare Safety
@@ -157,40 +157,40 @@ useEffect(() => {
 ```typescript
 // apps/web/hooks/mutations/healthcare-optimistic-updates.ts
 export const healthcareOptimisticUpdates = {
-  updatePatient: (queryClient: QueryClient, patientId: string, updateData: Partial<Patient>,) => {
-    const queryKey = patientQueries.detail(patientId,).queryKey
+  updatePatient: (queryClient: QueryClient, patientId: string, updateData: Partial<Patient>) => {
+    const queryKey = patientQueries.detail(patientId).queryKey;
 
     // Cancel outgoing queries
-    queryClient.cancelQueries({ queryKey, },)
+    queryClient.cancelQueries({ queryKey });
 
     // Get current data for rollback
-    const previousData = queryClient.getQueryData<Patient>(queryKey,)
+    const previousData = queryClient.getQueryData<Patient>(queryKey);
 
     // Optimistically update
     if (previousData) {
-      const optimisticData = { ...previousData, ...updateData, }
-      queryClient.setQueryData(queryKey, optimisticData,)
+      const optimisticData = { ...previousData, ...updateData };
+      queryClient.setQueryData(queryKey, optimisticData);
     }
 
     // Return rollback function
     return () => {
       if (previousData) {
-        queryClient.setQueryData(queryKey, previousData,)
+        queryClient.setQueryData(queryKey, previousData);
       }
-    }
+    };
   },
-}
+};
 
 // Usage in mutations
 const updatePatientMutation = useMutation({
   mutationFn: updatePatient,
-  onMutate: async (updateData,) => {
-    return healthcareOptimisticUpdates.updatePatient(queryClient, patientId, updateData,)
+  onMutate: async updateData => {
+    return healthcareOptimisticUpdates.updatePatient(queryClient, patientId, updateData);
   },
-  onError: (err, variables, rollback,) => {
-    rollback?.() // Safe rollback on error
+  onError: (err, variables, rollback) => {
+    rollback?.(); // Safe rollback on error
   },
-},)
+});
 ```
 
 ### 5. Performance Monitoring
@@ -199,10 +199,10 @@ const updatePatientMutation = useMutation({
 
 ```typescript
 // apps/web/lib/performance/healthcare-performance-monitor.ts
-export function createPerformanceMonitor(queryClient: QueryClient,) {
+export function createPerformanceMonitor(queryClient: QueryClient) {
   return {
     metrics: {
-      cacheHitRate: (events: CacheEvent[],) => ({
+      cacheHitRate: (events: CacheEvent[]) => ({
         hitRate: events.filter(e => e.type === 'hit').length / events.length,
         totalQueries: events.length,
         hits: events.filter(e => e.type === 'hit').length,
@@ -211,7 +211,7 @@ export function createPerformanceMonitor(queryClient: QueryClient,) {
     },
 
     monitoring: {
-      track: (queryKey: readonly unknown[],) => {
+      track: (queryKey: readonly unknown[]) => {
         // Track query performance for healthcare compliance
       },
       start: () => {
@@ -233,12 +233,12 @@ export function createPerformanceMonitor(queryClient: QueryClient,) {
         },
       }),
     },
-  }
+  };
 }
 
 // Usage
-const performanceMonitor = createPerformanceMonitor(queryClient,)
-const report = performanceMonitor.reporting.generate()
+const performanceMonitor = createPerformanceMonitor(queryClient);
+const report = performanceMonitor.reporting.generate();
 ```
 
 ## Best Practices
@@ -247,10 +247,10 @@ const report = performanceMonitor.reporting.generate()
 
 ```typescript
 // Hierarchical query keys for better cache management
-;['patients', 'detail', patientId,] // Patient detail
-  ['patients', 'list', { page: 1, limit: 10, }] // Patient list with pagination
+['patients', 'detail', patientId] // Patient detail
+  ['patients', 'list', { page: 1, limit: 10 }] // Patient list with pagination
   ['appointments', 'patient', patientId] // Patient's appointments
-  ['audit', 'patient', patientId] // Patient audit trail
+  ['audit', 'patient', patientId]; // Patient audit trail
 ```
 
 ### 2. Healthcare Compliance Checklist
@@ -270,18 +270,18 @@ const report = performanceMonitor.reporting.generate()
 ### 4. Error Handling
 
 ```typescript
-const { data, error, isError, } = useQuery({
-  ...patientQueries.detail(patientId,),
-  retry: (failureCount, error,) => {
+const { data, error, isError } = useQuery({
+  ...patientQueries.detail(patientId),
+  retry: (failureCount, error) => {
     // Healthcare-specific retry logic
-    if (error.status === 403) return false // Don't retry auth errors
-    return failureCount < 3
+    if (error.status === 403) return false; // Don't retry auth errors
+    return failureCount < 3;
   },
-  throwOnError: (error,) => {
+  throwOnError: error => {
     // Throw on critical healthcare errors
-    return error.status >= 500
+    return error.status >= 500;
   },
-},)
+});
 ```
 
 ## Testing Patterns
@@ -298,11 +298,11 @@ export function createTestQueryClient(): QueryClient {
         gcTime: 0,
       },
     },
-  },)
+  });
 }
 
 // Usage in tests
-const queryClient = createTestQueryClient()
+const queryClient = createTestQueryClient();
 ```
 
 ### 2. Healthcare Compliance Tests
@@ -310,10 +310,10 @@ const queryClient = createTestQueryClient()
 ```typescript
 describe('Healthcare Compliance', () => {
   it('should respect LGPD cache limits', () => {
-    const patientQuery = patientQueries.detail('patient-123',)
-    expect(patientQuery.gcTime,).toBeLessThanOrEqual(5 * 60 * 1000,)
-  })
-})
+    const patientQuery = patientQueries.detail('patient-123');
+    expect(patientQuery.gcTime).toBeLessThanOrEqual(5 * 60 * 1000);
+  });
+});
 ```
 
 ## Migration Guide

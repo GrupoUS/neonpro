@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { describe, it, expect } from 'vitest'
-import { GovernanceDashboard } from '../GovernanceDashboard'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { GovernanceDashboard } from '../GovernanceDashboard';
 
 describe('GovernanceDashboard', () => {
   const queryClient = new QueryClient({
@@ -9,23 +9,24 @@ describe('GovernanceDashboard', () => {
       queries: { retry: false },
       mutations: { retry: false },
     },
-  })
+  });
 
   const renderWithProviders = (component: React.ReactElement) => {
     return render(
       <QueryClientProvider client={queryClient}>
         {component}
-      </QueryClientProvider>
-    )
-  }
+      </QueryClientProvider>,
+    );
+  };
 
   it('renders governance dashboard', () => {
-    renderWithProviders(<GovernanceDashboard />)
-    expect(screen.getByText('Governance Dashboard')).toBeInTheDocument()
-  })
+    renderWithProviders(<GovernanceDashboard />);
+    expect(screen.getByText('Governance Dashboard')).toBeInTheDocument();
+  });
 
   it('displays healthcare compliance subtitle', () => {
-    renderWithProviders(<GovernanceDashboard />)
-    expect(screen.getByText('HIPAA/LGPD Compliance & AI Governance Monitoring')).toBeInTheDocument()
-  })
-})
+    renderWithProviders(<GovernanceDashboard />);
+    expect(screen.getByText('HIPAA/LGPD Compliance & AI Governance Monitoring'))
+      .toBeInTheDocument();
+  });
+});

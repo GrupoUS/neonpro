@@ -7,214 +7,214 @@
 // Missing type definitions
 export interface AuditConfiguration {
   /** Configuration options */
-  [key: string]: unknown
+  [key: string]: unknown;
 }
 
 export interface ExecutionError {
   /** Error message */
-  message: string
+  message: string;
   /** Error code */
-  code?: string
+  code?: string;
   /** Stack trace */
-  stack?: string
+  stack?: string;
 }
 
 export interface ExecutionWarning {
   /** Warning message */
-  message: string
+  message: string;
   /** Warning type */
-  type: string
+  type: string;
   /** Severity level */
-  severity: 'low' | 'medium' | 'high'
+  severity: 'low' | 'medium' | 'high';
 }
 
 export interface FileInfo {
   /** File path */
-  path: string
+  path: string;
   /** File size */
-  size: number
+  size: number;
   /** Last modified date */
-  lastModified: Date
+  lastModified: Date;
 }
 
 export interface ProblemFile {
   /** File path */
-  path: string
+  path: string;
   /** Issues found */
-  issues: string[]
+  issues: string[];
   /** Severity */
-  severity: 'low' | 'medium' | 'high'
+  severity: 'low' | 'medium' | 'high';
 }
 
 export interface CircularDependencyInfo {
   /** Cycle paths */
-  cycle: string[]
+  cycle: string[];
   /** Severity */
-  severity: 'low' | 'medium' | 'high'
+  severity: 'low' | 'medium' | 'high';
 }
 
 export interface DepthStatistics {
   /** Average depth */
-  averageDepth: number
+  averageDepth: number;
   /** Maximum depth */
-  maxDepth: number
+  maxDepth: number;
 }
 
 export interface ImportExportAnalysis {
   /** Total imports */
-  totalImports: number
+  totalImports: number;
   /** Total exports */
-  totalExports: number
+  totalExports: number;
 }
 
 export interface ExternalDependencyInfo {
   /** Package name */
-  name: string
+  name: string;
   /** Version */
-  version: string
+  version: string;
   /** Usage count */
-  usageCount: number
+  usageCount: number;
 }
 
 export interface UsagePattern {
   /** Pattern name */
-  name: string
+  name: string;
   /** Pattern description */
-  description: string
+  description: string;
   /** Files matching pattern */
-  files: string[]
+  files: string[];
 }
 
 export interface DeadCodeAnalysis {
   /** Dead code files */
-  deadFiles: string[]
+  deadFiles: string[];
   /** Unused exports */
-  unusedExports: string[]
+  unusedExports: string[];
 }
 
 export interface ComplexityMetrics {
   /** Average complexity */
-  averageComplexity: number
+  averageComplexity: number;
   /** Maximum complexity */
-  maxComplexity: number
+  maxComplexity: number;
 }
 
 export interface MaintainabilityMetrics {
   /** Maintainability index */
-  index: number
+  index: number;
   /** Technical debt ratio */
-  technicalDebtRatio: number
+  technicalDebtRatio: number;
 }
 
 export interface TestCoverageMetrics {
   /** Line coverage percentage */
-  lineCoverage: number
+  lineCoverage: number;
   /** Branch coverage percentage */
-  branchCoverage: number
+  branchCoverage: number;
 }
 
 export interface DocumentationMetrics {
   /** Documentation coverage percentage */
-  coverage: number
+  coverage: number;
   /** Missing documentation count */
-  missingDocs: number
+  missingDocs: number;
 }
 
 // Core Types
 export interface ReportOptions {
   /** Report format to generate */
-  format: ReportFormat
+  format: ReportFormat;
   /** Sections to include in report */
-  includeSections: ReportSection[]
+  includeSections: ReportSection[];
   /** Level of detail */
-  detailLevel: DetailLevel
+  detailLevel: DetailLevel;
   /** Whether to include visualizations */
-  includeVisualizations: boolean
+  includeVisualizations: boolean;
   /** Whether to include raw data */
-  includeRawData: boolean
+  includeRawData: boolean;
   /** Output file path */
-  outputPath?: string
+  outputPath?: string;
   /** Template to use for formatting */
-  template?: string
+  template?: string;
 }
 
 export interface AuditReport {
   /** Unique report identifier */
-  reportId: string
+  reportId: string;
   /** Report generation timestamp */
-  generatedAt: Date
+  generatedAt: Date;
   /** Audit execution summary */
-  executionSummary: ExecutionSummary
+  executionSummary: ExecutionSummary;
   /** Monorepo analysis results */
-  analysisResults: AnalysisResults
+  analysisResults: AnalysisResults;
   /** Architecture compliance results */
-  complianceResults: ComplianceResults
+  complianceResults: ComplianceResults;
   /** Cleanup operations performed */
-  cleanupResults: CleanupResults
+  cleanupResults: CleanupResults;
   /** Performance metrics */
-  performanceMetrics: PerformanceMetrics
+  performanceMetrics: PerformanceMetrics;
   /** Recommendations for improvement */
-  recommendations: RecommendationSection[]
+  recommendations: RecommendationSection[];
   /** Before/after comparison */
-  beforeAfterComparison: BeforeAfterComparison
+  beforeAfterComparison: BeforeAfterComparison;
 }
 
 export interface ExecutionSummary {
   /** Total execution time */
-  totalExecutionTime: number
+  totalExecutionTime: number;
   /** Audit phases executed */
-  phasesExecuted: AuditPhase[]
+  phasesExecuted: AuditPhase[];
   /** Overall audit status */
-  overallStatus: AuditStatus
+  overallStatus: AuditStatus;
   /** Configuration used */
-  configurationUsed: AuditConfiguration
+  configurationUsed: AuditConfiguration;
   /** Errors encountered */
-  errors: ExecutionError[]
+  errors: ExecutionError[];
   /** Warnings generated */
-  warnings: ExecutionWarning[]
+  warnings: ExecutionWarning[];
 }
 
 export interface AnalysisResults {
   /** File discovery results */
-  fileDiscovery: FileDiscoveryResults
+  fileDiscovery: FileDiscoveryResults;
   /** Dependency analysis results */
-  dependencyAnalysis: DependencyAnalysisResults
+  dependencyAnalysis: DependencyAnalysisResults;
   /** Architecture validation results */
-  architectureValidation: ArchitectureValidationResults
+  architectureValidation: ArchitectureValidationResults;
   /** Usage analysis results */
-  usageAnalysis: UsageAnalysisResults
+  usageAnalysis: UsageAnalysisResults;
   /** Quality metrics */
-  qualityMetrics: QualityMetrics
+  qualityMetrics: QualityMetrics;
 }
 
 export interface ComplianceResults {
   /** Overall compliance score */
-  overallScore: number
+  overallScore: number;
   /** Compliance by category */
-  categoryScores: Record<string, CategoryScore>
+  categoryScores: Record<string, CategoryScore>;
   /** Top violations */
-  topViolations: ViolationSummary[]
+  topViolations: ViolationSummary[];
   /** Trend analysis */
-  trends: ComplianceTrend[]
+  trends: ComplianceTrend[];
   /** Framework-specific compliance */
-  frameworkCompliance: FrameworkCompliance
+  frameworkCompliance: FrameworkCompliance;
 }
 
 export interface CleanupResults {
   /** Actions planned */
-  actionsPlanned: number
+  actionsPlanned: number;
   /** Actions executed */
-  actionsExecuted: number
+  actionsExecuted: number;
   /** Actions failed */
-  actionsFailed: number
+  actionsFailed: number;
   /** Space reclaimed */
-  spaceReclaimed: number
+  spaceReclaimed: number;
   /** Files removed */
-  filesRemoved: number
+  filesRemoved: number;
   /** Cleanup summary by type */
-  cleanupByType: Record<string, CleanupTypeResults>
+  cleanupByType: Record<string, CleanupTypeResults>;
   /** Risk mitigation results */
-  riskMitigation: RiskMitigationResults
+  riskMitigation: RiskMitigationResults;
 }
 
 // Enumerations
@@ -225,7 +225,7 @@ export type ReportFormat =
   | 'pdf'
   | 'csv'
   | 'xml'
-  | 'yaml'
+  | 'yaml';
 
 export type ReportSection =
   | 'executive_summary'
@@ -236,11 +236,11 @@ export type ReportSection =
   | 'performance_metrics'
   | 'recommendations'
   | 'technical_details'
-  | 'appendices'
+  | 'appendices';
 
-export type DetailLevel = 'minimal' | 'standard' | 'detailed' | 'comprehensive'
+export type DetailLevel = 'minimal' | 'standard' | 'detailed' | 'comprehensive';
 
-export type AuditStatus = 'successful' | 'completed_with_warnings' | 'failed' | 'partial'
+export type AuditStatus = 'successful' | 'completed_with_warnings' | 'failed' | 'partial';
 
 export type AuditPhase =
   | 'initialization'
@@ -250,268 +250,268 @@ export type AuditPhase =
   | 'usage_analysis'
   | 'cleanup_planning'
   | 'cleanup_execution'
-  | 'report_generation'
+  | 'report_generation';
 
 // Supporting Types
 export interface FileDiscoveryResults {
   /** Total files found */
-  totalFilesFound: number
+  totalFilesFound: number;
   /** Files by type */
-  filesByType: Record<string, number>
+  filesByType: Record<string, number>;
   /** Files by location */
-  filesByLocation: Record<string, number>
+  filesByLocation: Record<string, number>;
   /** Largest files */
-  largestFiles: FileInfo[]
+  largestFiles: FileInfo[];
   /** Recently modified files */
-  recentlyModified: FileInfo[]
+  recentlyModified: FileInfo[];
   /** Files with issues */
-  problemFiles: ProblemFile[]
+  problemFiles: ProblemFile[];
 }
 
 export interface DependencyAnalysisResults {
   /** Total dependencies found */
-  totalDependencies: number
+  totalDependencies: number;
   /** Circular dependencies */
-  circularDependencies: CircularDependencyInfo[]
+  circularDependencies: CircularDependencyInfo[];
   /** Unused dependencies */
-  unusedDependencies: string[]
+  unusedDependencies: string[];
   /** Dependency depth statistics */
-  depthStatistics: DepthStatistics
+  depthStatistics: DepthStatistics;
   /** Import/export analysis */
-  importExportAnalysis: ImportExportAnalysis
+  importExportAnalysis: ImportExportAnalysis;
   /** External dependencies */
-  externalDependencies: ExternalDependencyInfo[]
+  externalDependencies: ExternalDependencyInfo[];
 }
 
 export interface ArchitectureValidationResults {
   /** Rules evaluated */
-  rulesEvaluated: number
+  rulesEvaluated: number;
   /** Rules passed */
-  rulesPassed: number
+  rulesPassed: number;
   /** Rules failed */
-  rulesFailed: number
+  rulesFailed: number;
   /** Violations by category */
-  violationsByCategory: Record<string, number>
+  violationsByCategory: Record<string, number>;
   /** Violations by severity */
-  violationsBySeverity: Record<string, number>
+  violationsBySeverity: Record<string, number>;
   /** Auto-fixable violations */
-  autoFixableViolations: number
+  autoFixableViolations: number;
 }
 
 export interface UsageAnalysisResults {
   /** Files marked as unused */
-  unusedFiles: string[]
+  unusedFiles: string[];
   /** Files marked as orphaned */
-  orphanedFiles: string[]
+  orphanedFiles: string[];
   /** Files marked as redundant */
-  redundantFiles: string[]
+  redundantFiles: string[];
   /** Usage patterns identified */
-  usagePatterns: UsagePattern[]
+  usagePatterns: UsagePattern[];
   /** Dead code analysis */
-  deadCodeAnalysis: DeadCodeAnalysis
+  deadCodeAnalysis: DeadCodeAnalysis;
 }
 
 export interface QualityMetrics {
   /** Code complexity metrics */
-  complexity: ComplexityMetrics
+  complexity: ComplexityMetrics;
   /** Maintainability index */
-  maintainability: MaintainabilityMetrics
+  maintainability: MaintainabilityMetrics;
   /** Test coverage metrics */
-  testCoverage: TestCoverageMetrics
+  testCoverage: TestCoverageMetrics;
   /** Documentation coverage */
-  documentationCoverage: DocumentationMetrics
+  documentationCoverage: DocumentationMetrics;
 }
 
 export interface CategoryScore {
   /** Score (0-100) */
-  score: number
+  score: number;
   /** Total rules in category */
-  totalRules: number
+  totalRules: number;
   /** Passing rules */
-  passingRules: number
+  passingRules: number;
   /** Most common violations */
-  commonViolations: string[]
+  commonViolations: string[];
 }
 
 export interface ViolationSummary {
   /** Rule identifier */
-  ruleId: string
+  ruleId: string;
   /** Rule name */
-  ruleName: string
+  ruleName: string;
   /** Violation count */
-  violationCount: number
+  violationCount: number;
   /** Files affected */
-  filesAffected: number
+  filesAffected: number;
   /** Severity */
-  severity: string
+  severity: string;
 }
 
 export interface ComplianceTrend {
   /** Category or rule */
-  category: string
+  category: string;
   /** Historical scores */
-  historicalScores: TrendPoint[]
+  historicalScores: TrendPoint[];
   /** Trend direction */
-  direction: 'improving' | 'declining' | 'stable'
+  direction: 'improving' | 'declining' | 'stable';
 }
 
 export interface TrendPoint {
   /** Timestamp */
-  timestamp: Date
+  timestamp: Date;
   /** Score at that time */
-  score: number
+  score: number;
 }
 
 export interface FrameworkCompliance {
   /** Turborepo compliance */
-  turborepo: FrameworkScore
+  turborepo: FrameworkScore;
   /** Hono compliance */
-  hono: FrameworkScore
+  hono: FrameworkScore;
   /** TanStack Router compliance */
-  tanstackRouter: FrameworkScore
+  tanstackRouter: FrameworkScore;
 }
 
 export interface FrameworkScore {
   /** Compliance score */
-  score: number
+  score: number;
   /** Patterns validated */
-  patternsValidated: number
+  patternsValidated: number;
   /** Common issues */
-  commonIssues: string[]
+  commonIssues: string[];
 }
 
 export interface CleanupTypeResults {
   /** Files affected */
-  filesAffected: number
+  filesAffected: number;
   /** Success rate */
-  successRate: number
+  successRate: number;
   /** Space saved */
-  spaceSaved: number
+  spaceSaved: number;
   /** Time taken */
-  timeTaken: number
+  timeTaken: number;
 }
 
 export interface RiskMitigationResults {
   /** High-risk actions handled */
-  highRiskActionsHandled: number
+  highRiskActionsHandled: number;
   /** Risk mitigations applied */
-  mitigationsApplied: string[]
+  mitigationsApplied: string[];
   /** Remaining risks */
-  remainingRisks: RemainingRisk[]
+  remainingRisks: RemainingRisk[];
 }
 
 export interface RemainingRisk {
   /** Risk description */
-  description: string
+  description: string;
   /** Risk level */
-  level: 'low' | 'medium' | 'high' | 'critical'
+  level: 'low' | 'medium' | 'high' | 'critical';
   /** Recommended action */
-  recommendedAction: string
+  recommendedAction: string;
 }
 
 export interface BeforeAfterComparison {
   /** Repository metrics before */
-  before: RepositoryMetrics
+  before: RepositoryMetrics;
   /** Repository metrics after */
-  after: RepositoryMetrics
+  after: RepositoryMetrics;
   /** Improvement metrics */
-  improvements: ImprovementMetrics
+  improvements: ImprovementMetrics;
 }
 
 export interface RepositoryMetrics {
   /** Total files */
-  totalFiles: number
+  totalFiles: number;
   /** Total size in bytes */
-  totalSize: number
+  totalSize: number;
   /** Lines of code */
-  linesOfCode: number
+  linesOfCode: number;
   /** Number of packages */
-  packageCount: number
+  packageCount: number;
   /** Dependency count */
-  dependencyCount: number
+  dependencyCount: number;
   /** Circular dependencies */
-  circularDependencies: number
+  circularDependencies: number;
   /** Architecture violations */
-  architectureViolations: number
+  architectureViolations: number;
 }
 
 export interface ImprovementMetrics {
   /** Files removed */
-  filesRemoved: number
+  filesRemoved: number;
   /** Size reduction */
-  sizeReduction: number
+  sizeReduction: number;
   /** Size reduction percentage */
-  sizeReductionPercentage: number
+  sizeReductionPercentage: number;
   /** Complexity reduction */
-  complexityReduction: number
+  complexityReduction: number;
   /** Violations fixed */
-  violationsFixed: number
+  violationsFixed: number;
 }
 
 export interface PerformanceMetrics {
   /** Phase execution times */
-  phaseExecutionTimes: Record<AuditPhase, number>
+  phaseExecutionTimes: Record<AuditPhase, number>;
   /** Memory usage statistics */
-  memoryUsage: MemoryUsageMetrics
+  memoryUsage: MemoryUsageMetrics;
   /** I/O statistics */
-  ioStatistics: IOStatistics
+  ioStatistics: IOStatistics;
   /** Throughput metrics */
-  throughputMetrics: ThroughputMetrics
+  throughputMetrics: ThroughputMetrics;
 }
 
 export interface MemoryUsageMetrics {
   /** Peak memory usage */
-  peakUsage: number
+  peakUsage: number;
   /** Average memory usage */
-  averageUsage: number
+  averageUsage: number;
   /** Memory usage by phase */
-  usageByPhase: Record<AuditPhase, number>
+  usageByPhase: Record<AuditPhase, number>;
 }
 
 export interface IOStatistics {
   /** Files read */
-  filesRead: number
+  filesRead: number;
   /** Files written */
-  filesWritten: number
+  filesWritten: number;
   /** Bytes read */
-  bytesRead: number
+  bytesRead: number;
   /** Bytes written */
-  bytesWritten: number
+  bytesWritten: number;
   /** I/O operations per second */
-  iopsAverage: number
+  iopsAverage: number;
 }
 
 export interface ThroughputMetrics {
   /** Files processed per second */
-  filesPerSecond: number
+  filesPerSecond: number;
   /** Lines analyzed per second */
-  linesPerSecond: number
+  linesPerSecond: number;
   /** Dependencies analyzed per second */
-  dependenciesPerSecond: number
+  dependenciesPerSecond: number;
 }
 
 export interface RecommendationSection {
   /** Recommendation category */
-  category: string
+  category: string;
   /** Priority level */
-  priority: 'low' | 'medium' | 'high' | 'critical'
+  priority: 'low' | 'medium' | 'high' | 'critical';
   /** Recommendations list */
-  recommendations: Recommendation[]
+  recommendations: Recommendation[];
 }
 
 export interface Recommendation {
   /** Recommendation title */
-  title: string
+  title: string;
   /** Detailed description */
-  description: string
+  description: string;
   /** Expected benefit */
-  expectedBenefit: string
+  expectedBenefit: string;
   /** Implementation effort */
-  implementationEffort: 'low' | 'medium' | 'high'
+  implementationEffort: 'low' | 'medium' | 'high';
   /** Affected areas */
-  affectedAreas: string[]
+  affectedAreas: string[];
   /** Priority score */
-  priorityScore: number
+  priorityScore: number;
 }
 
 // Service Interface
@@ -522,14 +522,14 @@ export interface IReportGenerator {
    * @param options Report generation options
    * @returns Promise resolving to generated report
    */
-  generateAuditReport(auditData: AuditData, options: ReportOptions,): Promise<GeneratedReport>
+  generateAuditReport(auditData: AuditData, options: ReportOptions): Promise<GeneratedReport>;
 
   /**
    * Generate executive summary
    * @param auditData Audit results
    * @returns Promise resolving to executive summary
    */
-  generateExecutiveSummary(auditData: AuditData,): Promise<ExecutiveSummary>
+  generateExecutiveSummary(auditData: AuditData): Promise<ExecutiveSummary>;
 
   /**
    * Generate technical report
@@ -540,7 +540,7 @@ export interface IReportGenerator {
   generateTechnicalReport(
     auditData: AuditData,
     options: TechnicalReportOptions,
-  ): Promise<TechnicalReport>
+  ): Promise<TechnicalReport>;
 
   /**
    * Generate comparison report
@@ -548,7 +548,7 @@ export interface IReportGenerator {
    * @param afterData Current audit data
    * @returns Promise resolving to comparison report
    */
-  generateComparisonReport(beforeData: AuditData, afterData: AuditData,): Promise<ComparisonReport>
+  generateComparisonReport(beforeData: AuditData, afterData: AuditData): Promise<ComparisonReport>;
 
   /**
    * Export report in specified format
@@ -557,14 +557,14 @@ export interface IReportGenerator {
    * @param outputPath Output file path
    * @returns Promise resolving when export complete
    */
-  exportReport(report: GeneratedReport, format: ReportFormat, outputPath: string,): Promise<void>
+  exportReport(report: GeneratedReport, format: ReportFormat, outputPath: string): Promise<void>;
 
   /**
    * Generate metrics dashboard
    * @param auditData Audit results
    * @returns Promise resolving to dashboard HTML
    */
-  generateDashboard(auditData: AuditData,): Promise<string>
+  generateDashboard(auditData: AuditData): Promise<string>;
 
   /**
    * Create report template
@@ -572,194 +572,194 @@ export interface IReportGenerator {
    * @param templateConfig Template configuration
    * @returns Promise resolving to created template
    */
-  createTemplate(templateName: string, templateConfig: ReportTemplate,): Promise<void>
+  createTemplate(templateName: string, templateConfig: ReportTemplate): Promise<void>;
 }
 
 export interface AuditData {
   /** File scan results */
-  fileResults: any
+  fileResults: any;
   /** Dependency analysis results */
-  dependencyResults: any
+  dependencyResults: any;
   /** Architecture validation results */
-  architectureResults: any
+  architectureResults: any;
   /** Cleanup execution results */
-  cleanupResults: any
+  cleanupResults: any;
   /** Performance metrics */
-  performanceMetrics: PerformanceMetrics
+  performanceMetrics: PerformanceMetrics;
 }
 
 export interface GeneratedReport {
   /** Report metadata */
-  metadata: ReportMetadata
+  metadata: ReportMetadata;
   /** Report content */
-  content: string
+  content: string;
   /** Attachments/supplementary files */
-  attachments: ReportAttachment[]
+  attachments: ReportAttachment[];
 }
 
 export interface ReportMetadata {
   /** Report ID */
-  reportId: string
+  reportId: string;
   /** Generation timestamp */
-  generatedAt: Date
+  generatedAt: Date;
   /** Report format */
-  format: ReportFormat
+  format: ReportFormat;
   /** Report size in bytes */
-  size: number
+  size: number;
   /** Generation time in ms */
-  generationTime: number
+  generationTime: number;
 }
 
 export interface ReportAttachment {
   /** Attachment name */
-  name: string
+  name: string;
   /** Attachment type */
-  type: 'data' | 'chart' | 'log' | 'raw_data'
+  type: 'data' | 'chart' | 'log' | 'raw_data';
   /** Content or file path */
-  content: string
+  content: string;
   /** Size in bytes */
-  size: number
+  size: number;
 }
 
 export interface ExecutiveSummary {
   /** Overall assessment */
-  overallAssessment: string
+  overallAssessment: string;
   /** Key findings */
-  keyFindings: string[]
+  keyFindings: string[];
   /** Recommendations */
-  topRecommendations: string[]
+  topRecommendations: string[];
   /** Metrics summary */
-  metricsSummary: Record<string, number>
+  metricsSummary: Record<string, number>;
 }
 
 export interface TechnicalReport {
   /** Detailed findings */
-  detailedFindings: any
+  detailedFindings: any;
   /** Technical metrics */
-  technicalMetrics: any
+  technicalMetrics: any;
   /** Implementation details */
-  implementationDetails: any
+  implementationDetails: any;
 }
 
 export interface TechnicalReportOptions {
   /** Include code samples */
-  includeCodeSamples: boolean
+  includeCodeSamples: boolean;
   /** Include dependency graphs */
-  includeDependencyGraphs: boolean
+  includeDependencyGraphs: boolean;
   /** Include performance details */
-  includePerformanceDetails: boolean
+  includePerformanceDetails: boolean;
 }
 
 export interface ComparisonReport {
   /** Before snapshot */
-  before: RepositorySnapshot
+  before: RepositorySnapshot;
   /** After snapshot */
-  after: RepositorySnapshot
+  after: RepositorySnapshot;
   /** Changes summary */
-  changesSummary: ChangesSummary
+  changesSummary: ChangesSummary;
 }
 
 export interface RepositorySnapshot {
   /** Snapshot timestamp */
-  timestamp: Date
+  timestamp: Date;
   /** Repository metrics */
-  metrics: RepositoryMetrics
+  metrics: RepositoryMetrics;
   /** Issues found */
-  issues: IssueSnapshot[]
+  issues: IssueSnapshot[];
 }
 
 export interface IssueSnapshot {
   /** Issue category */
-  category: string
+  category: string;
   /** Issue count */
-  count: number
+  count: number;
   /** Severity breakdown */
-  severityBreakdown: Record<string, number>
+  severityBreakdown: Record<string, number>;
 }
 
 export interface ChangesSummary {
   /** Issues resolved */
-  issuesResolved: number
+  issuesResolved: number;
   /** Issues introduced */
-  issuesIntroduced: number
+  issuesIntroduced: number;
   /** Net improvement */
-  netImprovement: number
+  netImprovement: number;
   /** Key changes */
-  keyChanges: string[]
+  keyChanges: string[];
 }
 
 export interface ReportTemplate {
   /** Template sections */
-  sections: TemplateSection[]
+  sections: TemplateSection[];
   /** Styling configuration */
-  styling: StylingConfig
+  styling: StylingConfig;
   /** Output format options */
-  formatOptions: FormatOptions
+  formatOptions: FormatOptions;
 }
 
 export interface TemplateSection {
   /** Section name */
-  name: string
+  name: string;
   /** Section template */
-  template: string
+  template: string;
   /** Whether section is required */
-  required: boolean
+  required: boolean;
   /** Section order */
-  order: number
+  order: number;
 }
 
 export interface StylingConfig {
   /** CSS styles */
-  css?: string
+  css?: string;
   /** Color scheme */
-  colorScheme?: string
+  colorScheme?: string;
   /** Font configuration */
-  fonts?: FontConfig
+  fonts?: FontConfig;
 }
 
 export interface FontConfig {
   /** Primary font family */
-  primary: string
+  primary: string;
   /** Monospace font family */
-  monospace: string
+  monospace: string;
   /** Font sizes */
-  sizes: Record<string, string>
+  sizes: Record<string, string>;
 }
 
 export interface FormatOptions {
   /** Include table of contents */
-  includeTableOfContents: boolean
+  includeTableOfContents: boolean;
   /** Include page numbers */
-  includePageNumbers: boolean
+  includePageNumbers: boolean;
   /** Include timestamps */
-  includeTimestamps: boolean
+  includeTimestamps: boolean;
 }
 
 // Contract Tests Requirements
 export interface ReportGeneratorContractTests {
   /** Test basic report generation */
-  testBasicReportGeneration(): Promise<void>
+  testBasicReportGeneration(): Promise<void>;
 
   /** Test multiple format exports */
-  testMultipleFormatExports(): Promise<void>
+  testMultipleFormatExports(): Promise<void>;
 
   /** Test executive summary creation */
-  testExecutiveSummaryCreation(): Promise<void>
+  testExecutiveSummaryCreation(): Promise<void>;
 
   /** Test comparison report generation */
-  testComparisonReportGeneration(): Promise<void>
+  testComparisonReportGeneration(): Promise<void>;
 
   /** Test dashboard generation */
-  testDashboardGeneration(): Promise<void>
+  testDashboardGeneration(): Promise<void>;
 
   /** Test custom template creation */
-  testCustomTemplateCreation(): Promise<void>
+  testCustomTemplateCreation(): Promise<void>;
 
   /** Test large dataset handling */
-  testLargeDatasetHandling(): Promise<void>
+  testLargeDatasetHandling(): Promise<void>;
 
   /** Test report validation */
-  testReportValidation(): Promise<void>
+  testReportValidation(): Promise<void>;
 }
 
 // Default Configuration
@@ -776,7 +776,7 @@ export const DEFAULT_REPORT_OPTIONS: ReportOptions = {
   detailLevel: 'standard',
   includeVisualizations: true,
   includeRawData: false,
-}
+};
 
 // Performance Constraints
 export const REPORT_PERFORMANCE_REQUIREMENTS = {
@@ -786,4 +786,4 @@ export const REPORT_PERFORMANCE_REQUIREMENTS = {
   MAX_MEMORY_USAGE: 200_000_000, // 200MB
   /** Maximum report size (bytes) */
   MAX_REPORT_SIZE: 50_000_000, // 50MB
-} as const
+} as const;

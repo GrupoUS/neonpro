@@ -1,6 +1,7 @@
 # Governance Service Tests
 
 Layering strategy:
+
 - contract/: Public surface guarantees (service method behavior, invariants)
 - scenario/: Multi-step behavioral flows spanning multiple services
 - unit/: Pure deterministic helpers & calculation logic

@@ -689,20 +689,20 @@ const securityHeaders = [
   {
     key: 'Content-Security-Policy',
     value: [
-      "default-src 'self'",
-      "script-src 'self' 'strict-dynamic' https: 'nonce-<generated>'",
-      "style-src 'self' https:",
-      "img-src 'self' data:",
-      "font-src 'self'",
-      "connect-src 'self' https:",
-      "frame-src 'none'",
-      "worker-src 'self'",
-      "base-uri 'none'",
-      "form-action 'self'",
-      "object-src 'none'",
+      'default-src \'self\'',
+      'script-src \'self\' \'strict-dynamic\' https: \'nonce-<generated>\'',
+      'style-src \'self\' https:',
+      'img-src \'self\' data:',
+      'font-src \'self\'',
+      'connect-src \'self\' https:',
+      'frame-src \'none\'',
+      'worker-src \'self\'',
+      'base-uri \'none\'',
+      'form-action \'self\'',
+      'object-src \'none\'',
       'block-all-mixed-content',
       'upgrade-insecure-requests',
-    ].join('; ',),
+    ].join('; '),
   },
   {
     key: 'Strict-Transport-Security',
@@ -720,7 +720,7 @@ const securityHeaders = [
     key: 'Referrer-Policy',
     value: 'strict-origin-when-cross-origin',
   },
-]
+];
 ```
 
 ### LGPD Compliance Features
@@ -810,14 +810,14 @@ pnpm run build
 
 ```typescript
 // Internal packages
-import type { Patient, } from '@neonpro/types'
-import { Button, } from '@neonpro/ui'
-import { formatDate, } from '@neonpro/utils'
+import type { Patient } from '@neonpro/types';
+import { Button } from '@neonpro/ui';
+import { formatDate } from '@neonpro/utils';
 
 // Local imports
-import { Header, } from '@/components/header'
-import { useAuth, } from '@/hooks/useAuth'
-import { cn, } from '@/lib/utils'
+import { Header } from '@/components/header';
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
 ```
 
 ### File Naming Conventions

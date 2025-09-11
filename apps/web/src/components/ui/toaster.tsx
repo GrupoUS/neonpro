@@ -1,3 +1,3 @@
 export function Toaster() {
-  return null
+  return null;
 }

@@ -1,149 +1,149 @@
-import { EventEmitter, } from 'events'
-import { existsSync, readFileSync, unwatchFile, watchFile, } from 'fs'
-import { join, resolve, } from 'path'
-import { LogContext, logger, } from './Logger.js'
-import { LogLevel, } from './Logger.js'
+import { EventEmitter } from 'events';
+import { existsSync, readFileSync, unwatchFile, watchFile } from 'fs';
+import { join, resolve } from 'path';
+import { LogContext, logger } from './Logger.js';
+import { LogLevel } from './Logger.js';
 
 export interface AuditToolConfig {
   // Core settings
-  projectName: string
-  version: string
-  environment: 'development' | 'testing' | 'production'
+  projectName: string;
+  version: string;
+  environment: 'development' | 'testing' | 'production';
 
   // Scanning configuration
   scanning: {
-    includePaths: string[]
-    excludePaths: string[]
-    fileExtensions: string[]
-    maxFileSize: number // in bytes
-    followSymlinks: boolean
-    respectGitignore: boolean
-    maxDepth: number
-    parallelism: number
-  }
+    includePaths: string[];
+    excludePaths: string[];
+    fileExtensions: string[];
+    maxFileSize: number; // in bytes
+    followSymlinks: boolean;
+    respectGitignore: boolean;
+    maxDepth: number;
+    parallelism: number;
+  };
 
   // Dependency analysis
   dependencies: {
-    enableCircularDetection: boolean
-    enableUnusedDetection: boolean
-    enableDuplicateDetection: boolean
-    importanceThreshold: number
-    maxDependencyDepth: number
-    excludeDevDependencies: boolean
-  }
+    enableCircularDetection: boolean;
+    enableUnusedDetection: boolean;
+    enableDuplicateDetection: boolean;
+    importanceThreshold: number;
+    maxDependencyDepth: number;
+    excludeDevDependencies: boolean;
+  };
 
   // Architecture validation
   architecture: {
-    enableTurborepoValidation: boolean
-    enableHonoValidation: boolean
-    enableTanStackRouterValidation: boolean
-    customRulesPath?: string
-    strictMode: boolean
-    autoFixEnabled: boolean
-  }
+    enableTurborepoValidation: boolean;
+    enableHonoValidation: boolean;
+    enableTanStackRouterValidation: boolean;
+    customRulesPath?: string;
+    strictMode: boolean;
+    autoFixEnabled: boolean;
+  };
 
   // Cleanup settings
   cleanup: {
-    enabled: boolean
-    createBackups: boolean
-    backupDirectory: string
-    dryRunByDefault: boolean
-    confirmationRequired: boolean
+    enabled: boolean;
+    createBackups: boolean;
+    backupDirectory: string;
+    dryRunByDefault: boolean;
+    confirmationRequired: boolean;
     cleanupTypes: {
-      unusedFiles: boolean
-      duplicateFiles: boolean
-      orphanedFiles: boolean
-      emptyDirectories: boolean
-    }
-  }
+      unusedFiles: boolean;
+      duplicateFiles: boolean;
+      orphanedFiles: boolean;
+      emptyDirectories: boolean;
+    };
+  };
 
   // Reporting
   reporting: {
-    defaultFormat: 'json' | 'html' | 'markdown' | 'pdf'
-    outputDirectory: string
-    includeMetrics: boolean
-    generateDashboard: boolean
-    includeRecommendations: boolean
-    templatePath?: string
-  }
+    defaultFormat: 'json' | 'html' | 'markdown' | 'pdf';
+    outputDirectory: string;
+    includeMetrics: boolean;
+    generateDashboard: boolean;
+    includeRecommendations: boolean;
+    templatePath?: string;
+  };
 
   // Performance monitoring
   performance: {
-    enabled: boolean
-    collectMetrics: boolean
-    metricsInterval: number // milliseconds
-    memoryThreshold: number // MB
-    operationTimeout: number // milliseconds
-    eventLoopThreshold: number // milliseconds
-  }
+    enabled: boolean;
+    collectMetrics: boolean;
+    metricsInterval: number; // milliseconds
+    memoryThreshold: number; // MB
+    operationTimeout: number; // milliseconds
+    eventLoopThreshold: number; // milliseconds
+  };
 
   // Logging
   logging: {
-    level: LogLevel
-    format: 'json' | 'text' | 'pretty'
-    enableConsole: boolean
-    enableFile: boolean
-    logDirectory: string
-    maxFileSize: number
-    maxFiles: number
-  }
+    level: LogLevel;
+    format: 'json' | 'text' | 'pretty';
+    enableConsole: boolean;
+    enableFile: boolean;
+    logDirectory: string;
+    maxFileSize: number;
+    maxFiles: number;
+  };
 
   // CLI settings
   cli: {
-    defaultCommand: string
-    enableColors: boolean
-    enableProgress: boolean
-    confirmDestructiveActions: boolean
-  }
+    defaultCommand: string;
+    enableColors: boolean;
+    enableProgress: boolean;
+    confirmDestructiveActions: boolean;
+  };
 
   // Cache settings
   cache: {
-    enabled: boolean
-    directory: string
-    ttl: number // seconds
-    maxSize: number // MB
-  }
+    enabled: boolean;
+    directory: string;
+    ttl: number; // seconds
+    maxSize: number; // MB
+  };
 
   // Integration settings
   integrations: {
     git: {
-      enabled: boolean
-      respectGitignore: boolean
-      trackChanges: boolean
-    }
+      enabled: boolean;
+      respectGitignore: boolean;
+      trackChanges: boolean;
+    };
     ci: {
-      enabled: boolean
-      failOnIssues: boolean
-      generateArtifacts: boolean
-    }
-  }
+      enabled: boolean;
+      failOnIssues: boolean;
+      generateArtifacts: boolean;
+    };
+  };
 }
 
 export interface ConfigValidationError {
-  path: string
-  message: string
-  value: any
-  expected?: string
+  path: string;
+  message: string;
+  value: any;
+  expected?: string;
 }
 
 export interface ConfigSource {
-  name: string
-  priority: number
-  load(): Partial<AuditToolConfig>
+  name: string;
+  priority: number;
+  load(): Partial<AuditToolConfig>;
 }
 
 export class ConfigManager extends EventEmitter {
-  private config: AuditToolConfig
-  private sources: ConfigSource[] = []
-  private watchedFiles: Set<string> = new Set()
-  private validationErrors: ConfigValidationError[] = []
+  private config: AuditToolConfig;
+  private sources: ConfigSource[] = [];
+  private watchedFiles: Set<string> = new Set();
+  private validationErrors: ConfigValidationError[] = [];
 
-  constructor(initialConfig?: Partial<AuditToolConfig>,) {
-    super()
-    this.config = this.getDefaultConfig()
+  constructor(initialConfig?: Partial<AuditToolConfig>) {
+    super();
+    this.config = this.getDefaultConfig();
 
     if (initialConfig) {
-      this.mergeConfig(initialConfig,)
+      this.mergeConfig(initialConfig);
     }
   }
 
@@ -154,7 +154,7 @@ export class ConfigManager extends EventEmitter {
       environment: 'development',
 
       scanning: {
-        includePaths: ['apps/**', 'packages/**', 'libs/**',],
+        includePaths: ['apps/**', 'packages/**', 'libs/**'],
         excludePaths: [
           'node_modules/**',
           'dist/**',
@@ -166,7 +166,7 @@ export class ConfigManager extends EventEmitter {
           '**/.DS_Store',
           '**/Thumbs.db',
         ],
-        fileExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.md',],
+        fileExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.md'],
         maxFileSize: 5 * 1024 * 1024, // 5MB
         followSymlinks: false,
         respectGitignore: true,
@@ -258,14 +258,14 @@ export class ConfigManager extends EventEmitter {
           generateArtifacts: true,
         },
       },
-    }
+    };
   } // Configuration validation methods
-  private validateConfig(config: Partial<AuditToolConfig>,): ConfigValidationError[] {
-    const errors: ConfigValidationError[] = []
+  private validateConfig(config: Partial<AuditToolConfig>): ConfigValidationError[] {
+    const errors: ConfigValidationError[] = [];
 
     // Validate scanning configuration
     if (config.scanning) {
-      const scanning = config.scanning
+      const scanning = config.scanning;
 
       if (
         scanning.maxFileSize
@@ -276,7 +276,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Max file size must be between 0 and 100MB',
           value: scanning.maxFileSize,
           expected: '0 - 104857600 bytes',
-        },)
+        });
       }
 
       if (scanning.maxDepth && (scanning.maxDepth < 1 || scanning.maxDepth > 50)) {
@@ -285,7 +285,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Max depth must be between 1 and 50',
           value: scanning.maxDepth,
           expected: '1-50',
-        },)
+        });
       }
 
       if (scanning.parallelism && (scanning.parallelism < 1 || scanning.parallelism > 32)) {
@@ -294,13 +294,13 @@ export class ConfigManager extends EventEmitter {
           message: 'Parallelism must be between 1 and 32',
           value: scanning.parallelism,
           expected: '1-32',
-        },)
+        });
       }
     }
 
     // Validate dependencies configuration
     if (config.dependencies) {
-      const deps = config.dependencies
+      const deps = config.dependencies;
 
       if (
         deps.importanceThreshold
@@ -311,7 +311,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Importance threshold must be between 0 and 1',
           value: deps.importanceThreshold,
           expected: '0.0-1.0',
-        },)
+        });
       }
 
       if (deps.maxDependencyDepth && deps.maxDependencyDepth < 1) {
@@ -320,13 +320,13 @@ export class ConfigManager extends EventEmitter {
           message: 'Max dependency depth must be at least 1',
           value: deps.maxDependencyDepth,
           expected: '≥ 1',
-        },)
+        });
       }
     }
 
     // Validate performance configuration
     if (config.performance) {
-      const perf = config.performance
+      const perf = config.performance;
 
       if (perf.metricsInterval && perf.metricsInterval < 1000) {
         errors.push({
@@ -334,7 +334,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Metrics interval must be at least 1000ms',
           value: perf.metricsInterval,
           expected: '≥ 1000',
-        },)
+        });
       }
 
       if (perf.memoryThreshold && perf.memoryThreshold < 64) {
@@ -343,7 +343,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Memory threshold must be at least 64MB',
           value: perf.memoryThreshold,
           expected: '≥ 64',
-        },)
+        });
       }
 
       if (
@@ -355,13 +355,13 @@ export class ConfigManager extends EventEmitter {
           message: 'Operation timeout must be between 1 second and 5 minutes',
           value: perf.operationTimeout,
           expected: '1000-300000 ms',
-        },)
+        });
       }
     }
 
     // Validate logging configuration
     if (config.logging) {
-      const logging = config.logging
+      const logging = config.logging;
 
       if (logging.level !== undefined && (logging.level < 0 || logging.level > 4)) {
         errors.push({
@@ -369,7 +369,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Log level must be between 0 (ERROR) and 4 (TRACE)',
           value: logging.level,
           expected: '0-4',
-        },)
+        });
       }
 
       if (logging.maxFileSize && logging.maxFileSize < 1024 * 1024) {
@@ -378,7 +378,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Max log file size must be at least 1MB',
           value: logging.maxFileSize,
           expected: '≥ 1048576 bytes',
-        },)
+        });
       }
 
       if (logging.maxFiles && (logging.maxFiles < 1 || logging.maxFiles > 100)) {
@@ -387,13 +387,13 @@ export class ConfigManager extends EventEmitter {
           message: 'Max log files must be between 1 and 100',
           value: logging.maxFiles,
           expected: '1-100',
-        },)
+        });
       }
     }
 
     // Validate cache configuration
     if (config.cache) {
-      const cache = config.cache
+      const cache = config.cache;
 
       if (cache.ttl && cache.ttl < 60) {
         errors.push({
@@ -401,7 +401,7 @@ export class ConfigManager extends EventEmitter {
           message: 'Cache TTL must be at least 60 seconds',
           value: cache.ttl,
           expected: '≥ 60',
-        },)
+        });
       }
 
       if (cache.maxSize && (cache.maxSize < 10 || cache.maxSize > 10000)) {
@@ -410,44 +410,44 @@ export class ConfigManager extends EventEmitter {
           message: 'Cache max size must be between 10MB and 10GB',
           value: cache.maxSize,
           expected: '10-10000 MB',
-        },)
+        });
       }
     }
 
-    return errors
+    return errors;
   } // Configuration source loaders
-  private createFileSource(filePath: string, priority: number = 50,): ConfigSource {
+  private createFileSource(filePath: string, priority: number = 50): ConfigSource {
     return {
       name: `file:${filePath}`,
       priority,
       load: (): Partial<AuditToolConfig> => {
-        const resolvedPath = resolve(filePath,)
+        const resolvedPath = resolve(filePath);
 
-        if (!existsSync(resolvedPath,)) {
+        if (!existsSync(resolvedPath)) {
           logger.debug(`Config file not found: ${resolvedPath}`, {
             component: 'ConfigManager',
-          },)
-          return {}
+          });
+          return {};
         }
 
         try {
-          const content = readFileSync(resolvedPath, 'utf8',)
-          let config: Partial<AuditToolConfig>
+          const content = readFileSync(resolvedPath, 'utf8');
+          let config: Partial<AuditToolConfig>;
 
-          if (resolvedPath.endsWith('.json',)) {
-            config = JSON.parse(content,)
+          if (resolvedPath.endsWith('.json')) {
+            config = JSON.parse(content);
           } else {
             throw new Error(
               `Only JSON configuration files are supported for security reasons. Found: ${resolvedPath}`,
-            )
+            );
           }
 
           logger.info(`Loaded configuration from file: ${resolvedPath}`, {
             component: 'ConfigManager',
-            metadata: { configKeys: Object.keys(config,), },
-          },)
+            metadata: { configKeys: Object.keys(config) },
+          });
 
-          return config
+          return config;
         } catch (error) {
           logger.error(
             `Failed to load config file: ${resolvedPath}`,
@@ -455,219 +455,219 @@ export class ConfigManager extends EventEmitter {
               component: 'ConfigManager',
             },
             error as Error,
-          )
-          return {}
+          );
+          return {};
         }
       },
-    }
+    };
   }
 
-  private createEnvironmentSource(prefix: string = 'AUDIT_TOOL_',): ConfigSource {
+  private createEnvironmentSource(prefix: string = 'AUDIT_TOOL_'): ConfigSource {
     return {
       name: 'environment',
       priority: 75,
       load: (): Partial<AuditToolConfig> => {
-        const config: any = {}
-        const envVars = Object.keys(process.env,)
-          .filter(key => key.startsWith(prefix,))
-          .sort()
+        const config: any = {};
+        const envVars = Object.keys(process.env)
+          .filter(key => key.startsWith(prefix))
+          .sort();
 
         for (const envKey of envVars) {
-          const value = process.env[envKey]
+          const value = process.env[envKey];
           if (value === undefined) {
-            continue
+            continue;
           }
 
           // Convert env key to config path
-          const configPath = envKey.substring(prefix.length,).toLowerCase().split('_',)
+          const configPath = envKey.substring(prefix.length).toLowerCase().split('_');
 
           // Set nested value
-          let current = config
+          let current = config;
           for (let i = 0; i < configPath.length - 1; i++) {
-            const key = configPath[i]
+            const key = configPath[i];
             if (!(key in current)) {
-              current[key] = {}
+              current[key] = {};
             }
-            current = current[key]
+            current = current[key];
           }
 
-          const finalKey = configPath[configPath.length - 1]
+          const finalKey = configPath[configPath.length - 1];
 
           // Type conversion
-          let parsedValue: any = value
+          let parsedValue: any = value;
           if (value === 'true') {
-            parsedValue = true
+            parsedValue = true;
           } else if (value === 'false') {
-            parsedValue = false
-          } else if (/^\d+$/.test(value,)) {
-            parsedValue = parseInt(value, 10,)
-          } else if (/^\d*\.\d+$/.test(value,)) {
-            parsedValue = parseFloat(value,)
-          } else if (value.startsWith('[',) && value.endsWith(']',)) {
+            parsedValue = false;
+          } else if (/^\d+$/.test(value)) {
+            parsedValue = parseInt(value, 10);
+          } else if (/^\d*\.\d+$/.test(value)) {
+            parsedValue = parseFloat(value);
+          } else if (value.startsWith('[') && value.endsWith(']')) {
             try {
-              parsedValue = JSON.parse(value,)
+              parsedValue = JSON.parse(value);
             } catch {
               // Keep as string if JSON parsing fails
             }
           }
 
-          current[finalKey] = parsedValue
+          current[finalKey] = parsedValue;
         }
 
-        if (Object.keys(config,).length > 0) {
+        if (Object.keys(config).length > 0) {
           logger.info(`Loaded configuration from environment variables`, {
             component: 'ConfigManager',
-            metadata: { prefix, variableCount: envVars.length, },
-          },)
+            metadata: { prefix, variableCount: envVars.length },
+          });
         }
 
-        return config
+        return config;
       },
-    }
+    };
   }
 
-  private createCliArgsSource(args: string[],): ConfigSource {
+  private createCliArgsSource(args: string[]): ConfigSource {
     return {
       name: 'cli-args',
       priority: 100,
       load: (): Partial<AuditToolConfig> => {
-        const config: any = {}
+        const config: any = {};
 
         for (let i = 0; i < args.length; i++) {
-          const arg = args[i]
+          const arg = args[i];
 
-          if (arg.startsWith('--config-',)) {
-            const configPath = arg.substring(9,).split('-',)
-            const value = args[i + 1]
+          if (arg.startsWith('--config-')) {
+            const configPath = arg.substring(9).split('-');
+            const value = args[i + 1];
 
-            if (value && !value.startsWith('--',)) {
+            if (value && !value.startsWith('--')) {
               // Set nested value
-              let current = config
+              let current = config;
               for (let j = 0; j < configPath.length - 1; j++) {
-                const key = configPath[j]
+                const key = configPath[j];
                 if (!(key in current)) {
-                  current[key] = {}
+                  current[key] = {};
                 }
-                current = current[key]
+                current = current[key];
               }
 
-              const finalKey = configPath[configPath.length - 1]
+              const finalKey = configPath[configPath.length - 1];
 
               // Type conversion
-              let parsedValue: any = value
+              let parsedValue: any = value;
               if (value === 'true') {
-                parsedValue = true
+                parsedValue = true;
               } else if (value === 'false') {
-                parsedValue = false
-              } else if (/^\d+$/.test(value,)) {
-                parsedValue = parseInt(value, 10,)
-              } else if (/^\d*\.\d+$/.test(value,)) {
-                parsedValue = parseFloat(value,)
+                parsedValue = false;
+              } else if (/^\d+$/.test(value)) {
+                parsedValue = parseInt(value, 10);
+              } else if (/^\d*\.\d+$/.test(value)) {
+                parsedValue = parseFloat(value);
               }
 
-              current[finalKey] = parsedValue
-              i++ // Skip the value argument
+              current[finalKey] = parsedValue;
+              i++; // Skip the value argument
             }
           }
         }
 
-        if (Object.keys(config,).length > 0) {
+        if (Object.keys(config).length > 0) {
           logger.info(`Loaded configuration from CLI arguments`, {
             component: 'ConfigManager',
-            metadata: { configCount: Object.keys(config,).length, },
-          },)
+            metadata: { configCount: Object.keys(config).length },
+          });
         }
 
-        return config
+        return config;
       },
-    }
+    };
   } // Configuration merging and management
-  private mergeConfig(partial: Partial<AuditToolConfig>,): void {
-    this.config = this.deepMerge(this.config, partial,)
+  private mergeConfig(partial: Partial<AuditToolConfig>): void {
+    this.config = this.deepMerge(this.config, partial);
   }
 
-  private deepMerge(target: any, source: any,): any {
-    const result = { ...target, }
+  private deepMerge(target: any, source: any): any {
+    const result = { ...target };
 
     for (const key in source) {
-      if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key],)) {
-        result[key] = this.deepMerge(target[key] || {}, source[key],)
+      if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        result[key] = this.deepMerge(target[key] || {}, source[key]);
       } else {
-        result[key] = source[key]
+        result[key] = source[key];
       }
     }
 
-    return result
+    return result;
   }
 
   // Public API methods
-  public addSource(source: ConfigSource,): void {
-    this.sources.push(source,)
-    this.sources.sort((a, b,) => a.priority - b.priority)
+  public addSource(source: ConfigSource): void {
+    this.sources.push(source);
+    this.sources.sort((a, b) => a.priority - b.priority);
 
     logger.debug(`Added configuration source: ${source.name}`, {
       component: 'ConfigManager',
-      metadata: { priority: source.priority, totalSources: this.sources.length, },
-    },)
+      metadata: { priority: source.priority, totalSources: this.sources.length },
+    });
   }
 
-  public addFileSource(filePath: string, priority: number = 50,): void {
-    const source = this.createFileSource(filePath, priority,)
-    this.addSource(source,)
+  public addFileSource(filePath: string, priority: number = 50): void {
+    const source = this.createFileSource(filePath, priority);
+    this.addSource(source);
 
     // Watch file for changes
-    if (existsSync(resolve(filePath,),)) {
-      this.watchFile(resolve(filePath,),)
+    if (existsSync(resolve(filePath))) {
+      this.watchFile(resolve(filePath));
     }
   }
 
-  public addEnvironmentSource(prefix: string = 'AUDIT_TOOL_',): void {
-    const source = this.createEnvironmentSource(prefix,)
-    this.addSource(source,)
+  public addEnvironmentSource(prefix: string = 'AUDIT_TOOL_'): void {
+    const source = this.createEnvironmentSource(prefix);
+    this.addSource(source);
   }
 
-  public addCliArgsSource(args: string[],): void {
-    const source = this.createCliArgsSource(args,)
-    this.addSource(source,)
+  public addCliArgsSource(args: string[]): void {
+    const source = this.createCliArgsSource(args);
+    this.addSource(source);
   }
 
-  private watchFile(filePath: string,): void {
-    if (this.watchedFiles.has(filePath,)) {
-      return
+  private watchFile(filePath: string): void {
+    if (this.watchedFiles.has(filePath)) {
+      return;
     }
 
-    this.watchedFiles.add(filePath,)
+    this.watchedFiles.add(filePath);
 
-    watchFile(filePath, { interval: 1000, }, (curr, prev,) => {
+    watchFile(filePath, { interval: 1000 }, (curr, prev) => {
       if (curr.mtime !== prev.mtime) {
         logger.info(`Configuration file changed: ${filePath}`, {
           component: 'ConfigManager',
-        },)
+        });
 
-        this.reload()
-        this.emit('configChanged', this.config,)
+        this.reload();
+        this.emit('configChanged', this.config);
       }
-    },)
+    });
 
     logger.debug(`Watching configuration file: ${filePath}`, {
       component: 'ConfigManager',
-    },)
+    });
   }
 
   public reload(): boolean {
     logger.info('Reloading configuration from all sources', {
       component: 'ConfigManager',
-      metadata: { sourceCount: this.sources.length, },
-    },)
+      metadata: { sourceCount: this.sources.length },
+    });
 
     // Reset to default config
-    const newConfig = this.getDefaultConfig()
+    const newConfig = this.getDefaultConfig();
 
     // Apply all sources in priority order
     for (const source of this.sources) {
       try {
-        const sourceConfig = source.load()
-        Object.assign(newConfig, this.deepMerge(newConfig, sourceConfig,),)
+        const sourceConfig = source.load();
+        Object.assign(newConfig, this.deepMerge(newConfig, sourceConfig));
       } catch (error) {
         logger.error(
           `Failed to load configuration source: ${source.name}`,
@@ -675,186 +675,186 @@ export class ConfigManager extends EventEmitter {
             component: 'ConfigManager',
           },
           error as Error,
-        )
+        );
       }
     }
 
     // Validate the merged configuration
-    this.validationErrors = this.validateConfig(newConfig,)
+    this.validationErrors = this.validateConfig(newConfig);
 
     if (this.validationErrors.length > 0) {
       logger.warn('Configuration validation errors found', {
         component: 'ConfigManager',
-        metadata: { errorCount: this.validationErrors.length, },
-      },)
+        metadata: { errorCount: this.validationErrors.length },
+      });
 
       this.validationErrors.forEach(error => {
         logger.warn(`Config validation error at ${error.path}: ${error.message}`, {
           component: 'ConfigManager',
-          metadata: { value: error.value, expected: error.expected, },
-        },)
-      },)
+          metadata: { value: error.value, expected: error.expected },
+        });
+      });
 
       // In strict mode, don't apply invalid configuration
       if (newConfig.environment === 'production') {
         logger.error('Configuration validation failed in production mode', {
           component: 'ConfigManager',
-        },)
-        return false
+        });
+        return false;
       }
     }
 
-    this.config = newConfig
+    this.config = newConfig;
 
     logger.info('Configuration reloaded successfully', {
       component: 'ConfigManager',
-      metadata: { validationErrors: this.validationErrors.length, },
-    },)
+      metadata: { validationErrors: this.validationErrors.length },
+    });
 
-    return true
+    return true;
   }
 
   public get(): AuditToolConfig {
-    return { ...this.config, }
+    return { ...this.config };
   }
 
-  public getPartial<K extends keyof AuditToolConfig,>(key: K,): AuditToolConfig[K] {
-    return { ...this.config[key], } as AuditToolConfig[K]
+  public getPartial<K extends keyof AuditToolConfig>(key: K): AuditToolConfig[K] {
+    return { ...this.config[key] } as AuditToolConfig[K];
   }
 
-  public set<K extends keyof AuditToolConfig,>(key: K, value: AuditToolConfig[K],): void {
-    const oldValue = this.config[key]
-    this.config[key] = value
+  public set<K extends keyof AuditToolConfig>(key: K, value: AuditToolConfig[K]): void {
+    const oldValue = this.config[key];
+    this.config[key] = value;
 
     // Validate the change
-    const partialConfig = { [key]: value, } as Partial<AuditToolConfig>
-    const errors = this.validateConfig(partialConfig,)
+    const partialConfig = { [key]: value } as Partial<AuditToolConfig>;
+    const errors = this.validateConfig(partialConfig);
 
     if (errors.length > 0) {
       // Revert on validation error
-      this.config[key] = oldValue
-      throw new Error(`Configuration validation failed for ${key}: ${errors[0].message}`,)
+      this.config[key] = oldValue;
+      throw new Error(`Configuration validation failed for ${key}: ${errors[0].message}`);
     }
 
     logger.debug(`Configuration updated: ${key}`, {
       component: 'ConfigManager',
-      metadata: { oldValue, newValue: value, },
-    },)
+      metadata: { oldValue, newValue: value },
+    });
 
-    this.emit('configChanged', this.config, key,)
+    this.emit('configChanged', this.config, key);
   }
 
   public getValidationErrors(): ConfigValidationError[] {
-    return [...this.validationErrors,]
+    return [...this.validationErrors];
   }
 
   public isValid(): boolean {
-    return this.validationErrors.length === 0
+    return this.validationErrors.length === 0;
   }
 
-  public export(format: 'json' | 'yaml' = 'json',): string {
+  public export(format: 'json' | 'yaml' = 'json'): string {
     if (format === 'json') {
-      return JSON.stringify(this.config, null, 2,)
+      return JSON.stringify(this.config, null, 2);
     }
 
     if (format === 'yaml') {
       // Simple YAML serialization
-      const yamlLines: string[] = []
+      const yamlLines: string[] = [];
 
-      const serializeObject = (obj: any, indent: string = '',): void => {
-        for (const [key, value,] of Object.entries(obj,)) {
+      const serializeObject = (obj: any, indent: string = ''): void => {
+        for (const [key, value] of Object.entries(obj)) {
           if (value === null || value === undefined) {
-            yamlLines.push(`${indent}${key}: null`,)
-          } else if (typeof value === 'object' && !Array.isArray(value,)) {
-            yamlLines.push(`${indent}${key}:`,)
-            serializeObject(value, indent + '  ',)
-          } else if (Array.isArray(value,)) {
-            yamlLines.push(`${indent}${key}:`,)
+            yamlLines.push(`${indent}${key}: null`);
+          } else if (typeof value === 'object' && !Array.isArray(value)) {
+            yamlLines.push(`${indent}${key}:`);
+            serializeObject(value, indent + '  ');
+          } else if (Array.isArray(value)) {
+            yamlLines.push(`${indent}${key}:`);
             value.forEach(item => {
-              yamlLines.push(`${indent}  - ${JSON.stringify(item,)}`,)
-            },)
+              yamlLines.push(`${indent}  - ${JSON.stringify(item)}`);
+            });
           } else {
-            yamlLines.push(`${indent}${key}: ${JSON.stringify(value,)}`,)
+            yamlLines.push(`${indent}${key}: ${JSON.stringify(value)}`);
           }
         }
-      }
+      };
 
-      serializeObject(this.config,)
-      return yamlLines.join('\n',)
+      serializeObject(this.config);
+      return yamlLines.join('\n');
     }
 
-    throw new Error(`Unsupported export format: ${format}`,)
+    throw new Error(`Unsupported export format: ${format}`);
   }
 
   public reset(): void {
-    this.config = this.getDefaultConfig()
-    this.validationErrors = []
+    this.config = this.getDefaultConfig();
+    this.validationErrors = [];
 
     logger.info('Configuration reset to defaults', {
       component: 'ConfigManager',
-    },)
+    });
 
-    this.emit('configChanged', this.config,)
+    this.emit('configChanged', this.config);
   }
 
   public destroy(): void {
     // Unwatch all files
     for (const filePath of this.watchedFiles) {
-      unwatchFile(filePath,)
+      unwatchFile(filePath);
     }
-    this.watchedFiles.clear()
+    this.watchedFiles.clear();
 
     // Clear sources
-    this.sources = []
+    this.sources = [];
 
     // Remove all listeners
-    this.removeAllListeners()
+    this.removeAllListeners();
 
     logger.info('Configuration manager destroyed', {
       component: 'ConfigManager',
-    },)
+    });
   }
 
   // Static factory methods
   static createDefault(): ConfigManager {
-    const manager = new ConfigManager()
+    const manager = new ConfigManager();
 
     // Add standard configuration sources in priority order
-    manager.addFileSource('./audit-tool.config.json', 30,)
-    manager.addFileSource('./audit-tool.config.js', 35,)
-    manager.addFileSource('./.audit-tool.json', 40,)
-    manager.addEnvironmentSource()
+    manager.addFileSource('./audit-tool.config.json', 30);
+    manager.addFileSource('./audit-tool.config.js', 35);
+    manager.addFileSource('./.audit-tool.json', 40);
+    manager.addEnvironmentSource();
 
     // Load initial configuration
-    manager.reload()
+    manager.reload();
 
-    return manager
+    return manager;
   }
 
-  static createFromFile(filePath: string,): ConfigManager {
-    const manager = new ConfigManager()
-    manager.addFileSource(filePath, 50,)
-    manager.reload()
-    return manager
+  static createFromFile(filePath: string): ConfigManager {
+    const manager = new ConfigManager();
+    manager.addFileSource(filePath, 50);
+    manager.reload();
+    return manager;
   }
 
-  static createFromObject(config: Partial<AuditToolConfig>,): ConfigManager {
-    const manager = new ConfigManager(config,)
-    return manager
+  static createFromObject(config: Partial<AuditToolConfig>): ConfigManager {
+    const manager = new ConfigManager(config);
+    return manager;
   }
 }
 
 // Default configuration manager instance
-export const defaultConfigManager = ConfigManager.createDefault()
+export const defaultConfigManager = ConfigManager.createDefault();
 
 // Convenience functions
 export const config = {
   get: () => defaultConfigManager.get(),
-  getPartial: <K extends keyof AuditToolConfig,>(key: K,) => defaultConfigManager.getPartial(key,),
-  set: <K extends keyof AuditToolConfig,>(key: K, value: AuditToolConfig[K],) =>
-    defaultConfigManager.set(key, value,),
+  getPartial: <K extends keyof AuditToolConfig>(key: K) => defaultConfigManager.getPartial(key),
+  set: <K extends keyof AuditToolConfig>(key: K, value: AuditToolConfig[K]) =>
+    defaultConfigManager.set(key, value),
   reload: () => defaultConfigManager.reload(),
   isValid: () => defaultConfigManager.isValid(),
   getValidationErrors: () => defaultConfigManager.getValidationErrors(),
-  export: (format?: 'json' | 'yaml',) => defaultConfigManager.export(format,),
-}
+  export: (format?: 'json' | 'yaml') => defaultConfigManager.export(format),
+};

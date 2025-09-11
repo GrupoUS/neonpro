@@ -13,6 +13,7 @@ type: "always_apply"
 
 **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization.
 **GOAL-ORIENTED EXECUTION**: Strive to work through all steps toward problem resolution while respecting user/operator interrupts and system constraints.
+
 - **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
 - **MANDATORY**: Follow Archon as the single source of truth for tasks and knowledge; use the native augment task manager actively to create atomic tasks and track phased execution for everything requested.
 - **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_

@@ -31,23 +31,23 @@ Production-ready patterns and best practices for using the Vercel AI SDK v5.0 wi
 
 ```typescript
 // ✅ DO: Use separate message types
-import { convertToModelMessages, UIMessage, } from 'ai'
+import { convertToModelMessages, UIMessage } from 'ai';
 
-const uiMessages: UIMessage[] = await loadChatHistory(chatId,)
-const modelMessages = convertToModelMessages(uiMessages,)
+const uiMessages: UIMessage[] = await loadChatHistory(chatId);
+const modelMessages = convertToModelMessages(uiMessages);
 
 const result = await streamText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   messages: modelMessages,
-},)
+});
 
 return result.toUIMessageStreamResponse({
   originalMessages: uiMessages,
-  onFinish: ({ messages, responseMessage, },) => {
+  onFinish: ({ messages, responseMessage }) => {
     // Save complete UIMessage array - your source of truth
-    await saveChat({ chatId, messages, },)
+    await saveChat({ chatId, messages });
   },
-},)
+});
 ```
 
 ### 2. Custom UIMessage Types for Type Safety
@@ -56,25 +56,25 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Define custom message type once
-import { InferUITools, UIMessage, } from 'ai'
+import { InferUITools, UIMessage } from 'ai';
 
 type MyMetadata = {
-  model?: string
-  totalTokens?: number
-  createdAt?: number
-}
+  model?: string;
+  totalTokens?: number;
+  createdAt?: number;
+};
 
 type MyDataParts = {
-  'data-weather': { city: string; weather?: string; status: 'loading' | 'success' }
-  'data-notification': { message: string; level: 'info' | 'warning' | 'error' }
-}
+  'data-weather': { city: string; weather?: string; status: 'loading' | 'success' };
+  'data-notification': { message: string; level: 'info' | 'warning' | 'error' };
+};
 
-type MyUITools = InferUITools<typeof tools>
-type MyUIMessage = UIMessage<MyMetadata, MyDataParts, MyUITools>
+type MyUITools = InferUITools<typeof tools>;
+type MyUIMessage = UIMessage<MyMetadata, MyDataParts, MyUITools>;
 
 // Use across client and server
-const { messages, } = useChat<MyUIMessage>()
-const stream = createUIMessageStream<MyUIMessage>() /* ... */
+const { messages } = useChat<MyUIMessage>();
+const stream = createUIMessageStream<MyUIMessage>(); /* ... */
 ```
 
 ### 3. Data Parts for Streaming Custom Data
@@ -84,30 +84,30 @@ const stream = createUIMessageStream<MyUIMessage>() /* ... */
 ```typescript
 // ✅ DO: Server - Stream custom data with type safety
 const stream = createUIMessageStream<MyUIMessage>({
-  async execute({ writer, },) {
-    const dataPartId = 'weather-1'
+  async execute({ writer }) {
+    const dataPartId = 'weather-1';
 
     // Send loading state
     writer.write({
       type: 'data-weather',
       id: dataPartId,
-      data: { city: 'San Francisco', status: 'loading', },
-    },)
+      data: { city: 'San Francisco', status: 'loading' },
+    });
 
     // Update with result (same ID replaces previous)
-    const weather = await getWeather('San Francisco',)
+    const weather = await getWeather('San Francisco');
     writer.write({
       type: 'data-weather',
       id: dataPartId,
-      data: { city: 'San Francisco', weather, status: 'success', },
-    },)
+      data: { city: 'San Francisco', weather, status: 'success' },
+    });
   },
-},)
+});
 
 // ✅ DO: Client - Render typed data parts
 {
   messages.map(message =>
-    message.parts.map((part, index,) => {
+    message.parts.map((part, index) => {
       switch (part.type) {
         case 'data-weather':
           return (
@@ -116,10 +116,10 @@ const stream = createUIMessageStream<MyUIMessage>({
                 ? `Getting weather for ${part.data.city}...`
                 : `Weather in ${part.data.city}: ${part.data.weather}`}
             </div>
-          )
+          );
       }
-    },)
-  )
+    })
+  );
 }
 ```
 
@@ -131,20 +131,20 @@ const stream = createUIMessageStream<MyUIMessage>({
 // ✅ DO: Server - Send transient notifications
 writer.write({
   type: 'data-notification',
-  data: { message: 'Processing...', level: 'info', },
+  data: { message: 'Processing...', level: 'info' },
   transient: true, // Won't be persisted in message history
-},)
+});
 
 // ✅ DO: Client - Handle via onData callback
-const [notification, setNotification,] = useState()
+const [notification, setNotification] = useState();
 
-const { messages, } = useChat({
-  onData: ({ data, type, },) => {
+const { messages } = useChat({
+  onData: ({ data, type }) => {
     if (type === 'data-notification') {
-      setNotification({ message: data.message, level: data.level, },)
+      setNotification({ message: data.message, level: data.level });
     }
   },
-},)
+});
 ```
 
 ## Advanced Chat Features
@@ -163,15 +163,15 @@ const { messages, } = useChat({
           case 'tool-getWeather':
             switch (part.state) {
               case 'input-streaming':
-                return <div>Getting weather for {part.input.location}...</div>
+                return <div>Getting weather for {part.input.location}...</div>;
               case 'input-available':
-                return <div>Getting weather for {part.input.location}...</div>
+                return <div>Getting weather for {part.input.location}...</div>;
               case 'output-available':
-                return <div>Weather: {part.output}</div>
+                return <div>Weather: {part.output}</div>;
               case 'output-error':
-                return <div>Error: {part.errorText}</div>
+                return <div>Error: {part.errorText}</div>;
             }
-            break
+            break;
           case 'dynamic-tool':
             return (
               <div>
@@ -180,11 +180,11 @@ const { messages, } = useChat({
                   <pre>{JSON.stringify(part.output, null, 2)}</pre>
                 )}
               </div>
-            )
+            );
         }
-      },)}
+      })}
     </>
-  ))
+  ));
 }
 ```
 
@@ -195,18 +195,18 @@ const { messages, } = useChat({
 ```typescript
 // ✅ DO: Server - Send metadata
 return result.toUIMessageStreamResponse({
-  messageMetadata: ({ part, },) => {
+  messageMetadata: ({ part }) => {
     if (part.type === 'start') {
-      return { model: 'gpt-4o', createdAt: Date.now(), }
+      return { model: 'gpt-4o', createdAt: Date.now() };
     }
     if (part.type === 'finish') {
       return {
         model: part.response.modelId,
         totalTokens: part.totalUsage.totalTokens,
-      }
+      };
     }
   },
-},)
+});
 
 // ✅ DO: Client - Display metadata
 {
@@ -216,7 +216,7 @@ return result.toUIMessageStreamResponse({
       {message.metadata?.totalTokens && <span>{message.metadata.totalTokens} tokens</span>}
       {/* Message content */}
     </div>
-  ))
+  ));
 }
 ```
 
@@ -228,14 +228,14 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Control agent execution with conditions
-import { hasToolCall, stepCountIs, } from 'ai'
+import { hasToolCall, stepCountIs } from 'ai';
 
 const result = await generateText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   tools: {/* your tools */},
   // Stop after 5 steps OR when finalAnswer tool is called
-  stopWhen: [stepCountIs(5,), hasToolCall('finalAnswer',),],
-},)
+  stopWhen: [stepCountIs(5), hasToolCall('finalAnswer')],
+});
 ```
 
 ### 2. prepareStep for Dynamic Configuration
@@ -245,26 +245,26 @@ const result = await generateText({
 ```typescript
 // ✅ DO: Adjust settings per step
 const result = await streamText({
-  model: openai('gpt-4o',),
-  messages: convertToModelMessages(messages,),
+  model: openai('gpt-4o'),
+  messages: convertToModelMessages(messages),
   tools: {/* your tools */},
-  prepareStep: async ({ stepNumber, messages, },) => {
+  prepareStep: async ({ stepNumber, messages }) => {
     if (stepNumber === 0) {
       return {
-        model: openai('gpt-4o-mini',), // Different model for first step
-        toolChoice: { type: 'tool', toolName: 'analyzeIntent', },
-      }
+        model: openai('gpt-4o-mini'), // Different model for first step
+        toolChoice: { type: 'tool', toolName: 'analyzeIntent' },
+      };
     }
 
     // Compress context for longer conversations
     if (messages.length > 10) {
       return {
-        model: openai('gpt-4-turbo',), // Larger context window
-        messages: messages.slice(-10,),
-      }
+        model: openai('gpt-4-turbo'), // Larger context window
+        messages: messages.slice(-10),
+      };
     }
   },
-},)
+});
 ```
 
 ### 3. Agent Abstraction for Reusability
@@ -273,23 +273,23 @@ const result = await streamText({
 
 ```typescript
 // ✅ DO: Create reusable agents
-import { Experimental_Agent as Agent, stepCountIs, } from 'ai'
+import { Experimental_Agent as Agent, stepCountIs } from 'ai';
 
 const codingAgent = new Agent({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   system: 'You are a coding agent specializing in Next.js and TypeScript.',
-  stopWhen: stepCountIs(10,),
+  stopWhen: stepCountIs(10),
   tools: {/* your tools */},
-},)
+});
 
 // Use with generate or stream
 const result = await codingAgent.generate({
   prompt: 'Build an AI coding agent.',
-},)
+});
 
 const streamResult = await codingAgent.stream({
   prompt: 'Build an AI coding agent.',
-},)
+});
 ```
 
 ## Transport and Framework Integration
@@ -300,9 +300,9 @@ const streamResult = await codingAgent.stream({
 
 ```typescript
 // ✅ DO: Configure custom transport behavior
-const { messages, sendMessage, } = useChat({
+const { messages, sendMessage } = useChat({
   transport: new DefaultChatTransport({
-    prepareSendMessagesRequest: ({ id, messages, trigger, messageId, },) => {
+    prepareSendMessagesRequest: ({ id, messages, trigger, messageId }) => {
       if (trigger === 'submit-user-message') {
         return {
           body: {
@@ -311,7 +311,7 @@ const { messages, sendMessage, } = useChat({
             message: messages[messages.length - 1],
             messageId,
           },
-        }
+        };
       } else if (trigger === 'regenerate-assistant-message') {
         return {
           body: {
@@ -319,12 +319,12 @@ const { messages, sendMessage, } = useChat({
             id,
             messageId,
           },
-        }
+        };
       }
-      throw new Error(`Unsupported trigger: ${trigger}`,)
+      throw new Error(`Unsupported trigger: ${trigger}`);
     },
-  },),
-},)
+  }),
+});
 ```
 
 ### 2. Request-Level Configuration
@@ -334,7 +334,7 @@ const { messages, sendMessage, } = useChat({
 ```typescript
 // ✅ DO: Configure per request
 sendMessage(
-  { text: input, },
+  { text: input },
   {
     headers: {
       Authorization: `Bearer ${getAuthToken()}`,
@@ -350,7 +350,7 @@ sendMessage(
       sessionId: 'session456',
     },
   },
-)
+);
 ```
 
 ## Tool Improvements in v5.0
@@ -363,12 +363,12 @@ sendMessage(
 // ✅ DO: v5.0 tool definition
 const weatherTool = tool({
   description: 'Get the weather for a location',
-  inputSchema: z.object({ location: z.string(), },), // was 'parameters'
+  inputSchema: z.object({ location: z.string() }), // was 'parameters'
   outputSchema: z.string(), // New in v5.0 (optional)
-  execute: async ({ location, },) => {
-    return `Weather in ${location}: sunny, 72°F`
+  execute: async ({ location }) => {
+    return `Weather in ${location}: sunny, 72°F`;
   },
-},)
+});
 ```
 
 ### 2. Dynamic Tools for Runtime Tools
@@ -377,16 +377,16 @@ const weatherTool = tool({
 
 ```typescript
 // ✅ DO: Handle dynamic tools
-import { dynamicTool, } from 'ai'
+import { dynamicTool } from 'ai';
 
 const customDynamicTool = dynamicTool({
   description: 'Execute a custom user-defined function',
-  inputSchema: z.object({},),
+  inputSchema: z.object({}),
   execute: async input => {
-    const { action, parameters, } = input as any
-    return { result: `Executed ${action} with ${JSON.stringify(parameters,)}`, }
+    const { action, parameters } = input as any;
+    return { result: `Executed ${action} with ${JSON.stringify(parameters)}` };
   },
-},)
+});
 
 const result = await generateText({
   model: 'openai/gpt-4o',
@@ -394,21 +394,21 @@ const result = await generateText({
     weatherTool, // Static tool with known types
     customDynamicTool, // Dynamic tool
   },
-  onStepFinish: ({ toolCalls, },) => {
+  onStepFinish: ({ toolCalls }) => {
     for (const toolCall of toolCalls) {
       if (toolCall.dynamic) {
-        console.log('Dynamic:', toolCall.toolName, toolCall.input,)
+        console.log('Dynamic:', toolCall.toolName, toolCall.input);
       } else {
         // Static tool: full type inference
         switch (toolCall.toolName) {
           case 'weather':
-            console.log(toolCall.input.location,) // typed as string
-            break
+            console.log(toolCall.input.location); // typed as string
+            break;
         }
       }
     }
   },
-},)
+});
 ```
 
 ### 3. Provider-Executed Tools
@@ -417,15 +417,15 @@ const result = await generateText({
 
 ```typescript
 // ✅ DO: Use provider-executed tools
-import { openai, } from '@ai-sdk/openai'
+import { openai } from '@ai-sdk/openai';
 
 const result = await generateText({
-  model: openai.responses('gpt-4o-mini',),
+  model: openai.responses('gpt-4o-mini'),
   tools: {
-    web_search_preview: openai.tools.webSearchPreview({},),
+    web_search_preview: openai.tools.webSearchPreview({}),
   },
   // Results automatically appended to message history
-},)
+});
 ```
 
 ## Performance & Error Handling
@@ -437,23 +437,23 @@ const result = await generateText({
 ```typescript
 // ✅ DO: Handle stream errors
 const result = streamText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   prompt: 'Generate content...',
-  onError({ error, },) {
-    console.error('Stream error:', error,)
+  onError({ error }) {
+    console.error('Stream error:', error);
     // Your error logging logic
   },
-},)
+});
 
 // ✅ DO: Server error handling
 return result.toUIMessageStreamResponse({
   onError: error => {
     if (error instanceof Error) {
-      return error.message
+      return error.message;
     }
-    return 'An unexpected error occurred'
+    return 'An unexpected error occurred';
   },
-},)
+});
 ```
 
 ### 2. Global Provider Configuration
@@ -462,16 +462,16 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Set global provider once
-import { openai, } from '@ai-sdk/openai'
+import { openai } from '@ai-sdk/openai';
 
 // Initialize once during startup
-globalThis.AI_SDK_DEFAULT_PROVIDER = openai
+globalThis.AI_SDK_DEFAULT_PROVIDER = openai;
 
 // Use anywhere with simple string
 const result = streamText({
   model: 'gpt-4o', // Uses OpenAI provider without prefix
   prompt: 'Generate content...',
-},)
+});
 ```
 
 ## Common Pitfalls to Avoid
@@ -491,22 +491,22 @@ const result = streamText({
 
 ```typescript
 // ✅ DO: Text-to-Speech generation
-import { openai, } from '@ai-sdk/openai'
-import { experimental_generateSpeech as generateSpeech, } from 'ai'
+import { openai } from '@ai-sdk/openai';
+import { experimental_generateSpeech as generateSpeech } from 'ai';
 
-const { audio, } = await generateSpeech({
-  model: openai.speech('tts-1',),
+const { audio } = await generateSpeech({
+  model: openai.speech('tts-1'),
   text: 'Hello, world!',
   voice: 'alloy',
-},)
+});
 
 // ✅ DO: Speech-to-Text transcription
-import { experimental_transcribe as transcribe, } from 'ai'
+import { experimental_transcribe as transcribe } from 'ai';
 
-const { text, segments, } = await transcribe({
-  model: openai.transcription('whisper-1',),
-  audio: await readFile('audio.mp3',),
-},)
+const { text, segments } = await transcribe({
+  model: openai.transcription('whisper-1'),
+  audio: await readFile('audio.mp3'),
+});
 ```
 
 ## Framework Support (Vue, Svelte, Angular)
@@ -551,12 +551,12 @@ export class ChatComponent {
 ```typescript
 // ✅ DO: SSE streaming is now default
 const result = streamText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   prompt: 'Generate content...',
-},)
+});
 
 // Automatically uses SSE for better debugging and reliability
-return result.toUIMessageStreamResponse()
+return result.toUIMessageStreamResponse();
 ```
 
 ### 2. Raw Response Access
@@ -566,25 +566,25 @@ return result.toUIMessageStreamResponse()
 ```typescript
 // ✅ DO: Access raw streaming chunks
 const result = streamText({
-  model: openai('gpt-4o-mini',),
+  model: openai('gpt-4o-mini'),
   prompt: 'Generate content...',
   includeRawChunks: true,
-},)
+});
 
 for await (const part of result.fullStream) {
   if (part.type === 'raw') {
-    console.log('Raw chunk:', part.rawValue,)
+    console.log('Raw chunk:', part.rawValue);
   }
 }
 
 // ✅ DO: Access request/response bodies
 const result = await generateText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   prompt: 'Write a haiku about debugging',
-},)
+});
 
-console.log('Request:', result.request.body,)
-console.log('Response:', result.response.body,)
+console.log('Request:', result.request.body);
+console.log('Response:', result.response.body);
 ```
 
 ### 3. Stream Transformations
@@ -593,32 +593,32 @@ console.log('Response:', result.response.body,)
 
 ```typescript
 // ✅ DO: Use built-in smooth streaming
-import { smoothStream, } from 'ai'
+import { smoothStream } from 'ai';
 
 const result = streamText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   prompt: 'Generate content...',
   experimental_transform: smoothStream(),
-},)
+});
 
 // ✅ DO: Custom transformation
 const upperCaseTransform =
-  <TOOLS extends ToolSet,>() => (options: { tools: TOOLS; stopStream: () => void },) =>
+  <TOOLS extends ToolSet>() => (options: { tools: TOOLS; stopStream: () => void }) =>
     new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
-      transform(chunk, controller,) {
+      transform(chunk, controller) {
         controller.enqueue(
           chunk.type === 'text'
-            ? { ...chunk, text: chunk.text.toUpperCase(), }
+            ? { ...chunk, text: chunk.text.toUpperCase() }
             : chunk,
-        )
+        );
       },
-    },)
+    });
 
 const result = streamText({
-  model: openai('gpt-4o',),
+  model: openai('gpt-4o'),
   prompt: 'Generate content...',
   experimental_transform: upperCaseTransform(),
-},)
+});
 ```
 
 ## Migration from v4.0
@@ -638,24 +638,24 @@ npx @ai-sdk/codemod upgrade
 
 ```typescript
 // ❌ DON'T: v4.0 patterns
-const { messages, input, handleInputChange, handleSubmit, } = useChat()
+const { messages, input, handleInputChange, handleSubmit } = useChat();
 
 // Tool definition
 const tool = {
-  parameters: z.object({ location: z.string(), },),
-  execute: async ({ location, },) => {/* ... */},
-}
+  parameters: z.object({ location: z.string() }),
+  execute: async ({ location }) => {/* ... */},
+};
 
 // ✅ DO: v5.0 patterns
-const { messages, sendMessage, } = useChat<MyUIMessage>()
-const [input, setInput,] = useState('',)
+const { messages, sendMessage } = useChat<MyUIMessage>();
+const [input, setInput] = useState('');
 
 // Tool definition
 const tool = {
-  inputSchema: z.object({ location: z.string(), },),
+  inputSchema: z.object({ location: z.string() }),
   outputSchema: z.string(), // Optional but recommended
-  execute: async ({ location, },) => {/* ... */},
-}
+  execute: async ({ location }) => {/* ... */},
+};
 ```
 
 ## Related Rules

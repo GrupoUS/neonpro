@@ -77,13 +77,14 @@
     "eslint-plugin-prettier": "^5.5.4",
     "oxlint": "^1.14.0",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
     "yaml": "^2.8.1"
   },
   "performance": {
     "targets": {
-      "maxFilesProcessed": 10000,
+      "maxFilesProcessed": 1e4,
       "maxExecutionTimeMs": 30000,
       "maxMemoryUsageMB": 500
     },

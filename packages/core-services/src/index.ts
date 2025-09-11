@@ -1,2 +1,2 @@
-export * from './services/AIService'
-export * from './services/governance'
+export * from './services/AIService';
+export * from './services/governance';

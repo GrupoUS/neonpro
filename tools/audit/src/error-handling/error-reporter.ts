@@ -5,9 +5,9 @@
  * technical details, actionable recommendations, and multi-format output capabilities.
  */
 
-import { EventEmitter, } from 'events'
-import * as fs from 'fs/promises'
-import * as path from 'path'
+import { EventEmitter } from 'events';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import {
   AuditError,
   ErrorBatch,
@@ -19,57 +19,57 @@ import {
   ErrorSeverity,
   ErrorUtils,
   RecoveryResult,
-} from './error-types.js'
+} from './error-types.js';
 
 /**
  * Report configuration options
  */
 export interface ReportConfig {
   /** Output directory for reports */
-  outputDirectory: string
+  outputDirectory: string;
   /** Report formats to generate */
-  formats: ReportFormat[]
+  formats: ReportFormat[];
   /** Include stack traces in reports */
-  includeStackTraces: boolean
+  includeStackTraces: boolean;
   /** Include system state in reports */
-  includeSystemState: boolean
+  includeSystemState: boolean;
   /** Include recovery attempts in reports */
-  includeRecoveryAttempts: boolean
+  includeRecoveryAttempts: boolean;
   /** Include recommendations */
-  includeRecommendations: boolean
+  includeRecommendations: boolean;
   /** Maximum report file size (bytes) */
-  maxReportSize: number
+  maxReportSize: number;
   /** Enable report compression */
-  enableCompression: boolean
+  enableCompression: boolean;
   /** Anonymize sensitive data */
-  anonymizeSensitiveData: boolean
+  anonymizeSensitiveData: boolean;
   /** Report retention period (days) */
-  retentionPeriodDays: number
+  retentionPeriodDays: number;
 }
 
 /**
  * Supported report formats
  */
-export type ReportFormat = 'json' | 'html' | 'markdown' | 'csv' | 'xml'
+export type ReportFormat = 'json' | 'html' | 'markdown' | 'csv' | 'xml';
 
 /**
  * Report template interface
  */
 interface ReportTemplate {
-  format: ReportFormat
-  render(report: ErrorReport, config: ReportConfig,): Promise<string>
-  getFileExtension(): string
-  getContentType(): string
+  format: ReportFormat;
+  render(report: ErrorReport, config: ReportConfig): Promise<string>;
+  getFileExtension(): string;
+  getContentType(): string;
 }
 
 /**
  * Error aggregation options
  */
 interface AggregationOptions {
-  groupBy: 'category' | 'severity' | 'component' | 'timeframe'
-  timeframe?: 'hour' | 'day' | 'week' | 'month'
-  includeMetrics?: boolean
-  includeCharts?: boolean
+  groupBy: 'category' | 'severity' | 'component' | 'timeframe';
+  timeframe?: 'hour' | 'day' | 'week' | 'month';
+  includeMetrics?: boolean;
+  includeCharts?: boolean;
 }
 
 /**
@@ -77,37 +77,37 @@ interface AggregationOptions {
  */
 interface DeliveryOptions {
   email?: {
-    recipients: string[]
-    subject: string
-    includeAttachments: boolean
-  }
+    recipients: string[];
+    subject: string;
+    includeAttachments: boolean;
+  };
   webhook?: {
-    url: string
-    headers: Record<string, string>
-    payload: 'full' | 'summary'
-  }
+    url: string;
+    headers: Record<string, string>;
+    payload: 'full' | 'summary';
+  };
   slack?: {
-    webhookUrl: string
-    channel: string
-    mentions: string[]
-  }
+    webhookUrl: string;
+    channel: string;
+    mentions: string[];
+  };
 }
 
 /**
  * Comprehensive error reporter with multi-format output and intelligent recommendations
  */
 export class ErrorReporter extends EventEmitter {
-  private config: ReportConfig
-  private templates: Map<ReportFormat, ReportTemplate>
-  private reportHistory: Map<string, ErrorReport>
-  private aggregatedReports: Map<string, ErrorBatch>
+  private config: ReportConfig;
+  private templates: Map<ReportFormat, ReportTemplate>;
+  private reportHistory: Map<string, ErrorReport>;
+  private aggregatedReports: Map<string, ErrorBatch>;
 
-  constructor(config: Partial<ReportConfig> = {},) {
-    super()
+  constructor(config: Partial<ReportConfig> = {}) {
+    super();
 
     this.config = {
       outputDirectory: './error-reports',
-      formats: ['json', 'html',],
+      formats: ['json', 'html'],
       includeStackTraces: true,
       includeSystemState: true,
       includeRecoveryAttempts: true,
@@ -117,14 +117,14 @@ export class ErrorReporter extends EventEmitter {
       anonymizeSensitiveData: true,
       retentionPeriodDays: 30,
       ...config,
-    }
+    };
 
-    this.templates = new Map()
-    this.reportHistory = new Map()
-    this.aggregatedReports = new Map()
+    this.templates = new Map();
+    this.reportHistory = new Map();
+    this.aggregatedReports = new Map();
 
-    this.initializeTemplates()
-    this.ensureOutputDirectory()
+    this.initializeTemplates();
+    this.ensureOutputDirectory();
   }
 
   /**
@@ -141,22 +141,22 @@ export class ErrorReporter extends EventEmitter {
       classification,
       originalError: error,
       recoveryAttempts,
-      userMessage: this.generateUserMessage(error, classification,),
-      technicalDetails: this.generateTechnicalDetails(error, classification,),
-      recommendations: this.generateRecommendations(error, classification, recoveryAttempts,),
+      userMessage: this.generateUserMessage(error, classification),
+      technicalDetails: this.generateTechnicalDetails(error, classification),
+      recommendations: this.generateRecommendations(error, classification, recoveryAttempts),
       relatedErrors,
-    }
+    };
 
     // Anonymize sensitive data if enabled
     if (this.config.anonymizeSensitiveData) {
-      this.anonymizeReport(report,)
+      this.anonymizeReport(report);
     }
 
     // Store in history
-    this.reportHistory.set(error.errorId, report,)
+    this.reportHistory.set(error.errorId, report);
 
-    this.emit('report_generated', { report, error, },)
-    return report
+    this.emit('report_generated', { report, error });
+    return report;
   }
 
   /**
@@ -174,21 +174,21 @@ export class ErrorReporter extends EventEmitter {
       classification,
       recoveryAttempts,
       relatedErrors,
-    )
-    const formats = customFormats || this.config.formats
-    const reportPaths: string[] = []
+    );
+    const formats = customFormats || this.config.formats;
+    const reportPaths: string[] = [];
 
     for (const format of formats) {
       try {
-        const filePath = await this.saveReport(report, format,)
-        reportPaths.push(filePath,)
-        this.emit('report_saved', { report, format, filePath, },)
+        const filePath = await this.saveReport(report, format);
+        reportPaths.push(filePath);
+        this.emit('report_saved', { report, format, filePath });
       } catch (saveError) {
-        this.emit('report_save_failed', { report, format, error: saveError, },)
+        this.emit('report_save_failed', { report, format, error: saveError });
       }
     }
 
-    return reportPaths
+    return reportPaths;
   }
 
   /**
@@ -196,24 +196,24 @@ export class ErrorReporter extends EventEmitter {
    */
   async generateBatchReport(
     errors: AuditError[],
-    options: AggregationOptions = { groupBy: 'category', },
+    options: AggregationOptions = { groupBy: 'category' },
   ): Promise<ErrorBatch> {
-    const batchId = `batch_${Date.now()}_${Math.random().toString(36,).substr(2, 9,)}`
+    const batchId = `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const batch: ErrorBatch = {
       batchId,
       errors,
       totalCount: errors.length,
-      severityDistribution: this.calculateSeverityDistribution(errors,),
-      categoryDistribution: this.calculateCategoryDistribution(errors,),
+      severityDistribution: this.calculateSeverityDistribution(errors),
+      categoryDistribution: this.calculateCategoryDistribution(errors),
       recoverableCount: errors.filter(e => e.recoverable).length,
       timestamp: new Date(),
-    }
+    };
 
-    this.aggregatedReports.set(batchId, batch,)
-    this.emit('batch_report_generated', { batch, options, },)
+    this.aggregatedReports.set(batchId, batch);
+    this.emit('batch_report_generated', { batch, options });
 
-    return batch
+    return batch;
   }
 
   /**
@@ -225,75 +225,75 @@ export class ErrorReporter extends EventEmitter {
   ): Promise<ErrorMetrics> {
     const metrics: ErrorMetrics = {
       totalErrors: errors.length,
-      errorsByCategory: this.calculateCategoryDistribution(errors,),
-      errorsBySeverity: this.calculateSeverityDistribution(errors,),
-      recoverySuccessRate: this.calculateRecoverySuccessRate(errors,),
-      averageRecoveryTime: this.calculateAverageRecoveryTime(errors,),
-      mostCommonErrors: this.findMostCommonErrors(errors,),
-      errorTrends: this.calculateErrorTrends(errors, timeframe,),
-    }
+      errorsByCategory: this.calculateCategoryDistribution(errors),
+      errorsBySeverity: this.calculateSeverityDistribution(errors),
+      recoverySuccessRate: this.calculateRecoverySuccessRate(errors),
+      averageRecoveryTime: this.calculateAverageRecoveryTime(errors),
+      mostCommonErrors: this.findMostCommonErrors(errors),
+      errorTrends: this.calculateErrorTrends(errors, timeframe),
+    };
 
-    this.emit('metrics_report_generated', { metrics, timeframe, },)
-    return metrics
+    this.emit('metrics_report_generated', { metrics, timeframe });
+    return metrics;
   }
 
   /**
    * Save report to file system
    */
-  private async saveReport(report: ErrorReport, format: ReportFormat,): Promise<string> {
-    const template = this.templates.get(format,)
+  private async saveReport(report: ErrorReport, format: ReportFormat): Promise<string> {
+    const template = this.templates.get(format);
     if (!template) {
-      throw new Error(`No template found for format: ${format}`,)
+      throw new Error(`No template found for format: ${format}`);
     }
 
-    const content = await template.render(report, this.config,)
+    const content = await template.render(report, this.config);
 
     // Check size limits
     if (content.length > this.config.maxReportSize) {
       throw new Error(
         `Report size exceeds maximum allowed size: ${content.length} > ${this.config.maxReportSize}`,
-      )
+      );
     }
 
-    const fileName = this.generateFileName(report, format,)
-    const filePath = path.join(this.config.outputDirectory, fileName,)
+    const fileName = this.generateFileName(report, format);
+    const filePath = path.join(this.config.outputDirectory, fileName);
 
-    await fs.writeFile(filePath, content, 'utf-8',)
-    return filePath
+    await fs.writeFile(filePath, content, 'utf-8');
+    return filePath;
   }
 
   /**
    * Generate user-friendly error message
    */
-  private generateUserMessage(error: AuditError, classification: ErrorClassification,): string {
-    const severity = this.getSeverityEmoji(error.severity,)
-    const category = error.category.replace('_', ' ',).toUpperCase()
+  private generateUserMessage(error: AuditError, classification: ErrorClassification): string {
+    const severity = this.getSeverityEmoji(error.severity);
+    const category = error.category.replace('_', ' ').toUpperCase();
 
-    let message = `${severity} ${category}: ${error.message}`
+    let message = `${severity} ${category}: ${error.message}`;
 
     // Add context-specific information
     if (error.category === ErrorCategory.FILESYSTEM && 'filePath' in error) {
-      message += `\n📁 File: ${(error as any).filePath}`
+      message += `\n📁 File: ${(error as any).filePath}`;
     }
 
     if (error.category === ErrorCategory.PERFORMANCE && 'metric' in error) {
-      message += `\n📊 Metric: ${(error as any).metric}`
+      message += `\n📊 Metric: ${(error as any).metric}`;
     }
 
     if (error.category === ErrorCategory.MEMORY && 'currentUsage' in error) {
-      const usage = ((error as any).currentUsage / 1024 / 1024).toFixed(2,)
-      const max = ((error as any).maxUsage / 1024 / 1024).toFixed(2,)
-      message += `\n💾 Memory: ${usage}MB / ${max}MB`
+      const usage = ((error as any).currentUsage / 1024 / 1024).toFixed(2);
+      const max = ((error as any).maxUsage / 1024 / 1024).toFixed(2);
+      message += `\n💾 Memory: ${usage}MB / ${max}MB`;
     }
 
     // Add recovery information
     if (classification.recoverable) {
-      message += `\n🔄 Recovery strategy: ${classification.recoveryStrategy.replace('_', ' ',)}`
+      message += `\n🔄 Recovery strategy: ${classification.recoveryStrategy.replace('_', ' ')}`;
     } else {
-      message += '\n❌ This error requires manual intervention'
+      message += '\n❌ This error requires manual intervention';
     }
 
-    return message
+    return message;
   }
 
   /**
@@ -332,9 +332,9 @@ export class ErrorReporter extends EventEmitter {
           stack: this.config.includeStackTraces ? error.innerError.stack : undefined,
         }
         : undefined,
-    }
+    };
 
-    return JSON.stringify(details, null, 2,)
+    return JSON.stringify(details, null, 2);
   }
 
   /**
@@ -345,7 +345,7 @@ export class ErrorReporter extends EventEmitter {
     classification: ErrorClassification,
     recoveryAttempts: RecoveryResult[],
   ): string[] {
-    const recommendations: string[] = []
+    const recommendations: string[] = [];
 
     // Category-specific recommendations
     switch (error.category) {
@@ -355,8 +355,8 @@ export class ErrorReporter extends EventEmitter {
           'Check for memory leaks in recent code changes',
           'Enable garbage collection monitoring',
           'Review large object allocations',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.FILESYSTEM:
         recommendations.push(
@@ -364,8 +364,8 @@ export class ErrorReporter extends EventEmitter {
           'Check disk space availability',
           'Ensure file paths are correctly formatted',
           'Consider using alternative file locations',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.PERFORMANCE:
         recommendations.push(
@@ -373,8 +373,8 @@ export class ErrorReporter extends EventEmitter {
           'Consider implementing caching strategies',
           'Optimize database queries and operations',
           'Enable performance monitoring',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.DEPENDENCY:
         recommendations.push(
@@ -382,8 +382,8 @@ export class ErrorReporter extends EventEmitter {
           'Update outdated dependencies',
           'Consider dependency injection patterns',
           'Implement lazy loading for non-critical dependencies',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.NETWORK:
         recommendations.push(
@@ -391,8 +391,8 @@ export class ErrorReporter extends EventEmitter {
           'Implement retry mechanisms with exponential backoff',
           'Consider using connection pooling',
           'Monitor network latency and throughput',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.CONFIGURATION:
         recommendations.push(
@@ -400,8 +400,8 @@ export class ErrorReporter extends EventEmitter {
           'Validate configuration against schema',
           'Check environment variable settings',
           'Consider using configuration management tools',
-        )
-        break
+        );
+        break;
 
       case ErrorCategory.CONSTITUTIONAL:
         recommendations.push(
@@ -409,8 +409,8 @@ export class ErrorReporter extends EventEmitter {
           'Consider architectural optimizations',
           'Implement resource monitoring and alerting',
           'Plan for horizontal or vertical scaling',
-        )
-        break
+        );
+        break;
 
       default:
         recommendations.push(
@@ -418,24 +418,24 @@ export class ErrorReporter extends EventEmitter {
           'Check system logs for additional context',
           'Consider implementing additional error handling',
           'Monitor system metrics for patterns',
-        )
+        );
     }
 
     // Recovery attempt-specific recommendations
     if (recoveryAttempts.length > 0) {
-      const failedAttempts = recoveryAttempts.filter(r => !r.success)
+      const failedAttempts = recoveryAttempts.filter(r => !r.success);
 
       if (failedAttempts.length === recoveryAttempts.length) {
         recommendations.push(
           'All recovery attempts failed - consider manual intervention',
           'Review recovery strategies for this error type',
           'Check system resources and dependencies',
-        )
+        );
       } else {
         recommendations.push(
           'Some recovery attempts succeeded - monitor for recurrence',
           'Consider improving recovery strategies based on successful patterns',
-        )
+        );
       }
     }
 
@@ -445,40 +445,40 @@ export class ErrorReporter extends EventEmitter {
         '🚨 CRITICAL: Immediate attention required',
         'Consider activating incident response procedures',
         'Notify relevant stakeholders immediately',
-      )
+      );
     }
 
-    return recommendations
+    return recommendations;
   }
 
   /**
    * Anonymize sensitive data in reports
    */
-  private anonymizeReport(report: ErrorReport,): void {
+  private anonymizeReport(report: ErrorReport): void {
     // Anonymize file paths
     if (report.technicalDetails) {
       report.technicalDetails = report.technicalDetails.replace(
         /\/[^\/\s]+\/[^\/\s]+\/[^\/\s]+/g,
         '/***/***/***',
-      )
+      );
     }
 
     // Anonymize error messages with potential sensitive data
     if (
-      report.originalError.message.includes('password',)
-      || report.originalError.message.includes('token',)
-      || report.originalError.message.includes('key',)
+      report.originalError.message.includes('password')
+      || report.originalError.message.includes('token')
+      || report.originalError.message.includes('key')
     ) {
-      report.userMessage = report.userMessage.replace(/[\w\-\.]+@[\w\-\.]+/g, '***@***.***',)
-      report.userMessage = report.userMessage.replace(/[a-zA-Z0-9]{20,}/g, '***REDACTED***',)
+      report.userMessage = report.userMessage.replace(/[\w\-\.]+@[\w\-\.]+/g, '***@***.***');
+      report.userMessage = report.userMessage.replace(/[a-zA-Z0-9]{20,}/g, '***REDACTED***');
     }
 
     // Anonymize system state sensitive information
     if (report.context.systemState) {
-      const sensitiveKeys = ['password', 'token', 'key', 'secret', 'auth',]
-      for (const key of Object.keys(report.context.systemState,)) {
-        if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive,))) {
-          report.context.systemState[key] = '***REDACTED***'
+      const sensitiveKeys = ['password', 'token', 'key', 'secret', 'auth'];
+      for (const key of Object.keys(report.context.systemState)) {
+        if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))) {
+          report.context.systemState[key] = '***REDACTED***';
         }
       }
     }
@@ -487,88 +487,88 @@ export class ErrorReporter extends EventEmitter {
   /**
    * Generate file name for report
    */
-  private generateFileName(report: ErrorReport, format: ReportFormat,): string {
-    const template = this.templates.get(format,)
-    const extension = template?.getFileExtension() || format
-    const timestamp = report.context.timestamp.toISOString().replace(/[:.]/g, '-',)
-    const category = report.classification.category
-    const severity = report.classification.severity
+  private generateFileName(report: ErrorReport, format: ReportFormat): string {
+    const template = this.templates.get(format);
+    const extension = template?.getFileExtension() || format;
+    const timestamp = report.context.timestamp.toISOString().replace(/[:.]/g, '-');
+    const category = report.classification.category;
+    const severity = report.classification.severity;
 
-    return `error-report_${category}_${severity}_${timestamp}.${extension}`
+    return `error-report_${category}_${severity}_${timestamp}.${extension}`;
   }
 
   /**
    * Calculate severity distribution
    */
-  private calculateSeverityDistribution(errors: AuditError[],): Record<ErrorSeverity, number> {
+  private calculateSeverityDistribution(errors: AuditError[]): Record<ErrorSeverity, number> {
     const distribution: Record<ErrorSeverity, number> = {
       [ErrorSeverity.LOW]: 0,
       [ErrorSeverity.MEDIUM]: 0,
       [ErrorSeverity.HIGH]: 0,
       [ErrorSeverity.CRITICAL]: 0,
-    }
+    };
 
     errors.forEach(error => {
-      distribution[error.severity]++
-    },)
+      distribution[error.severity]++;
+    });
 
-    return distribution
+    return distribution;
   }
 
   /**
    * Calculate category distribution
    */
-  private calculateCategoryDistribution(errors: AuditError[],): Record<ErrorCategory, number> {
-    const distribution = {} as Record<ErrorCategory, number>
+  private calculateCategoryDistribution(errors: AuditError[]): Record<ErrorCategory, number> {
+    const distribution = {} as Record<ErrorCategory, number>;
 
     errors.forEach(error => {
-      distribution[error.category] = (distribution[error.category] || 0) + 1
-    },)
+      distribution[error.category] = (distribution[error.category] || 0) + 1;
+    });
 
-    return distribution
+    return distribution;
   }
 
   /**
    * Calculate recovery success rate
    */
-  private calculateRecoverySuccessRate(errors: AuditError[],): number {
-    const recoverableErrors = errors.filter(e => e.recoverable)
-    if (recoverableErrors.length === 0) return 0
+  private calculateRecoverySuccessRate(errors: AuditError[]): number {
+    const recoverableErrors = errors.filter(e => e.recoverable);
+    if (recoverableErrors.length === 0) return 0;
 
     // This would need to be tracked from actual recovery attempts
     // For now, we'll simulate based on error characteristics
     const successfulRecoveries = recoverableErrors.filter(e =>
       e.severity !== ErrorSeverity.CRITICAL
       && e.category !== ErrorCategory.CONSTITUTIONAL
-    ).length
+    ).length;
 
-    return successfulRecoveries / recoverableErrors.length
+    return successfulRecoveries / recoverableErrors.length;
   }
 
   /**
    * Calculate average recovery time
    */
-  private calculateAverageRecoveryTime(errors: AuditError[],): number {
+  private calculateAverageRecoveryTime(errors: AuditError[]): number {
     // This would be tracked from actual recovery operations
     // Simulated for demonstration
-    return 5000 // 5 seconds average
+    return 5000; // 5 seconds average
   }
 
   /**
    * Find most common errors
    */
-  private findMostCommonErrors(errors: AuditError[],): { error: string; count: number }[] {
-    const errorCounts = new Map<string, number>()
+  private findMostCommonErrors(errors: AuditError[]): { error: string; count: number }[] {
+    const errorCounts = new Map<string, number>();
 
     errors.forEach(error => {
-      const key = `${error.category}:${error.message.substring(0, 50,)}`
-      errorCounts.set(key, (errorCounts.get(key,) || 0) + 1,)
-    },)
+      const key = `${error.category}:${error.message.substring(0, 50)}`;
+      errorCounts.set(key, (errorCounts.get(key) || 0) + 1);
+    });
 
-    return Array.from(errorCounts.entries(),)
-      .map(([error, count,],) => ({ error, count, }))
-      .sort((a, b,) => b.count - a.count)
-      .slice(0, 10,)
+    return Array.from(errorCounts.entries())
+      .map(([error, count]) => ({ error, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
   }
 
   /**
@@ -578,50 +578,50 @@ export class ErrorReporter extends EventEmitter {
     errors: AuditError[],
     timeframe: 'hour' | 'day' | 'week' | 'month',
   ): { timestamp: Date; count: number }[] {
-    const trends = new Map<string, number>()
-    const now = new Date()
+    const trends = new Map<string, number>();
+    const now = new Date();
 
     errors.forEach(error => {
-      const timestamp = new Date(error.timestamp,)
-      let key: string
+      const timestamp = new Date(error.timestamp);
+      let key: string;
 
       switch (timeframe) {
         case 'hour':
-          key = timestamp.toISOString().substring(0, 13,) // YYYY-MM-DDTHH
-          break
+          key = timestamp.toISOString().substring(0, 13); // YYYY-MM-DDTHH
+          break;
         case 'day':
-          key = timestamp.toISOString().substring(0, 10,) // YYYY-MM-DD
-          break
+          key = timestamp.toISOString().substring(0, 10); // YYYY-MM-DD
+          break;
         case 'week':
-          const weekStart = new Date(timestamp,)
-          weekStart.setDate(timestamp.getDate() - timestamp.getDay(),)
-          key = weekStart.toISOString().substring(0, 10,)
-          break
+          const weekStart = new Date(timestamp);
+          weekStart.setDate(timestamp.getDate() - timestamp.getDay());
+          key = weekStart.toISOString().substring(0, 10);
+          break;
         case 'month':
-          key = timestamp.toISOString().substring(0, 7,) // YYYY-MM
-          break
+          key = timestamp.toISOString().substring(0, 7); // YYYY-MM
+          break;
       }
 
-      trends.set(key, (trends.get(key,) || 0) + 1,)
-    },)
+      trends.set(key, (trends.get(key) || 0) + 1);
+    });
 
-    return Array.from(trends.entries(),)
-      .map(([timestamp, count,],) => ({ timestamp: new Date(timestamp,), count, }))
-      .sort((a, b,) => a.timestamp.getTime() - b.timestamp.getTime())
+    return Array.from(trends.entries())
+      .map(([timestamp, count]) => ({ timestamp: new Date(timestamp), count }))
+      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
   /**
    * Get severity emoji
    */
-  private getSeverityEmoji(severity: ErrorSeverity,): string {
+  private getSeverityEmoji(severity: ErrorSeverity): string {
     const emojiMap = {
       [ErrorSeverity.LOW]: '⚪',
       [ErrorSeverity.MEDIUM]: '🟡',
       [ErrorSeverity.HIGH]: '🟠',
       [ErrorSeverity.CRITICAL]: '🔴',
-    }
+    };
 
-    return emojiMap[severity]
+    return emojiMap[severity];
   }
 
   /**
@@ -629,12 +629,12 @@ export class ErrorReporter extends EventEmitter {
    */
   private async ensureOutputDirectory(): Promise<void> {
     try {
-      await fs.mkdir(this.config.outputDirectory, { recursive: true, },)
+      await fs.mkdir(this.config.outputDirectory, { recursive: true });
     } catch (error) {
       this.emit('directory_creation_failed', {
         directory: this.config.outputDirectory,
         error,
-      },)
+      });
     }
   }
 
@@ -647,48 +647,48 @@ export class ErrorReporter extends EventEmitter {
       format: 'json',
       getFileExtension: () => 'json',
       getContentType: () => 'application/json',
-      render: async (report: ErrorReport,) => {
-        return JSON.stringify(report, null, 2,)
+      render: async (report: ErrorReport) => {
+        return JSON.stringify(report, null, 2);
       },
-    },)
+    });
 
     // HTML Template
     this.templates.set('html', {
       format: 'html',
       getFileExtension: () => 'html',
       getContentType: () => 'text/html',
-      render: async (report: ErrorReport, config: ReportConfig,) => {
-        return this.renderHTMLReport(report, config,)
+      render: async (report: ErrorReport, config: ReportConfig) => {
+        return this.renderHTMLReport(report, config);
       },
-    },)
+    });
 
     // Markdown Template
     this.templates.set('markdown', {
       format: 'markdown',
       getFileExtension: () => 'md',
       getContentType: () => 'text/markdown',
-      render: async (report: ErrorReport,) => {
-        return this.renderMarkdownReport(report,)
+      render: async (report: ErrorReport) => {
+        return this.renderMarkdownReport(report);
       },
-    },)
+    });
 
     // CSV Template
     this.templates.set('csv', {
       format: 'csv',
       getFileExtension: () => 'csv',
       getContentType: () => 'text/csv',
-      render: async (report: ErrorReport,) => {
-        return this.renderCSVReport(report,)
+      render: async (report: ErrorReport) => {
+        return this.renderCSVReport(report);
       },
-    },)
+    });
   }
 
   /**
    * Render HTML report
    */
-  private renderHTMLReport(report: ErrorReport, config: ReportConfig,): string {
-    const severity = this.getSeverityEmoji(report.classification.severity,)
-    const recommendations = report.recommendations.map(r => `<li>${r}</li>`).join('',)
+  private renderHTMLReport(report: ErrorReport, config: ReportConfig): string {
+    const severity = this.getSeverityEmoji(report.classification.severity);
+    const recommendations = report.recommendations.map(r => `<li>${r}</li>`).join('');
 
     return `
 <!DOCTYPE html>
@@ -732,10 +732,10 @@ export class ErrorReporter extends EventEmitter {
             <p><strong>Recoverable:</strong> ${report.classification.recoverable ? 'Yes' : 'No'}</p>
             <p><strong>Recovery Strategy:</strong> ${report.classification.recoveryStrategy}</p>
             <p><strong>Impact Score:</strong> ${
-      (report.classification.impactScore * 100).toFixed(1,)
+      (report.classification.impactScore * 100).toFixed(1)
     }%</p>
             <p><strong>Confidence:</strong> ${
-      (report.classification.confidence * 100).toFixed(1,)
+      (report.classification.confidence * 100).toFixed(1)
     }%</p>
         </div>
     </div>
@@ -747,12 +747,12 @@ export class ErrorReporter extends EventEmitter {
         <h2>Recovery Attempts</h2>
         <div class="error-details">
             ${
-          report.recoveryAttempts.map((attempt, i,) => `
+          report.recoveryAttempts.map((attempt, i) => `
                 <p><strong>Attempt ${i + 1}:</strong> ${
             attempt.success ? '✅ Success' : '❌ Failed'
           } 
                    (${attempt.strategy}, ${attempt.recoveryTime}ms)</p>
-            `).join('',)
+            `).join('')
         }
         </div>
     </div>
@@ -784,15 +784,15 @@ export class ErrorReporter extends EventEmitter {
         : ''
     }
 </body>
-</html>`
+</html>`;
   }
 
   /**
    * Render Markdown report
    */
-  private renderMarkdownReport(report: ErrorReport,): string {
-    const severity = this.getSeverityEmoji(report.classification.severity,)
-    const recommendations = report.recommendations.map(r => `- ${r}`).join('\n',)
+  private renderMarkdownReport(report: ErrorReport): string {
+    const severity = this.getSeverityEmoji(report.classification.severity);
+    const recommendations = report.recommendations.map(r => `- ${r}`).join('\n');
 
     return `# ${severity} Error Report
 
@@ -813,19 +813,19 @@ ${report.userMessage}
 - **Severity:** ${report.classification.severity}
 - **Recoverable:** ${report.classification.recoverable ? 'Yes' : 'No'}
 - **Recovery Strategy:** ${report.classification.recoveryStrategy}
-- **Impact Score:** ${(report.classification.impactScore * 100).toFixed(1,)}%
-- **Confidence:** ${(report.classification.confidence * 100).toFixed(1,)}%
+- **Impact Score:** ${(report.classification.impactScore * 100).toFixed(1)}%
+- **Confidence:** ${(report.classification.confidence * 100).toFixed(1)}%
 
 ${
       report.recoveryAttempts.length > 0
         ? `## Recovery Attempts
 
 ${
-          report.recoveryAttempts.map((attempt, i,) =>
+          report.recoveryAttempts.map((attempt, i) =>
             `${i + 1}. ${
               attempt.success ? '✅ Success' : '❌ Failed'
             } (${attempt.strategy}, ${attempt.recoveryTime}ms)`
-          ).join('\n',)
+          ).join('\n')
         }`
         : ''
     }
@@ -839,13 +839,13 @@ ${recommendations}
 \`\`\`json
 ${report.technicalDetails}
 \`\`\`
-`
+`;
   }
 
   /**
    * Render CSV report
    */
-  private renderCSVReport(report: ErrorReport,): string {
+  private renderCSVReport(report: ErrorReport): string {
     const headers = [
       'error_id',
       'timestamp',
@@ -859,7 +859,7 @@ ${report.technicalDetails}
       'confidence',
       'message',
       'recommendations_count',
-    ]
+    ];
 
     const row = [
       report.originalError.errorId,
@@ -872,77 +872,77 @@ ${report.technicalDetails}
       report.classification.recoveryStrategy,
       report.classification.impactScore,
       report.classification.confidence,
-      `"${report.originalError.message.replace(/"/g, '""',)}"`,
+      `"${report.originalError.message.replace(/"/g, '""')}"`,
       report.recommendations.length,
-    ]
+    ];
 
-    return headers.join(',',) + '\n' + row.join(',',)
+    return headers.join(',') + '\n' + row.join(',');
   }
 
   /**
    * Get report history
    */
   public getReportHistory(): Map<string, ErrorReport> {
-    return new Map(this.reportHistory,)
+    return new Map(this.reportHistory);
   }
 
   /**
    * Clean up old reports based on retention period
    */
   public async cleanupOldReports(): Promise<number> {
-    const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionPeriodDays,)
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionPeriodDays);
 
-    let cleanedCount = 0
+    let cleanedCount = 0;
 
-    for (const [errorId, report,] of this.reportHistory) {
+    for (const [errorId, report] of this.reportHistory) {
       if (report.context.timestamp < cutoffDate) {
-        this.reportHistory.delete(errorId,)
-        cleanedCount++
+        this.reportHistory.delete(errorId);
+        cleanedCount++;
       }
     }
 
-    this.emit('reports_cleaned', { cleanedCount, cutoffDate, },)
-    return cleanedCount
+    this.emit('reports_cleaned', { cleanedCount, cutoffDate });
+    return cleanedCount;
   }
 
   /**
    * Export aggregated reports
    */
-  public async exportAggregatedReports(format: ReportFormat = 'json',): Promise<string> {
+  public async exportAggregatedReports(format: ReportFormat = 'json'): Promise<string> {
     const aggregatedData = {
-      batches: Array.from(this.aggregatedReports.values(),),
+      batches: Array.from(this.aggregatedReports.values()),
       summary: {
         totalBatches: this.aggregatedReports.size,
-        totalErrors: Array.from(this.aggregatedReports.values(),).reduce(
-          (sum, batch,) => sum + batch.totalCount,
+        totalErrors: Array.from(this.aggregatedReports.values()).reduce(
+          (sum, batch) => sum + batch.totalCount,
           0,
         ),
       },
       exportTimestamp: new Date().toISOString(),
-    }
+    };
 
-    const template = this.templates.get(format,)
+    const template = this.templates.get(format);
     if (!template) {
-      throw new Error(`No template found for format: ${format}`,)
+      throw new Error(`No template found for format: ${format}`);
     }
 
     const fileName = `aggregated-reports_${
-      new Date().toISOString().replace(/[:.]/g, '-',)
-    }.${template.getFileExtension()}`
-    const filePath = path.join(this.config.outputDirectory, fileName,)
+      new Date().toISOString().replace(/[:.]/g, '-')
+    }.${template.getFileExtension()}`;
+    const filePath = path.join(this.config.outputDirectory, fileName);
 
     const content = format === 'json'
-      ? JSON.stringify(aggregatedData, null, 2,)
-      : JSON.stringify(aggregatedData,) // Simplified for other formats
+      ? JSON.stringify(aggregatedData, null, 2)
+      : JSON.stringify(aggregatedData); // Simplified for other formats
 
-    await fs.writeFile(filePath, content, 'utf-8',)
+    await fs.writeFile(filePath, content, 'utf-8');
 
     this.emit('aggregated_reports_exported', {
       filePath,
       format,
       batchCount: this.aggregatedReports.size,
-    },)
-    return filePath
+    });
+    return filePath;
   }
 }

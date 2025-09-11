@@ -16,16 +16,19 @@ related:
 ## 🎯 Core Principles
 
 ### KISS Principle - Keep It Simple, Stupid
+
 - Choose simplest solution that meets requirements
 - Prefer readable code over clever optimizations
 - Use clear, descriptive naming and avoid over-engineering
 
 ### YAGNI Principle - You Aren't Gonna Need It
+
 - Build only what current requirements specify
 - Resist 'just in case' features
 - Remove unused code immediately
 
 ### Chain of Thought
+
 - Break problems into sequential steps
 - Show intermediate decisions and validate against requirements
 - Each step follows logically from previous steps
@@ -37,18 +40,18 @@ related:
 ```typescript
 // ✅ CORRECT - Clear medical terminology
 interface PatientRecord {
-  patientId: string
-  medicalRecordNumber: string
-  healthInsuranceNumber: string
-  emergencyContact: EmergencyContact
-  lgpdConsent: ConsentStatus
+  patientId: string;
+  medicalRecordNumber: string;
+  healthInsuranceNumber: string;
+  emergencyContact: EmergencyContact;
+  lgpdConsent: ConsentStatus;
 }
 
 // ❌ INCORRECT - Confusing abbreviations
 interface PatRec {
-  id: string
-  mrn: string
-  ins: string
+  id: string;
+  mrn: string;
+  ins: string;
 }
 ```
 
@@ -60,20 +63,20 @@ class HealthcareError extends Error {
   constructor(
     message: string,
     public readonly healthcareContext: {
-      patientId?: string
-      appointmentId?: string
-      clinicId?: string
-      action?: string
-      severity: 'low' | 'medium' | 'high' | 'critical'
-    }
+      patientId?: string;
+      appointmentId?: string;
+      clinicId?: string;
+      action?: string;
+      severity: 'low' | 'medium' | 'high' | 'critical';
+    },
   ) {
-    super(message)
-    this.name = 'HealthcareError'
+    super(message);
+    this.name = 'HealthcareError';
   }
 }
 
 // ❌ INCORRECT - Generic error
-throw new Error('Something went wrong')
+throw new Error('Something went wrong');
 ```
 
 ## 🔧 TypeScript 5.7.2 Standards
@@ -82,13 +85,13 @@ throw new Error('Something went wrong')
 
 ```typescript
 // Branded types for healthcare safety
-type PatientId = string & { readonly __brand: unique symbol }
-type CPF = string & { readonly __brand: unique symbol }
-type AppointmentId = string & { readonly __brand: unique symbol }
+type PatientId = string & { readonly __brand: unique symbol };
+type CPF = string & { readonly __brand: unique symbol };
+type AppointmentId = string & { readonly __brand: unique symbol };
 
 // Utility types for sensitive data
-type SensitiveData<T> = T & { readonly __sensitive: true }
-type AuditableAction = 'create' | 'read' | 'update' | 'delete' | 'export'
+type SensitiveData<T> = T & { readonly __sensitive: true };
+type AuditableAction = 'create' | 'read' | 'update' | 'delete' | 'export';
 
 // Zod schema for runtime validation
 const PatientSchema = z.object({
@@ -96,18 +99,18 @@ const PatientSchema = z.object({
   personalInfo: z.object({
     fullName: z.string().min(2).max(100),
     cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/).transform((val): CPF => val as CPF),
-    dateOfBirth: z.date().refine((date) => date < new Date(), {
-      message: 'Data de nascimento deve ser no passado'
-    })
+    dateOfBirth: z.date().refine(date => date < new Date(), {
+      message: 'Data de nascimento deve ser no passado',
+    }),
   }),
   privacy: z.object({
     lgpdConsent: z.boolean(),
     consentDate: z.date(),
-    dataRetentionUntil: z.date()
-  })
-})
+    dataRetentionUntil: z.date(),
+  }),
+});
 
-type Patient = z.infer<typeof PatientSchema>
+type Patient = z.infer<typeof PatientSchema>;
 ```
 
 ### Advanced Type Patterns
@@ -116,23 +119,23 @@ type Patient = z.infer<typeof PatientSchema>
 // Mapped types for audit trails
 type AuditLog<T> = {
   [K in keyof T]: {
-    oldValue: T[K]
-    newValue: T[K]
-    changedAt: Date
-    changedBy: string
-  }
-}
+    oldValue: T[K];
+    newValue: T[K];
+    changedAt: Date;
+    changedBy: string;
+  };
+};
 
 // Discriminated unions for user types
 type HealthcareUser =
   | { role: 'doctor'; crm: string; specialization: string }
   | { role: 'nurse'; coren: string; department: string }
   | { role: 'admin'; permissions: string[] }
-  | { role: 'receptionist'; clinicId: string }
+  | { role: 'receptionist'; clinicId: string };
 
 // Type guards for runtime validation
 function isPatient(obj: unknown): obj is Patient {
-  return PatientSchema.safeParse(obj).success
+  return PatientSchema.safeParse(obj).success;
 }
 ```
 
@@ -150,7 +153,7 @@ function isPatient(obj: unknown): obj is Patient {
 async function calculateNextAvailableDate(
   baseDate: Date,
   excludeWeekends: boolean = true,
-  clinicSchedule: ClinicSchedule
+  clinicSchedule: ClinicSchedule,
 ): Promise<Date> {
   // Implementation...
 }
@@ -176,8 +179,8 @@ export const Route = createFileRoute('/patients/$patientId')({
       throw new HealthcareError('Acesso negado ao prontuário', {
         patientId: params.patientId,
         action: 'view_patient',
-        severity: 'high'
-      })
+        severity: 'high',
+      });
     }
   },
   loader: async ({ params }) => {
@@ -185,12 +188,12 @@ export const Route = createFileRoute('/patients/$patientId')({
     await logPatientAccess({
       patientId: params.patientId,
       action: 'view',
-      timestamp: new Date()
-    })
-    return await getPatientData(params.patientId)
+      timestamp: new Date(),
+    });
+    return await getPatientData(params.patientId);
   },
-  errorComponent: PatientErrorBoundary
-})
+  errorComponent: PatientErrorBoundary,
+});
 ```
 
 ### Type-Safe Navigation
@@ -198,7 +201,7 @@ export const Route = createFileRoute('/patients/$patientId')({
 ```typescript
 // ✅ CORRECT - Type-safe navigation with audit
 function usePatientNavigation() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const goToPatient = (patientId: PatientId) => {
     navigate({
@@ -207,12 +210,12 @@ function usePatientNavigation() {
       search: {
         referrer: 'patient-list',
         timestamp: Date.now(),
-        auditTrail: true
-      }
-    })
-  }
+        auditTrail: true,
+      },
+    });
+  };
 
-  return { goToPatient }
+  return { goToPatient };
 }
 ```
 
@@ -223,7 +226,7 @@ function usePatientNavigation() {
 export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
   beforeLoad: ({ params, context }) => {
     if (!context.user) {
-      throw redirect({ to: '/auth/login' })
+      throw redirect({ to: '/auth/login' });
     }
 
     if (!hasPatientAccess(context.user.id, params.patientId)) {
@@ -231,8 +234,8 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
         patientId: params.patientId,
         userId: context.user.id,
         action: 'view_patient',
-        severity: 'high'
-      })
+        severity: 'high',
+      });
     }
   },
   loader: async ({ params, context }) => {
@@ -241,11 +244,11 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
       patientId: params.patientId,
       userId: context.user.id,
       action: 'view',
-      timestamp: new Date()
-    })
-    return await getPatientData(params.patientId)
-  }
-})
+      timestamp: new Date(),
+    });
+    return await getPatientData(params.patientId);
+  },
+});
 ```
 
 ## 🏗️ Vite Build Optimization
@@ -264,23 +267,23 @@ export default defineConfig({
           'healthcare-core': [
             'src/components/patient',
             'src/components/appointment',
-            'src/components/emergency'
+            'src/components/emergency',
           ],
-          'admin': [
+          admin: [
             'src/components/admin',
-            'src/components/reports'
+            'src/components/reports',
           ],
-          'vendor': ['react', 'react-dom', '@tanstack/react-router']
-        }
-      }
+          vendor: ['react', 'react-dom', '@tanstack/react-router'],
+        },
+      },
     },
-    chunkSizeWarningLimit: 1000 // 1MB for critical features
+    chunkSizeWarningLimit: 1000, // 1MB for critical features
   },
   server: {
     host: '0.0.0.0', // Local network access
-    port: 3000
-  }
-})
+    port: 3000,
+  },
+});
 ```
 
 ### Performance Monitoring
@@ -288,23 +291,23 @@ export default defineConfig({
 ```typescript
 // ✅ CORRECT - Healthcare-critical performance monitoring
 function initHealthcareMetrics() {
-  onLCP((metric) => {
+  onLCP(metric => {
     // LCP < 2.5s critical for emergency forms
     if (metric.value > 2500) {
       reportHealthcareMetric('lcp_slow', {
         value: metric.value,
         page: window.location.pathname,
         severity: 'critical',
-        impact: 'emergency_response_delay'
-      })
+        impact: 'emergency_response_delay',
+      });
     }
-  })
+  });
 
   // Patient record loading SLA: < 1.5s
-  performance.mark('patient-load-start')
+  performance.mark('patient-load-start');
   // ... data loading
-  performance.mark('patient-load-end')
-  performance.measure('patient-load', 'patient-load-start', 'patient-load-end')
+  performance.mark('patient-load-end');
+  performance.measure('patient-load', 'patient-load-start', 'patient-load-end');
 }
 ```
 
@@ -315,37 +318,37 @@ function initHealthcareMetrics() {
 ```typescript
 // ✅ CORRECT - useOptimistic for patient updates
 function usePatientUpdates(patientId: PatientId) {
-  const [patient, setPatient] = useState<Patient>()
+  const [patient, setPatient] = useState<Patient>();
   const [optimisticPatient, updateOptimisticPatient] = useOptimistic(
     patient,
-    (current, update: Partial<Patient>) => ({ ...current, ...update })
-  )
-  const [isPending, startTransition] = useTransition()
+    (current, update: Partial<Patient>) => ({ ...current, ...update }),
+  );
+  const [isPending, startTransition] = useTransition();
 
   const updatePatient = async (updates: Partial<Patient>) => {
-    updateOptimisticPatient(updates)
+    updateOptimisticPatient(updates);
 
     startTransition(async () => {
       try {
-        await updatePatientInDatabase(patientId, updates)
+        await updatePatientInDatabase(patientId, updates);
         await logPatientUpdate({
           patientId,
           changes: updates,
-          timestamp: new Date()
-        })
-        setPatient(prev => ({ ...prev, ...updates }))
+          timestamp: new Date(),
+        });
+        setPatient(prev => ({ ...prev, ...updates }));
       } catch (error) {
-        setPatient(patient) // Revert optimistic update
+        setPatient(patient); // Revert optimistic update
         throw new HealthcareError('Falha ao atualizar prontuário', {
           patientId,
           action: 'update',
-          severity: 'high'
-        })
+          severity: 'high',
+        });
       }
-    })
-  }
+    });
+  };
 
-  return { optimisticPatient, updatePatient, isPending }
+  return { optimisticPatient, updatePatient, isPending };
 }
 ```
 
@@ -354,12 +357,12 @@ function usePatientUpdates(patientId: PatientId) {
 ```typescript
 // ✅ CORRECT - Well-structured component with React 19
 interface PatientCardProps {
-  patient: Patient
-  onEdit: (patientId: PatientId) => void
-  onDelete: (patientId: PatientId) => Promise<void>
-  readOnly?: boolean
-  className?: string
-  'data-testid'?: string
+  patient: Patient;
+  onEdit: (patientId: PatientId) => void;
+  onDelete: (patientId: PatientId) => Promise<void>;
+  readOnly?: boolean;
+  className?: string;
+  'data-testid'?: string;
 }
 
 export function PatientCard({
@@ -368,48 +371,48 @@ export function PatientCard({
   onDelete,
   readOnly = false,
   className,
-  'data-testid': testId
+  'data-testid': testId,
 }: PatientCardProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
     startTransition(async () => {
-      setIsDeleting(true)
+      setIsDeleting(true);
       try {
-        await onDelete(patient.id)
+        await onDelete(patient.id);
         await logHealthcareAction({
           action: 'delete_patient',
           patientId: patient.id,
-          timestamp: new Date()
-        })
+          timestamp: new Date(),
+        });
       } catch (error) {
         throw new HealthcareError('Falha ao excluir paciente', {
           patientId: patient.id,
           action: 'delete',
-          severity: 'critical'
-        })
+          severity: 'critical',
+        });
       } finally {
-        setIsDeleting(false)
+        setIsDeleting(false);
       }
-    })
-  }
+    });
+  };
 
   if (!patient) {
-    return <PatientCardSkeleton />
+    return <PatientCardSkeleton />;
   }
 
   return (
     <Card
       className={cn('patient-card', className, {
         'opacity-50': isPending,
-        'cursor-not-allowed': isDeleting
+        'cursor-not-allowed': isDeleting,
       })}
       data-testid={testId}
     >
       {/* Component content */}
     </Card>
-  )
+  );
 }
 ```
 
@@ -417,9 +420,9 @@ export function PatientCard({
 
 ```typescript
 // ✅ CORRECT - Suspense with concurrent features
-function PatientDataProvider({ patientId, children }: { 
-  patientId: PatientId
-  children: React.ReactNode 
+function PatientDataProvider({ patientId, children }: {
+  patientId: PatientId;
+  children: React.ReactNode;
 }) {
   return (
     <Suspense fallback={<PatientDataSkeleton />}>
@@ -427,25 +430,25 @@ function PatientDataProvider({ patientId, children }: {
         {children}
       </PatientDataBoundary>
     </Suspense>
-  )
+  );
 }
 
 function PatientDataBoundary({ patientId, children }: {
-  patientId: PatientId
-  children: React.ReactNode
+  patientId: PatientId;
+  children: React.ReactNode;
 }) {
-  const patientPromise = getPatientData(patientId)
-  const patient = use(patientPromise) // React 19 'use' hook
+  const patientPromise = getPatientData(patientId);
+  const patient = use(patientPromise); // React 19 'use' hook
 
   if (!patient || !hasPatientAccess(patient.id)) {
-    throw new HealthcareError('Acesso ao paciente não autorizado')
+    throw new HealthcareError('Acesso ao paciente não autorizado');
   }
 
   return (
     <PatientContext.Provider value={patient}>
       {children}
     </PatientContext.Provider>
-  )
+  );
 }
 ```
 
@@ -483,21 +486,21 @@ export const supabase = createClient(
     auth: {
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false // Extra security for clinic environment
+      detectSessionInUrl: false, // Extra security for clinic environment
     },
     realtime: {
       params: {
-        eventsPerSecond: 10 // Limited for clinic stability
-      }
+        eventsPerSecond: 10, // Limited for clinic stability
+      },
     },
     global: {
       headers: {
         'X-Healthcare-App': 'NeonPro',
-        'X-Compliance': 'LGPD-ANVISA'
-      }
-    }
-  }
-)
+        'X-Compliance': 'LGPD-ANVISA',
+      },
+    },
+  },
+);
 
 // Healthcare-specific query helpers
 export const healthcareQueries = {
@@ -509,16 +512,16 @@ export const healthcareQueries = {
         patient_id: patientId,
         action: 'view',
         timestamp: new Date().toISOString(),
-        user_id: (await supabase.auth.getUser()).data.user?.id
-      })
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+      });
 
     return supabase
       .from('patients')
       .select('*')
       .eq('id', patientId)
-      .single()
-  }
-}
+      .single();
+  },
+};
 ```
 
 ### Real-time Healthcare Subscriptions
@@ -526,7 +529,7 @@ export const healthcareQueries = {
 ```typescript
 // ✅ CORRECT - Real-time subscriptions for clinics
 function useAppointmentUpdates(clinicId: string) {
-  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     const subscription = supabase
@@ -537,47 +540,49 @@ function useAppointmentUpdates(clinicId: string) {
           event: '*',
           schema: 'public',
           table: 'appointments',
-          filter: `clinic_id=eq.${clinicId}`
+          filter: `clinic_id=eq.${clinicId}`,
         },
-        (payload) => {
+        payload => {
           if (payload.eventType === 'INSERT') {
             showHealthcareNotification({
               type: 'new_appointment',
               message: 'Novo agendamento recebido',
-              priority: 'medium'
-            })
+              priority: 'medium',
+            });
           }
 
           if (payload.eventType === 'UPDATE' && payload.new.status === 'emergency') {
             showHealthcareNotification({
               type: 'emergency',
               message: 'Agendamento de emergência!',
-              priority: 'critical'
-            })
+              priority: 'critical',
+            });
           }
 
           setAppointments(prev => {
             switch (payload.eventType) {
               case 'INSERT':
-                return [...prev, payload.new as Appointment]
+                return [...prev, payload.new as Appointment];
               case 'UPDATE':
-                return prev.map(apt => apt.id === payload.new.id ? payload.new as Appointment : apt)
+                return prev.map(apt =>
+                  apt.id === payload.new.id ? payload.new as Appointment : apt
+                );
               case 'DELETE':
-                return prev.filter(apt => apt.id !== payload.old.id)
+                return prev.filter(apt => apt.id !== payload.old.id);
               default:
-                return prev
+                return prev;
             }
-          })
-        }
+          });
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [clinicId])
+      subscription.unsubscribe();
+    };
+  }, [clinicId]);
 
-  return appointments
+  return appointments;
 }
 ```
 
@@ -592,24 +597,25 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        emergency: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 font-semibold',
+        emergency:
+          'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 font-semibold',
         healthcare: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500',
         patient: 'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500',
-        warning: 'bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-500'
+        warning: 'bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-500',
       },
       size: {
         sm: 'h-8 px-3 text-xs',
         md: 'h-10 px-4 py-2',
         lg: 'h-12 px-6 text-base', // Larger for clinic tablets
-        xl: 'h-14 px-8 text-lg' // Extra large for emergencies
-      }
+        xl: 'h-14 px-8 text-lg', // Extra large for emergencies
+      },
     },
     defaultVariants: {
       variant: 'healthcare',
-      size: 'md'
-    }
-  }
-)
+      size: 'md',
+    },
+  },
+);
 ```
 
 ### Healthcare Card Patterns
@@ -617,17 +623,17 @@ const buttonVariants = cva(
 ```typescript
 // ✅ CORRECT - Card for sensitive data
 interface PatientDataCardProps {
-  patient: Patient
-  accessLevel: 'public' | 'sensitive' | 'confidential'
-  showSensitiveData?: boolean
-  className?: string
+  patient: Patient;
+  accessLevel: 'public' | 'sensitive' | 'confidential';
+  showSensitiveData?: boolean;
+  className?: string;
 }
 
 export function PatientDataCard({
   patient,
   accessLevel,
   showSensitiveData = false,
-  className
+  className,
 }: PatientDataCardProps) {
   return (
     <Card
@@ -636,14 +642,14 @@ export function PatientDataCard({
         {
           'border-l-green-500 bg-green-50/50': accessLevel === 'public',
           'border-l-yellow-500 bg-yellow-50/50': accessLevel === 'sensitive',
-          'border-l-red-500 bg-red-50/50': accessLevel === 'confidential'
+          'border-l-red-500 bg-red-50/50': accessLevel === 'confidential',
         },
-        className
+        className,
       )}
     >
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-lg font-semibold'>
             {patient.name}
           </CardTitle>
           <Badge variant={accessLevel === 'confidential' ? 'destructive' : 'secondary'}>
@@ -655,12 +661,12 @@ export function PatientDataCard({
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <p>ID: {patient.id}</p>
           {(accessLevel === 'public' || showSensitiveData) && <p>CPF: {patient.cpf}</p>}
           {accessLevel === 'confidential' && showSensitiveData && (
-            <div className="p-3 bg-red-100 rounded border border-red-200">
-              <p className="text-sm text-red-800 font-medium">
+            <div className='p-3 bg-red-100 rounded border border-red-200'>
+              <p className='text-sm text-red-800 font-medium'>
                 ⚠️ Informações confidenciais - Acesso restrito
               </p>
             </div>
@@ -668,7 +674,7 @@ export function PatientDataCard({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 ```
 
@@ -677,11 +683,11 @@ export function PatientDataCard({
 ```typescript
 // ✅ CORRECT - Accessible emergency alert
 interface EmergencyAlertProps {
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  message: string
-  patientName?: string
-  onAcknowledge: () => void
-  autoFocus?: boolean
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  patientName?: string;
+  onAcknowledge: () => void;
+  autoFocus?: boolean;
 }
 
 export function EmergencyAlert({
@@ -689,15 +695,15 @@ export function EmergencyAlert({
   message,
   patientName,
   onAcknowledge,
-  autoFocus = false
+  autoFocus = false,
 }: EmergencyAlertProps) {
-  const alertRef = useRef<HTMLDivElement>(null)
+  const alertRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (autoFocus && severity === 'critical' && alertRef.current) {
-      alertRef.current.focus()
+      alertRef.current.focus();
     }
-  }, [autoFocus, severity])
+  }, [autoFocus, severity]);
 
   return (
     <Alert
@@ -708,25 +714,25 @@ export function EmergencyAlert({
           'border-l-blue-500 bg-blue-50': severity === 'low',
           'border-l-yellow-500 bg-yellow-50': severity === 'medium',
           'border-l-orange-500 bg-orange-50': severity === 'high',
-          'border-l-red-500 bg-red-50 animate-pulse': severity === 'critical'
-        }
+          'border-l-red-500 bg-red-50 animate-pulse': severity === 'critical',
+        },
       )}
-      role="alert"
+      role='alert'
       aria-live={severity === 'critical' ? 'assertive' : 'polite'}
-      aria-atomic="true"
+      aria-atomic='true'
       tabIndex={-1}
     >
-      <AlertTriangle className="h-5 w-5" />
-      <AlertTitle className="text-lg font-semibold">
+      <AlertTriangle className='h-5 w-5' />
+      <AlertTitle className='text-lg font-semibold'>
         {severity === 'critical' && '🚨 '}
         Alerta {severity === 'critical' ? 'CRÍTICO' : severity.toUpperCase()}
         {patientName && ` - ${patientName}`}
       </AlertTitle>
-      <AlertDescription className="text-base">
+      <AlertDescription className='text-base'>
         {message}
       </AlertDescription>
 
-      <div className="mt-4">
+      <div className='mt-4'>
         <Button
           variant={severity === 'critical' ? 'destructive' : 'default'}
           onClick={onAcknowledge}
@@ -736,7 +742,7 @@ export function EmergencyAlert({
         </Button>
       </div>
     </Alert>
-  )
+  );
 }
 ```
 
@@ -747,62 +753,62 @@ export function EmergencyAlert({
 ```typescript
 // ✅ CORRECT - Healthcare tests with Vitest
 describe('PatientService - Healthcare Security', () => {
-  let patientService: PatientService
-  let mockAuditLog: any
+  let patientService: PatientService;
+  let mockAuditLog: any;
 
   beforeEach(() => {
-    patientService = new PatientService()
-    mockAuditLog = vi.spyOn(patientService, 'logPatientAccess')
-  })
+    patientService = new PatientService();
+    mockAuditLog = vi.spyOn(patientService, 'logPatientAccess');
+  });
 
   afterEach(() => {
-    vi.restoreAllMocks()
-  })
+    vi.restoreAllMocks();
+  });
 
   describe('createPatient', () => {
     it('should create patient with valid data and log audit', async () => {
-      const authorizedUser = createMockUser({ role: 'doctor' })
+      const authorizedUser = createMockUser({ role: 'doctor' });
       const validPatientData = createMockPatient({
         fullName: 'João Silva',
         cpf: '123.456.789-00',
-        dateOfBirth: new Date('1990-01-01')
-      })
+        dateOfBirth: new Date('1990-01-01'),
+      });
 
-      const result = await patientService.createPatient(validPatientData, authorizedUser)
+      const result = await patientService.createPatient(validPatientData, authorizedUser);
 
-      expect(result.success).toBe(true)
-      expect(result.data).toHaveProperty('id')
-      expect(result.data?.fullName).toBe(validPatientData.fullName)
+      expect(result.success).toBe(true);
+      expect(result.data).toHaveProperty('id');
+      expect(result.data?.fullName).toBe(validPatientData.fullName);
 
       expect(mockAuditLog).toHaveBeenCalledWith({
         action: 'create_patient',
         patientId: result.data?.id,
         userId: authorizedUser.id,
-        timestamp: expect.any(Date)
-      })
-    })
+        timestamp: expect.any(Date),
+      });
+    });
 
     it('should reject patient creation without proper authorization', async () => {
-      const unauthorizedUser = createMockUser({ role: 'receptionist' })
-      const patientData = createMockPatient()
+      const unauthorizedUser = createMockUser({ role: 'receptionist' });
+      const patientData = createMockPatient();
 
       await expect(
-        patientService.createPatient(patientData, unauthorizedUser)
-      ).rejects.toThrow('Permissão insuficiente para criar pacientes')
-    })
+        patientService.createPatient(patientData, unauthorizedUser),
+      ).rejects.toThrow('Permissão insuficiente para criar pacientes');
+    });
 
     it('should validate CPF format and reject invalid CPF', async () => {
-      const user = createMockUser({ role: 'doctor' })
+      const user = createMockUser({ role: 'doctor' });
       const invalidPatientData = createMockPatient({
-        cpf: '111.111.111-11' // Invalid CPF
-      })
+        cpf: '111.111.111-11', // Invalid CPF
+      });
 
       await expect(
-        patientService.createPatient(invalidPatientData, user)
-      ).rejects.toThrow('CPF inválido')
-    })
-  })
-})
+        patientService.createPatient(invalidPatientData, user),
+      ).rejects.toThrow('CPF inválido');
+    });
+  });
+});
 ```
 
 ### Integration Testing with MSW
@@ -816,27 +822,27 @@ const server = setupServer(
       user: {
         id: 'mock-user-id',
         email: 'doctor@clinic.com',
-        role: 'doctor'
-      }
-    })
+        role: 'doctor',
+      },
+    });
   }),
   http.get('/rest/v1/patients', ({ request }) => {
-    const url = new URL(request.url)
-    const select = url.searchParams.get('select')
+    const url = new URL(request.url);
+    const select = url.searchParams.get('select');
 
     return HttpResponse.json([
       {
         id: 'patient-1',
         name: 'João Silva',
-        ...(select?.includes('cpf') ? { cpf: '123.456.789-00' } : {})
-      }
-    ])
-  })
-)
+        ...(select?.includes('cpf') ? { cpf: '123.456.789-00' } : {}),
+      },
+    ]);
+  }),
+);
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 ```
 
 ### E2E Testing with Playwright
@@ -845,38 +851,38 @@ afterAll(() => server.close())
 // ✅ CORRECT - E2E tests for critical healthcare flows
 test.describe('Emergency Patient Registration', () => {
   test('should allow quick patient registration in emergency scenarios', async ({ page }) => {
-    await page.goto('/emergency/register')
+    await page.goto('/emergency/register');
 
-    await page.fill('[data-testid="patient-name"]', 'Maria Silva')
-    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00')
-    await page.selectOption('[data-testid="emergency-level"]', 'high')
+    await page.fill('[data-testid="patient-name"]', 'Maria Silva');
+    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00');
+    await page.selectOption('[data-testid="emergency-level"]', 'high');
 
-    await page.click('[data-testid="emergency-submit"]')
+    await page.click('[data-testid="emergency-submit"]');
 
-    await expect(page.locator('[data-testid="success-message"]')).toBeVisible()
-    await expect(page).toHaveURL(/\/patients\/.*\/emergency/)
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
+    await expect(page).toHaveURL(/\/patients\/.*\/emergency/);
 
-    const auditLogs = await page.request.get('/api/audit-logs?action=emergency_registration')
-    expect(auditLogs.ok()).toBeTruthy()
-  })
+    const auditLogs = await page.request.get('/api/audit-logs?action=emergency_registration');
+    expect(auditLogs.ok()).toBeTruthy();
+  });
 
   test('should handle LGPD consent flow during registration', async ({ page }) => {
-    await page.goto('/patients/register')
+    await page.goto('/patients/register');
 
-    await page.fill('[data-testid="patient-name"]', 'Pedro Santos')
-    await page.fill('[data-testid="patient-email"]', 'pedro@email.com')
+    await page.fill('[data-testid="patient-name"]', 'Pedro Santos');
+    await page.fill('[data-testid="patient-email"]', 'pedro@email.com');
 
-    await expect(page.locator('[data-testid="lgpd-consent-dialog"]')).toBeVisible()
+    await expect(page.locator('[data-testid="lgpd-consent-dialog"]')).toBeVisible();
 
-    await page.check('[data-testid="consent-data-processing"]')
-    await page.check('[data-testid="consent-medical-records"]')
-    await page.click('[data-testid="accept-consent"]')
+    await page.check('[data-testid="consent-data-processing"]');
+    await page.check('[data-testid="consent-medical-records"]');
+    await page.click('[data-testid="accept-consent"]');
 
-    await page.click('[data-testid="register-patient"]')
+    await page.click('[data-testid="register-patient"]');
 
-    await expect(page.locator('[data-testid="consent-confirmation"]')).toBeVisible()
-  })
-})
+    await expect(page.locator('[data-testid="consent-confirmation"]')).toBeVisible();
+  });
+});
 ```
 
 ## 🔒 Security & LGPD Standards
@@ -886,10 +892,10 @@ test.describe('Emergency Patient Registration', () => {
 ```typescript
 // ✅ CORRECT - Protected sensitive data
 interface PatientPublicView {
-  id: PatientId
-  firstName: string // Only first name
-  appointmentCount: number
-  lastVisit: Date
+  id: PatientId;
+  firstName: string; // Only first name
+  appointmentCount: number;
+  lastVisit: Date;
   // CPF, address, phone omitted
 }
 
@@ -898,13 +904,13 @@ function getPatientPublicView(patient: Patient): PatientPublicView {
     id: patient.id,
     firstName: patient.personalInfo.fullName.split(' ')[0],
     appointmentCount: patient.appointments.length,
-    lastVisit: patient.lastAppointment?.date ?? new Date()
-  }
+    lastVisit: patient.lastAppointment?.date ?? new Date(),
+  };
 }
 
 // ❌ INCORRECT - Exposing sensitive data
 function getPatientData(patient: Patient) {
-  return patient // Exposes all data
+  return patient; // Exposes all data
 }
 ```
 
@@ -916,8 +922,8 @@ const validatePatientInput = z.object({
   fullName: z.string().min(2).max(100).regex(/^[a-zA-ZÀ-ÿ\s]+$/),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/).refine(validateCPF),
   email: z.string().email(),
-  phone: z.string().regex(/^\+55\d{2}\d{8,9}$/)
-})
+  phone: z.string().regex(/^\+55\d{2}\d{8,9}$/),
+});
 
 // ❌ INCORRECT - No validation
 function createPatient(data: any) {
@@ -931,11 +937,11 @@ function createPatient(data: any) {
 
 ```typescript
 // ✅ CORRECT - Specific imports
-import { formatDate } from '@neonpro/utils/date'
-import { validateCPF } from '@neonpro/utils/validation'
+import { formatDate } from '@neonpro/utils/date';
+import { validateCPF } from '@neonpro/utils/validation';
 
 // ❌ INCORRECT - Full import
-import * as utils from '@neonpro/utils'
+import * as utils from '@neonpro/utils';
 ```
 
 ### Component Lazy Loading
@@ -962,7 +968,7 @@ const PatientReportsModal = lazy(() =>
 // ✅ CORRECT - Explains the "why"
 // Apply special discount for SUS patients according to
 // ANVISA 2023 regulation, article 15.3
-const susDiscount = basePrice * 0.15
+const susDiscount = basePrice * 0.15;
 
 /**
  * Calculate average wait time considering medical priorities
@@ -973,14 +979,14 @@ const susDiscount = basePrice * 0.15
  */
 function calculateWaitTime(
   appointments: Appointment[],
-  priority: MedicalPriority
+  priority: MedicalPriority,
 ): number {
   // Implementation...
 }
 
 // ❌ INCORRECT - Obvious comment
 // Increment counter
-counter++
+counter++;
 ```
 
 ## ✅ Quality Checklist

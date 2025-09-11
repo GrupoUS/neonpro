@@ -1,4 +1,4 @@
-import type { QueryClient, } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query';
 
 export const healthcareOptimisticUpdates = {
   patient: {
@@ -7,24 +7,24 @@ export const healthcareOptimisticUpdates = {
       patientId: string,
       record: any,
     ) {
-      const key = ['patients', patientId, 'medical-records',] as const
-      const prev = queryClient.getQueryData(key,)
-      queryClient.setQueryData(key, (current: any[] = [],) => {
-        const idx = current.findIndex((r,) => r?.id === record.id)
+      const key = ['patients', patientId, 'medical-records'] as const;
+      const prev = queryClient.getQueryData(key);
+      queryClient.setQueryData(key, (current: any[] = []) => {
+        const idx = current.findIndex(r => r?.id === record.id);
         if (idx >= 0) {
-          const copy = current.slice()
-          copy[idx] = { ...current[idx], ...record, }
-          return copy
+          const copy = current.slice();
+          copy[idx] = { ...current[idx], ...record };
+          return copy;
         }
-        return [...current, record,]
-      },)
-      return { rollback: () => queryClient.setQueryData(key, prev,), record, }
+        return [...current, record];
+      });
+      return { rollback: () => queryClient.setQueryData(key, prev), record };
     },
-    async delete(queryClient: QueryClient, patientId: string,) {
-      const key = ['patients', 'detail', patientId,] as const
-      const prev = queryClient.getQueryData(key,)
-      queryClient.removeQueries({ queryKey: key, },)
-      return { rollback: () => queryClient.setQueryData(key, prev,), }
+    async delete(queryClient: QueryClient, patientId: string) {
+      const key = ['patients', 'detail', patientId] as const;
+      const prev = queryClient.getQueryData(key);
+      queryClient.removeQueries({ queryKey: key });
+      return { rollback: () => queryClient.setQueryData(key, prev) };
     },
   },
   appointment: {
@@ -33,11 +33,11 @@ export const healthcareOptimisticUpdates = {
       appointmentId: string,
       update: any,
     ) {
-      const key = ['appointments', 'detail', appointmentId,] as const
-      const prev = queryClient.getQueryData(key,) as any
-      const next = { ...prev, ...update, }
-      queryClient.setQueryData(key, next,)
-      return { rollback: () => queryClient.setQueryData(key, prev,), update: next, }
+      const key = ['appointments', 'detail', appointmentId] as const;
+      const prev = queryClient.getQueryData(key) as any;
+      const next = { ...prev, ...update };
+      queryClient.setQueryData(key, next);
+      return { rollback: () => queryClient.setQueryData(key, prev), update: next };
     },
   },
-} as const
+} as const;

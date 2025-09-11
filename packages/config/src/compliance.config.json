@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "lastUpdated": "2025-09-10T00:00:00Z",
   "environment": "production",
-  
+
   "hipaa": {
     "enabled": true,
     "version": "164.312",
@@ -60,7 +60,7 @@
         "automaticCleanup": true,
         "logFields": [
           "userId",
-          "action", 
+          "action",
           "resource",
           "timestamp",
           "ipAddress",
@@ -71,7 +71,7 @@
       }
     }
   },
-  
+
   "lgpd": {
     "enabled": true,
     "lawVersion": "13.709/2018",
@@ -84,7 +84,7 @@
         "auditTrail": true,
         "consentTypes": [
           "data_processing",
-          "marketing", 
+          "marketing",
           "research",
           "sharing"
         ],
@@ -130,7 +130,7 @@
       }
     }
   },
-  
+
   "performanceBudgets": {
     "enabled": true,
     "environment": "production",
@@ -144,7 +144,7 @@
       },
       "fid": {
         "budget": 100,
-        "unit": "ms", 
+        "unit": "ms",
         "alertThreshold": 0.9,
         "escalationPath": "ESC-003"
       },
@@ -174,7 +174,7 @@
       }
     }
   },
-  
+
   "aiGovernance": {
     "enabled": true,
     "evaluationMethod": "hybrid",
@@ -196,7 +196,7 @@
       "systemOverload": "cached_response"
     }
   },
-  
+
   "kpiConfiguration": {
     "baselineSource": "ehr_integration",
     "measurementWindow": 365,
@@ -213,12 +213,12 @@
         "baseline": 0,
         "phase1Target": 95,
         "phase2Target": 97,
-        "unit": "percentage", 
+        "unit": "percentage",
         "direction": "higher_better"
       }
     }
   },
-  
+
   "escalationPaths": {
     "ESC-001": {
       "name": "KPI Breach",
@@ -232,7 +232,7 @@
       ]
     },
     "ESC-002": {
-      "name": "HIPAA/LGPD Policy Failure", 
+      "name": "HIPAA/LGPD Policy Failure",
       "triggerCondition": "policy_violation",
       "responseTimeHours": 4,
       "owner": "Compliance Officer",
@@ -246,7 +246,7 @@
     "ESC-003": {
       "name": "Performance Budget Breach",
       "triggerCondition": "budget_exceeded",
-      "responseTimeHours": 1, 
+      "responseTimeHours": 1,
       "owner": "Engineering Lead",
       "actions": [
         "performance_analysis",
@@ -258,7 +258,7 @@
       "name": "AI Hallucination Spike",
       "triggerCondition": "hallucination_rate_above_threshold",
       "responseTimeHours": 2,
-      "owner": "AI Steward", 
+      "owner": "AI Steward",
       "actions": [
         "fallback_to_deterministic",
         "model_evaluation",
@@ -277,13 +277,13 @@
       ]
     }
   },
-  
+
   "complianceValidation": {
     "enabled": true,
     "automatedChecks": true,
     "scheduledAudits": {
       "hipaaCompliance": "monthly",
-      "lgpdCompliance": "monthly", 
+      "lgpdCompliance": "monthly",
       "performanceBudgets": "weekly",
       "aiGovernance": "weekly",
       "accessControls": "daily"

@@ -1,7 +1,7 @@
-import { Hono } from 'hono'
+import { Hono } from 'hono';
 
-const auth = new Hono()
+const auth = new Hono();
 
-auth.get('/status', (c) => c.json({ feature: 'auth', status: 'ok' }))
+auth.get('/status', c => c.json({ feature: 'auth', status: 'ok' }));
 
-export default auth
+export default auth;

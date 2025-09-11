@@ -87,6 +87,7 @@ flowchart TD
 ```
 
 **Flow Steps**:
+
 1. **User Type Detection** - System identifies user role (patient/professional/admin)
 2. **Credential Validation** - Role-specific authentication (CPF, CFM license, admin credentials)
 3. **Compliance Checks** - LGPD consent verification, CFM license validation
@@ -120,6 +121,7 @@ sequenceDiagram
 ```
 
 **Flow Steps**:
+
 1. **Registration Initiation** - Patient starts registration process
 2. **LGPD Compliance Check** - System presents required consent forms
 3. **Consent Collection** - Patient provides granular consent for data processing
@@ -161,6 +163,7 @@ flowchart LR
 ```
 
 **Flow Steps**:
+
 1. **Dashboard Overview** - Display key metrics (appointments, revenue, compliance status)
 2. **Schedule Management** - View today's appointments, available slots, blocked times
 3. **Patient Management** - Search patients, access medical/treatment history
@@ -197,6 +200,7 @@ sequenceDiagram
 ```
 
 **Flow Steps**:
+
 1. **Request Analysis** - Patient submits appointment request with procedure type and preferences
 2. **History Review** - AI analyzes patient history, previous no-shows, and risk factors
 3. **Availability Check** - System queries professional schedules and resource availability
@@ -240,6 +244,7 @@ flowchart LR
 ```
 
 **Flow Steps**:
+
 1. **Risk Assessment** - Analyze patient history, previous no-shows, and behavioral patterns
 2. **Risk Categorization** - Classify appointments as high, medium, or low risk
 3. **Communication Strategy** - Deploy appropriate reminder sequence based on risk level
@@ -281,6 +286,7 @@ flowchart TD
 ```
 
 **Flow Steps**:
+
 1. **Patient Search** - Search and select patient from database using CPF, name, or phone
 2. **Profile Access** - Load comprehensive patient profile with all related data
 3. **Medical History Review** - Access allergies, conditions, medications, and previous procedures
@@ -321,6 +327,7 @@ sequenceDiagram
 ```
 
 **Flow Steps**:
+
 1. **Credential Submission** - Professional submits CFM license number and password
 2. **CFM Validation** - System validates license with CFM database in real-time
 3. **Specialization Check** - Verify aesthetic procedure specializations and certifications
@@ -362,6 +369,7 @@ sequenceDiagram
 ```
 
 **Flow Steps**:
+
 1. **Consent Check** - Verify existing consents for specific data processing activities
 2. **Consent Collection** - Present granular consent forms for missing permissions
 3. **Consent Storage** - Store consent with timestamp, IP address, and legal basis
@@ -392,6 +400,7 @@ flowchart TD
 ```
 
 **Flow Steps**:
+
 1. **Initial Consultation** - Professional evaluates patient goals and medical history
 2. **Medical Assessment** - Review contraindications, allergies, and risk factors
 3. **Treatment Options** - Present suitable procedures with expected outcomes
@@ -430,6 +439,7 @@ sequenceDiagram
 ```
 
 **Flow Steps**:
+
 1. **Session Initiation** - Professional starts procedure session with patient verification
 2. **Compliance Check** - System verifies all regulatory requirements are met
 3. **Pre-procedure Protocol** - Execute safety checklist and final consent verification
@@ -471,6 +481,7 @@ flowchart TD
 ```
 
 **Flow Steps**:
+
 1. **Activity Monitoring** - Real-time monitoring of all platform activities and data processing
 2. **Multi-layer Compliance Check** - Simultaneous validation against LGPD, CFM, and ANVISA requirements
 3. **Audit Trail Creation** - Comprehensive logging of all compliance checks and results
@@ -500,6 +511,7 @@ This document provides a comprehensive overview of the core platform flows for N
 ### Flow Integration Points
 
 All flows are designed to work seamlessly together, with proper handoffs between:
+
 - Patient-facing interfaces and professional dashboards
 - Scheduling systems and compliance monitoring
 - Authentication flows and session management
@@ -509,6 +521,7 @@ All flows are designed to work seamlessly together, with proper handoffs between
 ### Next Steps
 
 For implementation details, refer to:
+
 - [System Architecture](./architecture.md) - Technical architecture and patterns
 - [Technology Stack](./tech-stack.md) - Technology choices and implementation
 - [Frontend Architecture](./frontend-architecture.md) - UI/UX implementation details
@@ -516,7 +529,7 @@ For implementation details, refer to:
 
 ---
 
-**Focus**: Platform flows and user journeys for Brazilian aesthetic clinics  
-**Compliance**: LGPD, ANVISA, CFM requirements integrated into workflows  
-**Target**: Developers implementing business logic and user experience flows  
+**Focus**: Platform flows and user journeys for Brazilian aesthetic clinics\
+**Compliance**: LGPD, ANVISA, CFM requirements integrated into workflows\
+**Target**: Developers implementing business logic and user experience flows\
 **Version**: 4.0.0 - Optimized for platform flows only

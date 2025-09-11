@@ -1,6 +1,6 @@
-import { EventEmitter, } from 'events'
-import { LogContext, logger, } from './Logger.js'
-import { performanceMonitor, } from './PerformanceMonitor.js'
+import { EventEmitter } from 'events';
+import { LogContext, logger } from './Logger.js';
+import { performanceMonitor } from './PerformanceMonitor.js';
 
 export enum ErrorSeverity {
   LOW = 'low',
@@ -32,57 +32,57 @@ export enum RecoveryStrategy {
 }
 
 export interface ErrorContext {
-  operation: string
-  component: string
-  input?: any
-  metadata?: Record<string, any>
-  userContext?: LogContext
-  timestamp: number
-  stackTrace?: string
+  operation: string;
+  component: string;
+  input?: any;
+  metadata?: Record<string, any>;
+  userContext?: LogContext;
+  timestamp: number;
+  stackTrace?: string;
 }
 
 export interface ClassifiedError {
-  originalError: Error
-  category: ErrorCategory
-  severity: ErrorSeverity
-  recoveryStrategy: RecoveryStrategy
-  context: ErrorContext
-  isRecoverable: boolean
-  retryable: boolean
-  userFriendlyMessage: string
+  originalError: Error;
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  recoveryStrategy: RecoveryStrategy;
+  context: ErrorContext;
+  isRecoverable: boolean;
+  retryable: boolean;
+  userFriendlyMessage: string;
 }
 
 export interface RetryConfig {
-  maxAttempts: number
-  initialDelayMs: number
-  maxDelayMs: number
-  backoffMultiplier: number
-  jitterFactor: number
-  retryableErrors: ErrorCategory[]
+  maxAttempts: number;
+  initialDelayMs: number;
+  maxDelayMs: number;
+  backoffMultiplier: number;
+  jitterFactor: number;
+  retryableErrors: ErrorCategory[];
 }
 
 export interface CircuitBreakerConfig {
-  failureThreshold: number
-  timeoutMs: number
-  resetTimeoutMs: number
-  monitoringPeriodMs: number
+  failureThreshold: number;
+  timeoutMs: number;
+  resetTimeoutMs: number;
+  monitoringPeriodMs: number;
 }
 
-export interface FallbackConfig<T,> {
-  fallbackValue?: T
-  fallbackFunction?: () => T | Promise<T>
-  enableGracefulDegradation: boolean
+export interface FallbackConfig<T> {
+  fallbackValue?: T;
+  fallbackFunction?: () => T | Promise<T>;
+  enableGracefulDegradation: boolean;
 }
 
 export interface ErrorHandlerConfig {
-  enableRetry: boolean
-  enableCircuitBreaker: boolean
-  enableFallback: boolean
-  enableGracefulDegradation: boolean
-  defaultRetry: RetryConfig
-  defaultCircuitBreaker: CircuitBreakerConfig
-  logErrors: boolean
-  reportMetrics: boolean
+  enableRetry: boolean;
+  enableCircuitBreaker: boolean;
+  enableFallback: boolean;
+  enableGracefulDegradation: boolean;
+  defaultRetry: RetryConfig;
+  defaultCircuitBreaker: CircuitBreakerConfig;
+  logErrors: boolean;
+  reportMetrics: boolean;
 }
 
 export class ErrorClassifier {
@@ -166,35 +166,35 @@ export class ErrorClassifier {
         severity: ErrorSeverity.HIGH,
       },
     ],
-  ],)
+  ]);
 
-  static classify(error: Error, context: ErrorContext,): ClassifiedError {
-    let category = ErrorCategory.UNKNOWN
-    let severity = ErrorSeverity.MEDIUM
+  static classify(error: Error, context: ErrorContext): ClassifiedError {
+    let category = ErrorCategory.UNKNOWN;
+    let severity = ErrorSeverity.MEDIUM;
 
     // Check error message against patterns
-    const errorMessage = error.message.toLowerCase()
-    for (const [pattern, classification,] of this.ERROR_PATTERNS) {
-      if (pattern.test(errorMessage,) || pattern.test(error.name.toLowerCase(),)) {
-        category = classification.category
-        severity = classification.severity
-        break
+    const errorMessage = error.message.toLowerCase();
+    for (const [pattern, classification] of this.ERROR_PATTERNS) {
+      if (pattern.test(errorMessage) || pattern.test(error.name.toLowerCase())) {
+        category = classification.category;
+        severity = classification.severity;
+        break;
       }
     }
 
     // Additional classification based on error type
     if (error.name === 'TypeError' || error.name === 'ReferenceError') {
-      category = ErrorCategory.USER_INPUT
-      severity = ErrorSeverity.LOW
+      category = ErrorCategory.USER_INPUT;
+      severity = ErrorSeverity.LOW;
     } else if (error.name === 'RangeError') {
-      category = ErrorCategory.VALIDATION
-      severity = ErrorSeverity.MEDIUM
+      category = ErrorCategory.VALIDATION;
+      severity = ErrorSeverity.MEDIUM;
     }
 
-    const isRecoverable = this.isRecoverable(category, severity,)
-    const retryable = this.isRetryable(category,)
-    const recoveryStrategy = this.getRecoveryStrategy(category, severity, isRecoverable,)
-    const userFriendlyMessage = this.getUserFriendlyMessage(category, error.message,)
+    const isRecoverable = this.isRecoverable(category, severity);
+    const retryable = this.isRetryable(category);
+    const recoveryStrategy = this.getRecoveryStrategy(category, severity, isRecoverable);
+    const userFriendlyMessage = this.getUserFriendlyMessage(category, error.message);
 
     return {
       originalError: error,
@@ -205,12 +205,12 @@ export class ErrorClassifier {
       isRecoverable,
       retryable,
       userFriendlyMessage,
-    }
+    };
   }
 
-  private static isRecoverable(category: ErrorCategory, severity: ErrorSeverity,): boolean {
+  private static isRecoverable(category: ErrorCategory, severity: ErrorSeverity): boolean {
     if (severity === ErrorSeverity.CRITICAL) {
-      return false
+      return false;
     }
 
     const recoverableCategories = [
@@ -219,19 +219,19 @@ export class ErrorClassifier {
       ErrorCategory.FILE_SYSTEM,
       ErrorCategory.PARSING,
       ErrorCategory.VALIDATION,
-    ]
+    ];
 
-    return recoverableCategories.includes(category,)
+    return recoverableCategories.includes(category);
   }
 
-  private static isRetryable(category: ErrorCategory,): boolean {
+  private static isRetryable(category: ErrorCategory): boolean {
     const retryableCategories = [
       ErrorCategory.NETWORK,
       ErrorCategory.TIMEOUT,
       ErrorCategory.FILE_SYSTEM,
-    ]
+    ];
 
-    return retryableCategories.includes(category,)
+    return retryableCategories.includes(category);
   }
 
   private static getRecoveryStrategy(
@@ -240,124 +240,124 @@ export class ErrorClassifier {
     isRecoverable: boolean,
   ): RecoveryStrategy {
     if (!isRecoverable) {
-      return RecoveryStrategy.ABORT
+      return RecoveryStrategy.ABORT;
     }
     if (severity === ErrorSeverity.CRITICAL) {
-      return RecoveryStrategy.ABORT
+      return RecoveryStrategy.ABORT;
     }
 
     switch (category) {
       case ErrorCategory.NETWORK:
       case ErrorCategory.TIMEOUT:
-        return RecoveryStrategy.RETRY
+        return RecoveryStrategy.RETRY;
 
       case ErrorCategory.FILE_SYSTEM:
-        return RecoveryStrategy.FALLBACK
+        return RecoveryStrategy.FALLBACK;
 
       case ErrorCategory.PARSING:
       case ErrorCategory.VALIDATION:
-        return RecoveryStrategy.SKIP
+        return RecoveryStrategy.SKIP;
 
       case ErrorCategory.CONFIGURATION:
-        return RecoveryStrategy.DEGRADE
+        return RecoveryStrategy.DEGRADE;
 
       default:
-        return RecoveryStrategy.RETRY
+        return RecoveryStrategy.RETRY;
     }
   }
 
-  private static getUserFriendlyMessage(category: ErrorCategory, originalMessage: string,): string {
+  private static getUserFriendlyMessage(category: ErrorCategory, originalMessage: string): string {
     switch (category) {
       case ErrorCategory.NETWORK:
-        return 'Network connection failed. Please check your internet connection and try again.'
+        return 'Network connection failed. Please check your internet connection and try again.';
 
       case ErrorCategory.FILE_SYSTEM:
-        return 'File system operation failed. Please check file permissions and availability.'
+        return 'File system operation failed. Please check file permissions and availability.';
 
       case ErrorCategory.PARSING:
-        return 'Failed to parse file content. The file may be corrupted or in an unsupported format.'
+        return 'Failed to parse file content. The file may be corrupted or in an unsupported format.';
 
       case ErrorCategory.VALIDATION:
-        return 'Input validation failed. Please check the provided data and try again.'
+        return 'Input validation failed. Please check the provided data and try again.';
 
       case ErrorCategory.TIMEOUT:
-        return 'Operation timed out. This may be due to high system load or network latency.'
+        return 'Operation timed out. This may be due to high system load or network latency.';
 
       case ErrorCategory.MEMORY:
-        return 'Insufficient memory to complete operation. Try closing other applications or processing smaller datasets.'
+        return 'Insufficient memory to complete operation. Try closing other applications or processing smaller datasets.';
 
       case ErrorCategory.PERMISSION:
-        return 'Permission denied. Please check file and directory permissions.'
+        return 'Permission denied. Please check file and directory permissions.';
 
       case ErrorCategory.CONFIGURATION:
-        return 'Configuration error detected. Please check your settings and try again.'
+        return 'Configuration error detected. Please check your settings and try again.';
 
       default:
-        return originalMessage
+        return originalMessage;
     }
   }
 }
 export class RetryMechanism {
-  private static async delay(ms: number,): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms,))
+  private static async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private static calculateDelay(attempt: number, config: RetryConfig,): number {
+  private static calculateDelay(attempt: number, config: RetryConfig): number {
     const exponentialDelay = config.initialDelayMs
-      * Math.pow(config.backoffMultiplier, attempt - 1,)
-    const cappedDelay = Math.min(exponentialDelay, config.maxDelayMs,)
+      * Math.pow(config.backoffMultiplier, attempt - 1);
+    const cappedDelay = Math.min(exponentialDelay, config.maxDelayMs);
 
     // Add jitter to prevent thundering herd
-    const jitter = cappedDelay * config.jitterFactor * Math.random()
-    return Math.round(cappedDelay + jitter,)
+    const jitter = cappedDelay * config.jitterFactor * Math.random();
+    return Math.round(cappedDelay + jitter);
   }
 
-  static async execute<T,>(
+  static async execute<T>(
     operation: () => Promise<T>,
     config: RetryConfig,
     context: ErrorContext,
   ): Promise<T> {
-    let lastError: ClassifiedError
+    let lastError: ClassifiedError;
 
     for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
       try {
         const operationId = performanceMonitor.startOperation(
           `retry_${context.operation}`,
           context.userContext,
-          [`attempt_${attempt}`,],
-        )
-        const result = await operation()
-        performanceMonitor.endOperation(operationId,)
+          [`attempt_${attempt}`],
+        );
+        const result = await operation();
+        performanceMonitor.endOperation(operationId);
 
         if (attempt > 1) {
           logger.info(`Operation succeeded after ${attempt} attempts`, {
             component: 'RetryMechanism',
             operation: context.operation,
-            metadata: { attempts: attempt, totalAttempts: config.maxAttempts, },
+            metadata: { attempts: attempt, totalAttempts: config.maxAttempts },
             ...context.userContext,
-          },)
+          });
         }
 
-        return result
+        return result;
       } catch (error) {
         const classifiedError = ErrorClassifier.classify(error as Error, {
           ...context,
           timestamp: Date.now(),
-        },)
+        });
 
-        lastError = classifiedError
+        lastError = classifiedError;
 
         // Check if error is retryable
         if (
           !classifiedError.retryable
-          || !config.retryableErrors.includes(classifiedError.category,)
+          || !config.retryableErrors.includes(classifiedError.category)
         ) {
           logger.debug(`Error not retryable: ${classifiedError.category}`, {
             component: 'RetryMechanism',
             operation: context.operation,
             ...context.userContext,
-          },)
-          throw classifiedError
+          });
+          throw classifiedError;
         }
 
         // Don't retry on last attempt
@@ -375,11 +375,11 @@ export class RetryMechanism {
               ...context.userContext,
             },
             error as Error,
-          )
-          throw classifiedError
+          );
+          throw classifiedError;
         }
 
-        const delay = this.calculateDelay(attempt, config,)
+        const delay = this.calculateDelay(attempt, config);
 
         logger.warn(
           `Operation failed, retrying in ${delay}ms (attempt ${attempt}/${config.maxAttempts})`,
@@ -394,13 +394,13 @@ export class RetryMechanism {
             },
             ...context.userContext,
           },
-        )
+        );
 
-        await this.delay(delay,)
+        await this.delay(delay);
       }
     }
 
-    throw lastError!
+    throw lastError!;
   }
 }
 
@@ -411,30 +411,30 @@ export enum CircuitBreakerState {
 }
 
 export class CircuitBreaker extends EventEmitter {
-  private state: CircuitBreakerState = CircuitBreakerState.CLOSED
-  private failures = 0
-  private lastFailureTime = 0
-  private successCount = 0
-  private requestCount = 0
+  private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
+  private failures = 0;
+  private lastFailureTime = 0;
+  private successCount = 0;
+  private requestCount = 0;
 
   constructor(
     private name: string,
     private config: CircuitBreakerConfig,
   ) {
-    super()
-    this.startMonitoring()
+    super();
+    this.startMonitoring();
   }
 
   private startMonitoring(): void {
     setInterval(() => {
-      this.resetMetrics()
-    }, this.config.monitoringPeriodMs,)
+      this.resetMetrics();
+    }, this.config.monitoringPeriodMs);
   }
 
   private resetMetrics(): void {
     if (this.state === CircuitBreakerState.CLOSED) {
-      this.requestCount = 0
-      this.successCount = 0
+      this.requestCount = 0;
+      this.successCount = 0;
     }
   }
 
@@ -442,33 +442,33 @@ export class CircuitBreaker extends EventEmitter {
     return (
       this.state === CircuitBreakerState.OPEN
       && Date.now() - this.lastFailureTime >= this.config.resetTimeoutMs
-    )
+    );
   }
 
   private onSuccess(): void {
-    this.failures = 0
-    this.successCount++
+    this.failures = 0;
+    this.successCount++;
 
     if (this.state === CircuitBreakerState.HALF_OPEN) {
-      this.state = CircuitBreakerState.CLOSED
+      this.state = CircuitBreakerState.CLOSED;
       logger.info(`Circuit breaker closed: ${this.name}`, {
         component: 'CircuitBreaker',
-        metadata: { circuitName: this.name, state: this.state, },
-      },)
-      this.emit('stateChange', this.state,)
+        metadata: { circuitName: this.name, state: this.state },
+      });
+      this.emit('stateChange', this.state);
     }
   }
 
   private onFailure(): void {
-    this.failures++
-    this.lastFailureTime = Date.now()
+    this.failures++;
+    this.lastFailureTime = Date.now();
 
     if (
       this.state === CircuitBreakerState.HALF_OPEN
       || (this.state === CircuitBreakerState.CLOSED
         && this.failures >= this.config.failureThreshold)
     ) {
-      this.state = CircuitBreakerState.OPEN
+      this.state = CircuitBreakerState.OPEN;
       logger.warn(`Circuit breaker opened: ${this.name}`, {
         component: 'CircuitBreaker',
         metadata: {
@@ -477,64 +477,64 @@ export class CircuitBreaker extends EventEmitter {
           failures: this.failures,
           threshold: this.config.failureThreshold,
         },
-      },)
-      this.emit('stateChange', this.state,)
+      });
+      this.emit('stateChange', this.state);
     }
   }
 
-  async execute<T,>(operation: () => Promise<T>, context: ErrorContext,): Promise<T> {
+  async execute<T>(operation: () => Promise<T>, context: ErrorContext): Promise<T> {
     if (this.state === CircuitBreakerState.OPEN) {
       if (this.shouldAttemptReset()) {
-        this.state = CircuitBreakerState.HALF_OPEN
+        this.state = CircuitBreakerState.HALF_OPEN;
         logger.info(`Circuit breaker half-open: ${this.name}`, {
           component: 'CircuitBreaker',
-          metadata: { circuitName: this.name, state: this.state, },
-        },)
-        this.emit('stateChange', this.state,)
+          metadata: { circuitName: this.name, state: this.state },
+        });
+        this.emit('stateChange', this.state);
       } else {
-        const error = new Error(`Circuit breaker is open for ${this.name}`,)
-        const classifiedError = ErrorClassifier.classify(error, context,)
-        classifiedError.category = ErrorCategory.DEPENDENCY
-        classifiedError.recoveryStrategy = RecoveryStrategy.FALLBACK
-        throw classifiedError
+        const error = new Error(`Circuit breaker is open for ${this.name}`);
+        const classifiedError = ErrorClassifier.classify(error, context);
+        classifiedError.category = ErrorCategory.DEPENDENCY;
+        classifiedError.recoveryStrategy = RecoveryStrategy.FALLBACK;
+        throw classifiedError;
       }
     }
 
-    this.requestCount++
+    this.requestCount++;
 
     try {
       const operationId = performanceMonitor.startOperation(
         `circuit_breaker_${context.operation}`,
         context.userContext,
-      )
+      );
 
-      const timeoutPromise = new Promise<never>((_, reject,) => {
+      const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => {
-          reject(new Error(`Circuit breaker timeout: ${this.name}`,),)
-        }, this.config.timeoutMs,)
-      },)
+          reject(new Error(`Circuit breaker timeout: ${this.name}`));
+        }, this.config.timeoutMs);
+      });
 
-      const result = await Promise.race([operation(), timeoutPromise,],)
+      const result = await Promise.race([operation(), timeoutPromise]);
 
-      performanceMonitor.endOperation(operationId,)
-      this.onSuccess()
-      return result
+      performanceMonitor.endOperation(operationId);
+      this.onSuccess();
+      return result;
     } catch (error) {
-      this.onFailure()
-      throw error
+      this.onFailure();
+      throw error;
     }
   }
 
   getState(): CircuitBreakerState {
-    return this.state
+    return this.state;
   }
 
   getMetrics(): {
-    state: CircuitBreakerState
-    failures: number
-    requestCount: number
-    successCount: number
-    successRate: number
+    state: CircuitBreakerState;
+    failures: number;
+    requestCount: number;
+    successCount: number;
+    successRate: number;
   } {
     return {
       state: this.state,
@@ -542,65 +542,65 @@ export class CircuitBreaker extends EventEmitter {
       requestCount: this.requestCount,
       successCount: this.successCount,
       successRate: this.requestCount > 0 ? this.successCount / this.requestCount : 0,
-    }
+    };
   }
 
   reset(): void {
-    this.state = CircuitBreakerState.CLOSED
-    this.failures = 0
-    this.lastFailureTime = 0
-    this.successCount = 0
-    this.requestCount = 0
+    this.state = CircuitBreakerState.CLOSED;
+    this.failures = 0;
+    this.lastFailureTime = 0;
+    this.successCount = 0;
+    this.requestCount = 0;
 
     logger.info(`Circuit breaker reset: ${this.name}`, {
       component: 'CircuitBreaker',
-      metadata: { circuitName: this.name, state: this.state, },
-    },)
+      metadata: { circuitName: this.name, state: this.state },
+    });
 
-    this.emit('stateChange', this.state,)
+    this.emit('stateChange', this.state);
   }
 }
 export class ErrorHandler extends EventEmitter {
-  private circuitBreakers = new Map<string, CircuitBreaker>()
-  private errorMetrics = new Map<string, { count: number; lastOccurrence: number }>()
+  private circuitBreakers = new Map<string, CircuitBreaker>();
+  private errorMetrics = new Map<string, { count: number; lastOccurrence: number }>();
 
-  constructor(private config: ErrorHandlerConfig,) {
-    super()
+  constructor(private config: ErrorHandlerConfig) {
+    super();
   }
 
-  private getOrCreateCircuitBreaker(name: string,): CircuitBreaker {
-    if (!this.circuitBreakers.has(name,)) {
-      const circuitBreaker = new CircuitBreaker(name, this.config.defaultCircuitBreaker,)
+  private getOrCreateCircuitBreaker(name: string): CircuitBreaker {
+    if (!this.circuitBreakers.has(name)) {
+      const circuitBreaker = new CircuitBreaker(name, this.config.defaultCircuitBreaker);
 
       circuitBreaker.on('stateChange', state => {
-        this.emit('circuitBreakerStateChange', { name, state, },)
-      },)
+        this.emit('circuitBreakerStateChange', { name, state });
+      });
 
-      this.circuitBreakers.set(name, circuitBreaker,)
+      this.circuitBreakers.set(name, circuitBreaker);
     }
 
-    return this.circuitBreakers.get(name,)!
+    return this.circuitBreakers.get(name)!;
   }
 
-  private recordError(error: ClassifiedError,): void {
+  private recordError(error: ClassifiedError): void {
     if (!this.config.reportMetrics) {
-      return
+      return;
     }
 
-    const key = `${error.category}_${error.severity}`
-    const current = this.errorMetrics.get(key,) || { count: 0, lastOccurrence: 0, }
+    const key = `${error.category}_${error.severity}`;
+    const current = this.errorMetrics.get(key) || { count: 0, lastOccurrence: 0 };
 
     this.errorMetrics.set(key, {
       count: current.count + 1,
       lastOccurrence: Date.now(),
-    },)
+    });
 
-    this.emit('errorRecorded', error,)
+    this.emit('errorRecorded', error);
   }
 
-  private logError(error: ClassifiedError,): void {
+  private logError(error: ClassifiedError): void {
     if (!this.config.logErrors) {
-      return
+      return;
     }
 
     const context = {
@@ -614,97 +614,97 @@ export class ErrorHandler extends EventEmitter {
         retryable: error.retryable,
       },
       ...error.context.userContext,
-    }
+    };
 
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        logger.error(`Critical error in ${error.context.operation}`, context, error.originalError,)
-        break
+        logger.error(`Critical error in ${error.context.operation}`, context, error.originalError);
+        break;
       case ErrorSeverity.HIGH:
         logger.error(
           `High severity error in ${error.context.operation}`,
           context,
           error.originalError,
-        )
-        break
+        );
+        break;
       case ErrorSeverity.MEDIUM:
-        logger.warn(`Medium severity error in ${error.context.operation}`, context,)
-        break
+        logger.warn(`Medium severity error in ${error.context.operation}`, context);
+        break;
       case ErrorSeverity.LOW:
-        logger.info(`Low severity error in ${error.context.operation}`, context,)
-        break
+        logger.info(`Low severity error in ${error.context.operation}`, context);
+        break;
     }
   }
 
-  async handleWithRetry<T,>(
+  async handleWithRetry<T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     retryConfig?: Partial<RetryConfig>,
   ): Promise<T> {
-    const config = { ...this.config.defaultRetry, ...retryConfig, }
+    const config = { ...this.config.defaultRetry, ...retryConfig };
 
     try {
-      return await RetryMechanism.execute(operation, config, context,)
+      return await RetryMechanism.execute(operation, config, context);
     } catch (error) {
-      const classifiedError = error as ClassifiedError
-      this.recordError(classifiedError,)
-      this.logError(classifiedError,)
-      throw classifiedError
+      const classifiedError = error as ClassifiedError;
+      this.recordError(classifiedError);
+      this.logError(classifiedError);
+      throw classifiedError;
     }
   }
 
-  async handleWithCircuitBreaker<T,>(
+  async handleWithCircuitBreaker<T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     circuitBreakerName: string = context.operation,
   ): Promise<T> {
-    const circuitBreaker = this.getOrCreateCircuitBreaker(circuitBreakerName,)
+    const circuitBreaker = this.getOrCreateCircuitBreaker(circuitBreakerName);
 
     try {
-      return await circuitBreaker.execute(operation, context,)
+      return await circuitBreaker.execute(operation, context);
     } catch (error) {
-      let classifiedError: ClassifiedError
+      let classifiedError: ClassifiedError;
 
       if (error instanceof Error && !(error as any).category) {
-        classifiedError = ErrorClassifier.classify(error, context,)
+        classifiedError = ErrorClassifier.classify(error, context);
       } else {
-        classifiedError = error as ClassifiedError
+        classifiedError = error as ClassifiedError;
       }
 
-      this.recordError(classifiedError,)
-      this.logError(classifiedError,)
-      throw classifiedError
+      this.recordError(classifiedError);
+      this.logError(classifiedError);
+      throw classifiedError;
     }
   }
 
-  async handleWithFallback<T,>(
+  async handleWithFallback<T>(
     operation: () => Promise<T>,
     fallbackConfig: FallbackConfig<T>,
     context: ErrorContext,
   ): Promise<T> {
     try {
-      return await operation()
+      return await operation();
     } catch (error) {
-      const classifiedError = ErrorClassifier.classify(error as Error, context,)
-      this.recordError(classifiedError,)
-      this.logError(classifiedError,)
+      const classifiedError = ErrorClassifier.classify(error as Error, context);
+      this.recordError(classifiedError);
+      this.logError(classifiedError);
 
       if (!this.config.enableFallback) {
-        throw classifiedError
+        throw classifiedError;
       }
 
       logger.warn(`Using fallback for failed operation: ${context.operation}`, {
         component: 'ErrorHandler',
         operation: context.operation,
-        metadata: { errorCategory: classifiedError.category, },
+        metadata: { errorCategory: classifiedError.category },
         ...context.userContext,
-      },)
+      });
 
       if (fallbackConfig.fallbackFunction) {
         try {
-          const result = await fallbackConfig.fallbackFunction()
-          this.emit('fallbackUsed', { context, result, },)
-          return result
+          const result = await fallbackConfig.fallbackFunction();
+          this.emit('fallbackUsed', { context, result });
+          return result;
         } catch (fallbackError) {
           logger.error(
             `Fallback function failed for ${context.operation}`,
@@ -714,30 +714,30 @@ export class ErrorHandler extends EventEmitter {
               ...context.userContext,
             },
             fallbackError as Error,
-          )
+          );
 
           if (fallbackConfig.fallbackValue !== undefined) {
-            this.emit('fallbackUsed', { context, result: fallbackConfig.fallbackValue, },)
-            return fallbackConfig.fallbackValue
+            this.emit('fallbackUsed', { context, result: fallbackConfig.fallbackValue });
+            return fallbackConfig.fallbackValue;
           }
         }
       } else if (fallbackConfig.fallbackValue !== undefined) {
-        this.emit('fallbackUsed', { context, result: fallbackConfig.fallbackValue, },)
-        return fallbackConfig.fallbackValue
+        this.emit('fallbackUsed', { context, result: fallbackConfig.fallbackValue });
+        return fallbackConfig.fallbackValue;
       }
 
-      throw classifiedError
+      throw classifiedError;
     }
   }
 
-  async handleWithFullRecovery<T,>(
+  async handleWithFullRecovery<T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     options: {
-      retryConfig?: Partial<RetryConfig>
-      fallbackConfig?: FallbackConfig<T>
-      useCircuitBreaker?: boolean
-      circuitBreakerName?: string
+      retryConfig?: Partial<RetryConfig>;
+      fallbackConfig?: FallbackConfig<T>;
+      useCircuitBreaker?: boolean;
+      circuitBreakerName?: string;
     } = {},
   ): Promise<T> {
     const {
@@ -745,41 +745,41 @@ export class ErrorHandler extends EventEmitter {
       fallbackConfig,
       useCircuitBreaker = this.config.enableCircuitBreaker,
       circuitBreakerName = context.operation,
-    } = options
+    } = options;
 
     const wrappedOperation = async (): Promise<T> => {
       if (useCircuitBreaker) {
-        return this.handleWithCircuitBreaker(operation, context, circuitBreakerName,)
+        return this.handleWithCircuitBreaker(operation, context, circuitBreakerName);
       } else {
-        return operation()
+        return operation();
       }
-    }
+    };
 
     try {
       if (this.config.enableRetry && retryConfig) {
-        return await this.handleWithRetry(wrappedOperation, context, retryConfig,)
+        return await this.handleWithRetry(wrappedOperation, context, retryConfig);
       } else {
-        return await wrappedOperation()
+        return await wrappedOperation();
       }
     } catch (error) {
       if (fallbackConfig && this.config.enableFallback) {
-        return this.handleWithFallback(operation, fallbackConfig, context,)
+        return this.handleWithFallback(operation, fallbackConfig, context);
       }
-      throw error
+      throw error;
     }
   }
 
-  async safeExecute<T,>(
+  async safeExecute<T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     defaultValue?: T,
   ): Promise<T | undefined> {
     try {
-      return await operation()
+      return await operation();
     } catch (error) {
-      const classifiedError = ErrorClassifier.classify(error as Error, context,)
-      this.recordError(classifiedError,)
-      this.logError(classifiedError,)
+      const classifiedError = ErrorClassifier.classify(error as Error, context);
+      this.recordError(classifiedError);
+      this.logError(classifiedError);
 
       logger.debug(`Safe execution failed, returning default value: ${context.operation}`, {
         component: 'ErrorHandler',
@@ -789,90 +789,90 @@ export class ErrorHandler extends EventEmitter {
           hasDefaultValue: defaultValue !== undefined,
         },
         ...context.userContext,
-      },)
+      });
 
-      this.emit('safeExecutionFailed', { context, error: classifiedError, defaultValue, },)
-      return defaultValue
+      this.emit('safeExecutionFailed', { context, error: classifiedError, defaultValue });
+      return defaultValue;
     }
   }
 
   // Error reporting and metrics
   getErrorMetrics(): Map<string, { count: number; lastOccurrence: number }> {
-    return new Map(this.errorMetrics,)
+    return new Map(this.errorMetrics);
   }
 
   getCircuitBreakerMetrics(): Map<string, ReturnType<CircuitBreaker['getMetrics']>> {
-    const metrics = new Map()
-    for (const [name, breaker,] of this.circuitBreakers) {
-      metrics.set(name, breaker.getMetrics(),)
+    const metrics = new Map();
+    for (const [name, breaker] of this.circuitBreakers) {
+      metrics.set(name, breaker.getMetrics());
     }
-    return metrics
+    return metrics;
   }
 
   resetMetrics(): void {
-    this.errorMetrics.clear()
+    this.errorMetrics.clear();
     for (const breaker of this.circuitBreakers.values()) {
-      breaker.reset()
+      breaker.reset();
     }
 
     logger.info('Error handler metrics reset', {
       component: 'ErrorHandler',
-    },)
+    });
   }
 
   // Graceful degradation helpers
-  async withGracefulDegradation<T,>(
+  async withGracefulDegradation<T>(
     primaryOperation: () => Promise<T>,
     degradedOperation: () => Promise<T>,
     context: ErrorContext,
   ): Promise<T> {
     if (!this.config.enableGracefulDegradation) {
-      return primaryOperation()
+      return primaryOperation();
     }
 
     try {
-      return await primaryOperation()
+      return await primaryOperation();
     } catch (error) {
-      const classifiedError = ErrorClassifier.classify(error as Error, context,)
+      const classifiedError = ErrorClassifier.classify(error as Error, context);
 
       if (classifiedError.recoveryStrategy === RecoveryStrategy.DEGRADE) {
         logger.info(`Degrading operation: ${context.operation}`, {
           component: 'ErrorHandler',
           operation: context.operation,
-          metadata: { errorCategory: classifiedError.category, },
+          metadata: { errorCategory: classifiedError.category },
           ...context.userContext,
-        },)
+        });
 
-        this.emit('gracefulDegradation', { context, error: classifiedError, },)
-        return degradedOperation()
+        this.emit('gracefulDegradation', { context, error: classifiedError });
+        return degradedOperation();
       }
 
-      throw classifiedError
+      throw classifiedError;
     }
   }
 
   // Configuration management
-  updateConfig(newConfig: Partial<ErrorHandlerConfig>,): void {
-    this.config = { ...this.config, ...newConfig, }
+  updateConfig(newConfig: Partial<ErrorHandlerConfig>): void {
+    this.config = { ...this.config, ...newConfig };
 
     logger.info('Error handler configuration updated', {
       component: 'ErrorHandler',
-      metadata: Object.keys(newConfig,),
-    },)
+      metadata: Object.keys(newConfig),
+    });
   }
 
   // Cleanup
   destroy(): void {
     for (const breaker of this.circuitBreakers.values()) {
-      breaker.removeAllListeners()
+      breaker.removeAllListeners();
     }
-    this.circuitBreakers.clear()
-    this.errorMetrics.clear()
-    this.removeAllListeners()
+    this.circuitBreakers.clear();
+    this.errorMetrics.clear();
+    this.removeAllListeners();
 
     logger.info('Error handler destroyed', {
       component: 'ErrorHandler',
-    },)
+    });
   }
 }
 
@@ -888,7 +888,7 @@ const defaultErrorHandlerConfig: ErrorHandlerConfig = {
     maxDelayMs: 10000,
     backoffMultiplier: 2,
     jitterFactor: 0.1,
-    retryableErrors: [ErrorCategory.NETWORK, ErrorCategory.TIMEOUT, ErrorCategory.FILE_SYSTEM,],
+    retryableErrors: [ErrorCategory.NETWORK, ErrorCategory.TIMEOUT, ErrorCategory.FILE_SYSTEM],
   },
   defaultCircuitBreaker: {
     failureThreshold: 5,
@@ -898,45 +898,45 @@ const defaultErrorHandlerConfig: ErrorHandlerConfig = {
   },
   logErrors: true,
   reportMetrics: true,
-}
+};
 
 // Default error handler instance
-export const defaultErrorHandler = new ErrorHandler(defaultErrorHandlerConfig,)
+export const defaultErrorHandler = new ErrorHandler(defaultErrorHandlerConfig);
 
 // Convenience functions
 export const errorHandler = {
-  handleWithRetry: <T,>(
+  handleWithRetry: <T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     retryConfig?: Partial<RetryConfig>,
-  ) => defaultErrorHandler.handleWithRetry(operation, context, retryConfig,),
+  ) => defaultErrorHandler.handleWithRetry(operation, context, retryConfig),
 
-  handleWithCircuitBreaker: <T,>(
+  handleWithCircuitBreaker: <T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     circuitBreakerName?: string,
-  ) => defaultErrorHandler.handleWithCircuitBreaker(operation, context, circuitBreakerName,),
+  ) => defaultErrorHandler.handleWithCircuitBreaker(operation, context, circuitBreakerName),
 
-  handleWithFallback: <T,>(
+  handleWithFallback: <T>(
     operation: () => Promise<T>,
     fallbackConfig: FallbackConfig<T>,
     context: ErrorContext,
-  ) => defaultErrorHandler.handleWithFallback(operation, fallbackConfig, context,),
+  ) => defaultErrorHandler.handleWithFallback(operation, fallbackConfig, context),
 
-  handleWithFullRecovery: <T,>(
+  handleWithFullRecovery: <T>(
     operation: () => Promise<T>,
     context: ErrorContext,
     options?: any,
-  ) => defaultErrorHandler.handleWithFullRecovery(operation, context, options,),
+  ) => defaultErrorHandler.handleWithFullRecovery(operation, context, options),
 
-  safeExecute: <T,>(operation: () => Promise<T>, context: ErrorContext, defaultValue?: T,) =>
-    defaultErrorHandler.safeExecute(operation, context, defaultValue,),
+  safeExecute: <T>(operation: () => Promise<T>, context: ErrorContext, defaultValue?: T) =>
+    defaultErrorHandler.safeExecute(operation, context, defaultValue),
 
-  withGracefulDegradation: <T,>(
+  withGracefulDegradation: <T>(
     primaryOperation: () => Promise<T>,
     degradedOperation: () => Promise<T>,
     context: ErrorContext,
-  ) => defaultErrorHandler.withGracefulDegradation(primaryOperation, degradedOperation, context,),
+  ) => defaultErrorHandler.withGracefulDegradation(primaryOperation, degradedOperation, context),
 
   getMetrics: () => ({
     errors: defaultErrorHandler.getErrorMetrics(),
@@ -944,4 +944,4 @@ export const errorHandler = {
   }),
 
   resetMetrics: () => defaultErrorHandler.resetMetrics(),
-}
+};

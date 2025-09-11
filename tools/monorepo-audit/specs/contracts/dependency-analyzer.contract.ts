@@ -4,112 +4,112 @@
  * Generated: 2025-09-09
  */
 
-import type { CodeAsset, } from './file-scanner.contract'
+import type { CodeAsset } from './file-scanner.contract';
 
 // Core Types
 export interface AnalyzerOptions {
   /** Whether to follow dynamic imports */
-  followDynamicImports: boolean
+  followDynamicImports: boolean;
   /** Whether to analyze type-only imports */
-  includeTypeImports: boolean
+  includeTypeImports: boolean;
   /** Maximum depth for transitive dependencies */
-  maxTransitiveDepth: number
+  maxTransitiveDepth: number;
   /** Whether to detect circular dependencies */
-  detectCircularDependencies: boolean
+  detectCircularDependencies: boolean;
   /** File extensions to analyze */
-  supportedExtensions: string[]
+  supportedExtensions: string[];
 }
 
 export interface DependencyGraph {
   /** Map of asset path to graph node */
-  nodes: Map<string, GraphNode>
+  nodes: Map<string, GraphNode>;
   /** All dependency relationships */
-  edges: GraphEdge[]
+  edges: GraphEdge[];
   /** Detected circular dependencies */
-  cycles: CircularDependency[]
+  cycles: CircularDependency[];
   /** Assets with no incoming dependencies */
-  orphanedNodes: string[]
+  orphanedNodes: string[];
   /** Entry point assets (no outgoing dependencies to app code) */
-  rootNodes: string[]
+  rootNodes: string[];
   /** Architectural layers */
-  layers: GraphLayer[]
+  layers: GraphLayer[];
   /** Graph analysis metrics */
-  metrics: GraphMetrics
+  metrics: GraphMetrics;
 }
 
 export interface GraphNode {
   /** Reference to code asset */
-  assetPath: string
+  assetPath: string;
   /** Assets that depend on this node */
-  incomingEdges: string[]
+  incomingEdges: string[];
   /** Assets this node depends on */
-  outgoingEdges: string[]
+  outgoingEdges: string[];
   /** Architectural layer classification */
-  layer: string
+  layer: string;
   /** Calculated importance score (0-100) */
-  importance: number
+  importance: number;
   /** Node type classification */
-  nodeType: NodeType
+  nodeType: NodeType;
   /** Package this node belongs to */
-  packageName?: string
+  packageName?: string;
 }
 
 export interface GraphEdge {
   /** Source asset path */
-  from: string
+  from: string;
   /** Target asset path */
-  to: string
+  to: string;
   /** Type of dependency */
-  type: DependencyType
+  type: DependencyType;
   /** Whether import is static or dynamic */
-  isStatic: boolean
+  isStatic: boolean;
   /** Line number where dependency occurs */
-  line: number
+  line: number;
   /** Column number where dependency occurs */
-  column: number
+  column: number;
   /** Import statement text */
-  importStatement: string
+  importStatement: string;
 }
 
 export interface CircularDependency {
   /** Asset paths forming the cycle */
-  cycle: string[]
+  cycle: string[];
   /** Severity based on cycle characteristics */
-  severity: CircularSeverity
+  severity: CircularSeverity;
   /** Possible resolution strategies */
-  resolutionStrategies: ResolutionStrategy[]
+  resolutionStrategies: ResolutionStrategy[];
   /** Impact assessment of breaking cycle */
-  breakingImpact: ImpactLevel
+  breakingImpact: ImpactLevel;
 }
 
 export interface GraphLayer {
   /** Layer name (e.g., 'apps', 'packages', 'shared') */
-  name: string
+  name: string;
   /** Assets in this layer */
-  assets: string[]
+  assets: string[];
   /** Dependencies on other layers */
-  dependsOn: string[]
+  dependsOn: string[];
   /** Layers that depend on this one */
-  dependents: string[]
+  dependents: string[];
   /** Whether layer follows architectural rules */
-  compliant: boolean
+  compliant: boolean;
 }
 
 export interface GraphMetrics {
   /** Total nodes in graph */
-  totalNodes: number
+  totalNodes: number;
   /** Total edges in graph */
-  totalEdges: number
+  totalEdges: number;
   /** Number of circular dependencies */
-  circularDependencies: number
+  circularDependencies: number;
   /** Average dependencies per node */
-  avgDependenciesPerNode: number
+  avgDependenciesPerNode: number;
   /** Maximum dependency depth */
-  maxDepth: number
+  maxDepth: number;
   /** Analysis execution time in ms */
-  analysisTimeMs: number
+  analysisTimeMs: number;
   /** Memory used during analysis */
-  memoryUsedBytes: number
+  memoryUsedBytes: number;
 }
 
 // Enumerations
@@ -122,7 +122,7 @@ export type NodeType =
   | 'test'
   | 'route'
   | 'type_definition'
-  | 'external'
+  | 'external';
 
 export type DependencyType =
   | 'es6_import'
@@ -131,13 +131,13 @@ export type DependencyType =
   | 'route_reference'
   | 'type_reference'
   | 'asset_reference'
-  | 'config_reference'
+  | 'config_reference';
 
 export type CircularSeverity =
   | 'low' // 2-3 nodes, no critical dependencies
   | 'medium' // 4-6 nodes, some important dependencies
   | 'high' // 7+ nodes, critical dependencies
-  | 'critical' // Prevents build or causes runtime issues
+  | 'critical'; // Prevents build or causes runtime issues
 
 export type ResolutionStrategy =
   | 'extract_interface'
@@ -145,9 +145,9 @@ export type ResolutionStrategy =
   | 'event_driven'
   | 'move_shared_code'
   | 'break_into_layers'
-  | 'lazy_loading'
+  | 'lazy_loading';
 
-export type ImpactLevel = 'low' | 'medium' | 'high'
+export type ImpactLevel = 'low' | 'medium' | 'high';
 
 // Service Interface
 export interface IDependencyAnalyzer {
@@ -157,7 +157,7 @@ export interface IDependencyAnalyzer {
    * @param options Analysis configuration
    * @returns Promise resolving to complete dependency graph
    */
-  buildGraph(assets: CodeAsset[], options: AnalyzerOptions,): Promise<DependencyGraph>
+  buildGraph(assets: CodeAsset[], options: AnalyzerOptions): Promise<DependencyGraph>;
 
   /**
    * Analyze specific asset's dependencies
@@ -165,28 +165,28 @@ export interface IDependencyAnalyzer {
    * @param options Analysis configuration
    * @returns Promise resolving to asset's dependency information
    */
-  analyzeAsset(assetPath: string, options: AnalyzerOptions,): Promise<AssetDependencies>
+  analyzeAsset(assetPath: string, options: AnalyzerOptions): Promise<AssetDependencies>;
 
   /**
    * Detect circular dependencies in graph
    * @param graph Dependency graph to analyze
    * @returns Array of circular dependencies found
    */
-  detectCircularDependencies(graph: DependencyGraph,): CircularDependency[]
+  detectCircularDependencies(graph: DependencyGraph): CircularDependency[];
 
   /**
    * Calculate importance scores for all nodes
    * @param graph Dependency graph to analyze
    * @returns Updated graph with importance scores
    */
-  calculateImportanceScores(graph: DependencyGraph,): DependencyGraph
+  calculateImportanceScores(graph: DependencyGraph): DependencyGraph;
 
   /**
    * Find unused assets in dependency graph
    * @param graph Dependency graph to analyze
    * @returns Array of unused asset paths
    */
-  findUnusedAssets(graph: DependencyGraph,): string[]
+  findUnusedAssets(graph: DependencyGraph): string[];
 
   /**
    * Get transitive dependencies for an asset
@@ -199,71 +199,71 @@ export interface IDependencyAnalyzer {
     assetPath: string,
     graph: DependencyGraph,
     maxDepth: number,
-  ): string[]
+  ): string[];
 
   /**
    * Validate graph integrity and detect issues
    * @param graph Dependency graph to validate
    * @returns Array of validation issues found
    */
-  validateGraph(graph: DependencyGraph,): GraphValidationIssue[]
+  validateGraph(graph: DependencyGraph): GraphValidationIssue[];
 }
 
 export interface AssetDependencies {
   /** Asset path being analyzed */
-  assetPath: string
+  assetPath: string;
   /** Direct dependencies */
-  directDependencies: string[]
+  directDependencies: string[];
   /** Assets that directly depend on this asset */
-  directDependents: string[]
+  directDependents: string[];
   /** All transitive dependencies */
-  transitiveDependencies: string[]
+  transitiveDependencies: string[];
   /** Import statements found in asset */
-  importStatements: ImportStatement[]
+  importStatements: ImportStatement[];
   /** Export statements found in asset */
-  exportStatements: ExportStatement[]
+  exportStatements: ExportStatement[];
 }
 
 export interface ImportStatement {
   /** What is being imported */
-  imported: string[]
+  imported: string[];
   /** Where it's imported from */
-  source: string
+  source: string;
   /** Type of import (default, named, namespace) */
-  importType: ImportType
+  importType: ImportType;
   /** Line number in source file */
-  line: number
+  line: number;
   /** Original import statement text */
-  statement: string
+  statement: string;
 }
 
 export interface ExportStatement {
   /** What is being exported */
-  exported: string[]
+  exported: string[];
   /** Where it's re-exported from (if applicable) */
-  source?: string
+  source?: string;
   /** Type of export */
-  exportType: ExportType
+  exportType: ExportType;
   /** Line number in source file */
-  line: number
+  line: number;
   /** Original export statement text */
-  statement: string
+  statement: string;
 }
 
-export type ImportType = 'default' | 'named' | 'namespace' | 'side_effect'
-export type ExportType = 'default' | 'named' | 'namespace' | 'assignment'
+export type ImportType = 'default' | 'named' | 'namespace' | 'side_effect';
+export type ExportType = 'default' | 'named' | 'namespace' | 'assignment';
 
 export interface GraphValidationIssue {
   /** Issue type */
-  type: ValidationIssueType
+  type: ValidationIssueType;
   /** Severity level */
-  severity: 'error' | 'warning' | 'info'
+  severity: 'error' | 'warning' | 'info';
   /** Human-readable description */
-  description: string
+  description: string;
   /** Affected asset paths */
-  affectedAssets: string[]
+  affectedAssets: string[];
   /** Suggested resolution */
-  suggestedFix?: string
+  suggestedFix?: string;
 }
 
 export type ValidationIssueType =
@@ -272,33 +272,33 @@ export type ValidationIssueType =
   | 'circular_dependency'
   | 'invalid_import_path'
   | 'unused_import'
-  | 'duplicate_dependency'
+  | 'duplicate_dependency';
 
 // Contract Tests Requirements
 export interface DependencyAnalyzerContractTests {
   /** Test basic dependency graph construction */
-  testBasicGraphConstruction(): Promise<void>
+  testBasicGraphConstruction(): Promise<void>;
 
   /** Test circular dependency detection accuracy */
-  testCircularDependencyDetection(): Promise<void>
+  testCircularDependencyDetection(): Promise<void>;
 
   /** Test dynamic import following */
-  testDynamicImportAnalysis(): Promise<void>
+  testDynamicImportAnalysis(): Promise<void>;
 
   /** Test importance score calculation */
-  testImportanceScoreCalculation(): Promise<void>
+  testImportanceScoreCalculation(): Promise<void>;
 
   /** Test unused asset identification */
-  testUnusedAssetIdentification(): Promise<void>
+  testUnusedAssetIdentification(): Promise<void>;
 
   /** Test graph validation */
-  testGraphValidation(): Promise<void>
+  testGraphValidation(): Promise<void>;
 
   /** Test performance with large codebase */
-  testLargeCodebasePerformance(): Promise<void>
+  testLargeCodebasePerformance(): Promise<void>;
 
   /** Test different import/export patterns */
-  testImportExportPatterns(): Promise<void>
+  testImportExportPatterns(): Promise<void>;
 }
 
 // Default Configuration
@@ -307,8 +307,8 @@ export const DEFAULT_ANALYZER_OPTIONS: AnalyzerOptions = {
   includeTypeImports: true,
   maxTransitiveDepth: 10,
   detectCircularDependencies: true,
-  supportedExtensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',],
-}
+  supportedExtensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'],
+};
 
 // Performance Constraints
 export const ANALYZER_PERFORMANCE_REQUIREMENTS = {
@@ -318,4 +318,4 @@ export const ANALYZER_PERFORMANCE_REQUIREMENTS = {
   MAX_MEMORY_USAGE: 750_000_000, // 750MB
   /** Maximum circular dependency detection time (ms) */
   MAX_CIRCULAR_DETECTION_TIME: 15_000,
-} as const
+} as const;

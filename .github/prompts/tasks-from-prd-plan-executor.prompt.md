@@ -14,11 +14,14 @@ outputs:
 ```
 
 ## 🧭 Overview
+
 Generates an actionable tasks.md and (optionally) Archon tasks from the completed PRD and plan. Enforces TDD ordering (contracts → integration → unit), dependency-aware sequencing, and [P] markers for parallel work. Mirrors and extends:
+
 - templates/tasks-template.md
 - .github/prompts/tasks.prompt.md
 
 ## 🔗 Plan Section Mapping (from plan.md)
+
 The generator must parse these sections of `plan.md` (Implementation Plan template) and use them as constraints:
 | Plan Section | Purpose in Task Generation | Failure Condition |
 |--------------|---------------------------|------------------|
@@ -33,8 +36,8 @@ The generator must parse these sections of `plan.md` (Implementation Plan templa
 
 If any abort condition triggers, return structured error JSON instead of writing `tasks.md`.
 
-
 ## 📚 Mandatory Pre‑Reads
+
 - templates/tasks-template.md (structure and rules)
 - .github/prompts/tasks.prompt.md (execution patterns and repo scripts)
 - docs/architecture/source-tree.md (path conventions)
@@ -42,10 +45,13 @@ If any abort condition triggers, return structured error JSON instead of writing
 - docs/AGENTS.md (docs orchestration)
 
 ## 🔧 Required MCP Tools
+
 - Archon (read PRD/Plan by ID, create tasks)
 
 ## 🛡️ Gates & Constitutional Enforcement
+
 Before any task generation the following MUST be validated from `plan.md`:
+
 1. Progress Tracking: `Phase 0: Research complete` = checked
 2. Progress Tracking: `Phase 1: Design complete` = checked
 3. Gate Status: `Initial Constitution Check: PASS` and `Post-Design Constitution Check: PASS`
@@ -53,11 +59,13 @@ Before any task generation the following MUST be validated from `plan.md`:
 5. At least one contract spec present (contracts/*) and `data-model.md` exists
 
 If any fail → return:
+
 ```json
-{"error": {"code": "GATE_FAILURE", "details": {"missing": ["list of failed predicates"]}}}
+{ "error": { "code": "GATE_FAILURE", "details": { "missing": ["list of failed predicates"] } } }
 ```
 
 Commitments mapping (each must become ≥1 task unless already covered by explicit design docs):
+
 - Testing commitments → tasks for RED first: contract tests, integration tests, then implementation
 - Observability commitments → structured logging setup (API + Frontend) tasks
 - Versioning commitments → version bump + CHANGELOG/update tasks
@@ -65,13 +73,15 @@ Commitments mapping (each must become ≥1 task unless already covered by explic
 - Simplicity commitments → tasks to remove unnecessary abstractions if flagged
 
 ## 🧠 Inputs & Discovery
+
 Resolve inputs in this order:
-1) If archon_plan_id provided → fetch plan content
-2) Else use plan_content
-3) Determine FEATURE_DIR:
+
+1. If archon_plan_id provided → fetch plan content
+2. Else use plan_content
+3. Determine FEATURE_DIR:
    - If feature_dir provided → use it
    - Else, run `scripts/check-task-prerequisites.sh --json` to detect FEATURE_DIR and AVAILABLE_DOCS
-4) Load available design docs within FEATURE_DIR (if present):
+4. Load available design docs within FEATURE_DIR (if present):
    - plan.md (REQUIRED)
    - data-model.md
    - contracts/*
@@ -79,6 +89,7 @@ Resolve inputs in this order:
    - quickstart.md
 
 ## 🧱 Task Generation Rules (must enforce)
+
 - TDD: All tests written first and MUST FAIL before implementation
 - From contracts/: one contract test per endpoint [P]
 - From data-model.md: one model task per entity [P]
@@ -90,11 +101,14 @@ Resolve inputs in this order:
 - Acceptance criteria: concrete, verifiable, tied to PRD FRs
 
 ## 🔗 Cross‑References
+
 - Every task should reference relevant PRD FR‑IDs and Plan sections
 - Include compliance checkpoints where healthcare data is involved (LGPD/ANVISA/CFM)
 
 ## 🧩 Output Structure (tasks.md)
+
 Follow templates/tasks-template.md, replacing examples with real tasks:
+
 - Title: `# Tasks: <FEATURE NAME>`
 - Prereqs and execution flow (condensed)
 - Numbered tasks (T001, T002, ...)
@@ -102,7 +116,9 @@ Follow templates/tasks-template.md, replacing examples with real tasks:
 - Dependency notes and parallel examples
 
 ## 🧪 Validation Checklist (auto‑review before writing)
+
 MUST all be TRUE before writing `tasks.md`:
+
 1. Contract Coverage: Every endpoint in `contracts/` has a preceding contract test task.
 2. Model Coverage: Every entity in `data-model.md` has a model creation + validation test task.
 3. Scenario Coverage: Every PRD user scenario → integration test task (RED first).
@@ -118,33 +134,36 @@ MUST all be TRUE before writing `tasks.md`:
 13. Versioning: If version bump required (commitment), a task updates version + changelog.
 14. Observability: Logging / tracing setup tasks exist for new code areas.
 15. JSON Summary Integrity: Summary arrays lengths match number of tasks & IDs sequential (T001..Tnn).
-If any item fails → abort with `VALIDATION_FAILED` JSON containing failing item indices.
+    If any item fails → abort with `VALIDATION_FAILED` JSON containing failing item indices.
 
 ## 🗂️ Archon Integration (optional)
+
 - If an Archon project_id is available, create tasks in Archon with:
   - title, description (include purpose, inputs, outputs, acceptance)
   - feature label = <feature name>
   - sources = links to PRD/Plan Archon docs and repo paths
 
 ## ▶️ Execution Flow
-1) Resolve inputs and locate FEATURE_DIR
-2) Load plan.md (REQUIRED) and optional design docs
-3) Build task set by categories: Setup → Tests → Models → Services → Endpoints → Integration → Polish
-4) Compute dependencies and [P] markers (files must not conflict)
-5) Validate via checklist
-6) Write tasks to `<FEATURE_DIR>/tasks.md`
-7) (Optional) Create Archon tasks
-8) Return a machine‑readable JSON summary and a human‑readable tasks preview
+
+1. Resolve inputs and locate FEATURE_DIR
+2. Load plan.md (REQUIRED) and optional design docs
+3. Build task set by categories: Setup → Tests → Models → Services → Endpoints → Integration → Polish
+4. Compute dependencies and [P] markers (files must not conflict)
+5. Validate via checklist
+6. Write tasks to `<FEATURE_DIR>/tasks.md`
+7. (Optional) Create Archon tasks
+8. Return a machine‑readable JSON summary and a human‑readable tasks preview
 
 ## 🧾 Machine‑Readable Summary (return this JSON)
+
 ```json
 {
   "feature_dir": "specs/001-feature-name",
   "structure_decision": "web|single|mobile",
-  "constitution_status": {"initial_gate": "PASS", "post_design_gate": "PASS"},
+  "constitution_status": { "initial_gate": "PASS", "post_design_gate": "PASS" },
   "unresolved_clarifications": 0,
   "complexity_items": [
-    {"violation": "4th project", "mitigation_task": "T012"}
+    { "violation": "4th project", "mitigation_task": "T012" }
   ],
   "tasks": [
     {
@@ -154,16 +173,23 @@ If any item fails → abort with `VALIDATION_FAILED` JSON containing failing ite
       "depends_on": [],
       "acceptance": ["lint, type-check scripts run successfully"],
       "artifacts": ["package.json scripts updated"],
-      "refs": {"prd": ["FR-001"], "plan": ["Technical Context"], "complexity": [], "constitution": ["Testing"]}
+      "refs": {
+        "prd": ["FR-001"],
+        "plan": ["Technical Context"],
+        "complexity": [],
+        "constitution": ["Testing"]
+      }
     }
   ],
-  "policy": {"tdd_order": true, "parallelization": true},
-  "archon": {"project_id": null, "tasks_created": 0}
+  "policy": { "tdd_order": true, "parallelization": true },
+  "archon": { "project_id": null, "tasks_created": 0 }
 }
 ```
 
 ## 🧑‍💻 Task Content Requirements
+
 For each task include:
+
 - Purpose and rationale (1–2 lines)
 - Inputs (contract/data‑model/plan references)
 - Path(s) to modify/create (absolute or from repo root)
@@ -171,24 +197,30 @@ For each task include:
 - Artifacts (files generated/updated)
 
 ## 📌 Pathing Examples (adjust per plan structure)
+
 - Single project: `src/`, `tests/`
 - Web app: `backend/src/`, `frontend/src/`
 - Monorepo (NeonPro default): per `docs/architecture/source-tree.md`
 
 ### Structure Decision Logic
+
 Parse `Structure Decision:` line from plan.md.
 Map tokens → path template:
+
 - `single` or default → use package/service layering inside monorepo packages if applicable
 - `web` → use `apps/api/src` & `apps/web/src` separation; tests mirrored per app
 - `mobile` → (future) ensure api + platform dir; abort if platform dirs missing
-If detected structure conflicts with actual repo layout (missing directories), raise error `STRUCTURE_MISMATCH`.
-All task paths must reflect chosen structure (e.g., model tasks in `packages/core-services/src/services` vs `apps/api/src/services`).
+  If detected structure conflicts with actual repo layout (missing directories), raise error `STRUCTURE_MISMATCH`.
+  All task paths must reflect chosen structure (e.g., model tasks in `packages/core-services/src/services` vs `apps/api/src/services`).
 
 ## 🧭 Parallelization Guidance
+
 Group [P] tasks by different files and no dependency edges. Provide a short example group to help executors run them concurrently.
 
 ### Extra Task Categories (derived from plan commitments)
+
 Must append these categories when applicable:
+
 - Observability: logging/tracing setup, log routing, error context enrichment
 - Versioning: bump version + changelog + migration notes (if breaking)
 - Complexity Mitigation: one task per Complexity Tracking violation row
@@ -196,9 +228,9 @@ Must append these categories when applicable:
 - Simplicity Cleanup: eliminate premature patterns flagged
 
 ## ✅ Completion Criteria
+
 - tasks.md created with ≥25 high‑quality tasks (or appropriate to scope)
 - TDD ordering verified; no implementation before tests
 - Dependencies explicit and [P] markers correct
 - Concrete paths and acceptance criteria present
 - (Optional) Tasks created in Archon with proper metadata and links
-

@@ -7,27 +7,27 @@
  * This file serves as the executable entry point for the npm package.
  */
 
-import { AuditCLI, } from './audit-cli.js'
+import { AuditCLI } from './audit-cli.js';
 
 async function main() {
-  const cli = new AuditCLI()
-  await cli.run()
+  const cli = new AuditCLI();
+  await cli.run();
 }
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise,) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason,)
-  process.exit(1,)
-},)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error,) => {
-  console.error('Uncaught Exception thrown:', error,)
-  process.exit(1,)
-},)
+process.on('uncaughtException', error => {
+  console.error('Uncaught Exception thrown:', error);
+  process.exit(1);
+});
 
 // Run the CLI
-main().catch((error,) => {
-  console.error('Fatal error:', error,)
-  process.exit(1,)
-},)
+main().catch(error => {
+  console.error('Fatal error:', error);
+  process.exit(1);
+});

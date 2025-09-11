@@ -1,7 +1,7 @@
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import { defineConfig, } from 'vite'
+import TanStackRouterVite from '@tanstack/router-vite-plugin';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,11 +12,11 @@ export default defineConfig({
       generatedRouteTree: './src/routeTree.gen.ts',
       routeFileIgnorePrefix: '-',
       quoteStyle: 'single',
-    },),
+    }),
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src',),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   define: {
@@ -33,10 +33,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom',],
-          router: ['@tanstack/react-router',],
-          query: ['@tanstack/react-query',],
-          supabase: ['@supabase/supabase-js',],
+          vendor: ['react', 'react-dom'],
+          router: ['@tanstack/react-router'],
+          query: ['@tanstack/react-query'],
+          supabase: ['@supabase/supabase-js'],
         },
       },
     },
@@ -54,4 +54,4 @@ export default defineConfig({
     jsx: 'automatic',
     jsxImportSource: 'react',
   },
-},)
+});

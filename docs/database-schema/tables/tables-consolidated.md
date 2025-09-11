@@ -20,6 +20,7 @@ Complete table reference for NeonPro aesthetic clinic management platform.
 ## Core Healthcare Tables
 
 ### patients
+
 **Purpose**: Patient records with LGPD compliance
 **Compliance**: LGPD + 7-year retention requirement
 
@@ -54,6 +55,7 @@ CREATE POLICY "professionals_clinic_patients" ON patients
 ```
 
 ### professionals
+
 **Purpose**: Healthcare professionals with CFM license validation
 
 ```sql
@@ -70,6 +72,7 @@ CREATE TABLE professionals (
 ```
 
 ### appointments
+
 **Purpose**: Appointment scheduling with conflict prevention
 
 ```sql
@@ -88,6 +91,7 @@ CREATE TABLE appointments (
 ```
 
 ### medical_records
+
 **Purpose**: Medical records with CFM digital signature compliance
 
 ```sql
@@ -107,6 +111,7 @@ CREATE TABLE medical_records (
 ```
 
 ### services
+
 **Purpose**: Aesthetic services catalog
 
 ```sql
@@ -123,6 +128,7 @@ CREATE TABLE services (
 ```
 
 ### clinics
+
 **Purpose**: Multi-tenant clinic management with regulatory compliance
 
 ```sql
@@ -141,6 +147,7 @@ CREATE TABLE clinics (
 ## AI Integration Tables
 
 ### ai_chat_sessions
+
 **Purpose**: AI conversation sessions with PHI sanitization
 
 ```sql
@@ -155,6 +162,7 @@ CREATE TABLE ai_chat_sessions (
 ```
 
 ### ai_chat_messages
+
 **Purpose**: AI messages with compliance monitoring
 
 ```sql
@@ -171,6 +179,7 @@ CREATE TABLE ai_chat_messages (
 ## Compliance & Audit Tables
 
 ### audit_logs
+
 **Purpose**: Immutable audit trail for LGPD compliance
 
 ```sql
@@ -188,6 +197,7 @@ CREATE TABLE audit_logs (
 ```
 
 ### consent_records
+
 **Purpose**: LGPD consent management
 
 ```sql

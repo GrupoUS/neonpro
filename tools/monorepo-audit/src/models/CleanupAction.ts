@@ -5,18 +5,18 @@
  * Generated: 2025-09-09
  */
 
-import { ActionStatus, ActionType, ImpactAssessment, RiskLevel, } from './types'
+import { ActionStatus, ActionType, ImpactAssessment, RiskLevel } from './types';
 
 export class CleanupAction {
-  public readonly actionId: string
-  public readonly type: ActionType
-  public readonly targetPath: string
-  public readonly justification: string
-  public impactAssessment: ImpactAssessment
-  public status: ActionStatus
-  public executedAt: Date | null
-  public backupPath: string | null
-  public rollbackPossible: boolean
+  public readonly actionId: string;
+  public readonly type: ActionType;
+  public readonly targetPath: string;
+  public readonly justification: string;
+  public impactAssessment: ImpactAssessment;
+  public status: ActionStatus;
+  public executedAt: Date | null;
+  public backupPath: string | null;
+  public rollbackPossible: boolean;
 
   constructor(
     type: ActionType,
@@ -25,99 +25,99 @@ export class CleanupAction {
     impactAssessment: ImpactAssessment,
     actionId: string = CleanupAction.generateActionId(),
   ) {
-    this.actionId = actionId
-    this.type = type
-    this.targetPath = targetPath
-    this.justification = justification
-    this.impactAssessment = impactAssessment
-    this.status = ActionStatus.PLANNED
-    this.executedAt = null
-    this.backupPath = null
-    this.rollbackPossible = false
+    this.actionId = actionId;
+    this.type = type;
+    this.targetPath = targetPath;
+    this.justification = justification;
+    this.impactAssessment = impactAssessment;
+    this.status = ActionStatus.PLANNED;
+    this.executedAt = null;
+    this.backupPath = null;
+    this.rollbackPossible = false;
   }
 
   /**
    * Mark action as executing
    */
   public markExecuting(): void {
-    this.status = ActionStatus.EXECUTING
+    this.status = ActionStatus.EXECUTING;
   }
 
   /**
    * Mark action as executed successfully
    */
-  public markExecuted(backupPath?: string,): void {
-    this.status = ActionStatus.EXECUTED
-    this.executedAt = new Date()
-    this.backupPath = backupPath || null
-    this.rollbackPossible = !!backupPath
+  public markExecuted(backupPath?: string): void {
+    this.status = ActionStatus.EXECUTED;
+    this.executedAt = new Date();
+    this.backupPath = backupPath || null;
+    this.rollbackPossible = !!backupPath;
   }
 
   /**
    * Mark action as failed
    */
   public markFailed(): void {
-    this.status = ActionStatus.FAILED
-    this.executedAt = new Date()
+    this.status = ActionStatus.FAILED;
+    this.executedAt = new Date();
   }
 
   /**
    * Mark action as rolled back
    */
   public markRolledBack(): void {
-    this.status = ActionStatus.ROLLED_BACK
-    this.rollbackPossible = false
+    this.status = ActionStatus.ROLLED_BACK;
+    this.rollbackPossible = false;
   }
 
   /**
    * Check if action is high risk
    */
   public isHighRisk(): boolean {
-    return this.impactAssessment.riskLevel === RiskLevel.HIGH
+    return this.impactAssessment.riskLevel === RiskLevel.HIGH;
   }
 
   /**
    * Check if action requires manual review
    */
   public requiresManualReview(): boolean {
-    return this.impactAssessment.requiresManualReview || this.isHighRisk()
+    return this.impactAssessment.requiresManualReview || this.isHighRisk();
   }
 
   /**
    * Check if action is reversible
    */
   public isReversible(): boolean {
-    return this.rollbackPossible && this.backupPath !== null
+    return this.rollbackPossible && this.backupPath !== null;
   }
 
   /**
    * Get estimated savings from this action
    */
   public getEstimatedSavings(): { files: number; size: number; dependencies: number } {
-    return this.impactAssessment.estimatedSavings || { files: 0, size: 0, dependencies: 0, }
+    return this.impactAssessment.estimatedSavings || { files: 0, size: 0, dependencies: 0 };
   } /**
    * Update impact assessment
    */
 
-  public updateImpactAssessment(assessment: ImpactAssessment,): void {
-    this.impactAssessment = assessment
+  public updateImpactAssessment(assessment: ImpactAssessment): void {
+    this.impactAssessment = assessment;
   }
 
   /**
    * Add affected file to impact assessment
    */
-  public addAffectedFile(filePath: string,): void {
-    if (!this.impactAssessment.affectedFiles.includes(filePath,)) {
-      this.impactAssessment.affectedFiles.push(filePath,)
+  public addAffectedFile(filePath: string): void {
+    if (!this.impactAssessment.affectedFiles.includes(filePath)) {
+      this.impactAssessment.affectedFiles.push(filePath);
     }
   }
 
   /**
    * Add broken reference to impact assessment
    */
-  public addBrokenReference(reference: string,): void {
-    if (!this.impactAssessment.brokenReferences.includes(reference,)) {
-      this.impactAssessment.brokenReferences.push(reference,)
+  public addBrokenReference(reference: string): void {
+    if (!this.impactAssessment.brokenReferences.includes(reference)) {
+      this.impactAssessment.brokenReferences.push(reference);
     }
   }
 
@@ -125,21 +125,21 @@ export class CleanupAction {
    * Calculate risk level based on impact assessment
    */
   public calculateRiskLevel(): RiskLevel {
-    const affectedCount = this.impactAssessment.affectedFiles.length
-    const brokenCount = this.impactAssessment.brokenReferences.length
+    const affectedCount = this.impactAssessment.affectedFiles.length;
+    const brokenCount = this.impactAssessment.brokenReferences.length;
 
     // High risk if many files affected or references broken
     if (affectedCount > 10 || brokenCount > 5) {
-      return RiskLevel.HIGH
+      return RiskLevel.HIGH;
     }
 
     // Medium risk if moderate impact
     if (affectedCount > 3 || brokenCount > 1) {
-      return RiskLevel.MEDIUM
+      return RiskLevel.MEDIUM;
     }
 
     // Low risk otherwise
-    return RiskLevel.LOW
+    return RiskLevel.LOW;
   }
 
   /**
@@ -147,25 +147,25 @@ export class CleanupAction {
    */
   public generateRollbackScript(): string {
     if (!this.isReversible()) {
-      return ''
+      return '';
     }
 
     switch (this.type) {
       case ActionType.DELETE_FILE:
-        return `cp "${this.backupPath}" "${this.targetPath}"`
+        return `cp "${this.backupPath}" "${this.targetPath}"`;
 
       case ActionType.DELETE_DIRECTORY:
-        return `cp -r "${this.backupPath}" "${this.targetPath}"`
+        return `cp -r "${this.backupPath}" "${this.targetPath}"`;
 
       case ActionType.MOVE_FILE:
         // For move operations, the backup path would be the original location
-        return `mv "${this.targetPath}" "${this.backupPath}"`
+        return `mv "${this.targetPath}" "${this.backupPath}"`;
 
       case ActionType.MODIFY_FILE:
-        return `cp "${this.backupPath}" "${this.targetPath}"`
+        return `cp "${this.backupPath}" "${this.targetPath}"`;
 
       default:
-        return `# No rollback available for action type: ${this.type}`
+        return `# No rollback available for action type: ${this.type}`;
     }
   }
 
@@ -175,22 +175,22 @@ export class CleanupAction {
   public getActionDescription(): string {
     switch (this.type) {
       case ActionType.DELETE_FILE:
-        return `Delete file: ${this.targetPath}`
+        return `Delete file: ${this.targetPath}`;
 
       case ActionType.DELETE_DIRECTORY:
-        return `Delete directory: ${this.targetPath}`
+        return `Delete directory: ${this.targetPath}`;
 
       case ActionType.MOVE_FILE:
-        return `Move file: ${this.targetPath}`
+        return `Move file: ${this.targetPath}`;
 
       case ActionType.MODIFY_FILE:
-        return `Modify file: ${this.targetPath}`
+        return `Modify file: ${this.targetPath}`;
 
       case ActionType.CREATE_BACKUP:
-        return `Create backup: ${this.targetPath}`
+        return `Create backup: ${this.targetPath}`;
 
       default:
-        return `Unknown action: ${this.type}`
+        return `Unknown action: ${this.type}`;
     }
   }
 
@@ -198,9 +198,9 @@ export class CleanupAction {
    * Generate unique action ID
    */
   private static generateActionId(): string {
-    const timestamp = Date.now().toString(36,)
-    const random = Math.random().toString(36,).substr(2, 5,)
-    return `action_${timestamp}_${random}`
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substr(2, 5);
+    return `action_${timestamp}_${random}`;
   }
 
   /**
@@ -211,7 +211,7 @@ export class CleanupAction {
     justification: string,
     impactAssessment: ImpactAssessment,
   ): CleanupAction {
-    return new CleanupAction(ActionType.DELETE_FILE, filePath, justification, impactAssessment,)
+    return new CleanupAction(ActionType.DELETE_FILE, filePath, justification, impactAssessment);
   }
 
   /**
@@ -222,7 +222,7 @@ export class CleanupAction {
     justification: string,
     impactAssessment: ImpactAssessment,
   ): CleanupAction {
-    return new CleanupAction(ActionType.MOVE_FILE, sourcePath, justification, impactAssessment,)
+    return new CleanupAction(ActionType.MOVE_FILE, sourcePath, justification, impactAssessment);
   }
 
   /**
@@ -233,13 +233,13 @@ export class CleanupAction {
     justification: string = 'Create backup before modification',
   ): CleanupAction {
     const impactAssessment: ImpactAssessment = {
-      affectedFiles: [targetPath,],
+      affectedFiles: [targetPath],
       brokenReferences: [],
       riskLevel: RiskLevel.LOW,
       requiresManualReview: false,
-    }
+    };
 
-    return new CleanupAction(ActionType.CREATE_BACKUP, targetPath, justification, impactAssessment,)
+    return new CleanupAction(ActionType.CREATE_BACKUP, targetPath, justification, impactAssessment);
   }
 
   /**
@@ -256,26 +256,26 @@ export class CleanupAction {
       executedAt: this.executedAt,
       backupPath: this.backupPath,
       rollbackPossible: this.rollbackPossible,
-    }
+    };
   }
 
   /**
    * Create CleanupAction from JSON representation
    */
-  public static fromJSON(data: any,): CleanupAction {
+  public static fromJSON(data: any): CleanupAction {
     const action = new CleanupAction(
       data.type,
       data.targetPath,
       data.justification,
       data.impactAssessment,
       data.actionId,
-    )
+    );
 
-    action.status = data.status
-    action.executedAt = data.executedAt ? new Date(data.executedAt,) : null
-    action.backupPath = data.backupPath
-    action.rollbackPossible = data.rollbackPossible
+    action.status = data.status;
+    action.executedAt = data.executedAt ? new Date(data.executedAt) : null;
+    action.backupPath = data.backupPath;
+    action.rollbackPossible = data.rollbackPossible;
 
-    return action
+    return action;
   }
 }

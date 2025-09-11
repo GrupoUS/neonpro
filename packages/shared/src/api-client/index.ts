@@ -22,4 +22,4 @@ export const apiClient = {
       },
     },
   },
-}
+};

@@ -4,169 +4,169 @@
  * Generated: 2025-09-09
  */
 
-import type { CodeAsset, } from './file-scanner.contract'
+import type { CodeAsset } from './file-scanner.contract';
 
 // Core Types
 export interface ValidationOptions {
   /** Architecture documents to validate against */
-  documentPaths: string[]
+  documentPaths: string[];
   /** Whether to validate Turborepo standards */
-  validateTurborepoStandards: boolean
+  validateTurborepoStandards: boolean;
   /** Whether to validate Hono routing patterns */
-  validateHonoPatterns: boolean
+  validateHonoPatterns: boolean;
   /** Whether to validate TanStack Router patterns */
-  validateTanStackRouterPatterns: boolean
+  validateTanStackRouterPatterns: boolean;
   /** Severity levels to include in results */
-  includeSeverities: RuleSeverity[]
+  includeSeverities: RuleSeverity[];
   /** Whether to suggest automatic fixes */
-  suggestAutoFixes: boolean
+  suggestAutoFixes: boolean;
 }
 
 export interface ValidationResult {
   /** Overall validation status */
-  overallStatus: ValidationStatus
+  overallStatus: ValidationStatus;
   /** All validation violations found */
-  violations: ArchitectureViolation[]
+  violations: ArchitectureViolation[];
   /** Architecture compliance summary */
-  complianceSummary: ComplianceSummary
+  complianceSummary: ComplianceSummary;
   /** Validation execution metrics */
-  metrics: ValidationMetrics
+  metrics: ValidationMetrics;
   /** Suggestions for improvement */
-  recommendations: Recommendation[]
+  recommendations: Recommendation[];
 }
 
 export interface ArchitectureViolation {
   /** Unique violation identifier */
-  violationId: string
+  violationId: string;
   /** Rule that was violated */
-  ruleId: string
+  ruleId: string;
   /** Rule name/description */
-  ruleName: string
+  ruleName: string;
   /** Violation severity */
-  severity: RuleSeverity
+  severity: RuleSeverity;
   /** Category of violation */
-  category: ViolationCategory
+  category: ViolationCategory;
   /** File path where violation occurs */
-  filePath: string
+  filePath: string;
   /** Specific location in file */
-  location: CodeLocation
+  location: CodeLocation;
   /** Description of the violation */
-  description: string
+  description: string;
   /** What the rule expects */
-  expected: string
+  expected: string;
   /** What was actually found */
-  actual: string
+  actual: string;
   /** Suggested fix if available */
-  suggestedFix?: AutoFix
+  suggestedFix?: AutoFix;
   /** Impact of not fixing this violation */
-  impact: ImpactAssessment
+  impact: ImpactAssessment;
 }
 
 export interface ArchitectureDocument {
   /** Path to the document */
-  filePath: string
+  filePath: string;
   /** Type of document */
-  type: DocumentType
+  type: DocumentType;
   /** Parsed standards from document */
-  standards: ArchitectureStandard[]
+  standards: ArchitectureStandard[];
   /** Validation rules extracted */
-  rules: ValidationRule[]
+  rules: ValidationRule[];
   /** Documented exceptions */
-  exceptions: RuleException[]
+  exceptions: RuleException[];
   /** Document metadata */
-  metadata: DocumentMetadata
+  metadata: DocumentMetadata;
 }
 
 export interface ArchitectureStandard {
   /** Standard identifier */
-  name: string
+  name: string;
   /** Human-readable description */
-  description: string
+  description: string;
   /** File patterns this applies to */
-  applicablePatterns: string[]
+  applicablePatterns: string[];
   /** Whether compliance is required */
-  required: boolean
+  required: boolean;
   /** Code examples demonstrating standard */
-  examples: CodeExample[]
+  examples: CodeExample[];
   /** Related standards */
-  relatedStandards: string[]
+  relatedStandards: string[];
 }
 
 export interface ValidationRule {
   /** Unique rule identifier */
-  id: string
+  id: string;
   /** Rule name */
-  name: string
+  name: string;
   /** Pattern to match files/code */
-  pattern: string
+  pattern: string;
   /** What the pattern must satisfy */
-  requirement: string
+  requirement: string;
   /** Rule severity */
-  severity: RuleSeverity
+  severity: RuleSeverity;
   /** Rule category */
-  category: ViolationCategory
+  category: ViolationCategory;
   /** Scope where rule applies */
-  scope: RuleScope
+  scope: RuleScope;
   /** Whether rule can be auto-fixed */
-  autoFixable: boolean
+  autoFixable: boolean;
 }
 
 export interface ComplianceSummary {
   /** Total files validated */
-  totalFilesValidated: number
+  totalFilesValidated: number;
   /** Files with violations */
-  filesWithViolations: number
+  filesWithViolations: number;
   /** Compliance percentage */
-  compliancePercentage: number
+  compliancePercentage: number;
   /** Breakdown by category */
-  categoryBreakdown: Record<ViolationCategory, CategoryCompliance>
+  categoryBreakdown: Record<ViolationCategory, CategoryCompliance>;
   /** Breakdown by severity */
-  severityBreakdown: Record<RuleSeverity, number>
+  severityBreakdown: Record<RuleSeverity, number>;
   /** Top violation types */
-  topViolationTypes: ViolationSummary[]
+  topViolationTypes: ViolationSummary[];
 }
 
 export interface CategoryCompliance {
   /** Total rules in category */
-  totalRules: number
+  totalRules: number;
   /** Passing rules */
-  passingRules: number
+  passingRules: number;
   /** Failing rules */
-  failingRules: number
+  failingRules: number;
   /** Compliance rate for category */
-  complianceRate: number
+  complianceRate: number;
 }
 
 export interface ViolationSummary {
   /** Rule ID */
-  ruleId: string
+  ruleId: string;
   /** Rule name */
-  ruleName: string
+  ruleName: string;
   /** Number of violations */
-  violationCount: number
+  violationCount: number;
   /** Affected files */
-  affectedFiles: number
+  affectedFiles: number;
 }
 
 export interface ValidationMetrics {
   /** Total validation time in ms */
-  executionTimeMs: number
+  executionTimeMs: number;
   /** Time spent parsing documents */
-  documentParsingTimeMs: number
+  documentParsingTimeMs: number;
   /** Time spent validating files */
-  fileValidationTimeMs: number
+  fileValidationTimeMs: number;
   /** Memory usage during validation */
-  memoryUsedBytes: number
+  memoryUsedBytes: number;
   /** Rules processed */
-  rulesProcessed: number
+  rulesProcessed: number;
   /** Files processed */
-  filesProcessed: number
+  filesProcessed: number;
 }
 
 // Enumerations
-export type ValidationStatus = 'compliant' | 'violations_found' | 'validation_failed'
+export type ValidationStatus = 'compliant' | 'violations_found' | 'validation_failed';
 
-export type RuleSeverity = 'error' | 'warning' | 'info'
+export type RuleSeverity = 'error' | 'warning' | 'info';
 
 export type ViolationCategory =
   | 'file_structure'
@@ -178,115 +178,115 @@ export type ViolationCategory =
   | 'architecture_layer'
   | 'performance'
   | 'security'
-  | 'documentation'
+  | 'documentation';
 
-export type DocumentType = 'source_tree' | 'tech_stack' | 'custom'
+export type DocumentType = 'source_tree' | 'tech_stack' | 'custom';
 
-export type RuleScope = 'global' | 'apps' | 'packages' | 'specific_package'
+export type RuleScope = 'global' | 'apps' | 'packages' | 'specific_package';
 
 // Supporting Types
 export interface CodeLocation {
   /** Line number (1-based) */
-  line: number
+  line: number;
   /** Column number (1-based) */
-  column: number
+  column: number;
   /** Length of problematic code */
-  length: number
+  length: number;
   /** Surrounding code context */
-  context: string
+  context: string;
 }
 
 export interface AutoFix {
   /** Description of the fix */
-  description: string
+  description: string;
   /** Confidence level in auto-fix */
-  confidence: FixConfidence
+  confidence: FixConfidence;
   /** Text replacement operations */
-  operations: FixOperation[]
+  operations: FixOperation[];
   /** Whether fix requires manual review */
-  requiresReview: boolean
+  requiresReview: boolean;
 }
 
 export interface FixOperation {
   /** Type of operation */
-  type: 'replace' | 'insert' | 'delete' | 'move'
+  type: 'replace' | 'insert' | 'delete' | 'move';
   /** Start position for operation */
-  start: CodeLocation
+  start: CodeLocation;
   /** End position for operation (for replace/delete) */
-  end?: CodeLocation
+  end?: CodeLocation;
   /** New text (for replace/insert) */
-  newText?: string
+  newText?: string;
   /** Target location (for move) */
-  targetLocation?: CodeLocation
+  targetLocation?: CodeLocation;
 }
 
-export type FixConfidence = 'high' | 'medium' | 'low'
+export type FixConfidence = 'high' | 'medium' | 'low';
 
 export interface ImpactAssessment {
   /** Business impact if not fixed */
-  businessImpact: ImpactLevel
+  businessImpact: ImpactLevel;
   /** Technical impact if not fixed */
-  technicalImpact: ImpactLevel
+  technicalImpact: ImpactLevel;
   /** Effort required to fix */
-  fixEffort: EffortLevel
+  fixEffort: EffortLevel;
   /** Risk of introducing bugs when fixing */
-  fixRisk: RiskLevel
+  fixRisk: RiskLevel;
 }
 
-export type ImpactLevel = 'low' | 'medium' | 'high' | 'critical'
-export type EffortLevel = 'trivial' | 'low' | 'medium' | 'high' | 'very_high'
-export type RiskLevel = 'low' | 'medium' | 'high'
+export type ImpactLevel = 'low' | 'medium' | 'high' | 'critical';
+export type EffortLevel = 'trivial' | 'low' | 'medium' | 'high' | 'very_high';
+export type RiskLevel = 'low' | 'medium' | 'high';
 
 export interface RuleException {
   /** Rule this exception applies to */
-  ruleId: string
+  ruleId: string;
   /** File or pattern this exception covers */
-  scope: string
+  scope: string;
   /** Reason for the exception */
-  justification: string
+  justification: string;
   /** Who approved the exception */
-  approvedBy: string
+  approvedBy: string;
   /** When exception was created */
-  createdAt: Date
+  createdAt: Date;
   /** When exception expires (if applicable) */
-  expiresAt?: Date
+  expiresAt?: Date;
 }
 
 export interface DocumentMetadata {
   /** Document version */
-  version: string
+  version: string;
   /** Last updated timestamp */
-  lastUpdated: Date
+  lastUpdated: Date;
   /** Document author/maintainer */
-  maintainer: string
+  maintainer: string;
   /** Related documentation */
-  relatedDocs: string[]
+  relatedDocs: string[];
 }
 
 export interface CodeExample {
   /** Example title/description */
-  title: string
+  title: string;
   /** Code snippet */
-  code: string
+  code: string;
   /** Programming language */
-  language: string
+  language: string;
   /** Whether this is a good or bad example */
-  type: 'good' | 'bad'
+  type: 'good' | 'bad';
 }
 
 export interface Recommendation {
   /** Recommendation category */
-  category: ViolationCategory
+  category: ViolationCategory;
   /** Priority level */
-  priority: 'low' | 'medium' | 'high' | 'critical'
+  priority: 'low' | 'medium' | 'high' | 'critical';
   /** Recommendation description */
-  description: string
+  description: string;
   /** Expected benefit */
-  expectedBenefit: string
+  expectedBenefit: string;
   /** Estimated effort */
-  estimatedEffort: EffortLevel
+  estimatedEffort: EffortLevel;
   /** Affected files/areas */
-  affectedAreas: string[]
+  affectedAreas: string[];
 }
 
 // Service Interface
@@ -297,7 +297,7 @@ export interface IArchitectureValidator {
    * @param options Validation configuration
    * @returns Promise resolving to validation results
    */
-  validateAssets(assets: CodeAsset[], options: ValidationOptions,): Promise<ValidationResult>
+  validateAssets(assets: CodeAsset[], options: ValidationOptions): Promise<ValidationResult>;
 
   /**
    * Validate specific asset against standards
@@ -305,42 +305,42 @@ export interface IArchitectureValidator {
    * @param options Validation configuration
    * @returns Promise resolving to asset validation results
    */
-  validateAsset(assetPath: string, options: ValidationOptions,): Promise<ArchitectureViolation[]>
+  validateAsset(assetPath: string, options: ValidationOptions): Promise<ArchitectureViolation[]>;
 
   /**
    * Load and parse architecture documents
    * @param documentPaths Paths to architecture documents
    * @returns Promise resolving to parsed documents
    */
-  loadArchitectureDocuments(documentPaths: string[],): Promise<ArchitectureDocument[]>
+  loadArchitectureDocuments(documentPaths: string[]): Promise<ArchitectureDocument[]>;
 
   /**
    * Check Turborepo workspace compliance
    * @param assets Code assets to check
    * @returns Promise resolving to Turborepo-specific violations
    */
-  validateTurborepoCompliance(assets: CodeAsset[],): Promise<ArchitectureViolation[]>
+  validateTurborepoCompliance(assets: CodeAsset[]): Promise<ArchitectureViolation[]>;
 
   /**
    * Check Hono routing pattern compliance
    * @param assets Code assets to check
    * @returns Promise resolving to Hono-specific violations
    */
-  validateHonoPatterns(assets: CodeAsset[],): Promise<ArchitectureViolation[]>
+  validateHonoPatterns(assets: CodeAsset[]): Promise<ArchitectureViolation[]>;
 
   /**
    * Check TanStack Router pattern compliance
    * @param assets Code assets to check
    * @returns Promise resolving to TanStack Router violations
    */
-  validateTanStackRouterPatterns(assets: CodeAsset[],): Promise<ArchitectureViolation[]>
+  validateTanStackRouterPatterns(assets: CodeAsset[]): Promise<ArchitectureViolation[]>;
 
   /**
    * Generate compliance report
    * @param validationResult Results from validation
    * @returns Promise resolving to formatted compliance report
    */
-  generateComplianceReport(validationResult: ValidationResult,): Promise<string>
+  generateComplianceReport(validationResult: ValidationResult): Promise<string>;
 
   /**
    * Apply automatic fixes for violations
@@ -351,69 +351,69 @@ export interface IArchitectureValidator {
   applyAutoFixes(
     violations: ArchitectureViolation[],
     options: AutoFixOptions,
-  ): Promise<FixResult[]>
+  ): Promise<FixResult[]>;
 }
 
 export interface AutoFixOptions {
   /** Minimum confidence level for auto-fixes */
-  minConfidence: FixConfidence
+  minConfidence: FixConfidence;
   /** Whether to require manual review */
-  requireReview: boolean
+  requireReview: boolean;
   /** Maximum number of files to fix in batch */
-  maxFilesToFix: number
+  maxFilesToFix: number;
   /** Whether to create backup before fixing */
-  createBackup: boolean
+  createBackup: boolean;
 }
 
 export interface FixResult {
   /** Violation that was fixed */
-  violationId: string
+  violationId: string;
   /** Whether fix was successful */
-  success: boolean
+  success: boolean;
   /** Error message if fix failed */
-  error?: string
+  error?: string;
   /** Files modified by the fix */
-  modifiedFiles: string[]
+  modifiedFiles: string[];
   /** Backup paths if created */
-  backupPaths?: string[]
+  backupPaths?: string[];
 }
 
 // Contract Tests Requirements
 export interface ArchitectureValidatorContractTests {
   /** Test basic architecture validation */
-  testBasicArchitectureValidation(): Promise<void>
+  testBasicArchitectureValidation(): Promise<void>;
 
   /** Test document parsing accuracy */
-  testDocumentParsing(): Promise<void>
+  testDocumentParsing(): Promise<void>;
 
   /** Test Turborepo compliance checking */
-  testTurborepoCompliance(): Promise<void>
+  testTurborepoCompliance(): Promise<void>;
 
   /** Test framework-specific validations */
-  testFrameworkValidations(): Promise<void>
+  testFrameworkValidations(): Promise<void>;
 
   /** Test auto-fix functionality */
-  testAutoFixFunctionality(): Promise<void>
+  testAutoFixFunctionality(): Promise<void>;
 
   /** Test exception handling */
-  testExceptionHandling(): Promise<void>
+  testExceptionHandling(): Promise<void>;
 
   /** Test performance with large codebase */
-  testLargeCodebaseValidation(): Promise<void>
+  testLargeCodebaseValidation(): Promise<void>;
 
   /** Test compliance reporting */
-  testComplianceReporting(): Promise<void>
+  testComplianceReporting(): Promise<void>;
 }
 
 // Default Configuration
 export const DEFAULT_VALIDATION_OPTIONS: ValidationOptions = {
-  documentPaths: ['docs/architecture/source-tree.md', 'docs/architecture/tech-stack.md',],
+  documentPaths: ['docs/architecture/source-tree.md', 'docs/architecture/tech-stack.md'],
   validateTurborepoStandards: true,
   validateHonoPatterns: true,
   validateTanStackRouterPatterns: true,
-  includeSeverities: ['error', 'warning',],
+  includeSeverities: ['error', 'warning'],
   suggestAutoFixes: true,
-}
+};
 
 // Performance Constraints
 export const VALIDATION_PERFORMANCE_REQUIREMENTS = {
@@ -423,4 +423,4 @@ export const VALIDATION_PERFORMANCE_REQUIREMENTS = {
   MAX_MEMORY_USAGE: 400_000_000, // 400MB
   /** Maximum document parsing time (ms) */
   MAX_DOCUMENT_PARSING_TIME: 5000,
-} as const
+} as const;

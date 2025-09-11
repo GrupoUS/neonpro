@@ -24,13 +24,13 @@ Scans the workspace for files matching the specified patterns.
 
 ```typescript
 interface FileScanOptions {
-  workspacePath: string
-  appsDir?: string
-  packagesDir?: string
-  includePatterns?: string[]
-  excludePatterns?: string[]
-  followSymlinks?: boolean
-  maxDepth?: number
+  workspacePath: string;
+  appsDir?: string;
+  packagesDir?: string;
+  includePatterns?: string[];
+  excludePatterns?: string[];
+  followSymlinks?: boolean;
+  maxDepth?: number;
 }
 ```
 
@@ -38,30 +38,30 @@ interface FileScanOptions {
 
 ```typescript
 interface FileScanResult {
-  files: CodeAsset[]
+  files: CodeAsset[];
   statistics: {
-    totalFiles: number
-    totalSize: number
-    categories: Record<string, number>
-  }
-  errors: ScanError[]
-  duration: number
+    totalFiles: number;
+    totalSize: number;
+    categories: Record<string, number>;
+  };
+  errors: ScanError[];
+  duration: number;
 }
 ```
 
 **Example:**
 
 ```typescript
-import { FileScanner, } from './services/FileScanner'
+import { FileScanner } from './services/FileScanner';
 
-const scanner = new FileScanner()
+const scanner = new FileScanner();
 const result = await scanner.scan({
   workspacePath: '/path/to/workspace',
-  includePatterns: ['**/*.{ts,tsx}',],
-  excludePatterns: ['**/node_modules/**',],
-},)
+  includePatterns: ['**/*.{ts,tsx}'],
+  excludePatterns: ['**/node_modules/**'],
+});
 
-console.log(`Scanned ${result.statistics.totalFiles} files`,)
+console.log(`Scanned ${result.statistics.totalFiles} files`);
 ```
 
 ##### `categorizeFile(filePath: string): FileCategory`
@@ -99,10 +99,10 @@ Analyzes file dependencies and builds a comprehensive dependency graph.
 
 ```typescript
 interface AnalysisOptions {
-  maxDepth?: number
-  includeExternalDeps?: boolean
-  followSymlinks?: boolean
-  ignorePatterns?: string[]
+  maxDepth?: number;
+  includeExternalDeps?: boolean;
+  followSymlinks?: boolean;
+  ignorePatterns?: string[];
 }
 ```
 
@@ -110,29 +110,29 @@ interface AnalysisOptions {
 
 ```typescript
 interface DependencyGraph {
-  nodes: DependencyNode[]
-  edges: DependencyEdge[]
+  nodes: DependencyNode[];
+  edges: DependencyEdge[];
   statistics: {
-    totalNodes: number
-    totalEdges: number
-    circularDependencies: CircularDependency[]
-    unusedFiles: string[]
-  }
+    totalNodes: number;
+    totalEdges: number;
+    circularDependencies: CircularDependency[];
+    unusedFiles: string[];
+  };
 }
 ```
 
 **Example:**
 
 ```typescript
-import { DependencyAnalyzer, } from './services/DependencyAnalyzer'
+import { DependencyAnalyzer } from './services/DependencyAnalyzer';
 
-const analyzer = new DependencyAnalyzer()
+const analyzer = new DependencyAnalyzer();
 const graph = await analyzer.analyze(scanResult.files, {
   maxDepth: 10,
   includeExternalDeps: true,
-},)
+});
 
-console.log(`Found ${graph.statistics.circularDependencies.length} circular dependencies`,)
+console.log(`Found ${graph.statistics.circularDependencies.length} circular dependencies`);
 ```
 
 ##### `findCircularDependencies(graph: DependencyGraph): CircularDependency[]`
@@ -143,9 +143,9 @@ Identifies circular dependencies in the dependency graph.
 
 ```typescript
 interface CircularDependency {
-  cycle: string[]
-  length: number
-  severity: 'low' | 'medium' | 'high'
+  cycle: string[];
+  length: number;
+  severity: 'low' | 'medium' | 'high';
 }
 ```
 
@@ -163,16 +163,16 @@ Validates the dependency graph against architectural rules.
 
 ```typescript
 interface ValidationRules {
-  turborepo?: TurborepoRules
-  hono?: HonoRules
-  tanstackRouter?: TanStackRouterRules
-  custom?: CustomRule[]
+  turborepo?: TurborepoRules;
+  hono?: HonoRules;
+  tanstackRouter?: TanStackRouterRules;
+  custom?: CustomRule[];
 }
 
 interface TurborepoRules {
-  checkWorkspaceConfig?: boolean
-  checkTaskPipelines?: boolean
-  checkDependencies?: boolean
+  checkWorkspaceConfig?: boolean;
+  checkTaskPipelines?: boolean;
+  checkDependencies?: boolean;
 }
 ```
 
@@ -180,38 +180,38 @@ interface TurborepoRules {
 
 ```typescript
 interface ValidationResult {
-  passed: boolean
-  results: RuleResult[]
+  passed: boolean;
+  results: RuleResult[];
   summary: {
-    totalRules: number
-    passed: number
-    failed: number
-    warnings: number
-  }
+    totalRules: number;
+    passed: number;
+    failed: number;
+    warnings: number;
+  };
 }
 
 interface RuleResult {
-  rule: string
-  status: 'passed' | 'failed' | 'warning'
-  message: string
-  files?: string[]
-  suggestions?: string[]
+  rule: string;
+  status: 'passed' | 'failed' | 'warning';
+  message: string;
+  files?: string[];
+  suggestions?: string[];
 }
 ```
 
 **Example:**
 
 ```typescript
-import { ArchitectureValidator, } from './services/ArchitectureValidator'
+import { ArchitectureValidator } from './services/ArchitectureValidator';
 
-const validator = new ArchitectureValidator()
+const validator = new ArchitectureValidator();
 const result = await validator.validate(dependencyGraph, {
-  turborepo: { checkWorkspaceConfig: true, },
-  hono: { checkRoutes: true, },
-  tanstackRouter: { checkRouteConfig: true, },
-},)
+  turborepo: { checkWorkspaceConfig: true },
+  hono: { checkRoutes: true },
+  tanstackRouter: { checkRouteConfig: true },
+});
 
-console.log(`Validation: ${result.summary.passed}/${result.summary.totalRules} rules passed`,)
+console.log(`Validation: ${result.summary.passed}/${result.summary.totalRules} rules passed`);
 ```
 
 ### CleanupEngine
@@ -228,11 +228,11 @@ Creates a cleanup plan identifying files that can be safely removed.
 
 ```typescript
 interface CleanupOptions {
-  aggressive?: boolean
-  removeUnusedFiles?: boolean
-  removeOrphanedDependencies?: boolean
-  cleanupEmptyDirectories?: boolean
-  optimizeImports?: boolean
+  aggressive?: boolean;
+  removeUnusedFiles?: boolean;
+  removeOrphanedDependencies?: boolean;
+  cleanupEmptyDirectories?: boolean;
+  optimizeImports?: boolean;
 }
 ```
 
@@ -240,22 +240,22 @@ interface CleanupOptions {
 
 ```typescript
 interface CleanupPlan {
-  id: string
-  operations: CleanupOperation[]
+  id: string;
+  operations: CleanupOperation[];
   estimatedSavings: {
-    files: number
-    sizeBytes: number
-    dependencies: number
-  }
-  risks: RiskAssessment[]
+    files: number;
+    sizeBytes: number;
+    dependencies: number;
+  };
+  risks: RiskAssessment[];
 }
 
 interface CleanupOperation {
-  type: 'delete' | 'modify' | 'move'
-  target: string
-  reason: string
-  risk: 'low' | 'medium' | 'high'
-  backup?: string
+  type: 'delete' | 'modify' | 'move';
+  target: string;
+  reason: string;
+  risk: 'low' | 'medium' | 'high';
+  backup?: string;
 }
 ```
 
@@ -267,10 +267,10 @@ Executes a cleanup plan with backup and rollback capabilities.
 
 ```typescript
 interface ExecutionOptions {
-  dryRun?: boolean
-  interactive?: boolean
-  backupDir?: string
-  confirmBeforeDelete?: boolean
+  dryRun?: boolean;
+  interactive?: boolean;
+  backupDir?: string;
+  confirmBeforeDelete?: boolean;
 }
 ```
 
@@ -288,18 +288,18 @@ Generates audit reports in the specified format.
 
 ```typescript
 interface ReportOptions {
-  format: 'html' | 'json' | 'markdown' | 'pdf'
-  template?: string
-  includeCharts?: boolean
-  outputPath?: string
+  format: 'html' | 'json' | 'markdown' | 'pdf';
+  template?: string;
+  includeCharts?: boolean;
+  outputPath?: string;
 }
 
 interface ReportData {
-  scanResult: FileScanResult
-  dependencyGraph: DependencyGraph
-  validationResult: ValidationResult
-  cleanupPlan?: CleanupPlan
-  metadata: ReportMetadata
+  scanResult: FileScanResult;
+  dependencyGraph: DependencyGraph;
+  validationResult: ValidationResult;
+  cleanupPlan?: CleanupPlan;
+  metadata: ReportMetadata;
 }
 ```
 
@@ -307,11 +307,11 @@ interface ReportData {
 
 ```typescript
 interface GeneratedReport {
-  filePath: string
-  format: string
-  size: number
-  generatedAt: Date
-  metadata: ReportMetadata
+  filePath: string;
+  format: string;
+  size: number;
+  generatedAt: Date;
+  metadata: ReportMetadata;
 }
 ```
 
@@ -354,12 +354,12 @@ Structured logging with performance monitoring and context management.
 **Example:**
 
 ```typescript
-import { Logger, } from './utils/Logger'
+import { Logger } from './utils/Logger';
 
-const logger = new Logger({ level: 'info', format: 'json', },)
+const logger = new Logger({ level: 'info', format: 'json' });
 
-logger.info('Starting file scan', { component: 'FileScanner', },)
-logger.performance('File scan completed', 1250, { filesScanned: 1247, },)
+logger.info('Starting file scan', { component: 'FileScanner' });
+logger.performance('File scan completed', 1250, { filesScanned: 1247 });
 ```
 
 ### PerformanceMonitor
@@ -391,41 +391,41 @@ Comprehensive error handling with retry logic and circuit breaker patterns.
 ```typescript
 // Code Asset representation
 interface CodeAsset {
-  id: string
-  path: string
-  relativePath: string
-  size: number
-  category: FileCategory
-  lastModified: Date
-  checksum: string
-  metadata: AssetMetadata
+  id: string;
+  path: string;
+  relativePath: string;
+  size: number;
+  category: FileCategory;
+  lastModified: Date;
+  checksum: string;
+  metadata: AssetMetadata;
 }
 
 // Dependency graph node
 interface DependencyNode {
-  id: string
-  path: string
-  type: 'internal' | 'external'
-  category: FileCategory
-  dependencies: string[]
-  dependents: string[]
+  id: string;
+  path: string;
+  type: 'internal' | 'external';
+  category: FileCategory;
+  dependencies: string[];
+  dependents: string[];
 }
 
 // Dependency graph edge
 interface DependencyEdge {
-  from: string
-  to: string
-  type: 'import' | 'require' | 'dynamic'
-  weight: number
+  from: string;
+  to: string;
+  type: 'import' | 'require' | 'dynamic';
+  weight: number;
 }
 
 // Validation rule definition
 interface ValidationRule {
-  id: string
-  name: string
-  description: string
-  severity: 'error' | 'warning' | 'info'
-  validator: (graph: DependencyGraph, config: any,) => Promise<RuleResult>
+  id: string;
+  name: string;
+  description: string;
+  severity: 'error' | 'warning' | 'info';
+  validator: (graph: DependencyGraph, config: any) => Promise<RuleResult>;
 }
 ```
 
@@ -433,21 +433,21 @@ interface ValidationRule {
 
 ```typescript
 interface AuditToolConfig {
-  workspace: WorkspaceConfig
-  analysis: AnalysisConfig
-  validation: ValidationConfig
-  cleanup: CleanupConfig
-  reporting: ReportingConfig
-  performance: PerformanceConfig
-  logging: LoggingConfig
+  workspace: WorkspaceConfig;
+  analysis: AnalysisConfig;
+  validation: ValidationConfig;
+  cleanup: CleanupConfig;
+  reporting: ReportingConfig;
+  performance: PerformanceConfig;
+  logging: LoggingConfig;
 }
 
 interface WorkspaceConfig {
-  rootPath: string
-  appsDir: string
-  packagesDir: string
-  includePatterns: string[]
-  excludePatterns: string[]
+  rootPath: string;
+  appsDir: string;
+  packagesDir: string;
+  includePatterns: string[];
+  excludePatterns: string[];
 }
 ```
 
@@ -460,25 +460,25 @@ The API uses a comprehensive error hierarchy:
 ```typescript
 // Base error class
 abstract class AuditError extends Error {
-  abstract readonly code: string
-  abstract readonly category: ErrorCategory
-  readonly context?: Record<string, unknown>
+  abstract readonly code: string;
+  abstract readonly category: ErrorCategory;
+  readonly context?: Record<string, unknown>;
 }
 
 // Specific error types
 class FileSystemError extends AuditError {
-  readonly code = 'FILESYSTEM_ERROR'
-  readonly category = ErrorCategory.FILESYSTEM
+  readonly code = 'FILESYSTEM_ERROR';
+  readonly category = ErrorCategory.FILESYSTEM;
 }
 
 class ValidationError extends AuditError {
-  readonly code = 'VALIDATION_ERROR'
-  readonly category = ErrorCategory.VALIDATION
+  readonly code = 'VALIDATION_ERROR';
+  readonly category = ErrorCategory.VALIDATION;
 }
 
 class ConfigurationError extends AuditError {
-  readonly code = 'CONFIGURATION_ERROR'
-  readonly category = ErrorCategory.CONFIGURATION
+  readonly code = 'CONFIGURATION_ERROR';
+  readonly category = ErrorCategory.CONFIGURATION;
 }
 ```
 
@@ -501,27 +501,27 @@ enum ErrorCategory {
 ```typescript
 // Using try-catch with specific error handling
 try {
-  const result = await scanner.scan(options,)
+  const result = await scanner.scan(options);
 } catch (error) {
   if (error instanceof FileSystemError) {
     // Handle file system specific errors
-    logger.error('File system error during scan', error,)
+    logger.error('File system error during scan', error);
   } else if (error instanceof ValidationError) {
     // Handle validation errors
-    logger.warn('Configuration validation failed', error,)
+    logger.warn('Configuration validation failed', error);
   } else {
     // Handle unexpected errors
-    logger.error('Unexpected error during scan', error,)
-    throw error
+    logger.error('Unexpected error during scan', error);
+    throw error;
   }
 }
 
 // Using error handler service
-const errorHandler = new ErrorHandler()
-const result = await errorHandler.retry(() => scanner.scan(options,), {
+const errorHandler = new ErrorHandler();
+const result = await errorHandler.retry(() => scanner.scan(options), {
   maxRetries: 3,
   backoffMs: 1000,
-},)
+});
 ```
 
 ### Return Types
@@ -529,27 +529,27 @@ const result = await errorHandler.retry(() => scanner.scan(options,), {
 All service methods return results wrapped in a consistent format:
 
 ```typescript
-interface ServiceResult<T,> {
-  success: boolean
-  data?: T
-  error?: AuditError
-  warnings?: string[]
+interface ServiceResult<T> {
+  success: boolean;
+  data?: T;
+  error?: AuditError;
+  warnings?: string[];
   metadata: {
-    duration: number
-    timestamp: Date
-    version: string
-  }
+    duration: number;
+    timestamp: Date;
+    version: string;
+  };
 }
 ```
 
 **Usage:**
 
 ```typescript
-const result = await scanner.scan(options,)
+const result = await scanner.scan(options);
 if (result.success) {
-  console.log(`Scanned ${result.data.statistics.totalFiles} files`,)
+  console.log(`Scanned ${result.data.statistics.totalFiles} files`);
 } else {
-  console.error('Scan failed:', result.error.message,)
+  console.error('Scan failed:', result.error.message);
 }
 ```
 
