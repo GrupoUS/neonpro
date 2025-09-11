@@ -3,19 +3,6 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "api/**/*.ts",
-      "use": "@vercel/node"
-    }
-  ],
 
   "functions": {
     "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },

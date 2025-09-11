@@ -4,11 +4,11 @@
   "projectName": "neonpro",
   "settings": {
     "createdAt": 1750299142397,
-    "framework": "nextjs",
-    "devCommand": "npm run dev",
-    "installCommand": null,
-    "buildCommand": null,
-    "outputDirectory": ".next",
+    "framework": null,
+    "devCommand": "pnpm turbo dev --filter=@neonpro/web --filter=@neonpro/api",
+    "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+    "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
+    "outputDirectory": "apps/web/dist",
     "rootDirectory": null,
     "directoryListing": false,
     "nodeVersion": "22.x"
