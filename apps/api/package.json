@@ -22,33 +22,32 @@
     "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.15",
-    "@hono/node-server": "^1.12.0",
-    "@hono/swagger-ui": "^0.4.0",
+    "@ai-sdk/openai": "^2.0.28",
+    "@hono/node-server": "^1.19.2",
+    "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-validator": "^0.2.2",
     "@neonpro/security": "workspace:*",
     "@neonpro/shared": "workspace:*",
     "@neonpro/types": "workspace:*",
-    "@prisma/client": "^5.18.0",
-    "@supabase/supabase-js": "^2.45.1",
-    "ai": "^5.0.23",
-    "bcryptjs": "^2.4.3",
+    "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "ai": "^5.0.39",
+    "bcryptjs": "^3.0.2",
     "date-fns": "^3.6.0",
-    "dotenv": "^17.2.1",
+    "dotenv": "^17.2.2",
     "hono": "^4.9.6",
-    "jose": "^5.6.3",
-    "nanoid": "^5.0.7",
-    "zod": "^3.23.8"
+    "jose": "^5.10.0",
+    "nanoid": "^5.1.5",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.3",
-    "@types/node": "^20.14.15",
-    "prisma": "^5.18.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.17.0",
+    "@types/node": "^20.19.13",
+    "prisma": "^5.22.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.9"
   },
   "prisma": {
     "schema": "../../packages/database/prisma/schema.prisma"

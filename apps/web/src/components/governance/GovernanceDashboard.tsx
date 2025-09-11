@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { KPIOverviewCards } from './KPIOverviewCards'
 import { ComplianceStatusPanel } from './ComplianceStatusPanel'
 import { RiskAssessmentTable } from './RiskAssessmentTable'

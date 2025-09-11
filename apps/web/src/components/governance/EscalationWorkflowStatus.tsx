@@ -3,16 +3,18 @@ import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useQuery } from '@tanstack/react-query'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { Escalations } from '@/lib/governance-service'
+
 
 type EscalationPriority = 'low' | 'medium' | 'high' | 'critical'
 type EscalationStatus = 'new' | 'in_progress' | 'escalated' | 'resolved' | 'closed'
 
-function EscalationSummaryCard({ 
-  title, 
-  value, 
-  subtitle, 
+function EscalationSummaryCard({
+  title,
+  value,
+  subtitle,
   badgeVariant = 'default',
-  badgeText 
+  badgeText
 }: {
   title: string
   value: string | number
@@ -67,14 +69,14 @@ export function EscalationWorkflowStatus() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
 
-  const { data: escalationData, isLoading, error } = useQuery({
+  const { data: escalationData, isLoading } = useQuery<Escalations>({
     queryKey: ['escalation-workflow', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getEscalationWorkflowData(clinicId)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -106,7 +108,7 @@ export function EscalationWorkflowStatus() {
           badgeText="Overview"
           badgeVariant="outline"
         />
-        
+
         <EscalationSummaryCard
           title="Critical Count"
           value={escalationData?.summary.criticalCount || 0}
@@ -114,7 +116,7 @@ export function EscalationWorkflowStatus() {
           badgeText="Critical"
           badgeVariant="destructive"
         />
-        
+
         <EscalationSummaryCard
           title="High Priority"
           value={escalationData?.summary.highCount || 0}
@@ -122,7 +124,7 @@ export function EscalationWorkflowStatus() {
           badgeText="High"
           badgeVariant="default"
         />
-        
+
         <EscalationSummaryCard
           title="Overdue"
           value={escalationData?.summary.overdue || 0}
@@ -130,7 +132,7 @@ export function EscalationWorkflowStatus() {
           badgeText={escalationData && escalationData.summary.overdue > 0 ? "Action Required" : "On Time"}
           badgeVariant={escalationData && escalationData.summary.overdue > 0 ? "destructive" : "default"}
         />
-        
+
         <EscalationSummaryCard
           title="Avg Response Time"
           value={`${escalationData?.summary.avgResponseTime || 0}h`}
@@ -138,7 +140,7 @@ export function EscalationWorkflowStatus() {
           badgeText="Good"
           badgeVariant="default"
         />
-        
+
         <EscalationSummaryCard
           title="Completed Today"
           value={escalationData?.summary.completedToday || 0}
@@ -165,8 +167,8 @@ export function EscalationWorkflowStatus() {
           </TableHeader>
           <TableBody>
             {escalationData?.activeEscalations.map((escalation) => {
-              const priorityBadge = getPriorityBadge(escalation.priority)
-              const statusBadge = getStatusBadge(escalation.status)
+              const priorityBadge = getPriorityBadge((escalation.priority ?? 'low') as EscalationPriority)
+              const statusBadge = getStatusBadge((escalation.status ?? 'new') as EscalationStatus)
 
               return (
                 <TableRow key={escalation.id}>
@@ -185,7 +187,7 @@ export function EscalationWorkflowStatus() {
                   <TableCell>{escalation.category}</TableCell>
                   <TableCell>{escalation.assignedTo}</TableCell>
                   <TableCell>
-                    {new Date(escalation.deadline).toLocaleString()}
+                    {escalation.deadline ? new Date(escalation.deadline).toLocaleString() : '-'}
                   </TableCell>
                 </TableRow>
               )

@@ -18,6 +18,22 @@ Generates an actionable tasks.md and (optionally) Archon tasks from the complete
 - templates/tasks-template.md
 - .github/prompts/tasks.prompt.md
 
+## 🔗 Plan Section Mapping (from plan.md)
+The generator must parse these sections of `plan.md` (Implementation Plan template) and use them as constraints:
+| Plan Section | Purpose in Task Generation | Failure Condition |
+|--------------|---------------------------|------------------|
+| Summary | Derive feature name + top-level objective | Empty → error |
+| Technical Context | Determine languages, deps, testing stack; identify remaining NEEDS CLARIFICATION | Any "NEEDS CLARIFICATION" unresolved → abort |
+| Constitution Check | Enumerate architectural/testing/observability/versioning commitments → create explicit tasks | Missing PASS gates → abort |
+| Project Structure / Structure Decision | Select pathing strategy (single/web/mobile) | Unsupported structure token → abort |
+| Phase 0 Research | Provide evidence that unknowns resolved; map decisions to rationale | Missing decisions for prior unknowns → abort |
+| Phase 1 Design (contracts, data-model, quickstart) | Source for contract tests, model entities, integration scenarios | Absent required doc(s) → abort |
+| Complexity Tracking | If rows exist → emit mitigation tasks & tag complexity flag | Table present but no mitigation tasks produced |
+| Progress Tracking | Validate Phase 0 + 1 complete & both Constitution gates PASS before generating tasks | Any required phase unchecked → abort |
+
+If any abort condition triggers, return structured error JSON instead of writing `tasks.md`.
+
+
 ## 📚 Mandatory Pre‑Reads
 - templates/tasks-template.md (structure and rules)
 - .github/prompts/tasks.prompt.md (execution patterns and repo scripts)
@@ -27,6 +43,26 @@ Generates an actionable tasks.md and (optionally) Archon tasks from the complete
 
 ## 🔧 Required MCP Tools
 - Archon (read PRD/Plan by ID, create tasks)
+
+## 🛡️ Gates & Constitutional Enforcement
+Before any task generation the following MUST be validated from `plan.md`:
+1. Progress Tracking: `Phase 0: Research complete` = checked
+2. Progress Tracking: `Phase 1: Design complete` = checked
+3. Gate Status: `Initial Constitution Check: PASS` and `Post-Design Constitution Check: PASS`
+4. No remaining tokens "NEEDS CLARIFICATION" in Technical Context or Research
+5. At least one contract spec present (contracts/*) and `data-model.md` exists
+
+If any fail → return:
+```json
+{"error": {"code": "GATE_FAILURE", "details": {"missing": ["list of failed predicates"]}}}
+```
+
+Commitments mapping (each must become ≥1 task unless already covered by explicit design docs):
+- Testing commitments → tasks for RED first: contract tests, integration tests, then implementation
+- Observability commitments → structured logging setup (API + Frontend) tasks
+- Versioning commitments → version bump + CHANGELOG/update tasks
+- Architecture commitments → tasks to enforce library boundaries / imports audit
+- Simplicity commitments → tasks to remove unnecessary abstractions if flagged
 
 ## 🧠 Inputs & Discovery
 Resolve inputs in this order:
@@ -66,12 +102,23 @@ Follow templates/tasks-template.md, replacing examples with real tasks:
 - Dependency notes and parallel examples
 
 ## 🧪 Validation Checklist (auto‑review before writing)
-- All endpoints in contracts/ have contract test tasks
-- All entities in data-model.md have model tasks
-- All integration scenarios from PRD are present as tests
-- Tests precede implementation tasks
-- Each task includes an exact file path and clear acceptance criteria
-- [P] tasks touch different files
+MUST all be TRUE before writing `tasks.md`:
+1. Contract Coverage: Every endpoint in `contracts/` has a preceding contract test task.
+2. Model Coverage: Every entity in `data-model.md` has a model creation + validation test task.
+3. Scenario Coverage: Every PRD user scenario → integration test task (RED first).
+4. TDD Order: No implementation task appears before all its prerequisite test tasks.
+5. Parallel Safety: All `[P]` tasks operate on disjoint file paths.
+6. Acceptance Criteria: Each task lists ≥1 explicit, testable criterion.
+7. Constitution Commitments: For each commitment category (Testing, Observability, Versioning, Architecture, Simplicity) at least one task enforces it.
+8. Gates Passed: Both Constitution gates in `plan.md` are PASS.
+9. No Unknowns: Zero remaining "NEEDS CLARIFICATION" tokens.
+10. Complexity Mitigation: For every row in Complexity Tracking table, a matching mitigation task exists referencing the violation.
+11. Structure Consistency: All task paths align with the resolved Structure Decision.
+12. Compliance: Any task touching PHI/PII includes LGPD/ANVISA acceptance criteria note.
+13. Versioning: If version bump required (commitment), a task updates version + changelog.
+14. Observability: Logging / tracing setup tasks exist for new code areas.
+15. JSON Summary Integrity: Summary arrays lengths match number of tasks & IDs sequential (T001..Tnn).
+If any item fails → abort with `VALIDATION_FAILED` JSON containing failing item indices.
 
 ## 🗂️ Archon Integration (optional)
 - If an Archon project_id is available, create tasks in Archon with:
@@ -93,6 +140,12 @@ Follow templates/tasks-template.md, replacing examples with real tasks:
 ```json
 {
   "feature_dir": "specs/001-feature-name",
+  "structure_decision": "web|single|mobile",
+  "constitution_status": {"initial_gate": "PASS", "post_design_gate": "PASS"},
+  "unresolved_clarifications": 0,
+  "complexity_items": [
+    {"violation": "4th project", "mitigation_task": "T012"}
+  ],
   "tasks": [
     {
       "id": "T001",
@@ -101,7 +154,7 @@ Follow templates/tasks-template.md, replacing examples with real tasks:
       "depends_on": [],
       "acceptance": ["lint, type-check scripts run successfully"],
       "artifacts": ["package.json scripts updated"],
-      "refs": {"prd": ["FR-001"], "plan": ["Technical Context"]}
+      "refs": {"prd": ["FR-001"], "plan": ["Technical Context"], "complexity": [], "constitution": ["Testing"]}
     }
   ],
   "policy": {"tdd_order": true, "parallelization": true},
@@ -122,8 +175,25 @@ For each task include:
 - Web app: `backend/src/`, `frontend/src/`
 - Monorepo (NeonPro default): per `docs/architecture/source-tree.md`
 
+### Structure Decision Logic
+Parse `Structure Decision:` line from plan.md.
+Map tokens → path template:
+- `single` or default → use package/service layering inside monorepo packages if applicable
+- `web` → use `apps/api/src` & `apps/web/src` separation; tests mirrored per app
+- `mobile` → (future) ensure api + platform dir; abort if platform dirs missing
+If detected structure conflicts with actual repo layout (missing directories), raise error `STRUCTURE_MISMATCH`.
+All task paths must reflect chosen structure (e.g., model tasks in `packages/core-services/src/services` vs `apps/api/src/services`).
+
 ## 🧭 Parallelization Guidance
 Group [P] tasks by different files and no dependency edges. Provide a short example group to help executors run them concurrently.
+
+### Extra Task Categories (derived from plan commitments)
+Must append these categories when applicable:
+- Observability: logging/tracing setup, log routing, error context enrichment
+- Versioning: bump version + changelog + migration notes (if breaking)
+- Complexity Mitigation: one task per Complexity Tracking violation row
+- Architecture Enforcement: import boundary audit, removal of unused abstractions
+- Simplicity Cleanup: eliminate premature patterns flagged
 
 ## ✅ Completion Criteria
 - tasks.md created with ≥25 high‑quality tasks (or appropriate to scope)

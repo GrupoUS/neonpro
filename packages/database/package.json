@@ -28,12 +28,12 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
-    "prisma": "^5.7.1"
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "typescript": "^5.7.2"
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2"
   },
   "publishConfig": {
     "access": "restricted"

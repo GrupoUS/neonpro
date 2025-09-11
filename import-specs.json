@@ -1,0 +1,806 @@
+[
+  {
+    "file": "apps/api/src/__tests__/auth/login.test.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/__tests__/auth/login.test.ts",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/__tests__/routes/patients.test.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/__tests__/routes/patients.test.ts",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/app.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/app.ts",
+    "specifier": "@/routes/auth",
+    "resolved": true,
+    "resolvedPath": "apps/api/src/routes/auth.ts"
+  },
+  {
+    "file": "apps/api/src/app.ts",
+    "specifier": "@/routes/patients",
+    "resolved": true,
+    "resolvedPath": "apps/api/src/routes/patients.ts"
+  },
+  {
+    "file": "apps/api/src/app.ts",
+    "specifier": "@/routes/appointments",
+    "resolved": true,
+    "resolvedPath": "apps/api/src/routes/appointments.ts"
+  },
+  {
+    "file": "apps/api/src/index.ts",
+    "specifier": "@hono/node-server",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/lib/prisma.ts",
+    "specifier": "@prisma/client",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/routes/appointments.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/routes/auth.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/api/src/routes/patients.ts",
+    "specifier": "hono",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/App.tsx",
+    "specifier": "@/components/ui/sonner",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/sonner.tsx"
+  },
+  {
+    "file": "apps/web/src/App.tsx",
+    "specifier": "@/components/ui/toaster",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/toaster.tsx"
+  },
+  {
+    "file": "apps/web/src/App.tsx",
+    "specifier": "@/components/ui/tooltip",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/tooltip.tsx"
+  },
+  {
+    "file": "apps/web/src/App.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@/components/ui/progress",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/progress.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@/components/ui/alert",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/alert.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/AIGovernanceMetrics.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/components/ui/input",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/input.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/components/ui/select",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/select.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/components/ui/table",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/table.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/AuditTrailTable.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@/components/ui/progress",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/progress.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@/components/ui/alert",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/alert.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/ComplianceStatusPanel.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/EscalationWorkflowStatus.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/EscalationWorkflowStatus.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/EscalationWorkflowStatus.tsx",
+    "specifier": "@/components/ui/table",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/table.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/EscalationWorkflowStatus.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/EscalationWorkflowStatus.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/KPIOverviewCards.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/KPIOverviewCards.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/KPIOverviewCards.tsx",
+    "specifier": "@/components/ui/progress",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/progress.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/KPIOverviewCards.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/KPIOverviewCards.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@/components/ui/card",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/card.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@/components/ui/progress",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/progress.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@/components/ui/table",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/table.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/PolicyManagementPanel.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/RiskAssessmentTable.tsx",
+    "specifier": "@/components/ui/badge",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/badge.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/RiskAssessmentTable.tsx",
+    "specifier": "@/components/ui/table",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/table.tsx"
+  },
+  {
+    "file": "apps/web/src/components/governance/RiskAssessmentTable.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/RiskAssessmentTable.tsx",
+    "specifier": "@/lib/governance-service",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/governance-service.ts"
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AIGovernanceMetrics.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AIGovernanceMetrics.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AIGovernanceMetrics.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AuditTrailTable.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AuditTrailTable.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/AuditTrailTable.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/ComplianceStatusPanel.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/ComplianceStatusPanel.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/ComplianceStatusPanel.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/EscalationWorkflowStatus.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/EscalationWorkflowStatus.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/EscalationWorkflowStatus.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/GovernanceDashboard.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/GovernanceDashboard.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/GovernanceDashboard.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/KPIOverviewCards.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/KPIOverviewCards.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/KPIOverviewCards.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/PolicyManagementPanel.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/PolicyManagementPanel.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/PolicyManagementPanel.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/RiskAssessmentTable.test.tsx",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/RiskAssessmentTable.test.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/governance/__tests__/RiskAssessmentTable.test.tsx",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/alert.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/alert.tsx",
+    "specifier": "class-variance-authority",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/alert.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/badge.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/badge.tsx",
+    "specifier": "@radix-ui/react-slot",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/badge.tsx",
+    "specifier": "class-variance-authority",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/badge.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/card.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/card.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/input.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/input.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/progress.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/progress.tsx",
+    "specifier": "@radix-ui/react-progress",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/progress.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/select.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/select.tsx",
+    "specifier": "@radix-ui/react-select",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/select.tsx",
+    "specifier": "lucide-react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/select.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/components/ui/table.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/components/ui/table.tsx",
+    "specifier": "@/lib/utils",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/utils.ts"
+  },
+  {
+    "file": "apps/web/src/contexts/auth-context.tsx",
+    "specifier": "@supabase/supabase-js",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/contexts/auth-context.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/hooks/mutations/healthcare-optimistic-updates.ts",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/integrations/supabase/client.ts",
+    "specifier": "@supabase/supabase-js",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/integrations/supabase/client.ts",
+    "specifier": "@/integrations/supabase/client",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/integrations/supabase/client.ts"
+  },
+  {
+    "file": "apps/web/src/lib/emergency/emergency-cache.test.ts",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/lib/emergency/emergency-cache.test.ts",
+    "specifier": "@/lib/emergency/emergency-cache",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/lib/emergency/emergency-cache.ts"
+  },
+  {
+    "file": "apps/web/src/lib/utils.ts",
+    "specifier": "clsx",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/lib/utils.ts",
+    "specifier": "tailwind-merge",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/main.tsx",
+    "specifier": "@tanstack/react-router",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/main.tsx",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/main.tsx",
+    "specifier": "react-dom/client",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/nav-items.tsx",
+    "specifier": "lucide-react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@/components/ui/sonner",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/sonner.tsx"
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@/components/ui/toaster",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/toaster.tsx"
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@/components/ui/tooltip",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/ui/tooltip.tsx"
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@tanstack/react-query",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@tanstack/react-router",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/routes/__root.tsx",
+    "specifier": "@tanstack/router-devtools",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/routes/governance.tsx",
+    "specifier": "@tanstack/react-router",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/routes/governance.tsx",
+    "specifier": "@/components/governance/GovernanceDashboard",
+    "resolved": true,
+    "resolvedPath": "apps/web/src/components/governance/GovernanceDashboard.tsx"
+  },
+  {
+    "file": "apps/web/src/routes/index.tsx",
+    "specifier": "@tanstack/react-router",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/test/setup.ts",
+    "specifier": "@testing-library/jest-dom",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/test/setup.ts",
+    "specifier": "@testing-library/react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/test/setup.ts",
+    "specifier": "react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/test/setup.ts",
+    "specifier": "vitest",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/src/test/setup.ts",
+    "specifier": "fake-indexeddb/auto",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vite.config.ts",
+    "specifier": "@tanstack/router-vite-plugin",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vite.config.ts",
+    "specifier": "@vitejs/plugin-react",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vite.config.ts",
+    "specifier": "path",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vite.config.ts",
+    "specifier": "vite",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vitest.config.ts",
+    "specifier": "path",
+    "resolved": false,
+    "resolvedPath": null
+  },
+  {
+    "file": "apps/web/vitest.config.ts",
+    "specifier": "vitest/config",
+    "resolved": false,
+    "resolvedPath": null
+  }
+]

@@ -4,15 +4,17 @@ import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useQuery } from '@tanstack/react-query'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { ComplianceData } from '@/lib/governance-service'
+
 
 type ComplianceStatus = 'compliant' | 'warning' | 'violation'
 
-function ComplianceCard({ 
-  title, 
-  score, 
-  status, 
-  violations, 
-  lastAudit 
+function ComplianceCard({
+  title,
+  score,
+  status,
+  violations,
+  lastAudit
 }: {
   title: string
   score: number
@@ -60,15 +62,15 @@ function ComplianceCard({
 export function ComplianceStatusPanel() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
-  
-  const { data: complianceData, isLoading, error } = useQuery({
+
+  const { data: complianceData, isLoading } = useQuery<ComplianceData>({
     queryKey: ['compliance-status', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getComplianceStatusData(clinicId)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -98,15 +100,15 @@ export function ComplianceStatusPanel() {
         <ComplianceCard
           title="HIPAA Compliance"
           score={complianceData?.hipaaCompliance.score || 0}
-          status={complianceData?.hipaaCompliance.status || 'compliant'}
+          status={(complianceData?.hipaaCompliance.status as ComplianceStatus) || 'compliant'}
           violations={complianceData?.hipaaCompliance.violations || 0}
           lastAudit={complianceData?.hipaaCompliance.lastAudit || ''}
         />
-        
+
         <ComplianceCard
           title="LGPD Compliance"
           score={complianceData?.lgpdCompliance.score || 0}
-          status={complianceData?.lgpdCompliance.status || 'compliant'}
+          status={(complianceData?.lgpdCompliance.status as ComplianceStatus) || 'compliant'}
           violations={complianceData?.lgpdCompliance.violations || 0}
           lastAudit={complianceData?.lgpdCompliance.lastAudit || ''}
         />
@@ -160,7 +162,7 @@ export function ComplianceStatusPanel() {
         <Alert variant="destructive">
           <AlertTitle>Critical Compliance Issues Detected</AlertTitle>
           <AlertDescription>
-            {complianceData.criticalViolations} critical violation{complianceData.criticalViolations > 1 ? 's' : ''} 
+            {complianceData.criticalViolations} critical violation{complianceData.criticalViolations > 1 ? 's' : ''}
             {' '}require immediate attention. Review and remediate to maintain compliance status.
           </AlertDescription>
         </Alert>

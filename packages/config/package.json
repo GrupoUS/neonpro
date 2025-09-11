@@ -23,11 +23,9 @@
     "lint": "echo 'lint placeholder'",
     "prepare": "npm run build"
   },
-  "dependencies": {
-  },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "typescript": "^5.7.2"
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2"
   },
   "publishConfig": {
     "access": "restricted"

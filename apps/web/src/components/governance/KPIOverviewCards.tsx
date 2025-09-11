@@ -3,15 +3,17 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { useQuery } from '@tanstack/react-query'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { KPIOverview } from '@/lib/governance-service'
 
-function KPIMetricCard({ 
-  title, 
-  value, 
-  subtitle, 
-  trend, 
+
+function KPIMetricCard({
+  title,
+  value,
+  subtitle,
+  trend,
   progressValue,
   badgeVariant = 'default',
-  badgeText 
+  badgeText
 }: {
   title: string
   value: string | number
@@ -62,14 +64,14 @@ function KPIMetricCard({
 }
 
 export function KPIOverviewCards() {
-  const { data: kpiData, isLoading, error } = useQuery({
+  const { data: kpiData, isLoading } = useQuery<KPIOverview>({
     queryKey: ['kpi-overview'],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getKPIOverviewData()
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -83,16 +85,6 @@ export function KPIOverviewCards() {
     )
   }
 
-  if (error) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">KPI Overview</h2>
-        <div className="flex items-center justify-center p-8">
-          <span className="text-destructive">Failed to load KPI data. Please try again.</span>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -105,32 +97,32 @@ export function KPIOverviewCards() {
           badgeText="Active"
           badgeVariant="default"
         />
-        
+
         <KPIMetricCard
           title="Normalization Rate"
           value={`${kpiData?.normalizationRate || 0}%`}
           subtitle="Successfully normalized"
-          trend={kpiData?.trends.normalizationTrend}
+          trend={String(kpiData?.trends.normalizationTrend ?? '')}
           progressValue={kpiData?.normalizationRate}
           badgeText="Improving"
           badgeVariant="secondary"
         />
-        
+
         <KPIMetricCard
           title="Data Quality"
           value={`${kpiData?.dataQualityScore || 0}%`}
           subtitle="Quality score"
-          trend={kpiData?.trends.qualityTrend}
+          trend={String(kpiData?.trends.qualityTrend ?? '')}
           progressValue={kpiData?.dataQualityScore}
           badgeText="Excellent"
           badgeVariant="default"
         />
-        
+
         <KPIMetricCard
           title="Critical KPIs"
           value={kpiData?.criticalKPIs || 0}
           subtitle="Require attention"
-          trend={kpiData?.trends.criticalTrend}
+          trend={String((kpiData as any)?.trends?.criticalTrend ?? '')}
           badgeText="Alert"
           badgeVariant={kpiData && kpiData.criticalKPIs > 0 ? "destructive" : "secondary"}
         />

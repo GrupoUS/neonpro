@@ -4,16 +4,18 @@ import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useQuery } from '@tanstack/react-query'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { AIMetrics } from '@/lib/governance-service'
+
 
 type ModelStatus = 'active' | 'inactive' | 'maintenance'
 
-function AIMetricCard({ 
-  title, 
-  value, 
-  subtitle, 
+function AIMetricCard({
+  title,
+  value,
+  subtitle,
   progressValue,
   badgeVariant = 'default',
-  badgeText 
+  badgeText
 }: {
   title: string
   value: string | number
@@ -62,14 +64,14 @@ export function AIGovernanceMetrics() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
 
-  const { data: aiData, isLoading, error } = useQuery({
+  const { data: aiData, isLoading } = useQuery<AIMetrics>({
     queryKey: ['ai-governance', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getAIGovernanceMetrics(clinicId)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -105,7 +107,7 @@ export function AIGovernanceMetrics() {
           badgeText="Good"
           badgeVariant="default"
         />
-        
+
         <AIMetricCard
           title="Hallucination Rate"
           value={`${aiData?.overallMetrics.averageHallucinationRate}%`}
@@ -114,15 +116,15 @@ export function AIGovernanceMetrics() {
           badgeText="Monitor"
           badgeVariant="secondary"
         />
-        
+
         <AIMetricCard
           title="Total Requests"
-          value={aiData?.overallMetrics.totalRequests.toLocaleString()}
+          value={aiData?.overallMetrics.totalRequests?.toLocaleString() ?? '0'}
           subtitle="Today"
           badgeText="Active"
           badgeVariant="default"
         />
-        
+
         <AIMetricCard
           title="Error Rate"
           value={`${aiData?.overallMetrics.errorRate}%`}
@@ -139,7 +141,7 @@ export function AIGovernanceMetrics() {
         <div className="grid gap-4">
           {aiData?.models.map((model) => {
             const statusBadge = getStatusBadge(model.status)
-            
+
             return (
               <Card key={model.id}>
                 <CardHeader className="pb-3">
@@ -166,7 +168,7 @@ export function AIGovernanceMetrics() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Governance</h4>
                       <div className="space-y-1">
@@ -180,7 +182,7 @@ export function AIGovernanceMetrics() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Usage Today</h4>
                       <div className="space-y-1">

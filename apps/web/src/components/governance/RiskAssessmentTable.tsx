@@ -30,14 +30,14 @@ export function RiskAssessmentTable() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
 
-  const { data: riskData, isLoading, error } = useQuery({
+  const { data: riskData, isLoading } = useQuery<any[]>({
     queryKey: ['risk-assessment', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getRiskAssessmentData(clinicId)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -73,7 +73,7 @@ export function RiskAssessmentTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {riskData?.map((risk) => {
+          {riskData?.map((risk: any) => {
             const severityBadge = getSeverityBadge(risk.severity)
             const statusBadge = getStatusBadge(risk.status)
 

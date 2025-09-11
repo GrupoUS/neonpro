@@ -1,0 +1,6 @@
+
+> monorepo-audit-optimization@0.1.0 lint /root/neonpro
+> eslint "apps/**/*.{ts,tsx,js,jsx}" "packages/**/*.{ts,tsx,js,jsx}" --ext .ts --config .config/eslint/.eslintrc.json "--silent"
+
+Invalid option '--silent' - perhaps you meant '--env'?
+ ELIFECYCLE  Command failed with exit code 2.

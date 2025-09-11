@@ -13,6 +13,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { AuditTrail } from '@/lib/governance-service'
+
 
 export interface AuditLogEntry {
   id: string
@@ -34,11 +36,6 @@ export type ResourceType = 'patient_record' | 'report' | 'system_config' | 'user
 export type AuditStatus = 'success' | 'failed' | 'blocked'
 export type RiskLevel = 'low' | 'medium' | 'high'
 
-interface AuditTrailData {
-  entries: AuditLogEntry[]
-  totalCount: number
-  filteredCount: number
-}
 
 // Helper functions for badge variants
 function getActionBadge(action: AuditAction) {
@@ -83,13 +80,13 @@ function getResourceTypeLabel(resourceType: ResourceType) {
 }export function AuditTrailTable() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
-  
+
   const [searchTerm, setSearchTerm] = useState('')
   const [actionFilter, setActionFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [riskLevelFilter, setRiskLevelFilter] = useState<string>('all')
 
-  const { data: auditData, isLoading, error } = useQuery({
+  const { data: auditData, isLoading } = useQuery<AuditTrail>({
     queryKey: ['audit-trail', clinicId, { searchTerm, actionFilter, statusFilter, riskLevelFilter }],
     queryFn: async () => {
       const governanceService = getGovernanceService()
@@ -102,7 +99,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
       return await governanceService.getAuditTrailData(clinicId, filters)
     },
     staleTime: 2 * 60 * 1000, // 2 minutes - shorter for audit data
-    cacheTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   })
 
   const formatTimestamp = (timestamp: Date) => {
@@ -127,19 +124,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
         </CardContent>
       </Card>
     )
-  }  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Audit Trail</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-4 text-destructive">
-            Error loading audit logs. Please try again.
-          </div>
-        </CardContent>
-      </Card>
-    )
+
   }
 
   return (
@@ -159,7 +144,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
           />
-          
+
           <div className="flex gap-4 flex-wrap">
             <Select value={actionFilter} onValueChange={setActionFilter}>
               <SelectTrigger className="w-[140px]">
@@ -221,7 +206,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
                 const actionBadge = getActionBadge(entry.action)
                 const statusBadge = getStatusBadge(entry.status)
                 const riskLevelBadge = getRiskLevelBadge(entry.riskLevel)
-                
+
                 return (
                   <TableRow key={entry.id}>
                     <TableCell className="font-mono text-xs">
@@ -261,7 +246,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
                     <TableCell className="font-mono text-xs">
                       {entry.ipAddress}
                     </TableCell>                    <TableCell>
-                      <div className="max-w-[250px] truncate text-sm text-muted-foreground" 
+                      <div className="max-w-[250px] truncate text-sm text-muted-foreground"
                            title={entry.additionalInfo}>
                         {entry.additionalInfo}
                       </div>
@@ -269,7 +254,7 @@ function getResourceTypeLabel(resourceType: ResourceType) {
                   </TableRow>
                 )
               })}
-              
+
               {(!auditData?.entries || auditData.entries.length === 0) && (
                 <TableRow>
                   <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">

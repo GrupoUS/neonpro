@@ -1194,7 +1194,7 @@ export class SystemValidator extends EventEmitter {
 
     try {
       // Test FileScanner → DependencyAnalyzer → AuditService data flow
-      const scanResults = await this.simulateFileScanning()
+      const scanResults = await this.simulateFileScanningNoArgs()
       const analysisResults = await this.simulateDependencyAnalysis(scanResults,)
       const auditResults = await this.simulateAuditProcessing(analysisResults,)
 
@@ -3566,7 +3566,7 @@ export class SystemValidator extends EventEmitter {
   }
 
   // Helper methods for simulation tests
-  private async simulateFileScanning(): Promise<any> {
+  private async simulateFileScanningNoArgs(): Promise<any> {
     return { files: Array(1000,).fill(null,).map((_, i,) => ({ id: i, path: `/file${i}.ts`, })), }
   }
 
@@ -3607,7 +3607,7 @@ export class SystemValidator extends EventEmitter {
     try {
       // Test concurrent component operations
       const concurrentTests = await Promise.all([
-        this.simulateFileScanning(),
+        this.simulateFileScanningNoArgs(),
         this.simulateDependencyAnalysis({ files: Array(100,).fill({},), },),
         this.simulateAuditProcessing({ files: Array(50,).fill({},), },),
       ],)

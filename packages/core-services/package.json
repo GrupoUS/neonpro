@@ -24,22 +24,20 @@
     "prepare": "echo 'prepare script temporarily disabled for workspace install'"
   },
   "dependencies": {
+    "@neonpro/config": "workspace:*",
     "@neonpro/database": "workspace:*",
-    "@neonpro/utils": "workspace:*",
     "@neonpro/types": "workspace:*",
-    "@supabase/supabase-js": "^2.38.5",
+    "@neonpro/utils": "workspace:*",
+    "@supabase/supabase-js": "^2.57.4",
     "date-fns": "^3.6.0",
     "lru-cache": "^11.2.1",
-    "zod": "^3.22.4",
-    "@neonpro/config": "workspace:*"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
+    "@types/node": "^20.19.13",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "peerDependencies": {
   },
   "publishConfig": {
     "access": "restricted"

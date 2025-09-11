@@ -4,16 +4,18 @@ import { Progress } from '@/components/ui/progress'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useQuery } from '@tanstack/react-query'
 import { getGovernanceService } from '@/lib/governance-service'
+import type { PolicySummary } from '@/lib/governance-service'
+
 
 type PolicyStatus = 'active' | 'draft' | 'inactive' | 'archived'
 
-function PolicySummaryCard({ 
-  title, 
-  value, 
-  subtitle, 
+function PolicySummaryCard({
+  title,
+  value,
+  subtitle,
   progressValue,
   badgeVariant = 'default',
-  badgeText 
+  badgeText
 }: {
   title: string
   value: string | number
@@ -63,14 +65,14 @@ export function PolicyManagementPanel() {
   // TODO: Get actual clinic ID from auth context
   const clinicId = 'default-clinic-id' // Placeholder
 
-  const { data: policyData, isLoading, error } = useQuery({
+  const { data: policyData, isLoading } = useQuery<PolicySummary>({
     queryKey: ['policy-management', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService()
       return await governanceService.getPolicyManagementData(clinicId)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   })
 
   if (isLoading) {
@@ -102,7 +104,7 @@ export function PolicyManagementPanel() {
           badgeText="Overview"
           badgeVariant="outline"
         />
-        
+
         <PolicySummaryCard
           title="Active Policies"
           value={policyData?.summary.activePolicies || 0}
@@ -110,7 +112,7 @@ export function PolicyManagementPanel() {
           badgeText="Enforced"
           badgeVariant="default"
         />
-        
+
         <PolicySummaryCard
           title="Draft Policies"
           value={policyData?.summary.draftPolicies || 0}
@@ -118,7 +120,7 @@ export function PolicyManagementPanel() {
           badgeText="Pending"
           badgeVariant="secondary"
         />
-        
+
         <PolicySummaryCard
           title="Average Enforcement"
           value={`${policyData?.summary.averageEnforcement || 0}%`}
@@ -127,7 +129,7 @@ export function PolicyManagementPanel() {
           badgeText="Strong"
           badgeVariant="default"
         />
-        
+
         <PolicySummaryCard
           title="Upcoming Reviews"
           value={policyData?.summary.upcomingReviews || 0}
@@ -183,8 +185,8 @@ export function PolicyManagementPanel() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{policy.enforcementRate}%</span>
-                      {policy.enforcementRate > 0 && (
+                      <span className="font-medium">{policy.enforcementRate ?? 0}%</span>
+                      {(policy.enforcementRate ?? 0) > 0 && (
                         <div className="w-16">
                           <Progress value={policy.enforcementRate} className="h-1" />
                         </div>
@@ -193,7 +195,7 @@ export function PolicyManagementPanel() {
                   </TableCell>
                   <TableCell>{policy.owner}</TableCell>
                   <TableCell>
-                    {new Date(policy.nextReview).toLocaleDateString()}
+                    {policy.nextReview ? new Date(policy.nextReview).toLocaleDateString() : '-'}
                   </TableCell>
                 </TableRow>
               )

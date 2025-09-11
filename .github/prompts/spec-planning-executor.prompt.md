@@ -72,6 +72,8 @@ Create a PRD aligned with spec-driven and templates/spec-template.md, but busine
 - Acceptance Criteria and Success Metrics
 - Research Appendix (decisions, alternatives, citations, confidence)
 
+**🌟 Use PRD agent do create PRD**: [`docs/agents/prd.md`](../../docs/agents/prd.md)
+
 Persist via Archon as document_type="prd" with tags, including links to plan and tasks that will be generated next.
 
 ### 4) Implementation Plan (templates/plan-template.md)

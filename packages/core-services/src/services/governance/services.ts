@@ -1,7 +1,7 @@
 // In-memory governance service implementations (Phase 1 minimal logic)
 // These implementations satisfy contract, unit, scenario, integration tests.
 
-import { computeRiskExposure, evaluateKPIValue, scorePriority, aggregatePolicyRules, generateEscalationId, isProvisionalAging, PolicyRule } from './helpers'
+import { computeRiskExposure, evaluateKPIValue, scorePriority, aggregatePolicyRules, isProvisionalAging, PolicyRule } from './helpers'
 
 // Shared basic types
 interface ServiceContext { userId?: string }
