@@ -511,6 +511,20 @@ describe("patient Management API - NeonPro Healthcare", () => {
         deletedAt: new Date(),
       });
 
+      mockPrisma.auditLog.create.mockResolvedValue({
+        id: "audit-123",
+        action: "PATIENT_DELETED_LGPD",
+        userId: "admin-123",
+        tenantId: "clinic-abc",
+        resourceId: "patient-123",
+        metadata: {
+          reason: "RIGHT_TO_ERASURE",
+          dataAnonymized: true,
+          auditTrailRetained: true,
+        },
+        timestamp: new Date(),
+      });
+
       const mockContext = {
         req: {
           param: vi.fn().mockReturnValue("patient-123"),
@@ -525,7 +539,20 @@ describe("patient Management API - NeonPro Healthcare", () => {
         const patientId = c.req.param("id");
         const { userId, tenantId } = c.get("user");
 
-        // Soft delete (LGPD compliance - retain audit trail)
+        // Soft delete with data anonymization (LGPD compliance)
+        await mockPrisma.patient.update({
+          where: { id: patientId, tenantId },
+          data: {
+            isActive: false,
+            deletedAt: new Date(),
+            name: "ANONYMOUS",
+            cpf: undefined,
+            rg: undefined,
+            email: undefined,
+            phone: undefined,
+          },
+        });
+
         // Create LGPD erasure audit log
         await mockPrisma.auditLog.create({
           data: {

@@ -11,65 +11,200 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Minimal initial models (non-breaking, extend as needed)
+// Healthcare Models - Matching actual database structure
 
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   clinics      Clinic[]
   auditTrails  AuditTrail[]
   escalations  EscalationWorkflow[]
+
+  @@map("users")
 }
 
 model Clinic {
   id        String    @id @default(uuid())
   name      String
-  ownerId   String
+  ownerId   String    @map("owner_id")
   owner     User      @relation(fields: [ownerId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
-  patients  Patient[]
-  appts     Appointment[]
-  auditTrails  AuditTrail[]
-  riskAssessments RiskAssessment[]
+  patients         Patient[]
+  appointments     Appointment[]
+  professionals    Professional[]
+  consentRecords   ConsentRecord[]
+  auditTrails      AuditTrail[]
+  riskAssessments  RiskAssessment[]
   complianceStatus ComplianceStatus[]
-}model Patient {
-  id        String    @id @default(uuid())
-  clinicId  String
-  clinic    Clinic    @relation(fields: [clinicId], references: [id])
-  fullName  String
-  email     String?   @unique
-  phone     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 
-  appts     Appointment[]
-  auditTrails AuditTrail[]
+  @@map("clinics")
 }
 
-enum AppointmentStatus {
-  SCHEDULED
-  COMPLETED
-  CANCELED
-  NO_SHOW
+// Comprehensive Patient model matching database structure
+model Patient {
+  id                           String    @id @default(uuid())
+  clinicId                     String    @map("clinic_id")
+  clinic                       Clinic    @relation(fields: [clinicId], references: [id])
+  medicalRecordNumber          String    @map("medical_record_number")
+  externalIds                  Json?     @map("external_ids")
+  givenNames                   String[]  @map("given_names")
+  familyName                   String    @map("family_name")
+  fullName                     String    @map("full_name")
+  preferredName                String?   @map("preferred_name")
+  phonePrimary                 String?   @map("phone_primary")
+  phoneSecondary               String?   @map("phone_secondary")
+  email                        String?
+  addressLine1                 String?   @map("address_line1")
+  addressLine2                 String?   @map("address_line2")
+  city                         String?
+  state                        String?
+  postalCode                   String?   @map("postal_code")
+  country                      String?   @default("BR")
+  birthDate                    DateTime? @map("birth_date") @db.Date
+  gender                       String?
+  maritalStatus                String?   @map("marital_status")
+  isActive                     Boolean?  @default(true) @map("is_active")
+  deceasedIndicator            Boolean?  @default(false) @map("deceased_indicator")
+  deceasedDate                 DateTime? @map("deceased_date") @db.Date
+  dataConsentStatus            String?   @default("pending") @map("data_consent_status")
+  dataConsentDate              DateTime? @map("data_consent_date")
+  dataRetentionUntil           DateTime? @map("data_retention_until") @db.Date
+  dataSource                   String?   @default("manual") @map("data_source")
+  createdAt                    DateTime? @default(now()) @map("created_at")
+  updatedAt                    DateTime? @default(now()) @map("updated_at")
+  createdBy                    String?   @map("created_by")
+  updatedBy                    String?   @map("updated_by")
+  photoUrl                     String?   @map("photo_url")
+  cpf                          String?
+  rg                           String?
+  passportNumber               String?   @map("passport_number")
+  preferredContactMethod       String?   @default("phone") @map("preferred_contact_method")
+  bloodType                    String?   @map("blood_type")
+  allergies                    String[]
+  chronicConditions            String[]  @map("chronic_conditions")
+  currentMedications           String[]  @map("current_medications")
+  insuranceProvider            String?   @map("insurance_provider")
+  insuranceNumber              String?   @map("insurance_number")
+  insurancePlan                String?   @map("insurance_plan")
+  emergencyContactName         String?   @map("emergency_contact_name")
+  emergencyContactPhone        String?   @map("emergency_contact_phone")
+  emergencyContactRelationship String?   @map("emergency_contact_relationship")
+  lgpdConsentGiven             Boolean   @default(false) @map("lgpd_consent_given")
+  lgpdConsentVersion           String?   @map("lgpd_consent_version")
+  dataSharingConsent           Json?     @map("data_sharing_consent")
+  marketingConsent             Boolean?  @default(false) @map("marketing_consent")
+  researchConsent              Boolean?  @default(false) @map("research_consent")
+  noShowRiskScore              Int?      @default(0) @map("no_show_risk_score")
+  lastNoShowDate               DateTime? @map("last_no_show_date")
+  totalNoShows                 Int?      @default(0) @map("total_no_shows")
+  totalAppointments            Int?      @default(0) @map("total_appointments")
+  preferredAppointmentTime     String[]  @map("preferred_appointment_time")
+  communicationPreferences     Json?     @map("communication_preferences")
+  patientStatus                String?   @default("active") @map("patient_status")
+  registrationSource           String?   @default("manual") @map("registration_source")
+  lastVisitDate                DateTime? @map("last_visit_date")
+  nextAppointmentDate          DateTime? @map("next_appointment_date")
+  patientNotes                 String?   @map("patient_notes")
+  nationality                  String?   @default("brasileira")
+  primaryDoctorId              String?   @map("primary_doctor_id")
+
+  appointments     Appointment[]
+  consentRecords   ConsentRecord[]
+  auditTrails      AuditTrail[]
+
+  @@map("patients")
 }
 
+// Comprehensive Appointment model matching database structure
 model Appointment {
-  id        String             @id @default(uuid())
-  clinicId  String
-  clinic    Clinic             @relation(fields: [clinicId], references: [id])
-  patientId String
-  patient   Patient            @relation(fields: [patientId], references: [id])
-  startsAt  DateTime
-  status    AppointmentStatus  @default(SCHEDULED)
-  notes     String?
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id                     String    @id @default(uuid())
+  clinicId               String    @map("clinic_id")
+  clinic                 Clinic    @relation(fields: [clinicId], references: [id])
+  patientId              String    @map("patient_id")
+  patient                Patient   @relation(fields: [patientId], references: [id])
+  professionalId         String    @map("professional_id")
+  professional           Professional @relation(fields: [professionalId], references: [id])
+  serviceTypeId          String    @map("service_type_id")
+  status                 String?   @default("scheduled")
+  startTime              DateTime  @map("start_time")
+  endTime                DateTime  @map("end_time")
+  notes                  String?
+  internalNotes          String?   @map("internal_notes")
+  reminderSentAt         DateTime? @map("reminder_sent_at")
+  confirmationSentAt     DateTime? @map("confirmation_sent_at")
+  whatsappReminderSent   Boolean?  @default(false) @map("whatsapp_reminder_sent")
+  smsReminderSent        Boolean?  @default(false) @map("sms_reminder_sent")
+  roomId                 String?   @map("room_id")
+  priority               Int?      @default(1)
+  createdAt              DateTime? @default(now()) @map("created_at")
+  updatedAt              DateTime? @default(now()) @map("updated_at")
+  createdBy              String    @map("created_by")
+  updatedBy              String?   @map("updated_by")
+  cancelledAt            DateTime? @map("cancelled_at")
+  cancelledBy            String?   @map("cancelled_by")
+  cancellationReason     String?   @map("cancellation_reason")
+
+  @@map("appointments")
+}
+
+// Professional model matching database structure
+model Professional {
+  id                   String    @id @default(uuid())
+  clinicId             String    @map("clinic_id")
+  clinic               Clinic    @relation(fields: [clinicId], references: [id])
+  userId               String?   @map("user_id")
+  fullName             String    @map("full_name")
+  specialization       String?
+  licenseNumber        String?   @map("license_number")
+  phone                String?
+  email                String?
+  color                String?   @default("#10B981")
+  isActive             Boolean?  @default(true) @map("is_active")
+  canWorkWeekends      Boolean?  @default(false) @map("can_work_weekends")
+  defaultStartTime     DateTime? @map("default_start_time") @db.Time
+  defaultEndTime       DateTime? @map("default_end_time") @db.Time
+  defaultBreakStart    DateTime? @map("default_break_start") @db.Time
+  defaultBreakEnd      DateTime? @map("default_break_end") @db.Time
+  serviceTypeIds       String[]  @map("service_type_ids")
+  createdAt            DateTime? @default(now()) @map("created_at")
+  updatedAt            DateTime? @default(now()) @map("updated_at")
+  createdBy            String?   @map("created_by")
+  updatedBy            String?   @map("updated_by")
+
+  appointments         Appointment[]
+
+  @@map("professionals")
+}
+
+// LGPD Consent Record model matching database structure
+model ConsentRecord {
+  id                String    @id @default(uuid())
+  patientId         String    @map("patient_id")
+  patient           Patient   @relation(fields: [patientId], references: [id])
+  clinicId          String    @map("clinic_id")
+  clinic            Clinic    @relation(fields: [clinicId], references: [id])
+  consentType       String    @map("consent_type")
+  purpose           String
+  legalBasis        String    @map("legal_basis")
+  status            String    @default("pending")
+  givenAt           DateTime? @map("given_at")
+  withdrawnAt       DateTime? @map("withdrawn_at")
+  expiresAt         DateTime? @map("expires_at")
+  collectionMethod  String    @map("collection_method")
+  ipAddress         String?   @map("ip_address")
+  userAgent         String?   @map("user_agent")
+  evidence          Json?     @default("{}")
+  dataCategories    String[]  @map("data_categories")
+  createdAt         DateTime? @default(now()) @map("created_at")
+  updatedAt         DateTime? @default(now()) @map("updated_at")
+
+  @@map("consent_records")
 }
 
 // Governance Models
@@ -105,33 +240,34 @@ enum RiskLevel {
 }// HIPAA/LGPD Audit Trail - Critical for compliance
 model AuditTrail {
   id             String      @id @default(uuid())
-  userId         String
+  userId         String      @map("user_id")
   user           User        @relation(fields: [userId], references: [id])
-  clinicId       String?
+  clinicId       String?     @map("clinic_id")
   clinic         Clinic?     @relation(fields: [clinicId], references: [id])
-  patientId      String?
+  patientId      String?     @map("patient_id")
   patient        Patient?    @relation(fields: [patientId], references: [id])
-  
+
   action         AuditAction
   resource       String      // What was accessed
-  resourceType   ResourceType
-  resourceId     String?     // ID of the accessed resource
-  
-  ipAddress      String
-  userAgent      String
-  sessionId      String?
-  
+  resourceType   ResourceType @map("resource_type")
+  resourceId     String?     @map("resource_id") // ID of the accessed resource
+
+  ipAddress      String      @map("ip_address")
+  userAgent      String      @map("user_agent")
+  sessionId      String?     @map("session_id")
+
   status         AuditStatus
-  riskLevel      RiskLevel   @default(LOW)
-  additionalInfo String?
-  
-  createdAt      DateTime    @default(now())
-  
+  riskLevel      RiskLevel   @default(LOW) @map("risk_level")
+  additionalInfo String?     @map("additional_info")
+
+  createdAt      DateTime    @default(now()) @map("created_at")
+
   @@index([userId, createdAt])
   @@index([clinicId, createdAt])
   @@index([patientId, createdAt])
   @@index([action, status])
   @@index([riskLevel, createdAt])
+  @@map("audit_logs")
 }enum KPIStatus {
   ACTIVE
   ARCHIVED

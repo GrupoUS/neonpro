@@ -2,7 +2,11 @@ import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import React from 'react'; // Expose React globally to fix "React is not defined" errors
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+
+// Set up fake-indexeddb BEFORE any imports that might use indexedDB
 import 'fake-indexeddb/auto';
+
+// Set up React globally
 (globalThis as any).React = React;
 (global as any).React = React;
 

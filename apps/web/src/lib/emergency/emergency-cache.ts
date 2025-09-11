@@ -73,7 +73,10 @@ export class EmergencyCache {
 
   constructor() {
     this.cache = new Map();
-    this.initIndexedDB();
+    // Only initialize IndexedDB if not in test environment
+    if (typeof indexedDB !== 'undefined' && typeof process === 'undefined' || process.env.NODE_ENV !== 'test') {
+      this.initIndexedDB();
+    }
   }
 
   public static getInstance(): EmergencyCache {

@@ -24,6 +24,12 @@
     "coverage": "vitest --run --coverage",
     "test:coverage": "vitest --run --coverage",
     "test:ui": "vitest --ui",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:debug": "playwright test --debug",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
+    "test:all": "./comprehensive-test-verification.sh",
     "routes:generate": "tsr generate",
     "routes:watch": "tsr watch"
   },
@@ -107,6 +113,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@radix-ui/react-separator": "^1.1.7",
     "@tanstack/router-cli": "^1.131.36",
     "@testing-library/dom": "^10.4.1",

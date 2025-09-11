@@ -1,42 +1,139 @@
-# 🔍 NeonPro Code Quality Audit & Refactoring
+# 🔍 NeonPro Comprehensive Code Quality & Integration Audit
 
-**COMPREHENSIVE CODE QUALITY AUDIT & REFACTORING PROJECT**
+**ENHANCED COMPREHENSIVE CODE QUALITY AUDIT & BACKEND-DATABASE INTEGRATION VALIDATION**
 
 ## 📋 MANDATORY EXECUTION SEQUENCE
 
-### **Phase 1: Code Quality Assessment & Fixes**
+### **Phase 0: Pre-Audit Preparation & Context Analysis**
 
-1. **Initialize with sequential-thinking** to analyze the complete scope
-2. **Use archon MCP** to create/update project tracking
-3. **Use serena MCP** (never native codebase-retrieval) for codebase analysis
+1. **Initialize with sequential-thinking** to analyze the complete scope and identify critical integration points
+2. **Use archon MCP** to create/update project tracking with comprehensive task breakdown
+3. **Use serena MCP** (never native codebase-retrieval) for codebase analysis and dependency mapping
 4. **Use desktop-commander MCP** for all file operations and terminal commands
+5. **Load critical documentation** for context:
+   - `docs/database-schema/database-schema-consolidated.md` - Database structure reference
+   - `docs/architecture/source-tree.md` - Project structure and dependencies
+   - `docs/architecture/tech-stack.md` - Technology stack and integration patterns
 
-### **Phase 2: Quality Assessment Commands**
+### **Phase 1: Database-Backend Integration Validation (CRITICAL)**
+
+#### **1.1 Schema Alignment Verification**
 
 ```bash
-# TypeScript Compilation Check
-cd /home/vibecoder/neonpro && npx tsc --noEmit --skipLibCheck
+# Verify Prisma schema generation
+cd packages/database && pnpm prisma:generate
 
-# Comprehensive Linting Scan
-cd /home/vibecoder/neonpro && npx oxlint --quiet
+# Check for schema mismatches
+cd packages/database && pnpm prisma:validate
 
-# Targeted File Analysis
-cd /home/vibecoder/neonpro && npx oxlint --quiet [specific-files]
+# Validate database connection
+cd apps/api && pnpm build
 ```
 
-### **Phase 2b: Intelligent Test Strategy Orchestration**
+#### **1.2 Database Structure Analysis**
 
-This prompt must auto-select and configure the correct testing strategy based on detected code changes.
+- **Use supabase MCP** to query actual database structure
+- **Compare** Prisma models against actual database tables
+- **Validate** field name mappings (snake_case DB vs camelCase Prisma)
+- **Check** relationship definitions and foreign key constraints
+- **Verify** enum types and custom PostgreSQL types
+
+#### **1.3 API Route Integration Validation**
+
+- **Scan** all API routes for database field references
+- **Validate** query field names match database structure
+- **Check** relationship includes and joins
+- **Verify** error handling for database operations
+
+### **Phase 2: LGPD Compliance & Healthcare Security Audit (CRITICAL)**
+
+#### **2.1 LGPD Compliance Validation**
+
+- **Scan** for patient data access without consent validation
+- **Verify** audit logging for all healthcare data operations
+- **Check** consent record integration in API routes
+- **Validate** data retention and deletion policies
+- **Ensure** proper legal basis documentation
+
+#### **2.2 Row Level Security (RLS) Integration**
+
+- **Use supabase MCP** to verify RLS policies are active
+- **Check** API routes leverage RLS policies correctly
+- **Validate** user context propagation in database queries
+- **Verify** multi-tenant clinic isolation
+- **Test** professional access controls
+
+#### **2.3 Healthcare Data Security**
+
+- **Scan** for PHI (Personal Health Information) exposure
+- **Verify** encryption at rest and in transit
+- **Check** access logging and audit trails
+- **Validate** professional license verification
+- **Ensure** emergency access protocols
+
+### **Phase 3: Code Quality Assessment Commands**
+
+```bash
+# Database Integration Validation
+cd packages/database && pnpm prisma:generate && pnpm prisma:validate
+
+# API Build Verification
+cd apps/api && pnpm build
+
+# TypeScript Compilation Check
+npx tsc --noEmit --skipLibCheck
+
+# Comprehensive Linting Scan
+npx oxlint --quiet
+
+# Security Vulnerability Scan
+pnpm audit --json
+
+# Targeted File Analysis
+npx oxlint --quiet [specific-files]
+```
+
+### **Phase 4: Database Integration Testing & Validation**
+
+#### **4.1 Schema Consistency Testing**
+
+```bash
+# Test Prisma schema against actual database
+cd packages/database && pnpm prisma:db:pull --print > schema-actual.prisma
+diff packages/database/prisma/schema.prisma schema-actual.prisma
+
+# Validate all models can be queried
+cd apps/api && pnpm test:db-integration
+```
+
+#### **4.2 API Route Database Integration Testing**
+
+```bash
+# Test all API routes with database operations
+cd apps/api && pnpm test:routes
+
+# Validate LGPD compliance in API responses
+cd apps/api && pnpm test:lgpd-compliance
+
+# Test RLS policy enforcement
+cd apps/api && pnpm test:rls-security
+```
+
+### **Phase 5: Intelligent Test Strategy Orchestration**
+
+This prompt must auto-select and configure the correct testing strategy based on detected code changes and integration issues.
 
 #### Inputs (provide or auto-derive)
 
 - `changed_files`: array of repository paths (e.g., from `git diff --name-only origin/main...HEAD`)
+- `integration_issues`: detected schema mismatches, API errors, compliance violations
 - `diff_stats` (optional): per-file stats to assess impact/criticality
 - `monorepo_map`: inferred from `docs/architecture/source-tree.md`
 
 #### Mandatory Pre‑Reads
 
 - `docs/architecture/source-tree.md` (structure), `docs/architecture/tech-stack.md` (stack)
+- `docs/database-schema/database-schema-consolidated.md` (database structure)
 - `docs/testing/testing-responsibility-matrix.md`, `docs/testing/coverage-policy.md`
 - `docs/rules/coding-standards.md` (LGPD/ANVISA/CFM, security)
 - Strategy guides:
@@ -46,13 +143,15 @@ This prompt must auto-select and configure the correct testing strategy based on
   - `docs/testing/supabase-rls-testing.md`
   - `docs/testing/monorepo-testing-strategies.md`
 
-#### Routing Rules (path → strategy)
+#### Enhanced Routing Rules (path → strategy + integration checks)
 
-- API (Hono): any changes under `apps/api/**` or shared services used by API → invoke Hono API testing patterns
-- Frontend components/hooks: changes under `apps/web/src/components/**` or `apps/web/src/hooks/**` → React 19 component testing
-- Routes: changes under `apps/web/src/routes/**` or files named `route.tsx/tsx` → TanStack Router testing
-- Database/RLS: SQL migrations, `packages/database/**`, Supabase policies or DB service code → Supabase RLS testing
-- Monorepo-wide: changes affecting multiple apps/packages or root configs → Monorepo testing strategies
+- **API (Hono)**: any changes under `apps/api/**` → invoke Hono API testing + database integration validation
+- **Database Schema**: changes to `packages/database/**` → full schema validation + API route testing + RLS verification
+- **Patient/Healthcare Routes**: changes affecting patient data → LGPD compliance testing + RLS validation + audit logging verification
+- **Frontend components/hooks**: changes under `apps/web/src/components/**` or `apps/web/src/hooks/**` → React 19 component testing + Supabase integration testing
+- **Routes**: changes under `apps/web/src/routes/**` → TanStack Router testing + backend API integration testing
+- **Supabase Integration**: changes to RLS policies, auth, or database functions → comprehensive RLS testing + compliance validation
+- **Monorepo-wide**: changes affecting multiple apps/packages → full integration testing across all layers
 
 #### Responsibility Matrix Application
 
@@ -102,60 +201,198 @@ Use `testing-responsibility-matrix.md` to determine for each triggered strategy:
 }
 ```
 
-### **Phase 3: Systematic Fixing Approach**
+### **Phase 6: Systematic Fixing Approach (Enhanced Priority System)**
 
-#### **Priority 1: Critical Security Issues**
+#### **Priority 0: Critical Integration Issues (IMMEDIATE)**
+
+- **Database Schema Mismatches**: Fix Prisma model field name mismatches with database
+- **API Route Database Errors**: Resolve field name errors in database queries
+- **Missing LGPD Compliance**: Implement consent validation and audit logging
+- **RLS Policy Bypass**: Ensure all patient data access respects Row Level Security
+
+#### **Priority 1: Critical Security & Compliance Issues**
 
 - Fix `no-script-url` violations (replace `javascript:` URLs)
 - Address `no-eval` usage in code
 - Resolve `no-invalid-fetch-options` violations
+- **Healthcare Data Exposure**: Ensure PHI is properly protected
+- **Missing Audit Trails**: Add comprehensive logging for compliance
 
-#### **Priority 2: Type Safety Issues**
+#### **Priority 2: Database Integration & Type Safety Issues**
 
+- **Schema Alignment**: Update ORM models to match database structure
+- **Field Name Consistency**: Ensure camelCase/snake_case mapping is correct
+- **Relationship Definitions**: Verify foreign key relationships are properly defined
 - Replace `no-explicit-any` with proper types:
   - `any` → `unknown` for generic unknowns
   - `any` → `Record<string, unknown>` for object types
   - `Mock<any, any[]>` → `Mock<unknown, unknown[]>`
 
-#### **Priority 3: Module System Issues**
+#### **Priority 3: Healthcare Compliance & Module System Issues**
 
+- **LGPD Consent Validation**: Implement consent checking middleware
+- **Professional Access Controls**: Verify healthcare professional authorization
+- **Data Retention Policies**: Implement automated data lifecycle management
 - Convert `no-require-imports` to ES6 imports:
   - `const fs = require('fs')` → `import fs from 'fs'`
   - `const { execSync } = require('child_process')` → `import { execSync } from 'child_process'`
 
-#### **Priority 4: Code Quality Issues**
+#### **Priority 4: Code Quality & Performance Issues**
 
 - Fix `no-var-requires` in test files
 - Resolve `no-assign-module-variable` violations
 - Address `no-thenable` violations in mock objects
+- **Query Optimization**: Ensure database queries are efficient and use proper indexes
+- **Error Handling**: Implement comprehensive error handling for database operations
 
-## 🎯 QUALITY GATES
+## 🎯 ENHANCED QUALITY GATES
 
-### **Gate 1: Linting Errors (Critical)**
+### **Gate 0: Database Integration (CRITICAL - BLOCKING)**
 
-- **Success Criteria**: 0 linting errors
+- **Success Criteria**:
+  - Prisma schema generates without errors
+  - All API routes build successfully
+  - Database field names match ORM models
+  - No schema validation errors
+- **Commands**:
+  ```bash
+  cd packages/database && pnpm prisma:generate
+  cd apps/api && pnpm build
+  ```
+- **Target**: Zero integration errors, successful builds
+
+### **Gate 1: LGPD Compliance (CRITICAL - BLOCKING)**
+
+- **Success Criteria**:
+  - All patient data access has consent validation
+  - Comprehensive audit logging implemented
+  - Data retention policies enforced
+  - Legal basis documented for all data processing
+- **Validation**: Manual review of patient data routes + automated compliance tests
+- **Target**: 100% LGPD compliance for healthcare data
+
+### **Gate 2: RLS Security (CRITICAL - BLOCKING)**
+
+- **Success Criteria**:
+  - All database queries respect Row Level Security
+  - Multi-tenant clinic isolation verified
+  - Professional access controls enforced
+  - User context properly propagated
+- **Commands**:
+  ```bash
+  # Use supabase MCP to verify RLS policies
+  cd apps/api && pnpm test:rls-security
+  ```
+- **Target**: Zero RLS policy bypasses
+
+### **Gate 3: Linting Errors (High Priority)**
+
+- **Success Criteria**: 0 linting errors, <100 warnings
 - **Command**: `npx oxlint --quiet`
 - **Target**: All TypeScript/JavaScript files
 
-### **Gate 2: Type Safety (High Priority)**
+### **Gate 4: Type Safety (High Priority)**
 
 - **Success Criteria**: TypeScript compilation successful, no explicit any types
 - **Command**: `npx tsc --noEmit --skipLibCheck`
 - **Target**: Exit code 0, no output
 
-### **Gate 3: Security Issues (Critical)**
+### **Gate 5: Security Vulnerabilities (High Priority)**
 
-- **Success Criteria**: No security vulnerabilities
-- **Focus**: Safe URL patterns, no eval usage, secure fetch options
-- **Manual Review**: Required for security-sensitive changes
+- **Success Criteria**: No security vulnerabilities in dependencies
+- **Commands**:
+  ```bash
+  pnpm audit --json
+  # Check for PHI exposure in logs/responses
+  ```
+- **Focus**: Safe URL patterns, no eval usage, secure fetch options, PHI protection
 
-### **Gate 4: Code Standards (Medium Priority)**
+### **Gate 6: Code Standards (Medium Priority)**
 
 - **Success Criteria**: ES6 imports, consistent patterns, no deprecated APIs
 - **Tools**: oxlint custom rules, manual review
 - **Target**: Modern JavaScript/TypeScript patterns
 
-## 🔧 COMMON FIXES REFERENCE
+## 🔧 ENHANCED FIXES REFERENCE
+
+### **Database Schema Integration Fixes**
+
+```typescript
+// ❌ Before (Schema Mismatch)
+model Patient {
+  id        String    @id @default(uuid())
+  fullName  String
+  createdAt DateTime  @default(now())
+}
+
+// ✅ After (Proper Database Mapping)
+model Patient {
+  id                    String    @id @default(uuid())
+  clinicId              String    @map("clinic_id")
+  medicalRecordNumber   String    @map("medical_record_number")
+  fullName              String    @map("full_name")
+  lgpdConsentGiven      Boolean   @default(false) @map("lgpd_consent_given")
+  createdAt             DateTime? @default(now()) @map("created_at")
+
+  @@map("patients")
+}
+```
+
+### **API Route Database Field Fixes**
+
+```typescript
+// ❌ Before (Field Name Error)
+const appointments = await prisma.appointment.findMany({
+  orderBy: { startsAt: 'desc' }, // Field doesn't exist in DB
+});
+
+// ✅ After (Correct Field Name)
+const appointments = await prisma.appointment.findMany({
+  orderBy: { startTime: 'desc' }, // Matches database field
+});
+```
+
+### **LGPD Compliance Implementation**
+
+```typescript
+// ❌ Before (No Consent Validation)
+app.get('/patients/:id', async c => {
+  const patient = await prisma.patient.findUnique({
+    where: { id: c.req.param('id') },
+  });
+  return c.json(patient);
+});
+
+// ✅ After (LGPD Compliant)
+app.get(
+  '/patients/:id',
+  lgpdMiddleware.patientView, // Validates consent
+  lgpdAuditMiddleware(), // Logs access
+  async c => {
+    const patient = await prisma.patient.findUnique({
+      where: {
+        id: c.req.param('id'),
+        lgpdConsentGiven: true, // Additional check
+      },
+    });
+    return c.json(patient);
+  },
+);
+```
+
+### **RLS Security Integration**
+
+```typescript
+// ❌ Before (No RLS)
+const patients = await prisma.patient.findMany();
+
+// ✅ After (RLS-Aware Query)
+const rlsQuery = new RLSQueryBuilder(userId, userRole);
+const { data: patients } = await rlsQuery.getPatients({
+  limit: 10,
+  clinicId: userClinicId, // Automatic RLS enforcement
+});
+```
 
 ### **TypeScript Type Safety**
 
@@ -187,68 +424,105 @@ import fs from 'node:fs';
 import path from 'node:path';
 ```
 
-### **Security URL Patterns**
+## 📊 ENHANCED SUCCESS METRICS
 
-```javascript
-// ❌ Before (Security Risk)
-const xssPayloads = [
-  'javascript:alert("XSS")',
-];
+### **Critical Integration Targets (BLOCKING)**
 
-// ✅ After (Safe Alternative)
-const xssPayloads = [
-  'data:text/html,<script>alert("XSS")</script>',
-];
-```
-
-## 📊 SUCCESS METRICS
+- **Database Schema Alignment**: 100% field name consistency between Prisma and database
+- **API Route Functionality**: 0 database query errors, all routes build successfully
+- **LGPD Compliance**: 100% patient data access has consent validation and audit logging
+- **RLS Security**: 100% database queries respect Row Level Security policies
+- **Healthcare Compliance**: Full ANVISA/CFM regulatory compliance maintained
 
 ### **Quantitative Targets**
 
-- **Linting Errors**: 0 (from 3,157)
-- **Linting Warnings**: <100 (from 3,248)
+- **Linting Errors**: 0 (from baseline)
+- **Linting Warnings**: <100 (from baseline)
 - **TypeScript Compilation**: 100% success rate
-- **Security Violations**: 0
+- **Security Violations**: 0 in dependencies
+- **Database Integration**: 0 schema mismatches, 0 field name errors
 - **Code Quality Score**: ≥9.5/10
 
 ### **Qualitative Improvements**
 
-- Enhanced type safety across codebase
-- Modernized module system usage
-- Improved security posture
-- Consistent code patterns
-- Better maintainability
+- **Database Integration**: Seamless backend-database connectivity
+- **Healthcare Compliance**: Full LGPD, ANVISA, CFM compliance
+- **Security Posture**: Multi-layer security with RLS and audit trails
+- **Type Safety**: Enhanced type safety across codebase
+- **Module System**: Modernized ES6 import usage
+- **Code Patterns**: Consistent healthcare-compliant patterns
+- **Maintainability**: Improved long-term maintainability and scalability
 
-## 🚀 EXECUTION WORKFLOW
+## 🚀 ENHANCED EXECUTION WORKFLOW
 
-### **Step 1: Assessment**
+### **Step 1: Pre-Audit Assessment & Context Loading**
+
+```bash
+# Load critical documentation and analyze integration points
+# Use serena MCP to analyze codebase structure
+# Use archon MCP to create comprehensive task breakdown
+```
+
+### **Step 2: Database Integration Validation**
+
+```bash
+# Critical integration checks
+cd packages/database && pnpm prisma:generate
+cd packages/database && pnpm prisma:validate
+cd apps/api && pnpm build
+
+# Schema consistency validation
+cd packages/database && pnpm prisma:db:pull --print > schema-actual.prisma
+diff packages/database/prisma/schema.prisma schema-actual.prisma
+```
+
+### **Step 3: LGPD & RLS Security Validation**
+
+```bash
+# Use supabase MCP to verify RLS policies
+# Scan for patient data access without consent validation
+# Verify audit logging implementation
+# Test multi-tenant clinic isolation
+```
+
+### **Step 4: Code Quality Assessment**
 
 ```bash
 # Run comprehensive analysis
 npx oxlint --quiet > quality-report.txt
 npx tsc --noEmit --skipLibCheck
+pnpm audit --json > security-report.json
 ```
 
-### **Step 2: Systematic Fixes**
+### **Step 5: Systematic Fixes (Priority-Based)**
 
-1. Address security issues first
-2. Fix type safety violations
-3. Convert module imports
-4. Resolve remaining quality issues
+1. **Priority 0**: Fix critical database integration issues
+2. **Priority 1**: Implement LGPD compliance and RLS security
+3. **Priority 2**: Address security vulnerabilities and type safety
+4. **Priority 3**: Fix module imports and code quality issues
 
-### **Step 3: Validation**
+### **Step 6: Comprehensive Validation**
 
 ```bash
-# Validate fixes
-npx oxlint --quiet [fixed-files]
+# Validate all fixes
+cd packages/database && pnpm prisma:generate
+cd apps/api && pnpm build
 npx tsc --noEmit --skipLibCheck
+npx oxlint --quiet
+pnpm audit
+
+# Test database integration
+cd apps/api && pnpm test:db-integration
+cd apps/api && pnpm test:lgpd-compliance
+cd apps/api && pnpm test:rls-security
 ```
 
-### **Step 4: Documentation**
+### **Step 7: Documentation & Reporting**
 
-- Update Archon project with progress
-- Document patterns and decisions
-- Create/update coding standards
+- Update Archon project with comprehensive progress
+- Document integration fixes and compliance implementations
+- Create/update healthcare coding standards
+- Generate comprehensive audit report with before/after metrics
 
 ## 🔄 CONTINUOUS MAINTENANCE
 
@@ -286,4 +560,69 @@ npx tsc --noEmit --skipLibCheck
 - **Testing Guides**: `docs/testing/hono-api-testing.md`, `docs/testing/react-test-patterns.md`, `docs/testing/tanstack-router-testing.md`, `docs/testing/supabase-rls-testing.md`, `docs/testing/monorepo-testing-strategies.md`, `docs/testing/testing-responsibility-matrix.md`, `docs/testing/coverage-policy.md`
 - **Compliance**: `docs/rules/coding-standards.md`, `docs/testing/e2e-testing.md`, `docs/testing/code-review-checklist.md`
 
-**🎯 EXECUTION COMMAND**: Use this prompt with Augment Agent to execute comprehensive code quality audit and refactoring following all specified procedures and quality gates.
+## 🔄 POST-AUDIT VALIDATION CHECKLIST
+
+### **Integration Validation**
+
+- [ ] Prisma schema generates without errors
+- [ ] All API routes build successfully
+- [ ] Database field names match ORM models
+- [ ] All relationships properly defined
+
+### **Compliance Validation**
+
+- [ ] LGPD consent validation implemented on all patient routes
+- [ ] Comprehensive audit logging active
+- [ ] RLS policies enforced on all database queries
+- [ ] Healthcare data properly protected
+
+### **Security Validation**
+
+- [ ] No security vulnerabilities in dependencies
+- [ ] PHI exposure eliminated
+- [ ] Multi-tenant isolation verified
+- [ ] Professional access controls active
+
+### **Quality Validation**
+
+- [ ] Zero linting errors
+- [ ] TypeScript compilation successful
+- [ ] Code patterns consistent
+- [ ] Documentation updated
+
+## 📋 AUDIT REPORT TEMPLATE
+
+```markdown
+# Code Quality & Integration Audit Report
+
+## Executive Summary
+
+- **Database Integration**: [Status] - [Issues Found] → [Issues Resolved]
+- **LGPD Compliance**: [Status] - [Coverage Percentage]
+- **RLS Security**: [Status] - [Policies Verified]
+- **Code Quality**: [Status] - [Errors] → [Warnings]
+
+## Critical Fixes Applied
+
+1. **Schema Mismatches**: [Details]
+2. **API Integration**: [Details]
+3. **Compliance Implementation**: [Details]
+4. **Security Enhancements**: [Details]
+
+## Validation Results
+
+- **Build Status**: ✅/❌
+- **Test Coverage**: [Percentage]
+- **Security Score**: [Rating]
+- **Compliance Score**: [Rating]
+
+## Next Steps
+
+- [Recommendations for ongoing maintenance]
+- [Performance optimization opportunities]
+- [Additional security enhancements]
+```
+
+---
+
+**🎯 EXECUTION COMMAND**: Use this enhanced prompt with Augment Agent to execute comprehensive code quality audit, database integration validation, LGPD compliance implementation, and RLS security integration following all specified procedures and quality gates.

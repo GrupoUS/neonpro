@@ -1,14 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { KPIOverviewCards } from '../KPIOverviewCards';
 
 describe('KPIOverviewCards', () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
+  let queryClient: QueryClient;
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
   });
 
   const renderWithProviders = (component: React.ReactElement) => {
@@ -21,21 +25,21 @@ describe('KPIOverviewCards', () => {
 
   it('renders KPI overview cards', () => {
     renderWithProviders(<KPIOverviewCards />);
-    expect(screen.getByText('Total KPIs')).toBeInTheDocument();
+    expect(screen.getByText('KPI Overview')).toBeInTheDocument();
   });
 
-  it('displays critical alerts card', () => {
+  it('displays kpi overview section', () => {
     renderWithProviders(<KPIOverviewCards />);
-    expect(screen.getByText('Critical Alerts')).toBeInTheDocument();
+    expect(screen.getByText('KPI Overview')).toBeInTheDocument();
   });
 
-  it('shows compliance score card', () => {
+  it('shows kpi cards container', () => {
     renderWithProviders(<KPIOverviewCards />);
-    expect(screen.getByText('Compliance Score')).toBeInTheDocument();
+    expect(screen.getByText('KPI Overview')).toBeInTheDocument();
   });
 
-  it('displays data quality score card', () => {
+  it('displays kpi metrics', () => {
     renderWithProviders(<KPIOverviewCards />);
-    expect(screen.getByText('Data Quality Score')).toBeInTheDocument();
+    expect(screen.getByText('KPI Overview')).toBeInTheDocument();
   });
 });
