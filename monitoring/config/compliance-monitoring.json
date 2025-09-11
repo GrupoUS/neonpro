@@ -1,0 +1,38 @@
+{
+  "lgpdCompliance": {
+    "auditLog": {
+      "enabled": true,
+      "retention": "7y",
+      "encryption": true,
+      "anonymization": true
+    },
+    "dataAccess": {
+      "monitoring": true,
+      "alerts": {
+        "unusualPatterns": true,
+        "bulkAccess": true,
+        "offHoursAccess": true
+      }
+    },
+    "consent": {
+      "tracking": true,
+      "expiration": true,
+      "withdrawal": true
+    }
+  },
+  "security": {
+    "suspiciousActivity": {
+      "enabled": true,
+      "patterns": [
+        "sql_injection",
+        "xss_attempt",
+        "brute_force",
+        "unusual_access_patterns"
+      ]
+    },
+    "dataLeakage": {
+      "monitoring": true,
+      "patterns": ["cpf", "email", "phone"]
+    }
+  }
+}

@@ -106,7 +106,8 @@ For API support, contact: api-support@neonpro.health
     }
   ],
   components: {
-    securitySchemes
+    securitySchemes,
+    schemas: {}
   }
 }
 
@@ -135,8 +136,17 @@ export function createOpenAPIApp() {
  * Setup OpenAPI documentation endpoints
  */
 export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
-  // OpenAPI JSON endpoint
-  app.doc('/openapi.json', openAPISpec)
+  // OpenAPI JSON endpoint with properly merged spec
+  const finalSpec = {
+    ...openAPISpec,
+    components: {
+      ...openAPISpec.components,
+      securitySchemes,
+      schemas: {} // Will be populated automatically by Hono OpenAPI
+    }
+  }
+  
+  app.doc('/openapi.json', finalSpec)
 
   // Swagger UI endpoint
   app.get('/docs', (c) => {

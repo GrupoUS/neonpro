@@ -100,10 +100,10 @@ app.openapi(healthRoute, c =>
 app.get('/health', c => c.json({ status: 'ok' }));
 
 // Versioned router group with OpenAPI routes
-const v1 = createOpenAPIApp();
+const v1 = new Hono();
 
 // OpenAPI-documented health route
-v1.openapi(detailedHealthRoute, c =>
+app.openapi(detailedHealthRoute, c =>
   c.json({
     status: 'healthy',
     version: 'v1',
@@ -113,7 +113,7 @@ v1.openapi(detailedHealthRoute, c =>
   }));
 
 // OpenAPI-documented info route
-v1.openapi(apiInfoRoute, c =>
+app.openapi(apiInfoRoute, c =>
   c.json({
     name: 'NeonPro API',
     version: 'v1',
@@ -124,7 +124,7 @@ v1.openapi(apiInfoRoute, c =>
   }));
 
 // OpenAPI-documented auth status route
-v1.openapi(authStatusRoute, c =>
+app.openapi(authStatusRoute, c =>
   c.json({
     status: 'available',
     provider: 'supabase',
@@ -137,7 +137,7 @@ v1.openapi(authStatusRoute, c =>
   }));
 
 // OpenAPI-documented patient routes
-v1.openapi(listPatientsRoute, c =>
+app.openapi(listPatientsRoute, c =>
   c.json({
     data: [
       {
@@ -155,7 +155,7 @@ v1.openapi(listPatientsRoute, c =>
     lgpdCompliant: true
   }));
 
-v1.openapi(getPatientByIdRoute, c =>
+app.openapi(getPatientByIdRoute, c =>
   c.json({
     id: 'patient_001',
     name: 'João Silva',
@@ -170,7 +170,7 @@ v1.openapi(getPatientByIdRoute, c =>
   }));
 
 // OpenAPI-documented appointment routes
-v1.openapi(listAppointmentsRoute, c =>
+app.openapi(listAppointmentsRoute, c =>
   c.json({
     data: [
       {
@@ -189,7 +189,7 @@ v1.openapi(listAppointmentsRoute, c =>
     hasNext: false
   }));
 
-v1.openapi(getPatientAppointmentsRoute, c =>
+app.openapi(getPatientAppointmentsRoute, c =>
   c.json({
     data: [
       {
@@ -206,6 +206,27 @@ v1.openapi(getPatientAppointmentsRoute, c =>
     lgpdCompliant: true
   }));
 
+// Standard v1 routes for backward compatibility
+v1.get('/health', c =>
+  c.json({
+    status: 'healthy',
+    version: 'v1',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    environment: getEnvironmentInfo(),
+  }));
+
+v1.get('/info', c =>
+  c.json({
+    name: 'NeonPro API',
+    version: 'v1',
+    runtime: 'node',
+    environment: process.env.NODE_ENV || 'development',
+    region: process.env.VERCEL_REGION || 'unknown',
+    timestamp: new Date().toISOString(),
+  }));
+
+// Keep existing route handlers for backward compatibility  
 v1.route('/auth', auth);
 v1.route('/patients', patients);
 v1.route('/appointments', appointments);
