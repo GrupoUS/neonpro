@@ -205,18 +205,12 @@ lighthouse-ci-results/
 # =============================================================================
 
 # Development AI assistants and tools
-.claude/
-**/.claude/
-.ruler/
-**/.ruler/
-.augment/
-**/.augment/
-.bmad-core/
-**/.bmad-core/
 archon/
 **/archon/
 serena/
 **/serena/
+.serena/
+**/.serena/**
 
 # Project cleanup and reports
 cleanup-reports/
@@ -441,14 +435,6 @@ tmp.drivedownload/
 # Node.js compilation cache
 node-compile-cache/
 **/node-compile-cache/
-
-# MCP Tool Caches
-.serena/
-**/.serena/
-.ruler/
-**/.ruler/
-.augment/
-**/.augment/
 
 # =============================================================================
 # 💾 BACKUP & ARCHIVE FILES
