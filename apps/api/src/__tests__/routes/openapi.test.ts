@@ -8,6 +8,6 @@ describe('T006 /openapi.json contract', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveProperty('openapi');
-    expect(body.info?.title).toBe('NeonPro API');
+    expect(body.info?.title).toBe('NeonPro Healthcare API');
   });
 });

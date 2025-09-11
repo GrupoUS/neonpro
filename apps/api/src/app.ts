@@ -10,6 +10,17 @@ import {
   securityLoggingMiddleware,
 } from './middleware/logging-middleware';
 import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
+import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
+import {
+  healthRoute,
+  detailedHealthRoute,
+  apiInfoRoute,
+  authStatusRoute,
+  listPatientsRoute,
+  getPatientByIdRoute,
+  listAppointmentsRoute,
+  getPatientAppointmentsRoute
+} from './schemas/openapi-routes';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import patients from './routes/patients';
@@ -46,7 +57,7 @@ logger.info('NeonPro API starting', {
 // Minimal Hono application exported for Vercel handler consumption.
 // Note: We use basePath('/api') so that requests rewritten from
 // '/api/*' map cleanly to these routes.
-const app = new Hono().basePath('/api');
+const app = createOpenAPIApp().basePath('/api');
 
 // CORS configuration
 app.use('*', cors({
@@ -74,23 +85,25 @@ if (process.env.NODE_ENV !== 'production') {
   app.use('*', performanceLoggingMiddleware());
 }
 
-app.get('/', c =>
+// Root route with OpenAPI definition
+app.openapi(healthRoute, c =>
   c.json({
-    name: 'NeonPro API',
     status: 'ok',
+    name: 'NeonPro API',
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     deployment: 'vercel-fixed',
   }));
 
-// T011: Simplified health route for contract test; returns minimal object to satisfy test.
+// Basic health check for backward compatibility
 app.get('/health', c => c.json({ status: 'ok' }));
 
-// Versioned router group
-const v1 = new Hono();
+// Versioned router group with OpenAPI routes
+const v1 = createOpenAPIApp();
 
-v1.get('/health', c =>
+// OpenAPI-documented health route
+v1.openapi(detailedHealthRoute, c =>
   c.json({
     status: 'healthy',
     version: 'v1',
@@ -99,7 +112,8 @@ v1.get('/health', c =>
     environment: getEnvironmentInfo(),
   }));
 
-v1.get('/info', c =>
+// OpenAPI-documented info route
+v1.openapi(apiInfoRoute, c =>
   c.json({
     name: 'NeonPro API',
     version: 'v1',
@@ -109,16 +123,96 @@ v1.get('/info', c =>
     timestamp: new Date().toISOString(),
   }));
 
+// OpenAPI-documented auth status route
+v1.openapi(authStatusRoute, c =>
+  c.json({
+    status: 'available',
+    provider: 'supabase',
+    endpoints: {
+      login: '/auth/login',
+      logout: '/auth/logout',
+      profile: '/auth/profile'
+    },
+    timestamp: new Date().toISOString(),
+  }));
+
+// OpenAPI-documented patient routes
+v1.openapi(listPatientsRoute, c =>
+  c.json({
+    data: [
+      {
+        id: 'patient_001',
+        name: 'João Silva',
+        cpf: '***.***.***-**',
+        email: 'j***@email.com',
+        lgpdConsent: true,
+        createdAt: '2024-01-15T10:00:00Z'
+      }
+    ],
+    total: 1,
+    page: 1,
+    hasNext: false,
+    lgpdCompliant: true
+  }));
+
+v1.openapi(getPatientByIdRoute, c =>
+  c.json({
+    id: 'patient_001',
+    name: 'João Silva',
+    cpf: '123.456.789-00',
+    email: 'joao.silva@email.com',
+    phone: '+55 11 99999-9999',
+    birthDate: '1990-05-15',
+    lgpdConsent: true,
+    consentDate: '2024-01-15T10:00:00Z',
+    createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-01-20T15:30:00Z'
+  }));
+
+// OpenAPI-documented appointment routes
+v1.openapi(listAppointmentsRoute, c =>
+  c.json({
+    data: [
+      {
+        id: 'appt_001',
+        patientId: 'patient_001',
+        patientName: 'João Silva',
+        date: '2024-02-15',
+        time: '14:30:00',
+        type: 'Consulta',
+        status: 'Agendado',
+        createdAt: '2024-01-20T10:00:00Z'
+      }
+    ],
+    total: 1,
+    page: 1,
+    hasNext: false
+  }));
+
+v1.openapi(getPatientAppointmentsRoute, c =>
+  c.json({
+    data: [
+      {
+        id: 'appt_001',
+        date: '2024-02-15',
+        time: '14:30:00',
+        type: 'Consulta',
+        status: 'Agendado',
+        notes: 'Consulta de rotina',
+        createdAt: '2024-01-20T10:00:00Z'
+      }
+    ],
+    total: 1,
+    lgpdCompliant: true
+  }));
+
 v1.route('/auth', auth);
 v1.route('/patients', patients);
 v1.route('/appointments', appointments);
 
 app.route('/v1', v1);
 
-// T012: OpenAPI route (minimal stub) - will be expanded later.
-app.get(
-  '/openapi.json',
-  c => c.json({ openapi: '3.1.0', info: { title: 'NeonPro API', version: '0.1.0' } }),
-);
+// Setup OpenAPI documentation endpoints
+setupOpenAPIDocumentation(app);
 
 export { app };

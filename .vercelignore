@@ -1,0 +1,25 @@
+# Ignore files that might interfere with deployment
+.next/
+node_modules/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore build artifacts that might cause conflicts
+apps/web/.next/
+apps/api/dist/
+
+# Ignore test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+coverage/
+
+# Ignore development files
+.vscode/
+.idea/
+*.log
+.DS_Store

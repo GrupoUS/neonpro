@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
+  "framework": null,
   "regions": ["gru1"],
   "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
   "buildCommand": "pnpm turbo build --filter=@neonpro/web --filter=@neonpro/api",
