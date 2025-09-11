@@ -1,6 +1,6 @@
+import { analytics } from '@/lib/analytics';
 import { useEffect } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
-import { analytics } from '../lib/analytics';
 
 /**
  * Hook to initialize analytics based on user consent
@@ -12,7 +12,7 @@ export function useAnalytics() {
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent
     if (hasConsent('analytics')) {
-      analytics.initialize().catch((error) => {
+      analytics.initialize().catch(error => {
         console.error('Failed to initialize analytics:', error);
       });
     }
@@ -22,10 +22,10 @@ export function useAnalytics() {
     // Listen for consent changes to handle analytics initialization/cleanup
     const handleConsentChange = (event: CustomEvent) => {
       const { category, granted } = event.detail;
-      
+
       if (category === 'analytics') {
         if (granted) {
-          analytics.initialize().catch((error) => {
+          analytics.initialize().catch(error => {
             console.error('Failed to initialize analytics after consent granted:', error);
           });
         } else {
@@ -101,7 +101,7 @@ export function useInteractionTracking() {
     element: string,
     category?: string,
     label?: string,
-    value?: number
+    value?: number,
   ) => {
     trackInteraction({
       element,

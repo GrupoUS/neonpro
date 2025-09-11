@@ -11,8 +11,8 @@ function AuthCallbackComponent() {
       try {
         // Handle OAuth callback - always redirect to dashboard
 
-        // Handle the OAuth callback
-        const { data, error } = await supabase.auth.getSession();
+        // Handle the OAuth callback by exchanging code for session
+        const { data, error } = await supabase.auth.exchangeCodeForSession();
 
         if (error) {
           console.error('Auth callback error:', error);

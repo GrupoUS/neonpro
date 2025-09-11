@@ -52,16 +52,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Database connectivity check
       database: {
         connected: true,
-        url: process.env.DATABASE_URL ? 'configured' : 'missing',
-        directUrl: process.env.DIRECT_URL ? 'configured' : 'missing'
+        url: !!process.env.DATABASE_URL,
+        directUrl: !!process.env.DIRECT_URL
       },
       
       // Environment check
       environment: {
         nodeEnv: process.env.NODE_ENV || 'development',
-        supabaseUrl: process.env.SUPABASE_URL ? 'configured' : 'missing',
-        supabaseKey: process.env.SUPABASE_ANON_KEY ? 'configured' : 'missing',
-        jwtSecret: process.env.JWT_SECRET ? 'configured' : 'missing'
+        supabaseUrl: !!process.env.SUPABASE_URL,
+        supabaseKey: !!process.env.SUPABASE_ANON_KEY,
+        jwtSecret: !!process.env.JWT_SECRET
       }
     };
 
@@ -71,8 +71,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await prisma.$queryRaw`SELECT 1`;
         healthCheck.database.connected = true;
       } catch (error) {
+        // Log the full error server-side for troubleshooting
+        console.error('Database connection test failed:', error);
+        
         healthCheck.database.connected = false;
-        healthCheck.database.error = error instanceof Error ? error.message : 'Unknown error';
+        // Return sanitized error message to prevent information leakage
+        healthCheck.database.error = 'database connection failed';
       }
     }
 
