@@ -4,12 +4,13 @@
   "rsc": false,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.cjs",
+    "config": "apps/web/tailwind.config.ts",
     "css": "apps/web/src/index.css",
     "baseColor": "slate",
     "cssVariables": true,
     "prefix": ""
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "apps/web/src/components",
     "utils": "apps/web/src/lib/utils",
@@ -17,5 +18,8 @@
     "lib": "apps/web/src/lib",
     "hooks": "apps/web/src/hooks"
   },
-  "iconLibrary": "lucide"
+  "registries": {
+    "@kokonutui": "https://kokonutui.com/r/{name}.json",
+    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
+  }
 }

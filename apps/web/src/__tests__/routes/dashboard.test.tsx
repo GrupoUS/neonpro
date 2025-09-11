@@ -2,10 +2,21 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DashboardComponent } from '@/routes/dashboard';
 import React from 'react';
+import { RouterProvider, createRootRoute, createRouter } from '@tanstack/react-router';
+import { createMemoryHistory } from '@tanstack/history';
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient();
-  return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
+  const root = createRootRoute();
+  const router = createRouter({
+    routeTree: root.addChildren([]),
+    history: createMemoryHistory({ initialEntries: ['/'] }),
+  });
+  return (
+    <QueryClientProvider client={qc}>
+      <RouterProvider router={router}>{children}</RouterProvider>
+    </QueryClientProvider>
+  );
 }
 
 describe('DashboardComponent', () => {

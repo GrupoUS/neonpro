@@ -27,8 +27,11 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 describe('TestAuth Back Link', () => {
   beforeEach(() => {
-    vi.spyOn(window.location, 'assign').mockImplementation(() => {});
-    vi.spyOn(window.location, 'replace').mockImplementation(() => {} as any);
+    const original = window.location;
+    // @ts-expect-error allow override for tests
+    delete (window as any).location;
+    // @ts-expect-error define mutable location for spying
+    (window as any).location = { ...original, assign: vi.fn(), replace: vi.fn() };
   });
 
   it("renders a Router Link for 'Back to Login' and doesn't reload", async () => {

@@ -7,59 +7,59 @@
 @layer base {
   :root {
     /* Light theme - NeonPro Warm Golden */
-    --background: 45 15% 95%; /* #f7f5f0 */
-    --foreground: 30 15% 15%; /* #2a251f */
-    --card: 45 20% 98%; /* #fdfcfa */
-    --card-foreground: 30 15% 15%; /* #2a251f */
-    --popover: 45 20% 98%; /* #fdfcfa */
-    --popover-foreground: 30 15% 15%; /* #2a251f */
-    --primary: 45 85% 55%; /* #ccb070 */
-    --primary-foreground: 30 15% 15%; /* #2a251f */
-    --secondary: 45 25% 90%; /* #f0ede5 */
-    --secondary-foreground: 30 15% 35%; /* #4a4035 */
-    --muted: 45 15% 92%; /* #ebe8e0 */
-    --muted-foreground: 30 10% 45%; /* #6b6258 */
-    --accent: 35 60% 75%; /* #d19248 */
-    --accent-foreground: 30 15% 15%; /* #2a251f */
-    --destructive: 0 84% 60%; /* #ef4444 */
-    --destructive-foreground: 0 0% 100%; /* #ffffff */
-    --border: 45 20% 88%; /* #e5e1d8 */
-    --input: 45 20% 88%; /* #e5e1d8 */
-    --ring: 45 85% 55%; /* #ccb070 */
-    --chart-1: 45 85% 55%; /* #ccb070 */
-    --chart-2: 35 75% 60%; /* #d19248 */
-    --chart-3: 25 65% 50%; /* #b8803d */
-    --chart-4: 15 55% 45%; /* #9e6f35 */
-    --chart-5: 10 45% 40%; /* #855e2e */
-    --radius: 1.25rem;
+    --background: 0 0% 100%; /* #f7f5f0 */
+    --foreground: 20 14.3% 4.1%; /* #2a251f */
+    --card: 0 0% 100%; /* #fdfcfa */
+    --card-foreground: 20 14.3% 4.1%; /* #2a251f */
+    --popover: 0 0% 100%; /* #fdfcfa */
+    --popover-foreground: 20 14.3% 4.1%; /* #2a251f */
+    --primary: 24 9.8% 10%; /* #ccb070 */
+    --primary-foreground: 60 9.1% 97.8%; /* #2a251f */
+    --secondary: 60 4.8% 95.9%; /* #f0ede5 */
+    --secondary-foreground: 24 9.8% 10%; /* #4a4035 */
+    --muted: 60 4.8% 95.9%; /* #ebe8e0 */
+    --muted-foreground: 25 5.3% 44.7%; /* #6b6258 */
+    --accent: 60 4.8% 95.9%; /* #d19248 */
+    --accent-foreground: 24 9.8% 10%; /* #2a251f */
+    --destructive: 0 84.2% 60.2%; /* #ef4444 */
+    --destructive-foreground: 60 9.1% 97.8%; /* #ffffff */
+    --border: 20 5.9% 90%; /* #e5e1d8 */
+    --input: 20 5.9% 90%; /* #e5e1d8 */
+    --ring: 20 14.3% 4.1%; /* #ccb070 */
+    --chart-1: 12 76% 61%; /* #ccb070 */
+    --chart-2: 173 58% 39%; /* #d19248 */
+    --chart-3: 197 37% 24%; /* #b8803d */
+    --chart-4: 43 74% 66%; /* #9e6f35 */
+    --chart-5: 27 87% 67%; /* #855e2e */
+    --radius: 0.5rem;
   }
 
   .dark {
     /* Dark theme - NeonPro Warm Golden */
-    --background: 30 25% 8%; /* #1a1612 */
-    --foreground: 45 40% 85%; /* #ccb070 */
-    --card: 30 20% 12%; /* #221e18 */
-    --card-foreground: 45 40% 85%; /* #ccb070 */
-    --popover: 30 20% 12%; /* #221e18 */
-    --popover-foreground: 45 40% 85%; /* #ccb070 */
-    --primary: 45 85% 65%; /* #d4bc7a */
-    --primary-foreground: 30 25% 8%; /* #1a1612 */
-    --secondary: 30 15% 18%; /* #2e2820 */
-    --secondary-foreground: 45 30% 75%; /* #c4ad6b */
-    --muted: 30 10% 20%; /* #332e26 */
-    --muted-foreground: 45 20% 60%; /* #a89660 */
-    --accent: 35 70% 55%; /* #c4904a */
-    --accent-foreground: 30 25% 8%; /* #1a1612 */
-    --destructive: 0 63% 50%; /* #dc2626 */
-    --destructive-foreground: 45 40% 85%; /* #ccb070 */
-    --border: 30 15% 25%; /* #3d3529 */
-    --input: 30 15% 25%; /* #3d3529 */
-    --ring: 45 85% 65%; /* #d4bc7a */
-    --chart-1: 45 85% 65%; /* #d4bc7a */
-    --chart-2: 35 75% 60%; /* #d19248 */
-    --chart-3: 25 65% 50%; /* #b8803d */
-    --chart-4: 15 55% 45%; /* #9e6f35 */
-    --chart-5: 10 45% 40%; /* #855e2e */
+    --background: 20 14.3% 4.1%; /* #1a1612 */
+    --foreground: 60 9.1% 97.8%; /* #ccb070 */
+    --card: 20 14.3% 4.1%; /* #221e18 */
+    --card-foreground: 60 9.1% 97.8%; /* #ccb070 */
+    --popover: 20 14.3% 4.1%; /* #221e18 */
+    --popover-foreground: 60 9.1% 97.8%; /* #ccb070 */
+    --primary: 60 9.1% 97.8%; /* #d4bc7a */
+    --primary-foreground: 24 9.8% 10%; /* #1a1612 */
+    --secondary: 12 6.5% 15.1%; /* #2e2820 */
+    --secondary-foreground: 60 9.1% 97.8%; /* #c4ad6b */
+    --muted: 12 6.5% 15.1%; /* #332e26 */
+    --muted-foreground: 24 5.4% 63.9%; /* #a89660 */
+    --accent: 12 6.5% 15.1%; /* #c4904a */
+    --accent-foreground: 60 9.1% 97.8%; /* #1a1612 */
+    --destructive: 0 62.8% 30.6%; /* #dc2626 */
+    --destructive-foreground: 60 9.1% 97.8%; /* #ccb070 */
+    --border: 12 6.5% 15.1%; /* #3d3529 */
+    --input: 12 6.5% 15.1%; /* #3d3529 */
+    --ring: 24 5.7% 82.9%; /* #d4bc7a */
+    --chart-1: 220 70% 50%; /* #d4bc7a */
+    --chart-2: 160 60% 45%; /* #d19248 */
+    --chart-3: 30 80% 55%; /* #b8803d */
+    --chart-4: 280 65% 60%; /* #9e6f35 */
+    --chart-5: 340 75% 55%; /* #855e2e */
   }
 }
 
@@ -97,5 +97,16 @@
   .touch-target {
     min-height: 44px;
     min-width: 44px;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

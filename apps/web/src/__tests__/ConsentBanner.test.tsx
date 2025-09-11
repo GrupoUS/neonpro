@@ -30,9 +30,12 @@ vi.mock('@/contexts/ConsentContext', () => {
 
 describe('ConsentBanner', () => {
   beforeEach(() => {
-    vi.spyOn(window.location, 'assign').mockImplementation(() => {
-      // no-op to detect any unexpected full reload navigations
-    });
+    // create a writable spyable property for assign
+    const original = window.location;
+    // @ts-expect-error allow override for tests
+    delete (window as any).location;
+    // @ts-expect-error define mutable location for spying
+    (window as any).location = { ...original, assign: vi.fn(), replace: vi.fn() };
   });
 
   it('uses Router Link for privacy navigation (SPA-safe)', async () => {
