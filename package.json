@@ -37,7 +37,29 @@
     "constitutional:setup": "cd tools/audit && chmod +x .tools/.husky/pre-commit && git config core.hooksPath .tools/.husky",
     "scan:bundle": "bun tsx tools/testing/scripts/scan-bundle.ts dist apps packages",
     "audit:licenses": "bun tsx tools/audit/license-audit.ts",
-    "log:demo": "bun tsx -e \"import { createLogger } from './packages/utils/src/logging/logger.ts'; const l=createLogger('demo'); l.info('User test@example.com CPF 123.456.789-09');\""
+    "log:demo": "bun tsx -e \"import { createLogger } from './packages/utils/src/logging/logger.ts'; const l=createLogger('demo'); l.info('User test@example.com CPF 123.456.789-09');\"",
+    "dev:workflow": "./scripts/dev-workflow.sh",
+    "dev:setup": "./scripts/dev-workflow.sh setup",
+    "dev:quality": "./scripts/dev-workflow.sh quality",
+    "dev:test-all": "./scripts/dev-workflow.sh test",
+    "dev:build-validate": "./scripts/dev-workflow.sh build",
+    "dev:deploy": "./scripts/dev-workflow.sh deploy",
+    "dev:monitor": "./scripts/dev-workflow.sh monitor",
+    "dev:compliance": "./scripts/dev-workflow.sh compliance",
+    "dev:performance": "./scripts/dev-workflow.sh performance",
+    "healthcare:compliance": "./scripts/dev-workflow.sh compliance",
+    "healthcare:performance": "node scripts/performance/dashboard-generator.cjs",
+    "monitoring:health": "node monitoring/scripts/health-check.js",
+    "monitoring:performance": "node monitoring/scripts/performance-monitor.js",
+    "performance:report": "node scripts/performance/dashboard-generator.cjs",
+    "performance:vitals": "node scripts/performance/core-web-vitals.cjs",
+    "e2e:post-deploy": "node tests/e2e/post-deploy-tests.js",
+    "deploy:production": "./scripts/deploy.sh",
+    "deploy:dry-run": "./scripts/deploy.sh --dry-run",
+    "setup:monitoring": "./scripts/monitoring/setup-alerts.sh",
+    "quality:full": "npm run build && npm run lint && npm run type-check",
+    "workflow:ci": "./scripts/dev-workflow.sh quality && ./scripts/dev-workflow.sh test",
+    "workflow:pre-deploy": "./scripts/dev-workflow.sh full"
   },
   "keywords": [
     "monorepo",
@@ -87,11 +109,12 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "web-vitals": "^4.0.0"
   },
   "performance": {
     "targets": {
-      "maxFilesProcessed": 1e4,
+      "maxFilesProcessed": 10000,
       "maxExecutionTimeMs": 30000,
       "maxMemoryUsageMB": 500
     },

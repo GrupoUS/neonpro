@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "web-vitals": "^4.0.0"
+  },
+  "scripts": {
+    "performance:report": "node scripts/performance/dashboard-generator.js",
+    "performance:monitor": "node monitoring/scripts/performance-monitor.js"
+  }
+}

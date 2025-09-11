@@ -1,0 +1,44 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "neonpro-api",
+  "framework": null,
+  "regions": ["gru1"],
+  "buildCommand": "cd apps/api && pnpm run build",
+  "outputDirectory": "apps/api/dist",
+  "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+  "functions": {
+    "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
+    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": "/api/health.ts" },
+    { "source": "/v1/health", "destination": "/api/v1/health.ts" },
+    { "source": "/openapi.json", "destination": "/api/openapi.json.ts" },
+    { "source": "/(.*)", "destination": "/api/index.ts" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://neonpro.vercel.app" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Requested-With" },
+        { "key": "Access-Control-Allow-Credentials", "value": "true" }
+      ]
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "VERCEL": "1",
+    "DATABASE_URL": "@database_url",
+    "DIRECT_URL": "@direct_url",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+    "JWT_SECRET": "@jwt_secret",
+    "ENCRYPTION_KEY": "@encryption_key",
+    "LOG_LEVEL": "info",
+    "VERCEL_REGION": "gru1"
+  }
+}

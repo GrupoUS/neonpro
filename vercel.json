@@ -3,6 +3,8 @@
   "version": 2,
   "framework": null,
   "regions": ["gru1"],
+  "cleanUrls": true,
+  "trailingSlash": false,
 
   "functions": {
     "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },

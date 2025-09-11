@@ -1,14 +1,25 @@
-# Ignore files that might interfere with deployment
+# Force ignore Next.js detection files
 .next/
+next.config.js
+next.config.mjs
+next.config.ts
+next-env.d.ts
+pages/
+app/layout.tsx
+app/page.tsx
+
+# Ignore build artifacts that might cause conflicts
+apps/web/.next/
+apps/api/dist/
+dist/
+build/
+
+# Ignore files that might interfere with deployment
 node_modules/
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Ignore build artifacts that might cause conflicts
-apps/web/.next/
-apps/api/dist/
 
 # Ignore test files
 **/*.test.ts
@@ -23,3 +34,8 @@ coverage/
 .idea/
 *.log
 .DS_Store
+
+# Force ignore any Next.js related files
+**/.next/
+**/next.config.*
+**/next-env.d.ts
