@@ -73,7 +73,7 @@
 - [ ] Testes unitários cobrem funcionalidades críticas
 - [ ] Testes de integração validam fluxos completos
 - [ ] Testes E2E cobrem cenários de usuário
-- [ ] Cobertura de código ≥ 80%
+- [ ] Cobertura conforme `docs/testing/coverage-policy.md` por criticidade (crítico ≥ 95%, importante ≥ 85%, demais ≥ 75%)
 - [ ] Testes são determinísticos (não flaky)
 
 #### Qualidade dos Testes

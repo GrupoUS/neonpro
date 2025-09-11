@@ -1,0 +1,98 @@
+{
+  "generated_at": "2025-09-11T01:11:19.754Z",
+  "summary": "Evidence report produced from codebase_search results: focused on CLI audit tooling, TanStack Router routing, required JSON output, missing exitHelper, and unimplemented audit subcommands referenced by tests.",
+  "findings": [
+    {
+      "id": "F001",
+      "category": "cli-audit-tools",
+      "description": "Audit CLI tooling present but several commands and JSON output paths are unimplemented (tests assert failures).",
+      "files": [
+        "tools/monorepo-audit/package.json",
+        "tools/audit/package.json",
+        "package.json"
+      ],
+      "evidence": [
+        "tools/monorepo-audit package.json defines bin 'audit-tool' and integration tests referencing audit-tool commands.",
+        "tools/audit package.json exposes 'neonpro-audit' CLI and scripts (constitutional, quick, benchmark).",
+        "Root package.json contains 'audit-tool' and scripts 'constitutional:quick' referencing tools/audit CLI."
+      ],
+      "severity": "medium",
+      "confidence": "high",
+      "recommended_action": "Implement the CLI commands referenced by integration tests (scan, find-unused, analyze, validate) and ensure --format json produces structured output.",
+      "proof": "See integration tests under tools/monorepo-audit/tests/integration that expect JSON outputs and assert failures indicating missing implementations."
+    },
+    {
+      "id": "F002",
+      "category": "tanstack-router",
+      "description": "Project documents describe an auto-generated route tree (routeTree.gen.ts) and tests expect TanStack Router validation, but CLI validation is not implemented.",
+      "files": [
+        "docs/architecture/source-tree.md",
+        "tools/monorepo-audit/tests/integration/architecture-validation.integration.test.ts"
+      ],
+      "evidence": [
+        "`routeTree.gen.ts` listed in docs as auto-generated TanStack Router tree.",
+        "Integration test 'should validate TanStack Router patterns' contains try/catch that forces failure until validation implemented."
+      ],
+      "severity": "medium",
+      "confidence": "high",
+      "recommended_action": "Add TanStack Router analysis in audit CLI: parse generated route tree, verify route definitions, and emit JSON validation artifacts.",
+      "proof": "Docs mention routeTree.gen.ts and tests assert CLI validation not implemented."
+    },
+    {
+      "id": "F003",
+      "category": "structured-output",
+      "description": "Multiple tests assert CLI subcommands should return JSON (scan/find-unused/analyze). Currently tests indicate these behaviors are failing.",
+      "files": [
+        "tools/monorepo-audit/tests/integration/file-discovery.integration.test.ts",
+        "tools/monorepo-audit/tests/integration/usage-analysis.integration.test.ts",
+        "tools/monorepo-audit/tests/integration/dependency-analysis.integration.test.ts"
+      ],
+      "evidence": [
+        "Tests invoke audit-tool with '--format json' or expect JSON-parseable stdout and assert properties like 'unusedFiles', 'orphanedFiles', 'analysis.circularDependencies'.",
+        "Contract tests for report generator define expected JSON shape (specs/contracts/report-generator.contract.ts)."
+      ],
+      "severity": "high",
+      "confidence": "high",
+      "recommended_action": "Implement JSON output for relevant CLI commands and unit-test the JSON schema; create audit-evidence.json as artifact upload in CI."
+    },
+    {
+      "id": "F004",
+      "category": "exit-helper",
+      "description": "No centralized 'exitHelper' or canonical exit code handling found in codebase_search results.",
+      "files": [],
+      "evidence": [
+        "Search for 'exitHelper' returned no matches; tests expect specific exit behavior in audit workflows and canonical exit codes (spec)."
+      ],
+      "severity": "medium",
+      "confidence": "medium",
+      "recommended_action": "Implement a centralized exit helper module to normalize exit codes and support JSON error payloads; update CLIs to use it.",
+      "proof": "Absence of matches in search results for 'exitHelper' and numerous tests expecting CLI behavior."
+    },
+    {
+      "id": "F005",
+      "category": "explicit-any-and-scanners",
+      "description": "No explicit-any AST scanner found; repo requires explicit-any detection per audit spec.",
+      "files": [],
+      "evidence": [
+        "No scanner implementation detected in tools/monorepo-audit or tools/audit for explicit 'any' detection (search returned tests referencing type-safety checks but no scanner)."
+      ],
+      "severity": "low",
+      "confidence": "medium",
+      "recommended_action": "Add an AST-based scanner (ts-morph) to enumerate explicit 'any' uses and report locations as part of audit-evidence.json.",
+      "proof": "Integration tests reference type safety verification but current CLI lacks explicit-any enforcement."
+    },
+    {
+      "id": "F006",
+      "category": "security-patterns",
+      "description": "No occurrences found of 'eval(' or 'javascript:' patterns in codebase_search results, but recommend dedicated scanner.",
+      "files": [],
+      "evidence": [
+        "Semantic search did not return matches for 'eval(' or 'javascript:'; tests and audit prompt require scanning for these patterns."
+      ],
+      "severity": "low",
+      "confidence": "low",
+      "recommended_action": "Run a regex-based security scan across repo and include findings in audit-evidence.json.",
+      "proof": "Absence of matches in semantic search is not a guarantee; recommend proactive scanning."
+    }
+  ]
+}

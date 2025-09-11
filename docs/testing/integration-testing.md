@@ -12,7 +12,7 @@
 ## Stack Overview
 
 - Test Runner: Vitest (node + browser environments)
-- API: Next.js Route Handlers or Hono; supertest/fetch for HTTP
+- API: Hono.dev (edge/server) — use fetch or @hono/testing utilities for HTTP
 - Database: Supabase Postgres (test schema or ephemeral DB)
 - Realtime: Supabase Realtime (optional in CI stage)
 - AI: Mock providers or local adapters for deterministic outputs
@@ -20,19 +20,26 @@
 ## Project Structure (example)
 
 ```
-packages/
-  api/               # services, handlers
-  db/                # prisma/sql, migrations, seed
-  ai/                # ai service adapters
-  auth/              # auth utils/middleware
-  domain/            # business logic
+apps/
+  api/                 # Hono.dev routes, middleware, handlers
+    src/
+      __tests__/       # API integration tests (optionally in /tests)
+  web/                 # React 19 + TanStack Router
+    src/
+      test/            # Test utils & setup for web
 
-tests/integration/
-  api/
-  database/
-  auth/
-  ai/
-  realtime/
+packages/
+  core-services/       # Business logic services
+  utils/               # Utility functions
+  security/            # Security & compliance helpers
+
+# Optional central folder for cross-cutting integration tests
+# tests/integration/
+#   api/
+#   database/
+#   auth/
+#   ai/
+#   realtime/
 ```
 
 ## Supabase Integration Patterns

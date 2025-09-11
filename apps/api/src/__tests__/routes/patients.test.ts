@@ -373,7 +373,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
     });
 
     it("should enforce tenant isolation for patient access", async () => {
-      mockPrisma.patient.findUnique.mockResolvedValue(); // Patient not found in user's tenant
+      mockPrisma.patient.findUnique.mockResolvedValue(undefined); // Patient not found in user's tenant
 
       const mockContext = {
         req: {

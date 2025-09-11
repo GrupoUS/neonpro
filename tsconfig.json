@@ -3,7 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
@@ -27,10 +28,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
-    "types": ["node"],
+    "types": ["node", "vitest", "vitest/globals", "vite/client"],
 
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./src/*", "apps/web/src/*", "apps/api/src/*"],
+      "@neonpro/*": ["packages/*/src"],
       "@models/*": ["./src/models/*"],
       "@services/*": ["./src/services/*"],
       "@cli/*": ["./src/cli/*"],

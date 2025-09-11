@@ -13,6 +13,7 @@
     "build:vercel": "bun install && tsc && vite build",
     "build:force": "vite build --force",
     "start": "vite preview",
+    "prepare": "echo 'prepare script temporarily disabled for workspace install'",
     "preview": "vite preview --port 3001",
     "lint": "oxlint src --fix",
     "format": "dprint fmt",

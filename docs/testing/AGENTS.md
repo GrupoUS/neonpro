@@ -44,7 +44,19 @@ Central router for all testing documentation. Start here to choose the right gui
 - E2E Testing: `./e2e-testing.md`
 - CI Pipelines: `./ci-pipelines.md`
 
+  - Hono API Testing: `./hono-api-testing.md`
+  - TanStack Router Testing: `./tanstack-router-testing.md`
+  - Supabase RLS Testing: `./supabase-rls-testing.md`
+  - Monorepo Testing Strategies: `./monorepo-testing-strategies.md`
+  - Responsibility Matrix: `./testing-responsibility-matrix.md`
+
 ## Navigation
+- Test Hono endpoints f `./hono-api-testing.md`
+- Validate TanStack routes f `./tanstack-router-testing.md`
+- Enforce DB RLS f `./supabase-rls-testing.md`
+- Plan monorepo runs f `./monorepo-testing-strategies.md`
+- Assign responsibilities f `./testing-responsibility-matrix.md`
+
 
 - Implement unit tests → `./react-test-patterns.md`
 - Add integration tests → `./integration-testing.md`

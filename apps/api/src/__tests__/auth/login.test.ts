@@ -36,6 +36,7 @@ const mockPrisma = {
     create: vi.fn(),
     delete: vi.fn(),
     findUnique: vi.fn(),
+    update: vi.fn(),
   },
   auditLog: {
     create: vi.fn(),
@@ -91,52 +92,6 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
       // Mock JWT generation
       mockJWT.sign.mockReturnValue(mockTokens.accessToken,)
 
-      // Mock request context
-      const _mockContext = {
-        req: {
-          json: vi.fn().mockResolvedValue({
-            email: 'doctor@neonpro.com.br',
-            password: 'SecurePass123!',
-            tenantId: 'clinic-abc',
-          },),
-        },
-        json: vi.fn(),
-        status: vi.fn(),
-      } as unknown as Context
-
-      // Simulate login endpoint
-      const _loginHandler = async (c: Context,) => {
-        const { email, password, tenantId, } = await c.req.json()
-
-        // Validate healthcare professional
-        const user = await mockPrisma.user.findUnique({
-          where: { email, tenantId, isActive: true, },
-        },)
-
-        if (!user) {
-          return c.json({ error: 'Invalid credentials', }, 401,)
-        }
-
-        // Generate tokens
-        const tokens = await mockAuthService.login(email, password,)
-
-        // Create audit log
-        await mockPrisma.auditLog.create({
-          data: {
-            action: 'LOGIN',
-            userId: user.id,
-            tenantId: user.tenantId,
-            metadata: { ip: '127.0.0.1', userAgent: 'test', },
-            timestamp: new Date(),
-          },
-        },)
-
-        return c.json({
-          success: true,
-          data: { user, tokens, },
-          message: 'Login realizado com sucesso',
-        },)
-      }
       expect(mockPrisma.user.findUnique,).toHaveBeenCalledWith({
         where: {
           email: 'doctor@neonpro.com.br',
@@ -149,9 +104,9 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
 
     it('should reject login with invalid credentials', async () => {
       // Mock user not found
-      mockPrisma.user.findUnique.mockResolvedValue()
+      mockPrisma.user.findUnique.mockResolvedValue(undefined)
 
-      const _mockContext = {
+      const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: 'invalid@example.com',
@@ -163,7 +118,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
         status: vi.fn(),
       } as unknown as Context
 
-      const _loginHandler = async (c: Context,) => {
+      const loginHandler = async (c: Context,) => {
         const { email, tenantId, } = await c.req.json()
 
         const user = await mockPrisma.user.findUnique({
@@ -216,7 +171,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
         reason: 'NO_PROFESSIONAL_LICENSE',
       },)
 
-      const _mockContext = {
+      const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: 'doctor@neonpro.com.br',
@@ -227,7 +182,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
         json: vi.fn(),
       } as unknown as Context
 
-      const _loginHandler = async (c: Context,) => {
+      const loginHandler = async (c: Context,) => {
         const { email, password: _password, tenantId, } = await c.req.json()
 
         const user = await mockPrisma.user.findUnique({
@@ -282,7 +237,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
         tokens: newTokens,
       },)
 
-      const _mockContext = {
+      const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: mockRefreshToken,
@@ -338,9 +293,9 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
     it('should reject expired refresh token', async () => {
       const expiredRefreshToken = 'expired-refresh-token'
 
-      mockPrisma.session.findUnique.mockResolvedValue() // Expired session not found
+      mockPrisma.session.findUnique.mockResolvedValue(undefined) // Expired session not found
 
-      const _mockContext = {
+      const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             refreshToken: expiredRefreshToken,
@@ -403,7 +358,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
       },)
       mockPrisma.session.delete.mockResolvedValue({ id: 'session-123', },)
 
-      const _mockContext = {
+      const mockContext = {
         req: {
           header: vi.fn().mockReturnValue(`Bearer ${accessToken}`,),
         },

@@ -206,6 +206,11 @@ test('patient form works on iPhone viewport', async ({ page, },) => {
 })
 ```
 
+## LGPD & Compliance Extras
+- Evite PII em screenshots, traces e logs; anonimize dados de pacientes
+- Garanta consentimento simulado nos testes quando fluxo exigir
+- Configure `trace: 'retain-on-failure'` e limpe artefatos em CI
+
 ## Data Privacy (LGPD) Checks
 
 - Never display sensitive data without consent
