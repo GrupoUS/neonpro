@@ -55,9 +55,8 @@ logger.info('NeonPro API starting', {
 });
 
 // Minimal Hono application exported for Vercel handler consumption.
-// Note: We use basePath('/api') so that requests rewritten from
-// '/api/*' map cleanly to these routes.
-const app = createOpenAPIApp().basePath('/api');
+// Note: Vercel rewrites '/api/*' to this function, so no basePath needed
+const app = createOpenAPIApp();
 
 // CORS configuration
 app.use(
