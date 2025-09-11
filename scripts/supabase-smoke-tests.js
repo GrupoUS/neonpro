@@ -71,7 +71,7 @@ class SupabaseSmokeTestRunner {
     }
 
     // Check if test files exist
-    const testDir = path.join(this.projectRoot, 'tests/integration');
+    const testDir = path.join(this.projectRoot, 'tools/tests/integration');
     if (!fs.existsSync(testDir)) {
       throw new Error(`Test directory not found: ${testDir}`);
     }
@@ -80,7 +80,7 @@ class SupabaseSmokeTestRunner {
   }
 
   async runTestSuite(suite) {
-    const testFile = path.join('tests/integration', suite.file);
+    const testFile = path.join('tools/tests/integration', suite.file);
     
     try {
       // Run tests using vitest

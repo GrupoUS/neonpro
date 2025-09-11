@@ -17,12 +17,12 @@ export default defineConfig({
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',
       'lib/**/*.{test,spec}.{ts,tsx}',
-      'tests/**/*.{test,spec}.{ts,tsx}',
+      'tools/tests/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: [
-      'tests/integration/**',
-      'tests/e2e/**',
-      'tests/performance/**',
+      'tools/tests/integration/**',
+      'tools/tests/e2e/**',
+      'tools/tests/performance/**',
       'lib/integration/**',
       'lib/e2e/**',
       'lib/performance/**',

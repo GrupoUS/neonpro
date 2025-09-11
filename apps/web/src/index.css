@@ -3,129 +3,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NeonPro Theme Variables */
+/* NeonPro Theme - Warm Golden Implementation */
 @layer base {
   :root {
-    /* Light theme - NeonPro */
-    --background: #e7e5e4;
-    --foreground: #1e293b;
-    --card: #f5f5f4;
-    --card-foreground: #1e293b;
-    --popover: #f5f5f4;
-    --popover-foreground: #1e293b;
-    --primary: #6366f1;
-    --primary-foreground: #ffffff;
-    --secondary: #d6d3d1;
-    --secondary-foreground: #4b5563;
-    --muted: #e7e5e4;
-    --muted-foreground: #6b7280;
-    --accent: #f3e5f5;
-    --accent-foreground: #374151;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --border: #d6d3d1;
-    --input: #d6d3d1;
-    --ring: #6366f1;
-    --chart-1: #6366f1;
-    --chart-2: #4f46e5;
-    --chart-3: #4338ca;
-    --chart-4: #3730a3;
-    --chart-5: #312e81;
+    /* Light theme - NeonPro Warm Golden */
+    --background: 45 15% 95%; /* #f7f5f0 */
+    --foreground: 30 15% 15%; /* #2a251f */
+    --card: 45 20% 98%; /* #fdfcfa */
+    --card-foreground: 30 15% 15%; /* #2a251f */
+    --popover: 45 20% 98%; /* #fdfcfa */
+    --popover-foreground: 30 15% 15%; /* #2a251f */
+    --primary: 45 85% 55%; /* #ccb070 */
+    --primary-foreground: 30 15% 15%; /* #2a251f */
+    --secondary: 45 25% 90%; /* #f0ede5 */
+    --secondary-foreground: 30 15% 35%; /* #4a4035 */
+    --muted: 45 15% 92%; /* #ebe8e0 */
+    --muted-foreground: 30 10% 45%; /* #6b6258 */
+    --accent: 35 60% 75%; /* #d19248 */
+    --accent-foreground: 30 15% 15%; /* #2a251f */
+    --destructive: 0 84% 60%; /* #ef4444 */
+    --destructive-foreground: 0 0% 100%; /* #ffffff */
+    --border: 45 20% 88%; /* #e5e1d8 */
+    --input: 45 20% 88%; /* #e5e1d8 */
+    --ring: 45 85% 55%; /* #ccb070 */
+    --chart-1: 45 85% 55%; /* #ccb070 */
+    --chart-2: 35 75% 60%; /* #d19248 */
+    --chart-3: 25 65% 50%; /* #b8803d */
+    --chart-4: 15 55% 45%; /* #9e6f35 */
+    --chart-5: 10 45% 40%; /* #855e2e */
     --radius: 1.25rem;
   }
 
   .dark {
-    /* Dark theme - NeonPro */
-    --background: #0D1926;
-    --foreground: #CCB07D;
-    --card: #112031;
-    --card-foreground: #CCB07D;
-    --popover: #0D1926;
-    --popover-foreground: #CCB07D;
-    --primary: #CCB07D;
-    --primary-foreground: #D2D0C8;
-    --secondary: #0D1926;
-    --secondary-foreground: #CCB07D;
-    --muted: #AC9469;
-    --muted-foreground: #D2D0C8;
-    --accent: #484441;
-    --accent-foreground: #CCB07D;
-    --destructive: #ef4444;
-    --destructive-foreground: #1e1b18;
-    --border: #3a3633;
-    --input: #3a3633;
-    --ring: #AC9469;
-    --chart-1: #818cf8;
-    --chart-2: #6366f1;
-    --chart-3: #4f46e5;
-    --chart-4: #4338ca;
-    --chart-5: #3730a3;
+    /* Dark theme - NeonPro Warm Golden */
+    --background: 30 25% 8%; /* #1a1612 */
+    --foreground: 45 40% 85%; /* #ccb070 */
+    --card: 30 20% 12%; /* #221e18 */
+    --card-foreground: 45 40% 85%; /* #ccb070 */
+    --popover: 30 20% 12%; /* #221e18 */
+    --popover-foreground: 45 40% 85%; /* #ccb070 */
+    --primary: 45 85% 65%; /* #d4bc7a */
+    --primary-foreground: 30 25% 8%; /* #1a1612 */
+    --secondary: 30 15% 18%; /* #2e2820 */
+    --secondary-foreground: 45 30% 75%; /* #c4ad6b */
+    --muted: 30 10% 20%; /* #332e26 */
+    --muted-foreground: 45 20% 60%; /* #a89660 */
+    --accent: 35 70% 55%; /* #c4904a */
+    --accent-foreground: 30 25% 8%; /* #1a1612 */
+    --destructive: 0 63% 50%; /* #dc2626 */
+    --destructive-foreground: 45 40% 85%; /* #ccb070 */
+    --border: 30 15% 25%; /* #3d3529 */
+    --input: 30 15% 25%; /* #3d3529 */
+    --ring: 45 85% 65%; /* #d4bc7a */
+    --chart-1: 45 85% 65%; /* #d4bc7a */
+    --chart-2: 35 75% 60%; /* #d19248 */
+    --chart-3: 25 65% 50%; /* #b8803d */
+    --chart-4: 15 55% 45%; /* #9e6f35 */
+    --chart-5: 10 45% 40%; /* #855e2e */
   }
 }
 
 @layer base {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 47 96% 53%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: hsl(var(--border));
   }
 
-  .light {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 47 96% 53%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: "Inter", sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Healthcare-specific optimizations */
+  .healthcare-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Brazilian Portuguese typography optimizations */
+  .text-portuguese {
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Mobile-first touch targets for aesthetic clinic workflows */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

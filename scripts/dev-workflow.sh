@@ -224,8 +224,8 @@ run_all_tests() {
     fi
     
     print_status "Running healthcare workflow tests..."
-    if [ -f "tests/healthcare/patient-workflow.test.js" ]; then
-        if node tests/healthcare/patient-workflow.test.js; then
+    if [ -f "tools/tests/healthcare/patient-workflow.test.js" ]; then
+        if node tools/tests/healthcare/patient-workflow.test.js; then
             print_success "Healthcare workflow tests: PASSED ✅"
             log "Healthcare workflow tests: PASSED"
         else

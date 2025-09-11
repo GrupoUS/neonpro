@@ -23,8 +23,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  globalSetup: require.resolve('./tools/e2e/global-setup'),
-  globalTeardown: require.resolve('./tools/e2e/global-teardown'),
+  // ESM-safe resolution for global setup/teardown modules
+  globalSetup: new URL('./tools/e2e/global-setup', import.meta.url).pathname,
+  globalTeardown: new URL('./tools/e2e/global-teardown', import.meta.url).pathname,
   projects: [
     {
       name: 'Chromium',

@@ -30,7 +30,7 @@ cat > temp_scripts.json << 'EOF'
     "monitoring:performance": "node monitoring/scripts/performance-monitor.js",
     "performance:report": "node scripts/performance/dashboard-generator.cjs",
     "performance:vitals": "node scripts/performance/core-web-vitals.cjs",
-    "e2e:post-deploy": "node tests/e2e/post-deploy-tests.js",
+    "e2e:post-deploy": "node tools/tests/e2e/post-deploy-tests.js",
     "deploy:production": "./scripts/deploy.sh",
     "deploy:dry-run": "./scripts/deploy.sh --dry-run",
     "setup:monitoring": "./scripts/monitoring/setup-alerts.sh",

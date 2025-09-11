@@ -7,6 +7,20 @@ const SUPABASE_URL = 'https://ownkoxryswokcdanrdgj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMDM2MDksImV4cCI6MjA2ODg3OTYwOX0.XFIAUxbnw2dQho1FEU7QBddw1gI7gD3V-ixY98e4t1E';
 
+// Get the base URL for redirects
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  
+  // Fallback for SSR
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://neonpro.vercel.app';
+  }
+  
+  return 'http://localhost:5173';
+};
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
@@ -20,6 +34,8 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
         : undefined,
       persistSession: true,
       autoRefreshToken: true,
+      // Configuração de redirecionamento padrão
+      redirectTo: `${getBaseUrl()}/auth/callback`,
     },
   },
 );

@@ -1,19 +1,37 @@
+import { ConsentBanner } from '@/components/ConsentBanner';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
-import { ConsentBanner } from '@/components/ConsentBanner';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { supabase } from '@/integrations/supabase/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { createRootRoute, Outlet, useRouter } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
 function RootComponent() {
   // Initialize analytics based on consent
   useAnalytics();
+  const router = useRouter();
+
+  // Listen for auth state changes and redirect to dashboard
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          // Only redirect if we're on the root page
+          if (window.location.pathname === '/') {
+            router.navigate({ to: '/dashboard' });
+          }
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   return (
     <ErrorBoundary>
@@ -27,8 +45,6 @@ function RootComponent() {
           <ConsentBanner />
           <Toaster />
           <Sonner />
-          {/* Only show devtools in development */}
-          {process.env.NODE_ENV === 'development' && <TanStackRouterDevtools />}
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>

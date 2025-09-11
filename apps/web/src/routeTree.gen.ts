@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
-import { Route as GovernanceRouteImport } from './routes/governance'
+import { Route as SignupDemoRouteImport } from './routes/signup-demo'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -19,9 +21,19 @@ const TestAuthRoute = TestAuthRouteImport.update({
   path: '/test-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GovernanceRoute = GovernanceRouteImport.update({
-  id: '/governance',
-  path: '/governance',
+const SignupDemoRoute = SignupDemoRouteImport.update({
+  id: '/signup-demo',
+  path: '/signup-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -38,34 +50,55 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/governance': typeof GovernanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/signup': typeof SignupRoute
+  '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/governance': typeof GovernanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/signup': typeof SignupRoute
+  '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/governance': typeof GovernanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/signup': typeof SignupRoute
+  '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/404' | '/governance' | '/test-auth'
+  fullPaths:
+    | '/'
+    | '/404'
+    | '/dashboard'
+    | '/signup'
+    | '/signup-demo'
+    | '/test-auth'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/404' | '/governance' | '/test-auth'
-  id: '__root__' | '/' | '/404' | '/governance' | '/test-auth'
+  to: '/' | '/404' | '/dashboard' | '/signup' | '/signup-demo' | '/test-auth'
+  id:
+    | '__root__'
+    | '/'
+    | '/404'
+    | '/dashboard'
+    | '/signup'
+    | '/signup-demo'
+    | '/test-auth'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
-  GovernanceRoute: typeof GovernanceRoute
+  DashboardRoute: typeof DashboardRoute
+  SignupRoute: typeof SignupRoute
+  SignupDemoRoute: typeof SignupDemoRoute
   TestAuthRoute: typeof TestAuthRoute
 }
 
@@ -78,11 +111,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/governance': {
-      id: '/governance'
-      path: '/governance'
-      fullPath: '/governance'
-      preLoaderRoute: typeof GovernanceRouteImport
+    '/signup-demo': {
+      id: '/signup-demo'
+      path: '/signup-demo'
+      fullPath: '/signup-demo'
+      preLoaderRoute: typeof SignupDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -105,7 +152,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
-  GovernanceRoute: GovernanceRoute,
+  DashboardRoute: DashboardRoute,
+  SignupRoute: SignupRoute,
+  SignupDemoRoute: SignupDemoRoute,
   TestAuthRoute: TestAuthRoute,
 }
 export const routeTree = rootRouteImport

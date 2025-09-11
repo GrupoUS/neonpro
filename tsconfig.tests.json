@@ -8,7 +8,7 @@
     "types": ["vitest", "vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
-    "tests/**/*"
+    "tools/tests/**/*"
   ],
   "exclude": [
     "node_modules",

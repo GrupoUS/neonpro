@@ -73,13 +73,15 @@ export function NotFoundPage() {
               Precisa de ajuda?
             </p>
             <Button 
+              asChild
               variant="ghost" 
               size="sm"
               className="text-blue-600 hover:text-blue-800"
-              onClick={() => window.location.href = 'mailto:suporte@neonpro.com.br'}
             >
-              <Phone className="mr-2 h-3 w-3" />
-              Entrar em Contato
+              <a href='mailto:suporte@neonpro.com.br' rel="noopener noreferrer">
+                <Phone className="mr-2 h-3 w-3" />
+                Entrar em Contato
+              </a>
             </Button>
           </div>
         </CardContent>

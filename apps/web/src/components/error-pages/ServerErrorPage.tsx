@@ -105,13 +105,15 @@ export function ServerErrorPage({ error, errorId }: ServerErrorPageProps) {
             </p>
             <div className="space-y-2">
               <Button 
+                asChild
                 variant="ghost" 
                 size="sm"
                 className="text-blue-600 hover:text-blue-800 w-full"
-                onClick={() => window.location.href = 'mailto:suporte@neonpro.com.br?subject=Erro%20do%20Servidor&body=ID%20do%20Erro:%20' + displayErrorId}
               >
-                <Phone className="mr-2 h-3 w-3" />
-                Reportar Problema
+                <a href={'mailto:suporte@neonpro.com.br?subject=Erro%20do%20Servidor&body=ID%20do%20Erro:%20' + encodeURIComponent(displayErrorId)} rel="noopener noreferrer">
+                  <Phone className="mr-2 h-3 w-3" />
+                  Reportar Problema
+                </a>
               </Button>
               
               <p className="text-xs text-gray-400">

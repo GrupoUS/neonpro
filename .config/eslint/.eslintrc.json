@@ -38,7 +38,7 @@
   },
   "overrides": [
     {
-      "files": ["tests/**/*"],
+      "files": ["tools/tests/**/*"],
       "rules": {
         "no-console": "off",
         "@typescript-eslint/no-explicit-any": "off"

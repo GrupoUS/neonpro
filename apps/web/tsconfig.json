@@ -5,17 +5,19 @@
     "rootDir": "src",
     "outDir": "./dist-types",
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "moduleResolution": "bundler",
-    "types": ["vite/client", "node"],
+    "types": [
+      "vite/client",
+      "node"
+    ],
     "paths": {
-      "@/*": ["src/*"],
-      "@neonpro/shared": ["../../packages/shared/src"],
-      "@neonpro/shared/*": ["../../packages/shared/src/*"],
-      "@neonpro/utils": ["../../packages/utils/src"],
-      "@neonpro/utils/*": ["../../packages/utils/src/*"],
-      "@neonpro/database": ["../../packages/database/src"],
-      "@neonpro/database/*": ["../../packages/database/src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "declaration": false,
     "declarationMap": false,
@@ -32,7 +34,7 @@
     "dist",
     "node_modules",
     "src/test/**",
-    "tests/**",
+    "tools/tests/**",
     "lib/**",
     "src/lib/emergency/**",
     "**/*.test.ts",

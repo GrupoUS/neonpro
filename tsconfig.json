@@ -59,7 +59,7 @@
         "./src/lib/*"
       ],
       "@tests/*": [
-        "./tests/*"
+        "./tools/tests/*"
       ]
     }
   },
@@ -67,7 +67,7 @@
     "apps/**/*",
     "packages/**/*",
     "src/**/*",
-    "tests/**/*",
+    "tools/tests/**/*",
     "*.ts",
     "*.tsx",
     "src/types/shims.d.ts"

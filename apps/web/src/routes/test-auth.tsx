@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/test-auth')({
   component: TestAuth,
 });
 
-function TestAuth() {
+export function TestAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<string>('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -20,7 +20,7 @@ function TestAuth() {
     setStatus('idle');
 
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/test-auth`,
@@ -108,7 +108,7 @@ function TestAuth() {
 
           <div className='text-center'>
             <Button variant='link' asChild>
-              <a href='/'>← Back to Login</a>
+              <Link to='/'>← Back to Login</Link>
             </Button>
           </div>
         </CardContent>
