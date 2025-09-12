@@ -9,7 +9,9 @@
     "package-lock.json",
     ".config/dprint/dprint.json",
     "bunfig.toml",
-    "bun.lock"
+    "bun.lock",
+    "packages/database/prisma/schema.prisma",
+    "packages/database/src/**/*.ts"
   ],
 
   "daemon": true,
@@ -41,8 +43,28 @@
   },
   "globalPassThroughEnv": ["CI", "NODE_ENV", "VERCEL_ENV"],
   "tasks": {
-    "build": {
+    "db:generate": {
+      "cache": false,
       "dependsOn": ["^build"],
+      "inputs": [
+        "packages/database/prisma/schema.prisma",
+        "packages/database/src/**/*.ts"
+      ],
+      "outputs": [
+        "packages/database/src/generated/**",
+        "node_modules/.prisma/**"
+      ]
+    },
+    "db:migrate": {
+      "cache": false,
+      "dependsOn": ["db:generate"]
+    },
+    "db:seed": {
+      "cache": false,
+      "dependsOn": ["db:migrate"]
+    },
+    "build": {
+      "dependsOn": ["^build", "db:generate"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
@@ -132,7 +154,7 @@
         "package.json",
         "tsconfig.json",
         ".env.local",
-        ".env.production.local", 
+        ".env.production.local",
         ".env",
         ".env.production",
         "!src/**/__tests__/**",
@@ -299,7 +321,7 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env.development.local",
-        ".env.local", 
+        ".env.local",
         ".env.development",
         ".env"
       ],
