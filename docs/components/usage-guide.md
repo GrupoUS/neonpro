@@ -63,10 +63,10 @@ Following **Atomic Design Methodology** with healthcare-specific extensions:
 
 **TanStack Router** file-based routing with component integration:
 
-```typescript
+````typescript
 // Route definition with component integration
 // apps/web/src/routes/dashboard.tsx
-import { PatientCard } from '@/components/molecules';
+import { PatientCard } from '@neonpro/shared';
 import { DashboardLayout } from '@/components/organisms';
 import { createFileRoute } from '@tanstack/react-router';
 
@@ -81,7 +81,6 @@ function Dashboard() {
     </DashboardLayout>
   );
 }
-```
 
 ---
 
@@ -112,7 +111,7 @@ export interface ButtonProps {
 
 // Usage across apps
 import { Button } from '@neonpro/ui';
-```
+````
 
 #### **Feature-Specific Components** (`apps/web/src/components/`)
 
@@ -173,19 +172,7 @@ interface HealthcareComponentProps {
 
 **TypeScript Configuration** (`tsconfig.json`):
 
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"],
-      "@neonpro/ui": ["../../packages/ui/src"],
-      "@neonpro/shared": ["../../packages/shared/src"],
-      "@neonpro/types": ["../../packages/types/src"]
-    }
-  }
-}
-```
-
+````json
 **Vite Configuration** (`vite.config.ts`):
 
 ```typescript
@@ -198,30 +185,32 @@ export default defineConfig({
     },
   },
 });
-```
+````
 
 ### Import Priority Hierarchy
 
-**1. Shared UI Package (Highest Priority)**
+import path from 'node:path';
+import { defineConfig } from 'vite';
 
-```typescript
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-```
-
-**2. Enhanced Molecules (Composed Components)**
-
-```typescript
-import { Alert, AlertDescription, AlertTitle } from '@/components/molecules/alert';
+export default defineConfig({
+resolve: {
+alias: {
+'@': path.resolve(__dirname, './src'),
+'@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+'@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
+},
+},
+});
 import { Table, TableBody, TableCell, TableHead } from '@/components/molecules/table';
-```
 
+````
 **3. Basic Atoms (Primitive Components)**
 
 ```typescript
 import { Badge } from '@/components/atoms/badge';
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
-```
+````
 
 **4. Specialized UI Components**
 
@@ -333,7 +322,8 @@ export function PatientRiskCard({
 
 **Component Testing with Healthcare Context:**
 
-```typescript
+````typescript
+// packages/shared/src/components/__tests__/patient-risk-card.test.tsx
 // packages/shared/src/components/__tests__/patient-risk-card.test.tsx
 import { render, screen } from '@testing-library/react';
 import { PatientRiskCard } from '../patient-risk-card';
@@ -358,7 +348,7 @@ describe('PatientRiskCard', () => {
         riskScore={mockRiskScore}
         userRole='professional'
         lgpdCompliant={true}
-        onScheduleIntervention={jest.fn()}
+        onScheduleIntervention={vi.fn()}
       />,
     );
 
@@ -366,9 +356,6 @@ describe('PatientRiskCard', () => {
     expect(screen.getByText('Agendar Lembrete')).toBeInTheDocument();
   });
 });
-```
-
-### Quality Gates
 
 **Build Process Integration:**
 
@@ -384,7 +371,7 @@ bun run test
 
 # Build verification
 bun run build
-```
+````
 
 ---
 
@@ -471,16 +458,13 @@ export function AccessibleButton({ children, ...props }: ButtonProps) {
 export function RealTimePatientStatus({ patientId }: Props) {
   const { data, isLoading } = useQuery({
     queryKey: ['patient-status', patientId],
+export function RealTimePatientStatus({ patientId }: Props) {
+  const { data, isLoading } = useQuery({
+    queryKey: ['patient-status', patientId],
     queryFn: () => fetchPatientStatus(patientId),
-    // Real-time updates for clinic operations
-    refetchInterval: 30000, // 30 seconds
-    // Optimistic updates for immediate feedback
-    optimisticUpdates: true,
+    // Atualizações em tempo real para operações da clínica
+    refetchInterval: 30000, // 30s
   });
-
-  // Loading states optimized for healthcare workflows
-  if (isLoading) {
-    return <PatientStatusSkeleton />;
   }
 
   return <PatientStatusDisplay data={data} />;
@@ -847,6 +831,22 @@ module.exports = {
         },
         accent: {
           DEFAULT: '#AC9469', // Warm Aesthetic Gold
+// tailwind.config.js - NeonPro healthcare theme
+export default {
+  theme: {
+    extend: {
+      colors: {
+        // NeonPro brand palette for aesthetic clinics
+        primary: {
+          DEFAULT: '#112031', // Deep Sophisticated Green
+          foreground: '#ffffff',
+        },
+        secondary: {
+          DEFAULT: '#294359', // Professional Petrol Blue
+          foreground: '#ffffff',
+        },
+        accent: {
+          DEFAULT: '#AC9469', // Warm Aesthetic Gold
           foreground: '#112031',
         },
         // Healthcare-specific colors
@@ -864,23 +864,6 @@ module.exports = {
     },
   },
 };
-```
-
-**Component Variants for Healthcare:**
-
-```typescript
-// Healthcare-specific button variants
-const healthcareButtonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background min-h-[44px]',
-  {
-    variants: {
-      variant: {
-        // Standard variants
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-
-        // Healthcare-specific variants
-        medical: 'bg-medical-info text-white hover:bg-medical-info/90',
         success: 'bg-medical-success text-white hover:bg-medical-success/90',
         warning: 'bg-medical-warning text-white hover:bg-medical-warning/90',
         emergency: 'bg-medical-error text-white hover:bg-medical-error/90 animate-pulse',
@@ -897,18 +880,17 @@ const healthcareButtonVariants = cva(
 ```typescript
 // Test utilities for healthcare components
 export const healthcareRenderOptions = {
+export const healthcareRenderOptions = {
   wrapper: ({ children }: { children: React.ReactNode }) => (
-    <QueryClient>
+    <QueryClientProvider client={new QueryClient()}>
       <ThemeProvider>
         <LGPDProvider>
           {children}
         </LGPDProvider>
       </ThemeProvider>
-    </QueryClient>
+    </QueryClientProvider>
   ),
 };
-
-// Mock healthcare data
 export const mockHealthcareData = {
   patient: {
     id: 'patient-123',

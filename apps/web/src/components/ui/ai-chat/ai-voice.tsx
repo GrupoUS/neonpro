@@ -18,11 +18,14 @@ export default function AIVoice({
   className,
 }: AIVoiceProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [hasAudioSupport] = useState(() =>
-    typeof window !== 'undefined'
-      && 'speechRecognition' in window
-    || 'webkitSpeechRecognition' in window
-  );
+  const [hasAudioSupport] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const hasMediaDevices = !!(navigator?.mediaDevices?.getUserMedia);
+    const hasRecorder = typeof MediaRecorder !== 'undefined';
+    // Se quiser manter a checagem opcional de STT:
+    // const hasSTT = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    return hasMediaDevices && hasRecorder;
+  });
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -43,11 +46,14 @@ export default function AIVoice({
         const audioChunks: Blob[] = [];
 
         mediaRecorder.ondataavailable = event => {
-          audioChunks.push(event.data);
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
         };
 
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          const mimeType = mediaRecorder.mimeType || audioChunks[0]?.type || 'audio/webm';
+          const audioBlob = new Blob(audioChunks, { type: mimeType });
           onVoiceInput?.(audioBlob);
           stream.getTracks().forEach(track => track.stop());
         };

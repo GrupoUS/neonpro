@@ -28,9 +28,15 @@ function ClientsPage() {
         .limit(100);
       if (search) {
         // simple ilike on name/email/phone
-        q = q.or(
-          `full_name.ilike.%${search}%,email.ilike.%${search}%,phone_primary.ilike.%${search}%`,
-        );
+        const term = search.trim();
+        if (term.length >= 2) {
+          // remove caracteres que quebram a gramática do PostgREST (.or)
+          const safe = term.replace(/[(),]/g, '').replace(/[%_]/g, '');
+          const pattern = `%${safe}%`;
+          q = q.or(
+            `full_name.ilike.${pattern},email.ilike.${pattern},phone_primary.ilike.${pattern}`,
+          );
+        }
       }
       const { data, error } = await q;
       if (error) throw error;

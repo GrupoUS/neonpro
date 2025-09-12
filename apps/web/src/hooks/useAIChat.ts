@@ -21,7 +21,7 @@ const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
  */
 export function useAIChat(clientId?: string) {
   const queryClient = useQueryClient();
-  const sessionId = useState(() => nanoid())[0];
+  const [sessionId] = useState(() => nanoid());
 
   // Chat state management
   const [chatState, setChatState] = useState<ChatState>(() => {
@@ -166,7 +166,9 @@ export function useAIChat(clientId?: string) {
         error: error instanceof Error ? error.message : 'Erro desconhecido',
       }));
     },
-  }); // Search suggestions query
+  });
+
+  // Search suggestions query
   const {
     data: searchSuggestions = [],
     isLoading: suggestionsLoading,
@@ -218,7 +220,7 @@ export function useAIChat(clientId?: string) {
     if (lastUserMessage) {
       // Remove messages after the last user message
       const messageIndex = chatState.messages.findIndex(m => m.id === lastUserMessage.id);
-      const newMessages = chatState.messages.slice(0, messageIndex);
+      const newMessages = chatState.messages.slice(0, messageIndex + 1);
 
       setChatState(prev => ({
         ...prev,

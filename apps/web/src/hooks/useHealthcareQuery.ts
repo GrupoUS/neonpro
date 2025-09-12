@@ -417,7 +417,7 @@ export function useEmergencyDetection() {
     },
 
     onSuccess: (data: any) => {
-      toast.error(
+      toast.warning(
         `Emergência detectada: ${String((data as any)?.severity ?? 'ALTA').toUpperCase()}`,
         {
           duration: 10000,

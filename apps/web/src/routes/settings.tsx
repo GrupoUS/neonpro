@@ -2,8 +2,7 @@ import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell, Globe, Lock, Palette, Shield, Users } from 'lucide-react';
 
@@ -27,7 +26,12 @@ function SettingsPage() {
   if (loading) {
     return (
       <div className='flex items-center justify-center min-h-screen'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+        <div
+          className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'
+          role='status'
+          aria-label='Carregando'
+        >
+        </div>
       </div>
     );
   }
@@ -87,7 +91,7 @@ function SettingsPage() {
 
             <div className='space-y-2'>
               <Label htmlFor='language'>Idioma</Label>
-              <select className='w-full p-2 border rounded-md'>
+              <select id='language' name='language' className='w-full p-2 border rounded-md'>
                 <option value='pt-BR'>Português (Brasil)</option>
                 <option value='en-US'>English (US)</option>
                 <option value='es-ES'>Español</option>
@@ -130,7 +134,11 @@ function SettingsPage() {
             <div className='space-y-2'>
               <Label>Cor Principal</Label>
               <div className='flex space-x-2'>
-                <div className='w-8 h-8 bg-blue-500 rounded-full border-2 border-primary'></div>
+                <button
+                  type='button'
+                  aria-label='Selecionar cor azul'
+                  className='w-8 h-8 bg-blue-500 rounded-full border-2 border-primary'
+                />
                 <div className='w-8 h-8 bg-purple-500 rounded-full'></div>
                 <div className='w-8 h-8 bg-green-500 rounded-full'></div>
                 <div className='w-8 h-8 bg-orange-500 rounded-full'></div>

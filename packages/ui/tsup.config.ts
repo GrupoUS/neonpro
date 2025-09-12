@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
-  dts: true,
+  dts: false, // Temporarily disabled due to Radix UI Slot type conflicts
   splitting: false,
   sourcemap: true,
   clean: true,

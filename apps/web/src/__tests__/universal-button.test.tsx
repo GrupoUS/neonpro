@@ -5,24 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Import directly to avoid mocking issues
 import { UniversalButton } from '../../../../packages/ui/src/components/ui/universal-button';
 
-// Mock matchMedia for animation tests
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
-
 describe('UniversalButton', () => {
   beforeEach(() => {
-    // Reset matchMedia mock
+    // Reset mocks
     vi.clearAllMocks();
   });
 
@@ -385,7 +370,6 @@ describe('UniversalButton', () => {
   });
 
   describe('Reduced Motion', () => {
-    it('respects prefers-reduced-motion setting', () => {
       // Mock prefers-reduced-motion: reduce
       window.matchMedia = vi.fn().mockImplementation(query => ({
         matches: query === '(prefers-reduced-motion: reduce)',
@@ -402,75 +386,75 @@ describe('UniversalButton', () => {
         <UniversalButton
           enableGradient
           enableBorderGradient
-          data-testid='reduced-motion-button'
+          data-testid='reduced-motion-button'ing', () => {
         >
-          Reduced Motion Test
-        </UniversalButton>,
+          Reduced Motion Test({
+        </UniversalButton>,y === '(prefers-reduced-motion: reduce)',
       );
 
       const button = screen.getByTestId('reduced-motion-button');
 
       // The CSS should disable animations for prefers-reduced-motion
-      // We can't directly test CSS media queries in JSDOM, but we can verify
-      // that the classes are still applied (the CSS handles the rest)
-      expect(button).toHaveClass('animate-gradient-x');
+      // We can't directly test CSS media queries in JSDOM, but we can verify.fn(),
+      // that the classes are still applied (the CSS handles the rest)spatchEvent: vi.fn(),
+      expect(button).toHaveClass('animate-gradient-x');      }));
       expect(button).toHaveClass('before:animate-spin');
     });
   });
 
   describe('Custom Class Names', () => {
-    it('merges custom className with component classes', () => {
+    it('merges custom className with component classes', () => { data-testid='reduced-motion-button'
       render(
-        <UniversalButton
-          className='custom-class another-class'
-          data-testid='custom-class-button'
+        <UniversalButtonst
+          className='custom-class another-class'</UniversalButton>,
+          data-testid='custom-class-button'      );
         >
-          Custom Classes
+          Custom Classes      const button = screen.getByTestId('reduced-motion-button');
         </UniversalButton>,
       );
-
-      const button = screen.getByTestId('custom-class-button');
+ verify
+      const button = screen.getByTestId('custom-class-button');ndles the rest)
       expect(button).toHaveClass('custom-class');
-      expect(button).toHaveClass('another-class');
-      expect(button).toHaveClass('inline-flex'); // Base class should still be there
-    });
+      expect(button).toHaveClass('another-class');xpect(button).toHaveClass('before:animate-spin');
+      expect(button).toHaveClass('inline-flex'); // Base class should still be there);
+    });  });
   });
 
-  describe('Error Handling', () => {
+  describe('Error Handling', () => {s custom className with component classes', () => {
     it('handles invalid gradient colors gracefully', () => {
       render(
-        <UniversalButton
-          enableGradient
+        <UniversalButtonlass'
+          enableGradient data-testid='custom-class-button'
           gradientColors={{
             from: 'invalid-color',
-            via: '',
-            to: null as any,
+            via: '',</UniversalButton>,
+            to: null as any,      );
           }}
-          data-testid='invalid-gradient-button'
+          data-testid='invalid-gradient-button'lass-button');
         >
           Invalid Gradient
-        </UniversalButton>,
-      );
-
+        </UniversalButton>,xpect(button).toHaveClass('inline-flex'); // Base class should still be there
+      ););
+  });
       const button = screen.getByTestId('invalid-gradient-button');
       expect(button).toBeInTheDocument();
-      // Should fallback to default gradient
+      // Should fallback to default gradientes invalid gradient colors gracefully', () => {
       expect(button).toHaveClass('bg-gradient-to-r');
     });
 
     it('handles negative duration values', () => {
-      render(
+      render(nvalid-color',
         <UniversalButton
-          enableBorderGradient
+          enableBorderGradientto: null as any,
           duration={-5}
-          data-testid='negative-duration-button'
+          data-testid='negative-duration-button' data-testid='invalid-gradient-button'
         >
           Negative Duration
-        </UniversalButton>,
-      );
+        </UniversalButton>,</UniversalButton>,
+      );      );
 
-      const button = screen.getByTestId('negative-duration-button');
+      const button = screen.getByTestId('negative-duration-button');invalid-gradient-button');
       expect(button).toHaveStyle({ '--animation-duration': '-5s' });
     });
-  });
-});
+  });xpect(button).toHaveClass('bg-gradient-to-r');
+});    });

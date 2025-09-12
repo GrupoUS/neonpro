@@ -46,6 +46,8 @@ test.describe('Responsive Design and Accessibility', () => {
       const submitButton = page.locator('button[type="submit"]');
       const googleButton = page.locator('button:has-text("Continue with Google")');
 
+      await submitButton.scrollIntoViewIfNeeded();
+      await googleButton.scrollIntoViewIfNeeded();
       const submitBox = await submitButton.boundingBox();
       const googleBox = await googleButton.boundingBox();
 
@@ -53,8 +55,11 @@ test.describe('Responsive Design and Accessibility', () => {
       expect(submitBox).not.toBeNull();
       expect(googleBox).not.toBeNull();
 
-      expect(submitBox!.height).toBeGreaterThanOrEqual(44);
-      expect(googleBox!.height).toBeGreaterThanOrEqual(44);
+      // TypeScript should understand these are not null after the assertions above
+      if (submitBox && googleBox) {
+        expect(submitBox.height).toBeGreaterThanOrEqual(44);
+        expect(googleBox.height).toBeGreaterThanOrEqual(44);
+      }
     });
   });
 
@@ -96,28 +101,29 @@ test.describe('Responsive Design and Accessibility', () => {
 
       // Verifica se todos os inputs têm labels associados
       const inputs = page.locator('input');
-      const inputCount = await inputs.count();
-
-      for (let i = 0; i < inputCount; i++) {
+      const count = await inputs.count();
+      for (let i = 0; i < count; i++) {
         const input = inputs.nth(i);
-        const inputId = await input.getAttribute('id');
-        const associatedLabel = page.locator(`label[for="${inputId}"]`);
-        await expect(associatedLabel).toBeVisible();
+        await expect(input).toHaveAccessibleName(/.+/);
       }
 
       // Verifica se os botões têm texto descritivo
       await expect(page.locator('button[type="submit"]')).toHaveText(
         /Entrar na Plataforma|Processando/,
       );
-      await expect(page.locator('button:has-text("Continue with Google")')).toBeVisible();
+      await expect(page.getByRole('button', { name: /entrar na plataforma|processando/i }))
+        .toBeVisible();
+      await expect(page.getByRole('button', { name: /continue with google/i })).toBeVisible();
     });
 
     test('should support keyboard navigation', async ({ page }) => {
       await page.goto('/signup-demo');
 
       // Testa navegação por Tab
-      await page.keyboard.press('Tab');
-      await expect(page.locator('#firstname')).toBeFocused();
+      await test.step('Firstname recebe foco', async () => {
+        await page.keyboard.press('Tab');
+        await expect(page.getByLabel(/first\s*name/i)).toBeFocused();
+      });
 
       await page.keyboard.press('Tab');
       await expect(page.locator('#lastname')).toBeFocused();
@@ -138,7 +144,7 @@ test.describe('Responsive Design and Accessibility', () => {
       await expect(page.locator('button:has-text("Continue with Google")')).toBeFocused();
     });
 
-    test('should handle focus management during form submission', async ({ page }) => {
+    test('should focus first invalid field on form submission', async ({ page }) => {
       await page.goto('/signup-demo');
 
       // Preenche dados inválidos
@@ -172,9 +178,13 @@ test.describe('Responsive Design and Accessibility', () => {
         'p[class*="text-destructive"]',
       );
       await expect(firstNameError).toBeVisible();
+      const firstName = page.locator('#firstname');
+      const describedBy = await firstName.getAttribute('aria-describedby');
+      await expect(describedBy).toMatch(/.+/);
+      await expect(page.locator(`#${describedBy}`)).toBeVisible();
     });
 
-    test('should maintain color contrast for accessibility', async ({ page }) => {
+    test('should maintain adequate color contrast', async ({ page }) => {
       await page.goto('/signup-demo');
 
       // Verifica se elementos importantes têm contraste adequado

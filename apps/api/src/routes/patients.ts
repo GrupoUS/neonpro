@@ -6,16 +6,32 @@
 import { zValidator } from '@hono/zod-validator';
 import { BaseService, prisma } from '@neonpro/database';
 import { Hono } from 'hono';
+import type { Context } from 'hono';
 import { cache } from 'hono/cache';
 import { etag } from 'hono/etag';
 import { z } from 'zod';
 
-const app = new Hono();
+// Consent duration configuration (defaults to 1 year)
+const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
+const CONSENT_DURATION_MS = (() => {
+  const v = process.env.CONSENT_DURATION_MS;
+  const n = v ? Number(v) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : DEFAULT_CONSENT_DURATION_MS;
+})();
+
+// Define context variables interface
+interface Variables {
+  userId: string;
+}
+
+// Create typed Hono instance
+const app = new Hono<{ Variables: Variables }>();
 
 // Patient validation schemas
 const PatientCreateSchema = z.object({
   clinicId: z.string().uuid(),
   fullName: z.string().min(2).max(100),
+  familyName: z.string().min(1).max(50),
   cpf: z.string().optional(),
   birthDate: z.string().datetime().optional(),
   phone: z.string().optional(),
@@ -36,6 +52,11 @@ const PatientQuerySchema = z.object({
 });
 
 class PatientService extends BaseService {
+  // Add public wrapper method for clinic access validation
+  async checkClinicAccess(userId: string, clinicId: string): Promise<boolean> {
+    return this.validateClinicAccess(userId, clinicId);
+  }
+
   async getPatients(
     clinicId: string,
     userId: string,
@@ -84,9 +105,10 @@ class PatientService extends BaseService {
                   id: true,
                   startTime: true,
                   status: true,
-                  service: {
-                    select: { name: true },
-                  },
+                  // Remove the invalid service relation for now
+                  // service: {
+                  //   select: { name: true },
+                  // },
                 },
               },
               _count: {
@@ -134,14 +156,15 @@ class PatientService extends BaseService {
                 professional: {
                   select: { fullName: true },
                 },
-                service: {
-                  select: { name: true, duration: true },
-                },
+                // Remove the invalid service relation for now
+                // service: {
+                //   select: { name: true, duration: true },
+                // },
               },
             },
-            consentRecord: {
+            consentRecords: {
               where: { status: 'GRANTED' },
-              orderBy: { grantedAt: 'desc' },
+              orderBy: { createdAt: 'desc' },
             },
           },
         });
@@ -176,10 +199,14 @@ class PatientService extends BaseService {
         newValues: data,
       },
       async () => {
+        // Generate medical record number
+        const medicalRecordNumber = await this.generateMedicalRecordNumber(data.clinicId);
+
         const patient = await prisma.patient.create({
           data: {
             ...data,
-            lgpdConsentDate: data.lgpdConsentGiven ? new Date() : null,
+            medicalRecordNumber,
+            dataConsentDate: data.lgpdConsentGiven ? new Date() : null,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
@@ -195,10 +222,13 @@ class PatientService extends BaseService {
           await prisma.consentRecord.create({
             data: {
               patientId: patient.id,
+              clinicId: data.clinicId,
               purpose: 'MEDICAL_TREATMENT',
               status: 'GRANTED',
-              grantedAt: new Date(),
-              expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+              consentType: 'EXPLICIT',
+              legalBasis: 'CONSENT',
+              collectionMethod: 'ONLINE_FORM',
+              expiresAt: new Date(Date.now() + CONSENT_DURATION_MS), // default 1 year, configurable via CONSENT_DURATION_MS
             },
           });
         }
@@ -206,6 +236,14 @@ class PatientService extends BaseService {
         return patient;
       },
     );
+  }
+
+  // Add method to generate medical record number
+  private async generateMedicalRecordNumber(clinicId: string): Promise<string> {
+    const count = await prisma.patient.count({
+      where: { clinicId },
+    });
+    return `MR${clinicId.slice(-6).toUpperCase()}${(count + 1).toString().padStart(4, '0')}`;
   }
 
   async updatePatient(data: z.infer<typeof PatientUpdateSchema>, userId: string) {
@@ -249,9 +287,9 @@ class PatientService extends BaseService {
 const patientService = new PatientService();
 
 // Middleware for authentication and clinic access validation
-const validateClinicAccess = async (c: any, next: any) => {
-  const userId = c.get('userId'); // From auth middleware
-  const clinicId = c.req.query('clinicId') || c.req.json()?.clinicId;
+const validateClinicAccess = async (c: Context<{ Variables: Variables }>, next: any) => {
+  const userId = c.get('userId'); // Now properly typed
+  const clinicId = c.req.query('clinicId') || (await c.req.json())?.clinicId;
 
   if (!userId) {
     return c.json({ error: 'Unauthorized' }, 401);
@@ -261,12 +299,12 @@ const validateClinicAccess = async (c: any, next: any) => {
     return c.json({ error: 'Clinic ID required' }, 400);
   }
 
-  const hasAccess = await patientService.validateClinicAccess(userId, clinicId);
+  const hasAccess = await patientService.checkClinicAccess(userId, clinicId);
   if (!hasAccess) {
     return c.json({ error: 'Access denied to clinic' }, 403);
   }
 
-  await next();
+  return await next();
 };
 
 // Routes with optimized caching and validation
@@ -281,7 +319,7 @@ app.get(
   validateClinicAccess,
   async c => {
     const query = c.req.valid('query');
-    const userId = c.get('userId');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const result = await patientService.getPatients(
@@ -321,7 +359,7 @@ app.get(
   validateClinicAccess,
   async c => {
     const patientId = c.req.param('id');
-    const userId = c.get('userId');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.getPatientById(patientId, userId);
@@ -348,7 +386,7 @@ app.post(
   validateClinicAccess,
   async c => {
     const data = c.req.valid('json');
-    const userId = c.get('userId');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.createPatient(data, userId);
