@@ -16,6 +16,7 @@ import {
 import { Link, useRouter } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import React, { useState } from 'react';
+import { AnimatedThemeToggler as ThemeToggleButton } from '@neonpro/ui';
 
 export default function SidebarDemo({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -96,8 +97,16 @@ export default function SidebarDemo({ children }: { children: React.ReactNode })
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className='justify-between gap-10'>
           <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto'>
-            {open ? <Logo /> : <LogoIcon />}
-            <div className='mt-8 flex flex-col gap-2'>
+            <div className='flex items-center justify-between pr-2'>
+              {open ? <Logo /> : <LogoIcon />}
+              <div className='ml-auto pl-2'>
+                {/* Theme toggler visible on all pages */}
+                {import.meta.env.VITE_ENABLE_THEME_TOGGLE !== 'false' && (
+                  <ThemeToggleButton />
+                )}
+              </div>
+            </div>
+            <div className='mt-6 flex flex-col gap-2'>
               {links.map((link, idx) => <SidebarLink key={idx} link={link} />)}
             </div>
           </div>

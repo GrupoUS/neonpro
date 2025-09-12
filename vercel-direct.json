@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/web && bun install && bun run build",
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "bun install",
-  "framework": null,
-
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "functions": {},
   "rewrites": [
     {
       "source": "/(.*)",

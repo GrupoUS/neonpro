@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/web && bun install && bun run build",
+  "buildCommand": "npx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "bun install",
+  "installCommand": "npm install",
   "framework": null,
-
+  "functions": {},
   "rewrites": [
     {
       "source": "/(.*)",

@@ -1,32 +1,21 @@
 /**
  * @neonpro/ui - NeonPro UI Components Library
- * 
- * This package contains only the KokonutUI Gradient Button and Aceternity Hover-Border Gradient Button
- * components as reusable UI elements for the NeonPro aesthetic clinic management platform.
- * 
- * Built with:
- * - React 19+ with TypeScript strict mode
- * - Tailwind CSS for styling
- * - NeonPro Pantone color palette
- * - class-variance-authority for variant management
- * - Motion/React for animations
- * 
- * @author NeonPro Development Team
- * @version 0.1.0
+ *
+ * Shared UI kit for NeonPro apps (React 19, Tailwind, motion).
  */
 
-// Export utility functions
-export { cn } from "./utils";
+export { cn } from './utils';
 
-// Export KokonutUI Gradient Button
-export { 
-  KokonutGradientButton, 
+export {
+  KokonutGradientButton,
   kokonutGradientButtonVariants,
-  type KokonutGradientButtonProps 
-} from "./KokonutGradientButton";
+  type KokonutGradientButtonProps,
+} from './KokonutGradientButton';
 
-// Export Aceternity Hover-Border Gradient Button  
-export { 
+export {
   AceternityHoverBorderGradientButton,
-  type AceternityHoverBorderGradientButtonProps 
-} from "./AceternityHoverBorderGradientButton";
+  type AceternityHoverBorderGradientButtonProps,
+} from './AceternityHoverBorderGradientButton';
+
+export { AnimatedThemeToggler } from './AnimatedThemeToggler';
+export * as ThemeBridge from './theme';

@@ -6,13 +6,14 @@ import type { Database } from './types';
 // Get Supabase credentials from environment variables
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const IS_TEST = typeof import.meta !== 'undefined' && (import.meta as any).env?.MODE === 'test';
 
 // Validate required environment variables
-if (!SUPABASE_URL) {
+if (!SUPABASE_URL && !IS_TEST) {
   throw new Error('Missing required environment variable: VITE_SUPABASE_URL');
 }
 
-if (!SUPABASE_PUBLISHABLE_KEY) {
+if (!SUPABASE_PUBLISHABLE_KEY && !IS_TEST) {
   throw new Error('Missing required environment variable: VITE_SUPABASE_ANON_KEY');
 }
 
@@ -22,8 +23,8 @@ import { getSiteUrl } from '@/lib/site-url';
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
+  SUPABASE_URL || 'http://localhost:54321',
+  SUPABASE_PUBLISHABLE_KEY || 'test-anon-key',
   {
     auth: {
       storage: typeof globalThis !== 'undefined' && typeof globalThis.localStorage !== 'undefined'

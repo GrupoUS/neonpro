@@ -19,6 +19,7 @@
     "format": "dprint fmt", 
     "format:check": "dprint check",
     "type-check": "tsc --noEmit",
+    "pretest": "pnpm run routes:generate",
     "test": "vitest --run",
     "test:watch": "vitest",
     "coverage": "vitest --run --coverage",

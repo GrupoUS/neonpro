@@ -264,3 +264,39 @@ If you find components that conflict:
 5. Document the decision for team reference
 
 This guide ensures consistent, conflict-free usage of all UI components in the NeonPro project.
+
+
+## MagicUI shine-border and magic-card usage (scoped)
+
+We integrated lightweight equivalents of MagicUI's ShineBorder and MagicCard in `apps/web/src/components/ui/shine-border.tsx` and `apps/web/src/components/ui/magic-card.tsx`.
+
+To avoid page-wide application, the base `Card` component is now opt-in for these effects via a `magic` prop.
+
+- File: `apps/web/src/components/molecules/card.tsx`
+- Prop: `magic?: boolean` (default: false)
+- Optional: `magicDisabled?: boolean` to force-disable when needed
+
+Usage examples:
+
+```tsx
+// With animated border + hover highlight
+<Card magic>
+  <CardHeader>...</CardHeader>
+  <CardContent>...</CardContent>
+</Card>
+
+// Default card (no MagicUI effects)
+<Card>...</Card>
+```
+
+Current application:
+- Dashboard stat cards opt-in: see `apps/web/src/routes/dashboard.tsx` (4 KPI cards use `<Card magic>`)
+- All other cards remain plain by default for focus and performance.
+
+Customization notes:
+- `ShineBorder` supports `radius`, `borderWidth`, and `glow` props if you need custom wrappers.
+- `MagicCard` supports `intensity` and responds to pointer move; keep it off on highly interactive forms.
+
+Accessibility/performance:
+- Effects are disabled under `MODE=test` to keep unit tests deterministic.
+- Prefer opt-in on small, decorative KPI tiles; avoid on long scrolling lists or forms.

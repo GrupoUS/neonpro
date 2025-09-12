@@ -161,3 +161,29 @@ if (!(HTMLFormElement.prototype as any).requestSubmit) {
     this.dispatchEvent(event);
   };
 }
+
+// Mock only the AnimatedThemeToggler while preserving other exports
+vi.mock('@neonpro/ui', async () => {
+  const actual = await vi.importActual<any>('@neonpro/ui');
+  return {
+    ...actual,
+    AnimatedThemeToggler: () => null,
+  } as any;
+});
+
+// Silence analytics during tests
+vi.mock('@/lib/analytics', async () => {
+  const noop = () => undefined;
+  return {
+    analytics: {
+      initialize: () => Promise.resolve(),
+      cleanup: noop,
+      trackPageView: noop,
+      trackEvent: noop,
+      trackInteraction: noop,
+      setUserId: noop,
+      exportUserData: vi.fn().mockResolvedValue({}),
+      deleteUserData: vi.fn().mockResolvedValue(undefined),
+    },
+  } as any;
+});

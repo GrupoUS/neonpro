@@ -14,6 +14,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    pool: 'forks',
+    threads: false,
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',
       'lib/**/*.{test,spec}.{ts,tsx}',

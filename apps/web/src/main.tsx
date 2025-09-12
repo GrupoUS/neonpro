@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import { routeTree } from './routeTree.gen';
 import { ConsentProvider } from './contexts/ConsentContext';
 import './index.css';
+import { ThemeProvider } from './components/theme-provider';
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -20,7 +21,9 @@ declare module '@tanstack/react-router' {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ConsentProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </ConsentProvider>
   </React.StrictMode>,
 );
