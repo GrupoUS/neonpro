@@ -1,7 +1,7 @@
 # 🏛️ NeonPro Component Governance Policies
 
-**Version:** 1.0  
-**Effective Date:** 2025-01-12  
+**Version:** 1.0\
+**Effective Date:** 2025-01-12\
 **Status:** ✅ **ACTIVE**
 
 ---
@@ -15,11 +15,13 @@ This document establishes governance policies for component development, mainten
 ## 🎯 **Core Principles**
 
 ### **1. Single Source of Truth**
+
 - Each component should have **one primary implementation**
 - Avoid duplicate components with identical functionality
 - Prioritize shared components over local implementations
 
 ### **2. Clear Ownership Hierarchy**
+
 ```
 @neonpro/ui (Highest Priority)
     ↓
@@ -33,6 +35,7 @@ This document establishes governance policies for component development, mainten
 ```
 
 ### **3. Atomic Design Compliance**
+
 - **Atoms**: Basic UI elements (buttons, inputs, labels)
 - **Molecules**: Simple combinations of atoms (cards, alerts, tables)
 - **Organisms**: Complex UI sections (dashboards, forms, navigation)
@@ -44,11 +47,13 @@ This document establishes governance policies for component development, mainten
 ## 📏 **Component Standards**
 
 ### **Naming Conventions**
+
 - **PascalCase** for component names: `Button`, `MagicCard`, `UniversalButton`
 - **kebab-case** for file names: `button.tsx`, `magic-card.tsx`, `universal-button.tsx`
 - **Descriptive names** that indicate purpose: `PatientForm`, `AppointmentTable`
 
 ### **File Structure**
+
 ```
 components/
 ├── atoms/
@@ -69,6 +74,7 @@ components/
 ```
 
 ### **Export Standards**
+
 - **Named exports** preferred: `export { Button }`
 - **Barrel exports** in index.ts files
 - **Type exports** alongside component exports
@@ -79,33 +85,36 @@ components/
 ## 🚫 **Prohibited Practices**
 
 ### **Component Conflicts**
+
 - ❌ **No duplicate components** with same functionality
 - ❌ **No conflicting import paths** for same component
 - ❌ **No circular dependencies** between components
 - ❌ **No direct file imports** when barrel exports exist
 
 ### **Architecture Violations**
+
 - ❌ **Atoms cannot import molecules/organisms**
 - ❌ **Molecules cannot import organisms**
 - ❌ **No business logic in atoms/molecules**
 - ❌ **No direct DOM manipulation** (use refs appropriately)
 
 ### **Import Anti-Patterns**
+
 ```typescript
 // ❌ DON'T - Mixing sources
 import { Button } from '@/components/ui/button';
 import { ButtonProps } from '@neonpro/ui';
 
 // ❌ DON'T - Direct file imports when barrel exists
-import { Button } from '@/components/atoms/button';
 import { Badge } from '@/components/atoms/badge';
+import { Button } from '@/components/atoms/button';
 
 // ✅ DO - Consistent sources
-import { Button } from '@neonpro/ui';
 import { Badge } from '@/components/atoms/badge';
+import { Button } from '@neonpro/ui';
 
 // ✅ DO - Use barrel exports
-import { Button, Badge } from '@/components/atoms';
+import { Badge, Button } from '@/components/atoms';
 ```
 
 ---
@@ -113,6 +122,7 @@ import { Button, Badge } from '@/components/atoms';
 ## ✅ **Required Practices**
 
 ### **Component Development**
+
 1. **Research existing components** before creating new ones
 2. **Follow atomic design principles** for component placement
 3. **Use TypeScript interfaces** for all props
@@ -120,12 +130,14 @@ import { Button, Badge } from '@/components/atoms';
 5. **Implement proper error boundaries** for organisms
 
 ### **Testing Requirements**
+
 - **Unit tests** for all atoms and molecules
 - **Integration tests** for organisms
 - **Visual regression tests** for UI components
 - **Accessibility tests** for all interactive components
 
 ### **Documentation Requirements**
+
 - **Component props documentation** in TypeScript interfaces
 - **Usage examples** in component files or Storybook
 - **Migration guides** for breaking changes
@@ -136,6 +148,7 @@ import { Button, Badge } from '@/components/atoms';
 ## 🔄 **Change Management Process**
 
 ### **Adding New Components**
+
 1. **Check for existing alternatives** in all component directories
 2. **Propose component location** following atomic design
 3. **Create RFC** for complex components or new patterns
@@ -143,6 +156,7 @@ import { Button, Badge } from '@/components/atoms';
 5. **Update component usage guide**
 
 ### **Modifying Existing Components**
+
 1. **Assess breaking change impact** on existing usage
 2. **Create deprecation plan** for removed features
 3. **Implement backward compatibility** when possible
@@ -150,6 +164,7 @@ import { Button, Badge } from '@/components/atoms';
 5. **Document migration path** for breaking changes
 
 ### **Removing Components**
+
 1. **Add deprecation warnings** (TypeScript + runtime)
 2. **Update documentation** with migration instructions
 3. **Provide migration period** (minimum 2 releases)
@@ -161,12 +176,14 @@ import { Button, Badge } from '@/components/atoms';
 ## 🛡️ **Quality Gates**
 
 ### **Pre-commit Checks**
+
 - ✅ **TypeScript compilation** passes
 - ✅ **ESLint rules** pass with no errors
 - ✅ **Unit tests** pass
 - ✅ **No duplicate component names** detected
 
 ### **Pre-merge Checks**
+
 - ✅ **Build process** completes successfully
 - ✅ **Integration tests** pass
 - ✅ **Visual regression tests** pass
@@ -174,6 +191,7 @@ import { Button, Badge } from '@/components/atoms';
 - ✅ **Component conflicts** resolved
 
 ### **Release Checks**
+
 - ✅ **All tests** pass in CI/CD
 - ✅ **Documentation** updated
 - ✅ **Migration guides** provided for breaking changes
@@ -184,6 +202,7 @@ import { Button, Badge } from '@/components/atoms';
 ## 🔧 **Automated Enforcement**
 
 ### **ESLint Rules**
+
 ```json
 {
   "rules": {
@@ -203,12 +222,14 @@ import { Button, Badge } from '@/components/atoms';
 ```
 
 ### **TypeScript Strict Mode**
+
 - **Strict null checks** enabled
 - **No implicit any** enforced
 - **Unused locals** detection enabled
 - **Consistent type imports** enforced
 
 ### **Build-time Validation**
+
 - **Duplicate component detection** script
 - **Import path validation** checks
 - **Circular dependency detection**
@@ -219,12 +240,14 @@ import { Button, Badge } from '@/components/atoms';
 ## 📊 **Monitoring & Metrics**
 
 ### **Component Health Metrics**
+
 - **Usage frequency** across codebase
 - **Import path consistency** percentage
 - **Test coverage** per component
 - **Bundle size impact** per component
 
 ### **Architecture Compliance**
+
 - **Atomic design violations** count
 - **Circular dependencies** detected
 - **Duplicate components** identified
@@ -235,11 +258,13 @@ import { Button, Badge } from '@/components/atoms';
 ## 🚨 **Violation Response**
 
 ### **Severity Levels**
+
 - **🔴 Critical**: Duplicate components, circular dependencies
 - **🟡 Warning**: Deprecated usage, missing tests
 - **🔵 Info**: Style guide violations, documentation gaps
 
 ### **Response Actions**
+
 - **Critical**: Block merge, require immediate fix
 - **Warning**: Create issue, schedule fix in next sprint
 - **Info**: Add to backlog, address in maintenance cycle
@@ -249,14 +274,17 @@ import { Button, Badge } from '@/components/atoms';
 ## 📚 **Resources**
 
 ### **Documentation**
+
 - **Component Usage Guide**: `docs/component-usage-guide.md`
 - **Architecture Analysis**: `docs/neonpro-component-architecture-analysis.md`
 - **Migration Guides**: `docs/migrations/`
 
 ### **Tools**
-- **Component Analyzer**: `scripts/analyze-components.js`
-- **Duplicate Detector**: `scripts/detect-duplicates.js`
-- **Import Validator**: `scripts/validate-imports.js`
+
+- **Component Conflict Detector**: `scripts/detect-component-conflicts.js`
+- **Visual Regression Testing**: Playwright + Percy (recommended)
+- **Bundle Size Monitor**: Built into build process
+- **Import Path Validator**: ESLint rules
 
 ---
 
@@ -269,6 +297,6 @@ import { Button, Badge } from '@/components/atoms';
 
 ---
 
-**Policy Owner**: Development Team  
-**Next Review**: 2025-04-12  
+**Policy Owner**: Development Team\
+**Next Review**: 2025-04-12\
 **Version History**: v1.0 (2025-01-12) - Initial policy establishment

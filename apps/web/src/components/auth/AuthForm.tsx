@@ -1,9 +1,9 @@
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { Alert, AlertDescription } from '@/components/molecules/alert';
-import { Button } from '@neonpro/ui';
+import { UniversalButton } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
-// MagicCard removed - using enhanced Card with permanent shine border effect
+// Enhanced with permanent shine border effect and smooth animations
 import { showToast } from '@/components/ui/toaster';
 import {
   resetPassword,
@@ -128,6 +128,11 @@ export function AuthForm(
       shineDuration={8}
       shineColor='#AC9469'
       borderWidth={1}
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+        backdropFilter: 'blur(10px)',
+        borderImage: 'linear-gradient(135deg, #AC9469, #112031, #294359) 1',
+      }}
     >
       <CardHeader className='text-center space-y-2'>
         <CardTitle className='text-3xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent'>
@@ -143,22 +148,46 @@ export function AuthForm(
           role='tablist'
           aria-label='Escolher ação de autenticação'
         >
-          <Button
+          <UniversalButton
             role='tab'
             aria-selected={mode === 'sign-in'}
-            variant={mode === 'sign-in' ? 'default' : 'outline'}
+            variant={mode === 'sign-in' ? 'default' : 'secondary'}
+            size='lg'
             onClick={() => setMode('sign-in')}
+            animations={{
+              shineBorder: {
+                enabled: mode === 'sign-in',
+                pattern: 'linear',
+                intensity: 'vibrant',
+                theme: 'gold',
+                speed: 'normal',
+                hoverOnly: true,
+              },
+            }}
+            className='transition-all duration-300'
           >
             Entrar
-          </Button>
-          <Button
+          </UniversalButton>
+          <UniversalButton
             role='tab'
             aria-selected={mode === 'sign-up'}
-            variant={mode === 'sign-up' ? 'default' : 'outline'}
+            variant={mode === 'sign-up' ? 'default' : 'secondary'}
+            size='lg'
             onClick={() => setMode('sign-up')}
+            animations={{
+              shineBorder: {
+                enabled: mode === 'sign-up',
+                pattern: 'linear',
+                intensity: 'vibrant',
+                theme: 'gold',
+                speed: 'normal',
+                hoverOnly: true,
+              },
+            }}
+            className='transition-all duration-300'
           >
             Criar conta
-          </Button>
+          </UniversalButton>
         </div>
 
         {error && (
@@ -168,16 +197,27 @@ export function AuthForm(
         )}
 
         {mode !== 'forgot' && (
-          <Button
+          <UniversalButton
             type='button'
-            variant='outline'
-            className='w-full h-10'
+            variant='secondary'
+            size='lg'
+            className='w-full h-12'
             onClick={handleProvider}
             disabled={isLoading}
+            animations={{
+              hoverBorderGradient: {
+                enabled: true,
+                intensity: 'normal',
+                direction: 'radial',
+                theme: 'blue',
+                speed: 'normal',
+                colors: ['#4285f4', '#34a853', '#fbbc05'],
+              },
+            }}
           >
             <IconBrandGoogle className='h-4 w-4 mr-2 text-[#4285f4]' />
             Continuar com Google
-          </Button>
+          </UniversalButton>
         )}
 
         {mode === 'sign-in' && (
@@ -216,13 +256,25 @@ export function AuthForm(
                 </p>
               )}
             </div>
-            <Button
+            <UniversalButton
               type='submit'
+              variant='default'
+              size='lg'
               className='w-full'
               disabled={isLoading || signInForm.formState.isSubmitting}
+              animations={{
+                shineBorder: {
+                  enabled: !isLoading,
+                  pattern: 'pulse',
+                  intensity: 'vibrant',
+                  theme: 'gold',
+                  speed: isLoading ? 'fast' : 'normal',
+                  hoverOnly: false,
+                },
+              }}
             >
               {isLoading ? 'Entrando...' : 'Entrar'}
-            </Button>
+            </UniversalButton>
           </form>
         )}
 
@@ -305,13 +357,25 @@ export function AuthForm(
                 </p>
               )}
             </div>
-            <Button
+            <UniversalButton
               type='submit'
+              variant='default'
+              size='lg'
               className='w-full'
               disabled={isLoading || signUpForm.formState.isSubmitting}
+              animations={{
+                shineBorder: {
+                  enabled: !isLoading,
+                  pattern: 'pulse',
+                  intensity: 'vibrant',
+                  theme: 'gold',
+                  speed: isLoading ? 'fast' : 'normal',
+                  hoverOnly: false,
+                },
+              }}
             >
               {isLoading ? 'Criando...' : 'Criar conta'}
-            </Button>
+            </UniversalButton>
           </form>
         )}
 
@@ -336,21 +400,44 @@ export function AuthForm(
               )}
             </div>
             <div className='flex items-center gap-2'>
-              <Button
+              <UniversalButton
                 type='submit'
+                variant='default'
+                size='lg'
                 className='flex-1'
                 disabled={isLoading || forgotForm.formState.isSubmitting}
+                animations={{
+                  shineBorder: {
+                    enabled: !isLoading,
+                    pattern: 'linear',
+                    intensity: 'normal',
+                    theme: 'gold',
+                    speed: 'normal',
+                    hoverOnly: true,
+                  },
+                }}
               >
                 {isLoading ? 'Enviando...' : 'Enviar link'}
-              </Button>
-              <Button
+              </UniversalButton>
+              <UniversalButton
                 type='button'
                 variant='ghost'
+                size='lg'
                 onClick={() => setMode('sign-in')}
                 aria-label='Voltar ao login'
+                animations={{
+                  hoverBorderGradient: {
+                    enabled: true,
+                    intensity: 'subtle',
+                    direction: 'radial',
+                    theme: 'silver',
+                    speed: 'normal',
+                  },
+                }}
+                className='px-3'
               >
-                <ArrowLeft className='h-4 w-4' /> Voltar
-              </Button>
+                <ArrowLeft className='h-4 w-4' />
+              </UniversalButton>
             </div>
           </form>
         )}
@@ -358,7 +445,7 @@ export function AuthForm(
         {mode === 'sign-in' && (
           <div className='text-center'>
             <button
-              className='text-sm text-muted-foreground hover:text-primary'
+              className='text-sm text-muted-foreground hover:text-primary transition-colors duration-200 hover:underline'
               onClick={() => setMode('forgot')}
             >
               Esqueceu sua senha?
