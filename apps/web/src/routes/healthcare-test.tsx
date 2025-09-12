@@ -4,7 +4,7 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Button } from '@/components/atoms/button';
 import { Badge } from '@/components/atoms/badge';
 import { usePatient, usePatientAppointments, useUpdatePatient, useCreateAppointment } from '@/hooks/useHealthcareQuery';

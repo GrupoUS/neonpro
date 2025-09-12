@@ -1,7 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
-import { ShineBorder } from '@/components/ui/shine-border';
+import { ShineBorder } from '../components/magicui/shine-border';
 
 export const Route = createFileRoute('/shine-test')({
   component: ShineTestPage,
@@ -9,130 +7,176 @@ export const Route = createFileRoute('/shine-test')({
 
 function ShineTestPage() {
   return (
-    <div className="min-h-screen bg-background p-8 space-y-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold text-center">Shine Border Test Page</h1>
-        
-        {/* Test 1: Direct ShineBorder Component */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 1: Direct ShineBorder Component</h2>
-          <div className="relative w-64 h-32 bg-card border rounded-xl mx-auto">
-            <ShineBorder 
-              borderWidth={2}
-              duration={8}
-              shineColor="#AC9469"
-              className="rounded-xl"
-            />
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <p className="text-center">Direct ShineBorder</p>
+    <div className="container mx-auto p-8 space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold">MagicUI Shine Border Test</h1>
+        <p className="text-lg text-muted-foreground">
+          Teste oficial do componente Shine Border do MagicUI instalado via shadcn CLI
+        </p>
+      </div>
+
+      {/* Teste 1: Shine Border dourado NeonPro com rotação 360° */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Teste 1: Shine Border Dourado NeonPro com Rotação 360°</h2>
+        <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
+          <ShineBorder 
+            className="size-full"
+            borderWidth={3}
+            duration={6}
+            shineColor="#AC9469"
+          />
+          <div className="relative z-10 flex h-full items-center justify-center bg-card/50 backdrop-blur-sm rounded-lg">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold">Dourado NeonPro Original</h3>
+              <p className="text-muted-foreground">Animação de rotação contínua 360 graus</p>
+              <p className="text-sm text-yellow-600 mt-2">✨ Cor dourada elegante com rotação suave</p>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Test 2: Card with Default Shine */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 2: Card with Default Shine (disableShine=false)</h2>
-          <div className="max-w-md mx-auto">
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle>Default Card with Shine</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>This card should have the default shine effect enabled.</p>
-              </CardContent>
-            </Card>
+      {/* Teste 2: Shine Border multicolor */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Teste 2: Shine Border Multicolor</h2>
+        <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
+          <ShineBorder 
+            className="size-full"
+            borderWidth={3}
+            duration={12}
+            shineColor={["#112031", "#294359", "#AC9469", "#B4AC9C"]}
+          />
+          <div className="relative z-10 flex h-full items-center justify-center bg-card/50 backdrop-blur-sm rounded-lg">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold">Paleta NeonPro</h3>
+              <p className="text-muted-foreground">Cores da clínica estética</p>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Test 3: Card with Magic Prop */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 3: Card with Magic Prop</h2>
-          <div className="max-w-md mx-auto">
-            <Card enableShineBorder className="p-6">
-              <CardHeader>
-                <CardTitle>Magic Card</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>This card has the magic prop enabled.</p>
-              </CardContent>
-            </Card>
+      {/* Teste 3: Shine Border com velocidade rápida */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Teste 3: Shine Border Rápido</h2>
+        <div className="relative h-[200px] w-full max-w-md mx-auto overflow-hidden rounded-lg">
+          <ShineBorder 
+            className="size-full"
+            borderWidth={3}
+            duration={4}
+            shineColor={["#AC9469", "#294359"]}
+          />
+          <div className="relative z-10 flex h-full items-center justify-center bg-card/80 backdrop-blur-sm rounded-lg">
+            <div className="text-center p-6">
+              <h3 className="text-lg font-semibold">Animação Rápida</h3>
+              <p className="text-sm text-muted-foreground">4 segundos por ciclo</p>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Test 4: Card with Custom Shine Properties */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 4: Card with Custom Shine Properties</h2>
-          <div className="max-w-md mx-auto">
-            <Card 
-              shineDuration={4}
-              shineColor="#FFD700"
-              borderWidth={3}
-              className="p-6"
-            >
-              <CardHeader>
-                <CardTitle>Custom Shine Card</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Fast golden shine (4s duration, 3px border)</p>
-              </CardContent>
-            </Card>
+      {/* Teste 4: Shine Border fino */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Teste 4: Shine Border Fino</h2>
+        <div className="relative h-[200px] w-full max-w-md mx-auto overflow-hidden rounded-lg">
+          <ShineBorder 
+            className="size-full"
+            borderWidth={1}
+            duration={10}
+            shineColor="#AC9469"
+          />
+          <div className="relative z-10 flex h-full items-center justify-center bg-card/80 backdrop-blur-sm rounded-lg">
+            <div className="text-center p-6">
+              <h3 className="text-lg font-semibold">Borda Fina</h3>
+              <p className="text-sm text-muted-foreground">1px de espessura</p>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Test 5: Card with Shine Disabled */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 5: Card with Shine Disabled</h2>
-          <div className="max-w-md mx-auto">
-            <Card enableShineBorder={false} className="p-6">
-              <CardHeader>
-                <CardTitle>No Shine Card</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>This card has shine disabled.</p>
-              </CardContent>
-            </Card>
+      {/* Comparação com nossa implementação */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Comparação: MagicUI vs Nossa Implementação</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* MagicUI Oficial */}
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">MagicUI Oficial</h3>
+            <div className="relative h-[200px] overflow-hidden rounded-lg">
+              <ShineBorder 
+                className="size-full"
+                borderWidth={2}
+                duration={8}
+                shineColor="#AC9469"
+              />
+              <div className="relative z-10 flex h-full items-center justify-center bg-card/50 backdrop-blur-sm rounded-lg">
+                <span className="text-sm font-medium">Componente Oficial</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Nossa implementação customizada */}
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">Nossa Implementação</h3>
+            <div className="relative h-[200px] overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border">
+              <div className="flex h-full items-center justify-center">
+                <span className="text-sm font-medium">Implementação Customizada</span>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Test 6: Multiple Colors */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Test 6: Multiple Shine Colors</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card shineColor="#AC9469" shineDuration={6} className="p-4">
-              <CardContent>
-                <p className="text-center">NeonPro Gold</p>
-              </CardContent>
-            </Card>
-            <Card shineColor="#3B82F6" shineDuration={6} className="p-4">
-              <CardContent>
-                <p className="text-center">Blue Shine</p>
-              </CardContent>
-            </Card>
-            <Card shineColor="#EF4444" shineDuration={6} className="p-4">
-              <CardContent>
-                <p className="text-center">Red Shine</p>
-              </CardContent>
-            </Card>
+      {/* Testes de Props */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Teste de Props Avançado</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Borda espessa */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Borda Espessa (5px)</h4>
+            <div className="relative h-[150px] overflow-hidden rounded-lg">
+              <ShineBorder 
+                className="size-full"
+                borderWidth={5}
+                duration={6}
+                shineColor="#294359"
+              />
+              <div className="relative z-10 flex h-full items-center justify-center bg-card/70 backdrop-blur-sm rounded-lg">
+                <span className="text-xs">5px</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Duração lenta */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Duração Lenta (20s)</h4>
+            <div className="relative h-[150px] overflow-hidden rounded-lg">
+              <ShineBorder 
+                className="size-full"
+                borderWidth={2}
+                duration={20}
+                shineColor="#AC9469"
+              />
+              <div className="relative z-10 flex h-full items-center justify-center bg-card/70 backdrop-blur-sm rounded-lg">
+                <span className="text-xs">20s</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Gradiente complexo */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Gradiente Complexo</h4>
+            <div className="relative h-[150px] overflow-hidden rounded-lg">
+              <ShineBorder 
+                className="size-full"
+                borderWidth={3}
+                duration={8}
+                shineColor={["#112031", "#294359", "#AC9469", "#B4AC9C", "#D2D0C8"]}
+              />
+              <div className="relative z-10 flex h-full items-center justify-center bg-card/70 backdrop-blur-sm rounded-lg">
+                <span className="text-xs">5 cores</span>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Debug Info */}
-        <div className="space-y-4 bg-muted p-4 rounded-lg">
-          <h2 className="text-xl font-semibold">Debug Information</h2>
-          <div className="text-sm space-y-2">
-            <p><strong>Expected Behavior:</strong></p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Golden light should travel around card borders</li>
-              <li>Animation should be smooth and continuous</li>
-              <li>Effect should be visible as a subtle glow</li>
-              <li>Different durations should be noticeable</li>
-            </ul>
-            <p className="mt-4"><strong>CSS Animation:</strong> shine keyframes with background-position</p>
-            <p><strong>Mask Composite:</strong> exclude/xor for border effect</p>
-            <p><strong>Background:</strong> conic-gradient with 300% size</p>
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

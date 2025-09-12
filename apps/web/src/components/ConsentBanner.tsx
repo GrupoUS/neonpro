@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
 import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 
 /**
  * LGPD-compliant consent banner component

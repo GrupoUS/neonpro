@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute, redirect } from '@tanstack/react-router';

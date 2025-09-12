@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tw-animate-css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -238,16 +239,32 @@
 
 @theme inline {
   --animate-shine: shine var(--duration) infinite linear;
+  --animate-shine-rotate: shine-rotate var(--duration) infinite linear;
 
   @keyframes shine {
     0% {
       background-position: 0% 0%;
     }
+    25% {
+      background-position: 100% 0%;
+    }
     50% {
       background-position: 100% 100%;
     }
-    to {
+    75% {
+      background-position: 0% 100%;
+    }
+    100% {
       background-position: 0% 0%;
+    }
+  }
+
+  @keyframes shine-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 
@@ -287,12 +304,54 @@
     87.5% { opacity: 1; }
     100% { opacity: 0; }
   }
+  @keyframes shine {
+  0% {
+    background-position: 0% 0%;
+    }
+  50% {
+    background-position: 100% 100%;
+    }
+  to {
+    background-position: 0% 0%;
+    }
+  }
 }
 
 ::view-transition-old(root), ::view-transition-new(root) {
     animation: none;
     mix-blend-mode: normal;
 }
+/* Smooth Shine Border Animation for Cards */
+@layer components {
+  .shine-border-animation {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--border-width, 1px);
+    background: conic-gradient(
+      from 0deg,
+      transparent 270deg,
+      var(--shine-color, #AC9469) 360deg,
+      transparent 450deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: shine-rotate var(--shine-duration, 8s) linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes shine-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+
 /* Hover Border Gradient for all Buttons */
 @layer components {
   .np-hover-border-gradient {
@@ -359,5 +418,17 @@
     syntax: '<angle>';
     inherits: false;
     initial-value: 0deg;
+  }
+
+  @property --shine-color {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #AC9469;
+  }
+
+  @property --shine-duration {
+    syntax: '<time>';
+    inherits: false;
+    initial-value: 8s;
   }
 }

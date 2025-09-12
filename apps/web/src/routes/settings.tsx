@@ -1,5 +1,5 @@
 import { Button } from '@/components/atoms/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { getCurrentSession } from '@/integrations/supabase/client';

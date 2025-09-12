@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';

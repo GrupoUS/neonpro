@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Input } from '@/components/atoms/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
 import { supabase } from '@/integrations/supabase/client';

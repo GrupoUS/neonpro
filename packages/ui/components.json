@@ -4,8 +4,8 @@
   "rsc": false,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.ts",
-    "css": "src/index.css",
+    "config": "",
+    "css": "",
     "baseColor": "slate",
     "cssVariables": true,
     "prefix": ""
@@ -13,14 +13,12 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "src/components",
-    "utils": "@neonpro/ui/lib/utils",
-    "ui": "@neonpro/ui",
+    "utils": "src/lib/utils",
+    "ui": "src/components/ui",
     "lib": "src/lib",
     "hooks": "src/hooks"
   },
   "registries": {
-    "@kokonutui": "https://kokonutui.com/r/{name}.json",
-    "@aceternity": "https://ui.aceternity.com/registry/{name}.json",
     "@cult-ui": "https://cult-ui.com/r/{name}.json"
   }
 }

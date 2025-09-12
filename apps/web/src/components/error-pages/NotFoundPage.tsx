@@ -5,7 +5,7 @@
  */
 
 import { Button } from '@/components/atoms/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Home, ArrowLeft, Search, Phone } from 'lucide-react';
 import { Link, useRouter } from '@tanstack/react-router';
 

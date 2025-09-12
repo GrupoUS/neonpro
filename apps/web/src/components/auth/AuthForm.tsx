@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/molecules/card';
+} from '@neonpro/ui';
 // MagicCard removed - using enhanced Card with permanent shine border effect
 import { showToast } from '@/components/ui/toaster';
 import {

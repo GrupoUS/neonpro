@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/molecules/card';
+} from '@neonpro/ui';
 import { cn } from '@/lib/utils';
 import React from 'react';
 

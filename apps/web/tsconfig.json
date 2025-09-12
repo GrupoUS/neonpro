@@ -32,6 +32,9 @@
       "@neonpro/ui/*": [
         "../../packages/ui/src/*"
       ],
+      "@neonpro/ui/lib/utils": [
+        "../../packages/ui/src/lib/utils"
+      ],
       "@neonpro/shared": [
         "../../packages/shared/src"
       ],

@@ -13,8 +13,8 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "apps/web/src/components",
-    "utils": "apps/web/src/lib/utils",
-    "ui": "apps/web/src/components/ui",
+    "utils": "packages/ui/src/lib/utils",
+    "ui": "@neonpro/ui",
     "lib": "apps/web/src/lib",
     "hooks": "apps/web/src/hooks"
   },
