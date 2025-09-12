@@ -68,7 +68,7 @@ export function errorTrackingMiddleware() {
           message: (error as Error).message,
           stack: (error as Error).stack,
         },
-      }, error as Error);
+      });
 
       // Return generic error response for security
       return c.json(

@@ -1,4 +1,5 @@
 export * from './governance';
+export * from './aesthetic-data';
 
 // Database types - placeholder for Supabase generated types
 export interface Database {

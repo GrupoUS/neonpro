@@ -5,6 +5,7 @@
 
 import type { Context, Next } from 'hono';
 import { logger, logUtils } from '../lib/logger';
+import { errorTracker } from '../lib/error-tracking';
 import { randomUUID } from 'crypto';
 
 /**

@@ -1,5 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { getCurrentSession } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { BarChart3, FileText, PieChart, TrendingUp } from 'lucide-react';
 

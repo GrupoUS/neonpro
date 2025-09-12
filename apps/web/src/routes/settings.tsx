@@ -1,8 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Input } from '@/components/atoms/input';
+import { Label } from '@/components/atoms/label';
 import { getCurrentSession } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell, Globe, Lock, Palette, Shield, Users } from 'lucide-react';
 

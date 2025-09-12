@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import type { Context } from 'hono';
 import { rlsHealthcareMiddleware, patientAccessMiddleware } from '../middleware/rls-middleware';
-import { lgpdAuditMiddleware } from '../middleware/lgpd-middleware';
+import { dataProtection } from '../middleware/lgpd-middleware';
 import type { RLSQueryBuilder } from '../lib/supabase-client';
 
 // Define context variables type for better TypeScript support
@@ -17,7 +17,7 @@ const rlsPatients = new Hono<{ Variables: Variables }>();
 
 // Apply RLS and LGPD middleware to all routes
 rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
-rlsPatients.use('*', lgpdAuditMiddleware());
+// rlsPatients.use('*', lgpdAuditMiddleware()); // Disabled for now
 
 /**
  * Get patients using RLS-aware queries

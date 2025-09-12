@@ -21,8 +21,10 @@ import { Route as FinancialRouteImport } from './routes/financial'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
+import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
@@ -86,6 +88,11 @@ const AppointmentsRoute = AppointmentsRouteImport.update({
   path: '/appointments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTestRoute = ApiTestRouteImport.update({
+  id: '/api-test',
+  path: '/api-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
@@ -94,6 +101,11 @@ const R404Route = R404RouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
+  id: '/patients/$patientId',
+  path: '/patients/$patientId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
@@ -110,6 +122,7 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
@@ -124,10 +137,12 @@ export interface FileRoutesByFullPath {
   '/test-auth': typeof TestAuthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
@@ -142,11 +157,13 @@ export interface FileRoutesByTo {
   '/test-auth': typeof TestAuthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
@@ -161,12 +178,14 @@ export interface FileRoutesById {
   '/test-auth': typeof TestAuthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/404'
+    | '/api-test'
     | '/appointments'
     | '/clients'
     | '/dashboard'
@@ -181,10 +200,12 @@ export interface FileRouteTypes {
     | '/test-auth'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$patientId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/404'
+    | '/api-test'
     | '/appointments'
     | '/clients'
     | '/dashboard'
@@ -199,10 +220,12 @@ export interface FileRouteTypes {
     | '/test-auth'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$patientId'
   id:
     | '__root__'
     | '/'
     | '/404'
+    | '/api-test'
     | '/appointments'
     | '/clients'
     | '/dashboard'
@@ -217,11 +240,13 @@ export interface FileRouteTypes {
     | '/test-auth'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$patientId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  ApiTestRoute: typeof ApiTestRoute
   AppointmentsRoute: typeof AppointmentsRoute
   ClientsRoute: typeof ClientsRoute
   DashboardRoute: typeof DashboardRoute
@@ -236,6 +261,7 @@ export interface RootRouteChildren {
   TestAuthRoute: typeof TestAuthRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
+  PatientsPatientIdRoute: typeof PatientsPatientIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -324,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api-test': {
+      id: '/api-test'
+      path: '/api-test'
+      fullPath: '/api-test'
+      preLoaderRoute: typeof ApiTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/404': {
       id: '/404'
       path: '/404'
@@ -336,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$patientId': {
+      id: '/patients/$patientId'
+      path: '/patients/$patientId'
+      fullPath: '/patients/$patientId'
+      preLoaderRoute: typeof PatientsPatientIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/confirm': {
@@ -358,6 +398,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  ApiTestRoute: ApiTestRoute,
   AppointmentsRoute: AppointmentsRoute,
   ClientsRoute: ClientsRoute,
   DashboardRoute: DashboardRoute,
@@ -372,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestAuthRoute: TestAuthRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
+  PatientsPatientIdRoute: PatientsPatientIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

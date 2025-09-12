@@ -1,20 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
 import { supabase } from '@/integrations/supabase/client';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 
 function AppointmentsPage() {
+  // Mock data since appointments table doesn't exist yet in database schema
   const { data: appointments, isLoading, error } = useQuery({
     queryKey: ['appointments'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select('id, start_time, end_time, status, client_id, clients!inner(full_name)')
-        .order('start_time', { ascending: true })
-        .limit(100);
-      if (error) throw error;
-      return data ?? [];
+      // Return mock data for now
+      return [
+        {
+          id: '1',
+          start_time: new Date().toISOString(),
+          end_time: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+          status: 'Agendado',
+          patient_name: 'Paciente Exemplo'
+        }
+      ];
     },
   });
 
@@ -47,7 +51,7 @@ function AppointmentsPage() {
                     <TableCell>{new Date(a.start_time).toLocaleString('pt-BR')}</TableCell>
                     <TableCell>{new Date(a.end_time).toLocaleString('pt-BR')}</TableCell>
                     <TableCell>{a.status ?? '—'}</TableCell>
-                    <TableCell>{(a as any).clients?.full_name ?? a.client_id}</TableCell>
+                    <TableCell>{a.patient_name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

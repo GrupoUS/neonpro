@@ -17,7 +17,7 @@ export default function KokonutExample() {
         <div className='text-center'>
           <h2 className='text-2xl font-semibold mb-4'>Particle Button</h2>
           <ParticleButton
-            onSuccess={() => console.log('Particle button clicked!')}
+            onClick={() => console.log('Particle button clicked!')}
             className='bg-blue-600 hover:bg-blue-700'
           >
             Click for Particles! ✨

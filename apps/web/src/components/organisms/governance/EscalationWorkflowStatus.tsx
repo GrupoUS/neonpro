@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/atoms/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { Escalations } from '@/lib/governance-service';
 import { useQuery } from '@tanstack/react-query';

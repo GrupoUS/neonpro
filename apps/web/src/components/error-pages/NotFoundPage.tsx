@@ -4,8 +4,8 @@
  * User-friendly 404 page with navigation options and healthcare-appropriate messaging
  */
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { Home, ArrowLeft, Search, Phone } from 'lucide-react';
 import { Link, useRouter } from '@tanstack/react-router';
 

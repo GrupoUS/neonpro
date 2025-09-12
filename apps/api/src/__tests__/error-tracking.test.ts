@@ -41,7 +41,7 @@ describe('ErrorTrackingManager', () => {
   describe('Initialization', () => {
     it('should initialize custom provider successfully', async () => {
       await errorTracker.initialize();
-      expect(errorTracker.isInitialized()).toBe(true);
+      expect(errorTracker.isReady()).toBe(true);
     });
 
     it('should skip initialization for disabled environments', async () => {
@@ -52,7 +52,7 @@ describe('ErrorTrackingManager', () => {
       });
 
       await disabledTracker.initialize();
-      expect(disabledTracker.isInitialized()).toBe(false);
+      expect(disabledTracker.isReady()).toBe(false);
     });
   });
 

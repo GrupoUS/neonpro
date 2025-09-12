@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
@@ -10,6 +9,6 @@
     },
     "types": ["node", "vitest", "vitest/globals"]
   },
-  "include": ["src/**/*", "tools/tests/**/*"],
+  "include": ["src/**/*", "../../packages/*/src/**/*", "tools/tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/atoms/badge';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut, supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -75,7 +75,7 @@ function DashboardComponent() {
     queryKey: ['activeClientsCount'],
     queryFn: async () => {
       const { count, error } = await supabase
-        .from('clients')
+        .from('patients')
         .select('id', { count: 'exact', head: true })
         .eq('is_active', true);
       if (error) throw error;
@@ -408,7 +408,7 @@ function DashboardComponent() {
               <Button
                 className='w-full justify-start'
                 variant='outline'
-                onClick={() => navigate({ to: '/patients' })}
+                onClick={() => navigate({ to: '/clients' })}
               >
                 <Users className='h-4 w-4 mr-2' />
                 Cadastrar Paciente
@@ -432,5 +432,3 @@ function DashboardComponent() {
 export const Route = createFileRoute('/dashboard')({
   component: DashboardComponent,
 });
-// Export for tests
-export { DashboardComponent };

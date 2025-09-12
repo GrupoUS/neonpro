@@ -4,7 +4,7 @@
   "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
   "private": true,
   "type": "module",
-  "packageManager": "npm@10.0.0",
+  "packageManager": "pnpm@8.15.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
@@ -25,6 +25,12 @@
     "clean": "turbo clean",
     "format": "turbo format",
     "format:check": "turbo format:check",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:prod": "./scripts/deploy.sh production",
+    "deploy:preview": "./scripts/deploy.sh preview",
+    "deploy:staging": "./scripts/deploy.sh staging",
+    "vercel:build": "pnpm install --frozen-lockfile && pnpm build",
+    "vercel:dev": "pnpm dev",
     "vercel:deploy": "vercel deploy --prod --scope grupous-projects --yes"
   },
   "keywords": [
@@ -44,6 +50,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
-    "typescript": "^5.9.2"
+    "@vitest/ui": "^3.2.4",
+    "oxlint": "^1.15.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

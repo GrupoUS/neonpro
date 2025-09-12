@@ -1,4 +1,4 @@
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
@@ -6,18 +6,23 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    TanStackRouterVite({
+    tanstackRouter({
+      target: 'react',
       routesDirectory: './src/routes',
       generatedRouteTree: './src/routeTree.gen.ts',
       routeFileIgnorePrefix: '-',
       quoteStyle: 'single',
+      autoCodeSplitting: true,
     }),
+    react(),
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@shared': path.resolve(__dirname, 'packages/shared/src'),
+      '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
@@ -29,6 +34,25 @@ export default defineConfig({
     host: '::',
     port: 8080,
     open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3004',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('proxy error', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          });
+        },
+      },
+    },
   },
   build: {
     sourcemap: true,

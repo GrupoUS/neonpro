@@ -23,6 +23,7 @@
     "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.15",
     "@ai-sdk/openai": "^2.0.28",
     "@hono/node-server": "^1.19.2",
     "@hono/swagger-ui": "^0.4.1",

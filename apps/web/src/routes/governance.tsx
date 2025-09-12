@@ -1,4 +1,4 @@
-import { GovernanceDashboard } from '@/components/governance/GovernanceDashboard';
+import { GovernanceDashboard } from '@/components/organisms/governance/GovernanceDashboard';
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 

@@ -1,182 +1,110 @@
 import { Context, Next } from 'hono';
-import { validateLGPDConsent, HEALTHCARE_DATA_CATEGORIES, HEALTHCARE_PURPOSES } from '../lib/lgpd-compliance';
+import { lgpdCompliance } from '../lib/lgpd-compliance';
+import { AESTHETIC_PURPOSES, CLIENT_DATA_CATEGORIES, type AestheticPurpose, type ClientDataCategory } from '@neonpro/types';
 
-export interface LGPDMiddlewareOptions {
-  purpose: string;
-  dataCategories: string[];
+export interface DataProtectionOptions {
+  purpose: AestheticPurpose;
+  dataCategories: ClientDataCategory[];
   requireActiveConsent?: boolean;
-  skipForRoles?: string[]; // Skip validation for certain roles (e.g., emergency access)
 }
 
 /**
- * LGPD Consent Validation Middleware
- * Validates that proper consent exists before allowing access to patient data
+ * Simple data protection middleware for aesthetic clinic client data
  */
-export function lgpdConsentMiddleware(options: LGPDMiddlewareOptions) {
+export function dataProtectionMiddleware(options: DataProtectionOptions) {
   return async (c: Context, next: Next) => {
     try {
-      // Extract patient ID from request (could be from params, query, or body)
-      const patientId = c.req.param('patientId') || 
-                       c.req.query('patientId') || 
-                       (await c.req.json().catch(() => ({})))?.patientId;
+      // Extract client ID from request
+      const clientId = c.req.param('clientId') || 
+                       c.req.query('clientId') ||
+                       c.req.param('patientId') || // backward compatibility
+                       c.req.query('patientId');
 
-      if (!patientId) {
-        return c.json({ 
-          error: 'Patient ID is required for LGPD compliance validation',
-          code: 'LGPD_PATIENT_ID_REQUIRED'
-        }, 400);
+      if (!clientId) {
+        return c.json({ error: 'Client ID required for data access' }, 400);
       }
 
-      // Check if user role should skip validation (e.g., emergency access)
-      const userRole = c.get('userRole'); // Assuming role is set by auth middleware
-      if (options.skipForRoles && userRole && options.skipForRoles.includes(userRole)) {
-        // Log the bypass for audit purposes
-        console.log(`LGPD validation bypassed for role: ${userRole}, patient: ${patientId}`);
-        return next();
-      }
-
-      // Validate LGPD consent
-      const consentResult = await validateLGPDConsent({
-        patientId,
-        purpose: options.purpose,
-        dataCategories: options.dataCategories,
-        requireActiveConsent: options.requireActiveConsent,
-      });
+      // Simple consent validation for client data access
+      const consentResult = await lgpdCompliance.validateConsent(
+        clientId,
+        options.purpose,
+        options.dataCategories
+      );
 
       if (!consentResult.isValid) {
-        return c.json({
-          error: 'LGPD consent validation failed',
-          reason: consentResult.reason,
-          code: 'LGPD_CONSENT_INVALID',
-          patientId,
-          purpose: options.purpose,
-          dataCategories: options.dataCategories,
+        return c.json({ 
+          error: 'Data access consent required',
+          missingConsents: consentResult.missingConsents
         }, 403);
       }
 
-      // Store consent info in context for potential use in route handlers
-      c.set('lgpdConsent', consentResult);
-      c.set('patientId', patientId);
+      // Log data access for audit trail
+      await lgpdCompliance.logDataAccess({
+        action: 'data_access',
+        clientId,
+        purpose: options.purpose,
+        dataCategories: options.dataCategories,
+        userId: c.get('userId') || 'anonymous',
+        timestamp: new Date(),
+      });
 
-      return next();
+      await next();
+      
+      // Successful completion
+      return;
     } catch (error) {
-      console.error('LGPD middleware error:', error);
-      return c.json({
-        error: 'LGPD compliance validation error',
-        code: 'LGPD_VALIDATION_ERROR'
-      }, 500);
+      console.error('Data protection middleware error:', error);
+      return c.json({ error: 'Data protection validation failed' }, 500);
     }
   };
 }
 
-/**
- * Pre-configured middleware for common healthcare scenarios
- */
-export const lgpdMiddleware = {
-  /**
-   * For viewing patient basic information
-   */
-  patientView: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.MEDICAL_TREATMENT,
+// Pre-configured middleware for common operations
+export const dataProtection = {
+  // Basic client info access
+  clientView: dataProtectionMiddleware({
+    purpose: AESTHETIC_PURPOSES.CONSULTATION,
     dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.PERSONAL_IDENTIFICATION,
-      HEALTHCARE_DATA_CATEGORIES.CONTACT_INFORMATION,
+      CLIENT_DATA_CATEGORIES.BASIC_INFO,
+      CLIENT_DATA_CATEGORIES.CONTACT_INFO,
     ],
   }),
 
-  /**
-   * For accessing medical records and health data
-   */
-  medicalRecords: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.MEDICAL_TREATMENT,
+  // Treatment-related data access  
+  treatments: dataProtectionMiddleware({
+    purpose: AESTHETIC_PURPOSES.TREATMENT,
     dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.PERSONAL_IDENTIFICATION,
-      HEALTHCARE_DATA_CATEGORIES.HEALTH_DATA,
-      HEALTHCARE_DATA_CATEGORIES.MEDICAL_RECORDS,
+      CLIENT_DATA_CATEGORIES.BASIC_INFO,
+      CLIENT_DATA_CATEGORIES.TREATMENT_INFO,
+      CLIENT_DATA_CATEGORIES.PHOTOS,
     ],
   }),
 
-  /**
-   * For appointment scheduling and management
-   */
-  appointments: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.APPOINTMENT_SCHEDULING,
+  // Appointment scheduling
+  appointments: dataProtectionMiddleware({
+    purpose: AESTHETIC_PURPOSES.APPOINTMENT_SCHEDULING,
     dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.PERSONAL_IDENTIFICATION,
-      HEALTHCARE_DATA_CATEGORIES.CONTACT_INFORMATION,
-      HEALTHCARE_DATA_CATEGORIES.APPOINTMENT_DATA,
+      CLIENT_DATA_CATEGORIES.BASIC_INFO,
+      CLIENT_DATA_CATEGORIES.CONTACT_INFO,
     ],
   }),
 
-  /**
-   * For patient communication (SMS, WhatsApp, email)
-   */
-  communication: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.PATIENT_COMMUNICATION,
+  // Billing operations
+  billing: dataProtectionMiddleware({
+    purpose: AESTHETIC_PURPOSES.BILLING_AND_PAYMENT,
     dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.PERSONAL_IDENTIFICATION,
-      HEALTHCARE_DATA_CATEGORIES.CONTACT_INFORMATION,
-      HEALTHCARE_DATA_CATEGORIES.COMMUNICATION_PREFERENCES,
+      CLIENT_DATA_CATEGORIES.BASIC_INFO,
+      CLIENT_DATA_CATEGORIES.BILLING_INFO,
     ],
   }),
 
-  /**
-   * For marketing and promotional communications
-   */
-  marketing: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.MARKETING,
+  // Marketing communications
+  marketing: dataProtectionMiddleware({
+    purpose: AESTHETIC_PURPOSES.MARKETING,
     dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.PERSONAL_IDENTIFICATION,
-      HEALTHCARE_DATA_CATEGORIES.CONTACT_INFORMATION,
-      HEALTHCARE_DATA_CATEGORIES.COMMUNICATION_PREFERENCES,
+      CLIENT_DATA_CATEGORIES.BASIC_INFO,
+      CLIENT_DATA_CATEGORIES.CONTACT_INFO,
+      CLIENT_DATA_CATEGORIES.PREFERENCES,
     ],
-    requireActiveConsent: true, // Marketing requires explicit consent
-  }),
-
-  /**
-   * For research and analytics
-   */
-  research: lgpdConsentMiddleware({
-    purpose: HEALTHCARE_PURPOSES.MEDICAL_RESEARCH,
-    dataCategories: [
-      HEALTHCARE_DATA_CATEGORIES.HEALTH_DATA,
-      HEALTHCARE_DATA_CATEGORIES.MEDICAL_RECORDS,
-    ],
-    requireActiveConsent: true, // Research requires explicit consent
   }),
 };
-
-/**
- * Audit logging middleware for LGPD compliance
- * Logs all data access for audit trail purposes
- */
-export function lgpdAuditMiddleware() {
-  return async (c: Context, next: Next) => {
-    const startTime = Date.now();
-    const patientId = c.get('patientId');
-    const lgpdConsent = c.get('lgpdConsent');
-    
-    // Execute the request
-    await next();
-    
-    // Log the access for audit purposes
-    if (patientId && lgpdConsent) {
-      const endTime = Date.now();
-      const auditLog = {
-        timestamp: new Date().toISOString(),
-        patientId,
-        userId: c.get('userId'), // Assuming user ID is set by auth middleware
-        action: `${c.req.method} ${c.req.path}`,
-        consentId: lgpdConsent.consentRecord?.id,
-        purpose: lgpdConsent.consentRecord?.purpose,
-        ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        userAgent: c.req.header('user-agent'),
-        responseTime: endTime - startTime,
-        statusCode: c.res.status,
-      };
-      
-      // In a production environment, you would send this to your audit logging system
-      console.log('LGPD Audit Log:', JSON.stringify(auditLog));
-    }
-  };
-}

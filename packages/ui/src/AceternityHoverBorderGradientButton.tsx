@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { cn } from "./utils";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -34,9 +34,7 @@ export interface AceternityHoverBorderGradientButtonProps
    * @default true
    */
   clockwise?: boolean;
-}
-
-/**
+}/**
  * AceternityHoverBorderGradientButton - A button component with animated gradient border that rotates around the button
  * and has special hover effects. Customized with NeonPro aesthetic clinic branding.
  * 
@@ -73,6 +71,12 @@ export function AceternityHoverBorderGradientButton({
   const rotateDirection = (currentDirection: Direction): Direction => {
     const directions: Direction[] = ["TOP", "LEFT", "BOTTOM", "RIGHT"];
     const currentIndex = directions.indexOf(currentDirection);
+    
+    // Fallback to TOP if currentDirection is not found
+    if (currentIndex === -1) {
+      return "TOP";
+    }
+    
     const nextIndex = clockwise
       ? (currentIndex - 1 + directions.length) % directions.length
       : (currentIndex + 1) % directions.length;
@@ -98,6 +102,8 @@ export function AceternityHoverBorderGradientButton({
       }, duration * 1000);
       return () => clearInterval(interval);
     }
+    // Return undefined explicitly for TypeScript
+    return undefined;
   }, [hovered, duration]);
 
   return (

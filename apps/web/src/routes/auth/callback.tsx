@@ -9,35 +9,68 @@ function AuthCallbackComponent() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Handle OAuth callback - always redirect to dashboard
+        // Handle OAuth callback - supports both code flow and implicit flow
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+        const accessToken = url.hash.match(/access_token=([^&]+)/)?.[1];
 
-        // Handle the OAuth callback by exchanging code for session
-        const { data, error } = await supabase.auth.exchangeCodeForSession();
+        console.log('Auth callback - URL:', url.href);
+        console.log('Auth callback - Code:', !!code, 'Access Token:', !!accessToken);
 
-        if (error) {
-          console.error('Auth callback error:', error);
-          setStatus('error');
+        // Handle code flow (PKCE)
+        if (code) {
+          console.log('Processing PKCE flow with code');
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (error) {
+            console.error('Auth callback error:', error);
+            setStatus('error');
+            setTimeout(() => {
+              router.navigate({
+                to: '/' as const,
+                search: { error: 'auth_callback_failed' } as any,
+              });
+            }, 1500);
+            return;
+          }
+
+          if (data.session) {
+            console.log('Auth callback successful (code flow), redirecting to dashboard');
+            setStatus('success');
+            setTimeout(() => {
+              router.navigate({ to: '/dashboard' });
+            }, 800);
+            return;
+          }
+        }
+
+        // Handle implicit flow (access_token in hash)
+        if (accessToken) {
+          console.log('Processing implicit flow with access_token');
+
+          // Force redirect to dashboard immediately
+          // The Supabase client should have already processed the hash automatically
+          console.log('Access token found, redirecting to dashboard immediately');
+          setStatus('success');
+
+          // Clean the URL hash before redirecting
+          const cleanUrl = window.location.pathname + window.location.search;
+          window.history.replaceState({}, document.title, cleanUrl);
+
+          // Redirect to dashboard
           setTimeout(() => {
-            router.navigate({ to: '/' as const, search: { error: 'auth_callback_failed' } as any });
-          }, 1500);
+            window.location.href = '/dashboard';
+          }, 800);
+
           return;
         }
 
-        if (data.session) {
-          console.log('Auth callback successful, redirecting to dashboard');
-          setStatus('success');
-
-          // Always redirect to dashboard after successful OAuth
-          setTimeout(() => {
-            router.navigate({ to: '/dashboard' });
-          }, 800);
-        } else {
-          console.log('No session found, redirecting to login');
-          setStatus('error');
-          setTimeout(() => {
-            router.navigate({ to: '/' as const });
-          }, 1500);
-        }
+        // No code or access_token found
+        console.error('No authentication parameters found in callback URL');
+        setStatus('error');
+        setTimeout(() => {
+          router.navigate({ to: '/' as const, search: { error: 'auth_callback_failed' } as any });
+        }, 1500);
       } catch (error) {
         console.error('Auth callback exception:', error);
         setStatus('error');

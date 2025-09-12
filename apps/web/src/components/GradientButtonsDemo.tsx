@@ -14,24 +14,24 @@ export function GradientButtonsDemo() {
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">KokonutGradientButton Variants</h2>
         <div className="flex flex-wrap gap-4">
-          <KokonutGradientButton variant="default" size="default">
-            Default Gradient
+          <KokonutGradientButton variant="primary" size="default">
+            Primary Gradient
           </KokonutGradientButton>
           
-          <KokonutGradientButton variant="colorful" size="lg">
-            Colorful Gradient
+          <KokonutGradientButton variant="secondary" size="lg">
+            Secondary Gradient
           </KokonutGradientButton>
           
-          <KokonutGradientButton variant="sunset" size="sm">
-            Sunset Gradient
+          <KokonutGradientButton variant="accent" size="sm">
+            Accent Gradient
           </KokonutGradientButton>
           
-          <KokonutGradientButton variant="ocean" size="xl">
-            Ocean Gradient
+          <KokonutGradientButton variant="neutral" size="xl">
+            Neutral Gradient
           </KokonutGradientButton>
           
-          <KokonutGradientButton variant="neon" size="default">
-            Neon Gradient
+          <KokonutGradientButton variant="elegant" size="default">
+            Elegant Gradient
           </KokonutGradientButton>
         </div>
       </section>

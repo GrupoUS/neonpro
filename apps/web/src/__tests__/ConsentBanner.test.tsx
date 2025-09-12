@@ -50,7 +50,7 @@ describe('ConsentBanner', () => {
 
     // Link rendered by mocked Router Link
     expect(link).toHaveAttribute('data-testid', 'router-link');
-    expect(link).toHaveAttribute('href', '/privacy');
+    expect(link).toHaveAttribute('href', '/settings');
 
     // Clicking should NOT attempt a full page navigation via window.location
     fireEvent.click(link);

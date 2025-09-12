@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
 import { prisma } from '../lib/prisma';
-import { lgpdAuditMiddleware, lgpdMiddleware } from '../middleware/lgpd-middleware';
+import { dataProtection } from '../middleware/lgpd-middleware';
 
 const patients = new Hono();
 
-// Apply LGPD audit logging to all patient routes
-patients.use('*', lgpdAuditMiddleware());
+// Apply data protection to all client routes
+patients.use('*', dataProtection.clientView);
 
-// Get all patients (with LGPD consent validation)
-patients.get('/', lgpdMiddleware.patientView, async c => {
+// Get all clients (with data protection validation)
+patients.get('/', async c => {
   try {
     const items = await prisma.patient.findMany({
       take: 10,
@@ -32,7 +32,7 @@ patients.get('/', lgpdMiddleware.patientView, async c => {
 });
 
 // Get specific patient by ID (with LGPD consent validation)
-patients.get('/:patientId', lgpdMiddleware.patientView, async c => {
+patients.get('/:patientId', async c => {
   try {
     const patientId = c.req.param('patientId');
 

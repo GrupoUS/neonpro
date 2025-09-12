@@ -4,8 +4,8 @@
  * User-friendly 500 error page for server errors with healthcare-appropriate messaging
  */
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { AlertTriangle, RefreshCw, Home, Phone } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';

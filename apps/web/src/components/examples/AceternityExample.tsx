@@ -9,16 +9,16 @@ export function AceternityExample() {
         <div>
           <h3 className="text-lg font-semibold mb-2">Button Variants</h3>
           <div className="flex gap-4">
-            <AceternityButton variant="default">
+            <AceternityButton duration={1} clockwise={true}>
               Default Button
             </AceternityButton>
             
-            <AceternityButton variant="shimmer">
-              Shimmer Button
+            <AceternityButton duration={2} clockwise={false}>
+              Slow Animation
             </AceternityButton>
             
-            <AceternityButton variant="glow">
-              Glow Button
+            <AceternityButton duration={0.5} clockwise={true}>
+              Fast Animation
             </AceternityButton>
           </div>
         </div>
@@ -26,10 +26,11 @@ export function AceternityExample() {
         <div>
           <h3 className="text-lg font-semibold mb-2">Custom Styling</h3>
           <AceternityButton 
-            variant="shimmer" 
+            duration={1.5} 
+            clockwise={false}
             className="px-8 py-3 text-lg"
           >
-            Large Shimmer Button
+            Large Hover Button
           </AceternityButton>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "./utils";
 
 const kokonutGradientButtonVariants = cva(
   [
@@ -115,3 +115,6 @@ export const KokonutGradientButton = React.forwardRef<
 });
 
 KokonutGradientButton.displayName = "KokonutGradientButton";
+
+// Export the variants
+export { kokonutGradientButtonVariants };

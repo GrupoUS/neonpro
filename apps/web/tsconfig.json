@@ -27,6 +27,30 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@neonpro/ui": [
+        "../../packages/ui/src"
+      ],
+      "@neonpro/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@neonpro/shared": [
+        "../../packages/shared/src"
+      ],
+      "@neonpro/shared/*": [
+        "../../packages/shared/src/*"
+      ],
+      "@neonpro/utils": [
+        "../../packages/utils/src"
+      ],
+      "@neonpro/utils/*": [
+        "../../packages/utils/src/*"
+      ],
+      "@neonpro/types": [
+        "../../packages/types/src"
+      ],
+      "@neonpro/types/*": [
+        "../../packages/types/src/*"
       ]
     }
   },

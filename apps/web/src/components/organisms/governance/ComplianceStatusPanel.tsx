@@ -1,6 +1,6 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/molecules/alert';
+import { Badge } from '@/components/atoms/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { ComplianceData } from '@/lib/governance-service';

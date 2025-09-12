@@ -13,6 +13,7 @@ import {
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import clients from './routes/clients';
+import aiChat from './routes/ai-chat';
 import metricsApi from './routes/metrics';
 import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
 import {
@@ -246,6 +247,7 @@ v1.get('/info', c =>
 v1.route('/auth', auth);
 v1.route('/clients', clients);
 v1.route('/appointments', appointments);
+v1.route('/ai-chat', aiChat);
 v1.route('/metrics', metricsApi);
 
 app.route('/v1', v1);

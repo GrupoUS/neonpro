@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Input } from '@/components/atoms/input';
+import { Label } from '@/components/atoms/label';
+import { Alert, AlertDescription } from '@/components/molecules/alert';
 import { useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';

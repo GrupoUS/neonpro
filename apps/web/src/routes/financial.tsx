@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/atoms/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { CreditCard, DollarSign, Receipt, TrendingDown, TrendingUp } from 'lucide-react';

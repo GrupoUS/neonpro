@@ -3,9 +3,9 @@ import { Link } from '@tanstack/react-router';
 import { CheckCircle, Settings, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from '@/components/atoms/badge';
+import { Button } from '@/components/atoms/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 
 /**
  * LGPD-compliant consent banner component
@@ -57,7 +57,7 @@ export function ConsentBanner() {
               <p className='text-xs text-muted-foreground'>
                 Conforme nossa{' '}
                 <Button asChild variant='link' className='p-0 h-auto text-primary'>
-                  <Link to='/privacy' className='hover:underline'>
+                  <Link to='/settings' className='hover:underline'>
                     Política de Privacidade
                   </Link>
                 </Button>

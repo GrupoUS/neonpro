@@ -1,13 +1,32 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, createRootRoute, createRouter } from '@tanstack/react-router';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { createMemoryHistory } from '@tanstack/history';
 import React from 'react';
 import { routeTree } from '@/routeTree.gen';
 import { ConsentProvider } from '@/contexts/ConsentContext';
 
+// Mock useQuery to return empty data
+vi.mock('@tanstack/react-query', async () => {
+  const actual = await vi.importActual('@tanstack/react-query');
+  return {
+    ...actual,
+    useQuery: vi.fn(() => ({
+      data: [],
+      isLoading: false,
+      error: null,
+    })),
+  };
+});
+
 function Wrapper() {
-  const qc = new QueryClient();
+  const qc = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const router = createRouter({
     routeTree,
     history: createMemoryHistory({ initialEntries: ['/appointments'] }),

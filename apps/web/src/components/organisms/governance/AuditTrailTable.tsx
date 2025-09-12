@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/atoms/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Input } from '@/components/atoms/input';
 import {
   Select,
   SelectContent,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AuditTrail } from '@/lib/governance-service';
 import { useQuery } from '@tanstack/react-query';

@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/atoms/badge';
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
 import { useQuery } from '@tanstack/react-query';
 

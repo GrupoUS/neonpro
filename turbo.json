@@ -93,6 +93,10 @@
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
+    "@neonpro/ui#build": {
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**"]
+    },
     "@neonpro/utils#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
@@ -127,6 +131,10 @@
         "tailwind.config.*",
         "package.json",
         "tsconfig.json",
+        ".env.local",
+        ".env.production.local", 
+        ".env",
+        ".env.production",
         "!src/**/__tests__/**",
         "!src/**/*.test.*",
         "!src/**/*.spec.*"
@@ -288,6 +296,13 @@
     "dev": {
       "cache": false,
       "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local", 
+        ".env.development",
+        ".env"
+      ],
       "env": [
         "NODE_ENV",
         "VITE_SUPABASE_URL",

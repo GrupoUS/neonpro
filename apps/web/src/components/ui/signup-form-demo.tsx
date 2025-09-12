@@ -1,6 +1,6 @@
 'use client';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/atoms/input';
+import { Label } from '@/components/atoms/label';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { type AuthFormData, authFormSchema } from '@/lib/validations/auth';

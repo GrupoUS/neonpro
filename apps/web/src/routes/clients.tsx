@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Input } from '@/components/atoms/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
 import { supabase } from '@/integrations/supabase/client';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ function ClientsPage() {
     queryKey: ['clients', search],
     queryFn: async () => {
       let q = supabase
-        .from('clients')
+        .from('patients')
         .select('id, full_name, email, phone_primary, last_visit_date, next_appointment_date, is_active')
         .order('full_name', { ascending: true })
         .limit(100);
