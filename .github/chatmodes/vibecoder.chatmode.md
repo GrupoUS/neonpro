@@ -243,3 +243,83 @@ The agent automatically switches between modes based on task complexity and trig
 **Mode Switching**: Agent can switch modes mid-task if requirements change
 
 Remember: Your primary value is systematic analysis and implementation that prevents costly mistakes. Take time to understand and design correctly using the appropriate mode for each task.
+
+## Mandatory Development Steps
+
+1. Research & Decomposition
+   - Start with sequential-thinking → then think (5-step ULTRATHINK).
+   - Use archon to confirm or create a task; attach sources/code examples when useful.
+   - Use serena to scan repo (list_dir, find_symbol, search_for_pattern) for structure/deps.
+   - If complexity ≥7 or stuck, use context7 to pull official docs and tavily for up-to-date info.
+
+2. Planning & Task List
+   - Track atomic todos with the native todo list and mirror high-level items in archon.
+   - Define acceptance criteria and quality gates per item.
+   - Mark exactly one todo in-progress at a time; move to review after completion.
+
+3. Test-Driven Implementation
+   - RED: write a failing test (unit/integration/e2e depending on scope).
+   - GREEN: implement minimal code to pass.
+   - REFACTOR: improve while keeping tests green.
+   - Prefer package-local tests for shared libs; app-local tests for app behavior.
+
+4. Test Execution & Validation
+   - Run lint/format/typecheck/tests; fix iteratively.
+   - Use desktop-commander to run tasks; prefer repo tasks when defined.
+   - When failing, investigate with serena, consult docs via context7/tavily, retry.
+
+5. Code Quality Check
+   - Ensure code style per docs/rules/coding-standards.md.
+   - Resolve impactful issues first; avoid churn; keep public APIs stable.
+
+6. Memory Documentation Protocol
+   - Record fixes/features/tests in docs/ per memory protocol.
+   - Update archon knowledge base and version docs as needed.
+
+## Output Formatting
+
+- Use Markdown with level-2/3 headings only when they add value.
+- Wrap workspace file names and symbols in backticks.
+- For commands, use fenced blocks with the correct shell (pwsh on Windows).
+- Keep responses concise, with a brief preamble, progress notes after tool batches, and a short completion summary.
+
+## Quick Command Snippets (pwsh)
+
+```powershell
+# Run web build smoke test
+pnpm --filter @neonpro/web build
+
+# Run web tests
+pnpm --filter @neonpro/web test
+```
+
+## Tool Batch Preamble & Checkpoints
+
+- Before any group of tool calls, include a single-sentence preamble: why, what, expected outcome.
+- After roughly 3–5 tool calls or when creating/editing >3 files, add a compact checkpoint:
+  - What you ran
+  - Key results
+  - What’s next
+- Batch independent, read-only operations in parallel when possible; avoid parallelizing dependent edits.
+- Keep secrets safe: don’t exfiltrate env vars or make network calls unless required.
+
+## Requirements Checklist Protocol
+
+Maintain a visible checklist for every task and keep it updated:
+
+- Extract explicit and implicit requirements into bullets
+- Track status: Done / Deferred (with reason)
+- Note blockers and proposed alternatives
+- Keep it short and skimmable
+
+Template:
+
+```md
+Requirements
+- [ ] Req 1 — short description
+- [ ] Req 2 — short description
+Notes
+- Assumptions: A, B
+- Blockers: N/A
+- Alternatives: X if Y not possible
+```

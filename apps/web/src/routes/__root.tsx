@@ -2,6 +2,7 @@ import { ConsentBanner } from '@/components/ConsentBanner';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
 import { BeamsBackground } from '@/components/ui/beams-background';
+import FloatingAIChat from '@/components/ui/floating-ai-chat';
 import SidebarDemo from '@/components/ui/sidebar-demo';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -33,7 +34,13 @@ function RootComponent() {
 
   const pathname = router.state.location.pathname;
   const excludedRoutes = [
-    '/', '/login', '/signup', '/signup-demo', '/auth/callback', '/auth/confirm', '/404',
+    '/',
+    '/login',
+    '/signup',
+    '/signup-demo',
+    '/auth/callback',
+    '/auth/confirm',
+    '/404',
   ];
   const showSidebar = !excludedRoutes.includes(pathname) && !pathname.startsWith('/auth/');
   const isAuthLike = excludedRoutes.includes(pathname) || pathname.startsWith('/auth/');
@@ -48,17 +55,24 @@ function RootComponent() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          {showSidebar ? (
-            <SidebarDemo>{content}</SidebarDemo>
-          ) : isAuthLike ? (
-            <BeamsBackground>{content}</BeamsBackground>
-          ) : (
-            <div className='flex min-h-screen flex-col'>{content}</div>
-          )}
+          {showSidebar
+            ? <SidebarDemo>{content}</SidebarDemo>
+            : isAuthLike
+            ? <BeamsBackground>{content}</BeamsBackground>
+            : <div className='flex min-h-screen flex-col'>{content}</div>}
 
           {/* Single toast provider mounted via Sonner at root */}
           <Sonner />
           <ConsentBanner />
+
+          {/* Floating AI Chat - only show on protected pages */}
+          {showSidebar && (
+            <FloatingAIChat
+              context='procedures'
+              userRole='professional'
+              lgpdCompliant={true}
+            />
+          )}
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
