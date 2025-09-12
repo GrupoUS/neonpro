@@ -6,7 +6,6 @@
 export * from '../atoms';
 export * from '../healthcare';
 export * from '../molecules';
-export * from '../organisms';
 
 // Specific re-exports for backward compatibility
 export { Badge } from '../atoms/badge';

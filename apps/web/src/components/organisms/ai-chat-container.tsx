@@ -51,18 +51,24 @@ export default function AIChatContainer({
     isLoading,
     error,
     searchSuggestions,
+    suggestionsLoading,
     sendMessage,
     processVoice,
     generateVoice,
     clearChat,
     sendMessageLoading,
     voiceProcessingLoading,
+    // sessionId, // unused
+    model: currentModel,
+    setModel,
   } = useAIChat(clientId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Model comes from hook state; default is gpt-5-mini
 
   const handleSendMessage = (content: string) => {
     if (!content.trim()) return;
@@ -91,6 +97,8 @@ export default function AIChatContainer({
     sendMessage(content);
     setSearchQuery('');
   };
+
+  // Model is managed by the hook; no extra sync needed here
 
   const handleSearch = (query: string) => {
     if (query.trim()) {
@@ -201,17 +209,40 @@ export default function AIChatContainer({
       <div className="border-t border-[#D2D0C8] p-4 space-y-3">
         {/* Search/Input */}
         {showSearchSuggestions ? (
-          <AIInputSearch
-            onSearch={handleSearch}
-            suggestions={searchSuggestions}
-            placeholder="Digite sua pergunta sobre tratamentos estéticos..."
-            className="w-full"
-          />
+          <div className="space-y-2">
+            <AIPrompt
+              onSubmit={handleSendMessage}
+              placeholder="Pergunte ao assistente..."
+              disabled={sendMessageLoading}
+              model={currentModel}
+              onModelChange={setModel}
+              showInput={false}
+            />
+            <AIInputSearch
+              onSearch={handleSearch}
+              suggestions={searchSuggestions}
+              placeholder="Digite sua pergunta sobre tratamentos estéticos..."
+              className="w-full"
+            />
+            {/** Suggestions loading indicator */}
+            {/** Show subtle loading when suggestions are being fetched */}
+            {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+            {/** Accessible spinner below input */}
+
+            {/* suggestionsLoading is provided by useAIChat */}
+            {suggestionsLoading && (
+              <div className="pt-1">
+                <AILoading size="sm" message="Buscando sugestões..." />
+              </div>
+            )}
+          </div>
         ) : (
           <AIPrompt
             onSubmit={handleSendMessage}
             placeholder="Digite sua pergunta sobre tratamentos estéticos..."
             disabled={sendMessageLoading}
+            model={currentModel}
+            onModelChange={setModel}
           />
         )}
         

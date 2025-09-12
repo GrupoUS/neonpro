@@ -22,7 +22,7 @@
   "dependencies": {
     "@21st-extension/react": "^0.5.14",
     "@ai-sdk/anthropic": "^2.0.15",
-    "@ai-sdk/openai": "^2.0.28",
+    "@ai-sdk/openai": "^2.0.13",
     "@aws-sdk/client-ses": "^3.886.0",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^3.10.0",

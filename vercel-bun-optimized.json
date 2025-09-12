@@ -1,15 +1,14 @@
 {
   "version": 2,
   "name": "neonpro",
-  "buildCommand": "bun install && bunx turbo build --filter=@neonpro/web",
+  "buildCommand": "cd apps/web && bun install && bun run build",
   "outputDirectory": "apps/web/dist",
   "installCommand": "bun install",
   "framework": null,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "functions": {},
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
@@ -52,5 +51,7 @@
       "VITE_APP_ENV": "production"
     }
   },
-  "regions": ["gru1"]
+  "regions": ["gru1"],
+  "cleanUrls": true,
+  "trailingSlash": false
 }

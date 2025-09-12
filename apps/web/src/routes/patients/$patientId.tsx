@@ -30,9 +30,7 @@ async function loadPatientData(patientId: string, userRole: string) {
     action: 'patient_data_accessed',
     resource_type: 'patient',
     resource_id: patientId,
-    user_role: userRole,
-    timestamp: new Date().toISOString(),
-    compliance_flags: ['lgpd_logged'],
+    user_id: userRole, // store who accessed in user_id or adapt schema
   });
 
   // Fetch patient data with RLS (Row Level Security)
@@ -145,7 +143,7 @@ export const Route = createFileRoute('/patients/$patientId')({
 function PatientDetailComponent() {
   const { patientId } = Route.useParams();
   const { tab, showRisk } = Route.useSearch();
-  const { patient, procedures, riskData } = Route.useLoaderData();
+  const { patient, procedures, riskData } = Route.useLoaderData() as any;
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -169,9 +167,9 @@ function PatientDetailComponent() {
   const handleScheduleIntervention = (interventionType: string) => {
     // Navigate to scheduling with pre-filled data
     navigate({
-      to: '/appointments/new',
+      to: '/appointments',
       search: {
-        patientId,
+        fromPatientId: patientId,
         type: interventionType,
         priority: 'high',
       },
@@ -179,15 +177,14 @@ function PatientDetailComponent() {
   };
   
   const handleAuditLog = (action: string, details?: Record<string, any>) => {
+    if (!user?.id) return;
     // Log healthcare actions for compliance
     supabase.from('audit_logs').insert({
       action,
       resource_type: 'patient',
       resource_id: patientId,
-      user_id: user?.id,
+      user_id: user.id,
       details,
-      timestamp: new Date().toISOString(),
-      compliance_flags: ['lgpd_logged', 'healthcare_action'],
     });
   };
   
@@ -213,7 +210,7 @@ function PatientDetailComponent() {
           </Button>
           
           <Button
-            onClick={() => navigate({ to: '/patients/$patientId/edit', params: { patientId } })}
+            onClick={() => navigate({ to: '/patients/$patientId', params: { patientId }, search: { tab: 'overview', showRisk } })}
           >
             Editar
           </Button>

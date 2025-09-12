@@ -2,7 +2,6 @@ import { ConsentBanner } from '@/components/ConsentBanner';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { NotFoundPage } from '@/components/error-pages/NotFoundPage';
 import { BeamsBackground } from '@/components/ui/beams-background';
-import FloatingAIChat from '@/components/ui/floating-ai-chat';
 import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
 import SidebarDemo from '@/components/ui/sidebar-demo';
 import { Toaster as Sonner } from '@/components/ui/sonner';

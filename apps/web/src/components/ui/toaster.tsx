@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 // Minimal in-app toast implementation (placeholder). For production, integrate sonner or radix-toast.
 // Legacy placeholder Toaster kept for compatibility; real UI mounted via Sonner in ui/sonner.tsx

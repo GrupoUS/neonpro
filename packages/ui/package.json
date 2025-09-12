@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch",
+    "dev": "tsc -w -p tsconfig.json",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },

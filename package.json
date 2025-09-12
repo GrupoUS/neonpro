@@ -17,22 +17,22 @@
     "esbuild": ">=0.25.0"
   },
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "test": "turbo test",
-    "lint": "turbo lint",
-    "type-check": "turbo type-check",
-    "clean": "turbo clean",
-    "format": "turbo format",
-    "format:check": "turbo format:check",
+    "build": "bunx turbo build",
+    "dev": "bunx turbo dev --concurrency=20",
+    "test": "bunx turbo test",
+    "lint": "bunx turbo lint",
+    "type-check": "bunx turbo type-check",
+    "clean": "bunx turbo clean",
+    "format": "bunx turbo format",
+    "format:check": "bunx turbo format:check",
     "deploy": "./scripts/deploy.sh",
     "deploy:prod": "./scripts/deploy.sh production",
     "deploy:preview": "./scripts/deploy.sh preview",
     "deploy:staging": "./scripts/deploy.sh staging",
-    "vercel:build": "pnpm install --frozen-lockfile && pnpm build",
-    "vercel:dev": "pnpm dev",
+    "vercel:build": "bun install && bunx turbo build",
+    "vercel:dev": "bunx turbo dev",
     "vercel:deploy": "vercel deploy --prod --scope grupous-projects --yes",
-    "vercel-build": "npm install -g pnpm@8.15.0 && pnpm install --no-frozen-lockfile && pnpm turbo build --filter=@neonpro/web"
+    "vercel-build": "bun install && bunx turbo build --filter=@neonpro/web"
   },
   "keywords": [
     "neonpro",
@@ -50,6 +50,7 @@
     "turbo": "^2.5.6"
   },
   "devDependencies": {
+    "bun": "^1.1.34",
     "@types/node": "^20.19.13",
     "@vitest/ui": "^3.2.4",
     "oxlint": "^1.15.0",

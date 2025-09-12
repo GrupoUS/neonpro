@@ -14,7 +14,7 @@ export default defineConfig({
     ],
     timeout: 30000, // 30 seconds for integration tests
     bail: 1,
-    reporter: ['verbose', 'json'],
+    reporters: ['verbose', 'json'],
     outputFile: {
       json: './test-results.json'
     }

@@ -6,7 +6,7 @@ import { cors } from 'hono/cors';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import { generateText, streamText } from 'ai';
 
 // Request validation schemas
@@ -19,6 +19,7 @@ const ChatRequestSchema = z.object({
   messages: z.array(ChatMessageSchema),
   clientId: z.string().optional(),
   sessionId: z.string(),
+  model: z.string().optional(),
 });
 
 const app = new Hono();
@@ -65,23 +66,49 @@ const redactPII = (text: string): string => {
     .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ_REDACTED]')
     .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '[PHONE_REDACTED]')
     .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]');
-};// Streaming AI response endpoint
+};// Allowed models registry
+const MODEL_REGISTRY = {
+  'gpt-5-mini': { provider: 'openai', active: true, label: 'ChatGPT 5 Mini' },
+  'gemini-2.5-flash': { provider: 'google', active: true, label: 'Gemini Flash 2.5' },
+  // Experimental (present but inactive by default)
+  'gpt-4o-mini': { provider: 'openai', active: false, label: 'GPT-4o Mini' },
+  'o4-mini': { provider: 'openai', active: false, label: 'o4-mini' },
+  'gemini-1.5-pro': { provider: 'google', active: false, label: 'Gemini 1.5 Pro' },
+} as const;
+
+const DEFAULT_PRIMARY = 'gpt-5-mini' as const;
+const DEFAULT_SECONDARY = 'gemini-2.5-flash' as const;
+
+// Streaming AI response endpoint
 app.post('/stream',
   zValidator('json', ChatRequestSchema),
   async (c) => {
     try {
-      const { messages, clientId, sessionId } = c.req.valid('json');
+      const { messages, clientId, sessionId, model } = c.req.valid('json');
       
+      // Resolve model: allow only active models unless allowExperimental=true
+      const url = new URL(c.req.url);
+      const allowExperimental = url.searchParams.get('allowExperimental') === 'true';
+      const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
+        ? model as keyof typeof MODEL_REGISTRY
+        : undefined;
+      const isAllowed = requestedModel
+        ? (MODEL_REGISTRY[requestedModel].active || allowExperimental)
+        : true;
+      const chosenPrimary = isAllowed && requestedModel ? requestedModel : DEFAULT_PRIMARY;
+
       // Add system prompt
       const aiMessages = [
         { role: 'system' as const, content: SYSTEM_PROMPT },
         ...messages
       ];
       
-      // Primary provider (OpenAI GPT-4)
+      // Primary provider
       try {
+        const provider = MODEL_REGISTRY[chosenPrimary].provider;
+        const modelAdapter = provider === 'google' ? google : openai;
         const result = await streamText({
-          model: openai('gpt-4o'),
+          model: modelAdapter(chosenPrimary),
           messages: aiMessages,
           maxOutputTokens: 1000,
           temperature: 0.7,
@@ -94,7 +121,7 @@ app.post('/stream',
           sessionId,
           clientId: clientId || 'anonymous',
           userMessage: redactPII(userMessage),
-          provider: 'openai-gpt4',
+          provider: `${MODEL_REGISTRY[chosenPrimary].provider}-${chosenPrimary}`,
         });
 
         return result.toTextStreamResponse();
@@ -102,11 +129,11 @@ app.post('/stream',
       } catch (primaryError) {
         console.error('Primary AI provider failed:', primaryError);
         
-        // Fallback to secondary provider (Anthropic Claude)
+        // Fallback to secondary provider (fixed active secondary)
         try {
           const userMessage = messages[messages.length - 1]?.content || '';
           const fallbackResult = await streamText({
-            model: anthropic('claude-3-5-sonnet-20241022'),
+            model: google(DEFAULT_SECONDARY),
             messages: aiMessages,
             maxOutputTokens: 1000,
             temperature: 0.7,
@@ -117,7 +144,7 @@ app.post('/stream',
             sessionId,
             clientId: clientId || 'anonymous',
             userMessage: redactPII(userMessage),
-            provider: 'anthropic-claude',
+            provider: `google-${DEFAULT_SECONDARY}`,
           });
 
           return fallbackResult.toTextStreamResponse();
@@ -145,10 +172,31 @@ app.post('/suggestions',
   async (c) => {
     try {
       const { query, sessionId } = c.req.valid('json');
+
+      // Optional: Web search enrichment with Tavily (if API key present)
+      const tavilyKey = process.env.TAVILY_API_KEY;
+      let webHints: string[] = [];
+      if (tavilyKey && query.length > 3) {
+        try {
+          const resp = await fetch('https://api.tavily.com/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tavilyKey}` },
+            body: JSON.stringify({ query, max_results: 5, search_depth: 'basic' }),
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            webHints = Array.isArray(data?.results)
+              ? data.results.map((r: any) => r.title).filter(Boolean).slice(0, 5)
+              : [];
+          }
+        } catch (e) {
+          console.warn('Tavily search failed, continuing without web hints');
+        }
+      }
       
       const result = await generateText({
-        model: openai('gpt-4o'),
-        prompt: `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Responda apenas com lista separada por vírgulas, sem numeração.`,
+        model: openai(DEFAULT_PRIMARY),
+        prompt: `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${webHints.join('; ')}. Responda apenas com lista separada por vírgulas, sem numeração.`,
         maxOutputTokens: 100,
       });
 
@@ -192,7 +240,7 @@ app.get('/health', (c) => {
     timestamp: new Date().toISOString(),
     providers: {
       openai: 'available',
-      anthropic: 'available',
+      google: 'available',
     }
   });
 });

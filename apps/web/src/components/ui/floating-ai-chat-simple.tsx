@@ -32,7 +32,6 @@ export default function FloatingAIChatSimple({
   userRole = 'professional',
   lgpdCompliant = true,
   onAuditLog,
-  onEmergencyDetected,
 }: FloatingAIChatSimpleProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);

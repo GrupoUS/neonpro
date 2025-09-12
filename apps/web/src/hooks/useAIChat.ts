@@ -42,7 +42,9 @@ export function useAIChat(clientId?: string) {
       isLoading: false,
       error: null,
       sessionId,
-    };
+      // Default model selection
+      model: 'gpt-5-mini',
+    } as ChatState & { model: string };
   });
 
   // Persist chat state to session storage
@@ -51,6 +53,15 @@ export function useAIChat(clientId?: string) {
       sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(state));
     }
   }, []);
+
+  // Model selection setter
+  const setModel = useCallback((model: string) => {
+    setChatState(prev => {
+      const next = { ...(prev as ChatState & { model?: string }), model } as ChatState;
+      persistChatState(next);
+      return next;
+    });
+  }, [persistChatState]);
 
   // Send message mutation
   const sendMessageMutation = useMutation({
@@ -61,6 +72,7 @@ export function useAIChat(clientId?: string) {
         content,
         timestamp: new Date(),
         clientId,
+        metadata: { model: (chatState as ChatState & { model?: string }).model }
       };
 
       // Add user message immediately
@@ -77,7 +89,7 @@ export function useAIChat(clientId?: string) {
       const stream = await streamAestheticResponse([
         ...chatState.messages,
         userMessage,
-      ], clientId);
+      ], clientId, (chatState as ChatState & { model?: string }).model);
 
       return { userMessage, stream };
     },
@@ -221,6 +233,7 @@ export function useAIChat(clientId?: string) {
     isLoading: chatState.isLoading || sendMessageMutation.isPending,
     error: chatState.error,
     sessionId: chatState.sessionId,
+    model: (chatState as ChatState & { model?: string }).model,
     
     // Search
     searchSuggestions,
@@ -232,6 +245,7 @@ export function useAIChat(clientId?: string) {
     generateVoice: generateVoiceOutput,
     clearChat,
     retryLastMessage,
+    setModel,
     
     // Mutation states
     sendMessageLoading: sendMessageMutation.isPending,

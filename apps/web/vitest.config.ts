@@ -1,7 +1,8 @@
 import path from 'path';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, mergeConfig } from 'vitest/config';
+import shared from '../../.config/testing/vitest.config';
 
-export default defineConfig({
+export default mergeConfig(shared, defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -53,4 +54,4 @@ export default defineConfig({
       ],
     },
   },
-});
+}));

@@ -1,7 +1,7 @@
 'use client';
 
-import GradientButton from '@/components/ui/gradient-button';
-import ParticleButton from '@/components/ui/particle-button';
+import { KokonutGradientButton as GradientButton } from '@neonpro/ui';
+// ParticleButton demo removed; not installed in repo
 
 export default function KokonutExample() {
   return (
@@ -14,16 +14,6 @@ export default function KokonutExample() {
       </div>
 
       <div className='flex flex-col gap-6 items-center'>
-        <div className='text-center'>
-          <h2 className='text-2xl font-semibold mb-4'>Particle Button</h2>
-          <ParticleButton
-            onClick={() => console.log('Particle button clicked!')}
-            className='bg-blue-600 hover:bg-blue-700'
-          >
-            Click for Particles! ✨
-          </ParticleButton>
-        </div>
-
         <div className='text-center'>
           <h2 className='text-2xl font-semibold mb-4'>Gradient Button</h2>
           <GradientButton

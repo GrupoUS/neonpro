@@ -4,6 +4,12 @@ export interface AIPromptProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  // Model selection (KokonutUI ai-prompt pattern)
+  model?: string;
+  onModelChange?: (model: string) => void;
+  models?: Array<{ value: string; label: string; disabled?: boolean }>;
+  // Optionally hide the input and only show the selector
+  showInput?: boolean;
 }
 
 export interface AIInputSearchProps {
@@ -51,7 +57,11 @@ export interface ChatState {
   isLoading: boolean;
   error: string | null;
   sessionId: string;
+  // Selected model id (matches API registry keys)
+  model?: string;
 }
+
+export type ModelOption = { value: string; label: string; disabled?: boolean };
 
 export interface ComplianceConfig {
   enablePIIRedaction: boolean;

@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npx turbo build --filter=@neonpro/web",
+  "buildCommand": "bunx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "npm install",
+  "installCommand": "bun install",
   "framework": null,
   "functions": {},
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {

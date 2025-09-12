@@ -1,4 +1,4 @@
-import { AceternityButton } from "@/components/ui/aceternity-button";
+import { AceternityHoverBorderGradientButton as AceternityButton } from "@neonpro/ui";
 
 export function AceternityExample() {
   return (

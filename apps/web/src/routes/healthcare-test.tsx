@@ -37,7 +37,7 @@ function HealthcareTestComponent() {
         },
       });
       toast.success('Paciente atualizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao atualizar paciente');
     } finally {
       setIsUpdating(false);
@@ -59,7 +59,7 @@ function HealthcareTestComponent() {
         priority: 'medium',
       });
       toast.success('Agendamento criado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao criar agendamento');
     } finally {
       setIsCreatingAppointment(false);

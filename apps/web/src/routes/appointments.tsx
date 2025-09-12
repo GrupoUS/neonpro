@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
-import { supabase } from '@/integrations/supabase/client';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 
