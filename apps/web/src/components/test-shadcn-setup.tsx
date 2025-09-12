@@ -20,7 +20,35 @@ export function TestShadcnSetup() {
 
   return (
     <div className='p-8 space-y-8'>
-      <h2 className='text-2xl font-bold'>NeonPro UI Components Test</h2>
+      <div className='bg-gradient-to-r from-[#AC9469]/10 to-[#112031]/10 border border-[#AC9469]/30 text-[#112031] px-6 py-4 rounded-lg mb-6'>
+        <h2 className='text-2xl font-bold mb-2'>
+          🎨 NeonPro Neumorph Button - Brand Colors Applied
+        </h2>
+        <div className='grid md:grid-cols-2 gap-4 text-sm'>
+          <div>
+            <p>
+              <strong>✅ Expected Result:</strong> Neumorphic 3D styling with NeonPro brand colors
+            </p>
+            <p>
+              <strong>🎨 Primary Gold:</strong> #AC9469 (Pantone 4007C)
+            </p>
+            <p>
+              <strong>🔵 Deep Blue:</strong> #112031 (NeonPro Navy)
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>📐 Border Radius:</strong> Reduced for refined appearance
+            </p>
+            <p>
+              <strong>🎭 Animations:</strong> Gradient, border spin, and shimmer effects
+            </p>
+            <p>
+              <strong>♿ Accessibility:</strong> Respects prefers-reduced-motion
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className='space-y-4'>
         <h3 className='text-lg font-semibold'>Backward Compatible Button (shadcn API)</h3>

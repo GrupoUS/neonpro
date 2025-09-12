@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/molecules/alert';
 import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AIMetrics } from '@/lib/governance-service';

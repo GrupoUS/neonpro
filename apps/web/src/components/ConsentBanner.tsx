@@ -1,11 +1,11 @@
 // import React from 'react'; // Not needed in this component
+import { Badge } from '@/components/atoms/badge';
+import { Button } from '@neonpro/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Link } from '@tanstack/react-router';
 import { CheckCircle, Settings, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
-import { Badge } from '@/components/atoms/badge';
-import { Button } from '@/components/atoms/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 
 /**
  * LGPD-compliant consent banner component

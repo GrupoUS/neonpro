@@ -7,6 +7,7 @@ export { ThemeProviderBridge, useThemeBridge } from './theme/ThemeContext';
 
 // Export UI components
 export { Button, buttonVariants, NeumorphButton } from './components/ui/button';
+export { UniversalButton, universalButtonVariants } from './components/ui/universal-button';
 export {
   Card,
   CardContent,

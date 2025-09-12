@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -24,6 +25,7 @@ import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as FinancialRouteImport } from './routes/financial'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClientsRouteImport } from './routes/clients'
+import { Route as ButtonTestRouteImport } from './routes/button-test'
 import { Route as BentoGridTestRouteImport } from './routes/bento-grid-test'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as ApiTestRouteImport } from './routes/api-test'
@@ -34,6 +36,11 @@ import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patien
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
+const UniversalButtonTestRoute = UniversalButtonTestRouteImport.update({
+  id: '/universal-button-test',
+  path: '/universal-button-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestAuthRoute = TestAuthRouteImport.update({
   id: '/test-auth',
   path: '/test-auth',
@@ -109,6 +116,11 @@ const ClientsRoute = ClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ButtonTestRoute = ButtonTestRouteImport.update({
+  id: '/button-test',
+  path: '/button-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BentoGridTestRoute = BentoGridTestRouteImport.update({
   id: '/bento-grid-test',
   path: '/bento-grid-test',
@@ -162,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/bento-grid-test': typeof BentoGridTestRoute
+  '/button-test': typeof ButtonTestRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
@@ -177,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/universal-button-test': typeof UniversalButtonTestRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
@@ -188,6 +202,7 @@ export interface FileRoutesByTo {
   '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/bento-grid-test': typeof BentoGridTestRoute
+  '/button-test': typeof ButtonTestRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
@@ -203,6 +218,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/universal-button-test': typeof UniversalButtonTestRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
@@ -215,6 +231,7 @@ export interface FileRoutesById {
   '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRoute
   '/bento-grid-test': typeof BentoGridTestRoute
+  '/button-test': typeof ButtonTestRoute
   '/clients': typeof ClientsRoute
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
@@ -230,6 +247,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/test-auth': typeof TestAuthRoute
+  '/universal-button-test': typeof UniversalButtonTestRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
@@ -243,6 +261,7 @@ export interface FileRouteTypes {
     | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
+    | '/button-test'
     | '/clients'
     | '/dashboard'
     | '/financial'
@@ -258,6 +277,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
+    | '/universal-button-test'
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
@@ -269,6 +289,7 @@ export interface FileRouteTypes {
     | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
+    | '/button-test'
     | '/clients'
     | '/dashboard'
     | '/financial'
@@ -284,6 +305,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
+    | '/universal-button-test'
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
@@ -295,6 +317,7 @@ export interface FileRouteTypes {
     | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
+    | '/button-test'
     | '/clients'
     | '/dashboard'
     | '/financial'
@@ -310,6 +333,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/test-auth'
+    | '/universal-button-test'
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
@@ -322,6 +346,7 @@ export interface RootRouteChildren {
   ApiTestRoute: typeof ApiTestRoute
   AppointmentsRoute: typeof AppointmentsRoute
   BentoGridTestRoute: typeof BentoGridTestRoute
+  ButtonTestRoute: typeof ButtonTestRoute
   ClientsRoute: typeof ClientsRoute
   DashboardRoute: typeof DashboardRoute
   FinancialRoute: typeof FinancialRoute
@@ -337,6 +362,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
   TestAuthRoute: typeof TestAuthRoute
+  UniversalButtonTestRoute: typeof UniversalButtonTestRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRoute
@@ -344,6 +370,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/universal-button-test': {
+      id: '/universal-button-test'
+      path: '/universal-button-test'
+      fullPath: '/universal-button-test'
+      preLoaderRoute: typeof UniversalButtonTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test-auth': {
       id: '/test-auth'
       path: '/test-auth'
@@ -449,6 +482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/button-test': {
+      id: '/button-test'
+      path: '/button-test'
+      fullPath: '/button-test'
+      preLoaderRoute: typeof ButtonTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/bento-grid-test': {
       id: '/bento-grid-test'
       path: '/bento-grid-test'
@@ -522,6 +562,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTestRoute: ApiTestRoute,
   AppointmentsRoute: AppointmentsRoute,
   BentoGridTestRoute: BentoGridTestRoute,
+  ButtonTestRoute: ButtonTestRoute,
   ClientsRoute: ClientsRoute,
   DashboardRoute: DashboardRoute,
   FinancialRoute: FinancialRoute,
@@ -537,6 +578,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,
   TestAuthRoute: TestAuthRoute,
+  UniversalButtonTestRoute: UniversalButtonTestRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
   PatientsPatientIdRoute: PatientsPatientIdRoute,

@@ -1,6 +1,6 @@
 ---
 description: "Activates the Apex UI/UX Designer agent for NeonPro clínica estética interfaces."
-tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'archon', 'serena', 'shadcn-ui', 'shadcn']
+tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'todos', 'search', 'runTasks', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'archon', 'shadcn-ui', 'serena', 'shadcn']
 ---
 
 # 🎨 APEX UI/UX DESIGNER AGENT

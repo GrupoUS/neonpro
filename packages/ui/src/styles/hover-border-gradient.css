@@ -1,0 +1,259 @@
+/* ===================================================================
+ * Hover Border Gradient Animation System
+ * Performance-optimized CSS for 60fps delivery
+ * Based on AceternityUI-inspired hover border gradient effects
+ * =================================================================== */
+
+/* Base hover border gradient container */
+.hover-border-gradient {
+  position: relative;
+  isolation: isolate;
+  will-change: auto;
+}
+
+.hover-border-gradient:hover {
+  will-change: transform;
+}
+
+/* Core gradient border implementation */
+.hover-border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--border-width, 2px));
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--gradient-angle, 0deg) at var(--gradient-x, 50%) var(--gradient-y, 50%),
+    var(--gradient-colors, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b)
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: var(--gradient-opacity, 0.8);
+  filter: blur(var(--gradient-blur, 0px));
+  z-index: -1;
+  transform: translateZ(0); /* GPU layer promotion */
+  animation: gradient-rotate var(--gradient-duration, 3s) linear infinite;
+}
+
+/* Pause animation when prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .hover-border-gradient::before {
+    animation-duration: var(--gradient-duration-reduced, 6s);
+    opacity: var(--gradient-opacity-reduced, 0.3);
+    filter: blur(var(--gradient-blur-reduced, 1px));
+  }
+}
+
+/* Performance optimization for mobile */
+@media (max-width: 768px) {
+  .hover-border-gradient::before {
+    animation-duration: calc(var(--gradient-duration, 3s) * 1.5);
+    filter: blur(var(--gradient-blur-mobile, 1px));
+  }
+}
+
+/* Core rotation animation */
+@keyframes gradient-rotate {
+  0% {
+    transform: rotate(0deg) translateZ(0);
+  }
+  100% {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+/* Reverse rotation for counter-clockwise */
+@keyframes gradient-rotate-reverse {
+  0% {
+    transform: rotate(360deg) translateZ(0);
+  }
+  100% {
+    transform: rotate(0deg) translateZ(0);
+  }
+}
+
+/* Alternating rotation animation */
+@keyframes gradient-rotate-alternate {
+  0%, 50% {
+    transform: rotate(0deg) translateZ(0);
+  }
+  25% {
+    transform: rotate(180deg) translateZ(0);
+  }
+  75% {
+    transform: rotate(-180deg) translateZ(0);
+  }
+  100% {
+    transform: rotate(0deg) translateZ(0);
+  }
+}
+
+/* Direction variants */
+.hover-border-gradient--counter-clockwise::before {
+  animation-name: gradient-rotate-reverse;
+}
+
+.hover-border-gradient--alternate::before {
+  animation-name: gradient-rotate-alternate;
+  animation-duration: calc(var(--gradient-duration, 3s) * 2);
+}
+
+/* Intensity variants */
+.hover-border-gradient--subtle {
+  --gradient-opacity: 0.3;
+  --gradient-blur: 1px;
+  --gradient-duration: 4s;
+}
+
+.hover-border-gradient--normal {
+  --gradient-opacity: 0.6;
+  --gradient-blur: 2px;
+  --gradient-duration: 3s;
+}
+
+.hover-border-gradient--vibrant {
+  --gradient-opacity: 0.9;
+  --gradient-blur: 3px;
+  --gradient-duration: 2s;
+}
+
+/* Glow effect variant */
+.hover-border-gradient--glow::before {
+  box-shadow: 0 0 var(--glow-size, 20px) var(--glow-color, rgba(255, 255, 255, 0.3));
+}
+
+/* Pulsate on hover variant */
+.hover-border-gradient--pulsate:hover::before {
+  animation: gradient-rotate var(--gradient-duration, 3s) linear infinite,
+             gradient-pulse var(--pulse-duration, 1s) ease-in-out infinite alternate;
+}
+
+@keyframes gradient-pulse {
+  0% {
+    opacity: var(--gradient-opacity, 0.8);
+    transform: rotate(var(--current-rotation, 0deg)) scale(1) translateZ(0);
+  }
+  100% {
+    opacity: calc(var(--gradient-opacity, 0.8) * 1.5);
+    transform: rotate(var(--current-rotation, 0deg)) scale(1.02) translateZ(0);
+  }
+}
+
+/* Mouse tracking responsive gradient */
+.hover-border-gradient--mouse-tracking::before {
+  background: conic-gradient(
+    from var(--gradient-angle, 0deg) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    var(--gradient-colors, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b)
+  );
+  transition: background-position 0.1s ease-out;
+}
+
+/* GPU acceleration control */
+.hover-border-gradient--gpu-accelerated::before {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Performance mode variants */
+.hover-border-gradient--performance-low::before {
+  animation-duration: calc(var(--gradient-duration, 3s) * 2);
+  filter: none;
+  opacity: calc(var(--gradient-opacity, 0.8) * 0.7);
+}
+
+.hover-border-gradient--performance-high::before {
+  animation-duration: calc(var(--gradient-duration, 3s) * 0.8);
+  will-change: transform, opacity;
+}
+
+/* Color theme presets */
+.hover-border-gradient--theme-blue {
+  --gradient-colors: #3b82f6, #1d4ed8, #1e40af, #3b82f6;
+}
+
+.hover-border-gradient--theme-purple {
+  --gradient-colors: #8b5cf6, #7c3aed, #6d28d9, #8b5cf6;
+}
+
+.hover-border-gradient--theme-pink {
+  --gradient-colors: #ec4899, #db2777, #be185d, #ec4899;
+}
+
+.hover-border-gradient--theme-green {
+  --gradient-colors: #10b981, #059669, #047857, #10b981;
+}
+
+.hover-border-gradient--theme-orange {
+  --gradient-colors: #f59e0b, #d97706, #b45309, #f59e0b;
+}
+
+/* Border radius support */
+.hover-border-gradient--rounded-sm::before {
+  border-radius: calc(0.125rem + var(--border-width, 2px));
+}
+
+.hover-border-gradient--rounded-md::before {
+  border-radius: calc(0.375rem + var(--border-width, 2px));
+}
+
+.hover-border-gradient--rounded-lg::before {
+  border-radius: calc(0.5rem + var(--border-width, 2px));
+}
+
+.hover-border-gradient--rounded-xl::before {
+  border-radius: calc(0.75rem + var(--border-width, 2px));
+}
+
+.hover-border-gradient--rounded-full::before {
+  border-radius: 9999px;
+}
+
+/* Interaction states */
+.hover-border-gradient:focus-visible::before {
+  animation-duration: calc(var(--gradient-duration, 3s) * 0.5);
+  opacity: calc(var(--gradient-opacity, 0.8) * 1.2);
+}
+
+.hover-border-gradient:active::before {
+  animation-play-state: paused;
+  opacity: calc(var(--gradient-opacity, 0.8) * 0.7);
+}
+
+/* Disabled state */
+.hover-border-gradient:disabled::before,
+.hover-border-gradient[aria-disabled="true"]::before {
+  animation-play-state: paused;
+  opacity: 0.2;
+  filter: grayscale(100%);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .hover-border-gradient::before {
+    filter: contrast(1.5) saturate(1.2);
+  }
+}
+
+/* Print mode - disable animations */
+@media print {
+  .hover-border-gradient::before {
+    animation: none;
+    opacity: 0.5;
+    filter: none;
+  }
+}
+
+/* Utilities for dynamic control */
+.hover-border-gradient--paused::before {
+  animation-play-state: paused;
+}
+
+.hover-border-gradient--hidden::before {
+  opacity: 0;
+}
+
+.hover-border-gradient--visible::before {
+  opacity: var(--gradient-opacity, 0.8);
+}

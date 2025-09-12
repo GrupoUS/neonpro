@@ -1,85 +1,178 @@
-import { cn } from '@/lib/utils';
 import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { useHoverBorderGradient, useShineBorderAnimation, useAnimationPerformance } from '@neonpro/ui/hooks';
+import '@neonpro/ui/styles/hover-border-gradient.css';
+import '@neonpro/ui/styles/enhanced-shine-border.css';
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    /** Back-compat props */
-    magic?: boolean;
-    disableShine?: boolean;
-    /** New explicit flag (optional) */
-    enableShineBorder?: boolean;
-    /** Effect tuning */
-    shineDuration?: number;
-    shineColor?: string | string[];
+// Advanced animation props interface (same as Button)
+interface AdvancedAnimationProps {
+  // Hover Border Gradient Animation (AceternityUI style)
+  hoverBorderGradient?: {
+    enabled?: boolean;
+    intensity?: 'subtle' | 'normal' | 'vibrant';
+    direction?: 'left-right' | 'top-bottom' | 'diagonal-tl-br' | 'diagonal-tr-bl' | 'radial';
+    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
+    speed?: 'slow' | 'normal' | 'fast';
     borderWidth?: number;
-  }
->(({
-  className,
-  magic = false,
-  disableShine = false,
-  enableShineBorder,
-  shineDuration = 8,
-  shineColor = '#AC9469',
-  borderWidth = 1,
-  children,
-  ...props
-}, ref) => {
-  const __show = enableShineBorder ?? (magic || !disableShine);
-  if (__show) {
-    const duration = Math.max(0.1, shineDuration ?? 8);
-    const colorValue = Array.isArray(shineColor)
-      ? shineColor[0] ?? '#AC9469'
-      : shineColor ?? '#AC9469';
+    colors?: string[];
+  };
+  
+  // Enhanced Shine Border Animation (MagicUI style)
+  shineBorder?: {
+    enabled?: boolean;
+    pattern?: 'linear' | 'orbital' | 'pulse' | 'wave' | 'spiral';
+    intensity?: 'subtle' | 'normal' | 'vibrant';
+    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
+    speed?: 'slow' | 'normal' | 'fast';
+    borderWidth?: number;
+    color?: string;
+    duration?: number;
+    autoStart?: boolean;
+    hoverOnly?: boolean;
+  };
+}
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  // Advanced animation props
+  animations?: AdvancedAnimationProps;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, animations, onMouseEnter, onMouseLeave, onMouseMove, ...props }, ref) => {
+    // Performance optimization hook
+    const { isReducedMotion, deviceCapability } = useAnimationPerformance();
+    
+    // Determine if animations should be enabled based on performance and user preferences
+    const shouldEnableAnimations = !isReducedMotion && deviceCapability !== 'low';
+    
+    // Advanced hover border gradient animation
+    const hoverBorderGradientConfig = animations?.hoverBorderGradient;
+    const hoverBorderGradientEnabled = shouldEnableAnimations && hoverBorderGradientConfig?.enabled;
+    
+    const {
+      elementRef: hoverBorderRef,
+      mousePosition,
+      isHovered: isHoverBorderHovered,
+      cssClasses: hoverBorderClasses,
+      handleMouseEnter: handleHoverBorderMouseEnter,
+      handleMouseLeave: handleHoverBorderMouseLeave,
+      handleMouseMove: handleHoverBorderMouseMove,
+    } = useHoverBorderGradient({
+      enabled: hoverBorderGradientEnabled,
+      intensity: hoverBorderGradientConfig?.intensity || 'normal',
+      direction: hoverBorderGradientConfig?.direction || 'radial',
+      theme: hoverBorderGradientConfig?.theme || 'blue',
+      speed: hoverBorderGradientConfig?.speed || 'normal',
+      borderWidth: hoverBorderGradientConfig?.borderWidth || 2,
+      colors: hoverBorderGradientConfig?.colors,
+    });
+
+    // Enhanced shine border animation
+    const shineBorderConfig = animations?.shineBorder;
+    const shineBorderEnabled = shouldEnableAnimations && shineBorderConfig?.enabled;
+    
+    const {
+      elementRef: shineBorderRef,
+      isAnimating,
+      cssClasses: shineBorderClasses,
+      start: startShine,
+      stop: stopShine,
+      restart: restartShine,
+    } = useShineBorderAnimation({
+      enabled: shineBorderEnabled,
+      pattern: shineBorderConfig?.pattern || 'linear',
+      intensity: shineBorderConfig?.intensity || 'normal',
+      theme: shineBorderConfig?.theme || 'blue',
+      speed: shineBorderConfig?.speed || 'normal',
+      borderWidth: shineBorderConfig?.borderWidth || 2,
+      color: shineBorderConfig?.color,
+      duration: shineBorderConfig?.duration || 2000,
+      autoStart: shineBorderConfig?.autoStart ?? true,
+      hoverOnly: shineBorderConfig?.hoverOnly ?? false,
+    });
+
+    // Combine all CSS classes
+    const cardClasses = cn(
+      'rounded-lg border bg-card text-card-foreground shadow-sm relative overflow-hidden',
+      {
+        // Animation classes
+        ...hoverBorderClasses,
+        ...shineBorderClasses,
+      },
+      className,
+    );
+
+    // Combined event handlers
+    const handleMouseEnterCombined = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (hoverBorderGradientEnabled) {
+        handleHoverBorderMouseEnter(e);
+      }
+      
+      if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
+        startShine();
+      }
+      
+      onMouseEnter?.(e);
+    };
+
+    const handleMouseLeaveCombined = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (hoverBorderGradientEnabled) {
+        handleHoverBorderMouseLeave(e);
+      }
+      
+      if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
+        stopShine();
+      }
+      
+      onMouseLeave?.(e);
+    };
+
+    const handleMouseMoveCombined = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (hoverBorderGradientEnabled) {
+        handleHoverBorderMouseMove(e);
+      }
+      
+      onMouseMove?.(e);
+    };
+
+    // Apply ref to the appropriate element
+    const combinedRef = (element: HTMLDivElement | null) => {
+      if (hoverBorderRef.current !== element) {
+        hoverBorderRef.current = element;
+      }
+      if (shineBorderRef.current !== element) {
+        shineBorderRef.current = element;
+      }
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref) {
+        ref.current = element;
+      }
+    };
+
+    // Style object for CSS custom properties
+    const cardStyle: React.CSSProperties = {
+      ...props.style,
+      ...(hoverBorderGradientEnabled && mousePosition && {
+        '--mouse-x': `${mousePosition.x}px`,
+        '--mouse-y': `${mousePosition.y}px`,
+      }),
+    };
 
     return (
       <div
-        ref={ref}
-        className={cn(
-          'relative rounded-lg bg-card text-card-foreground shadow-sm overflow-hidden',
-          className,
-        )}
-        style={{
-          '--shine-duration': `${duration}s`,
-          '--shine-color': colorValue,
-          '--border-width': `${borderWidth}px`,
-        } as React.CSSProperties}
+        ref={combinedRef}
+        className={cardClasses}
+        style={cardStyle}
+        onMouseEnter={handleMouseEnterCombined}
+        onMouseLeave={handleMouseLeaveCombined}
+        onMouseMove={handleMouseMoveCombined}
         {...props}
-      >
-        {/* Shine border animation */}
-        <div
-          className='absolute inset-0 rounded-lg shine-border-animation'
-          aria-hidden='true'
-        />
-
-        {/* Content wrapper with border */}
-        <div
-          className={cn(
-            'relative z-10 rounded-lg border bg-card text-card-foreground',
-            'h-full w-full',
-          )}
-        >
-          {children}
-        </div>
-      </div>
+      />
     );
   }
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        'rounded-lg border bg-card text-card-foreground shadow-sm',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+);
 Card.displayName = 'Card';
-
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -93,14 +186,14 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = 'CardHeader';
 
 const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <h3
     ref={ref}
     className={cn(
       'text-2xl font-semibold leading-none tracking-tight',
-      className,
+      className
     )}
     {...props}
   />
@@ -108,10 +201,10 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <p
     ref={ref}
     className={cn('text-sm text-muted-foreground', className)}
     {...props}
@@ -139,4 +232,5 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export type { AdvancedAnimationProps as CardAnimationProps };

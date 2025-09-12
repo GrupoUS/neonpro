@@ -1,0 +1,345 @@
+/* ===================================================================
+ * Enhanced Shine Border Animation System
+ * Performance-optimized CSS with multiple animation patterns
+ * Based on MagicUI-inspired effects with 60fps delivery
+ * =================================================================== */
+
+/* Base shine border container */
+.shine-border {
+  position: relative;
+  isolation: isolate;
+  will-change: auto;
+}
+
+.shine-border:hover {
+  will-change: transform;
+}
+
+/* Core shine border implementation */
+.shine-border::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--border-width, 1px));
+  border-radius: inherit;
+  background: var(--shine-gradient);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: var(--shine-intensity, 0.8);
+  filter: blur(var(--shine-blur, 2px));
+  z-index: -1;
+  transform: translateZ(0);
+  animation: var(--shine-animation) var(--shine-duration, 3s) var(--shine-easing, linear) infinite;
+}
+
+/* Pattern-specific gradient definitions */
+.shine-border--linear {
+  --shine-gradient: linear-gradient(
+    var(--shine-angle, 90deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-linear-sweep;
+}
+
+.shine-border--orbital {
+  --shine-gradient: conic-gradient(
+    from var(--orbital-angle, 0deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-orbital;
+}
+/* ===================================================================
+ * Enhanced Shine Border Animation System
+ * Performance-optimized CSS with multiple animation patterns
+ * Based on MagicUI-inspired effects with 60fps delivery
+ * =================================================================== */
+
+/* Base shine border container */
+.shine-border {
+  position: relative;
+  isolation: isolate;
+  will-change: auto;
+}
+
+.shine-border:hover {
+  will-change: transform;
+}
+
+/* Core shine border implementation */
+.shine-border::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--border-width, 1px));
+  border-radius: inherit;
+  background: var(--shine-gradient);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: var(--shine-intensity, 0.8);
+  filter: blur(var(--shine-blur, 2px));
+  z-index: -1;
+  transform: translateZ(0);
+  animation: var(--shine-animation) var(--shine-duration, 3s) var(--shine-easing, linear) infinite;
+}
+
+/* Pattern-specific gradient definitions */
+.shine-border--linear {
+  --shine-gradient: linear-gradient(
+    var(--shine-angle, 90deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-linear-sweep;
+}
+
+.shine-border--orbital {
+  --shine-gradient: conic-gradient(
+    from var(--orbital-angle, 0deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-orbital;
+}
+
+.shine-border--pulse {
+  --shine-gradient: radial-gradient(
+    circle at var(--pulse-origin-x, 50%) var(--pulse-origin-y, 50%),
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-pulse;
+}
+
+.shine-border--wave {
+  --shine-gradient: linear-gradient(
+    var(--wave-direction, 45deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-wave;
+}
+
+.shine-border--spiral {
+  --shine-gradient: conic-gradient(
+    from var(--spiral-start, 0deg),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent,
+    var(--shine-color, #AC9469),
+    transparent
+  );
+  --shine-animation: shine-spiral;
+}
+
+/* Keyframe animations for each pattern */
+@keyframes shine-linear-sweep {
+  0% {
+    --shine-angle: 0deg;
+    transform: translateX(-100%) translateZ(0);
+  }
+  50% {
+    --shine-angle: 90deg;
+    transform: translateX(0%) translateZ(0);
+  }
+  100% {
+    --shine-angle: 180deg;
+    transform: translateX(100%) translateZ(0);
+  }
+}
+
+@keyframes shine-orbital {
+  0% {
+    --orbital-angle: 0deg;
+    transform: rotate(0deg) translateZ(0);
+  }
+  100% {
+    --orbital-angle: 360deg;
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+@keyframes shine-pulse {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.8) translateZ(0);
+  }
+  50% {
+    opacity: var(--shine-intensity, 0.8);
+    transform: scale(1.2) translateZ(0);
+  }
+}
+
+@keyframes shine-wave {
+  0% {
+    --wave-direction: 0deg;
+    transform: translateX(-100%) skewX(-15deg) translateZ(0);
+  }
+  25% {
+    --wave-direction: 45deg;
+    transform: translateX(-50%) skewX(0deg) translateZ(0);
+  }
+  75% {
+    --wave-direction: 135deg;
+    transform: translateX(50%) skewX(0deg) translateZ(0);
+  }
+  100% {
+    --wave-direction: 180deg;
+    transform: translateX(100%) skewX(15deg) translateZ(0);
+  }
+}
+
+@keyframes shine-spiral {
+  0% {
+    --spiral-start: 0deg;
+    transform: rotate(0deg) scale(0.8) translateZ(0);
+  }
+  50% {
+    --spiral-start: 180deg;
+    transform: rotate(180deg) scale(1.1) translateZ(0);
+  }
+  100% {
+    --spiral-start: 360deg;
+    transform: rotate(360deg) scale(0.8) translateZ(0);
+  }
+}
+
+/* Intensity variants */
+.shine-border--subtle {
+  --shine-intensity: 0.4;
+  --shine-blur: 1px;
+  --shine-duration: 4s;
+}
+
+.shine-border--normal {
+  --shine-intensity: 0.8;
+  --shine-blur: 2px;
+  --shine-duration: 3s;
+}
+
+.shine-border--vibrant {
+  --shine-intensity: 1.0;
+  --shine-blur: 3px;
+  --shine-duration: 2s;
+}
+
+/* Theme presets */
+.shine-border--gold {
+  --shine-color: #AC9469;
+}
+
+.shine-border--silver {
+  --shine-color: #C0C0C0;
+}
+
+.shine-border--copper {
+  --shine-color: #B87333;
+}
+
+.shine-border--blue {
+  --shine-color: #4A90E2;
+}
+
+.shine-border--purple {
+  --shine-color: #8B5CF6;
+}
+
+.shine-border--green {
+  --shine-color: #10B981;
+}
+
+.shine-border--red {
+  --shine-color: #EF4444;
+}
+
+/* Speed variants */
+.shine-border--slow {
+  --shine-duration: 5s;
+}
+
+.shine-border--fast {
+  --shine-duration: 1.5s;
+}
+
+/* Interaction states */
+.shine-border:hover::before {
+  animation-play-state: running;
+}
+
+.shine-border:not(:hover)::before {
+  animation-play-state: paused;
+}
+
+.shine-border--auto::before {
+  animation-play-state: running;
+}
+
+.shine-border:focus-visible::before {
+  animation-play-state: running;
+  --shine-intensity: calc(var(--shine-intensity, 0.8) * 1.2);
+}
+
+.shine-border:active::before {
+  animation-play-state: paused;
+  transform: scale(0.98) translateZ(0);
+}
+
+/* Performance optimizations */
+@media (max-width: 768px) {
+  .shine-border::before {
+    --shine-blur: 1px;
+    --shine-duration: calc(var(--shine-duration, 3s) * 1.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine-border::before {
+    animation: none;
+    opacity: var(--shine-intensity, 0.8);
+    transform: translateZ(0);
+  }
+  
+  .shine-border:hover::before {
+    opacity: calc(var(--shine-intensity, 0.8) * 1.2);
+    transition: opacity 0.2s ease;
+  }
+}
+
+/* Browser optimizations */
+@supports not (mask: linear-gradient(#fff 0 0)) {
+  .shine-border::before {
+    border: var(--border-width, 1px) solid var(--shine-color, #AC9469);
+    background: transparent;
+    opacity: calc(var(--shine-intensity, 0.8) * 0.5);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .shine-border::before {
+    --shine-color: CanvasText;
+    --shine-intensity: 1;
+    --shine-blur: 0;
+  }
+}
+
+/* Utility classes */
+.shine-border--paused::before {
+  animation-play-state: paused;
+}
+
+.shine-border--hidden::before {
+  opacity: 0;
+}
+
+.shine-border--visible::before {
+  opacity: var(--shine-intensity, 0.8);
+}

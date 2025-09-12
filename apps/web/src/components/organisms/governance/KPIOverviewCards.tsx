@@ -1,5 +1,5 @@
 import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { KPIOverview } from '@/lib/governance-service';

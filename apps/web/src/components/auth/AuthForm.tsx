@@ -1,14 +1,8 @@
-import { Button } from '@/components/atoms/button';
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { Alert, AlertDescription } from '@/components/molecules/alert';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@neonpro/ui';
+import { Button } from '@neonpro/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 // MagicCard removed - using enhanced Card with permanent shine border effect
 import { showToast } from '@/components/ui/toaster';
 import {

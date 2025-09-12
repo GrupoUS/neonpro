@@ -1,5 +1,5 @@
 import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/molecules/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Input } from '@/components/atoms/input';
 import {
   Select,

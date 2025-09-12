@@ -54,9 +54,9 @@ export function HoverBorderGradient({
       }, duration * 1000);
       return () => clearInterval(interval);
     }
+    // Return undefined explicitly when hovered is true
     return undefined;
-  }, [hovered, duration]);
-
+  }, [hovered, duration, clockwise, rotateDirection]); // Add clockwise and rotateDirection to dependencies
   return (
     <Tag
       onMouseEnter={() => {

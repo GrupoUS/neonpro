@@ -10,26 +10,26 @@ const buttonVariants = cva(
     variants: {
       intent: {
         default: [
-          'bg-[#36322F]',
+          'bg-[#AC9469]', // NeonPro Gold
           'text-[#fff]',
-          'hover:enabled:bg-[#4a4542]',
-          'disabled:bg-[#8c8885]',
-          '[box-shadow:inset_0px_-2.108433723449707px_0px_0px_#171310,_0px_1.2048193216323853px_6.325301647186279px_0px_rgba(58,_33,_8,_58%)]',
-          'hover:enabled:[box-shadow:inset_0px_-2.53012px_0px_0px_#171310,_0px_1.44578px_7.59036px_0px_rgba(58,_33,_8,_64%)]',
+          'hover:enabled:bg-[#B8A076]',
+          'disabled:bg-[#D4C8B4]',
+          '[box-shadow:inset_0px_-2px_0px_0px_#8B7A56,_0px_1px_6px_0px_rgba(172,_148,_105,_58%)]',
+          'hover:enabled:[box-shadow:inset_0px_-2.5px_0px_0px_#8B7A56,_0px_1.5px_7px_0px_rgba(172,_148,_105,_64%)]',
           'disabled:shadow-none',
-          'active:bg-[#2A2724]',
-          'active:[box-shadow:inset_0px_-1.5px_0px_0px_#171310,_0px_0.5px_2px_0px_rgba(58,_33,_8,_70%)]',
+          'active:bg-[#9A8459]',
+          'active:[box-shadow:inset_0px_-1.5px_0px_0px_#8B7A56,_0px_0.5px_2px_0px_rgba(172,_148,_105,_70%)]',
         ],
         primary: [
-          'bg-[#2C7BE5]',
+          'bg-[#112031]', // NeonPro Deep Blue
           'text-[#fff]',
-          'hover:enabled:bg-[#3D8DF5]',
-          'disabled:bg-[#9FC3F5]',
-          '[box-shadow:inset_0px_-2.108433723449707px_0px_0px_#1A68D1,_0px_1.2048193216323853px_6.325301647186279px_0px_rgba(28,_100,_242,_58%)]',
-          'hover:enabled:[box-shadow:inset_0px_-2.53012px_0px_0px_#2C7BE5,_0px_1.44578px_7.59036px_0px_rgba(28,_100,_242,_64%)]',
+          'hover:enabled:bg-[#1A2F47]',
+          'disabled:bg-[#7A8A9A]',
+          '[box-shadow:inset_0px_-2px_0px_0px_#0A1520,_0px_1px_6px_0px_rgba(17,_32,_49,_58%)]',
+          'hover:enabled:[box-shadow:inset_0px_-2.5px_0px_0px_#0A1520,_0px_1.5px_7px_0px_rgba(17,_32,_49,_64%)]',
           'disabled:shadow-none',
-          'active:bg-[#1A68D1]',
-          'active:[box-shadow:inset_0px_-1.5px_0px_0px_#1554AB,_0px_0.5px_2px_0px_rgba(28,_100,_242,_70%)]',
+          'active:bg-[#0F1B28]',
+          'active:[box-shadow:inset_0px_-1.5px_0px_0px_#0A1520,_0px_0.5px_2px_0px_rgba(17,_32,_49,_70%)]',
         ],
         secondary: [
           'bg-[#FFFFFF]',
@@ -57,9 +57,9 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        small: ['text-xs', 'py-1', 'px-2', 'h-9', 'rounded-[8px]'],
-        medium: ['text-base', 'py-2', 'px-4', 'h-11', 'rounded-[9px]'],
-        large: ['text-lg', 'py-3', 'px-6', 'h-14', 'rounded-[11px]'],
+        small: ['text-xs', 'py-1', 'px-2', 'h-9', 'rounded-[6px]'],
+        medium: ['text-base', 'py-2', 'px-4', 'h-11', 'rounded-[7px]'],
+        large: ['text-lg', 'py-3', 'px-6', 'h-14', 'rounded-[8px]'],
       },
       fullWidth: {
         true: 'w-full',

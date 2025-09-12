@@ -15,11 +15,11 @@ export { Toaster } from './ui/toaster';
 // export * from './healthcare'; // removed: folder no longer exists
 
 // Common aliases (optional convenience re-exports)
+export { Button, NeumorphButton } from '@neonpro/ui'; // Use Neumorph Button from UI package
 export { Badge } from './atoms/badge';
-export { Button } from './atoms/button';
 export { Input } from './atoms/input';
 export { Label } from './atoms/label';
 
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 export { Alert, AlertDescription, AlertTitle } from './molecules/alert';
-export { Card, CardContent, CardDescription, CardHeader, CardTitle } from './molecules/card';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './molecules/table';

@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Button } from '@/components/atoms/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { Chrome, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@neonpro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { CheckCircle, Chrome, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/test-auth')({
   component: TestAuth,
@@ -49,7 +49,7 @@ export function TestAuth() {
 
     try {
       const { data, error } = await supabase.auth.getSession();
-      
+
       if (error) {
         setResult(`Session error: ${error.message}`);
         setStatus('error');
@@ -91,13 +91,15 @@ export function TestAuth() {
           </Button>
 
           {result && (
-            <div className={`p-4 rounded-lg border ${
-              status === 'success' 
-                ? 'bg-green-50 border-green-200 text-green-800' 
-                : status === 'error'
-                ? 'bg-red-50 border-red-200 text-red-800'
-                : 'bg-gray-50 border-gray-200 text-gray-800'
-            }`}>
+            <div
+              className={`p-4 rounded-lg border ${
+                status === 'success'
+                  ? 'bg-green-50 border-green-200 text-green-800'
+                  : status === 'error'
+                  ? 'bg-red-50 border-red-200 text-red-800'
+                  : 'bg-gray-50 border-gray-200 text-gray-800'
+              }`}
+            >
               <div className='flex items-start gap-2'>
                 {status === 'success' && <CheckCircle className='h-5 w-5 mt-0.5 flex-shrink-0' />}
                 {status === 'error' && <XCircle className='h-5 w-5 mt-0.5 flex-shrink-0' />}
