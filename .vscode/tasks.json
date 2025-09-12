@@ -139,6 +139,16 @@
 			"type": "shell",
 			"command": "pnpm --filter @neonpro/web exec tsc --noEmit --listFiles",
 			"group": "build"
+		},
+		{
+			"label": "Type Check (apps/web) - fresh",
+			"type": "shell",
+			"command": "pnpm --filter @neonpro/web type-check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }

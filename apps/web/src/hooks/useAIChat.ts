@@ -10,7 +10,7 @@ import {
   processVoiceInput,
   generateVoiceOutput,
   logAIInteraction,
-} from '@/lib/ai/ai-chat-service';
+} from '@/lib/ai/ai-chat-service'; // path confirmed
 
 // Session storage key for persistence
 const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';

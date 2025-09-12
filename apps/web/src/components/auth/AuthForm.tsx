@@ -22,7 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IconBrandGoogle } from '@tabler/icons-react';
 import { useRouter } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useState } from 'react'; // React import not needed with new JSX transform
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

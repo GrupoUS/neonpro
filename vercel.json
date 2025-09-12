@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "name": "neonpro",
-  "buildCommand": "cd apps/web && npm install --legacy-peer-deps --ignore-scripts && npm run build",
+  "buildCommand": "bun install && bunx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "npm install --legacy-peer-deps --ignore-scripts",
+  "installCommand": "bun install",
   "framework": null,
   "rewrites": [
     {

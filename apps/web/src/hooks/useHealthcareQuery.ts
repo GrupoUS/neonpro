@@ -211,7 +211,7 @@ export function useUpdatePatient() {
     },
     
     // Always refetch after mutation
-    onSettled: (data, error, { patientId }) => {
+    onSettled: (_data, _error, { patientId }) => {
       queryClient.invalidateQueries({ queryKey: healthcareKeys.patient(patientId) });
     },
   });
@@ -349,7 +349,7 @@ export function useCreateAppointment() {
       toast.error(`Erro ao criar agendamento: ${error.message}`);
     },
     
-    onSettled: (data, error, variables) => {
+    onSettled: (_data, _error, variables) => {
       const patientId = variables.patient_id;
       
       // Invalidate related queries

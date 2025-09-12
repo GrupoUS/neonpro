@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react'; // React import not needed
 import { cn } from '@/lib/utils';
 import { useAIChat } from '@/hooks/useAIChat';
 import {
@@ -10,7 +10,13 @@ import {
   AITextLoading,
   AIVoice,
 } from '@/components/ui/ai-chat';
-import type { AIAssistantProps } from '@/components/healthcare/types';
+// import type { AIAssistantProps } from '@/components/healthcare/types';
+
+interface AIAssistantProps {
+  sessionId?: string;
+  locale?: string;
+}
+
 
 interface AIChatContainerProps extends Partial<AIAssistantProps> {
   clientId?: string;
