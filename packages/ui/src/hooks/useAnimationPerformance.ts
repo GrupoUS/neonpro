@@ -67,14 +67,16 @@ interface AnimationPerformanceReturn {
 // Device capability detection functions
 const detectDeviceCapabilities = (): DeviceCapabilities => {
   const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || hasTouch;
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || hasTouch;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
+
   // GPU detection
   const canvas = document.createElement('canvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   const hasGPU = !!gl;
-  
+
   // CPU power estimation (simplified)
   const cpuPower = (() => {
     const cores = navigator.hardwareConcurrency || 4;
@@ -82,15 +84,17 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
     if (isMobile) return Math.min(cores + memory - 2, 6);
     return Math.min(cores + memory - 1, 10);
   })();
-  
-  // High refresh rate detection
-  const isHighRefreshRate = screen.refreshRate ? screen.refreshRate > 60 : false;
-  
+
+  // High refresh rate detection (fallback since refreshRate is not standard)
+  const isHighRefreshRate = (screen as any).refreshRate ? (screen as any).refreshRate > 60 : false;
+
   // Memory constraints (rough estimation)
-  const hasMemoryConstraints = (navigator as any).deviceMemory ? (navigator as any).deviceMemory <= 2 : isMobile;
-  
+  const hasMemoryConstraints = (navigator as any).deviceMemory
+    ? (navigator as any).deviceMemory <= 2
+    : isMobile;
+
   const isLowEnd = cpuPower <= 4 || hasMemoryConstraints || (isMobile && !hasGPU);
-  
+
   return {
     cpuPower,
     hasGPU,
@@ -106,7 +110,7 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 // Generate performance settings based on capabilities
 const generatePerformanceSettings = (capabilities: DeviceCapabilities): PerformanceSettings => {
   const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } = capabilities;
-  
+
   // Disable animations if user prefers reduced motion
   if (prefersReducedMotion) {
     return {
@@ -119,7 +123,7 @@ const generatePerformanceSettings = (capabilities: DeviceCapabilities): Performa
       maxConcurrentAnimations: 1,
     };
   }
-  
+
   // Low-end device settings
   if (isLowEnd) {
     return {
@@ -132,7 +136,7 @@ const generatePerformanceSettings = (capabilities: DeviceCapabilities): Performa
       maxConcurrentAnimations: 2,
     };
   }
-  
+
   // Mobile device settings
   if (isMobile) {
     return {
@@ -145,7 +149,7 @@ const generatePerformanceSettings = (capabilities: DeviceCapabilities): Performa
       maxConcurrentAnimations: 3,
     };
   }
-  
+
   // High-performance desktop settings
   return {
     enableAnimations: true,
@@ -162,43 +166,43 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
   const [capabilities] = useState<DeviceCapabilities>(() => detectDeviceCapabilities());
   const [settings] = useState<PerformanceSettings>(() => generatePerformanceSettings(capabilities));
   const [currentFPS, setCurrentFPS] = useState<number>(60);
-  
+
   // FPS monitoring
   useEffect(() => {
     if (!settings.enableAnimations) return;
-    
+
     let frameCount = 0;
     let lastTime = performance.now();
     let animationId: number;
-    
+
     const measureFPS = () => {
       frameCount++;
       const currentTime = performance.now();
-      
+
       if (currentTime >= lastTime + 1000) {
         setCurrentFPS(Math.round((frameCount * 1000) / (currentTime - lastTime)));
         frameCount = 0;
         lastTime = currentTime;
       }
-      
+
       animationId = requestAnimationFrame(measureFPS);
     };
-    
+
     animationId = requestAnimationFrame(measureFPS);
-    
+
     return () => {
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
     };
   }, [settings.enableAnimations]);
-  
+
   // Utility functions
   const shouldAnimate = useCallback(
     (complexity: 'low' | 'medium' | 'high') => {
       if (!settings.enableAnimations) return false;
       if (capabilities.prefersReducedMotion) return false;
-      
+
       switch (complexity) {
         case 'low':
           return true;
@@ -210,9 +214,9 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
           return settings.enableAnimations;
       }
     },
-    [settings.enableAnimations, capabilities]
+    [settings.enableAnimations, capabilities],
   );
-  
+
   const getOptimizedDuration = useCallback(
     (baseDuration: number) => {
       if (capabilities.prefersReducedMotion) return 0;
@@ -220,34 +224,34 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
       if (capabilities.isMobile) return baseDuration * 1.2;
       return baseDuration;
     },
-    [capabilities]
+    [capabilities],
   );
-  
+
   const getOptimizedDebounce = useCallback(
     (baseDebounce: number) => {
       return Math.max(baseDebounce, settings.debounceMs);
     },
-    [settings.debounceMs]
+    [settings.debounceMs],
   );
-  
+
   const measurePerformance = useCallback(
     async (callback: () => void): Promise<number> => {
       const startTime = performance.now();
-      
-      await new Promise<void>((resolve) => {
+
+      await new Promise<void>(resolve => {
         requestAnimationFrame(() => {
           callback();
           resolve();
         });
       });
-      
+
       return performance.now() - startTime;
     },
-    []
+    [],
   );
-  
+
   const supportsRAF = typeof requestAnimationFrame !== 'undefined';
-  
+
   return {
     capabilities,
     settings,
@@ -261,3 +265,6 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     },
   };
 }
+
+// Export types for external use
+export type { AnimationPerformanceReturn, DeviceCapabilities, PerformanceSettings };

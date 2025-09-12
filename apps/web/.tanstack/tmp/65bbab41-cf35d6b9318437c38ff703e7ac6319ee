@@ -19,7 +19,6 @@ import { Route as ShadcnTestRouteImport } from './routes/shadcn-test'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as ParticleTestRouteImport } from './routes/particle-test'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
 import { Route as GovernanceRouteImport } from './routes/governance'
@@ -88,11 +87,6 @@ const ReportsRoute = ReportsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ParticleTestRoute = ParticleTestRouteImport.update({
-  id: '/particle-test',
-  path: '/particle-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -209,7 +203,6 @@ export interface FileRoutesByFullPath {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
-  '/particle-test': typeof ParticleTestRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -241,7 +234,6 @@ export interface FileRoutesByTo {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
-  '/particle-test': typeof ParticleTestRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -274,7 +266,6 @@ export interface FileRoutesById {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
-  '/particle-test': typeof ParticleTestRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
@@ -308,7 +299,6 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
-    | '/particle-test'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -340,7 +330,6 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
-    | '/particle-test'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -372,7 +361,6 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
-    | '/particle-test'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -405,7 +393,6 @@ export interface RootRouteChildren {
   GovernanceRoute: typeof GovernanceRoute
   HealthcareTestRoute: typeof HealthcareTestRoute
   LoginRoute: typeof LoginRoute
-  ParticleTestRoute: typeof ParticleTestRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
@@ -491,13 +478,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/particle-test': {
-      id: '/particle-test'
-      path: '/particle-test'
-      fullPath: '/particle-test'
-      preLoaderRoute: typeof ParticleTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -653,7 +633,6 @@ const rootRouteChildren: RootRouteChildren = {
   GovernanceRoute: GovernanceRoute,
   HealthcareTestRoute: HealthcareTestRoute,
   LoginRoute: LoginRoute,
-  ParticleTestRoute: ParticleTestRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,

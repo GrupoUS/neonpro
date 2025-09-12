@@ -6,6 +6,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+// Type for CSS custom properties
+type CSSPropertiesWithVars = React.CSSProperties & {
+  [key: `--${string}`]: string | number;
+};
+
 interface MousePosition {
   x: number;
   y: number;
@@ -32,7 +37,7 @@ interface HoverBorderGradientConfig {
 
 interface HoverBorderGradientReturn {
   /** Ref to attach to the element */
-  elementRef: React.RefObject<HTMLElement>;
+  elementRef: React.RefObject<HTMLElement | null>;
   /** Current mouse position relative to element */
   mousePosition: MousePosition;
   /** Whether mouse is currently hovering */
@@ -40,7 +45,7 @@ interface HoverBorderGradientReturn {
   /** CSS class names to apply */
   classNames: string;
   /** CSS custom properties object */
-  style: React.CSSProperties;
+  style: CSSPropertiesWithVars;
   /** Manual trigger methods */
   handlers: {
     onMouseEnter: (event: React.MouseEvent) => void;
@@ -50,7 +55,7 @@ interface HoverBorderGradientReturn {
 }
 
 export function useHoverBorderGradient(
-  config: HoverBorderGradientConfig = {}
+  config: HoverBorderGradientConfig = {},
 ): HoverBorderGradientReturn {
   const {
     enabled = true,
@@ -63,7 +68,7 @@ export function useHoverBorderGradient(
     debounce = 16, // ~60fps
   } = config;
 
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const debounceTimeoutRef = useRef<number | null>(null);
@@ -89,7 +94,7 @@ export function useHoverBorderGradient(
         setMousePosition({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
       });
     },
-    [enabled]
+    [enabled],
   );
 
   // Debounced mouse move handler
@@ -103,7 +108,7 @@ export function useHoverBorderGradient(
         updateMousePosition(event);
       }, debounce);
     },
-    [updateMousePosition, debounce]
+    [updateMousePosition, debounce],
   );
 
   // Event handlers
@@ -113,7 +118,7 @@ export function useHoverBorderGradient(
       setIsHovering(true);
       updateMousePosition(event);
     },
-    [enabled, updateMousePosition]
+    [enabled, updateMousePosition],
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -137,26 +142,26 @@ export function useHoverBorderGradient(
   // Generate CSS class names
   const classNames = enabled
     ? [
-        'hover-border-gradient',
-        `hover-border-gradient--${intensity}`,
-        `hover-border-gradient--${direction}`,
-        `hover-border-gradient--${theme}`,
-        `hover-border-gradient--${speed}`,
-      ].join(' ')
+      'hover-border-gradient',
+      `hover-border-gradient--${intensity}`,
+      `hover-border-gradient--${direction}`,
+      `hover-border-gradient--${theme}`,
+      `hover-border-gradient--${speed}`,
+    ].join(' ')
     : '';
 
   // Generate CSS custom properties
-  const style: React.CSSProperties = enabled
+  const style: CSSPropertiesWithVars = enabled
     ? {
-        '--mouse-x': `${mousePosition.x}%`,
-        '--mouse-y': `${mousePosition.y}%`,
-        '--border-width': `${borderWidth}px`,
-        ...(colors && {
-          '--gradient-color-1': colors[0] || '#AC9469',
-          '--gradient-color-2': colors[1] || '#D4AF37',
-          '--gradient-color-3': colors[2] || '#FFD700',
-        }),
-      }
+      '--mouse-x': `${mousePosition.x}%`,
+      '--mouse-y': `${mousePosition.y}%`,
+      '--border-width': `${borderWidth}px`,
+      ...(colors && {
+        '--gradient-color-1': colors[0] || '#AC9469',
+        '--gradient-color-2': colors[1] || '#D4AF37',
+        '--gradient-color-3': colors[2] || '#FFD700',
+      }),
+    }
     : {};
 
   return {
@@ -172,3 +177,6 @@ export function useHoverBorderGradient(
     },
   };
 }
+
+// Export types for external use
+export type { HoverBorderGradientConfig, HoverBorderGradientReturn };

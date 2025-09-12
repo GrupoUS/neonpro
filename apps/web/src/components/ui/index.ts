@@ -13,7 +13,6 @@ export { Input } from '../atoms/input';
 export { Label } from '../atoms/label';
 
 export { Alert, AlertDescription, AlertTitle } from '../molecules/alert';
-export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../molecules/card';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/table';
 
 // Remaining UI components (not yet reorganized)

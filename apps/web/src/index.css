@@ -159,7 +159,6 @@
     --tracking-wide: calc(var(--tracking-normal) + 0.025em);
     --tracking-wider: calc(var(--tracking-normal) + 0.05em);
     --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-    --animate-shine: shine var(--duration) infinite linear;
   }
   body {
     letter-spacing: var(--tracking-normal);
@@ -218,28 +217,17 @@
   }
 }
 
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-}
+/* Duplicated section removed - already defined above */
 
 @layer base {
-  * {
-    @apply border-border;
+  /* Animation definitions for NeonPro theme */
+  .animate-shine {
+    animation: shine var(--duration, 8s) infinite linear;
   }
-  body {
-    @apply bg-background text-foreground;
+  
+  .animate-shine-rotate {
+    animation: shine-rotate var(--duration, 8s) infinite linear;
   }
-}
-
-@theme inline {
-  --animate-shine: shine var(--duration) infinite linear;
-  --animate-shine-rotate: shine-rotate var(--duration) infinite linear;
 
   @keyframes shine {
     0% {
@@ -304,23 +292,8 @@
     87.5% { opacity: 1; }
     100% { opacity: 0; }
   }
-  @keyframes shine {
-  0% {
-    background-position: 0% 0%;
-    }
-  50% {
-    background-position: 100% 100%;
-    }
-  to {
-    background-position: 0% 0%;
-    }
-  }
 }
 
-::view-transition-old(root), ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-}
 /* Smooth Shine Border Animation for Cards */
 @layer components {
   .shine-border-animation {
@@ -335,6 +308,7 @@
       transparent 450deg
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     animation: shine-rotate var(--shine-duration, 8s) linear infinite;
@@ -372,8 +346,9 @@
     --np-angle: 0deg;
     background: conic-gradient(from var(--np-angle), hsl(var(--ring)) 0deg var(--np-line-size), transparent var(--np-line-size) 360deg);
     -webkit-mask: linear-gradient(#CCB07D) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#CCB07D) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
-            mask-composite: exclude;
+    mask-composite: exclude;
     opacity: 0;
     transition: opacity 300ms ease;
     animation: np-sweep var(--np-anim-duration) linear infinite;
@@ -394,8 +369,9 @@
       hsl(var(--ring) / 0.6) 360deg
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
-            mask-composite: exclude;
+    mask-composite: exclude;
     filter: blur(var(--np-glow-blur));
     opacity: 0;
     transition: opacity 300ms ease;
@@ -419,14 +395,14 @@
     inherits: false;
     initial-value: 0deg;
   }
-
-  @property --shine-color {
+  
+  @property --np-shine-color {
     syntax: '<color>';
     inherits: false;
     initial-value: #AC9469;
   }
-
-  @property --shine-duration {
+  
+  @property --np-anim-duration {
     syntax: '<time>';
     inherits: false;
     initial-value: 8s;

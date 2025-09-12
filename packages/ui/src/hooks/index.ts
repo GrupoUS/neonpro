@@ -17,6 +17,12 @@ export type {
 export type {
   ShineBorderAnimationConfig,
   ShineBorderAnimationReturn,
+  HoverDirection,
+  HoverGradientTheme,
+  ShinePattern,
+  ShineIntensity,
+  ShineTheme,
+  ShineSpeed,
 } from './useShineBorderAnimation';
 
 export type {

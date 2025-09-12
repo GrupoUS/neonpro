@@ -80,11 +80,6 @@ export interface UniversalButtonProps
   enableBorderGradient?: boolean;
 
   // Legacy customization props (backward compatibility)
-  gradientColors?: {
-    from?: string;
-    via?: string;
-    to?: string;
-  };
   duration?: number;
   clockwise?: boolean;
   
@@ -106,7 +101,6 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       enableGradient = false,
       enableNeumorph = false,
       enableBorderGradient = false,
-      gradientColors,
       duration = 3000,
       clockwise = true,
       
@@ -123,9 +117,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     ref,
   ) => {
     // Performance optimization hook
-    const { isReducedMotion, deviceCapability } = useAnimationPerformance();
+    const { capabilities } = useAnimationPerformance();
     
     // Determine if animations should be enabled based on performance and user preferences
+    const isReducedMotion = capabilities.prefersReducedMotion;
+    const deviceCapability = capabilities.isLowEnd ? 'low' : capabilities.isMobile ? 'medium' : 'high';
     const shouldEnableAnimations = !isReducedMotion && deviceCapability !== 'low';
     
     // Legacy border gradient support (backward compatibility)
@@ -140,11 +136,13 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     const {
       elementRef: hoverBorderRef,
       mousePosition,
-      isHovered: isHoverBorderHovered,
-      cssClasses: hoverBorderClasses,
-      handleMouseEnter: handleHoverBorderMouseEnter,
-      handleMouseLeave: handleHoverBorderMouseLeave,
-      handleMouseMove: handleHoverBorderMouseMove,
+      classNames: hoverBorderClasses,
+      style: hoverBorderStyle,
+      handlers: {
+        onMouseEnter: handleHoverBorderMouseEnter,
+        onMouseLeave: handleHoverBorderMouseLeave,
+        onMouseMove: handleHoverBorderMouseMove,
+      },
     } = useHoverBorderGradient({
       enabled: hoverBorderGradientEnabled,
       intensity: hoverBorderGradientConfig?.intensity || 'normal',
@@ -161,11 +159,9 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     
     const {
       elementRef: shineBorderRef,
-      isAnimating,
-      cssClasses: shineBorderClasses,
+      classNames: shineBorderClasses,
       start: startShine,
       stop: stopShine,
-      restart: restartShine,
     } = useShineBorderAnimation({
       enabled: shineBorderEnabled,
       pattern: shineBorderConfig?.pattern || 'linear',
@@ -186,11 +182,10 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
         // Legacy gradient effects (backward compatibility)
         'universal-button-gradient': enableGradient && shouldEnableAnimations,
         'universal-button-neumorph': enableNeumorph && shouldEnableAnimations,
-        
-        // Animation classes
-        ...hoverBorderClasses,
-        ...shineBorderClasses,
       },
+      // Animation classes (strings)
+      hoverBorderClasses,
+      shineBorderClasses,
       className,
     );
 
@@ -230,10 +225,10 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     // Apply ref to the appropriate element
     const combinedRef = (element: HTMLButtonElement | null) => {
       if (hoverBorderRef.current !== element) {
-        hoverBorderRef.current = element;
+        hoverBorderRef.current = element as HTMLElement | null;
       }
       if (shineBorderRef.current !== element) {
-        shineBorderRef.current = element;
+        shineBorderRef.current = element as HTMLElement | null;
       }
       if (typeof ref === 'function') {
         ref(element);
@@ -245,6 +240,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     // Style object for CSS custom properties
     const buttonStyle: React.CSSProperties = {
       ...props.style,
+      ...hoverBorderStyle,
       ...(hoverBorderGradientEnabled && mousePosition && {
         '--mouse-x': `${mousePosition.x}px`,
         '--mouse-y': `${mousePosition.y}px`,

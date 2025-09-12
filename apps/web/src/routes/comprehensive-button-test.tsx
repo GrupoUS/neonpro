@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
 import { UniversalButton } from '@neonpro/ui';
 import { Button } from '@neonpro/ui'; // shadcn/ui Button for conflict testing
-import { useState, useEffect } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/comprehensive-button-test')({
   component: ComprehensiveButtonTest,
@@ -16,7 +16,7 @@ function ComprehensiveButtonTest() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mediaQuery.matches);
-    
+
     const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
@@ -27,67 +27,67 @@ function ComprehensiveButtonTest() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-2 text-slate-800 dark:text-slate-200">
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8'>
+      <div className='max-w-6xl mx-auto'>
+        <h1 className='text-4xl font-bold text-center mb-2 text-slate-800 dark:text-slate-200'>
           Universal Button Comprehensive Testing
         </h1>
-        <p className="text-center text-slate-600 dark:text-slate-400 mb-8">
+        <p className='text-center text-slate-600 dark:text-slate-400 mb-8'>
           Complete test suite for production readiness validation
         </p>
 
         {/* Test Status Dashboard */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h2 className='text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200'>
             Test Execution Status
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <div className='text-center'>
+              <div className='text-3xl font-bold text-blue-600'>
                 {Object.keys(testResults).length}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Total Tests Run</div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>Total Tests Run</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">
+            <div className='text-center'>
+              <div className='text-3xl font-bold text-green-600'>
                 {Object.values(testResults).filter(Boolean).length}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Passed</div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>Passed</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-red-600">
+            <div className='text-center'>
+              <div className='text-3xl font-bold text-red-600'>
                 {Object.values(testResults).filter(r => !r).length}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Failed</div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>Failed</div>
             </div>
           </div>
-          <div className="mt-4">
-            <div className="text-sm text-slate-600 dark:text-slate-400">
+          <div className='mt-4'>
+            <div className='text-sm text-slate-600 dark:text-slate-400'>
               Reduced Motion: {reducedMotion ? 'Enabled' : 'Disabled'}
             </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">
+            <div className='text-sm text-slate-600 dark:text-slate-400'>
               Current Test: {currentTest || 'None'}
             </div>
           </div>
         </div>
 
         {/* 1. INDIVIDUAL EFFECTS TESTING */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             1. Individual Effects Testing
           </h3>
-          
-          <div className="grid md:grid-cols-3 gap-6">
+
+          <div className='grid md:grid-cols-3 gap-6'>
             {/* Gradient Effect Tests */}
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Gradient Effects (KokonutUI)
               </h4>
-              
-              <UniversalButton 
+
+              <UniversalButton
                 enableGradient
-                variant="default"
-                className="w-full"
+                variant='default'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Gradient Default');
                   markTestResult('gradient-default', true);
@@ -98,8 +98,8 @@ function ComprehensiveButtonTest() {
 
               <UniversalButton
                 enableGradient
-                variant="destructive"
-                className="w-full"
+                variant='destructive'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Gradient Destructive');
                   markTestResult('gradient-destructive', true);
@@ -110,13 +110,8 @@ function ComprehensiveButtonTest() {
 
               <UniversalButton
                 enableGradient
-                variant="outline"
-                className="w-full"
-                gradientColors={{
-                  from: "#06b6d4",
-                  via: "#3b82f6",
-                  to: "#8b5cf6"
-                }}
+                variant='outline'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Gradient Custom Colors');
                   markTestResult('gradient-custom', true);
@@ -127,15 +122,15 @@ function ComprehensiveButtonTest() {
             </div>
 
             {/* Neumorph Effect Tests */}
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Neumorph Effects (CultUI)
               </h4>
-              
-              <UniversalButton 
+
+              <UniversalButton
                 enableNeumorph
-                variant="default"
-                className="w-full"
+                variant='default'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Neumorph Default');
                   markTestResult('neumorph-default', true);
@@ -144,11 +139,11 @@ function ComprehensiveButtonTest() {
                 Neumorph Button
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableNeumorph
-                variant="secondary"
-                size="sm"
-                className="w-full"
+                variant='secondary'
+                size='sm'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Neumorph Small');
                   markTestResult('neumorph-small', true);
@@ -157,11 +152,11 @@ function ComprehensiveButtonTest() {
                 Small Neumorph
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableNeumorph
-                variant="outline"
-                size="lg"
-                className="w-full"
+                variant='outline'
+                size='lg'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Neumorph Large');
                   markTestResult('neumorph-large', true);
@@ -172,15 +167,15 @@ function ComprehensiveButtonTest() {
             </div>
 
             {/* Border Gradient Effect Tests */}
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Border Gradient (Aceternity)
               </h4>
-              
+
               <UniversalButton
                 enableBorderGradient
-                variant="outline"
-                className="w-full"
+                variant='outline'
+                className='w-full'
                 duration={2}
                 onClick={() => {
                   setCurrentTest('Border Gradient Fast');
@@ -192,8 +187,8 @@ function ComprehensiveButtonTest() {
 
               <UniversalButton
                 enableBorderGradient
-                variant="outline"
-                className="w-full"
+                variant='outline'
+                className='w-full'
                 duration={5}
                 clockwise={false}
                 onClick={() => {
@@ -204,11 +199,11 @@ function ComprehensiveButtonTest() {
                 Slow Counter-clockwise
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableBorderGradient
-                variant="outline"
-                size="lg"
-                className="w-full"
+                variant='outline'
+                size='lg'
+                className='w-full'
                 onClick={() => {
                   setCurrentTest('Border Gradient Large');
                   markTestResult('border-gradient-large', true);
@@ -221,17 +216,17 @@ function ComprehensiveButtonTest() {
         </div>
 
         {/* 2. EFFECT COMBINATIONS TESTING */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             2. Effect Combinations Testing
           </h3>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <UniversalButton 
+
+          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4'>
+            <UniversalButton
               enableGradient
               enableNeumorph
-              variant="default"
-              className="w-full"
+              variant='default'
+              className='w-full'
               onClick={() => {
                 setCurrentTest('Gradient + Neumorph');
                 markTestResult('combo-gradient-neumorph', true);
@@ -240,11 +235,11 @@ function ComprehensiveButtonTest() {
               Gradient + Neumorph
             </UniversalButton>
 
-            <UniversalButton 
+            <UniversalButton
               enableGradient
               enableBorderGradient
-              variant="outline"
-              className="w-full"
+              variant='outline'
+              className='w-full'
               onClick={() => {
                 setCurrentTest('Gradient + Border');
                 markTestResult('combo-gradient-border', true);
@@ -253,11 +248,11 @@ function ComprehensiveButtonTest() {
               Gradient + Border
             </UniversalButton>
 
-            <UniversalButton 
+            <UniversalButton
               enableNeumorph
               enableBorderGradient
-              variant="secondary"
-              className="w-full"
+              variant='secondary'
+              className='w-full'
               onClick={() => {
                 setCurrentTest('Neumorph + Border');
                 markTestResult('combo-neumorph-border', true);
@@ -266,12 +261,12 @@ function ComprehensiveButtonTest() {
               Neumorph + Border
             </UniversalButton>
 
-            <UniversalButton 
+            <UniversalButton
               enableGradient
               enableNeumorph
               enableBorderGradient
-              variant="default"
-              className="w-full"
+              variant='default'
+              className='w-full'
               onClick={() => {
                 setCurrentTest('All Three Effects');
                 markTestResult('combo-all-three', true);
@@ -283,71 +278,71 @@ function ComprehensiveButtonTest() {
         </div>
 
         {/* 3. STATES TESTING */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             3. States Testing
           </h3>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+
+          <div className='grid md:grid-cols-3 gap-6'>
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Loading States
               </h4>
-              
-              <UniversalButton 
+
+              <UniversalButton
                 enableGradient
-                variant="default"
+                variant='default'
                 loading
                 onClick={() => markTestResult('loading-gradient', true)}
               >
                 Loading Gradient
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableNeumorph
-                variant="secondary"
+                variant='secondary'
                 loading
                 onClick={() => markTestResult('loading-neumorph', true)}
               >
                 Loading Neumorph
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableBorderGradient
                 loading
-                variant="outline"
+                variant='outline'
                 onClick={() => markTestResult('loading-border', true)}
               >
                 Loading Border
               </UniversalButton>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Disabled States
               </h4>
-              
-              <UniversalButton 
+
+              <UniversalButton
                 enableGradient
-                variant="default"
+                variant='default'
                 disabled
                 onClick={() => markTestResult('disabled-gradient', false)}
               >
                 Disabled Gradient
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableNeumorph
-                variant="secondary"
+                variant='secondary'
                 disabled
                 onClick={() => markTestResult('disabled-neumorph', false)}
               >
                 Disabled Neumorph
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableBorderGradient
-                variant="outline"
+                variant='outline'
                 disabled
                 onClick={() => markTestResult('disabled-border', false)}
               >
@@ -355,35 +350,35 @@ function ComprehensiveButtonTest() {
               </UniversalButton>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            <div className='space-y-4'>
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300'>
                 Size Variants
               </h4>
-              
-              <UniversalButton 
+
+              <UniversalButton
                 enableGradient
-                variant="default"
-                size="sm"
-                className="w-full"
+                variant='default'
+                size='sm'
+                className='w-full'
                 onClick={() => markTestResult('size-small', true)}
               >
                 Small
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableNeumorph
-                variant="secondary"
-                size="lg"
-                className="w-full"
+                variant='secondary'
+                size='lg'
+                className='w-full'
                 onClick={() => markTestResult('size-large', true)}
               >
                 Large
               </UniversalButton>
 
-              <UniversalButton 
+              <UniversalButton
                 enableBorderGradient
-                variant="outline"
-                size="icon"
+                variant='outline'
+                size='icon'
                 onClick={() => markTestResult('size-icon', true)}
               >
                 🎯
@@ -393,39 +388,39 @@ function ComprehensiveButtonTest() {
         </div>
 
         {/* 4. INTEGRATION TESTING */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             4. Integration Testing
           </h3>
-          
-          <div className="space-y-6">
+
+          <div className='space-y-6'>
             <div>
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-4">
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300 mb-4'>
                 Coexistence with shadcn/ui Button
               </h4>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  variant="default"
+              <div className='flex flex-wrap gap-4'>
+                <Button
+                  variant='default'
                   onClick={() => markTestResult('shadcn-button-works', true)}
                 >
                   Standard Button
                 </Button>
-                
-                <UniversalButton 
+
+                <UniversalButton
                   enableGradient
-                  variant="default"
+                  variant='default'
                   onClick={() => markTestResult('universal-alongside-shadcn', true)}
                 >
                   Universal Button
                 </UniversalButton>
-                
-                <Button variant="outline">
+
+                <Button variant='outline'>
                   Another Standard
                 </Button>
-                
-                <UniversalButton 
+
+                <UniversalButton
                   enableBorderGradient
-                  variant="outline"
+                  variant='outline'
                   onClick={() => markTestResult('no-style-conflicts', true)}
                 >
                   Another Universal
@@ -434,26 +429,26 @@ function ComprehensiveButtonTest() {
             </div>
 
             <div>
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-4">
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300 mb-4'>
                 AsChild Pattern Testing
               </h4>
-              <div className="flex flex-wrap gap-4">
-                <UniversalButton 
-                  asChild 
+              <div className='flex flex-wrap gap-4'>
+                <UniversalButton
+                  asChild
                   enableGradient
                   onClick={() => markTestResult('as-child-div', true)}
                 >
-                  <div role="button" tabIndex={0}>
+                  <div role='button' tabIndex={0}>
                     As Div Element
                   </div>
                 </UniversalButton>
-                
-                <UniversalButton 
-                  asChild 
+
+                <UniversalButton
+                  asChild
                   enableBorderGradient
                   onClick={() => markTestResult('as-child-span', true)}
                 >
-                  <span role="button" tabIndex={0}>
+                  <span role='button' tabIndex={0}>
                     As Span Element
                   </span>
                 </UniversalButton>
@@ -463,38 +458,38 @@ function ComprehensiveButtonTest() {
         </div>
 
         {/* 5. ACCESSIBILITY TESTING */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg mb-8'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             5. Accessibility Testing
           </h3>
-          
-          <div className="space-y-6">
+
+          <div className='space-y-6'>
             <div>
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-4">
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300 mb-4'>
                 Keyboard Navigation (Test with Tab, Enter, Space)
               </h4>
-              <div className="flex flex-wrap gap-4">
-                <UniversalButton 
+              <div className='flex flex-wrap gap-4'>
+                <UniversalButton
                   enableGradient
-                  variant="default"
+                  variant='default'
                   onFocus={() => markTestResult('focus-gradient', true)}
                   onClick={() => markTestResult('keyboard-click-gradient', true)}
                 >
                   Focus Test 1
                 </UniversalButton>
-                
-                <UniversalButton 
+
+                <UniversalButton
                   enableNeumorph
-                  variant="secondary"
+                  variant='secondary'
                   onFocus={() => markTestResult('focus-neumorph', true)}
                   onClick={() => markTestResult('keyboard-click-neumorph', true)}
                 >
                   Focus Test 2
                 </UniversalButton>
-                
-                <UniversalButton 
+
+                <UniversalButton
                   enableBorderGradient
-                  variant="outline"
+                  variant='outline'
                   onFocus={() => markTestResult('focus-border', true)}
                   onClick={() => markTestResult('keyboard-click-border', true)}
                 >
@@ -504,31 +499,31 @@ function ComprehensiveButtonTest() {
             </div>
 
             <div>
-              <h4 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-4">
+              <h4 className='text-lg font-medium text-slate-700 dark:text-slate-300 mb-4'>
                 ARIA Attributes
               </h4>
-              <div className="flex flex-wrap gap-4">
-                <UniversalButton 
+              <div className='flex flex-wrap gap-4'>
+                <UniversalButton
                   enableGradient
-                  variant="default"
-                  aria-label="Submit form with gradient style"
+                  variant='default'
+                  aria-label='Submit form with gradient style'
                   onClick={() => markTestResult('aria-label-test', true)}
                 >
                   Submit Form
                 </UniversalButton>
-                
-                <UniversalButton 
+
+                <UniversalButton
                   enableNeumorph
-                  variant="secondary"
+                  variant='secondary'
                   loading
-                  aria-busy="true"
-                  aria-describedby="loading-description"
+                  aria-busy='true'
+                  aria-describedby='loading-description'
                   onClick={() => markTestResult('aria-busy-test', true)}
                 >
                   Processing...
                 </UniversalButton>
               </div>
-              <div id="loading-description" className="sr-only">
+              <div id='loading-description' className='sr-only'>
                 The form is being processed, please wait.
               </div>
             </div>
@@ -536,37 +531,37 @@ function ComprehensiveButtonTest() {
         </div>
 
         {/* Test Results Summary */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg">
-          <h3 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
+        <div className='bg-white dark:bg-slate-800 rounded-lg p-6 shadow-lg'>
+          <h3 className='text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200'>
             Test Results Summary
           </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {Object.entries(testResults).map(([testName, passed]) => (
-              <div 
+              <div
                 key={testName}
                 className={`p-3 rounded-lg border-2 ${
-                  passed 
-                    ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' 
+                  passed
+                    ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
                     : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <div className='flex items-center justify-between'>
+                  <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                     {testName}
                   </span>
-                  <span className={`text-sm font-bold ${
-                    passed ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <span
+                    className={`text-sm font-bold ${passed ? 'text-green-600' : 'text-red-600'}`}
+                  >
                     {passed ? '✓' : '✗'}
                   </span>
                 </div>
               </div>
             ))}
           </div>
-          
+
           {Object.keys(testResults).length === 0 && (
-            <p className="text-center text-slate-500 dark:text-slate-400">
+            <p className='text-center text-slate-500 dark:text-slate-400'>
               Click on buttons above to run tests and see results here.
             </p>
           )}
