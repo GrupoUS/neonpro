@@ -69,15 +69,19 @@ export function usePatient(
         .from('patients')
         .select(`
           id,
-          name,
+          full_name,
           cpf,
-          phone,
+          phone_primary,
           email,
           birth_date,
           created_at,
           updated_at,
-          aesthetic_preferences,
-          medical_history
+          allergies,
+          chronic_conditions,
+          current_medications,
+          patient_notes,
+          lgpd_consent_given,
+          data_consent_status
         `)
         .eq('id', patientId)
         .single();

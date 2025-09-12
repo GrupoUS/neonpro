@@ -40,15 +40,19 @@ async function loadPatientData(patientId: string, userRole: string) {
     .from('patients')
     .select(`
       id,
-      name,
+      full_name,
       cpf,
-      phone,
+      phone_primary,
       email,
       birth_date,
       created_at,
       updated_at,
-      aesthetic_preferences,
-      medical_history
+      allergies,
+      chronic_conditions,
+      current_medications,
+      patient_notes,
+      lgpd_consent_given,
+      data_consent_status
     `)
     .eq('id', patientId)
     .single();
@@ -193,7 +197,7 @@ function PatientDetailComponent() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {patient.name}
+            {patient.full_name}
           </h1>
           <p className="text-gray-600">
             Paciente ID: {patientId}
@@ -221,7 +225,7 @@ function PatientDetailComponent() {
         <PatientRiskCard
           patient={{
             id: patient.id,
-            name: patient.name,
+            name: patient.full_name,
             nextAppointment: '2024-01-15 14:00',
           }}
           riskScore={{
@@ -270,29 +274,61 @@ function PatientDetailComponent() {
                 <CardTitle>Informações Pessoais</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p><strong>Nome:</strong> {patient.name}</p>
+                <p><strong>Nome:</strong> {patient.full_name}</p>
                 <p><strong>CPF:</strong> {patient.cpf || 'Não informado'}</p>
-                <p><strong>Telefone:</strong> {patient.phone || 'Não informado'}</p>
+                <p><strong>Telefone:</strong> {patient.phone_primary || 'Não informado'}</p>
                 <p><strong>Email:</strong> {patient.email || 'Não informado'}</p>
                 <p><strong>Data de Nascimento:</strong> {patient.birth_date || 'Não informado'}</p>
+                <p><strong>Consentimento LGPD:</strong> {patient.lgpd_consent_given ? '✅ Concedido' : '❌ Não concedido'}</p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader>
-                <CardTitle>Preferências Estéticas</CardTitle>
+                <CardTitle>Informações Médicas</CardTitle>
               </CardHeader>
-              <CardContent>
-                {patient.aesthetic_preferences ? (
-                  <div className="space-y-2">
-                    {Object.entries(patient.aesthetic_preferences).map(([key, value]) => (
-                      <p key={key}>
-                        <strong>{key}:</strong> {String(value)}
-                      </p>
-                    ))}
+              <CardContent className="space-y-3">
+                <div>
+                  <strong>Alergias:</strong>
+                  {patient.allergies && patient.allergies.length > 0 ? (
+                    <ul className="list-disc list-inside mt-1">
+                      {patient.allergies.map((allergy: string, index: number) => (
+                        <li key={index} className="text-red-600">{allergy}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 ml-2">Nenhuma alergia registrada</span>
+                  )}
+                </div>
+                <div>
+                  <strong>Condições Crônicas:</strong>
+                  {patient.chronic_conditions && patient.chronic_conditions.length > 0 ? (
+                    <ul className="list-disc list-inside mt-1">
+                      {patient.chronic_conditions.map((condition: string, index: number) => (
+                        <li key={index} className="text-orange-600">{condition}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 ml-2">Nenhuma condição crônica registrada</span>
+                  )}
+                </div>
+                <div>
+                  <strong>Medicamentos Atuais:</strong>
+                  {patient.current_medications && patient.current_medications.length > 0 ? (
+                    <ul className="list-disc list-inside mt-1">
+                      {patient.current_medications.map((medication: string, index: number) => (
+                        <li key={index} className="text-blue-600">{medication}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 ml-2">Nenhum medicamento registrado</span>
+                  )}
+                </div>
+                {patient.patient_notes && (
+                  <div>
+                    <strong>Observações:</strong>
+                    <p className="mt-1 text-gray-700">{patient.patient_notes}</p>
                   </div>
-                ) : (
-                  <p className="text-gray-500">Nenhuma preferência registrada</p>
                 )}
               </CardContent>
             </Card>

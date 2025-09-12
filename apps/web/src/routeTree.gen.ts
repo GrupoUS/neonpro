@@ -16,6 +16,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
 import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as FinancialRouteImport } from './routes/financial'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -61,6 +62,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthcareTestRoute = HealthcareTestRouteImport.update({
+  id: '/healthcare-test',
+  path: '/healthcare-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GovernanceRoute = GovernanceRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
+  '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
+  '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/financial': typeof FinancialRoute
   '/governance': typeof GovernanceRoute
+  '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/financial'
     | '/governance'
+    | '/healthcare-test'
     | '/login'
     | '/profile'
     | '/reports'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/financial'
     | '/governance'
+    | '/healthcare-test'
     | '/login'
     | '/profile'
     | '/reports'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/financial'
     | '/governance'
+    | '/healthcare-test'
     | '/login'
     | '/profile'
     | '/reports'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FinancialRoute: typeof FinancialRoute
   GovernanceRoute: typeof GovernanceRoute
+  HealthcareTestRoute: typeof HealthcareTestRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/healthcare-test': {
+      id: '/healthcare-test'
+      path: '/healthcare-test'
+      fullPath: '/healthcare-test'
+      preLoaderRoute: typeof HealthcareTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/governance': {
@@ -404,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FinancialRoute: FinancialRoute,
   GovernanceRoute: GovernanceRoute,
+  HealthcareTestRoute: HealthcareTestRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
