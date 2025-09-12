@@ -6,6 +6,8 @@ export { installThemeStyles, themeCss } from './theme';
 export { ThemeProviderBridge, useThemeBridge } from './theme/ThemeContext';
 
 // Export UI components
+export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
+export { Badge, badgeVariants } from './components/ui/badge';
 export { Button, buttonVariants, NeumorphButton } from './components/ui/button';
 export {
   Card,
@@ -16,7 +18,10 @@ export {
   CardTitle,
 } from './components/ui/card';
 export { UniversalButton, universalButtonVariants } from './components/ui/universal-button';
-export type { UniversalButtonProps, AdvancedAnimationProps } from './components/ui/universal-button';
+export type {
+  AdvancedAnimationProps,
+  UniversalButtonProps,
+} from './components/ui/universal-button';
 
 // Export hooks
 export * from './hooks';
@@ -26,5 +31,5 @@ export { ShineBorder } from './components/magicui/shine-border';
 export type { ShineBorderProps } from './components/magicui/shine-border';
 
 // Export Aceternity components
-export { HoverBorderGradient, EnhancedShineBorder } from './components/aceternity';
-export type { HoverBorderGradientProps, EnhancedShineBorderProps } from './components/aceternity';
+export { EnhancedShineBorder, HoverBorderGradient } from './components/aceternity';
+export type { EnhancedShineBorderProps, HoverBorderGradientProps } from './components/aceternity';

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 /**
  * Basic integration test for LGPD Analytics Consent
@@ -49,40 +49,40 @@ describe('LGPD Analytics Consent Integration', () => {
 
     it('should handle initialization gracefully', async () => {
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should not throw when initializing
       await expect(analytics.initialize()).resolves.toBeUndefined();
     });
 
     it('should handle tracking without consent gracefully', async () => {
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should not throw when tracking without consent
       expect(() => {
         analytics.trackEvent({
           name: 'test_event',
-          properties: { test: 'value' }
+          properties: { test: 'value' },
         });
       }).not.toThrow();
 
       expect(() => {
         analytics.trackPageView({
           path: '/test',
-          title: 'Test Page'
+          title: 'Test Page',
         });
       }).not.toThrow();
 
       expect(() => {
         analytics.trackInteraction({
           element: 'button',
-          action: 'click'
+          action: 'click',
         });
       }).not.toThrow();
     });
 
     it('should handle cleanup gracefully', async () => {
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should not throw when cleaning up
       expect(() => analytics.cleanup()).not.toThrow();
     });
@@ -153,10 +153,10 @@ describe('LGPD Analytics Consent Integration', () => {
   describe('LGPD Compliance Features', () => {
     it('should provide required LGPD data export functionality', async () => {
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should provide export method
       expect(typeof analytics.exportUserData).toBe('function');
-      
+
       // Should handle export gracefully (may throw if not initialized)
       try {
         const exported = await analytics.exportUserData('test@example.com');
@@ -169,10 +169,10 @@ describe('LGPD Analytics Consent Integration', () => {
 
     it('should provide required LGPD data deletion functionality', async () => {
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should provide deletion method
       expect(typeof analytics.deleteUserData).toBe('function');
-      
+
       // Should handle deletion gracefully (may throw if not initialized)
       try {
         await analytics.deleteUserData('test@example.com');
@@ -187,9 +187,9 @@ describe('LGPD Analytics Consent Integration', () => {
     it('should handle missing window object gracefully', async () => {
       // Remove window mock
       delete (globalThis as any).window;
-      
+
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should not throw without window
       expect(() => analytics.cleanup()).not.toThrow();
       await expect(analytics.initialize()).resolves.toBeUndefined();
@@ -199,18 +199,18 @@ describe('LGPD Analytics Consent Integration', () => {
       (globalThis as any).window = {
         addEventListener: () => {},
       };
-      
+
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should not throw without localStorage
       expect(() => analytics.cleanup()).not.toThrow();
     });
 
     it('should handle missing crypto gracefully', async () => {
       delete (globalThis as any).crypto;
-      
+
       const { analytics } = await import('../lib/analytics');
-      
+
       // Should still work without crypto.randomUUID
       await expect(analytics.initialize()).resolves.toBeUndefined();
     });

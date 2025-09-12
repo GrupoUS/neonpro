@@ -3,8 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 // Import the generated route tree
-import { routeTree } from './routeTree.gen';
 import { ConsentProvider } from './contexts/ConsentContext';
+import { routeTree } from './routeTree.gen';
 import './index.css';
 import { ThemeProvider } from './components/theme-provider';
 

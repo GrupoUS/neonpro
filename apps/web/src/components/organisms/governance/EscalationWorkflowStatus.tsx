@@ -1,5 +1,3 @@
-import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import {
   Table,
   TableBody,
@@ -10,6 +8,8 @@ import {
 } from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { Escalations } from '@/lib/governance-service';
+import { Badge } from '@neonpro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type EscalationPriority = 'low' | 'medium' | 'high' | 'critical';

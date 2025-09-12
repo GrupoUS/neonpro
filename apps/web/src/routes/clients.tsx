@@ -1,9 +1,16 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { Input } from '@/components/atoms/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/molecules/table';
 import { supabase } from '@/integrations/supabase/client';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 
 function ClientsPage() {
@@ -14,12 +21,16 @@ function ClientsPage() {
     queryFn: async () => {
       let q = supabase
         .from('patients')
-        .select('id, full_name, email, phone_primary, last_visit_date, next_appointment_date, is_active')
+        .select(
+          'id, full_name, email, phone_primary, last_visit_date, next_appointment_date, is_active',
+        )
         .order('full_name', { ascending: true })
         .limit(100);
       if (search) {
         // simple ilike on name/email/phone
-        q = q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone_primary.ilike.%${search}%`);
+        q = q.or(
+          `full_name.ilike.%${search}%,email.ilike.%${search}%,phone_primary.ilike.%${search}%`,
+        );
       }
       const { data, error } = await q;
       if (error) throw error;
@@ -38,11 +49,17 @@ function ClientsPage() {
         </CardHeader>
         <CardContent>
           <div className='mb-4'>
-            <Input placeholder='Buscar por nome, email ou telefone' value={search} onChange={(e) => setSearch(e.target.value)} />
+            <Input
+              placeholder='Buscar por nome, email ou telefone'
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
           {isLoading && <p className='text-sm text-muted-foreground'>Carregando...</p>}
           {error && <p className='text-sm text-red-500'>Erro ao carregar clientes.</p>}
-          {!isLoading && rows.length === 0 && <p className='text-sm text-muted-foreground'>Nenhum cliente encontrado.</p>}
+          {!isLoading && rows.length === 0 && (
+            <p className='text-sm text-muted-foreground'>Nenhum cliente encontrado.</p>
+          )}
           {!isLoading && rows.length > 0 && (
             <Table>
               <TableHeader>
@@ -56,13 +73,21 @@ function ClientsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((c) => (
+                {rows.map(c => (
                   <TableRow key={c.id}>
                     <TableCell className='font-medium'>{c.full_name}</TableCell>
                     <TableCell>{c.email ?? '—'}</TableCell>
                     <TableCell>{c.phone_primary ?? '—'}</TableCell>
-                    <TableCell>{c.last_visit_date ? new Date(c.last_visit_date).toLocaleDateString('pt-BR') : '—'}</TableCell>
-                    <TableCell>{c.next_appointment_date ? new Date(c.next_appointment_date).toLocaleDateString('pt-BR') : '—'}</TableCell>
+                    <TableCell>
+                      {c.last_visit_date
+                        ? new Date(c.last_visit_date).toLocaleDateString('pt-BR')
+                        : '—'}
+                    </TableCell>
+                    <TableCell>
+                      {c.next_appointment_date
+                        ? new Date(c.next_appointment_date).toLocaleDateString('pt-BR')
+                        : '—'}
+                    </TableCell>
                     <TableCell>{c.is_active ? 'Ativo' : 'Inativo'}</TableCell>
                   </TableRow>
                 ))}
@@ -72,7 +97,9 @@ function ClientsPage() {
         </CardContent>
       </Card>
       <div className='mt-4'>
-        <Link to='/dashboard' className='text-sm text-muted-foreground hover:underline'>← Voltar ao Dashboard</Link>
+        <Link to='/dashboard' className='text-sm text-muted-foreground hover:underline'>
+          ← Voltar ao Dashboard
+        </Link>
       </div>
     </div>
   );

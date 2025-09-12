@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { nanoid } from 'nanoid';
 import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
 import {
-  streamAestheticResponse,
   generateSearchSuggestions,
-  processVoiceInput,
   generateVoiceOutput,
   logAIInteraction,
+  processVoiceInput,
+  streamAestheticResponse,
 } from '@/lib/ai/ai-chat-service'; // path confirmed
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { nanoid } from 'nanoid';
+import { useCallback, useState } from 'react';
 
 // Session storage key for persistence
 const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
@@ -22,7 +22,7 @@ const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
 export function useAIChat(clientId?: string) {
   const queryClient = useQueryClient();
   const sessionId = useState(() => nanoid())[0];
-  
+
   // Chat state management
   const [chatState, setChatState] = useState<ChatState>(() => {
     // Load from session storage on mount
@@ -36,7 +36,7 @@ export function useAIChat(clientId?: string) {
         }
       }
     }
-    
+
     return {
       messages: [],
       isLoading: false,
@@ -72,7 +72,7 @@ export function useAIChat(clientId?: string) {
         content,
         timestamp: new Date(),
         clientId,
-        metadata: { model: (chatState as ChatState & { model?: string }).model }
+        metadata: { model: (chatState as ChatState & { model?: string }).model },
       };
 
       // Add user message immediately
@@ -86,10 +86,14 @@ export function useAIChat(clientId?: string) {
       persistChatState(newState);
 
       // Stream AI response
-      const stream = await streamAestheticResponse([
-        ...chatState.messages,
-        userMessage,
-      ], clientId, (chatState as ChatState & { model?: string }).model);
+      const stream = await streamAestheticResponse(
+        [
+          ...chatState.messages,
+          userMessage,
+        ],
+        clientId,
+        (chatState as ChatState & { model?: string }).model,
+      );
 
       return { userMessage, stream };
     },
@@ -97,16 +101,16 @@ export function useAIChat(clientId?: string) {
       // Process streaming response
       const reader = stream.getReader();
       let aiContent = '';
-      
+
       try {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          
+
           // Decode and accumulate response
           const chunk = new TextDecoder().decode(value);
           aiContent += chunk;
-          
+
           // Update UI with partial response
           const aiMessage: ChatMessage = {
             id: nanoid(),
@@ -115,7 +119,7 @@ export function useAIChat(clientId?: string) {
             timestamp: new Date(),
             clientId,
           };
-          
+
           const streamingState = {
             ...chatState,
             messages: [...chatState.messages, userMessage, aiMessage],
@@ -123,7 +127,7 @@ export function useAIChat(clientId?: string) {
           };
           setChatState(streamingState);
         }
-        
+
         // Final state when streaming is complete
         const finalAiMessage: ChatMessage = {
           id: nanoid(),
@@ -132,20 +136,19 @@ export function useAIChat(clientId?: string) {
           timestamp: new Date(),
           clientId,
         };
-        
+
         const finalState = {
           ...chatState,
           messages: [...chatState.messages, userMessage, finalAiMessage],
           isLoading: false,
           error: null,
         };
-        
+
         setChatState(finalState);
         persistChatState(finalState);
-        
+
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-        
       } catch (error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
@@ -155,7 +158,7 @@ export function useAIChat(clientId?: string) {
         }));
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Send message error:', error);
       setChatState(prev => ({
         ...prev,
@@ -163,7 +166,7 @@ export function useAIChat(clientId?: string) {
         error: error instanceof Error ? error.message : 'Erro desconhecido',
       }));
     },
-  });  // Search suggestions query
+  }); // Search suggestions query
   const {
     data: searchSuggestions = [],
     isLoading: suggestionsLoading,
@@ -173,9 +176,9 @@ export function useAIChat(clientId?: string) {
       const lastUserMessage = chatState.messages
         .filter(m => m.role === 'user')
         .pop();
-      
+
       if (!lastUserMessage) return [];
-      
+
       return generateSearchSuggestions(lastUserMessage.content);
     },
     enabled: chatState.messages.length > 0,
@@ -185,7 +188,7 @@ export function useAIChat(clientId?: string) {
   // Voice input processing
   const processVoiceMutation = useMutation({
     mutationFn: processVoiceInput,
-    onSuccess: (transcript) => {
+    onSuccess: transcript => {
       if (transcript) {
         sendMessageMutation.mutate(transcript);
       }
@@ -200,7 +203,7 @@ export function useAIChat(clientId?: string) {
       error: null,
       sessionId: nanoid(), // New session
     };
-    
+
     setChatState(clearedState);
     persistChatState(clearedState);
     queryClient.invalidateQueries({ queryKey: ['search-suggestions'] });
@@ -211,18 +214,18 @@ export function useAIChat(clientId?: string) {
     const lastUserMessage = chatState.messages
       .filter(m => m.role === 'user')
       .pop();
-    
+
     if (lastUserMessage) {
       // Remove messages after the last user message
       const messageIndex = chatState.messages.findIndex(m => m.id === lastUserMessage.id);
       const newMessages = chatState.messages.slice(0, messageIndex);
-      
+
       setChatState(prev => ({
         ...prev,
         messages: newMessages,
         error: null,
       }));
-      
+
       sendMessageMutation.mutate(lastUserMessage.content);
     }
   }, [chatState.messages, sendMessageMutation]);
@@ -234,11 +237,11 @@ export function useAIChat(clientId?: string) {
     error: chatState.error,
     sessionId: chatState.sessionId,
     model: (chatState as ChatState & { model?: string }).model,
-    
+
     // Search
     searchSuggestions,
     suggestionsLoading,
-    
+
     // Actions
     sendMessage: sendMessageMutation.mutate,
     processVoice: processVoiceMutation.mutate,
@@ -246,7 +249,7 @@ export function useAIChat(clientId?: string) {
     clearChat,
     retryLastMessage,
     setModel,
-    
+
     // Mutation states
     sendMessageLoading: sendMessageMutation.isPending,
     voiceProcessingLoading: processVoiceMutation.isPending,

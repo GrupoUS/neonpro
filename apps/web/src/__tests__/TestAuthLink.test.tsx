@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { TestAuth } from '@/routes/test-auth';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Router Link
 vi.mock('@tanstack/react-router', () => {
   return {
     Link: ({ to, children, ...props }: any) => (
-      <a data-testid="router-link" href={typeof to === 'string' ? to : String(to)} {...props}>
+      <a data-testid='router-link' href={typeof to === 'string' ? to : String(to)} {...props}>
         {children}
       </a>
     ),
@@ -39,7 +39,7 @@ describe('TestAuth Back Link', () => {
     });
   });
 
-  it("renders a Router Link for 'Back to Login' and doesn't reload", async () => {
+  it('renders a Router Link for \'Back to Login\' and doesn\'t reload', async () => {
     render(<TestAuth />);
 
     const link = await screen.findByRole('link', { name: /back to login/i });

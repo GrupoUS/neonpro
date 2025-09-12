@@ -1,6 +1,6 @@
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
-import { Alert, AlertDescription } from '@/components/molecules/alert';
+import { Alert, AlertDescription } from '@neonpro/ui';
 import { UniversalButton } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 // Enhanced with permanent shine border effect and smooth animations
@@ -129,7 +129,8 @@ export function AuthForm(
       shineColor='#AC9469'
       borderWidth={1}
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
         backdropFilter: 'blur(10px)',
         borderImage: 'linear-gradient(135deg, #AC9469, #112031, #294359) 1',
       }}

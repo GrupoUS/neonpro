@@ -1,9 +1,8 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/molecules/alert';
-import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { ComplianceData } from '@/lib/governance-service';
+import { Alert, AlertDescription, AlertTitle, Badge } from '@neonpro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type ComplianceStatus = 'compliant' | 'warning' | 'violation';

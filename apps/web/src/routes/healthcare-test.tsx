@@ -3,13 +3,13 @@
  * Tests the TanStack Query hooks with real Supabase data
  */
 
-import { Badge } from '@/components/atoms/badge';
 import {
   useCreateAppointment,
   usePatient,
   usePatientAppointments,
   useUpdatePatient,
 } from '@/hooks/useHealthcareQuery';
+import { Badge } from '@neonpro/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';

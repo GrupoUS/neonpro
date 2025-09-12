@@ -34,19 +34,19 @@ function MyBentoGrid() {
   return (
     <BentoGrid>
       <BentoGridItem
-        title="Agendamentos"
-        description="Sistema inteligente de marcação"
-        icon={<Calendar className="w-5 h-5" />}
-        variant="primary"
-        size="md"
+        title='Agendamentos'
+        description='Sistema inteligente de marcação'
+        icon={<Calendar className='w-5 h-5' />}
+        variant='primary'
+        size='md'
       />
-      
+
       <BentoGridItem
-        title="Pacientes"
-        description="Gestão completa de prontuários"
-        icon={<Users className="w-5 h-5" />}
-        variant="secondary"
-        size="sm"
+        title='Pacientes'
+        description='Gestão completa de prontuários'
+        icon={<Users className='w-5 h-5' />}
+        variant='secondary'
+        size='sm'
       />
     </BentoGrid>
   );
@@ -57,44 +57,44 @@ function MyBentoGrid() {
 
 ```tsx
 <BentoGridItem
-  title="Analytics Dashboard"
-  description="Métricas em tempo real"
-  variant="accent"
-  size="lg"
+  title='Analytics Dashboard'
+  description='Métricas em tempo real'
+  variant='accent'
+  size='lg'
   header={
-    <div className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-      <BarChart className="w-12 h-12 text-white" />
+    <div className='h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center'>
+      <BarChart className='w-12 h-12 text-white' />
     </div>
   }
 >
-  <div className="space-y-2">
+  <div className='space-y-2'>
     <p>Receita mensal: R$ 45.280</p>
     <p>Crescimento: +12%</p>
   </div>
-</BentoGridItem>
+</BentoGridItem>;
 ```
 
 ## Props
 
 ### BentoGrid Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `React.ReactNode` | - | BentoGridItem components |
+| Prop        | Type              | Default | Description              |
+| ----------- | ----------------- | ------- | ------------------------ |
+| `className` | `string`          | -       | Additional CSS classes   |
+| `children`  | `React.ReactNode` | -       | BentoGridItem components |
 
 ### BentoGridItem Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `title` | `string` | - | Card title |
-| `description` | `string` | - | Card description |
-| `header` | `React.ReactNode` | - | Custom header content (image, chart, etc.) |
-| `icon` | `React.ReactNode` | - | Icon component |
-| `children` | `React.ReactNode` | - | Custom card content |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Visual variant |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Card size |
+| Prop          | Type                                                | Default     | Description                                |
+| ------------- | --------------------------------------------------- | ----------- | ------------------------------------------ |
+| `className`   | `string`                                            | -           | Additional CSS classes                     |
+| `title`       | `string`                                            | -           | Card title                                 |
+| `description` | `string`                                            | -           | Card description                           |
+| `header`      | `React.ReactNode`                                   | -           | Custom header content (image, chart, etc.) |
+| `icon`        | `React.ReactNode`                                   | -           | Icon component                             |
+| `children`    | `React.ReactNode`                                   | -           | Custom card content                        |
+| `variant`     | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Visual variant                             |
+| `size`        | `'sm' \| 'md' \| 'lg' \| 'xl'`                      | `'md'`      | Card size                                  |
 
 ## Variants
 
@@ -102,7 +102,7 @@ function MyBentoGrid() {
 
 - **`default`**: Light background with NeonPro accent colors on hover
 - **`primary`**: Deep blue gradient (#112031 → #294359)
-- **`secondary`**: Gold gradient (#AC9469 → #B4AC9C)  
+- **`secondary`**: Gold gradient (#AC9469 → #B4AC9C)
 - **`accent`**: Mixed gradient (#294359 → #AC9469)
 
 ### Size Variants
@@ -192,6 +192,7 @@ Designed specifically for aesthetic clinic interfaces:
 Test the component at: `http://localhost:8084/bento-grid-test`
 
 The test page includes:
+
 - Full demo with clinic-specific content
 - Simplified version for smaller screens
 - Technical documentation

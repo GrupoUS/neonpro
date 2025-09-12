@@ -129,15 +129,17 @@ vi.mock('@supabase/supabase-js', () => {
         error: null,
       }),
       getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test' } }, error: null }),
-      onAuthStateChange: vi.fn().mockImplementation((cb?: (event: string, session: any) => void) => {
-        // Simulate a signed-in session by default so dashboard/pages render
-        if (cb) cb('SIGNED_IN', { user: { id: 'test' } });
-        return {
-          data: {
-            subscription: { unsubscribe: vi.fn() },
-          },
-        };
-      }),
+      onAuthStateChange: vi.fn().mockImplementation(
+        (cb?: (event: string, session: any) => void) => {
+          // Simulate a signed-in session by default so dashboard/pages render
+          if (cb) cb('SIGNED_IN', { user: { id: 'test' } });
+          return {
+            data: {
+              subscription: { unsubscribe: vi.fn() },
+            },
+          };
+        },
+      ),
     },
     channel: vi.fn().mockReturnValue(channelMock),
     removeChannel: vi.fn().mockResolvedValue(true),

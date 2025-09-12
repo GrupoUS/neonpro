@@ -1,13 +1,4 @@
-import { Badge } from '@/components/atoms/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Input } from '@/components/atoms/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -16,8 +7,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/molecules/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AuditTrail } from '@/lib/governance-service';
+import { Badge } from '@neonpro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 

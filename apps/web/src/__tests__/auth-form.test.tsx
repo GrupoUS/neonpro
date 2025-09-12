@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { AuthForm } from '@/components/auth/AuthForm';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { AuthForm } from '@/components/auth/AuthForm';
+import { describe, expect, it } from 'vitest';
 
 describe('AuthForm', () => {
   it('switches between modes', async () => {

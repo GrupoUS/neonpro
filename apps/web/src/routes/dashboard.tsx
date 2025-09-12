@@ -1,6 +1,6 @@
-import { Badge } from '@/components/atoms/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut, supabase } from '@/integrations/supabase/client';
+import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';

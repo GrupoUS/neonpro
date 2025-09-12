@@ -1,4 +1,3 @@
-import { Badge } from '@/components/atoms/badge';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -10,6 +9,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@neonpro/ui';
 import { UniversalButton } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';

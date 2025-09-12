@@ -1,4 +1,3 @@
-import { Badge } from '@/components/atoms/badge';
 import {
   Table,
   TableBody,
@@ -8,6 +7,7 @@ import {
   TableRow,
 } from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
+import { Badge } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type RiskSeverity = 'low' | 'medium' | 'high' | 'critical';

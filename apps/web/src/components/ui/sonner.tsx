@@ -1,4 +1,4 @@
-import { Toaster as SonnerToaster, toast } from 'sonner';
+import { toast, Toaster as SonnerToaster } from 'sonner';
 
 export { toast };
 
@@ -6,8 +6,8 @@ export function Toaster() {
   return (
     <SonnerToaster
       richColors
-      theme="system"
-      position="top-center"
+      theme='system'
+      position='top-center'
       expand={false}
       closeButton
       toastOptions={{

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test('basic setup test', async ({ page }) => {
   // Simple test to verify Playwright is working

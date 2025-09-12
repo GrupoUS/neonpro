@@ -1,6 +1,6 @@
 /**
  * Error Boundary Component
- * 
+ *
  * React Error Boundary that catches JavaScript errors and displays appropriate error pages
  */
 
@@ -26,8 +26,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     // Generate a unique error ID for tracking
-    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-    
+    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${
+      Math.random().toString(36).substr(2, 5).toUpperCase()
+    }`;
+
     return {
       hasError: true,
       error,
@@ -66,9 +68,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default to ServerErrorPage
       return (
-        <ServerErrorPage 
-          error={this.state.error} 
-          errorId={this.state.errorId} 
+        <ServerErrorPage
+          error={this.state.error}
+          errorId={this.state.errorId}
         />
       );
     }
@@ -80,8 +82,10 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook version for functional components
 export function useErrorHandler() {
   return (error: Error, errorInfo?: { componentStack?: string }) => {
-    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-    
+    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${
+      Math.random().toString(36).substr(2, 5).toUpperCase()
+    }`;
+
     if (process.env.NODE_ENV === 'development') {
       console.error('Error caught by useErrorHandler:', error, errorInfo);
     }

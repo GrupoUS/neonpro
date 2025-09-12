@@ -122,7 +122,8 @@ export const MagicCard = React.forwardRef<HTMLDivElement, MagicCardProps>(
           <div
             className='w-full h-full rounded-[var(--magic-radius)]'
             style={{
-              background: `conic-gradient(from 0deg, var(--magic-gradient-from), var(--magic-gradient-to), var(--magic-gradient-from))`,
+              background:
+                `conic-gradient(from 0deg, var(--magic-gradient-from), var(--magic-gradient-to), var(--magic-gradient-from))`,
               animation: `spin var(--magic-duration) linear infinite`,
               mask: `linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0)`,
               maskComposite: 'exclude',
@@ -139,7 +140,8 @@ export const MagicCard = React.forwardRef<HTMLDivElement, MagicCardProps>(
           className='absolute inset-0 rounded-[var(--magic-radius)] pointer-events-none opacity-0 transition-opacity duration-200 hover:opacity-100'
           style={{
             zIndex: -1,
-            background: `radial-gradient(var(--magic-size) circle at var(--magic-x, 50%) var(--magic-y, 50%), var(--magic-color)/var(--magic-opacity), transparent 60%)`,
+            background:
+              `radial-gradient(var(--magic-size) circle at var(--magic-x, 50%) var(--magic-y, 50%), var(--magic-color)/var(--magic-opacity), transparent 60%)`,
             contain: 'layout style paint',
           }}
         />

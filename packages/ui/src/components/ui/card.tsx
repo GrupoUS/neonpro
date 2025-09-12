@@ -46,6 +46,7 @@ const Card = React.forwardRef<
           '--border-width': `${borderWidth}px`,
         } as React.CSSProperties}
         {...props}
+
       >
         {/* Shine border animation */}
         <div

@@ -1,13 +1,13 @@
-import { Badge } from '@/components/atoms/badge';
+import { Badge } from '@neonpro/ui';
 import { UniversalButton } from '@neonpro/ui';
 import { Card } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/molecules/alert';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 
 interface PerformanceMetrics {

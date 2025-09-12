@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
   className?: string;
@@ -65,7 +65,7 @@ export default function FloatingAIChatSimple({
 
   const handleToggleChat = () => {
     setIsOpen(!isOpen);
-    
+
     // Audit log for chat interactions
     if (onAuditLog && lgpdCompliant) {
       onAuditLog('ai_chat_toggled', {
@@ -97,10 +97,11 @@ export default function FloatingAIChatSimple({
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Olá! Entendi que você está perguntando sobre "${userMessage.content}". Como assistente da NeonPro, posso ajudá-lo com informações sobre procedimentos estéticos, agendamentos e cuidados pós-tratamento. Como posso ser mais específico em minha ajuda?`,
+        content:
+          `Olá! Entendi que você está perguntando sobre "${userMessage.content}". Como assistente da NeonPro, posso ajudá-lo com informações sobre procedimentos estéticos, agendamentos e cuidados pós-tratamento. Como posso ser mais específico em minha ajuda?`,
         timestamp: new Date(),
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
       setIsLoading(false);
     }, 1500);
@@ -122,36 +123,34 @@ export default function FloatingAIChatSimple({
       {/* Floating Chat Button */}
       <div
         className={cn(
-          "fixed bottom-6 right-6 z-50",
-          className
+          'fixed bottom-6 right-6 z-50',
+          className,
         )}
       >
         <button
           onClick={handleToggleChat}
           className={cn(
-            "relative group flex items-center justify-center",
-            "w-14 h-14 rounded-full shadow-lg",
-            "bg-gradient-to-r from-[#294359] to-[#AC9469]",
-            "hover:from-[#1e3147] hover:to-[#9a8157]",
-            "transition-all duration-300 ease-in-out",
-            "focus:outline-none focus:ring-4 focus:ring-[#AC9469]/20",
-            "active:scale-95"
+            'relative group flex items-center justify-center',
+            'w-14 h-14 rounded-full shadow-lg',
+            'bg-gradient-to-r from-[#294359] to-[#AC9469]',
+            'hover:from-[#1e3147] hover:to-[#9a8157]',
+            'transition-all duration-300 ease-in-out',
+            'focus:outline-none focus:ring-4 focus:ring-[#AC9469]/20',
+            'active:scale-95',
           )}
-          aria-label={isOpen ? "Fechar chat AI" : "Abrir chat AI"}
+          aria-label={isOpen ? 'Fechar chat AI' : 'Abrir chat AI'}
         >
           {/* Background glow effect */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#294359] to-[#AC9469] opacity-20 blur-xl group-hover:opacity-30 transition-opacity duration-300" />
-          
+          <div className='absolute inset-0 rounded-full bg-gradient-to-r from-[#294359] to-[#AC9469] opacity-20 blur-xl group-hover:opacity-30 transition-opacity duration-300' />
+
           {/* Icon container */}
-          <div className="relative z-10">
-            {isOpen ? (
-              <X className="w-6 h-6 text-white" />
-            ) : (
-              <div className="relative">
-                <MessageCircle className="w-6 h-6 text-white" />
+          <div className='relative z-10'>
+            {isOpen ? <X className='w-6 h-6 text-white' /> : (
+              <div className='relative'>
+                <MessageCircle className='w-6 h-6 text-white' />
                 {/* AI sparkle indicator */}
-                <div className="absolute -top-1 -right-1">
-                  <Sparkles className="w-3 h-3 text-[#AC9469] animate-pulse" />
+                <div className='absolute -top-1 -right-1'>
+                  <Sparkles className='w-3 h-3 text-[#AC9469] animate-pulse' />
                 </div>
               </div>
             )}
@@ -159,9 +158,9 @@ export default function FloatingAIChatSimple({
 
           {/* Tooltip */}
           {!isOpen && (
-            <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className='absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
               Assistente NeonPro AI
-              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
+              <div className='absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900' />
             </div>
           )}
         </button>
@@ -171,75 +170,81 @@ export default function FloatingAIChatSimple({
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+          <div
+            className='fixed inset-0 bg-black/20 backdrop-blur-sm z-40'
             onClick={() => setIsOpen(false)}
           />
 
           {/* Chat Container */}
-          <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-lg shadow-xl z-50 flex flex-col">
+          <div className='fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-lg shadow-xl z-50 flex flex-col'>
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#294359] to-[#AC9469] text-white rounded-t-lg">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                <h3 className="font-semibold">NeonPro AI Assistant</h3>
+            <div className='flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#294359] to-[#AC9469] text-white rounded-t-lg'>
+              <div className='flex items-center gap-2'>
+                <Sparkles className='w-5 h-5' />
+                <h3 className='font-semibold'>NeonPro AI Assistant</h3>
               </div>
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 <button
                   onClick={clearChat}
-                  className="text-white/80 hover:text-white text-sm px-2 py-1 rounded hover:bg-white/10 transition-colors"
+                  className='text-white/80 hover:text-white text-sm px-2 py-1 rounded hover:bg-white/10 transition-colors'
                 >
                   Limpar
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-white/80 hover:text-white p-1 rounded hover:bg-white/10 transition-colors"
+                  className='text-white/80 hover:text-white p-1 rounded hover:bg-white/10 transition-colors'
                 >
-                  <X className="w-4 h-4" />
+                  <X className='w-4 h-4' />
                 </button>
               </div>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            <div className='flex-1 p-4 overflow-y-auto space-y-4'>
               {messages.length === 0 && (
-                <div className="text-center text-gray-500 py-8">
-                  <Sparkles className="w-12 h-12 mx-auto mb-4 text-[#AC9469]" />
-                  <p className="text-sm">
+                <div className='text-center text-gray-500 py-8'>
+                  <Sparkles className='w-12 h-12 mx-auto mb-4 text-[#AC9469]' />
+                  <p className='text-sm'>
                     Olá! Sou o assistente virtual da NeonPro.<br />
                     Como posso ajudá-lo hoje?
                   </p>
                 </div>
               )}
-              
-              {messages.map((message) => (
+
+              {messages.map(message => (
                 <div
                   key={message.id}
                   className={cn(
-                    "flex",
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                    'flex',
+                    message.role === 'user' ? 'justify-end' : 'justify-start',
                   )}
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                      'max-w-[80%] px-3 py-2 rounded-lg text-sm',
                       message.role === 'user'
                         ? 'bg-[#294359] text-white'
-                        : 'bg-gray-100 text-gray-800'
+                        : 'bg-gray-100 text-gray-800',
                     )}
                   >
                     {message.content}
                   </div>
                 </div>
               ))}
-              
+
               {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-800 px-3 py-2 rounded-lg text-sm">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                <div className='flex justify-start'>
+                  <div className='bg-gray-100 text-gray-800 px-3 py-2 rounded-lg text-sm'>
+                    <div className='flex items-center gap-1'>
+                      <div className='w-2 h-2 bg-gray-400 rounded-full animate-bounce' />
+                      <div
+                        className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
+                        style={{ animationDelay: '0.1s' }}
+                      />
+                      <div
+                        className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
+                        style={{ animationDelay: '0.2s' }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -247,29 +252,29 @@ export default function FloatingAIChatSimple({
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t">
-              <div className="flex gap-2">
+            <div className='p-4 border-t'>
+              <div className='flex gap-2'>
                 <input
-                  type="text"
+                  type='text'
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={e => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Digite sua mensagem..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#AC9469] focus:border-transparent"
+                  placeholder='Digite sua mensagem...'
+                  className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#AC9469] focus:border-transparent'
                   disabled={isLoading}
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isLoading}
-                  className="px-4 py-2 bg-[#294359] text-white rounded-md hover:bg-[#1e3147] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className='px-4 py-2 bg-[#294359] text-white rounded-md hover:bg-[#1e3147] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className='w-4 h-4' />
                 </button>
               </div>
-              
+
               {/* LGPD Compliance Notice */}
               {lgpdCompliant && (
-                <p className="text-xs text-gray-500 mt-2 text-center">
+                <p className='text-xs text-gray-500 mt-2 text-center'>
                   Powered by NeonPro AI • Respeitamos sua privacidade (LGPD)
                 </p>
               )}

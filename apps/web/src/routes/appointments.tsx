@@ -1,7 +1,14 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/molecules/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/table';
-import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 function AppointmentsPage() {
   // Mock data since appointments table doesn't exist yet in database schema
@@ -15,8 +22,8 @@ function AppointmentsPage() {
           start_time: new Date().toISOString(),
           end_time: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
           status: 'Agendado',
-          patient_name: 'Paciente Exemplo'
-        }
+          patient_name: 'Paciente Exemplo',
+        },
       ];
     },
   });
@@ -45,7 +52,7 @@ function AppointmentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {appointments!.map((a) => (
+                {appointments!.map(a => (
                   <TableRow key={a.id}>
                     <TableCell>{new Date(a.start_time).toLocaleString('pt-BR')}</TableCell>
                     <TableCell>{new Date(a.end_time).toLocaleString('pt-BR')}</TableCell>
@@ -59,7 +66,9 @@ function AppointmentsPage() {
         </CardContent>
       </Card>
       <div className='mt-4'>
-        <Link to='/dashboard' className='text-sm text-muted-foreground hover:underline'>← Voltar ao Dashboard</Link>
+        <Link to='/dashboard' className='text-sm text-muted-foreground hover:underline'>
+          ← Voltar ao Dashboard
+        </Link>
       </div>
     </div>
   );

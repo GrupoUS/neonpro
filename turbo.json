@@ -34,7 +34,11 @@
     "OPENAI_API_KEY",
     "ANTHROPIC_API_KEY",
     "ENCRYPTION_KEY",
-    "JWT_SECRET"
+    "JWT_SECRET",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "HEALTHCARE_COMPLIANCE_MODE",
+    "LGPD_AUDIT_ENABLED"
   ],
   "remoteCache": {
     "signature": true,
@@ -110,9 +114,10 @@
     "@neonpro/shared#build": {
       "dependsOn": [
         "@neonpro/types#build",
-        "@neonpro/database#build"
+        "@neonpro/database#build",
+        "@neonpro/core-services#build"
       ],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
     "@neonpro/ui#build": {
@@ -136,8 +141,7 @@
     "@neonpro/core-services#build": {
       "dependsOn": [
         "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/shared#build"
+        "@neonpro/database#build"
       ],
       "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]

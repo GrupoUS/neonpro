@@ -1,5 +1,5 @@
-import { BeamsBackground } from '@/components/ui/beams-background';
 import { AuthForm } from '@/components/auth/AuthForm';
+import { BeamsBackground } from '@/components/ui/beams-background';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({

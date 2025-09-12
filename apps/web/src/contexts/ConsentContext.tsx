@@ -1,29 +1,29 @@
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 // LGPD-compliant consent categories
 export interface ConsentPreferences {
-  necessary: boolean;        // Always true - essential for app functionality
-  analytics: boolean;        // Web analytics and usage tracking
-  functional: boolean;       // Enhanced features and personalization
-  marketing: boolean;        // Marketing and advertising cookies
+  necessary: boolean; // Always true - essential for app functionality
+  analytics: boolean; // Web analytics and usage tracking
+  functional: boolean; // Enhanced features and personalization
+  marketing: boolean; // Marketing and advertising cookies
 }
 
 export interface ConsentContextValue {
   // Consent state
   preferences: ConsentPreferences;
   hasConsent: (category: keyof ConsentPreferences) => boolean;
-  
+
   // Consent actions
   acceptAll: () => void;
   rejectOptional: () => void;
   updatePreferences: (preferences: Partial<ConsentPreferences>) => void;
   grantConsent: (category: keyof ConsentPreferences) => void;
-  
+
   // Settings and configuration
   consentSettings: ConsentPreferences;
   updateConsentSettings: (settings: Partial<ConsentPreferences>) => void;
-  consentHistory: Array<{timestamp: string; action: string; preferences: ConsentPreferences}>;
-  
+  consentHistory: Array<{ timestamp: string; action: string; preferences: ConsentPreferences }>;
+
   // UI state
   showConsentBanner: boolean;
   showPreferencesModal: boolean;
@@ -42,12 +42,12 @@ interface ConsentProviderProps {
 
 export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.Element {
   const [preferences, setPreferences] = useState<ConsentPreferences>({
-    necessary: true,   // Always required for app functionality
-    analytics: false,  // Requires explicit consent under LGPD
+    necessary: true, // Always required for app functionality
+    analytics: false, // Requires explicit consent under LGPD
     functional: false, // Enhanced features
-    marketing: false,  // Marketing/advertising
+    marketing: false, // Marketing/advertising
   });
-  
+
   const [showConsentBanner, setShowConsentBanner] = useState(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
   const [_consentVersion, setConsentVersion] = useState<string | null>(null);
@@ -55,11 +55,11 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
   // Load saved preferences on mount
   useEffect(() => {
     const savedData = localStorage.getItem(CONSENT_STORAGE_KEY);
-    
+
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        
+
         // Check if consent version matches current requirements
         if (parsed.version === CONSENT_VERSION) {
           setPreferences(prev => ({ ...prev, ...parsed.preferences }));
@@ -85,7 +85,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
       preferences: newPreferences,
       timestamp: new Date().toISOString(),
     };
-    
+
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(dataToSave));
       setConsentVersion(CONSENT_VERSION);
@@ -105,11 +105,11 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
       functional: true,
       marketing: true,
     };
-    
+
     setPreferences(newPreferences);
     savePreferences(newPreferences);
     setShowConsentBanner(false);
-    
+
     // Trigger analytics initialization if analytics was just enabled
     if (!preferences.analytics) {
       dispatchConsentEvent('analytics', true);
@@ -123,11 +123,11 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
       functional: false,
       marketing: false,
     };
-    
+
     setPreferences(newPreferences);
     savePreferences(newPreferences);
     setShowConsentBanner(false);
-    
+
     // Trigger analytics cleanup if analytics was previously enabled
     if (preferences.analytics) {
       dispatchConsentEvent('analytics', false);
@@ -140,13 +140,13 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
       ...updates,
       necessary: true, // Always true
     };
-    
+
     // Check for analytics consent changes
     const analyticsChanged = newPreferences.analytics !== preferences.analytics;
-    
+
     setPreferences(newPreferences);
     savePreferences(newPreferences);
-    
+
     // Trigger analytics events if consent changed
     if (analyticsChanged) {
       dispatchConsentEvent('analytics', newPreferences.analytics);
@@ -157,8 +157,8 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
   const dispatchConsentEvent = (category: string, granted: boolean) => {
     window.dispatchEvent(
       new CustomEvent('consent-changed', {
-        detail: { category, granted, timestamp: Date.now() }
-      })
+        detail: { category, granted, timestamp: Date.now() },
+      }),
     );
   };
 
@@ -172,7 +172,9 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
   };
 
   // Mock consent history for now (TODO: implement proper history tracking)
-  const consentHistory: Array<{timestamp: string; action: string; preferences: ConsentPreferences}> = [];
+  const consentHistory: Array<
+    { timestamp: string; action: string; preferences: ConsentPreferences }
+  > = [];
 
   const contextValue: ConsentContextValue = {
     preferences,
@@ -212,8 +214,8 @@ export function canTrackAnalytics(): boolean {
     const savedData = localStorage.getItem(CONSENT_STORAGE_KEY);
     if (savedData) {
       const parsed = JSON.parse(savedData);
-      return parsed.version === CONSENT_VERSION && 
-             parsed.preferences?.analytics === true;
+      return parsed.version === CONSENT_VERSION
+        && parsed.preferences?.analytics === true;
     }
   } catch {
     // If consent data is invalid, default to no tracking

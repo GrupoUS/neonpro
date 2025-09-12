@@ -12,7 +12,7 @@ export function usePerformance(componentName: string) { // componentName require
         const mountDuration = performance.now() - mountTime.current;
         (performanceMonitor as any).handleCustomMetric(
           `${componentName}-mount-time`,
-          mountDuration
+          mountDuration,
         );
       }
     };
@@ -34,14 +34,14 @@ export function usePerformance(componentName: string) { // componentName require
           const end = performance.now();
           (performanceMonitor as any).handleCustomMetric(
             `${componentName}-${operationName}`,
-            end - start
+            end - start,
           );
           return result as ReturnType<T>;
         } catch (error) {
           const end = performance.now();
           (performanceMonitor as any).handleCustomMetric(
             `${componentName}-${operationName}-error`,
-            end - start
+            end - start,
           );
           throw error;
         }
@@ -51,6 +51,6 @@ export function usePerformance(componentName: string) { // componentName require
 
   return {
     measureAsyncOperation,
-    getRenderCount: () => renderCount.current
+    getRenderCount: () => renderCount.current,
   };
 }

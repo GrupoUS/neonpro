@@ -3,15 +3,14 @@
  * Healthcare-compliant API with LGPD audit logging
  */
 
-import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
-import { z } from 'zod'
-import { prisma } from '@neonpro/database'
-import { BaseService } from '@neonpro/database/services'
-import { cache } from 'hono/cache'
-import { etag } from 'hono/etag'
+import { zValidator } from '@hono/zod-validator';
+import { BaseService, prisma } from '@neonpro/database';
+import { Hono } from 'hono';
+import { cache } from 'hono/cache';
+import { etag } from 'hono/etag';
+import { z } from 'zod';
 
-const app = new Hono()
+const app = new Hono();
 
 // Patient validation schemas
 const PatientCreateSchema = z.object({
@@ -22,11 +21,11 @@ const PatientCreateSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email().optional(),
   lgpdConsentGiven: z.boolean().default(false),
-})
+});
 
 const PatientUpdateSchema = PatientCreateSchema.partial().extend({
   id: z.string().uuid(),
-})
+});
 
 const PatientQuerySchema = z.object({
   clinicId: z.string().uuid(),
@@ -34,18 +33,18 @@ const PatientQuerySchema = z.object({
   limit: z.string().optional().transform(val => val ? Math.min(parseInt(val) || 20, 100) : 20),
   search: z.string().optional(),
   status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
-})
+});
 
 class PatientService extends BaseService {
   async getPatients(
-    clinicId: string, 
-    userId: string, 
+    clinicId: string,
+    userId: string,
     options: {
-      page: number
-      limit: number
-      search?: string
-      status: string
-    }
+      page: number;
+      limit: number;
+      search?: string;
+      status: string;
+    },
   ) {
     return this.withAuditLog(
       {
@@ -55,53 +54,53 @@ class PatientService extends BaseService {
         recordId: clinicId,
       },
       async () => {
-        const offset = (options.page - 1) * options.limit
-        
+        const offset = (options.page - 1) * options.limit;
+
         const whereClause: any = {
           clinicId,
           ...(options.status !== 'all' && {
-            isActive: options.status === 'active'
+            isActive: options.status === 'active',
           }),
           ...(options.search && {
             OR: [
               { fullName: { contains: options.search, mode: 'insensitive' } },
               { email: { contains: options.search, mode: 'insensitive' } },
               { phone: { contains: options.search } },
-            ]
-          })
-        }
+            ],
+          }),
+        };
 
         const [patients, total] = await Promise.all([
-          prisma.patients.findMany({
+          prisma.patient.findMany({
             where: whereClause,
             include: {
               appointments: {
                 where: {
-                  scheduledAt: { gte: new Date() }
+                  startTime: { gte: new Date() },
                 },
                 take: 3,
-                orderBy: { scheduledAt: 'asc' },
+                orderBy: { startTime: 'asc' },
                 select: {
                   id: true,
-                  scheduledAt: true,
+                  startTime: true,
                   status: true,
                   service: {
-                    select: { name: true }
-                  }
-                }
+                    select: { name: true },
+                  },
+                },
               },
               _count: {
                 select: {
-                  appointments: true
-                }
-              }
+                  appointments: true,
+                },
+              },
             },
             orderBy: { createdAt: 'desc' },
             skip: offset,
             take: options.limit,
           }),
-          prisma.patients.count({ where: whereClause })
-        ])
+          prisma.patient.count({ where: whereClause }),
+        ]);
 
         return {
           data: patients,
@@ -109,11 +108,11 @@ class PatientService extends BaseService {
             page: options.page,
             limit: options.limit,
             total,
-            totalPages: Math.ceil(total / options.limit)
-          }
-        }
-      }
-    )
+            totalPages: Math.ceil(total / options.limit),
+          },
+        };
+      },
+    );
   }
 
   async getPatientById(patientId: string, userId: string) {
@@ -125,46 +124,47 @@ class PatientService extends BaseService {
         recordId: patientId,
       },
       async () => {
-        const patient = await prisma.patients.findUnique({
+        const patient = await prisma.patient.findUnique({
           where: { id: patientId },
           include: {
             appointments: {
-              orderBy: { scheduledAt: 'desc' },
+              orderBy: { startTime: 'desc' },
               take: 10,
               include: {
                 professional: {
-                  select: { fullName: true }
+                  select: { fullName: true },
                 },
                 service: {
-                  select: { name: true, duration: true }
-                }
-              }
+                  select: { name: true, duration: true },
+                },
+              },
             },
-            consentRecords: {
-              where: { status: 'granted' },
-              orderBy: { grantedAt: 'desc' }
-            }
-          }
-        })
+            consentRecord: {
+              where: { status: 'GRANTED' },
+              orderBy: { grantedAt: 'desc' },
+            },
+          },
+        });
 
         if (!patient) {
-          throw new Error('Patient not found')
+          throw new Error('Patient not found');
         }
 
-        return patient
-      }
-    )
-  }  async createPatient(data: z.infer<typeof PatientCreateSchema>, userId: string) {
+        return patient;
+      },
+    );
+  }
+  async createPatient(data: z.infer<typeof PatientCreateSchema>, userId: string) {
     // Validate LGPD consent if processing personal data
     if (data.cpf || data.email) {
       if (!data.lgpdConsentGiven) {
-        throw new Error('LGPD consent required for processing personal data')
+        throw new Error('LGPD consent required for processing personal data');
       }
     }
 
     // Validate CPF if provided
     if (data.cpf && !this.validateCPF(data.cpf)) {
-      throw new Error('Invalid CPF format')
+      throw new Error('Invalid CPF format');
     }
 
     return this.withAuditLog(
@@ -176,7 +176,7 @@ class PatientService extends BaseService {
         newValues: data,
       },
       async () => {
-        const patient = await prisma.patients.create({
+        const patient = await prisma.patient.create({
           data: {
             ...data,
             lgpdConsentDate: data.lgpdConsentGiven ? new Date() : null,
@@ -185,36 +185,36 @@ class PatientService extends BaseService {
           },
           include: {
             _count: {
-              select: { appointments: true }
-            }
-          }
-        })
+              select: { appointments: true },
+            },
+          },
+        });
 
         // Create initial consent record if LGPD consent given
         if (data.lgpdConsentGiven) {
-          await prisma.consentRecords.create({
+          await prisma.consentRecord.create({
             data: {
               patientId: patient.id,
-              purpose: 'medical_treatment',
-              status: 'granted',
+              purpose: 'MEDICAL_TREATMENT',
+              status: 'GRANTED',
               grantedAt: new Date(),
               expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-            }
-          })
+            },
+          });
         }
 
-        return patient
-      }
-    )
+        return patient;
+      },
+    );
   }
 
   async updatePatient(data: z.infer<typeof PatientUpdateSchema>, userId: string) {
-    const existingPatient = await prisma.patients.findUnique({
-      where: { id: data.id }
-    })
+    const existingPatient = await prisma.patient.findUnique({
+      where: { id: data.id },
+    });
 
     if (!existingPatient) {
-      throw new Error('Patient not found')
+      throw new Error('Patient not found');
     }
 
     return this.withAuditLog(
@@ -227,9 +227,9 @@ class PatientService extends BaseService {
         newValues: data,
       },
       async () => {
-        const { id, ...updateData } = data
-        
-        return prisma.patients.update({
+        const { id, ...updateData } = data;
+
+        return prisma.patient.update({
           where: { id },
           data: {
             ...updateData,
@@ -237,37 +237,37 @@ class PatientService extends BaseService {
           },
           include: {
             _count: {
-              select: { appointments: true }
-            }
-          }
-        })
-      }
-    )
+              select: { appointments: true },
+            },
+          },
+        });
+      },
+    );
   }
 }
 
-const patientService = new PatientService()
+const patientService = new PatientService();
 
 // Middleware for authentication and clinic access validation
 const validateClinicAccess = async (c: any, next: any) => {
-  const userId = c.get('userId') // From auth middleware
-  const clinicId = c.req.query('clinicId') || c.req.json()?.clinicId
+  const userId = c.get('userId'); // From auth middleware
+  const clinicId = c.req.query('clinicId') || c.req.json()?.clinicId;
 
   if (!userId) {
-    return c.json({ error: 'Unauthorized' }, 401)
+    return c.json({ error: 'Unauthorized' }, 401);
   }
 
   if (!clinicId) {
-    return c.json({ error: 'Clinic ID required' }, 400)
+    return c.json({ error: 'Clinic ID required' }, 400);
   }
 
-  const hasAccess = await patientService.validateClinicAccess(userId, clinicId)
+  const hasAccess = await patientService.validateClinicAccess(userId, clinicId);
   if (!hasAccess) {
-    return c.json({ error: 'Access denied to clinic' }, 403)
+    return c.json({ error: 'Access denied to clinic' }, 403);
   }
 
-  await next()
-}
+  await next();
+};
 
 // Routes with optimized caching and validation
 app.get(
@@ -279,9 +279,9 @@ app.get(
   etag(),
   zValidator('query', PatientQuerySchema),
   validateClinicAccess,
-  async (c) => {
-    const query = c.req.valid('query')
-    const userId = c.get('userId')
+  async c => {
+    const query = c.req.valid('query');
+    const userId = c.get('userId');
 
     try {
       const result = await patientService.getPatients(
@@ -292,22 +292,80 @@ app.get(
           limit: query.limit,
           search: query.search,
           status: query.status,
-        }
-      )
+        },
+      );
 
       // Add performance headers
-      c.header('X-Total-Count', result.pagination.total.toString())
-      c.header('X-Page', result.pagination.page.toString())
-      
-      return c.json(result)
-    } catch (error) {
-      console.error('Error fetching patients:', error)
-      return c.json({ 
-        error: 'Failed to fetch patients',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 500)
-    }
-  }
-)
+      c.header('X-Total-Count', result.pagination.total.toString());
+      c.header('X-Page', result.pagination.page.toString());
 
-export default app
+      return c.json(result);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      return c.json({
+        error: 'Failed to fetch patients',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }, 500);
+    }
+  },
+);
+
+// Get single patient by ID
+app.get(
+  '/patients/:id',
+  cache({
+    cacheName: 'patient-detail',
+    cacheControl: 'private, max-age=600', // 10 minutes cache for patient details
+  }),
+  etag(),
+  validateClinicAccess,
+  async c => {
+    const patientId = c.req.param('id');
+    const userId = c.get('userId');
+
+    try {
+      const patient = await patientService.getPatientById(patientId, userId);
+
+      // Add LGPD compliance headers
+      c.header('X-Data-Classification', 'sensitive');
+      c.header('X-Retention-Policy', '7-years');
+
+      return c.json(patient);
+    } catch (error) {
+      console.error('Error fetching patient:', error);
+      return c.json({
+        error: 'Failed to fetch patient',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }, error instanceof Error && error.message === 'Patient not found' ? 404 : 500);
+    }
+  },
+);
+
+// Create new patient
+app.post(
+  '/patients',
+  zValidator('json', PatientCreateSchema),
+  validateClinicAccess,
+  async c => {
+    const data = c.req.valid('json');
+    const userId = c.get('userId');
+
+    try {
+      const patient = await patientService.createPatient(data, userId);
+
+      // Add performance headers
+      c.header('X-Created-At', new Date().toISOString());
+      c.header('Location', `/patients/${patient.id}`);
+
+      return c.json(patient, 201);
+    } catch (error) {
+      console.error('Error creating patient:', error);
+      return c.json({
+        error: 'Failed to create patient',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }, 400);
+    }
+  },
+);
+
+export default app;

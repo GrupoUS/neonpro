@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Google OAuth Authentication Flow', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,17 +8,17 @@ test.describe('Google OAuth Authentication Flow', () => {
 
   test('should display Google Sign-In button correctly', async ({ page }) => {
     const googleButton = page.locator('button:has-text("Continue with Google")');
-    
+
     // Verifica se o botão está visível
     await expect(googleButton).toBeVisible();
-    
+
     // Verifica se o ícone do Google está presente
     await expect(page.locator('svg[class*="IconBrandGoogle"]')).toBeVisible();
-    
+
     // Verifica se o botão tem o estilo correto
     await expect(googleButton).toHaveClass(/bg-white/);
     await expect(googleButton).toHaveClass(/border-2/);
-    
+
     // Verifica se o ícone tem a cor correta do Google
     const googleIcon = page.locator('svg[class*="IconBrandGoogle"]');
     await expect(googleIcon).toHaveClass(/text-\[#4285f4\]/);
@@ -30,21 +30,21 @@ test.describe('Google OAuth Authentication Flow', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           url: 'https://accounts.google.com/oauth/authorize?...',
-          provider: 'google'
-        })
+          provider: 'google',
+        }),
       });
     });
 
     const googleButton = page.locator('button:has-text("Continue with Google")');
-    
+
     // Clica no botão Google
     await googleButton.click();
-    
+
     // Verifica se o botão mostra estado de loading
     await expect(page.locator('button:has-text("Signing in...")')).toBeVisible();
-    
+
     // Verifica se o botão fica desabilitado durante o loading
     await expect(googleButton).toBeDisabled();
   });
@@ -55,18 +55,18 @@ test.describe('Google OAuth Authentication Flow', () => {
       route.fulfill({
         status: 400,
         contentType: 'application/json',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           error: 'invalid_request',
-          error_description: 'OAuth provider error'
-        })
+          error_description: 'OAuth provider error',
+        }),
       });
     });
 
     const googleButton = page.locator('button:has-text("Continue with Google")');
-    
+
     // Clica no botão Google
     await googleButton.click();
-    
+
     // Wait for error message to appear instead of fixed timeout
     await expect(page.locator('.bg-red-50')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('text=An unexpected error occurred')).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Google OAuth Authentication Flow', () => {
   test('should handle successful Google OAuth redirect', async ({ page }) => {
     // Simula retorno bem-sucedido do Google OAuth
     await page.goto('/signup-demo?code=auth_code&state=oauth_state');
-    
+
     // Mock da troca do código por token
     await page.route('**/auth/v1/token**', route => {
       route.fulfill({
@@ -88,16 +88,16 @@ test.describe('Google OAuth Authentication Flow', () => {
             id: 'user_123',
             email: 'dr.joao@clinica.com.br',
             user_metadata: {
-              name: 'Dr. João Silva'
-            }
-          }
-        })
+              name: 'Dr. João Silva',
+            },
+          },
+        }),
       });
     });
 
     // Verifica se não há mensagens de erro
     await expect(page.locator('.bg-red-50')).not.toBeVisible();
-    
+
     // Verifica se o usuário seria redirecionado (em um cenário real)
     // Aqui podemos verificar se elementos específicos da página logada aparecem
   });
@@ -108,17 +108,17 @@ test.describe('Google OAuth Authentication Flow', () => {
     await page.locator('#lastname').fill('Silva');
     await page.locator('#email').fill('dr.joao@clinica.com.br');
     await page.locator('#password').fill('MinhaSenh@123');
-    
+
     // Submete o formulário
     await page.locator('button[type="submit"]').click();
-    
+
     // Verifica se o botão Google fica desabilitado durante o submit do formulário
     const googleButton = page.locator('button:has-text("Continue with Google")');
     await expect(googleButton).toBeDisabled();
-    
+
     // Aguarda o processamento
     await page.waitForTimeout(3000);
-    
+
     // Verifica se o botão Google volta ao estado normal
     await expect(googleButton).toBeEnabled();
   });
@@ -130,13 +130,13 @@ test.describe('Google OAuth Authentication Flow', () => {
     });
 
     const googleButton = page.locator('button:has-text("Continue with Google")');
-    
+
     // Clica no botão Google
     await googleButton.click();
-    
+
     // Wait for error message to appear instead of fixed timeout
     await expect(page.locator('text=An unexpected error occurred')).toBeVisible({ timeout: 10000 });
-    
+
     // Verifica se o botão volta ao estado normal
     await expect(googleButton).toBeEnabled();
     await expect(page.locator('button:has-text("Continue with Google")')).toBeVisible();
@@ -144,30 +144,30 @@ test.describe('Google OAuth Authentication Flow', () => {
 
   test('should prevent multiple simultaneous OAuth requests', async ({ page }) => {
     let requestCount = 0;
-    
+
     // Conta quantas requisições são feitas
-    await page.route('**/auth/v1/authorize**', async (route) => {
+    await page.route('**/auth/v1/authorize**', async route => {
       requestCount++;
       // Use proper async delay instead of unawaited setTimeout
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ url: 'https://accounts.google.com/oauth/authorize' })
+        body: JSON.stringify({ url: 'https://accounts.google.com/oauth/authorize' }),
       });
     });
 
     const googleButton = page.locator('button:has-text("Continue with Google")');
-    
+
     // Use clickCount for multiple rapid clicks instead of separate calls
     await googleButton.click({ clickCount: 3 });
-    
+
     // Wait for processing to complete based on request count
     await expect(async () => {
       expect(requestCount).toBe(1);
     }).toPass({ timeout: 5000 });
-    
+
     // Verifica se apenas uma requisição foi feita
     expect(requestCount).toBe(1);
   });
@@ -175,10 +175,10 @@ test.describe('Google OAuth Authentication Flow', () => {
   test('should display correct button text in Portuguese context', async ({ page }) => {
     // Verifica se o texto do botão está em inglês (padrão internacional)
     await expect(page.locator('button:has-text("Continue with Google")')).toBeVisible();
-    
+
     // Verifica se não há texto em português no botão Google (mantém padrão internacional)
     await expect(page.locator('button:has-text("Entrar com Google")')).not.toBeVisible();
-    
+
     // Mas verifica se o contexto da página está em português
     await expect(page.locator('text=Acesse sua conta')).toBeVisible();
     await expect(page.locator('text=E-mail Profissional')).toBeVisible();

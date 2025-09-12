@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React from 'react';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { createMemoryHistory } from '@tanstack/history';
-import { routeTree } from '@/routeTree.gen';
 import { ConsentProvider } from '@/contexts/ConsentContext';
+import { routeTree } from '@/routeTree.gen';
+import { createMemoryHistory } from '@tanstack/history';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 
 function Wrapper() {
   const qc = new QueryClient();
@@ -26,7 +26,8 @@ describe('Dashboard route', () => {
     render(<Wrapper />);
 
     // Headings (wait for auth + data to settle)
-    expect(await screen.findByRole('heading', { name: /Bem-vindo ao Dashboard/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Bem-vindo ao Dashboard/i }))
+      .toBeInTheDocument();
 
     // Cards labels
     expect(screen.getByText(/Consultas Hoje/i)).toBeInTheDocument();

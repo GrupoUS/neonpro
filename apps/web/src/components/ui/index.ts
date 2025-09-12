@@ -8,11 +8,11 @@ export * from '../molecules';
 
 // Specific re-exports for backward compatibility
 export { Button, NeumorphButton } from '@neonpro/ui'; // Use Neumorph Button from UI package
-export { Badge } from '../atoms/badge';
+export { Badge } from '@neonpro/ui';
 export { Input } from '../atoms/input';
 export { Label } from '../atoms/label';
 
-export { Alert, AlertDescription, AlertTitle } from '../molecules/alert';
+export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/table';
 
 // Remaining UI components (not yet reorganized)
@@ -23,10 +23,10 @@ export * from './tooltip';
 
 // Custom Advanced Components
 export * from './beams-background';
+export * from './hover-border-gradient';
 export * from './shine-border';
 export * from './sidebar';
 export * from './universal-button';
-export * from './hover-border-gradient';
 
 // Demo Components removed from public API (moved to _deprecated)
 // If needed for local demos, import directly from the file path under _deprecated.

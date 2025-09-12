@@ -40,11 +40,11 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
 // Helper para login com OAuth providers
 export const signInWithProvider = async (
   provider: 'google' | 'github' | 'apple',
-  redirectTo?: string
+  redirectTo?: string,
 ) => {
   const baseUrl = getSiteUrl();
   const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
-  
+
   return supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -56,7 +56,7 @@ export const signInWithProvider = async (
 // Helper para login com email/password
 export const signInWithEmail = async (
   email: string,
-  password: string
+  password: string,
 ) => {
   return supabase.auth.signInWithPassword({
     email,
@@ -68,11 +68,11 @@ export const signInWithEmail = async (
 export const signUpWithEmail = async (
   email: string,
   password: string,
-  redirectTo?: string
+  redirectTo?: string,
 ) => {
   const baseUrl = getSiteUrl();
   const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
-  
+
   return supabase.auth.signUp({
     email,
     password,
@@ -85,11 +85,11 @@ export const signUpWithEmail = async (
 // Helper para reset de senha
 export const resetPassword = async (
   email: string,
-  redirectTo?: string
+  redirectTo?: string,
 ) => {
   const baseUrl = getSiteUrl();
   const finalRedirectTo = redirectTo ? `${baseUrl}${redirectTo}` : `${baseUrl}/dashboard`;
-  
+
   return supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${baseUrl}/auth/confirm?next=${encodeURIComponent(finalRedirectTo)}`,
   });
