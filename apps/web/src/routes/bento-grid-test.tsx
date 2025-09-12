@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BentoGridDemo, BentoGridSimple } from '@/components/ui/bento-grid-demo';
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
 
 /**
  * Bento Grid Test Page

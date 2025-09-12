@@ -133,6 +133,12 @@
 				"$tsc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Manual: tsc listFiles (apps/web)",
+			"type": "shell",
+			"command": "pnpm --filter @neonpro/web exec tsc --noEmit --listFiles",
+			"group": "build"
 		}
 	]
 }

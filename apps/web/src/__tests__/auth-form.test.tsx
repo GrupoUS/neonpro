@@ -15,8 +15,9 @@ describe('AuthForm', () => {
     await userEvent.click(screen.getByRole('tab', { name: /Criar conta/i }));
     expect(screen.getByRole('tab', { name: /Criar conta/i, selected: true })).toBeInTheDocument();
 
-    // go to forgot
-    await userEvent.click(screen.getByRole('tab', { name: /Recuperar/i }));
-    expect(screen.getByRole('tab', { name: /Recuperar/i, selected: true })).toBeInTheDocument();
+    // back to sign-in, then go to forgot via button
+    await userEvent.click(screen.getByRole('tab', { name: /Entrar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Esqueceu sua senha\?/i }));
+    expect(screen.getByRole('form', { name: /Recuperação de senha/i })).toBeInTheDocument();
   });
 });

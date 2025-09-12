@@ -1,32 +1,30 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "ESNext",
     "target": "ES2020",
-    "useDefineForClassFields": true,
     "lib": [
       "ES2020",
       "DOM",
       "DOM.Iterable"
     ],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "types": [
-      "vite/client",
-      "node"
-    ],
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
       "@neonpro/ui": [
         "../../packages/ui/src"
@@ -37,37 +35,25 @@
       "@neonpro/shared": [
         "../../packages/shared/src"
       ],
-      "@neonpro/shared/*": [
-        "../../packages/shared/src/*"
-      ],
       "@neonpro/utils": [
         "../../packages/utils/src"
       ],
-      "@neonpro/utils/*": [
-        "../../packages/utils/src/*"
-      ],
       "@neonpro/types": [
         "../../packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "../../packages/types/src/*"
       ]
     }
   },
   "include": [
+    "src/**/*",
+    "src/**/*.tsx",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "vite.config.ts"
   ],
   "exclude": [
-    "dist",
     "node_modules",
-    "src/test/**",
-    "tools/tests/**",
-    "lib/**",
-    "src/lib/emergency/**",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "dist",
+    "src/components/ui/_deprecated/**",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
   ]
 }

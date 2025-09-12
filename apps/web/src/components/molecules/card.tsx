@@ -3,7 +3,6 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 import { MagicCard } from '@/components/ui/magic-card';
-import { ShineBorder } from '@/components/ui/shine-border';
 
 type BaseCardProps = React.ComponentProps<'div'> & {
   /**
@@ -35,11 +34,9 @@ function Card({ className, magic = false, magicDisabled, ...props }: BaseCardPro
   const enableMagic = !!magic && !magicDisabled && !isTest;
   if (!enableMagic) return inner;
 
-  // Apply ShineBorder + MagicCard wrappers only when opted in
+  // Apply unified MagicCard (includes spotlight + shine border) only when opted in
   return (
-    <ShineBorder>
-      <MagicCard>{inner}</MagicCard>
-    </ShineBorder>
+    <MagicCard>{inner}</MagicCard>
   );
 }
 

@@ -23,11 +23,20 @@ function applyThemeToDocument(theme: Theme, attribute: 'class' | 'data-theme') {
   if (attribute === 'class') {
     root.classList.remove('light', 'dark');
     root.classList.add(resolved);
+    // Debug: Log theme application
+    console.log(`🎨 Theme applied: ${resolved}`, {
+      theme,
+      resolved,
+      classList: Array.from(root.classList),
+      hasLight: root.classList.contains('light'),
+      hasDark: root.classList.contains('dark'),
+    });
   } else {
     root.setAttribute('data-theme', resolved);
   }
 }
 
+import { ThemeProviderBridge } from '@neonpro/ui/theme';
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   attribute = 'class',
   defaultTheme = 'system',
@@ -42,7 +51,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   );
 
   React.useEffect(() => {
-    const stored = (localStorage.getItem(THEME_STORAGE_KEY) as Theme | null);
+    const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     if (stored) {
       setThemeState(stored);
     } else {
@@ -51,18 +60,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   }, [defaultTheme]);
 
   React.useEffect(() => {
-    const resolved = theme === 'system' && enableSystem ? getSystemTheme() : (theme as 'light' | 'dark');
+    const resolved = theme === 'system' && enableSystem
+      ? getSystemTheme()
+      : (theme as 'light' | 'dark');
     const restore = disableTransitionOnChange
       ? (() => {
-          const css = document.createElement('style');
-          css.appendChild(document.createTextNode('*{transition:none !important}'));
-          document.head.appendChild(css);
-          return () => {
-            // force reflow then remove
-            void window.getComputedStyle(document.body);
-            document.head.removeChild(css);
-          };
-        })()
+        const css = document.createElement('style');
+        css.appendChild(document.createTextNode('*{transition:none !important}'));
+        document.head.appendChild(css);
+        return () => {
+          // force reflow then remove
+          void window.getComputedStyle(document.body);
+          document.head.removeChild(css);
+        };
+      })()
       : () => {};
 
     applyThemeToDocument(theme, attribute);
@@ -99,8 +110,3 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     </div>
   );
 };
-
-// Local import from @neonpro/ui without creating a hard runtime dependency cycle
-// Consumers in packages/ui will import useThemeBridge
-import { ThemeBridge } from '@neonpro/ui';
-const { ThemeProviderBridge } = ThemeBridge;

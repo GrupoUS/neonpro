@@ -31,17 +31,14 @@ export * from './beams-background';
 export * from './liquid-glass-card';
 export * from './sidebar';
 
-// Demo Components (for testing and examples)
-export * from './ai-chat-demo';
-export * from './sidebar-demo';
-export * from './signup-form-demo';
+// Demo Components removed from public API (moved to _deprecated)
+// If needed for local demos, import directly from the file path under _deprecated.
 
 // AI Chat Components (NeonPro Custom)
 export * from './ai-chat';
 
 // Bento Grid Components (NeonPro Custom)
 export * from './bento-grid';
-export * from './bento-grid-demo';
 
 // Toaster (special case)
 export { Toaster } from './toaster';
