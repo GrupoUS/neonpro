@@ -38,7 +38,7 @@
     "quality": "npm run type-check && npm run lint && npm run format:check",
     "prepublishOnly": "npm run quality && npm run build:production && npm run test",
     "prepack": "npm run build:production",
-    "postinstall": "node dist/scripts/postinstall.js || true",
+    "postinstall": "node ./scripts/safe-postinstall.cjs",
     "benchmark": "node dist/benchmarks/performance.benchmark.js",
     "cli": "node dist/cli/index.js",
     "start": "npm run cli"

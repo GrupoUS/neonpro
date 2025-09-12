@@ -31,7 +31,7 @@ function FinancialPage() {
 
       {/* Financial Overview Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -45,7 +45,7 @@ function FinancialPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Despesas</CardTitle>
             <Receipt className="h-4 w-4 text-muted-foreground" />
@@ -59,7 +59,7 @@ function FinancialPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Lucro Líquido</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -73,7 +73,7 @@ function FinancialPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Contas a Receber</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />

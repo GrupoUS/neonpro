@@ -77,6 +77,11 @@ module.exports = {
           from: { backgroundPosition: '0 0' },
           to: { backgroundPosition: '-200% 0' },
         },
+        'shine': {
+          '0%': { backgroundPosition: '0% 0%' },
+          '50%': { backgroundPosition: '100% 100%' },
+          '100%': { backgroundPosition: '0% 0%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -84,6 +89,7 @@ module.exports = {
         'fade-in': 'fade-in 0.3s ease-out',
         'slide-in': 'slide-in 0.3s ease-out',
         'shimmer': 'shimmer 2s linear infinite',
+        'shine': 'shine var(--duration) infinite linear',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

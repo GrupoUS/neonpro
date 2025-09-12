@@ -26,6 +26,7 @@ export * from './tooltip';
 export * from './beams-background';
 
 // Custom Advanced Components
+export * from './shine-border';
 export * from './sidebar';
 
 // Demo Components removed from public API (moved to _deprecated)

@@ -50,7 +50,7 @@ function ReportsPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Relatório Financeiro</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -61,7 +61,7 @@ function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Procedimentos</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -72,7 +72,7 @@ function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Satisfação</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
@@ -83,7 +83,7 @@ function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card magic>
+        <Card enableShineBorder>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Relatórios Gerados</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />

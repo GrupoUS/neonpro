@@ -276,7 +276,7 @@ function DashboardComponent() {
 
         {/* Stats Cards */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-          <Card magic>
+          <Card enableShineBorder>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Consultas Hoje
@@ -292,7 +292,7 @@ function DashboardComponent() {
             </CardContent>
           </Card>
 
-          <Card magic>
+          <Card enableShineBorder>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Pacientes Ativos
@@ -309,7 +309,7 @@ function DashboardComponent() {
             </CardContent>
           </Card>
 
-          <Card magic>
+          <Card enableShineBorder>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Receita Mensal
@@ -326,7 +326,7 @@ function DashboardComponent() {
             </CardContent>
           </Card>
 
-          <Card magic>
+          <Card enableShineBorder>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Taxa de Presença (7 dias)

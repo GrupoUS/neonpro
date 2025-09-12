@@ -174,6 +174,11 @@
     border-style: solid;
     border-color: hsl(var(--border));
   }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  }
 
   body {
     background-color: hsl(var(--background));
@@ -232,15 +237,127 @@
 }
 
 @theme inline {
+  --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shine {
-  0% {
-    background-position: 0% 0%;
+    0% {
+      background-position: 0% 0%;
     }
-  50% {
-    background-position: 100% 100%;
+    50% {
+      background-position: 100% 100%;
     }
-  to {
-    background-position: 0% 0%;
+    to {
+      background-position: 0% 0%;
     }
+  }
+
+  /* Shimmer animation for hover border gradients */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Traveling Light Animations - Each border animates sequentially */
+  @keyframes shine-top {
+    0% { opacity: 0; }
+    12.5% { opacity: 1; }
+    25% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-right {
+    0% { opacity: 0; }
+    25% { opacity: 0; }
+    37.5% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-bottom {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    62.5% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-left {
+    0% { opacity: 0; }
+    75% { opacity: 0; }
+    87.5% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+/* Hover Border Gradient for all Buttons */
+@layer components {
+  .np-hover-border-gradient {
+    position: relative;
+    overflow: visible; /* allow glow outside */
+    z-index: 0; /* allow pseudo under content but above background */
+    --np-border-thickness: 1.5px;
+    --np-glow-blur: 8px;
+    --np-anim-duration: 14s;
+  }
+  .np-hover-border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--np-border-thickness);
+    --np-line-size: 6deg;
+    --np-angle: 0deg;
+    background: conic-gradient(from var(--np-angle), hsl(var(--ring)) 0deg var(--np-line-size), transparent var(--np-line-size) 360deg);
+    -webkit-mask: linear-gradient(#CCB07D) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 300ms ease;
+    animation: np-sweep var(--np-anim-duration) linear infinite;
+    pointer-events: none;
+    z-index: 0; /* under content, above background */
+  }
+  .np-hover-border-gradient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--np-border-thickness);
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--ring) / 0.6) 0deg,
+      hsl(var(--primary) / 0.6) 120deg,
+      hsl(var(--accent) / 0.6) 240deg,
+      hsl(var(--ring) / 0.6) 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    filter: blur(var(--np-glow-blur));
+    opacity: 0;
+    transition: opacity 300ms ease;
+    z-index: -2; /* glow below ::before */
+  }
+  .np-hover-border-gradient:hover::before,
+  .np-hover-border-gradient:focus-visible::before,
+  .np-hover-border-gradient:hover::after,
+  .np-hover-border-gradient:focus-visible::after {
+    opacity: 1;
+  }
+  @keyframes np-sweep {
+    to { --np-angle: 360deg; }
+  }
+}
+
+/* Custom property registration so animation of --np-angle works in Chromium */
+@supports (background: conic-gradient(from 0deg, red, blue)) {
+  @property --np-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
   }
 }

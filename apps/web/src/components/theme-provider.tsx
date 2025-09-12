@@ -36,7 +36,7 @@ function applyThemeToDocument(theme: Theme, attribute: 'class' | 'data-theme') {
   }
 }
 
-import { ThemeProviderBridge } from '@neonpro/ui/theme';
+import { ThemeProviderBridge } from '@neonpro/ui';
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   attribute = 'class',
   defaultTheme = 'system',

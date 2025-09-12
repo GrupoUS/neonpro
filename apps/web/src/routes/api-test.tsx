@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useApiStatus, useClients, useAppointments, useApiConnectivity } from '@/lib/api-hooks';
-import { Button } from '@/components/ui';
+import { Button } from '@/components';
 
 function ApiTestComponent() {
   const apiStatus = useApiStatus();

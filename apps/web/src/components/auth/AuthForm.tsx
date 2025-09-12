@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/molecules/card';
-import { MagicCard } from '@/components/ui/magic-card';
+// MagicCard removed - using enhanced Card with permanent shine border effect
 import { showToast } from '@/components/ui/toaster';
 import {
   resetPassword,
@@ -129,256 +129,250 @@ export function AuthForm(
   };
 
   return (
-    <MagicCard
-      className='w-full max-w-md'
-      gradientSize={300}
-      gradientColor='#AC9469'
-      gradientOpacity={0.1}
-      gradientFrom='#AC9469'
-      gradientTo='#D4AF37'
+    <Card
+      className='w-full max-w-md shadow-2xl border border-border/50 bg-card/95 backdrop-blur-sm'
+      shineDuration={8}
+      shineColor='#AC9469'
       borderWidth={1}
-      duration={8}
     >
-      <Card className='w-full shadow-2xl border border-border/50 bg-card/95 backdrop-blur-sm'>
-        <CardHeader className='text-center space-y-2'>
-          <CardTitle className='text-3xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent'>
-            NEON PRO
-          </CardTitle>
-          <CardDescription className='text-sm text-muted-foreground'>
-            Sistema para Clínicas de Estética
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='space-y-6'>
-          <div
-            className='grid grid-cols-2 gap-2'
-            role='tablist'
-            aria-label='Escolher ação de autenticação'
+      <CardHeader className='text-center space-y-2'>
+        <CardTitle className='text-3xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent'>
+          NEON PRO
+        </CardTitle>
+        <CardDescription className='text-sm text-muted-foreground'>
+          Sistema para Clínicas de Estética
+        </CardDescription>
+      </CardHeader>
+      <CardContent className='space-y-6'>
+        <div
+          className='grid grid-cols-2 gap-2'
+          role='tablist'
+          aria-label='Escolher ação de autenticação'
+        >
+          <Button
+            role='tab'
+            aria-selected={mode === 'sign-in'}
+            variant={mode === 'sign-in' ? 'default' : 'outline'}
+            onClick={() => setMode('sign-in')}
           >
-            <Button
-              role='tab'
-              aria-selected={mode === 'sign-in'}
-              variant={mode === 'sign-in' ? 'default' : 'outline'}
-              onClick={() => setMode('sign-in')}
-            >
-              Entrar
-            </Button>
-            <Button
-              role='tab'
-              aria-selected={mode === 'sign-up'}
-              variant={mode === 'sign-up' ? 'default' : 'outline'}
-              onClick={() => setMode('sign-up')}
-            >
-              Criar conta
-            </Button>
-          </div>
+            Entrar
+          </Button>
+          <Button
+            role='tab'
+            aria-selected={mode === 'sign-up'}
+            variant={mode === 'sign-up' ? 'default' : 'outline'}
+            onClick={() => setMode('sign-up')}
+          >
+            Criar conta
+          </Button>
+        </div>
 
-          {error && (
-            <Alert variant='destructive'>
-              <AlertDescription className='text-sm'>{error}</AlertDescription>
-            </Alert>
-          )}
+        {error && (
+          <Alert variant='destructive'>
+            <AlertDescription className='text-sm'>{error}</AlertDescription>
+          </Alert>
+        )}
 
-          {mode !== 'forgot' && (
-            <Button
-              type='button'
-              variant='outline'
-              className='w-full h-10'
-              onClick={handleProvider}
-              disabled={isLoading}
-            >
-              <IconBrandGoogle className='h-4 w-4 mr-2 text-[#4285f4]' />
-              Continuar com Google
-            </Button>
-          )}
+        {mode !== 'forgot' && (
+          <Button
+            type='button'
+            variant='outline'
+            className='w-full h-10'
+            onClick={handleProvider}
+            disabled={isLoading}
+          >
+            <IconBrandGoogle className='h-4 w-4 mr-2 text-[#4285f4]' />
+            Continuar com Google
+          </Button>
+        )}
 
-          {mode === 'sign-in' && (
-            <form
-              className='space-y-4'
-              onSubmit={signInForm.handleSubmit(onSubmitSignIn)}
-              aria-label='Formulário de login'
-            >
-              <div className='space-y-2'>
-                <Label htmlFor='email'>E-mail</Label>
-                <Input
-                  id='email'
-                  type='email'
-                  placeholder='voce@clinica.com.br'
-                  {...signInForm.register('email')}
-                  aria-invalid={!!signInForm.formState.errors.email}
-                />
-                {signInForm.formState.errors.email && (
-                  <p className='text-xs text-destructive'>
-                    {signInForm.formState.errors.email.message as string}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='password'>Senha</Label>
-                <Input
-                  id='password'
-                  type='password'
-                  placeholder='••••••••'
-                  {...signInForm.register('password')}
-                  aria-invalid={!!signInForm.formState.errors.password}
-                />
-                {signInForm.formState.errors.password && (
-                  <p className='text-xs text-destructive'>
-                    {signInForm.formState.errors.password.message as string}
-                  </p>
-                )}
-              </div>
-              <Button
-                type='submit'
-                className='w-full'
-                disabled={isLoading || signInForm.formState.isSubmitting}
-              >
-                {isLoading ? 'Entrando...' : 'Entrar'}
-              </Button>
-            </form>
-          )}
-
-          {mode === 'sign-up' && (
-            <form
-              className='space-y-4'
-              onSubmit={signUpForm.handleSubmit(onSubmitSignUp)}
-              aria-label='Formulário de cadastro'
-            >
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                <div className='space-y-2'>
-                  <Label htmlFor='firstname'>Nome</Label>
-                  <Input
-                    id='firstname'
-                    type='text'
-                    {...signUpForm.register('firstname')}
-                    aria-invalid={!!signUpForm.formState.errors.firstname}
-                  />
-                  {signUpForm.formState.errors.firstname && (
-                    <p className='text-xs text-destructive'>
-                      {signUpForm.formState.errors.firstname.message as string}
-                    </p>
-                  )}
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='lastname'>Sobrenome</Label>
-                  <Input
-                    id='lastname'
-                    type='text'
-                    {...signUpForm.register('lastname')}
-                    aria-invalid={!!signUpForm.formState.errors.lastname}
-                  />
-                  {signUpForm.formState.errors.lastname && (
-                    <p className='text-xs text-destructive'>
-                      {signUpForm.formState.errors.lastname.message as string}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='email-signup'>E-mail</Label>
-                <Input
-                  id='email-signup'
-                  type='email'
-                  {...signUpForm.register('email')}
-                  aria-invalid={!!signUpForm.formState.errors.email}
-                />
-                {signUpForm.formState.errors.email && (
-                  <p className='text-xs text-destructive'>
-                    {signUpForm.formState.errors.email.message as string}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='password-signup'>Senha</Label>
-                <Input
-                  id='password-signup'
-                  type='password'
-                  {...signUpForm.register('password')}
-                  aria-invalid={!!signUpForm.formState.errors.password}
-                />
-                {signUpForm.formState.errors.password && (
-                  <p className='text-xs text-destructive'>
-                    {signUpForm.formState.errors.password.message as string}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='crm'>CRM (opcional)</Label>
-                <Input
-                  id='crm'
-                  type='text'
-                  placeholder='CRM/SP 123456'
-                  {...signUpForm.register('crm')}
-                  aria-invalid={!!signUpForm.formState.errors.crm}
-                />
-                {signUpForm.formState.errors.crm && (
-                  <p className='text-xs text-destructive'>
-                    {signUpForm.formState.errors.crm.message as string}
-                  </p>
-                )}
-              </div>
-              <Button
-                type='submit'
-                className='w-full'
-                disabled={isLoading || signUpForm.formState.isSubmitting}
-              >
-                {isLoading ? 'Criando...' : 'Criar conta'}
-              </Button>
-            </form>
-          )}
-
-          {mode === 'forgot' && (
-            <form
-              className='space-y-4'
-              onSubmit={forgotForm.handleSubmit(onSubmitForgot)}
-              aria-label='Recuperação de senha'
-            >
-              <div className='space-y-2'>
-                <Label htmlFor='email-forgot'>E-mail</Label>
-                <Input
-                  id='email-forgot'
-                  type='email'
-                  {...forgotForm.register('email')}
-                  aria-invalid={!!forgotForm.formState.errors.email}
-                />
-                {forgotForm.formState.errors.email && (
-                  <p className='text-xs text-destructive'>
-                    {forgotForm.formState.errors.email.message as string}
-                  </p>
-                )}
-              </div>
-              <div className='flex items-center gap-2'>
-                <Button
-                  type='submit'
-                  className='flex-1'
-                  disabled={isLoading || forgotForm.formState.isSubmitting}
-                >
-                  {isLoading ? 'Enviando...' : 'Enviar link'}
-                </Button>
-                <Button
-                  type='button'
-                  variant='ghost'
-                  onClick={() => setMode('sign-in')}
-                  aria-label='Voltar ao login'
-                >
-                  <ArrowLeft className='h-4 w-4' /> Voltar
-                </Button>
-              </div>
-            </form>
-          )}
-
-          {mode === 'sign-in' && (
-            <div className='text-center'>
-              <button
-                className='text-sm text-muted-foreground hover:text-primary'
-                onClick={() => setMode('forgot')}
-              >
-                Esqueceu sua senha?
-              </button>
+        {mode === 'sign-in' && (
+          <form
+            className='space-y-4'
+            onSubmit={signInForm.handleSubmit(onSubmitSignIn)}
+            aria-label='Formulário de login'
+          >
+            <div className='space-y-2'>
+              <Label htmlFor='email'>E-mail</Label>
+              <Input
+                id='email'
+                type='email'
+                placeholder='voce@clinica.com.br'
+                {...signInForm.register('email')}
+                aria-invalid={!!signInForm.formState.errors.email}
+              />
+              {signInForm.formState.errors.email && (
+                <p className='text-xs text-destructive'>
+                  {signInForm.formState.errors.email.message as string}
+                </p>
+              )}
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </MagicCard>
+            <div className='space-y-2'>
+              <Label htmlFor='password'>Senha</Label>
+              <Input
+                id='password'
+                type='password'
+                placeholder='••••••••'
+                {...signInForm.register('password')}
+                aria-invalid={!!signInForm.formState.errors.password}
+              />
+              {signInForm.formState.errors.password && (
+                <p className='text-xs text-destructive'>
+                  {signInForm.formState.errors.password.message as string}
+                </p>
+              )}
+            </div>
+            <Button
+              type='submit'
+              className='w-full'
+              disabled={isLoading || signInForm.formState.isSubmitting}
+            >
+              {isLoading ? 'Entrando...' : 'Entrar'}
+            </Button>
+          </form>
+        )}
+
+        {mode === 'sign-up' && (
+          <form
+            className='space-y-4'
+            onSubmit={signUpForm.handleSubmit(onSubmitSignUp)}
+            aria-label='Formulário de cadastro'
+          >
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+              <div className='space-y-2'>
+                <Label htmlFor='firstname'>Nome</Label>
+                <Input
+                  id='firstname'
+                  type='text'
+                  {...signUpForm.register('firstname')}
+                  aria-invalid={!!signUpForm.formState.errors.firstname}
+                />
+                {signUpForm.formState.errors.firstname && (
+                  <p className='text-xs text-destructive'>
+                    {signUpForm.formState.errors.firstname.message as string}
+                  </p>
+                )}
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='lastname'>Sobrenome</Label>
+                <Input
+                  id='lastname'
+                  type='text'
+                  {...signUpForm.register('lastname')}
+                  aria-invalid={!!signUpForm.formState.errors.lastname}
+                />
+                {signUpForm.formState.errors.lastname && (
+                  <p className='text-xs text-destructive'>
+                    {signUpForm.formState.errors.lastname.message as string}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='email-signup'>E-mail</Label>
+              <Input
+                id='email-signup'
+                type='email'
+                {...signUpForm.register('email')}
+                aria-invalid={!!signUpForm.formState.errors.email}
+              />
+              {signUpForm.formState.errors.email && (
+                <p className='text-xs text-destructive'>
+                  {signUpForm.formState.errors.email.message as string}
+                </p>
+              )}
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='password-signup'>Senha</Label>
+              <Input
+                id='password-signup'
+                type='password'
+                {...signUpForm.register('password')}
+                aria-invalid={!!signUpForm.formState.errors.password}
+              />
+              {signUpForm.formState.errors.password && (
+                <p className='text-xs text-destructive'>
+                  {signUpForm.formState.errors.password.message as string}
+                </p>
+              )}
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='crm'>CRM (opcional)</Label>
+              <Input
+                id='crm'
+                type='text'
+                placeholder='CRM/SP 123456'
+                {...signUpForm.register('crm')}
+                aria-invalid={!!signUpForm.formState.errors.crm}
+              />
+              {signUpForm.formState.errors.crm && (
+                <p className='text-xs text-destructive'>
+                  {signUpForm.formState.errors.crm.message as string}
+                </p>
+              )}
+            </div>
+            <Button
+              type='submit'
+              className='w-full'
+              disabled={isLoading || signUpForm.formState.isSubmitting}
+            >
+              {isLoading ? 'Criando...' : 'Criar conta'}
+            </Button>
+          </form>
+        )}
+
+        {mode === 'forgot' && (
+          <form
+            className='space-y-4'
+            onSubmit={forgotForm.handleSubmit(onSubmitForgot)}
+            aria-label='Recuperação de senha'
+          >
+            <div className='space-y-2'>
+              <Label htmlFor='email-forgot'>E-mail</Label>
+              <Input
+                id='email-forgot'
+                type='email'
+                {...forgotForm.register('email')}
+                aria-invalid={!!forgotForm.formState.errors.email}
+              />
+              {forgotForm.formState.errors.email && (
+                <p className='text-xs text-destructive'>
+                  {forgotForm.formState.errors.email.message as string}
+                </p>
+              )}
+            </div>
+            <div className='flex items-center gap-2'>
+              <Button
+                type='submit'
+                className='flex-1'
+                disabled={isLoading || forgotForm.formState.isSubmitting}
+              >
+                {isLoading ? 'Enviando...' : 'Enviar link'}
+              </Button>
+              <Button
+                type='button'
+                variant='ghost'
+                onClick={() => setMode('sign-in')}
+                aria-label='Voltar ao login'
+              >
+                <ArrowLeft className='h-4 w-4' /> Voltar
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {mode === 'sign-in' && (
+          <div className='text-center'>
+            <button
+              className='text-sm text-muted-foreground hover:text-primary'
+              onClick={() => setMode('forgot')}
+            >
+              Esqueceu sua senha?
+            </button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 

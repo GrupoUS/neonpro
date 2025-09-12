@@ -1,35 +1,75 @@
-# Shared UI Architecture (Monorepo)
+# NeonPro Shared UI Architecture (apps/web/src/components)
 
-Decision: Place generic shadcn/ui-based primitives and shared composites in `packages/ui/src`. Keep app-specific/route-bound components in `apps/web/src/components`.
+This document captures the simplified, KISS/YAGNI-first organization of `apps/web/src/components` after consolidation.
 
-Why
-- Aligns with shadcn/ui monorepo guidance: components in a shared `ui` workspace package for reuse
-- Turborepo caching + Vite HMR works well with alias to package `src`
-- Easier multi-app reuse (future apps consume `@neonpro/ui`)
-- Clear boundaries: no app imports from packages
+## Goals
+- Mobile-first, WCAG 2.2 AA, brand-consistent UI
+- Fewer folders, clear imports, easy routing
+- Prefer shared primitives in `@neonpro/ui`; keep app-specific pieces locally
 
-Key Setup
-- Vite alias (web): `@neonpro/ui -> ../../packages/ui/src` (already configured)
-- Tailwind scanning (root): include `./apps/**/*` and `./packages/**/*` (configured)
-- Peer deps in UI: react, react-dom; Tailwind stays at app level
+## Source Tree (current)
+```
+apps/web/src/components/
+├─ atoms/                # Leaf UI pieces (inputs, buttons, labels)
+├─ molecules/            # Small compositions (card, alert, table)
+├─ organisms/            # Feature composites (dashboards, panels)
+├─ ui/                   # Advanced/compat pieces (ai-chat, sidebar, effects)
+├─ auth/                 # Auth-only UI widgets
+├─ error-pages/          # ErrorBoundary, 404/500 views
+├─ theme-provider.tsx    # Bridge to @neonpro/ui theme
+├─ ConsentBanner.tsx     # LGPD consent
+├─ index.ts              # App-level barrel (safe re-exports)
+└─ README.md             # Local notes
+```
 
-What goes where
-- `packages/ui/src`: primitives (button, input, label), utilities (`cn`), tokens/theme bridges, generic composites
-- `apps/web/src/components`: atoms/molecules/organisms (app-specific), feature views, layout shells, demos
+Notes:
+- Demo/legacy examples were moved out or removed. No export of demo barrels.
+- Sidebar is canonical at `ui/sidebar.tsx`. Avoid re-exporting it from the top barrel to prevent symbol clashes.
+- AI chat lives under `ui/ai-chat/` with a compact public surface.
 
-Imports
-- Shared: `import { KokonutGradientButton } from '@neonpro/ui'`
-- App: `import { Card } from '@/components/molecules'`
+## Import Patterns
+- App components: `import { Card, Table } from '@/components'`
+- Specific UI: `import { Toaster } from '@/components/ui'`
+- Shared kit (brand/theme/buttons): `import { Button, themeCss } from '@neonpro/ui'`
+- Theme bridge: `import { ThemeProviderBridge, useThemeBridge } from '@neonpro/ui/theme'`
 
-Notes
-- Keep `apps/web/src/components/ui/index.ts` as compatibility barrel re-exporting atoms/molecules where needed
-- Prefer CSS variables + tokens for theming; avoid shipping Tailwind config in packages
+## TypeScript & Build Hygiene
+- Type-check: `pnpm --filter @neonpro/web type-check` → clean
+- Lint: `pnpm --filter @neonpro/web lint` → no errors (warnings allowed)
+- Tests: `pnpm --filter @neonpro/web test` → all passing
+- Excludes: demos/examples are excluded from type-checking to avoid noise
 
-Updates (2025-09-12)
-- MagicCard now includes ShineBorder effect; `shine-border.tsx` archived. Use `MagicCard` from `apps/web/src/components/ui/magic-card.tsx`.
-- Theme provider bridge import path: import from `@neonpro/ui/theme` (not the top-level package).
-- Adjusted tests: AuthForm forgot flow is triggered via "Esqueceu sua senha?" button, not a Tab.
+## Decisions
+- KISS/YAGNI: only export what routes actually use.
+- Consolidated duplicate sidebars; use one canonical `ui/sidebar.tsx`.
+- Removed/relocated demos (bento-grid/aceternity/etc.) from public API.
+- Replaced custom buttons with `@neonpro/ui` variants.
+- Unified theme via `ThemeProviderBridge` from `@neonpro/ui`.
 
-References
-- shadcn/ui Monorepo: https://ui.shadcn.com/docs/monorepo
-- Turborepo + shadcn guide: https://turborepo.com/docs/guides/tools/shadcn-ui
+## Accessibility & Performance
+- Touch targets ≥44px, keyboard navigation complete
+- WCAG 2.2 AA contrast and focus indicators
+- Smooth transitions; avoid layout shift (CLS ≤ 0.1)
+- Mobile LCP ≤ 2.5s, INP ≤ 200ms targets
+
+## Maintenance Rules
+- Prefer atoms/molecules for reusable primitives; consider upstreaming to `packages/ui`.
+- Keep organisms feature-specific; avoid leaking them to the global barrel unless needed.
+- When adding a new component, add it where it belongs in the atomic tree; update only the minimal barrel.
+- Avoid demo exports. For experiments, place under a local `_sandbox` not included in barrels.
+
+## Migration Tips
+- If you still import from removed demo paths, switch to `@neonpro/ui` or local atoms/molecules.
+- For Sidebar usage, import from `@/components/ui/sidebar` directly to avoid name collisions.
+
+## Compliance & Privacy
+- LGPD consent is handled by `ConsentBanner.tsx`. Keep it lightweight and localized (pt-BR first).
+- Avoid logging PII; follow `docs/rules/coding-standards.md` privacy guidance.
+
+## Verification
+Last verified:
+- Build: Vite build ok
+- Type-check: clean
+- Tests: 79/79 passing
+- Lint: 0 errors, minor warnings only
+
