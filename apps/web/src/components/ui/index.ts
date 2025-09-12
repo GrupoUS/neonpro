@@ -23,13 +23,10 @@ export * from './sonner';
 export * from './tooltip';
 
 // Custom Background Components
-export * from './background-gradient';
 export * from './beams-background';
 
 // Custom Advanced Components
-export * from './liquid-glass-card';
 export * from './sidebar';
-
 
 // Demo Components removed from public API (moved to _deprecated)
 // If needed for local demos, import directly from the file path under _deprecated.

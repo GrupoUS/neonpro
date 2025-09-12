@@ -7,22 +7,19 @@ export * from './molecules';
 export { AIChatContainer } from './organisms';
 // export * from './templates'; // commented: path may not exist
 // Avoid re-exporting entire ui barrel; export only safe items
-export { Toaster } from './ui/toaster';
 export * from './ui/ai-chat';
-export * from './ui/background-gradient';
 export * from './ui/beams-background';
-export * from './ui/liquid-glass-card';
+export { Toaster } from './ui/toaster';
 // Do not re-export './ui/sidebar' here to avoid duplicate Sidebar symbols
 
 // export * from './healthcare'; // removed: folder no longer exists
 
-
 // Common aliases (optional convenience re-exports)
+export { Badge } from './atoms/badge';
 export { Button } from './atoms/button';
 export { Input } from './atoms/input';
 export { Label } from './atoms/label';
-export { Badge } from './atoms/badge';
 
-export { Card, CardHeader, CardTitle, CardContent, CardDescription } from './molecules/card';
-export { Alert, AlertTitle, AlertDescription } from './molecules/alert';
-export { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from './molecules/table';
+export { Alert, AlertDescription, AlertTitle } from './molecules/alert';
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from './molecules/card';
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './molecules/table';

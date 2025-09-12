@@ -2,10 +2,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useApiStatus, useClients, useAppointments, useApiConnectivity } from '@/lib/api-hooks';
 import { Button } from '@/components/ui';
 
-// Ensure UI build alias works in monorepo
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const __NEONPRO_UI_CHECK__ = Button;
-
 function ApiTestComponent() {
   const apiStatus = useApiStatus();
   const clients = useClients();

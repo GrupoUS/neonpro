@@ -6,8 +6,7 @@ export { default as AITextLoading } from './ai-text-loading';
 export { default as AIVoice } from './ai-voice';
 
 // Floating AI Chat Components
-export { default as FloatingAIChat } from '../floating-ai-chat';
-export { default as FloatingChatButton } from '../floating-chat-button';
+// Note: Complex floating chat components removed during cleanup - using FloatingAIChatSimple instead
 
 // Export types
 export type * from './types';
