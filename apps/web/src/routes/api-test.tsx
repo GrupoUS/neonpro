@@ -1,4 +1,4 @@
-import { KokonutGradientButton, AceternityHoverBorderGradientButton } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useApiStatus, useClients, useAppointments, useApiConnectivity } from '@/lib/api-hooks';
 
@@ -104,21 +104,13 @@ function ApiTestComponent() {
           <h2 className="text-xl font-semibold mb-4">🎨 UI Components</h2>
           
           <div className="space-y-4">
-            <AceternityHoverBorderGradientButton
-              onClick={testUIComponents}
-              className="w-full text-white"
-            >
-              Aceternity Hover Border Button
-            </AceternityHoverBorderGradientButton>
+            <Button onClick={testUIComponents} className="w-full">
+              Testar UI Button
+            </Button>
             
-            <KokonutGradientButton 
-              variant="secondary"
-              size="lg"
-              onClick={testUIComponents}
-              className="w-full"
-            >
-              KokonutUI Gradient Button
-            </KokonutGradientButton>
+            <Button variant="secondary" size="lg" onClick={testUIComponents} className="w-full">
+              Secondary Button
+            </Button>
           </div>
           
           <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">

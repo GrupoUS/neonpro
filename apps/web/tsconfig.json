@@ -53,6 +53,7 @@
     "node_modules",
     "dist",
     "src/components/ui/_deprecated/**",
+    "src/components/examples/**",
     "src/**/*.test.ts",
     "src/**/*.test.tsx"
   ]

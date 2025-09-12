@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+// React import not needed with new JSX transform
 import { MessageCircle, X, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';

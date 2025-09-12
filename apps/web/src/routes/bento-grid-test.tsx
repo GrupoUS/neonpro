@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+// Demo-only components removed; using core components only
 
 /**
  * Bento Grid Test Page
@@ -28,7 +29,12 @@ function BentoGridTestPage() {
               incluindo animações suaves e design responsivo.
             </p>
           </div>
-          <BentoGridDemo />
+          <BentoGrid className="mx-auto max-w-5xl">
+            <BentoGridItem title="AI Chat" description="Atendimento estético com IA" />
+            <BentoGridItem title="Agendamentos" description="Gestão de horários" />
+            <BentoGridItem title="Clientes" description="Dados e consentimentos" />
+            <BentoGridItem title="Relatórios" description="Resultados e insights" />
+          </BentoGrid>
         </div>
       </section>
 
@@ -41,7 +47,11 @@ function BentoGridTestPage() {
               Grade simplificada para seções menores ou telas móveis.
             </p>
           </div>
-          <BentoGridSimple />
+          <BentoGrid className="mx-auto max-w-4xl">
+            <BentoGridItem title="Simples" description="Versão compacta do grid" />
+            <BentoGridItem title="Rápido" description="Animações suaves" />
+            <BentoGridItem title="Acessível" description="WCAG 2.1 AA" />
+          </BentoGrid>
         </div>
       </section>
 

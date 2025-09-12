@@ -4,7 +4,6 @@
 
 // Export all components from new atomic structure
 export * from '../atoms';
-export * from '../healthcare';
 export * from '../molecules';
 
 // Specific re-exports for backward compatibility

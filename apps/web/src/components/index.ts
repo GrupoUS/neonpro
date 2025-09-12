@@ -14,7 +14,7 @@ export * from './ui/beams-background';
 export * from './ui/liquid-glass-card';
 // Do not re-export './ui/sidebar' here to avoid duplicate Sidebar symbols
 
-export * from './healthcare';
+// export * from './healthcare'; // removed: folder no longer exists or is internal
 
 // Common aliases (optional convenience re-exports)
 export { Button } from './atoms/button';

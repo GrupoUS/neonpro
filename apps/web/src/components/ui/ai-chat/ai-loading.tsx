@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+// React import not needed in React 17+ JSX runtime
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { AILoadingProps } from './types';

@@ -293,5 +293,4 @@ export const Dashboard = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
-  );
-};
+
