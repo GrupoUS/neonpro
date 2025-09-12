@@ -1,38 +1,22 @@
 import { KokonutGradientButton, AceternityHoverBorderGradientButton } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useApiStatus, useClients, useAppointments, useApiConnectivity } from '@/lib/api-hooks';
 
 function ApiTestComponent() {
-  const [apiStatus, setApiStatus] = useState<string>('');
-  const [clients, setClients] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const testApiConnection = async () => {
-    setLoading(true);
-    try {
-      // Test basic API connection
-      const healthResponse = await fetch('/api/health');
-      const healthData = await healthResponse.json();
-      
-      // Test versioned API
-      const v1Response = await fetch('/api/v1/health');
-      const v1Data = await v1Response.json();
-      
-      // Test clients endpoint
-      const clientsResponse = await fetch('/api/v1/clients');
-      const clientsData = await clientsResponse.json();
-      
-      setApiStatus(`✅ API Connected! Health: ${healthData.status}, V1: ${v1Data.status}`);
-      setClients(clientsData.items || []);
-    } catch (error) {
-      setApiStatus(`❌ API Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const apiStatus = useApiStatus();
+  const clients = useClients();
+  const appointments = useAppointments();
+  const connectivity = useApiConnectivity();
 
   const testUIComponents = () => {
     alert('🎨 NeonPro UI Components funcionando perfeitamente!');
+  };
+
+  const getStatusIcon = (isLoading: boolean, isError: boolean, isSuccess: boolean) => {
+    if (isLoading) return '⏳';
+    if (isError) return '❌';
+    if (isSuccess) return '✅';
+    return '❓';
   };
 
   return (
@@ -44,31 +28,70 @@ function ApiTestComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Backend API Testing */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">🔌 Backend API</h2>
+          <h2 className="text-xl font-semibold mb-4">🔌 Backend API (TanStack Query)</h2>
           
-          <KokonutGradientButton 
-            onClick={testApiConnection}
-            disabled={loading}
-            variant="primary"
-            size="lg"
-            className="mb-4"
-          >
-            {loading ? 'Testando...' : 'Testar Conexão API'}
-          </KokonutGradientButton>
-          
-          <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
-            <p className="text-sm font-mono">
-              {apiStatus || 'Clique no botão para testar a API'}
-            </p>
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded">
+              <span>Conectividade</span>
+              <span className="flex items-center gap-2">
+                {getStatusIcon(connectivity.isLoading, connectivity.isError, connectivity.isConnected)}
+                {connectivity.isConnected ? 'Conectado' : connectivity.isError ? 'Erro' : 'Verificando...'}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded">
+              <span>Health Check</span>
+              <span className="flex items-center gap-2">
+                {getStatusIcon(apiStatus.isLoading, apiStatus.isError, apiStatus.isSuccess)}
+                {apiStatus.data.health?.status || 'Aguardando...'}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded">
+              <span>API V1</span>
+              <span className="flex items-center gap-2">
+                {getStatusIcon(apiStatus.isLoading, apiStatus.isError, apiStatus.isSuccess)}
+                {apiStatus.data.healthV1?.status || 'Aguardando...'}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded">
+              <span>Clientes</span>
+              <span className="flex items-center gap-2">
+                {getStatusIcon(clients.isLoading, clients.isError, clients.isSuccess)}
+                {clients.data?.length || 0} registros
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded">
+              <span>Agendamentos</span>
+              <span className="flex items-center gap-2">
+                {getStatusIcon(appointments.isLoading, appointments.isError, appointments.isSuccess)}
+                {appointments.data?.length || 0} registros
+              </span>
+            </div>
           </div>
-          
-          {clients.length > 0 && (
+
+          {clients.data && clients.data.length > 0 && (
             <div className="mt-4">
-              <h3 className="font-semibold mb-2">📋 Clientes (Exemplo):</h3>
+              <h3 className="font-semibold mb-2">📋 Clientes (via TanStack Query):</h3>
               <ul className="space-y-2">
-                {clients.map((client, index) => (
+                {clients.data.slice(0, 3).map((client, index) => (
                   <li key={index} className="bg-gray-50 dark:bg-gray-600 p-2 rounded">
                     <strong>{client.fullName}</strong> - {client.email}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {appointments.data && appointments.data.length > 0 && (
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">📅 Agendamentos:</h3>
+              <ul className="space-y-2">
+                {appointments.data.slice(0, 2).map((appointment, index) => (
+                  <li key={index} className="bg-gray-50 dark:bg-gray-600 p-2 rounded">
+                    <strong>{appointment.client.fullName}</strong> - {appointment.status}
                   </li>
                 ))}
               </ul>

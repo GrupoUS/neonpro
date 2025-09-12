@@ -99,8 +99,12 @@ fi
 
 # Build locally to catch errors early
 echo -e "\n${BLUE}🏗️  Local build validation${NC}"
-pnpm build
-print_status "Local build successful"
+if pnpm build --filter=@neonpro/web; then
+    print_status "Web app build successful"
+else
+    print_error "Web app build failed"
+    exit 1
+fi
 
 # Healthcare compliance checks
 echo -e "\n${BLUE}🏥 Healthcare compliance validation${NC}"

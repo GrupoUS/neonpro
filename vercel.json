@@ -1,38 +1,11 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "framework": "vite",
-  "regions": ["gru1", "iad1"],
-  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm build",
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
   "installCommand": "npm install -g pnpm@8.15.0",
-  "cleanUrls": true,
-  "trailingSlash": false,
-
-  "functions": {
-    "apps/api/src/index.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 30,
-      "regions": ["gru1", "iad1"]
-    }
-  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" },
-    { "source": "/((?!api|.*\\..*).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://neonpro.vercel.app" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Requested-With" },
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Cache-Control", "value": "s-maxage=300, stale-while-revalidate=600" },
-        { "key": "X-Healthcare-API", "value": "NeonPro-v1.0" }
-      ]
-    },
     {
       "source": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2)",
       "headers": [
@@ -53,8 +26,6 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production",
-    "VITE_SUPABASE_URL": "@supabase_url",
-    "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key"
+    "NODE_ENV": "production"
   }
 }
