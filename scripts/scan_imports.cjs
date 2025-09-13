@@ -24,9 +24,8 @@ function findPackageRoot(start) {
   }
   return null;
 }
-function tryResolveCandidates(baseDir, rel) {
+function tryResolveCandidates(baseDir) {
   const candidates = [];
-  const withExts = exts.concat(exts.map(e=>path.join('', 'index'+e)));
   for (const e of exts) candidates.push(baseDir + e);
   for (const e of exts) candidates.push(path.join(baseDir, 'index'+e));
   for (const c of candidates) {
@@ -87,4 +86,5 @@ fs.writeFileSync(path.join(root,'import-specs.json'), JSON.stringify(results, nu
 console.log(`scan complete: ${results.length} non-relative specifiers found. Wrote import-specs.json`);
 // print summary top 30
 const summary = results.slice(0,200);
+console.log(JSON.stringify(summary, null, 2));
 console.log(JSON.stringify(summary, null, 2));

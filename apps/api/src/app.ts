@@ -19,6 +19,7 @@ import aiChat from './routes/ai-chat';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import clients from './routes/clients';
+import health from './routes/health';
 import metricsApi from './routes/metrics';
 import stripePortal from './routes/stripe-portal';
 import stripeWebhooks from './routes/stripe-webhooks';
@@ -246,10 +247,25 @@ v1.get('/info', c =>
   }));
 
 // Keep existing route handlers for backward compatibility
+// Audit some key groups
+v1.use('/ai-chat/*', auditMiddleware('ai.chat'))
+// Consent required for clinical patient balance
+v1.use('/tools/clinical/patient/balance', requireConsent())
+// Require clinic scope on finance overdue endpoint
+v1.use('/tools/finance/overdue', requireClinicScope())
+// Route mounts
 v1.route('/auth', auth);
 v1.route('/clients', clients);
 v1.route('/appointments', appointments);
 v1.route('/ai-chat', aiChat);
+v1.route('/ai-explain', (await import('./routes/ai-explanation')).default);
+// Protect clinical routes with RLS and consent as examples
+v1.use('/tools/clinical/*', auditMiddleware('tools.clinical'))
+v1.route('/tools/clinical', (await import('./routes/tools-clinical')).default)
+// Finance routes example
+v1.use('/tools/finance/*', auditMiddleware('tools.finance'))
+v1.route('/tools/finance', (await import('./routes/tools-finance')).default)
+v1.route('/health', health);
 v1.route('/metrics', metricsApi);
 
 // Stripe webhooks (no versioning needed for webhooks)
@@ -265,4 +281,6 @@ setupOpenAPIDocumentation(app);
 
 // Export for Vercel deployment (Official Hono + Vercel Pattern)
 // This allows Vercel to automatically convert Hono routes to Vercel Functions
+import { auditMiddleware } from './middleware/audit';
+import { requireConsent, requireClinicScope } from './middleware/authz';
 export default app;

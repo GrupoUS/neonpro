@@ -476,11 +476,11 @@ jobs:
       - name: Run smoke tests
         run: |
           echo "Running smoke tests..."
-          if [ -f "./scripts/simple-smoke-test.sh" ]; then
-            chmod +x ./scripts/simple-smoke-test.sh
-            ./scripts/simple-smoke-test.sh "${{ steps.deploy.outputs.deployment_url }}" || true
+          if [ -f "./scripts/deploy-unified.sh" ]; then
+            chmod +x ./scripts/deploy-unified.sh
+            ./scripts/deploy-unified.sh validate --url "${{ steps.deploy.outputs.deployment_url }}" || true
           else
-            echo "⚠️  Smoke test script not found, skipping"
+            echo "⚠️  Unified deployment script not found, skipping"
           fi
       
       - name: Deployment summary

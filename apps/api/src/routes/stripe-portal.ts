@@ -3,39 +3,42 @@
  * Handles creation of customer portal sessions for subscription management
  */
 
+import { createClient } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { createClient } from '@supabase/supabase-js';
 
 const app = new Hono();
 
 // CORS configuration
-app.use('*', cors({
-  origin: [
-    'http://localhost:8081',
-    'http://localhost:3000',
-    process.env.NEXT_PUBLIC_APP_URL || 'https://your-production-domain.com'
-  ],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+app.use(
+  '*',
+  cors({
+    origin: [
+      'http://localhost:8081',
+      'http://localhost:3000',
+      process.env.NEXT_PUBLIC_APP_URL || 'https://your-production-domain.com',
+    ],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }),
+);
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 /**
  * Create Stripe Customer Portal Session
  * POST /api/stripe/create-portal-session
  */
-app.post('/create-portal-session', async (c) => {
+app.post('/create-portal-session', async c => {
   try {
     // Get user ID from request body
     const { userId } = await c.req.json();
-    
+
     if (!userId) {
       return c.json({ error: 'User ID is required' }, 400);
     }
@@ -54,8 +57,8 @@ app.post('/create-portal-session', async (c) => {
 
     // Check if user has a Stripe customer ID
     if (!profile.stripe_customer_id) {
-      return c.json({ 
-        error: 'No Stripe customer found. Please subscribe first.' 
+      return c.json({
+        error: 'No Stripe customer found. Please subscribe first.',
       }, 400);
     }
 
@@ -71,16 +74,15 @@ app.post('/create-portal-session', async (c) => {
       return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8081'}/subscription`,
     });
 
-    return c.json({ 
-      success: true, 
-      portal_url: session.url 
+    return c.json({
+      success: true,
+      portal_url: session.url,
     });
-
   } catch (error) {
     console.error('Error creating customer portal session:', error);
-    return c.json({ 
+    return c.json({
       error: 'Failed to create customer portal session',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, 500);
   }
 });
@@ -89,7 +91,7 @@ app.post('/create-portal-session', async (c) => {
  * Get Customer Portal Configuration
  * GET /api/stripe/portal-config
  */
-app.get('/portal-config', async (c) => {
+app.get('/portal-config', async c => {
   try {
     // Import Stripe
     const Stripe = (await import('stripe')).default;
@@ -110,14 +112,13 @@ app.get('/portal-config', async (c) => {
         id: config?.id,
         features: config?.features,
         default_return_url: config?.default_return_url,
-      }
+      },
     });
-
   } catch (error) {
     console.error('Error fetching portal configuration:', error);
-    return c.json({ 
+    return c.json({
       error: 'Failed to fetch portal configuration',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, 500);
   }
 });
@@ -126,10 +127,10 @@ app.get('/portal-config', async (c) => {
  * Create Customer in Stripe (if needed)
  * POST /api/stripe/create-customer
  */
-app.post('/create-customer', async (c) => {
+app.post('/create-customer', async c => {
   try {
     const { userId, email, name } = await c.req.json();
-    
+
     if (!userId || !email) {
       return c.json({ error: 'User ID and email are required' }, 400);
     }
@@ -163,14 +164,13 @@ app.post('/create-customer', async (c) => {
     return c.json({
       success: true,
       customer_id: customer.id,
-      message: 'Customer created successfully'
+      message: 'Customer created successfully',
     });
-
   } catch (error) {
     console.error('Error creating Stripe customer:', error);
-    return c.json({ 
+    return c.json({
       error: 'Failed to create customer',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, 500);
   }
 });
@@ -179,11 +179,11 @@ app.post('/create-customer', async (c) => {
  * Health check endpoint
  * GET /api/stripe/health
  */
-app.get('/health', (c) => {
-  return c.json({ 
-    status: 'healthy', 
+app.get('/health', c => {
+  return c.json({
+    status: 'healthy',
     service: 'stripe-portal',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

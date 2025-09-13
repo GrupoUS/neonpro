@@ -21,7 +21,8 @@
 ---
 
 ## Phase 3.1: Setup
-- [ ] T001 Create feature branch scaffolding and ensure specs are synced
+- [x] T001 Create feature branch scaffolding and ensure specs are synced
+  - Done: Verified `/specs/001-ai-chat-with/*` exists (plan.md, research.md, data-model.md, contracts) and is synced. Working on main due to tool constraints; branch noted in docs.
   - Files: `/home/vibecode/neonpro/specs/001-ai-chat-with/*`
   - Notes: Branch already created `001-ai-chat-with`; verify latest
 - [ ] T002 Install UI primitives (shadcn) for Elements-based chat [P]
@@ -34,18 +35,18 @@
 
 ## Phase 3.2: Tests First (TDD)
 ### Contract Tests (from contracts/)
-- [ ] T004 [P] Contract test — Chat API streaming in `apps/api/tests/contract/chat.test.ts`
-- [ ] T005 [P] Contract test — Explanation Summary in `apps/api/tests/contract/explanation.test.ts`
-- [ ] T006 [P] Contract test — Finance getOverdueInvoices in `apps/api/tests/contract/tools.finance.test.ts`
-- [ ] T007 [P] Contract test — Clinical getNewTreatments in `apps/api/tests/contract/tools.clinical.treatments.test.ts`
-- [ ] T008 [P] Contract test — Clinical getPatientBalance (consent) in `apps/api/tests/contract/tools.clinical.balance.test.ts`
+- [x] T004 [P] Contract test — Chat API streaming in `apps/api/tests/contract/chat.test.ts`
+- [x] T005 [P] Contract test — Explanation Summary in `apps/api/tests/contract/explanation.test.ts`
+- [x] T006 [P] Contract test — Finance getOverdueInvoices in `apps/api/tests/contract/tools.finance.test.ts`
+- [x] T007 [P] Contract test — Clinical getNewTreatments in `apps/api/tests/contract/tools.clinical.treatments.test.ts`
+- [x] T008 [P] Contract test — Clinical getPatientBalance (consent) in `apps/api/tests/contract/tools.clinical.balance.test.ts`
 
 ### Integration Tests (from spec user stories)
-- [ ] T009 [P] Integration — Chat streaming start ≤2s in `apps/web/tests/integration/chat-streaming.test.ts`
-- [ ] T010 [P] Integration — Consent gating on patient query in `apps/api/tests/integration/consent-gating.test.ts`
-- [ ] T011 [P] Integration — RLS clinic isolation in `apps/api/tests/integration/rls-isolation.test.ts`
-- [ ] T012 [P] Integration — Error handling (provider/rate limit/timeout) in `apps/web/tests/integration/chat-errors.test.ts`
-- [ ] T013 [P] Integration — Audit logging for chat/explanation in `apps/api/tests/integration/audit-events.test.ts`
+- [x] T009 [P] Integration — Chat streaming start ≤2s in `apps/web/tests/integration/chat-streaming.test.ts`
+- [x] T010 [P] Integration — Consent gating on patient query in `apps/api/tests/integration/consent-gating.test.ts`
+- [x] T011 [P] Integration — RLS clinic isolation in `apps/api/tests/integration/rls-isolation.test.ts`
+- [x] T012 [P] Integration — Error handling (provider/rate limit/timeout) in `apps/web/tests/integration/chat-errors.test.ts`
+- [x] T013 [P] Integration — Audit logging for chat/explanation in `apps/api/tests/integration/audit-events.test.ts`
 
 ### UI Component Tests (Elements)
 - [ ] T014 [P] Prompt Input — Enter/Shift+Enter/validation in `apps/web/tests/ui/prompt-input.test.tsx`
@@ -60,13 +61,13 @@
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 ### Backend (apps/api)
-- [ ] T023 Implement Chat API route (streaming) in `apps/api/src/routes/chat.ts`
-- [ ] T024 Implement Explanation summary endpoint in `apps/api/src/routes/explanation.ts`
-- [ ] T025 Implement Finance tool — getOverdueInvoices in `apps/api/src/services/finance.ts`
-- [ ] T026 Implement Clinical tool — getNewTreatments in `apps/api/src/services/clinical.ts`
-- [ ] T027 Implement Clinical tool — getPatientBalance (consent) in `apps/api/src/services/clinical.ts`
-- [ ] T028 Add audit event emission in `apps/api/src/middleware/audit.ts`
-- [ ] T029 Add RLS/consent enforcement wrappers in `apps/api/src/middleware/authz.ts`
+- [x] T023 Implement Chat API route (streaming) in `apps/api/src/routes/ai-chat.ts`
+- [x] T024 Implement Explanation summary endpoint in `apps/api/src/routes/ai-explanation.ts`
+- [x] T025 Implement Finance tool — getOverdueInvoices in `apps/api/src/routes/tools-finance.ts` (contract minimal)
+- [x] T026 Implement Clinical tool — getNewTreatments in `apps/api/src/routes/tools-clinical.ts` (contract minimal)
+- [x] T027 Implement Clinical tool — getPatientBalance (consent) in `apps/api/src/routes/tools-clinical.ts` (contract minimal)
+- [x] T028 Add audit event emission in `apps/api/src/middleware/audit.ts`
+- [x] T029 Add RLS/consent enforcement wrappers in `apps/api/src/middleware/authz.ts`
 
 ### Frontend (apps/web)
 - [ ] T030 Build Prompt Input component in `apps/web/src/components/chat/PromptInput.tsx`
@@ -80,10 +81,10 @@
 - [ ] T038 Build Response summary with refine actions in `apps/web/src/components/chat/ResponseSummary.tsx`
 
 ## Phase 3.4: Integration
-- [ ] T039 Wire audit + authz middleware in API in `apps/api/src/app.ts`
+- [x] T039 Wire audit + authz middleware in API in `apps/api/src/app.ts`
 - [ ] T040 Connect services to Supabase clients in `apps/api/src/clients/supabase.ts`
 - [ ] T041 Configure provider failover & rate limits in `apps/api/src/config/ai.ts`
-- [ ] T042 Frontend → API wiring for streaming SSE in `apps/web/src/services/chatClient.ts`
+- [x] T042 Frontend → API wiring for streaming SSE in `apps/web/src/lib/ai/ai-chat-service.ts` + `apps/web/src/hooks/useAIChat.ts`
 - [ ] T043 i18n and accessibility pass across chat UI in `apps/web/src/components/chat/*`
 
 ## Phase 3.5: Polish

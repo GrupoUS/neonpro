@@ -16,7 +16,11 @@ const ChatMessageSchema = z.object({
 });
 
 const ChatRequestSchema = z.object({
-  messages: z.array(ChatMessageSchema),
+  messages: z.array(ChatMessageSchema).default([]),
+  text: z.string().optional(),
+  presetId: z.string().optional(),
+  params: z.record(z.any()).optional(),
+  locale: z.string().default('pt-BR'),
   clientId: z.string().optional(),
   sessionId: z.string(),
   model: z.string().optional(),
@@ -84,11 +88,12 @@ app.post('/stream',
   zValidator('json', ChatRequestSchema),
   async (c) => {
     try {
-      const { messages, clientId, sessionId, model } = c.req.valid('json');
+      const { messages, text, presetId, params, locale, clientId, sessionId, model } = c.req.valid('json');
       
       // Resolve model: allow only active models unless allowExperimental=true
       const url = new URL(c.req.url);
       const allowExperimental = url.searchParams.get('allowExperimental') === 'true';
+      const mockMode = url.searchParams.get('mock') === 'true' || process.env.AI_MOCK === 'true' || (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY);
       const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
         ? model as keyof typeof MODEL_REGISTRY
         : undefined;
@@ -98,15 +103,61 @@ app.post('/stream',
       const chosenPrimary = isAllowed && requestedModel ? requestedModel : DEFAULT_PRIMARY;
 
       // Add system prompt
+      const mergedMessages = messages.length > 0 ? messages : (text ? [{ role: 'user' as const, content: text }] : [])
       const aiMessages = [
         { role: 'system' as const, content: SYSTEM_PROMPT },
-        ...messages
+        ...mergedMessages,
       ];
       
-      // Primary provider
+      // Primary provider or mock
       try {
+        let modelHeader = `${MODEL_REGISTRY[chosenPrimary].provider}:${chosenPrimary}`
+        if (mockMode) {
+          const stream = new ReadableStream({
+            start(controller) {
+              const chunks = [
+                'Olá! ',
+                'Sou o assistente da NeonPro. ',
+                'Como posso ajudar você hoje?'
+              ]
+              let i = 0
+              const interval = setInterval(() => {
+                controller.enqueue(new TextEncoder().encode(chunks[i]))
+                i++
+                if (i >= chunks.length) {
+                  clearInterval(interval)
+                  controller.close()
+                }
+              }, 10)
+            }
+          })
+
+          const startedAt = new Date().toISOString()
+          const response = new Response(stream, {
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+              'X-Chat-Started-At': startedAt,
+              'X-Chat-Model': 'mock:model',
+              'X-Data-Freshness': 'as-of-now'
+            }
+          })
+
+          const lastContent = mergedMessages[mergedMessages.length - 1]?.content || ''
+          console.log('AI Chat Interaction (Mock):', {
+            timestamp: startedAt,
+            sessionId,
+            clientId: clientId || 'anonymous',
+            userMessage: redactPII(lastContent),
+            provider: 'mock:model',
+            locale,
+            presetId: presetId || null,
+          })
+          return response
+        }
+
         const provider = MODEL_REGISTRY[chosenPrimary].provider;
         const modelAdapter = provider === 'google' ? google : openai;
+        const startedAt = new Date().toISOString();
         const result = await streamText({
           model: modelAdapter(chosenPrimary),
           messages: aiMessages,
@@ -115,16 +166,25 @@ app.post('/stream',
         });
 
         // Log interaction for audit trail
-        const userMessage = messages[messages.length - 1]?.content || '';
+        const lastContent = mergedMessages[mergedMessages.length - 1]?.content || '';
         console.log('AI Chat Interaction:', {
-          timestamp: new Date().toISOString(),
+          timestamp: startedAt,
           sessionId,
           clientId: clientId || 'anonymous',
-          userMessage: redactPII(userMessage),
+          userMessage: redactPII(lastContent),
           provider: `${MODEL_REGISTRY[chosenPrimary].provider}-${chosenPrimary}`,
+          locale,
+          presetId: presetId || null,
         });
 
-        return result.toTextStreamResponse();
+        // Wrap stream with minimal metadata headers
+        return result.toTextStreamResponse({
+          headers: {
+            'X-Chat-Started-At': startedAt,
+            'X-Chat-Model': modelHeader,
+            'X-Data-Freshness': 'as-of-now'
+          }
+        });
         
       } catch (primaryError) {
         console.error('Primary AI provider failed:', primaryError);

@@ -93,6 +93,7 @@ export function useAIChat(clientId?: string) {
         ],
         clientId,
         (chatState as ChatState & { model?: string }).model,
+        chatState.sessionId,
       );
 
       return { userMessage, stream };
@@ -181,7 +182,7 @@ export function useAIChat(clientId?: string) {
 
       if (!lastUserMessage) return [];
 
-      return generateSearchSuggestions(lastUserMessage.content);
+      return generateSearchSuggestions(lastUserMessage.content, chatState.sessionId);
     },
     enabled: chatState.messages.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes

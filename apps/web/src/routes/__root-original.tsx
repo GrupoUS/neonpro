@@ -144,7 +144,7 @@ import {
   IconUsers,
 } from '@tabler/icons-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { createRootRoute, Outlet, useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
