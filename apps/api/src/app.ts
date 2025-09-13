@@ -1,6 +1,10 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { getEnvironmentInfo, getDetailedEnvironmentInfo, validateEnvironment } from './lib/env-validation';
+import {
+  getDetailedEnvironmentInfo,
+  getEnvironmentInfo,
+  validateEnvironment,
+} from './lib/env-validation';
 import { initializeErrorTracking } from './lib/error-tracking';
 import { logger } from './lib/logger';
 import { getErrorTrackingMiddlewareStack } from './middleware/error-tracking-middleware';
@@ -10,11 +14,12 @@ import {
   performanceLoggingMiddleware,
   securityLoggingMiddleware,
 } from './middleware/logging-middleware';
+import aiChat from './routes/ai-chat';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import clients from './routes/clients';
-import aiChat from './routes/ai-chat';
 import metricsApi from './routes/metrics';
+import stripeWebhooks from './routes/stripe-webhooks';
 import { createOpenAPIApp, setupOpenAPIDocumentation } from './schemas/openapi-config';
 import {
   apiInfoRoute,
@@ -143,8 +148,8 @@ app.openapi(listClientsRoute, c =>
         createdAt: '2024-01-15T10:00:00Z',
         clinic: {
           id: 'clinic_001',
-          name: 'Clínica Exemplo'
-        }
+          name: 'Clínica Exemplo',
+        },
       },
     ],
   }));
@@ -161,8 +166,8 @@ app.openapi(getClientByIdRoute, c =>
       createdAt: '2024-01-15T10:00:00Z',
       clinic: {
         id: 'clinic_001',
-        name: 'Clínica Exemplo'
-      }
+        name: 'Clínica Exemplo',
+      },
     },
   }));
 
@@ -184,13 +189,13 @@ app.openapi(listAppointmentsRoute, c =>
         },
         clinic: {
           id: 'clinic_001',
-          name: 'Clínica Exemplo'
+          name: 'Clínica Exemplo',
         },
         professional: {
           id: 'prof_001',
           fullName: 'Dra. Maria Silva',
-          specialization: 'Dermatologia'
-        }
+          specialization: 'Dermatologia',
+        },
       },
     ],
   }));
@@ -212,13 +217,13 @@ app.openapi(getClientAppointmentsRoute, c =>
         },
         clinic: {
           id: 'clinic_001',
-          name: 'Clínica Exemplo'
+          name: 'Clínica Exemplo',
         },
         professional: {
           id: 'prof_001',
           fullName: 'Dra. Maria Silva',
-          specialization: 'Dermatologia'
-        }
+          specialization: 'Dermatologia',
+        },
       },
     ],
   }));
@@ -249,6 +254,9 @@ v1.route('/clients', clients);
 v1.route('/appointments', appointments);
 v1.route('/ai-chat', aiChat);
 v1.route('/metrics', metricsApi);
+
+// Stripe webhooks (no versioning needed for webhooks)
+app.route('/webhooks', stripeWebhooks);
 
 app.route('/v1', v1);
 

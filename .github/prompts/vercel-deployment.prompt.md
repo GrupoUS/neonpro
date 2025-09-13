@@ -34,7 +34,20 @@ The NeonPro deployment has been upgraded to use Turborepo for optimal monorepo b
 
 ### Deployment Script:
 
-Use the new Turborepo-optimized deployment script:
+Use the unified deployment orchestrator (recommended):
+
+```bash
+# Preview deploy (turbo)
+./scripts/neonpro-deploy.sh deploy --preview --strategy turbo
+
+# Production deploy (turbo, with local build + tests)
+./scripts/neonpro-deploy.sh deploy --production --strategy turbo
+
+# Optional: quick smoke test after deploy
+./scripts/neonpro-deploy.sh smoke --url https://neonpro.vercel.app
+```
+
+Legacy script (still available):
 
 ```bash
 ./scripts/deploy-neonpro-turborepo.sh
@@ -173,6 +186,7 @@ Then run `pnpm turbo build` normally; cache will be remote.
 - Check CLI version (task): “Check Vercel CLI version”
 - Link with turbo config (task): “Vercel link (turbo config)”
 - Deploy preview with turbo config (task): “Vercel deploy (preview) with turbo config”
+- Or use unified script locally: `./scripts/neonpro-deploy.sh deploy --preview --strategy turbo`
 
 ---
 

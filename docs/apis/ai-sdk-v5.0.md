@@ -15,6 +15,79 @@ related:
 
 Production-ready patterns and best practices for using the Vercel AI SDK v5.0 with the NeonPro aesthetic clinic platform. Covers the redesigned chat system, agentic loop control, type-safe UI integration, streaming data parts, and advanced tool calling with TanStack Router + Vite + Hono integration.
 
+## Prerequisites
+
+- Node.js 20+ and pnpm installed
+- Packages: `ai` (v5), `@ai-sdk/openai`, `zod`, and optionally `hono` for server routes
+- Frontend: React 19 + Vite (TanStack Router optional)
+- Environment variables set for your provider (for OpenAI: `OPENAI_API_KEY`)
+- CORS configured to allow Server-Sent Events (SSE) from the web app to your API
+- TypeScript strict mode recommended for end-to-end types
+
+## Quick Start
+
+### Server — Hono route streaming UI messages
+
+```ts
+import { Hono } from 'hono';
+import { openai } from '@ai-sdk/openai';
+import { streamText, convertToModelMessages } from 'ai';
+import type { UIMessage } from 'ai';
+
+// Define a shared UI message type (extend later as needed)
+export type MyUIMessage = UIMessage;
+
+const app = new Hono();
+
+app.post('/api/chat', async (c) => {
+  const { messages } = (await c.req.json()) as { messages: MyUIMessage[] };
+
+  const result = await streamText({
+    model: openai('gpt-4o-mini'),
+    messages: convertToModelMessages(messages),
+  });
+
+  // SSE streaming to the UI with correct headers and error handling
+  return result.toUIMessageStreamResponse();
+});
+
+export default app;
+```
+
+### Client — React hook with typed messages
+
+```tsx
+import { useChat } from 'ai/react';
+import type { UIMessage } from 'ai';
+
+type MyUIMessage = UIMessage;
+
+export function Chat() {
+  const { messages, input, setInput, sendMessage, isLoading } = useChat<MyUIMessage>({
+    api: '/api/chat',
+  });
+
+  return (
+    <div>
+      <ul>
+        {messages.map((m) => (
+          <li key={m.id}>{m.display || m.role}</li>
+        ))}
+      </ul>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (input.trim()) sendMessage({ text: input });
+        }}
+      >
+        <input value={input} onChange={(e) => setInput(e.target.value)} />
+        <button disabled={isLoading}>Send</button>
+      </form>
+    </div>
+  );
+}
+```
+
 ## Core Principles
 
 - **Type Safety First**: Leverage end-to-end type safety from server to client
@@ -620,6 +693,31 @@ const result = streamText({
   experimental_transform: upperCaseTransform(),
 });
 ```
+
+## Troubleshooting
+
+- SSE not streaming in browser
+  - Ensure the server response uses `result.toUIMessageStreamResponse()` and no extra writes occur after returning the Response
+  - Check reverse proxies (Vercel/NGINX) are not buffering; disable compression for SSE if needed
+- Tool UI state not updating
+  - Handle all tool states: `input-streaming`, `input-available`, `output-available`, `output-error`
+  - Ensure part IDs are stable to replace previous data parts when streaming updates
+- Mixed v4/v5 APIs
+  - Migrate from `parameters` to `inputSchema` and adopt `UIMessage` with `parts`
+  - Run `npx @ai-sdk/codemod upgrade` and fix remaining manual diffs
+- Type errors with custom messages
+  - Export and reuse a single `MyUIMessage` type across server and client
+  - Use `InferUITools<typeof tools>` to wire static tools into the message type
+- 401/Provider errors
+  - Verify `OPENAI_API_KEY` (or provider key) is available on the server; never expose it to the client
+  - Log `onError` in `toUIMessageStreamResponse` for better diagnostics
+
+## See Also
+
+- ../AGENTS.md
+- ../architecture/tech-stack.md
+- ../agents/documentation.md
+- ./apis.md
 
 ## Migration from v4.0
 

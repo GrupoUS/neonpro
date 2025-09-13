@@ -1,4 +1,4 @@
-import { HomeIcon } from 'lucide-react';
+import { Crown, HomeIcon, MessageSquare } from 'lucide-react';
 import Index from './pages/Index';
 
 /**
@@ -10,5 +10,15 @@ export const navItems = [
     to: '/',
     icon: <HomeIcon className='h-4 w-4' />,
     page: <Index />,
+  },
+  {
+    title: 'AI Chat',
+    to: '/ai-chat',
+    icon: <MessageSquare className='h-4 w-4' />,
+  },
+  {
+    title: 'Assinatura',
+    to: '/subscription',
+    icon: <Crown className='h-4 w-4' />,
   },
 ];

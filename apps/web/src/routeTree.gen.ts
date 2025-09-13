@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ValidationReportRouteImport } from './routes/validation-report'
 import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShineTestRouteImport } from './routes/shine-test'
@@ -63,6 +64,11 @@ const UniversalButtonTestRoute = UniversalButtonTestRouteImport.update({
 const TestAuthRoute = TestAuthRouteImport.update({
   id: '/test-auth',
   path: '/test-auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupDemoRoute = SignupDemoRouteImport.update({
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
+  '/subscription': typeof SubscriptionRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
+  '/subscription': typeof SubscriptionRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
+  '/subscription': typeof SubscriptionRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/shine-test'
     | '/signup'
     | '/signup-demo'
+    | '/subscription'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/shine-test'
     | '/signup'
     | '/signup-demo'
+    | '/subscription'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/shine-test'
     | '/signup'
     | '/signup-demo'
+    | '/subscription'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -541,6 +553,7 @@ export interface RootRouteChildren {
   ShineTestRoute: typeof ShineTestRoute
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
+  SubscriptionRoute: typeof SubscriptionRoute
   TestAuthRoute: typeof TestAuthRoute
   UniversalButtonTestRoute: typeof UniversalButtonTestRoute
   ValidationReportRoute: typeof ValidationReportRoute
@@ -569,6 +582,13 @@ declare module '@tanstack/react-router' {
       path: '/test-auth'
       fullPath: '/test-auth'
       preLoaderRoute: typeof TestAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup-demo': {
@@ -903,6 +923,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShineTestRoute: ShineTestRoute,
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,
+  SubscriptionRoute: SubscriptionRoute,
   TestAuthRoute: TestAuthRoute,
   UniversalButtonTestRoute: UniversalButtonTestRoute,
   ValidationReportRoute: ValidationReportRoute,

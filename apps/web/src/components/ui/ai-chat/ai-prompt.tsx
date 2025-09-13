@@ -1,5 +1,6 @@
 'use client';
 
+import { useSubscription } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { Send } from 'lucide-react';
@@ -18,17 +19,14 @@ export default function AIPrompt({
   model,
   onModelChange,
   showInput = true,
-  models = [
-    { value: 'gpt-5-mini', label: 'ChatGPT 5 Mini' },
-    { value: 'gemini-2.5-flash', label: 'Gemini Flash 2.5' },
-    // experimental (deactivated by default)
-    { value: 'gpt-4o-mini', label: 'GPT-4o Mini', disabled: true },
-    { value: 'o4-mini', label: 'o4-mini', disabled: true },
-    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', disabled: true },
-  ],
+  models, // Now comes from subscription hook
 }: AIPromptProps) {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { chatModels, hasPro } = useSubscription();
+
+  // Use subscription-based models if not provided
+  const availableModels = models || chatModels;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,10 +74,11 @@ export default function AIPrompt({
               className='h-8 rounded-md border border-[#D2D0C8] bg-white px-2 text-xs text-[#112031] focus:border-[#294359] focus:outline-none focus:ring-2 focus:ring-[#294359]/20'
               aria-label='Selecionar modelo de IA'
             >
-              {models.map(m => (
+              {availableModels.map(m => (
                 <option key={m.value} value={m.value} disabled={m.disabled}>
                   {m.label}
-                  {m.disabled ? ' (desativado)' : ''}
+                  {m.disabled ? ' (Pro)' : ''}
+                  {m.disabled && !hasPro ? ' 🔒' : ''}
                 </option>
               ))}
             </select>

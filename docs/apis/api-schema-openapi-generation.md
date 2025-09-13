@@ -1,8 +1,77 @@
+---
+title: "API Schema / OpenAPI Generation"
+last_updated: 2025-09-13
+form: reference
+tags: [openapi, hono, zod, neonpro]
+related:
+  - ../AGENTS.md
+  - ../architecture/source-tree.md
+  - ../agents/documentation.md
+---
+
 # API Schema / OpenAPI Generation
 
 ## Overview
 
 This document describes the comprehensive OpenAPI schema generation implementation for the NeonPro Healthcare API, providing automatic Swagger UI documentation, schema validation, and API contract enforcement.
+
+## Prerequisites
+
+- Node.js 20+, pnpm
+- Packages: `hono` v4, `@hono/zod-openapi` v0.17+, `zod` v3
+- TypeScript strict mode recommended
+- JWT auth configured; define `Bearer` security scheme
+- Environments: dev/staging/prod with distinct base URLs
+
+## Quick Start
+
+Minimal wiring to expose `/docs` and `/openapi.json` with type-safe routes.
+
+```ts
+// apps/api/src/app.ts
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { swaggerUI } from '@hono/swagger-ui';
+import { z } from 'zod';
+
+const app = new OpenAPIHono();
+
+// Define a schema once and reuse
+const HealthResponse = z.object({ status: z.literal('ok'), version: z.string() });
+
+app.openapi(
+  {
+    method: 'get',
+    path: '/v1/health',
+    tags: ['system'],
+    summary: 'Service health',
+    responses: {
+      200: {
+        description: 'OK',
+        content: {
+          'application/json': { schema: HealthResponse },
+        },
+      },
+    },
+  },
+  (c) => c.json({ status: 'ok', version: '1.0.0' })
+);
+
+// OpenAPI schema and docs endpoints
+app.doc('/openapi.json', {
+  openapi: '3.1.0',
+  info: { title: 'NeonPro API', version: '1.0.0' },
+  servers: [
+    { url: 'http://localhost:3000/api', description: 'dev' },
+    { url: 'https://api.neonpro.health', description: 'prod' },
+  ],
+});
+
+app.get('/docs', swaggerUI({ url: '/openapi.json' }));
+
+export default app;
+```
+
+> Tip: Keep all schemas in `src/schemas/` and import them into route files to avoid drift.
 
 ## Implementation
 
@@ -202,6 +271,26 @@ SENTRY_DSN=your-sentry-dsn
 - Check browser developer tools for Swagger UI issues
 - Validate OpenAPI schema using external validators
 - Test endpoints individually for validation issues
+
+## Troubleshooting
+
+- Swagger UI not loading
+  - Verify `/openapi.json` route is reachable and CORS allows the docs origin
+  - Check JSON validity using an external OpenAPI validator
+- Missing security schemes
+  - Ensure `components.securitySchemes.BearerAuth` exists and operations include `security: [{ BearerAuth: [] }]`
+- Zod schema mismatch
+  - Make sure route handlers return data matching the declared response schema
+  - Add integration tests to catch drift
+- Version drift
+  - Centralize `info.version` and import from a single source of truth
+
+## See Also
+
+- ../AGENTS.md
+- ../architecture/tech-stack.md
+- ../agents/documentation.md
+- ./apis.md
 
 ## Conclusion
 

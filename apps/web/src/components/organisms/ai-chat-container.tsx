@@ -1,5 +1,6 @@
 'use client';
 
+import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import {
   AIInputSearch,
   AILoading,
@@ -8,9 +9,11 @@ import {
   AIVoice,
 } from '@/components/ui/ai-chat';
 import { useAIChat } from '@/hooks/useAIChat';
+import { useSubscription } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
+import { Button } from '@neonpro/ui';
+import { Crown, ExternalLink } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'; // React import not needed
-import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 // import type { AIAssistantProps } from '@/components/healthcare/types';
 
 interface AIAssistantProps {
@@ -52,6 +55,16 @@ export default function AIChatContainer({
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Subscription management
+  const {
+    chatModels,
+    hasPro,
+    checkModelAccess,
+    subscriptionInfo,
+    shouldShowUpgradePrompt,
+    upgradeUrl,
+  } = useSubscription();
+
   const {
     messages,
     isLoading,
@@ -79,6 +92,17 @@ export default function AIChatContainer({
   const handleSendMessage = (content: string) => {
     if (!content.trim()) return;
 
+    // Check if user has access to current model
+    if (!checkModelAccess(currentModel as any)) {
+      // Show upgrade prompt for pro models
+      if (shouldShowUpgradePrompt) {
+        alert(
+          `Este modelo requer NeonPro Pro. Faça upgrade para acessar todos os modelos avançados.`,
+        );
+        return;
+      }
+    }
+
     // Healthcare audit logging
     if (onAuditLog && lgpdCompliant) {
       onAuditLog('ai_chat_message_sent', {
@@ -86,6 +110,8 @@ export default function AIChatContainer({
         patientId,
         userRole,
         messageLength: content.length,
+        model: currentModel,
+        hasPro,
         timestamp: new Date().toISOString(),
       });
     }
@@ -144,9 +170,35 @@ export default function AIChatContainer({
       <div className='flex items-center justify-between p-4 border-b border-[#D2D0C8]'>
         <div className='flex items-center space-x-2'>
           <AIBrandIcon size={18} />
-          <h3 className='text-lg font-semibold text-[#112031]'>
-            Assistente NeonPro
-          </h3>
+          <div>
+            <h3 className='text-lg font-semibold text-[#112031]'>
+              Assistente NeonPro
+            </h3>
+            <div className='flex items-center space-x-2'>
+              <span
+                className={cn(
+                  'text-xs px-2 py-1 rounded-full',
+                  hasPro
+                    ? 'bg-gradient-to-r from-[#AC9469] to-[#294359] text-white'
+                    : 'bg-[#D2D0C8] text-[#112031]',
+                )}
+              >
+                {hasPro && <Crown className='w-3 h-3 mr-1 inline' />}
+                {subscriptionInfo.displayStatus}
+              </span>
+              {shouldShowUpgradePrompt && (
+                <Button
+                  size='sm'
+                  onClick={() => window.open(upgradeUrl, '_blank')}
+                  className='text-xs bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031]'
+                >
+                  <Crown className='w-3 h-3 mr-1' />
+                  Upgrade Pro
+                  <ExternalLink className='w-3 h-3 ml-1' />
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
 
         <button
@@ -263,6 +315,7 @@ export default function AIChatContainer({
               disabled={sendMessageLoading}
               model={currentModel}
               onModelChange={setModel}
+              models={chatModels}
             />
           )}
 
