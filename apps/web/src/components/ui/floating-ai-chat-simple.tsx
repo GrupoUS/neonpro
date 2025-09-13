@@ -1,9 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Send, Sparkles, X } from 'lucide-react';
+import { Send, Sparkles, X } from 'lucide-react'; // MessageCircle not used
 import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
   className?: string;

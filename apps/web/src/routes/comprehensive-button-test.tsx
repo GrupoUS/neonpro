@@ -27,7 +27,7 @@ function ComprehensiveButtonTest() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8'>
+    <div className='min-h-full h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8'>
       <div className='max-w-6xl mx-auto'>
         <h1 className='text-4xl font-bold text-center mb-2 text-slate-800 dark:text-slate-200'>
           Universal Button Comprehensive Testing

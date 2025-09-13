@@ -84,7 +84,7 @@ function AuthCallbackComponent() {
   }, []);
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-background'>
+    <div className='flex min-h-full h-full items-center justify-center bg-background'>
       <div className='text-center space-y-4'>
         {status === 'loading' && (
           <>

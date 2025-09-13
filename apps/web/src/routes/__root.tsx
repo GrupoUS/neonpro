@@ -82,8 +82,13 @@ function AppShellWithSidebar({ children }: { children: React.ReactNode }) {
                   src='/brand/simboloneonpro.png'
                   alt='NeonPro'
                   className='h-6 w-6 shrink-0 rounded-md object-contain'
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/neonpro-favicon.svg';
+                  onError={e => {
+                    // First fallback to SVG version, then to favicon
+                    if ((e.currentTarget as HTMLImageElement).src.includes('.png')) {
+                      (e.currentTarget as HTMLImageElement).src = '/brand/simboloneonpro.svg';
+                    } else {
+                      (e.currentTarget as HTMLImageElement).src = '/neonpro-favicon.svg';
+                    }
                   }}
                 />
                 <span className='font-medium whitespace-pre text-foreground dark:text-foreground'>
@@ -100,7 +105,7 @@ function AppShellWithSidebar({ children }: { children: React.ReactNode }) {
             <div className='flex items-center justify-center py-2'>
               <AnimatedThemeToggler size='md' />
             </div>
-            
+
             <Link
               to='/'
               className='flex items-center justify-start gap-2 group/sidebar py-2 w-full text-left hover:bg-accent/50 dark:hover:bg-accent/10 rounded-md px-2 transition-colors'
@@ -191,7 +196,7 @@ function RootComponent() {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             {/* Ensure main root has bg/text from theme */}
-            <div className='min-h-screen bg-background text-foreground'>
+            <div className='min-h-full h-full bg-background text-foreground'>
               {showSidebar ? <AppShellWithSidebar>{content}</AppShellWithSidebar> : isAuthLike
                 ? (
                   <BeamsBackground>
@@ -202,7 +207,7 @@ function RootComponent() {
                   </BeamsBackground>
                 )
                 : (
-                  <div className='flex min-h-screen flex-col'>
+                  <div className='flex min-h-full h-full flex-col'>
                     <div className='flex w-full justify-end p-2'>
                       {canShowToggle && <AnimatedThemeToggler />}
                     </div>
@@ -231,7 +236,7 @@ function RootComponent() {
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
               {/* Ensure main root has bg/text from theme */}
-              <div className='min-h-screen bg-background text-foreground'>
+              <div className='min-h-full h-full bg-background text-foreground'>
                 {showSidebar ? <AppShellWithSidebar>{content}</AppShellWithSidebar> : isAuthLike
                   ? (
                     <BeamsBackground>
@@ -242,7 +247,7 @@ function RootComponent() {
                     </BeamsBackground>
                   )
                   : (
-                    <div className='flex min-h-screen flex-col'>
+                    <div className='flex min-h-full h-full flex-col'>
                       <div className='flex w-full justify-end p-2'>
                         {canShowToggle && <AnimatedThemeToggler />}
                       </div>

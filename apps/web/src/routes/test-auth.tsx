@@ -66,7 +66,7 @@ export function TestAuth() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-background via-background/95 to-accent/10 flex items-center justify-center p-4'>
+    <div className='min-h-full h-full bg-gradient-to-br from-background via-background/95 to-accent/10 flex items-center justify-center p-4'>
       <Card className='w-full max-w-md shadow-2xl border-0 bg-card/95 backdrop-blur-sm'>
         <CardHeader>
           <CardTitle className='text-2xl text-center'>Authentication Test</CardTitle>

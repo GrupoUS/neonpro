@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { Sparkles } from 'lucide-react'; // no title prop support on Lucide icons
+import { useState } from 'react'; // React import not needed for JSX (react-jsx)
 
 interface AIBrandIconProps {
   size?: number;
   className?: string;
   alt?: string;
-  title?: string;
+  title?: string; // only applied to <img>, not Lucide icon
 }
 
 /**
@@ -19,8 +19,8 @@ interface AIBrandIconProps {
 export function AIBrandIcon({
   size = 24,
   className,
-  alt = "NeonPro AI",
-  title = "NeonPro AI",
+  alt = 'NeonPro AI',
+  title = 'NeonPro AI',
 }: AIBrandIconProps) {
   const [failed, setFailed] = useState(false);
 
@@ -29,21 +29,29 @@ export function AIBrandIcon({
       <Sparkles
         width={size}
         height={size}
-        className={cn("text-[#AC9469]", className)}
+        className={cn('text-[#AC9469]', className)}
         aria-hidden
+        // no title prop on Lucide icon
       />
     );
   }
 
   return (
     <img
-      src="/brand/iconeneonpro.png"
+      src='/brand/iconeneonpro.png'
       width={size}
       height={size}
       alt={alt}
       title={title}
-      className={cn("inline-block", className)}
-      onError={() => setFailed(true)}
+      className={cn('inline-block', className)}
+      onError={e => {
+        // First fallback to SVG version, then to Sparkles icon
+        if ((e.currentTarget as HTMLImageElement).src.includes('.png')) {
+          (e.currentTarget as HTMLImageElement).src = '/brand/iconeneonpro.svg';
+        } else {
+          setFailed(true);
+        }
+      }}
     />
   );
 }

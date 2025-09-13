@@ -1,7 +1,0 @@
-Placeholder for AI icon: iconeneonpro.png
-
-Expected path: apps/web/public/brand/iconeneonpro.png
-Recommended sizes: 64x64, 96x96, 128x128 (square) with transparent background.
-Purpose: Used as the AI chat opener icon and AI-related UI badges.
-
-Replace this file by dropping the actual PNG with the exact filename above.
