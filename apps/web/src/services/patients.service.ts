@@ -121,14 +121,72 @@ class PatientService {
   }
 
   /**
+   * Generate unique medical record number
+   */
+  private async generateMedicalRecordNumber(clinicId: string): Promise<string> {
+    try {
+      // Get the clinic's prefix or use a default
+      const { data: clinic } = await supabase
+        .from('clinics')
+        .select('clinic_name')
+        .eq('id', clinicId)
+        .single();
+
+      const prefix = clinic?.clinic_name?.substring(0, 3).toUpperCase() || 'NP';
+      const timestamp = Date.now().toString().slice(-6);
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+      return `${prefix}${timestamp}${random}`;
+    } catch (error) {
+      console.error('Error generating medical record number:', error);
+      // Fallback to timestamp-based number
+      const timestamp = Date.now().toString().slice(-8);
+      return `NP${timestamp}`;
+    }
+  }
+
+  /**
+   * Parse full name into given names and family name
+   */
+  private parseFullName(fullName: string): { givenNames: string[]; familyName: string } {
+    const nameParts = fullName.trim().split(' ').filter(part => part.length > 0);
+
+    if (nameParts.length === 0) {
+      throw new Error('Nome completo é obrigatório');
+    }
+
+    if (nameParts.length === 1) {
+      return {
+        givenNames: [nameParts[0]],
+        familyName: nameParts[0], // Use same name as family name if only one name provided
+      };
+    }
+
+    // Last name is family name, rest are given names
+    const familyName = nameParts[nameParts.length - 1];
+    const givenNames = nameParts.slice(0, -1);
+
+    return { givenNames, familyName };
+  }
+
+  /**
    * Create new patient
    */
   async createPatient(data: CreatePatientData, clinicId: string, userId: string): Promise<Patient> {
     try {
-      // Note: Some fields may be optional in current schema; casting to PatientInsert for flexibility
+      // Parse full name into required format
+      const { givenNames, familyName } = this.parseFullName(data.fullName);
+
+      // Generate medical record number
+      const medicalRecordNumber = await this.generateMedicalRecordNumber(clinicId);
+
+      // Prepare patient data according to database schema
       const patientData: any = {
         clinic_id: clinicId,
-        full_name: data.fullName,
+        medical_record_number: medicalRecordNumber,
+        given_names: givenNames,
+        family_name: familyName,
+        full_name: data.fullName.trim(),
         email: data.email || null,
         phone_primary: data.phone || null,
         birth_date: data.birthDate || null,
@@ -136,7 +194,12 @@ class PatientService {
         created_by: userId,
         lgpd_consent_given: true, // Assume consent given during creation
         data_consent_status: 'granted',
+        is_active: true,
+        patient_status: 'active',
+        registration_source: 'manual',
       };
+
+      console.log('🔧 Creating patient with data:', patientData);
 
       const { data: patient, error } = await supabase
         .from('patients')
@@ -153,9 +216,11 @@ class PatientService {
         .single();
 
       if (error) {
-        console.error('Error creating patient:', error);
+        console.error('❌ Error creating patient:', error);
         throw new Error(`Failed to create patient: ${error.message}`);
       }
+
+      console.log('✅ Patient created successfully:', patient);
 
       // Log audit trail
       await this.logPatientAction('create', patient.id, userId, data);

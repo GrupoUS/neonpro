@@ -208,21 +208,7 @@ function PatientDetailPage() {
     });
   };
 
-  const handleViewHistory = () => {
-    navigate({
-      to: '/patients/$patientId',
-      params: { patientId },
-      search: { tab: 'history' },
-    });
-  };
 
-  const handleViewDocuments = () => {
-    navigate({
-      to: '/patients/$patientId',
-      params: { patientId },
-      search: { tab: 'documents' },
-    });
-  };
 
   if (isLoading) {
     return (
@@ -440,7 +426,7 @@ function PatientDetailPage() {
       {/* Tab Content with Error Boundaries */}
       <div role="tabpanel" id={`tabpanel-${tab}`} aria-labelledby={`tab-${tab}`}>
         <ErrorBoundary
-          fallback={({ error, resetError }) => (
+          fallback={(error: Error) => (
             <Card>
               <CardContent className="p-6 text-center">
                 <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-2" />
@@ -450,7 +436,7 @@ function PatientDetailPage() {
                 <p className="text-muted-foreground text-sm mb-4">
                   {error.message}
                 </p>
-                <Button onClick={resetError} size="sm">
+                <Button onClick={() => window.location.reload()} size="sm">
                   Tentar Novamente
                 </Button>
               </CardContent>

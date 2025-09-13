@@ -14,6 +14,7 @@ import { Badge } from '@neonpro/ui';
 import { AlertCircle, Users, UserPlus, Calendar, Activity, TrendingUp } from 'lucide-react';
 import { Suspense } from 'react';
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
+import { toast } from 'sonner';
 
 // Type-safe search params for filtering and pagination
 const patientsSearchSchema = z.object({
@@ -90,10 +91,10 @@ export const Route = createFileRoute('/patients')({
 
 function PatientsPage() {
   const { user } = useAuth();
-  const _search = Route.useSearch();
+  // const search = Route.useSearch(); // Currently unused
 
   // Get clinic ID from user context (adapt based on your auth structure)
-  const clinicId = user?.user_metadata?.clinic_id || user?.clinic_id;
+  const clinicId = (user as any)?.user_metadata?.clinic_id || (user as any)?.clinic_id;
 
   if (!clinicId) {
     return (
@@ -156,7 +157,7 @@ function PatientsPage() {
 
       {/* Main Patients Table with Error Boundary */}
       <ErrorBoundary
-        fallback={({ error, resetError }) => (
+        fallback={(error: Error, errorId: string) => (
           <Card>
             <CardContent className="p-6 text-center">
               <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-2" />
@@ -166,7 +167,7 @@ function PatientsPage() {
               <p className="text-muted-foreground text-sm mb-4">
                 {error.message}
               </p>
-              <Button onClick={resetError} size="sm">
+              <Button onClick={() => window.location.reload()} size="sm">
                 Tentar Novamente
               </Button>
             </CardContent>
@@ -252,7 +253,6 @@ function PatientsStatistics({ clinicId: _clinicId }: { clinicId: string }) {
                 </p>
                 <p className={`text-xs flex items-center gap-1 ${
                   stat.changeType === 'positive' ? 'text-green-600' : 
-                  stat.changeType === 'negative' ? 'text-red-600' : 
                   'text-muted-foreground'
                 }`}>
                   {stat.changeType === 'positive' && <TrendingUp className="w-3 h-3" />}

@@ -16,15 +16,12 @@ import { Separator } from '@neonpro/ui';
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { z } from 'zod';
 import {
-  ArrowLeft,
   Save,
   X,
   Shield,
   AlertCircle,
   User,
   Phone,
-  Mail,
-  Calendar,
   FileText,
   Lock,
   Eye,
@@ -72,8 +69,8 @@ const patientFormSchema = z.object({
     }),
   
   notes: z.string()
-    .optional()
-    .max(500, 'Observações devem ter no máximo 500 caracteres'),
+    .max(500, 'Observações devem ter no máximo 500 caracteres')
+    .optional(),
   
   // LGPD Consent fields
   lgpdConsent: z.boolean(),
@@ -200,12 +197,12 @@ function PatientEditPage() {
   // Form submission handler
   const onSubmit = async (data: PatientFormData) => {
     try {
-      if (!user?.user_metadata?.clinic_id && !user?.clinic_id) {
+      if (!(user as any)?.user_metadata?.clinic_id && !(user as any)?.clinic_id) {
         toast.error('Clínica não identificada');
         return;
       }
 
-      const clinicId = user.user_metadata?.clinic_id || user.clinic_id;
+      const clinicId = (user as any)?.user_metadata?.clinic_id || (user as any)?.clinic_id; // normalized any-cast for TS
 
       await updatePatientMutation.mutateAsync({
         patientId,
@@ -250,11 +247,39 @@ function PatientEditPage() {
   };
 
   if (isLoading) {
-    return <Route.pendingComponent />;
+    return (
+      <div className="container mx-auto p-4 md:p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="space-y-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-12 bg-muted rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error || !patient) {
-    return <Route.errorComponent error={error || new Error('Paciente não encontrado')} reset={() => window.location.reload()} />;
+    return (
+      <div className="container mx-auto p-4 md:p-6">
+        <Card className="max-w-lg mx-auto text-center">
+          <CardHeader>
+            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <CardTitle>Erro ao Carregar Paciente</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Não foi possível carregar os dados do paciente.
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -474,7 +499,7 @@ function PatientEditPage() {
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    {watchedFields.notes?.length || 0}/500 caracteres
+                    {typeof watchedFields.notes === 'string' ? watchedFields.notes.length : 0}/500 caracteres
                   </p>
                 </div>
               </CardContent>

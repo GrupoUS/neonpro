@@ -3,30 +3,24 @@
  * Features: Timeline view, procedure history, appointment records, LGPD compliance
  */
 
-import { useAuth } from '@/hooks/useAuth';
 import { usePatient, usePatientAppointmentHistory } from '@/hooks/usePatients';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Separator } from '@neonpro/ui';
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { z } from 'zod';
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   FileText,
-  Heart,
   History,
   MapPin,
   Stethoscope,
   User,
   AlertCircle,
-  Filter,
   Download,
   Search,
   Pill,
-  Zap,
   TrendingUp,
   Activity,
 } from 'lucide-react';
@@ -131,12 +125,12 @@ export const Route = createFileRoute('/patients/$patientId/history')({
 
 function PatientHistoryPage() {
   const { patientId } = Route.useParams();
-  const { filter, period, sortBy, sortOrder } = Route.useSearch();
+  const search = Route.useSearch();
   const navigate = useNavigate();
 
   // Data fetching
   const { data: patient, isLoading: patientLoading } = usePatient(patientId);
-  const { data: appointmentHistory, isLoading: historyLoading } = usePatientAppointmentHistory(patientId);
+  // const { data: appointmentHistory, isLoading: historyLoading } = usePatientAppointmentHistory(patientId);
 
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
@@ -194,25 +188,25 @@ function PatientHistoryPage() {
     let filtered = mockHistoryData;
 
     // Apply type filter
-    if (filter !== 'all') {
-      const filterMap = {
+    if ((search as any).filter !== 'all') {
+      const filterMap: Record<string, string[]> = {
         appointments: ['appointment'],
         procedures: ['procedure'],
         medications: ['medication'],
       };
-      filtered = filtered.filter(item => filterMap[filter]?.includes(item.type));
+      filtered = filtered.filter(item => filterMap[(search as any).filter]?.includes(item.type));
     }
 
     // Apply period filter
-    if (period !== 'all') {
+    if ((search as any).period !== 'all') {
       const now = new Date();
-      const periodDays = {
+      const periodDays: Record<string, number> = {
         '7d': 7,
         '30d': 30,
         '90d': 90,
         '1y': 365,
       };
-      const dayLimit = periodDays[period];
+      const dayLimit = periodDays[(search as any).period];
       if (dayLimit) {
         filtered = filtered.filter(item => 
           differenceInDays(now, parseISO(item.date)) <= dayLimit
@@ -234,7 +228,7 @@ function PatientHistoryPage() {
     filtered.sort((a, b) => {
       let comparison = 0;
       
-      switch (sortBy) {
+      switch ((search as any).sortBy) {
         case 'date':
           comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
           break;
@@ -246,36 +240,61 @@ function PatientHistoryPage() {
           break;
       }
       
-      return sortOrder === 'desc' ? -comparison : comparison;
+      return (search as any).sortOrder === 'desc' ? -comparison : comparison;
     });
 
     return filtered;
-  }, [mockHistoryData, filter, period, searchQuery, sortBy, sortOrder]);
+  }, [mockHistoryData, (search as any).filter, (search as any).period, searchQuery, (search as any).sortBy, (search as any).sortOrder]);
 
   // Filter change handler
-  const handleFilterChange = (newFilter: typeof filter) => {
+  const handleFilterChange = (newFilter: string) => {
     navigate({
       to: '/patients/$patientId/history',
       params: { patientId },
-      search: { filter: newFilter, period, sortBy, sortOrder },
+      search: { filter: newFilter, period: (search as any).period, sortBy: (search as any).sortBy, sortOrder: (search as any).sortOrder },
     });
   };
 
   // Period change handler
-  const handlePeriodChange = (newPeriod: typeof period) => {
+  const handlePeriodChange = (newPeriod: string) => {
     navigate({
       to: '/patients/$patientId/history',
       params: { patientId },
-      search: { filter, period: newPeriod, sortBy, sortOrder },
+      search: { filter: (search as any).filter, period: newPeriod, sortBy: (search as any).sortBy, sortOrder: (search as any).sortOrder },
     });
   };
 
   if (patientLoading) {
-    return <Route.pendingComponent />;
+    return (
+      <div className="container mx-auto p-4 md:p-6 space-y-6">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-muted rounded w-1/3"></div>
+          <div className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-32 bg-muted rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!patient) {
-    return <Route.errorComponent error={new Error('Paciente não encontrado')} reset={() => window.location.reload()} />;
+    return (
+      <div className="container mx-auto p-4 md:p-6">
+        <Card className="max-w-lg mx-auto text-center">
+          <CardHeader>
+            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <CardTitle>Paciente Não Encontrado</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => window.location.reload()}>
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -345,8 +364,8 @@ function PatientHistoryPage() {
 
         {/* Type Filter */}
         <select
-          value={filter}
-          onChange={(e) => handleFilterChange(e.target.value as typeof filter)}
+          value={(search as any).filter}
+          onChange={(e) => handleFilterChange(e.target.value)}
           className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           <option value="all">Todos os tipos</option>
@@ -357,8 +376,8 @@ function PatientHistoryPage() {
 
         {/* Period Filter */}
         <select
-          value={period}
-          onChange={(e) => handlePeriodChange(e.target.value as typeof period)}
+          value={(search as any).period}
+          onChange={(e) => handlePeriodChange(e.target.value)}
           className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           <option value="all">Todo o período</option>

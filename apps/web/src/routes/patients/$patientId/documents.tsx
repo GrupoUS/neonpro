@@ -3,17 +3,14 @@
  * Features: Upload, organize, preview, secure sharing, audit trail
  */
 
-import { useAuth } from '@/hooks/useAuth';
 import { usePatient } from '@/hooks/usePatients';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
-import { Separator } from '@neonpro/ui';
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { z } from 'zod';
 import {
-  ArrowLeft,
   Upload,
   FileText,
   Image,
@@ -23,13 +20,10 @@ import {
   Share2,
   Trash2,
   Search,
-  Filter,
-  Calendar,
   User,
   Lock,
   AlertCircle,
   FolderOpen,
-  Plus,
   MoreVertical,
   Shield,
   Clock,
@@ -261,11 +255,36 @@ function PatientDocumentsPage() {
   });
 
   if (patientLoading) {
-    return <Route.pendingComponent />;
+    return (
+      <div className="container mx-auto p-4 md:p-6 space-y-6">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-muted rounded w-1/3"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-48 bg-muted rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!patient) {
-    return <Route.errorComponent error={new Error('Paciente não encontrado')} reset={() => window.location.reload()} />;
+    return (
+      <div className="container mx-auto p-4 md:p-6">
+        <Card className="max-w-lg mx-auto text-center">
+          <CardHeader>
+            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <CardTitle>Paciente Não Encontrado</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => window.location.reload()}>
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
