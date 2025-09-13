@@ -102,7 +102,7 @@ export function useUpdateMedicalRecord() {
       request: UpdateMedicalRecordRequest 
     }) => patientHistoryService.updateMedicalRecord(id, request),
     
-    onSuccess: (_data, variables) => {) => {
+    onSuccess: (_data, variables) => {
       void _data;
       // Broadly invalidate patient history queries after update
       queryClient.invalidateQueries({ 
@@ -177,7 +177,7 @@ export function useUpdateTreatmentPlan() {
       request: UpdateTreatmentPlanRequest 
     }) => patientHistoryService.updateTreatmentPlan(id, request),
     
-    onSuccess: (_data, variables) => {) => {
+    onSuccess: (_data, variables) => {
       void _data;
       // Broadly invalidate patient history queries after update
       queryClient.invalidateQueries({ 
