@@ -584,7 +584,7 @@ function DocumentCard({
             
             <div className="flex items-center gap-1">
               {document.isSecure && (
-                <Lock className="w-4 h-4 text-blue-600" title="Documento protegido" />
+                <Lock className="w-4 h-4 text-blue-600" aria-label="Documento protegido" />
               )}
               <Button variant="ghost" size="sm">
                 <MoreVertical className="w-4 h-4" />

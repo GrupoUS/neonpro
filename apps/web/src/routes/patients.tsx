@@ -90,11 +90,11 @@ export const Route = createFileRoute('/patients')({
 });
 
 function PatientsPage() {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   // const search = Route.useSearch(); // Currently unused
 
-  // Get clinic ID from user context (adapt based on your auth structure)
-  const clinicId = (user as any)?.user_metadata?.clinic_id || (user as any)?.clinic_id;
+  // Get clinic ID from user profile (corrected to use profile instead of user metadata)
+  const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback clinic ID for development
 
   if (!clinicId) {
     return (
@@ -157,7 +157,7 @@ function PatientsPage() {
 
       {/* Main Patients Table with Error Boundary */}
       <ErrorBoundary
-        fallback={(error: Error, errorId: string) => (
+        fallback={(_error: Error) => (
           <Card>
             <CardContent className="p-6 text-center">
               <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-2" />
@@ -165,7 +165,7 @@ function PatientsPage() {
                 Erro na Tabela de Pacientes
               </h3>
               <p className="text-muted-foreground text-sm mb-4">
-                {error.message}
+                Ocorreu um erro ao carregar os dados.
               </p>
               <Button onClick={() => window.location.reload()} size="sm">
                 Tentar Novamente

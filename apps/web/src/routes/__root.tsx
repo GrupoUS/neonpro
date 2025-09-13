@@ -88,7 +88,12 @@ function AppShellWithSidebar({ children }: { children: React.ReactNode }) {
               {links.map((link, idx) => <SidebarLink key={idx} link={link as any} />)}
             </div>
           </div>
-          <div>
+          <div className='flex flex-col gap-2'>
+            {/* Theme Toggle Button */}
+            <div className='flex items-center justify-center py-2'>
+              <AnimatedThemeToggler size='md' />
+            </div>
+            
             <Link
               to='/'
               className='flex items-center justify-start gap-2 group/sidebar py-2 w-full text-left hover:bg-accent/50 dark:hover:bg-accent/10 rounded-md px-2 transition-colors'

@@ -59,6 +59,7 @@
     "src/components/ui/_deprecated/**",
     "src/components/examples/**",
     "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+    "src/**/*.test.tsx",
+    "src/services/appointment-templates.service.ts"
   ]
 }

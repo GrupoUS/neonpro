@@ -3,7 +3,7 @@
  * Features: Timeline view, procedure history, appointment records, LGPD compliance
  */
 
-import { usePatient, usePatientAppointmentHistory } from '@/hooks/usePatients';
+import { usePatient } from '@/hooks/usePatients';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
@@ -247,7 +247,7 @@ function PatientHistoryPage() {
   }, [mockHistoryData, (search as any).filter, (search as any).period, searchQuery, (search as any).sortBy, (search as any).sortOrder]);
 
   // Filter change handler
-  const handleFilterChange = (newFilter: string) => {
+  const handleFilterChange = (newFilter: 'all' | 'appointments' | 'procedures' | 'medications') => {
     navigate({
       to: '/patients/$patientId/history',
       params: { patientId },
@@ -256,7 +256,7 @@ function PatientHistoryPage() {
   };
 
   // Period change handler
-  const handlePeriodChange = (newPeriod: string) => {
+  const handlePeriodChange = (newPeriod: 'all' | '7d' | '30d' | '90d' | '1y') => {
     navigate({
       to: '/patients/$patientId/history',
       params: { patientId },
@@ -365,7 +365,7 @@ function PatientHistoryPage() {
         {/* Type Filter */}
         <select
           value={(search as any).filter}
-          onChange={(e) => handleFilterChange(e.target.value)}
+          onChange={(e) => handleFilterChange(e.target.value as 'all' | 'appointments' | 'procedures' | 'medications')}
           className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           <option value="all">Todos os tipos</option>
@@ -377,7 +377,7 @@ function PatientHistoryPage() {
         {/* Period Filter */}
         <select
           value={(search as any).period}
-          onChange={(e) => handlePeriodChange(e.target.value)}
+          onChange={(e) => handlePeriodChange(e.target.value as 'all' | '7d' | '30d' | '90d' | '1y')}
           className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           <option value="all">Todo o período</option>

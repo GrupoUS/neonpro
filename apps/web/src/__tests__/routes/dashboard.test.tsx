@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { ThemeProvider } from '@/components/theme-provider';
 
 // Mock auth to appear authenticated in tests
 vi.mock('@/hooks/useAuth', () => ({
@@ -53,12 +54,14 @@ function Wrapper() {
   });
   return (
     <QueryClientProvider client={qc}>
-      {/* Suppress error boundary noise */}
-      <div id='__root-test-wrapper'>
-      <ConsentProvider>
-        <RouterProvider router={router} />
-      </ConsentProvider>
-      </div>
+      <ThemeProvider>
+        {/* Suppress error boundary noise */}
+        <ConsentProvider>
+          <div id='__root-test-wrapper'>
+            <RouterProvider router={router} />
+          </div>
+        </ConsentProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

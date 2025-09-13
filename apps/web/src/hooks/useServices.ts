@@ -3,19 +3,19 @@
  * React Query hooks for service CRUD operations and data fetching
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type {
-  Service,
-  CreateServiceRequest,
-  UpdateServiceRequest,
-  ServiceFilters,
-  ServicesResponse,
-  ServiceMutationResponse,
   AvailabilityCheck,
   AvailabilityResult,
+  CreateServiceRequest,
+  Service,
+  ServiceFilters,
+  ServiceMutationResponse,
+  ServicesResponse,
   TimeSlot,
+  UpdateServiceRequest,
 } from '@/types/service';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Query Keys
 export const serviceKeys = {
@@ -25,7 +25,7 @@ export const serviceKeys = {
   details: () => [...serviceKeys.all, 'detail'] as const,
   detail: (id: string) => [...serviceKeys.details(), id] as const,
   availability: () => [...serviceKeys.all, 'availability'] as const,
-  timeSlots: (serviceId: string, date: string) => 
+  timeSlots: (serviceId: string, date: string) =>
     [...serviceKeys.availability(), serviceId, date] as const,
 };
 
@@ -239,28 +239,97 @@ export function useCheckAvailability() {
     mutationFn: async (check: AvailabilityCheck): Promise<AvailabilityResult> => {
       console.log('🔍 Checking availability:', check);
 
-      // This would typically check against appointments table
-      // For now, return a mock response
-      const conflicts: Array<{ type: 'appointment'; start_time: string; end_time: string; description: string; }> = [];
-      const warnings: Array<{ type: 'short_break' | 'late_hour' | 'early_hour'; message: string; }> = [];
+      const conflicts: Array<
+        { type: 'appointment'; start_time: string; end_time: string; description: string }
+      > = [];
+      const warnings: Array<{ type: 'short_break' | 'late_hour' | 'early_hour'; message: string }> =
+        [];
 
-      // Mock logic - in real implementation, query appointments table
-      const isAvailable = Math.random() > 0.3; // 70% chance of being available
+      try {
+        // Parse the date and time
+        const startDateTime = new Date(`${check.date}T${check.start_time}`);
+        const endDateTime = new Date(`${check.date}T${check.end_time}`);
 
-      if (!isAvailable) {
-        conflicts.push({
-          type: 'appointment' as const,
-          start_time: check.start_time,
-          end_time: check.end_time,
-          description: 'Horário já agendado',
-        });
+        // Check for existing appointments that conflict
+        const { data: existingAppointments, error } = await supabase
+          .from('appointments')
+          .select(`
+            id,
+            start_time,
+            end_time,
+            patients!fk_appointments_patient (
+              full_name
+            ),
+            service_types!fk_appointments_service_type (
+              name
+            )
+          `)
+          .eq('professional_id', check.professional_id)
+          .in('status', ['scheduled', 'confirmed'])
+          .or(
+            `start_time.lt.${endDateTime.toISOString()},end_time.gt.${startDateTime.toISOString()}`,
+          );
+
+        if (error) {
+          console.error('Error checking availability:', error);
+          throw new Error(`Failed to check availability: ${error.message}`);
+        }
+
+        // Add conflicts for existing appointments
+        if (existingAppointments && existingAppointments.length > 0) {
+          existingAppointments.forEach(appointment => {
+            const patient = appointment.patients as any;
+            const service = appointment.service_types as any;
+            conflicts.push({
+              type: 'appointment' as const,
+              start_time: new Date(appointment.start_time).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+              end_time: new Date(appointment.end_time).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+              description: `Agendamento existente: ${patient?.full_name || 'Paciente'} - ${
+                service?.name || 'Serviço'
+              }`,
+            });
+          });
+        }
+
+        // Check for business hour warnings
+        const hour = startDateTime.getHours();
+        if (hour < 8) {
+          warnings.push({
+            type: 'early_hour' as const,
+            message: 'Agendamento muito cedo. Horário de funcionamento inicia às 08:00.',
+          });
+        } else if (hour >= 18) {
+          warnings.push({
+            type: 'late_hour' as const,
+            message: 'Agendamento tardio. Horário de funcionamento termina às 18:00.',
+          });
+        }
+
+        // Check for short break between appointments
+        const now = new Date();
+        const hoursUntilAppointment = (startDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+        if (hoursUntilAppointment < 2) {
+          warnings.push({
+            type: 'short_break' as const,
+            message: 'Agendamento com menos de 2 horas de antecedência.',
+          });
+        }
+
+        return {
+          available: conflicts.length === 0,
+          conflicts,
+          warnings,
+        };
+      } catch (error) {
+        console.error('Error in availability check:', error);
+        throw error;
       }
-
-      return {
-        available: isAvailable,
-        conflicts,
-        warnings,
-      };
     },
   });
 }
@@ -268,29 +337,88 @@ export function useCheckAvailability() {
 /**
  * Get available time slots for a service on a specific date
  */
-export function useServiceTimeSlots(serviceId: string, date: string, _professionalId?: string) {
+export function useServiceTimeSlots(serviceId: string, date: string, professionalId?: string) {
   return useQuery({
     queryKey: serviceKeys.timeSlots(serviceId, date),
     queryFn: async (): Promise<TimeSlot[]> => {
       console.log('🔍 Fetching time slots for service:', serviceId, 'on date:', date);
 
-      // Mock time slots - in real implementation, this would:
-      // 1. Get service duration
-      // 2. Get professional's working hours
-      // 3. Check existing appointments
-      // 4. Generate available slots
+      try {
+        // Get service duration
+        const { data: service, error: serviceError } = await supabase
+          .from('service_types')
+          .select('duration_minutes')
+          .eq('id', serviceId)
+          .single();
 
-      const baseSlots = [
-        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
-      ];
+        if (serviceError) {
+          console.error('Error fetching service:', serviceError);
+          throw new Error(`Failed to fetch service: ${serviceError.message}`);
+        }
 
-      return baseSlots.map(time => ({
-        time,
-        available: Math.random() > 0.3, // 70% chance of being available
-        reason: Math.random() > 0.7 ? 'Agendado' : undefined,
-      }));
+        const serviceDuration = service?.duration_minutes || 60;
+
+        // Get existing appointments for the date
+        const startOfDay = new Date(`${date}T00:00:00`);
+        const endOfDay = new Date(`${date}T23:59:59`);
+
+        let appointmentsQuery = supabase
+          .from('appointments')
+          .select('start_time, end_time')
+          .gte('start_time', startOfDay.toISOString())
+          .lte('start_time', endOfDay.toISOString())
+          .in('status', ['scheduled', 'confirmed']);
+
+        if (professionalId) {
+          appointmentsQuery = appointmentsQuery.eq('professional_id', professionalId);
+        }
+
+        const { data: appointments, error: appointmentsError } = await appointmentsQuery;
+
+        if (appointmentsError) {
+          console.error('Error fetching appointments:', appointmentsError);
+          throw new Error(`Failed to fetch appointments: ${appointmentsError.message}`);
+        }
+
+        // Generate time slots from 8:00 to 18:00 with 30-minute intervals
+        const slots: TimeSlot[] = [];
+        const startHour = 8;
+        const endHour = 18;
+        const intervalMinutes = 30;
+
+        for (let hour = startHour; hour < endHour; hour++) {
+          for (let minute = 0; minute < 60; minute += intervalMinutes) {
+            const timeString = `${hour.toString().padStart(2, '0')}:${
+              minute.toString().padStart(2, '0')
+            }`;
+            const slotStart = new Date(`${date}T${timeString}:00`);
+            const slotEnd = new Date(slotStart.getTime() + serviceDuration * 60 * 1000);
+
+            // Check if this slot conflicts with existing appointments
+            const hasConflict = appointments?.some(appointment => {
+              const appointmentStart = new Date(appointment.start_time);
+              const appointmentEnd = new Date(appointment.end_time);
+
+              return (
+                (slotStart >= appointmentStart && slotStart < appointmentEnd)
+                || (slotEnd > appointmentStart && slotEnd <= appointmentEnd)
+                || (slotStart <= appointmentStart && slotEnd >= appointmentEnd)
+              );
+            });
+
+            slots.push({
+              time: timeString,
+              available: !hasConflict,
+              reason: hasConflict ? 'Agendado' : undefined,
+            });
+          }
+        }
+
+        return slots;
+      } catch (error) {
+        console.error('Error generating time slots:', error);
+        throw error;
+      }
     },
     enabled: !!serviceId && !!date,
     staleTime: 2 * 60 * 1000, // 2 minutes

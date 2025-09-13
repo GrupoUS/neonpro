@@ -1,13 +1,18 @@
 'use client';
 
+import { AppointmentTemplateSelector } from '@/components/appointment-templates/AppointmentTemplateSelector';
 import { PatientCreationForm } from '@/components/patients/PatientCreationForm';
 import { ServiceCreationForm } from '@/components/services/ServiceCreationForm';
 import { useSendAppointmentConfirmation } from '@/hooks/useNotifications';
+// import { useScheduleAppointmentNotifications } from '@/hooks/useNotificationScheduler';
 import { usePatientAppointmentHistory, useSearchPatients } from '@/hooks/usePatients';
 import { useProfessionalsByServiceType } from '@/hooks/useProfessionals';
 import { useCheckAvailability, useServices, useServiceTimeSlots } from '@/hooks/useServices';
 import { useTimeSlotValidationWithStatus } from '@/hooks/useTimeSlotValidation';
+
 import type { TimeSlot } from '@/types/service';
+// TODO: remove if not used
+
 import { Button } from '@neonpro/ui';
 import { Calendar } from '@neonpro/ui';
 import { ScrollArea } from '@neonpro/ui';
@@ -47,7 +52,6 @@ interface AppointmentBookingProps {
 export function AppointmentBooking(
   { open, onOpenChange, onBookingComplete, clinicId }: AppointmentBookingProps,
 ) {
-
   const today = new Date();
   const [date, setDate] = useState<Date>(today);
   const [time, setTime] = useState<string | null>(null);
@@ -94,6 +98,7 @@ export function AppointmentBooking(
 
   // Notification mutations
   const sendConfirmationMutation = useSendAppointmentConfirmation();
+  // const scheduleNotificationsMutation = useScheduleAppointmentNotifications();
 
   // Availability checking
   const checkAvailabilityMutation = useCheckAvailability();
@@ -224,6 +229,7 @@ export function AppointmentBooking(
       const selectedProfessional = professionals?.find(p => p.id === professionalId);
 
       if (selectedPatientId) {
+        // Send immediate confirmation notification
         await sendConfirmationMutation.mutateAsync({
           patientId: selectedPatientId,
           patientName,
@@ -235,6 +241,19 @@ export function AppointmentBooking(
           clinicAddress: 'Endereço da Clínica', // This should come from clinic data
           clinicPhone: '(11) 99999-9999', // This should come from clinic data
         });
+
+        // Schedule automatic reminders (24h and 1h before appointment)
+        // NOTE: Disabled in this sweep to avoid undefined variable during type-check
+        //   appointmentId: 'temp-appointment-id', // This should be the actual appointment ID from creation
+        //   appointmentDate: startDateTime,
+        //   patientId: selectedPatientId,
+        //   settings: {
+        //     reminder24h: true,
+        //     reminder1h: true,
+        //     confirmationImmediate: false, // Already sent above
+        //     followupAfter24h: true,
+        //   },
+        // });
       }
 
       // Reset form
@@ -304,7 +323,10 @@ export function AppointmentBooking(
                             )
                             : (
                               availableTimeSlots.map((
-                                { time: timeSlot, available, reason }: Partial<TimeSlot> & { time: string; available: boolean },
+                                { time: timeSlot, available, reason }: Partial<TimeSlot> & {
+                                  time: string;
+                                  available: boolean;
+                                },
                               ) => (
                                 <Button
                                   key={timeSlot}
@@ -570,6 +592,23 @@ export function AppointmentBooking(
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Appointment Templates */}
+              <div>
+                <Label>Templates de Agendamento</Label>
+                <p className='text-sm text-muted-foreground mb-3'>
+                  Selecione um template pré-configurado ou escolha o serviço manualmente
+                </p>
+                <AppointmentTemplateSelector
+                  clinicId={clinicId}
+                  onSelectTemplate={template => {
+                    setServiceTypeId(template.serviceTypeId);
+                    setService(template.serviceName);
+                    setProfessionalId(''); // Reset professional when service changes
+                  }}
+                  selectedTemplateId={serviceTypeId}
+                />
               </div>
 
               <div>

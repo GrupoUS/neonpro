@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { ThemeProvider } from '@/components/theme-provider';
 
 // Mock useQuery to return empty data
 vi.mock('@tanstack/react-query', async () => {
@@ -66,9 +67,13 @@ function Wrapper() {
   });
   return (
     <QueryClientProvider client={qc}>
+      <ThemeProvider>
       <ConsentProvider>
+        <div id='__root-test-wrapper'>
         <RouterProvider router={router} />
+        </div>
       </ConsentProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

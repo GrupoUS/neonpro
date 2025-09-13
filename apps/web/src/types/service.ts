@@ -11,12 +11,18 @@ export interface Service {
   price: number;
   is_active: boolean;
   clinic_id: string;
+  category_id: string | null;
   created_at: string;
   updated_at: string;
   // Relations
   clinic?: {
     id: string;
     clinic_name: string;
+  };
+  category?: {
+    id: string;
+    name: string;
+    color: string;
   };
 }
 
@@ -27,6 +33,7 @@ export interface CreateServiceRequest {
   price: number;
   is_active?: boolean;
   clinic_id: string;
+  category_id?: string;
 }
 
 export interface UpdateServiceRequest {
@@ -36,6 +43,7 @@ export interface UpdateServiceRequest {
   duration_minutes?: number;
   price?: number;
   is_active?: boolean;
+  category_id?: string;
 }
 
 export interface ServiceFilters {

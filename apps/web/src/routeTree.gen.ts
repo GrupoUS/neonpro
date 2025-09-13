@@ -18,8 +18,11 @@ import { Route as ShineTestRouteImport } from './routes/shine-test'
 import { Route as ShadcnTestRouteImport } from './routes/shadcn-test'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as ServiceTemplatesRouteImport } from './routes/service-templates'
+import { Route as ServiceCategoriesRouteImport } from './routes/service-categories'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ProfessionalServicesRouteImport } from './routes/professional-services'
 import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
@@ -90,6 +93,16 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServiceTemplatesRoute = ServiceTemplatesRouteImport.update({
+  id: '/service-templates',
+  path: '/service-templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceCategoriesRoute = ServiceCategoriesRouteImport.update({
+  id: '/service-categories',
+  path: '/service-categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -98,6 +111,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfessionalServicesRoute = ProfessionalServicesRouteImport.update({
+  id: '/professional-services',
+  path: '/professional-services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsRoute = PatientsRouteImport.update({
@@ -242,8 +260,11 @@ export interface FileRoutesByFullPath {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-categories': typeof ServiceCategoriesRoute
+  '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
@@ -279,8 +300,11 @@ export interface FileRoutesByTo {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-categories': typeof ServiceCategoriesRoute
+  '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
@@ -317,8 +341,11 @@ export interface FileRoutesById {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-categories': typeof ServiceCategoriesRoute
+  '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
@@ -356,8 +383,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-categories'
+    | '/service-templates'
     | '/services'
     | '/settings'
     | '/shadcn-test'
@@ -393,8 +423,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-categories'
+    | '/service-templates'
     | '/services'
     | '/settings'
     | '/shadcn-test'
@@ -430,8 +463,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-categories'
+    | '/service-templates'
     | '/services'
     | '/settings'
     | '/shadcn-test'
@@ -468,8 +504,11 @@ export interface RootRouteChildren {
   HealthcareTestRoute: typeof HealthcareTestRoute
   LoginRoute: typeof LoginRoute
   PatientsRoute: typeof PatientsRouteWithChildren
+  ProfessionalServicesRoute: typeof ProfessionalServicesRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
+  ServiceCategoriesRoute: typeof ServiceCategoriesRoute
+  ServiceTemplatesRoute: typeof ServiceTemplatesRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
   ShadcnTestRoute: typeof ShadcnTestRoute
@@ -548,6 +587,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/service-templates': {
+      id: '/service-templates'
+      path: '/service-templates'
+      fullPath: '/service-templates'
+      preLoaderRoute: typeof ServiceTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service-categories': {
+      id: '/service-categories'
+      path: '/service-categories'
+      fullPath: '/service-categories'
+      preLoaderRoute: typeof ServiceCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports': {
       id: '/reports'
       path: '/reports'
@@ -560,6 +613,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/professional-services': {
+      id: '/professional-services'
+      path: '/professional-services'
+      fullPath: '/professional-services'
+      preLoaderRoute: typeof ProfessionalServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patients': {
@@ -790,8 +850,11 @@ const rootRouteChildren: RootRouteChildren = {
   HealthcareTestRoute: HealthcareTestRoute,
   LoginRoute: LoginRoute,
   PatientsRoute: PatientsRouteWithChildren,
+  ProfessionalServicesRoute: ProfessionalServicesRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
+  ServiceCategoriesRoute: ServiceCategoriesRoute,
+  ServiceTemplatesRoute: ServiceTemplatesRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
   ShadcnTestRoute: ShadcnTestRoute,
