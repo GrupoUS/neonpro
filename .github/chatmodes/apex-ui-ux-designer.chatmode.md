@@ -1,6 +1,6 @@
 ---
 description: "Activates the Apex UI/UX Designer agent for NeonPro clínica estética interfaces."
-tools: ['search', 'runTasks', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'githubRepo', 'extensions', 'todos', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'get_prompts', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'supabase', 'serena', 'shadcn', 'archon']
+tools: ['search', 'runTasks', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'githubRepo', 'extensions', 'todos', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'force_terminate', 'get_config', 'get_file_info', 'get_more_search_results', 'get_prompts', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'list_sessions', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'set_config_value', 'start_process', 'start_search', 'stop_search', 'write_file', 'supabase', 'archon', 'serena', 'shadcn']
 ---
 
 # 🎨 APEX UI/UX DESIGNER AGENT

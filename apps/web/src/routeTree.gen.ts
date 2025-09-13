@@ -20,9 +20,11 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ServiceTemplatesRouteImport } from './routes/service-templates'
 import { Route as ServiceCategoriesRouteImport } from './routes/service-categories'
+import { Route as ServiceAnalyticsRouteImport } from './routes/service-analytics'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProfessionalServicesRouteImport } from './routes/professional-services'
+import { Route as PricingRulesRouteImport } from './routes/pricing-rules'
 import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
@@ -103,6 +105,11 @@ const ServiceCategoriesRoute = ServiceCategoriesRouteImport.update({
   path: '/service-categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServiceAnalyticsRoute = ServiceAnalyticsRouteImport.update({
+  id: '/service-analytics',
+  path: '/service-analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -116,6 +123,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const ProfessionalServicesRoute = ProfessionalServicesRouteImport.update({
   id: '/professional-services',
   path: '/professional-services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRulesRoute = PricingRulesRouteImport.update({
+  id: '/pricing-rules',
+  path: '/pricing-rules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsRoute = PatientsRouteImport.update({
@@ -260,9 +272,11 @@ export interface FileRoutesByFullPath {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/pricing-rules': typeof PricingRulesRoute
   '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-analytics': typeof ServiceAnalyticsRoute
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
@@ -300,9 +314,11 @@ export interface FileRoutesByTo {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/pricing-rules': typeof PricingRulesRoute
   '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-analytics': typeof ServiceAnalyticsRoute
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
@@ -341,9 +357,11 @@ export interface FileRoutesById {
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
   '/patients': typeof PatientsRouteWithChildren
+  '/pricing-rules': typeof PricingRulesRoute
   '/professional-services': typeof ProfessionalServicesRoute
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/service-analytics': typeof ServiceAnalyticsRoute
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
@@ -383,9 +401,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/pricing-rules'
     | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-analytics'
     | '/service-categories'
     | '/service-templates'
     | '/services'
@@ -423,9 +443,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/pricing-rules'
     | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-analytics'
     | '/service-categories'
     | '/service-templates'
     | '/services'
@@ -463,9 +485,11 @@ export interface FileRouteTypes {
     | '/healthcare-test'
     | '/login'
     | '/patients'
+    | '/pricing-rules'
     | '/professional-services'
     | '/profile'
     | '/reports'
+    | '/service-analytics'
     | '/service-categories'
     | '/service-templates'
     | '/services'
@@ -504,9 +528,11 @@ export interface RootRouteChildren {
   HealthcareTestRoute: typeof HealthcareTestRoute
   LoginRoute: typeof LoginRoute
   PatientsRoute: typeof PatientsRouteWithChildren
+  PricingRulesRoute: typeof PricingRulesRoute
   ProfessionalServicesRoute: typeof ProfessionalServicesRoute
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
+  ServiceAnalyticsRoute: typeof ServiceAnalyticsRoute
   ServiceCategoriesRoute: typeof ServiceCategoriesRoute
   ServiceTemplatesRoute: typeof ServiceTemplatesRoute
   ServicesRoute: typeof ServicesRoute
@@ -601,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServiceCategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/service-analytics': {
+      id: '/service-analytics'
+      path: '/service-analytics'
+      fullPath: '/service-analytics'
+      preLoaderRoute: typeof ServiceAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports': {
       id: '/reports'
       path: '/reports'
@@ -620,6 +653,13 @@ declare module '@tanstack/react-router' {
       path: '/professional-services'
       fullPath: '/professional-services'
       preLoaderRoute: typeof ProfessionalServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing-rules': {
+      id: '/pricing-rules'
+      path: '/pricing-rules'
+      fullPath: '/pricing-rules'
+      preLoaderRoute: typeof PricingRulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patients': {
@@ -850,9 +890,11 @@ const rootRouteChildren: RootRouteChildren = {
   HealthcareTestRoute: HealthcareTestRoute,
   LoginRoute: LoginRoute,
   PatientsRoute: PatientsRouteWithChildren,
+  PricingRulesRoute: PricingRulesRoute,
   ProfessionalServicesRoute: ProfessionalServicesRoute,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
+  ServiceAnalyticsRoute: ServiceAnalyticsRoute,
   ServiceCategoriesRoute: ServiceCategoriesRoute,
   ServiceTemplatesRoute: ServiceTemplatesRoute,
   ServicesRoute: ServicesRoute,

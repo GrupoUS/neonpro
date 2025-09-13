@@ -1370,3 +1370,18 @@ export function HealthcareDashboard() {
 **Last Updated**: 2025-01-12
 **Next Review**: When major architecture changes occur
 **Maintainer**: NeonPro Development Team
+
+
+## Registry update — 2025-09-13
+
+- Added Tailark registry for shadcn/ui blocks:
+  - Namespace: `@tailark`
+  - URL template: `https://tailark.com/r/{name}.json`
+  - Example install:
+    - `pnpm dlx shadcn add @tailark/hero-section-1`
+- AI SDK Elements (ai-sdk.dev): no public shadcn-compatible registry URL documented yet. Use the dedicated CLI instead:
+  - `npx ai-elements@latest add <component>` (e.g., `response`, `message`, `prompt-input`)
+- ReactBits (reactbits.dev): no shadcn registry endpoint. Use copy/paste from docs or any official CLI they provide.
+
+Notes:
+- Both `components.json` files were updated to include `@tailark` (root and apps/web). Base style/color preserved (style: `default`, baseColor: `slate`).
