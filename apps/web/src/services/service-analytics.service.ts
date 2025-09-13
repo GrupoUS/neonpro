@@ -3,7 +3,7 @@
  * Service layer for analytics, reporting, and statistics
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   ServiceAnalytics,
   RevenueAnalytics,

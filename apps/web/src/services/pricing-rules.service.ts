@@ -9,8 +9,7 @@ import type {
   CreatePricingRuleRequest,
   UpdatePricingRuleRequest,
   PricingRuleFilters,
-  PricingCalculation,
-  calculatePricing
+  PricingCalculation
 } from '@/types/pricing-rules';
 
 export class PricingRulesService {

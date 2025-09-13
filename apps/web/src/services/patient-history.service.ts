@@ -3,7 +3,7 @@
  * Service layer for advanced patient medical history and treatment tracking
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   MedicalRecord,
   TreatmentPlan,
@@ -390,7 +390,7 @@ export class PatientHistoryService {
   ): Promise<{ id: string; url: string }> {
     // Upload file to storage
     const fileName = `medical-records/${recordId}/${Date.now()}-${file.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { data: _uploadData, error: uploadError } = await supabase.storage
       .from('medical-attachments')
       .upload(fileName, file);
 

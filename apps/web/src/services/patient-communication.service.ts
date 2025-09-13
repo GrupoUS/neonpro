@@ -3,7 +3,7 @@
  * Service layer for SMS/Email notifications and patient communication
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   CommunicationTemplate,
   CommunicationMessage,
