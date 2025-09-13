@@ -7,6 +7,7 @@ import SubscriptionStatus from '@/components/subscription/SubscriptionStatus';
 import SubscriptionUpgrade from '@/components/subscription/SubscriptionUpgrade';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
@@ -34,10 +35,36 @@ function SubscriptionPage() {
     }
   };
 
-  const handleManageSubscription = () => {
-    // This would typically open a customer portal
-    // For now, we'll just show a message
-    toast('Portal do Cliente - Em breve você poderá gerenciar sua assinatura diretamente aqui.');
+  const handleManageSubscription = async () => {
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast('Erro - Você precisa estar logado para acessar o portal do cliente.');
+        return;
+      }
+
+      // Call API to create customer portal session
+      const response = await fetch('/api/v1/stripe/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.portal_url) {
+        // Redirect to Stripe Customer Portal
+        window.location.href = data.portal_url;
+      } else {
+        toast(`Erro - ${data.error || 'Não foi possível abrir o portal do cliente.'}`);
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast('Erro - Falha ao conectar com o portal do cliente.');
+    }
   };
 
   if (isLoading) {

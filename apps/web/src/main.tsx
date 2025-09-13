@@ -3,10 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 // Import the generated route tree
-import { ConsentProvider } from './contexts/ConsentContext';
 import { routeTree } from './routeTree.gen';
 import './index.css';
-import { ThemeProvider } from './components/theme-provider';
+
+console.log('🚀 main.tsx carregado!');
+console.log('React:', React);
+console.log('ReactDOM:', ReactDOM);
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -18,12 +20,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ConsentProvider>
-      <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </ConsentProvider>
-  </React.StrictMode>,
-);
+console.log('🎯 Tentando renderizar App...');
+const rootElement = document.getElementById('root');
+console.log('Root element:', rootElement);
+
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  console.log('Root criado:', root);
+  root.render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>,
+  );
+  console.log('✅ App renderizado com sucesso!');
+} else {
+  console.error('❌ Elemento root não encontrado!');
+}

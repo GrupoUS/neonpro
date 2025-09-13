@@ -1,0 +1,116 @@
+# Tasks: AI Chat with Database-Aware Context
+
+**Input**: Design documents from `/specs/001-ai-chat-with/`
+**Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
+
+## Execution Flow (main)
+```
+1. Load plan.md from feature directory
+2. Load optional design documents (data-model, contracts, research, quickstart)
+3. Generate tasks by category (Setup → Tests → Core → Integration → Polish)
+4. Apply rules (different files → [P], tests before implementation)
+5. Number tasks sequentially (T001, T002...)
+6. Create dependency graph and parallel examples
+7. Return: SUCCESS (tasks ready for execution)
+```
+
+## Path Conventions (Web App)
+- Backend: `apps/api/src/` + tests in `apps/api/`
+- Frontend: `apps/web/src/` + tests in `apps/web/`
+
+---
+
+## Phase 3.1: Setup
+- [ ] T001 Create feature branch scaffolding and ensure specs are synced
+  - Files: `/home/vibecode/neonpro/specs/001-ai-chat-with/*`
+  - Notes: Branch already created `001-ai-chat-with`; verify latest
+- [ ] T002 Install UI primitives (shadcn) for Elements-based chat [P]
+  - Run:
+    - `pnpm dlx shadcn@latest add @shadcn/input @shadcn/textarea @shadcn/dialog @shadcn/popover @shadcn/tooltip @shadcn/toast @shadcn/badge @shadcn/card @shadcn/progress @shadcn/skeleton @shadcn/spinner @shadcn/separator @shadcn/alert @shadcn/accordion @shadcn/avatar @shadcn/scroll-area @shadcn/dropdown-menu @shadcn/command @shadcn/tabs`
+  - Scope: repo root (monorepo-aware)
+- [ ] T003 Configure accessibility and i18n scaffolding [P]
+  - Files: `apps/web/src/i18n/*`, `apps/web/src/components/*`
+  - Notes: Ensure pt-BR default, structure for additional locales
+
+## Phase 3.2: Tests First (TDD)
+### Contract Tests (from contracts/)
+- [ ] T004 [P] Contract test — Chat API streaming in `apps/api/tests/contract/chat.test.ts`
+- [ ] T005 [P] Contract test — Explanation Summary in `apps/api/tests/contract/explanation.test.ts`
+- [ ] T006 [P] Contract test — Finance getOverdueInvoices in `apps/api/tests/contract/tools.finance.test.ts`
+- [ ] T007 [P] Contract test — Clinical getNewTreatments in `apps/api/tests/contract/tools.clinical.treatments.test.ts`
+- [ ] T008 [P] Contract test — Clinical getPatientBalance (consent) in `apps/api/tests/contract/tools.clinical.balance.test.ts`
+
+### Integration Tests (from spec user stories)
+- [ ] T009 [P] Integration — Chat streaming start ≤2s in `apps/web/tests/integration/chat-streaming.test.ts`
+- [ ] T010 [P] Integration — Consent gating on patient query in `apps/api/tests/integration/consent-gating.test.ts`
+- [ ] T011 [P] Integration — RLS clinic isolation in `apps/api/tests/integration/rls-isolation.test.ts`
+- [ ] T012 [P] Integration — Error handling (provider/rate limit/timeout) in `apps/web/tests/integration/chat-errors.test.ts`
+- [ ] T013 [P] Integration — Audit logging for chat/explanation in `apps/api/tests/integration/audit-events.test.ts`
+
+### UI Component Tests (Elements)
+- [ ] T014 [P] Prompt Input — Enter/Shift+Enter/validation in `apps/web/tests/ui/prompt-input.test.tsx`
+- [ ] T015 [P] Suggestions — safe, role/clinic filtered in `apps/web/tests/ui/suggestions.test.tsx`
+- [ ] T016 [P] Loading/Task progress — staged/cancel in `apps/web/tests/ui/task-progress.test.tsx`
+- [ ] T017 [P] Reasoning summary — OFF by default, summarized, audit in `apps/web/tests/ui/reasoning-view.test.tsx`
+- [ ] T018 [P] Conversation thread — list/reset history in `apps/web/tests/ui/conversation-thread.test.tsx`
+- [ ] T019 [P] Context input — optional note, scoped usage in `apps/web/tests/ui/context-input.test.tsx`
+- [ ] T020 [P] Open-in-Chat — prefill from pages in `apps/web/tests/ui/open-in-chat.test.tsx`
+- [ ] T021 [P] Image attachment policy — allow/block with consent in `apps/web/tests/ui/image-attachment.test.tsx`
+- [ ] T022 [P] Response summaries — freshness + refine actions in `apps/web/tests/ui/response-summary.test.tsx`
+
+## Phase 3.3: Core Implementation (ONLY after tests are failing)
+### Backend (apps/api)
+- [ ] T023 Implement Chat API route (streaming) in `apps/api/src/routes/chat.ts`
+- [ ] T024 Implement Explanation summary endpoint in `apps/api/src/routes/explanation.ts`
+- [ ] T025 Implement Finance tool — getOverdueInvoices in `apps/api/src/services/finance.ts`
+- [ ] T026 Implement Clinical tool — getNewTreatments in `apps/api/src/services/clinical.ts`
+- [ ] T027 Implement Clinical tool — getPatientBalance (consent) in `apps/api/src/services/clinical.ts`
+- [ ] T028 Add audit event emission in `apps/api/src/middleware/audit.ts`
+- [ ] T029 Add RLS/consent enforcement wrappers in `apps/api/src/middleware/authz.ts`
+
+### Frontend (apps/web)
+- [ ] T030 Build Prompt Input component in `apps/web/src/components/chat/PromptInput.tsx`
+- [ ] T031 Build Suggestions component in `apps/web/src/components/chat/Suggestions.tsx`
+- [ ] T032 Build Loading/Task progress UI in `apps/web/src/components/chat/TaskProgress.tsx`
+- [ ] T033 Build Reasoning summary toggle in `apps/web/src/components/chat/ReasoningSummary.tsx`
+- [ ] T034 Build Conversation thread view in `apps/web/src/components/chat/Conversation.tsx`
+- [ ] T035 Build Context input UI in `apps/web/src/components/chat/ContextInput.tsx`
+- [ ] T036 Build Open-in-Chat entrypoint wrapper in `apps/web/src/components/chat/OpenInChat.tsx`
+- [ ] T037 Build Image attachment UI guard in `apps/web/src/components/chat/ImageAttachment.tsx`
+- [ ] T038 Build Response summary with refine actions in `apps/web/src/components/chat/ResponseSummary.tsx`
+
+## Phase 3.4: Integration
+- [ ] T039 Wire audit + authz middleware in API in `apps/api/src/app.ts`
+- [ ] T040 Connect services to Supabase clients in `apps/api/src/clients/supabase.ts`
+- [ ] T041 Configure provider failover & rate limits in `apps/api/src/config/ai.ts`
+- [ ] T042 Frontend → API wiring for streaming SSE in `apps/web/src/services/chatClient.ts`
+- [ ] T043 i18n and accessibility pass across chat UI in `apps/web/src/components/chat/*`
+
+## Phase 3.5: Polish
+- [ ] T044 [P] Unit tests for utilities (redaction, consent checks) in `apps/api/tests/unit/utils.test.ts`
+- [ ] T045 [P] Performance validation — p95 start ≤2s in `tools/performance/chat-slo.md`
+- [ ] T046 [P] Docs — update quickstart and contracts in `specs/001-ai-chat-with/*`
+- [ ] T047 [P] Observability — structured logs/metrics in `apps/api/src/observability/*`
+- [ ] T048 [P] Accessibility — keyboard/screen reader in `apps/web/tests/ui/a11y.chat.test.tsx`
+
+## Dependencies
+- T001 → T002–T003
+- T004–T022 (tests) before T023–T038 (implementation)
+- Models/services (T025–T027) before endpoints/middleware wiring (T023–T024, T028–T029)
+- API clients/config (T040–T041) before streaming wiring (T042)
+- Implementation before polish (T044–T048)
+
+## Parallel Execution Examples
+```
+# Contract tests in parallel
+Task: T004, T005, T006, T007, T008
+# UI tests in parallel
+Task: T014–T022
+# Frontend components in parallel (different files)
+Task: T030–T038
+```
+
+## Notes
+- [P] tasks = different files, no dependencies
+- Ensure tests fail (RED) before implementing (GREEN)
+- Commit after each task; keep changes small and focused
