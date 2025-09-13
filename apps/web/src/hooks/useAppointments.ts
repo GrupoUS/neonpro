@@ -292,8 +292,10 @@ export function useAppointmentRealtime(clinicId: string) {
 
   useEffect(() => {
     if (!clinicId) return;
+    const hasChannel = typeof (supabase as any)?.channel === 'function';
+    if (!hasChannel) return;
 
-    const subscription = supabase
+    const subscription = (supabase as any)
       .channel('appointments')
       .on(
         'postgres_changes',
@@ -308,7 +310,7 @@ export function useAppointmentRealtime(clinicId: string) {
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription?.unsubscribe) subscription.unsubscribe();
     };
   }, [clinicId, handleRealtimeUpdate]);
 }

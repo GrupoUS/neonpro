@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ConsentProvider } from '@/contexts/ConsentContext';
 import { routeTree } from '@/routeTree.gen';
 import { createMemoryHistory } from '@tanstack/history';
@@ -16,6 +17,38 @@ vi.mock('@tanstack/react-query', async () => {
       isLoading: false,
       error: null,
     })),
+  };
+});
+
+// Mock auth + supabase to avoid runtime errors and return empty datasets
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => ({
+    user: { id: 'test-user', email: 'test@example.com' },
+    session: { user: { id: 'test-user', email: 'test@example.com' } },
+    profile: { role: 'admin', permissions: { canViewAllAppointments: true } } as any,
+    loading: false,
+    isAuthenticated: true,
+    hasPermission: () => true,
+    isRole: () => true,
+  }),
+}));
+
+vi.mock('@/integrations/supabase/client', () => {
+  return {
+    supabase: {
+      auth: { onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }) },
+      from: () => ({
+        select: () => chain,
+      }),
+    },
+  } as any;
+  const chain = {
+    eq: () => chain,
+    gte: () => chain,
+    lte: () => chain,
+    order: () => chain,
+    limit: () => chain,
+    then: (resolve: any) => resolve({ data: [], count: 0, error: null }),
   };
 });
 

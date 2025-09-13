@@ -8,11 +8,7 @@ import {
   useUpdateAppointment,
 } from '@/hooks/useAppointments';
 import { useAuth } from '@/hooks/useAuth';
-import type {
-  CalendarAppointment,
-  CreateAppointmentData,
-  UpdateAppointmentData,
-} from '@/services/appointments.service';
+import type { CreateAppointmentData, UpdateAppointmentData } from '@/services/appointments.service';
 import { Card, CardContent } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -21,13 +17,18 @@ import { useState } from 'react';
 
 function AppointmentsPage() {
   const [showNewAppointment, setShowNewAppointment] = useState(false);
-  const { user } = useAuth();
+  const { user, profile, hasPermission, loading: authLoading } = useAuth();
 
-  // Get clinic ID from user profile (assuming it's available)
-  // In a real app, this would come from user context or route params
-  const clinicId = user?.user_metadata?.clinic_id || 'default-clinic-id';
+  // Get clinic ID from user profile
+  const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
+
+  // Check permissions
+  const canViewAllAppointments = hasPermission('canViewAllAppointments');
+  const canCreateAppointments = hasPermission('canCreateAppointments');
+  const canEditAppointments = hasPermission('canEditAppointments');
 
   // Fetch appointments from database
+  // For patients, we'll need to filter by patient_id in the future
   const { data: appointments, isLoading, error } = useAppointments(clinicId);
 
   // Set up real-time updates
@@ -69,8 +70,11 @@ function AppointmentsPage() {
   const handleBookingComplete = (booking: {
     date: Date;
     time: string;
+    patientId: string;
     patientName: string;
-    service: string;
+    serviceTypeId: string;
+    serviceName: string;
+    professionalId: string;
     notes?: string;
   }) => {
     // Parse time and create start/end dates
@@ -86,11 +90,11 @@ function AppointmentsPage() {
     // 2. Look up service type ID by service name
     // 3. Get professional ID from current user or selection
 
-    // For now, we'll use placeholder IDs
+    // Use the actual IDs from the booking form
     const appointmentData: CreateAppointmentData = {
-      patientId: 'placeholder-patient-id', // Would be resolved from patient lookup
-      professionalId: user?.id || 'placeholder-professional-id',
-      serviceTypeId: 'placeholder-service-id', // Would be resolved from service lookup
+      patientId: booking.patientId || 'placeholder-patient-id', // Will need patient creation if empty
+      professionalId: booking.professionalId,
+      serviceTypeId: booking.serviceTypeId,
       startTime,
       endTime,
       notes: booking.notes,
@@ -114,20 +118,35 @@ function AppointmentsPage() {
           <h1 className='text-3xl font-bold tracking-tight'>Agendamentos</h1>
           <p className='text-muted-foreground'>Gerencie suas consultas e compromissos</p>
         </div>
-        <Button onClick={() => setShowNewAppointment(true)}>
-          <Plus className='h-4 w-4 mr-2' />
-          Nova Consulta
-        </Button>
+        {canCreateAppointments && (
+          <Button onClick={() => setShowNewAppointment(true)}>
+            <Plus className='h-4 w-4 mr-2' />
+            Nova Consulta
+          </Button>
+        )}
       </div>
 
       <Card>
         <CardContent className='p-6'>
-          {isLoading && (
+          {(authLoading || isLoading) && (
             <div className='flex items-center justify-center h-96'>
               <div className='text-center'>
                 <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'>
                 </div>
-                <p className='text-sm text-muted-foreground'>Carregando agendamentos...</p>
+                <p className='text-sm text-muted-foreground'>
+                  {authLoading ? 'Carregando perfil do usuário...' : 'Carregando agendamentos...'}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {!authLoading && !canViewAllAppointments && profile?.role !== 'patient' && (
+            <div className='flex items-center justify-center h-96'>
+              <div className='text-center'>
+                <p className='text-lg font-semibold text-destructive'>Acesso Negado</p>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  Você não tem permissão para visualizar agendamentos.
+                </p>
               </div>
             </div>
           )}
@@ -136,20 +155,24 @@ function AppointmentsPage() {
               <p className='text-sm text-red-500'>Erro ao carregar agendamentos.</p>
             </div>
           )}
-          {!isLoading && !error && (
-            <EventCalendar
-              events={(appointments || []).map(apt => ({
-                id: apt.id,
-                title: apt.title,
-                start: apt.start,
-                end: apt.end,
-                color: apt.color,
-                description: apt.description,
-              }))}
-              onEventCreate={handleEventCreate}
-              onEventUpdate={handleEventUpdate}
-              onEventDelete={handleEventDelete}
-            />
+          {!authLoading && !isLoading && !error && (canViewAllAppointments || profile?.role === 'patient') && (
+            (appointments?.length ?? 0) === 0 ? (
+              <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
+            ) : (
+              <EventCalendar
+                events={(appointments || []).map(apt => ({
+                  id: apt.id,
+                  title: apt.title,
+                  start: apt.start,
+                  end: apt.end,
+                  color: apt.color,
+                  description: apt.description,
+                }))}
+                onEventCreate={handleEventCreate}
+                onEventUpdate={handleEventUpdate}
+                onEventDelete={handleEventDelete}
+              />
+            )
           )}
         </CardContent>
       </Card>
@@ -160,12 +183,14 @@ function AppointmentsPage() {
         </Link>
       </div>
 
-      <AppointmentBooking
-        open={showNewAppointment}
-        onOpenChange={setShowNewAppointment}
-        clinicId={clinicId}
-        onBookingComplete={handleBookingComplete}
-      />
+      {showNewAppointment && (
+        <AppointmentBooking
+          open={showNewAppointment}
+          onOpenChange={setShowNewAppointment}
+          clinicId={clinicId}
+          onBookingComplete={handleBookingComplete}
+        />
+      )}
     </div>
   );
 }

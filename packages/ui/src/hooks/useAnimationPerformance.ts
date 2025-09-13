@@ -85,7 +85,9 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 
   // GPU detection
   let hasGPU = false;
-  if (hasDocument) {
+  // Avoid calling canvas.getContext in test/jsdom where it throws a Not implemented error
+  const isTestEnv = (typeof process !== 'undefined' && (process as any).env?.VITEST) || (hasNavigator && /jsdom/i.test((navigator as any).userAgent || ''));
+  if (hasDocument && !isTestEnv) {
     try {
       const canvas = document.createElement('canvas');
       const gl = (canvas.getContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
@@ -93,6 +95,8 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
     } catch {
       hasGPU = false;
     }
+  } else {
+    hasGPU = false;
   }
 
   // CPU power estimation (simplified)
@@ -268,7 +272,7 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     [],
   );
 
-  const supportsRAF = typeof requestAnimationFrame !== 'undefined';
+  const supportsRAF = typeof requestAnimationFrame !== 'undefined' && typeof window !== 'undefined';
 
   return {
     capabilities,

@@ -5,17 +5,17 @@ import { format, isBefore } from "date-fns"
 import type {
   CalendarEvent,
   EventColor,
-} from "apps/web/src/components/event-calendar"
+} from "."
 import {
   DefaultEndHour,
   DefaultStartHour,
   EndHour,
   StartHour,
-} from "apps/web/src/components/event-calendar/constants"
-import { cn } from "apps/web/src/lib/utils"
-import { Button } from "@neonpro/ui/button"
-import { Calendar } from "@neonpro/ui/calendar"
-import { Checkbox } from "@neonpro/ui/checkbox"
+} from "./constants"
+import { cn } from "../../lib/utils"
+import { Button } from "@neonpro/ui"
+import { Calendar } from "@neonpro/ui"
+import { Checkbox } from "@neonpro/ui"
 import {
   Dialog,
   DialogContent,
@@ -23,23 +23,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@neonpro/ui/dialog"
-import { Input } from "@neonpro/ui/input"
-import { Label } from "@neonpro/ui/label"
+} from "@neonpro/ui"
+import { Input } from "@neonpro/ui"
+import { Label } from "@neonpro/ui"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@neonpro/ui/popover"
-import { RadioGroup, RadioGroupItem } from "@neonpro/ui/radio-group"
+} from "@neonpro/ui"
+import { RadioGroup, RadioGroupItem } from "@neonpro/ui"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@neonpro/ui/select"
-import { Textarea } from "@neonpro/ui/textarea"
+} from "@neonpro/ui"
+import { Textarea } from "@neonpro/ui"
 
 interface EventDialogProps {
   event: CalendarEvent | null

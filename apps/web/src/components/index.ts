@@ -4,7 +4,7 @@
 export * from './atoms';
 export * from './molecules';
 // Export specific Organisms only (avoid Sidebar name collisions from ui/sidebar re-exports)
-export { AIChatContainer } from './organisms';
+export { AIChatContainer, NotificationCard } from './organisms';
 // export * from './templates'; // commented: path may not exist
 // Avoid re-exporting entire ui barrel; export only safe items
 export * from './ui/ai-chat';

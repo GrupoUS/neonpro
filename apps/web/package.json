@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@21st-extension/react": "^0.5.14",
+    "@21st-extension/toolbar-react": "^0.5.14",
     "@ai-sdk/anthropic": "^2.0.15",
     "@ai-sdk/google": "^2.0.13",
     "@ai-sdk/openai": "^2.0.13",

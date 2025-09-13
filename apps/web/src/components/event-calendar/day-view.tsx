@@ -21,12 +21,12 @@ import {
   useCurrentTimeIndicator,
   WeekCellsHeight,
   type CalendarEvent,
-} from "apps/web/src/components/event-calendar"
+} from "."
 import {
   EndHour,
   StartHour,
-} from "apps/web/src/components/event-calendar/constants"
-import { cn } from "apps/web/src/lib/utils"
+} from "./constants"
+import { cn } from "../../lib/utils"
 
 interface DayViewProps {
   currentDate: Date

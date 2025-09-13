@@ -7,7 +7,7 @@ import {
   CalendarEvent,
   EventItem,
   useCalendarDnd,
-} from "apps/web/src/components/event-calendar"
+} from "."
 
 interface DraggableEventProps {
   event: CalendarEvent

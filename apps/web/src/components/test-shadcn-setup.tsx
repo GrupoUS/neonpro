@@ -4,10 +4,9 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-  NeumorphButton,
+  CardTitle
 } from '@neonpro/ui';
-import { cn } from '@neonpro/ui/lib/utils';
+import { cn } from '@neonpro/ui';
 import { useState } from 'react';
 
 export function TestShadcnSetup() {
@@ -73,46 +72,42 @@ export function TestShadcnSetup() {
           <div>
             <p className='text-sm font-medium mb-2'>Button Variants:</p>
             <div className='flex gap-2 flex-wrap'>
-              <NeumorphButton>Default</NeumorphButton>
-              <NeumorphButton intent='primary'>Primary</NeumorphButton>
-              <NeumorphButton intent='secondary'>Secondary</NeumorphButton>
-              <NeumorphButton intent='danger'>Danger</NeumorphButton>
+              <Button>Default</Button>
+              <Button variant='default'>Primary</Button>
+              <Button variant='secondary'>Secondary</Button>
+              <Button variant='destructive'>Danger</Button>
             </div>
           </div>
 
           <div>
             <p className='text-sm font-medium mb-2'>Button Sizes:</p>
             <div className='flex gap-2 items-center flex-wrap'>
-              <NeumorphButton size='small'>Small</NeumorphButton>
-              <NeumorphButton size='medium'>Medium</NeumorphButton>
-              <NeumorphButton size='large'>Large</NeumorphButton>
+              <Button size='sm'>Small</Button>
+              <Button size='default'>Medium</Button>
+              <Button size='lg'>Large</Button>
             </div>
           </div>
 
           <div>
             <p className='text-sm font-medium mb-2'>Loading State:</p>
             <div className='flex gap-2 flex-wrap'>
-              <NeumorphButton
-                intent='primary'
-                loading={loading}
-                onClick={handleLoadingTest}
-              >
+              <Button onClick={handleLoadingTest}>
                 {loading ? 'Loading...' : 'Click to Load'}
-              </NeumorphButton>
+              </Button>
             </div>
           </div>
 
           <div>
             <p className='text-sm font-medium mb-2'>Disabled States:</p>
             <div className='flex gap-2 flex-wrap'>
-              <NeumorphButton disabled>Disabled Default</NeumorphButton>
-              <NeumorphButton intent='primary' disabled>Disabled Primary</NeumorphButton>
+              <Button disabled>Disabled Default</Button>
+              <Button variant='default' disabled>Disabled Primary</Button>
             </div>
           </div>
 
           <div>
             <p className='text-sm font-medium mb-2'>Full Width:</p>
-            <NeumorphButton intent='primary' fullWidth>Full Width Button</NeumorphButton>
+            <Button className="w-full">Full Width Button</Button>
           </div>
         </div>
       </div>

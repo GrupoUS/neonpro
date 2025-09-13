@@ -1,8 +1,11 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
+import { useSendAppointmentConfirmation } from '@/hooks/useNotifications';
 import { useCreatePatient, useSearchPatients } from '@/hooks/usePatients';
+import { useProfessionalsByServiceType } from '@/hooks/useProfessionals';
 import { useServiceTypes } from '@/hooks/useServiceTypes';
+import { useTimeSlotValidationWithStatus } from '@/hooks/useTimeSlotValidation';
 import { Button } from '@neonpro/ui';
 import { Calendar } from '@neonpro/ui';
 import { ScrollArea } from '@neonpro/ui';
@@ -34,6 +37,7 @@ interface AppointmentBookingProps {
     patientName: string;
     serviceTypeId: string;
     serviceName: string;
+    professionalId: string;
     notes?: string;
   }) => void;
 }
@@ -49,10 +53,18 @@ export function AppointmentBooking(
   const [patientSearch, setPatientSearch] = useState('');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [serviceTypeId, setServiceTypeId] = useState('');
+  const [service, setService] = useState(''); // For backward compatibility
+  const [professionalId, setProfessionalId] = useState('');
   const [notes, setNotes] = useState('');
 
   // Fetch service types
   const { data: serviceTypes, isLoading: servicesLoading } = useServiceTypes(clinicId);
+
+  // Fetch professionals for selected service type
+  const { data: professionals, isLoading: professionalsLoading } = useProfessionalsByServiceType(
+    clinicId,
+    serviceTypeId,
+  );
 
   // Search patients when typing
   const { data: searchResults, isLoading: searchLoading } = useSearchPatients(
@@ -63,6 +75,47 @@ export function AppointmentBooking(
 
   // Create patient mutation
   const createPatientMutation = useCreatePatient();
+
+  // Notification mutations
+  const sendConfirmationMutation = useSendAppointmentConfirmation();
+
+  // Calculate appointment end time based on service duration
+  const appointmentEndTime = time && serviceTypeId
+    ? (() => {
+      const selectedService = serviceTypes?.find(st => st.id === serviceTypeId);
+      const duration = selectedService?.durationMinutes || 60;
+      const [hours, minutes] = time.split(':').map(Number);
+      const startDateTime = new Date(date);
+      startDateTime.setHours(hours, minutes, 0, 0);
+      const endDateTime = new Date(startDateTime);
+      endDateTime.setMinutes(endDateTime.getMinutes() + duration);
+      return endDateTime;
+    })()
+    : null;
+
+  const appointmentStartTime = time
+    ? (() => {
+      const [hours, minutes] = time.split(':').map(Number);
+      const startDateTime = new Date(date);
+      startDateTime.setHours(hours, minutes, 0, 0);
+      return startDateTime;
+    })()
+    : null;
+
+  // Time slot validation
+  const {
+    validation,
+    isValidating,
+    hasConflicts,
+    hasWarnings,
+    isValid: isTimeSlotValid,
+  } = useTimeSlotValidationWithStatus(
+    clinicId,
+    professionalId,
+    serviceTypeId,
+    appointmentStartTime,
+    appointmentEndTime,
+  );
 
   // Mock time slots data
   const timeSlots = [
@@ -97,29 +150,62 @@ export function AppointmentBooking(
     'Consulta Inicial',
   ];
 
-  const handleBooking = () => {
-    if (!date || !time || !patientName || !service) {
+  const handleBooking = async () => {
+    if (!date || !time || !patientName || !serviceTypeId || !professionalId) {
       return;
     }
 
-    onBookingComplete?.({
-      date,
-      time,
-      patientName,
-      service,
-      notes,
-    });
+    try {
+      // Create the appointment
+      const appointmentData = {
+        date,
+        time,
+        patientId: selectedPatientId || '', // Will need to create patient if not selected
+        patientName,
+        serviceTypeId,
+        serviceName: service,
+        professionalId,
+        notes,
+      };
 
-    // Reset form
-    setDate(today);
-    setTime(null);
-    setPatientName('');
-    setService('');
-    setNotes('');
-    onOpenChange(false);
+      onBookingComplete?.(appointmentData);
+
+      // Send confirmation notification after successful booking
+      const selectedService = serviceTypes?.find(st => st.id === serviceTypeId);
+      const selectedProfessional = professionals?.find(p => p.id === professionalId);
+
+      if (selectedPatientId) {
+        await sendConfirmationMutation.mutateAsync({
+          patientId: selectedPatientId,
+          patientName,
+          appointmentDate: date,
+          appointmentTime: time,
+          professionalName: selectedProfessional?.full_name || 'Profissional',
+          serviceName: selectedService?.name || service,
+          clinicName: 'NeonPro Clinic', // This should come from clinic data
+          clinicAddress: 'Endereço da Clínica', // This should come from clinic data
+          clinicPhone: '(11) 99999-9999', // This should come from clinic data
+        });
+      }
+
+      // Reset form
+      setDate(today);
+      setTime(null);
+      setPatientName('');
+      setService('');
+      setServiceTypeId('');
+      setProfessionalId('');
+      setSelectedPatientId(null);
+      setNotes('');
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error during booking process:', error);
+      // The error will be handled by the mutation's onError callback
+    }
   };
 
-  const isFormValid = date && time && patientName && service;
+  const isFormValid = date && time && patientName && serviceTypeId && professionalId
+    && isTimeSlotValid;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -180,6 +266,85 @@ export function AppointmentBooking(
                 </div>
               </div>
             </div>
+
+            {/* Time Slot Validation Feedback */}
+            {time && professionalId && serviceTypeId && (
+              <div className='mt-4 space-y-2'>
+                {isValidating && (
+                  <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                    <div className='h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent'>
+                    </div>
+                    Verificando disponibilidade...
+                  </div>
+                )}
+
+                {validation && hasConflicts && (
+                  <div className='space-y-2'>
+                    {validation.conflicts.map((conflict, index) => (
+                      <div
+                        key={index}
+                        className='flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md'
+                      >
+                        <div className='h-4 w-4 rounded-full bg-destructive flex-shrink-0 mt-0.5'>
+                        </div>
+                        <div className='text-sm text-destructive'>
+                          <p className='font-medium'>Conflito de Agendamento</p>
+                          <p>{conflict.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {validation && hasWarnings && (
+                  <div className='space-y-2'>
+                    {validation.warnings.map((warning, index) => (
+                      <div
+                        key={index}
+                        className='flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md'
+                      >
+                        <div className='h-4 w-4 rounded-full bg-yellow-500 flex-shrink-0 mt-0.5'>
+                        </div>
+                        <div className='text-sm text-yellow-800'>
+                          <p className='font-medium'>Atenção</p>
+                          <p>{warning.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {validation && validation.suggestedAlternatives
+                  && validation.suggestedAlternatives.length > 0 && (
+                  <div className='p-3 bg-blue-50 border border-blue-200 rounded-md'>
+                    <p className='text-sm font-medium text-blue-800 mb-2'>
+                      Horários alternativos sugeridos:
+                    </p>
+                    <div className='flex flex-wrap gap-2'>
+                      {validation.suggestedAlternatives.map((alternative, index) => (
+                        <Button
+                          key={index}
+                          variant='outline'
+                          size='sm'
+                          className='text-xs'
+                          onClick={() => {
+                            const newDate = new Date(alternative.start);
+                            const timeString = `${newDate.getHours().toString().padStart(2, '0')}:${
+                              newDate.getMinutes().toString().padStart(2, '0')
+                            }`;
+                            setDate(newDate);
+                            setTime(timeString);
+                          }}
+                        >
+                          {format(alternative.start, 'dd/MM')} às{' '}
+                          {format(alternative.start, 'HH:mm')}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Patient Information */}
@@ -198,19 +363,65 @@ export function AppointmentBooking(
 
               <div>
                 <Label htmlFor='service'>Serviço *</Label>
-                <Select value={service} onValueChange={setService}>
+                <Select
+                  value={serviceTypeId}
+                  onValueChange={value => {
+                    setServiceTypeId(value);
+                    const selectedService = serviceTypes?.find(st => st.id === value);
+                    setService(selectedService?.name || '');
+                    setProfessionalId(''); // Reset professional when service changes
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder='Selecione o serviço' />
                   </SelectTrigger>
                   <SelectContent>
-                    {services.map(serviceOption => (
-                      <SelectItem key={serviceOption} value={serviceOption}>
-                        {serviceOption}
-                      </SelectItem>
-                    ))}
+                    {servicesLoading
+                      ? <SelectItem value='loading' disabled>Carregando...</SelectItem>
+                      : (
+                        serviceTypes?.map(serviceType => (
+                          <SelectItem key={serviceType.id} value={serviceType.id}>
+                            {serviceType.name}
+                          </SelectItem>
+                        ))
+                      )}
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Professional Selection */}
+              {serviceTypeId && (
+                <div>
+                  <Label htmlFor='professional'>Profissional *</Label>
+                  <Select value={professionalId} onValueChange={setProfessionalId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Selecione o profissional' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {professionalsLoading
+                        ? <SelectItem value='loading' disabled>Carregando...</SelectItem>
+                        : professionals && professionals.length > 0
+                        ? (
+                          professionals.map(professional => (
+                            <SelectItem key={professional.id} value={professional.id}>
+                              {professional.fullName}
+                              {professional.specialization && (
+                                <span className='text-muted-foreground ml-2'>
+                                  - {professional.specialization}
+                                </span>
+                              )}
+                            </SelectItem>
+                          ))
+                        )
+                        : (
+                          <SelectItem value='none' disabled>
+                            Nenhum profissional disponível para este serviço
+                          </SelectItem>
+                        )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor='notes'>Observações</Label>

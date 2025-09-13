@@ -24,7 +24,7 @@ import { addMinutes, differenceInMinutes } from "date-fns"
 import {
   EventItem,
   type CalendarEvent,
-} from "apps/web/src/components/event-calendar"
+} from "."
 
 // Define the context type
 type CalendarDndContextType = {

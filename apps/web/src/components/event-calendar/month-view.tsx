@@ -26,13 +26,13 @@ import {
   sortEvents,
   useEventVisibility,
   type CalendarEvent,
-} from "apps/web/src/components/event-calendar"
-import { DefaultStartHour } from "apps/web/src/components/event-calendar/constants"
+} from "."
+import { DefaultStartHour } from "./constants"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@neonpro/ui/popover"
+} from "@neonpro/ui"
 
 interface MonthViewProps {
   currentDate: Date
