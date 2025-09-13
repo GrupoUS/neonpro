@@ -10,6 +10,7 @@ import {
 import { useAIChat } from '@/hooks/useAIChat';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react'; // React import not needed
+import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 // import type { AIAssistantProps } from '@/components/healthcare/types';
 
 interface AIAssistantProps {
@@ -142,7 +143,7 @@ export default function AIChatContainer({
       {/* Header */}
       <div className='flex items-center justify-between p-4 border-b border-[#D2D0C8]'>
         <div className='flex items-center space-x-2'>
-          <div className='w-2 h-2 bg-[#AC9469] rounded-full animate-pulse' />
+          <AIBrandIcon size={18} />
           <h3 className='text-lg font-semibold text-[#112031]'>
             Assistente NeonPro
           </h3>

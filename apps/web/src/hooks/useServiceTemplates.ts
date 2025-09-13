@@ -7,9 +7,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serviceTemplatesService } from '@/services/service-templates.service';
 // Only import the types we actually use to avoid TS6196
-import type { ServiceTemplateFilters } from '@/types/service-templates';
-import type { CreateServiceTemplateRequest, UpdateServiceTemplateRequest } from '@/types/service-templates';
-import type { CreateServiceTemplateItemRequest, UpdateServiceTemplateItemRequest, DuplicateServiceTemplateRequest } from '@/types/service-templates';
+import type {
+  ServiceTemplateFilters,
+  CreateServiceTemplateRequest,
+  UpdateServiceTemplateRequest,
+  CreateServiceTemplateItemRequest,
+  UpdateServiceTemplateItemRequest,
+  DuplicateServiceTemplateRequest,
+} from '@/types/service-templates';
+
+// NOTE: Keep imports minimal; these types are used in generics below to satisfy TS
 
 // Query keys
 export const serviceTemplatesKeys = {

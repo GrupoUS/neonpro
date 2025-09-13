@@ -110,7 +110,7 @@ function AdvancedAnimationsTest() {
   });
 
   return (
-    <div className='min-h-screen bg-background p-8'>
+    <div className='min-h-full h-full bg-background p-8'>
       <div className='mx-auto max-w-7xl space-y-8'>
         {/* Header */}
         <div className='text-center space-y-4'>

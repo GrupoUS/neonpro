@@ -7,7 +7,7 @@ export const Route = createFileRoute('/shadcn-test')({
 
 function ShadcnTestPage() {
   return (
-    <div className='min-h-screen bg-background'>
+    <div className='min-h-full h-full bg-background'>
       <div className='container mx-auto py-8'>
         <TestShadcnSetup />
       </div>

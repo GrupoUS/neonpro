@@ -1,0 +1,2 @@
+This placeholder indicates where to put the real `simboloneonpro.png` file.
+Path: apps/web/public/brand/simboloneonpro.png

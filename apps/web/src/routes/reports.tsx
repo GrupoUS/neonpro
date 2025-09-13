@@ -23,7 +23,7 @@ function ReportsPage() {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
+      <div className='flex items-center justify-center h-full min-h-[200px]'>
         <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
       </div>
     );
@@ -31,7 +31,7 @@ function ReportsPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
+      <div className='flex items-center justify-center h-full min-h-[200px]'>
         <div className='text-center'>
           <h2 className='text-2xl font-semibold mb-2'>Acesso Negado</h2>
           <p className='text-muted-foreground'>

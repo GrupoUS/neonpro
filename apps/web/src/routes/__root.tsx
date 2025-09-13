@@ -78,7 +78,14 @@ function AppShellWithSidebar({ children }: { children: React.ReactNode }) {
                 to='/dashboard'
                 className='relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground'
               >
-                <div className='h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-primary to-accent dark:from-primary dark:to-accent' />
+                <img
+                  src='/brand/simboloneonpro.png'
+                  alt='NeonPro'
+                  className='h-6 w-6 shrink-0 rounded-md object-contain'
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/neonpro-favicon.svg';
+                  }}
+                />
                 <span className='font-medium whitespace-pre text-foreground dark:text-foreground'>
                   NeonPro
                 </span>
@@ -106,8 +113,8 @@ function AppShellWithSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div className='flex flex-1'>
-        <div className='flex h-full w-full flex-1 flex-col rounded-tl-2xl border border-border bg-card dark:border-border dark:bg-card'>
+      <div className='flex flex-1 overflow-hidden'>
+        <div className='flex h-full w-full flex-1 flex-col rounded-tl-2xl border border-border bg-card dark:border-border dark:bg-card overflow-y-auto'>
           {children}
         </div>
       </div>

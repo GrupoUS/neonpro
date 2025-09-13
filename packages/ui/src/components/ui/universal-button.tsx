@@ -112,6 +112,9 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       // Advanced animation props
       animations,
 
+      // Legacy customization props should not reach DOM
+      gradientColors: _gradientColors,
+
       disabled,
       onMouseEnter,
       onMouseLeave,

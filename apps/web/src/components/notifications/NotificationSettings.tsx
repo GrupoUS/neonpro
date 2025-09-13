@@ -89,7 +89,7 @@ export function NotificationSettings({
       });
       setHasChanges(false);
       toast.success('Preferências salvas com sucesso!');
-    } catch (/* ignore error for UX */ _error) {
+    } catch { // ignore error for UX
       console.error('Error saving notification preferences');
       toast.error('Erro ao salvar preferências');
     }

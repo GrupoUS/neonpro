@@ -80,7 +80,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(props: SharedAnim
   const isEmpty = !loading && !error && (!items || items.length === 0);
   const motionCfg: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
     ...defaultMotion,
-    ...(motionOverrides || {}),
+    ...motionOverrides,
   };
 
   // Keyboard navigation (SSR safe: only runs on client)

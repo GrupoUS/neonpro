@@ -17,11 +17,13 @@ import type {
 } from '@/types/service-templates';
 
 class ServiceTemplatesService {
+  // Use an any-typed supabase client to avoid strict generated overloads during migration
+  private sb: any = supabase;
   /**
    * Get all service templates with optional filtering
    */
   async getServiceTemplates(filters: ServiceTemplateFilters = {}): Promise<ServiceTemplate[]> {
-    let query = (supabase as any)
+    let query = this.sb
       .from('service_templates')
       .select('*');
 
@@ -60,7 +62,7 @@ class ServiceTemplatesService {
    * Get service templates with items and calculated prices
    */
   async getServiceTemplatesWithItems(clinicId: string): Promise<ServiceTemplateWithItems[]> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await this.sb
       .rpc('get_service_templates_with_items', { p_clinic_id: clinicId });
 
     if (error) {
@@ -74,7 +76,7 @@ class ServiceTemplatesService {
    * Get a single service template by ID
    */
   async getServiceTemplate(id: string): Promise<ServiceTemplate | null> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await this.sb
       .from('service_templates')
       .select('*')
       .eq('id', id)
@@ -96,7 +98,7 @@ class ServiceTemplatesService {
     if (!template) return null;
 
     // Get template items
-    const { data: items, error: itemsError } = await (supabase as any)
+    const { data: items, error: itemsError } = await this.sb
       .from('service_template_items')
       .select(`
         *,
@@ -110,7 +112,7 @@ class ServiceTemplatesService {
     }
 
     // Transform the data to match our interface
-    const transformedItems = (items || []).map((item: any) => ({
+    const transformedItems: Array<{ total_price: number } & any> = (items || []).map((item: any) => ({
       id: item.id,
       template_id: item.template_id,
       service_id: item.service_id,
@@ -129,7 +131,7 @@ class ServiceTemplatesService {
       ...template,
       category_name: null, // Would need to join with categories
       category_color: null,
-      calculated_price: transformedItems.reduce((sum: number, item: { total_price: number }) => sum + item.total_price, 0),
+      calculated_price: transformedItems.reduce((sum: number, item: { total_price: number }) => sum + item.total_price, 0 as number),
       items: transformedItems,
     };
   }
@@ -138,7 +140,7 @@ class ServiceTemplatesService {
    * Create a new service template
    */
   async createServiceTemplate(request: CreateServiceTemplateRequest): Promise<ServiceTemplate> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await this.sb
       .from('service_templates')
       .insert({
         name: request.name,
@@ -185,7 +187,7 @@ class ServiceTemplatesService {
     if (request.sort_order !== undefined) updateData.sort_order = request.sort_order;
     if (request.template_config) updateData.template_config = request.template_config;
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await this.sb
       .from('service_templates')
       .update(updateData)
       .eq('id', request.id)
@@ -203,7 +205,7 @@ class ServiceTemplatesService {
    * Delete a service template
    */
   async deleteServiceTemplate(id: string): Promise<void> {
-    const { error } = await (supabase as any)
+    const { error } = await this.sb
       .from('service_templates')
       .delete()
       .eq('id', id);
@@ -227,7 +229,7 @@ class ServiceTemplatesService {
       notes: item.notes || null,
     }));
 
-    const { error } = await (supabase as any)
+    const { error } = await this.sb
       .from('service_template_items')
       .insert(itemsData);
 
@@ -248,7 +250,7 @@ class ServiceTemplatesService {
     if (request.discount_percentage !== undefined) updateData.discount_percentage = request.discount_percentage;
     if (request.notes !== undefined) updateData.notes = request.notes;
 
-    const { error } = await (supabase as any)
+    const { error } = await this.sb
       .from('service_template_items')
       .update(updateData)
       .eq('id', request.id);
@@ -262,7 +264,7 @@ class ServiceTemplatesService {
    * Remove a template item
    */
   async removeTemplateItem(itemId: string): Promise<void> {
-    const { error } = await (supabase as any)
+    const { error } = await this.sb
       .from('service_template_items')
       .delete()
       .eq('id', itemId);
@@ -276,21 +278,21 @@ class ServiceTemplatesService {
    * Increment template usage count
    */
   async incrementTemplateUsage(templateId: string): Promise<boolean> {
-    const { data, error } = await (supabase as any)
-      .rpc('increment_template_usage', { p_template_id: templateId });
+    const { data, error } = await this.sb
+      .rpc('increment_template_usage', { p_template_id: templateId as any });
 
     if (error) {
       throw new Error(`Failed to increment template usage: ${error.message}`);
     }
 
-    return Boolean(data);
+    return Boolean(data as any);
   }
 
   /**
    * Duplicate a service template
    */
   async duplicateServiceTemplate(request: DuplicateServiceTemplateRequest): Promise<string> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await this.sb
       .rpc('duplicate_service_template', {
         p_template_id: request.template_id,
         p_new_name: request.new_name,
@@ -301,7 +303,7 @@ class ServiceTemplatesService {
       throw new Error(`Failed to duplicate service template: ${error.message}`);
     }
 
-    return String(data);
+    return String(data as any);
   }
 
   /**

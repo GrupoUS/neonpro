@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-label="NeonPro">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#AC9469"/>
+      <stop offset="100%" stop-color="#d2aa60"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#112031"/>
+  <path d="M14 46V18h6l20 20V18h10v28h-6L24 26v20H14z" fill="url(#g)"/>
+</svg>

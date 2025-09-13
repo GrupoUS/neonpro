@@ -56,9 +56,7 @@ describe('Supabase Migration Integration', () => {
       const mockClient = {
         from: (table: string) => ({
           select: (columns: string) => ({
-            limit: (count: number) => ({
-              then: (callback: Function) => callback({ data: [], error: null })
-            })
+            limit: (count: number) => Promise.resolve({ data: [], error: null })
           })
         })
       };
@@ -72,11 +70,9 @@ describe('Supabase Migration Integration', () => {
       const mockClient = {
         from: (table: string) => ({
           select: (columns: string) => ({
-            limit: (count: number) => ({
-              then: (callback: Function) => callback({ 
-                data: null, 
-                error: { message: 'Table not found' } 
-              })
+            limit: (count: number) => Promise.resolve({ 
+              data: null, 
+              error: { message: 'Table not found' } 
             })
           })
         })

@@ -8,7 +8,7 @@ import { createFileRoute } from '@tanstack/react-router';
  */
 function BentoGridTestPage() {
   return (
-    <div className='min-h-screen bg-background'>
+    <div className='min-h-full h-full bg-background'>
       {/* Header */}
       <div className='bg-gradient-to-r from-[#294359] to-[#AC9469] text-white py-8'>
         <div className='container mx-auto px-4'>

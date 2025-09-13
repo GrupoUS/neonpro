@@ -148,7 +148,7 @@ export function useNotificationProcessor(enabled: boolean = false) {
       try {
         await notificationSchedulerService.processPendingNotifications();
         return { lastProcessed: new Date(), success: true } as const;
-      } catch (_error) {
+      } catch { // ignore error for UX
         console.error('Background notification processing failed');
         return { lastProcessed: new Date(), success: false } as const;
       }

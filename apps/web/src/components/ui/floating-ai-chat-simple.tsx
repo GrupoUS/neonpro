@@ -1,7 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
+import { Send, Sparkles, X } from 'lucide-react';
+import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import React, { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
@@ -147,7 +148,7 @@ export default function FloatingAIChatSimple({
           <div className='relative z-10'>
             {isOpen ? <X className='w-6 h-6 text-white' /> : (
               <div className='relative'>
-                <MessageCircle className='w-6 h-6 text-white' />
+                <AIBrandIcon size={24} className='drop-shadow' />
                 {/* AI sparkle indicator */}
                 <div className='absolute -top-1 -right-1'>
                   <Sparkles className='w-3 h-3 text-[#AC9469] animate-pulse' />
@@ -180,7 +181,7 @@ export default function FloatingAIChatSimple({
             {/* Header */}
             <div className='flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#294359] to-[#AC9469] text-white rounded-t-lg'>
               <div className='flex items-center gap-2'>
-                <Sparkles className='w-5 h-5' />
+                <AIBrandIcon size={20} />
                 <h3 className='font-semibold'>NeonPro AI Assistant</h3>
               </div>
               <div className='flex items-center gap-2'>
