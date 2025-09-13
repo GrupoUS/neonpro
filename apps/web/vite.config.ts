@@ -23,7 +23,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@neonpro/ui/lib/utils': path.resolve(__dirname, '../../packages/ui/src/lib/utils'),
+      '@neonpro/ui/lib/utils': path.resolve(__dirname, '../../packages/ui/src/utils'),
       '@neonpro/ui/theme': path.resolve(__dirname, '../../packages/ui/src/theme'),
       '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),

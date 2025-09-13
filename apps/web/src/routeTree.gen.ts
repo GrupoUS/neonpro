@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as _rootOriginalRouteImport } from './routes/__root-original'
 import { Route as ValidationReportRouteImport } from './routes/validation-report'
 import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
+import { Route as SubscriptionTestRouteImport } from './routes/subscription-test'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupDemoRouteImport } from './routes/signup-demo'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -51,6 +53,10 @@ import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/
 import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
 import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
 
+const _rootOriginalRoute = _rootOriginalRouteImport.update({
+  id: '/__root-original',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ValidationReportRoute = ValidationReportRouteImport.update({
   id: '/validation-report',
   path: '/validation-report',
@@ -64,6 +70,11 @@ const UniversalButtonTestRoute = UniversalButtonTestRouteImport.update({
 const TestAuthRoute = TestAuthRouteImport.update({
   id: '/test-auth',
   path: '/test-auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionTestRoute = SubscriptionTestRouteImport.update({
+  id: '/subscription-test',
+  path: '/subscription-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubscriptionRoute = SubscriptionRouteImport.update({
@@ -292,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/subscription': typeof SubscriptionRoute
+  '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -335,6 +347,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/subscription': typeof SubscriptionRoute
+  '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -350,6 +363,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/__root-original': typeof _rootOriginalRoute
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
@@ -379,6 +393,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/signup-demo': typeof SignupDemoRoute
   '/subscription': typeof SubscriptionRoute
+  '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
   '/validation-report': typeof ValidationReportRoute
@@ -424,6 +439,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/subscription'
+    | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -467,6 +483,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/subscription'
+    | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -481,6 +498,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/404'
+    | '/__root-original'
     | '/advanced-animations-test'
     | '/ai-chat'
     | '/animation-validation-suite'
@@ -510,6 +528,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/signup-demo'
     | '/subscription'
+    | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
     | '/validation-report'
@@ -525,6 +544,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  _rootOriginalRoute: typeof _rootOriginalRoute
   AdvancedAnimationsTestRoute: typeof AdvancedAnimationsTestRoute
   AiChatRoute: typeof AiChatRoute
   AnimationValidationSuiteRoute: typeof AnimationValidationSuiteRoute
@@ -554,6 +574,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SignupDemoRoute: typeof SignupDemoRoute
   SubscriptionRoute: typeof SubscriptionRoute
+  SubscriptionTestRoute: typeof SubscriptionTestRoute
   TestAuthRoute: typeof TestAuthRoute
   UniversalButtonTestRoute: typeof UniversalButtonTestRoute
   ValidationReportRoute: typeof ValidationReportRoute
@@ -563,6 +584,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/__root-original': {
+      id: '/__root-original'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof _rootOriginalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/validation-report': {
       id: '/validation-report'
       path: '/validation-report'
@@ -582,6 +610,13 @@ declare module '@tanstack/react-router' {
       path: '/test-auth'
       fullPath: '/test-auth'
       preLoaderRoute: typeof TestAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription-test': {
+      id: '/subscription-test'
+      path: '/subscription-test'
+      fullPath: '/subscription-test'
+      preLoaderRoute: typeof SubscriptionTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subscription': {
@@ -895,6 +930,7 @@ const PatientsRouteWithChildren = PatientsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  _rootOriginalRoute: _rootOriginalRoute,
   AdvancedAnimationsTestRoute: AdvancedAnimationsTestRoute,
   AiChatRoute: AiChatRoute,
   AnimationValidationSuiteRoute: AnimationValidationSuiteRoute,
@@ -924,6 +960,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SignupDemoRoute: SignupDemoRoute,
   SubscriptionRoute: SubscriptionRoute,
+  SubscriptionTestRoute: SubscriptionTestRoute,
   TestAuthRoute: TestAuthRoute,
   UniversalButtonTestRoute: UniversalButtonTestRoute,
   ValidationReportRoute: ValidationReportRoute,
