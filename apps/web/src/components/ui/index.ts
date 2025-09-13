@@ -7,7 +7,7 @@ export * from '../atoms';
 export * from '../molecules';
 
 // Specific re-exports for backward compatibility
-export { Button, NeumorphButton } from '@neonpro/ui'; // Use Neumorph Button from UI package
+export { Button } from '@neonpro/ui'; // Use Button from UI package
 export { Badge } from '@neonpro/ui';
 export { Input } from '../atoms/input';
 export { Label } from '../atoms/label';

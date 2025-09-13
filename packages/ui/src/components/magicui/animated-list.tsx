@@ -1,6 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import * as React from 'react';
 import { cn } from '../../utils';
-import { AnimatePresence, motion } from 'framer-motion';
 
 export type SharedAnimatedListItem = {
   id: string | number;
@@ -29,7 +29,10 @@ export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
    */
   motion?: {
     initial?: import('framer-motion').Target | boolean;
-    animate?: import('framer-motion').AnimationControls | import('framer-motion').TargetAndTransition | import('framer-motion').VariantLabels | boolean;
+    animate?:
+      | import('framer-motion').TargetAndTransition
+      | import('framer-motion').VariantLabels
+      | boolean;
     exit?: import('framer-motion').TargetAndTransition | import('framer-motion').VariantLabels;
     transition?: import('framer-motion').Transition;
   };
@@ -67,9 +70,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(props: SharedAnim
     motion: motionOverrides,
     loading,
     error,
-    emptyMessage = (
-      <span className='text-xs text-muted-foreground'>Nada para exibir</span>
-    ),
+    emptyMessage = <span className='text-xs text-muted-foreground'>Nada para exibir</span>,
     keyboardNavigation = true,
   } = props;
 
@@ -92,10 +93,10 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(props: SharedAnim
       if (!items || items.length === 0) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setFocusedIndex((idx) => Math.min(idx + 1, items.length - 1));
+        setFocusedIndex(idx => Math.min(idx + 1, items.length - 1));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setFocusedIndex((idx) => Math.max(idx - 1, 0));
+        setFocusedIndex(idx => Math.max(idx - 1, 0));
       } else if (e.key === 'Home') {
         e.preventDefault();
         setFocusedIndex(0);
@@ -146,7 +147,9 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(props: SharedAnim
           {error}
         </li>
       )}
-      {isEmpty && <li className={cn('text-xs text-muted-foreground', paddingBySize)}>{emptyMessage}</li>}
+      {isEmpty && (
+        <li className={cn('text-xs text-muted-foreground', paddingBySize)}>{emptyMessage}</li>
+      )}
 
       <AnimatePresence initial={false}>
         {(items ?? []).map((item, idx) => {
@@ -166,31 +169,33 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(props: SharedAnim
                 paddingBySize,
               )}
             >
-              {renderItem ? (
-                renderItem(item)
-              ) : (
-                <div className='flex items-start justify-between gap-2'>
-                  <div>
-                    {(item as any)?.title && (
-                      <div className='text-sm font-medium'>{(item as any).title}</div>
-                    )}
-                    {(item as any)?.message && (
-                      <div className='text-xs text-muted-foreground'>{(item as any).message}</div>
+              {renderItem
+                ? (
+                  renderItem(item)
+                )
+                : (
+                  <div className='flex items-start justify-between gap-2'>
+                    <div>
+                      {(item as any)?.title && (
+                        <div className='text-sm font-medium'>{(item as any).title}</div>
+                      )}
+                      {(item as any)?.message && (
+                        <div className='text-xs text-muted-foreground'>{(item as any).message}</div>
+                      )}
+                    </div>
+                    {(item as any)?.createdAt && (
+                      <time
+                        className='text-[11px] text-muted-foreground'
+                        dateTime={new Date((item as any).createdAt).toISOString()}
+                      >
+                        {new Date((item as any).createdAt).toLocaleTimeString('pt-BR', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </time>
                     )}
                   </div>
-                  {(item as any)?.createdAt && (
-                    <time
-                      className='text-[11px] text-muted-foreground'
-                      dateTime={new Date((item as any).createdAt).toISOString()}
-                    >
-                      {new Date((item as any).createdAt).toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </time>
-                  )}
-                </div>
-              )}
+                )}
             </motion.li>
           );
         })}

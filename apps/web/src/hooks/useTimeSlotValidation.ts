@@ -3,7 +3,7 @@
  * React Query hooks for appointment time slot validation
  */
 
-import { timeSlotValidationService, type TimeSlotValidationResult } from '@/services/time-slot-validation.service';
+import { timeSlotValidationService } from '@/services/time-slot-validation.service';
 import { useQuery } from '@tanstack/react-query';
 
 /**

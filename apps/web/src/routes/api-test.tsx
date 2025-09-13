@@ -37,9 +37,9 @@ function ApiTestComponent() {
                 {getStatusIcon(
                   connectivity.isLoading,
                   connectivity.isError,
-                  connectivity.isConnected,
+                  Boolean(connectivity.data?.isConnected),
                 )}
-                {connectivity.isConnected
+                {connectivity.data?.isConnected
                   ? 'Conectado'
                   : connectivity.isError
                   ? 'Erro'
@@ -51,7 +51,7 @@ function ApiTestComponent() {
               <span>Health Check</span>
               <span className='flex items-center gap-2'>
                 {getStatusIcon(apiStatus.isLoading, apiStatus.isError, apiStatus.isSuccess)}
-                {apiStatus.data.health?.status || 'Aguardando...'}
+                {apiStatus.data?.health?.status || 'Aguardando...'}
               </span>
             </div>
 
@@ -59,7 +59,7 @@ function ApiTestComponent() {
               <span>API V1</span>
               <span className='flex items-center gap-2'>
                 {getStatusIcon(apiStatus.isLoading, apiStatus.isError, apiStatus.isSuccess)}
-                {apiStatus.data.healthV1?.status || 'Aguardando...'}
+                {apiStatus.data?.healthV1?.status || 'Aguardando...'}
               </span>
             </div>
 

@@ -21,7 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "echo 'lint placeholder'",
-    "prepare": "npm run build"
+    "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",

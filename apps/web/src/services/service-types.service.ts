@@ -4,9 +4,8 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
 
-type ServiceTypeRow = Database['public']['Tables']['service_types']['Row'];
+// type ServiceTypeRow = Database['public']['Tables']['service_types']['Row'];
 
 export interface ServiceType {
   id: string;
@@ -33,7 +32,6 @@ class ServiceTypeService {
           description,
           duration_minutes,
           price,
-          category,
           color,
           is_active
         `)
@@ -81,12 +79,11 @@ class ServiceTypeService {
           description,
           duration_minutes,
           price,
-          category,
           color,
           is_active
         `)
         .eq('is_active', true)
-        .or(`name.ilike.%${query}%,category.ilike.%${query}%`)
+        .or(`name.ilike.%${query}%`)
         .limit(limit)
         .order('name');
 
@@ -130,7 +127,6 @@ class ServiceTypeService {
           description,
           duration_minutes,
           price,
-          category,
           color,
           is_active
         `)
@@ -165,7 +161,7 @@ class ServiceTypeService {
    * Get service types by category
    * Note: Current schema doesn't have category column, returning empty array
    */
-  async getServiceTypesByCategory(category: string, clinicId?: string): Promise<ServiceType[]> {
+  async getServiceTypesByCategory(_category: string, _clinicId?: string): Promise<ServiceType[]> {
     try {
       // Since there's no category column in the current schema,
       // we'll return an empty array for now
@@ -180,7 +176,7 @@ class ServiceTypeService {
    * Get available service categories
    * Note: Current schema doesn't have category column, returning empty array
    */
-  async getServiceCategories(clinicId?: string): Promise<string[]> {
+  async getServiceCategories(_clinicId?: string): Promise<string[]> {
     try {
       // Since there's no category column in the current schema,
       // we'll return an empty array for now

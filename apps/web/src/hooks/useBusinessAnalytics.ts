@@ -6,11 +6,11 @@
 import { 
   analyticsService, 
   type AnalyticsDateRange,
-  type AppointmentMetrics,
-  type RevenueMetrics,
-  type PatientAnalytics,
-  type ProfessionalPerformance,
-  type PopularServicesData
+  // type AppointmentMetrics,
+  // type RevenueMetrics,
+  // type PatientAnalytics,
+  // type ProfessionalPerformance,
+  // type PopularServicesData
 } from '@/services/analytics.service';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';

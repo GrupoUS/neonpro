@@ -4,7 +4,6 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -344,7 +343,7 @@ class NotificationService {
   private async getNotificationPreferences(patientId: string): Promise<NotificationPreferences> {
     try {
       const { data, error } = await supabase
-        .from('patient_notification_preferences')
+        .from('patient_notification_preferences' as any)
         .select('*')
         .eq('patient_id', patientId)
         .single();
@@ -368,16 +367,17 @@ class NotificationService {
         };
       }
 
+      const anyData = data as any;
       return {
-        email: data.email_enabled || false,
-        sms: data.sms_enabled || false,
-        whatsapp: data.whatsapp_enabled || false,
-        appointmentReminders: data.appointment_reminders || false,
-        appointmentConfirmations: data.appointment_confirmations || false,
-        appointmentCancellations: data.appointment_cancellations || false,
-        promotionalMessages: data.promotional_messages || false,
-        lgpdConsent: data.lgpd_consent || false,
-        lgpdConsentDate: data.lgpd_consent_date ? new Date(data.lgpd_consent_date) : new Date(),
+        email: anyData.email_enabled || false,
+        sms: anyData.sms_enabled || false,
+        whatsapp: anyData.whatsapp_enabled || false,
+        appointmentReminders: anyData.appointment_reminders || false,
+        appointmentConfirmations: anyData.appointment_confirmations || false,
+        appointmentCancellations: anyData.appointment_cancellations || false,
+        promotionalMessages: anyData.promotional_messages || false,
+        lgpdConsent: anyData.lgpd_consent || false,
+        lgpdConsentDate: anyData.lgpd_consent_date ? new Date(anyData.lgpd_consent_date) : new Date(),
       };
     } catch (error) {
       console.error('Error getting notification preferences:', error);
@@ -515,8 +515,8 @@ Nos vemos em breve! ✨`,
       }));
 
       const { error } = await supabase
-        .from('notification_logs')
-        .insert(logEntries);
+        .from('notification_logs' as any)
+        .insert(logEntries as any);
 
       if (error) {
         console.error('Error logging notification activity:', error);

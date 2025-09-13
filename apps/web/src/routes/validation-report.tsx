@@ -1,11 +1,29 @@
-// Optional dev artifact: fallback to empty component in tests/CI
-let AdvancedAnimationProductionValidationReport: any = () => null;
-try {
-  AdvancedAnimationProductionValidationReport = (await import('@/test-results/advanced-animation-production-validation-report')).default;
-} catch {}
-
+import React, { Suspense, lazy } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 
+// Lazy-load ONLY in dev to avoid top-level await in prod bundles
+const LazyReport: React.ComponentType = (import.meta as any).env?.DEV
+  ? lazy(async () => {
+      try {
+        const mod = await import('@/test-results/advanced-animation-production-validation-report');
+        return { default: mod.default } as any;
+      } catch {
+        return { default: () => null } as any;
+      }
+    })
+  : (() => null);
+
+function ValidationReportRoute() {
+  if (!(import.meta as any).env?.DEV) {
+    return null;
+  }
+  return (
+    <Suspense fallback={null}>
+      <LazyReport />
+    </Suspense>
+  );
+}
+
 export const Route = createFileRoute('/validation-report')({
-  component: AdvancedAnimationProductionValidationReport,
+  component: ValidationReportRoute,
 });

@@ -21,7 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "echo 'lint placeholder'",
-    "prepare": "npm run build"
+    "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
     "@neonpro/core-services": "0.1.0",

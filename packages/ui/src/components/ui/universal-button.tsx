@@ -1,10 +1,14 @@
-import { Slot } from '@radix-ui/react-slot'; // kept for compatibility, not used when cloning
+// import { Slot } from '@radix-ui/react-slot'; // kept for compatibility, not used when cloning
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { forwardRef } from 'react';
+import {
+  useAnimationPerformance,
+  useHoverBorderGradient,
+  useShineBorderAnimation,
+} from '../../hooks';
 import { cn } from '../../utils';
-import { useHoverBorderGradient, useShineBorderAnimation, useAnimationPerformance } from '../../hooks';
 import './universal-button.css';
 import '../../styles/hover-border-gradient.css';
 import '../../styles/enhanced-shine-border.css';
@@ -49,7 +53,7 @@ interface AdvancedAnimationProps {
     borderWidth?: number;
     colors?: string[];
   };
-  
+
   // Enhanced Shine Border Animation (MagicUI style)
   shineBorder?: {
     enabled?: boolean;
@@ -83,7 +87,7 @@ export interface UniversalButtonProps
   duration?: number;
   clockwise?: boolean;
   gradientColors?: { from?: string; via?: string; to?: string };
-  
+
   // Advanced animation props
   animations?: AdvancedAnimationProps;
 }
@@ -97,17 +101,17 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       children,
       loading = false,
       asChild = false,
-      
+
       // Legacy props (backward compatibility)
       enableGradient = false,
       enableNeumorph = false,
       enableBorderGradient = false,
       duration = 3000,
       clockwise = true,
-      
+
       // Advanced animation props
       animations,
-      
+
       disabled,
       onMouseEnter,
       onMouseLeave,
@@ -119,22 +123,24 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
   ) => {
     // Performance optimization hook
     const { capabilities } = useAnimationPerformance();
-    
+
     // Determine if animations should be enabled based on performance and user preferences
-    const isReducedMotion = capabilities.prefersReducedMotion;
-    const deviceCapability = capabilities.isLowEnd ? 'low' : capabilities.isMobile ? 'medium' : 'high';
+    const deviceCapability = capabilities.isLowEnd
+      ? 'low'
+      : capabilities.isMobile
+      ? 'medium'
+      : 'high';
     // We still apply classes even with reduced motion; CSS will disable animations via media query
     const shouldEnableAnimations = deviceCapability !== 'low';
-    
+
     // Legacy border gradient support (backward compatibility)
     const legacyBorderGradientEnabled = enableBorderGradient;
-    
+
     // Advanced hover border gradient animation
     const hoverBorderGradientConfig = animations?.hoverBorderGradient;
-    const hoverBorderGradientEnabled = 
-      shouldEnableAnimations && 
-      (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled);
-    
+    const hoverBorderGradientEnabled = shouldEnableAnimations
+      && (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled);
+
     const {
       elementRef: hoverBorderRef,
       mousePosition,
@@ -158,7 +164,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     // Enhanced shine border animation
     const shineBorderConfig = animations?.shineBorder;
     const shineBorderEnabled = shouldEnableAnimations && shineBorderConfig?.enabled;
-    
+
     const {
       elementRef: shineBorderRef,
       classNames: shineBorderClasses,
@@ -182,13 +188,21 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       universalButtonVariants({ variant, size, className }),
       {
         // Legacy gradient effects (backward compatibility)
-        'bg-gradient-to-r animate-gradient-x from-blue-600 via-blue-500 to-cyan-500': enableGradient,
+        'bg-gradient-to-r animate-gradient-x from-blue-600 via-blue-500 to-cyan-500':
+          enableGradient,
         // Variant-specific gradient overrides
-        ...(enableGradient && variant === 'destructive' ? { 'from-red-600 via-rose-500 to-orange-500': true } : {}),
-        'neumorph-hover universal-button-neumorph shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] bg-[#e0e5ec]': enableNeumorph,
+        ...(enableGradient && variant === 'destructive'
+          ? { 'from-red-600 via-rose-500 to-orange-500': true }
+          : {}),
+        'neumorph-hover universal-button-neumorph shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] bg-[#e0e5ec]':
+          enableNeumorph,
         'border-2 border-transparent before:animate-spin': legacyBorderGradientEnabled,
-        ...(legacyBorderGradientEnabled && duration !== undefined ? { '--animation-duration': `${duration}s` } as any : {}),
-        ...(legacyBorderGradientEnabled && clockwise === false ? { 'before:animate-reverse-spin': true } : {}),
+        ...(legacyBorderGradientEnabled && duration !== undefined
+          ? { '--animation-duration': `${duration}s` } as any
+          : {}),
+        ...(legacyBorderGradientEnabled && clockwise === false
+          ? { 'before:animate-reverse-spin': true }
+          : {}),
       },
       // Animation classes (strings)
       hoverBorderClasses,
@@ -201,11 +215,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       if (hoverBorderGradientEnabled) {
         handleHoverBorderMouseEnter(e);
       }
-      
+
       if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
         startShine();
       }
-      
+
       onMouseEnter?.(e);
     };
 
@@ -213,11 +227,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       if (hoverBorderGradientEnabled) {
         handleHoverBorderMouseLeave(e);
       }
-      
+
       if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
         stopShine();
       }
-      
+
       onMouseLeave?.(e);
     };
 
@@ -225,7 +239,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       if (hoverBorderGradientEnabled) {
         handleHoverBorderMouseMove(e);
       }
-      
+
       onMouseMove?.(e);
     };
 
@@ -252,14 +266,18 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
         '--mouse-x': `${mousePosition.x}px`,
         '--mouse-y': `${mousePosition.y}px`,
       }),
-      ...(legacyBorderGradientEnabled && duration !== undefined ? { ['--animation-duration' as any]: `${duration}s` } : {}),
+      ...(legacyBorderGradientEnabled && duration !== undefined
+        ? { ['--animation-duration' as any]: `${duration}s` }
+        : {}),
     };
 
     // If asChild, we need to clone the only valid React element child and inject button props
     if (asChild) {
       const arr = React.Children.toArray(children).filter(Boolean);
       if (arr.length !== 1 || !React.isValidElement(arr[0])) {
-        throw new Error('UniversalButton with asChild requires a single valid React element as child');
+        throw new Error(
+          'UniversalButton with asChild requires a single valid React element as child',
+        );
       }
       const child = arr[0] as React.ReactElement<any>;
       const mergedProps = {
@@ -301,7 +319,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
         onClick={onClick}
         {...props}
       >
-        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
         {children}
       </button>
     );

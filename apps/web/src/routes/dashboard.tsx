@@ -1,3 +1,4 @@
+import { NotificationCard } from '@/components';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut, supabase } from '@/integrations/supabase/client';
 import { Badge } from '@neonpro/ui';
@@ -5,7 +6,6 @@ import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { NotificationCard } from '@/components';
 import {
   Activity,
   Bell,
@@ -402,7 +402,7 @@ function DashboardComponent() {
                 <Button
                   className='w-full justify-start'
                   variant='outline'
-                  onClick={() => navigate({ to: '/appointments' })}
+                  onClick={() => navigate({ to: '/appointments/new' })}
                 >
                   <Calendar className='h-4 w-4 mr-2' />
                   Nova Consulta

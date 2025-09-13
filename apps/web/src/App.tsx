@@ -1,8 +1,8 @@
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TwentyFirstToolbar } from '@21st-extension/toolbar-react';
-import { ReactPlugin } from '@21st-extension/react';
+// import { TwentyFirstToolbar } from '@21st-extension/toolbar-react';
+// import { ReactPlugin } from '@21st-extension/react';
 
 const queryClient = new QueryClient();
 
@@ -14,11 +14,13 @@ const App = () => (
       {/* Single toast provider mounted via Sonner */}
       <Sonner />
       {/* 21st.dev Toolbar - only runs in development mode */}
-      <TwentyFirstToolbar
+      {
+        /* <TwentyFirstToolbar
         config={{
           plugins: [ReactPlugin],
         }}
-      />
+      /> */
+      }
     </TooltipProvider>
   </QueryClientProvider>
 );

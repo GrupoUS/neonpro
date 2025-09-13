@@ -5,7 +5,8 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
-import { addMinutes, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { addMinutes, isAfter, isBefore, parseISO } from 'date-fns';
+
 
 // Type definitions
 type ProfessionalRow = Database['public']['Tables']['professionals']['Row'];

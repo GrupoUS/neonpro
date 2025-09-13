@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { performanceMonitor } from '../lib/performance';
+// Temporary stub during type sweep; replace with real impl when available
+export const performanceMonitor = {
+  mark: (_label: string) => {},
+  measure: (_name: string, _start: string, _end: string) => {},
+};
+
 
 export function usePerformance(componentName: string) { // componentName required
   const mountTime = useRef<number | null>(null);

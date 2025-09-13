@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 // Mock matchMedia globally
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query: any) => ({
     matches: false,
     media: query,
     onchange: null,

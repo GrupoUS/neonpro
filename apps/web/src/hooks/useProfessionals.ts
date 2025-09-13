@@ -3,7 +3,7 @@
  * React Query hooks for professional data management
  */
 
-import { professionalService, type Professional, type ProfessionalAvailability } from '@/services/professionals.service';
+import { professionalService } from '@/services/professionals.service';
 import { useQuery } from '@tanstack/react-query';
 
 /**

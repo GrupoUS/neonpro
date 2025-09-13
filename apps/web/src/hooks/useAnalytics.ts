@@ -1,4 +1,4 @@
-import { analytics } from '@/lib';
+import { analytics } from '@/lib/analytics';
 import { useEffect } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
 

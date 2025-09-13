@@ -91,10 +91,10 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (newAppointment, { clinicId }) => {
+    onSuccess: (newAppointment, { clinicId: _clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(clinicId),
+        appointmentKeys.calendar(_clinicId),
         (old: CalendarAppointment[] = []) => 
           old.map(apt => apt.id.startsWith('temp-') ? newAppointment : apt)
       );
@@ -115,9 +115,9 @@ export function useCreateAppointment() {
       toast.error(error.message || 'Erro ao criar agendamento');
     },
 
-    onSettled: (_, __, { clinicId }) => {
+    onSettled: (_, __, { clinicId: _clinicId }) => {
       // Always refetch after mutation
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(clinicId) });
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(_clinicId) });
     },
   });
 }
@@ -133,11 +133,11 @@ export function useUpdateAppointment() {
     mutationFn: async ({ 
       appointmentId, 
       updates, 
-      clinicId 
+      clinicId: _clinicId 
     }: { 
       appointmentId: string; 
       updates: UpdateAppointmentData; 
-      clinicId: string;
+      clinicId: string; // eslint-disable-line @typescript-eslint/no-unused-vars
     }) => {
       if (!user?.id) {
         throw new Error('User not authenticated');
@@ -145,7 +145,7 @@ export function useUpdateAppointment() {
       return appointmentService.updateAppointment(appointmentId, updates, user.id);
     },
 
-    onMutate: async ({ appointmentId, updates, clinicId }) => {
+    onMutate: async ({ appointmentId, updates, clinicId }) => { // clinicId used for query keys
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: appointmentKeys.calendar(clinicId) });
 
@@ -172,10 +172,10 @@ export function useUpdateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (updatedAppointment, { clinicId }) => {
+    onSuccess: (updatedAppointment, { clinicId: _clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(clinicId),
+        appointmentKeys.calendar(_clinicId),
         (old: CalendarAppointment[] = []) =>
           old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt)
       );
@@ -196,9 +196,9 @@ export function useUpdateAppointment() {
       toast.error(error.message || 'Erro ao atualizar agendamento');
     },
 
-    onSettled: (_, __, { clinicId }) => {
+    onSettled: (_, __, { clinicId: _clinicId }) => {
       // Always refetch after mutation
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(clinicId) });
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(_clinicId) });
     },
   });
 }
@@ -213,7 +213,7 @@ export function useDeleteAppointment() {
   return useMutation({
     mutationFn: async ({ 
       appointmentId, 
-      clinicId, 
+      clinicId: _clinicId, 
       reason 
     }: { 
       appointmentId: string; 
@@ -243,7 +243,7 @@ export function useDeleteAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (_, { clinicId }) => {
+    onSuccess: (_, { clinicId: _clinicId }) => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
       
@@ -260,9 +260,9 @@ export function useDeleteAppointment() {
       toast.error(error.message || 'Erro ao cancelar agendamento');
     },
 
-    onSettled: (_, __, { clinicId }) => {
+    onSettled: (_, __, { clinicId: _clinicId }) => {
       // Always refetch after mutation
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(clinicId) });
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(_clinicId) });
     },
   });
 }
@@ -274,7 +274,7 @@ export function useAppointmentRealtime(clinicId: string) {
   const queryClient = useQueryClient();
 
   const handleRealtimeUpdate = useCallback((payload: any) => {
-    const { eventType, new: newRecord, old: oldRecord } = payload;
+    const { eventType } = payload;
 
     // Update all relevant queries
     queryClient.invalidateQueries({ queryKey: appointmentKeys.calendar(clinicId) });

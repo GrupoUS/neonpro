@@ -60,7 +60,7 @@ export function AuthForm(
     defaultValues: { firstname: '', lastname: '', email: '', password: '', crm: '' },
   });
 
-  const forgotForm = useForm<z.infer<typeof emailSchema>>({
+  const forgotForm = useForm<{ email: string }>({
     resolver: zodResolver(emailSchema),
     mode: 'onBlur',
     defaultValues: { email: '' },
@@ -107,7 +107,7 @@ export function AuthForm(
     }
   };
 
-  const onSubmitForgot = async (data: z.infer<typeof emailSchema>) => {
+  const onSubmitForgot = async (data: { email: string }) => {
     try {
       setIsLoading(true);
       setError(null);

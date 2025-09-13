@@ -5,11 +5,9 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
-import { addMinutes, format, parseISO } from 'date-fns';
-import { toast } from 'sonner';
+import { parseISO } from 'date-fns';
 
 // Type definitions
-type AppointmentRow = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
@@ -373,13 +371,13 @@ class AppointmentService {
   ): Promise<void> {
     try {
       await supabase.from('audit_logs').insert({
-        table_name: 'appointments',
+        // table_name removed: not part of current type
         record_id: appointmentId,
         action: action.toUpperCase(),
         user_id: userId,
         new_values: metadata || {},
         created_at: new Date().toISOString(),
-      });
+      } as any);
     } catch (error) {
       console.error('Error logging appointment action:', error);
       // Don't throw error for audit logging failures

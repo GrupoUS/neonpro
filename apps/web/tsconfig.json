@@ -21,6 +21,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client", "vitest/globals"],
     "baseUrl": ".",
     "paths": {
       "@/*": [

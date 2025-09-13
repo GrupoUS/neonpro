@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useSendAppointmentConfirmation } from '@/hooks/useNotifications';
-import { useCreatePatient, useSearchPatients } from '@/hooks/usePatients';
+import { /* useCreatePatient, */ useSearchPatients } from '@/hooks/usePatients'; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { useProfessionalsByServiceType } from '@/hooks/useProfessionals';
 import { useServiceTypes } from '@/hooks/useServiceTypes';
 import { useTimeSlotValidationWithStatus } from '@/hooks/useTimeSlotValidation';
@@ -23,8 +23,8 @@ import {
   DialogTitle,
 } from '@neonpro/ui';
 import { format } from 'date-fns';
-import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
+import { Plus, Search, User } from 'lucide-react';
+import { useState } from 'react';
 
 interface AppointmentBookingProps {
   open: boolean;
@@ -45,13 +45,15 @@ interface AppointmentBookingProps {
 export function AppointmentBooking(
   { open, onOpenChange, onBookingComplete, clinicId }: AppointmentBookingProps,
 ) {
-  const { user } = useAuth();
+  const {/* user */} = useAuth();
   const today = new Date();
   const [date, setDate] = useState<Date>(today);
   const [time, setTime] = useState<string | null>(null);
   const [patientName, setPatientName] = useState('');
   const [patientSearch, setPatientSearch] = useState('');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [showPatientSearch, setShowPatientSearch] = useState(false);
+  const [showNewPatientForm, setShowNewPatientForm] = useState(false);
   const [serviceTypeId, setServiceTypeId] = useState('');
   const [service, setService] = useState(''); // For backward compatibility
   const [professionalId, setProfessionalId] = useState('');
@@ -74,7 +76,6 @@ export function AppointmentBooking(
   );
 
   // Create patient mutation
-  const createPatientMutation = useCreatePatient();
 
   // Notification mutations
   const sendConfirmationMutation = useSendAppointmentConfirmation();
@@ -139,17 +140,6 @@ export function AppointmentBooking(
     { time: '17:30', available: true },
   ];
 
-  const services = [
-    'Limpeza de Pele',
-    'Botox',
-    'Preenchimento',
-    'Harmonização Facial',
-    'Peeling',
-    'Microagulhamento',
-    'Laser',
-    'Consulta Inicial',
-  ];
-
   const handleBooking = async () => {
     if (!date || !time || !patientName || !serviceTypeId || !professionalId) {
       return;
@@ -180,7 +170,7 @@ export function AppointmentBooking(
           patientName,
           appointmentDate: date,
           appointmentTime: time,
-          professionalName: selectedProfessional?.full_name || 'Profissional',
+          professionalName: selectedProfessional?.fullName || 'Profissional',
           serviceName: selectedService?.name || service,
           clinicName: 'NeonPro Clinic', // This should come from clinic data
           clinicAddress: 'Endereço da Clínica', // This should come from clinic data
@@ -243,7 +233,7 @@ export function AppointmentBooking(
                       <div className='space-y-3'>
                         <div className='flex h-5 shrink-0 items-center px-5'>
                           <p className='text-sm font-medium'>
-                            {format(date, 'EEEE, d')}
+                            {format(date, 'EEEE, d', {})}
                           </p>
                         </div>
                         <div className='grid gap-1.5 px-5 max-sm:grid-cols-2'>
@@ -352,13 +342,80 @@ export function AppointmentBooking(
             <h3 className='text-lg font-semibold mb-4'>Dados do Paciente</h3>
             <div className='space-y-4'>
               <div>
-                <Label htmlFor='patientName'>Nome do Paciente *</Label>
-                <Input
-                  id='patientName'
-                  value={patientName}
-                  onChange={e => setPatientName(e.target.value)}
-                  placeholder='Digite o nome completo'
-                />
+                <Label htmlFor='patientSearch'>Buscar Paciente *</Label>
+                <div className='relative'>
+                  <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+                  <Input
+                    id='patientSearch'
+                    value={patientSearch}
+                    onChange={e => {
+                      setPatientSearch(e.target.value);
+                      setPatientName(e.target.value);
+                      if (e.target.value.length < 2) {
+                        setSelectedPatientId(null);
+                      }
+                    }}
+                    placeholder='Digite o nome do paciente para buscar...'
+                    className='pl-10'
+                  />
+                  {searchLoading && (
+                    <div className='absolute right-3 top-1/2 transform -translate-y-1/2'>
+                      <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-primary'>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Search Results */}
+                {searchResults && searchResults.length > 0 && patientSearch.length >= 2 && (
+                  <div className='mt-2 border rounded-md bg-white shadow-lg max-h-40 overflow-y-auto'>
+                    {searchResults.map(patient => (
+                      <button
+                        key={patient.id}
+                        type='button'
+                        className='w-full text-left px-3 py-2 hover:bg-gray-50 border-b last:border-b-0 flex items-center gap-2'
+                        onClick={() => {
+                          setSelectedPatientId(patient.id);
+                          setPatientName(patient.fullName);
+                          setPatientSearch(patient.fullName);
+                        }}
+                      >
+                        <User className='h-4 w-4 text-gray-400' />
+                        <div>
+                          <div className='font-medium'>{patient.fullName}</div>
+                          <div className='text-sm text-gray-500'>{patient.phone}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* No Results */}
+                {searchResults && searchResults.length === 0 && patientSearch.length >= 2
+                  && !searchLoading && (
+                  <div className='mt-2 p-3 border rounded-md bg-gray-50 text-center'>
+                    <p className='text-sm text-gray-600 mb-2'>Nenhum paciente encontrado</p>
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => setShowNewPatientForm(true)}
+                      className='gap-2'
+                    >
+                      <Plus className='h-4 w-4' />
+                      Cadastrar Novo Paciente
+                    </Button>
+                  </div>
+                )}
+
+                {/* Selected Patient Info */}
+                {selectedPatientId && (
+                  <div className='mt-2 p-2 bg-green-50 border border-green-200 rounded-md'>
+                    <p className='text-sm text-green-700'>
+                      ✓ Paciente selecionado: <strong>{patientName}</strong>
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div>

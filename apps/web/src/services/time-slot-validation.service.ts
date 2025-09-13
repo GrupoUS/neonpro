@@ -4,8 +4,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
-import { addMinutes, format, isAfter, isBefore, isWeekend, parseISO, startOfDay } from 'date-fns';
+import { addMinutes, format, isAfter, isBefore, isWeekend, parseISO } from 'date-fns';
 
 // Type definitions
 export interface TimeSlotValidationResult {
@@ -170,7 +169,9 @@ class TimeSlotValidationService {
     endTime: Date,
     businessRules: BusinessRules
   ): ConflictInfo | null {
-    const dayOfWeek = startTime.toLocaleDateString('en-US', { weekday: 'lowercase' }) as keyof BusinessRules['clinicHours'];
+    const dayOfWeek = startTime
+      .toLocaleDateString('en-US', { weekday: 'long' })
+      .toLowerCase() as keyof BusinessRules['clinicHours'];
     const dayRules = businessRules.clinicHours[dayOfWeek];
 
     if (dayRules.closed) {
@@ -262,9 +263,9 @@ class TimeSlotValidationService {
    * Check service availability (placeholder for future service-specific rules)
    */
   private async checkServiceAvailability(
-    serviceTypeId: string,
-    startTime: Date,
-    endTime: Date
+    _serviceTypeId: string,
+    _startTime: Date,
+    _endTime: Date
   ): Promise<ConflictInfo | null> {
     // Placeholder for service-specific availability rules
     // Could include equipment availability, room booking, etc.
@@ -317,7 +318,7 @@ class TimeSlotValidationService {
    */
   private checkBusinessRuleWarnings(
     startTime: Date,
-    endTime: Date,
+    _endTime: Date,
     businessRules: BusinessRules
   ): WarningInfo[] {
     const warnings: WarningInfo[] = [];
@@ -394,7 +395,9 @@ class TimeSlotValidationService {
     const businessRules = await this.getBusinessRules(clinicId);
 
     // Get day of week and operating hours
-    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'lowercase' }) as keyof BusinessRules['clinicHours'];
+    const dayOfWeek = date
+      .toLocaleDateString('en-US', { weekday: 'long' })
+      .toLowerCase() as keyof BusinessRules['clinicHours'];
     const dayRules = businessRules.clinicHours[dayOfWeek];
 
     if (dayRules.closed) return slots;

@@ -17,7 +17,7 @@ export { Toaster } from './ui/toaster';
 // Common aliases (optional convenience re-exports)
 export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
 export { Badge } from '@neonpro/ui';
-export { Button, NeumorphButton } from '@neonpro/ui'; // Use Neumorph Button from UI package
+export { Button } from '@neonpro/ui'; // Use Button from UI package
 export { Input } from './atoms/input';
 export { Label } from './atoms/label';
 

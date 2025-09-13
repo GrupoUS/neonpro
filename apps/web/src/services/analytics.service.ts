@@ -4,7 +4,6 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
 import { endOfMonth, format, startOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -111,19 +110,19 @@ class AnalyticsService {
     dateRange: AnalyticsDateRange,
   ): Promise<AppointmentMetrics> {
     try {
-      const { data: appointments, error } = await supabase
+      const { data: appointments, error } = await (supabase as any)
         .from('appointments')
         .select('id, status, start_time')
-        .eq('clinic_id', clinicId)
+        .eq('clinic_id' as any, clinicId as any)
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
       const totalAppointments = appointments?.length || 0;
-      const completedAppointments = appointments?.filter(a => a.status === 'completed').length || 0;
-      const cancelledAppointments = appointments?.filter(a => a.status === 'cancelled').length || 0;
-      const noShowAppointments = appointments?.filter(a => a.status === 'no_show').length || 0;
+      const completedAppointments = (appointments as any[])?.filter((a: any) => a.status === 'completed').length || 0;
+      const cancelledAppointments = (appointments as any[])?.filter((a: any) => a.status === 'cancelled').length || 0;
+      const noShowAppointments = (appointments as any[])?.filter((a: any) => a.status === 'no_show').length || 0;
 
       return {
         totalAppointments,
@@ -162,7 +161,7 @@ class AnalyticsService {
     dateRange: AnalyticsDateRange,
   ): Promise<RevenueMetrics> {
     try {
-      const { data: appointments, error } = await supabase
+      const { data: appointments, error } = await (supabase as any)
         .from('appointments')
         .select(`
           id,
@@ -172,20 +171,23 @@ class AnalyticsService {
           service_types!inner(id, name, price),
           professionals!inner(id, full_name)
         `)
-        .eq('clinic_id', clinicId)
+
+        .eq('clinic_id' as any, clinicId as any)
         .eq('status', 'completed')
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
-      const totalRevenue = appointments?.reduce((sum, apt) => sum + (apt.total_amount || 0), 0)
-        || 0;
+      const totalRevenue = (appointments as Array<{ total_amount: number | null }> | undefined)?.reduce(
+        (sum: number, apt) => sum + (apt.total_amount || 0),
+        0,
+      ) || 0;
       const averageTicket = appointments?.length ? totalRevenue / appointments.length : 0;
 
       // Revenue by service
       const serviceRevenue = new Map<string, ServiceRevenueBreakdown>();
-      appointments?.forEach(apt => {
+      (appointments as any[])?.forEach((apt: any) => {
         const service = apt.service_types;
         if (service) {
           const existing = serviceRevenue.get(service.id) || {
@@ -212,7 +214,7 @@ class AnalyticsService {
 
       // Revenue by professional
       const professionalRevenue = new Map<string, ProfessionalRevenueBreakdown>();
-      appointments?.forEach(apt => {
+      (appointments as any[])?.forEach((apt: any) => {
         const professional = apt.professionals;
         if (professional) {
           const existing = professionalRevenue.get(professional.id) || {
@@ -240,13 +242,13 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthAppointments = appointments?.filter(apt => {
+        const monthAppointments = (appointments as any[])?.filter((apt: any) => {
           const aptDate = new Date(apt.start_time);
           return aptDate >= monthStart && aptDate <= monthEnd;
         }) || [];
 
-        const monthRevenue = monthAppointments.reduce(
-          (sum, apt) => sum + (apt.total_amount || 0),
+        const monthRevenue = (monthAppointments as any[]).reduce(
+          (sum: number, apt: any) => sum + (apt.total_amount || 0),
           0,
         );
 
@@ -286,15 +288,15 @@ class AnalyticsService {
   ): Promise<PatientAnalytics> {
     try {
       // Get all patients for the clinic
-      const { data: allPatients, error: patientsError } = await supabase
+      const { data: allPatients, error: patientsError } = await (supabase as any)
         .from('patients')
         .select('id, full_name, created_at')
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id' as any, clinicId as any);
 
       if (patientsError) throw patientsError;
 
       // Get appointments in date range
-      const { data: appointments, error: appointmentsError } = await supabase
+      const { data: appointments, error: appointmentsError } = await (supabase as any)
         .from('appointments')
         .select(`
           id,
@@ -304,21 +306,22 @@ class AnalyticsService {
           status,
           patients!inner(full_name)
         `)
-        .eq('clinic_id', clinicId)
+
+        .eq('clinic_id' as any, clinicId as any)
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
 
       if (appointmentsError) throw appointmentsError;
 
       const totalPatients = allPatients?.length || 0;
-      const newPatients = allPatients?.filter(p => {
-        const createdDate = new Date(p.created_at);
+      const newPatients = allPatients?.filter((p: any) => {
+        const createdDate = new Date((p as any).created_at || 0);
         return createdDate >= dateRange.startDate && createdDate <= dateRange.endDate;
       }).length || 0;
 
       // Calculate patient frequency
       const patientFrequency = new Map<string, PatientFrequencyData>();
-      appointments?.forEach(apt => {
+      (appointments as any[])?.forEach((apt: any) => {
         if (apt.patient_id && apt.patients) {
           const existing = patientFrequency.get(apt.patient_id) || {
             patientId: apt.patient_id,
@@ -345,7 +348,7 @@ class AnalyticsService {
         .slice(0, 10);
 
       const returningPatients = Array.from(patientFrequency.values())
-        .filter(p => p.appointmentCount > 1).length;
+        .filter((p: PatientFrequencyData) => p.appointmentCount > 1).length;
 
       const patientRetentionRate = totalPatients > 0
         ? (returningPatients / totalPatients) * 100
@@ -360,13 +363,13 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthNewPatients = allPatients?.filter(p => {
-          const createdDate = new Date(p.created_at);
+        const monthNewPatients = allPatients?.filter((p: any) => {
+          const createdDate = new Date((p as any).created_at || 0);
           return createdDate >= monthStart && createdDate <= monthEnd;
         }).length || 0;
 
         const monthReturningPatients = Array.from(patientFrequency.values())
-          .filter(p => {
+          .filter((p: PatientFrequencyData) => {
             return p.lastVisit >= monthStart && p.lastVisit <= monthEnd && p.appointmentCount > 1;
           }).length;
 
@@ -408,7 +411,7 @@ class AnalyticsService {
     dateRange: AnalyticsDateRange,
   ): Promise<ProfessionalPerformance[]> {
     try {
-      const { data: appointments, error } = await supabase
+      const { data: appointments, error } = await (supabase as any)
         .from('appointments')
         .select(`
           id,
@@ -418,7 +421,8 @@ class AnalyticsService {
           service_types!inner(name),
           professionals!inner(full_name)
         `)
-        .eq('clinic_id', clinicId)
+
+        .eq('clinic_id' as any, clinicId as any)
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
 
@@ -426,7 +430,7 @@ class AnalyticsService {
 
       const professionalStats = new Map<string, ProfessionalPerformance>();
 
-      appointments?.forEach(apt => {
+      (appointments as any[])?.forEach((apt: any) => {
         if (apt.professional_id && apt.professionals) {
           const existing = professionalStats.get(apt.professional_id) || {
             professionalId: apt.professional_id,
@@ -470,7 +474,7 @@ class AnalyticsService {
     dateRange: AnalyticsDateRange,
   ): Promise<PopularServicesData[]> {
     try {
-      const { data: appointments, error } = await supabase
+      const { data: appointments, error } = await (supabase as any)
         .from('appointments')
         .select(`
           id,
@@ -479,7 +483,8 @@ class AnalyticsService {
           start_time,
           service_types!inner(name)
         `)
-        .eq('clinic_id', clinicId)
+
+        .eq('clinic_id' as any, clinicId as any)
         .eq('status', 'completed')
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
@@ -488,7 +493,7 @@ class AnalyticsService {
 
       const serviceStats = new Map<string, PopularServicesData>();
 
-      appointments?.forEach(apt => {
+      (appointments as any[])?.forEach((apt: any) => {
         if (apt.service_type_id && apt.service_types) {
           const existing = serviceStats.get(apt.service_type_id) || {
             serviceId: apt.service_type_id,
