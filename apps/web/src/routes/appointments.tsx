@@ -42,9 +42,9 @@ function AppointmentsPage() {
   // Get clinic ID from user profile
   const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
 
-  // Check permissions
-  const canViewAllAppointments = hasPermission('canViewAllAppointments');
-  const canCreateAppointments = hasPermission('canCreateAppointments');
+  // Check permissions - handle case where profile is null
+  const canViewAllAppointments = profile ? hasPermission('canViewAllAppointments') : true; // Allow access when no profile
+  const canCreateAppointments = profile ? hasPermission('canCreateAppointments') : true; // Allow access when no profile
 
   // Fetch appointments from database
   // For patients, we'll need to filter by patient_id in the future
@@ -162,7 +162,7 @@ function AppointmentsPage() {
             </div>
           )}
 
-          {!authLoading && !canViewAllAppointments && profile?.role !== 'patient' && (
+          {!authLoading && !canViewAllAppointments && profile && profile.role !== 'patient' && (
             <div className='flex items-center justify-center h-96'>
               <div className='text-center'>
                 <p className='text-lg font-semibold text-destructive'>Acesso Negado</p>
@@ -198,7 +198,7 @@ function AppointmentsPage() {
             </div>
           )}
           {!authLoading && !isLoading && !error
-            && (canViewAllAppointments || profile?.role === 'patient') && (
+            && (canViewAllAppointments || !profile || profile.role === 'patient') && (
               (appointments?.length ?? 0) === 0
                 ? <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
                 : (

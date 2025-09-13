@@ -314,7 +314,7 @@ class AnalyticsService {
       if (appointmentsError) throw appointmentsError;
 
       const totalPatients = allPatients?.length || 0;
-      const newPatients = allPatients?.filter((p: any) => {
+      const newPatients = (allPatients as any[])?.filter((p: any) => {
         const createdDate = new Date((p as any).created_at || 0);
         return createdDate >= dateRange.startDate && createdDate <= dateRange.endDate;
       }).length || 0;
@@ -363,7 +363,7 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthNewPatients = allPatients?.filter((p: any) => {
+        const monthNewPatients = (allPatients as any[])?.filter((p: any) => {
           const createdDate = new Date((p as any).created_at || 0);
           return createdDate >= monthStart && createdDate <= monthEnd;
         }).length || 0;

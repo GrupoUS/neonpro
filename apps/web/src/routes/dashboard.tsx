@@ -415,6 +415,14 @@ function DashboardComponent() {
                   <Users className='h-4 w-4 mr-2' />
                   Cadastrar Paciente
                 </Button>
+                <Button
+                  className='w-full justify-start'
+                  variant='outline'
+                  onClick={() => navigate({ to: '/services' })}
+                >
+                  <Settings className='h-4 w-4 mr-2' />
+                  Gerenciar Serviços
+                </Button>
                 <Button className='w-full justify-start' variant='outline'>
                   <DollarSign className='h-4 w-4 mr-2' />
                   Registrar Pagamento

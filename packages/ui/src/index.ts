@@ -30,12 +30,25 @@ export {
 } from './components/ui/dialog';
 export {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './components/ui/dropdown-menu';
 export { Input } from './components/ui/input';
 export { Label } from './components/ui/label';
+export { Separator } from './components/ui/separator';
+export { Pagination, PaginationContent, PaginationItem } from './components/ui/pagination';
 export {
   Popover,
   PopoverContent,
@@ -53,6 +66,15 @@ export {
   SelectTrigger,
   SelectValue,
 } from './components/ui/select';
+export { Switch } from './components/ui/switch';
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './components/ui/table';
 export { Textarea } from './components/ui/textarea';
 export { UniversalButton, universalButtonVariants } from './components/ui/universal-button';
 export type {

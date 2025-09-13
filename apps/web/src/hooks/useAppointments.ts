@@ -142,6 +142,8 @@ export function useUpdateAppointment() {
       if (!user?.id) {
         throw new Error('User not authenticated');
       }
+      // reference to avoid TS6133 unused parameter warning
+      void _clinicId;
       return appointmentService.updateAppointment(appointmentId, updates, user.id);
     },
 

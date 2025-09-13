@@ -27,6 +27,15 @@ export interface CreatePatientData {
   cpf?: string;
 }
 
+export interface PatientAppointmentHistory {
+  id: string;
+  date: string;
+  serviceName: string;
+  professionalName: string;
+  status: string;
+  notes?: string;
+}
+
 class PatientService {
   /**
    * Search patients by name or phone
@@ -167,13 +176,58 @@ class PatientService {
   }
 
   /**
+   * Get patient appointment history
+   */
+  async getPatientAppointmentHistory(
+    patientId: string,
+    limit = 10,
+  ): Promise<PatientAppointmentHistory[]> {
+    try {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select(`
+          id,
+          start_time,
+          status,
+          notes,
+          service_types (
+            name
+          ),
+          professionals (
+            full_name
+          )
+        `)
+        .eq('patient_id', patientId)
+        .order('start_time', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error getting patient appointment history:', error);
+        throw new Error(`Failed to get patient appointment history: ${error.message}`);
+      }
+
+      return (data || []).map(appointment => ({
+        id: appointment.id,
+        date: appointment.start_time,
+        serviceName: appointment.service_types?.name || 'Serviço não especificado',
+        professionalName: appointment.professionals?.full_name || 'Profissional não especificado',
+        status: appointment.status || 'scheduled',
+        notes: appointment.notes || undefined,
+      }));
+    } catch (error) {
+      console.error('Error in getPatientAppointmentHistory:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Log patient actions for audit trail
    */
   private async logPatientAction(
     action: string,
     patientId: string,
     userId: string,
-    metadata?: any
+    metadata?: any,
   ): Promise<void> {
     try {
       await supabase.from('audit_logs').insert({

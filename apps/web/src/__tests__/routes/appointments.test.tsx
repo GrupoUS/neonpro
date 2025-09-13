@@ -34,22 +34,22 @@ vi.mock('@/hooks/useAuth', () => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => {
+  const makeChain = (result: any) => {
+    const p: any = Promise.resolve(result);
+    p.select = () => p;
+    p.eq = () => p;
+    p.gte = () => p;
+    p.lte = () => p;
+    p.order = () => p;
+    p.limit = () => p;
+    return p;
+  };
   return {
     supabase: {
       auth: { onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }) },
-      from: () => ({
-        select: () => chain,
-      }),
+      from: () => makeChain({ data: [], count: 0, error: null }),
     },
   } as any;
-  const chain = {
-    eq: () => chain,
-    gte: () => chain,
-    lte: () => chain,
-    order: () => chain,
-    limit: () => chain,
-    then: (resolve: any) => resolve({ data: [], count: 0, error: null }),
-  };
 });
 
 function Wrapper() {

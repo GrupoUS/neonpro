@@ -22,21 +22,22 @@ vi.mock('@/hooks/useAuth', () => ({
 
 // Mock supabase patients query to return empty data
 vi.mock('@/integrations/supabase/client', () => {
-  const makeThenable = (result: any) => ({
-    select: () => chain,
-    order: () => chain,
-    limit: () => chain,
-    eq: () => chain,
-    or: () => chain,
-    then: (resolve: any) => resolve(result),
-  });
-  const chain = makeThenable({ data: [], count: 0, error: null });
+  const makeChain = (result: any) => {
+    const p: any = Promise.resolve(result);
+    p.select = () => p;
+    p.order = () => p;
+    p.limit = () => p;
+    p.eq = () => p;
+    p.or = () => p;
+    return p;
+  };
+  const result = { data: [], count: 0, error: null };
   return {
     supabase: {
       auth: {
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       },
-      from: (_table: string) => chain,
+      from: (_table: string) => makeChain(result),
     },
     signOut: vi.fn(),
   } as any;

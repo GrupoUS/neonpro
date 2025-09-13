@@ -17,8 +17,10 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShineTestRouteImport } from './routes/shine-test'
 import { Route as ShadcnTestRouteImport } from './routes/shadcn-test'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PatientsRouteImport } from './routes/patients'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
 import { Route as GovernanceRouteImport } from './routes/governance'
@@ -39,6 +41,9 @@ import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patien
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
+import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
+import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
+import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
 
 const ValidationReportRoute = ValidationReportRouteImport.update({
   id: '/validation-report',
@@ -80,6 +85,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -88,6 +98,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsRoute = PatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -172,9 +187,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
-  id: '/patients/$patientId',
-  path: '/patients/$patientId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$patientId',
+  path: '/$patientId',
+  getParentRoute: () => PatientsRoute,
 } as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
@@ -191,6 +206,23 @@ const AppointmentsNewRoute = AppointmentsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppointmentsRoute,
 } as any)
+const PatientsPatientIdHistoryRoute =
+  PatientsPatientIdHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => PatientsPatientIdRoute,
+  } as any)
+const PatientsPatientIdEditRoute = PatientsPatientIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => PatientsPatientIdRoute,
+} as any)
+const PatientsPatientIdDocumentsRoute =
+  PatientsPatientIdDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => PatientsPatientIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -209,8 +241,10 @@ export interface FileRoutesByFullPath {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
+  '/patients': typeof PatientsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
@@ -222,7 +256,10 @@ export interface FileRoutesByFullPath {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -241,8 +278,10 @@ export interface FileRoutesByTo {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
+  '/patients': typeof PatientsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
@@ -254,7 +293,10 @@ export interface FileRoutesByTo {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -274,8 +316,10 @@ export interface FileRoutesById {
   '/governance': typeof GovernanceRoute
   '/healthcare-test': typeof HealthcareTestRoute
   '/login': typeof LoginRoute
+  '/patients': typeof PatientsRouteWithChildren
   '/profile': typeof ProfileRoute
   '/reports': typeof ReportsRoute
+  '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
@@ -287,7 +331,10 @@ export interface FileRoutesById {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -308,8 +355,10 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
+    | '/patients'
     | '/profile'
     | '/reports'
+    | '/services'
     | '/settings'
     | '/shadcn-test'
     | '/shine-test'
@@ -322,6 +371,9 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
+    | '/patients/$patientId/documents'
+    | '/patients/$patientId/edit'
+    | '/patients/$patientId/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -340,8 +392,10 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
+    | '/patients'
     | '/profile'
     | '/reports'
+    | '/services'
     | '/settings'
     | '/shadcn-test'
     | '/shine-test'
@@ -354,6 +408,9 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
+    | '/patients/$patientId/documents'
+    | '/patients/$patientId/edit'
+    | '/patients/$patientId/history'
   id:
     | '__root__'
     | '/'
@@ -372,8 +429,10 @@ export interface FileRouteTypes {
     | '/governance'
     | '/healthcare-test'
     | '/login'
+    | '/patients'
     | '/profile'
     | '/reports'
+    | '/services'
     | '/settings'
     | '/shadcn-test'
     | '/shine-test'
@@ -386,6 +445,9 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
+    | '/patients/$patientId/documents'
+    | '/patients/$patientId/edit'
+    | '/patients/$patientId/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -405,8 +467,10 @@ export interface RootRouteChildren {
   GovernanceRoute: typeof GovernanceRoute
   HealthcareTestRoute: typeof HealthcareTestRoute
   LoginRoute: typeof LoginRoute
+  PatientsRoute: typeof PatientsRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ReportsRoute: typeof ReportsRoute
+  ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
   ShadcnTestRoute: typeof ShadcnTestRoute
   ShineTestRoute: typeof ShineTestRoute
@@ -417,7 +481,6 @@ export interface RootRouteChildren {
   ValidationReportRoute: typeof ValidationReportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
-  PatientsPatientIdRoute: typeof PatientsPatientIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -478,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports': {
       id: '/reports'
       path: '/reports'
@@ -490,6 +560,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients': {
+      id: '/patients'
+      path: '/patients'
+      fullPath: '/patients'
+      preLoaderRoute: typeof PatientsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -606,10 +683,10 @@ declare module '@tanstack/react-router' {
     }
     '/patients/$patientId': {
       id: '/patients/$patientId'
-      path: '/patients/$patientId'
+      path: '/$patientId'
       fullPath: '/patients/$patientId'
       preLoaderRoute: typeof PatientsPatientIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PatientsRoute
     }
     '/auth/confirm': {
       id: '/auth/confirm'
@@ -632,6 +709,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsNewRouteImport
       parentRoute: typeof AppointmentsRoute
     }
+    '/patients/$patientId/history': {
+      id: '/patients/$patientId/history'
+      path: '/history'
+      fullPath: '/patients/$patientId/history'
+      preLoaderRoute: typeof PatientsPatientIdHistoryRouteImport
+      parentRoute: typeof PatientsPatientIdRoute
+    }
+    '/patients/$patientId/edit': {
+      id: '/patients/$patientId/edit'
+      path: '/edit'
+      fullPath: '/patients/$patientId/edit'
+      preLoaderRoute: typeof PatientsPatientIdEditRouteImport
+      parentRoute: typeof PatientsPatientIdRoute
+    }
+    '/patients/$patientId/documents': {
+      id: '/patients/$patientId/documents'
+      path: '/documents'
+      fullPath: '/patients/$patientId/documents'
+      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
+      parentRoute: typeof PatientsPatientIdRoute
+    }
   }
 }
 
@@ -645,6 +743,33 @@ const AppointmentsRouteChildren: AppointmentsRouteChildren = {
 
 const AppointmentsRouteWithChildren = AppointmentsRoute._addFileChildren(
   AppointmentsRouteChildren,
+)
+
+interface PatientsPatientIdRouteChildren {
+  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
+  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute
+  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute
+}
+
+const PatientsPatientIdRouteChildren: PatientsPatientIdRouteChildren = {
+  PatientsPatientIdDocumentsRoute: PatientsPatientIdDocumentsRoute,
+  PatientsPatientIdEditRoute: PatientsPatientIdEditRoute,
+  PatientsPatientIdHistoryRoute: PatientsPatientIdHistoryRoute,
+}
+
+const PatientsPatientIdRouteWithChildren =
+  PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
+
+interface PatientsRouteChildren {
+  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
+}
+
+const PatientsRouteChildren: PatientsRouteChildren = {
+  PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
+}
+
+const PatientsRouteWithChildren = PatientsRoute._addFileChildren(
+  PatientsRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -664,8 +789,10 @@ const rootRouteChildren: RootRouteChildren = {
   GovernanceRoute: GovernanceRoute,
   HealthcareTestRoute: HealthcareTestRoute,
   LoginRoute: LoginRoute,
+  PatientsRoute: PatientsRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ReportsRoute: ReportsRoute,
+  ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
   ShadcnTestRoute: ShadcnTestRoute,
   ShineTestRoute: ShineTestRoute,
@@ -676,7 +803,6 @@ const rootRouteChildren: RootRouteChildren = {
   ValidationReportRoute: ValidationReportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
-  PatientsPatientIdRoute: PatientsPatientIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

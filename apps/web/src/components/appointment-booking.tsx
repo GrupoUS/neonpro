@@ -1,11 +1,13 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
+import { PatientCreationForm } from '@/components/patients/PatientCreationForm';
+import { ServiceCreationForm } from '@/components/services/ServiceCreationForm';
 import { useSendAppointmentConfirmation } from '@/hooks/useNotifications';
-import { /* useCreatePatient, */ useSearchPatients } from '@/hooks/usePatients'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { usePatientAppointmentHistory, useSearchPatients } from '@/hooks/usePatients';
 import { useProfessionalsByServiceType } from '@/hooks/useProfessionals';
-import { useServiceTypes } from '@/hooks/useServiceTypes';
+import { useCheckAvailability, useServices, useServiceTimeSlots } from '@/hooks/useServices';
 import { useTimeSlotValidationWithStatus } from '@/hooks/useTimeSlotValidation';
+import type { TimeSlot } from '@/types/service';
 import { Button } from '@neonpro/ui';
 import { Calendar } from '@neonpro/ui';
 import { ScrollArea } from '@neonpro/ui';
@@ -23,7 +25,7 @@ import {
   DialogTitle,
 } from '@neonpro/ui';
 import { format } from 'date-fns';
-import { Plus, Search, User } from 'lucide-react';
+import { Clock, Phone, Plus, Search, User } from 'lucide-react';
 import { useState } from 'react';
 
 interface AppointmentBookingProps {
@@ -45,22 +47,29 @@ interface AppointmentBookingProps {
 export function AppointmentBooking(
   { open, onOpenChange, onBookingComplete, clinicId }: AppointmentBookingProps,
 ) {
-  const {/* user */} = useAuth();
+
   const today = new Date();
   const [date, setDate] = useState<Date>(today);
   const [time, setTime] = useState<string | null>(null);
   const [patientName, setPatientName] = useState('');
   const [patientSearch, setPatientSearch] = useState('');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
-  const [showPatientSearch, setShowPatientSearch] = useState(false);
+
+  // New form state
   const [showNewPatientForm, setShowNewPatientForm] = useState(false);
+  const [showNewServiceForm, setShowNewServiceForm] = useState(false);
+
   const [serviceTypeId, setServiceTypeId] = useState('');
   const [service, setService] = useState(''); // For backward compatibility
   const [professionalId, setProfessionalId] = useState('');
   const [notes, setNotes] = useState('');
 
-  // Fetch service types
-  const { data: serviceTypes, isLoading: servicesLoading } = useServiceTypes(clinicId);
+  // Fetch services
+  const { data: servicesResponse, isLoading: servicesLoading } = useServices({
+    clinic_id: clinicId,
+    is_active: true, // Only show active services
+  });
+  const serviceTypes = servicesResponse?.data || [];
 
   // Fetch professionals for selected service type
   const { data: professionals, isLoading: professionalsLoading } = useProfessionalsByServiceType(
@@ -75,16 +84,25 @@ export function AppointmentBooking(
     { enabled: patientSearch.length >= 2 },
   );
 
+  // Get patient appointment history when a patient is selected
+  const { data: patientHistory, isLoading: historyLoading } = usePatientAppointmentHistory(
+    selectedPatientId || '',
+    { enabled: !!selectedPatientId },
+  );
+
   // Create patient mutation
 
   // Notification mutations
   const sendConfirmationMutation = useSendAppointmentConfirmation();
 
+  // Availability checking
+  const checkAvailabilityMutation = useCheckAvailability();
+
   // Calculate appointment end time based on service duration
   const appointmentEndTime = time && serviceTypeId
     ? (() => {
       const selectedService = serviceTypes?.find(st => st.id === serviceTypeId);
-      const duration = selectedService?.durationMinutes || 60;
+      const duration = selectedService?.duration_minutes || 60;
       const [hours, minutes] = time.split(':').map(Number);
       const startDateTime = new Date(date);
       startDateTime.setHours(hours, minutes, 0, 0);
@@ -118,21 +136,29 @@ export function AppointmentBooking(
     appointmentEndTime,
   );
 
-  // Mock time slots data
-  const timeSlots = [
+  // Get available time slots for selected service and date
+  const dateString = date ? format(date, 'yyyy-MM-dd') : '';
+  const { data: timeSlots, isLoading: timeSlotsLoading } = useServiceTimeSlots(
+    serviceTypeId,
+    dateString,
+    professionalId,
+  );
+
+  // Fallback to default time slots if no service selected or loading
+  const defaultTimeSlots = [
     { time: '09:00', available: true },
-    { time: '09:30', available: false },
+    { time: '09:30', available: true },
     { time: '10:00', available: true },
     { time: '10:30', available: true },
     { time: '11:00', available: true },
     { time: '11:30', available: true },
-    { time: '12:00', available: false },
+    { time: '12:00', available: true },
     { time: '12:30', available: true },
     { time: '13:00', available: true },
     { time: '13:30', available: true },
     { time: '14:00', available: true },
-    { time: '14:30', available: false },
-    { time: '15:00', available: false },
+    { time: '14:30', available: true },
+    { time: '15:00', available: true },
     { time: '15:30', available: true },
     { time: '16:00', available: true },
     { time: '16:30', available: true },
@@ -140,12 +166,45 @@ export function AppointmentBooking(
     { time: '17:30', available: true },
   ];
 
+  const availableTimeSlots: TimeSlot[] = (timeSlots as TimeSlot[] | undefined)
+    || (defaultTimeSlots as TimeSlot[]);
+
   const handleBooking = async () => {
     if (!date || !time || !patientName || !serviceTypeId || !professionalId) {
       return;
     }
 
     try {
+      // First, check real-time availability
+      const currentService = serviceTypes?.find(st => st.id === serviceTypeId);
+      const duration = currentService?.duration_minutes || 60;
+      const [hours, minutes] = time.split(':').map(Number);
+      const startDateTime = new Date(date);
+      startDateTime.setHours(hours, minutes, 0, 0);
+      const endDateTime = new Date(startDateTime);
+      endDateTime.setMinutes(endDateTime.getMinutes() + duration);
+
+      const availabilityCheck = await checkAvailabilityMutation.mutateAsync({
+        service_id: serviceTypeId,
+        professional_id: professionalId,
+        date: format(date, 'yyyy-MM-dd'),
+        start_time: time,
+        end_time: format(endDateTime, 'HH:mm'),
+      });
+
+      if (!availabilityCheck.available) {
+        const conflictMessages = availabilityCheck.conflicts.map(c => c.description).join(', ');
+        throw new Error(`Horário não disponível: ${conflictMessages}`);
+      }
+
+      // Show warnings if any
+      if (availabilityCheck.warnings.length > 0) {
+        const warningMessages = availabilityCheck.warnings.map(w => w.message).join('\n');
+        if (!window.confirm(`Atenção:\n${warningMessages}\n\nDeseja continuar mesmo assim?`)) {
+          return;
+        }
+      }
+
       // Create the appointment
       const appointmentData = {
         date,
@@ -237,18 +296,32 @@ export function AppointmentBooking(
                           </p>
                         </div>
                         <div className='grid gap-1.5 px-5 max-sm:grid-cols-2'>
-                          {timeSlots.map(({ time: timeSlot, available }) => (
-                            <Button
-                              key={timeSlot}
-                              variant={time === timeSlot ? 'default' : 'outline'}
-                              size='sm'
-                              className='w-full'
-                              onClick={() => setTime(timeSlot)}
-                              disabled={!available}
-                            >
-                              {timeSlot}
-                            </Button>
-                          ))}
+                          {timeSlotsLoading
+                            ? (
+                              <div className='col-span-full text-center py-4 text-sm text-muted-foreground'>
+                                Carregando horários disponíveis...
+                              </div>
+                            )
+                            : (
+                              availableTimeSlots.map((
+                                { time: timeSlot, available, reason }: Partial<TimeSlot> & { time: string; available: boolean },
+                              ) => (
+                                <Button
+                                  key={timeSlot}
+                                  variant={time === timeSlot ? 'default' : 'outline'}
+                                  size='sm'
+                                  className='w-full relative'
+                                  onClick={() => setTime(timeSlot)}
+                                  disabled={!available}
+                                  title={!available && reason ? reason : undefined}
+                                >
+                                  {timeSlot}
+                                  {!available && (
+                                    <span className='absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full' />
+                                  )}
+                                </Button>
+                              ))
+                            )}
                         </div>
                       </div>
                     </ScrollArea>
@@ -368,22 +441,47 @@ export function AppointmentBooking(
 
                 {/* Search Results */}
                 {searchResults && searchResults.length > 0 && patientSearch.length >= 2 && (
-                  <div className='mt-2 border rounded-md bg-white shadow-lg max-h-40 overflow-y-auto'>
+                  <div className='mt-2 border rounded-md bg-white shadow-lg max-h-48 overflow-y-auto'>
                     {searchResults.map(patient => (
                       <button
                         key={patient.id}
                         type='button'
-                        className='w-full text-left px-3 py-2 hover:bg-gray-50 border-b last:border-b-0 flex items-center gap-2'
+                        className='w-full text-left px-3 py-3 hover:bg-gray-50 border-b last:border-b-0 transition-colors'
                         onClick={() => {
                           setSelectedPatientId(patient.id);
                           setPatientName(patient.fullName);
                           setPatientSearch(patient.fullName);
                         }}
                       >
-                        <User className='h-4 w-4 text-gray-400' />
-                        <div>
-                          <div className='font-medium'>{patient.fullName}</div>
-                          <div className='text-sm text-gray-500'>{patient.phone}</div>
+                        <div className='flex items-start gap-3'>
+                          <div className='flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center'>
+                            <User className='h-4 w-4 text-primary' />
+                          </div>
+                          <div className='flex-1 min-w-0'>
+                            <div className='font-medium text-gray-900 truncate'>
+                              {patient.fullName}
+                            </div>
+                            <div className='flex items-center gap-3 mt-1 text-sm text-gray-500'>
+                              {patient.phone && (
+                                <div className='flex items-center gap-1'>
+                                  <Phone className='h-3 w-3' />
+                                  <span>{patient.phone}</span>
+                                </div>
+                              )}
+                              {patient.email && (
+                                <div className='flex items-center gap-1'>
+                                  <span>•</span>
+                                  <span className='truncate'>{patient.email}</span>
+                                </div>
+                              )}
+                            </div>
+                            {patient.cpf && (
+                              <div className='text-xs text-gray-400 mt-1'>
+                                CPF:{' '}
+                                {patient.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </button>
                     ))}
@@ -410,10 +508,66 @@ export function AppointmentBooking(
 
                 {/* Selected Patient Info */}
                 {selectedPatientId && (
-                  <div className='mt-2 p-2 bg-green-50 border border-green-200 rounded-md'>
-                    <p className='text-sm text-green-700'>
-                      ✓ Paciente selecionado: <strong>{patientName}</strong>
-                    </p>
+                  <div className='mt-2 p-4 bg-green-50 border border-green-200 rounded-lg'>
+                    <div className='flex items-start gap-3'>
+                      <div className='flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center'>
+                        <User className='h-4 w-4 text-green-600' />
+                      </div>
+                      <div className='flex-1'>
+                        <div className='flex items-center gap-2 mb-2'>
+                          <span className='text-sm font-medium text-green-800'>
+                            ✓ Paciente selecionado:
+                          </span>
+                          <strong className='text-green-900'>{patientName}</strong>
+                        </div>
+
+                        {/* Patient History */}
+                        {patientHistory && patientHistory.length > 0 && (
+                          <div className='mt-3'>
+                            <h5 className='text-xs font-medium text-green-700 mb-2 flex items-center gap-1'>
+                              <Clock className='h-3 w-3' />
+                              Últimas consultas
+                            </h5>
+                            <div className='space-y-1'>
+                              {patientHistory.slice(0, 3).map(appointment => (
+                                <div
+                                  key={appointment.id}
+                                  className='text-xs text-green-600 flex items-center gap-2'
+                                >
+                                  <span className='w-1 h-1 bg-green-400 rounded-full'></span>
+                                  <span>
+                                    {new Date(appointment.date).toLocaleDateString('pt-BR')} -{' '}
+                                    {appointment.serviceName}
+                                  </span>
+                                  <span className='text-green-500'>
+                                    ({appointment.professionalName})
+                                  </span>
+                                </div>
+                              ))}
+                              {patientHistory.length > 3 && (
+                                <div className='text-xs text-green-500 mt-1'>
+                                  +{patientHistory.length - 3} consultas anteriores
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {historyLoading && (
+                          <div className='mt-2 text-xs text-green-600 flex items-center gap-2'>
+                            <div className='animate-spin rounded-full h-3 w-3 border border-green-400 border-t-transparent'>
+                            </div>
+                            Carregando histórico...
+                          </div>
+                        )}
+
+                        {patientHistory && patientHistory.length === 0 && !historyLoading && (
+                          <div className='mt-2 text-xs text-green-600'>
+                            Primeiro agendamento deste paciente
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -423,6 +577,10 @@ export function AppointmentBooking(
                 <Select
                   value={serviceTypeId}
                   onValueChange={value => {
+                    if (value === 'create-new') {
+                      setShowNewServiceForm(true);
+                      return;
+                    }
                     setServiceTypeId(value);
                     const selectedService = serviceTypes?.find(st => st.id === value);
                     setService(selectedService?.name || '');
@@ -436,11 +594,32 @@ export function AppointmentBooking(
                     {servicesLoading
                       ? <SelectItem value='loading' disabled>Carregando...</SelectItem>
                       : (
-                        serviceTypes?.map(serviceType => (
-                          <SelectItem key={serviceType.id} value={serviceType.id}>
-                            {serviceType.name}
+                        <>
+                          {serviceTypes?.map(serviceType => (
+                            <SelectItem key={serviceType.id} value={serviceType.id}>
+                              <div className='flex items-center justify-between w-full'>
+                                <span>{serviceType.name}</span>
+                                <div className='flex items-center gap-2 text-xs text-muted-foreground ml-2'>
+                                  <Clock className='h-3 w-3' />
+                                  <span>{serviceType.duration_minutes}min</span>
+                                  <span>•</span>
+                                  <span>
+                                    {serviceType.price.toLocaleString('pt-BR', {
+                                      style: 'currency',
+                                      currency: 'BRL',
+                                    })}
+                                  </span>
+                                </div>
+                              </div>
+                            </SelectItem>
+                          ))}
+                          <SelectItem value='create-new' className='text-primary'>
+                            <div className='flex items-center gap-2'>
+                              <Plus className='h-4 w-4' />
+                              Criar Novo Serviço
+                            </div>
                           </SelectItem>
-                        ))
+                        </>
                       )}
                   </SelectContent>
                 </Select>
@@ -532,6 +711,33 @@ export function AppointmentBooking(
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Patient Creation Form */}
+      <PatientCreationForm
+        open={showNewPatientForm}
+        onOpenChange={setShowNewPatientForm}
+        clinicId={clinicId}
+        initialName={patientSearch}
+        onPatientCreated={patient => {
+          setSelectedPatientId(patient.id);
+          setPatientName(patient.fullName);
+          setPatientSearch(patient.fullName);
+          setShowNewPatientForm(false);
+        }}
+      />
+
+      {/* Service Creation Form */}
+      <ServiceCreationForm
+        open={showNewServiceForm}
+        onOpenChange={setShowNewServiceForm}
+        clinicId={clinicId}
+        onServiceCreated={service => {
+          setServiceTypeId(service.id);
+          setService(service.name);
+          setProfessionalId(''); // Reset professional when new service is created
+          setShowNewServiceForm(false);
+        }}
+      />
     </Dialog>
   );
 }

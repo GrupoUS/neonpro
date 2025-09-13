@@ -27,7 +27,7 @@ export function useAuth(): AuthState {
         // Add timeout to prevent hanging
         const sessionPromise = getCurrentSession();
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Session timeout')), 5000)
+          setTimeout(() => reject(new Error('Session timeout')), 3000)
         );
 
         const currentSession = await Promise.race([sessionPromise, timeoutPromise]) as any;
@@ -39,33 +39,29 @@ export function useAuth(): AuthState {
         if (currentSession?.user) {
           console.log('🔍 useAuth: Loading profile for user:', currentSession.user.id);
           try {
-            const userProfile = await userProfileService.getUserProfile(currentSession.user.id);
+            const profilePromise = userProfileService.getUserProfile(currentSession.user.id);
+            const profileTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
+            );
+
+            const userProfile = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
             console.log('✅ useAuth: Profile loaded:', userProfile ? 'Success' : 'Failed');
             setProfile(userProfile);
           } catch (profileError) {
             console.error('❌ useAuth: Error loading user profile:', profileError);
-            // Create fallback profile instead of setting null
-            const fallbackProfile = await userProfileService.getUserProfile('fallback-user');
-            setProfile(fallbackProfile);
+            // Set null profile instead of trying fallback to prevent infinite loading
+            setProfile(null);
           }
         } else {
-          console.log('⚠️ useAuth: No authenticated user, creating fallback profile');
-          // Create fallback profile for development
-          const fallbackProfile = await userProfileService.getUserProfile('fallback-user');
-          setProfile(fallbackProfile);
+          console.log('⚠️ useAuth: No authenticated user, setting null profile');
+          // Don't create fallback profile - just set null to allow app to work
+          setProfile(null);
         }
       } catch (error) {
         console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);
-        // Create fallback profile even on error
-        try {
-          const fallbackProfile = await userProfileService.getUserProfile('fallback-user');
-          setProfile(fallbackProfile);
-        } catch (fallbackError) {
-          console.error('❌ useAuth: Failed to create fallback profile:', fallbackError);
-          setProfile(null);
-        }
+        setProfile(null);
       } finally {
         console.log('✅ useAuth: Initial session loading complete');
         setLoading(false);
@@ -85,7 +81,12 @@ export function useAuth(): AuthState {
         // Load user profile for authenticated users
         if (session?.user) {
           try {
-            const userProfile = await userProfileService.getUserProfile(session.user.id);
+            const profilePromise = userProfileService.getUserProfile(session.user.id);
+            const profileTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
+            );
+
+            const userProfile = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
             setProfile(userProfile);
           } catch (profileError) {
             console.error('Error loading user profile:', profileError);

@@ -66,10 +66,21 @@ class UserProfileService {
   async getUserProfile(userId: string): Promise<UserProfile> {
     console.log('🔍 getUserProfile called for userId:', userId);
 
+    // Handle fallback user case immediately
+    if (userId === 'fallback-user') {
+      console.log('🔧 Creating fallback profile for development');
+      return this.createFallbackProfile(userId);
+    }
+
     try {
+      // Add timeout to all database operations
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database operation timeout')), 5000)
+      );
+
       // First check if user is a professional
       console.log('🔍 Checking for professional profile...');
-      const { data: professional, error: profError } = await supabase
+      const professionalPromise = supabase
         .from('professionals')
         .select(`
           *,
@@ -79,6 +90,11 @@ class UserProfileService {
         .eq('is_active', true)
         .single();
 
+      const { data: professional, error: profError } = await Promise.race([
+        professionalPromise,
+        timeoutPromise,
+      ]) as any;
+
       if (professional && !profError) {
         console.log('✅ Found professional profile:', professional.full_name);
         return this.buildProfessionalProfile(professional);
@@ -86,12 +102,17 @@ class UserProfileService {
 
       console.log('⚠️ No professional profile found, checking staff...');
       // Check if user is staff member
-      const { data: staff, error: staffError } = await supabase
+      const staffPromise = supabase
         .from('staff_members')
         .select('*')
         .eq('user_id', userId)
         .eq('is_active', true)
         .single();
+
+      const { data: staff, error: staffError } = await Promise.race([
+        staffPromise,
+        timeoutPromise,
+      ]) as any;
 
       if (staff && !staffError) {
         console.log('✅ Found staff profile:', staff.name);
@@ -101,20 +122,23 @@ class UserProfileService {
       console.log('⚠️ No staff profile found, checking auth user...');
       // If not professional or staff, treat as patient
       // Get user info from auth.users
-      const { data: authUser, error: authError } = await supabase.auth.getUser();
+      const authPromise = supabase.auth.getUser();
+      const { data: authUser, error: authError } = await Promise.race([
+        authPromise,
+        timeoutPromise,
+      ]) as any;
+
       if (authError || !authUser.user) {
-        console.warn('⚠️ Could not get authenticated user, creating fallback profile');
-        // Create a fallback profile for development/testing
-        return this.createFallbackProfile(userId);
+        console.warn('⚠️ Could not get authenticated user, throwing error');
+        throw new Error('No authenticated user found');
       }
 
       console.log('✅ Found auth user, creating patient profile:', authUser.user.email);
       return this.buildPatientProfile(authUser.user);
     } catch (error) {
       console.error('❌ Error fetching user profile:', error);
-      // Instead of throwing, return a fallback profile to prevent app crashes
-      console.log('🔧 Creating fallback profile due to error');
-      return this.createFallbackProfile(userId);
+      // Throw error instead of creating fallback to let caller handle it
+      throw error;
     }
   }
 
