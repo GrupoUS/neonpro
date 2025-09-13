@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "bun install && bunx turbo build --filter=@neonpro/web",
+  "buildCommand": "cd apps/web && bun install && bun run build",
   "outputDirectory": "apps/web/dist",
   "installCommand": "bun install",
   "framework": null,
