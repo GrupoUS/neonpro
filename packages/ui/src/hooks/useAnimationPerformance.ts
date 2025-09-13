@@ -66,30 +66,48 @@ interface AnimationPerformanceReturn {
 
 // Device capability detection functions
 const detectDeviceCapabilities = (): DeviceCapabilities => {
-  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    || hasTouch;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Guard for non-browser environments (SSR/tests)
+  const hasWindow = typeof window !== 'undefined';
+  const hasNavigator = typeof navigator !== 'undefined';
+  const hasDocument = typeof document !== 'undefined';
+  const hasScreen = typeof screen !== 'undefined';
+
+  const hasTouch = hasWindow && hasNavigator
+    ? ('ontouchstart' in window || (navigator as any).maxTouchPoints > 0)
+    : false;
+
+  const userAgent = hasNavigator ? navigator.userAgent : '';
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) || hasTouch;
+
+  const prefersReducedMotion = hasWindow && typeof window.matchMedia === 'function'
+    ? !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    : false;
 
   // GPU detection
-  const canvas = document.createElement('canvas');
-  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  const hasGPU = !!gl;
+  let hasGPU = false;
+  if (hasDocument) {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = (canvas.getContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      hasGPU = !!gl;
+    } catch {
+      hasGPU = false;
+    }
+  }
 
   // CPU power estimation (simplified)
   const cpuPower = (() => {
-    const cores = navigator.hardwareConcurrency || 4;
-    const memory = (navigator as any).deviceMemory || 4;
+    const cores = hasNavigator ? (navigator as any).hardwareConcurrency || 4 : 4;
+    const memory = hasNavigator ? (navigator as any).deviceMemory || 4 : 4;
     if (isMobile) return Math.min(cores + memory - 2, 6);
     return Math.min(cores + memory - 1, 10);
   })();
 
   // High refresh rate detection (fallback since refreshRate is not standard)
-  const isHighRefreshRate = (screen as any).refreshRate ? (screen as any).refreshRate > 60 : false;
+  const isHighRefreshRate = hasScreen && (screen as any).refreshRate ? (screen as any).refreshRate > 60 : false;
 
   // Memory constraints (rough estimation)
-  const hasMemoryConstraints = (navigator as any).deviceMemory
+  const hasMemoryConstraints = hasNavigator && (navigator as any).deviceMemory
     ? (navigator as any).deviceMemory <= 2
     : isMobile;
 

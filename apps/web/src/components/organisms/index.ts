@@ -5,6 +5,7 @@
 
 // AI Chat Organism
 export { default as AIChatContainer } from './ai-chat-container';
+export { default as NotificationCard } from './NotificationCard';
 
 // Governance Organisms
 export * from './governance/AIGovernanceMetrics';

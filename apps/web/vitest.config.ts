@@ -9,6 +9,7 @@ export default defineConfig({
       '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
     },
   },
   test: {
@@ -39,6 +40,7 @@ export default defineConfig({
           include: [
             '@neonpro/shared',
             '@neonpro/utils',
+            '@neonpro/ui',
           ],
         },
       },

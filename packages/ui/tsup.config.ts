@@ -1,13 +1,17 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: ['src/index.ts'],
-  format: ['cjs', 'esm'],
-  dts: false, // Temporarily disabled due to Radix UI Slot type conflicts
-  splitting: false,
+  format: ['esm', 'cjs'],
+  dts: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom'],
+  external: [
+    'react',
+    'react-dom',
+    'framer-motion',
+    '@radix-ui/react-slot',
+  ],
   treeshake: true,
-  minify: false,
-});
+  skipNodeModulesBundle: true,
+})

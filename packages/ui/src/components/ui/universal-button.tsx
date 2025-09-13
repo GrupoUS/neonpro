@@ -180,8 +180,9 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       universalButtonVariants({ variant, size, className }),
       {
         // Legacy gradient effects (backward compatibility)
-        'universal-button-gradient': enableGradient && shouldEnableAnimations,
-        'universal-button-neumorph': enableNeumorph && shouldEnableAnimations,
+        'bg-gradient-to-r animate-gradient-x': enableGradient && shouldEnableAnimations,
+        'neumorph-hover universal-button-neumorph': enableNeumorph && shouldEnableAnimations,
+        'border-gradient-spin before:animate-spin': legacyBorderGradientEnabled,
       },
       // Animation classes (strings)
       hoverBorderClasses,

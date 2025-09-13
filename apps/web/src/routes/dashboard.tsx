@@ -5,6 +5,7 @@ import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { NotificationCard } from '@/components';
 import {
   Activity,
   Bell,
@@ -388,41 +389,45 @@ function DashboardComponent() {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ações Rápidas</CardTitle>
-              <CardDescription>
-                Acesso rápido às funcionalidades principais
-              </CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-3'>
-              <Button
-                className='w-full justify-start'
-                variant='outline'
-                onClick={() => navigate({ to: '/appointments' })}
-              >
-                <Calendar className='h-4 w-4 mr-2' />
-                Nova Consulta
-              </Button>
-              <Button
-                className='w-full justify-start'
-                variant='outline'
-                onClick={() => navigate({ to: '/clients' })}
-              >
-                <Users className='h-4 w-4 mr-2' />
-                Cadastrar Paciente
-              </Button>
-              <Button className='w-full justify-start' variant='outline'>
-                <DollarSign className='h-4 w-4 mr-2' />
-                Registrar Pagamento
-              </Button>
-              <Button className='w-full justify-start' variant='outline'>
-                <TrendingUp className='h-4 w-4 mr-2' />
-                Ver Relatórios
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Quick Actions and Notifications */}
+          <div className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Ações Rápidas</CardTitle>
+                <CardDescription>
+                  Acesso rápido às funcionalidades principais
+                </CardDescription>
+              </CardHeader>
+              <CardContent className='space-y-3'>
+                <Button
+                  className='w-full justify-start'
+                  variant='outline'
+                  onClick={() => navigate({ to: '/appointments' })}
+                >
+                  <Calendar className='h-4 w-4 mr-2' />
+                  Nova Consulta
+                </Button>
+                <Button
+                  className='w-full justify-start'
+                  variant='outline'
+                  onClick={() => navigate({ to: '/clients' })}
+                >
+                  <Users className='h-4 w-4 mr-2' />
+                  Cadastrar Paciente
+                </Button>
+                <Button className='w-full justify-start' variant='outline'>
+                  <DollarSign className='h-4 w-4 mr-2' />
+                  Registrar Pagamento
+                </Button>
+                <Button className='w-full justify-start' variant='outline'>
+                  <TrendingUp className='h-4 w-4 mr-2' />
+                  Ver Relatórios
+                </Button>
+              </CardContent>
+            </Card>
+
+            <NotificationCard />
+          </div>
         </div>
       </main>
     </div>
