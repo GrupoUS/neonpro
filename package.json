@@ -19,6 +19,8 @@
   "scripts": {
     "build": "bunx turbo build",
     "dev": "bunx turbo dev --concurrency=20",
+    "dev:web": "bunx turbo dev --filter=@neonpro/web --concurrency=5",
+    "dev:web:pnpm": "pnpm --filter @neonpro/web dev",
     "test": "bunx turbo test",
     "lint": "bunx turbo lint",
     "type-check": "bunx turbo type-check",

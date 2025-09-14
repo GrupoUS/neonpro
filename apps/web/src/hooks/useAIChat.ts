@@ -1,4 +1,3 @@
-'use client';
 
 import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
 import {
@@ -10,7 +9,9 @@ import {
 } from '@/lib/ai/ai-chat-service'; // path confirmed
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { nanoid } from 'nanoid';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { fetchDefaultChatModel } from '@/services/chat-settings.service';
 
 // Session storage key for persistence
 const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
@@ -22,6 +23,7 @@ const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
 export function useAIChat(clientId?: string) {
   const queryClient = useQueryClient();
   const [sessionId] = useState(() => nanoid());
+  const { user } = useAuth();
 
   // Chat state management
   const [chatState, setChatState] = useState<ChatState>(() => {
@@ -37,15 +39,37 @@ export function useAIChat(clientId?: string) {
       }
     }
 
+    // Read persisted default model if available
+    const persistedDefault = typeof window !== 'undefined'
+      ? localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini'
+      : 'gpt-5-mini';
+
     return {
       messages: [],
       isLoading: false,
       error: null,
       sessionId,
       // Default model selection
-      model: 'gpt-5-mini',
+      model: persistedDefault,
     } as ChatState & { model: string };
   });
+
+  // Hydrate model from server when user is known
+  useEffect(() => {
+    (async () => {
+      if (!user?.id) return;
+      const serverModel = await fetchDefaultChatModel(user.id);
+      if (serverModel) {
+        setChatState(prev => {
+          const next = { ...(prev as ChatState & { model?: string }), model: serverModel } as ChatState;
+          persistChatState(next);
+          return next;
+        });
+        try { localStorage.setItem('neonpro-default-chat-model', serverModel); } catch {}
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   // Persist chat state to session storage
   const persistChatState = useCallback((state: ChatState) => {
@@ -256,5 +280,5 @@ export function useAIChat(clientId?: string) {
     // Mutation states
     sendMessageLoading: sendMessageMutation.isPending,
     voiceProcessingLoading: processVoiceMutation.isPending,
-  };
+  } as const;
 }

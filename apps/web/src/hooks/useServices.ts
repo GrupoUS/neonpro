@@ -38,13 +38,7 @@ export function useServices(filters: ServiceFilters = {}) {
     queryFn: async (): Promise<ServicesResponse> => {
       let query = supabase
         .from('service_types')
-        .select(`
-          *,
-          clinics (
-            id,
-            clinic_name
-          )
-        `)
+        .select('*')
         .order('name', { ascending: true });
 
       // Apply filters
@@ -88,13 +82,7 @@ export function useService(id: string) {
     queryFn: async (): Promise<Service> => {
       const { data, error } = await supabase
         .from('service_types')
-        .select(`
-          *,
-          clinics (
-            id,
-            clinic_name
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
@@ -122,13 +110,7 @@ export function useCreateService() {
       const { data, error } = await supabase
         .from('service_types')
         .insert([serviceData])
-        .select(`
-          *,
-          clinics (
-            id,
-            clinic_name
-          )
-        `)
+        .select('*')
         .single();
 
       if (error) {

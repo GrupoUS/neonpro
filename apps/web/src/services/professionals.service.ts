@@ -200,24 +200,25 @@ class ProfessionalService {
    * Transform database row to Professional interface
    */
   private transformProfessional(row: ProfessionalRow): Professional {
+    const anyRow = row as any;
     return {
-      id: row.id,
-      fullName: row.full_name,
-      email: row.email,
-      phone: row.phone,
-      specialization: row.specialization,
-      licenseNumber: row.license_number,
-      serviceTypeIds: row.service_type_ids || [],
+      id: anyRow.id,
+      fullName: anyRow.full_name,
+      email: anyRow.email || '',
+      phone: anyRow.phone || '',
+      specialization: anyRow.specialization || '',
+      licenseNumber: anyRow.license_number,
+      serviceTypeIds: anyRow.service_type_ids || [],
       workingHours: {
-        startTime: row.default_start_time,
-        endTime: row.default_end_time,
-        breakStart: row.default_break_start,
-        breakEnd: row.default_break_end,
+        startTime: anyRow.default_start_time,
+        endTime: anyRow.default_end_time,
+        breakStart: anyRow.default_break_start,
+        breakEnd: anyRow.default_break_end,
       },
-      canWorkWeekends: row.can_work_weekends || false,
-      color: row.color,
-      isActive: row.is_active || false,
-      clinicId: row.clinic_id,
+      canWorkWeekends: anyRow.can_work_weekends || false,
+      color: anyRow.color || '#3B82F6',
+      isActive: anyRow.is_active || false,
+      clinicId: anyRow.clinic_id,
     };
   }
 

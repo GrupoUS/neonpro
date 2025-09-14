@@ -2,14 +2,20 @@ import { AppointmentBooking } from '@/components/appointment-booking';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, Calendar, Clock, User, FileText } from 'lucide-react';
+import { createFileRoute, Link, useNavigate, useSearch } from '@tanstack/react-router';
+import { ArrowLeft, Calendar, Clock, FileText, User } from 'lucide-react';
 import { useState } from 'react';
 
 function NewAppointmentPage() {
   const navigate = useNavigate();
   const { profile, hasPermission, loading: authLoading } = useAuth();
-  const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const search = useSearch({ from: '/appointments/new' }) as {
+    serviceId?: string;
+    name?: string;
+    duration?: number;
+    price?: number;
+  };
+  const [showBookingDialog, setShowBookingDialog] = useState(!!search?.serviceId);
 
   // Get clinic ID from user profile
   const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
@@ -28,7 +34,8 @@ function NewAppointmentPage() {
       <div className='container mx-auto px-4 py-8'>
         <div className='flex items-center justify-center h-96'>
           <div className='text-center'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'>
+            </div>
             <p className='text-sm text-muted-foreground'>Carregando perfil do usuário...</p>
           </div>
         </div>
@@ -60,8 +67,8 @@ function NewAppointmentPage() {
                 <p className='mt-2 text-sm text-muted-foreground'>
                   Você não tem permissão para criar agendamentos.
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant='outline'
                   className='mt-4'
                   onClick={() => navigate({ to: '/appointments' })}
                 >
@@ -102,7 +109,7 @@ function NewAppointmentPage() {
             <p className='text-sm text-muted-foreground mb-4'>
               Use o formulário completo para agendar uma nova consulta com todos os detalhes.
             </p>
-            <Button 
+            <Button
               onClick={() => setShowBookingDialog(true)}
               className='w-full'
             >
@@ -167,7 +174,7 @@ function NewAppointmentPage() {
                 <li>Confirme o agendamento</li>
               </ol>
             </div>
-            
+
             <div>
               <h4 className='font-semibold mb-2'>Dicas importantes:</h4>
               <ul className='list-disc list-inside space-y-1 text-sm text-muted-foreground'>
@@ -192,6 +199,14 @@ function NewAppointmentPage() {
           open={showBookingDialog}
           onOpenChange={setShowBookingDialog}
           clinicId={clinicId}
+          initialService={search?.serviceId
+            ? {
+              id: search.serviceId,
+              name: search.name ?? '',
+              duration_minutes: typeof search.duration === 'number' ? search.duration : undefined,
+              price: typeof search.price === 'number' ? search.price : undefined,
+            }
+            : undefined}
           onBookingComplete={handleBookingComplete}
         />
       )}

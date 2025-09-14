@@ -3,8 +3,7 @@
  * Comprehensive service management with CRUD operations
  */
 
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,6 +17,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
@@ -32,14 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@neonpro/ui';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@neonpro/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@neonpro/ui';
 import {
   Dialog,
   DialogContent,
@@ -49,21 +42,25 @@ import {
   DialogTrigger,
 } from '@neonpro/ui';
 
-import { useAuth } from '@/hooks/useAuth';
-import { useServices, useDeleteService } from '@/hooks/useServices';
-import type { Service } from '@/types/service';
 import { ServiceForm } from '@/components/services/ServiceForm';
+import { useAuth } from '@/hooks/useAuth';
+import { useDeleteService, useServices } from '@/hooks/useServices';
+import type { Service } from '@/types/service';
 import { toast } from 'sonner';
 
 // Service table columns definition
+
+import { useServiceCategories } from '@/hooks/useServiceCategories';
 const createColumns = (
   onEdit: (service: Service) => void,
   onDelete: (service: Service) => void,
+  getCategoryLabel: (id: string | null) => string,
 ): ColumnDef<Service>[] => [
   {
     accessorKey: 'name',
     header: ({ column }) => (
       <Button
+        aria-label='Ordenar por nome do serviço'
         variant='ghost'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className='h-auto p-0 font-semibold'
@@ -72,14 +69,25 @@ const createColumns = (
         <ArrowUpDown className='ml-2 h-4 w-4' />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className='font-medium'>{row.getValue('name')}</div>
-    ),
+    cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
+  },
+  {
+    accessorKey: 'description',
+    header: 'Descrição',
+    cell: ({ row }) => {
+      const description = row.getValue('description') as string | null;
+      return (
+        <div className='max-w-[260px] truncate text-sm text-muted-foreground'>
+          {description || 'Sem descrição'}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'duration_minutes',
     header: ({ column }) => (
       <Button
+        aria-label='Ordenar por duração'
         variant='ghost'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className='h-auto p-0 font-semibold'
@@ -98,6 +106,7 @@ const createColumns = (
     accessorKey: 'price',
     header: ({ column }) => (
       <Button
+        aria-label='Ordenar por preço'
         variant='ghost'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className='h-auto p-0 font-semibold'
@@ -117,26 +126,26 @@ const createColumns = (
     },
   },
   {
+    id: 'category',
+    header: 'Categoria',
+    cell: ({ row }) => {
+      const id = (row.original.category_id ?? null) as string | null;
+      const label = getCategoryLabel(id);
+      return <Badge variant='outline'>{label}</Badge>;
+    },
+  },
+  {
     accessorKey: 'is_active',
     header: 'Status',
     cell: ({ row }) => {
       const isActive = row.getValue('is_active') as boolean;
       return (
-        <Badge variant={isActive ? 'default' : 'secondary'}>
+        <Badge
+          variant={isActive ? 'default' : 'secondary'}
+          aria-label={isActive ? 'Serviço ativo' : 'Serviço inativo'}
+        >
           {isActive ? 'Ativo' : 'Inativo'}
         </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descrição',
-    cell: ({ row }) => {
-      const description = row.getValue('description') as string | null;
-      return (
-        <div className='max-w-[200px] truncate text-sm text-muted-foreground'>
-          {description || 'Sem descrição'}
-        </div>
       );
     },
   },
@@ -149,13 +158,31 @@ const createColumns = (
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
+            <Button
+              variant='ghost'
+              className='h-8 w-8 p-0'
+              aria-label={`Ações para ${service.name}`}
+            >
               <span className='sr-only'>Abrir menu</span>
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link
+                to='/appointments/new'
+                search={{
+                  serviceId: service.id,
+                  name: service.name,
+                  duration: service.duration_minutes,
+                  price: service.price,
+                }}
+                aria-label={`Agendar ${service.name}`}
+              >
+                Agendar
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onEdit(service)}>
               Editar serviço
             </DropdownMenuItem>
@@ -191,6 +218,16 @@ function ServicesPage() {
     clinic_id: userProfile?.clinicId,
   });
 
+  // Fetch categories to display Category column labels
+  const { data: categoriesData } = useServiceCategories({
+    clinic_id: userProfile?.clinicId,
+    is_active: true,
+  } as any);
+  const categoryNameById = new Map<string, string>(
+    ((categoriesData as any[]) || []).map((c: any) => [String(c.id), String(c.name ?? '')]),
+  );
+  const getCategoryLabel = (id: string | null): string => (id && categoryNameById.get(id)) || '—';
+
   const deleteServiceMutation = useDeleteService();
 
   const services = servicesResponse?.data || [];
@@ -211,7 +248,7 @@ function ServicesPage() {
     }
   };
 
-  const columns = createColumns(handleEdit, handleDelete);
+  const columns = createColumns(handleEdit, handleDelete, getCategoryLabel);
 
   const table = useReactTable({
     data: services,
@@ -237,7 +274,7 @@ function ServicesPage() {
       <div className='container mx-auto py-8'>
         <Card>
           <CardContent className='pt-6'>
-            <div className='text-center text-destructive'>
+            <div className='text-center text-destructive' role='alert' aria-live='polite'>
               Erro ao carregar serviços: {error.message}
             </div>
           </CardContent>
@@ -284,7 +321,8 @@ function ServicesPage() {
           <CardHeader>
             <CardTitle>Lista de Serviços</CardTitle>
             <CardDescription>
-              {services.length} serviço{services.length !== 1 ? 's' : ''} encontrado{services.length !== 1 ? 's' : ''}
+              {services.length} serviço{services.length !== 1 ? 's' : ''}{' '}
+              encontrado{services.length !== 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -296,9 +334,7 @@ function ServicesPage() {
                   <Input
                     placeholder='Buscar serviços...'
                     value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) =>
-                      table.getColumn('name')?.setFilterValue(event.target.value)
-                    }
+                    onChange={event => table.getColumn('name')?.setFilterValue(event.target.value)}
                     className='max-w-sm pl-9'
                   />
                 </div>
@@ -312,16 +348,14 @@ function ServicesPage() {
                 <DropdownMenuContent align='end'>
                   {table
                     .getAllColumns()
-                    .filter((column) => column.getCanHide())
-                    .map((column) => {
+                    .filter(column => column.getCanHide())
+                    .map(column => {
                       return (
                         <DropdownMenuCheckboxItem
                           key={column.id}
                           className='capitalize'
                           checked={column.getIsVisible()}
-                          onCheckedChange={(value) =>
-                            column.toggleVisibility(!!value)
-                          }
+                          onCheckedChange={value => column.toggleVisibility(!!value)}
                         >
                           {column.id}
                         </DropdownMenuCheckboxItem>
@@ -333,11 +367,11 @@ function ServicesPage() {
 
             {/* Data Table */}
             <div className='overflow-hidden rounded-md border'>
-              <Table>
+              <Table aria-label='Tabela de serviços com seleção e agendamento'>
                 <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
+                      {headerGroup.headers.map(header => {
                         return (
                           <TableHead key={header.id}>
                             {header.isPlaceholder
@@ -353,38 +387,42 @@ function ServicesPage() {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className='h-24 text-center'>
-                        Carregando serviços...
-                      </TableCell>
-                    </TableRow>
-                  ) : table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </TableCell>
-                        ))}
+                  {isLoading
+                    ? (
+                      <TableRow>
+                        <TableCell colSpan={columns.length} className='h-24 text-center'>
+                          Carregando serviços...
+                        </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className='h-24 text-center'
-                      >
-                        Nenhum serviço encontrado.
-                      </TableCell>
-                    </TableRow>
-                  )}
+                    )
+                    : table.getRowModel().rows?.length
+                    ? (
+                      table.getRowModel().rows.map(row => (
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && 'selected'}
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    )
+                    : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={columns.length}
+                          className='h-24 text-center'
+                        >
+                          Nenhum serviço encontrado.
+                        </TableCell>
+                      </TableRow>
+                    )}
                 </TableBody>
               </Table>
             </div>

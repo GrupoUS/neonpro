@@ -31,12 +31,19 @@ import {
 } from '@neonpro/ui';
 import { format } from 'date-fns';
 import { Clock, Phone, Plus, Search, User } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AppointmentBookingProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clinicId: string;
+  /** Optional initial service to pre-populate booking form */
+  initialService?: {
+    id: string;
+    name: string;
+    duration_minutes?: number;
+    price?: number;
+  };
   onBookingComplete?: (booking: {
     date: Date;
     time: string;
@@ -50,7 +57,7 @@ interface AppointmentBookingProps {
 }
 
 export function AppointmentBooking(
-  { open, onOpenChange, onBookingComplete, clinicId }: AppointmentBookingProps,
+  { open, onOpenChange, onBookingComplete, clinicId, initialService }: AppointmentBookingProps,
 ) {
   const today = new Date();
   const [date, setDate] = useState<Date>(today);
@@ -61,12 +68,20 @@ export function AppointmentBooking(
 
   // New form state
   const [showNewPatientForm, setShowNewPatientForm] = useState(false);
+  const [serviceTypeId, setServiceTypeId] = useState('');
   const [showNewServiceForm, setShowNewServiceForm] = useState(false);
 
-  const [serviceTypeId, setServiceTypeId] = useState('');
   const [service, setService] = useState(''); // For backward compatibility
   const [professionalId, setProfessionalId] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Pre-populate service from initialService (e.g., from Services page)
+  useEffect(() => {
+    if (initialService && !serviceTypeId) {
+      setServiceTypeId(initialService.id);
+      setService(initialService.name);
+    }
+  }, [initialService, serviceTypeId]);
 
   // Fetch services
   const { data: servicesResponse, isLoading: servicesLoading } = useServices({

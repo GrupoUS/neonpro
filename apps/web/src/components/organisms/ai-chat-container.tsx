@@ -65,6 +65,7 @@ export default function AIChatContainer({
     upgradeUrl,
   } = useSubscription();
 
+  const chat = useAIChat(clientId);
   const {
     messages,
     isLoading,
@@ -75,12 +76,15 @@ export default function AIChatContainer({
     processVoice,
     generateVoice,
     clearChat,
-    sendMessageLoading,
-    voiceProcessingLoading,
     // sessionId, // unused
     model: currentModel,
     setModel,
-  } = useAIChat(clientId);
+  } = chat as ReturnType<typeof useAIChat>;
+  // Narrow type to include optional loading flags without breaking current signature
+  const { sendMessageLoading = false, voiceProcessingLoading = false } = (chat as any) as {
+    sendMessageLoading?: boolean;
+    voiceProcessingLoading?: boolean;
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

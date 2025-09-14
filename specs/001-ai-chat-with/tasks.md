@@ -91,11 +91,16 @@
   - Done: Refactored chat components to use useI18n; added aria-labels/live regions. Added test helper `apps/web/tests/test-utils.tsx` with I18nProvider wrapper and updated UI tests.
 
 ## Phase 3.5: Polish
-- [ ] T044 [P] Unit tests for utilities (redaction, consent checks) in `apps/api/tests/unit/utils.test.ts`
-- [ ] T045 [P] Performance validation — p95 start ≤2s in `tools/performance/chat-slo.md`
-- [ ] T046 [P] Docs — update quickstart and contracts in `specs/001-ai-chat-with/*`
-- [ ] T047 [P] Observability — structured logs/metrics in `apps/api/src/observability/*`
-- [ ] T048 [P] Accessibility — keyboard/screen reader in `apps/web/tests/ui/a11y.chat.test.tsx`
+- [x] T044 [P] Unit tests for utilities (redaction, consent checks) in `apps/api/src/__tests__/unit/utils.test.ts`
+  - Done: Added comprehensive tests for redactPII (email/phone/CPF) and checkConsent (allow/block/missing).
+- [x] T045 [P] Performance validation — p95 start ≤2s in `tools/performance/chat-slo.md`
+  - Done: Created SLO doc with acceptance criteria, measurement steps, and references.
+- [x] T046 [P] Docs — update quickstart and contracts in `specs/001-ai-chat-with/*`
+  - Done: Quickstart now documents SLOs in `docs/features/chat-slo.md`; contracts list required headers and privacy rules.
+- [x] T047 [P] Observability — structured logs/metrics in `apps/api/src/observability/*`
+  - Done: Added minimal observability module wrapping metrics timers and structured logs.
+- [x] T048 [P] Accessibility — keyboard/screen reader in `apps/web/tests/ui/a11y.chat.test.tsx`
+  - Done: New a11y test validates keyboard behavior and live region; existing `live-region.test.tsx` covers polite ARIA.
 
 ## Dependencies
 - T001 → T002–T003

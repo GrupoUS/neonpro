@@ -4,6 +4,10 @@ import { cn } from '@/lib/utils';
 import { Send, Sparkles, X } from 'lucide-react'; // MessageCircle not used
 import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import { useEffect, useState } from 'react';
+import { useAIChat } from '@/hooks/useAIChat';
+import { useSubscription } from '@/hooks/useSubscription';
+import { AIPrompt } from '@/components/ui/ai-chat';
+import type { ChatMessage } from '@/components/ui/ai-chat/types';
 
 interface FloatingAIChatSimpleProps {
   className?: string;
@@ -15,12 +19,8 @@ interface FloatingAIChatSimpleProps {
   onEmergencyDetected?: () => void;
 }
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+// Simplified floating chat that now uses the real AI hook
+
 
 /**
  * Simplified Floating AI Chat Component for NeonPro
@@ -35,9 +35,20 @@ export default function FloatingAIChatSimple({
   onAuditLog,
 }: FloatingAIChatSimpleProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // Use real AI chat hook instead of local stub state
+  const {
+    messages,
+    isLoading,
+    error,
+    sendMessage,
+    clearChat,
+    searchSuggestions,
+    suggestionsLoading,
+    model: currentModel,
+    setModel,
+  } = useAIChat();
+  const { chatModels } = useSubscription(); // exposes allowed models based on plan
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   // Handle escape key to close chat
   useEffect(() => {
@@ -81,31 +92,10 @@ export default function FloatingAIChatSimple({
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: inputValue.trim(),
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+    const content = inputValue.trim();
     setInputValue('');
-    setIsLoading(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content:
-          `Olá! Entendi que você está perguntando sobre "${userMessage.content}". Como assistente da NeonPro, posso ajudá-lo com informações sobre procedimentos estéticos, agendamentos e cuidados pós-tratamento. Como posso ser mais específico em minha ajuda?`,
-        timestamp: new Date(),
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
-      setIsLoading(false);
-    }, 1500);
+    // Send via real hook (streams handled internally)
+    sendMessage(content);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -115,9 +105,8 @@ export default function FloatingAIChatSimple({
     }
   };
 
-  const clearChat = () => {
-    setMessages([]);
-  };
+  // clearChat now comes from the hook
+  // const clearChat = () => { /* handled by hook */ };
 
   return (
     <>
@@ -204,6 +193,9 @@ export default function FloatingAIChatSimple({
             <div className='flex-1 p-4 overflow-y-auto space-y-4'>
               {messages.length === 0 && (
                 <div className='text-center text-gray-500 py-8'>
+                  {error && (
+                    <div className='mb-2 text-sm text-red-600'>Erro: {error}</div>
+                  )}
                   <Sparkles className='w-12 h-12 mx-auto mb-4 text-[#AC9469]' />
                   <p className='text-sm'>
                     Olá! Sou o assistente virtual da NeonPro.<br />
@@ -212,7 +204,7 @@ export default function FloatingAIChatSimple({
                 </div>
               )}
 
-              {messages.map(message => (
+              {messages.map((message: ChatMessage) => (
                 <div
                   key={message.id}
                   className={cn(
@@ -253,7 +245,17 @@ export default function FloatingAIChatSimple({
             </div>
 
             {/* Input Area */}
-            <div className='p-4 border-t'>
+            <div className='p-4 border-t space-y-2'>
+              {/* KokonutUI-style model selector */}
+              <AIPrompt
+                onSubmit={() => handleSendMessage()}
+                placeholder='Pergunte ao assistente...'
+                disabled={isLoading}
+                model={currentModel}
+                onModelChange={setModel}
+                models={chatModels}
+                showInput={false}
+              />
               <div className='flex gap-2'>
                 <input
                   type='text'
@@ -273,9 +275,26 @@ export default function FloatingAIChatSimple({
                 </button>
               </div>
 
+              {/* Suggestions */}
+              {suggestionsLoading ? (
+                <div className='text-xs text-gray-500'>Buscando sugestões...</div>
+              ) : searchSuggestions?.length ? (
+                <div className='flex flex-wrap gap-2'>
+                  {searchSuggestions.slice(0, 4).map(s => (
+                    <button
+                      key={s}
+                      onClick={() => { setInputValue(s); setTimeout(() => handleSendMessage(), 0); }}
+                      className='text-xs px-2 py-1 rounded-full border border-[#D2D0C8] text-[#112031] hover:bg-[#F6F5F2]'
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
               {/* LGPD Compliance Notice */}
               {lgpdCompliant && (
-                <p className='text-xs text-gray-500 mt-2 text-center'>
+                <p className='text-xs text-gray-500 text-center'>
                   Powered by NeonPro AI • Respeitamos sua privacidade (LGPD)
                 </p>
               )}

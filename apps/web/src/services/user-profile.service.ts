@@ -178,20 +178,21 @@ class UserProfileService {
    */
   private buildStaffProfile(staff: StaffMemberRow): UserProfile {
     const permissions = this.getStaffPermissions(staff.role);
+    const anyStaff = staff as any;
 
     return {
-      id: staff.user_id || '',
-      email: staff.email,
-      role: this.mapStaffRole(staff.role),
+      id: anyStaff.user_id || '',
+      email: anyStaff.email || '',
+      role: this.mapStaffRole(anyStaff.role),
       clinicId: '', // Staff members don't have direct clinic association in current schema
-      fullName: staff.name,
+      fullName: anyStaff.full_name || anyStaff.name || '',
       permissions,
       staffInfo: {
-        id: staff.id,
-        role: staff.role,
-        specialization: staff.specialization,
-        crmNumber: staff.crm_number,
-        avatarUrl: staff.avatar_url,
+        id: anyStaff.id,
+        role: anyStaff.role,
+        specialization: anyStaff.specialization || '',
+        crmNumber: anyStaff.crm_number || '',
+        avatarUrl: anyStaff.avatar_url || '',
       },
     };
   }

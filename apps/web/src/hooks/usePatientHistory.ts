@@ -65,11 +65,10 @@ export function useCreateMedicalRecord() {
       request: CreateMedicalRecordRequest 
     }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
     
-    onSuccess: (_data, variables) => {
-      void _data;
+    onSuccess: (_data) => {
       // Invalidate medical records for this patient
       queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.medicalRecords(variables.patientId) 
+        queryKey: patientHistoryKeys.all 
       });
       
       // Invalidate patient summary and timeline

@@ -4,6 +4,50 @@
 export type Database = {
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          id: string;
+          clinic_id: string;
+          patient_id: string;
+          professional_id: string;
+          service_type_id: string | null;
+          status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          start_time: string;
+          end_time: string;
+          notes: string | null;
+          priority: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          clinic_id: string;
+          patient_id: string;
+          professional_id: string;
+          service_type_id?: string | null;
+          status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          start_time: string;
+          end_time: string;
+          notes?: string | null;
+          priority?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          clinic_id?: string;
+          patient_id?: string;
+          professional_id?: string;
+          service_type_id?: string | null;
+          status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          start_time?: string;
+          end_time?: string;
+          notes?: string | null;
+          priority?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       clinics: {
         Row: {
           id: string;
@@ -70,6 +114,79 @@ export type Database = {
           lgpd_consent_given?: boolean;
           lgpd_consent_date?: string | null;
           data_retention_until?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      professionals: {
+        Row: {
+          id: string;
+          clinic_id: string;
+          user_id: string | null;
+          full_name: string;
+          license_number: string | null;
+          professional_type: string;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          clinic_id: string;
+          user_id?: string | null;
+          full_name: string;
+          license_number?: string | null;
+          professional_type?: string;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          clinic_id?: string;
+          user_id?: string | null;
+          full_name?: string;
+          license_number?: string | null;
+          professional_type?: string;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      service_types: {
+        Row: {
+          id: string;
+          clinic_id: string;
+          name: string;
+          description: string | null;
+          duration_minutes: number | null;
+          price: number | null;
+          color: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          clinic_id: string;
+          name: string;
+          description?: string | null;
+          duration_minutes?: number | null;
+          price?: number | null;
+          color?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          clinic_id?: string;
+          name?: string;
+          description?: string | null;
+          duration_minutes?: number | null;
+          price?: number | null;
+          color?: string | null;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
