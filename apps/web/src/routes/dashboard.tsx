@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { signOut, supabase } from '@/integrations/supabase/client';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -181,10 +181,12 @@ function DashboardComponent() {
           created_at: a.created_at,
           label: 'Nova consulta agendada',
           detail: `${
-            new Date(a.start_time).toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
+            a.start_time
+              ? new Date(a.start_time).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              : '00:00'
           }`,
         })),
         ...(patientRes.data ?? []).map(p => ({
@@ -280,7 +282,9 @@ function DashboardComponent() {
         <BentoGrid className='mb-8 max-w-none' useKokonutUI={true} density='comfortable'>
           <BentoGridItem
             title='Consultas Hoje'
-            description={loadingAppt ? 'Carregando...' : `${appointmentsTodayCount} consultas agendadas para hoje`}
+            description={loadingAppt
+              ? 'Carregando...'
+              : `${appointmentsTodayCount} consultas agendadas para hoje`}
             icon={<Calendar className='h-5 w-5' />}
             variant='primary'
             size='sm'
@@ -295,7 +299,9 @@ function DashboardComponent() {
 
           <BentoGridItem
             title='Pacientes Ativos'
-            description={loadingClients ? 'Carregando...' : `${activeClientsCount} pacientes cadastrados e ativos`}
+            description={loadingClients
+              ? 'Carregando...'
+              : `${activeClientsCount} pacientes cadastrados e ativos`}
             icon={<Users className='h-5 w-5' />}
             variant='secondary'
             size='sm'
@@ -323,7 +329,9 @@ function DashboardComponent() {
 
           <BentoGridItem
             title='Taxa de Presença'
-            description={showRateLoading ? 'Carregando...' : `${(showRate * 100).toFixed(0)}% dos pacientes compareceram nos últimos 7 dias`}
+            description={showRateLoading
+              ? 'Carregando...'
+              : `${(showRate * 100).toFixed(0)}% dos pacientes compareceram nos últimos 7 dias`}
             icon={<TrendingUp className='h-5 w-5' />}
             variant='default'
             size='sm'

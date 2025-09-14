@@ -273,7 +273,7 @@ class PatientService {
 
       return (data || []).map(appointment => ({
         id: appointment.id,
-        date: appointment.start_time,
+        date: appointment.start_time || new Date().toISOString(),
         serviceName: appointment.service_types?.name || 'Serviço não especificado',
         professionalName: appointment.professionals?.full_name || 'Profissional não especificado',
         status: appointment.status || 'scheduled',

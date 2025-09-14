@@ -33,7 +33,7 @@ import {
   ToggleRight,
   Trash2,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { PricingRuleForm } from './PricingRuleForm';
 import { PricingRuleStats } from './PricingRuleStats';
@@ -223,7 +223,8 @@ export function PricingRulesManager() {
                           Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleToggleRule(rule)}
+                          onClick={() =>
+                            handleToggleRule(rule)}
                         >
                           {rule.is_active
                             ? <ToggleLeft className='h-4 w-4 mr-2' />
@@ -254,16 +255,16 @@ export function PricingRulesManager() {
                     <div className='flex items-center justify-between text-sm'>
                       <span className='text-muted-foreground'>Tipo de Ajuste:</span>
                       <span className='font-medium'>
-                        {rule.adjustment_type === 'percentage' ? 'Percentual' : 'Valor Fixo'}
+                        {rule.adjustment.type === 'percentage' ? 'Percentual' : 'Valor Fixo'}
                       </span>
                     </div>
 
                     <div className='flex items-center justify-between text-sm'>
                       <span className='text-muted-foreground'>Valor:</span>
                       <span className='font-medium'>
-                        {rule.adjustment_type === 'percentage'
-                          ? `${rule.adjustment_value > 0 ? '+' : ''}${rule.adjustment_value}%`
-                          : `R$ ${rule.adjustment_value.toFixed(2)}`}
+                        {rule.adjustment.type === 'percentage'
+                          ? `${rule.adjustment.value > 0 ? '+' : ''}${rule.adjustment.value}%`
+                          : `R$ ${rule.adjustment.value.toFixed(2)}`}
                       </span>
                     </div>
                   </div>

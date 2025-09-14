@@ -1,3 +1,10 @@
+export { default as PromptInput } from './PromptInput';
+export { ReasoningSummary } from './ReasoningSummary';
+export { Conversation } from './Conversation';
+export { ContextInput } from './ContextInput';
+export { OpenInChat } from './OpenInChat';
+export { ImageAttachment } from './ImageAttachment';
+export { ResponseSummary } from './ResponseSummary';
 export { default as Suggestions } from './Suggestions';
 export type { SuggestionsProps, SuggestionItem } from './Suggestions';
 export { default as TaskProgress } from './TaskProgress';

@@ -4,7 +4,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import type { Database } from '@/lib/supabase/types/database';
 import { parseISO } from 'date-fns';
 
 // Type definitions
@@ -49,7 +49,11 @@ class AppointmentService {
   /**
    * Get appointments for calendar view with related data
    */
-  async getAppointments(clinicId: string, startDate?: Date, endDate?: Date): Promise<CalendarAppointment[]> {
+  async getAppointments(
+    clinicId: string,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<CalendarAppointment[]> {
     try {
       let query = supabase
         .from('appointments')
@@ -61,15 +65,15 @@ class AppointmentService {
           notes,
           priority,
           patient_id,
-          patients!fk_appointments_patient (
+          patients!appointments_patient_id_fkey (
             id,
             full_name
           ),
-          professionals!fk_appointments_professional (
+          professionals!appointments_professional_id_fkey (
             id,
             full_name
           ),
-          service_types!fk_appointments_service_type (
+          service_types!appointments_service_type_id_fkey (
             id,
             name,
             color
@@ -96,9 +100,11 @@ class AppointmentService {
       // Transform to calendar format
       return (data || []).map(appointment => ({
         id: appointment.id,
-        title: `${appointment.patients?.full_name || 'Paciente'} - ${appointment.service_types?.name || 'Serviço'}`,
-        start: parseISO(appointment.start_time),
-        end: parseISO(appointment.end_time),
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
+        }`,
+        start: appointment.start_time ? parseISO(appointment.start_time) : new Date(),
+        end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
         color: appointment.service_types?.color || '#3b82f6',
         description: appointment.service_types?.name || '',
         status: appointment.status || 'scheduled',
@@ -117,14 +123,18 @@ class AppointmentService {
   /**
    * Create new appointment with validation and conflict checking
    */
-  async createAppointment(data: CreateAppointmentData, clinicId: string, userId: string): Promise<CalendarAppointment> {
+  async createAppointment(
+    data: CreateAppointmentData,
+    clinicId: string,
+    userId: string,
+  ): Promise<CalendarAppointment> {
     try {
       // Check for conflicts
       const hasConflict = await this.checkAppointmentConflict(
         data.professionalId,
         data.startTime,
         data.endTime,
-        clinicId
+        clinicId,
       );
 
       if (hasConflict) {
@@ -137,12 +147,12 @@ class AppointmentService {
         patient_id: data.patientId,
         professional_id: data.professionalId,
         service_type_id: data.serviceTypeId,
+        appointment_date: data.startTime.toISOString().split('T')[0], // Extract date part
         start_time: data.startTime.toISOString(),
         end_time: data.endTime.toISOString(),
         notes: data.notes || null,
         priority: data.priority || null,
         status: data.status || 'scheduled',
-        created_by: userId,
       };
 
       const { data: appointment, error } = await supabase
@@ -155,15 +165,15 @@ class AppointmentService {
           status,
           notes,
           priority,
-          patients!fk_appointments_patient (
+          patients!appointments_patient_id_fkey (
             id,
             full_name
           ),
-          professionals!fk_appointments_professional (
+          professionals!appointments_professional_id_fkey (
             id,
             full_name
           ),
-          service_types!fk_appointments_service_type (
+          service_types!appointments_service_type_id_fkey (
             id,
             name,
             color
@@ -186,9 +196,11 @@ class AppointmentService {
       // Transform to calendar format
       return {
         id: appointment.id,
-        title: `${appointment.patients?.full_name || 'Paciente'} - ${appointment.service_types?.name || 'Serviço'}`,
-        start: parseISO(appointment.start_time),
-        end: parseISO(appointment.end_time),
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
+        }`,
+        start: appointment.start_time ? parseISO(appointment.start_time) : new Date(),
+        end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
         color: appointment.service_types?.color || '#3b82f6',
         description: appointment.service_types?.name || '',
         status: appointment.status || 'scheduled',
@@ -210,12 +222,11 @@ class AppointmentService {
   async updateAppointment(
     appointmentId: string,
     updates: UpdateAppointmentData,
-    userId: string
+    userId: string,
   ): Promise<CalendarAppointment> {
     try {
       // Prepare update data
       const updateData: AppointmentUpdate = {
-        updated_by: userId,
         updated_at: new Date().toISOString(),
       };
 
@@ -231,9 +242,7 @@ class AppointmentService {
       if (updates.status) {
         updateData.status = updates.status;
         if (updates.status === 'cancelled' && updates.cancellationReason) {
-          updateData.cancellation_reason = updates.cancellationReason;
-          updateData.cancelled_at = new Date().toISOString();
-          updateData.cancelled_by = userId;
+          updateData.notes = updates.cancellationReason;
         }
       }
 
@@ -248,15 +257,15 @@ class AppointmentService {
           status,
           notes,
           priority,
-          patients!fk_appointments_patient (
+          patients!appointments_patient_id_fkey (
             id,
             full_name
           ),
-          professionals!fk_appointments_professional (
+          professionals!appointments_professional_id_fkey (
             id,
             full_name
           ),
-          service_types!fk_appointments_service_type (
+          service_types!appointments_service_type_id_fkey (
             id,
             name,
             color
@@ -275,9 +284,11 @@ class AppointmentService {
       // Transform to calendar format
       return {
         id: appointment.id,
-        title: `${appointment.patients?.full_name || 'Paciente'} - ${appointment.service_types?.name || 'Serviço'}`,
-        start: parseISO(appointment.start_time),
-        end: parseISO(appointment.end_time),
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
+        }`,
+        start: appointment.start_time ? parseISO(appointment.start_time) : new Date(),
+        end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
         color: appointment.service_types?.color || '#3b82f6',
         description: appointment.service_types?.name || '',
         status: appointment.status || 'scheduled',
@@ -302,10 +313,7 @@ class AppointmentService {
         .from('appointments')
         .update({
           status: 'cancelled',
-          cancellation_reason: reason || 'Cancelled by user',
-          cancelled_at: new Date().toISOString(),
-          cancelled_by: userId,
-          updated_by: userId,
+          notes: reason || 'Cancelled by user',
           updated_at: new Date().toISOString(),
         })
         .eq('id', appointmentId);
@@ -331,7 +339,7 @@ class AppointmentService {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<boolean> {
     try {
       let query = supabase
@@ -367,7 +375,7 @@ class AppointmentService {
     action: string,
     appointmentId: string,
     userId: string,
-    metadata?: any
+    metadata?: any,
   ): Promise<void> {
     try {
       await supabase.from('audit_logs').insert({

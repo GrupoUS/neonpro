@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 // Simple test component
@@ -7,7 +6,14 @@ function TestApp() {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>🧪 TESTE DE FUNCIONAMENTO</h1>
       <p>Se você está vendo esta mensagem, o React está funcionando!</p>
-      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '10px',
+          backgroundColor: '#f0f0f0',
+          borderRadius: '5px',
+        }}
+      >
         <h2>Status do Sistema:</h2>
         <ul>
           <li>✅ React carregado</li>
@@ -15,16 +21,16 @@ function TestApp() {
           <li>✅ DOM renderizado</li>
         </ul>
       </div>
-      <button 
+      <button
         onClick={() => alert('Botão funcionando!')}
-        style={{ 
-          marginTop: '20px', 
-          padding: '10px 20px', 
-          backgroundColor: '#007bff', 
-          color: 'white', 
-          border: 'none', 
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
           borderRadius: '5px',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         Testar Interação

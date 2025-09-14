@@ -80,7 +80,7 @@ class TimeSlotValidationService {
     serviceTypeId: string,
     startTime: Date,
     endTime: Date,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<TimeSlotValidationResult> {
     const conflicts: ConflictInfo[] = [];
     const warnings: WarningInfo[] = [];
@@ -98,7 +98,7 @@ class TimeSlotValidationService {
         professionalId,
         startTime,
         endTime,
-        excludeAppointmentId
+        excludeAppointmentId,
       );
       conflicts.push(...professionalConflicts);
 
@@ -106,7 +106,7 @@ class TimeSlotValidationService {
       const serviceConflict = await this.checkServiceAvailability(
         serviceTypeId,
         startTime,
-        endTime
+        endTime,
       );
       if (serviceConflict) conflicts.push(serviceConflict);
 
@@ -116,7 +116,7 @@ class TimeSlotValidationService {
         startTime,
         endTime,
         businessRules,
-        excludeAppointmentId
+        excludeAppointmentId,
       );
       if (capacityConflict) conflicts.push(capacityConflict);
 
@@ -124,7 +124,7 @@ class TimeSlotValidationService {
       const businessWarnings = this.checkBusinessRuleWarnings(
         startTime,
         endTime,
-        businessRules
+        businessRules,
       );
       warnings.push(...businessWarnings);
 
@@ -136,7 +136,7 @@ class TimeSlotValidationService {
           professionalId,
           serviceTypeId,
           startTime,
-          endTime.getTime() - startTime.getTime()
+          endTime.getTime() - startTime.getTime(),
         );
       }
 
@@ -167,7 +167,7 @@ class TimeSlotValidationService {
   private checkClinicHours(
     startTime: Date,
     endTime: Date,
-    businessRules: BusinessRules
+    businessRules: BusinessRules,
   ): ConflictInfo | null {
     const dayOfWeek = startTime
       .toLocaleDateString('en-US', { weekday: 'long' })
@@ -177,7 +177,13 @@ class TimeSlotValidationService {
     if (dayRules.closed) {
       return {
         type: 'clinic_closed',
-        message: `A clínica está fechada ${dayOfWeek === 'sunday' ? 'aos domingos' : dayOfWeek === 'saturday' ? 'aos sábados' : `às ${dayOfWeek}s`}.`,
+        message: `A clínica está fechada ${
+          dayOfWeek === 'sunday'
+            ? 'aos domingos'
+            : dayOfWeek === 'saturday'
+            ? 'aos sábados'
+            : `às ${dayOfWeek}s`
+        }.`,
       };
     }
 
@@ -207,7 +213,7 @@ class TimeSlotValidationService {
     professionalId: string,
     startTime: Date,
     endTime: Date,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<ConflictInfo[]> {
     const conflicts: ConflictInfo[] = [];
 
@@ -224,7 +230,9 @@ class TimeSlotValidationService {
         `)
         .eq('professional_id', professionalId)
         .neq('status', 'cancelled')
-        .or(`and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`);
+        .or(
+          `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
+        );
 
       if (excludeAppointmentId) {
         query = query.neq('id', excludeAppointmentId);
@@ -237,12 +245,16 @@ class TimeSlotValidationService {
       conflictingAppointments?.forEach(appointment => {
         conflicts.push({
           type: 'professional_busy',
-          message: `Profissional já possui agendamento das ${format(parseISO(appointment.start_time), 'HH:mm')} às ${format(parseISO(appointment.end_time), 'HH:mm')}.`,
+          message: `Profissional já possui agendamento das ${
+            appointment.start_time ? format(parseISO(appointment.start_time), 'HH:mm') : '00:00'
+          } às ${
+            appointment.end_time ? format(parseISO(appointment.end_time), 'HH:mm') : '00:00'
+          }.`,
           conflictingAppointment: {
             id: appointment.id,
             patientName: appointment.patients?.full_name || 'Paciente',
-            startTime: parseISO(appointment.start_time),
-            endTime: parseISO(appointment.end_time),
+            startTime: appointment.start_time ? parseISO(appointment.start_time) : new Date(),
+            endTime: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
           },
         });
       });
@@ -265,7 +277,7 @@ class TimeSlotValidationService {
   private async checkServiceAvailability(
     _serviceTypeId: string,
     _startTime: Date,
-    _endTime: Date
+    _endTime: Date,
   ): Promise<ConflictInfo | null> {
     // Placeholder for service-specific availability rules
     // Could include equipment availability, room booking, etc.
@@ -280,7 +292,7 @@ class TimeSlotValidationService {
     startTime: Date,
     endTime: Date,
     businessRules: BusinessRules,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<ConflictInfo | null> {
     try {
       // Count concurrent appointments
@@ -289,7 +301,9 @@ class TimeSlotValidationService {
         .select('id', { count: 'exact' })
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
-        .or(`and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`);
+        .or(
+          `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
+        );
 
       if (excludeAppointmentId) {
         query = query.neq('id', excludeAppointmentId);
@@ -302,7 +316,8 @@ class TimeSlotValidationService {
       if (count && count >= businessRules.maxConcurrentAppointments) {
         return {
           type: 'capacity_exceeded',
-          message: `Capacidade máxima atingida para este horário (${businessRules.maxConcurrentAppointments} agendamentos simultâneos).`,
+          message:
+            `Capacidade máxima atingida para este horário (${businessRules.maxConcurrentAppointments} agendamentos simultâneos).`,
         };
       }
 
@@ -319,7 +334,7 @@ class TimeSlotValidationService {
   private checkBusinessRuleWarnings(
     startTime: Date,
     _endTime: Date,
-    businessRules: BusinessRules
+    businessRules: BusinessRules,
   ): WarningInfo[] {
     const warnings: WarningInfo[] = [];
     const now = new Date();
@@ -352,7 +367,7 @@ class TimeSlotValidationService {
     professionalId: string,
     serviceTypeId: string,
     originalStartTime: Date,
-    durationMs: number
+    durationMs: number,
   ): Promise<TimeSlot[]> {
     const alternatives: TimeSlot[] = [];
     const duration = Math.round(durationMs / (1000 * 60)); // Convert to minutes
@@ -369,7 +384,7 @@ class TimeSlotValidationService {
         professionalId,
         serviceTypeId,
         searchDate,
-        duration
+        duration,
       );
 
       alternatives.push(...dayAlternatives);
@@ -389,7 +404,7 @@ class TimeSlotValidationService {
     professionalId: string,
     serviceTypeId: string,
     date: Date,
-    durationMinutes: number
+    durationMinutes: number,
   ): Promise<TimeSlot[]> {
     const slots: TimeSlot[] = [];
     const businessRules = await this.getBusinessRules(clinicId);
@@ -422,7 +437,7 @@ class TimeSlotValidationService {
         professionalId,
         serviceTypeId,
         currentTime,
-        slotEnd
+        slotEnd,
       );
 
       if (validation.isValid) {

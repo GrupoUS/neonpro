@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { useServiceAnalytics } from '@/hooks/useServiceAnalytics';
+import { useAnalyticsDashboard } from '@/hooks/useServiceAnalytics';
 import { Button } from '@neonpro/ui';
 import {
   Activity,
@@ -21,7 +21,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export function ServiceAnalyticsDashboard() {
   const { user } = useAuth();
@@ -58,9 +58,9 @@ export function ServiceAnalyticsDashboard() {
     };
   };
 
-  const { data: dashboard, isLoading } = useServiceAnalytics(clinicId, {
+  const { data: dashboard, isLoading } = useAnalyticsDashboard(clinicId, {
     ...getDateFilters(),
-    comparison_period: 'previous',
+    comparison_period: 'previous_month',
   });
 
   if (isLoading) {
@@ -253,11 +253,11 @@ export function ServiceAnalyticsDashboard() {
           <CardContent>
             <div className='space-y-4'>
               {dashboard?.category_breakdown?.map(category => (
-                <div key={category.category_id} className='flex items-center justify-between'>
+                <div key={category.category_name} className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
                     <div
                       className='w-3 h-3 rounded-full'
-                      style={{ backgroundColor: category.color || '#3b82f6' }}
+                      style={{ backgroundColor: '#3b82f6' }}
                     />
                     <span className='font-medium'>{category.category_name}</span>
                   </div>
@@ -334,10 +334,12 @@ export function ServiceAnalyticsDashboard() {
                 <div key={index} className='flex items-start space-x-3 p-3 rounded-lg bg-muted/50'>
                   <div
                     className={`w-2 h-2 rounded-full mt-2 ${
-                      insight.type === 'positive'
+                      insight.type === 'growth'
                         ? 'bg-green-500'
-                        : insight.type === 'negative'
+                        : insight.type === 'decline'
                         ? 'bg-red-500'
+                        : insight.type === 'warning'
+                        ? 'bg-yellow-500'
                         : 'bg-blue-500'
                     }`}
                   />

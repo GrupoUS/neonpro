@@ -282,14 +282,18 @@ export function useCheckAvailability() {
             const service = appointment.service_types as any;
             conflicts.push({
               type: 'appointment' as const,
-              start_time: new Date(appointment.start_time).toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit',
-              }),
-              end_time: new Date(appointment.end_time).toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit',
-              }),
+              start_time: appointment.start_time
+                ? new Date(appointment.start_time).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+                : '00:00',
+              end_time: appointment.end_time
+                ? new Date(appointment.end_time).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+                : '00:00',
               description: `Agendamento existente: ${patient?.full_name || 'Paciente'} - ${
                 service?.name || 'Serviço'
               }`,
@@ -396,6 +400,7 @@ export function useServiceTimeSlots(serviceId: string, date: string, professiona
 
             // Check if this slot conflicts with existing appointments
             const hasConflict = appointments?.some(appointment => {
+              if (!appointment.start_time || !appointment.end_time) return false;
               const appointmentStart = new Date(appointment.start_time);
               const appointmentEnd = new Date(appointment.end_time);
 

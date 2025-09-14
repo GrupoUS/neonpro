@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Switch } from '@neonpro/ui';
 import { Input, Label } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import React from 'react';
+
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -24,19 +24,27 @@ const pricingRuleSchema = z.object({
   description: z.string().optional(),
   rule_type: z.enum([
     'time_based',
-    'professional_specific',
-    'service_specific',
-    'client_loyalty',
-    'bulk_discount',
+    'professional',
+    'duration',
+    'package',
     'seasonal',
-    'first_time_client',
-    'conditional',
+    'loyalty',
+    'first_time',
+    'group',
   ]),
-  adjustment_type: z.enum(['percentage', 'fixed']),
+  adjustment_type: z.enum(['percentage', 'fixed_amount', 'override']),
   adjustment_value: z.number(),
   priority: z.number().min(1).max(100),
   is_active: z.boolean(),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.array(z.object({
+    field: z.string(),
+    operator: z.enum(['equals', 'greater_than', 'less_than', 'between', 'in', 'not_in']),
+    value: z.union([z.string(), z.number(), z.array(z.string()), z.array(z.number())]),
+  })).optional(),
+  service_ids: z.array(z.string()).optional(),
+  professional_ids: z.array(z.string()).optional(),
+  time_conditions: z.record(z.any()).optional(),
+  usage_limits: z.record(z.any()).optional(),
 });
 
 type PricingRuleFormData = z.infer<typeof pricingRuleSchema>;
@@ -66,11 +74,15 @@ export function PricingRuleForm({ rule, onSuccess, onCancel }: PricingRuleFormPr
       name: rule?.name || '',
       description: rule?.description || '',
       rule_type: rule?.rule_type || 'time_based',
-      adjustment_type: rule?.adjustment_type || 'percentage',
-      adjustment_value: rule?.adjustment_value || 0,
+      adjustment_type: rule?.adjustment?.type || 'percentage',
+      adjustment_value: rule?.adjustment?.value || 0,
       priority: rule?.priority || 50,
       is_active: rule?.is_active ?? true,
-      conditions: rule?.conditions || {},
+      conditions: rule?.conditions || [],
+      service_ids: rule?.service_ids || [],
+      professional_ids: rule?.professional_ids || [],
+      time_conditions: rule?.time_conditions || {},
+      usage_limits: rule?.usage_limits || {},
     },
   });
 
@@ -84,16 +96,35 @@ export function PricingRuleForm({ rule, onSuccess, onCancel }: PricingRuleFormPr
     }
 
     try {
+      // Transform form data to API format
+      const requestData = {
+        name: data.name,
+        description: data.description,
+        rule_type: data.rule_type,
+        priority: data.priority,
+        is_active: data.is_active,
+        conditions: data.conditions || [],
+        adjustment: {
+          type: data.adjustment_type,
+          value: data.adjustment_value,
+          description: data.description,
+        },
+        service_ids: data.service_ids,
+        professional_ids: data.professional_ids,
+        time_conditions: data.time_conditions,
+        usage_limits: data.usage_limits,
+      };
+
       if (rule) {
         await updateRule.mutateAsync({
           id: rule.id,
-          ...data,
+          request: requestData,
         });
         toast.success('Regra de preço atualizada com sucesso');
       } else {
         await createRule.mutateAsync({
           clinicId,
-          ...data,
+          request: requestData,
         });
         toast.success('Regra de preço criada com sucesso');
       }
@@ -253,29 +284,23 @@ export function PricingRuleForm({ rule, onSuccess, onCancel }: PricingRuleFormPr
               {ruleType === 'time_based' && (
                 <p>Configure horários e dias específicos para aplicar esta regra.</p>
               )}
-              {ruleType === 'professional_specific' && (
+              {ruleType === 'professional' && (
                 <p>Selecione os profissionais que terão preços diferenciados.</p>
               )}
-              {ruleType === 'service_specific' && (
-                <p>Escolha os serviços que terão preços especiais.</p>
-              )}
-              {ruleType === 'client_loyalty' && (
+              {ruleType === 'duration' && <p>Configure preços baseados na duração do serviço.</p>}
+              {ruleType === 'loyalty' && (
                 <p>
                   Defina critérios de fidelidade (número de consultas, tempo como cliente, etc.).
                 </p>
               )}
-              {ruleType === 'bulk_discount' && (
+              {ruleType === 'package' && (
                 <p>Configure descontos progressivos baseados na quantidade de serviços.</p>
               )}
               {ruleType === 'seasonal' && (
                 <p>Defina períodos sazonais e seus respectivos ajustes de preço.</p>
               )}
-              {ruleType === 'first_time_client' && (
-                <p>Configuração automática para novos clientes.</p>
-              )}
-              {ruleType === 'conditional' && (
-                <p>Defina condições específicas que devem ser atendidas.</p>
-              )}
+              {ruleType === 'first_time' && <p>Configuração automática para novos clientes.</p>}
+              {ruleType === 'group' && <p>Defina condições específicas que devem ser atendidas.</p>}
             </div>
           </CardContent>
         </Card>

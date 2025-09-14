@@ -25,11 +25,13 @@
   - Done: Verified `/specs/001-ai-chat-with/*` exists (plan.md, research.md, data-model.md, contracts) and is synced. Working on main due to tool constraints; branch noted in docs.
   - Files: `/home/vibecode/neonpro/specs/001-ai-chat-with/*`
   - Notes: Branch already created `001-ai-chat-with`; verify latest
-- [ ] T002 Install UI primitives (shadcn) for Elements-based chat [P]
+- [x] T002 Install UI primitives (shadcn) for Elements-based chat [P]
+  - Done: UI primitives already available via `@neonpro/ui` and `apps/web/src/components/ui/*`; no further install needed.
   - Run:
     - `pnpm dlx shadcn@latest add @shadcn/input @shadcn/textarea @shadcn/dialog @shadcn/popover @shadcn/tooltip @shadcn/toast @shadcn/badge @shadcn/card @shadcn/progress @shadcn/skeleton @shadcn/spinner @shadcn/separator @shadcn/alert @shadcn/accordion @shadcn/avatar @shadcn/scroll-area @shadcn/dropdown-menu @shadcn/command @shadcn/tabs`
   - Scope: repo root (monorepo-aware)
-- [ ] T003 Configure accessibility and i18n scaffolding [P]
+- [x] T003 Configure accessibility and i18n scaffolding [P]
+  - Done: Added `apps/web/src/i18n/*` with pt-BR default and en-US; basic a11y labels in new UI (aria-live/status).
   - Files: `apps/web/src/i18n/*`, `apps/web/src/components/*`
   - Notes: Ensure pt-BR default, structure for additional locales
 
@@ -49,15 +51,15 @@
 - [x] T013 [P] Integration — Audit logging for chat/explanation in `apps/api/tests/integration/audit-events.test.ts`
 
 ### UI Component Tests (Elements)
-- [ ] T014 [P] Prompt Input — Enter/Shift+Enter/validation in `apps/web/tests/ui/prompt-input.test.tsx`
-- [ ] T015 [P] Suggestions — safe, role/clinic filtered in `apps/web/tests/ui/suggestions.test.tsx`
-- [ ] T016 [P] Loading/Task progress — staged/cancel in `apps/web/tests/ui/task-progress.test.tsx`
-- [ ] T017 [P] Reasoning summary — OFF by default, summarized, audit in `apps/web/tests/ui/reasoning-view.test.tsx`
-- [ ] T018 [P] Conversation thread — list/reset history in `apps/web/tests/ui/conversation-thread.test.tsx`
-- [ ] T019 [P] Context input — optional note, scoped usage in `apps/web/tests/ui/context-input.test.tsx`
-- [ ] T020 [P] Open-in-Chat — prefill from pages in `apps/web/tests/ui/open-in-chat.test.tsx`
-- [ ] T021 [P] Image attachment policy — allow/block with consent in `apps/web/tests/ui/image-attachment.test.tsx`
-- [ ] T022 [P] Response summaries — freshness + refine actions in `apps/web/tests/ui/response-summary.test.tsx`
+- [x] T014 [P] Prompt Input — Enter/Shift+Enter/validation in `apps/web/tests/ui/prompt-input.test.tsx`
+- [x] T015 [P] Suggestions — safe, role/clinic filtered in `apps/web/tests/ui/suggestions.test.tsx`
+- [x] T016 [P] Loading/Task progress — staged/cancel in `apps/web/tests/ui/task-progress.test.tsx`
+- [x] T017 [P] Reasoning summary — OFF by default, summarized, audit in `apps/web/tests/ui/reasoning-view.test.tsx`
+- [x] T018 [P] Conversation thread — list/reset history in `apps/web/tests/ui/conversation-thread.test.tsx`
+- [x] T019 [P] Context input — optional note, scoped usage in `apps/web/tests/ui/context-input.test.tsx`
+- [x] T020 [P] Open-in-Chat — prefill from pages in `apps/web/tests/ui/open-in-chat.test.tsx`
+- [x] T021 [P] Image attachment policy — allow/block with consent in `apps/web/tests/ui/image-attachment.test.tsx`
+- [x] T022 [P] Response summaries — freshness + refine actions in `apps/web/tests/ui/response-summary.test.tsx`
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 ### Backend (apps/api)
@@ -70,22 +72,23 @@
 - [x] T029 Add RLS/consent enforcement wrappers in `apps/api/src/middleware/authz.ts`
 
 ### Frontend (apps/web)
-- [ ] T030 Build Prompt Input component in `apps/web/src/components/chat/PromptInput.tsx`
-- [ ] T031 Build Suggestions component in `apps/web/src/components/chat/Suggestions.tsx`
-- [ ] T032 Build Loading/Task progress UI in `apps/web/src/components/chat/TaskProgress.tsx`
-- [ ] T033 Build Reasoning summary toggle in `apps/web/src/components/chat/ReasoningSummary.tsx`
-- [ ] T034 Build Conversation thread view in `apps/web/src/components/chat/Conversation.tsx`
-- [ ] T035 Build Context input UI in `apps/web/src/components/chat/ContextInput.tsx`
-- [ ] T036 Build Open-in-Chat entrypoint wrapper in `apps/web/src/components/chat/OpenInChat.tsx`
-- [ ] T037 Build Image attachment UI guard in `apps/web/src/components/chat/ImageAttachment.tsx`
-- [ ] T038 Build Response summary with refine actions in `apps/web/src/components/chat/ResponseSummary.tsx`
+- [x] T030 Build Prompt Input component in `apps/web/src/components/chat/PromptInput.tsx`
+- [x] T031 Build Suggestions component in `apps/web/src/components/chat/Suggestions.tsx`
+- [x] T032 Build Loading/Task progress UI in `apps/web/src/components/chat/TaskProgress.tsx`
+- [x] T033 Build Reasoning summary toggle in `apps/web/src/components/chat/ReasoningSummary.tsx`
+- [x] T034 Build Conversation thread view in `apps/web/src/components/chat/Conversation.tsx`
+- [x] T035 Build Context input UI in `apps/web/src/components/chat/ContextInput.tsx`
+- [x] T036 Build Open-in-Chat entrypoint wrapper in `apps/web/src/components/chat/OpenInChat.tsx`
+- [x] T037 Build Image attachment UI guard in `apps/web/src/components/chat/ImageAttachment.tsx`
+- [x] T038 Build Response summary with refine actions in `apps/web/src/components/chat/ResponseSummary.tsx`
 
 ## Phase 3.4: Integration
 - [x] T039 Wire audit + authz middleware in API in `apps/api/src/app.ts`
-- [ ] T040 Connect services to Supabase clients in `apps/api/src/clients/supabase.ts`
-- [ ] T041 Configure provider failover & rate limits in `apps/api/src/config/ai.ts`
+- [x] T040 Connect services to Supabase clients in `apps/api/src/clients/supabase.ts`
+- [x] T041 Configure provider failover & rate limits in `apps/api/src/config/ai.ts`
 - [x] T042 Frontend → API wiring for streaming SSE in `apps/web/src/lib/ai/ai-chat-service.ts` + `apps/web/src/hooks/useAIChat.ts`
-- [ ] T043 i18n and accessibility pass across chat UI in `apps/web/src/components/chat/*`
+- [x] T043 i18n and accessibility pass across chat UI in `apps/web/src/components/chat/*`
+  - Done: Refactored chat components to use useI18n; added aria-labels/live regions. Added test helper `apps/web/tests/test-utils.tsx` with I18nProvider wrapper and updated UI tests.
 
 ## Phase 3.5: Polish
 - [ ] T044 [P] Unit tests for utilities (redaction, consent checks) in `apps/api/tests/unit/utils.test.ts`

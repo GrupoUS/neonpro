@@ -4,9 +4,8 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import type { Database } from '@/lib/supabase/types/database';
 import { addMinutes, isAfter, isBefore, parseISO } from 'date-fns';
-
 
 // Type definitions
 type ProfessionalRow = Database['public']['Tables']['professionals']['Row'];
@@ -77,7 +76,7 @@ class ProfessionalService {
    */
   async getProfessionalsByServiceType(
     clinicId: string,
-    serviceTypeId: string
+    serviceTypeId: string,
   ): Promise<Professional[]> {
     try {
       const { data, error } = await supabase
@@ -103,7 +102,7 @@ class ProfessionalService {
   async getProfessionalAvailability(
     professionalId: string,
     date: Date,
-    serviceDuration: number = 60 // default 60 minutes
+    serviceDuration: number = 60, // default 60 minutes
   ): Promise<ProfessionalAvailability> {
     try {
       // Get professional info
@@ -140,16 +139,20 @@ class ProfessionalService {
       };
 
       const bookedSlots = appointments.map(apt => ({
-        start: parseISO(apt.start_time),
-        end: parseISO(apt.end_time),
-        duration: Math.round((parseISO(apt.end_time).getTime() - parseISO(apt.start_time).getTime()) / (1000 * 60)),
+        start: apt.start_time ? parseISO(apt.start_time) : new Date(),
+        end: apt.end_time ? parseISO(apt.end_time) : new Date(),
+        duration: apt.start_time && apt.end_time
+          ? Math.round(
+            (parseISO(apt.end_time).getTime() - parseISO(apt.start_time).getTime()) / (1000 * 60),
+          )
+          : 0,
       }));
 
       const availableSlots = this.calculateAvailableSlots(
         date,
         workingHours,
         bookedSlots,
-        serviceDuration
+        serviceDuration,
       );
 
       return {
@@ -171,7 +174,7 @@ class ProfessionalService {
   async isProfessionalAvailable(
     professionalId: string,
     startTime: Date,
-    endTime: Date
+    endTime: Date,
   ): Promise<boolean> {
     try {
       // Check for conflicting appointments
@@ -180,7 +183,9 @@ class ProfessionalService {
         .select('id')
         .eq('professional_id', professionalId)
         .neq('status', 'cancelled')
-        .or(`and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`);
+        .or(
+          `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
+        );
 
       if (error) throw error;
 
@@ -223,52 +228,54 @@ class ProfessionalService {
     date: Date,
     workingHours: { start: string; end: string; breakStart?: string; breakEnd?: string },
     bookedSlots: TimeSlot[],
-    serviceDuration: number
+    serviceDuration: number,
   ): TimeSlot[] {
     const availableSlots: TimeSlot[] = [];
-    
+
     // Parse working hours
     const [startHour, startMinute] = workingHours.start.split(':').map(Number);
     const [endHour, endMinute] = workingHours.end.split(':').map(Number);
-    
+
     const workStart = new Date(date);
     workStart.setHours(startHour, startMinute, 0, 0);
-    
+
     const workEnd = new Date(date);
     workEnd.setHours(endHour, endMinute, 0, 0);
 
     // Handle break time if specified
     let breakStart: Date | undefined;
     let breakEnd: Date | undefined;
-    
+
     if (workingHours.breakStart && workingHours.breakEnd) {
       const [breakStartHour, breakStartMinute] = workingHours.breakStart.split(':').map(Number);
       const [breakEndHour, breakEndMinute] = workingHours.breakEnd.split(':').map(Number);
-      
+
       breakStart = new Date(date);
       breakStart.setHours(breakStartHour, breakStartMinute, 0, 0);
-      
+
       breakEnd = new Date(date);
       breakEnd.setHours(breakEndHour, breakEndMinute, 0, 0);
     }
 
     // Generate time slots
     let currentTime = new Date(workStart);
-    
-    while (isBefore(addMinutes(currentTime, serviceDuration), workEnd) || 
-           addMinutes(currentTime, serviceDuration).getTime() === workEnd.getTime()) {
+
+    while (
+      isBefore(addMinutes(currentTime, serviceDuration), workEnd)
+      || addMinutes(currentTime, serviceDuration).getTime() === workEnd.getTime()
+    ) {
       const slotEnd = addMinutes(currentTime, serviceDuration);
-      
+
       // Check if slot conflicts with break time
       const conflictsWithBreak = breakStart && breakEnd && (
-        (isBefore(currentTime, breakEnd) && isAfter(slotEnd, breakStart))
+        isBefore(currentTime, breakEnd) && isAfter(slotEnd, breakStart)
       );
-      
+
       // Check if slot conflicts with booked appointments
-      const conflictsWithBooking = bookedSlots.some(booked => 
-        (isBefore(currentTime, booked.end) && isAfter(slotEnd, booked.start))
+      const conflictsWithBooking = bookedSlots.some(
+        booked => (isBefore(currentTime, booked.end) && isAfter(slotEnd, booked.start)),
       );
-      
+
       if (!conflictsWithBreak && !conflictsWithBooking) {
         availableSlots.push({
           start: new Date(currentTime),
@@ -276,7 +283,7 @@ class ProfessionalService {
           duration: serviceDuration,
         });
       }
-      
+
       // Move to next slot (15-minute intervals)
       currentTime = addMinutes(currentTime, 15);
     }

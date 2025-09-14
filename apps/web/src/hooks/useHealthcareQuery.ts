@@ -34,11 +34,12 @@ async function logHealthcareAction(
   try {
     if (!userId) return; // ensure required field
     await supabase.from('audit_logs').insert({
+      table_name: resourceType,
       action,
       resource_type: resourceType,
       resource_id: resourceId,
       user_id: userId,
-      details,
+      details: details ? JSON.stringify(details) : null,
     });
   } catch (error) {
     console.error('Failed to log healthcare action:', error);
