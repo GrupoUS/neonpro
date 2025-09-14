@@ -43,10 +43,13 @@ import {
 export interface EventCalendarProps {
   events?: CalendarEvent[];
   onEventAdd?: (event: CalendarEvent) => void;
+  // When dragging or editing, pass the updated event
   onEventUpdate?: (event: CalendarEvent) => void;
   onEventDelete?: (eventId: string) => void;
   className?: string;
   initialView?: CalendarView;
+  // Trigger parent-controlled client consultation flow
+  onNewConsultation?: () => void;
 }
 
 export function EventCalendar({
@@ -56,6 +59,7 @@ export function EventCalendar({
   onEventDelete,
   className,
   initialView = 'month',
+  onNewConsultation,
 }: EventCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>(initialView);
@@ -252,11 +256,37 @@ export function EventCalendar({
     }
   }, [currentDate, view]);
 
-  // Keyboard navigation support
+  // Keyboard navigation + event nudge support
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Only handle keyboard events when calendar is focused
       if (!document.activeElement?.closest('[role="application"]')) return;
+
+      // Move focused event by 15 minutes with Alt+Arrow
+      // Assumes the focused element carries data-event-id attr (set by views)
+      const targetEl = document.activeElement as HTMLElement | null;
+      if (event.altKey && targetEl?.dataset?.eventId) {
+        const eventId = targetEl.dataset.eventId;
+        const ev = events.find(e => e.id === eventId);
+        if (ev) {
+          let deltaMinutes = 0;
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') deltaMinutes = -15;
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') deltaMinutes = 15;
+          if (deltaMinutes !== 0) {
+            event.preventDefault();
+            const newStart = new Date(ev.start);
+            newStart.setMinutes(newStart.getMinutes() + deltaMinutes);
+            const newEnd = new Date(ev.end ?? newStart);
+            newEnd.setMinutes(newEnd.getMinutes() + deltaMinutes);
+            onEventUpdate?.({ ...ev, start: newStart, end: newEnd });
+            toast(`Event "${ev.title}" moved ${deltaMinutes > 0 ? 'forward' : 'back'} 15 minutes`, {
+              description: format(new Date(newStart), 'MMM d, yyyy'),
+              position: 'bottom-left',
+            });
+            return;
+          }
+        }
+      }
 
       switch (event.key) {
         case 'ArrowLeft':
@@ -311,7 +341,7 @@ export function EventCalendar({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handlePrevious, handleNext, handleToday, setView]);
+  }, [handlePrevious, handleNext, handleToday, setView, events, onEventUpdate]);
 
   return (
     <div
@@ -425,6 +455,15 @@ export function EventCalendar({
                 aria-hidden='true'
               />
               <span className='max-sm:sr-only'>New event</span>
+            </Button>
+            <Button
+              variant='secondary'
+              className='max-[479px]:hidden'
+              size='sm'
+              onClick={() => onNewConsultation?.()}
+            >
+              <PlusIcon className='opacity-60 sm:-ms-1' size={16} aria-hidden='true' />
+              <span>New consultation</span>
             </Button>
           </div>
         </div>

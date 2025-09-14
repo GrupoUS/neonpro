@@ -1,10 +1,11 @@
-export const EventHeight = 24
+export const EventHeight = 20
 
 // Vertical gap between events in pixels - controls spacing in month view
 export const EventGap = 4
 
 // Height of hour cells in week and day views - controls the scale of time display
-export const WeekCellsHeight = 64
+// Reduced for a more compact calendar while maintaining 44px+ touch targets
+export const WeekCellsHeight = 48
 
 // Number of days to show in the agenda view
 export const AgendaDaysToShow = 30

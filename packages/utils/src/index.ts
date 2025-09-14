@@ -9,6 +9,7 @@ export * from './cli';
 
 // UI utilities
 export * from './lib/utils';
+export * from './lib/currency/brl';
 
 // Placeholder exports - will be populated with actual utilities
 export const auth = {};

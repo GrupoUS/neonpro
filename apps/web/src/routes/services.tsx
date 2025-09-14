@@ -7,7 +7,6 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import {
   ColumnDef,
   ColumnFiltersState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -32,20 +31,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@neonpro/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@neonpro/ui';
+import { EnhancedTable } from '@neonpro/ui';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  SmoothDrawer,
+  SmoothDrawerContent,
+  SmoothDrawerDescription,
+  SmoothDrawerHeader,
+  SmoothDrawerTitle,
 } from '@neonpro/ui';
 
 import { ServiceForm } from '@/components/services/ServiceForm';
 import { useAuth } from '@/hooks/useAuth';
 import { useDeleteService, useServices } from '@/hooks/useServices';
 import type { Service } from '@/types/service';
+import { formatBRL } from '@neonpro/utils';
 import { toast } from 'sonner';
 
 // Service table columns definition
@@ -117,11 +116,7 @@ const createColumns = (
     ),
     cell: ({ row }) => {
       const price = parseFloat(row.getValue('price'));
-      const formatted = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(price);
-
+      const formatted = formatBRL(price);
       return <div className='text-right font-medium'>{formatted}</div>;
     },
   },
@@ -294,26 +289,24 @@ function ServicesPage() {
               Gerencie os serviços oferecidos pela sua clínica
             </p>
           </div>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button className='gap-2'>
-                <Plus className='h-4 w-4' />
-                Novo Serviço
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='max-w-2xl'>
-              <DialogHeader>
-                <DialogTitle>Criar Novo Serviço</DialogTitle>
-                <DialogDescription>
+          <SmoothDrawer open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <Button className='gap-2' onClick={() => setShowCreateDialog(true)}>
+              <Plus className='h-4 w-4' />
+              Novo Serviço
+            </Button>
+            <SmoothDrawerContent>
+              <SmoothDrawerHeader>
+                <SmoothDrawerTitle>Criar Novo Serviço</SmoothDrawerTitle>
+                <SmoothDrawerDescription>
                   Preencha as informações do novo serviço
-                </DialogDescription>
-              </DialogHeader>
+                </SmoothDrawerDescription>
+              </SmoothDrawerHeader>
               <ServiceForm
                 onSuccess={() => setShowCreateDialog(false)}
                 clinicId={userProfile?.clinicId || ''}
               />
-            </DialogContent>
-          </Dialog>
+            </SmoothDrawerContent>
+          </SmoothDrawer>
         </div>
 
         {/* Services Table */}
@@ -326,145 +319,92 @@ function ServicesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Table Controls */}
-            <div className='flex items-center justify-between py-4'>
-              <div className='flex items-center gap-2'>
-                <div className='relative'>
-                  <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                  <Input
-                    placeholder='Buscar serviços...'
-                    value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                    onChange={event => table.getColumn('name')?.setFilterValue(event.target.value)}
-                    className='max-w-sm pl-9'
-                  />
+            <EnhancedTable
+              table={table}
+              loading={isLoading}
+              columnsCount={columns.length}
+              ariaLabel='Tabela de serviços com seleção e agendamento'
+              emptyMessage='Nenhum serviço encontrado.'
+              renderToolbar={
+                <div className='flex w-full items-center justify-between py-2'>
+                  <div className='flex items-center gap-2'>
+                    <div className='relative'>
+                      <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <Input
+                        placeholder='Buscar serviços...'
+                        value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                        onChange={event =>
+                          table.getColumn('name')?.setFilterValue(event.target.value)}
+                        className='max-w-sm pl-9'
+                      />
+                    </div>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant='outline' className='gap-2'>
+                        Colunas <ChevronDown className='h-4 w-4' />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align='end'>
+                      {table
+                        .getAllColumns()
+                        .filter(column => column.getCanHide())
+                        .map(column => {
+                          return (
+                            <DropdownMenuCheckboxItem
+                              key={column.id}
+                              className='capitalize'
+                              checked={column.getIsVisible()}
+                              onCheckedChange={value => column.toggleVisibility(!!value)}
+                            >
+                              {column.id}
+                            </DropdownMenuCheckboxItem>
+                          );
+                        })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant='outline' className='gap-2'>
-                    Colunas <ChevronDown className='h-4 w-4' />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  {table
-                    .getAllColumns()
-                    .filter(column => column.getCanHide())
-                    .map(column => {
-                      return (
-                        <DropdownMenuCheckboxItem
-                          key={column.id}
-                          className='capitalize'
-                          checked={column.getIsVisible()}
-                          onCheckedChange={value => column.toggleVisibility(!!value)}
-                        >
-                          {column.id}
-                        </DropdownMenuCheckboxItem>
-                      );
-                    })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Data Table */}
-            <div className='overflow-hidden rounded-md border'>
-              <Table aria-label='Tabela de serviços com seleção e agendamento'>
-                <TableHeader>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map(header => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {isLoading
-                    ? (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className='h-24 text-center'>
-                          Carregando serviços...
-                        </TableCell>
-                      </TableRow>
-                    )
-                    : table.getRowModel().rows?.length
-                    ? (
-                      table.getRowModel().rows.map(row => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && 'selected'}
-                        >
-                          {row.getVisibleCells().map(cell => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))
-                    )
-                    : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={columns.length}
-                          className='h-24 text-center'
-                        >
-                          Nenhum serviço encontrado.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination */}
-            <div className='flex items-center justify-end space-x-2 py-4'>
-              <div className='text-muted-foreground flex-1 text-sm'>
-                {table.getFilteredSelectedRowModel().rows.length} de{' '}
-                {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-              </div>
-              <div className='space-x-2'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  Próximo
-                </Button>
-              </div>
-            </div>
+              }
+              renderPagination={
+                <div className='flex w-full items-center justify-end space-x-2 py-2'>
+                  <div className='text-muted-foreground flex-1 text-sm'>
+                    {table.getFilteredSelectedRowModel().rows.length} de{' '}
+                    {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+                  </div>
+                  <div className='space-x-2'>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => table.previousPage()}
+                      disabled={!table.getCanPreviousPage()}
+                    >
+                      Anterior
+                    </Button>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => table.nextPage()}
+                      disabled={!table.getCanNextPage()}
+                    >
+                      Próximo
+                    </Button>
+                  </div>
+                </div>
+              }
+            />
           </CardContent>
         </Card>
       </div>
 
-      {/* Edit Service Dialog */}
-      <Dialog open={!!editingService} onOpenChange={() => setEditingService(null)}>
-        <DialogContent className='max-w-2xl'>
-          <DialogHeader>
-            <DialogTitle>Editar Serviço</DialogTitle>
-            <DialogDescription>
+      {/* Edit Service Drawer */}
+      <SmoothDrawer open={!!editingService} onOpenChange={() => setEditingService(null)}>
+        <SmoothDrawerContent>
+          <SmoothDrawerHeader>
+            <SmoothDrawerTitle>Editar Serviço</SmoothDrawerTitle>
+            <SmoothDrawerDescription>
               Atualize as informações do serviço
-            </DialogDescription>
-          </DialogHeader>
+            </SmoothDrawerDescription>
+          </SmoothDrawerHeader>
           {editingService && (
             <ServiceForm
               service={editingService}
@@ -472,8 +412,8 @@ function ServicesPage() {
               clinicId={userProfile?.clinicId || ''}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </SmoothDrawerContent>
+      </SmoothDrawer>
     </div>
   );
 }

@@ -1,10 +1,31 @@
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription, useSubscriptionPrompt } from '@/hooks/useSubscription';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { 
+  Button, 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle,
+  Badge,
+  Switch,
+  Alert,
+  AlertTitle,
+  AlertDescription
+} from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Bell, Globe, Lock, Palette, Shield, Users } from 'lucide-react';
+import { Bell, Globe, Shield, Users, Brain, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { 
+  fetchDefaultChatModel, 
+  updateDefaultChatModel, 
+  getHiddenProviders, 
+  setHiddenProviders, 
+  type ProviderKey 
+} from '@/services/chat-settings.service';
 
 export const Route = createFileRoute('/settings')({
   beforeLoad: async () => {
@@ -21,7 +42,59 @@ export const Route = createFileRoute('/settings')({
 });
 
 function SettingsPage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+  const { availableModels, subscriptionInfo } = useSubscription();
+  const { shouldShowUpgradePrompt, upgradeUrl } = useSubscriptionPrompt();
+
+  // Chat settings state
+  const [defaultModel, setDefaultModel] = React.useState<string>(() => {
+    if (typeof window === 'undefined') return 'gpt-5-mini';
+    return localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini';
+  });
+  const [saving, setSaving] = React.useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      if (!user?.id) return;
+      const serverModel = await fetchDefaultChatModel(user.id);
+      if (serverModel) {
+        setDefaultModel(serverModel);
+        try { localStorage.setItem('neonpro-default-chat-model', serverModel); } catch {}
+      }
+    })();
+  }, [user?.id]);
+
+  const handleSelectDefault = async (model: string) => {
+    setDefaultModel(model);
+    try { localStorage.setItem('neonpro-default-chat-model', model); } catch {}
+
+    if (!user?.id) return;
+    setSaving(true);
+    await updateDefaultChatModel(user.id, model);
+    setSaving(false);
+  };
+
+  // Provider visibility toggles
+  const [hiddenProviders, setHidden] = React.useState<ProviderKey[]>(() => getHiddenProviders());
+  const toggleProvider = (key: ProviderKey) => {
+    const next = hiddenProviders.includes(key)
+      ? hiddenProviders.filter(p => p !== key)
+      : [...hiddenProviders, key];
+    setHidden(next);
+    setHiddenProviders(next);
+  };
+
+  // Map model -> provider for filtering
+  const providerByModel: Record<string, ProviderKey> = {
+    'gpt-5-mini': 'openai',
+    'gpt-4o-mini': 'openai',
+    'o4-mini': 'openai',
+    'gemini-2.5-flash': 'google',
+    'gemini-1.5-pro': 'google',
+    'claude-3-sonnet': 'anthropic',
+  };
+
+  const filteredModels = availableModels.filter(m => !hiddenProviders.includes(providerByModel[m.model]));
 
   if (loading) {
     return (
@@ -52,11 +125,26 @@ function SettingsPage() {
   return (
     <div className='container mx-auto p-6 space-y-6'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-3xl font-bold tracking-tight'>Configurações</h1>
+        <div className='space-y-1'>
+          <h1 className='text-3xl font-bold tracking-tight'>Configurações</h1>
+          <p className='text-sm text-muted-foreground'>
+            Personalize sua experiência no NeonPro
+          </p>
+        </div>
         <div className='text-sm text-muted-foreground'>
-          Personalize sua experiência no NeonPro
+          Plano: {subscriptionInfo.displayStatus}
         </div>
       </div>
+
+      {shouldShowUpgradePrompt && (
+        <Alert>
+          <AlertTitle>Desbloqueie recursos avançados</AlertTitle>
+          <AlertDescription>
+            Faça upgrade para o NeonPro Pro e acesse todos os recursos avançados incluindo modelos de IA premium.
+            {' '}<a href={upgradeUrl} target='_blank' rel='noreferrer' className='underline text-primary'>Fazer upgrade</a>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className='grid gap-6 md:grid-cols-2'>
         {/* General Settings */}
@@ -100,49 +188,66 @@ function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Appearance Settings */}
+        {/* Chat AI Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className='flex items-center space-x-2'>
-              <Palette className='h-5 w-5' />
-              <span>Aparência</span>
+            <CardTitle className='flex items-center gap-2'>
+              <Brain className='h-5 w-5' />
+              <span>Assistente de IA</span>
             </CardTitle>
             <CardDescription>
-              Personalize a aparência do sistema
+              Configure os modelos de IA e preferências do chatbot
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label>Tema</Label>
-              <div className='grid grid-cols-3 gap-2'>
-                <button className='p-3 border rounded-md text-center hover:bg-accent'>
-                  <div className='w-full h-8 bg-white border rounded mb-2'></div>
-                  <span className='text-xs'>Claro</span>
-                </button>
-                <button className='p-3 border rounded-md text-center hover:bg-accent'>
-                  <div className='w-full h-8 bg-gray-900 rounded mb-2'></div>
-                  <span className='text-xs'>Escuro</span>
-                </button>
-                <button className='p-3 border rounded-md text-center hover:bg-accent border-primary'>
-                  <div className='w-full h-8 bg-gradient-to-r from-white to-gray-900 rounded mb-2'>
+            <div className='space-y-3'>
+              <Label>Modelo Padrão</Label>
+              <div className='grid gap-2'>
+                {filteredModels.slice(0, 3).map(model => (
+                  <div key={model.model} className='flex items-center justify-between p-2 border rounded-md'>
+                    <div className='flex items-center gap-2'>
+                      <span className='text-sm font-medium'>{model.label}</span>
+                      {model.requiresPro ? (
+                        <Badge variant='secondary' className='text-xs'>Pro</Badge>
+                      ) : (
+                        <Badge variant='outline' className='text-xs'>Grátis</Badge>
+                      )}
+                    </div>
+                    <Button
+                      size='sm'
+                      variant={defaultModel === model.model ? 'default' : 'outline'}
+                      disabled={!model.available || saving}
+                      onClick={() => handleSelectDefault(model.model)}
+                      className='text-xs'
+                    >
+                      {defaultModel === model.model ? 'Padrão' : 'Selecionar'}
+                    </Button>
                   </div>
-                  <span className='text-xs'>Auto</span>
-                </button>
+                ))}
               </div>
+              <p className='text-xs text-muted-foreground'>
+                Modelo usado por padrão no chat. Você pode alterar durante a conversa.
+              </p>
             </div>
 
-            <div className='space-y-2'>
-              <Label>Cor Principal</Label>
-              <div className='flex space-x-2'>
-                <button
-                  type='button'
-                  aria-label='Selecionar cor azul'
-                  className='w-8 h-8 bg-blue-500 rounded-full border-2 border-primary'
-                />
-                <div className='w-8 h-8 bg-purple-500 rounded-full'></div>
-                <div className='w-8 h-8 bg-green-500 rounded-full'></div>
-                <div className='w-8 h-8 bg-orange-500 rounded-full'></div>
-                <div className='w-8 h-8 bg-pink-500 rounded-full'></div>
+            <div className='space-y-3'>
+              <Label>Provedores Visíveis</Label>
+              <div className='grid gap-2'>
+                {(['openai', 'google', 'anthropic'] as ProviderKey[]).map(pk => (
+                  <div key={pk} className='flex items-center justify-between p-2 border rounded-md'>
+                    <div className='flex items-center gap-2'>
+                      {hiddenProviders.includes(pk) ? 
+                        <EyeOff className='h-4 w-4 text-muted-foreground' /> : 
+                        <Eye className='h-4 w-4 text-muted-foreground' />
+                      }
+                      <span className='text-sm capitalize'>{pk}</span>
+                    </div>
+                    <Switch 
+                      checked={!hiddenProviders.includes(pk)} 
+                      onCheckedChange={() => toggleProvider(pk)} 
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </CardContent>
@@ -165,7 +270,7 @@ function SettingsPage() {
                 <p className='font-medium'>Notificações de Agendamento</p>
                 <p className='text-sm text-muted-foreground'>Novos agendamentos e alterações</p>
               </div>
-              <Button variant='outline' size='sm'>Ativado</Button>
+              <Switch defaultChecked />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -173,7 +278,7 @@ function SettingsPage() {
                 <p className='font-medium'>Lembretes de Consulta</p>
                 <p className='text-sm text-muted-foreground'>Lembretes 24h antes da consulta</p>
               </div>
-              <Button variant='outline' size='sm'>Ativado</Button>
+              <Switch defaultChecked />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -181,7 +286,7 @@ function SettingsPage() {
                 <p className='font-medium'>Relatórios Financeiros</p>
                 <p className='text-sm text-muted-foreground'>Relatórios mensais automáticos</p>
               </div>
-              <Button variant='outline' size='sm'>Desativado</Button>
+              <Switch />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -189,7 +294,7 @@ function SettingsPage() {
                 <p className='font-medium'>Atualizações do Sistema</p>
                 <p className='text-sm text-muted-foreground'>Novidades e atualizações</p>
               </div>
-              <Button variant='outline' size='sm'>Ativado</Button>
+              <Switch defaultChecked />
             </div>
           </CardContent>
         </Card>
@@ -232,15 +337,15 @@ function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Privacy Settings */}
+        {/* Privacy & LGPD Settings */}
         <Card>
           <CardHeader>
             <CardTitle className='flex items-center space-x-2'>
-              <Lock className='h-5 w-5' />
-              <span>Privacidade</span>
+              <ShieldCheck className='h-5 w-5' />
+              <span>Privacidade & LGPD</span>
             </CardTitle>
             <CardDescription>
-              Configurações de privacidade e LGPD
+              Configurações de privacidade e proteção de dados
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
@@ -268,6 +373,10 @@ function SettingsPage() {
                 <p className='text-sm text-muted-foreground'>Baixe uma cópia dos seus dados</p>
               </div>
               <Button variant='outline' size='sm'>Exportar</Button>
+            </div>
+
+            <div className='text-sm text-muted-foreground border-t pt-4'>
+              Seus dados são protegidos conforme a LGPD. O uso do chat AI segue as políticas de privacidade e consentimento.
             </div>
           </CardContent>
         </Card>

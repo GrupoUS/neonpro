@@ -1,12 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Send, Sparkles, X } from 'lucide-react'; // MessageCircle not used
+import { Send, Sparkles, X } from 'lucide-react';
 import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import { useEffect, useState } from 'react';
 import { useAIChat } from '@/hooks/useAIChat';
-import { useSubscription } from '@/hooks/useSubscription';
-import { AIPrompt } from '@/components/ui/ai-chat';
 import type { ChatMessage } from '@/components/ui/ai-chat/types';
 
 interface FloatingAIChatSimpleProps {
@@ -44,10 +42,7 @@ export default function FloatingAIChatSimple({
     clearChat,
     searchSuggestions,
     suggestionsLoading,
-    model: currentModel,
-    setModel,
   } = useAIChat();
-  const { chatModels } = useSubscription(); // exposes allowed models based on plan
   const [inputValue, setInputValue] = useState('');
 
   // Handle escape key to close chat
@@ -246,23 +241,13 @@ export default function FloatingAIChatSimple({
 
             {/* Input Area */}
             <div className='p-4 border-t space-y-2'>
-              {/* KokonutUI-style model selector */}
-              <AIPrompt
-                onSubmit={() => handleSendMessage()}
-                placeholder='Pergunte ao assistente...'
-                disabled={isLoading}
-                model={currentModel}
-                onModelChange={setModel}
-                models={chatModels}
-                showInput={false}
-              />
               <div className='flex gap-2'>
                 <input
                   type='text'
                   value={inputValue}
                   onChange={e => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder='Digite sua mensagem...'
+                  placeholder='Digite sua mensagem para o NeonPro AI...'
                   className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#AC9469] focus:border-transparent'
                   disabled={isLoading}
                 />

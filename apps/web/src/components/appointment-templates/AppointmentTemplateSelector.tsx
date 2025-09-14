@@ -16,6 +16,7 @@ import {
 } from '@/types/appointment-templates';
 import { Button, Card, CardContent, Badge, Input, ScrollArea } from '@neonpro/ui';
 import { Clock, DollarSign, Search, Star } from 'lucide-react';
+import { formatBRL } from '@neonpro/utils';
 import React, { useState } from 'react';
 
 interface AppointmentTemplateSelectorProps {
@@ -74,10 +75,7 @@ export function AppointmentTemplateSelector({
   }, [allTemplates]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(price);
+    return formatBRL(price);
   };
 
   const formatDuration = (minutes: number) => {

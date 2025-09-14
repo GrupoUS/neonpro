@@ -10,6 +10,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard } from '@/hooks/useServiceAnalytics';
 import { Button } from '@neonpro/ui';
+import { formatBRL } from '@neonpro/utils';
 import {
   Activity,
   BarChart3,
@@ -80,12 +81,7 @@ export function ServiceAnalyticsDashboard() {
     client_satisfaction: null,
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
+  const formatCurrency = (value: number) => formatBRL(value);
 
   const formatPercentage = (value: number) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;

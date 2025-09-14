@@ -44,7 +44,6 @@ import { Route as AiChatRouteImport } from './routes/ai-chat'
 import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-animations-test'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SettingsChatRouteImport } from './routes/settings.chat'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
@@ -229,11 +228,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsChatRoute = SettingsChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => SettingsRoute,
-} as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/$patientId',
   path: '/$patientId',
@@ -298,7 +292,7 @@ export interface FileRoutesByFullPath {
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
@@ -312,7 +306,6 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/settings/chat': typeof SettingsChatRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -343,7 +336,7 @@ export interface FileRoutesByTo {
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
@@ -357,7 +350,6 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/settings/chat': typeof SettingsChatRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -389,7 +381,7 @@ export interface FileRoutesById {
   '/service-categories': typeof ServiceCategoriesRoute
   '/service-templates': typeof ServiceTemplatesRoute
   '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/shadcn-test': typeof ShadcnTestRoute
   '/shine-test': typeof ShineTestRoute
   '/signup': typeof SignupRoute
@@ -403,7 +395,6 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/settings/chat': typeof SettingsChatRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -450,7 +441,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
-    | '/settings/chat'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -495,7 +485,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
-    | '/settings/chat'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -540,7 +529,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/confirm'
     | '/patients/$patientId'
-    | '/settings/chat'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -572,7 +560,7 @@ export interface RootRouteChildren {
   ServiceCategoriesRoute: typeof ServiceCategoriesRoute
   ServiceTemplatesRoute: typeof ServiceTemplatesRoute
   ServicesRoute: typeof ServicesRoute
-  SettingsRoute: typeof SettingsRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
   ShadcnTestRoute: typeof ShadcnTestRoute
   ShineTestRoute: typeof ShineTestRoute
   SignupRoute: typeof SignupRoute
@@ -833,13 +821,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/chat': {
-      id: '/settings/chat'
-      path: '/chat'
-      fullPath: '/settings/chat'
-      preLoaderRoute: typeof SettingsChatRouteImport
-      parentRoute: typeof SettingsRoute
-    }
     '/patients/$patientId': {
       id: '/patients/$patientId'
       path: '/$patientId'
@@ -931,18 +912,6 @@ const PatientsRouteWithChildren = PatientsRoute._addFileChildren(
   PatientsRouteChildren,
 )
 
-interface SettingsRouteChildren {
-  SettingsChatRoute: typeof SettingsChatRoute
-}
-
-const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsChatRoute: SettingsChatRoute,
-}
-
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
-  SettingsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
@@ -969,7 +938,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServiceCategoriesRoute: ServiceCategoriesRoute,
   ServiceTemplatesRoute: ServiceTemplatesRoute,
   ServicesRoute: ServicesRoute,
-  SettingsRoute: SettingsRouteWithChildren,
+  SettingsRoute: SettingsRoute,
   ShadcnTestRoute: ShadcnTestRoute,
   ShineTestRoute: ShineTestRoute,
   SignupRoute: SignupRoute,

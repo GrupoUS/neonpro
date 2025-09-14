@@ -1,7 +1,7 @@
 import { NotificationCard } from '@/components';
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
 import { useAuth } from '@/hooks/useAuth';
-import { signOut, supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 
@@ -12,24 +12,17 @@ import {
   Bell,
   Calendar,
   DollarSign,
-  LogOut,
+
   Settings,
   TrendingUp,
   Users,
 } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 
-function formatBRL(value: number | null | undefined) {
-  const v = typeof value === 'number' ? value : 0;
-  try {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-  } catch {
-    return `R$ ${v.toFixed(2)}`;
-  }
-}
+import { formatBRL } from '@neonpro/utils';
 
 function DashboardComponent() {
-  const { user, session, loading, isAuthenticated } = useAuth();
+  const { session, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate(); // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -203,15 +196,7 @@ function DashboardComponent() {
         .slice(0, 5);
     },
   });
-  // Handle logout
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      navigate({ to: '/' as const });
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+
 
   if (loading) {
     return (
@@ -229,44 +214,6 @@ function DashboardComponent() {
 
   return (
     <div className='h-full bg-background'>
-      {/* Header */}
-      <header className='border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50'>
-        <div className='container mx-auto px-4 py-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-4'>
-              <h1 className='text-2xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent'>
-                NEON PRO
-              </h1>
-              <Badge variant='secondary' className='text-xs'>
-                Dashboard
-              </Badge>
-              {user && (
-                <Badge variant='outline' className='text-xs'>
-                  {user.email}
-                </Badge>
-              )}
-            </div>
-
-            <div className='flex items-center space-x-2'>
-              <Button variant='ghost' size='sm'>
-                <Bell className='h-4 w-4' />
-              </Button>
-              <Button variant='ghost' size='sm'>
-                <Settings className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={handleLogout}
-                title='Sair'
-              >
-                <LogOut className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className='container mx-auto px-4 py-8'>
         <div className='mb-8'>
@@ -323,7 +270,7 @@ function DashboardComponent() {
             elevation='md'
           >
             <div className='text-3xl font-bold text-white'>
-              {loadingRevenue ? '—' : formatBRL(monthlyRevenue)}
+              {loadingRevenue ? '—' : formatBRL(monthlyRevenue ?? 0)}
             </div>
           </BentoGridItem>
 

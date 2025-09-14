@@ -6,12 +6,12 @@ import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Textarea } from '@neonpro/ui';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
+  SmoothDrawer as Dialog,
+  SmoothDrawerContent as DialogContent,
+  SmoothDrawerDescription as DialogDescription,
+  SmoothDrawerHeader as DialogHeader,
+  SmoothDrawerTitle as DialogTitle,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from '@neonpro/ui';
 import { Loader2, User, Phone, CreditCard, FileText } from 'lucide-react';
 import { useState } from 'react';

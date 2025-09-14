@@ -1,13 +1,15 @@
 import { openai } from '@ai-sdk/openai'
 import { google } from '@ai-sdk/google'
+import { anthropic } from '@ai-sdk/anthropic'
 import type { CoreMessage } from 'ai'
 import { generateText, streamText } from 'ai'
 
-export type Provider = 'openai' | 'google'
+export type Provider = 'openai' | 'google' | 'anthropic'
 
 export const MODEL_REGISTRY = {
   'gpt-5-mini': { provider: 'openai' as Provider, active: true, label: 'ChatGPT 5 Mini' },
   'gemini-2.5-flash': { provider: 'google' as Provider, active: true, label: 'Gemini Flash 2.5' },
+  'claude-3-5-sonnet': { provider: 'anthropic' as Provider, active: true, label: 'Claude 3.5 Sonnet' },
   'gpt-4o-mini': { provider: 'openai' as Provider, active: false, label: 'GPT-4o Mini' },
   'o4-mini': { provider: 'openai' as Provider, active: false, label: 'o4-mini' },
   'gemini-1.5-pro': { provider: 'google' as Provider, active: false, label: 'Gemini 1.5 Pro' },
@@ -18,7 +20,11 @@ export const DEFAULT_SECONDARY = 'gemini-2.5-flash' as const
 
 export function resolveProvider(model: keyof typeof MODEL_REGISTRY) {
   const entry = MODEL_REGISTRY[model]
-  const adapter = entry.provider === 'google' ? google : openai
+  const adapter = entry.provider === 'google' 
+    ? google 
+    : entry.provider === 'anthropic'
+    ? anthropic
+    : openai
   return { provider: entry.provider, adapter }
 }
 

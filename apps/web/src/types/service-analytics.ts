@@ -288,11 +288,11 @@ export function calculateCompletionRate(completed: number, total: number): numbe
   return (completed / total) * 100;
 }
 
-export function formatCurrency(amount: number, currency = 'BRL'): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: currency,
-  }).format(amount);
+import { formatBRL } from '@neonpro/utils';
+
+export function formatCurrency(amount: number, _currency = 'BRL'): string {
+  // Standardize on BRL formatting across the app for now
+  return formatBRL(amount);
 }
 
 export function formatPercentage(value: number, decimals = 1): string {

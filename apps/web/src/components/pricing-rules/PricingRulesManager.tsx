@@ -68,6 +68,7 @@ export function PricingRulesManager() {
       await deleteRule.mutateAsync(rule.id);
       toast.success('Regra de preço excluída com sucesso');
     } catch (error) {
+      console.error('Failed to delete pricing rule:', error);
       toast.error('Erro ao excluir regra de preço');
     }
   };
@@ -77,6 +78,7 @@ export function PricingRulesManager() {
       await toggleRule.mutateAsync({ id: rule.id, isActive: !rule.is_active });
       toast.success(`Regra ${rule.is_active ? 'desativada' : 'ativada'} com sucesso`);
     } catch (error) {
+      console.error('Failed to toggle pricing rule:', error);
       toast.error('Erro ao alterar status da regra');
     }
   };

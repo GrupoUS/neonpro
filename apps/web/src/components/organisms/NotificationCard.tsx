@@ -10,12 +10,9 @@ export type NormalizedNotification = Required<Pick<SharedAnimatedListItem, 'id' 
   read: boolean;
 };
 
+import { formatBRL } from '@neonpro/utils';
 function formatCurrencyBRL(value: number) {
-  try {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  } catch {
-    return `R$ ${value.toFixed(2)}`;
-  }
+  return formatBRL(value);
 }
 
 function getReadStore() {

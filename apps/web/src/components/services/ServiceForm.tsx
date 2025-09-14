@@ -3,14 +3,16 @@
  * Form for creating and editing services with validation
  */
 
-import { useState, useEffect } from 'react';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Textarea } from '@neonpro/ui';
 import { Switch } from '@neonpro/ui';
 import { Card, CardContent } from '@neonpro/ui';
+import { TimeSlotPicker } from '@neonpro/ui';
+import { formatBRL, maskBRLInput } from '@neonpro/utils';
 import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { useCreateService, useUpdateService } from '@/hooks/useServices';
 import type { Service, ServiceFormData, ServiceFormErrors } from '@/types/service';
@@ -31,6 +33,11 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
     is_active: service?.is_active ?? true,
   });
 
+  // Local input state for formatted BRL price entry
+  const [priceInput, setPriceInput] = useState<string>(
+    formatBRL(service?.price ?? 0),
+  );
+
   const [errors, setErrors] = useState<ServiceFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,7 +46,7 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
 
   const isEditMode = !!service;
 
-  // Update form data when service prop changes
+  // Update form data and formatted price when service prop changes
   useEffect(() => {
     if (service) {
       setFormData({
@@ -49,6 +56,13 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
         price: service.price,
         is_active: service.is_active,
       });
+      setPriceInput(
+        formatBRL(service.price),
+      );
+    } else {
+      setPriceInput(
+        formatBRL(0),
+      );
     }
   }, [service]);
 
@@ -116,7 +130,7 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
     } catch (error) {
       console.error('Error saving service:', error);
       toast.error(
-        isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço'
+        isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço',
       );
     } finally {
       setIsSubmitting(false);
@@ -125,11 +139,18 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
 
   const handleInputChange = (field: keyof ServiceFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
+  };
+
+  // Price input handler: keep numeric value in state and formatted BRL string for UX
+  const handlePriceChange = (raw: string) => {
+    const { formatted, value } = maskBRLInput(raw);
+    setPriceInput(formatted);
+    handleInputChange('price', value);
   };
 
   return (
@@ -141,16 +162,15 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
             <Label htmlFor='name'>
               Nome do Serviço <span className='text-destructive'>*</span>
             </Label>
+
             <Input
               id='name'
               value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
+              onChange={e => handleInputChange('name', e.target.value)}
               placeholder='Ex: Consulta Médica, Exame de Sangue...'
               className={errors.name ? 'border-destructive' : ''}
             />
-            {errors.name && (
-              <p className='text-sm text-destructive'>{errors.name}</p>
-            )}
+            {errors.name && <p className='text-sm text-destructive'>{errors.name}</p>}
           </div>
 
           {/* Description */}
@@ -159,14 +179,12 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
             <Textarea
               id='description'
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={e => handleInputChange('description', e.target.value)}
               placeholder='Descreva o serviço oferecido...'
               rows={3}
               className={errors.description ? 'border-destructive' : ''}
             />
-            {errors.description && (
-              <p className='text-sm text-destructive'>{errors.description}</p>
-            )}
+            {errors.description && <p className='text-sm text-destructive'>{errors.description}</p>}
           </div>
 
           {/* Duration and Price Row */}
@@ -174,45 +192,44 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
             {/* Duration */}
             <div className='space-y-2'>
               <Label htmlFor='duration'>
-                Duração (minutos) <span className='text-destructive'>*</span>
+                Duração <span className='text-destructive'>*</span>
               </Label>
-              <Input
+              <TimeSlotPicker
                 id='duration'
-                type='number'
-                min='1'
-                max='480'
-                step='15'
                 value={formData.duration_minutes}
-                onChange={(e) => handleInputChange('duration_minutes', parseInt(e.target.value) || 0)}
-                placeholder='60'
-                className={errors.duration_minutes ? 'border-destructive' : ''}
+                onChange={(m) => handleInputChange('duration_minutes', m)}
+                min={15}
+                max={480}
+                step={15}
+                aria-describedby={errors.duration_minutes ? 'duration-error' : undefined}
               />
               {errors.duration_minutes && (
-                <p className='text-sm text-destructive'>{errors.duration_minutes}</p>
+                <p id='duration-error' className='text-sm text-destructive'>{errors.duration_minutes}</p>
               )}
               <p className='text-xs text-muted-foreground'>
-                Duração padrão em minutos (ex: 30, 60, 90)
+                Duração em múltiplos de 15 minutos (15 a 480)
               </p>
             </div>
 
             {/* Price */}
             <div className='space-y-2'>
               <Label htmlFor='price'>Preço (R$)</Label>
+              {/* Text input with BRL mask/formatting */}
               <Input
                 id='price'
-                type='number'
-                min='0'
-                step='0.01'
-                value={formData.price}
-                onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                placeholder='0.00'
+                type='text'
+                inputMode='numeric'
+                value={priceInput}
+                onChange={e => handlePriceChange(e.target.value)}
+                placeholder='R$ 0,00'
                 className={errors.price ? 'border-destructive' : ''}
+                aria-describedby={errors.price ? 'price-error' : undefined}
               />
               {errors.price && (
-                <p className='text-sm text-destructive'>{errors.price}</p>
+                <p id='price-error' className='text-sm text-destructive'>{errors.price}</p>
               )}
               <p className='text-xs text-muted-foreground'>
-                Valor do serviço em reais
+                Digite apenas números. Ex.: "1500" → "R$ 1.500,00"
               </p>
             </div>
           </div>
@@ -222,7 +239,7 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
             <Switch
               id='is_active'
               checked={formData.is_active}
-              onCheckedChange={(checked) => handleInputChange('is_active', checked)}
+              onCheckedChange={checked => handleInputChange('is_active', checked)}
             />
             <Label htmlFor='is_active' className='text-sm font-medium'>
               Serviço ativo

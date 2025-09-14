@@ -8,12 +8,12 @@ import {
   useUpdateAppointment,
 } from '@/hooks/useAppointments';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
 import type { CreateAppointmentData, UpdateAppointmentData } from '@/services/appointments.service';
 import { Card, CardContent } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute, Link } from '@tanstack/react-router'; // useNavigate removed
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 // Helper function to map color strings to EventColor types
 function mapColorToEventColor(color: string): EventColor {
@@ -38,17 +38,23 @@ function mapColorToEventColor(color: string): EventColor {
 function AppointmentsPage() {
   const [showNewAppointment, setShowNewAppointment] = useState(false); // removed unused navigate
   const { /* user, */ profile, hasPermission, loading: authLoading } = useAuth();
+  const toast = useToast();
 
   // Get clinic ID from user profile
   const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
 
   // Check permissions - handle case where profile is null
   const canViewAllAppointments = profile ? hasPermission('canViewAllAppointments') : true; // Allow access when no profile
-  const canCreateAppointments = profile ? hasPermission('canCreateAppointments') : true; // Allow access when no profile
+  // const canCreateAppointments = profile ? hasPermission('canCreateAppointments') : true; // Removed top CTA, keep permission check if re-enabled later
 
   // Fetch appointments from database
   // For patients, we'll need to filter by patient_id in the future
   const { data: appointments, isLoading, error } = useAppointments(clinicId);
+
+  // Build a memoized set of event time ranges for collision checks
+  const appointmentRanges = useMemo(() => {
+    return (appointments || []).map(a => ({ id: a.id, start: new Date(a.start), end: new Date(a.end) }));
+  }, [appointments]);
 
   // Set up real-time updates
   useAppointmentRealtime(clinicId);
@@ -61,16 +67,46 @@ function AppointmentsPage() {
   // New event creation is handled by EventCalendar's internal dialog.
   // We only need to handle add/update/delete callbacks from the calendar.
 
-  const handleEventUpdate = (_event: CalendarEvent, updates?: Partial<CalendarEvent>) => {
+  const handleEventUpdate = (event: CalendarEvent, updates?: Partial<CalendarEvent>) => {
     const updateData: UpdateAppointmentData = {};
 
-    if (updates?.start) updateData.startTime = updates.start;
-    if (updates?.end) updateData.endTime = updates.end;
-    if (updates?.description) updateData.notes = updates.description;
+    // Use updates if provided (e.g., inline edit), otherwise use the updated event payload (e.g., DnD)
+    const src = updates ?? event;
 
-    if (!_event?.id) return;
+    if (src.start) updateData.startTime = src.start;
+    if (src.end) updateData.endTime = src.end;
+    if (src.description !== undefined) updateData.notes = src.description;
+
+    if (!event?.id) return;
+    // Skip if nothing to update
+    if (Object.keys(updateData).length === 0) return;
+
+    // Collision check (non-blocking): warn if overlapping with another appointment
+    const start = updateData.startTime ?? (event.start as Date);
+    const end = updateData.endTime ?? (event.end as Date);
+    const overlaps = appointmentRanges.some(r => r.id !== event.id && start < r.end && end > r.start);
+    if (overlaps) {
+      toast.info('Aviso: possível conflito de horário com outro agendamento.');
+    }
+
+    // Lightweight audit note (client-side). In a full implementation, send to an audit endpoint.
+    try {
+      console.debug('[Audit] appointment_update', {
+        action: 'appointment_update',
+        appointmentId: event.id,
+        clinicId,
+        userRole: profile?.role,
+        timestamp: new Date().toISOString(),
+        changes: {
+          startTime: updateData.startTime?.toISOString?.(),
+          endTime: updateData.endTime?.toISOString?.(),
+          notes: updateData.notes,
+        },
+      });
+    } catch {}
+
     updateAppointmentMutation.mutate({
-      appointmentId: _event.id,
+      appointmentId: event.id,
       updates: updateData,
       clinicId,
     });
@@ -130,21 +166,9 @@ function AppointmentsPage() {
 
   return (
     <div className='container mx-auto px-4 py-8'>
-      <div className='flex items-center justify-between mb-6'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Agendamentos</h1>
-          <p className='text-muted-foreground'>Gerencie suas consultas e compromissos</p>
-        </div>
-        {canCreateAppointments && (
-          <Button onClick={() => setShowNewAppointment(true)}>
-            <Plus className='h-4 w-4 mr-2' />
-            Nova Consulta
-          </Button>
-        )}
-      </div>
 
       <Card>
-        <CardContent className='p-6'>
+        <CardContent className='p-4 sm:p-5'>
           {(authLoading || isLoading) && (
             <div className='flex items-center justify-center h-96'>
               <div className='text-center'>
@@ -202,18 +226,22 @@ function AppointmentsPage() {
               (appointments?.length ?? 0) === 0
                 ? <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
                 : (
-                  <EventCalendar
-                    events={(appointments || []).map<CalendarEvent>(apt => ({
-                      id: apt.id,
-                      title: apt.title,
-                      start: apt.start,
-                      end: apt.end,
-                      color: mapColorToEventColor(apt.color),
-                      description: apt.description,
-                    }))}
-                    onEventUpdate={handleEventUpdate}
-                    onEventDelete={handleEventDelete}
-                  />
+                  <div className='max-h-[70vh] min-h-[420px] sm:min-h-[520px]'>
+                    <EventCalendar
+                      className='rounded-md'
+                      events={(appointments || []).map<CalendarEvent>(apt => ({
+                        id: apt.id,
+                        title: apt.title,
+                        start: apt.start,
+                        end: apt.end,
+                        color: mapColorToEventColor(apt.color),
+                        description: apt.description,
+                      }))}
+                      onEventUpdate={handleEventUpdate}
+                      onEventDelete={handleEventDelete}
+                      onNewConsultation={() => setShowNewAppointment(true)}
+                    />
+                  </div>
                 )
             )}
         </CardContent>

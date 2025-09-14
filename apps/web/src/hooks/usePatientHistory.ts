@@ -101,8 +101,7 @@ export function useUpdateMedicalRecord() {
       request: UpdateMedicalRecordRequest 
     }) => patientHistoryService.updateMedicalRecord(id, request),
     
-    onSuccess: (_data, variables) => {
-      void _data;
+    onSuccess: () => {
       // Broadly invalidate patient history queries after update
       queryClient.invalidateQueries({ 
         queryKey: patientHistoryKeys.all 
@@ -142,11 +141,10 @@ export function useCreateTreatmentPlan() {
       request: CreateTreatmentPlanRequest 
     }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
     
-    onSuccess: (_data, variables) => {
-      void _data;
-      // Invalidate treatment plans for this patient
+    onSuccess: () => {
+      // Invalidate treatment plans and summary
       queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.treatmentPlans(variables.patientId) 
+        queryKey: patientHistoryKeys.all 
       });
       
       // Invalidate patient summary
@@ -176,8 +174,7 @@ export function useUpdateTreatmentPlan() {
       request: UpdateTreatmentPlanRequest 
     }) => patientHistoryService.updateTreatmentPlan(id, request),
     
-    onSuccess: (_data, variables) => {
-      void _data;
+    onSuccess: () => {
       // Broadly invalidate patient history queries after update
       queryClient.invalidateQueries({ 
         queryKey: patientHistoryKeys.all 
@@ -216,11 +213,10 @@ export function useCreateProgressNote() {
       request: CreateProgressNoteRequest 
     }) => patientHistoryService.createProgressNote(patientId, request),
     
-    onSuccess: (_data, variables) => {
-      void _data;
-      // Invalidate progress notes for this patient
+    onSuccess: () => {
+      // Invalidate progress notes and timeline
       queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.progressNotes(variables.patientId) 
+        queryKey: patientHistoryKeys.all 
       });
       
       // Invalidate patient timeline

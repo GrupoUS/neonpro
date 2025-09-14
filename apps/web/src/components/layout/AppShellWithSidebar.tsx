@@ -4,8 +4,7 @@ import {
   IconCalendar,
   IconDashboard,
   IconFileText,
-  IconHistoryToggle,
-  IconMenu2,
+
   IconMoneybag,
   IconReport,
   IconSettings,
@@ -16,6 +15,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Link, Outlet } from '@tanstack/react-router';
 import { useState } from 'react';
+import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -79,22 +79,8 @@ function AppShellWithSidebar() {
       ),
     },
     {
-      label: 'Histórico',
-      href: '/history',
-      icon: (
-        <IconHistoryToggle className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
-      ),
-    },
-    {
       label: 'Configurações',
       href: '/settings',
-      icon: (
-        <IconSettings className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
-      ),
-    },
-    {
-      label: 'Chat',
-      href: '/settings/chat',
       icon: (
         <IconSettings className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
@@ -157,30 +143,19 @@ function AppShellWithSidebar() {
         )}
       >
         <div className='flex h-full w-full flex-col overflow-hidden'>
-          {/* Header */}
-          <div className={cn(
-            'z-50 flex min-h-[4rem] w-full shrink-0 items-center justify-between border-b bg-card px-4 shadow-sm transition-all duration-300',
-            open
-              ? 'md:ml-0'
-              : 'md:ml-0'
-          )}>
-            <IconMenu2
-              className='h-5 w-5 cursor-pointer text-neutral-800 dark:text-neutral-200 md:hidden'
-              onClick={() => setOpen(!open)}
-            />
-            <div className='flex items-center gap-2'>
-              <span className='text-sm font-medium text-neutral-700 dark:text-neutral-200'>
-                NeonPro Clínica Estética
-              </span>
-            </div>
-          </div>
-          
           {/* Page Content */}
           <div className='flex-1 overflow-auto bg-background p-4'>
             <Outlet />
           </div>
         </div>
       </div>
+      
+      {/* Floating AI Chat Button */}
+      <FloatingAIChatSimple 
+        context="procedures"
+        userRole="professional"
+        lgpdCompliant={true}
+      />
       </div>
     </QueryClientProvider>
   );

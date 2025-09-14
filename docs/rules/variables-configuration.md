@@ -20,10 +20,10 @@ STRIPE_SECRET_KEY={stripe-secret-key}
 STRIPE_WEBHOOK_SECRET={stripe-webhook-secret}
 EMAIL_SERVICE_API_KEY={email-api-key}
 
-# AI Services (Optional)
+# AI Services (Required for Chat Functionality)
 OPENAI_API_KEY={openai-key}
-ANTHROPIC_API_KEY={anthropic-key}
-OPENROUTER_API_KEY={openrouter-key}
+GOOGLE_GENERATIVE_AI_API_KEY={google-gemini-key}
+ANTHROPIC_API_KEY={anthropic-claude-key}
 
 # Rate Limiting
 UPSTASH_REDIS_REST_URL={upstash-url}
