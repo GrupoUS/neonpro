@@ -6,7 +6,7 @@
 import { Badge } from '@neonpro/ui';
 import { Crown, Clock, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils.ts';
 import SubscriptionUpgrade from './SubscriptionUpgrade';
 
 interface SubscriptionStatusProps {

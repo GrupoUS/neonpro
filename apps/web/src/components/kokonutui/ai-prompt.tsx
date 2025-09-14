@@ -13,7 +13,7 @@
 import { ArrowRight, Bot, Check, ChevronDown, Paperclip } from "lucide-react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
 import { Button } from "@neonpro/ui";
 import {

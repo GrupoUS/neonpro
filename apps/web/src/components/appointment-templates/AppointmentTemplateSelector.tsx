@@ -7,7 +7,7 @@ import {
   useAppointmentTemplates,
   useDefaultAppointmentTemplates,
 } from '@/hooks/useAppointmentTemplates';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils.ts';
 import {
   APPOINTMENT_TEMPLATE_CATEGORY_COLORS,
   APPOINTMENT_TEMPLATE_CATEGORY_LABELS,

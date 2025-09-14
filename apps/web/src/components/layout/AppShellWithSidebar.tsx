@@ -1,5 +1,5 @@
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils.ts';
 import {
   IconCalendar,
   IconDashboard,
