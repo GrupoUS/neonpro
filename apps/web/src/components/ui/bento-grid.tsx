@@ -37,36 +37,37 @@ interface BentoGridItemProps {
 }
 
 // Feature flag for Kokonut UI (default enabled for gradual migration)
-const NEONPRO_FEATURE_BENTO_KOKONUT = process.env.NEONPRO_FEATURE_BENTO_KOKONUT !== 'false';
+const NEONPRO_FEATURE_BENTO_KOKONUT =
+  (import.meta.env.VITE_NEONPRO_FEATURE_BENTO_KOKONUT ?? 'true') !== 'false';
 
 /**
  * Enhanced NeonPro Bento Grid Container with Kokonut UI integration
  * Responsive grid layout with advanced animations and accessibility features
  */
-export function BentoGrid({ 
-  className, 
-  children, 
+export function BentoGrid({
+  className,
+  children,
   useKokonutUI = NEONPRO_FEATURE_BENTO_KOKONUT,
-  density = 'comfortable' 
+  density = 'comfortable',
 }: BentoGridProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   const densityStyles = {
     comfortable: 'gap-6',
-    compact: 'gap-4'
+    compact: 'gap-4',
   };
-  
+
   const gridAnimation = {
     initial: { opacity: 0 },
-    animate: { 
+    animate: {
       opacity: 1,
       transition: {
         staggerChildren: shouldReduceMotion ? 0 : 0.1,
-        delayChildren: shouldReduceMotion ? 0 : 0.05
-      }
-    }
+        delayChildren: shouldReduceMotion ? 0 : 0.05,
+      },
+    },
   };
-  
+
   if (useKokonutUI && !shouldReduceMotion) {
     return (
       <motion.div
@@ -78,16 +79,16 @@ export function BentoGrid({
           className,
         )}
         variants={gridAnimation}
-        initial="initial"
-        animate="animate"
-        role="grid"
-        aria-label="NeonPro feature showcase grid"
+        initial='initial'
+        animate='animate'
+        role='grid'
+        aria-label='NeonPro feature showcase grid'
       >
         {children}
       </motion.div>
     );
   }
-  
+
   // Fallback to standard implementation
   return (
     <div
@@ -96,8 +97,8 @@ export function BentoGrid({
         densityStyles[density],
         className,
       )}
-      role="grid"
-      aria-label="NeonPro feature showcase grid"
+      role='grid'
+      aria-label='NeonPro feature showcase grid'
     >
       {children}
     </div>
@@ -155,7 +156,9 @@ export function BentoGridItem({
   } as const;
 
   const MotionWrapper = enableMotion && enhanced ? motion.div : 'div';
-  const cardProps = enableMotion && enhanced ? { whileHover: { y: -2 }, transition: { type: 'spring', stiffness: 300, damping: 25 } } : {};
+  const cardProps = enableMotion && enhanced
+    ? { whileHover: { y: -2 }, transition: { type: 'spring', stiffness: 300, damping: 25 } }
+    : {};
 
   return (
     <MotionWrapper {...(cardProps as any)}>
@@ -177,81 +180,81 @@ export function BentoGridItem({
         role='article'
         aria-label={title ? `${title} card` : 'Bento grid item'}
       >
-      {/* Header/Image Section */}
-      {header && (
-        <div className='relative overflow-hidden rounded-t-xl'>
-          <div className='transition-transform duration-300 group-hover:scale-105'>
-            {header}
-          </div>
-          {/* Gradient overlay for better text readability */}
-          <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
-        </div>
-      )}
-
-      {/* Content Section */}
-      <CardHeader className='relative z-10'>
-        <div className='flex items-start gap-3'>
-          {/* Icon */}
-          {icon && (
-            <div className='flex-shrink-0 p-2 rounded-lg bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110'>
-              {icon}
+        {/* Header/Image Section */}
+        {header && (
+          <div className='relative overflow-hidden rounded-t-xl'>
+            <div className='transition-transform duration-300 group-hover:scale-105'>
+              {header}
             </div>
-          )}
+            {/* Gradient overlay for better text readability */}
+            <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+          </div>
+        )}
 
-          {/* Title and Description */}
-          <div className='flex-1 min-w-0'>
-            {title && (
-              <CardTitle
-                className={cn(
-                  'text-lg font-semibold leading-tight mb-2',
-                  'transition-colors duration-300',
-                  variant === 'default'
-                    ? 'text-foreground group-hover:text-[#294359]'
-                    : 'text-white',
-                )}
-              >
-                {title}
-              </CardTitle>
+        {/* Content Section */}
+        <CardHeader className='relative z-10'>
+          <div className='flex items-start gap-3'>
+            {/* Icon */}
+            {icon && (
+              <div className='flex-shrink-0 p-2 rounded-lg bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110'>
+                {icon}
+              </div>
             )}
 
-            {description && (
-              <CardDescription
-                className={cn(
-                  'text-sm leading-relaxed',
-                  'transition-colors duration-300',
-                  variant === 'default' ? 'text-muted-foreground' : 'text-white/80',
-                )}
-              >
-                {description}
-              </CardDescription>
-            )}
+            {/* Title and Description */}
+            <div className='flex-1 min-w-0'>
+              {title && (
+                <CardTitle
+                  className={cn(
+                    'text-lg font-semibold leading-tight mb-2',
+                    'transition-colors duration-300',
+                    variant === 'default'
+                      ? 'text-foreground group-hover:text-[#294359]'
+                      : 'text-white',
+                  )}
+                >
+                  {title}
+                </CardTitle>
+              )}
+
+              {description && (
+                <CardDescription
+                  className={cn(
+                    'text-sm leading-relaxed',
+                    'transition-colors duration-300',
+                    variant === 'default' ? 'text-muted-foreground' : 'text-white/80',
+                  )}
+                >
+                  {description}
+                </CardDescription>
+              )}
+            </div>
+          </div>
+        </CardHeader>
+
+        {/* Custom Content */}
+        {children && (
+          <CardContent className='relative z-10 flex-1'>
+            {children}
+          </CardContent>
+        )}
+
+        {/* Kokonut UI enhanced content */}
+        {kokonutContent && enhanced && (
+          <CardContent className='relative z-10 flex-1'>
+            {kokonutContent}
+          </CardContent>
+        )}
+
+        {/* Enhanced animated border effect */}
+        <div className='absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+          <div className='absolute inset-0 rounded-xl bg-gradient-to-r from-[#294359] via-[#AC9469] to-[#294359] p-[1px]'>
+            <div className='w-full h-full rounded-xl bg-card' />
           </div>
         </div>
-      </CardHeader>
 
-      {/* Custom Content */}
-      {children && (
-        <CardContent className='relative z-10 flex-1'>
-          {children}
-        </CardContent>
-      )}
-
-      {/* Kokonut UI enhanced content */}
-      {kokonutContent && enhanced && (
-        <CardContent className='relative z-10 flex-1'>
-          {kokonutContent}
-        </CardContent>
-      )}
-
-      {/* Enhanced animated border effect */}
-      <div className='absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-        <div className='absolute inset-0 rounded-xl bg-gradient-to-r from-[#294359] via-[#AC9469] to-[#294359] p-[1px]'>
-          <div className='w-full h-full rounded-xl bg-card' />
-        </div>
-      </div>
-
-      {/* Enhanced glow effect */}
-      <div className='absolute -inset-1 rounded-xl bg-gradient-to-r from-[#294359]/20 via-[#AC9469]/20 to-[#294359]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm -z-10' />
+        {/* Enhanced glow effect */}
+        <div className='absolute -inset-1 rounded-xl bg-gradient-to-r from-[#294359]/20 via-[#AC9469]/20 to-[#294359]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm -z-10' />
       </Card>
     </MotionWrapper>
   );
