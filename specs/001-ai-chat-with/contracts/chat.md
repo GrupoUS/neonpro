@@ -27,3 +27,18 @@
 - Response: includes metadata.dataFreshness, summary actions
 - Suggestion: suggestions?: string[] (safe)
 - Task: task?: { id, status, progress? }
+
+
+## Transport details
+- HTTP (prefix `/v1`):
+  - POST `/ai-chat/stream` — body JSON; response is a text stream with headers:
+    - `X-Chat-Started-At` (ISO string)
+    - `X-Chat-Model` (e.g., `mock:model`, `openai:gpt-4o-mini`) 
+    - `X-Data-Freshness` (e.g., `as-of-now`)
+    - `X-Response-Time` (server timing in ms)
+  - POST `/ai-chat/suggestions` — JSON `{ suggestions: string[] }`, sets `X-Response-Time`
+
+## Privacy & LGPD
+- Server logs redact user content via `redactPII`.
+- Consent checks available per `ConsentScope` with `checkConsent`.
+- Do not emit raw prompts or PII in responses or headers.

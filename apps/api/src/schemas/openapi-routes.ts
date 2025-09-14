@@ -6,6 +6,7 @@
  */
 
 import { createRoute } from '@hono/zod-openapi'
+import { z } from '@hono/zod-openapi'
 import {
   HealthResponseSchema,
   DetailedHealthResponseSchema,
@@ -17,6 +18,19 @@ import {
   AuthStatusResponseSchema,
   CommonResponses
 } from '../schemas/openapi-schemas'
+
+// Parameter schemas
+export const PatientIdParamSchema = z.object({
+  patientId: z.string().min(1).openapi({
+    param: {
+      name: 'patientId',
+      in: 'path',
+      description: 'Patient unique identifier'
+    },
+    example: 'patient_123',
+    description: 'Must be a valid patient ID'
+  })
+}).openapi('PatientIdParam')
 
 // Health and system routes
 export const healthRoute = createRoute({

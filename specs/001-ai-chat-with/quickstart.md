@@ -20,3 +20,20 @@ pnpm dlx shadcn@latest add @shadcn/input @shadcn/textarea @shadcn/dialog @shadcn
 ```
 
 Then wire: input for Prompt Input; badges/cards for Response; progress/skeleton/spinner for Task/Loading; dialog/popover/tooltip for Open-in-Chat and suggestions; avatar for Conversation.
+
+
+## Backend validation
+
+- Run API tests (mock providers):
+```bash
+pnpm --filter @neonpro/api test tests/contract/chat.test.ts
+```
+- Contract expectations for `/v1/ai-chat/stream?mock=true`:
+  - Headers: `X-Chat-Started-At`, `X-Chat-Model`, `X-Data-Freshness`, `X-Response-Time`
+  - Body: streamed UTF-8 text
+- Consent & privacy:
+  - LGPD: logs use `redactPII` for user text
+  - Consent checks available via `checkConsent` in `apps/api/src/services/privacy.ts`
+- Observability:
+  - Minimal metrics logged as JSON: `{ type: 'metrics', route, ms, ok, model? }`
+  - SLOs documented in `docs/features/chat-slo.md`
