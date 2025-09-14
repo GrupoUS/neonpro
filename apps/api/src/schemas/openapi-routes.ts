@@ -213,3 +213,234 @@ export const getClientAppointmentsRoute = createRoute({
     ...CommonResponses
   }
 })
+
+// Patient management routes
+export const listPatientsRoute = createRoute({
+  method: 'get',
+  path: '/v1/patients',
+  summary: 'List Patients',
+  description: 'Get a list of aesthetic clinic patients with pagination and filtering',
+  tags: ['Patients'],
+  security: [
+    {
+      BearerAuth: []
+    }
+  ],
+  responses: {
+    200: {
+      description: 'List of patients with pagination data',
+      content: {
+        'application/json': {
+          schema: z.object({
+            data: z.array(z.object({
+              id: z.string(),
+              fullName: z.string(),
+              familyName: z.string(),
+              email: z.string().email().optional(),
+              phone: z.string().optional(),
+              medicalRecordNumber: z.string(),
+              lgpdConsentGiven: z.boolean(),
+              isActive: z.boolean(),
+              createdAt: z.string(),
+              updatedAt: z.string(),
+              _count: z.object({
+                appointments: z.number()
+              })
+            })).openapi('Patient'),
+            pagination: z.object({
+              page: z.number(),
+              limit: z.number(),
+              total: z.number(),
+              totalPages: z.number()
+            })
+          })
+        }
+      }
+    },
+    ...CommonResponses
+  }
+})
+
+export const getPatientByIdRoute = createRoute({
+  method: 'get',
+  path: '/v1/patients/{patientId}',
+  summary: 'Get Patient Details',
+  description: 'Retrieve detailed information about a specific aesthetic clinic patient',
+  tags: ['Patients'],
+  security: [
+    {
+      BearerAuth: []
+    }
+  ],
+  request: {
+    params: PatientIdParamSchema
+  },
+  responses: {
+    200: {
+      description: 'Patient details with appointments and consent records',
+      content: {
+        'application/json': {
+          schema: z.object({
+            id: z.string(),
+            clinicId: z.string(),
+            fullName: z.string(),
+            familyName: z.string(),
+            cpf: z.string().optional(),
+            birthDate: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().email().optional(),
+            medicalRecordNumber: z.string(),
+            lgpdConsentGiven: z.boolean(),
+            dataConsentDate: z.string().optional(),
+            isActive: z.boolean(),
+            createdAt: z.string(),
+            updatedAt: z.string(),
+            appointments: z.array(z.object({
+              id: z.string(),
+              startTime: z.string(),
+              status: z.string(),
+              professional: z.object({
+                fullName: z.string()
+              })
+            })),
+            consentRecords: z.array(z.object({
+              id: z.string(),
+              purpose: z.string(),
+              status: z.string(),
+              consentType: z.string(),
+              legalBasis: z.string(),
+              createdAt: z.string(),
+              expiresAt: z.string()
+            })),
+            _count: z.object({
+              appointments: z.number()
+            })
+          })
+        }
+      }
+    },
+    ...CommonResponses
+  }
+})
+
+export const createPatientRoute = createRoute({
+  method: 'post',
+  path: '/v1/patients',
+  summary: 'Create Patient',
+  description: 'Create a new patient record in the aesthetic clinic system',
+  tags: ['Patients'],
+  security: [
+    {
+      BearerAuth: []
+    }
+  ],
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            clinicId: z.string().uuid(),
+            fullName: z.string().min(2).max(100),
+            familyName: z.string().min(1).max(50),
+            cpf: z.string().optional(),
+            birthDate: z.string().datetime().optional(),
+            phone: z.string().optional(),
+            email: z.string().email().optional(),
+            lgpdConsentGiven: z.boolean().default(false)
+          })
+        }
+      }
+    }
+  },
+  responses: {
+    201: {
+      description: 'Patient successfully created',
+      content: {
+        'application/json': {
+          schema: z.object({
+            id: z.string(),
+            clinicId: z.string(),
+            fullName: z.string(),
+            familyName: z.string(),
+            cpf: z.string().optional(),
+            birthDate: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().email().optional(),
+            medicalRecordNumber: z.string(),
+            lgpdConsentGiven: z.boolean(),
+            dataConsentDate: z.string().optional(),
+            isActive: z.boolean(),
+            createdAt: z.string(),
+            updatedAt: z.string(),
+            _count: z.object({
+              appointments: z.number()
+            })
+          })
+        }
+      }
+    },
+    ...CommonResponses
+  }
+})
+
+export const updatePatientRoute = createRoute({
+  method: 'put',
+  path: '/v1/patients/{patientId}',
+  summary: 'Update Patient',
+  description: 'Update an existing patient record in the aesthetic clinic system',
+  tags: ['Patients'],
+  security: [
+    {
+      BearerAuth: []
+    }
+  ],
+  request: {
+    params: PatientIdParamSchema,
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            id: z.string().uuid(),
+            clinicId: z.string().uuid(),
+            fullName: z.string().min(2).max(100),
+            familyName: z.string().min(1).max(50),
+            cpf: z.string().optional(),
+            birthDate: z.string().datetime().optional(),
+            phone: z.string().optional(),
+            email: z.string().email().optional(),
+            lgpdConsentGiven: z.boolean().default(false)
+          })
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: 'Patient successfully updated',
+      content: {
+        'application/json': {
+          schema: z.object({
+            id: z.string(),
+            clinicId: z.string(),
+            fullName: z.string(),
+            familyName: z.string(),
+            cpf: z.string().optional(),
+            birthDate: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().email().optional(),
+            medicalRecordNumber: z.string(),
+            lgpdConsentGiven: z.boolean(),
+            dataConsentDate: z.string().optional(),
+            isActive: z.boolean(),
+            createdAt: z.string(),
+            updatedAt: z.string(),
+            _count: z.object({
+              appointments: z.number()
+            })
+          })
+        }
+      }
+    },
+    ...CommonResponses
+  }
+})
