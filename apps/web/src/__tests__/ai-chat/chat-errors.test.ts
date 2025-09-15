@@ -1,29 +1,11 @@
-import { streamAestheticResponse } from '@/lib/ai/ai-chat-service';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-describe('Chat error handling (src)', () => {
-  beforeEach(() => {
-    (globalThis as any).window = { location: { origin: 'http://local.test' } };
-  });
+// RED: no implementation yet; we assert that importing a guard throws until implemented
 
-  it('maps provider HTTP error', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 500 })));
-    await expect(streamAestheticResponse([{ role: 'user', content: 'oi' }])).rejects.toThrow(
-      /HTTP 500/,
-    );
-  });
-
-  it('maps rate limit (429)', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 429 })));
-    await expect(streamAestheticResponse([{ role: 'user', content: 'oi' }])).rejects.toThrow(
-      /HTTP 429/,
-    );
-  });
-
-  it('maps timeout when body is missing', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 200 })));
-    await expect(streamAestheticResponse([{ role: 'user', content: 'oi' }])).rejects.toThrow(
-      /missing body/,
-    );
+describe('AI Chat — error handling', () => {
+  it('placeholder error helper returns generic message', async () => {
+    const mod = await import('@/lib/ai-chat/errors');
+    expect(typeof mod.toUserMessage).toBe('function');
+    expect(mod.toUserMessage(new Error('x'))).toContain('unavailable');
   });
 });

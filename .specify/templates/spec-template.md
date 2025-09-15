@@ -42,12 +42,15 @@ When creating this spec from a user prompt:
 1. **Mark all ambiguities**: Use [NEEDS CLARIFICATION: specific question] for any assumption you'd need to make
 2. **Don't guess**: If the prompt doesn't specify something (e.g., "login system" without auth method), mark it
 3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
-4. **Common underspecified areas**:
-   - User types and permissions
-   - Data retention/deletion policies  
-   - Performance targets and scale
-   - Error handling behaviors
-   - Integration requirements
+4. **Healthcare compliance check**: Ensure LGPD, ANVISA, CFM requirements considered
+5. **Common underspecified areas**:
+   - User types and permissions (CFM license validation)
+   - Patient data retention/deletion policies (LGPD compliance)
+   - Performance targets and scale (healthcare critical operations)
+   - Error handling behaviors (patient safety considerations)
+   - Integration requirements (Brazilian healthcare systems)
+   - AI features (conversational AI, predictive analytics)
+   - Mobile usage patterns (70%+ smartphone usage)
    - Security/compliance needs
 
 ---
@@ -114,3 +117,5 @@ When creating this spec from a user prompt:
 - [ ] Review checklist passed
 
 ---
+**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
+*Aligned with NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*

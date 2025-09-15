@@ -46,35 +46,45 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-**Simplicity**:
-- Projects: [#] (max 3 - e.g., api, cli, tests)
-- Using framework directly? (no wrapper classes)
-- Single data model? (no DTOs unless serialization differs)
-- Avoiding patterns? (no Repository/UoW without proven need)
+**I. Compliance-First Development**:
+- LGPD data protection implemented? (patient consent, audit trails)
+- ANVISA compliance verified? (medical device regulations if applicable)
+- CFM professional standards met? (Brazilian medical council requirements)
+- Patient data anonymization on consent withdrawal?
 
-**Architecture**:
-- EVERY feature as library? (no direct app code)
-- Libraries listed: [name + purpose for each]
-- CLI per library: [commands with --help/--version/--format]
-- Library docs: llms.txt format planned?
-
-**Testing (NON-NEGOTIABLE)**:
+**II. Test-Driven Development (NON-NEGOTIABLE)**:
 - RED-GREEN-Refactor cycle enforced? (test MUST fail first)
+- 90% test coverage for healthcare components? (patient data, appointments, AI)
 - Git commits show tests before implementation?
 - Order: Contract→Integration→E2E→Unit strictly followed?
 - Real dependencies used? (actual DBs, not mocks)
-- Integration tests for: new libraries, contract changes, shared schemas?
 - FORBIDDEN: Implementation before test, skipping RED phase
 
-**Observability**:
-- Structured logging included?
-- Frontend logs → backend? (unified stream)
-- Error context sufficient?
+**III. AI-Enhanced Architecture**:
+- Conversational AI integration planned? (24/7 patient engagement)
+- Predictive analytics included? (no-show prevention <10%)
+- AI automation throughout platform? (scheduling, triage, insights)
+- Portuguese language support for AI features?
 
-**Versioning**:
-- Version number assigned? (MAJOR.MINOR.BUILD)
-- BUILD increments on every change?
-- Breaking changes handled? (parallel tests, migration plan)
+**IV. Mobile-First Design**:
+- Mobile-optimized for 70%+ usage? (touch interfaces, PWA)
+- Responsive design mandatory? (not degraded mobile experience)
+- Performance targets met? (<500ms patient records, <300ms scheduling)
+
+**V. Real-Time Operations**:
+- WebSocket subscriptions for live updates?
+- Performance targets: 99.9% uptime, <2s AI responses?
+- Critical healthcare operations prioritized?
+
+**Healthcare Standards**:
+- Branded types for medical identifiers? (PatientId, CPF)
+- Healthcare-specific error handling? (severity levels)
+- Comprehensive audit logging? (all data operations)
+
+**Technology Governance**:
+- Required tech stack used? (TanStack Router, Vite, Hono, Supabase)
+- MCP tools integration? (archon, serena, desktop-commander)
+- Quality standard ≥9.5/10 maintained?
 
 ## Project Structure
 
@@ -172,7 +182,7 @@ ios/ or android/
    - Quickstart test = story validation steps
 
 5. **Update agent file incrementally** (O(1) operation):
-   - Run `/scripts/bash/update-agent-context.sh copilot` for your AI assistant
+   - Run `/scripts/bash/update-agent-context.sh claude` for your AI assistant
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
    - Update recent changes (keep last 3)
@@ -235,4 +245,5 @@ ios/ or android/
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
+*Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*
