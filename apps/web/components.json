@@ -10,7 +10,7 @@
     "cssVariables": true,
     "prefix": ""
   },
-  "iconLibrary": "lucide",
+  "iconLibrary": "remixicon",
   "aliases": {
     "components": "src/components",
     "utils": "@neonpro/ui/lib/utils",
@@ -19,6 +19,7 @@
     "hooks": "src/hooks"
   },
   "registries": {
+    "@experiment-01": "https://ui-experiments-green.vercel.app/r/experiment-01.json",
     "@kokonutui": "https://kokonutui.com/r/{name}.json",
     "@aceternity": "https://ui.aceternity.com/registry/{name}.json",
     "@cult-ui": "https://cult-ui.com/r/{name}.json",

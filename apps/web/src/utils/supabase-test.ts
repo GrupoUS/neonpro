@@ -6,8 +6,7 @@ export async function testSupabaseConnection() {
     console.log('🔍 Testing Supabase connection...');
     
     // Test 1: Check client configuration
-    console.log('📋 Supabase URL:', supabase.supabaseUrl);
-    console.log('📋 Supabase Key (first 10 chars):', supabase.supabaseKey.substring(0, 10) + '...');
+    console.log('📋 Supabase client initialized');
     
     // Test 2: Check authentication status
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();

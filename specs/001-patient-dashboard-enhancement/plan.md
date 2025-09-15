@@ -1,8 +1,8 @@
-# Implementation Plan: AI Chat with Database-Aware Context
+# Implementation Plan: [FEATURE]
 
 
-**Branch**: `001-ai-chat-with` | **Date**: 2025-09-13 | **Spec**: /home/vibecode/neonpro/specs/001-ai-chat-with/spec.md
-**Input**: Feature specification from `/specs/001-ai-chat-with/spec.md`
+**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
+**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
 ## Execution Flow (/plan command scope)
 ```
@@ -30,24 +30,18 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-Enable NeonPro’s AI chat to deliver accurate, database-aware answers for clinical and financial questions with strict LGPD compliance.
-
-Primary requirement:
-- Natural-language Q&A across clinic domains with consent gating, RLS, audit, and privacy-protecting explanation view.
-
-Technical approach (from research):
-- Use AI SDK v5 for typed streaming chat and tools; Hono API routes; Supabase/Postgres under RLS; business logic via services; UI components for prompt presets, safe suggestions, loading states, and optional summarized explanation.
+[Extract from feature spec: primary requirement + technical approach from research]
 
 ## Technical Context
-**Language/Version**: TypeScript 5.7, React 19, Node 20  
-**Primary Dependencies**: Vercel AI SDK v5, Hono, Supabase JS, Zod, shadcn/ui  
-**Storage**: PostgreSQL (Supabase) with RLS and consent records  
-**Testing**: Vitest, Playwright, MSW; >95% coverage for critical logic (per Constitution)  
-**Target Platform**: Web (Vercel) with Edge-compatible routes where applicable  
-**Project Type**: web (frontend + backend)  
-**Performance Goals**: p95 stream start ≤2s; full answer ≤12s; 99.9% availability  
-**Constraints**: LGPD compliance, PII redaction, audit logging, role/clinic isolation, accessibility  
-**Scale/Scope**: Multi-clinic tenants; pt-BR primary locale; finance + clinical domains
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [single/web/mobile - determines source structure]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
@@ -132,7 +126,7 @@ ios/ or android/
 └── [platform-specific structure]
 ```
 
-**Structure Decision**: Option 2 (Web application) — backend (Hono API + services) and frontend (React components) with shared packages; contracts generated into `specs/001-ai-chat-with/contracts/` for planning.
+**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
@@ -227,17 +221,17 @@ ios/ or android/
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [x] Phase 0: Research complete (/plan command)
-- [x] Phase 1: Design complete (/plan command)
-- [x] Phase 2: Task planning complete (/plan command - describe approach only)
+- [ ] Phase 0: Research complete (/plan command)
+- [ ] Phase 1: Design complete (/plan command)
+- [ ] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [x] Initial Constitution Check: PASS
-- [x] Post-Design Constitution Check: PASS
-- [ ] All NEEDS CLARIFICATION resolved (pending final stakeholder confirmation on roles, locales, retention, SLOs)
+- [ ] Initial Constitution Check: PASS
+- [ ] Post-Design Constitution Check: PASS
+- [ ] All NEEDS CLARIFICATION resolved
 - [ ] Complexity deviations documented
 
 ---

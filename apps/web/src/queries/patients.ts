@@ -1,11 +1,19 @@
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/lib/supabase/types/database';
 
-// Tipos para melhor type safety
-type Patient = Database['public']['Tables']['patients']['Row'];
-type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-type PatientUpdate = Database['public']['Tables']['patients']['Update'];
+// Tipos básicos para melhor type safety
+type Patient = {
+  id: string;
+  fullName: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
+  updatedAt: string;
+  clinicId: string;
+};
+
+type PatientInsert = Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>;
+type PatientUpdate = Partial<PatientInsert> & { id: string };
 
 // Query options para listar pacientes com filtros
 export const patientsQueryOptions = ({

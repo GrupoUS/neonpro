@@ -37,25 +37,55 @@ async function countUpcomingAppointments(clinicId: string, fromISO: string, toIS
   return count || 0;
 }
 
-export function usePatientStats(clinicId: string) {
-  return useQuery<PatientStats, Error>({
-    queryKey: ['patients-stats', clinicId],
-    enabled: !!clinicId,
-    staleTime: 30_000,
-    gcTime: 120_000,
+export function usePatientStats(clinicId?: string) {
+  return useQuery({
+    queryKey: ['patient-stats', clinicId],
     queryFn: async () => {
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const inSevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      // Como a função RPC não está disponível, fazemos as queries separadamente
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-      const [totalPatients, activePatients, newThisMonth, upcomingAppointments] = await Promise.all([
-        countPatients(clinicId),
-        countPatients(clinicId, { isActive: true }),
-        countPatients(clinicId, { createdFrom: startOfMonth.toISOString() }),
-        countUpcomingAppointments(clinicId, now.toISOString(), inSevenDays.toISOString()),
+      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise.all([
+        supabase
+          .from('patients')
+          .select('id, is_active'),
+        supabase
+          .from('patients')
+          .select('id')
+          .gte('created_at', firstDayOfMonth.toISOString()),
+        supabase
+          .from('appointments')
+          .select('id')
+          .gte('start_time', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z'),
+        supabase
+          .from('financial_transactions')
+          .select('amount')
+          .gte('transaction_date', today.toISOString().split('T')[0] + 'T00:00:00Z')
+          .lt('transaction_date', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z')
       ]);
 
-      return { totalPatients, activePatients, newThisMonth, upcomingAppointments };
+      if (patientsResult.error) throw patientsResult.error;
+      if (newPatientsResult.error) throw newPatientsResult.error;
+      if (appointmentsResult.error) throw appointmentsResult.error;
+      if (revenueResult.error) throw revenueResult.error;
+
+      const totalPatients = patientsResult.data?.length || 0;
+      const activePatients = patientsResult.data?.filter(p => p.is_active)?.length || 0;
+      const newThisMonth = newPatientsResult.data?.length || 0;
+      const upcomingAppointments = appointmentsResult.data?.length || 0;
+      const revenueToday = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0) || 0;
+
+      return {
+        totalPatients,
+        activePatients,
+        newThisMonth,
+        upcomingAppointments,
+        appointmentsToday: 0, // Legacy, incluir para compatibilidade
+        revenueToday
+      };
     },
+    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+    staleTime: 2 * 60 * 1000, // Consider stale after 2 minutes
   });
 }

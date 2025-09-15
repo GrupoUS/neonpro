@@ -262,9 +262,7 @@ function AppShellContent() {
               {links.map((link) => (
                 <SidebarLink
                   key={link.href}
-                  href={link.href}
-                  icon={link.icon}
-                  label={link.label}
+                  link={link}
                   setOpen={setOpen}
                 />
               ))}
