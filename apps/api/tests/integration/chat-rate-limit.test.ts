@@ -2,6 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Hono } from 'hono'
 
 async function api(init?: RequestInit) {
+  process.env.SUPABASE_URL ??= 'http://localhost:54321';
+  process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'service_role_test_key';
+  process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
   const { default: chat } = await import('../../src/routes/chat')
   const app = new Hono()
   app.route('/v1/chat', chat)
@@ -35,11 +39,20 @@ describe('Integration: chat rate limits', () => {
     const res11 = await call('/v1/chat/query?mock=true')
     expect(res11.status).toBe(429)
 
-    // Advance 5 minutes to reset short window
-    vi.advanceTimersByTime(5 * 60 * 1000)
+    // Advance 5 minutes + 1ms to fully exit short window (boundary is <= 5m)
+    vi.advanceTimersByTime(5 * 60 * 1000 + 1)
 
     // Next 20 requests to hit hourly cap (10 already counted) → total 30 ok
-    for (let i = 0; i < 20; i++) {
+    // But respect the 10-per-5m window by splitting into two batches of 10
+    for (let i = 0; i < 10; i++) {
+      const res = await call('/v1/chat/query?mock=true')
+      expect(res.status).toBe(200)
+    }
+
+    // Advance another 5 minutes window to allow second batch
+    vi.advanceTimersByTime(5 * 60 * 1000 + 1)
+
+    for (let i = 0; i < 10; i++) {
       const res = await call('/v1/chat/query?mock=true')
       expect(res.status).toBe(200)
     }

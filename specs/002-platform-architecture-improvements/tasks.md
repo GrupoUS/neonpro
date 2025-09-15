@@ -1,465 +1,219 @@
-# 📋 NeonPro Platform Architecture Improvements - Implementation Tasks
+# Tasks: NeonPro Platform Architecture Improvements
 
-> **Implementation Strategy**: Phased approach with healthcare compliance validation, minimal disruption, and progressive enhancement
+**Input**: Design documents from `/home/vibecode/neonpro/specs/002-platform-architecture-improvements/`
+**Prerequisites**: plan.md ✓, research.md ✓, data-model.md ✓, contracts/ ✓
 
-## 🎯 Task Overview & Prioritization
-
-### **Priority Classification**
-- **P0 (Critical)**: Security, compliance, core performance issues
-- **P1 (High)**: User experience, major performance gains
-- **P2 (Medium)**: Developer experience, monitoring enhancements
-- **P3 (Low)**: Nice-to-have features, future optimizations
-
-### **Dependencies Matrix**
+## Execution Flow (main)
 ```
-observability → performance → ai_optimization
-security → authentication → api_contracts
-accessibility → (all components)
-developer_experience → (supports all areas)
+1. Load plan.md from feature directory ✓
+   → Tech stack: React 19 + TanStack Router + Vite, Hono + Supabase, TypeScript 5.7
+   → Libraries: Sentry, OpenTelemetry, Zod, Argon2id, axe-core
+2. Load design documents ✓:
+   → data-model.md: TelemetryEvent, APIContract, SecurityPolicy, AIOptimization entities
+   → contracts/: observability.openapi.yaml, api-management.openapi.yaml, security-policies.openapi.yaml, ai-optimization.openapi.yaml
+   → research.md: Healthcare compliance decisions, performance optimizations
+3. Generate tasks by category: 8 improvement areas with 42 tasks
+4. Apply task rules: Different files marked [P], tests before implementation
+5. Number tasks sequentially (T001-T042)
+6. Dependencies: Setup → Tests → Core → Integration → Polish
+7. Parallel execution examples included
+8. Task completeness validated ✓
+```
+
+## Format: `[ID] [P?] Description`
+- **[P]**: Can run in parallel (different files, no dependencies)
+- Include exact file paths in descriptions
+
+## Path Conventions
+- **Monorepo structure**: `apps/web/`, `apps/api/`, `packages/shared/`
+- **Frontend**: `apps/web/src/`, `apps/web/tests/`
+- **Backend**: `apps/api/src/`, `apps/api/tests/`
+- **Shared**: `packages/shared/src/`, `packages/shared/tests/`
+
+---
+
+## Phase 3.1: Setup & Infrastructure
+
+### Observability Infrastructure
+- [ ] **T001** Initialize Sentry configuration for healthcare platform at `apps/web/src/lib/sentry.ts` and `apps/api/src/lib/sentry.ts`
+- [ ] **T002** [P] Configure OpenTelemetry tracing infrastructure at `packages/shared/src/telemetry/`
+- [ ] **T003** [P] Set up error tracking middleware for Hono API at `apps/api/src/middleware/error-tracking.ts`
+
+### API Contract Management
+- [ ] **T004** [P] Install and configure Hono OpenAPI generator at `apps/api/src/lib/openapi-generator.ts`
+- [ ] **T005** [P] Set up Zod schema validation middleware at `apps/api/src/middleware/zod-validation.ts`
+
+### Security Infrastructure  
+- [ ] **T006** [P] Configure Content Security Policy headers at `apps/web/src/lib/security/csp.ts`
+- [ ] **T007** [P] Set up Subresource Integrity validation at `apps/web/vite.config.ts`
+- [ ] **T008** [P] Initialize rate limiting infrastructure at `apps/api/src/middleware/rate-limiting.ts`
+
+---
+
+## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
+
+### Contract Tests
+- [ ] **T009** [P] Create observability API contract tests at `apps/api/tests/contracts/observability.test.ts`
+- [ ] **T010** [P] Create API management contract tests at `apps/api/tests/contracts/api-management.test.ts`
+- [ ] **T011** [P] Create security policies contract tests at `apps/api/tests/contracts/security-policies.test.ts`
+- [ ] **T012** [P] Create AI optimization contract tests at `apps/api/tests/contracts/ai-optimization.test.ts`
+
+### Integration Tests
+- [ ] **T013** [P] Create performance monitoring integration tests at `apps/web/tests/integration/performance-monitoring.test.ts`
+- [ ] **T014** [P] Create accessibility testing integration tests at `apps/web/tests/integration/accessibility.test.ts`
+- [ ] **T015** [P] Create AI semantic caching integration tests at `apps/api/tests/integration/ai-semantic-caching.test.ts`
+
+---
+
+## Phase 3.3: Core Implementation
+
+### 1. Observability & Monitoring
+- [ ] **T016** Create TelemetryEvent data model at `packages/shared/src/models/telemetry-event.ts`
+- [ ] **T017** Implement performance metrics collection service at `apps/web/src/services/performance-metrics.ts`
+- [ ] **T018** Create error tracking service with healthcare data redaction at `apps/api/src/services/error-tracking.ts`
+- [ ] **T019** [P] Implement Web Vitals monitoring at `apps/web/src/lib/web-vitals.ts`
+- [ ] **T020** [P] Create structured logging service at `packages/shared/src/services/structured-logging.ts`
+
+### 2. API Contracts & Documentation
+- [ ] **T021** Create APIContract data model at `packages/shared/src/models/api-contract.ts`
+- [ ] **T022** Implement automatic OpenAPI generation from Zod schemas at `apps/api/src/lib/schema-to-openapi.ts`
+- [ ] **T023** Create interactive API documentation generator at `apps/api/src/routes/docs.ts`
+- [ ] **T024** [P] Implement contract validation middleware at `apps/api/src/middleware/contract-validation.ts`
+
+### 3. Performance Optimization
+- [ ] **T025** Configure Vite code splitting and lazy loading at `apps/web/vite.config.ts`
+- [ ] **T026** [P] Implement intelligent prefetching with TanStack Router at `apps/web/src/lib/prefetch-manager.ts`
+- [ ] **T027** [P] Set up image optimization with WebP/AVIF support at `apps/web/src/lib/image-optimization.ts`
+- [ ] **T028** [P] Create service worker for offline capabilities at `apps/web/public/sw.js`
+
+### 4. Security & Compliance
+- [ ] **T029** Create SecurityPolicy data model at `packages/shared/src/models/security-policy.ts`
+- [ ] **T030** Implement LGPD compliance middleware at `apps/api/src/middleware/lgpd-compliance.ts`
+- [ ] **T031** Create audit trail service for healthcare operations at `apps/api/src/services/audit-trail.ts`
+- [ ] **T032** [P] Implement secure session management at `apps/api/src/lib/session-management.ts`
+
+### 5. Developer Experience
+- [ ] **T033** [P] Create code generation templates at `.specify/generators/`
+- [ ] **T034** [P] Set up automated test sharding for CI at `.github/workflows/test-sharding.yml`
+- [ ] **T035** [P] Configure development environment automation at `scripts/dev-setup.sh`
+
+### 6. AI Cost & Latency Optimization
+- [ ] **T036** Create AIOptimization data model at `packages/shared/src/models/ai-optimization.ts`
+- [ ] **T037** Implement semantic caching with vector embeddings at `apps/api/src/services/semantic-cache.ts`
+- [ ] **T038** Create multi-provider AI routing service at `apps/api/src/services/ai-provider-router.ts`
+- [ ] **T039** [P] Implement PII redaction for AI prompts at `apps/api/src/lib/pii-redaction.ts`
+
+### 7. Authentication Modernization
+- [ ] **T040** Implement Argon2id password hashing migration at `apps/api/src/lib/password-migration.ts`
+- [ ] **T041** [P] Create modern password policy validation at `packages/shared/src/lib/password-validation.ts`
+
+### 8. Accessibility Testing
+- [ ] **T042** [P] Set up automated axe-core testing in CI at `apps/web/tests/accessibility/axe-integration.test.ts`
+
+---
+
+## Phase 3.4: Integration & Polish
+
+### System Integration
+- [ ] **T043** Integrate Sentry with existing error handling at `apps/api/src/app.ts`
+- [ ] **T044** Connect OpenTelemetry with Supabase monitoring at `apps/api/src/lib/supabase-telemetry.ts`
+- [ ] **T045** [P] Integrate semantic caching with existing AI chat system at `apps/api/src/routes/ai-chat.ts`
+
+### Performance Polish
+- [ ] **T046** [P] Optimize bundle sizes and implement performance budgets at `apps/web/webpack-bundle-analyzer.config.js`
+- [ ] **T047** [P] Add performance monitoring dashboards at `apps/web/src/components/admin/performance-dashboard.tsx`
+
+### Security Polish
+- [ ] **T048** [P] Implement security headers testing at `apps/api/tests/security/headers.test.ts`
+- [ ] **T049** [P] Add LGPD compliance validation tests at `apps/api/tests/compliance/lgpd.test.ts`
+
+### Documentation & DevEx Polish
+- [ ] **T050** [P] Create comprehensive README for each improvement area at `docs/architecture/improvements/`
+- [ ] **T051** [P] Generate API documentation and deploy to docs site at `docs/api/`
+
+---
+
+## Dependency Graph
+
+```mermaid
+graph TD
+    A[T001-T008: Setup] --> B[T009-T015: Tests]
+    B --> C[T016-T042: Core Implementation]
+    C --> D[T043-T051: Integration & Polish]
+    
+    subgraph "Parallel Groups"
+        P1[T002,T003,T004,T005,T006,T007,T008]
+        P2[T009,T010,T011,T012,T013,T014,T015]
+        P3[T019,T020,T024,T027,T028,T032-T035,T039,T041,T042]
+        P4[T045,T046,T047,T048,T049,T050,T051]
+    end
+```
+
+## Parallel Execution Examples
+
+### Setup Phase (Can run simultaneously)
+```bash
+# Terminal 1: Observability setup
+Task: "Initialize Sentry and OpenTelemetry configuration for healthcare platform monitoring"
+
+# Terminal 2: API contracts setup  
+Task: "Set up Hono OpenAPI generator and Zod validation middleware"
+
+# Terminal 3: Security infrastructure
+Task: "Configure CSP, SRI, and rate limiting for healthcare security compliance"
+```
+
+### Core Implementation (Grouped by area)
+```bash
+# Observability team
+Task: "Implement performance metrics, error tracking, and Web Vitals monitoring with healthcare data protection"
+
+# API team
+Task: "Create automatic OpenAPI generation and interactive documentation from Zod schemas"
+
+# Security team  
+Task: "Implement LGPD compliance middleware and audit trail service for healthcare operations"
+
+# AI team
+Task: "Build semantic caching and multi-provider routing for AI cost optimization"
 ```
 
 ---
 
-## 📊 PHASE 1: Foundation & Security (Weeks 1-4)
-
-### **Task 1.1: Security Policy Implementation**
-**Priority**: P0 | **Effort**: 3 weeks | **Owner**: Backend + Security Team
-
-#### **Subtasks**:
-1. **Content Security Policy (CSP) Setup** *(5 days)*
-   - [ ] Configure CSP headers for production/staging environments
-   - [ ] Implement CSP violation reporting endpoint
-   - [ ] Add healthcare-specific CSP directives for patient data protection
-   - [ ] Test CSP with existing components and third-party integrations
-   - [ ] Document CSP policy versioning and update procedures
-
-2. **Subresource Integrity (SRI) Implementation** *(3 days)*
-   - [ ] Generate SRI hashes for all critical static assets
-   - [ ] Implement automatic SRI hash generation in build pipeline
-   - [ ] Add SRI verification for CDN resources
-   - [ ] Create SRI monitoring and alerting for hash mismatches
-   - [ ] Document SRI update procedures for asset changes
-
-3. **HTTP Strict Transport Security (HSTS) Configuration** *(2 days)*
-   - [ ] Configure HSTS headers with healthcare-grade settings
-   - [ ] Implement HSTS preload list registration
-   - [ ] Add subdomain HSTS enforcement
-   - [ ] Test HSTS with all application endpoints
-   - [ ] Document HSTS policy and maintenance procedures
-
-**Acceptance Criteria**:
-- [ ] All security headers properly configured and tested
-- [ ] CSP violations monitored and reported
-- [ ] SRI hashes verified for all critical assets
-- [ ] HSTS preload list registration completed
-- [ ] Healthcare security compliance validated
-
-**Healthcare Compliance**: LGPD data protection, ANVISA security requirements
-
----
-
-### **Task 1.2: Authentication Modernization**
-**Priority**: P0 | **Effort**: 2 weeks | **Owner**: Backend + Security Team
-
-#### **Subtasks**:
-1. **Argon2id Implementation** *(1 week)*
-   - [ ] Install and configure Argon2id library
-   - [ ] Implement Argon2id hashing functions with healthcare-optimized parameters
-   - [ ] Create password validation utilities
-   - [ ] Add unit tests for Argon2id implementation
-   - [ ] Document Argon2id configuration and security parameters
-
-2. **Gradual Migration from bcrypt** *(1 week)*
-   - [ ] Implement hybrid authentication system (bcrypt + Argon2id)
-   - [ ] Create migration script for existing password hashes
-   - [ ] Add migration progress tracking and monitoring
-   - [ ] Implement fallback mechanisms for migration failures
-   - [ ] Document migration procedures and rollback plans
-
-**Acceptance Criteria**:
-- [ ] Argon2id implementation with healthcare-grade security parameters
-- [ ] Successful migration of existing password hashes
-- [ ] Zero authentication service downtime during migration
-- [ ] Comprehensive testing of authentication flows
-- [ ] Security audit validation of new authentication system
-
-**Healthcare Compliance**: Enhanced patient data access security
-
----
-
-### **Task 1.3: Accessibility Foundation**
-**Priority**: P0 | **Effort**: 2 weeks | **Owner**: Frontend + QA Team
-
-#### **Subtasks**:
-1. **Automated Accessibility Testing Setup** *(1 week)*
-   - [ ] Install and configure axe-core testing framework
-   - [ ] Integrate axe testing into CI/CD pipeline
-   - [ ] Create accessibility test suites for critical patient workflows
-   - [ ] Implement accessibility violation reporting
-   - [ ] Set up accessibility monitoring dashboard
-
-2. **WCAG 2.1 AA+ Compliance Audit** *(1 week)*
-   - [ ] Conduct comprehensive accessibility audit of existing components
-   - [ ] Document accessibility violations and remediation plans
-   - [ ] Create accessibility testing checklist for new features
-   - [ ] Implement accessibility testing training for development team
-   - [ ] Establish accessibility compliance gates for releases
-
-**Acceptance Criteria**:
-- [ ] Automated accessibility testing in CI/CD pipeline
-- [ ] WCAG 2.1 AA+ compliance for critical patient workflows
-- [ ] Accessibility violation detection and reporting system
-- [ ] Team training on accessibility best practices completed
-- [ ] Accessibility compliance gates enforced
-
-**Healthcare Compliance**: Inclusive design for healthcare accessibility
-
----
-
-## 🔍 PHASE 2: Observability & Monitoring (Weeks 5-8)
-
-### **Task 2.1: Sentry Error Tracking Implementation**
-**Priority**: P1 | **Effort**: 2 weeks | **Owner**: DevOps + Frontend Team
-
-#### **Subtasks**:
-1. **Sentry Configuration and Setup** *(1 week)*
-   - [ ] Configure Sentry projects for frontend and backend
-   - [ ] Implement Sentry SDK integration with React 19 and Hono
-   - [ ] Configure healthcare-compliant error filtering and PII redaction
-   - [ ] Set up Sentry alerts and notification channels
-   - [ ] Create custom Sentry dashboards for healthcare KPIs
-
-2. **Error Handling and Reporting** *(1 week)*
-   - [ ] Implement comprehensive error boundaries for React components
-   - [ ] Add structured error logging with healthcare context
-   - [ ] Configure error fingerprinting for better issue grouping
-   - [ ] Implement user feedback collection for errors
-   - [ ] Document error handling procedures and escalation
-
-**Acceptance Criteria**:
-- [ ] Sentry fully integrated with PII redaction for healthcare compliance
-- [ ] Error boundaries implemented for all critical patient workflows
-- [ ] Comprehensive error alerting and notification system
-- [ ] Custom dashboards for healthcare-specific error tracking
-- [ ] Error handling documentation and procedures established
-
-**Healthcare Compliance**: LGPD-compliant error data collection
-
----
-
-### **Task 2.2: OpenTelemetry Distributed Tracing**
-**Priority**: P1 | **Effort**: 2 weeks | **Owner**: Backend + DevOps Team
-
-#### **Subtasks**:
-1. **OpenTelemetry Instrumentation** *(1 week)*
-   - [ ] Install and configure OpenTelemetry for Hono backend
-   - [ ] Implement browser instrumentation for frontend tracing
-   - [ ] Configure trace sampling for production performance
-   - [ ] Set up trace export to observability backend
-   - [ ] Create custom instrumentation for healthcare workflows
-
-2. **Distributed Tracing Implementation** *(1 week)*
-   - [ ] Implement trace correlation across frontend and backend
-   - [ ] Add custom spans for critical healthcare operations
-   - [ ] Configure trace filtering to exclude sensitive data
-   - [ ] Set up distributed tracing dashboards and alerts
-   - [ ] Document tracing architecture and troubleshooting procedures
-
-**Acceptance Criteria**:
-- [ ] Complete distributed tracing across frontend and backend
-- [ ] Custom spans for healthcare-critical operations
-- [ ] Trace data compliant with healthcare privacy requirements
-- [ ] Distributed tracing dashboards and alerting configured
-- [ ] Performance impact of tracing validated and optimized
-
-**Healthcare Compliance**: LGPD-compliant distributed tracing
-
----
-
-### **Task 2.3: Web Vitals and Performance Monitoring**
-**Priority**: P1 | **Effort**: 1 week | **Owner**: Frontend Team
-
-#### **Subtasks**:
-1. **Web Vitals Implementation** *(3 days)*
-   - [ ] Implement Core Web Vitals collection (CLS, FCP, FID, INP, LCP, TTFB)
-   - [ ] Configure real user monitoring (RUM) for performance tracking
-   - [ ] Set up performance budgets and alerting thresholds
-   - [ ] Implement performance monitoring dashboard
-   - [ ] Create performance regression detection system
-
-2. **Healthcare-Specific Performance Metrics** *(2 days)*
-   - [ ] Define and track healthcare-specific performance KPIs
-   - [ ] Implement patient workflow timing measurements
-   - [ ] Add appointment scheduling performance tracking
-   - [ ] Monitor critical patient data loading times
-   - [ ] Document performance SLAs for healthcare operations
-
-**Acceptance Criteria**:
-- [ ] Complete Web Vitals monitoring with healthcare-specific thresholds
-- [ ] Real user monitoring for all critical patient workflows
-- [ ] Performance budgets enforced in CI/CD pipeline
-- [ ] Performance regression detection and alerting system
-- [ ] Healthcare performance SLAs documented and monitored
-
-**Healthcare Compliance**: Patient care performance standards
-
----
-
-## ⚡ PHASE 3: Performance Optimization (Weeks 9-12)
-
-### **Task 3.1: Vite Build Optimization**
-**Priority**: P1 | **Effort**: 2 weeks | **Owner**: Frontend + DevOps Team
-
-#### **Subtasks**:
-1. **Code Splitting and Lazy Loading** *(1 week)*
-   - [ ] Implement route-based code splitting with TanStack Router
-   - [ ] Add component-level lazy loading for large healthcare modules
-   - [ ] Configure bundle analysis and size monitoring
-   - [ ] Implement preloading strategies for critical patient workflows
-   - [ ] Optimize vendor bundle splitting and caching
-
-2. **Build Pipeline Optimization** *(1 week)*
-   - [ ] Configure advanced Vite build optimizations
-   - [ ] Implement build-time asset optimization (minification, compression)
-   - [ ] Add build performance monitoring and metrics
-   - [ ] Configure optimized development build for faster iteration
-   - [ ] Document build optimization procedures and troubleshooting
-
-**Acceptance Criteria**:
-- [ ] Initial page load time under 2 seconds for patient dashboards
-- [ ] Route-based code splitting implemented across all major modules
-- [ ] Bundle size reduced by minimum 30% compared to baseline
-- [ ] Build time optimized for development productivity
-- [ ] Build performance monitoring and alerting established
-
-**Healthcare Compliance**: Fast loading for critical patient care workflows
-
----
-
-### **Task 3.2: Image and Asset Optimization**
-**Priority**: P2 | **Effort**: 1 week | **Owner**: Frontend Team
-
-#### **Subtasks**:
-1. **Modern Image Format Implementation** *(3 days)*
-   - [ ] Implement WebP and AVIF image format support
-   - [ ] Add responsive image loading with srcset
-   - [ ] Configure automatic image optimization in build pipeline
-   - [ ] Implement lazy loading for non-critical images
-   - [ ] Add image performance monitoring
-
-2. **Asset Delivery Optimization** *(2 days)*
-   - [ ] Configure CDN for optimized asset delivery
-   - [ ] Implement progressive image loading
-   - [ ] Add image caching strategies
-   - [ ] Configure asset preloading for critical resources
-   - [ ] Document image optimization guidelines
-
-**Acceptance Criteria**:
-- [ ] Modern image formats implemented with fallbacks
-- [ ] Image loading performance improved by minimum 40%
-- [ ] Lazy loading implemented for all non-critical images
-- [ ] CDN configured for optimal asset delivery
-- [ ] Image optimization guidelines documented for team
-
-**Healthcare Compliance**: Fast image loading for medical imaging workflows
-
----
-
-## 🔗 PHASE 4: API Contracts & Developer Experience (Weeks 13-16)
-
-### **Task 4.1: Hono + Zod OpenAPI Integration**
-**Priority**: P2 | **Effort**: 3 weeks | **Owner**: Backend Team
-
-#### **Subtasks**:
-1. **OpenAPI Schema Generation** *(1 week)*
-   - [ ] Configure Zod schema validation for all API endpoints
-   - [ ] Implement automatic OpenAPI specification generation
-   - [ ] Add healthcare-specific validation rules and constraints
-   - [ ] Configure API documentation generation pipeline
-   - [ ] Set up API schema versioning and change management
-
-2. **API Contract Validation** *(1 week)*
-   - [ ] Implement request/response validation middleware
-   - [ ] Add API contract testing in CI/CD pipeline
-   - [ ] Configure breaking change detection for API contracts
-   - [ ] Implement API usage analytics and monitoring
-   - [ ] Document API contract development workflow
-
-3. **Healthcare API Compliance** *(1 week)*
-   - [ ] Implement LGPD-compliant API data handling
-   - [ ] Add ANVISA regulatory compliance validation
-   - [ ] Configure healthcare-specific rate limiting
-   - [ ] Implement audit logging for sensitive API operations
-   - [ ] Document healthcare API compliance procedures
-
-**Acceptance Criteria**:
-- [ ] All API endpoints have Zod schema validation
-- [ ] Automatic OpenAPI specification generation and documentation
-- [ ] API contract validation in CI/CD pipeline
-- [ ] Healthcare compliance validation for all sensitive endpoints
-- [ ] API contract development workflow documented
-
-**Healthcare Compliance**: LGPD, ANVISA, and CFM API compliance
-
----
-
-### **Task 4.2: Developer Experience Enhancement**
-**Priority**: P2 | **Effort**: 2 weeks | **Owner**: DevOps + Full Team
-
-#### **Subtasks**:
-1. **Code Generation and Tooling** *(1 week)*
-   - [ ] Implement TypeScript type generation from API schemas
-   - [ ] Add code generators for common healthcare patterns
-   - [ ] Configure IDE integrations and extensions
-   - [ ] Implement development workflow automation
-   - [ ] Create developer onboarding automation
-
-2. **Documentation and Standards** *(1 week)*
-   - [ ] Create comprehensive API documentation portal
-   - [ ] Implement interactive API testing environment
-   - [ ] Document coding standards and best practices
-   - [ ] Create healthcare development guidelines
-   - [ ] Set up automated documentation updates
-
-**Acceptance Criteria**:
-- [ ] Automated TypeScript type generation from API schemas
-- [ ] Code generators for common healthcare development patterns
-- [ ] Comprehensive API documentation portal with interactive testing
-- [ ] Healthcare development guidelines documented and enforced
-- [ ] Developer onboarding time reduced by minimum 50%
-
-**Healthcare Compliance**: Development standards for healthcare software
-
----
-
-## 🤖 PHASE 5: AI Optimization (Weeks 17-20)
-
-### **Task 5.1: Semantic Caching Implementation**
-**Priority**: P1 | **Effort**: 3 weeks | **Owner**: AI + Backend Team
-
-#### **Subtasks**:
-1. **Semantic Cache Infrastructure** *(1 week)*
-   - [ ] Implement embedding generation for query similarity
-   - [ ] Configure vector database for semantic search
-   - [ ] Add cache hit/miss analytics and monitoring
-   - [ ] Implement cache invalidation strategies
-   - [ ] Configure healthcare-compliant data retention policies
-
-2. **AI Response Caching** *(1 week)*
-   - [ ] Implement intelligent caching for AI model responses
-   - [ ] Add cache warming for common healthcare queries
-   - [ ] Configure cache TTL based on content sensitivity
-   - [ ] Implement cache performance monitoring
-   - [ ] Add LGPD-compliant cache data handling
-
-3. **Cost Optimization** *(1 week)*
-   - [ ] Implement AI usage cost tracking and analytics
-   - [ ] Configure model routing for cost optimization
-   - [ ] Add budget alerts and cost controls
-   - [ ] Implement fallback model chains for availability
-   - [ ] Document AI cost optimization procedures
-
-**Acceptance Criteria**:
-- [ ] Semantic caching achieving minimum 80% cost reduction target
-- [ ] AI response latency improved by minimum 60%
-- [ ] Comprehensive AI cost tracking and budget controls
-- [ ] LGPD-compliant AI data handling and retention
-- [ ] AI optimization procedures documented
-
-**Healthcare Compliance**: LGPD-compliant AI data processing
-
----
-
-### **Task 5.2: Multi-Provider AI Integration**
-**Priority**: P2 | **Effort**: 2 weeks | **Owner**: AI Team
-
-#### **Subtasks**:
-1. **Provider Abstraction Layer** *(1 week)*
-   - [ ] Implement unified AI provider interface
-   - [ ] Add support for multiple AI model providers
-   - [ ] Configure intelligent model routing based on query type
-   - [ ] Implement provider health checks and failover
-   - [ ] Add provider cost and performance analytics
-
-2. **Healthcare AI Optimization** *(1 week)*
-   - [ ] Configure healthcare-specific AI model optimizations
-   - [ ] Implement medical knowledge domain routing
-   - [ ] Add clinical decision support AI patterns
-   - [ ] Configure AI audit trails for healthcare compliance
-   - [ ] Document healthcare AI usage guidelines
-
-**Acceptance Criteria**:
-- [ ] Multi-provider AI integration with intelligent routing
-- [ ] Healthcare-specific AI optimizations implemented
-- [ ] AI provider failover and health monitoring
-- [ ] Clinical decision support patterns documented
-- [ ] AI audit trails for healthcare compliance established
-
-**Healthcare Compliance**: Clinical AI decision support standards
-
----
-
-## 📋 TASK DEPENDENCIES & COORDINATION
-
-### **Critical Path Dependencies**
-1. **Security → Authentication** (Tasks 1.1 → 1.2)
-2. **Observability → Performance** (Phase 2 → Phase 3)
-3. **API Contracts → AI Optimization** (Task 4.1 → Phase 5)
-4. **Accessibility** (Parallel across all phases)
-
-### **Resource Allocation**
-- **Backend Team**: 60% (Security, API, AI)
-- **Frontend Team**: 30% (Performance, Accessibility, UX)
-- **DevOps Team**: 20% (Observability, Infrastructure)
-- **QA Team**: 15% (Testing, Compliance Validation)
-
-### **Risk Mitigation Strategies**
-1. **Healthcare Compliance Validation**: Weekly compliance reviews
-2. **Performance Impact Assessment**: Before/after performance testing
-3. **Security Audit**: External security review after Phase 1
-4. **Rollback Procedures**: Documented for all critical changes
-5. **Gradual Rollout**: Feature flags for all major implementations
-
----
-
-## 🎯 SUCCESS METRICS & VALIDATION
-
-### **Technical Metrics**
-- **Performance**: Page load time <2s, LCP <1.2s, CLS <0.1
-- **Security**: Zero critical vulnerabilities, 100% CSP compliance
-- **AI Optimization**: 80% cost reduction, 60% latency improvement
-- **Accessibility**: WCAG 2.1 AA+ compliance, zero critical violations
-- **API Quality**: 100% contract validation, <1% breaking changes
-
-### **Healthcare Compliance Metrics**
-- **LGPD Compliance**: 100% data protection compliance, zero violations
-- **ANVISA Compliance**: Full SaMD regulatory compliance
-- **CFM Standards**: Professional medical software standards adherence
-- **Audit Trail**: 100% healthcare operation audit coverage
-- **Data Retention**: Automated compliance with healthcare retention policies
-
-### **Developer Experience Metrics**
-- **Onboarding Time**: 50% reduction in new developer setup time
-- **Development Velocity**: 30% improvement in feature delivery time
-- **Code Quality**: 90% test coverage, zero critical code smells
-- **Documentation**: 100% API documentation coverage
-- **Developer Satisfaction**: >8/10 in quarterly developer surveys
-
----
-
-## 📅 TIMELINE SUMMARY
-
-| Phase | Duration | Key Deliverables | Critical Milestones |
-|-------|----------|------------------|-------------------|
-| **Phase 1** | Weeks 1-4 | Security, Auth, A11y Foundation | Security audit passed |
-| **Phase 2** | Weeks 5-8 | Observability & Monitoring | Full observability stack |
-| **Phase 3** | Weeks 9-12 | Performance Optimization | <2s load time achieved |
-| **Phase 4** | Weeks 13-16 | API Contracts & DevEx | API contracts fully validated |
-| **Phase 5** | Weeks 17-20 | AI Optimization | 80% AI cost reduction |
-
-**Total Project Duration**: 20 weeks (5 months)
-**Go-Live Target**: Healthcare platform production deployment
-
----
-
-> **🏥 Healthcare Compliance**: All tasks include mandatory healthcare compliance validation, LGPD data protection, ANVISA regulatory requirements, and CFM professional standards adherence. Security and patient data protection are prioritized throughout all implementation phases.
+## Healthcare Compliance Checkpoints
+
+### LGPD Compliance Tasks
+- T030: LGPD compliance middleware
+- T031: Audit trail service
+- T039: PII redaction for AI
+- T049: LGPD validation tests
+
+### ANVISA Requirements  
+- T016: Healthcare-specific telemetry
+- T018: Medical data error tracking
+- T031: Regulatory audit trails
+- T042: Medical interface accessibility
+
+### Performance Requirements
+- T025: <2s page load optimization
+- T026: Intelligent prefetching
+- T046: Performance budgets
+- T047: Monitoring dashboards
+
+## Task Execution Notes
+
+1. **Healthcare Data Sensitivity**: All tasks involving patient data must implement proper encryption and LGPD compliance
+2. **Performance Requirements**: Maintain <2s load times and <500ms API responses throughout implementation
+3. **Security First**: Security tasks (T006-T008, T029-T032) are prerequisites for patient data handling
+4. **AI Cost Control**: Semantic caching (T037) must be implemented before deploying AI features to production
+5. **Accessibility Compliance**: Automated testing (T042) must pass WCAG 2.1 AA standards before deployment
+
+## Success Criteria
+
+- [ ] All 51 tasks completed with passing tests
+- [ ] Performance benchmarks achieved (<2s load, <500ms API)
+- [ ] Security compliance validated (LGPD, ANVISA)
+- [ ] AI cost optimization implemented (80% reduction target)
+- [ ] Accessibility standards met (WCAG 2.1 AA+)
+- [ ] Documentation complete and deployed
+- [ ] All parallel execution examples tested and validated

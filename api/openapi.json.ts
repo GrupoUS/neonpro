@@ -1,13 +1,11 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default function handler(req: any, res: any) {
   res.setHeader('Content-Type', 'application/json');
 
   const baseUrl = (() => {
-    const fromEnv = process.env.API_URL;
+    const fromEnv = process.env.API_URL as string | undefined;
     if (fromEnv) return fromEnv.startsWith('http') ? `${fromEnv}/api` : `https://${fromEnv}/api`;
-    const host = req.headers.host ?? 'localhost:3000';
-    const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
+    const host = req.headers?.host ?? 'localhost:3000';
+    const proto = (req.headers?.['x-forwarded-proto'] as string) || 'https';
     return `${proto}://${host}/api`;
   })();
 
@@ -54,5 +52,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     },
   } as const;
 
-  return res.status(200).json(doc);
+  res.statusCode = 200;
+  res.end(JSON.stringify(doc));
 }

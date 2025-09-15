@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   Checkbox,
@@ -40,12 +41,14 @@ import {
   Loader2,
   Phone,
   Shield,
+  Upload,
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { FileUploadIntegration, type UploadedFile } from './FileUploadIntegration';
 
 // Step 1: Basic Information Schema
 const basicInfoSchema = z.object({
@@ -148,6 +151,13 @@ const STEPS = [
   },
   {
     id: 5,
+    title: 'Documentos Médicos',
+    description: 'Upload de exames e documentos',
+    icon: Upload,
+    schema: z.object({}), // No validation needed for file upload
+  },
+  {
+    id: 6,
     title: 'Consentimento LGPD',
     description: 'Autorização para uso dos dados',
     icon: Shield,
@@ -164,6 +174,7 @@ export function PatientRegistrationWizard({
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   const createPatientMutation = useCreatePatient();
 
@@ -433,7 +444,15 @@ export function PatientRegistrationWizard({
               {currentStep === 2 && <ContactAddressStep form={form} />}
               {currentStep === 3 && <DocumentsStep form={form} />}
               {currentStep === 4 && <MedicalInformationStep form={form} />}
-              {currentStep === 5 && <ConsentStep form={form} />}
+              {currentStep === 5 && (
+                <FileUploadStep
+                  uploadedFiles={uploadedFiles}
+                  onFilesUploaded={files => setUploadedFiles(prev => [...prev, ...files])}
+                  onFileRemoved={fileId =>
+                    setUploadedFiles(prev => prev.filter(f => f.id !== fileId))}
+                />
+              )}
+              {currentStep === 6 && <ConsentStep form={form} />}
             </div>
 
             {/* Navigation Buttons */}
@@ -1346,6 +1365,73 @@ function ConsentStep({ form }: { form: any }) {
             Você pode retirar seu consentimento a qualquer momento entrando em contato conosco.
             Alguns serviços podem ser limitados caso você retire consentimentos essenciais para o
             atendimento.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function FileUploadStep({
+  uploadedFiles,
+  onFilesUploaded,
+  onFileRemoved,
+}: {
+  uploadedFiles: UploadedFile[];
+  onFilesUploaded: (files: UploadedFile[]) => void;
+  onFileRemoved: (fileId: string) => void;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className='flex items-center gap-2'>
+          <Upload className='w-5 h-5' />
+          Documentos Médicos
+        </CardTitle>
+        <CardDescription>
+          Faça upload de exames, laudos médicos, carteirinha do plano de saúde e outros documentos
+          importantes. Esta etapa é opcional, mas recomendada para um atendimento mais completo.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className='space-y-6'>
+        <div className='bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
+          <h4 className='text-sm font-medium text-blue-900 dark:text-blue-100 mb-2'>
+            Tipos de Documentos Aceitos
+          </h4>
+          <ul className='text-sm text-blue-800 dark:text-blue-200 space-y-1'>
+            <li>• Exames laboratoriais e de imagem</li>
+            <li>• Laudos e relatórios médicos</li>
+            <li>• Carteirinha do plano de saúde</li>
+            <li>• Receitas médicas</li>
+            <li>• Documentos de identidade (RG, CPF, CNH)</li>
+            <li>• Outros documentos médicos relevantes</li>
+          </ul>
+        </div>
+
+        <FileUploadIntegration
+          category='medical'
+          maxFiles={10}
+          maxFileSize={15} // 15MB
+          onFilesUploaded={onFilesUploaded}
+          onFileRemoved={onFileRemoved}
+          className='w-full'
+        />
+
+        {uploadedFiles.length > 0 && (
+          <div className='bg-green-50 dark:bg-green-950 p-4 rounded-lg border border-green-200 dark:border-green-800'>
+            <p className='text-sm text-green-800 dark:text-green-200'>
+              <strong>Sucesso!</strong> {uploadedFiles.length}{' '}
+              arquivo(s) enviado(s) com segurança. Seus documentos estão protegidos e serão
+              acessíveis apenas pela equipe médica autorizada.
+            </p>
+          </div>
+        )}
+
+        <div className='bg-amber-50 dark:bg-amber-950 p-4 rounded-lg border border-amber-200 dark:border-amber-800'>
+          <p className='text-sm text-amber-800 dark:text-amber-200'>
+            <strong>Privacidade e Segurança:</strong>{' '}
+            Todos os documentos são armazenados com criptografia e seguem as normas da LGPD. Apenas
+            profissionais autorizados terão acesso aos seus documentos médicos.
           </p>
         </div>
       </CardContent>

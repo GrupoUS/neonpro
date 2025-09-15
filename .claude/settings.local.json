@@ -89,7 +89,8 @@
       "mcp__shadcn__get_item_examples_from_registries",
       "mcp__supabase__list_projects",
       "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__Tavily__tavily-crawl"
     ],
     "deny": [
       "Edit",
