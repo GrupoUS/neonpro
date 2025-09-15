@@ -36,14 +36,15 @@ export default defineConfig({
     global: 'globalThis',
   },
   server: {
-    host: '::',
-    port: 8080,
-    open: true,
+    host: true,
+    port: 5173,
+    open: false,
   },
   build: {
-    outDir: './apps/web/dist',
+    outDir: './dist',
     sourcemap: true,
     rollupOptions: {
+      external: [/^apps\/api/],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
