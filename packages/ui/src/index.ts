@@ -89,6 +89,7 @@ export type {
 
 // Export hooks
 export * from './hooks';
+export { usePersistedDashboardLayout } from './hooks/use-persisted-dashboard-layout';
 
 // Export MagicUI components
 export { ShineBorder } from './components/magicui/shine-border';

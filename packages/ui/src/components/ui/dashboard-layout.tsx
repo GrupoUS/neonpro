@@ -1,32 +1,101 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { TiltedCard } from './tilted-card';
+import { usePersistedDashboardLayout } from '../../hooks/use-persisted-dashboard-layout';
+import { Button } from './button';
+import { RotateCcw } from 'lucide-react';
 
 interface DashboardCardProps {
   children: React.ReactNode;
   className?: string;
   enableTilt?: boolean;
+  cardId?: string;
 }
 
 export function DashboardCard({
   children,
   className = '',
   enableTilt = true,
+  cardId = `card-${Math.random()}`,
 }: DashboardCardProps) {
+  const { 
+    updateCardPosition, 
+    getCardPosition, 
+    gridConfig
+  } = usePersistedDashboardLayout();
+  
+  const [isDragging, setIsDragging] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const position = getCardPosition(cardId);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      const containerRect = cardRef.current.offsetParent?.getBoundingClientRect();
+      
+      if (containerRect) {
+        const relativeX = rect.left - containerRect.left;
+        const relativeY = rect.top - containerRect.top;
+        
+        updateCardPosition(
+          cardId,
+          { x: relativeX, y: relativeY },
+          { width: rect.width, height: rect.height }
+        );
+      }
+    }
+  }, [cardId, updateCardPosition]);
+
   return (
     <motion.div
+      ref={cardRef}
       drag
       dragMomentum={false}
       dragElastic={0.1}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      animate={{
+        x: position.x,
+        y: position.y,
+      }}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={handleDragEnd}
       whileDrag={{
         scale: 1.05,
         rotate: 2,
         zIndex: 10,
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       }}
-      className={`cursor-grab active:cursor-grabbing ${className}`}
+      transition={{
+        type: "spring",
+        stiffness: 500,
+        damping: 30
+      }}
+      className={`cursor-grab active:cursor-grabbing ${className} ${
+        isDragging ? 'z-50' : 'z-10'
+      }`}
+      style={{
+        position: 'absolute',
+      }}
     >
+      {/* Snap grid visual feedback (only during drag) */}
+      {isDragging && (
+        <div 
+          className="fixed inset-0 pointer-events-none z-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #ac9469 1px, transparent 1px),
+              linear-gradient(to bottom, #ac9469 1px, transparent 1px)
+            `,
+            backgroundSize: `${gridConfig.snapSize}px ${gridConfig.snapSize}px`,
+          }}
+        />
+      )}
+      
       {enableTilt
         ? (
           <TiltedCard className='h-full w-full'>
@@ -40,31 +109,70 @@ export function DashboardCard({
         )}
     </motion.div>
   );
-}
-
-interface DashboardLayoutProps {
+}interface DashboardLayoutProps {
   children: React.ReactNode;
   className?: string;
 }
 
 export function DashboardLayout({ children, className = '' }: DashboardLayoutProps) {
+  const { resetLayout, updateContainerSize, gridConfig } = usePersistedDashboardLayout();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Update container size on mount and resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        updateContainerSize({ width: rect.width, height: rect.height });
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    
+    return () => window.removeEventListener('resize', updateSize);
+  }, [updateContainerSize]);
+
   return (
-    <div className={`relative ${className}`}>
-      {/* Dashboard Content - Always draggable */}
-      <div className='grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
+    <div className={`relative min-h-[600px] ${className}`} ref={containerRef}>
+      {/* Reset button */}
+      <div className="absolute top-0 right-0 z-20 mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={resetLayout}
+          className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
+        >
+          <RotateCcw className="h-4 w-4 mr-2" />
+          Resetar Layout
+        </Button>
+      </div>
+
+      {/* Dashboard Content - Cards with absolute positioning */}
+      <div className="relative w-full h-full pt-14">
         {React.Children.map(children, (child, index) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child, {
-              key: child.key || `dashboard-card-${index}`,
+            // Generate consistent ID for each card
+            const cardId = child.key?.toString() || (child.props as any)?.id || `dashboard-card-${index}`;
+            
+            return React.cloneElement(child as any, {
+              key: cardId,
+              cardId: cardId,
+              className: `${(child.props as any)?.className || ''} w-80 h-64`, // Fixed size for consistent layout
             });
           }
           return child;
         })}
       </div>
 
-      {/* Helpful hint */}
-      <div className='mt-4 text-xs text-muted-foreground text-center'>
-        💡 Arraste e solte os cards para reorganizar o layout do seu dashboard
+      {/* Helpful hints */}
+      <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground text-center'>
+        <div className="bg-background/80 backdrop-blur-sm rounded-lg px-4 py-2 border">
+          <div className="flex items-center gap-2">
+            <span>💡</span>
+            <span>Arraste os cards para reorganizar • Snap grid: {gridConfig.snapSize}px</span>
+          </div>
+        </div>
       </div>
     </div>
   );
