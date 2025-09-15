@@ -105,6 +105,10 @@ jobs:
           VERCEL_PROJECT_ID: ""
         run: |
           set -e
+          export VERCEL_DEBUG=1
+          export VERCEL_PROJECT_SETTINGS_INSTALL_COMMAND="pnpm install --no-frozen-lockfile"
+          export VERCEL_PROJECT_SETTINGS_BUILD_COMMAND="pnpm -w turbo run build --filter=@neonpro/web"
+          export VERCEL_PROJECT_SETTINGS_OUTPUT_DIRECTORY="dist"
           url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects || vercel deploy --token "$VERCEL_TOKEN" --scope grupous-projects)
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
@@ -209,5 +213,10 @@ jobs:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
         run: |
+          set -e
+          export VERCEL_DEBUG=1
+          export VERCEL_PROJECT_SETTINGS_INSTALL_COMMAND="pnpm install --no-frozen-lockfile"
+          export VERCEL_PROJECT_SETTINGS_BUILD_COMMAND="pnpm -w turbo run build --filter=@neonpro/web"
+          export VERCEL_PROJECT_SETTINGS_OUTPUT_DIRECTORY="dist"
           vercel deploy --prod --token "$VERCEL_TOKEN" --scope grupous-projects
 
