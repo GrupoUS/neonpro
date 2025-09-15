@@ -52,6 +52,7 @@ function ServicesPage() {
   // Fetch services data
   const { data: servicesResponse, isLoading, error } = useServices({
     clinic_id: clinicId,
+    clinicId: clinicId, // backward compatibility
     is_active: true,
   });
 
