@@ -64,7 +64,7 @@ jobs:
 
       - name: Link Vercel project
         run: |
-          vercel link --yes --scope grupous-projects --project neonpro-web --token "$VERCEL_TOKEN"
+          vercel link --yes --scope grupous-projects --project neonpro --token "$VERCEL_TOKEN"
 
       - name: (Optional) Sync Preview env vars to Vercel
         if: ${{ env.VERCEL_TOKEN != '' }}
@@ -81,12 +81,12 @@ jobs:
         run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
 
       - name: Build (preview)
-        run: vercel build --token "$VERCEL_TOKEN"
+        run: vercel build --token "$VERCEL_TOKEN" --project neonpro
 
       - name: Deploy (preview, prebuilt)
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects)
+          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro)
           echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Comment Preview URL on PR
@@ -150,7 +150,7 @@ jobs:
 
       - name: Link Vercel project
         run: |
-          vercel link --yes --scope grupous-projects --project neonpro-web --token "$VERCEL_TOKEN"
+          vercel link --yes --scope grupous-projects --project neonpro --token "$VERCEL_TOKEN"
 
       - name: (Optional) Sync Production env vars to Vercel
         if: ${{ env.VERCEL_TOKEN != '' }}
@@ -167,8 +167,8 @@ jobs:
         run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
       - name: Build (production)
-        run: vercel build --prod --token "$VERCEL_TOKEN"
+        run: vercel build --prod --token "$VERCEL_TOKEN" --project neonpro
 
       - name: Deploy (production, prebuilt)
-        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects
+        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro
 
