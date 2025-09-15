@@ -89,7 +89,7 @@ jobs:
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
-        run: vercel build --token "$VERCEL_TOKEN" --project neonpro
+        run: vercel build --token "$VERCEL_TOKEN"
 
       - name: Deploy (preview, prebuilt)
         id: deploy
@@ -97,14 +97,16 @@ jobs:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
         run: |
-          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro)
+          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects)
           echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Comment Preview URL on PR
         uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         with:
           script: |
-            const url = core.getInput('url');
+            const url = process.env.PREVIEW_URL;
             const body = `🚀 Preview deploy: ${url}`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -113,7 +115,6 @@ jobs:
               body,
             });
           result-encoding: string
-          url: ${{ steps.deploy.outputs.url }}
 
   production:
     if: github.event_name == 'push'
@@ -186,11 +187,11 @@ jobs:
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
-        run: vercel build --prod --token "$VERCEL_TOKEN" --project neonpro
+        run: vercel build --prod --token "$VERCEL_TOKEN"
 
       - name: Deploy (production, prebuilt)
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
-        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro
+        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects
 
