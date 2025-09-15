@@ -204,7 +204,7 @@ export function AIGovernanceMetrics() {
       {aiData?.alerts && aiData.alerts.length > 0 && (
         <div className='space-y-3'>
           <h3 className='text-md font-semibold'>Governance Alerts</h3>
-          {aiData.alerts.map((alert, index) => (
+          {aiData.alerts.map((alert: { type: 'warning' | 'info'; message: string }, index: number) => (
             <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
               <AlertTitle>AI Governance Alert</AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>

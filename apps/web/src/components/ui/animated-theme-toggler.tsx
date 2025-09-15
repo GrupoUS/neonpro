@@ -1,7 +1,7 @@
 'use client';
 
-import { cn } from "@neonpro/ui";
-import { useThemeBridge } from '@neonpro/ui/theme';
+import { cn } from '@/lib/utils';
+import { useThemeBridge } from '@/shims/neonpro-ui-theme';
 import { Moon, SunDim } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
