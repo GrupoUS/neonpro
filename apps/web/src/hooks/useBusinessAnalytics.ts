@@ -3,18 +3,18 @@
  * React Query hooks for business analytics and reporting data
  */
 
-import { 
-  analyticsService, 
+import {
   type AnalyticsDateRange,
+  analyticsService,
   // type AppointmentMetrics,
   // type RevenueMetrics,
   // type PatientAnalytics,
   // type ProfessionalPerformance,
   // type PopularServicesData
 } from '@/services/analytics.service';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { subDays } from 'date-fns';
+import { toast } from 'sonner';
 
 /**
  * Default date range (last 30 days)
@@ -29,7 +29,7 @@ const getDefaultDateRange = (): AnalyticsDateRange => ({
  */
 export function useAppointmentMetrics(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
     queryKey: ['appointment-metrics', clinicId, dateRange.startDate, dateRange.endDate],
@@ -45,7 +45,7 @@ export function useAppointmentMetrics(
  */
 export function useRevenueMetrics(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
     queryKey: ['revenue-metrics', clinicId, dateRange.startDate, dateRange.endDate],
@@ -61,7 +61,7 @@ export function useRevenueMetrics(
  */
 export function usePatientAnalytics(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
     queryKey: ['patient-analytics', clinicId, dateRange.startDate, dateRange.endDate],
@@ -77,7 +77,7 @@ export function usePatientAnalytics(
  */
 export function useProfessionalPerformance(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
     queryKey: ['professional-performance', clinicId, dateRange.startDate, dateRange.endDate],
@@ -93,7 +93,7 @@ export function useProfessionalPerformance(
  */
 export function usePopularServices(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
     queryKey: ['popular-services', clinicId, dateRange.startDate, dateRange.endDate],
@@ -109,36 +109,43 @@ export function usePopularServices(
  */
 export function useExportAnalytics() {
   return useMutation({
-    mutationFn: async ({ 
-      clinicId, 
-      dateRange, 
-      reportType 
-    }: { 
-      clinicId: string; 
-      dateRange: AnalyticsDateRange; 
+    mutationFn: async ({
+      clinicId,
+      dateRange,
+      reportType,
+    }: {
+      clinicId: string;
+      dateRange: AnalyticsDateRange;
       reportType: 'appointments' | 'revenue' | 'patients' | 'professionals';
     }) => {
-      const csvContent = await analyticsService.exportAnalyticsToCSV(clinicId, dateRange, reportType);
-      
+      const csvContent = await analyticsService.exportAnalyticsToCSV(
+        clinicId,
+        dateRange,
+        reportType,
+      );
+
       // Create and download CSV file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
-      
+
       link.setAttribute('href', url);
-      link.setAttribute('download', `neonpro-${reportType}-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute(
+        'download',
+        `neonpro-${reportType}-${new Date().toISOString().split('T')[0]}.csv`,
+      );
       link.style.visibility = 'hidden';
-      
+
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       return csvContent;
     },
     onSuccess: (_, { reportType }) => {
       toast.success(`Relatório de ${reportType} exportado com sucesso!`);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error exporting analytics:', error);
       toast.error('Erro ao exportar relatório');
     },
@@ -150,7 +157,7 @@ export function useExportAnalytics() {
  */
 export function useDashboardData(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   const appointmentMetrics = useAppointmentMetrics(clinicId, dateRange);
   const revenueMetrics = useRevenueMetrics(clinicId, dateRange);
@@ -164,24 +171,21 @@ export function useDashboardData(
     patientAnalytics,
     professionalPerformance,
     popularServices,
-    isLoading: 
-      appointmentMetrics.isLoading ||
-      revenueMetrics.isLoading ||
-      patientAnalytics.isLoading ||
-      professionalPerformance.isLoading ||
-      popularServices.isLoading,
-    isError: 
-      appointmentMetrics.isError ||
-      revenueMetrics.isError ||
-      patientAnalytics.isError ||
-      professionalPerformance.isError ||
-      popularServices.isError,
-    error: 
-      appointmentMetrics.error ||
-      revenueMetrics.error ||
-      patientAnalytics.error ||
-      professionalPerformance.error ||
-      popularServices.error,
+    isLoading: appointmentMetrics.isLoading
+      || revenueMetrics.isLoading
+      || patientAnalytics.isLoading
+      || professionalPerformance.isLoading
+      || popularServices.isLoading,
+    isError: appointmentMetrics.isError
+      || revenueMetrics.isError
+      || patientAnalytics.isError
+      || professionalPerformance.isError
+      || popularServices.isError,
+    error: appointmentMetrics.error
+      || revenueMetrics.error
+      || patientAnalytics.error
+      || professionalPerformance.error
+      || popularServices.error,
   };
 }
 
@@ -190,7 +194,7 @@ export function useDashboardData(
  */
 export function useRealtimeDashboard(
   clinicId: string,
-  dateRange: AnalyticsDateRange = getDefaultDateRange()
+  dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   const dashboardData = useDashboardData(clinicId, dateRange);
 
@@ -231,7 +235,7 @@ export function formatPercentage(value: number): string {
  */
 export function getDateRangePresets(): { label: string; range: AnalyticsDateRange }[] {
   const today = new Date();
-  
+
   return [
     {
       label: 'Últimos 7 dias',

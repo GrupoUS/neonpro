@@ -1,15 +1,25 @@
-import * as React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button } from '@neonpro/ui';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@neonpro/ui';
 import { type SharedAnimatedListItem } from '@neonpro/ui';
 import { ExpandableCard, ExpandableCardProvider } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from '@tanstack/react-router';
+import * as React from 'react';
 
-export type NormalizedNotification = Required<Pick<SharedAnimatedListItem, 'id' | 'title' | 'message' | 'type' | 'link'>> & {
-  createdAt: string;
-  read: boolean;
-};
+export type NormalizedNotification =
+  & Required<Pick<SharedAnimatedListItem, 'id' | 'title' | 'message' | 'type' | 'link'>>
+  & {
+    createdAt: string;
+    read: boolean;
+  };
 
 import { formatBRL } from '@neonpro/utils';
 function formatCurrencyBRL(value: number) {
@@ -42,7 +52,9 @@ export interface NotificationCardProps {
   maxItems?: number;
 }
 
-export default function NotificationCard({ title = 'Notificações', pollIntervalMs = 30000, maxItems = 8 }: NotificationCardProps) {
+export default function NotificationCard(
+  { title = 'Notificações', pollIntervalMs = 30000, maxItems = 8 }: NotificationCardProps,
+) {
   const navigate = useNavigate();
   const [readIds, setReadIds] = React.useState<Set<string>>(() => getReadStore());
 
@@ -78,7 +90,12 @@ export default function NotificationCard({ title = 'Notificações', pollInterva
         id: `appointment:${a.id}`,
         title: a.status === 'cancelled' ? 'Consulta cancelada' : 'Consulta agendada',
         message: a.start_time
-          ? new Date(a.start_time).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+          ? new Date(a.start_time).toLocaleString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+          })
           : 'Consulta atualizada',
         type: 'appointment',
         link: '/appointments',
@@ -131,37 +148,37 @@ export default function NotificationCard({ title = 'Notificações', pollInterva
   };
 
   return (
-    <ExpandableCardProvider className="grid-cols-1">
-      <ExpandableCard 
-        id="notifications-main" 
-        className="w-full h-full"
+    <ExpandableCardProvider className='grid-cols-1'>
+      <ExpandableCard
+        id='notifications-main'
+        className='w-full h-full'
         expandedContent={
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Todas as Notificações</h3>
-            <div className="max-h-96 overflow-y-auto space-y-3">
+          <div className='space-y-4'>
+            <h3 className='text-lg font-semibold'>Todas as Notificações</h3>
+            <div className='max-h-96 overflow-y-auto space-y-3'>
               {items.map((n, idx) => (
-                <div 
-                  key={`${n.id}-${idx}`} 
+                <div
+                  key={`${n.id}-${idx}`}
                   className={`p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
                     n.read ? 'bg-gray-50 dark:bg-gray-800 opacity-75' : 'bg-white dark:bg-gray-900'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium">{n.title}</span>
-                        <Badge variant="outline" className="text-[10px] capitalize">{n.type}</Badge>
+                  <div className='flex items-start justify-between gap-3'>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-2 mb-1'>
+                        <span className='text-sm font-medium'>{n.title}</span>
+                        <Badge variant='outline' className='text-[10px] capitalize'>{n.type}</Badge>
                       </div>
-                      <div className="text-sm text-muted-foreground mb-2">{n.message}</div>
-                      <div className="flex justify-between items-center">
-                        <time className="text-xs text-muted-foreground">
+                      <div className='text-sm text-muted-foreground mb-2'>{n.message}</div>
+                      <div className='flex justify-between items-center'>
+                        <time className='text-xs text-muted-foreground'>
                           {new Date(n.createdAt).toLocaleString('pt-BR')}
                         </time>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
+                        <Button
+                          size='sm'
+                          variant='outline'
                           onClick={() => onClickItem(n)}
-                          className="ml-2"
+                          className='ml-2'
                         >
                           Ver Detalhes
                         </Button>
@@ -175,60 +192,68 @@ export default function NotificationCard({ title = 'Notificações', pollInterva
         }
       >
         <Card>
-          <CardHeader className="flex items-center justify-between">
+          <CardHeader className='flex items-center justify-between'>
             <div>
-              <CardTitle className="flex items-center gap-2">{title}</CardTitle>
+              <CardTitle className='flex items-center gap-2'>{title}</CardTitle>
               <CardDescription>Clientes, agendamentos e financeiro</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={isFetching ? 'secondary' : 'outline'} className="text-xs">
+            <div className='flex items-center gap-2'>
+              <Badge variant={isFetching ? 'secondary' : 'outline'} className='text-xs'>
                 {isFetching ? 'Atualizando…' : 'Atualizado'}
               </Badge>
-              <Button size="sm" variant="outline" onClick={() => refetch()} aria-label="Atualizar notificações">
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={() => refetch()}
+                aria-label='Atualizar notificações'
+              >
                 Atualizar
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className='space-y-2'>
               {items.slice(0, 3).map((n, idx) => (
-                <div 
+                <div
                   key={`${n.id}-preview-${idx}`}
                   className={`p-2 rounded transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${
                     n.read ? 'opacity-60' : ''
                   }`}
                   onClick={() => onClickItem(n)}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium truncate">{n.title}</span>
-                        <Badge variant="outline" className="text-[10px] capitalize">{n.type}</Badge>
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='min-w-0 flex-1'>
+                      <div className='flex items-center gap-2'>
+                        <span className='text-sm font-medium truncate'>{n.title}</span>
+                        <Badge variant='outline' className='text-[10px] capitalize'>{n.type}</Badge>
                       </div>
-                      <div className="text-xs text-muted-foreground truncate">
+                      <div className='text-xs text-muted-foreground truncate'>
                         {n.message}
                       </div>
                     </div>
-                    <time className="text-[11px] text-muted-foreground shrink-0">
-                      {new Date(n.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    <time className='text-[11px] text-muted-foreground shrink-0'>
+                      {new Date(n.createdAt).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </time>
                   </div>
                 </div>
               ))}
               {items.length > 3 && (
-                <div className="text-center pt-2 border-t">
-                  <span className="text-xs text-muted-foreground">
+                <div className='text-center pt-2 border-t'>
+                  <span className='text-xs text-muted-foreground'>
                     Clique no card para ver todas as {items.length} notificações
                   </span>
                 </div>
               )}
               {items.length === 0 && !isLoading && (
-                <p className="text-xs text-muted-foreground text-center py-4">
+                <p className='text-xs text-muted-foreground text-center py-4'>
                   Sem notificações recentes.
                 </p>
               )}
               {isLoading && (
-                <p className="text-xs text-muted-foreground text-center py-4">
+                <p className='text-xs text-muted-foreground text-center py-4'>
                   Carregando notificações...
                 </p>
               )}

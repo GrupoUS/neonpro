@@ -3,7 +3,11 @@
  * React Query hooks for notification management
  */
 
-import { notificationService, type NotificationData, type NotificationResult } from '@/services/notification.service';
+import {
+  type NotificationData,
+  type NotificationResult,
+  notificationService,
+} from '@/services/notification.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -14,24 +18,25 @@ export function useSendAppointmentConfirmation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: NotificationData) => 
-      notificationService.sendAppointmentConfirmation(data),
+    mutationFn: (data: NotificationData) => notificationService.sendAppointmentConfirmation(data),
     onSuccess: (results: NotificationResult[]) => {
       const successCount = results.filter(r => r.success).length;
       const totalCount = results.length;
-      
+
       if (successCount === totalCount && totalCount > 0) {
-        toast.success(`Confirmação enviada com sucesso via ${results.map(r => r.channel).join(', ')}`);
+        toast.success(
+          `Confirmação enviada com sucesso via ${results.map(r => r.channel).join(', ')}`,
+        );
       } else if (successCount > 0) {
         toast.warning(`Confirmação enviada parcialmente (${successCount}/${totalCount})`);
       } else if (totalCount > 0) {
         toast.error('Falha ao enviar confirmação');
       }
-      
+
       // Invalidate notification logs
       queryClient.invalidateQueries({ queryKey: ['notification-logs'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error sending appointment confirmation:', error);
       toast.error('Erro ao enviar confirmação de agendamento');
     },
@@ -45,18 +50,17 @@ export function useSendAppointmentReminder() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: NotificationData) => 
-      notificationService.sendAppointmentReminder(data),
+    mutationFn: (data: NotificationData) => notificationService.sendAppointmentReminder(data),
     onSuccess: (results: NotificationResult[]) => {
       const successCount = results.filter(r => r.success).length;
-      
+
       if (successCount > 0) {
         toast.success(`Lembrete enviado com sucesso`);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['notification-logs'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error sending appointment reminder:', error);
       toast.error('Erro ao enviar lembrete');
     },
@@ -70,18 +74,17 @@ export function useSendAppointmentCancellation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: NotificationData) => 
-      notificationService.sendAppointmentCancellation(data),
+    mutationFn: (data: NotificationData) => notificationService.sendAppointmentCancellation(data),
     onSuccess: (results: NotificationResult[]) => {
       const successCount = results.filter(r => r.success).length;
-      
+
       if (successCount > 0) {
         toast.success('Notificação de cancelamento enviada');
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['notification-logs'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error sending appointment cancellation:', error);
       toast.error('Erro ao enviar notificação de cancelamento');
     },
@@ -137,9 +140,9 @@ export function useUpdateNotificationPreferences() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ patientId, preferences }: { 
-      patientId: string; 
-      preferences: any; 
+    mutationFn: async ({ patientId, preferences }: {
+      patientId: string;
+      preferences: any;
     }) => {
       // This would update the patient_notification_preferences table
       // For now, just simulate the update
@@ -148,11 +151,11 @@ export function useUpdateNotificationPreferences() {
     },
     onSuccess: (_, { patientId }) => {
       toast.success('Preferências de notificação atualizadas');
-      queryClient.invalidateQueries({ 
-        queryKey: ['notification-preferences', patientId] 
+      queryClient.invalidateQueries({
+        queryKey: ['notification-preferences', patientId],
       });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error updating notification preferences:', error);
       toast.error('Erro ao atualizar preferências');
     },

@@ -1,203 +1,203 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Patient Dashboard Enhancement with Modern UI Components
 
-
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-patient-dashboard-enhancement` | **Date**: 2025-01-15 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/001-patient-dashboard-enhancement/spec.md`
 
 ## Execution Flow (/plan command scope)
 ```
-1. Load feature spec from Input path
-   → If not found: ERROR "No feature spec at {path}"
-2. Fill Technical Context (scan for NEEDS CLARIFICATION)
-   → Detect Project Type from context (web=frontend+backend, mobile=app+api)
-   → Set Structure Decision based on project type
-3. Evaluate Constitution Check section below
-   → If violations exist: Document in Complexity Tracking
-   → If no justification possible: ERROR "Simplify approach first"
-   → Update Progress Tracking: Initial Constitution Check
-4. Execute Phase 0 → research.md
-   → If NEEDS CLARIFICATION remain: ERROR "Resolve unknowns"
-5. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file (e.g., `CLAUDE.md` for Claude Code, `.github/copilot-instructions.md` for GitHub Copilot, or `GEMINI.md` for Gemini CLI).
-6. Re-evaluate Constitution Check section
-   → If new violations: Refactor design, return to Phase 1
-   → Update Progress Tracking: Post-Design Constitution Check
-7. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
+1. Load feature spec from Input path ✓
+   → Loaded: Patient Dashboard Enhancement with 15 functional requirements
+2. Fill Technical Context ✓
+   → Project Type: web (frontend+backend integration)
+   → Structure Decision: Frontend enhancement within existing monorepo
+3. Evaluate Constitution Check section ✓
+   → Simplicity: PASS - Enhancing existing components, not adding new projects
+   → Architecture: PASS - Following MCP pattern as component library
+   → Testing: PASS - TDD cycle with component and integration tests
+4. Execute Phase 0 → research.md ✓
+   → All technical decisions documented with rationale
+5. Execute Phase 1 → contracts, data-model.md, quickstart.md ✓
+   → Data models, API contracts, and testing approach defined
+6. Re-evaluate Constitution Check section ✓
+   → No new violations introduced
+7. Plan Phase 2 → Task generation approach described ✓
 8. STOP - Ready for /tasks command
 ```
 
-**IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
-- Phase 2: /tasks command creates tasks.md
-- Phase 3-4: Implementation execution (manual or via tools)
-
 ## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
+Modernize the existing patient management interface by enhancing UI components using shadcn/ui with experiment-01.json registry, implementing Modular Component Pattern (MCP) for better maintainability, adding advanced data tables with filtering/sorting, multi-step registration forms with Brazilian validation, and ensuring LGPD/ANVISA compliance with WCAG 2.1 AA+ accessibility standards.
 
 ## Technical Context
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5.7.2 with React 19.1.1  
+**Primary Dependencies**: shadcn/ui (experiment-01 registry), TanStack Table v8.15, React Hook Form v7.62, Zod v3.23  
+**Storage**: Existing Supabase PostgreSQL with RLS (no schema changes)  
+**Testing**: Vitest + React Testing Library + Playwright for E2E  
+**Target Platform**: Web application (desktop + mobile responsive)  
+**Project Type**: web - frontend enhancement within existing monorepo  
+**Performance Goals**: <200ms table rendering for 1000+ records, <50ms form validation per field  
+**Constraints**: LGPD compliance, WCAG 2.1 AA+ accessibility, mobile-first responsive design  
+**Scale/Scope**: 15 functional requirements, 4 core components, 3-phase implementation
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-**Simplicity**:
-- Projects: [#] (max 3 - e.g., api, cli, tests)
-- Using framework directly? (no wrapper classes)
-- Single data model? (no DTOs unless serialization differs)
-- Avoiding patterns? (no Repository/UoW without proven need)
+**Simplicity**: ✅ PASS
+- Projects: 1 (enhancing existing web app within monorepo)
+- Using framework directly? Yes (shadcn/ui components without custom wrappers)
+- Single data model? Yes (extending existing Patient entity)
+- Avoiding patterns? Yes (direct component composition, no unnecessary abstractions)
 
-**Architecture**:
-- EVERY feature as library? (no direct app code)
-- Libraries listed: [name + purpose for each]
-- CLI per library: [commands with --help/--version/--format]
-- Library docs: llms.txt format planned?
+**Architecture**: ✅ PASS
+- EVERY feature as library? Yes (MCP components in `apps/web/src/components/`)
+- Libraries listed: 
+  - PatientDataTable (advanced table with filtering/sorting)
+  - PatientRegistrationForm (multi-step wizard with validation)
+  - DashboardNavigation (sidebar + breadcrumbs + command palette)
+  - PatientActions (bulk operations and file upload)
+- CLI per library: N/A (UI components, exposed through web interface)
+- Library docs: Component documentation with usage examples planned
 
-**Testing (NON-NEGOTIABLE)**:
-- RED-GREEN-Refactor cycle enforced? (test MUST fail first)
-- Git commits show tests before implementation?
-- Order: Contract→Integration→E2E→Unit strictly followed?
-- Real dependencies used? (actual DBs, not mocks)
-- Integration tests for: new libraries, contract changes, shared schemas?
+**Testing (NON-NEGOTIABLE)**: ✅ PASS
+- RED-GREEN-Refactor cycle enforced? Yes (tests written before implementation)
+- Git commits show tests before implementation? Yes (TDD workflow)
+- Order: Contract→Integration→E2E→Unit strictly followed? Yes
+- Real dependencies used? Yes (actual Supabase, real form validation)
+- Integration tests for: Component data flows, form submissions, table operations
 - FORBIDDEN: Implementation before test, skipping RED phase
 
-**Observability**:
-- Structured logging included?
-- Frontend logs → backend? (unified stream)
-- Error context sufficient?
+**Observability**: ✅ PASS
+- Structured logging included? Yes (user actions, form submissions, errors)
+- Frontend logs → backend? Yes (unified error tracking)
+- Error context sufficient? Yes (form validation, API errors, accessibility issues)
 
-**Versioning**:
-- Version number assigned? (MAJOR.MINOR.BUILD)
-- BUILD increments on every change?
-- Breaking changes handled? (parallel tests, migration plan)
+**Versioning**: ✅ PASS
+- Version number assigned? 1.0.0 (new component system)
+- BUILD increments on every change? Yes (semantic versioning)
+- Breaking changes handled? N/A (additive enhancement to existing system)
 
 ## Project Structure
 
 ### Documentation (this feature)
 ```
-specs/[###-feature]/
-├── plan.md              # This file (/plan command output)
-├── research.md          # Phase 0 output (/plan command)
-├── data-model.md        # Phase 1 output (/plan command)
-├── quickstart.md        # Phase 1 output (/plan command)
-├── contracts/           # Phase 1 output (/plan command)
+specs/001-patient-dashboard-enhancement/
+├── plan.md              # This file (/plan command output) ✓
+├── research.md          # Phase 0 output (/plan command) ✓
+├── data-model.md        # Phase 1 output (/plan command) ✓
+├── quickstart.md        # Phase 1 output (/plan command) ✓
+├── contracts/           # Phase 1 output (/plan command) ✓
 └── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
 ```
 
 ### Source Code (repository root)
 ```
-# Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+apps/web/src/
+├── components/
+│   ├── ui/                    # shadcn/ui base components
+│   │   ├── table.tsx          # Enhanced with experiment-01 config
+│   │   ├── form.tsx           # Form components with validation
+│   │   ├── sidebar.tsx        # Collapsible navigation
+│   │   └── dialog.tsx         # Modal and drawer components
+│   ├── patient/               # Patient-specific components (MCP)
+│   │   ├── PatientDataTable.tsx      # Advanced table component
+│   │   ├── PatientRegistrationForm.tsx # Multi-step wizard
+│   │   ├── PatientQuickActions.tsx   # Bulk operations
+│   │   └── PatientDetailDrawer.tsx   # Mobile details view
+│   └── layout/                # Navigation and layout
+│       ├── DashboardSidebar.tsx      # Main navigation
+│       ├── PatientBreadcrumb.tsx     # Context breadcrumbs
+│       └── CommandPalette.tsx        # Global search
+├── pages/                     # Existing page components to enhance
+├── hooks/                     # Custom hooks for patient data
+└── lib/                       # Utilities and validation schemas
 
 tests/
-├── contract/
-├── integration/
-└── unit/
-
-# Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure]
+├── components/                # Component unit tests
+├── integration/               # Patient flow integration tests
+└── e2e/                       # End-to-end user scenarios
 ```
 
-**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
+**Structure Decision**: Web application enhancement (frontend focus within existing monorepo)
 
-## Phase 0: Outline & Research
-1. **Extract unknowns from Technical Context** above:
-   - For each NEEDS CLARIFICATION → research task
-   - For each dependency → best practices task
-   - For each integration → patterns task
+## Phase 0: Outline & Research ✅
 
-2. **Generate and dispatch research agents**:
-   ```
-   For each unknown in Technical Context:
-     Task: "Research {unknown} for {feature context}"
-   For each technology choice:
-     Task: "Find best practices for {tech} in {domain}"
-   ```
+### Technical Decisions Made
 
-3. **Consolidate findings** in `research.md` using format:
-   - Decision: [what was chosen]
-   - Rationale: [why chosen]
-   - Alternatives considered: [what else evaluated]
+**UI Component Strategy**:
+- **Decision**: Use shadcn/ui with experiment-01.json registry
+- **Rationale**: Provides enhanced components optimized for data-heavy interfaces, accessibility built-in, Brazilian Portuguese localization support
+- **Alternatives considered**: Custom component library (too much overhead), standard shadcn (lacks advanced table features)
 
-**Output**: research.md with all NEEDS CLARIFICATION resolved
+**State Management Approach**:
+- **Decision**: TanStack Query + Zustand + React Hook Form
+- **Rationale**: TanStack Query for server state with caching, Zustand for simple client state, React Hook Form for complex multi-step forms
+- **Alternatives considered**: Redux Toolkit (overkill for scope), useState only (insufficient for complex forms)
 
-## Phase 1: Design & Contracts
-*Prerequisites: research.md complete*
+**Form Validation Strategy**:
+- **Decision**: Zod schemas with Brazilian-specific validation
+- **Rationale**: Runtime validation, TypeScript integration, custom CPF/phone/CEP validators
+- **Alternatives considered**: Yup (less TypeScript support), custom validation (reinventing wheel)
 
-1. **Extract entities from feature spec** → `data-model.md`:
-   - Entity name, fields, relationships
-   - Validation rules from requirements
-   - State transitions if applicable
+**Table Enhancement Approach**:
+- **Decision**: TanStack Table with shadcn Table components
+- **Rationale**: Headless table logic with accessible UI, advanced filtering/sorting, virtual scrolling for performance
+- **Alternatives considered**: Material-UI DataGrid (design inconsistency), custom table (performance issues)
 
-2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+**Brazilian Compliance Integration**:
+- **Decision**: Extend existing LGPD utilities, add ANVISA-specific audit trails
+- **Rationale**: Leverage proven compliance patterns, avoid regulatory gaps
+- **Alternatives considered**: Third-party compliance service (vendor lock-in), manual compliance (error-prone)
 
-3. **Generate contract tests** from contracts:
-   - One test file per endpoint
-   - Assert request/response schemas
-   - Tests must fail (no implementation yet)
+**Output**: research.md with all technical decisions documented ✅
 
-4. **Extract test scenarios** from user stories:
-   - Each story → integration test scenario
-   - Quickstart test = story validation steps
+## Phase 1: Design & Contracts ✅
 
-5. **Update agent file incrementally** (O(1) operation):
-   - Run `/scripts/bash/update-agent-context.sh copilot` for your AI assistant
-   - If exists: Add only NEW tech from current plan
-   - Preserve manual additions between markers
-   - Update recent changes (keep last 3)
-   - Keep under 150 lines for token efficiency
-   - Output to repository root
+### Data Model Enhancements
+Enhanced existing Patient entity with additional fields for UI optimization:
+- Display preferences (table density, column visibility)
+- Form progress tracking for multi-step registration
+- Accessibility preferences (contrast, font size)
+- Mobile optimization flags
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
+### API Contract Enhancements
+Extended existing patient endpoints with:
+- Advanced filtering parameters (date ranges, status filters, text search)
+- Bulk operation endpoints (batch updates, exports)
+- File upload endpoints for patient documents
+- Real-time subscription endpoints for live updates
+
+### Component Contracts
+Defined TypeScript interfaces for:
+- PatientDataTable component props and state
+- PatientRegistrationForm wizard configuration
+- Navigation component integration points
+- Accessibility compliance interfaces
+
+**Output**: data-model.md, /contracts/*, failing component tests, quickstart.md ✅
 
 ## Phase 2: Task Planning Approach
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
 
 **Task Generation Strategy**:
 - Load `/templates/tasks-template.md` as base
-- Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Each contract → contract test task [P]
-- Each entity → model creation task [P] 
-- Each user story → integration test task
-- Implementation tasks to make tests pass
+- Generate component-focused tasks from design artifacts
+- Each shadcn component installation → setup task [P]
+- Each MCP component → development task with tests
+- Each user scenario → integration test task
+- Each accessibility requirement → compliance test task
 
 **Ordering Strategy**:
-- TDD order: Tests before implementation 
-- Dependency order: Models before services before UI
-- Mark [P] for parallel execution (independent files)
+- TDD order: Component tests before implementation
+- Dependency order: Base UI components → Patient components → Integration
+- Registry setup → Core components → Advanced features → Testing → Polish
+- Mark [P] for parallel execution where components are independent
 
-**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
+**Estimated Task Categories**:
+1. **Registry & Foundation** (4 tasks): shadcn setup, base component installation
+2. **Core Components** (8 tasks): PatientDataTable, PatientRegistrationForm, navigation
+3. **Integration & Polish** (6 tasks): mobile optimization, accessibility, performance
+4. **Testing & Validation** (4 tasks): E2E scenarios, compliance verification
+
+**Estimated Output**: 22 numbered, ordered tasks in tasks.md with clear acceptance criteria
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
@@ -206,33 +206,31 @@ ios/ or android/
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
-**Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
+**Phase 5**: Validation (accessibility audit, performance testing, compliance verification)
 
 ## Complexity Tracking
-*Fill ONLY if Constitution Check has violations that must be justified*
+*No constitutional violations identified - all checks passed*
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-
+| None | N/A | N/A |
 
 ## Progress Tracking
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [ ] Phase 0: Research complete (/plan command)
-- [ ] Phase 1: Design complete (/plan command)
-- [ ] Phase 2: Task planning complete (/plan command - describe approach only)
+- [x] Phase 0: Research complete (/plan command)
+- [x] Phase 1: Design complete (/plan command)
+- [x] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [ ] Initial Constitution Check: PASS
-- [ ] Post-Design Constitution Check: PASS
-- [ ] All NEEDS CLARIFICATION resolved
-- [ ] Complexity deviations documented
+- [x] Initial Constitution Check: PASS
+- [x] Post-Design Constitution Check: PASS
+- [x] All NEEDS CLARIFICATION resolved
+- [x] Complexity deviations documented (None)
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Constitution v2.0.0 - See `.specify/memory/constitution.md`*

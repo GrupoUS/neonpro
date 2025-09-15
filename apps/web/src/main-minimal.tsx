@@ -5,17 +5,25 @@ console.log('🚀 main-minimal.tsx carregado!');
 
 function MinimalApp() {
   console.log('🎯 MinimalApp renderizado!');
-  
+
   return React.createElement('div', {
     style: {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
       backgroundColor: '#f0f8ff',
-      minHeight: '100vh'
-    }
+      minHeight: '100vh',
+    },
   }, [
-    React.createElement('h1', { key: 'title', style: { color: '#333' } }, '🎉 REACT MÍNIMO FUNCIONANDO!'),
-    React.createElement('p', { key: 'desc', style: { color: '#666' } }, 'Se você está vendo esta mensagem, o React está funcionando sem JSX!'),
+    React.createElement(
+      'h1',
+      { key: 'title', style: { color: '#333' } },
+      '🎉 REACT MÍNIMO FUNCIONANDO!',
+    ),
+    React.createElement(
+      'p',
+      { key: 'desc', style: { color: '#666' } },
+      'Se você está vendo esta mensagem, o React está funcionando sem JSX!',
+    ),
     React.createElement('div', {
       key: 'status',
       style: {
@@ -23,16 +31,16 @@ function MinimalApp() {
         padding: '15px',
         backgroundColor: '#d4edda',
         border: '1px solid #c3e6cb',
-        borderRadius: '5px'
-      }
+        borderRadius: '5px',
+      },
     }, [
       React.createElement('h2', { key: 'status-title' }, '✅ Status'),
       React.createElement('ul', { key: 'status-list' }, [
         React.createElement('li', { key: 'react' }, '✅ React carregado'),
         React.createElement('li', { key: 'dom' }, '✅ ReactDOM funcionando'),
         React.createElement('li', { key: 'render' }, '✅ Renderização ativa'),
-        React.createElement('li', { key: 'js' }, '✅ JavaScript executando')
-      ])
+        React.createElement('li', { key: 'js' }, '✅ JavaScript executando'),
+      ]),
     ]),
     React.createElement('button', {
       key: 'button',
@@ -44,9 +52,9 @@ function MinimalApp() {
         color: 'white',
         border: 'none',
         borderRadius: '5px',
-        cursor: 'pointer'
-      }
-    }, 'Testar Interação React')
+        cursor: 'pointer',
+      },
+    }, 'Testar Interação React'),
   ]);
 }
 
@@ -58,7 +66,7 @@ if (rootElement) {
   console.log('✅ Root encontrado, criando React root...');
   const root = ReactDOM.createRoot(rootElement);
   console.log('Root criado:', root);
-  
+
   try {
     root.render(React.createElement(MinimalApp));
     console.log('✅ MinimalApp renderizado com sucesso!');

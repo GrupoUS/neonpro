@@ -1,10 +1,10 @@
-import React from 'react';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/query-client';
 import { SupabaseCacheManager } from '@/lib/cache/supabase-cache-manager';
 import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
+import { queryClient } from '@/lib/query-client';
+import { QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 // import { TwentyFirstToolbar } from '@21st-extension/toolbar-react';
 // import { ReactPlugin } from '@21st-extension/react';
 
@@ -17,13 +17,13 @@ const CacheManager = () => {
 
   React.useEffect(() => {
     HealthcareRoutePrefetcher.setupHoverPrefetching();
-    
+
     const currentPath = window.location.pathname;
     HealthcareRoutePrefetcher.prefetchBasedOnCurrentRoute(currentPath);
-    
+
     // Setup manual cache manager for cleanup
     const manualCacheManager = new SupabaseCacheManager(queryClient);
-    
+
     // Cleanup periódico de cache
     const cleanupInterval = setInterval(() => {
       manualCacheManager.cleanupExpiredCache();

@@ -1,19 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import {
+  Button,
   SmoothDrawer,
   SmoothDrawerContent,
   SmoothDrawerHeader,
   SmoothDrawerTitle,
-  Button,
 } from '@neonpro/ui';
+import { fireEvent, render, screen } from '@testing-library/react';
+import * as React from 'react';
+import { describe, expect, it } from 'vitest';
 
 function DrawerHarness() {
   const [open, setOpen] = React.useState(false);
   return (
     <div>
-      <Button onClick={() => setOpen(true)} aria-label="open">Open</Button>
+      <Button onClick={() => setOpen(true)} aria-label='open'>Open</Button>
       <SmoothDrawer open={open} onOpenChange={setOpen}>
         <SmoothDrawerContent>
           <SmoothDrawerHeader>
@@ -50,4 +50,3 @@ describe('SmoothDrawer accessibility', () => {
     expect(document.activeElement).toBe(trigger);
   });
 });
-

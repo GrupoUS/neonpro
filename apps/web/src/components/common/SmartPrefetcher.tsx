@@ -1,41 +1,41 @@
-import React, { useEffect } from 'react';
 import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
 import { queryClient } from '@/lib/query-client';
-import { patientsQueryOptions, patientDetailsQueryOptions } from '@/queries/patients';
-import { appointmentsQueryOptions, appointmentDetailsQueryOptions } from '@/queries/appointments';
-import type { Patient, Appointment } from '@neonpro/types';
+import { appointmentDetailsQueryOptions, appointmentsQueryOptions } from '@/queries/appointments';
+import { patientDetailsQueryOptions, patientsQueryOptions } from '@/queries/patients';
+import type { Appointment, Patient } from '@neonpro/types';
+import React, { useEffect } from 'react';
 
 interface SmartPrefetcherProps {
   /**
    * Tipo de dado para prefetch
    */
   type: 'patient' | 'appointment' | 'patients-list' | 'appointments-list' | 'dashboard';
-  
+
   /**
    * ID do paciente (apenas para type 'patient')
    */
   patientId?: string;
-  
+
   /**
    * ID do agendamento (apenas para type 'appointment')
    */
   appointmentId?: string;
-  
+
   /**
    * Gatilho para prefetch (hover, visible, immediate)
    */
   trigger?: 'hover' | 'visible' | 'immediate';
-  
+
   /**
    * Delay antes do prefetch (em ms)
    */
   delay?: number;
-  
+
   /**
    * Se deve prefetch dados relacionados
    */
   includeRelated?: boolean;
-  
+
   children: React.ReactNode;
   className?: string;
   [key: string]: any;
@@ -43,7 +43,7 @@ interface SmartPrefetcherProps {
 
 /**
  * Componente inteligente para prefetching de dados
- * 
+ *
  * Este componente gerencia o prefetching otimizado baseado em
  * diferentes gatilhos e contextos para melhorar a performance
  */
@@ -73,33 +73,33 @@ export function SmartPrefetcher({
           }
         }
         break;
-        
+
       case 'appointment':
         if (appointmentId) {
           queryClient.prefetchQuery(appointmentDetailsQueryOptions(appointmentId));
         }
         break;
-        
+
       case 'patients-list':
         queryClient.prefetchQuery(
           patientsQueryOptions({
             page: 1,
             pageSize: 10,
             sortBy: 'created_at',
-            sortOrder: 'desc'
-          })
+            sortOrder: 'desc',
+          }),
         );
         break;
-        
+
       case 'appointments-list':
         HealthcareRoutePrefetcher.prefetchAppointmentsData();
         break;
-        
+
       case 'dashboard':
         HealthcareRoutePrefetcher.prefetchDashboardData();
         break;
     }
-    
+
     setHasPrefetched(true);
   }, [type, patientId, appointmentId, includeRelated, hasPrefetched]);
 
@@ -129,8 +129,8 @@ export function SmartPrefetcher({
       if (!element) return;
 
       const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
+        entries => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               executePrefetch();
               observer.disconnect();
@@ -139,8 +139,8 @@ export function SmartPrefetcher({
         },
         {
           rootMargin: '100px',
-          threshold: 0.1
-        }
+          threshold: 0.1,
+        },
       );
 
       observer.observe(element);
@@ -168,11 +168,11 @@ export function SmartPrefetcher({
 /**
  * Link com prefetching inteligente para pacientes
  */
-export function PatientLink({ 
-  patient, 
-  children, 
+export function PatientLink({
+  patient,
+  children,
   className = '',
-  includeRelated = false 
+  includeRelated = false,
 }: {
   patient: Patient | { id: string; name?: string };
   children: React.ReactNode;
@@ -181,14 +181,14 @@ export function PatientLink({
 }) {
   return (
     <SmartPrefetcher
-      type="patient"
+      type='patient'
       patientId={patient.id}
-      trigger="hover"
+      trigger='hover'
       delay={300}
       includeRelated={includeRelated}
-      className="inline-block"
+      className='inline-block'
     >
-      <a 
+      <a
         href={`/patients/${patient.id}`}
         className={className}
         data-patient-id={patient.id}
@@ -202,11 +202,11 @@ export function PatientLink({
 /**
  * Link com prefetching inteligente para agendamentos
  */
-export function AppointmentLink({ 
-  appointment, 
-  children, 
+export function AppointmentLink({
+  appointment,
+  children,
   className = '',
-  includeRelated = false 
+  includeRelated = false,
 }: {
   appointment: Appointment | { id: string };
   children: React.ReactNode;
@@ -215,14 +215,14 @@ export function AppointmentLink({
 }) {
   return (
     <SmartPrefetcher
-      type="appointment"
+      type='appointment'
       appointmentId={appointment.id}
-      trigger="hover"
+      trigger='hover'
       delay={300}
       includeRelated={includeRelated}
-      className="inline-block"
+      className='inline-block'
     >
-      <a 
+      <a
         href={`/appointments/${appointment.id}`}
         className={className}
         data-appointment-id={appointment.id}
@@ -236,10 +236,10 @@ export function AppointmentLink({
 /**
  * Componente para prefetching baseado em scroll
  */
-export function ScrollPrefetcher({ 
-  children, 
+export function ScrollPrefetcher({
+  children,
   prefetchData,
-  threshold = 0.8 
+  threshold = 0.8,
 }: {
   children: React.ReactNode;
   prefetchData: () => void;
@@ -254,9 +254,9 @@ export function ScrollPrefetcher({
       const scrollHeight = document.documentElement.scrollHeight;
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
-      
+
       const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
-      
+
       if (scrollPercentage >= threshold && !hasPrefetched) {
         prefetchData();
         setHasPrefetched(true);
@@ -277,7 +277,7 @@ export function ScrollPrefetcher({
 export function useConditionalPrefetch<T>(
   condition: T | null | undefined,
   prefetchFn: (data: T) => void,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ) {
   useEffect(() => {
     if (condition) {

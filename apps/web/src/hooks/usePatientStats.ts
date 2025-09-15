@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 export type PatientStats = {
   totalPatients: number;
@@ -8,7 +8,10 @@ export type PatientStats = {
   upcomingAppointments: number;
 };
 
-async function countPatients(clinicId: string, filters?: { isActive?: boolean; createdFrom?: string }) {
+async function countPatients(
+  clinicId: string,
+  filters?: { isActive?: boolean; createdFrom?: string },
+) {
   let query = supabase
     .from('patients')
     .select('id', { count: 'exact', head: true })
@@ -46,24 +49,25 @@ export function usePatientStats(clinicId?: string) {
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise.all([
-        supabase
-          .from('patients')
-          .select('id, is_active'),
-        supabase
-          .from('patients')
-          .select('id')
-          .gte('created_at', firstDayOfMonth.toISOString()),
-        supabase
-          .from('appointments')
-          .select('id')
-          .gte('start_time', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z'),
-        supabase
-          .from('financial_transactions')
-          .select('amount')
-          .gte('transaction_date', today.toISOString().split('T')[0] + 'T00:00:00Z')
-          .lt('transaction_date', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z')
-      ]);
+      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise
+        .all([
+          supabase
+            .from('patients')
+            .select('id, is_active'),
+          supabase
+            .from('patients')
+            .select('id')
+            .gte('created_at', firstDayOfMonth.toISOString()),
+          supabase
+            .from('appointments')
+            .select('id')
+            .gte('start_time', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z'),
+          supabase
+            .from('financial_transactions')
+            .select('amount')
+            .gte('transaction_date', today.toISOString().split('T')[0] + 'T00:00:00Z')
+            .lt('transaction_date', tomorrow.toISOString().split('T')[0] + 'T00:00:00Z'),
+        ]);
 
       if (patientsResult.error) throw patientsResult.error;
       if (newPatientsResult.error) throw newPatientsResult.error;
@@ -74,7 +78,8 @@ export function usePatientStats(clinicId?: string) {
       const activePatients = patientsResult.data?.filter(p => p.is_active)?.length || 0;
       const newThisMonth = newPatientsResult.data?.length || 0;
       const upcomingAppointments = appointmentsResult.data?.length || 0;
-      const revenueToday = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0) || 0;
+      const revenueToday = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
+        || 0;
 
       return {
         totalPatients,
@@ -82,7 +87,7 @@ export function usePatientStats(clinicId?: string) {
         newThisMonth,
         upcomingAppointments,
         appointmentsToday: 0, // Legacy, incluir para compatibilidade
-        revenueToday
+        revenueToday,
       };
     },
     refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes

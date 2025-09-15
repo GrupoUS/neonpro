@@ -37,7 +37,7 @@ const SUPABASE_KEY_RESOLVED = IS_TEST
 
 if (!IS_TEST && (!SUPABASE_URL_RESOLVED || !SUPABASE_KEY_RESOLVED)) {
   throw new Error(
-    'Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or NEXT_PUBLIC_ equivalents) in Vercel envs.'
+    'Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or NEXT_PUBLIC_ equivalents) in Vercel envs.',
   );
 }
 

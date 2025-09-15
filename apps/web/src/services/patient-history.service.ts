@@ -6,19 +6,19 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
+  CreateMedicalRecordRequest,
+  CreateProgressNoteRequest,
+  CreateTreatmentPlanRequest,
   MedicalRecord,
-  TreatmentPlan,
-  ProgressNote,
   PatientAllergy,
   PatientCondition,
-  PatientTimeline,
-  PatientSummary,
-  CreateMedicalRecordRequest,
-  UpdateMedicalRecordRequest,
-  CreateTreatmentPlanRequest,
-  UpdateTreatmentPlanRequest,
-  CreateProgressNoteRequest,
   PatientHistoryFilters,
+  PatientSummary,
+  PatientTimeline,
+  ProgressNote,
+  TreatmentPlan,
+  UpdateMedicalRecordRequest,
+  UpdateTreatmentPlanRequest,
 } from '@/types/patient-history';
 
 export class PatientHistoryService {
@@ -28,7 +28,7 @@ export class PatientHistoryService {
    */
   static async getMedicalRecords(
     patientId: string,
-    filters?: PatientHistoryFilters
+    filters?: PatientHistoryFilters,
   ): Promise<MedicalRecord[]> {
     let query = PatientHistoryService.sb
       .from('medical_records')
@@ -57,7 +57,9 @@ export class PatientHistoryService {
     }
 
     if (filters?.search) {
-      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`);
+      query = query.or(
+        `title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`,
+      );
     }
 
     const { data, error } = await query;
@@ -76,7 +78,7 @@ export class PatientHistoryService {
   static async createMedicalRecord(
     patientId: string,
     clinicId: string,
-    request: CreateMedicalRecordRequest
+    request: CreateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
       .from('medical_records')
@@ -101,7 +103,7 @@ export class PatientHistoryService {
    */
   static async updateMedicalRecord(
     id: string,
-    request: UpdateMedicalRecordRequest
+    request: UpdateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
       .from('medical_records')
@@ -148,7 +150,7 @@ export class PatientHistoryService {
   static async createTreatmentPlan(
     patientId: string,
     clinicId: string,
-    request: CreateTreatmentPlanRequest
+    request: CreateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
       .from('treatment_plans')
@@ -175,7 +177,7 @@ export class PatientHistoryService {
    */
   static async updateTreatmentPlan(
     id: string,
-    request: UpdateTreatmentPlanRequest
+    request: UpdateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
       .from('treatment_plans')
@@ -200,7 +202,7 @@ export class PatientHistoryService {
    */
   static async getProgressNotes(
     patientId: string,
-    treatmentPlanId?: string
+    treatmentPlanId?: string,
   ): Promise<ProgressNote[]> {
     let query = PatientHistoryService.sb
       .from('progress_notes')
@@ -231,7 +233,7 @@ export class PatientHistoryService {
    */
   static async createProgressNote(
     patientId: string,
-    request: CreateProgressNoteRequest
+    request: CreateProgressNoteRequest,
   ): Promise<ProgressNote> {
     const { data, error } = await PatientHistoryService.sb
       .from('progress_notes')
@@ -274,7 +276,7 @@ export class PatientHistoryService {
    */
   static async addPatientAllergy(
     patientId: string,
-    allergy: Omit<PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+    allergy: Omit<PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'>,
   ): Promise<PatientAllergy> {
     const { data, error } = await PatientHistoryService.sb
       .from('patient_allergies')
@@ -316,7 +318,7 @@ export class PatientHistoryService {
    */
   static async addPatientCondition(
     patientId: string,
-    condition: Omit<PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+    condition: Omit<PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'>,
   ): Promise<PatientCondition> {
     const { data, error } = await PatientHistoryService.sb
       .from('patient_conditions')
@@ -388,11 +390,12 @@ export class PatientHistoryService {
   static async uploadAttachment(
     recordId: string,
     file: File,
-    description?: string
+    description?: string,
   ): Promise<{ id: string; url: string }> {
     // Upload file to storage
     const fileName = `medical-records/${recordId}/${Date.now()}-${file.name}`;
-    const { data: _uploadData, error: uploadError } = await (PatientHistoryService.sb as any).storage
+    const { data: _uploadData, error: uploadError } = await (PatientHistoryService.sb as any)
+      .storage
       .from('medical-attachments')
       .upload(fileName, file);
 

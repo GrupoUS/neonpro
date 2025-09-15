@@ -4,9 +4,9 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { notificationService, type NotificationData } from './notification.service';
-import { addHours, isAfter, format } from 'date-fns';
+import { addHours, format, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { type NotificationData, notificationService } from './notification.service';
 
 export interface ScheduledNotification {
   id: string;
@@ -43,7 +43,7 @@ class NotificationSchedulerService {
       reminder1h: true,
       confirmationImmediate: true,
       followupAfter24h: false,
-    }
+    },
   ): Promise<void> {
     try {
       const notifications: Omit<ScheduledNotification, 'id' | 'createdAt' | 'updatedAt'>[] = [];
@@ -114,7 +114,9 @@ class NotificationSchedulerService {
           throw error;
         }
 
-        console.log(`Scheduled ${notifications.length} notifications for appointment ${appointmentId}`);
+        console.log(
+          `Scheduled ${notifications.length} notifications for appointment ${appointmentId}`,
+        );
       }
     } catch (error) {
       console.error('Error in scheduleAppointmentNotifications:', error);
@@ -287,7 +289,9 @@ class NotificationSchedulerService {
       .eq('id', notificationId)
       .single();
 
-    const attempts = (data && typeof (data as any).attempts === 'number') ? (data as any).attempts : 0;
+    const attempts = (data && typeof (data as any).attempts === 'number')
+      ? (data as any).attempts
+      : 0;
     const newAttempts = attempts + 1;
     const status = newAttempts >= this.MAX_ATTEMPTS ? 'failed' : 'pending';
 

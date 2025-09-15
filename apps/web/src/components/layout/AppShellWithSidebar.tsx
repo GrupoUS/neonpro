@@ -1,6 +1,8 @@
 import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';
 import {
   IconCalendar,
   IconDashboard,
@@ -9,22 +11,18 @@ import {
   IconReport,
   IconSettings,
   IconStethoscope,
-  IconUser,
   IconUsers,
 } from '@tabler/icons-react';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { Link, Outlet, useLocation } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Outlet, useLocation } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
 
 // Real-time subscription hook para pacientes
 const usePatientRealtimeSubscription = () => {
   const { user } = useAuth();
-  
+
   useEffect(() => {
     if (!user) return;
 
@@ -39,19 +37,19 @@ const usePatientRealtimeSubscription = () => {
           table: 'patients',
           filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
         },
-        (payload) => {
+        payload => {
           console.log('Patient change:', payload);
-          
+
           // Invalidar queries relacionadas a pacientes
           queryClient.invalidateQueries({ queryKey: ['patients'] });
-          
+
           // Mostrar notificação para mudanças importantes
           if (payload.eventType === 'INSERT') {
             toast.success('Novo paciente cadastrado!');
           } else if (payload.eventType === 'UPDATE') {
             toast.info('Dados do paciente atualizados!');
           }
-        }
+        },
       )
       .subscribe();
 
@@ -64,7 +62,7 @@ const usePatientRealtimeSubscription = () => {
 // Real-time subscription hook para agendamentos
 const useAppointmentRealtimeSubscription = () => {
   const { user } = useAuth();
-  
+
   useEffect(() => {
     if (!user) return;
 
@@ -79,19 +77,19 @@ const useAppointmentRealtimeSubscription = () => {
           table: 'appointments',
           filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
         },
-        (payload) => {
+        payload => {
           console.log('Appointment change:', payload);
-          
+
           // Invalidar queries relacionadas a agendamentos
           queryClient.invalidateQueries({ queryKey: ['appointments'] });
-          
+
           // Mostrar notificação para mudanças importantes
           if (payload.eventType === 'INSERT') {
             toast.success('Novo agendamento criado!');
           } else if (payload.eventType === 'UPDATE') {
             const newStatus = payload.new?.status;
             const oldStatus = payload.old?.status;
-            
+
             if (newStatus !== oldStatus) {
               if (newStatus === 'confirmed') {
                 toast.success('Agendamento confirmado!');
@@ -104,7 +102,7 @@ const useAppointmentRealtimeSubscription = () => {
           } else if (payload.eventType === 'DELETE') {
             toast.info('Agendamento removido!');
           }
-        }
+        },
       )
       .subscribe();
 
@@ -138,7 +136,7 @@ const useAppointmentRealtimeSubscription = () => {
 // Hook para prefetch de dados com base na rota atual
 const useRoutePrefetch = () => {
   const location = useLocation();
-  
+
   useEffect(() => {
     // Prefetch dados com base na rota
     if (location.pathname.startsWith('/patients')) {
@@ -153,7 +151,7 @@ const useRoutePrefetch = () => {
         staleTime: 5 * 60 * 1000,
       });
     }
-    
+
     if (location.pathname.startsWith('/appointments')) {
       queryClient.prefetchQuery({
         queryKey: ['appointments', 'today'],
@@ -175,7 +173,7 @@ const useRoutePrefetch = () => {
 function AppShellContent() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
-  
+
   // Ativar real-time subscriptions
   usePatientRealtimeSubscription();
   useAppointmentRealtimeSubscription();
@@ -259,11 +257,10 @@ function AppShellContent() {
               <span className='text-lg font-semibold'>NeonPro</span>
             </div>
             <nav className='space-y-1'>
-              {links.map((link) => (
+              {links.map(link => (
                 <SidebarLink
                   key={link.href}
                   link={link}
-                  setOpen={setOpen}
                 />
               ))}
             </nav>
@@ -278,7 +275,7 @@ function AppShellContent() {
       </main>
 
       <FloatingAIChatSimple />
-      
+
       {/* Status indicator para real-time */}
       <div className='fixed bottom-4 right-4 z-50'>
         <div className='flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm'>

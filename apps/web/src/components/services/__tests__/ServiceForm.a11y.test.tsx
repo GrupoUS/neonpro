@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
+import { describe, expect, it } from 'vitest';
 import { ServiceForm } from '../ServiceForm';
 
 const noop = () => {};
 
 describe('ServiceForm ARIA and validation', () => {
   it('shows error for empty name on submit and clears after typing', async () => {
-    render(<ServiceForm onSuccess={noop} clinicId="test-clinic" /> as any);
+    render(<ServiceForm onSuccess={noop} clinicId='test-clinic' /> as any);
 
     // Submit without filling required name
     const submit = screen.getByRole('button', { name: /Criar Serviço|Atualizar Serviço/i });
@@ -24,9 +24,8 @@ describe('ServiceForm ARIA and validation', () => {
   });
 
   it('price input uses numeric inputMode for mobile keyboards', () => {
-    render(<ServiceForm onSuccess={noop} clinicId="test-clinic" /> as any);
+    render(<ServiceForm onSuccess={noop} clinicId='test-clinic' /> as any);
     const price = screen.getByLabelText(/Preço/i) as HTMLInputElement;
     expect(price).toHaveAttribute('inputmode', 'numeric');
   });
 });
-

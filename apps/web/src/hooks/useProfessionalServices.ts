@@ -3,28 +3,33 @@
  * React Query hooks for managing professional-service relationships
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { professionalServicesService } from '@/services/professional-services.service';
 import type {
-  CreateProfessionalServiceRequest,
-  UpdateProfessionalServiceRequest,
   BulkAssignServicesRequest,
-  SetPrimaryProfessionalRequest,
+  CreateProfessionalServiceRequest,
   ProfessionalServiceFilters,
+  SetPrimaryProfessionalRequest,
+  UpdateProfessionalServiceRequest,
 } from '@/types/professional-services';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query keys
 export const professionalServicesKeys = {
   all: ['professional-services'] as const,
   lists: () => [...professionalServicesKeys.all, 'list'] as const,
-  list: (filters: ProfessionalServiceFilters) => [...professionalServicesKeys.lists(), filters] as const,
+  list: (filters: ProfessionalServiceFilters) =>
+    [...professionalServicesKeys.lists(), filters] as const,
   detailed: (clinicId: string) => [...professionalServicesKeys.all, 'detailed', clinicId] as const,
-  servicesByProfessional: (professionalId: string) => [...professionalServicesKeys.all, 'by-professional', professionalId] as const,
-  professionalsByService: (serviceId: string) => [...professionalServicesKeys.all, 'by-service', serviceId] as const,
+  servicesByProfessional: (professionalId: string) =>
+    [...professionalServicesKeys.all, 'by-professional', professionalId] as const,
+  professionalsByService: (serviceId: string) =>
+    [...professionalServicesKeys.all, 'by-service', serviceId] as const,
   stats: (clinicId: string) => [...professionalServicesKeys.all, 'stats', clinicId] as const,
-  canPerform: (professionalId: string, serviceId: string) => [...professionalServicesKeys.all, 'can-perform', professionalId, serviceId] as const,
-  recommended: (serviceId: string) => [...professionalServicesKeys.all, 'recommended', serviceId] as const,
+  canPerform: (professionalId: string, serviceId: string) =>
+    [...professionalServicesKeys.all, 'can-perform', professionalId, serviceId] as const,
+  recommended: (serviceId: string) =>
+    [...professionalServicesKeys.all, 'recommended', serviceId] as const,
 };
 
 /**
@@ -92,7 +97,8 @@ export function useProfessionalServiceStats(clinicId: string) {
 export function useCanProfessionalPerformService(professionalId: string, serviceId: string) {
   return useQuery({
     queryKey: professionalServicesKeys.canPerform(professionalId, serviceId),
-    queryFn: () => professionalServicesService.canProfessionalPerformService(professionalId, serviceId),
+    queryFn: () =>
+      professionalServicesService.canProfessionalPerformService(professionalId, serviceId),
     enabled: !!professionalId && !!serviceId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -122,7 +128,7 @@ export function useCreateProfessionalService() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
-      
+
       toast.success('Serviço atribuído ao profissional com sucesso!');
     },
     onError: (error: Error) => {
@@ -143,7 +149,7 @@ export function useUpdateProfessionalService() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
-      
+
       toast.success('Atribuição de serviço atualizada com sucesso!');
     },
     onError: (error: Error) => {
@@ -163,7 +169,7 @@ export function useDeleteProfessionalService() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
-      
+
       toast.success('Atribuição de serviço removida com sucesso!');
     },
     onError: (error: Error) => {
@@ -181,10 +187,10 @@ export function useBulkAssignServices() {
   return useMutation({
     mutationFn: (request: BulkAssignServicesRequest) =>
       professionalServicesService.bulkAssignServices(request),
-    onSuccess: (count) => {
+    onSuccess: count => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
-      
+
       toast.success(`${count} serviços atribuídos com sucesso!`);
     },
     onError: (error: Error) => {
@@ -205,7 +211,7 @@ export function useSetPrimaryProfessional() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
-      
+
       toast.success('Profissional principal definido com sucesso!');
     },
     onError: (error: Error) => {
@@ -222,10 +228,10 @@ export function useToggleProfessionalService() {
   const deleteMutation = useDeleteProfessionalService();
 
   return useMutation({
-    mutationFn: async ({ 
-      isAssigned, 
-      professionalServiceId, 
-      createRequest 
+    mutationFn: async ({
+      isAssigned,
+      professionalServiceId,
+      createRequest,
     }: {
       isAssigned: boolean;
       professionalServiceId?: string;
@@ -242,9 +248,9 @@ export function useToggleProfessionalService() {
       }
       throw new Error('Invalid toggle operation');
     },
-    onSuccess: (result) => {
-      const message = result.action === 'added' 
-        ? 'Serviço atribuído com sucesso!' 
+    onSuccess: result => {
+      const message = result.action === 'added'
+        ? 'Serviço atribuído com sucesso!'
         : 'Atribuição removida com sucesso!';
       toast.success(message);
     },

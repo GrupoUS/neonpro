@@ -3,36 +3,17 @@
  * Comprehensive service management with CRUD operations
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router';
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus, Search } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@neonpro/ui';
-import { EnhancedTable } from '@neonpro/ui';
-import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
   SmoothDrawer,
   SmoothDrawerContent,
   SmoothDrawerDescription,
@@ -41,191 +22,27 @@ import {
 } from '@neonpro/ui';
 
 import { ServiceForm } from '@/components/services/ServiceForm';
+import { ServicesDataTable } from '@/components/services/ServicesDataTable';
 import { useAuth } from '@/hooks/useAuth';
 import { useDeleteService, useServices } from '@/hooks/useServices';
 import type { Service } from '@/types/service';
-import { formatBRL } from '@neonpro/utils';
 import { toast } from 'sonner';
-
-// Service table columns definition
-
-import { useServiceCategories } from '@/hooks/useServiceCategories';
-const createColumns = (
-  onEdit: (service: Service) => void,
-  onDelete: (service: Service) => void,
-  getCategoryLabel: (id: string | null) => string,
-): ColumnDef<Service>[] => [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <Button
-        aria-label='Ordenar por nome do serviço'
-        variant='ghost'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className='h-auto p-0 font-semibold'
-      >
-        Nome do Serviço
-        <ArrowUpDown className='ml-2 h-4 w-4' />
-      </Button>
-    ),
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descrição',
-    cell: ({ row }) => {
-      const description = row.getValue('description') as string | null;
-      return (
-        <div className='max-w-[260px] truncate text-sm text-muted-foreground'>
-          {description || 'Sem descrição'}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'duration_minutes',
-    header: ({ column }) => (
-      <Button
-        aria-label='Ordenar por duração'
-        variant='ghost'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className='h-auto p-0 font-semibold'
-      >
-        Duração
-        <ArrowUpDown className='ml-2 h-4 w-4' />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className='text-center'>
-        {row.getValue('duration_minutes')} min
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'price',
-    header: ({ column }) => (
-      <Button
-        aria-label='Ordenar por preço'
-        variant='ghost'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className='h-auto p-0 font-semibold'
-      >
-        Preço
-        <ArrowUpDown className='ml-2 h-4 w-4' />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const price = parseFloat(row.getValue('price'));
-      const formatted = formatBRL(price);
-      return <div className='text-right font-medium'>{formatted}</div>;
-    },
-  },
-  {
-    id: 'category',
-    header: 'Categoria',
-    cell: ({ row }) => {
-      const id = (row.original.category_id ?? null) as string | null;
-      const label = getCategoryLabel(id);
-      return <Badge variant='outline'>{label}</Badge>;
-    },
-  },
-  {
-    accessorKey: 'is_active',
-    header: 'Status',
-    cell: ({ row }) => {
-      const isActive = row.getValue('is_active') as boolean;
-      return (
-        <Badge
-          variant={isActive ? 'default' : 'secondary'}
-          aria-label={isActive ? 'Serviço ativo' : 'Serviço inativo'}
-        >
-          {isActive ? 'Ativo' : 'Inativo'}
-        </Badge>
-      );
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const service = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant='ghost'
-              className='h-8 w-8 p-0'
-              aria-label={`Ações para ${service.name}`}
-            >
-              <span className='sr-only'>Abrir menu</span>
-              <MoreHorizontal className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link
-                to='/appointments/new'
-                search={{
-                  serviceId: service.id,
-                  name: service.name,
-                  duration: service.duration_minutes,
-                  price: service.price,
-                }}
-                aria-label={`Agendar ${service.name}`}
-              >
-                Agendar
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(service)}>
-              Editar serviço
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(service)}
-              className='text-destructive'
-            >
-              Excluir serviço
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
 function ServicesPage() {
-  const { profile: userProfile } = useAuth(); // fix property name (was userProfile)
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { user } = useAuth();
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
-  // Fetch services
-  const {
-    data: servicesResponse,
-    isLoading,
-    error,
-  } = useServices({
-    clinic_id: userProfile?.clinicId,
+  // Get clinic ID from user
+  const clinicId = user?.user_metadata?.clinic_id || user?.clinic_id;
+
+  // Fetch services data
+  const { data: services = [], isLoading, error } = useServices({
+    clinicId,
+    isActive: true,
   });
 
-  // Fetch categories to display Category column labels
-  const { data: categoriesData } = useServiceCategories({
-    clinic_id: userProfile?.clinicId,
-    is_active: true,
-  } as any);
-  const categoryNameById = new Map<string, string>(
-    ((categoriesData as any[]) || []).map((c: any) => [String(c.id), String(c.name ?? '')]),
-  );
-  const getCategoryLabel = (id: string | null): string => (id && categoryNameById.get(id)) || '—';
-
+  // Delete service mutation
   const deleteServiceMutation = useDeleteService();
-
-  const services = servicesResponse?.data || [];
 
   const handleEdit = (service: Service) => {
     setEditingService(service);
@@ -238,38 +55,23 @@ function ServicesPage() {
         toast.success('Serviço excluído com sucesso!');
       } catch (error) {
         console.error('Error deleting service:', error);
-        toast.error('Erro ao excluir serviço');
+        toast.error('Erro ao excluir serviço. Tente novamente.');
       }
     }
   };
 
-  const columns = createColumns(handleEdit, handleDelete, getCategoryLabel);
-
-  const table = useReactTable({
-    data: services,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
+  const handleFormSuccess = () => {
+    setEditingService(null);
+    setIsCreateDrawerOpen(false);
+    toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado!');
+  };
 
   if (error) {
     return (
       <div className='container mx-auto py-8'>
         <Card>
           <CardContent className='pt-6'>
-            <div className='text-center text-destructive' role='alert' aria-live='polite'>
+            <div className='text-center text-destructive'>
               Erro ao carregar serviços: {error.message}
             </div>
           </CardContent>
@@ -279,122 +81,55 @@ function ServicesPage() {
   }
 
   return (
-    <div className='container mx-auto py-8'>
-      <div className='space-y-6'>
-        {/* Header */}
-        <div className='flex items-center justify-between'>
-          <div>
-            <h1 className='text-3xl font-bold tracking-tight'>Gerenciar Serviços</h1>
-            <p className='text-muted-foreground'>
-              Gerencie os serviços oferecidos pela sua clínica
-            </p>
-          </div>
-          <SmoothDrawer open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <Button className='gap-2' onClick={() => setShowCreateDialog(true)}>
-              <Plus className='h-4 w-4' />
-              Novo Serviço
-            </Button>
-            <SmoothDrawerContent>
-              <SmoothDrawerHeader>
-                <SmoothDrawerTitle>Criar Novo Serviço</SmoothDrawerTitle>
-                <SmoothDrawerDescription>
-                  Preencha as informações do novo serviço
-                </SmoothDrawerDescription>
-              </SmoothDrawerHeader>
-              <ServiceForm
-                onSuccess={() => setShowCreateDialog(false)}
-                clinicId={userProfile?.clinicId || ''}
-              />
-            </SmoothDrawerContent>
-          </SmoothDrawer>
+    <div className='container mx-auto py-8 space-y-8'>
+      {/* Header */}
+      <div className='flex items-center justify-between'>
+        <div>
+          <h1 className='text-3xl font-bold tracking-tight'>Serviços</h1>
+          <p className='text-muted-foreground'>
+            Gerencie os serviços oferecidos pela sua clínica
+          </p>
         </div>
-
-        {/* Services Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Serviços</CardTitle>
-            <CardDescription>
-              {services.length} serviço{services.length !== 1 ? 's' : ''}{' '}
-              encontrado{services.length !== 1 ? 's' : ''}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <EnhancedTable
-              table={table}
-              loading={isLoading}
-              columnsCount={columns.length}
-              ariaLabel='Tabela de serviços com seleção e agendamento'
-              emptyMessage='Nenhum serviço encontrado.'
-              renderToolbar={
-                <div className='flex w-full items-center justify-between py-2'>
-                  <div className='flex items-center gap-2'>
-                    <div className='relative'>
-                      <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                      <Input
-                        placeholder='Buscar serviços...'
-                        value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                        onChange={event =>
-                          table.getColumn('name')?.setFilterValue(event.target.value)}
-                        className='max-w-sm pl-9'
-                      />
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant='outline' className='gap-2'>
-                        Colunas <ChevronDown className='h-4 w-4' />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                      {table
-                        .getAllColumns()
-                        .filter(column => column.getCanHide())
-                        .map(column => {
-                          return (
-                            <DropdownMenuCheckboxItem
-                              key={column.id}
-                              className='capitalize'
-                              checked={column.getIsVisible()}
-                              onCheckedChange={value => column.toggleVisibility(!!value)}
-                            >
-                              {column.id}
-                            </DropdownMenuCheckboxItem>
-                          );
-                        })}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              }
-              renderPagination={
-                <div className='flex w-full items-center justify-end space-x-2 py-2'>
-                  <div className='text-muted-foreground flex-1 text-sm'>
-                    {table.getFilteredSelectedRowModel().rows.length} de{' '}
-                    {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-                  </div>
-                  <div className='space-x-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => table.previousPage()}
-                      disabled={!table.getCanPreviousPage()}
-                    >
-                      Anterior
-                    </Button>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => table.nextPage()}
-                      disabled={!table.getCanNextPage()}
-                    >
-                      Próximo
-                    </Button>
-                  </div>
-                </div>
-              }
-            />
-          </CardContent>
-        </Card>
+        <Button onClick={() => setIsCreateDrawerOpen(true)} className='gap-2'>
+          <Plus className='h-4 w-4' />
+          Novo Serviço
+        </Button>
       </div>
+
+      {/* Services Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Serviços</CardTitle>
+          <CardDescription>
+            {services.length} serviço{services.length !== 1 ? 's' : ''}{' '}
+            cadastrado{services.length !== 1 ? 's' : ''}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ServicesDataTable
+            data={services}
+            loading={isLoading}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Create Service Drawer */}
+      <SmoothDrawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen}>
+        <SmoothDrawerContent>
+          <SmoothDrawerHeader>
+            <SmoothDrawerTitle>Criar Novo Serviço</SmoothDrawerTitle>
+            <SmoothDrawerDescription>
+              Preencha as informações do novo serviço
+            </SmoothDrawerDescription>
+          </SmoothDrawerHeader>
+          <ServiceForm
+            onSuccess={handleFormSuccess}
+            clinicId={clinicId}
+          />
+        </SmoothDrawerContent>
+      </SmoothDrawer>
 
       {/* Edit Service Drawer */}
       <SmoothDrawer open={!!editingService} onOpenChange={() => setEditingService(null)}>
@@ -408,8 +143,8 @@ function ServicesPage() {
           {editingService && (
             <ServiceForm
               service={editingService}
-              onSuccess={() => setEditingService(null)}
-              clinicId={userProfile?.clinicId || ''}
+              onSuccess={handleFormSuccess}
+              clinicId={clinicId}
             />
           )}
         </SmoothDrawerContent>

@@ -3,23 +3,35 @@
  * Implements healthcare-specific patterns with real-time updates and optimistic mutations
  */
 
-import { appointmentService, type CalendarAppointment, type CreateAppointmentData, type UpdateAppointmentData } from '@/services/appointments.service';
-import { supabase } from '@/integrations/supabase/client';
-import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  appointmentService,
+  type CalendarAppointment,
+  type CreateAppointmentData,
+  type UpdateAppointmentData,
+} from '@/services/appointments.service';
+import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
+import { addDays, endOfDay, startOfDay } from 'date-fns';
+import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
-import { useEffect, useCallback } from 'react';
-import { addDays, startOfDay, endOfDay } from 'date-fns';
 
 // Query keys for appointments
 export const appointmentKeys = {
   all: ['appointments'] as const,
   lists: () => [...appointmentKeys.all, 'list'] as const,
-  list: (clinicId: string, filters?: any) => [...appointmentKeys.lists(), clinicId, filters] as const,
+  list: (clinicId: string, filters?: any) =>
+    [...appointmentKeys.lists(), clinicId, filters] as const,
   details: () => [...appointmentKeys.all, 'detail'] as const,
   detail: (id: string) => [...appointmentKeys.details(), id] as const,
-  calendar: (clinicId: string, startDate?: Date, endDate?: Date) => 
-    [...appointmentKeys.all, 'calendar', clinicId, startDate?.toISOString(), endDate?.toISOString()] as const,
+  calendar: (clinicId: string, startDate?: Date, endDate?: Date) =>
+    [
+      ...appointmentKeys.all,
+      'calendar',
+      clinicId,
+      startDate?.toISOString(),
+      endDate?.toISOString(),
+    ] as const,
 };
 
 /**
@@ -29,7 +41,7 @@ export function useAppointments(
   clinicId: string,
   startDate?: Date,
   endDate?: Date,
-  options?: Omit<UseQueryOptions<CalendarAppointment[], Error>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<CalendarAppointment[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
     queryKey: appointmentKeys.calendar(clinicId, startDate, endDate),
@@ -85,7 +97,7 @@ export function useCreateAppointment() {
 
       queryClient.setQueryData(
         appointmentKeys.calendar(clinicId),
-        (old: CalendarAppointment[] = []) => [...old, optimisticAppointment]
+        (old: CalendarAppointment[] = []) => [...old, optimisticAppointment],
       );
 
       return { previousAppointments, optimisticAppointment };
@@ -95,13 +107,13 @@ export function useCreateAppointment() {
       // Replace optimistic data with server data
       queryClient.setQueryData(
         appointmentKeys.calendar(_clinicId),
-        (old: CalendarAppointment[] = []) => 
-          old.map(apt => apt.id.startsWith('temp-') ? newAppointment : apt)
+        (old: CalendarAppointment[] = []) =>
+          old.map(apt => apt.id.startsWith('temp-') ? newAppointment : apt),
       );
 
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
-      
+
       toast.success('Agendamento criado com sucesso!');
     },
 
@@ -130,13 +142,13 @@ export function useUpdateAppointment() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ 
-      appointmentId, 
-      updates, 
-      clinicId: _clinicId 
-    }: { 
-      appointmentId: string; 
-      updates: UpdateAppointmentData; 
+    mutationFn: async ({
+      appointmentId,
+      updates,
+      clinicId: _clinicId,
+    }: {
+      appointmentId: string;
+      updates: UpdateAppointmentData;
       clinicId: string; // eslint-disable-line @typescript-eslint/no-unused-vars
     }) => {
       if (!user?.id) {
@@ -161,14 +173,14 @@ export function useUpdateAppointment() {
           old.map(apt =>
             apt.id === appointmentId
               ? {
-                  ...apt,
-                  ...(updates.startTime && { start: updates.startTime }),
-                  ...(updates.endTime && { end: updates.endTime }),
-                  ...(updates.notes !== undefined && { notes: updates.notes }),
-                  ...(updates.status && { status: updates.status }),
-                }
+                ...apt,
+                ...(updates.startTime && { start: updates.startTime }),
+                ...(updates.endTime && { end: updates.endTime }),
+                ...(updates.notes !== undefined && { notes: updates.notes }),
+                ...(updates.status && { status: updates.status }),
+              }
               : apt
-          )
+          ),
       );
 
       return { previousAppointments };
@@ -179,12 +191,12 @@ export function useUpdateAppointment() {
       queryClient.setQueryData(
         appointmentKeys.calendar(_clinicId),
         (old: CalendarAppointment[] = []) =>
-          old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt)
+          old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt),
       );
 
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
-      
+
       toast.success('Agendamento atualizado com sucesso!');
     },
 
@@ -213,13 +225,13 @@ export function useDeleteAppointment() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ 
-      appointmentId, 
-      clinicId: _clinicId, 
-      reason 
-    }: { 
-      appointmentId: string; 
-      clinicId: string; 
+    mutationFn: async ({
+      appointmentId,
+      clinicId: _clinicId,
+      reason,
+    }: {
+      appointmentId: string;
+      clinicId: string;
       reason?: string;
     }) => {
       if (!user?.id) {
@@ -238,8 +250,7 @@ export function useDeleteAppointment() {
       // Optimistically remove the appointment
       queryClient.setQueryData(
         appointmentKeys.calendar(clinicId),
-        (old: CalendarAppointment[] = []) =>
-          old.filter(apt => apt.id !== appointmentId)
+        (old: CalendarAppointment[] = []) => old.filter(apt => apt.id !== appointmentId),
       );
 
       return { previousAppointments };
@@ -248,7 +259,7 @@ export function useDeleteAppointment() {
     onSuccess: (_, { clinicId: _clinicId }) => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
-      
+
       toast.success('Agendamento cancelado com sucesso!');
     },
 
@@ -307,7 +318,7 @@ export function useAppointmentRealtime(clinicId: string) {
           table: 'appointments',
           filter: `clinic_id=eq.${clinicId}`,
         },
-        handleRealtimeUpdate
+        handleRealtimeUpdate,
       )
       .subscribe();
 

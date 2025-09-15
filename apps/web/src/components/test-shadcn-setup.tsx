@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@neonpro/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { cn } from '@neonpro/ui';
 import { useState } from 'react';
 
@@ -107,7 +100,7 @@ export function TestShadcnSetup() {
 
           <div>
             <p className='text-sm font-medium mb-2'>Full Width:</p>
-            <Button className="w-full">Full Width Button</Button>
+            <Button className='w-full'>Full Width Button</Button>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ export function useTimeSlotValidation(
   serviceTypeId: string,
   startTime: Date | null,
   endTime: Date | null,
-  excludeAppointmentId?: string
+  excludeAppointmentId?: string,
 ) {
   return useQuery({
     queryKey: [
@@ -34,7 +34,7 @@ export function useTimeSlotValidation(
         serviceTypeId,
         startTime!,
         endTime!,
-        excludeAppointmentId
+        excludeAppointmentId,
       ),
     enabled: !!(clinicId && professionalId && serviceTypeId && startTime && endTime),
     staleTime: 30 * 1000, // 30 seconds (short for real-time validation)
@@ -52,7 +52,7 @@ export function useTimeSlotValidationWithStatus(
   serviceTypeId: string,
   startTime: Date | null,
   endTime: Date | null,
-  excludeAppointmentId?: string
+  excludeAppointmentId?: string,
 ) {
   const query = useTimeSlotValidation(
     clinicId,
@@ -60,7 +60,7 @@ export function useTimeSlotValidationWithStatus(
     serviceTypeId,
     startTime,
     endTime,
-    excludeAppointmentId
+    excludeAppointmentId,
   );
 
   return {
