@@ -7,13 +7,13 @@
 import { patientHistoryService } from '@/services/patient-history.service';
 import type {
   CreateMedicalRecordRequest,
-  UpdateMedicalRecordRequest,
-  CreateTreatmentPlanRequest,
-  UpdateTreatmentPlanRequest,
   CreateProgressNoteRequest,
-  PatientHistoryFilters,
+  CreateTreatmentPlanRequest,
   PatientAllergy,
   PatientCondition,
+  PatientHistoryFilters,
+  UpdateMedicalRecordRequest,
+  UpdateTreatmentPlanRequest,
 } from '@/types/patient-history';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -22,20 +22,18 @@ import { toast } from 'sonner';
 export const patientHistoryKeys = {
   all: ['patientHistory'] as const,
   patient: (patientId: string) => [...patientHistoryKeys.all, patientId] as const,
-  medicalRecords: (patientId: string, filters?: PatientHistoryFilters) => 
+  medicalRecords: (patientId: string, filters?: PatientHistoryFilters) =>
     [...patientHistoryKeys.patient(patientId), 'medicalRecords', filters] as const,
-  treatmentPlans: (patientId: string) => 
+  treatmentPlans: (patientId: string) =>
     [...patientHistoryKeys.patient(patientId), 'treatmentPlans'] as const,
-  progressNotes: (patientId: string, treatmentPlanId?: string) => 
+  progressNotes: (patientId: string, treatmentPlanId?: string) =>
     [...patientHistoryKeys.patient(patientId), 'progressNotes', treatmentPlanId] as const,
-  allergies: (patientId: string) => 
+  allergies: (patientId: string) =>
     [...patientHistoryKeys.patient(patientId), 'allergies'] as const,
-  conditions: (patientId: string) => 
+  conditions: (patientId: string) =>
     [...patientHistoryKeys.patient(patientId), 'conditions'] as const,
-  timeline: (patientId: string) => 
-    [...patientHistoryKeys.patient(patientId), 'timeline'] as const,
-  summary: (patientId: string) => 
-    [...patientHistoryKeys.patient(patientId), 'summary'] as const,
+  timeline: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'timeline'] as const,
+  summary: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'summary'] as const,
 };
 
 /**
@@ -43,7 +41,7 @@ export const patientHistoryKeys = {
  */
 export function useMedicalRecords(
   patientId: string,
-  filters?: PatientHistoryFilters
+  filters?: PatientHistoryFilters,
 ) {
   return useQuery({
     queryKey: patientHistoryKeys.medicalRecords(patientId, filters),
@@ -59,29 +57,29 @@ export function useCreateMedicalRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, clinicId, request }: { 
-      patientId: string; 
+    mutationFn: ({ patientId, clinicId, request }: {
+      patientId: string;
       clinicId: string;
-      request: CreateMedicalRecordRequest 
+      request: CreateMedicalRecordRequest;
     }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
-    
-    onSuccess: (_data) => {
+
+    onSuccess: _data => {
       // Invalidate medical records for this patient
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       // Invalidate patient summary and timeline
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.summary(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.summary(variables.patientId),
       });
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.timeline(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
-      
+
       toast.success('Registro médico criado com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error creating medical record:', error);
       toast.error(`Erro ao criar registro médico: ${error.message}`);
@@ -96,20 +94,20 @@ export function useUpdateMedicalRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, request }: { 
-      id: string; 
-      request: UpdateMedicalRecordRequest 
+    mutationFn: ({ id, request }: {
+      id: string;
+      request: UpdateMedicalRecordRequest;
     }) => patientHistoryService.updateMedicalRecord(id, request),
-    
+
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       toast.success('Registro médico atualizado com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error updating medical record:', error);
       toast.error(`Erro ao atualizar registro médico: ${error.message}`);
@@ -135,26 +133,26 @@ export function useCreateTreatmentPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, clinicId, request }: { 
-      patientId: string; 
+    mutationFn: ({ patientId, clinicId, request }: {
+      patientId: string;
       clinicId: string;
-      request: CreateTreatmentPlanRequest 
+      request: CreateTreatmentPlanRequest;
     }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
-    
+
     onSuccess: () => {
       // Invalidate treatment plans and summary
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       // Invalidate patient summary
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.summary(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.summary(variables.patientId),
       });
-      
+
       toast.success('Plano de tratamento criado com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error creating treatment plan:', error);
       toast.error(`Erro ao criar plano de tratamento: ${error.message}`);
@@ -169,20 +167,20 @@ export function useUpdateTreatmentPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, request }: { 
-      id: string; 
-      request: UpdateTreatmentPlanRequest 
+    mutationFn: ({ id, request }: {
+      id: string;
+      request: UpdateTreatmentPlanRequest;
     }) => patientHistoryService.updateTreatmentPlan(id, request),
-    
+
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       toast.success('Plano de tratamento atualizado com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error updating treatment plan:', error);
       toast.error(`Erro ao atualizar plano de tratamento: ${error.message}`);
@@ -208,25 +206,25 @@ export function useCreateProgressNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, request }: { 
-      patientId: string; 
-      request: CreateProgressNoteRequest 
+    mutationFn: ({ patientId, request }: {
+      patientId: string;
+      request: CreateProgressNoteRequest;
     }) => patientHistoryService.createProgressNote(patientId, request),
-    
+
     onSuccess: () => {
       // Invalidate progress notes and timeline
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       // Invalidate patient timeline
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.timeline(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
-      
+
       toast.success('Nota de progresso criada com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error creating progress note:', error);
       toast.error(`Erro ao criar nota de progresso: ${error.message}`);
@@ -252,26 +250,26 @@ export function useAddPatientAllergy() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, allergy }: { 
-      patientId: string; 
-      allergy: Omit<PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+    mutationFn: ({ patientId, allergy }: {
+      patientId: string;
+      allergy: Omit<PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'>;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
-    
+
     onSuccess: (_data, variables) => {
       void _data;
       // Invalidate allergies for this patient
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.allergies(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.allergies(variables.patientId),
       });
-      
+
       // Invalidate patient summary
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.summary(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.summary(variables.patientId),
       });
-      
+
       toast.success('Alergia adicionada com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error adding patient allergy:', error);
       toast.error(`Erro ao adicionar alergia: ${error.message}`);
@@ -297,26 +295,26 @@ export function useAddPatientCondition() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, condition }: { 
-      patientId: string; 
-      condition: Omit<PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+    mutationFn: ({ patientId, condition }: {
+      patientId: string;
+      condition: Omit<PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'>;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
-    
+
     onSuccess: (_data, variables) => {
       void _data;
       // Invalidate conditions for this patient
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.conditions(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.conditions(variables.patientId),
       });
-      
+
       // Invalidate patient summary
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.summary(variables.patientId) 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.summary(variables.patientId),
       });
-      
+
       toast.success('Condição médica adicionada com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error adding patient condition:', error);
       toast.error(`Erro ao adicionar condição médica: ${error.message}`);
@@ -355,21 +353,21 @@ export function useUploadAttachment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ recordId, file, description }: { 
-      recordId: string; 
+    mutationFn: ({ recordId, file, description }: {
+      recordId: string;
       file: File;
       description?: string;
     }) => patientHistoryService.uploadAttachment(recordId, file, description),
-    
+
     onSuccess: () => {
       // Invalidate medical records to refresh attachments
-      queryClient.invalidateQueries({ 
-        queryKey: patientHistoryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: patientHistoryKeys.all,
       });
-      
+
       toast.success('Anexo enviado com sucesso!');
     },
-    
+
     onError: (error: Error) => {
       console.error('Error uploading attachment:', error);
       toast.error(`Erro ao enviar anexo: ${error.message}`);

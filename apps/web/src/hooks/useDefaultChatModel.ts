@@ -24,7 +24,9 @@ export function useDefaultChatModel() {
         } catch {}
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [user?.id]);
 
   return { defaultModel, setDefaultModel };

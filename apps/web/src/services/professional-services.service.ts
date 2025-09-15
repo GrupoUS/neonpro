@@ -5,23 +5,25 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
+  BulkAssignServicesRequest,
+  CreateProfessionalServiceRequest,
   ProfessionalService,
   ProfessionalServiceDetailed,
-  ServiceWithProfessional,
-  ProfessionalWithService,
-  CreateProfessionalServiceRequest,
-  UpdateProfessionalServiceRequest,
-  BulkAssignServicesRequest,
-  SetPrimaryProfessionalRequest,
   ProfessionalServiceFilters,
   ProfessionalServiceStats,
+  ProfessionalWithService,
+  ServiceWithProfessional,
+  SetPrimaryProfessionalRequest,
+  UpdateProfessionalServiceRequest,
 } from '@/types/professional-services';
 
 class ProfessionalServicesService {
   /**
    * Get all professional-service relationships with optional filtering
    */
-  async getProfessionalServices(filters: ProfessionalServiceFilters = {}): Promise<ProfessionalService[]> {
+  async getProfessionalServices(
+    filters: ProfessionalServiceFilters = {},
+  ): Promise<ProfessionalService[]> {
     let query = (supabase as any)
       .from('professional_services' as any)
       .select('*');
@@ -97,7 +99,9 @@ class ProfessionalServicesService {
   /**
    * Create a new professional-service relationship
    */
-  async createProfessionalService(request: CreateProfessionalServiceRequest): Promise<ProfessionalService> {
+  async createProfessionalService(
+    request: CreateProfessionalServiceRequest,
+  ): Promise<ProfessionalService> {
     const { data, error } = await (supabase as any)
       .from('professional_services' as any)
       .insert({
@@ -122,7 +126,9 @@ class ProfessionalServicesService {
   /**
    * Update a professional-service relationship
    */
-  async updateProfessionalService(request: UpdateProfessionalServiceRequest): Promise<ProfessionalService> {
+  async updateProfessionalService(
+    request: UpdateProfessionalServiceRequest,
+  ): Promise<ProfessionalService> {
     const updateData: Partial<ProfessionalService> = {};
 
     if (request.is_primary !== undefined) updateData.is_primary = request.is_primary;
@@ -223,11 +229,11 @@ class ProfessionalServicesService {
     // Calculate services per professional and professionals per service
     const uniqueProfessionals = new Set(professionalServices.map(ps => ps.professional_id));
     const uniqueServices = new Set(professionalServices.map(ps => ps.service_id));
-    
+
     const servicesPerProfessional = uniqueProfessionals.size > 0
       ? totalAssignments / uniqueProfessionals.size
       : 0;
-    
+
     const professionalsPerService = uniqueServices.size > 0
       ? totalAssignments / uniqueServices.size
       : 0;
@@ -267,7 +273,7 @@ class ProfessionalServicesService {
    */
   async getAvailableProfessionalsForService(serviceId: string): Promise<ProfessionalWithService[]> {
     const professionals = await this.getProfessionalsByService(serviceId);
-    
+
     // Filter only active professionals
     return professionals.filter(prof => prof.availability_score > 0);
   }
@@ -275,9 +281,11 @@ class ProfessionalServicesService {
   /**
    * Get recommended professional for a service (highest proficiency, primary if available)
    */
-  async getRecommendedProfessionalForService(serviceId: string): Promise<ProfessionalWithService | null> {
+  async getRecommendedProfessionalForService(
+    serviceId: string,
+  ): Promise<ProfessionalWithService | null> {
     const professionals = await this.getAvailableProfessionalsForService(serviceId);
-    
+
     if (professionals.length === 0) {
       return null;
     }

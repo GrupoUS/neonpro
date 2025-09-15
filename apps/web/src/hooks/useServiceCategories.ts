@@ -6,8 +6,8 @@
 import { serviceCategoriesService } from '@/services/service-categories.service';
 import type {
   CreateServiceCategoryRequest,
-  UpdateServiceCategoryRequest,
   ServiceCategoryFilters,
+  UpdateServiceCategoryRequest,
 } from '@/types/service-categories'; // keep types used in generics only
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -19,7 +19,8 @@ export const serviceCategoryKeys = {
   list: (filters?: ServiceCategoryFilters) => [...serviceCategoryKeys.lists(), filters] as const,
   details: () => [...serviceCategoryKeys.all, 'detail'] as const,
   detail: (id: string) => [...serviceCategoryKeys.details(), id] as const,
-  withServices: (clinicId: string) => [...serviceCategoryKeys.all, 'withServices', clinicId] as const,
+  withServices: (clinicId: string) =>
+    [...serviceCategoryKeys.all, 'withServices', clinicId] as const,
 };
 
 /**
@@ -69,27 +70,27 @@ export function useCreateServiceCategory() {
   return useMutation({
     mutationFn: (categoryData: CreateServiceCategoryRequest) =>
       serviceCategoriesService.createServiceCategory(categoryData),
-    onSuccess: (newCategory) => {
+    onSuccess: newCategory => {
       // Invalidate and refetch categories list
       queryClient.invalidateQueries({ queryKey: serviceCategoryKeys.lists() });
-      queryClient.invalidateQueries({ 
-        queryKey: serviceCategoryKeys.withServices(newCategory.clinic_id) 
+      queryClient.invalidateQueries({
+        queryKey: serviceCategoryKeys.withServices(newCategory.clinic_id),
       });
 
       // Add the new category to the cache
       queryClient.setQueryData(
         serviceCategoryKeys.detail(newCategory.id),
-        newCategory
+        newCategory,
       );
 
       toast.success('Categoria criada com sucesso!');
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error creating service category:', error);
       toast.error(
-        error instanceof Error 
-          ? error.message 
-          : 'Erro ao criar categoria'
+        error instanceof Error
+          ? error.message
+          : 'Erro ao criar categoria',
       );
     },
   });
@@ -104,27 +105,27 @@ export function useUpdateServiceCategory() {
   return useMutation({
     mutationFn: (categoryData: UpdateServiceCategoryRequest) =>
       serviceCategoriesService.updateServiceCategory(categoryData),
-    onSuccess: (updatedCategory) => {
+    onSuccess: updatedCategory => {
       // Update the category in the cache
       queryClient.setQueryData(
         serviceCategoryKeys.detail(updatedCategory.id),
-        updatedCategory
+        updatedCategory,
       );
 
       // Invalidate lists to ensure consistency
       queryClient.invalidateQueries({ queryKey: serviceCategoryKeys.lists() });
-      queryClient.invalidateQueries({ 
-        queryKey: serviceCategoryKeys.withServices(updatedCategory.clinic_id) 
+      queryClient.invalidateQueries({
+        queryKey: serviceCategoryKeys.withServices(updatedCategory.clinic_id),
       });
 
       toast.success('Categoria atualizada com sucesso!');
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error updating service category:', error);
       toast.error(
-        error instanceof Error 
-          ? error.message 
-          : 'Erro ao atualizar categoria'
+        error instanceof Error
+          ? error.message
+          : 'Erro ao atualizar categoria',
       );
     },
   });
@@ -137,8 +138,7 @@ export function useDeleteServiceCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (categoryId: string) =>
-      serviceCategoriesService.deleteServiceCategory(categoryId),
+    mutationFn: (categoryId: string) => serviceCategoriesService.deleteServiceCategory(categoryId),
     onSuccess: (_, categoryId) => {
       // Remove the category from the cache
       queryClient.removeQueries({ queryKey: serviceCategoryKeys.detail(categoryId) });
@@ -149,12 +149,12 @@ export function useDeleteServiceCategory() {
 
       toast.success('Categoria excluída com sucesso!');
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error deleting service category:', error);
       toast.error(
-        error instanceof Error 
-          ? error.message 
-          : 'Erro ao excluir categoria'
+        error instanceof Error
+          ? error.message
+          : 'Erro ao excluir categoria',
       );
     },
   });
@@ -174,24 +174,24 @@ export function useInitializeDefaultCategories() {
       categories.forEach(category => {
         queryClient.setQueryData(
           serviceCategoryKeys.detail(category.id),
-          category
+          category,
         );
       });
 
       // Invalidate lists to ensure they include new categories
       queryClient.invalidateQueries({ queryKey: serviceCategoryKeys.lists() });
-      queryClient.invalidateQueries({ 
-        queryKey: serviceCategoryKeys.withServices(clinicId) 
+      queryClient.invalidateQueries({
+        queryKey: serviceCategoryKeys.withServices(clinicId),
       });
 
       toast.success(`${categories.length} categorias padrão criadas com sucesso!`);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error initializing default categories:', error);
       toast.error(
-        error instanceof Error 
-          ? error.message 
-          : 'Erro ao criar categorias padrão'
+        error instanceof Error
+          ? error.message
+          : 'Erro ao criar categorias padrão',
       );
     },
   });

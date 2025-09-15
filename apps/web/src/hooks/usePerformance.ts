@@ -5,7 +5,6 @@ export const performanceMonitor = {
   measure: (_name: string, _start: string, _end: string) => {},
 };
 
-
 export function usePerformance(componentName: string) { // componentName required
   const mountTime = useRef<number | null>(null);
   const renderCount = useRef<number>(0);

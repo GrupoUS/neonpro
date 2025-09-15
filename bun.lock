@@ -4,6 +4,7 @@
     "": {
       "name": "neonpro-monorepo",
       "dependencies": {
+        "dotenv": "^17.2.2",
         "turbo": "^2.5.6",
       },
       "devDependencies": {

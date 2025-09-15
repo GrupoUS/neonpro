@@ -1,13 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/lib/supabase/types/database';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 // Hook genérico para queries do Supabase
 export function useSupabaseQuery<T = any>(
   queryKey: string[],
   queryFn: () => Promise<{ data: T | null; error: any }>,
-  options = {}
+  options = {},
 ) {
   return useQuery({
     queryKey,
@@ -25,10 +26,10 @@ export function useSupabaseRealTimeQuery<T = any>(
   queryKey: string[],
   table: string,
   queryFn: () => Promise<{ data: T | null; error: any }>,
-  options = {}
+  options = {},
 ) {
   const queryClient = useQueryClient();
-  
+
   // Configurar real-time subscription
   const setupRealTimeSubscription = () => {
     const channel = supabase
@@ -43,7 +44,7 @@ export function useSupabaseRealTimeQuery<T = any>(
         () => {
           // Invalidar query quando houver mudanças
           queryClient.invalidateQueries({ queryKey });
-        }
+        },
       )
       .subscribe();
 
@@ -71,13 +72,13 @@ export function usePatients(options = {}) {
         .from('patients')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       return { data, error };
     },
     {
       staleTime: 5 * 60 * 1000,
       ...options,
-    }
+    },
   );
 }
 
@@ -95,13 +96,13 @@ export function useAppointments(options = {}) {
           service:services(*)
         `)
         .order('start_time', { ascending: true });
-      
+
       return { data, error };
     },
     {
       staleTime: 2 * 60 * 1000,
       ...options,
-    }
+    },
   );
 }
 
@@ -112,7 +113,7 @@ export function useTodayAppointments(professionalId?: string) {
     'appointments',
     async () => {
       const today = new Date().toISOString().split('T')[0];
-      
+
       let query = supabase
         .from('appointments')
         .select(`
@@ -124,19 +125,19 @@ export function useTodayAppointments(professionalId?: string) {
         .gte('start_time', `${today}T00:00:00`)
         .lte('start_time', `${today}T23:59:59`)
         .order('start_time', { ascending: true });
-      
+
       if (professionalId) {
         query = query.eq('professional_id', professionalId);
       }
-      
+
       const { data, error } = await query;
-      
+
       return { data, error };
     },
     {
       staleTime: 30 * 1000,
       refetchInterval: 30 * 1000, // Refetch a cada 30 segundos
-    }
+    },
   );
 }
 
@@ -158,7 +159,7 @@ export function useStats() {
           .select('*', { count: 'exact', head: true })
           .gte('start_time', new Date().toISOString().split('T')[0] + 'T00:00:00'),
       ]);
-      
+
       return {
         data: {
           totalPatients: totalPatients || 0,
@@ -170,7 +171,7 @@ export function useStats() {
     },
     {
       staleTime: 5 * 60 * 1000,
-    }
+    },
   );
 }
 
@@ -181,30 +182,32 @@ export function useSupabaseMutation(
     onSuccess?: (data: any) => void;
     onError?: (error: any) => void;
     invalidateQueries?: string[][];
-  } = {}
+  } = {},
 ) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ data, id, action }: { data?: any; id?: string; action: 'create' | 'update' | 'delete' }) => {
+    mutationFn: async (
+      { data, id, action }: { data?: any; id?: string; action: 'create' | 'update' | 'delete' },
+    ) => {
       let result;
-      
+
       switch (action) {
         case 'create':
-          result = await supabase.from(table).insert([data]).select().single();
+          result = await (supabase as any).from(table).insert([data]).select().single();
           break;
         case 'update':
           if (!id) throw new Error('ID is required for update');
-          result = await supabase.from(table).update(data).eq('id', id).select().single();
+          result = await (supabase as any).from(table).update(data).eq('id', id).select().single();
           break;
         case 'delete':
           if (!id) throw new Error('ID is required for delete');
-          result = await supabase.from(table).delete().eq('id', id);
+          result = await (supabase as any).from(table).delete().eq('id', id);
           break;
         default:
           throw new Error('Invalid action');
       }
-      
+
       if (result.error) throw result.error;
       return result.data;
     },
@@ -215,7 +218,7 @@ export function useSupabaseMutation(
           queryClient.invalidateQueries({ queryKey });
         });
       }
-      
+
       // Mostrar toast de sucesso
       if (variables.action === 'create') {
         toast.success('Registro criado com sucesso!');
@@ -224,12 +227,12 @@ export function useSupabaseMutation(
       } else if (variables.action === 'delete') {
         toast.success('Registro excluído com sucesso!');
       }
-      
+
       options.onSuccess?.(data);
     },
     onError: (error: any) => {
       console.error(`Error in ${table} mutation:`, error);
-      
+
       // Mostrar toast de erro
       if (error.code === 'PGRST116') {
         toast.error('Erro de permissão. Você não tem acesso para esta operação.');
@@ -238,7 +241,7 @@ export function useSupabaseMutation(
       } else {
         toast.error(`Erro: ${error.message || 'Ocorreu um erro inesperado'}`);
       }
-      
+
       options.onError?.(error);
     },
   });
@@ -268,7 +271,7 @@ export function useRealTimeSubscription(
     onUpdate?: (payload: any) => void;
     onDelete?: (payload: any) => void;
   },
-  filters?: Record<string, any>
+  filters?: Record<string, any>,
 ) {
   useEffect(() => {
     const channel = supabase
@@ -278,12 +281,12 @@ export function useRealTimeSubscription(
         {
           event: '*',
           schema: 'public',
-          table: table,
+          table: table as any,
           ...filters,
         },
-        (payload) => {
+        payload => {
           console.log(`Real-time update on ${table}:`, payload);
-          
+
           switch (payload.eventType) {
             case 'INSERT':
               callbacks.onInsert?.(payload);
@@ -295,7 +298,7 @@ export function useRealTimeSubscription(
               callbacks.onDelete?.(payload);
               break;
           }
-        }
+        },
       )
       .subscribe();
 
@@ -317,7 +320,7 @@ export function useSupabasePrefetch() {
           .from('patients')
           .select('*')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data;
       },
@@ -337,7 +340,7 @@ export function useSupabasePrefetch() {
             professional:professionals(*)
           `)
           .order('start_time', { ascending: true });
-        
+
         if (error) throw error;
         return data;
       },

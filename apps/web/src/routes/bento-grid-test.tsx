@@ -1,15 +1,15 @@
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
 import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { 
-  Activity, 
-  Calendar, 
-  DollarSign, 
+import {
+  Activity,
+  Calendar,
+  DollarSign,
   Palette,
   Sparkles,
   TrendingUp,
   Users,
-  Zap 
+  Zap,
 } from 'lucide-react';
 
 /**
@@ -44,8 +44,8 @@ function BentoGridTestPage() {
             </p>
           </div>
           <BentoGrid className='mx-auto max-w-5xl' useKokonutUI={true} density='comfortable'>
-            <BentoGridItem 
-              title='AI Chat Estético' 
+            <BentoGridItem
+              title='AI Chat Estético'
               description='Atendimento inteligente para procedimentos estéticos'
               icon={<Sparkles className='w-5 h-5' />}
               variant='primary'
@@ -54,40 +54,40 @@ function BentoGridTestPage() {
               elevation='md'
               emphasis='brand'
             />
-            <BentoGridItem 
-              title='Agendamentos' 
+            <BentoGridItem
+              title='Agendamentos'
               description='Gestão inteligente de horários'
               icon={<Calendar className='w-5 h-5' />}
               variant='secondary'
               size='md'
               enhanced={true}
             />
-            <BentoGridItem 
-              title='Pacientes' 
+            <BentoGridItem
+              title='Pacientes'
               description='Base completa de clientes'
               icon={<Users className='w-5 h-5' />}
               variant='accent'
               size='md'
               enhanced={true}
             />
-            <BentoGridItem 
-              title='Relatórios' 
+            <BentoGridItem
+              title='Relatórios'
               description='Analytics e insights'
               icon={<TrendingUp className='w-5 h-5' />}
               variant='default'
               size='sm'
               enhanced={true}
             />
-            <BentoGridItem 
-              title='Receita' 
+            <BentoGridItem
+              title='Receita'
               description='Controle financeiro'
               icon={<DollarSign className='w-5 h-5' />}
               variant='primary'
               size='sm'
               enhanced={true}
             />
-            <BentoGridItem 
-              title='Atividades' 
+            <BentoGridItem
+              title='Atividades'
               description='Timeline de ações'
               icon={<Activity className='w-5 h-5' />}
               variant='default'
@@ -116,24 +116,25 @@ function BentoGridTestPage() {
           <div className='mb-8'>
             <h2 className='text-2xl font-bold text-[#294359] mb-4'>Versão Legacy (Fallback)</h2>
             <p className='text-muted-foreground mb-6'>
-              Grade com animações reduzidas para dispositivos com prefer-reduced-motion ou feature flag desabilitada.
+              Grade com animações reduzidas para dispositivos com prefer-reduced-motion ou feature
+              flag desabilitada.
             </p>
           </div>
           <BentoGrid className='mx-auto max-w-4xl' useKokonutUI={false} density='compact'>
-            <BentoGridItem 
-              title='Simples' 
+            <BentoGridItem
+              title='Simples'
               description='Versão compacta sem animações'
               icon={<Zap className='w-5 h-5' />}
               enhanced={false}
             />
-            <BentoGridItem 
-              title='Rápido' 
+            <BentoGridItem
+              title='Rápido'
               description='Performance otimizada'
               icon={<Palette className='w-5 h-5' />}
               enhanced={false}
             />
-            <BentoGridItem 
-              title='Acessível' 
+            <BentoGridItem
+              title='Acessível'
               description='WCAG 2.1 AA compliant'
               icon={<Users className='w-5 h-5' />}
               enhanced={false}
@@ -149,7 +150,9 @@ function BentoGridTestPage() {
 
           <div className='grid md:grid-cols-2 gap-6'>
             <div className='bg-card p-6 rounded-lg border'>
-              <h3 className='text-lg font-semibold mb-4 text-[#294359]'>Características Kokonut UI</h3>
+              <h3 className='text-lg font-semibold mb-4 text-[#294359]'>
+                Características Kokonut UI
+              </h3>
               <ul className='space-y-2 text-sm text-muted-foreground'>
                 <li>• Design responsivo com Framer Motion</li>
                 <li>• Animações avançadas (hover, spring physics)</li>
@@ -210,7 +213,7 @@ function BentoGridTestPage() {
                 <div>
                   <p className='mb-2 font-medium'>Exemplo de uso:</p>
                   <code className='block bg-gray-100 p-2 rounded text-xs font-mono whitespace-pre'>
-{`<BentoGrid useKokonutUI={true} density="comfortable">
+                    {`<BentoGrid useKokonutUI={true} density="comfortable">
   <BentoGridItem 
     title="Título" 
     description="Descrição"

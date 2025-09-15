@@ -197,14 +197,16 @@ export function ServiceForm({ service, onSuccess, clinicId }: ServiceFormProps) 
               <TimeSlotPicker
                 id='duration'
                 value={formData.duration_minutes}
-                onChange={(m) => handleInputChange('duration_minutes', m)}
+                onChange={m => handleInputChange('duration_minutes', m)}
                 min={15}
                 max={480}
                 step={15}
                 aria-describedby={errors.duration_minutes ? 'duration-error' : undefined}
               />
               {errors.duration_minutes && (
-                <p id='duration-error' className='text-sm text-destructive'>{errors.duration_minutes}</p>
+                <p id='duration-error' className='text-sm text-destructive'>
+                  {errors.duration_minutes}
+                </p>
               )}
               <p className='text-xs text-muted-foreground'>
                 Duração em múltiplos de 15 minutos (15 a 480)

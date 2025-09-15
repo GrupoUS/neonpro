@@ -6,15 +6,15 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
-  CommunicationTemplate,
+  CommunicationFilters,
   CommunicationMessage,
   CommunicationSettings,
-  PatientCommunicationPreferences,
-  CreateCommunicationTemplateRequest,
-  UpdateCommunicationTemplateRequest,
-  SendMessageRequest,
-  CommunicationFilters,
   CommunicationStats,
+  CommunicationTemplate,
+  CreateCommunicationTemplateRequest,
+  PatientCommunicationPreferences,
+  SendMessageRequest,
+  UpdateCommunicationTemplateRequest,
 } from '@/types/patient-communication';
 
 export class PatientCommunicationService {
@@ -24,7 +24,7 @@ export class PatientCommunicationService {
    */
   static async getCommunicationTemplates(
     clinicId: string,
-    filters?: { message_type?: string; communication_type?: string; is_active?: boolean }
+    filters?: { message_type?: string; communication_type?: string; is_active?: boolean },
   ): Promise<CommunicationTemplate[]> {
     let query = this.sb
       .from('communication_templates')
@@ -59,7 +59,7 @@ export class PatientCommunicationService {
    */
   static async createCommunicationTemplate(
     clinicId: string,
-    request: CreateCommunicationTemplateRequest
+    request: CreateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
       .from('communication_templates')
@@ -83,7 +83,7 @@ export class PatientCommunicationService {
    */
   static async updateCommunicationTemplate(
     id: string,
-    request: UpdateCommunicationTemplateRequest
+    request: UpdateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
       .from('communication_templates')
@@ -123,7 +123,7 @@ export class PatientCommunicationService {
    */
   static async sendMessage(
     clinicId: string,
-    request: SendMessageRequest
+    request: SendMessageRequest,
   ): Promise<CommunicationMessage> {
     const { data, error } = await this.sb.rpc('send_patient_message', {
       p_clinic_id: clinicId,
@@ -151,7 +151,7 @@ export class PatientCommunicationService {
    */
   static async getCommunicationMessages(
     clinicId: string,
-    filters?: CommunicationFilters
+    filters?: CommunicationFilters,
   ): Promise<CommunicationMessage[]> {
     let query = this.sb
       .from('communication_messages')
@@ -192,7 +192,9 @@ export class PatientCommunicationService {
     }
 
     if (filters?.search) {
-      query = query.or(`recipient_name.ilike.%${filters.search}%,content.ilike.%${filters.search}%`);
+      query = query.or(
+        `recipient_name.ilike.%${filters.search}%,content.ilike.%${filters.search}%`,
+      );
     }
 
     const { data, error } = await query;
@@ -231,7 +233,7 @@ export class PatientCommunicationService {
    */
   static async updateCommunicationSettings(
     clinicId: string,
-    settings: Partial<CommunicationSettings>
+    settings: Partial<CommunicationSettings>,
   ): Promise<CommunicationSettings> {
     const { data, error } = await this.sb
       .from('communication_settings')
@@ -255,7 +257,7 @@ export class PatientCommunicationService {
    * Get patient communication preferences
    */
   static async getPatientCommunicationPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<PatientCommunicationPreferences | null> {
     const { data, error } = await this.sb
       .from('patient_communication_preferences')
@@ -279,7 +281,7 @@ export class PatientCommunicationService {
    */
   static async updatePatientCommunicationPreferences(
     patientId: string,
-    preferences: Partial<PatientCommunicationPreferences>
+    preferences: Partial<PatientCommunicationPreferences>,
   ): Promise<PatientCommunicationPreferences> {
     const { data, error } = await this.sb
       .from('patient_communication_preferences')
@@ -305,7 +307,7 @@ export class PatientCommunicationService {
   static async getCommunicationStats(
     clinicId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<CommunicationStats> {
     const { data, error } = await this.sb.rpc('get_communication_stats', {
       p_clinic_id: clinicId,
@@ -342,7 +344,7 @@ export class PatientCommunicationService {
    */
   static async scheduleAppointmentReminders(
     clinicId: string,
-    appointmentId: string
+    appointmentId: string,
   ): Promise<{ scheduled_count: number }> {
     const { data, error } = await this.sb.rpc('schedule_appointment_reminders', {
       p_clinic_id: clinicId,
@@ -362,7 +364,7 @@ export class PatientCommunicationService {
    */
   static async cancelScheduledMessages(
     appointmentId: string,
-    messageTypes?: string[]
+    messageTypes?: string[],
   ): Promise<{ cancelled_count: number }> {
     const { data, error } = await this.sb.rpc('cancel_scheduled_messages', {
       p_appointment_id: appointmentId,

@@ -5,6 +5,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { usePatient, useUpdatePatient } from '@/hooks/usePatients';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
@@ -13,24 +14,23 @@ import { Textarea } from '@neonpro/ui';
 import { Checkbox } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Separator } from '@neonpro/ui';
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
-import { z } from 'zod';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import {
-  Save,
-  X,
-  Shield,
   AlertCircle,
-  User,
-  Phone,
-  FileText,
-  Lock,
   Eye,
   EyeOff,
+  FileText,
+  Lock,
+  Phone,
+  Save,
+  Shield,
+  User,
+  X,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 // Type-safe params schema
 const patientParamsSchema = z.object({
@@ -43,35 +43,35 @@ const patientFormSchema = z.object({
     .min(2, 'Nome deve ter pelo menos 2 caracteres')
     .max(100, 'Nome deve ter no máximo 100 caracteres')
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
-  
+
   email: z.string()
     .optional()
-    .refine((email) => !email || z.string().email().safeParse(email).success, {
+    .refine(email => !email || z.string().email().safeParse(email).success, {
       message: 'Email inválido',
     }),
-  
+
   phone: z.string()
     .optional()
-    .refine((phone) => !phone || /^\(?[1-9]{2}\)?\s?9?\d{4}-?\d{4}$/.test(phone.replace(/\D/g, '')), {
+    .refine(phone => !phone || /^\(?[1-9]{2}\)?\s?9?\d{4}-?\d{4}$/.test(phone.replace(/\D/g, '')), {
       message: 'Telefone deve estar no formato (11) 99999-9999',
     }),
-  
+
   cpf: z.string()
     .optional()
-    .refine((cpf) => !cpf || isValidCPF(cpf), {
+    .refine(cpf => !cpf || isValidCPF(cpf), {
       message: 'CPF inválido',
     }),
-  
+
   birthDate: z.string()
     .optional()
-    .refine((date) => !date || new Date(date) <= new Date(), {
+    .refine(date => !date || new Date(date) <= new Date(), {
       message: 'Data de nascimento não pode ser no futuro',
     }),
-  
+
   notes: z.string()
     .max(500, 'Observações devem ter no máximo 500 caracteres')
     .optional(),
-  
+
   // LGPD Consent fields
   lgpdConsent: z.boolean(),
   dataProcessingConsent: z.boolean(),
@@ -91,14 +91,14 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
 
   // Loading component
   pendingComponent: () => (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
-      <div className="animate-pulse space-y-6">
-        <div className="h-8 bg-muted rounded w-1/3"></div>
-        <div className="space-y-4">
+    <div className='container mx-auto p-4 md:p-6 space-y-6'>
+      <div className='animate-pulse space-y-6'>
+        <div className='h-8 bg-muted rounded w-1/3'></div>
+        <div className='space-y-4'>
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <div className="h-4 bg-muted rounded w-1/4"></div>
-              <div className="h-10 bg-muted rounded"></div>
+            <div key={i} className='space-y-2'>
+              <div className='h-4 bg-muted rounded w-1/4'></div>
+              <div className='h-10 bg-muted rounded'></div>
             </div>
           ))}
         </div>
@@ -108,27 +108,27 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
 
   // Error boundary
   errorComponent: ({ error, reset }) => (
-    <div className="container mx-auto p-4 md:p-6">
-      <Card className="max-w-lg mx-auto text-center">
+    <div className='container mx-auto p-4 md:p-6'>
+      <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
-          <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
-            <AlertCircle className="w-6 h-6 text-destructive" />
+          <div className='mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4'>
+            <AlertCircle className='w-6 h-6 text-destructive' />
           </div>
-          <CardTitle className="text-destructive">Erro ao Carregar</CardTitle>
+          <CardTitle className='text-destructive'>Erro ao Carregar</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-muted-foreground">
+        <CardContent className='space-y-4'>
+          <p className='text-muted-foreground'>
             Não foi possível carregar os dados do paciente para edição.
           </p>
-          <p className="text-sm text-muted-foreground font-mono bg-muted p-2 rounded">
+          <p className='text-sm text-muted-foreground font-mono bg-muted p-2 rounded'>
             {error.message}
           </p>
-          <div className="flex gap-2 justify-center">
-            <Button onClick={reset} variant="outline">
+          <div className='flex gap-2 justify-center'>
+            <Button onClick={reset} variant='outline'>
               Tentar Novamente
             </Button>
             <Button asChild>
-              <Link to="/patients">Voltar</Link>
+              <Link to='/patients'>Voltar</Link>
             </Button>
           </div>
         </CardContent>
@@ -218,7 +218,7 @@ function PatientEditPage() {
 
       setHasUnsavedChanges(false);
       toast.success('Dados do paciente atualizados com sucesso!');
-      
+
       // Navigate back to patient details
       navigate({
         to: '/patients/$patientId',
@@ -248,12 +248,12 @@ function PatientEditPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 md:p-6 space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
-          <div className="space-y-4">
+      <div className='container mx-auto p-4 md:p-6 space-y-6'>
+        <div className='animate-pulse'>
+          <div className='h-8 bg-muted rounded w-1/3 mb-4'></div>
+          <div className='space-y-4'>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-12 bg-muted rounded"></div>
+              <div key={i} className='h-12 bg-muted rounded'></div>
             ))}
           </div>
         </div>
@@ -263,14 +263,14 @@ function PatientEditPage() {
 
   if (error || !patient) {
     return (
-      <div className="container mx-auto p-4 md:p-6">
-        <Card className="max-w-lg mx-auto text-center">
+      <div className='container mx-auto p-4 md:p-6'>
+        <Card className='max-w-lg mx-auto text-center'>
           <CardHeader>
-            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <AlertCircle className='w-12 h-12 text-destructive mx-auto mb-4' />
             <CardTitle>Erro ao Carregar Paciente</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">
+            <p className='text-muted-foreground mb-4'>
               Não foi possível carregar os dados do paciente.
             </p>
             <Button onClick={() => window.location.reload()}>
@@ -283,132 +283,136 @@ function PatientEditPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
+    <div className='container mx-auto p-4 md:p-6 space-y-6'>
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb">
-        <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
+      <nav aria-label='Breadcrumb'>
+        <ol className='flex items-center space-x-2 text-sm text-muted-foreground'>
           <li>
-            <Link to="/patients" className="hover:text-foreground transition-colors">
+            <Link to='/patients' className='hover:text-foreground transition-colors'>
               Pacientes
             </Link>
           </li>
           <li>/</li>
           <li>
-            <Link 
-              to="/patients/$patientId" 
+            <Link
+              to='/patients/$patientId'
               params={{ patientId }}
-              className="hover:text-foreground transition-colors"
+              className='hover:text-foreground transition-colors'
             >
               {patient.fullName}
             </Link>
           </li>
           <li>/</li>
-          <li className="text-foreground font-medium" aria-current="page">
+          <li className='text-foreground font-medium' aria-current='page'>
             Editar
           </li>
         </ol>
       </nav>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+      <div className='flex items-center justify-between'>
+        <div className='space-y-1'>
+          <h1 className='text-2xl md:text-3xl font-bold text-foreground'>
             Editar Paciente
           </h1>
-          <p className="text-muted-foreground">
+          <p className='text-muted-foreground'>
             Atualize as informações de {patient.fullName}
           </p>
         </div>
 
         {/* Unsaved changes indicator */}
         {hasUnsavedChanges && (
-          <Badge variant="outline" className="border-warning text-warning">
+          <Badge variant='outline' className='border-warning text-warning'>
             Alterações não salvas
           </Badge>
         )}
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
           {/* Main Information */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className='lg:col-span-2 space-y-6'>
             {/* Personal Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <User className='w-5 h-5' />
                   Informações Pessoais
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className='space-y-4'>
                 {/* Full Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='fullName' className='text-sm font-medium'>
                     Nome Completo *
                   </Label>
                   <Input
-                    id="fullName"
+                    id='fullName'
                     {...register('fullName')}
-                    placeholder="Digite o nome completo"
+                    placeholder='Digite o nome completo'
                     className={errors.fullName ? 'border-destructive' : ''}
                     aria-describedby={errors.fullName ? 'fullName-error' : undefined}
                   />
                   {errors.fullName && (
-                    <p id="fullName-error" className="text-sm text-destructive">
+                    <p id='fullName-error' className='text-sm text-destructive'>
                       {errors.fullName.message}
                     </p>
                   )}
                 </div>
 
                 {/* CPF */}
-                <div className="space-y-2">
-                  <Label htmlFor="cpf" className="text-sm font-medium flex items-center gap-2">
+                <div className='space-y-2'>
+                  <Label htmlFor='cpf' className='text-sm font-medium flex items-center gap-2'>
                     CPF
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => setShowSensitiveData(!showSensitiveData)}
-                      className="text-muted-foreground hover:text-foreground"
-                      aria-label={showSensitiveData ? 'Ocultar dados sensíveis' : 'Mostrar dados sensíveis'}
+                      className='text-muted-foreground hover:text-foreground'
+                      aria-label={showSensitiveData
+                        ? 'Ocultar dados sensíveis'
+                        : 'Mostrar dados sensíveis'}
                     >
-                      {showSensitiveData ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showSensitiveData
+                        ? <EyeOff className='w-4 h-4' />
+                        : <Eye className='w-4 h-4' />}
                     </button>
                   </Label>
                   <Input
-                    id="cpf"
+                    id='cpf'
                     {...register('cpf')}
                     type={showSensitiveData ? 'text' : 'password'}
-                    placeholder="000.000.000-00"
+                    placeholder='000.000.000-00'
                     maxLength={14}
                     className={errors.cpf ? 'border-destructive' : ''}
                     aria-describedby={errors.cpf ? 'cpf-error' : undefined}
-                    onChange={(e) => {
+                    onChange={e => {
                       const formatted = formatCPFInput(e.target.value);
                       setValue('cpf', formatted, { shouldValidate: true });
                     }}
                   />
                   {errors.cpf && (
-                    <p id="cpf-error" className="text-sm text-destructive">
+                    <p id='cpf-error' className='text-sm text-destructive'>
                       {errors.cpf.message}
                     </p>
                   )}
                 </div>
 
                 {/* Birth Date */}
-                <div className="space-y-2">
-                  <Label htmlFor="birthDate" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='birthDate' className='text-sm font-medium'>
                     Data de Nascimento
                   </Label>
                   <Input
-                    id="birthDate"
+                    id='birthDate'
                     {...register('birthDate')}
-                    type="date"
+                    type='date'
                     max={new Date().toISOString().split('T')[0]}
                     className={errors.birthDate ? 'border-destructive' : ''}
                     aria-describedby={errors.birthDate ? 'birthDate-error' : undefined}
                   />
                   {errors.birthDate && (
-                    <p id="birthDate-error" className="text-sm text-destructive">
+                    <p id='birthDate-error' className='text-sm text-destructive'>
                       {errors.birthDate.message}
                     </p>
                   )}
@@ -419,50 +423,50 @@ function PatientEditPage() {
             {/* Contact Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="w-5 h-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <Phone className='w-5 h-5' />
                   Informações de Contato
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className='space-y-4'>
                 {/* Phone */}
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='phone' className='text-sm font-medium'>
                     Telefone
                   </Label>
                   <Input
-                    id="phone"
+                    id='phone'
                     {...register('phone')}
-                    placeholder="(11) 99999-9999"
+                    placeholder='(11) 99999-9999'
                     className={errors.phone ? 'border-destructive' : ''}
                     aria-describedby={errors.phone ? 'phone-error' : undefined}
-                    onChange={(e) => {
+                    onChange={e => {
                       const formatted = formatPhoneInput(e.target.value);
                       setValue('phone', formatted, { shouldValidate: true });
                     }}
                   />
                   {errors.phone && (
-                    <p id="phone-error" className="text-sm text-destructive">
+                    <p id='phone-error' className='text-sm text-destructive'>
                       {errors.phone.message}
                     </p>
                   )}
                 </div>
 
                 {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='email' className='text-sm font-medium'>
                     Email
                   </Label>
                   <Input
-                    id="email"
+                    id='email'
                     {...register('email')}
-                    type="email"
-                    placeholder="paciente@email.com"
+                    type='email'
+                    placeholder='paciente@email.com'
                     className={errors.email ? 'border-destructive' : ''}
                     aria-describedby={errors.email ? 'email-error' : undefined}
                   />
                   {errors.email && (
-                    <p id="email-error" className="text-sm text-destructive">
+                    <p id='email-error' className='text-sm text-destructive'>
                       {errors.email.message}
                     </p>
                   )}
@@ -473,33 +477,34 @@ function PatientEditPage() {
             {/* Additional Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <FileText className='w-5 h-5' />
                   Informações Adicionais
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className='space-y-4'>
                 {/* Notes */}
-                <div className="space-y-2">
-                  <Label htmlFor="notes" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='notes' className='text-sm font-medium'>
                     Observações
                   </Label>
                   <Textarea
-                    id="notes"
+                    id='notes'
                     {...register('notes')}
-                    placeholder="Adicione observações importantes sobre o paciente..."
+                    placeholder='Adicione observações importantes sobre o paciente...'
                     rows={4}
                     maxLength={500}
                     className={errors.notes ? 'border-destructive' : ''}
                     aria-describedby={errors.notes ? 'notes-error' : undefined}
                   />
                   {errors.notes && (
-                    <p id="notes-error" className="text-sm text-destructive">
+                    <p id='notes-error' className='text-sm text-destructive'>
                       {errors.notes.message}
                     </p>
                   )}
-                  <p className="text-xs text-muted-foreground">
-                    {typeof watchedFields.notes === 'string' ? watchedFields.notes.length : 0}/500 caracteres
+                  <p className='text-xs text-muted-foreground'>
+                    {typeof watchedFields.notes === 'string' ? watchedFields.notes.length : 0}/500
+                    caracteres
                   </p>
                 </div>
               </CardContent>
@@ -507,80 +512,89 @@ function PatientEditPage() {
           </div>
 
           {/* LGPD Compliance Sidebar */}
-          <div className="space-y-6">
-            <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/30">
+          <div className='space-y-6'>
+            <Card className='border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/30'>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
-                  <Shield className="w-5 h-5" />
+                <CardTitle className='flex items-center gap-2 text-blue-700 dark:text-blue-300'>
+                  <Shield className='w-5 h-5' />
                   Conformidade LGPD
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-sm text-blue-600 dark:text-blue-400 mb-4">
+              <CardContent className='space-y-4'>
+                <div className='text-sm text-blue-600 dark:text-blue-400 mb-4'>
                   Gerencie os consentimentos do paciente conforme a Lei Geral de Proteção de Dados.
                 </div>
 
                 {/* LGPD Consent */}
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-2">
+                <div className='space-y-3'>
+                  <div className='flex items-start space-x-2'>
                     <Checkbox
-                      id="lgpdConsent"
+                      id='lgpdConsent'
                       {...register('lgpdConsent')}
-                      className="mt-1"
+                      className='mt-1'
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="lgpdConsent" className="text-sm font-medium leading-none">
+                    <div className='space-y-1'>
+                      <Label htmlFor='lgpdConsent' className='text-sm font-medium leading-none'>
                         Consentimento LGPD *
                       </Label>
-                      <p className="text-xs text-muted-foreground">
+                      <p className='text-xs text-muted-foreground'>
                         Paciente concorda com o tratamento dos seus dados pessoais
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-2">
+                  <div className='flex items-start space-x-2'>
                     <Checkbox
-                      id="dataProcessingConsent"
+                      id='dataProcessingConsent'
                       {...register('dataProcessingConsent')}
-                      className="mt-1"
+                      className='mt-1'
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="dataProcessingConsent" className="text-sm font-medium leading-none">
+                    <div className='space-y-1'>
+                      <Label
+                        htmlFor='dataProcessingConsent'
+                        className='text-sm font-medium leading-none'
+                      >
                         Processamento de Dados *
                       </Label>
-                      <p className="text-xs text-muted-foreground">
+                      <p className='text-xs text-muted-foreground'>
                         Autoriza o processamento para fins de atendimento médico
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-2">
+                  <div className='flex items-start space-x-2'>
                     <Checkbox
-                      id="marketingConsent"
+                      id='marketingConsent'
                       {...register('marketingConsent')}
-                      className="mt-1"
+                      className='mt-1'
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="marketingConsent" className="text-sm font-medium leading-none">
+                    <div className='space-y-1'>
+                      <Label
+                        htmlFor='marketingConsent'
+                        className='text-sm font-medium leading-none'
+                      >
                         Marketing e Comunicações
                       </Label>
-                      <p className="text-xs text-muted-foreground">
+                      <p className='text-xs text-muted-foreground'>
                         Aceita receber informações sobre promoções e novidades
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-2">
+                  <div className='flex items-start space-x-2'>
                     <Checkbox
-                      id="dataShareConsent"
+                      id='dataShareConsent'
                       {...register('dataShareConsent')}
-                      className="mt-1"
+                      className='mt-1'
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="dataShareConsent" className="text-sm font-medium leading-none">
+                    <div className='space-y-1'>
+                      <Label
+                        htmlFor='dataShareConsent'
+                        className='text-sm font-medium leading-none'
+                      >
                         Compartilhamento de Dados
                       </Label>
-                      <p className="text-xs text-muted-foreground">
+                      <p className='text-xs text-muted-foreground'>
                         Permite compartilhamento com parceiros para melhor atendimento
                       </p>
                     </div>
@@ -589,41 +603,43 @@ function PatientEditPage() {
 
                 <Separator />
 
-                <div className="text-xs text-muted-foreground">
-                  <Lock className="w-3 h-3 inline mr-1" />
+                <div className='text-xs text-muted-foreground'>
+                  <Lock className='w-3 h-3 inline mr-1' />
                   Todos os dados são protegidos por criptografia e auditados conforme a LGPD.
                 </div>
               </CardContent>
             </Card>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className='space-y-3'>
               <Button
-                type="submit"
-                className="w-full"
+                type='submit'
+                className='w-full'
                 disabled={isSubmitting || !isDirty}
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Salvando...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4 mr-2" />
-                    Salvar Alterações
-                  </>
-                )}
+                {isSubmitting
+                  ? (
+                    <>
+                      <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+                      Salvando...
+                    </>
+                  )
+                  : (
+                    <>
+                      <Save className='w-4 h-4 mr-2' />
+                      Salvar Alterações
+                    </>
+                  )}
               </Button>
 
               <Button
-                type="button"
-                variant="outline"
-                className="w-full"
+                type='button'
+                variant='outline'
+                className='w-full'
                 onClick={handleCancel}
                 disabled={isSubmitting}
               >
-                <X className="w-4 h-4 mr-2" />
+                <X className='w-4 h-4 mr-2' />
                 Cancelar
               </Button>
             </div>
@@ -662,11 +678,11 @@ function formatPhoneInput(value: string): string {
 
 function isValidCPF(cpf: string): boolean {
   cpf = cpf.replace(/\D/g, '');
-  
+
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
     return false;
   }
-  
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(cpf.charAt(i)) * (10 - i);
@@ -674,7 +690,7 @@ function isValidCPF(cpf: string): boolean {
   let digit = 11 - (sum % 11);
   if (digit === 10 || digit === 11) digit = 0;
   if (digit !== parseInt(cpf.charAt(9))) return false;
-  
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cpf.charAt(i)) * (11 - i);
@@ -682,6 +698,6 @@ function isValidCPF(cpf: string): boolean {
   digit = 11 - (sum % 11);
   if (digit === 10 || digit === 11) digit = 0;
   if (digit !== parseInt(cpf.charAt(10))) return false;
-  
+
   return true;
 }
