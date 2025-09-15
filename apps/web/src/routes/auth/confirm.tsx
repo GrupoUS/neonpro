@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 function AuthConfirmComponent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');

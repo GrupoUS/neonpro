@@ -13,9 +13,10 @@ import { Button } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Activity, AlertCircle, Calendar, UserPlus, Users } from 'lucide-react';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { testSupabaseConnection } from '@/utils/supabase-test';
 
 // Type-safe search params for filtering and pagination
 const patientsSearchSchema = z.object({
@@ -92,7 +93,24 @@ export const Route = createFileRoute('/patients')({
 
 function PatientsPage() {
   const { profile } = useAuth();
+  const [connectionTest, setConnectionTest] = useState<any>(null);
   // const search = Route.useSearch(); // Currently unused
+
+  // Test Supabase connection on component mount
+  useEffect(() => {
+    const runConnectionTest = async () => {
+      try {
+        const result = await testSupabaseConnection();
+        setConnectionTest(result);
+        console.log('🔧 Connection test result:', result);
+      } catch (error) {
+        console.error('🔧 Connection test failed:', error);
+        setConnectionTest({ success: false, error: 'Test failed to run' });
+      }
+    };
+    
+    runConnectionTest();
+  }, []);
 
   // Get clinic ID from user profile (corrected to use profile instead of user metadata)
   const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback clinic ID for development
@@ -152,6 +170,31 @@ function PatientsPage() {
           </Badge>
         </div>
       </div>
+
+      {/* Debug connection test info */}
+      {connectionTest && (
+        <Card className={connectionTest.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}>
+          <CardHeader>
+            <CardTitle className='text-sm flex items-center gap-2'>
+              🔧 Diagnóstico de Conexão Supabase
+              {connectionTest.success ? '✅' : '❌'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='text-xs space-y-1'>
+            <p><strong>Status:</strong> {connectionTest.success ? 'Sucesso' : 'Falha'}</p>
+            {connectionTest.error && <p><strong>Erro:</strong> {connectionTest.error}</p>}
+            {connectionTest.session !== undefined && (
+              <p><strong>Autenticado:</strong> {connectionTest.session ? 'Sim' : 'Não'}</p>
+            )}
+            {connectionTest.basicConnectionWorking !== undefined && (
+              <p><strong>Conexão Básica:</strong> {connectionTest.basicConnectionWorking ? 'OK' : 'Falha'}</p>
+            )}
+            {connectionTest.patientsAccessWorking !== undefined && (
+              <p><strong>Acesso Pacientes:</strong> {connectionTest.patientsAccessWorking ? 'OK' : 'Falha'}</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Statistics Overview Cards - Brazilian healthcare metrics */}
       <PatientsStatistics clinicId={clinicId} />
