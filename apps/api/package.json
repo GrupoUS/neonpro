@@ -40,7 +40,7 @@
     "bcryptjs": "^3.0.2",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.2",
-    "hono": "^4.9.6",
+    "hono": "^4.9.7",
     "jose": "^5.10.0",
     "nanoid": "^5.1.5",
     "zod": "^3.25.76"
@@ -54,7 +54,7 @@
     "tsup": "^8.5.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "vitest": "^2.1.9"
+    "vitest": "^3.2.4"
   },
   "prisma": {
     "schema": "../../packages/database/prisma/schema.prisma"

@@ -307,14 +307,14 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 **Core Technologies**:
 
 - **React**: 19.1.1 (latest stable) - Concurrent features
-- **TypeScript**: 5.7.2 (latest stable) - Latest language features
+- **TypeScript**: 5.9.2 (latest stable) - Latest language features
 - **Node.js**: 20+ (LTS) - Long-term support
-- **Vite**: 5.2.0 (stable) - Modern build tooling
+- **Vite**: 7.1.5 (latest stable) - Modern build tooling
 
 **Framework Versions**:
 
 - **TanStack Router**: Latest (stable) - Type-safe routing
-- **Hono.dev**: 4.5.8 (stable) - Edge-compatible framework
+- **Hono.dev**: 4.9.7 (stable) - Edge-compatible framework (Security patched)
 - **Supabase**: 2.45.1 (stable) - Backend-as-a-service
 - **Vercel AI SDK**: 5.0.23 (stable) - Multi-provider AI
 

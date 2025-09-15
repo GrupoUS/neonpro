@@ -1,7 +1,7 @@
 'use client';
 
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { Send } from 'lucide-react';
 import React, { useRef, useState } from 'react';

@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import type { AITextLoadingProps } from './types';
 

@@ -80,7 +80,8 @@
         "bunfig.toml",
         "!*/**/__tests__/**",
         "!*/**/*.test.*",
-        "!*/**/*.spec.*"
+        "!*/**/*.spec.*",
+        "!tools/monorepo-audit/**"
       ],
       "outputs": ["dist/**", "build/**"],
       "persistent": false,
@@ -192,6 +193,8 @@
         "DATABASE_URL"
       ]
     },
+
+    
 
     "lint": {
       "inputs": [

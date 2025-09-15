@@ -11,6 +11,7 @@ export default defineConfig({
     'react-dom',
     'framer-motion',
     '@radix-ui/react-slot',
+    '@neonpro/utils',
   ],
   treeshake: true,
   skipNodeModulesBundle: true,

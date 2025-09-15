@@ -14,7 +14,9 @@
     "packages/*"
   ],
   "overrides": {
-    "esbuild": ">=0.25.0"
+    "esbuild": ">=0.25.0",
+    "hono": ">=4.9.7",
+    "tmp": ">=0.2.4"
   },
   "scripts": {
     "build": "bunx turbo build",
@@ -52,9 +54,9 @@
     "turbo": "^2.5.6"
   },
   "devDependencies": {
-    "bun": "^1.1.34",
-    "@types/node": "^20.19.13",
+    "@types/node": "^24.4.0",
     "@vitest/ui": "^3.2.4",
+    "bun": "^1.2.22",
     "oxlint": "^1.15.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

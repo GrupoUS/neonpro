@@ -99,3 +99,10 @@ export { EnhancedShineBorder, HoverBorderGradient } from './components/aceternit
 export type { EnhancedShineBorderProps, HoverBorderGradientProps } from './components/aceternity';
 export { SharedAnimatedList } from './components/magicui';
 export type { SharedAnimatedListItem, SharedAnimatedListProps } from './components/magicui';
+
+// Export Enhanced Card components
+export { ExpandableCard, ExpandableCardProvider, useExpandableCard } from './components/ui/expandable-card';
+export { TiltedCard } from './components/ui/tilted-card';
+export { DraggableCardBody, DraggableCardContainer } from './components/ui/draggable-card';
+export { FocusCards } from './components/ui/focus-cards';
+export { DashboardLayout, DashboardCard } from './components/ui/dashboard-layout';

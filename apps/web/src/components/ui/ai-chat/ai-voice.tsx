@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import type { AIVoiceProps } from './types';

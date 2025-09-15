@@ -33,9 +33,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
+    "prettier": "^3.0.0",
     "typescript": "^5.9.2",
-    "vitest": "^1.6.1",
-    "prettier": "^3.0.0"
+    "vitest": "^3.2.4"
   },
   "keywords": [
     "cli",
