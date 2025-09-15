@@ -17,25 +17,35 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 });
 
 // Auth helpers
-export const signInWithEmail = async (email: string, password: string) => {
-  return supabase.auth.signInWithPassword({ email, password });
-};
+export const signInWithEmail = async (email: string, password: string) =>
+  supabase.auth.signInWithPassword({ email, password });
 
-export const signUpWithEmail = async (email: string, password: string) => {
-  return supabase.auth.signUp({ email, password });
-};
+export const signUpWithEmail = async (
+  email: string,
+  password: string,
+  redirectTo?: string,
+) =>
+  supabase.auth.signUp({
+    email,
+    password,
+    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
+  });
 
-export const signInWithProvider = async (provider: 'google') => {
-  return supabase.auth.signInWithOAuth({ provider });
-};
+export const signInWithProvider = async (
+  provider: 'google',
+  redirectTo?: string,
+) =>
+  supabase.auth.signInWithOAuth({
+    provider,
+    options: redirectTo ? { redirectTo } : undefined,
+  });
 
-export const resetPassword = async (email: string) => {
-  return supabase.auth.resetPasswordForEmail(email);
-};
+export const resetPassword = async (email: string, redirectTo?: string) =>
+  supabase.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
 
 // Additional auth helpers for backward compatibility
 export const signUp = signUpWithEmail;
 export const signIn = signInWithEmail;
 export const signOut = () => supabase.auth.signOut();
 export const getCurrentUser = () => supabase.auth.getUser();
-export const getCurrentSession = () => supabase.auth.getSession();
+export const getCurrentSession = async () => (await supabase.auth.getSession()).data.session;

@@ -28,7 +28,7 @@ function showErrorBanner(message: string) {
   el!.textContent = `Runtime error: ${message}`;
 }
 
-if (import.meta.env.DEV) {
+if ((import.meta as any).env?.DEV) {
   window.addEventListener('error', e => showErrorBanner(e.message));
   window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
     const reason: any = (e as any).reason;
@@ -69,7 +69,7 @@ async function bootstrap() {
     console.log('[NeonPro] App mounted.');
   } catch (err: any) {
     console.error('[NeonPro] Boot error:', err);
-    if (import.meta.env.DEV) showErrorBanner(err?.message ?? String(err));
+    if ((import.meta as any).env?.DEV) showErrorBanner(err?.message ?? String(err));
     // Fallback UI so page never stays blank
     root.render(
       <div style={{ padding: 24, fontFamily: 'monospace', color: '#8B0000' }}>

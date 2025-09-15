@@ -13,5 +13,38 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-  }
+  },
 });
+
+// Auth helpers (added for compatibility with apps/web)
+export const signInWithEmail = async (email: string, password: string) =>
+  supabase.auth.signInWithPassword({ email, password });
+
+export const signUpWithEmail = async (
+  email: string,
+  password: string,
+  redirectTo?: string,
+) =>
+  supabase.auth.signUp({
+    email,
+    password,
+    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
+  });
+
+export const signInWithProvider = async (
+  provider: 'google',
+  redirectTo?: string,
+) =>
+  supabase.auth.signInWithOAuth({
+    provider,
+    options: redirectTo ? { redirectTo } : undefined,
+  });
+
+export const resetPassword = async (email: string, redirectTo?: string) =>
+  supabase.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
+
+export const signUp = signUpWithEmail;
+export const signIn = signInWithEmail;
+export const signOut = () => supabase.auth.signOut();
+export const getCurrentUser = () => supabase.auth.getUser();
+export const getCurrentSession = async () => (await supabase.auth.getSession()).data.session;

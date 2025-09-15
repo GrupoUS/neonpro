@@ -74,7 +74,7 @@ export default function AIPrompt({
               className='h-8 rounded-md border border-[#D2D0C8] bg-white px-2 text-xs text-[#112031] focus:border-[#294359] focus:outline-none focus:ring-2 focus:ring-[#294359]/20'
               aria-label='Selecionar modelo de IA'
             >
-              {availableModels.map(m => (
+              {availableModels.map((m: any) => (
                 <option key={m.value} value={m.value} disabled={m.disabled}>
                   {m.label}
                   {m.disabled ? ' (Pro)' : ''}
