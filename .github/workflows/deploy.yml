@@ -32,8 +32,14 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install deps (pnpm/bun)
-        run: bun install --frozen-lockfile
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.3 --activate
+          pnpm -v
+
+      - name: Install deps (pnpm)
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type check
         run: bun run type-check
@@ -107,8 +113,14 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install deps (pnpm/bun)
-        run: bun install --frozen-lockfile
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.3 --activate
+          pnpm -v
+
+      - name: Install deps (pnpm)
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type check
         run: bun run type-check
