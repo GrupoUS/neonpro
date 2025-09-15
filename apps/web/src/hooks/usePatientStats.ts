@@ -49,8 +49,7 @@ export function usePatientStats(clinicId?: string) {
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise
-        .all([
+      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise.all([
           supabase
             .from('patients')
             .select('id, is_active'),
