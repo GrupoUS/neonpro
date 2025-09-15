@@ -1,0 +1,148 @@
+name: Vercel Deploy (NeonPro)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: vercel-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install deps (pnpm/bun)
+        run: bun install --frozen-lockfile
+
+      - name: Type check
+        run: bun run type-check
+
+      - name: Lint (fix)
+        run: bun run lint:fix
+
+      - name: Unit tests
+        run: bun test
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Link Vercel project
+        run: |
+          vercel link --yes --scope grupous-projects --project neonpro-web --token "$VERCEL_TOKEN"
+
+      - name: (Optional) Sync Preview env vars to Vercel
+        if: ${{ env.VERCEL_TOKEN != '' }}
+        continue-on-error: true
+        run: |
+          set -eu
+          add() { echo "$2" | vercel env add "$1" preview --token "$VERCEL_TOKEN"; }
+          [ -n "${{ secrets.VITE_SUPABASE_URL }}" ] && add VITE_SUPABASE_URL "${{ secrets.VITE_SUPABASE_URL }}" || true
+          [ -n "${{ secrets.VITE_SUPABASE_ANON_KEY }}" ] && add VITE_SUPABASE_ANON_KEY "${{ secrets.VITE_SUPABASE_ANON_KEY }}" || true
+          [ -n "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" ] && add SUPABASE_SERVICE_ROLE_KEY "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" || true
+          [ -n "${{ secrets.DATABASE_URL }}" ] && add DATABASE_URL "${{ secrets.DATABASE_URL }}" || true
+
+      - name: Pull Vercel env (preview)
+        run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+
+      - name: Build (preview)
+        run: vercel build --token "$VERCEL_TOKEN"
+
+      - name: Deploy (preview, prebuilt)
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects)
+          echo "url=$url" >> $GITHUB_OUTPUT
+
+      - name: Comment Preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = core.getInput('url');
+            const body = `🚀 Preview deploy: ${url}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+          result-encoding: string
+        env:
+          url: ${{ steps.deploy.outputs.url }}
+
+  production:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install deps (pnpm/bun)
+        run: bun install --frozen-lockfile
+
+      - name: Type check
+        run: bun run type-check
+
+      - name: Lint (fix)
+        run: bun run lint:fix
+
+      - name: Unit tests
+        run: bun test
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Link Vercel project
+        run: |
+          vercel link --yes --scope grupous-projects --project neonpro-web --token "$VERCEL_TOKEN"
+
+      - name: (Optional) Sync Production env vars to Vercel
+        if: ${{ env.VERCEL_TOKEN != '' }}
+        continue-on-error: true
+        run: |
+          set -eu
+          add() { echo "$2" | vercel env add "$1" production --token "$VERCEL_TOKEN"; }
+          [ -n "${{ secrets.VITE_SUPABASE_URL }}" ] && add VITE_SUPABASE_URL "${{ secrets.VITE_SUPABASE_URL }}" || true
+          [ -n "${{ secrets.VITE_SUPABASE_ANON_KEY }}" ] && add VITE_SUPABASE_ANON_KEY "${{ secrets.VITE_SUPABASE_ANON_KEY }}" || true
+          [ -n "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" ] && add SUPABASE_SERVICE_ROLE_KEY "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" || true
+          [ -n "${{ secrets.DATABASE_URL }}" ] && add DATABASE_URL "${{ secrets.DATABASE_URL }}" || true
+
+      - name: Pull Vercel env (production)
+        run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+
+      - name: Build (production)
+        run: vercel build --prod --token "$VERCEL_TOKEN"
+
+      - name: Deploy (production, prebuilt)
+        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects
+
