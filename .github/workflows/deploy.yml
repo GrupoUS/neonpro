@@ -89,21 +89,24 @@ jobs:
         run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
 
       - name: Build (preview)
+        if: ${{ false }} # disabled: rely on remote build
         working-directory: apps/web
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
+          VERCEL_DEBUG: 1
         run: vercel build --token "$VERCEL_TOKEN"
 
-      - name: Deploy (preview, prebuilt)
+      - name: Deploy (preview)
         id: deploy
         working-directory: apps/web
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
         run: |
-          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects)
-          echo "url=$url" >> $GITHUB_OUTPUT
+          set -e
+          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects || vercel deploy --token "$VERCEL_TOKEN" --scope grupous-projects)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Comment Preview URL on PR
         uses: actions/github-script@v7
@@ -192,16 +195,19 @@ jobs:
         run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
       - name: Build (production)
+        if: ${{ false }} # disabled: rely on remote build
         working-directory: apps/web
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
+          VERCEL_DEBUG: 1
         run: vercel build --prod --token "$VERCEL_TOKEN"
 
-      - name: Deploy (production, prebuilt)
+      - name: Deploy (production)
         working-directory: apps/web
         env:
           VERCEL_ORG_ID: ""
           VERCEL_PROJECT_ID: ""
-        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects
+        run: |
+          vercel deploy --prod --token "$VERCEL_TOKEN" --scope grupous-projects
 
