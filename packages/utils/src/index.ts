@@ -8,8 +8,8 @@ export * from './logging/redact';
 export * from './cli';
 
 // UI utilities
-export * from './lib/currency/brl.ts';
-export * from './lib/utils.ts';
+export * from './lib/currency/brl';
+export * from './lib/utils';
 
 // Placeholder exports - will be populated with actual utilities
 export const auth = {};
