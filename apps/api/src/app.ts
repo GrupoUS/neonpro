@@ -264,6 +264,7 @@ v1.route('/clients', clients);
 v1.route('/appointments', appointments);
 v1.route('/ai-chat', aiChat);
 v1.route('/ai-explain', (await import('./routes/ai-explanation')).default);
+v1.route('/chat', (await import('./routes/chat')).default);
 // Protect clinical routes with RLS and consent as examples
 v1.use('/tools/clinical/*', auditMiddleware('tools.clinical'))
 v1.route('/tools/clinical', (await import('./routes/tools-clinical')).default)

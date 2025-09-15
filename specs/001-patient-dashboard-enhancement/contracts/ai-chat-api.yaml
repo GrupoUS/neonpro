@@ -1,0 +1,1628 @@
+openapi: 3.0.3
+info:
+  title: NeonPro AI Chat API
+  description: |
+    AI-enhanced chat system for patient insights and healthcare professional assistance.
+    
+    Features:
+    - Multi-model AI support (OpenAI GPT-4, Anthropic Claude)
+    - Portuguese-optimized healthcare responses
+    - LGPD-compliant conversation handling
+    - Real-time streaming responses
+    - Patient context integration
+    - Clinical decision support
+    
+    Performance targets:
+    - AI response time: <2 seconds
+    - Streaming latency: <100ms
+    - Context processing: <500ms
+    
+    Constitutional requirements:
+    - LGPD compliance for all conversation data
+    - Healthcare professional validation
+    - Audit trails for AI interactions
+    - Brazilian medical terminology support
+    
+  version: 2.0.0
+  contact:
+    name: NeonPro AI Support
+    url: https://neonpro.com.br/ai-support
+    email: ai-support@neonpro.com.br
+
+servers:
+  - url: https://api.neonpro.com.br/v2/ai
+    description: Production AI server
+  - url: https://api-staging.neonpro.com.br/v2/ai
+    description: Staging AI server
+  - url: http://localhost:3002/v2/ai
+    description: Development AI server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /chat/sessions:
+    get:
+      summary: List AI chat sessions
+      description: |
+        Retrieve paginated list of AI chat sessions for the current user.
+        Includes session metadata and last activity information.
+      operationId: listChatSessions
+      tags:
+        - Chat Sessions
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of sessions per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: patient_id
+          in: query
+          description: Filter sessions by patient
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: Filter by session status
+          required: false
+          schema:
+            $ref: '#/components/schemas/SessionStatus'
+      responses:
+        '200':
+          description: Chat sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatSession'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Create new AI chat session
+      description: |
+        Create a new AI chat session with optional patient context.
+        Session includes LGPD compliance tracking and audit trails.
+      operationId: createChatSession
+      tags:
+        - Chat Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatSessionRequest'
+      responses:
+        '201':
+          description: Chat session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ChatSession'
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/sessions/{sessionId}:
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        description: Chat session UUID
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get chat session details
+      description: |
+        Retrieve complete chat session including message history.
+        Includes performance metrics and compliance status.
+      operationId: getChatSession
+      tags:
+        - Chat Sessions
+      parameters:
+        - name: include_messages
+          in: query
+          description: Include message history in response
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: message_limit
+          in: query
+          description: Limit number of messages returned
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        '200':
+          description: Chat session retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ChatSessionDetailed'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update chat session
+      description: |
+        Update chat session metadata such as title or patient context.
+        Cannot modify message history through this endpoint.
+      operationId: updateChatSession
+      tags:
+        - Chat Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChatSessionRequest'
+      responses:
+        '200':
+          description: Chat session updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ChatSession'
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Delete chat session
+      description: |
+        Soft delete chat session while maintaining LGPD compliance.
+        Actual deletion follows data retention policies.
+      operationId: deleteChatSession
+      tags:
+        - Chat Sessions
+      parameters:
+        - name: reason
+          in: query
+          description: Reason for deletion (required for audit)
+          required: true
+          schema:
+            type: string
+            minLength: 5
+            maxLength: 200
+      responses:
+        '200':
+          description: Chat session deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  deletion_id:
+                    type: string
+                    format: uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/sessions/{sessionId}/messages:
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        description: Chat session UUID
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get chat messages
+      description: |
+        Retrieve paginated chat messages for a session.
+        Includes AI response metadata and performance metrics.
+      operationId: getChatMessages
+      tags:
+        - Chat Messages
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: order
+          in: query
+          description: Message ordering
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+            default: 'asc'
+      responses:
+        '200':
+          description: Chat messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Send chat message
+      description: |
+        Send a message to the AI chat session and receive response.
+        Supports both synchronous and streaming response modes.
+      operationId: sendChatMessage
+      tags:
+        - Chat Messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: Message sent and response received (synchronous mode)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user_message:
+                        $ref: '#/components/schemas/ChatMessage'
+                      ai_response:
+                        $ref: '#/components/schemas/ChatMessage'
+                  performance:
+                    $ref: '#/components/schemas/AIPerformanceMetrics'
+        '202':
+          description: Message accepted for streaming processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message_id:
+                    type: string
+                    format: uuid
+                  stream_url:
+                    type: string
+                    format: uri
+                    description: "WebSocket URL for streaming response"
+                  estimated_response_time:
+                    type: integer
+                    description: "Estimated response time in milliseconds"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/stream/{messageId}:
+    parameters:
+      - name: messageId
+        in: path
+        required: true
+        description: Message UUID for streaming
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Stream AI response (WebSocket upgrade)
+      description: |
+        WebSocket endpoint for streaming AI responses in real-time.
+        Provides token-by-token response streaming with <100ms latency.
+        
+        WebSocket Protocol:
+        - Connection: Upgrade to WebSocket
+        - Messages: JSON formatted with message chunks
+        - Completion: Final message with complete response
+        - Error handling: Error messages in JSON format
+      operationId: streamAIResponse
+      tags:
+        - Chat Streaming
+      responses:
+        '101':
+          description: WebSocket connection established
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/insights/patient/{patientId}:
+    parameters:
+      - name: patientId
+        in: path
+        required: true
+        description: Patient UUID
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get AI patient insights
+      description: |
+        Generate AI-powered insights for a specific patient based on their
+        medical history, treatment patterns, and clinic data.
+        
+        Performance target: <2 seconds response time
+        LGPD compliance: Requires patient data access permissions
+      operationId: getPatientInsights
+      tags:
+        - AI Insights
+      parameters:
+        - name: insight_types
+          in: query
+          description: Types of insights to generate
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/InsightType'
+        - name: include_recommendations
+          in: query
+          description: Include treatment recommendations
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: time_range
+          in: query
+          description: Time range for analysis (in days)
+          required: false
+          schema:
+            type: integer
+            minimum: 30
+            maximum: 365
+            default: 90
+      responses:
+        '200':
+          description: Patient insights generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PatientInsights'
+                  performance:
+                    $ref: '#/components/schemas/AIPerformanceMetrics'
+                  compliance:
+                    type: object
+                    properties:
+                      lgpd_consent_verified:
+                        type: boolean
+                      data_access_logged:
+                        type: boolean
+                      retention_policy_applied:
+                        type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Insufficient data for insights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/insights/clinic:
+    get:
+      summary: Get clinic-wide AI insights
+      description: |
+        Generate AI insights for clinic operations including patient trends,
+        treatment outcomes, and operational optimization suggestions.
+        
+        Requires admin permissions and LGPD compliance for aggregated data.
+      operationId: getClinicInsights
+      tags:
+        - AI Insights
+      parameters:
+        - name: insight_categories
+          in: query
+          description: Categories of insights to generate
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ClinicInsightCategory'
+        - name: date_range
+          in: query
+          description: Date range for analysis
+          required: false
+          schema:
+            type: object
+            properties:
+              start_date:
+                type: string
+                format: date
+              end_date:
+                type: string
+                format: date
+        - name: anonymize_data
+          in: query
+          description: Anonymize patient data in insights
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Clinic insights generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ClinicInsights'
+                  performance:
+                    $ref: '#/components/schemas/AIPerformanceMetrics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/models:
+    get:
+      summary: List available AI models
+      description: |
+        Retrieve list of available AI models with their capabilities,
+        performance characteristics, and usage costs.
+      operationId: listAIModels
+      tags:
+        - AI Models
+      responses:
+        '200':
+          description: AI models retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AIModel'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /chat/usage:
+    get:
+      summary: Get AI usage statistics
+      description: |
+        Retrieve AI usage statistics for the current user or clinic.
+        Includes token consumption, response times, and cost analysis.
+      operationId: getAIUsage
+      tags:
+        - AI Usage
+      parameters:
+        - name: period
+          in: query
+          description: Time period for statistics
+          required: false
+          schema:
+            type: string
+            enum: ['day', 'week', 'month', 'quarter', 'year']
+            default: 'month'
+        - name: model
+          in: query
+          description: Filter by specific AI model
+          required: false
+          schema:
+            type: string
+        - name: group_by
+          in: query
+          description: Group statistics by dimension
+          required: false
+          schema:
+            type: string
+            enum: ['user', 'session', 'model', 'date']
+            default: 'date'
+      responses:
+        '200':
+          description: AI usage statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AIUsageStats'
+                  summary:
+                    type: object
+                    properties:
+                      total_requests:
+                        type: integer
+                      total_tokens:
+                        type: integer
+                      average_response_time:
+                        type: number
+                      total_cost:
+                        type: number
+                      cost_currency:
+                        type: string
+                        default: "BRL"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ChatSession:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 100
+          description: "Session title or topic"
+        patient_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Associated patient (if applicable)"
+        model:
+          type: string
+          description: "AI model being used"
+          example: "gpt-4-turbo"
+        status:
+          $ref: '#/components/schemas/SessionStatus'
+        language:
+          type: string
+          default: "pt-BR"
+          description: "Session language"
+        context:
+          type: object
+          description: "Session context and metadata"
+          properties:
+            patient_context:
+              type: boolean
+              description: "Whether patient data is included in context"
+            medical_specialties:
+              type: array
+              items:
+                type: string
+              description: "Relevant medical specialties"
+            clinic_protocols:
+              type: array
+              items:
+                type: string
+              description: "Applicable clinic protocols"
+        message_count:
+          type: integer
+          minimum: 0
+          description: "Number of messages in session"
+        last_activity:
+          type: string
+          format: date-time
+          description: "Last message timestamp"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          format: uuid
+          description: "User who created the session"
+        clinic_id:
+          type: string
+          format: uuid
+          description: "Clinic isolation for RLS"
+      required:
+        - id
+        - title
+        - model
+        - status
+        - language
+        - message_count
+        - created_at
+        - created_by
+        - clinic_id
+
+    ChatSessionDetailed:
+      allOf:
+        - $ref: '#/components/schemas/ChatSession'
+        - type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChatMessage'
+            performance_metrics:
+              $ref: '#/components/schemas/SessionPerformanceMetrics'
+            compliance_status:
+              type: object
+              properties:
+                lgpd_compliant:
+                  type: boolean
+                data_retention_date:
+                  type: string
+                  format: date
+                audit_trail_complete:
+                  type: boolean
+
+    CreateChatSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 100
+        patient_id:
+          type: string
+          format: uuid
+          nullable: true
+        model:
+          type: string
+          description: "AI model to use for this session"
+          example: "gpt-4-turbo"
+        language:
+          type: string
+          default: "pt-BR"
+        context:
+          type: object
+          properties:
+            include_patient_data:
+              type: boolean
+              default: false
+              description: "Include patient medical data in AI context"
+            medical_specialties:
+              type: array
+              items:
+                type: string
+            clinic_protocols:
+              type: array
+              items:
+                type: string
+            session_purpose:
+              type: string
+              enum: 
+                - consultation_support
+                - treatment_planning
+                - patient_education
+                - administrative_query
+                - research_assistance
+        initial_message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: "Optional initial message to start conversation"
+      required:
+        - title
+        - model
+
+    UpdateChatSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 100
+        patient_id:
+          type: string
+          format: uuid
+          nullable: true
+        status:
+          $ref: '#/components/schemas/SessionStatus'
+        context:
+          type: object
+          properties:
+            medical_specialties:
+              type: array
+              items:
+                type: string
+            clinic_protocols:
+              type: array
+              items:
+                type: string
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/MessageRole'
+        content:
+          type: string
+          description: "Message content"
+        content_type:
+          type: string
+          enum: ['text', 'markdown', 'html']
+          default: 'text'
+        metadata:
+          type: object
+          properties:
+            model_used:
+              type: string
+              description: "AI model used for this response"
+            tokens_used:
+              type: integer
+              description: "Number of tokens consumed"
+            response_time_ms:
+              type: integer
+              description: "Response generation time"
+            confidence_score:
+              type: number
+              minimum: 0
+              maximum: 1
+              description: "AI confidence in response"
+            safety_score:
+              type: number
+              minimum: 0
+              maximum: 1
+              description: "Content safety assessment"
+            medical_disclaimer:
+              type: boolean
+              description: "Whether medical disclaimer was applied"
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageAttachment'
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+          description: "User ID for user messages, null for AI"
+        clinic_id:
+          type: string
+          format: uuid
+      required:
+        - id
+        - session_id
+        - role
+        - content
+        - content_type
+        - created_at
+        - clinic_id
+
+    SendMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 4000
+          description: "Message content"
+        content_type:
+          type: string
+          enum: ['text', 'markdown']
+          default: 'text'
+        streaming:
+          type: boolean
+          default: false
+          description: "Enable streaming response"
+        include_context:
+          type: object
+          properties:
+            patient_data:
+              type: boolean
+              default: false
+            recent_treatments:
+              type: boolean
+              default: false
+            clinic_protocols:
+              type: boolean
+              default: true
+        model_parameters:
+          type: object
+          properties:
+            temperature:
+              type: number
+              minimum: 0
+              maximum: 2
+              default: 0.7
+            max_tokens:
+              type: integer
+              minimum: 1
+              maximum: 4000
+              default: 1000
+            top_p:
+              type: number
+              minimum: 0
+              maximum: 1
+              default: 1
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageAttachment'
+          maxItems: 5
+      required:
+        - content
+
+    MessageAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: ['image', 'document', 'link', 'patient_data']
+        url:
+          type: string
+          format: uri
+          description: "Secure URL to attachment content"
+        filename:
+          type: string
+          description: "Original filename"
+        size_bytes:
+          type: integer
+          description: "File size in bytes"
+        mime_type:
+          type: string
+          description: "MIME type of attachment"
+        description:
+          type: string
+          maxLength: 200
+          description: "Attachment description"
+        metadata:
+          type: object
+          description: "Additional attachment metadata"
+      required:
+        - id
+        - type
+        - url
+
+    PatientInsights:
+      type: object
+      properties:
+        patient_id:
+          type: string
+          format: uuid
+        generated_at:
+          type: string
+          format: date-time
+        insights:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatientInsight'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreatmentRecommendation'
+        risk_factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskFactor'
+        trends:
+          type: object
+          properties:
+            treatment_response:
+              type: string
+              enum: ['improving', 'stable', 'declining', 'insufficient_data']
+            satisfaction_trend:
+              type: string
+              enum: ['increasing', 'stable', 'decreasing', 'insufficient_data']
+            visit_frequency:
+              type: string
+              enum: ['regular', 'irregular', 'increasing', 'decreasing']
+        compliance_notes:
+          type: object
+          properties:
+            data_sources:
+              type: array
+              items:
+                type: string
+            confidence_level:
+              type: string
+              enum: ['high', 'medium', 'low']
+            limitations:
+              type: array
+              items:
+                type: string
+      required:
+        - patient_id
+        - generated_at
+        - insights
+
+    PatientInsight:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/InsightType'
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: ['high', 'medium', 'low']
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        supporting_data:
+          type: array
+          items:
+            type: string
+        action_required:
+          type: boolean
+        follow_up_date:
+          type: string
+          format: date
+          nullable: true
+      required:
+        - type
+        - title
+        - description
+        - priority
+        - confidence
+
+    TreatmentRecommendation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        treatment_type:
+          type: string
+        expected_outcome:
+          type: string
+        duration_weeks:
+          type: integer
+          nullable: true
+        cost_estimate:
+          type: object
+          properties:
+            min_brl:
+              type: number
+            max_brl:
+              type: number
+            currency:
+              type: string
+              default: "BRL"
+        contraindications:
+          type: array
+          items:
+            type: string
+        prerequisites:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        evidence_level:
+          type: string
+          enum: ['high', 'medium', 'low', 'expert_opinion']
+      required:
+        - id
+        - title
+        - description
+        - treatment_type
+        - confidence
+        - evidence_level
+
+    RiskFactor:
+      type: object
+      properties:
+        factor:
+          type: string
+        severity:
+          type: string
+          enum: ['high', 'medium', 'low']
+        description:
+          type: string
+        mitigation_strategies:
+          type: array
+          items:
+            type: string
+        monitoring_required:
+          type: boolean
+      required:
+        - factor
+        - severity
+        - description
+
+    ClinicInsights:
+      type: object
+      properties:
+        clinic_id:
+          type: string
+          format: uuid
+        generated_at:
+          type: string
+          format: date-time
+        period:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+            end_date:
+              type: string
+              format: date
+        insights:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClinicInsight'
+        operational_metrics:
+          $ref: '#/components/schemas/OperationalMetrics'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationalRecommendation'
+      required:
+        - clinic_id
+        - generated_at
+        - insights
+
+    ClinicInsight:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/ClinicInsightCategory'
+        title:
+          type: string
+        description:
+          type: string
+        impact:
+          type: string
+          enum: ['high', 'medium', 'low']
+        trend:
+          type: string
+          enum: ['improving', 'stable', 'declining']
+        metrics:
+          type: object
+        visualizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisualizationData'
+      required:
+        - category
+        - title
+        - description
+        - impact
+
+    OperationalMetrics:
+      type: object
+      properties:
+        patient_satisfaction:
+          type: object
+          properties:
+            average_score:
+              type: number
+            response_rate:
+              type: number
+            trend:
+              type: string
+        treatment_outcomes:
+          type: object
+          properties:
+            success_rate:
+              type: number
+            complication_rate:
+              type: number
+            average_recovery_time:
+              type: number
+        efficiency_metrics:
+          type: object
+          properties:
+            average_consultation_time:
+              type: number
+            patient_wait_time:
+              type: number
+            appointment_utilization:
+              type: number
+        financial_metrics:
+          type: object
+          properties:
+            revenue_growth:
+              type: number
+            cost_per_patient:
+              type: number
+            profit_margin:
+              type: number
+
+    OperationalRecommendation:
+      type: object
+      properties:
+        category:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: ['high', 'medium', 'low']
+        estimated_impact:
+          type: string
+        implementation_effort:
+          type: string
+          enum: ['low', 'medium', 'high']
+        timeline:
+          type: string
+        success_metrics:
+          type: array
+          items:
+            type: string
+      required:
+        - category
+        - title
+        - description
+        - priority
+
+    VisualizationData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ['chart', 'graph', 'table', 'heatmap']
+        title:
+          type: string
+        data:
+          type: object
+        configuration:
+          type: object
+
+    AIModel:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        provider:
+          type: string
+          enum: ['openai', 'anthropic', 'google', 'local']
+        description:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+        performance:
+          type: object
+          properties:
+            avg_response_time_ms:
+              type: integer
+            max_tokens:
+              type: integer
+            context_window:
+              type: integer
+        cost:
+          type: object
+          properties:
+            input_cost_per_1k_tokens:
+              type: number
+            output_cost_per_1k_tokens:
+              type: number
+            currency:
+              type: string
+              default: "USD"
+        language_support:
+          type: array
+          items:
+            type: string
+        medical_training:
+          type: boolean
+        available:
+          type: boolean
+      required:
+        - id
+        - name
+        - provider
+        - available
+
+    AIUsageStats:
+      type: object
+      properties:
+        period:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date-time
+            end_date:
+              type: string
+              format: date-time
+        usage_by_model:
+          type: array
+          items:
+            type: object
+            properties:
+              model:
+                type: string
+              requests:
+                type: integer
+              tokens_consumed:
+                type: integer
+              avg_response_time:
+                type: number
+              cost:
+                type: number
+        usage_by_user:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                format: uuid
+              requests:
+                type: integer
+              tokens_consumed:
+                type: integer
+        daily_usage:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              requests:
+                type: integer
+              tokens:
+                type: integer
+              cost:
+                type: number
+
+    SessionPerformanceMetrics:
+      type: object
+      properties:
+        total_messages:
+          type: integer
+        avg_response_time_ms:
+          type: number
+        total_tokens_used:
+          type: integer
+        total_cost:
+          type: number
+        session_duration_minutes:
+          type: number
+        error_count:
+          type: integer
+        satisfaction_rating:
+          type: number
+          minimum: 1
+          maximum: 5
+          nullable: true
+
+    AIPerformanceMetrics:
+      type: object
+      properties:
+        response_time_ms:
+          type: integer
+        tokens_consumed:
+          type: integer
+        model_used:
+          type: string
+        processing_time_breakdown:
+          type: object
+          properties:
+            context_processing_ms:
+              type: integer
+            inference_time_ms:
+              type: integer
+            safety_check_ms:
+              type: integer
+            formatting_ms:
+              type: integer
+        cost_breakdown:
+          type: object
+          properties:
+            input_tokens:
+              type: integer
+            output_tokens:
+              type: integer
+            total_cost:
+              type: number
+            currency:
+              type: string
+              default: "USD"
+
+    # Enum Types
+    SessionStatus:
+      type: string
+      enum:
+        - active
+        - paused
+        - completed
+        - archived
+        - error
+      description: "Chat session status"
+
+    MessageRole:
+      type: string
+      enum:
+        - user
+        - assistant
+        - system
+      description: "Message sender role"
+
+    InsightType:
+      type: string
+      enum:
+        - treatment_response
+        - risk_assessment
+        - satisfaction_analysis
+        - compliance_status
+        - outcome_prediction
+        - cost_optimization
+        - scheduling_pattern
+      description: "Type of AI-generated insight"
+
+    ClinicInsightCategory:
+      type: string
+      enum:
+        - patient_satisfaction
+        - treatment_outcomes
+        - operational_efficiency
+        - financial_performance
+        - quality_metrics
+        - compliance_status
+        - resource_utilization
+      description: "Category of clinic-wide insight"
+
+    # Utility Types
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total_pages:
+          type: integer
+        total_count:
+          type: integer
+        has_next:
+          type: boolean
+        has_previous:
+          type: boolean
+      required:
+        - page
+        - limit
+        - total_pages
+        - total_count
+        - has_next
+        - has_previous
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        request_id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - error
+        - message
+        - request_id
+        - timestamp
+
+    ValidationError:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            validation_errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  value: {}
+                required:
+                  - field
+                  - code
+                  - message
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Chat Sessions
+    description: AI chat session management
+  - name: Chat Messages
+    description: Chat message operations
+  - name: Chat Streaming
+    description: Real-time AI response streaming
+  - name: AI Insights
+    description: AI-generated insights and analytics
+  - name: AI Models
+    description: AI model information and capabilities
+  - name: AI Usage
+    description: AI usage statistics and monitoring
