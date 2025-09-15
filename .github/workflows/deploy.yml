@@ -89,7 +89,6 @@ jobs:
         run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
 
       - name: Build (preview)
-        if: ${{ false }} # disabled: rely on remote build
         working-directory: apps/web
         env:
           VERCEL_ORG_ID: ""
@@ -109,7 +108,7 @@ jobs:
           export VERCEL_PROJECT_SETTINGS_INSTALL_COMMAND="pnpm install --no-frozen-lockfile"
           export VERCEL_PROJECT_SETTINGS_BUILD_COMMAND="pnpm -w turbo run build --filter=@neonpro/web"
           export VERCEL_PROJECT_SETTINGS_OUTPUT_DIRECTORY="dist"
-          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects || vercel deploy --token "$VERCEL_TOKEN" --scope grupous-projects)
+          url=$(vercel deploy --prebuilt --yes --token "$VERCEL_TOKEN" --scope grupous-projects)
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Comment Preview URL on PR
