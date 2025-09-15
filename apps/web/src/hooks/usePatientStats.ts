@@ -44,13 +44,12 @@ export function usePatientStats(clinicId?: string) {
   return useQuery({
     queryKey: ['patient-stats', clinicId],
     queryFn: async () => {
-      // Como a função RPC não está disponível, fazemos as queries separadamente
+      // Since the RPC function is not available, we perform the queries separately
       const today = new Date();
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise
-        .all([
+      const [patientsResult, newPatientsResult, appointmentsResult, revenueResult] = await Promise.all([
           supabase
             .from('patients')
             .select('id, is_active'),
@@ -86,7 +85,7 @@ export function usePatientStats(clinicId?: string) {
         activePatients,
         newThisMonth,
         upcomingAppointments,
-        appointmentsToday: 0, // Legacy, incluir para compatibilidade
+        appointmentsToday: 0, // Legacy field: included for compatibility with existing consumers. Remove only after all dependencies are updated.
         revenueToday,
       };
     },
