@@ -34,13 +34,42 @@ const snapToGrid = (position: number, snapSize: number): number => {
 };
 
 // Get container constraints based on viewport
-const getConstraints = (containerWidth: number, containerHeight: number, cardWidth: number, cardHeight: number) => {
+const getConstraints = (
+  containerWidth: number,
+  containerHeight: number,
+  cardWidth: number,
+  cardHeight: number,
+) => {
   return {
     left: 0,
     right: Math.max(0, containerWidth - cardWidth),
     top: 0,
     bottom: Math.max(0, containerHeight - cardHeight),
   };
+};
+
+// Calculate automatic grid positions for cards
+const calculateGridPositions = (
+  cardIds: string[],
+  _containerWidth: number,
+  _containerHeight: number,
+  cardSize: { width: number; height: number },
+  gridConfig: GridConfig,
+): Record<string, CardPosition> => {
+  const { columns, gap } = gridConfig;
+  const positions: Record<string, CardPosition> = {};
+
+  cardIds.forEach((cardId, index) => {
+    const row = Math.floor(index / columns);
+    const col = index % columns;
+
+    const x = gap + col * (cardSize.width + gap);
+    const y = gap + row * (cardSize.height + gap);
+
+    positions[cardId] = { id: cardId, x, y };
+  });
+
+  return positions;
 };
 
 export function usePersistedDashboardLayout() {
@@ -59,6 +88,27 @@ export function usePersistedDashboardLayout() {
       }
     }
   }, []);
+
+  // Auto-distribute cards when container dimensions change or cards are added
+  const autoDistributeCards = useCallback((cardIds: string[]) => {
+    if (!containerSize.width || !containerSize.height || cardIds.length === 0) return;
+
+    // Only auto-distribute if we have no saved positions for any card
+    const hasExistingPositions = cardIds.some(id => positions[id]);
+    if (hasExistingPositions) return;
+
+    const cardSize = { width: 280, height: 200 }; // Default card size
+    const newPositions = calculateGridPositions(
+      cardIds,
+      containerSize.width,
+      containerSize.height,
+      cardSize,
+      gridConfig,
+    );
+
+    console.log('Auto-distributing cards:', { cardIds, newPositions, containerSize });
+    setPositions(prev => ({ ...prev, ...newPositions }));
+  }, [containerSize, gridConfig, positions]);
 
   // Update grid config based on container size
   useEffect(() => {
@@ -82,9 +132,9 @@ export function usePersistedDashboardLayout() {
 
   // Update card position with snap assist
   const updateCardPosition = useCallback((
-    cardId: string, 
+    cardId: string,
     newPosition: { x: number; y: number },
-    cardSize: { width: number; height: number }
+    cardSize: { width: number; height: number },
   ) => {
     // Apply snap to grid
     const snappedX = snapToGrid(newPosition.x, gridConfig.snapSize);
@@ -92,10 +142,10 @@ export function usePersistedDashboardLayout() {
 
     // Apply constraints to keep card in view
     const constraints = getConstraints(
-      containerSize.width, 
-      containerSize.height, 
-      cardSize.width, 
-      cardSize.height
+      containerSize.width,
+      containerSize.height,
+      cardSize.width,
+      cardSize.height,
     );
 
     const constrainedX = Math.max(constraints.left, Math.min(constraints.right, snappedX));
@@ -140,6 +190,7 @@ export function usePersistedDashboardLayout() {
     getCardPosition,
     resetLayout,
     updateContainerSize,
+    autoDistributeCards,
     snapToGrid: (pos: number) => snapToGrid(pos, gridConfig.snapSize),
   };
 }

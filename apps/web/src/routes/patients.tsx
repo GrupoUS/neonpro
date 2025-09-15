@@ -4,17 +4,18 @@
  * Features: Real-time updates, accessibility, responsive design, error handling
  */
 
-import { createFileRoute } from '@tanstack/react-router';
-import { z } from 'zod';
+import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { PatientDataTable } from '@/components/patients/PatientDataTable';
 import { useAuth } from '@/hooks/useAuth';
+import { usePatientStats } from '@/hooks/usePatientStats';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
-import { AlertCircle, Users, UserPlus, Calendar, Activity, TrendingUp } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
+import { Activity, AlertCircle, Calendar, UserPlus, Users } from 'lucide-react';
 import { Suspense } from 'react';
-import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 // Type-safe search params for filtering and pagination
 const patientsSearchSchema = z.object({
@@ -33,23 +34,23 @@ export const Route = createFileRoute('/patients')({
 
   // Loading component with skeleton
   pendingComponent: () => (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
-      <div className="animate-pulse">
-        <div className="h-8 bg-muted rounded w-1/4 mb-2"></div>
-        <div className="h-4 bg-muted rounded w-1/2 mb-6"></div>
-        
+    <div className='container mx-auto p-4 md:p-6 space-y-6'>
+      <div className='animate-pulse'>
+        <div className='h-8 bg-muted rounded w-1/4 mb-2'></div>
+        <div className='h-4 bg-muted rounded w-1/2 mb-6'></div>
+
         {/* Statistics cards skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 bg-muted rounded-lg"></div>
+            <div key={i} className='h-24 bg-muted rounded-lg'></div>
           ))}
         </div>
-        
+
         {/* Table skeleton */}
-        <div className="bg-card rounded-lg border">
-          <div className="h-12 bg-muted rounded-t-lg mb-4"></div>
+        <div className='bg-card rounded-lg border'>
+          <div className='h-12 bg-muted rounded-t-lg mb-4'></div>
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 bg-muted/50 rounded mx-4 mb-2"></div>
+            <div key={i} className='h-16 bg-muted/50 rounded mx-4 mb-2'></div>
           ))}
         </div>
       </div>
@@ -58,23 +59,23 @@ export const Route = createFileRoute('/patients')({
 
   // Error boundary for patient data
   errorComponent: ({ error, reset }) => (
-    <div className="container mx-auto p-4 md:p-6">
-      <Card className="max-w-lg mx-auto text-center">
+    <div className='container mx-auto p-4 md:p-6'>
+      <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
-          <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
-            <AlertCircle className="w-6 h-6 text-destructive" />
+          <div className='mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4'>
+            <AlertCircle className='w-6 h-6 text-destructive' />
           </div>
-          <CardTitle className="text-destructive">Erro ao Carregar Pacientes</CardTitle>
+          <CardTitle className='text-destructive'>Erro ao Carregar Pacientes</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-muted-foreground">
+        <CardContent className='space-y-4'>
+          <p className='text-muted-foreground'>
             Não foi possível carregar a lista de pacientes. Verifique sua conexão e tente novamente.
           </p>
-          <p className="text-sm text-muted-foreground font-mono bg-muted p-2 rounded">
+          <p className='text-sm text-muted-foreground font-mono bg-muted p-2 rounded'>
             {error.message}
           </p>
-          <div className="flex gap-2 justify-center">
-            <Button onClick={reset} variant="outline">
+          <div className='flex gap-2 justify-center'>
+            <Button onClick={reset} variant='outline'>
               Tentar Novamente
             </Button>
             <Button onClick={() => window.location.reload()}>
@@ -98,21 +99,21 @@ function PatientsPage() {
 
   if (!clinicId) {
     return (
-      <div className="container mx-auto p-4 md:p-6">
-        <Card className="max-w-lg mx-auto text-center">
+      <div className='container mx-auto p-4 md:p-6'>
+        <Card className='max-w-lg mx-auto text-center'>
           <CardHeader>
-            <div className="mx-auto w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4">
-              <AlertCircle className="w-6 h-6 text-warning" />
+            <div className='mx-auto w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4'>
+              <AlertCircle className='w-6 h-6 text-warning' />
             </div>
             <CardTitle>Clínica Não Identificada</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">
+            <p className='text-muted-foreground mb-4'>
               Não foi possível identificar sua clínica. Entre em contato com o suporte técnico.
             </p>
-            <Button 
+            <Button
               onClick={() => toast.error('Função de suporte ainda não implementada')}
-              variant="outline"
+              variant='outline'
             >
               Contatar Suporte
             </Button>
@@ -123,30 +124,30 @@ function PatientsPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
+    <div className='container mx-auto p-4 md:p-6 space-y-6'>
       {/* Page Header with Brazilian healthcare context */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
+      <div className='flex flex-col gap-2'>
+        <div className='flex items-center justify-between'>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-foreground'>
               Gestão de Pacientes
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base">
+            <p className='text-muted-foreground text-sm md:text-base'>
               Administre os pacientes da sua clínica com segurança e conformidade LGPD
             </p>
           </div>
-          
+
           {/* Quick actions - mobile responsive */}
-          <div className="hidden sm:flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+          <div className='hidden sm:flex items-center gap-2'>
+            <Badge variant='outline' className='text-xs'>
               🔒 LGPD Compliant
             </Badge>
           </div>
         </div>
-        
+
         {/* Mobile badge */}
-        <div className="flex sm:hidden">
-          <Badge variant="outline" className="text-xs">
+        <div className='flex sm:hidden'>
+          <Badge variant='outline' className='text-xs'>
             🔒 Proteção de Dados LGPD
           </Badge>
         </div>
@@ -159,15 +160,15 @@ function PatientsPage() {
       <ErrorBoundary
         fallback={(_error: Error) => (
           <Card>
-            <CardContent className="p-6 text-center">
-              <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-2" />
-              <h3 className="font-semibold text-destructive mb-2">
+            <CardContent className='p-6 text-center'>
+              <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
+              <h3 className='font-semibold text-destructive mb-2'>
                 Erro na Tabela de Pacientes
               </h3>
-              <p className="text-muted-foreground text-sm mb-4">
+              <p className='text-muted-foreground text-sm mb-4'>
                 Ocorreu um erro ao carregar os dados.
               </p>
-              <Button onClick={() => window.location.reload()} size="sm">
+              <Button onClick={() => window.location.reload()} size='sm'>
                 Tentar Novamente
               </Button>
             </CardContent>
@@ -180,13 +181,13 @@ function PatientsPage() {
       </ErrorBoundary>
 
       {/* LGPD Compliance Footer */}
-      <Card className="bg-muted/30">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+      <Card className='bg-muted/30'>
+        <CardContent className='p-4'>
+          <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+            <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse' />
             <span>
-              Sistema em conformidade com a LGPD • Todos os acessos são auditados • 
-              Pacientes têm direito ao acesso, correção e exclusão de dados
+              Sistema em conformidade com a LGPD • Todos os acessos são auditados • Pacientes têm
+              direito ao acesso, correção e exclusão de dados
             </span>
           </div>
         </CardContent>
@@ -198,69 +199,86 @@ function PatientsPage() {
 /**
  * Statistics cards component with Brazilian healthcare KPIs
  */
-function PatientsStatistics({ clinicId: _clinicId }: { clinicId: string }) {
-  // In a real implementation, these would come from a hook/query
-  const stats = {
-    totalPatients: 1247,
-    activePatients: 1156,
-    newThisMonth: 89,
-    upcomingAppointments: 156,
+function PatientsStatistics({ clinicId }: { clinicId: string }) {
+  const { data: stats, isLoading, error } = usePatientStats(clinicId);
+
+  if (error) {
+    return (
+      <Card className='bg-destructive/5 border-destructive'>
+        <CardContent className='p-4 text-destructive text-sm'>
+          Erro ao carregar estatísticas: {error.message}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const fallback = {
+    totalPatients: 0,
+    activePatients: 0,
+    newThisMonth: 0,
+    upcomingAppointments: 0,
+  };
+  const resolved = stats ?? fallback;
+
+  type StatCard = {
+    title: string;
+    value: string;
+    icon: any;
+    change?: string;
   };
 
-  const statisticsCards = [
+  const statisticsCards: StatCard[] = [
     {
       title: 'Total de Pacientes',
-      value: stats.totalPatients.toLocaleString('pt-BR'),
+      value: resolved.totalPatients.toLocaleString('pt-BR'),
       icon: Users,
-      change: '+12% este mês',
-      changeType: 'positive' as const,
+      change: isLoading ? 'carregando…' : undefined,
     },
     {
       title: 'Pacientes Ativos',
-      value: stats.activePatients.toLocaleString('pt-BR'),
+      value: resolved.activePatients.toLocaleString('pt-BR'),
       icon: Activity,
-      change: `${((stats.activePatients / stats.totalPatients) * 100).toFixed(1)}% do total`,
-      changeType: 'neutral' as const,
+      change: isLoading
+        ? 'carregando…'
+        : `${
+          resolved.totalPatients > 0
+            ? ((resolved.activePatients / resolved.totalPatients) * 100).toFixed(1)
+            : '0.0'
+        }% do total`,
     },
     {
       title: 'Novos Pacientes',
-      value: stats.newThisMonth.toLocaleString('pt-BR'),
+      value: resolved.newThisMonth.toLocaleString('pt-BR'),
       icon: UserPlus,
-      change: '+24% vs mês anterior',
-      changeType: 'positive' as const,
+      change: isLoading ? 'carregando…' : undefined,
     },
     {
       title: 'Próximas Consultas',
-      value: stats.upcomingAppointments.toLocaleString('pt-BR'),
+      value: resolved.upcomingAppointments.toLocaleString('pt-BR'),
       icon: Calendar,
       change: 'Próximos 7 dias',
-      changeType: 'neutral' as const,
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
       {statisticsCards.map((stat, index) => (
-        <Card key={index} className="relative overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">
+        <Card key={index} className='relative overflow-hidden'>
+          <CardContent className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm font-medium text-muted-foreground'>
                   {stat.title}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className='text-2xl font-bold text-foreground'>
                   {stat.value}
                 </p>
-                <p className={`text-xs flex items-center gap-1 ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 
-                  'text-muted-foreground'
-                }`}>
-                  {stat.changeType === 'positive' && <TrendingUp className="w-3 h-3" />}
+                <p className={`text-xs flex items-center gap-1 text-muted-foreground`}>
                   {stat.change}
                 </p>
               </div>
-              <div className="p-3 bg-primary/10 rounded-full">
-                <stat.icon className="w-5 h-5 text-primary" />
+              <div className='p-3 bg-primary/10 rounded-full'>
+                <stat.icon className='w-5 h-5 text-primary' />
               </div>
             </div>
           </CardContent>
@@ -277,33 +295,33 @@ function PatientTableSkeleton() {
   return (
     <Card>
       <CardHeader>
-        <div className="animate-pulse space-y-2">
-          <div className="h-6 bg-muted rounded w-1/4"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
+        <div className='animate-pulse space-y-2'>
+          <div className='h-6 bg-muted rounded w-1/4'></div>
+          <div className='h-4 bg-muted rounded w-1/2'></div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="animate-pulse space-y-4">
+        <div className='animate-pulse space-y-4'>
           {/* Filters skeleton */}
-          <div className="flex gap-2">
-            <div className="h-10 bg-muted rounded w-64"></div>
-            <div className="h-10 bg-muted rounded w-24"></div>
-            <div className="h-10 bg-muted rounded w-24"></div>
+          <div className='flex gap-2'>
+            <div className='h-10 bg-muted rounded w-64'></div>
+            <div className='h-10 bg-muted rounded w-24'></div>
+            <div className='h-10 bg-muted rounded w-24'></div>
           </div>
-          
+
           {/* Table skeleton */}
-          <div className="space-y-2">
+          <div className='space-y-2'>
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-16 bg-muted/50 rounded"></div>
+              <div key={i} className='h-16 bg-muted/50 rounded'></div>
             ))}
           </div>
-          
+
           {/* Pagination skeleton */}
-          <div className="flex justify-between items-center">
-            <div className="h-8 bg-muted rounded w-32"></div>
-            <div className="flex gap-1">
+          <div className='flex justify-between items-center'>
+            <div className='h-8 bg-muted rounded w-32'></div>
+            <div className='flex gap-1'>
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-8 w-8 bg-muted rounded"></div>
+                <div key={i} className='h-8 w-8 bg-muted rounded'></div>
               ))}
             </div>
           </div>
