@@ -62,6 +62,9 @@ jobs:
         run: npm i -g vercel@latest
 
       - name: Link Vercel project
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: |
           vercel link --yes --scope grupous-projects --project neonpro --token "$VERCEL_TOKEN"
 
@@ -77,13 +80,22 @@ jobs:
           [ -n "${{ secrets.DATABASE_URL }}" ] && add DATABASE_URL "${{ secrets.DATABASE_URL }}" || true
 
       - name: Pull Vercel env (preview)
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
 
       - name: Build (preview)
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: vercel build --token "$VERCEL_TOKEN" --project neonpro
 
       - name: Deploy (preview, prebuilt)
         id: deploy
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: |
           url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro)
           echo "url=$url" >> $GITHUB_OUTPUT
@@ -147,6 +159,9 @@ jobs:
         run: npm i -g vercel@latest
 
       - name: Link Vercel project
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: |
           vercel link --yes --scope grupous-projects --project neonpro --token "$VERCEL_TOKEN"
 
@@ -162,11 +177,20 @@ jobs:
           [ -n "${{ secrets.DATABASE_URL }}" ] && add DATABASE_URL "${{ secrets.DATABASE_URL }}" || true
 
       - name: Pull Vercel env (production)
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
       - name: Build (production)
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: vercel build --prod --token "$VERCEL_TOKEN" --project neonpro
 
       - name: Deploy (production, prebuilt)
+        env:
+          VERCEL_ORG_ID: ""
+          VERCEL_PROJECT_ID: ""
         run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --scope grupous-projects --project neonpro
 
