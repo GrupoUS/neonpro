@@ -48,6 +48,11 @@
 - [ ] T003 [P] Configure linting and formatting tools
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
+- [ ] T004 Write contract tests for healthcare compliance (LGPD audit trails)
+- [ ] T005 Write contract tests for patient data protection requirements
+- [ ] T006 Write contract tests for AI features (conversational AI, no-show prediction)
+- [ ] T007 Write integration tests for mobile-first responsive design
+- [ ] T008 Write real-time operation tests (WebSocket subscriptions)
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 - [ ] T004 [P] Contract test POST /api/users in tests/contract/test_users_post.py
 - [ ] T005 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.py
@@ -125,3 +130,7 @@ Task: "Integration test auth in tests/integration/test_auth.py"
 - [ ] Parallel tasks truly independent
 - [ ] Each task specifies exact file path
 - [ ] No task modifies same file as another [P] task
+
+---
+**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
+*Aligned with NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*

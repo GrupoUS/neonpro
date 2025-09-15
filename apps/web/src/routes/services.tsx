@@ -33,13 +33,31 @@ function ServicesPage() {
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
   // Get clinic ID from user
-  const clinicId = user?.user_metadata?.clinic_id || user?.clinic_id;
+  const clinicId = user?.user_metadata?.clinic_id;
 
+  // If clinicId is missing, show error and prevent data fetch
+  if (!clinicId) {
+    return (
+      <div className='container mx-auto py-8'>
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='text-center text-destructive'>
+              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login novamente.
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   // Fetch services data
-  const { data: services = [], isLoading, error } = useServices({
-    clinicId,
-    isActive: true,
+  const { data: servicesResponse, isLoading, error } = useServices({
+    clinic_id: clinicId,
+    clinicId: clinicId, // backward compatibility
+    is_active: true,
   });
+
+  // Extract services array from response
+  const services = servicesResponse?.data || [];
 
   // Delete service mutation
   const deleteServiceMutation = useDeleteService();

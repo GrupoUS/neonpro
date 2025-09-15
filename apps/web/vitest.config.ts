@@ -10,6 +10,8 @@ export default defineConfig({
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
       '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@neonpro/config': path.resolve(__dirname, '../../packages/config/src'),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
     },
   },
   test: {

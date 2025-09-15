@@ -11,7 +11,12 @@ Given the implementation details provided as an argument, do this:
    - Success criteria and acceptance criteria
    - Any technical constraints or dependencies mentioned
 
-3. Read the constitution at `.specify/memory/constitution.md` to understand constitutional requirements.
+3. Read the constitution at `.specify/memory/constitution.md` to understand constitutional requirements:
+   - Compliance-First Development (LGPD, ANVISA, CFM)
+   - Test-Driven Development (90% coverage for healthcare components)
+   - AI-Enhanced Architecture (conversational AI, predictive analytics)
+   - Mobile-First Design (70%+ mobile usage optimization)
+   - Real-Time Operations (WebSocket subscriptions, <500ms response times)
 
 4. Execute the implementation plan template:
    - Load `.specify/templates/plan-template.md` (already copied to IMPL_PLAN path)
