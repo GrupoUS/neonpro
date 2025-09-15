@@ -280,7 +280,7 @@ function AppShellContent() {
       <div className='fixed bottom-4 right-4 z-50'>
         <div className='flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm'>
           <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
-          <span>Real-time Ativo</span>
+          <span>Real-time Active</span>
         </div>
       </div>
     </div>
