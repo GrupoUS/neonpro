@@ -1,5 +1,5 @@
-
 import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
+import { useAuth } from '@/hooks/useAuth';
 import {
   generateSearchSuggestions,
   generateVoiceOutput,
@@ -7,11 +7,10 @@ import {
   processVoiceInput,
   streamAestheticResponse,
 } from '@/lib/ai/ai-chat-service'; // path confirmed
+import { fetchDefaultChatModel } from '@/services/chat-settings.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { nanoid } from 'nanoid';
 import { useCallback, useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { fetchDefaultChatModel } from '@/services/chat-settings.service';
 
 // Session storage key for persistence
 const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
@@ -61,11 +60,16 @@ export function useAIChat(clientId?: string) {
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
         setChatState(prev => {
-          const next = { ...(prev as ChatState & { model?: string }), model: serverModel } as ChatState;
+          const next = {
+            ...(prev as ChatState & { model?: string }),
+            model: serverModel,
+          } as ChatState;
           persistChatState(next);
           return next;
         });
-        try { localStorage.setItem('neonpro-default-chat-model', serverModel); } catch {}
+        try {
+          localStorage.setItem('neonpro-default-chat-model', serverModel);
+        } catch {}
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

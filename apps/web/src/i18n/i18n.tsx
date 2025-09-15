@@ -1,14 +1,21 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import ptBR from './locales/pt-BR.json';
 import enUS from './locales/en-US.json';
+import ptBR from './locales/pt-BR.json';
 
 type LocaleKey = 'pt-BR' | 'en-US';
 export type Messages = Record<string, string>;
 const DICTS: Record<LocaleKey, Messages> = { 'pt-BR': ptBR, 'en-US': enUS } as const;
 
-const I18nCtx = createContext<{ t: (k: string) => string; locale: LocaleKey; setLocale: (l: LocaleKey) => void } | null>(null);
+const I18nCtx = createContext<
+  { t: (k: string) => string; locale: LocaleKey; setLocale: (l: LocaleKey) => void } | null
+>(null);
 
-export function I18nProvider({ children, defaultLocale = 'pt-BR' as LocaleKey }: { children: React.ReactNode; defaultLocale?: LocaleKey }) {
+export function I18nProvider(
+  { children, defaultLocale = 'pt-BR' as LocaleKey }: {
+    children: React.ReactNode;
+    defaultLocale?: LocaleKey;
+  },
+) {
   const [locale, setLocale] = useState<LocaleKey>(defaultLocale);
   const dict = DICTS[locale] || ptBR;
   const value = useMemo(() => ({

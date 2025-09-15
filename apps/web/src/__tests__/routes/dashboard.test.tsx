@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { ThemeProvider } from '@/components/theme-provider';
 import { ConsentProvider } from '@/contexts/ConsentContext';
 import { routeTree } from '@/routeTree.gen';
 import { createMemoryHistory } from '@tanstack/history';
@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { ThemeProvider } from '@/components/theme-provider';
+import { vi } from 'vitest';
 
 // Mock auth to appear authenticated in tests
 vi.mock('@/hooks/useAuth', () => ({

@@ -1,6 +1,6 @@
-import { renderWithI18n as render, screen } from '../test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { renderWithI18n as render, screen } from '../test-utils';
 
 import { ImageAttachment } from '@/components/chat/ImageAttachment';
 
@@ -9,7 +9,7 @@ describe('Image attachment policy (T021)', () => {
     const onAttach = vi.fn();
 
     const { rerender } = render(
-      <ImageAttachment consent={false} onAttach={onAttach} />
+      <ImageAttachment consent={false} onAttach={onAttach} />,
     );
 
     expect(screen.getByText(/consentimento necessário/i)).toBeInTheDocument();

@@ -8,8 +8,20 @@ import { Suggestions } from '@/components/chat/Suggestions';
 describe('Suggestions (T015)', () => {
   test('renders safe suggestions and applies role/clinic filter', async () => {
     const items = [
-      { id: '1', label: 'Tratamentos faciais', safe: true, roles: ['admin', 'clinician'], clinics: ['A'] },
-      { id: '2', label: 'Dados sensíveis do paciente', safe: false, roles: ['admin'], clinics: ['A', 'B'] },
+      {
+        id: '1',
+        label: 'Tratamentos faciais',
+        safe: true,
+        roles: ['admin', 'clinician'],
+        clinics: ['A'],
+      },
+      {
+        id: '2',
+        label: 'Dados sensíveis do paciente',
+        safe: false,
+        roles: ['admin'],
+        clinics: ['A', 'B'],
+      },
       { id: '3', label: 'Agendar avaliação', safe: true, roles: ['assistant'], clinics: ['B'] },
     ];
 
@@ -18,7 +30,13 @@ describe('Suggestions (T015)', () => {
 
     const onPick = vi.fn();
     render(
-      <Suggestions items={items as any} role="assistant" clinic="B" filter={filter} onPick={onPick} />
+      <Suggestions
+        items={items as any}
+        role='assistant'
+        clinic='B'
+        filter={filter}
+        onPick={onPick}
+      />,
     );
 
     // Only safe + role/clinic match should render (id:3)

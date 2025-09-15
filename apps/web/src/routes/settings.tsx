@@ -3,29 +3,29 @@ import { Label } from '@/components/atoms/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription, useSubscriptionPrompt } from '@/hooks/useSubscription';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { 
-  Button, 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle,
-  Badge,
-  Switch,
+import {
+  fetchDefaultChatModel,
+  getHiddenProviders,
+  type ProviderKey,
+  setHiddenProviders,
+  updateDefaultChatModel,
+} from '@/services/chat-settings.service';
+import {
   Alert,
+  AlertDescription,
   AlertTitle,
-  AlertDescription
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Switch,
 } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Bell, Globe, Shield, Users, Brain, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users } from 'lucide-react';
 import React from 'react';
-import { 
-  fetchDefaultChatModel, 
-  updateDefaultChatModel, 
-  getHiddenProviders, 
-  setHiddenProviders, 
-  type ProviderKey 
-} from '@/services/chat-settings.service';
 
 export const Route = createFileRoute('/settings')({
   beforeLoad: async () => {
@@ -59,14 +59,18 @@ function SettingsPage() {
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
         setDefaultModel(serverModel);
-        try { localStorage.setItem('neonpro-default-chat-model', serverModel); } catch {}
+        try {
+          localStorage.setItem('neonpro-default-chat-model', serverModel);
+        } catch {}
       }
     })();
   }, [user?.id]);
 
   const handleSelectDefault = async (model: string) => {
     setDefaultModel(model);
-    try { localStorage.setItem('neonpro-default-chat-model', model); } catch {}
+    try {
+      localStorage.setItem('neonpro-default-chat-model', model);
+    } catch {}
 
     if (!user?.id) return;
     setSaving(true);
@@ -94,7 +98,9 @@ function SettingsPage() {
     'claude-3-sonnet': 'anthropic',
   };
 
-  const filteredModels = availableModels.filter(m => !hiddenProviders.includes(providerByModel[m.model]));
+  const filteredModels = availableModels.filter(m =>
+    !hiddenProviders.includes(providerByModel[m.model])
+  );
 
   if (loading) {
     return (
@@ -140,8 +146,16 @@ function SettingsPage() {
         <Alert>
           <AlertTitle>Desbloqueie recursos avançados</AlertTitle>
           <AlertDescription>
-            Faça upgrade para o NeonPro Pro e acesse todos os recursos avançados incluindo modelos de IA premium.
-            {' '}<a href={upgradeUrl} target='_blank' rel='noreferrer' className='underline text-primary'>Fazer upgrade</a>
+            Faça upgrade para o NeonPro Pro e acesse todos os recursos avançados incluindo modelos
+            de IA premium.{' '}
+            <a
+              href={upgradeUrl}
+              target='_blank'
+              rel='noreferrer'
+              className='underline text-primary'
+            >
+              Fazer upgrade
+            </a>
           </AlertDescription>
         </Alert>
       )}
@@ -204,14 +218,15 @@ function SettingsPage() {
               <Label>Modelo Padrão</Label>
               <div className='grid gap-2'>
                 {filteredModels.slice(0, 3).map(model => (
-                  <div key={model.model} className='flex items-center justify-between p-2 border rounded-md'>
+                  <div
+                    key={model.model}
+                    className='flex items-center justify-between p-2 border rounded-md'
+                  >
                     <div className='flex items-center gap-2'>
                       <span className='text-sm font-medium'>{model.label}</span>
-                      {model.requiresPro ? (
-                        <Badge variant='secondary' className='text-xs'>Pro</Badge>
-                      ) : (
-                        <Badge variant='outline' className='text-xs'>Grátis</Badge>
-                      )}
+                      {model.requiresPro
+                        ? <Badge variant='secondary' className='text-xs'>Pro</Badge>
+                        : <Badge variant='outline' className='text-xs'>Grátis</Badge>}
                     </div>
                     <Button
                       size='sm'
@@ -236,15 +251,15 @@ function SettingsPage() {
                 {(['openai', 'google', 'anthropic'] as ProviderKey[]).map(pk => (
                   <div key={pk} className='flex items-center justify-between p-2 border rounded-md'>
                     <div className='flex items-center gap-2'>
-                      {hiddenProviders.includes(pk) ? 
-                        <EyeOff className='h-4 w-4 text-muted-foreground' /> : 
-                        <Eye className='h-4 w-4 text-muted-foreground' />
-                      }
+                      {hiddenProviders.includes(pk)
+                        ? <EyeOff className='h-4 w-4 text-muted-foreground' />
+                        : <Eye className='h-4 w-4 text-muted-foreground' />}
                       <span className='text-sm capitalize'>{pk}</span>
                     </div>
-                    <Switch 
-                      checked={!hiddenProviders.includes(pk)} 
-                      onCheckedChange={() => toggleProvider(pk)} 
+                    <Switch
+                      checked={!hiddenProviders.includes(pk)}
+                      onCheckedChange={() =>
+                        toggleProvider(pk)}
                     />
                   </div>
                 ))}
@@ -376,7 +391,8 @@ function SettingsPage() {
             </div>
 
             <div className='text-sm text-muted-foreground border-t pt-4'>
-              Seus dados são protegidos conforme a LGPD. O uso do chat AI segue as políticas de privacidade e consentimento.
+              Seus dados são protegidos conforme a LGPD. O uso do chat AI segue as políticas de
+              privacidade e consentimento.
             </div>
           </CardContent>
         </Card>

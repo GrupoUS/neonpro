@@ -1,5 +1,5 @@
-import React from 'react';
 import { useI18n } from '@/i18n/i18n';
+import React from 'react';
 
 export type ContextInputProps = {
   value: string;
@@ -17,7 +17,7 @@ export function ContextInput({ value, onChange }: ContextInputProps) {
         placeholder={t('chat.optional_context')}
         aria-label={t('chat.optional_context')}
         value={text}
-        onChange={(e) => {
+        onChange={e => {
           const v = e.target.value;
           setText(v);
           onChange(v);
@@ -25,10 +25,10 @@ export function ContextInput({ value, onChange }: ContextInputProps) {
       />
       <label>
         <input
-          type="checkbox"
+          type='checkbox'
           aria-label={t('chat.use_once')}
           checked={nextOnly}
-          onChange={(e) => {
+          onChange={e => {
             const checked = e.target.checked;
             setNextOnly(checked);
             onChange(value);

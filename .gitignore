@@ -115,6 +115,7 @@ id_ed25519*
 **/.turbo/
 .turbo
 **/.turbo
+.specify/
 
 # Workspace and package manager
 node_modules/

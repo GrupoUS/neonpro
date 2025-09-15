@@ -120,9 +120,14 @@ class AnalyticsService {
       if (error) throw error;
 
       const totalAppointments = appointments?.length || 0;
-      const completedAppointments = (appointments as any[])?.filter((a: any) => a.status === 'completed').length || 0;
-      const cancelledAppointments = (appointments as any[])?.filter((a: any) => a.status === 'cancelled').length || 0;
-      const noShowAppointments = (appointments as any[])?.filter((a: any) => a.status === 'no_show').length || 0;
+      const completedAppointments = (appointments as any[])?.filter((a: any) =>
+        a.status === 'completed'
+      ).length || 0;
+      const cancelledAppointments = (appointments as any[])?.filter((a: any) =>
+        a.status === 'cancelled'
+      ).length || 0;
+      const noShowAppointments =
+        (appointments as any[])?.filter((a: any) => a.status === 'no_show').length || 0;
 
       return {
         totalAppointments,
@@ -171,7 +176,6 @@ class AnalyticsService {
           service_types!inner(id, name, price),
           professionals!inner(id, full_name)
         `)
-
         .eq('clinic_id' as any, clinicId as any)
         .eq('status', 'completed')
         .gte('start_time', dateRange.startDate.toISOString())
@@ -179,10 +183,11 @@ class AnalyticsService {
 
       if (error) throw error;
 
-      const totalRevenue = (appointments as Array<{ total_amount: number | null }> | undefined)?.reduce(
-        (sum: number, apt) => sum + (apt.total_amount || 0),
-        0,
-      ) || 0;
+      const totalRevenue =
+        (appointments as Array<{ total_amount: number | null }> | undefined)?.reduce(
+          (sum: number, apt) => sum + (apt.total_amount || 0),
+          0,
+        ) || 0;
       const averageTicket = appointments?.length ? totalRevenue / appointments.length : 0;
 
       // Revenue by service
@@ -306,7 +311,6 @@ class AnalyticsService {
           status,
           patients!inner(full_name)
         `)
-
         .eq('clinic_id' as any, clinicId as any)
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
@@ -421,7 +425,6 @@ class AnalyticsService {
           service_types!inner(name),
           professionals!inner(full_name)
         `)
-
         .eq('clinic_id' as any, clinicId as any)
         .gte('start_time', dateRange.startDate.toISOString())
         .lte('start_time', dateRange.endDate.toISOString());
@@ -483,7 +486,6 @@ class AnalyticsService {
           start_time,
           service_types!inner(name)
         `)
-
         .eq('clinic_id' as any, clinicId as any)
         .eq('status', 'completed')
         .gte('start_time', dateRange.startDate.toISOString())

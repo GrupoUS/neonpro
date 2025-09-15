@@ -1,18 +1,26 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Use existing prompt from UI lib
 import { AIPrompt } from '@/components/ui/ai-chat';
 
 // Mock useAuth and subscription behavior to avoid network/query deps
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => ({ user: { id: 'u1' } }) }));
-vi.mock('@/integrations/supabase/client', () => ({ supabase: { channel: () => ({ on: () => ({ on: () => ({ subscribe: () => ({}) }) }), }), removeChannel: () => {} } }));
+vi.mock(
+  '@/integrations/supabase/client',
+  () => ({
+    supabase: {
+      channel: () => ({ on: () => ({ on: () => ({ subscribe: () => ({}) }) }) }),
+      removeChannel: () => {},
+    },
+  }),
+);
 vi.mock('@/lib/subscription/subscription-service', () => ({
   getUserSubscription: async () => ({ status: 'free', plan: 'free' }),
   getAvailableModels: () => [],
-  getModelsForChat: () => ([{ value: 'gpt-4o-mini', label: 'GPT-4o Mini' }]),
+  getModelsForChat: () => [{ value: 'gpt-4o-mini', label: 'GPT-4o Mini' }],
   hasModelAccess: () => true,
 }));
 
@@ -24,7 +32,7 @@ function wrapper(children: React.ReactNode) {
 describe('Prompt Input (T014)', () => {
   test('Enter submits, Shift+Enter inserts newline, and empty is invalid', async () => {
     const onSubmit = vi.fn();
-    render(wrapper(<AIPrompt onSubmit={onSubmit} placeholder="Pergunte..." />));
+    render(wrapper(<AIPrompt onSubmit={onSubmit} placeholder='Pergunte...' />));
 
     const textarea = screen.getByPlaceholderText('Pergunte...') as HTMLTextAreaElement;
 

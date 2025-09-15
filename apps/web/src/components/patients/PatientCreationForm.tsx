@@ -6,14 +6,14 @@ import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Textarea } from '@neonpro/ui';
 import {
+  DialogFooter,
   SmoothDrawer as Dialog,
   SmoothDrawerContent as DialogContent,
   SmoothDrawerDescription as DialogDescription,
   SmoothDrawerHeader as DialogHeader,
   SmoothDrawerTitle as DialogTitle,
-  DialogFooter,
 } from '@neonpro/ui';
-import { Loader2, User, Phone, CreditCard, FileText } from 'lucide-react';
+import { CreditCard, FileText, Loader2, Phone, User } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -74,10 +74,10 @@ export function PatientCreationForm({
   const validateCPF = (cpf: string): boolean => {
     const cleanCPF = cpf.replace(/\D/g, '');
     if (cleanCPF.length !== 11) return false;
-    
+
     // Check for repeated digits
     if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
-    
+
     // Validate CPF algorithm
     let sum = 0;
     for (let i = 0; i < 9; i++) {
@@ -86,7 +86,7 @@ export function PatientCreationForm({
     let remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
-    
+
     sum = 0;
     for (let i = 0; i < 10; i++) {
       sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
@@ -94,7 +94,7 @@ export function PatientCreationForm({
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
-    
+
     return true;
   };
 
@@ -148,7 +148,7 @@ export function PatientCreationForm({
 
   const handleInputChange = (field: keyof PatientFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -237,7 +237,7 @@ export function PatientCreationForm({
               <User className='h-4 w-4' />
               Informações Básicas
             </h4>
-            
+
             <div className='grid grid-cols-1 gap-4'>
               <div>
                 <Label htmlFor='fullName'>Nome Completo *</Label>
@@ -264,7 +264,7 @@ export function PatientCreationForm({
               <Phone className='h-4 w-4' />
               Informações de Contato
             </h4>
-            
+
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
                 <Label htmlFor='phone'>Telefone *</Label>
@@ -312,7 +312,7 @@ export function PatientCreationForm({
               <CreditCard className='h-4 w-4' />
               Documentos e Endereço
             </h4>
-            
+
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
                 <Label htmlFor='cpf'>CPF</Label>
@@ -353,7 +353,7 @@ export function PatientCreationForm({
               <FileText className='h-4 w-4' />
               Observações Médicas
             </h4>
-            
+
             <div>
               <Label htmlFor='medicalNotes'>Observações</Label>
               <Textarea

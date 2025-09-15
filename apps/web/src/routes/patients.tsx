@@ -8,6 +8,7 @@ import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { PatientDataTable } from '@/components/patients/PatientDataTable';
 import { useAuth } from '@/hooks/useAuth';
 import { usePatientStats } from '@/hooks/usePatientStats';
+import { testSupabaseConnection } from '@/utils/supabase-test';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
@@ -16,7 +17,6 @@ import { Activity, AlertCircle, Calendar, UserPlus, Users } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { testSupabaseConnection } from '@/utils/supabase-test';
 
 // Type-safe search params for filtering and pagination
 const patientsSearchSchema = z.object({
@@ -108,7 +108,7 @@ function PatientsPage() {
         setConnectionTest({ success: false, error: 'Test failed to run' });
       }
     };
-    
+
     runConnectionTest();
   }, []);
 
@@ -173,7 +173,11 @@ function PatientsPage() {
 
       {/* Debug connection test info */}
       {connectionTest && (
-        <Card className={connectionTest.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}>
+        <Card
+          className={connectionTest.success
+            ? 'bg-green-50 border-green-200'
+            : 'bg-red-50 border-red-200'}
+        >
           <CardHeader>
             <CardTitle className='text-sm flex items-center gap-2'>
               🔧 Diagnóstico de Conexão Supabase
@@ -181,16 +185,30 @@ function PatientsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className='text-xs space-y-1'>
-            <p><strong>Status:</strong> {connectionTest.success ? 'Sucesso' : 'Falha'}</p>
-            {connectionTest.error && <p><strong>Erro:</strong> {connectionTest.error}</p>}
+            <p>
+              <strong>Status:</strong> {connectionTest.success ? 'Sucesso' : 'Falha'}
+            </p>
+            {connectionTest.error && (
+              <p>
+                <strong>Erro:</strong> {connectionTest.error}
+              </p>
+            )}
             {connectionTest.session !== undefined && (
-              <p><strong>Autenticado:</strong> {connectionTest.session ? 'Sim' : 'Não'}</p>
+              <p>
+                <strong>Autenticado:</strong> {connectionTest.session ? 'Sim' : 'Não'}
+              </p>
             )}
             {connectionTest.basicConnectionWorking !== undefined && (
-              <p><strong>Conexão Básica:</strong> {connectionTest.basicConnectionWorking ? 'OK' : 'Falha'}</p>
+              <p>
+                <strong>Conexão Básica:</strong>{' '}
+                {connectionTest.basicConnectionWorking ? 'OK' : 'Falha'}
+              </p>
             )}
             {connectionTest.patientsAccessWorking !== undefined && (
-              <p><strong>Acesso Pacientes:</strong> {connectionTest.patientsAccessWorking ? 'OK' : 'Falha'}</p>
+              <p>
+                <strong>Acesso Pacientes:</strong>{' '}
+                {connectionTest.patientsAccessWorking ? 'OK' : 'Falha'}
+              </p>
             )}
           </CardContent>
         </Card>
