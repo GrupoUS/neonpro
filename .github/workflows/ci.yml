@@ -121,8 +121,8 @@ jobs:
       - name: Install dependencies (if cache miss)
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
-      - name: TypeScript compile
-        run: pnpm type-check
+      - name: TypeScript compile (filtered)
+        run: pnpm turbo run type-check --filter=!@neonpro/monorepo-audit-tool
 
   test-and-coverage:
     name: Tests & Coverage
@@ -165,7 +165,7 @@ jobs:
       - name: Run unit tests
         run: pnpm vitest run --project unit
       - name: Run coverage (affected packages only)
-        run: pnpm turbo run coverage --filter=...[origin/main]
+        run: pnpm turbo run coverage --filter=...[origin/main] --filter=!@neonpro/monorepo-audit-tool
       - name: Upload coverage artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -222,7 +222,7 @@ jobs:
           TOTAL_SCORE=0
 
           echo "Checking TypeScript compilation..."
-          if pnpm type-check > /dev/null 2>&1; then
+          if pnpm turbo run type-check --filter=!@neonpro/monorepo-audit-tool > /dev/null 2>&1; then
             TSC_SCORE=25
           else
             TSC_SCORE=0

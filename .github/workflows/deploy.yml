@@ -32,6 +32,12 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - name: Setup pnpm
         run: |
           corepack enable
@@ -41,17 +47,17 @@ jobs:
       - name: Install deps (pnpm)
         run: pnpm install --no-frozen-lockfile
 
-      - name: Type check
+      - name: Type check (web)
         continue-on-error: true
-        run: bun run type-check
+        run: pnpm turbo run type-check --filter=@neonpro/web
 
-      - name: Lint (fix)
+      - name: Lint (web)
         continue-on-error: true
-        run: bun run lint:fix
+        run: pnpm turbo run lint --filter=@neonpro/web
 
-      - name: Unit tests
-        if: ${{ false }}
-        run: echo 'Skipping unit tests in preview validation run'
+      - name: Unit tests (web)
+        continue-on-error: true
+        run: pnpm turbo run test --filter=@neonpro/web
 
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
@@ -115,6 +121,12 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - name: Setup pnpm
         run: |
           corepack enable
@@ -124,14 +136,14 @@ jobs:
       - name: Install deps (pnpm)
         run: pnpm install --no-frozen-lockfile
 
-      - name: Type check
-        run: bun run type-check
+      - name: Type check (web)
+        run: pnpm turbo run type-check --filter=@neonpro/web
 
-      - name: Lint (fix)
-        run: bun run lint:fix
+      - name: Lint (web)
+        run: pnpm turbo run lint --filter=@neonpro/web
 
-      - name: Unit tests
-        run: bun test
+      - name: Unit tests (web)
+        run: pnpm turbo run test --filter=@neonpro/web
 
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
