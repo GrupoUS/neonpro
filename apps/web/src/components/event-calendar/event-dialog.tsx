@@ -12,7 +12,7 @@ import {
   EndHour,
   StartHour,
 } from "./constants"
-import { cn } from "../../lib/utils"
+import { cn } from "@/lib/utils"
 import { Button } from "@neonpro/ui"
 import { Calendar } from "@neonpro/ui"
 import { Checkbox } from "@neonpro/ui"

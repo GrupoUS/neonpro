@@ -32,3 +32,10 @@ export const signInWithProvider = async (provider: 'google') => {
 export const resetPassword = async (email: string) => {
   return supabase.auth.resetPasswordForEmail(email);
 };
+
+// Additional auth helpers for backward compatibility
+export const signUp = signUpWithEmail;
+export const signIn = signInWithEmail;
+export const signOut = () => supabase.auth.signOut();
+export const getCurrentUser = () => supabase.auth.getUser();
+export const getCurrentSession = () => supabase.auth.getSession();

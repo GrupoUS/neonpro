@@ -54,7 +54,7 @@ export function ServerErrorPage({ error, errorId }: ServerErrorPageProps) {
               ID: {displayErrorId}
             </p>
 
-            {import.meta.env.DEV && error && (
+            {import.meta.env?.NODE_ENV === 'development' && error && (
               <details className='mt-4 text-left'>
                 <summary className='cursor-pointer text-red-600 hover:text-red-800'>
                   Detalhes técnicos (desenvolvimento)
