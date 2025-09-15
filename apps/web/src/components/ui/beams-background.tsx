@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@neonpro/ui";
 import React from 'react';
 
 // Lightweight, CSS-only "Beams" style animated background inspired by KokonutUI

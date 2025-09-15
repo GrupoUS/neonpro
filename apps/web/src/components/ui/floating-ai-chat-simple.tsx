@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from "@neonpro/ui";
 import { Send, Sparkles, X } from 'lucide-react';
 import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import { useEffect, useState } from 'react';
