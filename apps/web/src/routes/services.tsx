@@ -33,8 +33,22 @@ function ServicesPage() {
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
   // Get clinic ID from user
-  const clinicId = user?.user_metadata?.clinic_id || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback clinic ID
+  const clinicId = user?.user_metadata?.clinic_id;
 
+  // If clinicId is missing, show error and prevent data fetch
+  if (!clinicId) {
+    return (
+      <div className='container mx-auto py-8'>
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='text-center text-destructive'>
+              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login novamente.
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   // Fetch services data
   const { data: servicesResponse, isLoading, error } = useServices({
     clinic_id: clinicId,
