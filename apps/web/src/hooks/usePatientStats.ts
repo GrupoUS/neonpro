@@ -86,7 +86,7 @@ export function usePatientStats(clinicId?: string) {
         activePatients,
         newThisMonth,
         upcomingAppointments,
-        appointmentsToday: 0, // Legacy, incluir para compatibilidade
+        appointmentsToday: 0, // Legacy field: included for compatibility with existing consumers. Remove only after all dependencies are updated.
         revenueToday,
       };
     },
