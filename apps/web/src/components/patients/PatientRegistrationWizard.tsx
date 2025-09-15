@@ -1,9 +1,9 @@
 'use client';
 
+import { useFormAutoSave } from '@/hooks/useFormAutoSave';
 import { useCreatePatient } from '@/hooks/usePatients';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -29,7 +29,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Separator,
   Textarea,
 } from '@neonpro/ui';
 import {
@@ -39,13 +38,11 @@ import {
   CreditCard,
   FileText,
   Loader2,
-  Mail,
-  MapPin,
   Phone,
   Shield,
   User,
 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -205,6 +202,46 @@ export function PatientRegistrationWizard({
     mode: 'onChange',
   });
 
+  // Auto-save functionality (FR-004)
+  const autoSave = useFormAutoSave('patient-registration-form');
+
+  // Watch form values for auto-save
+  const formValues = form.watch();
+
+  // Auto-save form data when values change
+  useEffect(() => {
+    if (open) {
+      autoSave.saveFormData(formValues);
+    }
+  }, [formValues, open, autoSave]);
+
+  // Load saved data when dialog opens
+  useEffect(() => {
+    if (open && autoSave.hasSavedData && autoSave.savedData) {
+      // Show recovery option
+      if (
+        autoSave.canRecover && autoSave.recoveryAge && autoSave.recoveryAge < 24 * 60 * 60 * 1000
+      ) {
+        const ageInMinutes = Math.floor(autoSave.recoveryAge / (1000 * 60));
+        toast.info(
+          `Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`,
+          {
+            action: {
+              label: 'Recuperar',
+              onClick: () => {
+                if (autoSave.savedData) {
+                  form.reset(autoSave.savedData as PatientRegistrationData);
+                  toast.success('Dados recuperados com sucesso!');
+                }
+              },
+            },
+            duration: 10000,
+          },
+        );
+      }
+    }
+  }, [open, autoSave, form]);
+
   const currentStepData = STEPS.find(step => step.id === currentStep);
   const progress = (currentStep / STEPS.length) * 100;
 
@@ -213,7 +250,6 @@ export function PatientRegistrationWizard({
     const currentSchema = currentStepData?.schema;
     if (!currentSchema) return false;
 
-    const formData = form.getValues();
     const result = await form.trigger(Object.keys(currentSchema.shape) as any);
 
     if (result && !completedSteps.includes(currentStep)) {
@@ -296,10 +332,11 @@ export function PatientRegistrationWizard({
       onPatientCreated?.(newPatient);
       onOpenChange(false);
 
-      // Reset form
+      // Reset form and clear auto-saved data
       form.reset();
       setCurrentStep(1);
       setCompletedSteps([]);
+      autoSave.clearSavedData();
 
       toast.success('Paciente cadastrado com sucesso!');
     } catch (error) {
@@ -341,7 +378,7 @@ export function PatientRegistrationWizard({
 
         {/* Step Navigation */}
         <div className='flex justify-between items-center py-4 border-b'>
-          {STEPS.map((step, index) => {
+          {STEPS.map((step, _index) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
             const isCompleted = completedSteps.includes(step.id);
@@ -588,7 +625,7 @@ function ContactAddressStep({ form }: { form: any }) {
       } else {
         toast.error('CEP não encontrado');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao buscar CEP');
     } finally {
       setIsLoadingCep(false);
@@ -1169,8 +1206,148 @@ function ConsentStep({ form }: { form: any }) {
           Consentimento LGPD
         </CardTitle>
       </CardHeader>
-      <CardContent className='space-y-4'>
-        {/* Content will be added */}
+      <CardContent className='space-y-6'>
+        <div className='bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
+          <h4 className='text-sm font-medium text-blue-900 dark:text-blue-100 mb-2'>
+            Lei Geral de Proteção de Dados (LGPD)
+          </h4>
+          <p className='text-sm text-blue-800 dark:text-blue-200'>
+            De acordo com a LGPD, precisamos do seu consentimento para coletar, processar e
+            armazenar seus dados pessoais. Você pode retirar seu consentimento a qualquer momento.
+          </p>
+        </div>
+
+        <div className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='dataProcessingConsent'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel className='text-sm font-medium'>
+                    Consentimento para Processamento de Dados *
+                  </FormLabel>
+                  <FormDescription>
+                    Autorizo o processamento dos meus dados pessoais para fins de atendimento
+                    médico, agendamento de consultas e comunicações relacionadas ao tratamento.
+                  </FormDescription>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='marketingConsent'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel className='text-sm font-medium'>
+                    Comunicações de Marketing
+                  </FormLabel>
+                  <FormDescription>
+                    Autorizo o envio de comunicações promocionais, newsletters e informações sobre
+                    novos tratamentos e serviços por email, SMS ou WhatsApp.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='dataSharingConsent'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel className='text-sm font-medium'>
+                    Compartilhamento com Parceiros
+                  </FormLabel>
+                  <FormDescription>
+                    Autorizo o compartilhamento dos meus dados com laboratórios, convênios e outros
+                    profissionais de saúde quando necessário para o tratamento.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='photoVideoConsent'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel className='text-sm font-medium'>
+                    Uso de Imagem
+                  </FormLabel>
+                  <FormDescription>
+                    Autorizo o uso da minha imagem (fotos e vídeos) para fins médicos, documentação
+                    de tratamentos e casos clínicos.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='researchConsent'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel className='text-sm font-medium'>
+                    Pesquisa e Estudos
+                  </FormLabel>
+                  <FormDescription>
+                    Autorizo o uso dos meus dados anonimizados para pesquisas científicas, estudos
+                    estatísticos e melhoria dos serviços oferecidos.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className='bg-amber-50 dark:bg-amber-950 p-4 rounded-lg border border-amber-200 dark:border-amber-800'>
+          <p className='text-sm text-amber-800 dark:text-amber-200'>
+            <strong>Importante:</strong>{' '}
+            Você pode retirar seu consentimento a qualquer momento entrando em contato conosco.
+            Alguns serviços podem ser limitados caso você retire consentimentos essenciais para o
+            atendimento.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
