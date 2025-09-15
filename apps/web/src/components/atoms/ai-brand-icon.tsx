@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { Sparkles } from 'lucide-react'; // no title prop support on Lucide icons
 import { useState } from 'react'; // React import not needed for JSX (react-jsx)
 

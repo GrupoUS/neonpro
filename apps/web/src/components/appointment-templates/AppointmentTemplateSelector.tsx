@@ -7,16 +7,16 @@ import {
   useAppointmentTemplates,
   useDefaultAppointmentTemplates,
 } from '@/hooks/useAppointmentTemplates';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import {
   APPOINTMENT_TEMPLATE_CATEGORY_COLORS,
   APPOINTMENT_TEMPLATE_CATEGORY_LABELS,
   type AppointmentTemplate,
   type AppointmentTemplateCategory,
 } from '@/types/appointment-templates';
-import { Button, Card, CardContent, Badge, Input, ScrollArea } from '@neonpro/ui';
-import { Clock, DollarSign, Search, Star } from 'lucide-react';
+import { Badge, Button, Card, CardContent, Input, ScrollArea } from '@neonpro/ui';
 import { formatBRL } from '@neonpro/utils';
+import { Clock, DollarSign, Search, Star } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface AppointmentTemplateSelectorProps {
@@ -130,17 +130,39 @@ export function AppointmentTemplateSelector({
       </div>
 
       <div className='mt-4'>
-          <ScrollArea className='h-[400px]'>
-            <div className='grid gap-3'>
-              {/* Default Templates Section */}
-              {selectedCategory === 'all' && defaultTemplates && defaultTemplates.length > 0 && (
-                <div className='space-y-2'>
-                  <div className='flex items-center gap-2'>
-                    <Star className='h-4 w-4 text-yellow-500' />
-                    <h3 className='text-sm font-medium'>Templates Recomendados</h3>
-                  </div>
-                  <div className='grid gap-2'>
-                    {defaultTemplates.map(template => (
+        <ScrollArea className='h-[400px]'>
+          <div className='grid gap-3'>
+            {/* Default Templates Section */}
+            {selectedCategory === 'all' && defaultTemplates && defaultTemplates.length > 0 && (
+              <div className='space-y-2'>
+                <div className='flex items-center gap-2'>
+                  <Star className='h-4 w-4 text-yellow-500' />
+                  <h3 className='text-sm font-medium'>Templates Recomendados</h3>
+                </div>
+                <div className='grid gap-2'>
+                  {defaultTemplates.map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      isSelected={selectedTemplateId === template.id}
+                      onSelect={() => onSelectTemplate(template)}
+                      formatPrice={formatPrice}
+                      formatDuration={formatDuration}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* All Templates */}
+            <div className='space-y-2'>
+              {selectedCategory === 'all' && (
+                <h3 className='text-sm font-medium'>Todos os Templates</h3>
+              )}
+              <div className='grid gap-2'>
+                {filteredTemplates.length > 0
+                  ? (
+                    filteredTemplates.map(template => (
                       <TemplateCard
                         key={template.id}
                         template={template}
@@ -149,41 +171,19 @@ export function AppointmentTemplateSelector({
                         formatPrice={formatPrice}
                         formatDuration={formatDuration}
                       />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* All Templates */}
-              <div className='space-y-2'>
-                {selectedCategory === 'all' && (
-                  <h3 className='text-sm font-medium'>Todos os Templates</h3>
-                )}
-                <div className='grid gap-2'>
-                  {filteredTemplates.length > 0
-                    ? (
-                      filteredTemplates.map(template => (
-                        <TemplateCard
-                          key={template.id}
-                          template={template}
-                          isSelected={selectedTemplateId === template.id}
-                          onSelect={() => onSelectTemplate(template)}
-                          formatPrice={formatPrice}
-                          formatDuration={formatDuration}
-                        />
-                      ))
-                    )
-                    : (
-                      <div className='text-center py-8 text-muted-foreground'>
-                        <p>Nenhum template encontrado</p>
-                        {searchQuery && <p className='text-sm'>Tente ajustar sua busca</p>}
-                      </div>
-                    )}
-                </div>
+                    ))
+                  )
+                  : (
+                    <div className='text-center py-8 text-muted-foreground'>
+                      <p>Nenhum template encontrado</p>
+                      {searchQuery && <p className='text-sm'>Tente ajustar sua busca</p>}
+                    </div>
+                  )}
               </div>
             </div>
-          </ScrollArea>
-        </div>
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   );
 }

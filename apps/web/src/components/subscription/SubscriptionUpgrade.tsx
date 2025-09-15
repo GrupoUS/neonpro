@@ -5,7 +5,7 @@
 
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { Brain, Check, Crown, ExternalLink, Shield, Zap } from 'lucide-react';
 import { useState } from 'react';

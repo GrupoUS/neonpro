@@ -8,7 +8,7 @@ import {
   useInitializeDefaultCategories,
   useServiceCategories,
 } from '@/hooks/useServiceCategories';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import type { ServiceCategory } from '@/types/service-categories';
 import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';

@@ -8,7 +8,7 @@ import {
   useProfessionalServicesDetailed,
   useSetPrimaryProfessional,
 } from '@/hooks/useProfessionalServices';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import {
   getProficiencyColor,
   getProficiencyLabel,

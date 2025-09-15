@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { useThemeBridge } from '@neonpro/ui/theme';
 import { Moon, SunDim } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

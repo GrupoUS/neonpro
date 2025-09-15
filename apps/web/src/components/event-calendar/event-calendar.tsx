@@ -16,7 +16,7 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from 'lu
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import {
   DropdownMenu,

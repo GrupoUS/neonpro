@@ -1,11 +1,11 @@
 'use client';
 
-import { cn } from '@/lib/utils.ts';
-import { Send, Sparkles, X } from 'lucide-react';
 import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
-import { useEffect, useState } from 'react';
-import { useAIChat } from '@/hooks/useAIChat';
 import type { ChatMessage } from '@/components/ui/ai-chat/types';
+import { useAIChat } from '@/hooks/useAIChat';
+import { cn } from '@/lib/utils';
+import { Send, Sparkles, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
   className?: string;
@@ -18,7 +18,6 @@ interface FloatingAIChatSimpleProps {
 }
 
 // Simplified floating chat that now uses the real AI hook
-
 
 /**
  * Simplified Floating AI Chat Component for NeonPro
@@ -188,9 +187,7 @@ export default function FloatingAIChatSimple({
             <div className='flex-1 p-4 overflow-y-auto space-y-4'>
               {messages.length === 0 && (
                 <div className='text-center text-gray-500 py-8'>
-                  {error && (
-                    <div className='mb-2 text-sm text-red-600'>Erro: {error}</div>
-                  )}
+                  {error && <div className='mb-2 text-sm text-red-600'>Erro: {error}</div>}
                   <Sparkles className='w-12 h-12 mx-auto mb-4 text-[#AC9469]' />
                   <p className='text-sm'>
                     Olá! Sou o assistente virtual da NeonPro.<br />
@@ -261,21 +258,26 @@ export default function FloatingAIChatSimple({
               </div>
 
               {/* Suggestions */}
-              {suggestionsLoading ? (
-                <div className='text-xs text-gray-500'>Buscando sugestões...</div>
-              ) : searchSuggestions?.length ? (
-                <div className='flex flex-wrap gap-2'>
-                  {searchSuggestions.slice(0, 4).map(s => (
-                    <button
-                      key={s}
-                      onClick={() => { setInputValue(s); setTimeout(() => handleSendMessage(), 0); }}
-                      className='text-xs px-2 py-1 rounded-full border border-[#D2D0C8] text-[#112031] hover:bg-[#F6F5F2]'
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
+              {suggestionsLoading
+                ? <div className='text-xs text-gray-500'>Buscando sugestões...</div>
+                : searchSuggestions?.length
+                ? (
+                  <div className='flex flex-wrap gap-2'>
+                    {searchSuggestions.slice(0, 4).map(s => (
+                      <button
+                        key={s}
+                        onClick={() => {
+                          setInputValue(s);
+                          setTimeout(() => handleSendMessage(), 0);
+                        }}
+                        className='text-xs px-2 py-1 rounded-full border border-[#D2D0C8] text-[#112031] hover:bg-[#F6F5F2]'
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )
+                : null}
 
               {/* LGPD Compliance Notice */}
               {lgpdCompliant && (

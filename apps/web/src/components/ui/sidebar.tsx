@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 import { IconMenu2, IconX } from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';

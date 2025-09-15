@@ -3,10 +3,10 @@
  * Displays current subscription status and available models
  */
 
-import { Badge } from '@neonpro/ui';
-import { Crown, Clock, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
+import { Badge } from '@neonpro/ui';
+import { AlertTriangle, CheckCircle, Clock, Crown, XCircle } from 'lucide-react';
 import SubscriptionUpgrade from './SubscriptionUpgrade';
 
 interface SubscriptionStatusProps {
@@ -16,20 +16,20 @@ interface SubscriptionStatusProps {
   variant?: 'compact' | 'detailed';
 }
 
-export default function SubscriptionStatus({ 
-  className, 
+export default function SubscriptionStatus({
+  className,
   showUpgrade = true,
   showModels = true,
-  variant = 'detailed'
+  variant = 'detailed',
 }: SubscriptionStatusProps) {
-  const { 
-    subscriptionInfo, 
-    hasPro, 
-    isOnTrial, 
+  const {
+    subscriptionInfo,
+    hasPro,
+    isOnTrial,
     isExpired,
     trialDaysRemaining,
     availableModels,
-    isLoading 
+    isLoading,
   } = useSubscription();
 
   if (isLoading) {
@@ -134,41 +134,43 @@ export default function SubscriptionStatus({
         <div className='bg-white rounded-lg border border-[#D2D0C8] p-4'>
           <h4 className='text-md font-semibold text-[#112031] mb-3'>Modelos de IA</h4>
           <div className='space-y-2'>
-            {availableModels.map((model) => (
-              <div 
-                key={model.model} 
+            {availableModels.map(model => (
+              <div
+                key={model.model}
                 className={cn(
                   'flex items-center justify-between p-2 rounded-lg border',
-                  model.available 
-                    ? 'bg-green-50 border-green-200' 
-                    : 'bg-gray-50 border-gray-200'
+                  model.available
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-gray-50 border-gray-200',
                 )}
               >
                 <div className='flex items-center space-x-2'>
-                  {model.available ? (
-                    <CheckCircle className='w-4 h-4 text-green-600' />
-                  ) : (
-                    <XCircle className='w-4 h-4 text-gray-400' />
-                  )}
+                  {model.available
+                    ? <CheckCircle className='w-4 h-4 text-green-600' />
+                    : <XCircle className='w-4 h-4 text-gray-400' />}
                   <div>
-                    <span className={cn(
-                      'text-sm font-medium',
-                      model.available ? 'text-green-800' : 'text-gray-600'
-                    )}>
+                    <span
+                      className={cn(
+                        'text-sm font-medium',
+                        model.available ? 'text-green-800' : 'text-gray-600',
+                      )}
+                    >
                       {model.label}
                     </span>
                     {model.description && (
-                      <p className={cn(
-                        'text-xs',
-                        model.available ? 'text-green-600' : 'text-gray-500'
-                      )}>
+                      <p
+                        className={cn(
+                          'text-xs',
+                          model.available ? 'text-green-600' : 'text-gray-500',
+                        )}
+                      >
                         {model.description}
                       </p>
                     )}
                   </div>
                 </div>
                 {model.requiresPro && !model.available && (
-                  <Badge variant="outline" className='text-xs'>
+                  <Badge variant='outline' className='text-xs'>
                     <Crown className='w-3 h-3 mr-1' />
                     Pro
                   </Badge>
@@ -180,9 +182,7 @@ export default function SubscriptionStatus({
       )}
 
       {/* Upgrade Component */}
-      {showUpgrade && !hasPro && (
-        <SubscriptionUpgrade variant="card" />
-      )}
+      {showUpgrade && !hasPro && <SubscriptionUpgrade variant='card' />}
     </div>
   );
 }
