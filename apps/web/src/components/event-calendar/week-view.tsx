@@ -29,7 +29,7 @@ import {
   EndHour,
   StartHour,
 } from "./constants"
-import { cn } from "@/lib/utils"
+import { cn } from "@neonpro/ui"
 
 interface WeekViewProps {
   currentDate: Date

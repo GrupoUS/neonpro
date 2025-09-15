@@ -58,7 +58,7 @@ import {
   type ServiceTemplateType 
 } from '@/types/service-templates';
 import type { ServiceTemplateWithItems } from '@/types/service-templates';
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 
 interface ServiceTemplateManagerProps {
   clinicId: string;

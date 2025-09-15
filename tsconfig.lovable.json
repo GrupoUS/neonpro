@@ -42,6 +42,8 @@
     "apps/api.disabled/**/*",
     "apps/api/**/*",
     "**/*.test.*",
-    "**/*.spec.*"
+    "**/*.spec.*",
+    "apps/web/e2e/**/*",
+    "apps/web/playwright.config.ts"
   ]
 }

@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 import { useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import {
   Badge,
   Button,
