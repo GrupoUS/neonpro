@@ -59,6 +59,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "apps/api/**/*",
     "src/components/ui/_deprecated/**",
     "src/components/examples/**",
     "src/**/*.test.ts",

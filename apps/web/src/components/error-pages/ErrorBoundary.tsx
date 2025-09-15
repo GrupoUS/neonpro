@@ -39,13 +39,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to console in development
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
 
     // In production, you would send this to your error reporting service
     // Example: Sentry, LogRocket, etc.
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === 'production') {
       // TODO: Send to error reporting service
       console.error('Production error caught:', {
         error: error.message,
@@ -86,11 +86,11 @@ export function useErrorHandler() {
       Math.random().toString(36).substr(2, 5).toUpperCase()
     }`;
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       console.error('Error caught by useErrorHandler:', error, errorInfo);
     }
 
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === 'production') {
       // TODO: Send to error reporting service
       console.error('Production error:', {
         error: error.message,
