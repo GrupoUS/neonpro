@@ -83,7 +83,7 @@ export function AuthForm(
     try {
       setIsLoading(true);
       setError(null);
-      const { error } = await signInWithEmail(data.email, data.password);
+      const { error } = await signInWithEmail(data.email as string, data.password as string);
       if (error) return setError(error.message);
       router.navigate({ to: onSuccessRedirectTo });
     } catch (e: any) {

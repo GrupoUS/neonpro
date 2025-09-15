@@ -265,7 +265,7 @@ export default function FloatingAIChatSimple({
                 <div className='text-xs text-gray-500'>Buscando sugestões...</div>
               ) : searchSuggestions?.length ? (
                 <div className='flex flex-wrap gap-2'>
-                  {searchSuggestions.slice(0, 4).map(s => (
+                  {searchSuggestions.slice(0, 4).map((s: string) => (
                     <button
                       key={s}
                       onClick={() => { setInputValue(s); setTimeout(() => handleSendMessage(), 0); }}

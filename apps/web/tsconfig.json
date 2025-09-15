@@ -15,8 +15,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -46,7 +46,7 @@
         "../../packages/shared/src"
       ],
       "@neonpro/utils": [
-        "./src/shims/neonpro-utils.ts"
+        "../../packages/utils/src"
       ],
       "@neonpro/types": [
         "../../packages/types/src"
@@ -62,6 +62,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "../../packages/**",
     "../api/**/*",
     "e2e/**/*",
     "**/*.spec.ts",

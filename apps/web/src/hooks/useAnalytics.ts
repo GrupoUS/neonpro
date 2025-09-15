@@ -12,7 +12,7 @@ export function useAnalytics() {
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent
     if (hasConsent('analytics')) {
-      analytics.initialize().catch(error => {
+      analytics.initialize().catch((error: Error) => {
         console.error('Failed to initialize analytics:', error);
       });
     }
@@ -25,7 +25,7 @@ export function useAnalytics() {
 
       if (category === 'analytics') {
         if (granted) {
-          analytics.initialize().catch(error => {
+          analytics.initialize().catch((error: Error) => {
             console.error('Failed to initialize analytics after consent granted:', error);
           });
         } else {

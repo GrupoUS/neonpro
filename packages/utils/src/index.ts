@@ -1,8 +1,13 @@
 // Utils package exports
 
+// Currency utilities (main exports)
+export * from './lib/currency/brl';
+
+// Additional re-exports for direct access
+export { formatBRL, maskBRLInput, parseBRLInput } from './lib/currency/brl';
+
 // UI utilities  
 export * from './lib/utils';
-export * from './lib/currency/brl';
 
 // Logging utilities  
 export * from './logging/logger';
