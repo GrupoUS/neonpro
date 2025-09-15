@@ -27,9 +27,23 @@ import { getSiteUrl } from '@/lib/site-url';
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+const SUPABASE_URL_RESOLVED = IS_TEST
+  ? (SUPABASE_URL || 'http://localhost:54321')
+  : SUPABASE_URL;
+
+const SUPABASE_KEY_RESOLVED = IS_TEST
+  ? (SUPABASE_PUBLISHABLE_KEY || 'test-anon-key')
+  : SUPABASE_PUBLISHABLE_KEY;
+
+if (!IS_TEST && (!SUPABASE_URL_RESOLVED || !SUPABASE_KEY_RESOLVED)) {
+  throw new Error(
+    'Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or NEXT_PUBLIC_ equivalents) in Vercel envs.'
+  );
+}
+
 export const supabase: SupabaseClient<Database> = createClient<Database>(
-  SUPABASE_URL || 'http://localhost:54321',
-  SUPABASE_PUBLISHABLE_KEY || 'test-anon-key',
+  SUPABASE_URL_RESOLVED as string,
+  SUPABASE_KEY_RESOLVED as string,
   {
     auth: {
       storage: (typeof globalThis !== 'undefined' && 'localStorage' in globalThis)

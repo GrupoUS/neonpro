@@ -50,6 +50,8 @@ export interface EventCalendarProps {
   initialView?: CalendarView;
   // Trigger parent-controlled client consultation flow
   onNewConsultation?: () => void;
+  // Hide header controls (date nav, view switch, new buttons)
+  hideHeader?: boolean;
 }
 
 export function EventCalendar({
@@ -60,6 +62,7 @@ export function EventCalendar({
   className,
   initialView = 'month',
   onNewConsultation,
+  hideHeader = false,
 }: EventCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>(initialView);
@@ -362,111 +365,113 @@ export function EventCalendar({
         event. Press Escape to close dialogs. Use Tab to navigate between calendar controls.
       </div>
       <CalendarDndProvider onEventUpdate={handleEventUpdate}>
-        <div
-          className={cn(
-            'flex items-center justify-between p-2 sm:p-4',
-            className,
-          )}
-        >
-          <div className='flex items-center gap-1 sm:gap-4'>
-            <Button
-              variant='outline'
-              className='max-[479px]:aspect-square max-[479px]:p-0!'
-              onClick={handleToday}
-              aria-label="Go to today's date"
-              title="Go to today's date"
-            >
-              <RiCalendarCheckLine
-                className='min-[480px]:hidden'
-                size={16}
-                aria-hidden='true'
-              />
-              <span className='max-[479px]:sr-only'>Today</span>
-            </Button>
-            <div className='flex items-center sm:gap-2'>
+        {!hideHeader && (
+          <div
+            className={cn(
+              'flex items-center justify-between p-2 sm:p-4',
+              className,
+            )}
+          >
+            <div className='flex items-center gap-1 sm:gap-4'>
               <Button
-                variant='ghost'
-                size='icon'
-                onClick={handlePrevious}
-                aria-label={`Previous ${view}`}
-                title={`Go to previous ${view}`}
+                variant='outline'
+                className='max-[479px]:aspect-square max-[479px]:p-0!'
+                onClick={handleToday}
+                aria-label="Go to today's date"
+                title="Go to today's date"
               >
-                <ChevronLeftIcon size={16} aria-hidden='true' />
+                <RiCalendarCheckLine
+                  className='min-[480px]:hidden'
+                  size={16}
+                  aria-hidden='true'
+                />
+                <span className='max-[479px]:sr-only'>Today</span>
+              </Button>
+              <div className='flex items-center sm:gap-2'>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={handlePrevious}
+                  aria-label={`Previous ${view}`}
+                  title={`Go to previous ${view}`}
+                >
+                  <ChevronLeftIcon size={16} aria-hidden='true' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={handleNext}
+                  aria-label={`Next ${view}`}
+                  title={`Go to next ${view}`}
+                >
+                  <ChevronRightIcon size={16} aria-hidden='true' />
+                </Button>
+              </div>
+              <h2 className='text-sm font-semibold sm:text-lg md:text-xl'>
+                {viewTitle}
+              </h2>
+            </div>
+            <div className='flex items-center gap-2'>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='gap-1.5 max-[479px]:h-8'>
+                    <span>
+                      <span className='min-[480px]:hidden' aria-hidden='true'>
+                        {view.charAt(0).toUpperCase()}
+                      </span>
+                      <span className='max-[479px]:sr-only'>
+                        {view.charAt(0).toUpperCase() + view.slice(1)}
+                      </span>
+                    </span>
+                    <ChevronDownIcon
+                      className='-me-1 opacity-60'
+                      size={16}
+                      aria-hidden='true'
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end' className='min-w-32'>
+                  <DropdownMenuItem onClick={() => setView('month')}>
+                    Month <span className='ml-auto text-xs text-muted-foreground'>M</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setView('week')}>
+                    Week <span className='ml-auto text-xs text-muted-foreground'>W</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setView('day')}>
+                    Day <span className='ml-auto text-xs text-muted-foreground'>D</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setView('agenda')}>
+                    Agenda <span className='ml-auto text-xs text-muted-foreground'>A</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                className='max-[479px]:aspect-square max-[479px]:p-0!'
+                size='sm'
+                onClick={() => {
+                  setSelectedEvent(null); // Ensure we're creating a new event
+                  setIsEventDialogOpen(true);
+                }}
+              >
+                <PlusIcon
+                  className='opacity-60 sm:-ms-1'
+                  size={16}
+                  aria-hidden='true'
+                />
+                <span className='max-sm:sr-only'>New event</span>
               </Button>
               <Button
-                variant='ghost'
-                size='icon'
-                onClick={handleNext}
-                aria-label={`Next ${view}`}
-                title={`Go to next ${view}`}
+                variant='secondary'
+                className='max-[479px]:hidden'
+                size='sm'
+                onClick={() => onNewConsultation?.()}
               >
-                <ChevronRightIcon size={16} aria-hidden='true' />
+                <PlusIcon className='opacity-60 sm:-ms-1' size={16} aria-hidden='true' />
+                <span>New consultation</span>
               </Button>
             </div>
-            <h2 className='text-sm font-semibold sm:text-lg md:text-xl'>
-              {viewTitle}
-            </h2>
           </div>
-          <div className='flex items-center gap-2'>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='gap-1.5 max-[479px]:h-8'>
-                  <span>
-                    <span className='min-[480px]:hidden' aria-hidden='true'>
-                      {view.charAt(0).toUpperCase()}
-                    </span>
-                    <span className='max-[479px]:sr-only'>
-                      {view.charAt(0).toUpperCase() + view.slice(1)}
-                    </span>
-                  </span>
-                  <ChevronDownIcon
-                    className='-me-1 opacity-60'
-                    size={16}
-                    aria-hidden='true'
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='min-w-32'>
-                <DropdownMenuItem onClick={() => setView('month')}>
-                  Month <span className='ml-auto text-xs text-muted-foreground'>M</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView('week')}>
-                  Week <span className='ml-auto text-xs text-muted-foreground'>W</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView('day')}>
-                  Day <span className='ml-auto text-xs text-muted-foreground'>D</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView('agenda')}>
-                  Agenda <span className='ml-auto text-xs text-muted-foreground'>A</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button
-              className='max-[479px]:aspect-square max-[479px]:p-0!'
-              size='sm'
-              onClick={() => {
-                setSelectedEvent(null); // Ensure we're creating a new event
-                setIsEventDialogOpen(true);
-              }}
-            >
-              <PlusIcon
-                className='opacity-60 sm:-ms-1'
-                size={16}
-                aria-hidden='true'
-              />
-              <span className='max-sm:sr-only'>New event</span>
-            </Button>
-            <Button
-              variant='secondary'
-              className='max-[479px]:hidden'
-              size='sm'
-              onClick={() => onNewConsultation?.()}
-            >
-              <PlusIcon className='opacity-60 sm:-ms-1' size={16} aria-hidden='true' />
-              <span>New consultation</span>
-            </Button>
-          </div>
-        </div>
+        )}
 
         <div className='flex flex-1 flex-col'>
           {view === 'month' && (

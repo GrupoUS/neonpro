@@ -1,0 +1,318 @@
+{
+  "name": "Spec-Driven Development",
+  "version": "1.0.0",
+  "description": "Transform any user request into a fully researched PRD, comprehensive implementation plan, and atomic task breakdown",
+  "category": "development",
+  "complexity": "high",
+  "mcp_tools": ["sequential-thinking", "archon", "tavily", "context7"],
+  "execution_flow": [
+    {
+      "phase": "Understand",
+      "description": "Extract and analyze user requirements",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Extract Goals and Constraints",
+          "tool": "sequential-thinking",
+          "actions": [
+            "Analyze user request for goals, actors, constraints, success metrics",
+            "Identify unknowns and mark with [NEEDS CLARIFICATION: question]"
+          ],
+          "output": "Structured requirements analysis"
+        }
+      ]
+    },
+    {
+      "phase": "Research",
+      "description": "Conduct comprehensive research using Apex-Researcher methodology",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Complexity Classification",
+          "tool": "sequential-thinking",
+          "actions": [
+            "Classify complexity (L1-L10)",
+            "Choose research depth based on complexity"
+          ],
+          "output": "Complexity assessment and research strategy"
+        },
+        {
+          "step": 2,
+          "name": "Multi-Source Research",
+          "tool": "archon",
+          "actions": [
+            "Run Archon RAG for internal knowledge",
+            "Use Context7 for official docs and API references",
+            "Use Tavily for real-time best practices and validation"
+          ],
+          "output": "Research notes with decisions, rationale, alternatives, sources, confidence"
+        }
+      ]
+    },
+    {
+      "phase": "PRD Generation",
+      "description": "Create comprehensive Product Requirements Document",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Create PRD Structure",
+          "tool": "archon",
+          "actions": [
+            "Generate PRD aligned with spec-driven methodology",
+            "Include: Title, Summary, Goals/Non-Goals, Stakeholders, User Scenarios",
+            "Functional Requirements (FR-###; testable; no implementation details)",
+            "Non-Functional Requirements, Data Concepts, Assumptions, Risks",
+            "Open Questions, Acceptance Criteria, Research Appendix"
+          ],
+          "output": "PRD document stored in Archon"
+        }
+      ]
+    },
+    {
+      "phase": "Plan Generation",
+      "description": "Create implementation plan following local template",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Generate Implementation Plan",
+          "tool": "archon",
+          "actions": [
+            "Follow plan template precisely",
+            "Include: Summary, Technical Context, Constitution Check",
+            "Phase 0: Outline & Research consolidation",
+            "Phase 1: Design & Contracts (data-model.md, contracts/, quickstart.md)",
+            "Phase 2: Task Planning Approach",
+            "Complexity Tracking and Progress Tracking"
+          ],
+          "output": "Implementation plan document stored in Archon"
+        }
+      ]
+    },
+    {
+      "phase": "Task Generation",
+      "description": "Generate atomic, executable tasks with dependency awareness",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Create Atomic Task List",
+          "tool": "archon",
+          "actions": [
+            "Generate numbered, dependency-aware task list",
+            "Include [P] markers for parallelizable tasks",
+            "Each task: purpose, inputs, outputs, acceptance criteria, related PRD/Plan refs",
+            "Enforce TDD: tests before implementation",
+            "Include specific repository paths and compliance checkpoints"
+          ],
+          "output": "Atomic task list with parallelization markers"
+        }
+      ]
+    },
+    {
+      "phase": "Quality Gates",
+      "description": "Validate all outputs against constitutional requirements",
+      "steps": [
+        {
+          "step": 1,
+          "name": "PRD Validation",
+          "criteria": [
+            "PRD is unambiguous and testable",
+            "No implementation details present",
+            "All requirements traceable to user scenarios"
+          ]
+        },
+        {
+          "step": 2,
+          "name": "Plan Validation",
+          "criteria": [
+            "Constitution Check passes (or violations justified)",
+            "All NEEDS CLARIFICATION resolved",
+            "Technical context complete and accurate"
+          ]
+        },
+        {
+          "step": 3,
+          "name": "Tasks Validation",
+          "criteria": [
+            "Each task has clear acceptance criteria",
+            "TDD ordering enforced (tests before code)",
+            "Parallelization markers correct",
+            "Repository paths align with source-tree.md"
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "Documentation",
+      "description": "Create comprehensive feature documentation",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Create Feature Documentation",
+          "tool": "desktop-commander",
+          "actions": [
+            "Create docs/features/[feature-name].md",
+            "Include: overview, technical architecture, implementation approach",
+            "API endpoints and data models, testing strategy, compliance considerations",
+            "Dependencies and integration points, risk assessment",
+            "Links to PRD and Implementation Plan in Archon"
+          ],
+          "output": "Feature documentation file"
+        }
+      ]
+    }
+  ],
+  "output_contract": {
+    "machine_readable": {
+      "inputs": {
+        "user_request": "Free-form request from stakeholder or engineer",
+        "context": "Optional context links or constraints"
+      },
+      "research": {
+        "decisions": [
+          {
+            "topic": "Decision topic",
+            "decision": "Chosen approach",
+            "rationale": "Reason for decision",
+            "alternatives": ["Alternative 1", "Alternative 2"],
+            "sources": [
+              {
+                "url": "Source URL",
+                "type": "official|community|vendor",
+                "date": "YYYY-MM-DD",
+                "credibility": "high|med|low"
+              }
+            ],
+            "confidence": 0.95
+          }
+        ]
+      },
+      "prd": {
+        "title": "Feature Title",
+        "summary": "Brief description",
+        "goals": ["Goal 1", "Goal 2"],
+        "non_goals": ["Non-goal 1", "Non-goal 2"],
+        "stakeholders": ["Stakeholder 1", "Stakeholder 2"],
+        "user_scenarios": ["Given ... When ... Then ..."],
+        "functional_requirements": ["FR-001: Requirement description"],
+        "non_functional_requirements": ["NFR-001: Requirement description"],
+        "data_concepts": ["Concept 1", "Concept 2"],
+        "assumptions": ["Assumption 1", "Assumption 2"],
+        "risks": ["Risk 1", "Risk 2"],
+        "open_questions": ["[NEEDS CLARIFICATION: Question]"]
+      },
+      "plan": {
+        "technical_context": {
+          "language": "Programming language",
+          "deps": ["Dependency 1", "Dependency 2"],
+          "testing": "Testing framework",
+          "platform": "Target platform",
+          "constraints": ["Constraint 1", "Constraint 2"]
+        },
+        "constitution_check": {
+          "simplicity": true,
+          "architecture": true,
+          "testing": true,
+          "observability": true,
+          "versioning": true,
+          "notes": "Additional notes"
+        },
+        "phases": [
+          {
+            "phase": 0,
+            "outputs": ["specs/<feature>/research.md"],
+            "status": "pending|done"
+          },
+          {
+            "phase": 1,
+            "outputs": [
+              "specs/<feature>/data-model.md",
+              "specs/<feature>/contracts/*",
+              "specs/<feature>/quickstart.md"
+            ],
+            "status": "pending|done"
+          }
+        ],
+        "complexity_tracking": [
+          {
+            "violation": "Constitutional violation",
+            "why_needed": "Reason for violation",
+            "simpler_alt_rejected": "Simpler alternative rejected"
+          }
+        ]
+      },
+      "tasks": {
+        "list": [
+          {
+            "id": "T-001",
+            "title": "Task title with [P] marker if parallel",
+            "depends_on": ["T-000"],
+            "path": "specs/<feature>/contracts/...",
+            "acceptance": ["Acceptance criterion 1", "Acceptance criterion 2"],
+            "artifacts": ["Artifact 1", "Artifact 2"]
+          }
+        ],
+        "policy": {
+          "tdd_order": true,
+          "parallelization": true
+        }
+      },
+      "links": {
+        "archon_prd_id": "archon_document_id",
+        "archon_plan_id": "archon_document_id"
+      }
+    },
+    "human_readable": {
+      "research_summary": "Bullet points with sources + confidence",
+      "prd": "Clear sections with no implementation details",
+      "plan": "Template structure with gates and phases",
+      "tasks": "Numbered tasks grouped by phase with [P] markers"
+    }
+  },
+  "mandatory_pre_reads": [
+    "docs/AGENTS.md",
+    "docs/architecture/AGENTS.md",
+    "docs/architecture/source-tree.md",
+    "docs/architecture/tech-stack.md",
+    "docs/apis/AGENTS.md",
+    "docs/database-schema/AGENTS.md",
+    "docs/agents/apex-researcher.md",
+    "templates/spec-template.md",
+    "templates/plan-template.md"
+  ],
+  "constitutional_rules": [
+    "KISS/YAGNI principles",
+    "Simplicity gates",
+    "Anti-abstraction (avoid wrappers without need)",
+    "Test-first: Contracts → Integration/E2E → Unit; RED before GREEN",
+    "Every feature as a library with CLI exposure where applicable",
+    "Follow monorepo structure and stack",
+    "Compliance & security (LGPD/ANVISA/CFM) for healthcare data",
+    "Coding standards in docs/rules/coding-standards.md"
+  ],
+  "completion_criteria": {
+    "prd": "Complete, unambiguous, linked to research and acceptance metrics",
+    "plan": "Passes Constitution Check (or justified), includes Phase 0/1 outputs",
+    "tasks": "25-40 granular items, parallelization tagged, each with acceptance criteria",
+    "research": "Cited sources with credibility and confidence",
+    "archon": "PRD and Plan persisted; IDs returned in links",
+    "documentation": "Feature documentation file created with proper sections and links"
+  },
+  "archon_integration": {
+    "document_types": {
+      "prd": {
+        "type": "prd",
+        "tags": ["spec-kit", "prd"]
+      },
+      "plan": {
+        "type": "design",
+        "tags": ["plan", "templates/plan-template.md"]
+      },
+      "tasks": {
+        "type": "task",
+        "tags": ["implementation", "atomic"]
+      }
+    },
+    "persistence": true,
+    "linking": true
+  }
+}

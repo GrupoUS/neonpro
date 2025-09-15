@@ -1,0 +1,284 @@
+{
+  "name": "Implementation Planning",
+  "version": "1.0.0",
+  "description": "Execute the implementation planning workflow using the plan template to generate design artifacts",
+  "category": "specification",
+  "complexity": "high",
+  "mcp_tools": ["desktop-commander", "archon"],
+  "execution_flow": [
+    {
+      "phase": "Initialization",
+      "description": "Set up planning environment and load inputs",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Execute Setup Script",
+          "tool": "desktop-commander",
+          "command": ".specify/scripts/bash/setup-plan.sh --json",
+          "working_directory": "repo_root",
+          "output_parsing": {
+            "format": "json",
+            "required_fields": ["FEATURE_SPEC", "IMPL_PLAN", "SPECS_DIR", "BRANCH"],
+            "path_resolution": "All future file paths must be absolute"
+          },
+          "description": "Parse JSON for feature specification and planning paths"
+        }
+      ]
+    },
+    {
+      "phase": "Analysis",
+      "description": "Read and analyze feature specification and constitution",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Analyze Feature Specification",
+          "tool": "desktop-commander",
+          "action": "read_file",
+          "path": "{{FEATURE_SPEC}}",
+          "analysis_focus": [
+            "Feature requirements and user stories",
+            "Functional and non-functional requirements",
+            "Success criteria and acceptance criteria",
+            "Technical constraints or dependencies"
+          ],
+          "output": "Structured understanding of feature requirements"
+        },
+        {
+          "step": 2,
+          "name": "Read Constitution",
+          "tool": "desktop-commander",
+          "action": "read_file",
+          "path": ".specify/memory/constitution.md",
+          "purpose": "Understand constitutional requirements for planning",
+          "output": "Constitutional requirements awareness"
+        }
+      ]
+    },
+    {
+      "phase": "Template Execution",
+      "description": "Execute implementation plan template with structured phases",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Load Plan Template",
+          "tool": "desktop-commander",
+          "action": "read_file",
+          "path": "{{IMPL_PLAN}}",
+          "note": "Template already copied to IMPL_PLAN path by setup script",
+          "description": "Load self-contained executable template"
+        },
+        {
+          "step": 2,
+          "name": "Execute Template Flow",
+          "template_execution": {
+            "input_path": "{{FEATURE_SPEC}}",
+            "execution_flow": "main function steps 1-10",
+            "error_handling": "Follow template's error handling and gate checks",
+            "artifact_generation": {
+              "phase_0": "research.md",
+              "phase_1": [
+                "data-model.md",
+                "contracts/",
+                "quickstart.md"
+              ]
+            },
+            "user_provided_details": {
+              "incorporation": "Update Technical Context: $ARGUMENTS",
+              "source": "User-provided implementation details from arguments"
+            },
+            "progress_tracking": {
+              "requirement": "Update Progress Tracking as each phase completes",
+              "format": "Template-defined progress tracking structure"
+            }
+          },
+          "description": "Execute self-contained template following its Execution Flow"
+        }
+      ]
+    },
+    {
+      "phase": "Verification",
+      "description": "Verify execution completed successfully",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Check Progress Tracking",
+          "verification": {
+            "criteria": "Progress Tracking shows all phases complete",
+            "method": "Examine template's progress tracking section"
+          },
+          "description": "Verify all phases marked as complete"
+        },
+        {
+          "step": 2,
+          "name": "Verify Artifacts Generated",
+          "verification": {
+            "criteria": "All required artifacts were generated",
+            "expected_artifacts": [
+              "{{SPECS_DIR}}/research.md",
+              "{{SPECS_DIR}}/data-model.md",
+              "{{SPECS_DIR}}/contracts/*",
+              "{{SPECS_DIR}}/quickstart.md"
+            ],
+            "method": "File system existence check"
+          },
+          "description": "Verify all design artifacts created"
+        },
+        {
+          "step": 3,
+          "name": "Check Error States",
+          "verification": {
+            "criteria": "No ERROR states in execution",
+            "method": "Examine template execution logs and progress tracking",
+            "failure_action": "Report any error states with context"
+          },
+          "description": "Ensure clean execution without errors"
+        }
+      ]
+    },
+    {
+      "phase": "Reporting",
+      "description": "Generate completion report with outputs",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Generate Completion Report",
+          "output": {
+            "branch_name": "{{BRANCH}}",
+            "file_paths": {
+              "feature_spec": "{{FEATURE_SPEC}}",
+              "impl_plan": "{{IMPL_PLAN}}",
+              "specs_dir": "{{SPECS_DIR}}",
+              "artifacts": [
+                "{{SPECS_DIR}}/research.md",
+                "{{SPECS_DIR}}/data-model.md",
+                "{{SPECS_DIR}}/contracts/",
+                "{{SPECS_DIR}}/quickstart.md"
+              ]
+            },
+            "execution_status": {
+              "phases_complete": "All template phases completed",
+              "artifacts_generated": "All required artifacts created",
+              "errors": "None detected"
+            }
+          },
+          "description": "Report completion with branch name, file paths, and generated artifacts"
+        }
+      ]
+    }
+  ],
+  "input_parameters": {
+    "arguments": {
+      "type": "string",
+      "description": "Implementation details provided as argument",
+      "required": true,
+      "processing": "Incorporated into Technical Context section of plan template"
+    }
+  },
+  "template_characteristics": {
+    "self_contained": "Template is executable and self-contained",
+    "error_handling": "Template defines its own error handling and gate checks",
+    "artifact_generation": "Template generates specific artifacts in defined phases",
+    "progress_tracking": "Template includes progress tracking mechanism"
+  },
+  "output_requirements": {
+    "branch": {
+      "name": "{{BRANCH}}",
+      "status": "Created and ready for development"
+    },
+    "planning_artifacts": {
+      "research": "{{SPECS_DIR}}/research.md",
+      "data_model": "{{SPECS_DIR}}/data-model.md",
+      "contracts": "{{SPECS_DIR}}/contracts/*",
+      "quickstart": "{{SPECS_DIR}}/quickstart.md"
+    },
+    "implementation_plan": {
+      "file": "{{IMPL_PLAN}}",
+      "status": "Completed with all phases executed",
+      "technical_context": "Updated with user-provided details"
+    }
+  },
+  "error_handling": {
+    "setup_script": {
+      "failure": "If setup script fails, abort with JSON parsing error",
+      "recovery": "Verify .specify/scripts/bash/setup-plan.sh exists and is executable"
+    },
+    "file_reading": {
+      "failure": "If required files cannot be read, abort with file access error",
+      "recovery": "Check file existence and permissions"
+    },
+    "template_execution": {
+      "failure": "If template execution encounters errors, follow template's error handling",
+      "recovery": "Template-defined error recovery mechanisms"
+    },
+    "artifact_generation": {
+      "failure": "If artifacts cannot be generated, abort with creation error",
+      "recovery": "Check directory permissions and disk space"
+    }
+  },
+  "validation_gates": {
+    "pre_execution": [
+      {
+        "check": "Repository root contains .specify directory",
+        "critical": true
+      },
+      {
+        "check": "Setup script exists at .specify/scripts/bash/setup-plan.sh",
+        "critical": true
+      },
+      {
+        "check": "Feature specification file exists at FEATURE_SPEC path",
+        "critical": true
+      },
+      {
+        "check": "Constitution file exists at .specify/memory/constitution.md",
+        "critical": true
+      }
+    ],
+    "post_execution": [
+      {
+        "check": "All template phases completed successfully",
+        "critical": true
+      },
+      {
+        "check": "All required artifacts generated in correct locations",
+        "critical": true
+      },
+      {
+        "check": "No error states in template execution",
+        "critical": true
+      },
+      {
+        "check": "Progress tracking properly updated",
+        "critical": false
+      }
+    ]
+  },
+  "success_criteria": {
+    "template_execution": "All template phases completed successfully",
+    "artifacts": "All required design artifacts generated",
+    "planning": "Implementation plan completed with technical context updated",
+    "readiness": "Ready for task generation phase",
+    "branch": "Development branch prepared and ready"
+  },
+  "integration_points": {
+    "previous_phase": "Feature Specification (specify.prompt.md)",
+    "next_phase": "Task Generation (tasks.prompt.md)",
+    "dependencies": [
+      "Feature specification document",
+      "Constitution requirements",
+      "Template system availability",
+      "Setup scripts"
+    ]
+  },
+  "workflow_triggers": {
+    "manual": "Developer wants to create implementation plan from feature spec",
+    "automated": "Part of larger spec-driven development workflow",
+    "api": "Can be called by other workflows or CI/CD systems"
+  },
+  "metadata": {
+    "author": "NeonPro Development Team",
+    "created": "2025-09-15",
+    "category": "specification",
+    "tags": ["planning", "template-driven", "design-artifacts", "implementation"]
+  }
+}

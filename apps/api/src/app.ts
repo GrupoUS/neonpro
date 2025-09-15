@@ -92,6 +92,11 @@ app.use(
 //   app.use('*', performanceLoggingMiddleware());
 // }
 
+import { errorHandler } from './middleware/error-handler';
+
+// Global error handler
+app.use('*', errorHandler);
+
 // Root route with OpenAPI definition
 app.openapi(healthRoute, c =>
   c.json({

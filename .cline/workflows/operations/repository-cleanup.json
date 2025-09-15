@@ -1,0 +1,395 @@
+{
+  "name": "Repository Cleanup",
+  "version": "1.0.0",
+  "description": "Safe repository cleanup system with validation, backup, and healthcare compliance",
+  "category": "operations",
+  "complexity": "high",
+  "mcp_tools": ["sequential-thinking", "archon", "serena", "desktop-commander"],
+  "execution_modes": {
+    "dry_run": {
+      "default": true,
+      "description": "Analysis mode only - no changes made to filesystem",
+      "output": "Plan + manifest only"
+    },
+    "apply": {
+      "default": false,
+      "description": "Execute cleanup operations",
+      "requirements": {
+        "confirmation": "User must provide explicit 'CONFIRMO LIMPAR' phrase",
+        "parameters": "Must define all cleanup parameters"
+      }
+    }
+  },
+  "default_parameters": {
+    "dry_run": true,
+    "root_path": "/root/neonpro",
+    "include": ["."],
+    "exclude": [
+      ".git/",
+      "node_modules/",
+      "**/dist/",
+      "**/build/",
+      ".next/",
+      ".turbo/",
+      "coverage/",
+      "reports/",
+      ".nyc_output/",
+      "test-results/",
+      "**/.husky/**",
+      ".vscode/**",
+      ".idea/**",
+      "**/*.env",
+      "**/.env*"
+    ],
+    "gitignore": true,
+    "min_age_days": 2,
+    "confirm_categories": [],
+    "extra_exclusions": [],
+    "include_orphans_scan": true,
+    "max_items_per_phase": 2000,
+    "max_depth": 8,
+    "timeout_seconds": 300,
+    "log_dir": "cleanup-logs/"
+  },
+  "execution_phases": [
+    {
+      "phase": "Analysis",
+      "description": "Read architecture and map repository structure",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Load Architecture Documents",
+          "tool": "archon",
+          "documents": [
+            "docs/AGENTS.md",
+            "docs/architecture/AGENTS.md",
+            "docs/architecture/source-tree.md",
+            "docs/architecture/tech-stack.md",
+            "docs/rules/coding-standards.md",
+            "docs/memory.md"
+          ],
+          "purpose": "Understand repository structure and constraints"
+        },
+        {
+          "step": 2,
+          "name": "Map Current State",
+          "tool": "serena",
+          "actions": [
+            "Analyze current repository structure",
+            "Compare with expected architecture from source-tree.md",
+            "Extract app and package counts dynamically"
+          ],
+          "output": "Repository state analysis and architecture validation"
+        }
+      ],
+      "quality_gate": "Architecture mapping complete and validated",
+      "exit_criteria": ["Repository structure understood", "Architecture validation passed"]
+    },
+    {
+      "phase": "Classification",
+      "description": "Identify and classify cleanup candidates",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Scan for Candidates",
+          "tool": "desktop-commander",
+          "scan_parameters": {
+            "root_path": "{{root_path}}",
+            "include": "{{include}}",
+            "exclude": "{{exclude}}",
+            "gitignore": "{{gitignore}}",
+            "max_depth": "{{max_depth}}",
+            "max_items": "{{max_items_per_phase}}"
+          },
+          "categories": {
+            "temporarios": {
+              "patterns": ["*.tmp", "*.temp", "*.cache", "*.bak", "node_modules/.cache/", ".next/cache/", "turbo/.cache/", "**/dist/temp/", "**/build/temp/"],
+              "age_filter": "min_age_days",
+              "risk": "low"
+            },
+            "logs": {
+              "patterns": ["*.log", "*.log.*", "npm-debug.log*", "yarn-debug.log*", "lerna-debug.log*", "logs/**/*.log"],
+              "risk": "low"
+            },
+            "backups": {
+              "patterns": ["*.backup", "*.old", "*.orig", "*_backup/", "backup_*/", "*-copy.*"],
+              "age_filter": "min_age_days > 7",
+              "risk": "medium"
+            },
+            "reports": {
+              "patterns": ["coverage/", "nyc_output/", "reports/", "test-results/", "*.coverage", "*.report"],
+              "risk": "medium"
+            },
+            "placeholders": {
+              "patterns": ["TODO.md (empty)", "placeholder_*", "template_* (unreferenced)", "sample_* (unused)"],
+              "risk": "high",
+              "validation": "extra"
+            }
+          },
+          "output": "Classified candidate list with risk assessment"
+        },
+        {
+          "step": 2,
+          "name": "Orphan Scan (Optional)",
+          "tool": "serena",
+          "condition": "{{include_orphans_scan}}",
+          "actions": [
+            "Build reference graph from package.json, tsconfig.json, imports",
+            "Identify unreferenced files outside protected paths",
+            "Generate orphan candidate list with validation requirements"
+          ],
+          "output": "Orphan file analysis and recommendations"
+        }
+      ],
+      "quality_gate": "Candidate classification complete with risk assessment",
+      "exit_criteria": ["All candidates classified", "Risk levels assigned", "Orphan analysis complete (if enabled)"]
+    },
+    {
+      "phase": "Validation",
+      "description": "Validate candidates against safety constraints",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Safety Checks",
+          "tool": "serena",
+          "validations": {
+            "never_delete": [
+              "Code-source: apps/, packages/, src/",
+              "Configuration: package.json, lockfiles, configs",
+              "Environment: .env*, .npmrc",
+              "Documentation: docs/, README.md, CHANGELOG.md",
+              "Metadata: .github/, .gitignore, .git/",
+              "Lockfiles: pnpm-lock.yaml, bun.lockb, package-lock.json",
+              "Templates: templates/, .github/prompts/"
+            ],
+            "git_tracked": "Never remove Git-tracked files",
+            "architecture": "Respect docs/architecture/source-tree.md boundaries",
+            "age_validation": "Respect min_age_days parameter"
+          },
+          "output": "Validated candidate list with safety status"
+        },
+        {
+          "step": 2,
+          "name": "Compliance Check",
+          "tool": "archon",
+          "focus": "Healthcare data and compliance",
+          "validations": [
+            "No PHI/PII in cleanup candidates",
+            "LGPD compliance for data handling",
+            "Audit trail preservation"
+          ],
+          "output": "Compliance validation report"
+        }
+      ],
+      "quality_gate": "All candidates validated for safety and compliance",
+      "exit_criteria": ["Safety checks passed", "Compliance validated", "No protected files in candidates"]
+    },
+    {
+      "phase": "Planning",
+      "description": "Generate cleanup plan and manifest",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Generate Manifest",
+          "tool": "desktop-commander",
+          "manifest_structure": {
+            "mode": "dry-run|apply",
+            "root_path": "{{root_path}}",
+            "generated_at": "ISO-8601 timestamp",
+            "phases": [
+              {
+                "name": "temporarios|logs|backups|reports|orphans",
+                "items": [
+                  {
+                    "path": "file/path",
+                    "category": "category",
+                    "size_bytes": 1234,
+                    "reason": "justification"
+                  }
+                ],
+                "summary": {
+                  "count": 0,
+                  "size_bytes": 0
+                }
+              }
+            ],
+            "totals": {
+              "count": 0,
+              "size_bytes": 0
+            },
+            "arch_checks": {
+              "apps": true,
+              "packages": true
+            },
+            "errors": []
+          },
+          "output": "Detailed cleanup manifest in JSON format"
+        },
+        {
+          "step": 2,
+          "name": "Generate Human Report",
+          "tool": "desktop-commander",
+          "report_structure": {
+            "summary": "Plan overview (dry-run) or execution summary (apply)",
+            "table_by_category": "Items, space estimated, status by category",
+            "checkpoints": "Architecture and validation results",
+            "recommendations": "Next steps and safety considerations"
+          },
+          "output": "Human-readable cleanup report in Markdown format"
+        }
+      ],
+      "quality_gate": "Cleanup plan and manifest generated",
+      "exit_criteria": ["Manifest JSON created", "Human report generated", "Plan validated"]
+    },
+    {
+      "phase": "Execution",
+      "description": "Execute cleanup operations (Apply mode only)",
+      "condition": "!dry_run",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Create Backup",
+          "tool": "desktop-commander",
+          "action": "write_file",
+          "path": "{{log_dir}}/backup-[timestamp].txt",
+          "content": "Complete list of items before removal",
+          "purpose": "Enable rollback if needed"
+        },
+        {
+          "step": 2,
+          "name": "Execute by Categories",
+          "tool": "desktop-commander",
+          "execution_strategy": {
+            "order": ["temporarios", "logs", "backups", "reports", "orphans"],
+            "confirmation": "Ask before each category: 'Remover [category]? (sim/nao)'",
+            "validation": "Verify after each phase that critical files still exist"
+          },
+          "actions": [
+            "Remove files by category with confirmation",
+            "Log each operation with timestamp",
+            "Verify repository integrity after each phase"
+          ],
+          "output": "Execution logs and status updates"
+        },
+        {
+          "step": 3,
+          "name": "Post-Execution Validation",
+          "tool": "serena",
+          "validations": {
+            "architecture": "Verify apps/packages still present per source-tree.md",
+            "critical_files": "Check package.json, lockfiles, configs exist",
+            "build_test": "Run 'pnpm -v' and 'pnpm install --ignore-scripts'",
+            "functionality": "Verify basic repository operations work"
+          },
+          "output": "Post-execution validation report"
+        }
+      ],
+      "quality_gate": "Cleanup executed successfully with validation",
+      "exit_criteria": ["Backup created", "Categories cleaned with confirmation", "Post-validation passed"]
+    }
+  ],
+  "safety_guards": {
+    "never_delete_protected": [
+      "Code-source: apps/, packages/, src/",
+      "Configuration: package.json, tsconfig.json, turbo.json, pnpm-workspace.yaml, vitest.config.ts",
+      "Environment: .env*, .npmrc",
+      "Documentation: docs/, README.md, CHANGELOG.md, .github/, .gitignore, .git/",
+      "Lockfiles: pnpm-lock.yaml, bun.lockb, package-lock.json",
+      "Templates: templates/, .github/prompts/"
+    ],
+    "git_protection": "Never remove Git-tracked files (only untracked and ignored)",
+    "architecture_authority": "Read and respect docs/architecture/source-tree.md for validation",
+    "idempotency": "Repeating should not cause additional effects (use manifest/hashes for deduplication)",
+    "anomaly_detection": "Stop immediately on architecture divergence or basic command failures",
+    "scope_limitation": "Limit to safe categories only"
+  },
+  "confirmation_protocol": {
+    "apply_mode": {
+      "required_phrase": "CONFIRMO LIMPAR",
+      "category_confirmation": {
+        "format": "Remover [category]? (sim/nao)",
+        "categories": [
+          "caches",
+          "builds",
+          "logs_tmp",
+          "node_artifacts",
+          "orphans"
+        ]
+      },
+      "extra_confirmation": "Required for potentially destructive actions (directory removal)"
+    },
+    "pre_execution_display": {
+      "count": "Show item count and estimated size",
+      "categories": "Display categories to be processed",
+      "risks": "Highlight any high-risk operations"
+    }
+  },
+  "output_artifacts": {
+    "logs": {
+      "directory": "{{log_dir}}",
+      "files": [
+        "manifest-[timestamp].json",
+        "report-[timestamp].md",
+        "errors-[timestamp].log"
+      ]
+    },
+    "backup": {
+      "file": "{{log_dir}}/backup-[timestamp].txt",
+      "content": "Complete list before removal"
+    },
+    "reports": {
+      "human_readable": "Markdown report with summary and tables",
+      "machine_readable": "JSON manifest with detailed information"
+    }
+  },
+  "error_handling": {
+    "architecture_mismatch": {
+      "detection": "App/package count differs from source-tree.md",
+      "action": "Abort with detailed error report"
+    },
+    "command_failure": {
+      "detection": "Basic commands (pnpm -v, etc.) fail",
+      "action": "Abort with command error details"
+    },
+    "protected_file_access": {
+      "detection": "Attempt to access protected file",
+      "action": "Abort with protection violation details"
+    },
+    "timeout": {
+      "detection": "Operation exceeds timeout_seconds",
+      "action": "Abort with timeout details and partial results"
+    }
+  },
+  "success_criteria": {
+    "dry_run": {
+      "analysis": "Repository structure analyzed and understood",
+      "classification": "All candidates properly classified and validated",
+      "planning": "Manifest and report generated successfully",
+      "safety": "No protected files in candidate list"
+    },
+    "apply": {
+      "execution": "All confirmed categories cleaned successfully",
+      "validation": "Post-execution checks pass",
+      "integrity": "Repository functionality preserved",
+      "backup": "Rollback information available if needed"
+    }
+  },
+  "compliance_features": {
+    "lgpd": {
+      "phi_detection": "Scan for PHI/PII in candidates",
+      "data_retention": "Respect healthcare data retention policies",
+      "audit_trail": "Maintain operation logs for compliance"
+    },
+    "healthcare": {
+      "system_integrity": "Preserve critical healthcare system components",
+      "availability": "Ensure system remains operational",
+      "validation": "Healthcare-specific validation checks"
+    }
+  },
+  "metadata": {
+    "author": "NeonPro Development Team",
+    "created": "2025-09-15",
+    "category": "operations",
+    "tags": ["cleanup", "safety", "validation", "healthcare-compliance", "repository-maintenance"]
+  }
+}

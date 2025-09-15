@@ -13,6 +13,8 @@ import type { CreateAppointmentData, UpdateAppointmentData } from '@/services/ap
 import { Card, CardContent } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute, Link } from '@tanstack/react-router'; // useNavigate removed
+import { isAfter, isSameDay } from 'date-fns';
+import { CalendarCheck, CalendarClock, CheckCircle2, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 // Helper function to map color strings to EventColor types
@@ -53,7 +55,11 @@ function AppointmentsPage() {
 
   // Build a memoized set of event time ranges for collision checks
   const appointmentRanges = useMemo(() => {
-    return (appointments || []).map(a => ({ id: a.id, start: new Date(a.start), end: new Date(a.end) }));
+    return (appointments || []).map(a => ({
+      id: a.id,
+      start: new Date(a.start),
+      end: new Date(a.end),
+    }));
   }, [appointments]);
 
   // Set up real-time updates
@@ -63,6 +69,21 @@ function AppointmentsPage() {
   const createAppointmentMutation = useCreateAppointment();
   const updateAppointmentMutation = useUpdateAppointment();
   const deleteAppointmentMutation = useDeleteAppointment();
+
+  // Appointments statistics for overview cards
+  const stats = useMemo(() => {
+    const list = appointments || [];
+    const now = new Date();
+    const totalToday = list.filter(a => isSameDay(new Date(a.start), now)).length;
+    const upcoming = list.filter(a => isAfter(new Date(a.start), now)).length;
+    const completed = list.filter(a =>
+      ['completed', 'done'].includes(String(a.status || '').toLowerCase())
+    ).length;
+    const cancelled =
+      list.filter(a => ['cancelled', 'canceled'].includes(String(a.status || '').toLowerCase()))
+        .length;
+    return { totalToday, upcoming, completed, cancelled };
+  }, [appointments]);
 
   // New event creation is handled by EventCalendar's internal dialog.
   // We only need to handle add/update/delete callbacks from the calendar.
@@ -84,7 +105,9 @@ function AppointmentsPage() {
     // Collision check (non-blocking): warn if overlapping with another appointment
     const start = updateData.startTime ?? (event.start as Date);
     const end = updateData.endTime ?? (event.end as Date);
-    const overlaps = appointmentRanges.some(r => r.id !== event.id && start < r.end && end > r.start);
+    const overlaps = appointmentRanges.some(r =>
+      r.id !== event.id && start < r.end && end > r.start
+    );
     if (overlaps) {
       toast.info('Aviso: possível conflito de horário com outro agendamento.');
     }
@@ -166,6 +189,65 @@ function AppointmentsPage() {
 
   return (
     <div className='container mx-auto px-4 py-8'>
+      {/* Overview cards */}
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 sm:mb-6'>
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Consultas hoje</p>
+                <p className='text-2xl font-bold'>{stats.totalToday.toLocaleString('pt-BR')}</p>
+                <p className='text-xs text-muted-foreground'>Atualizado em tempo real</p>
+              </div>
+              <div className='p-3 bg-primary/10 rounded-full'>
+                <CalendarCheck className='w-5 h-5 text-primary' />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Próximas consultas</p>
+                <p className='text-2xl font-bold'>{stats.upcoming.toLocaleString('pt-BR')}</p>
+                <p className='text-xs text-muted-foreground'>Agendadas no futuro</p>
+              </div>
+              <div className='p-3 bg-primary/10 rounded-full'>
+                <CalendarClock className='w-5 h-5 text-primary' />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Concluídas</p>
+                <p className='text-2xl font-bold'>{stats.completed.toLocaleString('pt-BR')}</p>
+                <p className='text-xs text-muted-foreground'>Hoje e anteriores</p>
+              </div>
+              <div className='p-3 bg-primary/10 rounded-full'>
+                <CheckCircle2 className='w-5 h-5 text-primary' />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Canceladas</p>
+                <p className='text-2xl font-bold'>{stats.cancelled.toLocaleString('pt-BR')}</p>
+                <p className='text-xs text-muted-foreground'>Período atual</p>
+              </div>
+              <div className='p-3 bg-primary/10 rounded-full'>
+                <XCircle className='w-5 h-5 text-primary' />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardContent className='p-4 sm:p-5'>
@@ -226,7 +308,7 @@ function AppointmentsPage() {
               (appointments?.length ?? 0) === 0
                 ? <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
                 : (
-                  <div className='max-h-[70vh] min-h-[420px] sm:min-h-[520px]'>
+                  <div className='h-[calc(100vh-280px)] min-h-[520px] max-h-[82vh]'>
                     <EventCalendar
                       className='rounded-md'
                       events={(appointments || []).map<CalendarEvent>(apt => ({
@@ -240,6 +322,7 @@ function AppointmentsPage() {
                       onEventUpdate={handleEventUpdate}
                       onEventDelete={handleEventDelete}
                       onNewConsultation={() => setShowNewAppointment(true)}
+                      hideHeader
                     />
                   </div>
                 )

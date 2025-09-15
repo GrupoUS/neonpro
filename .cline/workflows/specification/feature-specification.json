@@ -1,0 +1,187 @@
+{
+  "name": "Feature Specification",
+  "version": "1.0.0",
+  "description": "Create or update feature specifications from natural language feature descriptions",
+  "category": "specification",
+  "complexity": "medium",
+  "mcp_tools": ["desktop-commander"],
+  "execution_flow": [
+    {
+      "phase": "Initialization",
+      "description": "Set up feature specification environment",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Execute Setup Script",
+          "tool": "desktop-commander",
+          "command": ".specify/scripts/bash/create-new-feature.sh --json \"$ARGUMENTS\"",
+          "working_directory": "repo_root",
+          "output_parsing": {
+            "format": "json",
+            "required_fields": ["BRANCH_NAME", "SPEC_FILE"],
+            "path_resolution": "All file paths must be absolute"
+          },
+          "description": "Creates and checks out new branch, initializes spec file"
+        }
+      ]
+    },
+    {
+      "phase": "Template Loading",
+      "description": "Load and understand the required template structure",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Load Spec Template",
+          "tool": "desktop-commander",
+          "action": "read_file",
+          "path": ".specify/templates/spec-template.md",
+          "purpose": "Understand required sections and structure"
+        }
+      ]
+    },
+    {
+      "phase": "Specification Generation",
+      "description": "Write the specification using template structure",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Generate Specification Content",
+          "tool": "desktop-commander",
+          "action": "write_file",
+          "path": "{{SPEC_FILE}}",
+          "content_rules": {
+            "template_structure": "Use spec-template.md structure",
+            "placeholder_replacement": "Replace placeholders with concrete details from feature description",
+            "section_order": "Preserve section order and headings",
+            "content_source": "Derive from feature description arguments"
+          },
+          "description": "Write specification to SPEC_FILE using template structure"
+        }
+      ]
+    },
+    {
+      "phase": "Completion Reporting",
+      "description": "Report completion status and outputs",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Generate Completion Report",
+          "output": {
+            "branch_name": "{{BRANCH_NAME}}",
+            "spec_file_path": "{{SPEC_FILE}}",
+            "readiness_status": "Ready for next phase",
+            "validation_status": "Template structure preserved, placeholders replaced with concrete details"
+          },
+          "description": "Report completion with branch name, spec file path, and readiness"
+        }
+      ]
+    }
+  ],
+  "input_parameters": {
+    "arguments": {
+      "type": "string",
+      "description": "Feature description provided as argument",
+      "required": true,
+      "processing": "Used to replace placeholders in template with concrete details"
+    }
+  },
+  "output_requirements": {
+    "branch_creation": {
+      "status": "Created and checked out",
+      "naming": "Follows feature naming conventions"
+    },
+    "spec_file": {
+      "location": "Absolute path as returned by setup script",
+      "content": "Template structure with placeholders replaced by concrete details",
+      "readiness": "Immediately ready for next phase of development"
+    }
+  },
+  "template_requirements": {
+    "structure": {
+      "mandatory_sections": [
+        "Feature Overview",
+        "Requirements",
+        "Technical Specifications",
+        "Acceptance Criteria",
+        "Implementation Notes"
+      ]
+    },
+    "placeholder_handling": {
+      "rule": "All placeholders must be replaced with concrete details derived from feature description",
+      "exception": "If information is insufficient, mark with [NEEDS CLARIFICATION: specific question]"
+    }
+  },
+  "error_handling": {
+    "script_execution": {
+      "failure": "If setup script fails, abort with error details",
+      "recovery": "No automatic recovery - manual intervention required"
+    },
+    "template_loading": {
+      "failure": "If template file not found, abort with template path error",
+      "recovery": "Verify .specify/templates/spec-template.md exists"
+    },
+    "file_writing": {
+      "failure": "If spec file cannot be written, abort with file system error",
+      "recovery": "Check file permissions and disk space"
+    }
+  },
+  "validation_gates": {
+    "pre_execution": [
+      {
+        "check": "Repository root contains .specify directory",
+        "critical": true
+      },
+      {
+        "check": "Setup script exists at .specify/scripts/bash/create-new-feature.sh",
+        "critical": true
+      },
+      {
+        "check": "Template exists at .specify/templates/spec-template.md",
+        "critical": true
+      }
+    ],
+    "post_execution": [
+      {
+        "check": "Branch was created and checked out",
+        "critical": true
+      },
+      {
+        "check": "Spec file exists at specified path",
+        "critical": true
+      },
+      {
+        "check": "Spec file follows template structure",
+        "critical": true
+      },
+      {
+        "check": "All placeholders replaced or marked for clarification",
+        "critical": false
+      }
+    ]
+  },
+  "success_criteria": {
+    "branch": "New feature branch created and checked out",
+    "spec_file": "Feature specification file created with proper structure",
+    "content": "Template placeholders replaced with concrete details from feature description",
+    "readiness": "Specification ready for next development phase"
+  },
+  "integration_points": {
+    "next_phase": "Implementation Planning (plan.prompt.md)",
+    "dependencies": [
+      "Repository structure with .specify directory",
+      "Feature description arguments",
+      "Template system availability"
+    ]
+  },
+  "workflow_triggers": {
+    "manual": "Developer wants to create new feature specification",
+    "automated": "Part of larger spec-driven development workflow",
+    "api": "Can be called by other workflows or CI/CD systems"
+  },
+  "metadata": {
+    "author": "NeonPro Development Team",
+    "created": "2025-09-15",
+    "category": "specification",
+    "tags": ["feature", "specification", "template-driven", "branch-management"]
+  }
+}

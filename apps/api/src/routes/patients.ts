@@ -307,9 +307,12 @@ const validateClinicAccess = async (c: Context<{ Variables: Variables }>, next: 
   return await next();
 };
 
+import { requireAuth } from '../middleware/authn';
+
 // Routes with optimized caching and validation
 app.get(
   '/patients',
+  requireAuth, 
   cache({
     cacheName: 'patients-list',
     cacheControl: 'private, max-age=300', // 5 minutes cache
@@ -337,13 +340,12 @@ app.get(
       c.header('X-Total-Count', result.pagination.total.toString());
       c.header('X-Page', result.pagination.page.toString());
 
-      return c.json(result);
+      import { ok } from '../utils/responses';
+      return ok(c, result);
     } catch (error) {
       console.error('Error fetching patients:', error);
-      return c.json({
-        error: 'Failed to fetch patients',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      }, 500);
+      import { serverError } from '../utils/responses';
+      return serverError(c, 'Failed to fetch patients', error instanceof Error ? error : undefined);
     }
   },
 );
@@ -351,6 +353,7 @@ app.get(
 // Get single patient by ID
 app.get(
   '/patients/:id',
+  requireAuth, 
   cache({
     cacheName: 'patient-detail',
     cacheControl: 'private, max-age=600', // 10 minutes cache for patient details
@@ -368,13 +371,15 @@ app.get(
       c.header('X-Data-Classification', 'sensitive');
       c.header('X-Retention-Policy', '7-years');
 
-      return c.json(patient);
+      import { ok } from '../utils/responses';
+      return ok(c, patient);
     } catch (error) {
       console.error('Error fetching patient:', error);
-      return c.json({
-        error: 'Failed to fetch patient',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      }, error instanceof Error && error.message === 'Patient not found' ? 404 : 500);
+      import { notFound, serverError } from '../utils/responses';
+      if (error instanceof Error && error.message === 'Patient not found') {
+        return notFound(c, 'Patient not found');
+      }
+      return serverError(c, 'Failed to fetch patient', error instanceof Error ? error : undefined);
     }
   },
 );
@@ -382,6 +387,7 @@ app.get(
 // Create new patient
 app.post(
   '/patients',
+  requireAuth, 
   zValidator('json', PatientCreateSchema),
   validateClinicAccess,
   async c => {
@@ -395,13 +401,12 @@ app.post(
       c.header('X-Created-At', new Date().toISOString());
       c.header('Location', `/patients/${patient.id}`);
 
-      return c.json(patient, 201);
+      import { created } from '../utils/responses';
+      return created(c, patient, `/patients/${patient.id}`);
     } catch (error) {
       console.error('Error creating patient:', error);
-      return c.json({
-        error: 'Failed to create patient',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      }, 400);
+      import { badRequest } from '../utils/responses';
+      return badRequest(c, 'VALIDATION_ERROR', error instanceof Error ? error.message : 'Failed to create patient', error instanceof Error ? error : undefined);
     }
   },
 );

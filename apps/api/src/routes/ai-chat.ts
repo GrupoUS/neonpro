@@ -6,8 +6,9 @@ import { cors } from 'hono/cors'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { startTimer, endTimerMs, logMetric } from '../services/metrics'
-import type { CoreMessage } from 'ai'
-import { streamWithFailover, DEFAULT_PRIMARY, MODEL_REGISTRY, getSuggestionsFromAI } from '../config/ai'
+import type { CoreMessage, UIMessage } from 'ai'
+import { streamText } from 'ai'
+import { streamWithFailover, DEFAULT_PRIMARY, MODEL_REGISTRY, getSuggestionsFromAI, resolveProvider } from '../config/ai'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
@@ -73,60 +74,92 @@ const redactPII = (text: string): string => {
 }
 
 // Allowed models registry
-const DEFAULT_SECONDARY = 'gemini-2.5-flash' as const
 
-// Streaming AI response endpoint
+// Streaming AI response endpoint (Vercel AI SDK v5 UIMessage stream)
 app.post('/stream',
   zValidator('json', ChatRequestSchema),
   async (c) => {
-    // Timing and minimal metrics
     const t0 = startTimer()
     try {
-      const { messages, text, presetId, params, locale, clientId, sessionId, model } = c.req.valid('json')
-      
-      // Resolve model: allow only active models unless allowExperimental=true
+      const { messages, text, presetId, locale, clientId, sessionId, model } = c.req.valid('json')
+
       const url = new URL(c.req.url)
       const allowExperimental = url.searchParams.get('allowExperimental') === 'true'
-      const mockMode = url.searchParams.get('mock') === 'true' || process.env.AI_MOCK === 'true' || (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY)
+      const mockMode =
+        url.searchParams.get('mock') === 'true' ||
+        process.env.AI_MOCK === 'true' ||
+        (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.ANTHROPIC_API_KEY)
       const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
         ? (model as keyof typeof MODEL_REGISTRY)
         : undefined
 
-      const mergedMessages: CoreMessage[] = (messages.length > 0 ? messages : (text ? [{ role: 'user' as const, content: text }] : []))
-      const aiMessages: CoreMessage[] = [
+      // Build UI messages and convert to model messages per v5 best practices
+      const uiMessages: UIMessage[] = Array.isArray(messages)
+        ? (messages as { role: 'user' | 'assistant' | 'system'; content: string }[]).map(m => ({
+            role: m.role,
+            content: [{ type: 'text', text: m.content }],
+          }))
+        : []
+
+      if (text && text.trim().length > 0) {
+        uiMessages.push({ role: 'user', content: [{ type: 'text', text }] })
+      }
+
+      // Build CoreMessage[] directly to avoid conversion pitfalls
+      const coreMessages: CoreMessage[] = [
         { role: 'system', content: SYSTEM_PROMPT },
-        ...mergedMessages,
+        ...uiMessages.map(m => ({
+          role: m.role,
+          // Convert UI blocks back to simple string for CoreMessage compatibility
+          content: (Array.isArray(m.content) ? m.content.map(b => (b as any).text).filter(Boolean).join('\n') : ''),
+        })),
       ]
 
-      const startedAt = new Date().toISOString()
-      const response = await streamWithFailover({
-        model: (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY,
-        allowExperimental,
-        messages: aiMessages,
-        mock: mockMode,
+      const chosen = (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY
+
+      if (mockMode) {
+        // Fallback to existing failover mock to keep behavior consistent
+        const startedAt = new Date().toISOString()
+        const response = await streamWithFailover({
+          model: chosen,
+          allowExperimental,
+          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...((messages as CoreMessage[]) || inputAsMessage)],
+          mock: true,
+        })
+        const headers = new Headers(response.headers)
+        headers.set('X-Chat-Started-At', startedAt)
+        const ms = endTimerMs(t0)
+        logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: headers.get('X-Chat-Model') })
+        headers.set('X-Response-Time', `${ms}ms`)
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+      }
+
+      // Provider resolution and v5 streaming to UI
+      const { adapter } = resolveProvider(chosen)
+      const result = await streamText({
+        model: adapter(chosen),
+        messages: coreMessages,
       })
 
-      // Log interaction for audit trail
-      const lastContent = mergedMessages[mergedMessages.length - 1]?.content || ''
+      // Audit log minimal info
+      const lastText = (text || (Array.isArray(messages) ? (messages as any)[messages.length - 1]?.content : '')) || ''
       console.log('AI Chat Interaction:', {
-        timestamp: startedAt,
+        timestamp: new Date().toISOString(),
         sessionId,
         clientId: clientId || 'anonymous',
-        userMessage: redactPII(lastContent),
-        provider: response.headers.get('X-Chat-Model') ?? 'unknown',
+        userMessage: redactPII(lastText),
+        provider: `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
         locale,
         presetId: presetId || null,
       })
 
-      // Ensure required metadata headers and emit lightweight metrics
-      const headers = new Headers(response.headers)
-      headers.set('X-Chat-Started-At', startedAt)
-      if (!headers.has('X-Data-Freshness')) headers.set('X-Data-Freshness', 'as-of-now')
-      const ms = endTimerMs(t0)
-      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: headers.get('X-Chat-Model') })
-      headers.set('X-Response-Time', `${ms}ms`)
-      return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
-      
+      // Return UIMessageStreamResponse per v5
+      return result.toUIMessageStreamResponse({
+        onError: (err) => {
+          console.error('Stream error:', err)
+          return 'Erro ao gerar resposta'
+        },
+      })
     } catch (error) {
       const ms = endTimerMs(t0)
       logMetric({ route: '/v1/ai-chat/stream', ms, ok: false })
