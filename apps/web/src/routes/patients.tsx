@@ -227,7 +227,7 @@ function PatientsStatistics({ clinicId }: { clinicId: string }) {
     change?: string;
   };
 
-  const statisticsCards: StatCard[] = [
+  const statisticsCards: StatCard[] = [ // all neutral styling; no conditional classes
     {
       title: 'Total de Pacientes',
       value: resolved.totalPatients.toLocaleString('pt-BR'),
