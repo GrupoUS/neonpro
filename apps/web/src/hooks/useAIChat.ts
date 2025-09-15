@@ -213,9 +213,9 @@ export function useAIChat(clientId?: string) {
   });
 
   // Voice input processing
-  const processVoiceMutation = useMutation({
+  const processVoiceMutation = useMutation<string, Error, Blob>({
     mutationFn: processVoiceInput,
-    onSuccess: transcript => {
+    onSuccess: (transcript: string) => {
       if (transcript) {
         sendMessageMutation.mutate(transcript);
       }

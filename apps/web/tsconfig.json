@@ -39,11 +39,14 @@
       "@neonpro/ui/lib/utils": [
         "../../packages/ui/src/lib/utils"
       ],
+      "@neonpro/ui/theme": [
+        "../../packages/ui/src/theme/index.ts"
+      ],
       "@neonpro/shared": [
         "../../packages/shared/src"
       ],
       "@neonpro/utils": [
-        "../../packages/utils/src"
+        "./src/shims/neonpro-utils.ts"
       ],
       "@neonpro/types": [
         "../../packages/types/src"
@@ -60,6 +63,9 @@
     "node_modules",
     "dist",
     "../api/**/*",
+    "e2e/**/*",
+    "**/*.spec.ts",
+    "**/*.e2e.ts",
     "src/components/ui/_deprecated/**",
     "src/components/examples/**",
     "src/**/*.test.ts",
