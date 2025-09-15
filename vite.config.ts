@@ -15,10 +15,10 @@ export default defineConfig({
     }),
     react(),
   ],
-  root: '.',
-  publicDir: './apps/web/public',
+  root: './apps/web',
+  publicDir: './public',
   css: {
-    postcss: './apps/web/postcss.config.js',
+    postcss: './postcss.config.js',
   },
   resolve: {
     alias: {
@@ -37,14 +37,13 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 5173,
+    port: 8080,
     open: false,
   },
   build: {
-    outDir: './dist',
+    outDir: path.resolve(__dirname, './dist'),
     sourcemap: true,
     rollupOptions: {
-      external: [/^apps\/api/],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
