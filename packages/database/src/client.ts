@@ -63,6 +63,45 @@ const createPrismaClient = () => {
   });
 };
 
+// Client creation functions for testing
+export const createClient = () => {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Missing Supabase environment variables');
+  }
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      db: {
+        schema: 'public',
+      },
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  );
+};
+
+export const createServiceClient = () => {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Missing Supabase service role environment variables');
+  }
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      db: {
+        schema: 'public',
+      },
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  );
+};
+
 // Global instances
 export const supabase = createOptimizedSupabaseClient();
 export const supabaseBrowser = createBrowserSupabaseClient();

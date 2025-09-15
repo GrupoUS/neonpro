@@ -1,6 +1,6 @@
 // T007 Env validation test (GREEN phase)
 import { describe, expect, it } from 'vitest';
-import { validateEnv } from '../../validate';
+import { validateEnv } from '../validate';
 
 describe('T007 validateEnv', () => {
   it('throws when SUPABASE_URL is missing', () => {

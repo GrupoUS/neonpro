@@ -1,19 +1,20 @@
-// T013 validateEnv implementation (initial)
-// Throws if required environment variables are missing. Extend as needed.
+/**
+ * Environment validation utilities for NeonPro
+ */
 
-export interface EnvRequirements {
-  required: string[];
-}
+export const validateEnv = (): boolean => {
+  const required = [
+    'SUPABASE_URL',
+    'SUPABASE_ANON_KEY',
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  ];
 
-const DEFAULT_REQUIRED = ['SUPABASE_URL'];
-
-export function validateEnv(req: EnvRequirements = { required: DEFAULT_REQUIRED }) {
-  const missing: string[] = [];
-  for (const key of req.required) {
-    if (!process.env[key] || process.env[key]?.trim() === '') missing.push(key);
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
-  if (missing.length) {
-    throw new Error(`Missing required env vars: ${missing.join(', ')}`);
-  }
+
   return true;
-}
+};

@@ -11,9 +11,14 @@ const appointments = new Hono();
 appointments.use('*', requireAuth);
 appointments.use('*', dataProtection.appointments);
 
-// Get all appointments (with LGPD consent validation)
+// Get all appointments (with LGPD consent validation and multi-tenant scoping)
 appointments.get('/', async c => {
   try {
+    const clinicId = c.get('clinicId');
+    if (!clinicId) {
+      return c.json({ error: 'Clinic ID required' }, 400);
+    }
+
     const items = await prisma.appointment.findMany({
       take: 10,
       orderBy: { startTime: 'desc' }, // Fixed field name: startsAt -> startTime
@@ -39,6 +44,8 @@ appointments.get('/', async c => {
         },
       },
       where: {
+        // Add multi-tenant scoping - only appointments for this clinic
+        clinicId: clinicId,
         // Only return appointments for patients with LGPD consent
         patient: {
           lgpdConsentGiven: true,
@@ -53,14 +60,20 @@ appointments.get('/', async c => {
   }
 });
 
-// Get appointments for a specific patient (with LGPD consent validation)
+// Get appointments for a specific patient (with LGPD consent validation and multi-tenant scoping)
 appointments.get('/patient/:patientId', async c => {
   try {
     const patientId = c.req.param('patientId');
+    const clinicId = c.get('clinicId');
+    if (!clinicId) {
+      return c.json({ error: 'Clinic ID required' }, 400);
+    }
 
     const items = await prisma.appointment.findMany({
       where: {
         patientId,
+        // Add multi-tenant scoping - only appointments for this clinic
+        clinicId: clinicId,
         patient: {
           lgpdConsentGiven: true,
           isActive: true,

@@ -1,2 +1,6 @@
-// Root API v1 health - re-export
-export { default } from "../../apps/api/vercel/v1/health";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json({ ok: true, status: 'healthy', version: 'v1', ts: new Date().toISOString(), path: '/api/v1/health' });
+}

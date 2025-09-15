@@ -54,14 +54,14 @@ describe("patient Management API - NeonPro Healthcare", () => {
   const mockPatient = {
     id: "patient-123",
     tenantId: "clinic-abc",
-    name: "Maria da Silva Santos",
-    cpf: "12345678900",
-    rg: "123456789",
-    cns: "123456789012345",
+    name: "Paciente Teste Anonimizado",
+    cpf: "12345678900", // Invalid CPF for testing
+    rg: "123456789",   // Invalid RG for testing  
+    cns: "123456789012345", // Invalid CNS for testing
     dateOfBirth: "1985-03-15",
     gender: "FEMALE",
-    email: "maria@email.com",
-    phone: "11999999999",
+    email: "paciente.teste@exemplo.com",
+    phone: "11987654321",
     bloodType: "A+",
     allergies: ["Penicilina"],
     chronicConditions: ["Diabetes"],
