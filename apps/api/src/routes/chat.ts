@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { streamWithFailover, MODEL_REGISTRY, DEFAULT_PRIMARY } from '../config/ai'
+import { sanitizeForAI } from '@neonpro/database'
+import { supabase } from '@neonpro/database'
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)
 // POST /api/v1/chat/query → 200 SSE | 400 | 403 | 429
@@ -35,13 +37,17 @@ function isRateLimited(userKey: string, now = Date.now()) {
   return limited
 }
 
-// Minimal PII redaction (extend as needed)
+// Minimal PII redaction delegated to shared utils
 function redactPII(text: string): string {
-  return text
-    .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '<CPF>')
-    .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '<CNPJ>')
-    .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '<PHONE>')
-    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '<EMAIL>')
+  try {
+    return sanitizeForAI(text)
+  } catch {
+    return text
+      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '<CPF>')
+      .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '<CNPJ>')
+      .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '<PHONE>')
+      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '<EMAIL>')
+  }
 }
 
 // Consent/role gate (stub): require role and consent header
@@ -126,6 +132,27 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
     console.log('AuditEvent', {
       eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: 'n/a', queryType: classifyQueryType(question), redactionApplied: false, outcome: 'limit', latencyMs: Date.now() - t0, sessionId: sessionId || null,
     })
+    if (process.env.AI_AUDIT_DB === 'true') {
+      try {
+        await supabase.from('ai_audit_events').insert({
+          clinic_id: clinicId,
+          user_id: userId,
+          session_id: sessionId || null,
+          action_type: 'query',
+          consent_status: 'n/a',
+          query_type: classifyQueryType(question),
+          redaction_applied: false,
+          outcome: 'limit',
+          latency_ms: Date.now() - t0,
+        })
+      } catch (e) {
+        console.warn('Audit DB insert failed', e)
+      }
+    } else {
+      console.log('AuditEvent', {
+        eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: 'n/a', queryType: classifyQueryType(question), redactionApplied: false, outcome: 'limit', latencyMs: Date.now() - t0, sessionId: sessionId || null,
+      })
+    }
     return c.json({ message: 'Please retry shortly' }, 429)
   }
 
@@ -135,6 +162,27 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
     console.log('AuditEvent', {
       eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus, queryType: classifyQueryType(question), redactionApplied: false, outcome: 'refusal', latencyMs: Date.now() - t0, sessionId: sessionId || null,
     })
+    if (process.env.AI_AUDIT_DB === 'true') {
+      try {
+        await supabase.from('ai_audit_events').insert({
+          clinic_id: clinicId,
+          user_id: userId,
+          session_id: sessionId || null,
+          action_type: 'query',
+          consent_status,
+          query_type: classifyQueryType(question),
+          redaction_applied: false,
+          outcome: 'refusal',
+          latency_ms: Date.now() - t0,
+        })
+      } catch (e) {
+        console.warn('Audit DB insert failed', e)
+      }
+    } else {
+      console.log('AuditEvent', {
+        eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus, queryType: classifyQueryType(question), redactionApplied: false, outcome: 'refusal', latencyMs: Date.now() - t0, sessionId: sessionId || null,
+      })
+    }
     return c.json({ message: 'Consent required or insufficient role' }, 403)
   }
 
@@ -149,9 +197,27 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
       const resp = new Response(stream, { headers })
 
       // Audit (mock path)
-      console.log('AuditEvent', {
-        eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome, latencyMs: Date.now() - t0, sessionId: sessionId || null,
-      })
+      if (process.env.AI_AUDIT_DB === 'true') {
+        try {
+          await supabase.from('ai_audit_events').insert({
+            clinic_id: clinicId,
+            user_id: userId,
+            session_id: sessionId || null,
+            action_type: 'query',
+            consent_status: ok ? 'valid' : consentStatus,
+            query_type: classifyQueryType(question),
+            redaction_applied: true,
+            outcome,
+            latency_ms: Date.now() - t0,
+          })
+        } catch (e) {
+          console.warn('Audit DB insert failed', e)
+        }
+      } else {
+        console.log('AuditEvent', {
+          eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome, latencyMs: Date.now() - t0, sessionId: sessionId || null,
+        })
+      }
       return resp
     }
 
@@ -186,16 +252,52 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
     const headers = sseHeaders({ 'X-Chat-Model': aiResp.headers.get('X-Chat-Model') || 'unknown' })
 
     // Audit (success)
-    console.log('AuditEvent', {
-      eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome: 'success', latencyMs: Date.now() - t0, sessionId: sessionId || null,
-    })
+    if (process.env.AI_AUDIT_DB === 'true') {
+      try {
+        await supabase.from('ai_audit_events').insert({
+          clinic_id: clinicId,
+          user_id: userId,
+          session_id: sessionId || null,
+          action_type: 'query',
+          consent_status: ok ? 'valid' : consentStatus,
+          query_type: classifyQueryType(question),
+          redaction_applied: true,
+          outcome: 'success',
+          latency_ms: Date.now() - t0,
+        })
+      } catch (e) {
+        console.warn('Audit DB insert failed', e)
+      }
+    } else {
+      console.log('AuditEvent', {
+        eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome: 'success', latencyMs: Date.now() - t0, sessionId: sessionId || null,
+      })
+    }
 
     return new Response(stream, { headers })
   } catch (err) {
     console.error('Chat query error:', err)
-    console.log('AuditEvent', {
-      eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome: 'error', latencyMs: Date.now() - t0, sessionId: sessionId || null,
-    })
+    if (process.env.AI_AUDIT_DB === 'true') {
+      try {
+        await supabase.from('ai_audit_events').insert({
+          clinic_id: clinicId,
+          user_id: userId,
+          session_id: sessionId || null,
+          action_type: 'query',
+          consent_status: ok ? 'valid' : consentStatus,
+          query_type: classifyQueryType(question),
+          redaction_applied: true,
+          outcome: 'error',
+          latency_ms: Date.now() - t0,
+        })
+      } catch (e) {
+        console.warn('Audit DB insert failed', e)
+      }
+    } else {
+      console.log('AuditEvent', {
+        eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus: ok ? 'valid' : consentStatus, queryType: classifyQueryType(question), redactionApplied: true, outcome: 'error', latencyMs: Date.now() - t0, sessionId: sessionId || null,
+      })
+    }
     return c.json({ message: 'Service temporarily unavailable' }, 500)
   }
 })
