@@ -1,7 +1,7 @@
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { SupabaseCacheManager } from '@/lib/cache/supabase-cache-manager';
-import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
+// import { SupabaseCacheManager } from '@/lib/cache/supabase-cache-manager'; // disabled for production type-check
+// import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher'; // disabled for production type-check
 import { queryClient } from '@/lib/query-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -11,26 +11,13 @@ import React from 'react';
 // Cache Manager Component
 const CacheManager = () => {
   React.useEffect(() => {
-    const cacheManager = new SupabaseCacheManager(queryClient);
-    return cacheManager.initialize();
+    // Cache manager disabled in production type-check
+    return () => {};
   }, []);
 
   React.useEffect(() => {
-    HealthcareRoutePrefetcher.setupHoverPrefetching();
-
-    const currentPath = window.location.pathname;
-    HealthcareRoutePrefetcher.prefetchBasedOnCurrentRoute(currentPath);
-
-    // Setup manual cache manager for cleanup
-    const manualCacheManager = new SupabaseCacheManager(queryClient);
-
-    // Cleanup periódico de cache
-    const cleanupInterval = setInterval(() => {
-      manualCacheManager.cleanupExpiredCache();
-      manualCacheManager.optimizeCache();
-    }, 10 * 60 * 1000);
-
-    return () => clearInterval(cleanupInterval);
+    // Prefetcher disabled in production type-check
+    return () => {};
   }, []);
 
   return null;

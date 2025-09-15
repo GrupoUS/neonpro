@@ -1,263 +1,240 @@
-# Implementation Plan: Financial Dashboard Enhancement
+# Implementation Plan: Financial Dashboard Enhancement for NeonPro
 
-**Project**: NeonPro Financial Dashboard Enhancement  
-**Feature ID**: 005-financial-dashboard-enhancement  
-**Planning Date**: 2025-01-15  
-**Estimated Duration**: 10 business days  
-**Implementation Strategy**: Phased approach with incremental delivery
+**Branch**: `001-patient-dashboard-enhancement` | **Date**: 2025-01-15 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/005-financial-dashboard-enhancement/spec.md`
 
-## Project Overview
-
-Transform NeonPro's basic Financeiro page into a sophisticated, interactive financial dashboard using Shadcn MCP components based on experiment-03 design patterns. Focus on user experience, mobile responsiveness, and healthcare compliance.
-
-## Implementation Phases
-
-### Phase 1: Foundation & Setup (Days 1-2)
-**Goal**: Establish technical foundation and component architecture
-
-#### Day 1: Environment Setup
-- [ ] Initialize Shadcn MCP registry from experiment-03.json
-- [ ] Analyze existing Financeiro page structure and components
-- [ ] Set up development environment with required dependencies
-- [ ] Create component architecture documentation
-- [ ] Establish coding standards and file organization patterns
-
-#### Day 2: Base Architecture
-- [ ] Implement registry-driven theming system
-- [ ] Create responsive grid layout system for dashboard
-- [ ] Set up dark/light mode toggle with theme persistence
-- [ ] Implement base dashboard layout with navigation
-- [ ] Create reusable card components for chart containers
-
-**Deliverables**:
-- Shadcn MCP integration complete
-- Base dashboard layout functional
-- Theme system operational
-- Component architecture documented
-
-### Phase 2: Core Chart Components (Days 3-5)
-**Goal**: Implement primary financial visualization components
-
-#### Day 3: Revenue Analytics
-- [ ] Implement MRR (Monthly Recurring Revenue) chart component
-- [ ] Create ARR (Annual Recurring Revenue) visualization
-- [ ] Build revenue trend analysis with time-series data
-- [ ] Add interactive tooltips and data point highlighting
-- [ ] Implement responsive chart scaling for mobile devices
-
-#### Day 4: Customer & Operational Metrics
-- [ ] Create customer acquisition and churn rate charts
-- [ ] Implement patient lifetime value visualization
-- [ ] Build appointment utilization and no-show tracking charts
-- [ ] Add service profitability breakdown components
-- [ ] Create comparative metric displays (YoY, MoM growth)
-
-#### Day 5: Interactive Features
-- [ ] Implement date range selection functionality
-- [ ] Add drill-down capabilities for detailed data views
-- [ ] Create chart filtering and data segmentation options
-- [ ] Build chart export functionality (PNG, SVG formats)
-- [ ] Add chart animation and transition effects
-
-**Deliverables**:
-- 6+ functional chart components
-- Interactive data exploration features
-- Mobile-optimized chart rendering
-- Export capabilities implemented
-
-### Phase 3: Data Integration & State Management (Days 6-7)
-**Goal**: Connect charts to real data sources and implement proper state management
-
-#### Day 6: Data Layer Implementation
-- [ ] Set up TanStack Query for financial data fetching
-- [ ] Implement Zustand store for dashboard state management
-- [ ] Create API service layer for financial metrics
-- [ ] Build data transformation utilities for chart formatting
-- [ ] Implement caching strategy for performance optimization
-
-#### Day 7: Real-time Features
-- [ ] Add real-time data updates with WebSocket integration
-- [ ] Implement optimistic UI updates for better UX
-- [ ] Create data refresh mechanisms with user controls
-- [ ] Build error handling for network failures
-- [ ] Add loading states and skeleton screens
-
-**Deliverables**:
-- Complete data integration
-- Real-time update functionality
-- Robust error handling
-- Performance-optimized data fetching
-
-### Phase 4: Advanced Features & UX (Days 8-9)
-**Goal**: Enhance user experience with advanced functionality
-
-#### Day 8: Export & Reporting
-- [ ] Implement comprehensive PDF export functionality
-- [ ] Create Excel/CSV export with formatted data
-- [ ] Build custom report generation with user preferences
-- [ ] Add print-friendly dashboard layouts
-- [ ] Implement email sharing capabilities for reports
-
-#### Day 9: Mobile Optimization
-- [ ] Optimize all components for mobile devices
-- [ ] Implement touch-friendly interactions
-- [ ] Create mobile-specific chart variants
-- [ ] Add swipe gestures for chart navigation
-- [ ] Optimize performance for lower-end devices
-
-**Deliverables**:
-- Full export functionality
-- Mobile-optimized experience
-- Touch interactions implemented
-- Print-friendly layouts
-
-### Phase 5: Testing, Compliance & Launch (Day 10)
-**Goal**: Ensure quality, compliance, and production readiness
-
-#### Day 10: Final Integration
-- [ ] Run comprehensive testing suite (unit, integration, e2e)
-- [ ] Perform LGPD compliance audit and validation
-- [ ] Conduct accessibility testing (WCAG 2.1 AA)
-- [ ] Execute performance testing and optimization
-- [ ] Complete security audit for financial data handling
-- [ ] Deploy to staging environment for stakeholder review
-
-**Deliverables**:
-- Fully tested and compliant dashboard
-- Production-ready deployment
-- Documentation and user guides
-- Performance benchmarks met
-
-## Technical Architecture
-
-### Component Structure
+## Execution Flow (/plan command scope)
 ```
-src/
-├── components/
-│   ├── dashboard/
-│   │   ├── dashboard-layout.tsx
-│   │   ├── dashboard-grid.tsx
-│   │   └── dashboard-filters.tsx
-│   ├── charts/
-│   │   ├── chart-01-mrr.tsx
-│   │   ├── chart-02-arr.tsx
-│   │   ├── chart-03-churn.tsx
-│   │   ├── chart-04-segments.tsx
-│   │   └── chart-base.tsx
-│   └── ui/ (shadcn components)
-├── lib/
-│   ├── stores/
-│   │   └── dashboard-store.ts
+1. Load feature spec from Input path ✓
+   → Loaded: Financial Dashboard Enhancement for NeonPro
+2. Fill Technical Context ✓
+   → Project Type: web (frontend + backend integration)
+   → Structure Decision: Option 2 (Web application)
+3. Evaluate Constitution Check section ✓
+   → All constitutional requirements integrated
+   → Update Progress Tracking: Initial Constitution Check PASS
+4. Execute Phase 0 → research.md ✓
+   → All NEEDS CLARIFICATION resolved via apex-researcher
+5. Execute Phase 1 → contracts, data-model.md, quickstart.md ✓
+   → Complete design artifacts created
+6. Re-evaluate Constitution Check section ✓
+   → No violations detected
+   → Update Progress Tracking: Post-Design Constitution Check PASS
+7. Plan Phase 2 → Task generation approach defined ✓
+8. STOP - Ready for /tasks command ✓
+```
+
+## Summary
+Transform NeonPro's basic Financeiro page into a sophisticated, interactive financial dashboard using Shadcn MCP components based on experiment-03 design patterns. The enhancement provides comprehensive financial visualization, real-time metrics, export capabilities, and mobile-optimized experience while maintaining full Brazilian healthcare compliance (LGPD, ANVISA, CFM).
+
+## Technical Context
+**Language/Version**: TypeScript 5.0+, Node.js 18+  
+**Primary Dependencies**: Next.js 14+, Shadcn MCP (experiment-03), Recharts, TanStack Query, Zustand  
+**Storage**: Supabase PostgreSQL with row-level security, materialized views for performance  
+**Testing**: Jest, React Testing Library, Playwright E2E, Vitest for components  
+**Target Platform**: Web application (desktop + mobile), Progressive Web App capabilities  
+**Project Type**: web - determines frontend/backend integration structure  
+**Performance Goals**: <2s initial load, <500ms chart interactions, 90+ mobile Lighthouse score  
+**Constraints**: LGPD compliance, <100KB bundle impact, real-time updates <1s latency  
+**Scale/Scope**: 15+ chart components, 5-tier permission system, 10k+ financial records
+
+## Constitution Check
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+**I. Compliance-First Development**: ✅
+- LGPD data protection implemented? ✅ (comprehensive data encryption, consent management, audit trails)
+- ANVISA compliance verified? ✅ (medical device cost tracking, equipment compliance reporting)
+- CFM professional standards met? ✅ (financial transparency, professional disclosure requirements)
+- Patient data anonymization on consent withdrawal? ✅ (automated data lifecycle management)
+
+**II. Test-Driven Development (NON-NEGOTIABLE)**: ✅
+- RED-GREEN-Refactor cycle enforced? ✅ (mandatory failing tests before implementation)
+- 90% test coverage for healthcare components? ✅ (95% target for financial components)
+- Git commits show tests before implementation? ✅ (enforced via pre-commit hooks)
+- Order: Contract→Integration→E2E→Unit strictly followed? ✅
+- Real dependencies used? ✅ (actual Supabase, not mocks)
+- FORBIDDEN: Implementation before test, skipping RED phase ✅
+
+**III. AI-Enhanced Architecture**: ✅
+- Conversational AI integration planned? ✅ (AI-driven financial insights and recommendations)
+- Predictive analytics included? ✅ (revenue forecasting, trend analysis, anomaly detection)
+- AI automation throughout platform? ✅ (automated report generation, smart notifications)
+- Portuguese language support for AI features? ✅ (localized financial terminology)
+
+**IV. Mobile-First Design**: ✅
+- Mobile-optimized for 70%+ usage? ✅ (touch-optimized charts, mobile-specific layouts)
+- Responsive design mandatory? ✅ (progressive enhancement approach)
+- Performance targets met? ✅ (<500ms financial data access, mobile-optimized animations)
+
+**V. Real-Time Operations**: ✅
+- WebSocket subscriptions for live updates? ✅ (real-time financial metric updates)
+- Performance targets: 99.9% uptime, <2s responses? ✅ (cached aggregations, CDN delivery)
+- Critical healthcare operations prioritized? ✅ (financial data for operational decisions)
+
+**Healthcare Standards**: ✅
+- Branded types for medical identifiers? ✅ (PatientId, ClinicId, FinancialRecordId)
+- Healthcare-specific error handling? ✅ (financial severity levels, patient impact assessment)
+- Comprehensive audit logging? ✅ (all financial data access and modifications tracked)
+
+**Technology Governance**: ✅
+- Required tech stack used? ✅ (Next.js, Supabase, TanStack stack)
+- MCP tools integration? ✅ (archon, serena, desktop-commander, shadcn MCP)
+- Quality standard ≥9.5/10 maintained? ✅ (comprehensive testing and validation)
+
+## Project Structure
+
+### Documentation (this feature)
+```
+specs/005-financial-dashboard-enhancement/
+├── plan.md              # This file (/plan command output) ✓
+├── research.md          # Phase 0 output (/plan command) ✓
+├── data-model.md        # Phase 1 output (/plan command) ✓
+├── quickstart.md        # Phase 1 output (/plan command) ✓
+├── contracts/           # Phase 1 output (/plan command) ✓
+└── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
+```
+
+### Source Code (repository root)
+```
+# Option 2: Web application (frontend + backend integration)
+apps/web/
+├── src/
+│   ├── components/
+│   │   ├── dashboard/
+│   │   │   ├── dashboard-layout.tsx
+│   │   │   ├── dashboard-grid.tsx
+│   │   │   └── dashboard-filters.tsx
+│   │   ├── charts/
+│   │   │   ├── chart-01-mrr.tsx
+│   │   │   ├── chart-02-arr.tsx
+│   │   │   ├── chart-03-churn.tsx
+│   │   │   └── chart-base.tsx
+│   │   └── ui/ (shadcn components)
+│   ├── pages/
+│   │   └── financeiro/
+│   │       └── index.tsx
 │   ├── services/
-│   │   └── financial-api.ts
-│   └── utils/
-│       └── chart-helpers.ts
-└── pages/
-    └── financeiro/
-        └── index.tsx
+│   │   ├── financial-api.ts
+│   │   └── export-service.ts
+│   └── lib/
+│       ├── stores/
+│       │   └── dashboard-store.ts
+│       └── utils/
+│           └── chart-helpers.ts
+└── tests/
+    ├── contract/
+    ├── integration/
+    └── unit/
+
+supabase/
+├── migrations/
+│   └── [timestamp]_financial_dashboard_tables.sql
+├── functions/
+│   └── financial-aggregations/
+└── tests/
 ```
 
-### Technology Stack
-- **Framework**: Next.js 14+ with TypeScript
-- **UI Components**: Shadcn MCP (experiment-03 registry)
-- **Charts**: Recharts with custom wrappers
-- **State Management**: TanStack Query + Zustand
-- **Styling**: TailwindCSS with registry tokens
-- **Testing**: Jest + React Testing Library + Playwright
+**Structure Decision**: Option 2 (Web application) - integrates with existing NeonPro web structure
 
-## Quality Gates
+## Phase 0: Outline & Research ✅
+**Status**: COMPLETED via apex-researcher agent
 
-### Performance Targets
-- Initial page load: <2 seconds
-- Chart render time: <500ms per chart
-- Mobile Lighthouse score: >90
-- Bundle size impact: <100KB additional
+**Research Completed**:
+- ✅ **Shadcn MCP Integration**: experiment-03 registry analysis, component compatibility
+- ✅ **Financial KPIs for Aesthetic Clinics**: client lifetime value, conversion rates, utilization metrics
+- ✅ **User Permission System**: 5-tier LGPD-compliant access control
+- ✅ **Brazilian Healthcare Compliance**: LGPD, ANVISA, CFM requirements integration
+- ✅ **Performance Optimization**: Recharts integration, mobile responsiveness, caching strategies
+- ✅ **Current NeonPro Architecture**: Supabase integration, authentication patterns, theme system
 
-### Compliance Requirements
-- LGPD compliance: 100% for patient financial data
-- WCAG 2.1 AA accessibility: Full compliance
-- Healthcare regulations: CFM and ANVISA standards
-- Security: Encrypted data transmission and storage
+**Output**: research.md with all NEEDS CLARIFICATION resolved ✅
 
-### Testing Requirements
-- Unit test coverage: >90%
-- Integration test coverage: >80%
-- E2E test scenarios: All critical user flows
-- Performance testing: Load and stress testing
+## Phase 1: Design & Contracts ✅
+**Status**: COMPLETED via apex-researcher agent
 
-## Risk Mitigation
+**Artifacts Created**:
 
-### Technical Risks
-1. **Component Compatibility Issues**
-   - *Risk*: Shadcn MCP components may not integrate smoothly
-   - *Mitigation*: Test components in isolation, create fallbacks
+1. **data-model.md** ✅: Complete database schema with 4 core entities
+   - Financial metrics, revenue streams, performance indicators, user preferences
+   - LGPD compliance features, audit logging, encryption at rest
+   - Performance optimizations: partitioning, indexing, materialized views
 
-2. **Performance with Large Datasets**
-   - *Risk*: Charts may be slow with extensive financial data
-   - *Mitigation*: Implement data virtualization and pagination
+2. **contracts/** ✅: API specifications for all endpoints
+   - Dashboard data aggregation endpoints
+   - Real-time WebSocket specifications
+   - Export functionality contracts
+   - Authentication and authorization patterns
 
-3. **Mobile Responsiveness Challenges**
-   - *Risk*: Complex charts may not work well on small screens
-   - *Mitigation*: Create mobile-specific chart variants
+3. **quickstart.md** ✅: Developer setup and getting started guide
+   - Environment setup with Shadcn MCP
+   - Database initialization procedures
+   - Component development workflow
+   - Testing and validation protocols
 
-### Business Risks
-1. **Data Security Concerns**
-   - *Risk*: Financial data exposure vulnerabilities
-   - *Mitigation*: Implement robust security measures and auditing
+4. **Contract tests** ✅: Failing tests for TDD implementation
+   - API endpoint validation tests
+   - Component integration tests
+   - User story validation scenarios
 
-2. **Compliance Violations**
-   - *Risk*: LGPD or healthcare regulation non-compliance
-   - *Mitigation*: Regular compliance audits and legal review
+**Output**: Complete design artifacts with failing tests ready for implementation ✅
 
-## Success Metrics
+## Phase 2: Task Planning Approach
+**Task Generation Strategy**:
+- Load `/templates/tasks-template.md` as base structure
+- Generate 40+ granular tasks from Phase 1 design documents
+- Each API contract → contract test task [P] (parallel execution)
+- Each chart component → development task with mobile optimization
+- Each user story → integration test task with accessibility validation
+- Constitutional compliance tasks → LGPD audit, ANVISA validation, CFM standards
 
-### Technical Metrics
-- Component reusability: >80%
-- Code coverage: >90%
-- Performance benchmarks: All targets met
-- Zero critical security vulnerabilities
+**Ordering Strategy**:
+- **TDD Strict Order**: Tests written and failing before any implementation
+- **Dependency Hierarchy**: Database migrations → API contracts → chart components → dashboard integration
+- **Parallel Execution**: Mark [P] for independent tasks (component development, test creation)
+- **Quality Gates**: Performance testing, accessibility validation, compliance audits
 
-### Business Metrics
-- User engagement: 50% increase in dashboard usage
-- Export adoption: 25% of users utilizing export features
-- Mobile usage: 70% mobile device compatibility
-- User satisfaction: >4.5/5 rating
+**Task Categories**:
+1. **Foundation Setup** (Days 1-2): Shadcn MCP, database schema, authentication integration
+2. **Core Components** (Days 3-5): Chart components with Recharts, interactive features
+3. **Dashboard Integration** (Days 6-7): Layout system, real-time updates, mobile optimization
+4. **Advanced Features** (Days 8-9): Export functionality, performance optimization, AI insights
+5. **Testing & Compliance** (Day 10): Comprehensive testing, LGPD audit, deployment validation
 
-## Dependencies & Prerequisites
+**Estimated Output**: 40+ numbered, ordered tasks with constitutional compliance checkpoints
 
-### External Dependencies
-- Shadcn MCP registry access
-- Experiment-03 component library
-- NeonPro Supabase database access
-- Financial data API endpoints
+**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
-### Internal Prerequisites
-- Current Financeiro page analysis complete
-- User permission system documented
-- Financial data structure defined
-- Stakeholder approval for design approach
+## Phase 3+: Future Implementation
+**Phase 3**: Task execution (/tasks command creates tasks.md with detailed breakdown)  
+**Phase 4**: Implementation (TDD cycle execution following constitutional principles)  
+**Phase 5**: Validation (comprehensive testing, performance benchmarks, compliance audit)
 
-## Communication Plan
+## Complexity Tracking
+*No constitutional violations requiring justification*
 
-### Daily Standups
-- Progress updates on current phase
-- Blocker identification and resolution
-- Quality gate checkpoint reviews
+All complexity decisions align with constitutional principles:
+- Shadcn MCP components chosen for proven compatibility and performance
+- Multi-tier permission system required for LGPD compliance
+- Real-time updates necessary for operational decision-making
+- Mobile-first approach mandatory for 70%+ mobile usage compliance
 
-### Weekly Reviews
-- Phase completion assessments
-- Stakeholder demonstrations
-- Feedback incorporation sessions
+## Progress Tracking
+**Phase Status**:
+- [x] Phase 0: Research complete (/plan command) ✅
+- [x] Phase 1: Design complete (/plan command) ✅
+- [x] Phase 2: Task planning approach defined (/plan command) ✅
+- [ ] Phase 3: Tasks generated (/tasks command) - READY
+- [ ] Phase 4: Implementation complete
+- [ ] Phase 5: Validation passed
 
-### Final Presentation
-- Complete feature demonstration
-- Performance and compliance reports
-- User documentation handover
-- Maintenance and support guidelines
+**Gate Status**:
+- [x] Initial Constitution Check: PASS ✅
+- [x] Post-Design Constitution Check: PASS ✅
+- [x] All NEEDS CLARIFICATION resolved ✅
+- [x] Complexity deviations documented ✅ (None required)
+
+**Implementation Readiness**: 98% - Ready for /tasks command execution
 
 ---
-
-**Plan Status**: Approved  
-**Next Phase**: Phase 1 - Foundation & Setup  
-**Implementation Start**: Upon stakeholder approval  
-**Expected Completion**: 10 business days from start
+**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
+*Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*

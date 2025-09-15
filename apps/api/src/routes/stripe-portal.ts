@@ -14,10 +14,10 @@ app.use(
   '*',
   cors({
     origin: [
-      'http://localhost:8081',
+      process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app',
       'http://localhost:3000',
-      process.env.NEXT_PUBLIC_APP_URL || 'https://your-production-domain.com',
-    ],
+      'http://localhost:8081'
+    ],,,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

@@ -18,10 +18,10 @@ const webVitalsRouter = new Hono();
 // Enable CORS for web vitals reporting
 webVitalsRouter.use('*', cors({
   origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'https://neonpro.vercel.app',
+    process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app',
+    'http://localhost:3000',
     'https://neonpro.com.br'
-  ],
+  ],,
   allowMethods: ['POST', 'GET'],
   allowHeaders: ['Content-Type', 'Authorization']
 }));

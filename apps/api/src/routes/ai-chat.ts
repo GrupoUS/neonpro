@@ -31,9 +31,9 @@ const app = new Hono()
 
 // Enable CORS for browser requests
 app.use('*', cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://neonpro.vercel.app'] 
-    : ['http://localhost:5173'],
+  origin: process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app']
+  : ['http://localhost:5173', 'http://localhost:3000'],
   allowMethods: ['GET', 'POST'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }))

@@ -52,7 +52,7 @@ function ServicesPage() {
   // Fetch services data
   const { data: servicesResponse, isLoading, error } = useServices({
     clinic_id: clinicId,
-    clinicId: clinicId, // backward compatibility
+    // clinicId is deprecated; use clinic_id only
     is_active: true,
   });
 

@@ -152,7 +152,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
 
   // Advanced search dialog state
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-  const [advancedFilters, setAdvancedFilters] = useState<any>({});
+  // Removed unused advancedFilters state after removing prop from AdvancedSearchDialog
 
   // Search and filter state
   const searchFilter = columnFilters.find(f => f.id === 'fullName')?.value as string || '';
@@ -417,8 +417,6 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
 
   // Advanced search handlers (FR-005)
   const handleApplyAdvancedFilters = (filters: any) => {
-    setAdvancedFilters(filters);
-
     // Apply filters to the table
     if (filters.query) {
       table.getColumn('fullName')?.setFilterValue(filters.query);
@@ -814,7 +812,6 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
         open={showAdvancedSearch}
         onOpenChange={setShowAdvancedSearch}
         onApplyFilters={handleApplyAdvancedFilters}
-        currentFilters={advancedFilters}
       />
     </div>
   );

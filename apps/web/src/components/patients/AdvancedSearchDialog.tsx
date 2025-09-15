@@ -6,8 +6,10 @@
 'use client';
 
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
+import { useSearchPerformance } from '@/hooks/usePerformanceMonitor';
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -16,32 +18,24 @@ import {
   DialogTitle,
   Input,
   Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Checkbox,
 } from '@neonpro/ui';
-import { Calendar, Search, X, Filter } from 'lucide-react';
+import { Activity, Calendar, Filter, Search, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface AdvancedSearchDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onApplyFilters: (filters: any) => void;
-  currentFilters?: any;
+  // currentFilters?: any;
 }
 
 export function AdvancedSearchDialog({
   open,
   onOpenChange,
   onApplyFilters,
-  currentFilters,
 }: AdvancedSearchDialogProps) {
   const {
     filters,
-    setFilters,
     clearFilters,
     formatCPF,
     formatPhone,
@@ -50,10 +44,17 @@ export function AdvancedSearchDialog({
     metrics,
   } = useAdvancedSearch();
 
+  const { measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
+    useSearchPerformance();
+
   const [localFilters, setLocalFilters] = useState(filters);
 
-  const handleApply = () => {
-    onApplyFilters(localFilters);
+  const handleApply = async () => {
+    // Measure search performance
+    await measureSearch(async () => {
+      onApplyFilters(localFilters);
+      return Promise.resolve();
+    });
     onOpenChange(false);
   };
 
@@ -88,8 +89,8 @@ export function AdvancedSearchDialog({
             Busca Avançada de Pacientes
           </DialogTitle>
           <DialogDescription>
-            Use os filtros abaixo para encontrar pacientes específicos. 
-            Os campos são opcionais e podem ser combinados.
+            Use os filtros abaixo para encontrar pacientes específicos. Os campos são opcionais e
+            podem ser combinados.
           </DialogDescription>
         </DialogHeader>
 
@@ -103,7 +104,7 @@ export function AdvancedSearchDialog({
                 id='general-search'
                 placeholder='Nome, email ou telefone...'
                 value={localFilters.query}
-                onChange={(e) => setLocalFilters(prev => ({ ...prev, query: e.target.value }))}
+                onChange={e => setLocalFilters(prev => ({ ...prev, query: e.target.value }))}
                 className='pl-10'
               />
             </div>
@@ -118,7 +119,7 @@ export function AdvancedSearchDialog({
                 id='cpf-search'
                 placeholder='000.000.000-00'
                 value={localFilters.cpf}
-                onChange={(e) => handleCPFChange(e.target.value)}
+                onChange={e => handleCPFChange(e.target.value)}
                 maxLength={14}
               />
               {localFilters.cpf && !validateCPF(localFilters.cpf) && (
@@ -133,7 +134,7 @@ export function AdvancedSearchDialog({
                 id='phone-search'
                 placeholder='(11) 99999-9999'
                 value={localFilters.phone}
-                onChange={(e) => handlePhoneChange(e.target.value)}
+                onChange={e => handlePhoneChange(e.target.value)}
                 maxLength={15}
               />
               {localFilters.phone && !validatePhone(localFilters.phone) && (
@@ -149,7 +150,7 @@ export function AdvancedSearchDialog({
                 type='email'
                 placeholder='paciente@exemplo.com'
                 value={localFilters.email}
-                onChange={(e) => setLocalFilters(prev => ({ ...prev, email: e.target.value }))}
+                onChange={e => setLocalFilters(prev => ({ ...prev, email: e.target.value }))}
               />
             </div>
 
@@ -157,21 +158,23 @@ export function AdvancedSearchDialog({
             <div className='space-y-2'>
               <Label>Status</Label>
               <div className='space-y-2'>
-                {statusOptions.map((option) => (
+                {statusOptions.map(option => (
                   <div key={option.value} className='flex items-center space-x-2'>
                     <Checkbox
                       id={`status-${option.value}`}
                       checked={localFilters.status.includes(option.value)}
-                      onCheckedChange={(checked) => {
+                      onCheckedChange={checked => {
                         if (checked) {
                           setLocalFilters(prev => ({
                             ...prev,
-                            status: [...prev.status, option.value]
+                            status: [...prev.status, option.value],
                           }));
                         } else {
                           setLocalFilters(prev => ({
                             ...prev,
-                            status: prev.status.filter(s => s !== option.value)
+                            status: prev.status.filter(s =>
+                              s !== option.value
+                            ),
                           }));
                         }
                       }}
@@ -197,11 +200,11 @@ export function AdvancedSearchDialog({
                     id='date-start'
                     type='date'
                     value={localFilters.dateRange.start?.toISOString().split('T')[0] || ''}
-                    onChange={(e) => {
+                    onChange={e => {
                       const date = e.target.value ? new Date(e.target.value) : null;
                       setLocalFilters(prev => ({
                         ...prev,
-                        dateRange: { ...prev.dateRange, start: date }
+                        dateRange: { ...prev.dateRange, start: date },
                       }));
                     }}
                     className='pl-10'
@@ -216,11 +219,11 @@ export function AdvancedSearchDialog({
                     id='date-end'
                     type='date'
                     value={localFilters.dateRange.end?.toISOString().split('T')[0] || ''}
-                    onChange={(e) => {
+                    onChange={e => {
                       const date = e.target.value ? new Date(e.target.value) : null;
                       setLocalFilters(prev => ({
                         ...prev,
-                        dateRange: { ...prev.dateRange, end: date }
+                        dateRange: { ...prev.dateRange, end: date },
                       }));
                     }}
                     className='pl-10'
@@ -233,13 +236,34 @@ export function AdvancedSearchDialog({
           {/* Search Metrics */}
           {metrics.lastSearchAt && (
             <div className='text-xs text-muted-foreground border-t pt-4'>
-              Última busca: {metrics.lastSearchAt.toLocaleString('pt-BR')} 
+              Última busca: {metrics.lastSearchAt.toLocaleString('pt-BR')}
               ({metrics.searchTime.toFixed(0)}ms)
             </div>
           )}
         </div>
 
         <DialogFooter className='gap-2'>
+          <div className='flex items-center gap-4 flex-1'>
+            {/* Performance Indicator */}
+            {searchResponseTime > 0 && (
+              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                <Activity className='w-4 h-4' />
+                <span>
+                  Busca: {searchResponseTime.toFixed(0)}ms
+                  {searchStatus === 'excellent' && ' ⚡'}
+                  {searchStatus === 'good' && ' ✓'}
+                  {searchStatus === 'fair' && ' ⚠️'}
+                  {searchStatus === 'poor' && ' 🐌'}
+                </span>
+                {!isSearchHealthy && (
+                  <span className='text-yellow-600 dark:text-yellow-400 text-xs'>
+                    (meta: &lt;300ms)
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
           <Button variant='outline' onClick={handleClear}>
             <X className='w-4 h-4 mr-2' />
             Limpar

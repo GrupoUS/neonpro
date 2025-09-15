@@ -1,7 +1,7 @@
 /**
  * EnhancedAppShell Component - Complete Navigation System (FR-009, FR-010)
  * Integrates EnhancedSidebar and BreadcrumbNavigation with real-time features
- * 
+ *
  * Features:
  * - Enhanced collapsible sidebar navigation
  * - Route-aware breadcrumb navigation
@@ -14,102 +14,83 @@
 
 'use client';
 
+import { RealTimeStatusIndicator } from '@/components/realtime/RealTimeStatusIndicator';
+import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
 import { useAuth } from '@/hooks/useAuth';
+import { useEnhancedRealTime, useRealTimePatientSync } from '@/hooks/useEnhancedRealTime';
 import { supabase } from '@/integrations/supabase/client';
 import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';
+import { cn } from '@/lib/utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Outlet, useLocation } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
-import { EnhancedSidebar } from './EnhancedSidebar';
 import { BreadcrumbNavigation } from './BreadcrumbNavigation';
-import { cn } from '@/lib/utils';
+import { EnhancedSidebar } from './EnhancedSidebar';
 
-// Real-time subscription hook for patients
-const usePatientRealtimeSubscription = () => {
+// Enhanced real-time subscription hooks using the new system
+const useEnhancedRealtimeSubscriptions = () => {
   const { user } = useAuth();
+  const { subscribe } = useEnhancedRealTime();
 
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel('patient-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'patients',
-          filter: `clinic_id=eq.${user.id}`,
-        },
-        payload => {
-          console.log('Patient change:', payload);
-          queryClient.invalidateQueries({ queryKey: ['patients'] });
-
-          if (payload.eventType === 'INSERT') {
-            toast.success('Novo paciente cadastrado!');
-          } else if (payload.eventType === 'UPDATE') {
-            toast.info('Dados do paciente atualizados!');
-          }
-        },
-      )
-      .subscribe();
+    // Subscribe to patient changes with enhanced features
+    const patientSubscription = subscribe({
+      tableName: 'patients',
+      filter: `clinic_id=eq.${user.id}`,
+      enableNotifications: true,
+      rateLimitMs: 500,
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      patientSubscription?.unsubscribe();
     };
-  }, [user]);
+  }, [user, subscribe]);
 };
 
-// Real-time subscription hook for appointments
-const useAppointmentRealtimeSubscription = () => {
+// Enhanced appointment subscription hook
+const useEnhancedAppointmentSubscription = () => {
   const { user } = useAuth();
+  const { subscribe } = useEnhancedRealTime();
 
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel('appointment-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
-          filter: `clinic_id=eq.${user.id}`,
-        },
-        payload => {
-          console.log('Appointment change:', payload);
-          queryClient.invalidateQueries({ queryKey: ['appointments'] });
+    // Subscribe to appointment changes with enhanced features
+    const appointmentSubscription = subscribe({
+      tableName: 'appointments',
+      filter: `clinic_id=eq.${user.id}`,
+      enableNotifications: true,
+      rateLimitMs: 500,
+      onInsert: _payload => {
+        toast.success('Novo agendamento criado!');
+      },
+      onUpdate: payload => {
+        const newStatus = payload.new?.status;
+        const oldStatus = payload.old?.status;
 
-          if (payload.eventType === 'INSERT') {
-            toast.success('Novo agendamento criado!');
-          } else if (payload.eventType === 'UPDATE') {
-            const newStatus = payload.new?.status;
-            const oldStatus = payload.old?.status;
-
-            if (newStatus !== oldStatus) {
-              if (newStatus === 'confirmed') {
-                toast.success('Agendamento confirmado!');
-              } else if (newStatus === 'cancelled') {
-                toast.error('Agendamento cancelado!');
-              } else if (newStatus === 'completed') {
-                toast.success('Agendamento concluído!');
-              }
-            }
-          } else if (payload.eventType === 'DELETE') {
-            toast.info('Agendamento removido!');
+        if (newStatus !== oldStatus) {
+          if (newStatus === 'confirmed') {
+            toast.success('Agendamento confirmado!');
+          } else if (newStatus === 'cancelled') {
+            toast.error('Agendamento cancelado!');
+          } else if (newStatus === 'completed') {
+            toast.success('Agendamento concluído!');
           }
-        },
-      )
-      .subscribe();
+        }
+      },
+      onDelete: () => {
+        toast.info('Agendamento removido!');
+      },
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      appointmentSubscription?.unsubscribe();
     };
-  }, [user]);
+  }, [user, subscribe]);
 };
 
 // Route-based prefetching hook
@@ -151,39 +132,19 @@ const useRoutePrefetch = () => {
 
 function EnhancedAppShellContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isRealTimeConnected, setIsRealTimeConnected] = useState(false);
+  const { user } = useAuth();
 
-  // Activate real-time subscriptions
-  usePatientRealtimeSubscription();
-  useAppointmentRealtimeSubscription();
+  // Activate enhanced real-time subscriptions
+  useEnhancedRealtimeSubscriptions();
+  useEnhancedAppointmentSubscription();
   useRoutePrefetch();
+
+  // Activate patient-specific real-time sync
+  useRealTimePatientSync(user?.id || '');
 
   // Setup error handling
   useEffect(() => {
     setupQueryErrorHandling();
-  }, []);
-
-  // Monitor real-time connection status
-  useEffect(() => {
-    const handleConnectionChange = (status: string) => {
-      if (status === 'SUBSCRIBED') {
-        console.log('Real-time connection established');
-        setIsRealTimeConnected(true);
-        toast.success('Conexão em tempo real ativada!');
-      } else if (status === 'CHANNEL_ERROR') {
-        console.error('Real-time connection error');
-        setIsRealTimeConnected(false);
-        toast.error('Erro na conexão em tempo real!');
-      }
-    };
-
-    const channel = supabase.channel('connection-monitor');
-    channel.on('system', { event: 'connection' }, handleConnectionChange);
-    channel.subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   return (
@@ -195,44 +156,32 @@ function EnhancedAppShellContent() {
       />
 
       {/* Main Content Area */}
-      <div 
+      <div
         className={cn(
           'flex-1 flex flex-col transition-all duration-300 ease-in-out',
-          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-70'
+          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-70',
         )}
       >
         {/* Header with Breadcrumbs */}
         <header className='sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border'>
           <div className='container mx-auto px-4 py-3'>
-            <BreadcrumbNavigation 
+            <BreadcrumbNavigation
               className='mb-2'
               maxItems={4}
             />
-            
+
             {/* Page Title Area - can be customized per route */}
             <div className='flex items-center justify-between'>
               <div className='min-w-0 flex-1'>
                 {/* This will be filled by individual pages if needed */}
               </div>
-              
-              {/* Real-time Status Indicator */}
+
+              {/* Enhanced Real-time Status Indicator */}
               <div className='flex items-center gap-2'>
-                <div className={cn(
-                  'flex items-center gap-2 px-3 py-1 rounded-full text-sm transition-colors',
-                  isRealTimeConnected 
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                )}>
-                  <div className={cn(
-                    'w-2 h-2 rounded-full',
-                    isRealTimeConnected 
-                      ? 'bg-green-500 animate-pulse' 
-                      : 'bg-red-500'
-                  )} />
-                  <span>
-                    {isRealTimeConnected ? 'Tempo Real Ativo' : 'Desconectado'}
-                  </span>
-                </div>
+                <RealTimeStatusIndicator
+                  showMetrics={true}
+                  className='transition-all duration-200'
+                />
               </div>
             </div>
           </div>

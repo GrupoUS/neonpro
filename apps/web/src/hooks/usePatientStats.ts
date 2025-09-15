@@ -8,6 +8,7 @@ export type PatientStats = {
   upcomingAppointments: number;
 };
 
+/*
 async function countPatients(
   clinicId: string,
   filters?: { isActive?: boolean; createdFrom?: string },
@@ -39,6 +40,7 @@ async function countUpcomingAppointments(clinicId: string, fromISO: string, toIS
   if (error) throw new Error(error.message);
   return count || 0;
 }
+*/
 
 export function usePatientStats(clinicId?: string) {
   return useQuery({
