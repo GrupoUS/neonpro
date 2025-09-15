@@ -50,6 +50,7 @@
   "license": "MIT",
   "dependencies": {
     "@radix-ui/react-toast": "^1.2.15",
+    "@tanstack/router-plugin": "^1.131.44",
     "clsx": "^2.1.1",
     "lovable-tagger": "^1.1.9",
     "tailwind-merge": "^3.3.1",
