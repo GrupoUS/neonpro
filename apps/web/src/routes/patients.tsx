@@ -273,7 +273,7 @@ function PatientsStatistics({ clinicId }: { clinicId: string }) {
                 <p className='text-2xl font-bold text-foreground'>
                   {stat.value}
                 </p>
-                <p className={`text-xs flex items-center gap-1 text-muted-foreground`}>
+                <p className='text-xs text-muted-foreground'>
                   {stat.change}
                 </p>
               </div>
