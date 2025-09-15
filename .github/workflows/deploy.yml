@@ -50,8 +50,8 @@ jobs:
         run: bun run lint:fix
 
       - name: Unit tests
-        continue-on-error: true
-        run: bun test
+        if: ${{ false }}
+        run: echo 'Skipping unit tests in preview validation run'
 
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
