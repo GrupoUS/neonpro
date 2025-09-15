@@ -1,122 +1,58 @@
 # NeonPro Constitution
-
-<!-- AI-First Advanced Aesthetic Platform for Brazilian Beauty Clinics -->
+<!-- AI-First Advanced Aesthetic Platform for Brazilian Clinics -->
 
 ## Core Principles
 
-### I. AI-First Aesthetic Development
+### I. Compliance-First Development
+Every feature must meet Brazilian healthcare regulations from design to deployment; LGPD data protection, ANVISA medical device compliance, and CFM professional standards are fundamental requirements; Patient privacy and data security are non-negotiable - all data operations require explicit consent and comprehensive audit trails.
 
-Portuguese-optimized AI drives all system interactions; Every feature must integrate intelligent automation; Aesthetic clinic workflows require conversational AI support with beauty consultation guidance; Brazilian beauty terminology and cultural context required; AI responses must achieve <2 second response time for clinic operations
+### II. Test-Driven Development (NON-NEGOTIABLE)
+TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced; Minimum 90% test coverage for critical healthcare components (patient data, appointments, AI features, financial operations).
 
-### II. Compliance by Design
+### III. AI-Enhanced Architecture
+Conversational AI for 24/7 patient engagement in Portuguese is core infrastructure; Predictive analytics for no-show prevention (target <10% from 30%); AI-driven automation integrated throughout platform - scheduling optimization, patient triage, and operational insights.
 
-LGPD compliance built into every data operation; Audit trail mandatory for all client data access; Row Level Security (RLS) enforced at database level; Granular consent management with timestamp tracking
+### IV. Mobile-First Design
+Optimized for smartphone-centric workflows (70%+ mobile usage by clinic staff); Touch-optimized interfaces with PWA capabilities; Responsive design mandatory - mobile experience cannot be degraded version of desktop.
 
-### III. Type-Safe Aesthetic Development
+### V. Real-Time Operations
+Live updates essential for clinic operations and patient safety; WebSocket subscriptions for instant data synchronization; Performance targets: <500ms patient record access, <300ms appointment scheduling, 99.9% uptime.
 
-TypeScript mandatory across entire stack (frontend, backend, database); Aesthetic-specific type definitions required (ClientId, CPF, TreatmentStatus); Zod validation schemas for all API boundaries; No `any` types in aesthetic domain logic; Database operations must use strongly-typed clients (Supabase)
+## Healthcare-Specific Standards
 
-### IV. Test-Driven Development (NON-NEGOTIABLE)
+### Patient Data Protection
+All patient data classified as sensitive with LGPD protection requirements; Branded types for PatientId, CPF, and medical record numbers prevent data mixing; Automatic data anonymization after consent withdrawal; Comprehensive audit logging for all data access and modifications.
 
-Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced; Aesthetic business logic requires >95% test coverage; Integration tests mandatory for client data workflows; E2E tests required for appointment scheduling and AI chat; Critical paths (no-show prediction, treatment recommendations) require comprehensive test suites
+### Medical Terminology Standards
+Clear healthcare nomenclature required - PatientRecord, MedicalRecordNumber, HealthInsuranceNumber; Error handling must include healthcare context with severity levels (low/medium/high/critical); Patient safety considerations in all UI/UX decisions.
 
-### V. Performance & Reliability Standards
+### Audit and Compliance
+Every data operation generates audit trail with timestamp, user, action, and reason; LGPD consent management with expiration tracking; Automated compliance reports for ANVISA and CFM requirements; Data retention policies aligned with Brazilian healthcare regulations.
 
-AI chat responses: <2 seconds response time; System uptime: 99.9% availability requirement; Mobile-first design for Brazilian aesthetic clinic workflows; PWA functionality for offline basic operations; Database queries optimized for clinic-scale operations; Real-time subscriptions for appointment updates
+## Technology Governance
 
-### VI. Simplicity & Necessity (KISS + YAGNI)
+### Required Tech Stack
+Frontend: TanStack Router + Vite + React 19 + TypeScript 5.7.2; Backend: Hono.dev + Supabase + PostgreSQL 15+; AI: OpenAI GPT-4 + Anthropic Claude via Vercel AI SDK; Infrastructure: Vercel (São Paulo) + Turborepo monorepo; Quality: Vitest + Playwright + Oxlint + TypeScript strict mode.
 
-Choose simplest solution that meets aesthetic clinic requirements; Prefer readable code over clever optimizations; Build only what current clinic workflows specify; Remove unused code immediately; "Does this solve the core aesthetic problem without unnecessary complexity?"; Clear, descriptive naming with beauty clinic terminology
+### Performance Standards
+System reliability: 99.9% uptime mandatory; Response times: <500ms patient records, <300ms scheduling, <2s AI responses; Mobile performance: 60fps animations, <100ms interactions; Database: Row Level Security (RLS) for multi-tenant isolation.
 
-### VII. Chain of Thought Development
-
-Break healthcare problems into sequential, traceable steps; Verbalize reasoning process in healthcare context; Show intermediate decisions with medical logic; Question assumptions about clinic workflows; Validate solutions against Brazilian healthcare regulations; Each implementation step follows logically from previous steps; Final healthcare solution traceable back to clinic requirements
-
-## Architecture Constraints
-
-### Technology Stack Requirements
-
-- Frontend: TanStack Router + Vite + React 19 (File-based routing)
-- Backend: Supabase PostgreSQL with RLS + Hono.dev API
-- AI: OpenAI GPT-4 with Portuguese optimization
-- UI: shadcn/ui with healthcare themes
-- State: Zustand + React Server Components
-- Monorepo: Turborepo 2.5.6 with 8 essential packages
-
-### Aesthetic Clinic Data Requirements
-
-- Encrypted PII storage (CPF, RG) using PostgreSQL bytea
-- LGPD consent tracking with granular permissions
-- Audit logging for all client data access
-- Treatment image storage with secure cloud handling
-- Brazilian timezone handling (America/Sao_Paulo)
-- Portuguese language support throughout
-
-### Integration Requirements
-
-- WhatsApp Business API for client communication
-- Brazilian SMS providers (Zenvia, TotalVoice)
-- PIX payment integration for Brazilian market
-- Aesthetic clinic professional management
+### Code Quality Requirements
+Quality standard ≥9.5/10 for all implementations; Zod schemas for runtime validation of sensitive data; Healthcare-specific error handling with patient safety context; Type-safe APIs with branded types for medical identifiers.
 
 ## Development Workflow
 
-### Mandatory Development Sequence
+### MCP Tool Integration
+MANDATORY use of archon MCP for task management and knowledge base; MANDATORY use of serena MCP for codebase analysis (never native search); MANDATORY use of desktop-commander MCP for file operations; Use context7 and tavily for research and best practices.
 
-1. **Sequential Thinking**: Use sequential-thinking MCP first for analysis
-2. **Task Management**: Use Archon MCP for task tracking and knowledge management
-3. **Codebase Analysis**: Use Serena MCP for semantic code understanding (never native tools)
-4. **Implementation**: Follow TDD cycle with aesthetic-specific test patterns
-5. **Quality Gates**: TypeScript compilation + tests + lint + LGPD compliance checks
+### Quality Gates
+All implementations follow CLAUDE.md workflow: Research → Decompose → Plan → Implement → Validate; TDD cycle for every feature: Red → Green → Refactor; Lint + type-check + test must pass before any commit; Healthcare compliance review required for patient-facing features.
 
-### Code Review Requirements
-
-- Aesthetic clinic domain expert review for beauty workflows
-- LGPD compliance verification for data handling
-- Performance review for AI response times
-- Accessibility review for clinic staff usage
-- Security review for client data protection
-
-### Quality Standards
-
-- TypeScript strict mode with aesthetic clinic types
-- Test coverage >90% for aesthetic business logic
-- AI response time <2 seconds validated
-- Mobile responsiveness for clinic workflows verified
-- LGPD compliance automated testing included
-
-## Security & Compliance
-
-### Data Protection Standards
-
-- All patient data encrypted at rest and in transit
-- CPF/RG data stored encrypted with secure key management
-- Database access logged with user identification
-- Patient consent tracked with legal compliance
-- Data retention policies automated per Brazilian healthcare law
-
-### Authentication & Authorization
-
-- Multi-factor authentication for healthcare professionals
-- Role-based access control (dermatologist, aesthetician, coordinator)
-- Session management with automatic timeout
-- Professional license validation integration
-- Clinic-based data isolation (multi-tenant RLS)
-
-### Audit & Monitoring
-
-- All patient data access logged with context
-- Healthcare actions tracked for regulatory compliance
-- Performance monitoring for clinic operations
-- Error tracking with healthcare context
-- Compliance reporting automation
+### AI-Driven Development
+Sequential thinking for complex problem analysis; Research-driven implementation using official documentation; One-shot resolution philosophy with complete requirement analysis; Constitutional compliance verification at each development phase.
 
 ## Governance
 
-This Constitution supersedes all other development practices and architectural decisions. All code reviews, pull requests, and system changes must verify compliance with these principles. Any complexity introduced must be justified against healthcare requirements and Brazilian regulatory needs.
+Constitution supersedes all other development practices and standards; All PRs and code reviews must verify constitutional compliance; Amendment requires documentation, approval from technical leadership, and migration plan; Use CLAUDE.md for runtime development guidance and MCP tool coordination.
 
-Architecture changes require documentation update and migration plan. Breaking changes must include compatibility strategy for existing clinic data.
-
-Use `docs/architecture/AGENTS.md` for detailed architectural guidance and `docs/rules/coding-standards.md` for implementation-specific standards during development.
-
-**Version**: 2.0.0 | **Ratified**: 2025-01-14 | **Last Amended**: 2025-01-14
+**Version**: 1.0.0 | **Ratified**: 2025-01-15 | **Last Amended**: 2025-01-15

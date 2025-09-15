@@ -33,13 +33,16 @@ function ServicesPage() {
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
   // Get clinic ID from user
-  const clinicId = user?.user_metadata?.clinic_id || user?.clinic_id;
+  const clinicId = user?.user_metadata?.clinic_id || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback clinic ID
 
   // Fetch services data
-  const { data: services = [], isLoading, error } = useServices({
-    clinicId,
-    isActive: true,
+  const { data: servicesResponse, isLoading, error } = useServices({
+    clinic_id: clinicId,
+    is_active: true,
   });
+
+  // Extract services array from response
+  const services = servicesResponse?.data || [];
 
   // Delete service mutation
   const deleteServiceMutation = useDeleteService();
