@@ -22,12 +22,8 @@ import {
   Clock,
   Eye,
   EyeOff,
-  Filter,
   Phone,
   Shield,
-  TrendingDown,
-  TrendingUp,
-  User,
   UserX,
   X,
 } from 'lucide-react';
@@ -43,11 +39,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -60,7 +51,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
-import { formatDate, formatDateTime, formatTime } from '@/utils/brazilian-formatters';
+import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
 export interface NoShowAlertsProps {

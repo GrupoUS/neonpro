@@ -14,11 +14,11 @@
 
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Bot,
   Brain,
-  MessageCircle,
+
   Mic,
   MicOff,
   Paperclip,
@@ -26,7 +26,7 @@ import {
   Settings,
   Stethoscope,
   User,
-  X,
+
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -42,7 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
+
   ScrollArea,
   Select,
   SelectContent,
@@ -197,7 +197,7 @@ export const AIChat = ({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   // Fetch available AI models
   const { data: availableModels = [] } = useQuery({

@@ -13,10 +13,10 @@
 
 'use client';
 
-import { Eye, EyeOff, MapPin, Phone, User } from 'lucide-react';
+import { MapPin, Phone, User } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 
-import { Button, Input, Label } from '@/components/ui';
+import { Input, Label } from '@/components/ui';
 import {
   formatCEP,
   formatCNPJ,

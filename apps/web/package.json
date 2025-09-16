@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:dev": "vite build --mode development",
     "build:vercel": "vite build",
     "build:force": "vite build --force",
     "start": "vite preview",
