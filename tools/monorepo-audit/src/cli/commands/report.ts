@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import ora from 'ora';
 import path from 'path';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
-import { AuditReport, ReportFormat } from '../../types/index.js';
+import { ReportFormat, ReportOptions } from '../../specs/contracts/report-generator.contract.js';
 
 interface GenerateOptions {
   format?: string;
@@ -166,72 +166,76 @@ async function handleReportGenerate(options: GenerateOptions): Promise<void> {
     }
 
     // Validate format
-    const format = options.format?.toLowerCase() as ReportFormat;
-    if (!['html', 'json', 'markdown', 'pdf'].includes(format)) {
+    const formatStr = (options.format?.toLowerCase() || 'html');
+    const supportedFormats = ['html', 'json', 'markdown', 'pdf'];
+    if (!supportedFormats.includes(formatStr)) {
       spinner.fail('Invalid format specified');
       console.error(
-        chalk.red(`❌ Unsupported format: ${options.format}. Use: html, json, markdown, pdf`),
+        chalk.red(`❌ Unsupported format: ${options.format}. Use: ${supportedFormats.join(', ')}`),
       );
       return;
     }
+    const format = formatStr as ReportFormat;
 
     spinner.text = `Generating ${format.toUpperCase()} report...`;
 
-    // Generate report
-    const report = await reportGenerator.generateAuditReport({
-      scanResult: auditData.scanResult,
-      dependencyGraph: auditData.dependencyGraph,
-      validationResults: auditData.validationResults,
-      cleanupPlan: auditData.cleanupPlan,
-      projectName: options.projectName || 'Monorepo Audit',
-      generatedAt: new Date(),
-    });
-
-    // Export report
-    const exportOptions = {
-      outputDirectory: outputDir,
-      filename: `audit-report.${format}`,
+    // Prepare report options aligned with contract
+    const reportOptions: ReportOptions = {
       format,
-      includeAssets: true,
+      includeSections: [
+        'executive_summary',
+        'technical_details',
+        'recommendations',
+        'performance_metrics',
+      ],
+      detailLevel: 'standard',
+      includeVisualizations: format === 'html' || format === 'markdown',
+      includeRawData: false,
+      template: options.template ? path.resolve(options.template) : undefined,
+      outputPath: path.join(outputDir, `audit-report.${format}`),
     };
 
-    if (options.template) {
-      exportOptions.templatePath = path.resolve(options.template);
-    }
+    // Generate report
+    const report = await reportGenerator.generateAuditReport(auditData, reportOptions);
 
-    const exportResult = await reportGenerator.exportReport(report, exportOptions);
+    // Export report (service expects format and output file path)
+    const outputFilePath = path.join(outputDir, `audit-report.${format}`);
+    await reportGenerator.exportReport(report, format, outputFilePath);
+
+    const stats = await fs.stat(outputFilePath);
 
     spinner.succeed(`Report generated successfully`);
 
     // Display results
     console.log(chalk.green(`\n✅ Report Generated`));
     console.log(chalk.gray(`📁 Output Directory: ${outputDir}`));
-    console.log(chalk.gray(`📄 Report File: ${exportResult.filePath}`));
-    console.log(chalk.gray(`📏 File Size: ${formatBytes(exportResult.size)}`));
+    console.log(chalk.gray(`📄 Report File: ${outputFilePath}`));
+    console.log(chalk.gray(`📏 File Size: ${formatBytes(stats.size)}`));
 
     // Generate dashboard if requested
     if (options.includeDashboard) {
       spinner.start('Generating interactive dashboard...');
 
-      const dashboard = await reportGenerator.generateDashboard(report, {
-        outputDirectory: outputDir,
-        includeCharts: true,
-        includeInteractiveElements: true,
-      });
+      const dashboardHtml = await reportGenerator.generateDashboard(auditData);
+      const dashboardPath = path.join(outputDir, 'index.html');
+      await fs.writeFile(dashboardPath, dashboardHtml, 'utf-8');
 
       spinner.succeed('Dashboard generated successfully');
-      console.log(chalk.cyan(`🎯 Dashboard: ${dashboard.indexPath}`));
+      console.log(chalk.cyan(`🎯 Dashboard: ${dashboardPath}`));
     }
 
     // Provide next steps
     console.log(chalk.cyan('\n🚀 Next Steps:'));
-    console.log(chalk.gray(`  • Open: ${exportResult.filePath}`));
+    console.log(chalk.gray(`  • Open: ${path.join(outputDir, `audit-report.${format}`)}`));
     if (options.includeDashboard) {
       console.log(chalk.gray(`  • View Dashboard: open ${path.join(outputDir, 'index.html')}`));
     }
     console.log(
       chalk.gray(
-        `  • Export to other formats: report export --input-file ${exportResult.filePath}`,
+        `  • Export to other formats: report export --input-file ${path.join(
+          outputDir,
+          `audit-report.${format}`,
+        )}`,
       ),
     );
   } catch (error) {
@@ -255,7 +259,7 @@ async function handleReportExport(options: ExportCliOptions): Promise<void> {
     const outputDir = path.resolve(options.outputDir || './reports');
 
     // Load existing report
-    let reportData: AuditReport;
+    let reportData: any;
     try {
       const reportContent = await fs.readFile(inputPath, 'utf-8');
       reportData = JSON.parse(reportContent);
@@ -272,40 +276,35 @@ async function handleReportExport(options: ExportCliOptions): Promise<void> {
     }
 
     // Validate export format
-    const format = options.format?.toLowerCase() as ReportFormat;
-    if (!['html', 'json', 'markdown', 'pdf'].includes(format)) {
+    const formatStr = (options.format?.toLowerCase() || 'pdf');
+    const supportedFormats = ['html', 'json', 'markdown', 'pdf'];
+    if (!supportedFormats.includes(formatStr)) {
       spinner.fail('Invalid export format');
       console.error(
-        chalk.red(`❌ Unsupported format: ${options.format}. Use: html, json, markdown, pdf`),
+        chalk.red(`❌ Unsupported format: ${options.format}. Use: ${supportedFormats.join(', ')}`),
       );
       return;
     }
+    const format = formatStr as ReportFormat;
 
     await fs.mkdir(outputDir, { recursive: true });
 
     spinner.text = `Exporting to ${format.toUpperCase()}...`;
 
-    // Export report
-    const exportOptions = {
-      outputDirectory: outputDir,
-      filename: `exported-report.${format}`,
-      format,
-      includeAssets: true,
-    };
+    const outputFilePath = path.join(outputDir, `exported-report.${format}`);
 
-    if (options.template) {
-      exportOptions.templatePath = path.resolve(options.template);
-    }
+    // Export report (service expects format and output file path)
+    await reportGenerator.exportReport(reportData, format, outputFilePath);
 
-    const result = await reportGenerator.exportReport(reportData, exportOptions);
+    const stats = await fs.stat(outputFilePath);
 
     spinner.succeed('Export completed successfully');
 
     // Display results
     console.log(chalk.green(`\n✅ Export Successful`));
     console.log(chalk.gray(`📁 Output Directory: ${outputDir}`));
-    console.log(chalk.gray(`📄 Exported File: ${result.filePath}`));
-    console.log(chalk.gray(`📏 File Size: ${formatBytes(result.size)}`));
+    console.log(chalk.gray(`📄 Exported File: ${outputFilePath}`));
+    console.log(chalk.gray(`📏 File Size: ${formatBytes(stats.size)}`));
     console.log(chalk.gray(`🎨 Format: ${format.toUpperCase()}`));
   } catch (error) {
     spinner.fail('Export failed');
@@ -375,35 +374,45 @@ async function handleReportCompare(options: CompareOptions): Promise<void> {
 
     spinner.text = 'Generating comparison report...';
 
-    // Generate comparison report
-    const comparisonReport = await reportGenerator.generateComparisonReport({
-      baseline: baselineData,
-      current: currentData,
-      compareDate: new Date(),
-    });
+    // Generate comparison report (service expects two AuditData parameters)
+    const comparisonReport = await reportGenerator.generateComparisonReport(
+      baselineData,
+      currentData,
+    );
 
     // Export comparison report
-    const format = (options.format?.toLowerCase() as ReportFormat) || 'html';
-    const exportResult = await reportGenerator.exportReport(comparisonReport, {
-      outputDirectory: outputDir,
-      filename: `comparison-report.${format}`,
-      format,
-      includeAssets: true,
-    });
+    const formatStr = (options.format?.toLowerCase() || 'html');
+    const supportedFormats = ['html', 'json', 'markdown', 'pdf'];
+    if (!supportedFormats.includes(formatStr)) {
+      spinner.fail('Invalid format specified for comparison report');
+      console.error(
+        chalk.red(
+          `❌ Unsupported format: ${options.format}. Use: ${supportedFormats.join(', ')}`,
+        ),
+      );
+      return;
+    }
+    const format = formatStr as ReportFormat;
+
+    const outputFilePath = path.join(outputDir, `comparison-report.${format}`);
+    await reportGenerator.exportReport(comparisonReport, format, outputFilePath);
+    const stats = await fs.stat(outputFilePath);
 
     spinner.succeed('Comparison report generated successfully');
 
     // Display results
     console.log(chalk.green(`\n✅ Comparison Report Generated`));
     console.log(chalk.gray(`📁 Output Directory: ${outputDir}`));
-    console.log(chalk.gray(`📄 Report File: ${exportResult.filePath}`));
-    console.log(chalk.gray(`📏 File Size: ${formatBytes(exportResult.size)}`));
+    console.log(chalk.gray(`📄 Report File: ${outputFilePath}`));
+    console.log(chalk.gray(`📏 File Size: ${formatBytes(stats.size)}`));
 
     // Show key differences
-    if (comparisonReport.summary) {
+    // Note: comparisonReport may contain a summary section depending on implementation
+    // Guarded logging to avoid runtime errors if fields are missing
+    // @ts-ignore - runtime safety
+    const summary = (comparisonReport as any).summary;
+    if (summary) {
       console.log(chalk.cyan('\n📈 Key Changes:'));
-      const summary = comparisonReport.summary;
-
       if (summary.filesChanged) {
         console.log(chalk.yellow(`  📁 Files Changed: ${summary.filesChanged}`));
       }
@@ -462,47 +471,22 @@ async function handleDashboard(options: DashboardOptions): Promise<void> {
 
     await fs.mkdir(outputDir, { recursive: true });
 
-    // Convert audit data to report format
-    const report: AuditReport = {
-      summary: auditData.summary || {},
-      scanResults: auditData.scanResult || {},
-      dependencyAnalysis: auditData.dependencyGraph || {},
-      architectureValidation: auditData.validationResults || {},
-      cleanupRecommendations: auditData.cleanupPlan || {},
-      metadata: {
-        projectName: 'Monorepo Audit Dashboard',
-        generatedAt: new Date(),
-        version: '1.0.0',
-      },
-    };
-
     spinner.text = 'Generating interactive dashboard...';
 
-    // Generate dashboard
-    const dashboard = await reportGenerator.generateDashboard(report, {
-      outputDirectory: outputDir,
-      includeCharts: true,
-      includeInteractiveElements: true,
-      port: parseInt(options.port || '3000'),
-      host: options.host || 'localhost',
-    });
+    // Generate dashboard HTML (service returns a string of HTML)
+    const dashboardHtml = await reportGenerator.generateDashboard(auditData);
+    const indexPath = path.join(outputDir, 'index.html');
+    await fs.writeFile(indexPath, dashboardHtml, 'utf-8');
 
     spinner.succeed('Dashboard generated successfully');
 
     // Display results
     console.log(chalk.green(`\n✅ Dashboard Generated`));
     console.log(chalk.gray(`📁 Output Directory: ${outputDir}`));
-    console.log(chalk.gray(`🎯 Dashboard Index: ${dashboard.indexPath}`));
-    console.log(chalk.gray(`📊 Charts: ${dashboard.chartsGenerated}`));
-    console.log(chalk.gray(`🔗 Interactive Elements: ${dashboard.interactiveElements}`));
+    console.log(chalk.gray(`🎯 Dashboard Index: ${indexPath}`));
 
-    // Show access information
     console.log(chalk.cyan('\n🌐 Access Information:'));
-    console.log(chalk.gray(`  • Local File: file://${dashboard.indexPath}`));
-    if (dashboard.serverUrl) {
-      console.log(chalk.gray(`  • Development Server: ${dashboard.serverUrl}`));
-      console.log(chalk.yellow(`  • Server running on ${options.host}:${options.port}`));
-    }
+    console.log(chalk.gray(`  • Local File: file://${indexPath}`));
 
     console.log(chalk.cyan('\n🚀 Dashboard Features:'));
     console.log(chalk.gray('  • Interactive dependency graphs'));

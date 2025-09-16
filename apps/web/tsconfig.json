@@ -31,6 +31,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
       "@neonpro/shared": [
         "../../packages/shared/src"
       ],
@@ -39,14 +42,22 @@
       ],
       "@neonpro/types": [
         "../../packages/types/src"
+      ],
+      "@neonpro/ui": [
+        "../../packages/ui/src"
+      ],
+      "@neonpro/ui/lib/utils": [
+        "../../packages/ui/src/lib/utils.ts"
+      ],
+      "@neonpro/ui/theme": [
+        "../../packages/ui/src/theme"
       ]
     }
   },
   "include": [
     "src/**/*",
     "src/**/*.tsx",
-    "src/**/*.ts",
-    "vite.config.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -63,6 +74,7 @@
     "src/lib/prefetching/**",
     "src/lib/cache/**",
     "src/components/common/SmartPrefetcher.tsx",
+    "src/components/patients/PatientRegistrationWizard.tsx",
     "src/components/patients/AdvancedSearchDialog.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",

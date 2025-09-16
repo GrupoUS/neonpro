@@ -123,9 +123,9 @@
 - [x] T045 GET /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/get.ts ✅ COMPLETED: Retrieve individual patient by ID with full data model, LGPD compliance, data access logging, sensitive data masking, consent validation, performance optimization with caching, Brazilian healthcare compliance
 - [x] T046 PUT /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/update.ts ✅ COMPLETED: Update patient information with change tracking, Brazilian data validation, LGPD consent updates, audit trail logging, notification service integration, healthcare professional context validation
 - [x] T047 DELETE /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/delete.ts ✅ COMPLETED: Soft delete with LGPD compliance (anonymization vs deletion), comprehensive audit trail, notification service integration, Brazilian healthcare compliance (CFM/ANVISA), data retention policies
-- [ ] T048 POST /api/v2/patients/search endpoint in apps/api/src/routes/patients/search.ts
-- [ ] T049 POST /api/v2/patients/bulk-actions endpoint in apps/api/src/routes/patients/bulk.ts
-- [ ] T050 GET /api/v2/patients/{id}/history endpoint in apps/api/src/routes/patients/history.ts
+- [x] T048 POST /api/v2/patients/search endpoint in apps/api/src/routes/patients/search.ts ✅ COMPLETED: Advanced patient search with filters, sorting, full-text search capabilities, LGPD compliant search with data access logging, Brazilian healthcare compliance (CFM), fuzzy matching, performance optimization, comprehensive error handling
+- [x] T049 POST /api/v2/patients/bulk-actions endpoint in apps/api/src/routes/patients/bulk.ts ✅ COMPLETED: Bulk operations for patient management (update/delete/export), LGPD compliant bulk operations with individual consent validation, comprehensive audit logging, batch processing, Brazilian healthcare compliance, performance optimization
+- [x] T050 GET /api/v2/patients/{id}/history endpoint in apps/api/src/routes/patients/history.ts ✅ COMPLETED: Patient history and audit trail retrieval with timeline view, LGPD compliant history access with data access logging, Brazilian healthcare compliance (CFM/ANVISA), comprehensive filtering, performance optimization
 
 ### API Endpoints - AI Features
 

@@ -10,11 +10,11 @@
     "target": "ES2022",
     "skipLibCheck": true,
     "strict": true,
-  "baseUrl": ".",
-  "paths": {
-    "src/*": ["./src/*"]
-  }
-  }
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+  },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]
 }
