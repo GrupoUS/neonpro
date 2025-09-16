@@ -1,4 +1,5 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { formatCPF as formatCPFUtil, validateCPFMask, formatBRPhone, validateBRPhoneMask } from '@neonpro/utils';
 
 export type AdvancedFilters = {
   query?: string;
@@ -31,21 +32,10 @@ export function useAdvancedSearch(
 ): UseAdvancedSearchResult {
   const [filters, setFilters] = useState<AdvancedFilters>(initial);
 
-  const formatCPF = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11); // cap to 11 digits
-    return digits
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  };
-  const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11); // cap to 11 digits (BR mobile)
-    return digits
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d{4})$/, '$1-$2');
-  };
-  const validateCPF = (value: string) => /\d{3}\.\d{3}\.\d{3}-\d{2}/.test(value);
-  const validatePhone = (value: string) => /\(\d{2}\) \d{5}-\d{4}/.test(value);
+  const formatCPF = (value: string) => formatCPFUtil(value);
+  const formatPhone = (value: string) => formatBRPhone(value);
+  const validateCPF = (value: string) => validateCPFMask(value);
+  const validatePhone = (value: string) => validateBRPhoneMask(value);
 
   const metrics: AdvancedSearchMetrics = useMemo(() => {
     const nonEmpty = [

@@ -188,14 +188,14 @@ const MetricCard = ({
  */
 export const AIInsightsDashboard = ({
   timeRange: initialTimeRange = '7d',
-  insightTypes = ['patient_insights', 'risk_assessment', 'recommendations'],
+  insightTypes: _insightTypes = ['patient_insights', 'risk_assessment', 'recommendations'],
   healthcareProfessional,
   lgpdConsent = {
     canViewAggregatedData: true,
     canViewPatientInsights: false,
     consentLevel: 'basic',
   },
-  mobileOptimized = true,
+  mobileOptimized: _mobileOptimized = true,
   testId = 'ai-insights-dashboard',
 }: AIInsightsDashboardProps) => {
   const [timeRange, setTimeRange] = useState(initialTimeRange);
@@ -204,8 +204,8 @@ export const AIInsightsDashboard = ({
 
   // Fetch metrics data
   const { data: metrics, isLoading: metricsLoading, error: metricsError, refetch: refetchMetrics } =
-    useQuery({
-      queryKey: ['ai-metrics', timeRange],
+    useQuery<MetricsApiResponse>({
+      queryKey: ['ai-metrics', timeRange, _insightTypes],
       queryFn: () => fetchInsightMetrics(timeRange),
       enabled: lgpdConsent.canViewAggregatedData,
       staleTime: 2 * 60 * 1000, // 2 minutes cache
@@ -213,8 +213,8 @@ export const AIInsightsDashboard = ({
     });
 
   // Fetch trends data
-  const { data: trends, isLoading: trendsLoading, error: trendsError } = useQuery({
-    queryKey: ['ai-trends', timeRange],
+  const { data: trends, isLoading: trendsLoading, error: trendsError } = useQuery<TrendsApiResponse>({
+    queryKey: ['ai-trends', timeRange, insightTypes],
     queryFn: () => fetchInsightTrends(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache

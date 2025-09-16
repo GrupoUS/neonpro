@@ -147,3 +147,160 @@ export class SecurityUtils {
     );
   }
 
+  /**
+   * Sanitize RG (Brazilian ID)
+   * @param rg The RG to sanitize
+   * @returns Sanitized RG
+   */
+  static sanitizeRG(rg: string): string {
+    if (typeof rg !== 'string') {
+      return '';
+    }
+
+    // Remove all non-digit and non-X characters
+    return rg.replace(/[^0-9X]/gi, '').toUpperCase();
+  }
+
+  /**
+   * Generate secure random token
+   * @param length Token length in bytes
+   * @returns Hex-encoded random token
+   */
+  static generateToken(length: number = 32): string {
+    return randomUUID().replace(/-/g, '').substring(0, length);
+  }
+
+  /**
+   * Generate secure random nonce
+   * @param length Nonce length
+   * @returns Random nonce string
+   */
+  static generateNonce(length: number = 16): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  /**
+   * Check for common attack patterns in input
+   * @param input The input to check
+   * @returns True if suspicious patterns are found
+   */
+  static containsSuspiciousPatterns(input: string): boolean {
+    if (typeof input !== 'string') {
+      return false;
+    }
+
+    const suspiciousPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /vbscript:/i,
+      /onload=/i,
+      /onerror=/i,
+      /onclick=/i,
+      /onfocus=/i,
+      /onblur=/i,
+      /union.*select/i,
+      /drop.*table/i,
+      /insert.*into/i,
+      /delete.*from/i,
+      /update.*set/i,
+      /exec\(/i,
+      /eval\(/i,
+      /system\(/i,
+      /shell_exec\(/i,
+      /\.\.\//i, // Path traversal
+      /\/etc\/passwd/i,
+      /cmd\.exe/i,
+      /powershell/i,
+      /bash/i,
+    ];
+
+    return suspiciousPatterns.some(pattern => pattern.test(input));
+  }
+
+  /**
+   * Mask sensitive data for logging and display
+   * @param data The data to mask
+   * @param maskChar Character to use for masking (default: '*')
+   * @returns Masked data
+   */
+  static maskSensitiveData(data: string, maskChar: string = '*'): string {
+    if (typeof data !== 'string' || data.length === 0) {
+      return '';
+    }
+
+    // Don't mask very short strings
+    if (data.length <= 4) {
+      return maskChar.repeat(data.length);
+    }
+
+    // Show first 2 and last 2 characters, mask the rest
+    const firstTwo = data.substring(0, 2);
+    const lastTwo = data.substring(data.length - 2);
+    const maskedLength = data.length - 4;
+    const masked = maskChar.repeat(maskedLength);
+
+    return `${firstTwo}${masked}${lastTwo}`;
+  }
+
+  /**
+   * Validate password strength
+   * @param password The password to validate
+   * @returns Object with validation result and score
+   */
+  static validatePasswordStrength(password: string): {
+    isValid: boolean;
+    score: number;
+    feedback: string[];
+  } {
+    const feedback: string[] = [];
+    let score = 0;
+
+    if (typeof password !== 'string') {
+      return {
+        isValid: false,
+        score: 0,
+        feedback: ['Password must be a string'],
+      };
+    }
+
+    // Length check
+    if (password.length < 8) {
+      feedback.push('Password must be at least 8 characters long');
+    } else {
+      score += 2;
+    }
+
+    // Contains lowercase
+    if (!/[a-z]/.test(password)) {
+      feedback.push('Password must contain lowercase letters');
+    } else {
+      score += 1;
+    }
+
+    // Contains uppercase
+    if (!/[A-Z]/.test(password)) {
+      feedback.push('Password must contain uppercase letters');
+    } else {
+      score += 1;
+    }
+
+    // Contains numbers
+    if (!/\d/.test(password)) {
+      feedback.push('Password must contain numbers');
+    } else {
+      score += 1;
+    }
+
+    // Contains special characters
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      feedback.push('Password must contain special characters');
+    } else {
+      score += 1;
+    }
+
+    // No common patterns

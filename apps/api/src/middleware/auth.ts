@@ -1,7 +1,7 @@
 /**
  * Authentication Middleware Enhancement (T073)
  * Healthcare professional validation for AI features
- * 
+ *
  * Features:
  * - Healthcare professional validation for AI features
  * - CFM/CRM number verification integration
@@ -239,7 +239,7 @@ export function requireHealthcareProfessional() {
     try {
       // TODO: Integrate with healthcare professional database
       // For now, use mock data or check user metadata
-      
+
       const healthcareProfessional: HealthcareProfessional = {
         id: userId,
         crmNumber: '12345-SP', // This would come from database
@@ -293,7 +293,10 @@ export function requireHealthcareProfessional() {
 }
 
 // LGPD consent validation middleware
-export function requireLGPDConsent(requiredPurposes: string[] = [], requiredDataCategories: string[] = []) {
+export function requireLGPDConsent(
+  requiredPurposes: string[] = [],
+  requiredDataCategories: string[] = [],
+) {
   return async (c: Context, next: Next) => {
     const userId = c.get('userId');
     if (!userId) {
@@ -303,7 +306,7 @@ export function requireLGPDConsent(requiredPurposes: string[] = [], requiredData
     try {
       // TODO: Integrate with LGPD consent database
       // For now, use mock consent data
-      
+
       const lgpdConsent: LGPDConsent = {
         userId,
         consentDate: new Date(),
@@ -329,7 +332,7 @@ export function requireLGPDConsent(requiredPurposes: string[] = [], requiredData
 
       // Check required purposes
       const missingPurposes = requiredPurposes.filter(
-        purpose => !validatedConsent.purposes.includes(purpose as any)
+        purpose => !validatedConsent.purposes.includes(purpose as any),
       );
 
       if (missingPurposes.length > 0) {
@@ -346,7 +349,7 @@ export function requireLGPDConsent(requiredPurposes: string[] = [], requiredData
 
       // Check required data categories
       const missingDataCategories = requiredDataCategories.filter(
-        category => !validatedConsent.dataCategories.includes(category as any)
+        category => !validatedConsent.dataCategories.includes(category as any),
       );
 
       if (missingDataCategories.length > 0) {
@@ -393,7 +396,7 @@ export function requireAIAccess() {
     // First require healthcare professional validation
     const healthcareMiddleware = requireHealthcareProfessional();
     const healthcareResult = await healthcareMiddleware(c, async () => {});
-    
+
     if (healthcareResult) {
       return healthcareResult; // Return error response
     }
@@ -401,7 +404,7 @@ export function requireAIAccess() {
     // Then require LGPD consent for AI assistance
     const lgpdMiddleware = requireLGPDConsent(['ai_assistance'], ['health_data']);
     const lgpdResult = await lgpdMiddleware(c, async () => {});
-    
+
     if (lgpdResult) {
       return lgpdResult; // Return error response
     }
@@ -435,7 +438,7 @@ export function sessionCleanup(maxInactiveHours: number = 24) {
   return async (c: Context, next: Next) => {
     // Clean expired sessions
     const cleanedCount = sessionManager.cleanExpiredSessions(maxInactiveHours);
-    
+
     if (cleanedCount > 0) {
       console.log(`Cleaned ${cleanedCount} expired sessions`);
     }
@@ -445,5 +448,4 @@ export function sessionCleanup(maxInactiveHours: number = 24) {
 }
 
 // Export types and utilities
-export type { SessionMetadata, HealthcareProfessional, LGPDConsent };
-export { sessionManager };
+export type { HealthcareProfessional, LGPDConsent, SessionMetadata };

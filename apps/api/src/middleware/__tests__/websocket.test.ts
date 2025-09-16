@@ -229,6 +229,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
         data: { message: 'Teste de notificação' },
       };
 
+      // Clear welcome messages first
+      mockWs.messages = [];
+      mockWs2.messages = [];
+
       const sentCount = wsManager.sendToUser('user-123', message);
 
       expect(sentCount).toBe(1);
@@ -245,6 +249,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
         type: WSMessageType.ALERT,
         data: { message: 'Alerta geral' },
       };
+
+      // Clear welcome messages first
+      mockWs.messages = [];
+      mockWs2.messages = [];
 
       const sentCount = wsManager.broadcast(message);
 
@@ -264,6 +272,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
         type: WSMessageType.NOTIFICATION,
         data: { message: 'Notificação para profissionais' },
       };
+
+      // Clear welcome messages first
+      mockWs.messages = [];
+      mockWs2.messages = [];
 
       const filter = (metadata: ConnectionMetadata) => !!metadata.healthcareProfessional;
       const sentCount = wsManager.broadcast(message, filter);

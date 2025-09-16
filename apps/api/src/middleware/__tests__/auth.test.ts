@@ -3,16 +3,13 @@
  * Comprehensive test suite for healthcare professional authentication
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  requireAIAccess,
   requireAuth,
   requireHealthcareProfessional,
   requireLGPDConsent,
-  requireAIAccess,
   sessionManager,
-  setServices,
-  type HealthcareProfessional,
-  type LGPDConsent,
 } from '../auth';
 
 // Mock Supabase client
@@ -22,20 +19,21 @@ const mockSupabaseClient = {
   },
 };
 
-const mockCreateClient = vi.fn(() => mockSupabaseClient);
-
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: mockCreateClient,
-}));
-
 // Mock crypto.randomUUID
-vi.stubGlobal('crypto', {
-  randomUUID: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
+Object.defineProperty(global, 'crypto', {
+  value: {
+    randomUUID: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
+  },
 });
 
 // Mock environment variables
-vi.stubEnv('SUPABASE_URL', 'https://test.supabase.co');
-vi.stubEnv('SUPABASE_ANON_KEY', 'test-anon-key');
+process.env.SUPABASE_URL = 'https://test.supabase.co';
+process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+
+// Mock createClient function
+vi.doMock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => mockSupabaseClient),
+}));
 
 describe('Authentication Middleware Enhancement (T073)', () => {
   let mockContext: any;
@@ -137,22 +135,25 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
     it('should validate healthcare professional with active license', async () => {
       const middleware = requireHealthcareProfessional();
-      
+
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('healthcareProfessional', expect.objectContaining({
-        id: 'user-123',
-        crmNumber: '12345-SP',
-        specialty: 'Dermatologia',
-        licenseStatus: 'active',
-      }));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'healthcareProfessional',
+        expect.objectContaining({
+          id: 'user-123',
+          crmNumber: '12345-SP',
+          specialty: 'Dermatologia',
+          licenseStatus: 'active',
+        }),
+      );
       expect(mockContext.set).toHaveBeenCalledWith('isHealthcareProfessional', true);
       expect(mockNext).toHaveBeenCalled();
     });
 
     it('should reject requests without user authentication', async () => {
       mockContext.get.mockReturnValue(undefined);
-      
+
       const middleware = requireHealthcareProfessional();
       const result = await middleware(mockContext, mockNext);
 
@@ -189,22 +190,25 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
     it('should validate LGPD consent with required purposes', async () => {
       const middleware = requireLGPDConsent(['healthcare_service'], ['personal_data']);
-      
+
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('lgpdConsent', expect.objectContaining({
-        userId: 'user-123',
-        purposes: expect.arrayContaining(['healthcare_service']),
-        dataCategories: expect.arrayContaining(['personal_data']),
-        isActive: true,
-      }));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'lgpdConsent',
+        expect.objectContaining({
+          userId: 'user-123',
+          purposes: expect.arrayContaining(['healthcare_service']),
+          dataCategories: expect.arrayContaining(['personal_data']),
+          isActive: true,
+        }),
+      );
       expect(mockContext.set).toHaveBeenCalledWith('hasLGPDConsent', true);
       expect(mockNext).toHaveBeenCalled();
     });
 
     it('should reject requests with missing required purposes', async () => {
       const middleware = requireLGPDConsent(['marketing'], []);
-      const result = await middleware(mockContext, mockNext);
+      await middleware(mockContext, mockNext);
 
       expect(mockContext.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -212,14 +216,14 @@ describe('Authentication Middleware Enhancement (T073)', () => {
           error: 'Consentimento LGPD insuficiente',
           code: 'LGPD_INSUFFICIENT_CONSENT',
         }),
-        403
+        403,
       );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should reject requests with missing required data categories', async () => {
       const middleware = requireLGPDConsent([], ['usage_data']);
-      const result = await middleware(mockContext, mockNext);
+      await middleware(mockContext, mockNext);
 
       expect(mockContext.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -227,7 +231,7 @@ describe('Authentication Middleware Enhancement (T073)', () => {
           error: 'Consentimento LGPD insuficiente para categorias de dados',
           code: 'LGPD_INSUFFICIENT_DATA_CONSENT',
         }),
-        403
+        403,
       );
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -254,25 +258,27 @@ describe('Authentication Middleware Enhancement (T073)', () => {
       mockContext.get.mockImplementation((key: string) => {
         if (key === 'userId') return 'user-123';
         if (key === 'sessionId') return 'session-123';
-        if (key === 'healthcareProfessional') return {
-          id: 'user-123',
-          crmNumber: '12345-SP',
-          specialty: 'Dermatologia',
-          licenseStatus: 'active',
-          permissions: {
-            canAccessAI: true,
-            canViewPatientData: true,
-            canModifyPatientData: true,
-            canAccessReports: true,
-          },
-        };
+        if (key === 'healthcareProfessional') {
+          return {
+            id: 'user-123',
+            crmNumber: '12345-SP',
+            specialty: 'Dermatologia',
+            licenseStatus: 'active',
+            permissions: {
+              canAccessAI: true,
+              canViewPatientData: true,
+              canModifyPatientData: true,
+              canAccessReports: true,
+            },
+          };
+        }
         return undefined;
       });
     });
 
     it('should grant AI access to authorized healthcare professionals', async () => {
       const middleware = requireAIAccess();
-      
+
       // Mock the context.set calls that would be made by sub-middlewares
       mockContext.set.mockImplementation((key: string, value: any) => {
         if (key === 'healthcareProfessional') {
@@ -295,17 +301,19 @@ describe('Authentication Middleware Enhancement (T073)', () => {
       mockContext.get.mockImplementation((key: string) => {
         if (key === 'userId') return 'user-123';
         if (key === 'sessionId') return sessionId;
-        if (key === 'healthcareProfessional') return {
-          permissions: { canAccessAI: true },
-        };
+        if (key === 'healthcareProfessional') {
+          return {
+            permissions: { canAccessAI: true },
+          };
+        }
         return undefined;
       });
 
       const middleware = requireAIAccess();
-      
+
       // Mock successful sub-middleware execution
       mockContext.set.mockImplementation(() => {});
-      
+
       await middleware(mockContext, mockNext);
 
       const session = sessionManager.getSession(sessionId);
@@ -321,7 +329,7 @@ describe('Authentication Middleware Enhancement (T073)', () => {
       });
 
       expect(sessionId).toBeDefined();
-      
+
       const session = sessionManager.getSession(sessionId);
       expect(session).toBeDefined();
       expect(session?.userId).toBe('user-123');
@@ -344,9 +352,9 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
     it('should remove sessions', () => {
       const sessionId = sessionManager.createSession('user-123', {});
-      
+
       expect(sessionManager.getSession(sessionId)).toBeDefined();
-      
+
       const removed = sessionManager.removeSession(sessionId);
       expect(removed).toBe(true);
       expect(sessionManager.getSession(sessionId)).toBeUndefined();
@@ -366,7 +374,7 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
     it('should clean expired sessions', () => {
       const sessionId = sessionManager.createSession('user-123', {});
-      
+
       // Simulate old session
       const session = sessionManager.getSession(sessionId);
       if (session) {
@@ -374,7 +382,7 @@ describe('Authentication Middleware Enhancement (T073)', () => {
       }
 
       const cleanedCount = sessionManager.cleanExpiredSessions(24);
-      
+
       expect(cleanedCount).toBe(1);
       expect(sessionManager.getSession(sessionId)).toBeUndefined();
     });
