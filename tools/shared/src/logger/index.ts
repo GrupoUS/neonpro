@@ -542,5 +542,4 @@ export const logger = createLogger('DefaultTool', {
 
 // Export everything
 export * from '../types';
-export { LogLevel, UnifiedLogger };
 export default UnifiedLogger;

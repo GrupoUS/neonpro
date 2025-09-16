@@ -20,11 +20,15 @@ import {
   AgentCoordinationPattern,
   OrchestrationWorkflow,
 } from '../types';
-import { createLogger } from '../utils/logger';
+import { createLogger } from '@neonpro/tools-shared';
 import { AgentMessageBus, AgentCommunicationProtocol } from '../communication';
 
 export class WorkflowEngine implements OrchestrationWorkflow {
-  private logger = createLogger('WorkflowEngine');
+  private logger = createLogger('WorkflowEngine', {
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+    format: 'pretty',
+    enableConstitutional: true,
+  });
   private agentRegistry?: AgentRegistry;
   private workflows: Map<WorkflowType, WorkflowConfig> = new Map();
   private messageBus?: AgentMessageBus;

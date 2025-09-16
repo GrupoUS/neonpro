@@ -103,7 +103,8 @@ export class PerformanceMetricsService {
     try {
       this.setupPerformanceObserver();
       this.setupWebVitalsCollection();
-      this.setupResourceMonitoring();
+      // Optional: setupResourceMonitoring is not implemented; skip for now
+      // this.setupResourceMonitoring();
       this.setupReportingInterval();
       this.isEnabled = true;
       
@@ -220,13 +221,15 @@ export class PerformanceMetricsService {
   private observeEventTiming(metricName: string, callback: Function): void {
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
+        const entries = list.getEntries() as any[];
         for (const entry of entries) {
-          if (metricName === 'FID' && entry.name === 'first-input') {
-            callback(entry.processingStart - entry.startTime, entry);
+          if (metricName === 'FID' && (entry as any).name === 'first-input') {
+            const ps = (entry as any).processingStart ?? (entry as any).startTime;
+            callback(ps - (entry as any).startTime, entry as any);
           } else if (metricName === 'INP') {
-            const duration = entry.processingEnd - entry.startTime;
-            callback(duration, entry);
+            const pe = (entry as any).processingEnd ?? (entry as any).duration + (entry as any).startTime;
+            const duration = pe - (entry as any).startTime;
+            callback(duration, entry as any);
           }
         }
       });

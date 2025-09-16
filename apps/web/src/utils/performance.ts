@@ -14,6 +14,17 @@ export interface WebVitalsMetrics {
   ttfb: number;
 }
 
+// Declare global gtag for TypeScript
+declare global {
+  interface Window {
+    gtag?: (
+      command: 'event' | string,
+      action: string,
+      params?: Record<string, any>
+    ) => void;
+  }
+}
+
 export class PerformanceMonitor {
   private metrics: Partial<WebVitalsMetrics> = {};
   private observers: PerformanceObserver[] = [];
@@ -162,8 +173,8 @@ export const logBundleSize = () => {
 };
 
 // Memory usage monitoring
-export const monitorMemoryUsage = () => {
-  if (typeof window === 'undefined' || !('performance' in window)) return;
+export const monitorMemoryUsage = (): { used: number; total: number; limit: number } | undefined => {
+  if (typeof window === 'undefined' || !('performance' in window)) return undefined;
 
   const memory = (performance as any).memory;
   if (memory) {
@@ -179,6 +190,7 @@ export const monitorMemoryUsage = () => {
 
     return usage;
   }
+  return undefined;
 };
 
 // Performance singleton

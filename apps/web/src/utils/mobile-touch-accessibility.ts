@@ -274,9 +274,9 @@ export class MobileTouchAccessibility {
 
     this.issues.push(...issues);
 
-    const level = alternativesProvided === complexGestures 
+    const level: TouchAccessibilityLevel = (alternativesProvided === complexGestures)
       ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
-      : alternativesProvided >= complexGestures * 0.8
+      : (alternativesProvided >= Math.floor(complexGestures * 0.8))
       ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
       : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
 

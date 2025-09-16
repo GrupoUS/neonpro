@@ -217,17 +217,17 @@ export const lazyComponents = {
   
   // Complex Components
   appointmentBooking: () => createLazyComponent(
-    () => import('@/components/appointment-booking'),
+    () => import('@/components/appointment-booking').then(m => ({ default: m.AppointmentBooking })),
     'appointment-booking'
   ),
   eventCalendar: () => createLazyComponent(
-    () => import('@/components/event-calendar/event-calendar'),
+    () => import('@/components/event-calendar/event-calendar').then(m => ({ default: m.EventCalendar })),
     'event-calendar'
   ),
   
   // Chart Components
   performanceDashboard: () => createLazyComponent(
-    () => import('@/components/performance/PerformanceDashboard'),
+    () => import('@/components/performance/PerformanceDashboard').then(m => ({ default: m.PerformanceDashboard })),
     'performance-dashboard'
   ),
 };

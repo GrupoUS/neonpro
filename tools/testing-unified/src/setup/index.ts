@@ -5,6 +5,7 @@
 
 import { beforeAll, beforeEach, afterEach, afterAll } from 'vitest';
 import { createLogger, LogLevel } from '@neonpro/tools-shared';
+import { config } from 'dotenv';
 
 // Initialize test logger
 const testLogger = createLogger('TestRunner', {
@@ -18,9 +19,39 @@ const testLogger = createLogger('TestRunner', {
 beforeAll(async () => {
   testLogger.info('🧪 Initializing unified test environment');
 
+  // Load environment variables for testing
+  config({ path: '.env.local' });
+  config({ path: '.env.test' });
+  config({ path: '.env' });
+
   // Set test environment variables
   process.env.NODE_ENV = 'test';
   process.env.LOG_LEVEL = 'debug';
+
+  // Validate required environment variables for testing
+  const requiredVars = [
+    'SUPABASE_URL',
+    'SUPABASE_ANON_KEY'
+  ];
+
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+
+  if (missingVars.length > 0) {
+    testLogger.warn(`⚠️  Missing environment variables for full test coverage: ${missingVars.join(', ')}`);
+    testLogger.warn('Some tests may be skipped or limited in scope.');
+  }
+
+  // Optional variables that enable advanced testing
+  const optionalVars = [
+    'SUPABASE_SERVICE_ROLE_KEY'
+  ];
+
+  const missingOptional = optionalVars.filter(varName => !process.env[varName]);
+
+  if (missingOptional.length > 0) {
+    testLogger.info(`ℹ️  Optional environment variables not set: ${missingOptional.join(', ')}`);
+    testLogger.info('Advanced tests requiring elevated permissions will be skipped.');
+  }
 
   // Initialize test database or mocks if needed
   await setupTestEnvironment();

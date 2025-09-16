@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
 import chatRouter from './routes/chat';
+import { medicalRecords } from './routes/medical-records';
+import { billing } from './routes/billing';
 
 // Import security and monitoring libraries
 import security from '@neonpro/security';
@@ -146,6 +148,12 @@ app.use('*', async (c, next) => {
 
 // Mount chat routes under /v1/chat
 app.route('/v1/chat', chatRouter);
+
+// Mount medical records routes under /v1/medical-records
+app.route('/v1/medical-records', medicalRecords);
+
+// Mount billing routes under /v1/billing
+app.route('/v1/billing', billing);
 
 // Basic health endpoints with enhanced monitoring
 app.get('/health', (c) => {

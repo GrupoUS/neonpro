@@ -17,11 +17,11 @@ import type {
   ScanProgress,
   ScanResult,
   ScanWarning,
-} from '../../../specs/003-monorepo-audit-optimization/contracts/file-scanner.contract';
+} from '../types';
 import {
   DEFAULT_SCAN_OPTIONS,
   PERFORMANCE_REQUIREMENTS,
-} from '../../../specs/003-monorepo-audit-optimization/contracts/file-scanner.contract';
+} from '../types';
 
 export class FileScanner implements IFileScanner {
   private isCancelled: boolean = false;
