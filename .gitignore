@@ -460,6 +460,7 @@ node-compile-cache/
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 # Local configuration overrides
 *local.config*

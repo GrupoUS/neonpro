@@ -20,18 +20,13 @@ import {
   AlertTriangle,
   BarChart3,
   Brain,
-  Calendar,
   Clock,
-  Eye,
-  Filter,
   Heart,
   LineChart,
-  PieChart,
   RefreshCw,
   Shield,
   TrendingDown,
   TrendingUp,
-  Users,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -98,8 +93,14 @@ interface TrendData {
   processingTime: number;
 }
 
+type MetricsApiResponse = { data: InsightMetrics };
+
+type TrendsSummary = { totalGrowth?: string; averageAccuracy?: string; responseTime?: string };
+
+type TrendsApiResponse = { data: TrendsSummary & { trends?: TrendData[] } };
+
 // Mock API functions - these would be replaced with actual API calls
-const fetchInsightMetrics = async (timeRange: string) => {
+const fetchInsightMetrics = async (timeRange: string): Promise<MetricsApiResponse> => {
   // This would aggregate data from AI endpoints (T051-T054)
   const response = await fetch(`/api/v2/ai/analytics/metrics?timeRange=${timeRange}`, {
     headers: {
@@ -116,7 +117,7 @@ const fetchInsightMetrics = async (timeRange: string) => {
   return response.json();
 };
 
-const fetchInsightTrends = async (timeRange: string) => {
+const fetchInsightTrends = async (timeRange: string): Promise<TrendsApiResponse> => {
   // This would call analytics endpoints for trend data
   const response = await fetch(`/api/v2/ai/analytics/trends?timeRange=${timeRange}`, {
     headers: {
@@ -571,7 +572,7 @@ export const AIInsightsDashboard = ({
         <p>
           Dashboard atualizado em {formatDateTime(new Date())}{' '}
           • Dados conforme LGPD e CFM • Insights gerados por IA com{' '}
-          {formatPercentage(metrics?.data?.averageConfidence * 100 || 85)} de confiança média
+          {formatPercentage((metrics?.data?.averageConfidence ?? 0.85) * 100)} de confiança média
         </p>
       </div>
     </div>

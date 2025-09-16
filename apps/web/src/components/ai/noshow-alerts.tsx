@@ -38,7 +38,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -419,7 +418,7 @@ export const NoShowAlerts = ({
   timeRange: initialTimeRange = '48h',
   riskThreshold = 50,
   highRiskOnly = false,
-  healthcareProfessional,
+  healthcareProfessional: _healthcareProfessional,
   lgpdConsent = {
     canViewPatientData: true,
     canSendNotifications: true,
@@ -443,7 +442,7 @@ export const NoShowAlerts = ({
   const queryClient = useQueryClient();
 
   // Fetch predictions
-  const { data: predictions, isLoading, error, refetch } = useQuery({
+  const { data: predictions, isLoading, error } = useQuery({
     queryKey: ['noshow-predictions', timeRange, riskThreshold, showHighRiskOnly],
     queryFn: () =>
       fetchNoShowPredictions({

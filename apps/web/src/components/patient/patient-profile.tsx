@@ -22,15 +22,13 @@ import {
   Brain,
   Calendar,
   FileText,
-  Heart,
   Mail,
   MapPin,
   Phone,
   Shield,
   Stethoscope,
-  TrendingUp,
   User,
-  UserCheck,
+  TrendingUp,
 } from 'lucide-react';
 import { Suspense, useMemo, useState } from 'react';
 
@@ -44,7 +42,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Separator,
+
   Skeleton,
   Tabs,
   TabsContent,
@@ -53,7 +51,7 @@ import {
 } from '@/components/ui';
 import { formatCPF, formatDate, formatDateTime, formatPhone } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
-import { cn } from '@neonpro/ui';
+// import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
 
 export interface PatientProfileProps {
