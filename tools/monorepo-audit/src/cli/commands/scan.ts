@@ -175,3 +175,5 @@ function generateTextOutput(result: any): string {
 
   return output;
 }
+
+export default scanCommand;

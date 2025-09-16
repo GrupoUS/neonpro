@@ -644,7 +644,7 @@ function ContactAddressStep({ form }: { form: any }) {
       } else {
         toast.error('CEP não encontrado');
       }
-    } catch (_error) {
+    } catch {
       toast.error('Erro ao buscar CEP');
     } finally {
       setIsLoadingCep(false);

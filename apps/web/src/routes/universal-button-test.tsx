@@ -1,11 +1,11 @@
-import { UniversalButton } from '@/components/ui/universal-button';
+import { AdvancedButton } from '@/components/ui/advanced-button';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/universal-button-test')({
-  component: UniversalButtonTest,
+  component: AdvancedButtonTest,
 });
 
-function UniversalButtonTest() {
+function AdvancedButtonTest() {
   return (
     <div className='min-h-full h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8'>
       <div className='max-w-6xl mx-auto'>
@@ -25,26 +25,26 @@ function UniversalButtonTest() {
               Standard Variants (NeonPro Colors)
             </h3>
             <div className='space-y-4'>
-              <UniversalButton
+              <AdvancedButton
                 variant='default'
                 className='w-full'
               >
                 Default (Deep Green)
-              </UniversalButton>
-              <UniversalButton
+              </AdvancedButton>
+              <AdvancedButton
                 variant='secondary'
                 size='sm'
                 className='w-full'
               >
                 Secondary Small (Beige)
-              </UniversalButton>
-              <UniversalButton
+              </AdvancedButton>
+              <AdvancedButton
                 variant='outline'
                 size='lg'
                 className='w-full'
               >
                 Outline Large (Gold Border)
-              </UniversalButton>
+              </AdvancedButton>
             </div>
           </div>
 
@@ -54,23 +54,23 @@ function UniversalButtonTest() {
               Effects Testing
             </h3>
             <div className='space-y-4'>
-              <UniversalButton
+              <AdvancedButton
                 enableHoverBorder
                 variant='outline'
                 className='w-full'
                 hoverBorderDuration={2}
               >
                 Hover Border Effect
-              </UniversalButton>
-              <UniversalButton
+              </AdvancedButton>
+              <AdvancedButton
                 enableShineBorder
                 variant='default'
                 className='w-full'
                 shineDuration={3}
               >
                 Shine Border Effect
-              </UniversalButton>
-              <UniversalButton
+              </AdvancedButton>
+              <AdvancedButton
                 enableHoverBorder
                 enableShineBorder
                 variant='secondary'
@@ -79,7 +79,7 @@ function UniversalButtonTest() {
                 hoverBorderDuration={2}
               >
                 Combined Effects
-              </UniversalButton>
+              </AdvancedButton>
             </div>
           </div>
         </div>
@@ -90,33 +90,33 @@ function UniversalButtonTest() {
             Gradient Effects (NeonPro Palette)
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-            <UniversalButton
+            <AdvancedButton
               variant='gradient-primary'
               className='h-14'
             >
               Primary Gradient
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='gradient-secondary'
               className='h-14'
             >
               Secondary Gradient
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='gradient-gold'
               className='h-14'
             >
               Gold Gradient
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='gradient-neon'
               className='h-14'
             >
               NeonPro Gradient
-            </UniversalButton>
+            </AdvancedButton>
           </div>
         </div>
 
@@ -126,29 +126,29 @@ function UniversalButtonTest() {
             Neumorph Effects (Smaller Radius)
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            <UniversalButton
+            <AdvancedButton
               variant='neumorph'
               className='h-14'
               neumorphIntensity='light'
             >
               Neumorph Light
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='neumorph-primary'
               className='h-14'
               neumorphIntensity='medium'
             >
               Neumorph Primary
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='neumorph-gold'
               className='h-14'
               neumorphIntensity='strong'
             >
               Neumorph Gold
-            </UniversalButton>
+            </AdvancedButton>
           </div>
         </div>
 
@@ -158,7 +158,7 @@ function UniversalButtonTest() {
             Custom Effects (Fixed Animations)
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <UniversalButton
+            <AdvancedButton
               variant='default'
               gradientFrom='#AC9469'
               gradientTo='#294359'
@@ -167,9 +167,9 @@ function UniversalButtonTest() {
               hoverBorderDuration={2}
             >
               Custom Gradient + Hover Border
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               enableShineBorder
               shineColor='#AC9469'
               variant='outline'
@@ -177,7 +177,7 @@ function UniversalButtonTest() {
               shineDuration={2}
             >
               Custom Gold Shine
-            </UniversalButton>
+            </AdvancedButton>
           </div>
         </div>
 
@@ -187,7 +187,7 @@ function UniversalButtonTest() {
             Ultimate Combinations
           </h2>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            <UniversalButton
+            <AdvancedButton
               enableHoverBorder
               enableShineBorder
               variant='gradient-neon'
@@ -197,9 +197,9 @@ function UniversalButtonTest() {
               shineColor='#AC9469'
             >
               All Effects Combined
-            </UniversalButton>
+            </AdvancedButton>
 
-            <UniversalButton
+            <AdvancedButton
               variant='neumorph-gold'
               enableShineBorder
               className='h-16 text-lg'
@@ -208,7 +208,7 @@ function UniversalButtonTest() {
               neumorphIntensity='medium'
             >
               Neumorph + Shine
-            </UniversalButton>
+            </AdvancedButton>
           </div>
         </div>
 
@@ -219,31 +219,31 @@ function UniversalButtonTest() {
           </h2>
           <div className='space-y-6'>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-              <UniversalButton
+              <AdvancedButton
                 loading={true}
                 variant='default'
                 className='h-12'
               >
                 Loading Default
-              </UniversalButton>
+              </AdvancedButton>
 
-              <UniversalButton
+              <AdvancedButton
                 loading={true}
                 loadingText='Processing...'
                 variant='gradient-gold'
                 className='h-12'
               >
                 Custom Loading Text
-              </UniversalButton>
+              </AdvancedButton>
 
-              <UniversalButton
+              <AdvancedButton
                 enableHoverBorder
                 loading={true}
                 variant='outline'
                 className='h-12'
               >
                 Loading with Border
-              </UniversalButton>
+              </AdvancedButton>
             </div>
           </div>
         </div>

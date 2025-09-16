@@ -1,6 +1,11 @@
+import {
+  AESTHETIC_PURPOSES,
+  type AestheticPurpose,
+  CLIENT_DATA_CATEGORIES,
+  type ClientDataCategory,
+} from '@neonpro/types';
 import { Context, Next } from 'hono';
 import { lgpdCompliance } from '../lib/lgpd-compliance';
-import { AESTHETIC_PURPOSES, CLIENT_DATA_CATEGORIES, type AestheticPurpose, type ClientDataCategory } from '@neonpro/types';
 
 export interface DataProtectionOptions {
   purpose: AestheticPurpose;
@@ -15,10 +20,10 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
   return async (c: Context, next: Next) => {
     try {
       // Extract client ID from request
-      const clientId = c.req.param('clientId') || 
-                       c.req.query('clientId') ||
-                       c.req.param('patientId') || // backward compatibility
-                       c.req.query('patientId');
+      const clientId = c.req.param('clientId')
+        || c.req.query('clientId')
+        || c.req.param('patientId') // backward compatibility
+        || c.req.query('patientId');
 
       if (!clientId) {
         return c.json({ error: 'Client ID required for data access' }, 400);
@@ -28,13 +33,13 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
       const consentResult = await lgpdCompliance.validateConsent(
         clientId,
         options.purpose,
-        options.dataCategories
+        options.dataCategories,
       );
 
       if (!consentResult.isValid) {
-        return c.json({ 
+        return c.json({
           error: 'Data access consent required',
-          missingConsents: consentResult.missingConsents
+          missingConsents: consentResult.missingConsents,
         }, 403);
       }
 
@@ -49,7 +54,7 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
       });
 
       await next();
-      
+
       // Successful completion
       return;
     } catch (error) {
@@ -70,7 +75,7 @@ export const dataProtection = {
     ],
   }),
 
-  // Treatment-related data access  
+  // Treatment-related data access
   treatments: dataProtectionMiddleware({
     purpose: AESTHETIC_PURPOSES.TREATMENT,
     dataCategories: [

@@ -2,12 +2,12 @@
 
 import chalk from 'chalk';
 import { Command } from 'commander';
-import setupAnalyzeCommand from './commands/analyze.js';
-import setupAuditCommand from './commands/audit.js';
-import setupCleanupCommand from './commands/cleanup.js';
-import setupReportCommand from './commands/report.js';
-import setupScanCommand from './commands/scan.js';
-import setupValidateCommand from './commands/validate.js';
+import analyzeCommand from './commands/analyze.js';
+import auditCommand from './commands/audit.js';
+import cleanupCommand from './commands/cleanup.js';
+import reportCommand from './commands/report.js';
+import scanCommand from './commands/scan.js';
+import validateCommand from './commands/validate.js';
 
 const program = new Command();
 
@@ -26,12 +26,12 @@ program
   .option('--dry-run', 'Run in dry-run mode (no changes)');
 
 // Commands
-setupScanCommand(program);
-setupAnalyzeCommand(program);
-setupValidateCommand(program);
-setupCleanupCommand(program);
-setupReportCommand(program);
-setupAuditCommand(program); // Complete workflow command
+program.addCommand(scanCommand);
+program.addCommand(analyzeCommand);
+program.addCommand(validateCommand);
+program.addCommand(cleanupCommand);
+program.addCommand(reportCommand);
+program.addCommand(auditCommand); // Complete workflow command
 
 // Error handling
 program.configureHelp({

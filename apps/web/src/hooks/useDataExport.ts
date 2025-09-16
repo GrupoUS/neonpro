@@ -1,7 +1,7 @@
 /**
  * useDataExport Hook - Data export functionality (FR-008)
  * Implements CSV and PDF export for patient data with Brazilian compliance
- * 
+ *
  * Features:
  * - CSV export with proper encoding (UTF-8 BOM)
  * - PDF export with Brazilian formatting
@@ -11,7 +11,7 @@
  * - Support for filtered/selected data export
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 export type ExportFormat = 'csv' | 'pdf';
@@ -56,10 +56,10 @@ export function useDataExport(): UseDataExportReturn {
     });
 
     let csv = '';
-    
+
     // Add UTF-8 BOM for proper Excel compatibility
     csv += '\uFEFF';
-    
+
     // Add headers if requested
     if (options.includeHeaders !== false) {
       csv += csvHeaders.join(',') + '\n';
@@ -69,12 +69,12 @@ export function useDataExport(): UseDataExportReturn {
     data.forEach((row, index) => {
       const values = headers.map(header => {
         let value = row[header];
-        
+
         // Handle different data types
         if (value === null || value === undefined) {
           return '';
         }
-        
+
         // Format dates for Brazilian locale
         if (header.includes('Date') || header.includes('At')) {
           try {
@@ -84,28 +84,28 @@ export function useDataExport(): UseDataExportReturn {
             // Keep original value if date parsing fails
           }
         }
-        
+
         // Format phone numbers
         if (header.includes('phone') || header.includes('Phone')) {
           value = String(value).replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         }
-        
+
         // Format CPF
         if (header.includes('cpf') || header.includes('Cpf')) {
           value = String(value).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         }
-        
+
         // Escape commas and quotes in CSV
         value = String(value).replace(/"/g, '""');
         if (value.includes(',') || value.includes('"') || value.includes('\n')) {
           value = `"${value}"`;
         }
-        
+
         return value;
       });
-      
+
       csv += values.join(',') + '\n';
-      
+
       // Update progress
       setProgress(Math.round(((index + 1) / data.length) * 100));
     });
@@ -116,7 +116,7 @@ export function useDataExport(): UseDataExportReturn {
   const generatePDF = useCallback(async (data: any[], options: ExportOptions): Promise<Blob> => {
     // For now, we'll create a simple HTML-to-PDF approach
     // In a real implementation, you might use libraries like jsPDF or Puppeteer
-    
+
     const headers = options.selectedFields || Object.keys(data[0]);
     const csvHeaders = headers.map(header => {
       return header
@@ -143,7 +143,9 @@ export function useDataExport(): UseDataExportReturn {
       </head>
       <body>
         <h1>Relatório de Pacientes</h1>
-        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${
+      new Date().toLocaleTimeString('pt-BR')
+    }</p>
         <table>
           <thead>
             <tr>
@@ -157,12 +159,12 @@ export function useDataExport(): UseDataExportReturn {
       html += '<tr>';
       headers.forEach(header => {
         let value = row[header];
-        
+
         // Handle different data types
         if (value === null || value === undefined) {
           value = '';
         }
-        
+
         // Format dates for Brazilian locale
         if (header.includes('Date') || header.includes('At')) {
           try {
@@ -172,21 +174,21 @@ export function useDataExport(): UseDataExportReturn {
             // Keep original value if date parsing fails
           }
         }
-        
+
         // Format phone numbers
         if (header.includes('phone') || header.includes('Phone')) {
           value = String(value).replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         }
-        
+
         // Format CPF
         if (header.includes('cpf') || header.includes('Cpf')) {
           value = String(value).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         }
-        
+
         html += `<td>${String(value).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
       });
       html += '</tr>';
-      
+
       // Update progress
       setProgress(Math.round(((index + 1) / data.length) * 100));
     });
@@ -212,12 +214,12 @@ export function useDataExport(): UseDataExportReturn {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
-    
+
     // Append to body, click, and remove
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Clean up the URL object
     URL.revokeObjectURL(url);
   }, []);
@@ -256,21 +258,20 @@ export function useDataExport(): UseDataExportReturn {
 
       setStatus('complete');
       setProgress(100);
-      
+
       toast.success(`Dados exportados com sucesso! (${data.length} registros)`);
-      
+
       // Reset status after a delay
       setTimeout(() => {
         setStatus('idle');
         setProgress(0);
       }, 3000);
-
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido na exportação';
       setError(errorMessage);
       setStatus('error');
       toast.error(`Erro na exportação: ${errorMessage}`);
-      
+
       // Reset status after a delay
       setTimeout(() => {
         setStatus('idle');

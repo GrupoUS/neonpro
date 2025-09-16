@@ -1,12 +1,12 @@
 /**
  * Performance Monitoring Hooks (FR-012)
  * Comprehensive performance measurement and optimization tools
- * 
+ *
  * Performance Targets:
  * - Search response time: <300ms
  * - Mobile load time: <500ms
  * - Real-time latency: <1s
- * 
+ *
  * Features:
  * - Response time validation and tracking
  * - Mobile performance optimization
@@ -81,10 +81,10 @@ export function usePerformanceMonitor() {
 
     // Setup Performance Observer
     if ('PerformanceObserver' in window) {
-      performanceObserver.current = new PerformanceObserver((list) => {
+      performanceObserver.current = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        
-        entries.forEach((entry) => {
+
+        entries.forEach(entry => {
           if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
             updateMetrics({
@@ -92,7 +92,7 @@ export function usePerformanceMonitor() {
               networkLatency: navEntry.responseStart - navEntry.requestStart,
             });
           }
-          
+
           if (entry.entryType === 'paint') {
             if (entry.name === 'first-contentful-paint') {
               updateMetrics({
@@ -103,8 +103,8 @@ export function usePerformanceMonitor() {
         });
       });
 
-      performanceObserver.current.observe({ 
-        entryTypes: ['navigation', 'paint', 'measure'] 
+      performanceObserver.current.observe({
+        entryTypes: ['navigation', 'paint', 'measure'],
       });
     }
 
@@ -130,7 +130,7 @@ export function usePerformanceMonitor() {
   const updateMetrics = useCallback((newMetrics: Partial<PerformanceMetrics>) => {
     setMetrics(prev => {
       const updated = { ...prev, ...newMetrics };
-      
+
       // Store in history
       metricsHistory.current.push(updated);
       if (metricsHistory.current.length > 100) {
@@ -139,20 +139,23 @@ export function usePerformanceMonitor() {
 
       // Check thresholds and create alerts
       checkPerformanceThresholds(updated, newMetrics);
-      
+
       return updated;
     });
   }, []);
 
   // Check performance thresholds
   const checkPerformanceThresholds = useCallback((
-    _metrics: PerformanceMetrics, 
-    newMetrics: Partial<PerformanceMetrics>
+    _metrics: PerformanceMetrics,
+    newMetrics: Partial<PerformanceMetrics>,
   ) => {
     const newAlerts: PerformanceAlert[] = [];
 
     // Check search response time
-    if (newMetrics.searchResponseTime && newMetrics.searchResponseTime > PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME) {
+    if (
+      newMetrics.searchResponseTime
+      && newMetrics.searchResponseTime > PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME
+    ) {
       newAlerts.push({
         type: 'search',
         severity: newMetrics.searchResponseTime > 500 ? 'error' : 'warning',
@@ -164,7 +167,10 @@ export function usePerformanceMonitor() {
     }
 
     // Check mobile load time
-    if (newMetrics.mobileLoadTime && newMetrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME) {
+    if (
+      newMetrics.mobileLoadTime
+      && newMetrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME
+    ) {
       newAlerts.push({
         type: 'mobile',
         severity: newMetrics.mobileLoadTime > 1000 ? 'error' : 'warning',
@@ -176,7 +182,10 @@ export function usePerformanceMonitor() {
     }
 
     // Check real-time latency
-    if (newMetrics.realTimeLatency && newMetrics.realTimeLatency > PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY) {
+    if (
+      newMetrics.realTimeLatency
+      && newMetrics.realTimeLatency > PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY
+    ) {
       newAlerts.push({
         type: 'realtime',
         severity: newMetrics.realTimeLatency > 2000 ? 'error' : 'warning',
@@ -190,7 +199,7 @@ export function usePerformanceMonitor() {
     // Add new alerts
     if (newAlerts.length > 0) {
       setAlerts(prev => [...prev, ...newAlerts].slice(-20)); // Keep last 20 alerts
-      
+
       // Show toast notifications for critical issues
       newAlerts.forEach(alert => {
         if (alert.severity === 'error' || alert.severity === 'critical') {
@@ -203,13 +212,16 @@ export function usePerformanceMonitor() {
   }, []);
 
   // Get performance status
-  const getPerformanceStatus = useCallback((value: number, threshold: number): PerformanceStatus => {
-    const ratio = value / threshold;
-    if (ratio <= 0.5) return 'excellent';
-    if (ratio <= 0.8) return 'good';
-    if (ratio <= 1.0) return 'fair';
-    return 'poor';
-  }, []);
+  const getPerformanceStatus = useCallback(
+    (value: number, threshold: number): PerformanceStatus => {
+      const ratio = value / threshold;
+      if (ratio <= 0.5) return 'excellent';
+      if (ratio <= 0.8) return 'good';
+      if (ratio <= 1.0) return 'fair';
+      return 'poor';
+    },
+    [],
+  );
 
   // Get performance analytics
   const getAnalytics = useCallback(() => {
@@ -217,18 +229,28 @@ export function usePerformanceMonitor() {
 
     const history = metricsHistory.current;
     const latest = history[history.length - 1];
-    
+
     return {
       current: latest,
       average: {
-        searchResponseTime: history.reduce((sum, m) => sum + m.searchResponseTime, 0) / history.length,
+        searchResponseTime: history.reduce((sum, m) => sum + m.searchResponseTime, 0)
+          / history.length,
         mobileLoadTime: history.reduce((sum, m) => sum + m.mobileLoadTime, 0) / history.length,
         realTimeLatency: history.reduce((sum, m) => sum + m.realTimeLatency, 0) / history.length,
       },
       trend: {
-        searchResponseTime: getPerformanceStatus(latest.searchResponseTime, PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME),
-        mobileLoadTime: getPerformanceStatus(latest.mobileLoadTime, PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME),
-        realTimeLatency: getPerformanceStatus(latest.realTimeLatency, PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY),
+        searchResponseTime: getPerformanceStatus(
+          latest.searchResponseTime,
+          PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
+        ),
+        mobileLoadTime: getPerformanceStatus(
+          latest.mobileLoadTime,
+          PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME,
+        ),
+        realTimeLatency: getPerformanceStatus(
+          latest.realTimeLatency,
+          PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
+        ),
       },
       alerts: alerts.slice(-5), // Last 5 alerts
     };
@@ -237,14 +259,14 @@ export function usePerformanceMonitor() {
   // Measure performance
   const measurePerformance = useCallback((
     operation: string,
-    fn: () => Promise<any> | any
+    fn: () => Promise<any> | any,
   ) => {
     const startTime = performance.now();
-    
+
     const finish = (result?: any) => {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       // Update relevant metrics based on operation type
       if (operation.includes('search')) {
         updateMetrics({ searchResponseTime: duration });
@@ -253,13 +275,13 @@ export function usePerformanceMonitor() {
       } else if (operation.includes('realtime')) {
         updateMetrics({ realTimeLatency: duration });
       }
-      
+
       return result;
     };
 
     try {
       const result = fn();
-      
+
       if (result && typeof result.then === 'function') {
         return result.then(finish).catch((error: any) => {
           finish();
@@ -281,9 +303,9 @@ export function usePerformanceMonitor() {
     measurePerformance,
     getAnalytics,
     getPerformanceStatus,
-    isHealthy: metrics.searchResponseTime < PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME &&
-               metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME &&
-               metrics.realTimeLatency < PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
+    isHealthy: metrics.searchResponseTime < PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME
+      && metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME
+      && metrics.realTimeLatency < PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
   };
 }
 
@@ -299,7 +321,10 @@ export function useSearchPerformance() {
   }, [measurePerformance]);
 
   const getSearchStatus = useCallback(() => {
-    return getPerformanceStatus(metrics.searchResponseTime, PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME);
+    return getPerformanceStatus(
+      metrics.searchResponseTime,
+      PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
+    );
   }, [metrics.searchResponseTime, getPerformanceStatus]);
 
   return {
@@ -328,7 +353,7 @@ export function useMobilePerformance() {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -342,20 +367,20 @@ export function useMobilePerformance() {
 
   const getRecommendations = useCallback(() => {
     const recommendations: string[] = [];
-    
+
     if (metrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME) {
       recommendations.push('Considere implementar lazy loading para componentes não críticos');
       recommendations.push('Otimize imagens e recursos para dispositivos móveis');
     }
-    
+
     if (metrics.bundleSize > 1000) { // 1MB
       recommendations.push('Reduza o tamanho do bundle com code splitting');
     }
-    
+
     if (metrics.memoryUsage > 50) { // 50MB
       recommendations.push('Otimize o uso de memória removendo vazamentos');
     }
-    
+
     return recommendations;
   }, [metrics]);
 

@@ -9,18 +9,23 @@ import { cors } from 'hono/cors';
 
 const app = new Hono();
 
-// CORS configuration
+// Standardized CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.NEXT_PUBLIC_APP_URL,
+].filter(Boolean) as string[];
+
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+}
+
 app.use(
   '*',
   cors({
-    origin: [
-      process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:8081'
-    ],,,
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin:
+      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
   }),
 );
 

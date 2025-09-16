@@ -317,3 +317,5 @@ ${
 </body>
 </html>`;
 }
+
+export default validateCommand;

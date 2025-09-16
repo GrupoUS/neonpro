@@ -1,7 +1,7 @@
 /**
  * BreadcrumbNavigation Component - Navigation System (FR-010)
  * Implements route-aware breadcrumb navigation with accessibility and mobile support
- * 
+ *
  * Features:
  * - Route-aware breadcrumb generation
  * - Clickable breadcrumb links for navigation
@@ -64,7 +64,7 @@ const defaultRouteLabels: Record<string, string> = {
 const generateBreadcrumbs = (
   pathname: string,
   customLabels: Record<string, string> = {},
-  showHome: boolean = true
+  showHome: boolean = true,
 ): BreadcrumbItem[] => {
   const segments = pathname.split('/').filter(Boolean);
   const breadcrumbs: BreadcrumbItem[] = [];
@@ -83,16 +83,16 @@ const generateBreadcrumbs = (
   segments.forEach((segment, index) => {
     currentPath += `/${segment}`;
     const isLast = index === segments.length - 1;
-    
+
     // Check if segment is a UUID or ID (skip in breadcrumb display)
-    const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment) ||
-                 /^\d+$/.test(segment);
-    
+    const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment)
+      || /^\d+$/.test(segment);
+
     if (!isId) {
-      const label = customLabels[segment] || 
-                   defaultRouteLabels[segment] || 
-                   segment.charAt(0).toUpperCase() + segment.slice(1);
-      
+      const label = customLabels[segment]
+        || defaultRouteLabels[segment]
+        || segment.charAt(0).toUpperCase() + segment.slice(1);
+
       breadcrumbs.push({
         label,
         href: currentPath,
@@ -114,14 +114,14 @@ export function BreadcrumbNavigation({
 
   const breadcrumbs = useMemo(() => {
     const items = generateBreadcrumbs(location.pathname, customLabels, showHome);
-    
+
     // Limit breadcrumbs for mobile responsiveness
     if (items.length > maxItems) {
       const firstItem = items[0];
       const lastItems = items.slice(-maxItems + 2);
       return [firstItem, { label: '...', href: '', isCurrentPage: false }, ...lastItems];
     }
-    
+
     return items;
   }, [location.pathname, customLabels, showHome, maxItems]);
 
@@ -134,7 +134,7 @@ export function BreadcrumbNavigation({
       className={cn(
         'flex items-center space-x-1 text-sm text-muted-foreground',
         'py-2 px-1 overflow-x-auto scrollbar-hide',
-        className
+        className,
       )}
       aria-label='Navegação estrutural'
       role='navigation'
@@ -143,40 +143,42 @@ export function BreadcrumbNavigation({
         {breadcrumbs.map((item, index) => (
           <li key={`${item.href}-${index}`} className='flex items-center space-x-1' role='listitem'>
             {index > 0 && (
-              <IconChevronRight 
-                className='h-4 w-4 text-muted-foreground/60 flex-shrink-0' 
+              <IconChevronRight
+                className='h-4 w-4 text-muted-foreground/60 flex-shrink-0'
                 aria-hidden='true'
               />
             )}
-            
-            {item.label === '...' ? (
-              <span className='px-2 py-1 text-muted-foreground/60' aria-hidden='true'>
-                ...
-              </span>
-            ) : item.isCurrentPage ? (
-              <span 
-                className='px-2 py-1 font-medium text-foreground truncate'
-                aria-current='page'
-              >
-                {item.label}
-              </span>
-            ) : (
-              <Link
-                to={item.href}
-                className={cn(
-                  'px-2 py-1 rounded-md transition-colors truncate',
-                  'hover:bg-accent hover:text-accent-foreground',
-                  'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
-                  index === 0 && 'flex items-center gap-1'
-                )}
-                aria-label={index === 0 ? `Ir para ${item.label}` : `Ir para ${item.label}`}
-              >
-                {index === 0 && showHome && (
-                  <IconHome className='h-3 w-3' aria-hidden='true' />
-                )}
-                <span className='truncate'>{item.label}</span>
-              </Link>
-            )}
+
+            {item.label === '...'
+              ? (
+                <span className='px-2 py-1 text-muted-foreground/60' aria-hidden='true'>
+                  ...
+                </span>
+              )
+              : item.isCurrentPage
+              ? (
+                <span
+                  className='px-2 py-1 font-medium text-foreground truncate'
+                  aria-current='page'
+                >
+                  {item.label}
+                </span>
+              )
+              : (
+                <Link
+                  to={item.href}
+                  className={cn(
+                    'px-2 py-1 rounded-md transition-colors truncate',
+                    'hover:bg-accent hover:text-accent-foreground',
+                    'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
+                    index === 0 && 'flex items-center gap-1',
+                  )}
+                  aria-label={index === 0 ? `Ir para ${item.label}` : `Ir para ${item.label}`}
+                >
+                  {index === 0 && showHome && <IconHome className='h-3 w-3' aria-hidden='true' />}
+                  <span className='truncate'>{item.label}</span>
+                </Link>
+              )}
           </li>
         ))}
       </ol>
@@ -187,7 +189,7 @@ export function BreadcrumbNavigation({
 // Hook for custom breadcrumb management
 export function useBreadcrumbs(customLabels?: Record<string, string>) {
   const location = useLocation();
-  
+
   return useMemo(() => {
     return generateBreadcrumbs(location.pathname, customLabels);
   }, [location.pathname, customLabels]);
@@ -196,8 +198,8 @@ export function useBreadcrumbs(customLabels?: Record<string, string>) {
 // Breadcrumb separator component for custom layouts
 export function BreadcrumbSeparator({ className }: { className?: string }) {
   return (
-    <IconChevronRight 
-      className={cn('h-4 w-4 text-muted-foreground/60', className)} 
+    <IconChevronRight
+      className={cn('h-4 w-4 text-muted-foreground/60', className)}
       aria-hidden='true'
     />
   );
@@ -211,15 +213,15 @@ interface BreadcrumbItemProps {
   className?: string;
 }
 
-export function BreadcrumbItem({ 
-  item, 
-  isLast = false, 
+export function BreadcrumbItem({
+  item,
+  isLast = false,
   showIcon = false,
-  className 
+  className,
 }: BreadcrumbItemProps) {
   if (item.isCurrentPage || isLast) {
     return (
-      <span 
+      <span
         className={cn('font-medium text-foreground', className)}
         aria-current='page'
       >
@@ -235,7 +237,7 @@ export function BreadcrumbItem({
       className={cn(
         'transition-colors hover:text-foreground',
         'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 rounded-sm',
-        className
+        className,
       )}
       aria-label={`Ir para ${item.label}`}
     >

@@ -119,7 +119,7 @@ export const deferNonCriticalResources = () => {
 };
 
 // Performance-aware component loading hook
-export const usePerformanceAwareLoading = (_threshold: number = 500) => {
+export const usePerformanceAwareLoading = () => {
   return true; // Simplified for utility functions
 };
 

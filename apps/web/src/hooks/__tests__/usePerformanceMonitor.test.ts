@@ -1,7 +1,7 @@
 /**
  * Tests for Performance Monitoring Hook (FR-012)
  * Following TDD methodology - these tests should FAIL initially
- * 
+ *
  * Performance Targets:
  * - Search response time: <300ms
  * - Mobile load time: <500ms

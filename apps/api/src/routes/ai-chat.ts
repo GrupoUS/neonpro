@@ -1,20 +1,26 @@
 // API Route: AI Chat for NeonPro Aesthetic Clinic
 // Handles AI chat requests with LGPD compliance and audit logging
 
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import { zValidator } from '@hono/zod-validator'
-import { z } from 'zod'
-import { startTimer, endTimerMs, logMetric } from '../services/metrics'
-import type { CoreMessage, UIMessage } from 'ai'
-import { streamText } from 'ai'
-import { streamWithFailover, DEFAULT_PRIMARY, MODEL_REGISTRY, getSuggestionsFromAI, resolveProvider } from '../config/ai'
+import { zValidator } from '@hono/zod-validator';
+import type { CoreMessage, UIMessage } from 'ai';
+import { streamText } from 'ai';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { z } from 'zod';
+import {
+  DEFAULT_PRIMARY,
+  getSuggestionsFromAI,
+  MODEL_REGISTRY,
+  resolveProvider,
+  streamWithFailover,
+} from '../config/ai';
+import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
-})
+});
 
 const ChatRequestSchema = z.object({
   messages: z.array(ChatMessageSchema).default([]),
@@ -25,18 +31,29 @@ const ChatRequestSchema = z.object({
   clientId: z.string().optional(),
   sessionId: z.string(),
   model: z.string().optional(),
-})
+});
 
-const app = new Hono()
+const app = new Hono();
 
 // Enable CORS for browser requests
-app.use('*', cors({
-  origin: process.env.NODE_ENV === 'production'
-  ? [process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app']
-  : ['http://localhost:5173', 'http://localhost:3000'],
-  allowMethods: ['GET', 'POST'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-}))
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.NEXT_PUBLIC_APP_URL,
+].filter(Boolean) as string[];
+
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+}
+
+app.use(
+  '*',
+  cors({
+    origin:
+      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    allowMethods: ['GET', 'POST'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 
 // Aesthetic clinic system prompt
 const SYSTEM_PROMPT = `Você é um assistente especializado em clínica estética no Brasil.
@@ -62,7 +79,7 @@ DIRETRIZES:
 - Use linguagem acessível, empática e acolhedora
 - Promova confiança e segurança nos tratamentos
 
-Responda sempre de forma útil, segura e focada em estética.`
+Responda sempre de forma útil, segura e focada em estética.`;
 
 // PII redaction for LGPD compliance
 const redactPII = (text: string): string => {
@@ -70,175 +87,186 @@ const redactPII = (text: string): string => {
     .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF_REDACTED]')
     .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ_REDACTED]')
     .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '[PHONE_REDACTED]')
-    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]')
-}
+    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]');
+};
 
 // Allowed models registry
 
 // Streaming AI response endpoint (Vercel AI SDK v5 UIMessage stream)
-app.post('/stream',
-  zValidator('json', ChatRequestSchema),
-  async (c) => {
-    const t0 = startTimer()
-    try {
-      const { messages, text, presetId, locale, clientId, sessionId, model } = c.req.valid('json')
+app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
+  const t0 = startTimer();
+  try {
+    const { messages, text, presetId, locale, clientId, sessionId, model } = c.req.valid('json');
 
-      const url = new URL(c.req.url)
-      const allowExperimental = url.searchParams.get('allowExperimental') === 'true'
-      const mockMode =
-        url.searchParams.get('mock') === 'true' ||
-        process.env.AI_MOCK === 'true' ||
-        (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.ANTHROPIC_API_KEY)
-      const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
-        ? (model as keyof typeof MODEL_REGISTRY)
-        : undefined
+    const url = new URL(c.req.url);
+    const allowExperimental = url.searchParams.get('allowExperimental') === 'true';
+    const mockMode = url.searchParams.get('mock') === 'true'
+      || process.env.AI_MOCK === 'true'
+      || (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY
+        && !process.env.ANTHROPIC_API_KEY);
+    const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
+      ? (model as keyof typeof MODEL_REGISTRY)
+      : undefined;
 
-      // Build UI messages and convert to model messages per v5 best practices
-      const uiMessages: UIMessage[] = Array.isArray(messages)
-        ? (messages as { role: 'user' | 'assistant' | 'system'; content: string }[]).map(m => ({
-            role: m.role,
-            content: [{ type: 'text', text: m.content }],
-          }))
-        : []
+    // Build UI messages and convert to model messages per v5 best practices
+    const uiMessages: UIMessage[] = Array.isArray(messages)
+      ? (messages as { role: 'user' | 'assistant' | 'system'; content: string }[]).map(m => ({
+        role: m.role,
+        content: [{ type: 'text', text: m.content }],
+      }))
+      : [];
 
-      if (text && text.trim().length > 0) {
-        uiMessages.push({ role: 'user', content: [{ type: 'text', text }] })
-      }
-
-      // Build CoreMessage[] directly to avoid conversion pitfalls
-      const coreMessages: CoreMessage[] = [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...uiMessages.map(m => ({
-          role: m.role,
-          // Convert UI blocks back to simple string for CoreMessage compatibility
-          content: (Array.isArray(m.content) ? m.content.map(b => (b as any).text).filter(Boolean).join('\n') : ''),
-        })),
-      ]
-
-      const chosen = (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY
-
-      if (mockMode) {
-        // Fallback to existing failover mock to keep behavior consistent
-        const startedAt = new Date().toISOString()
-        const response = await streamWithFailover({
-          model: chosen,
-          allowExperimental,
-          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...((messages as CoreMessage[]) || inputAsMessage)],
-          mock: true,
-        })
-        const headers = new Headers(response.headers)
-        headers.set('X-Chat-Started-At', startedAt)
-        const ms = endTimerMs(t0)
-        logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: headers.get('X-Chat-Model') })
-        headers.set('X-Response-Time', `${ms}ms`)
-        return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
-      }
-
-      // Provider resolution and v5 streaming to UI
-      const { adapter } = resolveProvider(chosen)
-      const result = await streamText({
-        model: adapter(chosen),
-        messages: coreMessages,
-      })
-
-      // Audit log minimal info
-      const lastText = (text || (Array.isArray(messages) ? (messages as any)[messages.length - 1]?.content : '')) || ''
-      console.log('AI Chat Interaction:', {
-        timestamp: new Date().toISOString(),
-        sessionId,
-        clientId: clientId || 'anonymous',
-        userMessage: redactPII(lastText),
-        provider: `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
-        locale,
-        presetId: presetId || null,
-      })
-
-      // Return UIMessageStreamResponse per v5
-      return result.toUIMessageStreamResponse({
-        onError: (err) => {
-          console.error('Stream error:', err)
-          return 'Erro ao gerar resposta'
-        },
-      })
-    } catch (error) {
-      const ms = endTimerMs(t0)
-      logMetric({ route: '/v1/ai-chat/stream', ms, ok: false })
-      console.error('AI chat error:', error)
-      return c.json({
-        error: 'Erro interno do servidor',
-        message: 'Não foi possível processar sua solicitação'
-      }, 500)
+    if (text && text.trim().length > 0) {
+      uiMessages.push({ role: 'user', content: [{ type: 'text', text }] });
     }
+
+    // Build CoreMessage[] directly to avoid conversion pitfalls
+    const coreMessages: CoreMessage[] = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...uiMessages.map(m => ({
+        role: m.role,
+        // Convert UI blocks back to simple string for CoreMessage compatibility
+        content: (Array.isArray(m.content)
+          ? m.content.map(b => (b as any).text).filter(Boolean).join('\n')
+          : ''),
+      })),
+    ];
+
+    const chosen = (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY;
+
+    if (mockMode) {
+      // Fallback to existing failover mock to keep behavior consistent
+      const startedAt = new Date().toISOString();
+      const response = await streamWithFailover({
+        model: chosen,
+        allowExperimental,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...((messages as CoreMessage[]) || inputAsMessage),
+        ],
+        mock: true,
+      });
+      const headers = new Headers(response.headers);
+      headers.set('X-Chat-Started-At', startedAt);
+      const ms = endTimerMs(t0);
+      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: headers.get('X-Chat-Model') });
+      headers.set('X-Response-Time', `${ms}ms`);
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    }
+
+    // Provider resolution and v5 streaming to UI
+    const { adapter } = resolveProvider(chosen);
+    const result = await streamText({
+      model: adapter(chosen),
+      messages: coreMessages,
+    });
+
+    // Audit log minimal info
+    const lastText =
+      (text || (Array.isArray(messages) ? (messages as any)[messages.length - 1]?.content : ''))
+      || '';
+    console.log('AI Chat Interaction:', {
+      timestamp: new Date().toISOString(),
+      sessionId,
+      clientId: clientId || 'anonymous',
+      userMessage: redactPII(lastText),
+      provider: `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
+      locale,
+      presetId: presetId || null,
+    });
+
+    // Return UIMessageStreamResponse per v5
+    return result.toUIMessageStreamResponse({
+      onError: err => {
+        console.error('Stream error:', err);
+        return 'Erro ao gerar resposta';
+      },
+    });
+  } catch (error) {
+    const ms = endTimerMs(t0);
+    logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
+    console.error('AI chat error:', error);
+    return c.json({
+      error: 'Erro interno do servidor',
+      message: 'Não foi possível processar sua solicitação',
+    }, 500);
   }
-)
+});
 
 // Search suggestions endpoint
-app.post('/suggestions',
-  zValidator('json', z.object({
-    query: z.string().min(1),
-    sessionId: z.string(),
-  })),
-  async (c) => {
-    const t0 = startTimer()
+app.post(
+  '/suggestions',
+  zValidator(
+    'json',
+    z.object({
+      query: z.string().min(1),
+      sessionId: z.string(),
+    }),
+  ),
+  async c => {
+    const t0 = startTimer();
     try {
-      const { query, sessionId } = c.req.valid('json')
+      const { query, sessionId } = c.req.valid('json');
 
       // Optional: Web search enrichment with Tavily (if API key present)
-      const tavilyKey = process.env.TAVILY_API_KEY
-      let webHints: string[] = []
+      const tavilyKey = process.env.TAVILY_API_KEY;
+      let webHints: string[] = [];
       if (tavilyKey && query.length > 3) {
         try {
           const resp = await fetch('https://api.tavily.com/search', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tavilyKey}` },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tavilyKey}` },
             body: JSON.stringify({ query, max_results: 5, search_depth: 'basic' }),
-          })
+          });
           if (resp.ok) {
-            const data = await resp.json()
+            const data = await resp.json();
             webHints = Array.isArray(data?.results)
               ? data.results.map((r: any) => r.title).filter(Boolean).slice(0, 5)
-              : []
+              : [];
           }
         } catch (e) {
-          console.warn('Tavily search failed, continuing without web hints')
+          console.warn('Tavily search failed, continuing without web hints');
         }
       }
-      
-      const suggestions = await getSuggestionsFromAI(query, webHints)
+
+      const suggestions = await getSuggestionsFromAI(query, webHints);
 
       console.log('Search Suggestions:', {
         timestamp: new Date().toISOString(),
         sessionId,
         query: redactPII(query),
         suggestionsCount: suggestions.length,
-      })
+      });
 
-      const ms = endTimerMs(t0)
-      logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: true })
-      c.header('X-Response-Time', `${ms}ms`)
-      return c.json({ suggestions })
-      
+      const ms = endTimerMs(t0);
+      logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: true });
+      c.header('X-Response-Time', `${ms}ms`);
+      return c.json({ suggestions });
     } catch (error) {
-      const ms = endTimerMs(t0)
-      logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: false })
-      console.error('Search suggestions error:', error)
-      
+      const ms = endTimerMs(t0);
+      logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: false });
+      console.error('Search suggestions error:', error);
+
       // Fallback suggestions
       const fallbackSuggestions = [
         'Botox para rugas',
         'Preenchimento labial',
         'Limpeza de pele profunda',
         'Harmonização facial',
-        'Peeling químico'
-      ]
-      
-      return c.json({ suggestions: fallbackSuggestions })
+        'Peeling químico',
+      ];
+
+      return c.json({ suggestions: fallbackSuggestions });
     }
-  }
-)
+  },
+);
 
 // Health check endpoint
-app.get('/health', (c) => {
+app.get('/health', c => {
   return c.json({
     status: 'ok',
     service: 'neonpro-ai-chat',
@@ -246,8 +274,8 @@ app.get('/health', (c) => {
     providers: {
       openai: 'available',
       google: 'available',
-    }
-  })
-})
+    },
+  });
+});
 
-export default app
+export default app;

@@ -100,13 +100,13 @@
 
 ### Data Models & Types
 
-- [ ] T031 [P] Patient model with LGPD compliance in packages/shared/src/types/patient.ts
-- [ ] T032 [P] Medical History model in packages/shared/src/types/medical-history.ts
-- [ ] T033 [P] Contact Information model in packages/shared/src/types/contact.ts
-- [ ] T034 [P] LGPD Consent model in packages/shared/src/types/lgpd-consent.ts
-- [ ] T035 [P] AI Insights model in packages/shared/src/types/ai-insights.ts
-- [ ] T036 [P] Real-time Notification model in packages/shared/src/types/notifications.ts
-- [ ] T037 [P] Brazilian validation schemas (CPF, phone, CEP) in packages/shared/src/validators/brazilian.ts
+- [x] T031 [P] Patient model with LGPD compliance in packages/shared/src/types/patient.ts ✅ COMPLETED: Comprehensive patient model with LGPD compliance, Brazilian data validation (CPF, phone, CEP), audit trail, data anonymization, healthcare-specific fields, emergency contacts
+- [x] T032 [P] Medical History model in packages/shared/src/types/medical-history.ts ✅ COMPLETED: Comprehensive medical history model with vital signs tracking, prescription management, medical procedures, file attachments, LGPD compliance, Brazilian healthcare context
+- [x] T033 [P] Contact Information model in packages/shared/src/types/contact.ts ✅ COMPLETED: Comprehensive contact model with Brazilian validation, emergency contact management, communication preferences, LGPD compliance, relationship tracking, contact verification
+- [x] T034 [P] LGPD Consent model in packages/shared/src/types/lgpd-consent.ts ✅ COMPLETED: Comprehensive LGPD consent model with legal basis documentation, data retention policies, consent history, data subject rights management, compliance validation and scoring
+- [x] T035 [P] AI Insights model in packages/shared/src/types/ai-insights.ts ✅ COMPLETED: Comprehensive AI insights model with multi-model support (OpenAI, Anthropic, Google, local), patient analysis, confidence scoring, Brazilian healthcare context, LGPD compliance, validation workflow
+- [x] T036 [P] Real-time Notification model in packages/shared/src/types/notifications.ts ✅ COMPLETED: Comprehensive notification system with multi-channel support (email, SMS, WhatsApp, push), Brazilian healthcare compliance, priority levels, delivery tracking, template management, LGPD consent integration
+- [x] T037 [P] Brazilian validation schemas (CPF, phone, CEP) in packages/shared/src/validators/brazilian.ts ✅ COMPLETED: Comprehensive Brazilian validation utilities with CPF/CNPJ/phone/CEP validation, healthcare-specific validations (CRM, ANVISA, SUS), Portuguese error messages, patient data validation
 
 ### Backend Services
 

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import type { ChatMessage, ChatSession } from '@neonpro/types';
 import { aiConfig } from '@neonpro/config';
+import type { ChatMessage, ChatSession } from '@neonpro/types';
+import { describe, expect, it } from 'vitest';
 
 // RED: streaming pipeline not implemented yet; we assert minimal contracts/types are wired
 

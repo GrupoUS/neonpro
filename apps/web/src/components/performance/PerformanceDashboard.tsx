@@ -1,7 +1,7 @@
 /**
  * PerformanceDashboard Component - Performance Optimization (FR-012)
  * Comprehensive performance metrics visualization and monitoring
- * 
+ *
  * Features:
  * - Real-time performance metrics display
  * - Performance status indicators
@@ -13,8 +13,15 @@
 
 'use client';
 
+import {
+  PERFORMANCE_THRESHOLDS,
+  type PerformanceStatus,
+  usePerformanceMonitor,
+} from '@/hooks/usePerformanceMonitor';
 import { cn } from '@/lib/utils';
-import { usePerformanceMonitor, PERFORMANCE_THRESHOLDS, type PerformanceStatus } from '@/hooks/usePerformanceMonitor';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
+import { Progress } from '@neonpro/ui';
 import {
   IconActivity,
   IconAlertTriangle,
@@ -24,9 +31,6 @@ import {
   IconSearch,
   IconWifi,
 } from '@tabler/icons-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Progress } from '@neonpro/ui';
 import { useState } from 'react';
 
 interface PerformanceDashboardProps {
@@ -68,9 +72,10 @@ const statusConfig: Record<PerformanceStatus, {
 };
 
 export function PerformanceDashboard({ className, compact = false }: PerformanceDashboardProps) {
-  const { metrics, alerts, getAnalytics, getPerformanceStatus, isHealthy } = usePerformanceMonitor();
+  const { metrics, alerts, getAnalytics, getPerformanceStatus, isHealthy } =
+    usePerformanceMonitor();
   const [showDetails, setShowDetails] = useState(false);
-  
+
   const analytics = getAnalytics();
 
   // Format time values
@@ -91,7 +96,10 @@ export function PerformanceDashboard({ className, compact = false }: Performance
       title: 'Tempo de Busca',
       value: metrics.searchResponseTime,
       threshold: PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
-      status: getPerformanceStatus(metrics.searchResponseTime, PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME),
+      status: getPerformanceStatus(
+        metrics.searchResponseTime,
+        PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
+      ),
       icon: IconSearch,
       target: '<300ms',
     },
@@ -109,7 +117,10 @@ export function PerformanceDashboard({ className, compact = false }: Performance
       title: 'Latência Tempo Real',
       value: metrics.realTimeLatency,
       threshold: PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
-      status: getPerformanceStatus(metrics.realTimeLatency, PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY),
+      status: getPerformanceStatus(
+        metrics.realTimeLatency,
+        PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
+      ),
       icon: IconWifi,
       target: '<1s',
     },
@@ -118,10 +129,12 @@ export function PerformanceDashboard({ className, compact = false }: Performance
   if (compact) {
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <div className={cn(
-          'w-3 h-3 rounded-full',
-          isHealthy ? 'bg-green-500 animate-pulse' : 'bg-red-500'
-        )} />
+        <div
+          className={cn(
+            'w-3 h-3 rounded-full',
+            isHealthy ? 'bg-green-500 animate-pulse' : 'bg-red-500',
+          )}
+        />
         <span className='text-sm text-muted-foreground'>
           Performance: {isHealthy ? 'Saudável' : 'Atenção'}
         </span>
@@ -141,7 +154,7 @@ export function PerformanceDashboard({ className, compact = false }: Performance
         </CardHeader>
         <CardContent>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            {performanceMetrics.map((metric) => {
+            {performanceMetrics.map(metric => {
               const config = statusConfig[metric.status];
               const IconComponent = metric.icon;
               const progress = getProgress(metric.value, metric.threshold);
@@ -153,8 +166,8 @@ export function PerformanceDashboard({ className, compact = false }: Performance
                       <IconComponent className='h-4 w-4 text-muted-foreground' />
                       <span className='text-sm font-medium'>{metric.title}</span>
                     </div>
-                    <Badge 
-                      variant='secondary' 
+                    <Badge
+                      variant='secondary'
                       className={cn(config.bgColor, config.color)}
                     >
                       {config.label}
@@ -164,20 +177,26 @@ export function PerformanceDashboard({ className, compact = false }: Performance
                   <div className='space-y-2'>
                     <div className='flex items-center justify-between text-sm'>
                       <span className='text-muted-foreground'>Atual:</span>
-                      <span className={cn(
-                        'font-mono',
-                        metric.value > metric.threshold ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
-                      )}>
+                      <span
+                        className={cn(
+                          'font-mono',
+                          metric.value > metric.threshold
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-green-600 dark:text-green-400',
+                        )}
+                      >
                         {formatTime(metric.value)}
                       </span>
                     </div>
-                    
-                    <Progress 
-                      value={progress} 
+
+                    <Progress
+                      value={progress}
                       className='h-2'
-                      aria-label={`${metric.title}: ${formatTime(metric.value)} (meta: ${metric.target})`}
+                      aria-label={`${metric.title}: ${
+                        formatTime(metric.value)
+                      } (meta: ${metric.target})`}
                     />
-                    
+
                     <div className='flex items-center justify-between text-xs text-muted-foreground'>
                       <span>Meta: {metric.target}</span>
                       <span>{Math.round(progress)}%</span>
@@ -202,35 +221,43 @@ export function PerformanceDashboard({ className, compact = false }: Performance
           <CardContent>
             <div className='space-y-3'>
               {alerts.slice(-5).map((alert, index) => (
-                <div 
+                <div
                   key={index}
                   className={cn(
                     'flex items-start gap-3 p-3 rounded-lg border',
-                    alert.severity === 'error' && 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20',
-                    alert.severity === 'warning' && 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20',
-                    alert.severity === 'critical' && 'border-red-300 bg-red-100 dark:border-red-700 dark:bg-red-900/30'
+                    alert.severity === 'error'
+                      && 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20',
+                    alert.severity === 'warning'
+                      && 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20',
+                    alert.severity === 'critical'
+                      && 'border-red-300 bg-red-100 dark:border-red-700 dark:bg-red-900/30',
                   )}
                 >
-                  <IconAlertTriangle className={cn(
-                    'h-4 w-4 mt-0.5',
-                    alert.severity === 'error' && 'text-red-600 dark:text-red-400',
-                    alert.severity === 'warning' && 'text-yellow-600 dark:text-yellow-400',
-                    alert.severity === 'critical' && 'text-red-700 dark:text-red-300'
-                  )} />
-                  
+                  <IconAlertTriangle
+                    className={cn(
+                      'h-4 w-4 mt-0.5',
+                      alert.severity === 'error' && 'text-red-600 dark:text-red-400',
+                      alert.severity === 'warning' && 'text-yellow-600 dark:text-yellow-400',
+                      alert.severity === 'critical' && 'text-red-700 dark:text-red-300',
+                    )}
+                  />
+
                   <div className='flex-1 space-y-1'>
                     <p className='text-sm font-medium'>{alert.message}</p>
                     <p className='text-xs text-muted-foreground'>
                       {new Date(alert.timestamp).toLocaleString('pt-BR')}
                     </p>
                   </div>
-                  
-                  <Badge 
+
+                  <Badge
                     variant='outline'
                     className={cn(
-                      alert.severity === 'error' && 'border-red-300 text-red-700 dark:border-red-700 dark:text-red-300',
-                      alert.severity === 'warning' && 'border-yellow-300 text-yellow-700 dark:border-yellow-700 dark:text-yellow-300',
-                      alert.severity === 'critical' && 'border-red-400 text-red-800 dark:border-red-600 dark:text-red-200'
+                      alert.severity === 'error'
+                        && 'border-red-300 text-red-700 dark:border-red-700 dark:text-red-300',
+                      alert.severity === 'warning'
+                        && 'border-yellow-300 text-yellow-700 dark:border-yellow-700 dark:text-yellow-300',
+                      alert.severity === 'critical'
+                        && 'border-red-400 text-red-800 dark:border-red-600 dark:text-red-200',
                     )}
                   >
                     {alert.severity === 'error' && 'Erro'}
@@ -270,7 +297,7 @@ export function PerformanceDashboard({ className, compact = false }: Performance
                 </p>
                 <p className='text-xs text-muted-foreground'>Meta: &lt;300ms</p>
               </div>
-              
+
               <div className='space-y-2'>
                 <h4 className='text-sm font-medium text-muted-foreground'>Mobile (Média)</h4>
                 <p className='text-2xl font-bold'>
@@ -278,7 +305,7 @@ export function PerformanceDashboard({ className, compact = false }: Performance
                 </p>
                 <p className='text-xs text-muted-foreground'>Meta: &lt;500ms</p>
               </div>
-              
+
               <div className='space-y-2'>
                 <h4 className='text-sm font-medium text-muted-foreground'>Tempo Real (Média)</h4>
                 <p className='text-2xl font-bold'>

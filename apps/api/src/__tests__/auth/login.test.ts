@@ -113,8 +113,12 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
         });
 
         if (user) {
-          const tokens = await mockAuthService.login({ email, password: 'validpassword', tenantId });
-          
+          const tokens = await mockAuthService.login({
+            email,
+            password: 'validpassword',
+            tenantId,
+          });
+
           // Create audit log for successful login
           await mockPrisma.auditLog.create({
             data: {
@@ -296,7 +300,7 @@ describe('authentication API Endpoints - NeonPro Healthcare', () => {
 
         // Verify refresh token
         const decoded = mockJWT.verify(refreshToken);
-        
+
         // Find active session
         const session = await mockPrisma.session.findUnique({
           where: {

@@ -39,7 +39,7 @@ describe('useFormAutoSave', () => {
   it('should create storage key correctly', () => {
     const { useFormAutoSave } = require('../useFormAutoSave');
     expect(useFormAutoSave).toBeDefined();
-    
+
     // Test that the hook can be imported and is a function
     expect(typeof useFormAutoSave).toBe('function');
   });

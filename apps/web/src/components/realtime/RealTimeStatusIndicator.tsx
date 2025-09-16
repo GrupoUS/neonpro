@@ -1,7 +1,7 @@
 /**
  * RealTimeStatusIndicator Component - Real-Time Features (FR-011)
  * Displays real-time connection status and performance metrics
- * 
+ *
  * Features:
  * - Connection status indicator with visual feedback
  * - Performance metrics display (latency, messages/sec)
@@ -13,8 +13,9 @@
 
 'use client';
 
+import { type ConnectionStatus, useEnhancedRealTime } from '@/hooks/useEnhancedRealTime';
 import { cn } from '@/lib/utils';
-import { useEnhancedRealTime, type ConnectionStatus } from '@/hooks/useEnhancedRealTime';
+import { Button } from '@neonpro/ui';
 import {
   IconActivity,
   IconAlertCircle,
@@ -24,7 +25,6 @@ import {
   IconWifiOff,
 } from '@tabler/icons-react';
 import { useState } from 'react';
-import { Button } from '@neonpro/ui';
 
 interface RealTimeStatusIndicatorProps {
   className?: string;
@@ -81,7 +81,7 @@ export function RealTimeStatusIndicator({
 }: RealTimeStatusIndicatorProps) {
   const { connectionStatus, metrics, isConnected } = useEnhancedRealTime();
   const [showDetails, setShowDetails] = useState(false);
-  
+
   const config = statusConfig[connectionStatus];
   const IconComponent = config.icon;
 
@@ -111,11 +111,13 @@ export function RealTimeStatusIndicator({
   if (compact) {
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <div className={cn(
-          'w-2 h-2 rounded-full transition-colors',
-          isConnected ? 'bg-green-500' : 'bg-red-500',
-          isConnected && 'animate-pulse'
-        )} />
+        <div
+          className={cn(
+            'w-2 h-2 rounded-full transition-colors',
+            isConnected ? 'bg-green-500' : 'bg-red-500',
+            isConnected && 'animate-pulse',
+          )}
+        />
         <span className='text-xs text-muted-foreground'>
           {isConnected ? 'Online' : 'Offline'}
         </span>
@@ -133,33 +135,39 @@ export function RealTimeStatusIndicator({
           'flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all',
           config.bgColor,
           config.color,
-          'hover:opacity-80'
+          'hover:opacity-80',
         )}
         aria-label={`Status da conexão em tempo real: ${config.label}`}
       >
-        <IconComponent 
+        <IconComponent
           className={cn(
             'h-4 w-4',
-            config.animate && 'animate-spin'
-          )} 
+            config.animate && 'animate-spin',
+          )}
         />
-        
+
         {!compact && (
           <>
             <span className='font-medium'>{config.label}</span>
-            
+
             {showMetrics && isConnected && (
               <div className='flex items-center gap-2 text-xs'>
-                <span className={cn(
-                  'px-2 py-1 rounded-full',
-                  latencyStatus === 'excellent' && 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
-                  latencyStatus === 'good' && 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
-                  latencyStatus === 'fair' && 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
-                  latencyStatus === 'poor' && 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200'
-                )}>
+                <span
+                  className={cn(
+                    'px-2 py-1 rounded-full',
+                    latencyStatus === 'excellent'
+                      && 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
+                    latencyStatus === 'good'
+                      && 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+                    latencyStatus === 'fair'
+                      && 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
+                    latencyStatus === 'poor'
+                      && 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200',
+                  )}
+                >
                   {formatLatency(metrics.latency)}
                 </span>
-                
+
                 <div className='flex items-center gap-1'>
                   <IconActivity className='h-3 w-3' />
                   <span>{formatMessagesPerSecond(metrics.messagesPerSecond)}/s</span>
@@ -199,13 +207,15 @@ export function RealTimeStatusIndicator({
 
               <div>
                 <span className='text-gray-600 dark:text-gray-400'>Latência:</span>
-                <div className={cn(
-                  'font-medium',
-                  latencyStatus === 'excellent' && 'text-green-600 dark:text-green-400',
-                  latencyStatus === 'good' && 'text-blue-600 dark:text-blue-400',
-                  latencyStatus === 'fair' && 'text-yellow-600 dark:text-yellow-400',
-                  latencyStatus === 'poor' && 'text-red-600 dark:text-red-400'
-                )}>
+                <div
+                  className={cn(
+                    'font-medium',
+                    latencyStatus === 'excellent' && 'text-green-600 dark:text-green-400',
+                    latencyStatus === 'good' && 'text-blue-600 dark:text-blue-400',
+                    latencyStatus === 'fair' && 'text-yellow-600 dark:text-yellow-400',
+                    latencyStatus === 'poor' && 'text-red-600 dark:text-red-400',
+                  )}
+                >
                   {formatLatency(metrics.latency)}
                 </div>
               </div>
@@ -252,33 +262,41 @@ export function RealTimeStatusIndicator({
               <div className='text-xs text-gray-600 dark:text-gray-400 mb-2'>
                 Indicadores de Performance:
               </div>
-              
+
               <div className='space-y-1'>
                 <div className='flex items-center justify-between'>
                   <span className='text-xs'>Latência</span>
                   <div className='flex items-center gap-1'>
-                    <div className={cn(
-                      'w-2 h-2 rounded-full',
-                      latencyStatus === 'excellent' && 'bg-green-500',
-                      latencyStatus === 'good' && 'bg-blue-500',
-                      latencyStatus === 'fair' && 'bg-yellow-500',
-                      latencyStatus === 'poor' && 'bg-red-500'
-                    )} />
-                    <span className='text-xs capitalize'>{
-                      latencyStatus === 'excellent' ? 'Excelente' :
-                      latencyStatus === 'good' ? 'Boa' :
-                      latencyStatus === 'fair' ? 'Regular' : 'Ruim'
-                    }</span>
+                    <div
+                      className={cn(
+                        'w-2 h-2 rounded-full',
+                        latencyStatus === 'excellent' && 'bg-green-500',
+                        latencyStatus === 'good' && 'bg-blue-500',
+                        latencyStatus === 'fair' && 'bg-yellow-500',
+                        latencyStatus === 'poor' && 'bg-red-500',
+                      )}
+                    />
+                    <span className='text-xs capitalize'>
+                      {latencyStatus === 'excellent'
+                        ? 'Excelente'
+                        : latencyStatus === 'good'
+                        ? 'Boa'
+                        : latencyStatus === 'fair'
+                        ? 'Regular'
+                        : 'Ruim'}
+                    </span>
                   </div>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span className='text-xs'>Conexão</span>
                   <div className='flex items-center gap-1'>
-                    <div className={cn(
-                      'w-2 h-2 rounded-full',
-                      isConnected ? 'bg-green-500' : 'bg-red-500'
-                    )} />
+                    <div
+                      className={cn(
+                        'w-2 h-2 rounded-full',
+                        isConnected ? 'bg-green-500' : 'bg-red-500',
+                      )}
+                    />
                     <span className='text-xs'>
                       {isConnected ? 'Estável' : 'Instável'}
                     </span>

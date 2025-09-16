@@ -5,33 +5,40 @@
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import type { 
-  MetricEntry, 
-  SessionInfo, 
-  PerformanceThresholds, 
+import type {
   MetricAnalysis,
-  WebVitalMetric 
+  MetricEntry,
+  PerformanceThresholds,
+  SessionInfo,
+  WebVitalMetric,
 } from '../types/web-vitals';
 
 const webVitalsRouter = new Hono();
 
-// Enable CORS for web vitals reporting
-webVitalsRouter.use('*', cors({
-  origin: [
-    process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app',
-    'http://localhost:3000',
-    'https://neonpro.com.br'
-  ],,
-  allowMethods: ['POST', 'GET'],
-  allowHeaders: ['Content-Type', 'Authorization']
-}));
+// CORS middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.NEXT_PUBLIC_APP_URL,
+].filter(Boolean) as string[];
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+}
+webVitalsRouter.use(
+  '*',
+  cors({
+    origin:
+      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    allowMethods: ['GET', 'POST'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 
 // In-memory storage (replace with your database)
 const metricsStore = new Map<string, MetricEntry[]>();
 const sessionsStore = new Map<string, SessionInfo>();
 
 // Core Web Vitals reporting endpoint
-webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
+webVitalsRouter.post('/api/analytics/web-vitals', async c => {
   try {
     const body = await c.req.json();
     const { metric, data, sessionId, userId }: {
@@ -69,7 +76,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
       isMedicalRecordView: data.isMedicalRecordView || false,
       // Request context
       clinicId: null,
-      requestId: generateMetricId()
+      requestId: generateMetricId(),
     };
 
     // Store metric
@@ -87,10 +94,10 @@ webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
         startTime: new Date().toISOString(),
         lastActivity: new Date().toISOString(),
         metricsCount: 0,
-        urls: new Set()
+        urls: new Set(),
       });
     }
-    
+
     const session = sessionsStore.get(currentSessionId)!;
     session.lastActivity = new Date().toISOString();
     session.metricsCount++;
@@ -99,12 +106,11 @@ webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
     // Check for performance issues
     await checkPerformanceThresholds(metricEntry);
 
-    return c.json({ 
+    return c.json({
       status: 'recorded',
       metricId: metricEntry.id,
-      timestamp: metricEntry.timestamp
+      timestamp: metricEntry.timestamp,
     });
-
   } catch (error) {
     console.error('Web vitals recording error:', error);
     return c.json({ error: 'Failed to record metric' }, 500);
@@ -112,7 +118,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
 });
 
 // Batch metrics endpoint (beacon)
-webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
+webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
   try {
     const body = await c.req.json();
     const { metrics, sessionId, userId, url, timestamp }: {
@@ -129,7 +135,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
 
     // Process each metric in the batch
     const processedMetrics: MetricEntry[] = [];
-    
+
     for (const [metricName, metricData] of Object.entries(metrics)) {
       const typedMetricData = metricData as WebVitalMetric;
       const metricEntry: MetricEntry = {
@@ -152,7 +158,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
         isAppointmentView: typedMetricData.isAppointmentView || false,
         isMedicalRecordView: typedMetricData.isMedicalRecordView || false,
         clinicId: null,
-        requestId: generateMetricId()
+        requestId: generateMetricId(),
       };
 
       processedMetrics.push(metricEntry);
@@ -167,7 +173,6 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
 
     // Return empty response for beacon (standard)
     return new Response(null, { status: 204 });
-
   } catch (error) {
     console.error('Web vitals beacon error:', error);
     return new Response(null, { status: 204 });
@@ -175,7 +180,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
 });
 
 // Analytics dashboard endpoint
-webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async (c) => {
+webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
   try {
     // Get time range from query params
     const timeRange = c.req.query('timeRange') || '24h';
@@ -195,18 +200,17 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async (c) => {
         totalSessions: new Set(allMetrics.map(m => m.sessionId)).size,
         totalMetrics: allMetrics.length,
         uniqueUsers: new Set(allMetrics.map(m => m.userId).filter(Boolean)).size,
-        timeRangeStart: since.toISOString()
+        timeRangeStart: since.toISOString(),
       },
       coreWebVitals: calculateCoreWebVitals(allMetrics),
       performanceGrade: calculatePerformanceGrade(allMetrics),
       healthcareMetrics: calculateHealthcareMetrics(allMetrics),
       deviceBreakdown: calculateDeviceBreakdown(allMetrics),
       urlBreakdown: calculateUrlBreakdown(allMetrics),
-      trends: calculateTrends(allMetrics)
+      trends: calculateTrends(allMetrics),
     };
 
     return c.json(dashboard);
-
   } catch (error) {
     console.error('Dashboard generation error:', error);
     return c.json({ error: 'Failed to generate dashboard' }, 500);
@@ -221,12 +225,18 @@ function generateMetricId(): string {
 function getTimeRangeStart(timeRange: string): Date {
   const now = new Date();
   switch (timeRange) {
-    case '1h': return new Date(now.getTime() - 1 * 60 * 60 * 1000);
-    case '6h': return new Date(now.getTime() - 6 * 60 * 60 * 1000);
-    case '24h': return new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    case '7d': return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    case '30d': return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    default: return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    case '1h':
+      return new Date(now.getTime() - 1 * 60 * 60 * 1000);
+    case '6h':
+      return new Date(now.getTime() - 6 * 60 * 60 * 1000);
+    case '24h':
+      return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    case '7d':
+      return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    case '30d':
+      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    default:
+      return new Date(now.getTime() - 24 * 60 * 60 * 1000);
   }
 }
 
@@ -236,7 +246,7 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
     FID: { good: 100, poor: 300 },
     CLS: { good: 0.1, poor: 0.25 },
     FCP: { good: 1800, poor: 3000 },
-    TTFB: { good: 800, poor: 1800 }
+    TTFB: { good: 800, poor: 1800 },
   };
 
   const threshold = thresholds[metric.metric as keyof PerformanceThresholds];
@@ -250,10 +260,14 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
   }
 
   // Healthcare-specific alerting
-  if (performanceLevel === 'poor' && 
-      (metric.isPatientView || metric.isAppointmentView || metric.isMedicalRecordView)) {
-    console.warn(`🏥 Healthcare performance issue: ${metric.metric} = ${metric.value} on ${metric.pathname}`);
-    
+  if (
+    performanceLevel === 'poor'
+    && (metric.isPatientView || metric.isAppointmentView || metric.isMedicalRecordView)
+  ) {
+    console.warn(
+      `🏥 Healthcare performance issue: ${metric.metric} = ${metric.value} on ${metric.pathname}`,
+    );
+
     // Could integrate with alerting system here
     // await sendHealthcarePerformanceAlert(metric);
   }
@@ -266,13 +280,13 @@ function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAn
   vitals.forEach(vital => {
     const vitalMetrics = metrics.filter(m => m.metric === vital);
     if (vitalMetrics.length === 0) {
-      results[vital] = { 
+      results[vital] = {
         metric: vital,
         count: 0,
         avg: 0,
         p50: 0,
         p90: 0,
-        p95: 0
+        p95: 0,
       };
       return;
     }
@@ -289,7 +303,7 @@ function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAn
       avg: Math.round(avg * 100) / 100,
       p50: Math.round(p50 * 100) / 100,
       p90: Math.round(p90 * 100) / 100,
-      p95: Math.round(p95 * 100) / 100
+      p95: Math.round(p95 * 100) / 100,
     };
   });
 
@@ -306,7 +320,7 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
   const thresholds = {
     LCP: { good: 2500 },
     FID: { good: 100 },
-    CLS: { good: 0.1 }
+    CLS: { good: 0.1 },
   };
 
   let goodCount = 0;
@@ -324,7 +338,7 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
 
   const score = totalCount > 0 ? (goodCount / totalCount) * 100 : 0;
   let grade = 'F';
-  
+
   if (score >= 90) grade = 'A';
   else if (score >= 80) grade = 'B';
   else if (score >= 70) grade = 'C';
@@ -334,7 +348,7 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
     score: Math.round(score),
     grade,
     goodMetrics: goodCount,
-    totalMetrics: totalCount
+    totalMetrics: totalCount,
   };
 }
 
@@ -347,7 +361,7 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
   complianceStatus?: string;
   complianceThreshold?: number;
 } {
-  const healthcareMetrics = metrics.filter(m => 
+  const healthcareMetrics = metrics.filter(m =>
     m.isPatientView || m.isAppointmentView || m.isMedicalRecordView
   );
 
@@ -355,8 +369,9 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
     return { count: 0 };
   }
 
-  const avgResponseTime = healthcareMetrics.reduce((sum, m) => sum + m.value, 0) / healthcareMetrics.length;
-  
+  const avgResponseTime = healthcareMetrics.reduce((sum, m) => sum + m.value, 0)
+    / healthcareMetrics.length;
+
   return {
     count: healthcareMetrics.length,
     averageResponseTime: Math.round(avgResponseTime),
@@ -364,7 +379,7 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
     appointmentViews: healthcareMetrics.filter(m => m.isAppointmentView).length,
     medicalRecordViews: healthcareMetrics.filter(m => m.isMedicalRecordView).length,
     complianceStatus: avgResponseTime <= 2000 ? 'compliant' : 'needs-improvement',
-    complianceThreshold: 2000
+    complianceThreshold: 2000,
   };
 }
 
@@ -374,17 +389,17 @@ function calculateDeviceBreakdown(metrics: MetricEntry[]): Array<{
   sessions: number;
 }> {
   const devices: Record<string, { count: number; sessions: Set<string> }> = {};
-  
+
   metrics.forEach(metric => {
     const memory = metric.deviceMemory || 'unknown';
     const cores = metric.hardwareConcurrency || 'unknown';
     const connection = metric.connectionType || 'unknown';
     const key = `${memory}GB-${cores}cores-${connection}`;
-    
+
     if (!devices[key]) {
       devices[key] = { count: 0, sessions: new Set() };
     }
-    
+
     devices[key].count++;
     devices[key].sessions.add(metric.sessionId);
   });
@@ -393,7 +408,7 @@ function calculateDeviceBreakdown(metrics: MetricEntry[]): Array<{
     .map(([device, data]) => ({
       device,
       metrics: data.count,
-      sessions: data.sessions.size
+      sessions: data.sessions.size,
     }))
     .sort((a, b) => b.metrics - a.metrics);
 }
@@ -405,7 +420,7 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
   avgValue: number;
 }> {
   const urls: Record<string, { metrics: MetricEntry[]; sessions: Set<string> }> = {};
-  
+
   metrics.forEach(metric => {
     const pathname = metric.pathname || metric.url || 'unknown';
     if (!urls[pathname]) {
@@ -420,7 +435,7 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
       url,
       metrics: data.metrics.length,
       sessions: data.sessions.size,
-      avgValue: Math.round(data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length)
+      avgValue: Math.round(data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length),
     }))
     .sort((a, b) => b.metrics - a.metrics);
 }
@@ -431,7 +446,7 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
   avgValue: number;
 }> {
   const trends: Record<number, MetricEntry[]> = {};
-  
+
   metrics.forEach(metric => {
     const hour = new Date(metric.timestamp).getHours();
     if (!trends[hour]) {
@@ -444,7 +459,7 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
     .map(([hour, hourMetrics]) => ({
       hour: parseInt(hour),
       count: hourMetrics.length,
-      avgValue: Math.round(hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length)
+      avgValue: Math.round(hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length),
     }))
     .sort((a, b) => a.hour - b.hour);
 }

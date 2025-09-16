@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import type { Context } from 'hono';
-import { rlsHealthcareMiddleware, patientAccessMiddleware } from '../middleware/rls-middleware';
-import { dataProtection } from '../middleware/lgpd-middleware';
 import type { RLSQueryBuilder } from '../lib/supabase-client';
+import { dataProtection } from '../middleware/lgpd-middleware';
+import { patientAccessMiddleware, rlsHealthcareMiddleware } from '../middleware/rls-middleware';
 
 // Define context variables type for better TypeScript support
 type Variables = {
@@ -41,23 +41,27 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 
     if (error) {
       console.error('RLS query error:', error);
-      return c.json({ 
+      return c.json({
         error: 'Failed to fetch patients with RLS',
-        details: error.message 
+        details: error.message,
       }, 500);
     }
 
     // Log successful access
-    console.log(`RLS Patient Access: User ${_userId} (${_userRole}) accessed ${patients?.length || 0} patients`);
+    console.log(
+      `RLS Patient Access: User ${_userId} (${_userRole}) accessed ${
+        patients?.length || 0
+      } patients`,
+    );
 
-    return c.json({ 
+    return c.json({
       patients: patients || [],
       meta: {
         count: patients?.length || 0,
         rlsApplied: true,
         userId: _userId,
         userRole: _userRole,
-      }
+      },
     });
   } catch (error) {
     console.error('Error in RLS patients route:', error);
@@ -68,16 +72,19 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 /**
  * Get specific patient by ID using RLS
  */
-rlsPatients.get('/:patientId', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
-  try {
-    const patientId = c.req.param('patientId');
-    const rlsQuery = c.get('rlsQuery');
-    const userId = c.get('userId');
+rlsPatients.get(
+  '/:patientId',
+  patientAccessMiddleware(),
+  async (c: Context<{ Variables: Variables }>) => {
+    try {
+      const patientId = c.req.param('patientId');
+      const rlsQuery = c.get('rlsQuery');
+      const userId = c.get('userId');
 
-    // Use RLS-aware query for single patient
-    const { data: patient, error } = await (rlsQuery as any).client
-      .from('patients')
-      .select(`
+      // Use RLS-aware query for single patient
+      const { data: patient, error } = await (rlsQuery as any).client
+        .from('patients')
+        .select(`
         *,
         clinic:clinics(id, name),
         consent_records(
@@ -89,139 +96,154 @@ rlsPatients.get('/:patientId', patientAccessMiddleware(), async (c: Context<{ Va
           expires_at
         )
       `)
-      .eq('id', patientId)
-      .single();
+        .eq('id', patientId)
+        .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return c.json({ 
-          error: 'Patient not found or access denied',
-          code: 'PATIENT_NOT_FOUND_OR_ACCESS_DENIED'
-        }, 404);
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return c.json({
+            error: 'Patient not found or access denied',
+            code: 'PATIENT_NOT_FOUND_OR_ACCESS_DENIED',
+          }, 404);
+        }
+
+        console.error('RLS patient query error:', error);
+        return c.json({
+          error: 'Failed to fetch patient with RLS',
+          details: error.message,
+        }, 500);
       }
-      
-      console.error('RLS patient query error:', error);
-      return c.json({ 
-        error: 'Failed to fetch patient with RLS',
-        details: error.message 
-      }, 500);
-    }
 
-    // Additional LGPD compliance check
-    if (!patient.lgpd_consent_given) {
+      // Additional LGPD compliance check
+      if (!patient.lgpd_consent_given) {
+        return c.json({
+          error: 'Patient has not provided LGPD consent',
+          code: 'LGPD_CONSENT_REQUIRED',
+          patientId,
+        }, 403);
+      }
+
+      // Log successful access
+      console.log(`RLS Patient Detail Access: User ${userId} accessed patient ${patientId}`);
+
       return c.json({
-        error: 'Patient has not provided LGPD consent',
-        code: 'LGPD_CONSENT_REQUIRED',
-        patientId
-      }, 403);
+        patient,
+        meta: {
+          rlsApplied: true,
+          lgpdCompliant: true,
+          accessedBy: userId,
+        },
+      });
+    } catch (error) {
+      console.error('Error in RLS patient detail route:', error);
+      return c.json({ error: 'Internal server error' }, 500);
     }
-
-    // Log successful access
-    console.log(`RLS Patient Detail Access: User ${userId} accessed patient ${patientId}`);
-
-    return c.json({ 
-      patient,
-      meta: {
-        rlsApplied: true,
-        lgpdCompliant: true,
-        accessedBy: userId,
-      }
-    });
-  } catch (error) {
-    console.error('Error in RLS patient detail route:', error);
-    return c.json({ error: 'Internal server error' }, 500);
-  }
-});
+  },
+);
 
 /**
  * Get patient appointments using RLS
  */
-rlsPatients.get('/:patientId/appointments', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
-  try {
-    const patientId = c.req.param('patientId');
-    const rlsQuery = c.get('rlsQuery');
-    const _userId = c.get('userId');
+rlsPatients.get(
+  '/:patientId/appointments',
+  patientAccessMiddleware(),
+  async (c: Context<{ Variables: Variables }>) => {
+    try {
+      const patientId = c.req.param('patientId');
+      const rlsQuery = c.get('rlsQuery');
+      const _userId = c.get('userId');
 
-    // Query parameters
-    const limit = parseInt(c.req.query('limit') || '10');
-    const status = c.req.query('status');
-    const startDate = c.req.query('startDate');
-    const endDate = c.req.query('endDate');
+      // Query parameters
+      const limit = parseInt(c.req.query('limit') || '10');
+      const status = c.req.query('status');
+      const startDate = c.req.query('startDate');
+      const endDate = c.req.query('endDate');
 
-    // Use RLS-aware appointment query
-    const { data: appointments, error } = await rlsQuery.getAppointments({
-      patientId,
-      limit,
-      status,
-      startDate,
-      endDate,
-    });
-
-    if (error) {
-      console.error('RLS appointments query error:', error);
-      return c.json({ 
-        error: 'Failed to fetch appointments with RLS',
-        details: error.message 
-      }, 500);
-    }
-
-    // Log successful access
-    console.log(`RLS Appointment Access: User ${_userId} accessed ${appointments?.length || 0} appointments for patient ${patientId}`);
-
-    return c.json({ 
-      appointments: appointments || [],
-      meta: {
-        count: appointments?.length || 0,
+      // Use RLS-aware appointment query
+      const { data: appointments, error } = await rlsQuery.getAppointments({
         patientId,
-        rlsApplied: true,
-        filters: { status, startDate, endDate },
-        accessedBy: _userId,
+        limit,
+        status,
+        startDate,
+        endDate,
+      });
+
+      if (error) {
+        console.error('RLS appointments query error:', error);
+        return c.json({
+          error: 'Failed to fetch appointments with RLS',
+          details: error.message,
+        }, 500);
       }
-    });
-  } catch (error) {
-    console.error('Error in RLS patient appointments route:', error);
-    return c.json({ error: 'Internal server error' }, 500);
-  }
-});
+
+      // Log successful access
+      console.log(
+        `RLS Appointment Access: User ${_userId} accessed ${
+          appointments?.length || 0
+        } appointments for patient ${patientId}`,
+      );
+
+      return c.json({
+        appointments: appointments || [],
+        meta: {
+          count: appointments?.length || 0,
+          patientId,
+          rlsApplied: true,
+          filters: { status, startDate, endDate },
+          accessedBy: _userId,
+        },
+      });
+    } catch (error) {
+      console.error('Error in RLS patient appointments route:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  },
+);
 
 /**
  * Get patient consent records using RLS
  */
-rlsPatients.get('/:patientId/consent', patientAccessMiddleware(), async (c: Context<{ Variables: Variables }>) => {
-  try {
-    const patientId = c.req.param('patientId');
-    const purpose = c.req.query('purpose');
-    const rlsQuery = c.get('rlsQuery');
-    const _userId = c.get('userId');
+rlsPatients.get(
+  '/:patientId/consent',
+  patientAccessMiddleware(),
+  async (c: Context<{ Variables: Variables }>) => {
+    try {
+      const patientId = c.req.param('patientId');
+      const purpose = c.req.query('purpose');
+      const rlsQuery = c.get('rlsQuery');
+      const _userId = c.get('userId');
 
-    // Use RLS-aware consent query
-    const { data: consentRecords, error } = await rlsQuery.getConsentRecords(patientId, purpose);
+      // Use RLS-aware consent query
+      const { data: consentRecords, error } = await rlsQuery.getConsentRecords(patientId, purpose);
 
-    if (error) {
-      console.error('RLS consent query error:', error);
-      return c.json({ 
-        error: 'Failed to fetch consent records with RLS',
-        details: error.message 
-      }, 500);
-    }
-
-    // Log successful access
-    console.log(`RLS Consent Access: User ${_userId} accessed consent records for patient ${patientId}`);
-
-    return c.json({ 
-      consentRecords: consentRecords || [],
-      meta: {
-        count: consentRecords?.length || 0,
-        patientId,
-        purpose,
-        rlsApplied: true,
-        accessedBy: _userId,
+      if (error) {
+        console.error('RLS consent query error:', error);
+        return c.json({
+          error: 'Failed to fetch consent records with RLS',
+          details: error.message,
+        }, 500);
       }
-    });
-  } catch (error) {
-    console.error('Error in RLS patient consent route:', error);
-    return c.json({ error: 'Internal server error' }, 500);
-  }
-});
+
+      // Log successful access
+      console.log(
+        `RLS Consent Access: User ${_userId} accessed consent records for patient ${patientId}`,
+      );
+
+      return c.json({
+        consentRecords: consentRecords || [],
+        meta: {
+          count: consentRecords?.length || 0,
+          patientId,
+          purpose,
+          rlsApplied: true,
+          accessedBy: _userId,
+        },
+      });
+    } catch (error) {
+      console.error('Error in RLS patient consent route:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  },
+);
 
 export default rlsPatients;

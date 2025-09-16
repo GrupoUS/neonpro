@@ -17,8 +17,8 @@ class FunctionWarmer {
   }
 
   private setupDefaultTargets() {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
       : 'http://localhost:3000';
 
     this.targets = [
@@ -26,13 +26,13 @@ class FunctionWarmer {
         url: `${baseUrl}/api/health`,
         method: 'GET',
         expectedStatusCode: 200,
-        timeout: 5000
+        timeout: 5000,
       },
       {
         url: `${baseUrl}/api/v1/health`,
         method: 'GET',
         expectedStatusCode: 200,
-        timeout: 5000
+        timeout: 5000,
       },
       {
         url: `${baseUrl}/api/auth/validate`,
@@ -40,8 +40,8 @@ class FunctionWarmer {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: 'warmup-token' }),
         expectedStatusCode: 401, // Expected failure for warmup
-        timeout: 5000
-      }
+        timeout: 5000,
+      },
     ];
   }
 
@@ -81,7 +81,7 @@ class FunctionWarmer {
         timestamp: new Date().toISOString(),
         results: results.filter(r => r.success).length,
         failures: results.filter(r => !r.success).length,
-        totalTargets: this.targets.length
+        totalTargets: this.targets.length,
       });
     } catch (error) {
       console.error('Warmup error:', error);
@@ -107,7 +107,7 @@ class FunctionWarmer {
         method: target.method,
         headers: target.headers,
         body: target.body,
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -120,7 +120,7 @@ class FunctionWarmer {
         url: target.url,
         success,
         duration,
-        statusCode: response.status
+        statusCode: response.status,
       };
     } catch (error) {
       const duration = performance.now() - start;
@@ -128,7 +128,7 @@ class FunctionWarmer {
         url: target.url,
         success: false,
         duration,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

@@ -39,7 +39,7 @@ Object.defineProperty(global, 'document', {
 });
 
 // Mock patient data
-const mockPatients = [
+const _mockPatients = [
   {
     id: '1',
     fullName: 'João Silva',
