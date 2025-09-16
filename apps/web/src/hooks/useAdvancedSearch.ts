@@ -12,7 +12,16 @@
  * - Clear filters functionality
  */
 
-import debounce from 'lodash.debounce';
+// Native debounce implementation to avoid external dependency
+function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null;
+  return function (...args: Parameters<T>) {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func(...args);
+    }, wait);
+  };
+}
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface SearchFilters {
