@@ -8,11 +8,11 @@ function getBaseUrl(req: VercelRequest): string {
     // Ensure it has protocol
     return url.startsWith('http') ? `${url}/api` : `https://${url}/api`;
   }
-  
+
   // Fallback to constructing from request headers
   const host = req.headers.host;
   const protocol = req.headers['x-forwarded-proto'] || 'https';
-  
+
   return `${protocol}://${host}/api`;
 }
 

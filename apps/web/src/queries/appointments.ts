@@ -3,12 +3,12 @@ import type { Database } from '@/lib/supabase/types/database';
 import { queryOptions } from '@tanstack/react-query';
 
 // Tipos para melhor type safety
-type Appointment = Database['public']['Tables']['appointments']['Row'];
+// type Appointment = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 // Query options para listar agendamentos com filtros
-export const appointmentsQueryOptions = ({
+export const appointmentsQueryOptions: any = ({
   page = 1,
   pageSize = 10,
   startDate,
@@ -95,7 +95,7 @@ export const appointmentsQueryOptions = ({
   });
 
 // Query options para buscar um agendamento específico
-export const appointmentQueryOptions = (id: string) =>
+export const appointmentQueryOptions: any = (id: string) =>
   queryOptions({
     queryKey: ['appointments', 'detail', id],
     queryFn: async () => {
@@ -121,7 +121,7 @@ export const appointmentQueryOptions = (id: string) =>
   });
 
 // Query options para agendamentos do dia
-export const todayAppointmentsQueryOptions = (professionalId?: string) =>
+export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
     queryKey: ['appointments', 'today', professionalId],
     queryFn: async () => {
@@ -154,7 +154,7 @@ export const todayAppointmentsQueryOptions = (professionalId?: string) =>
   });
 
 // Query options para agenda semanal
-export const weeklyAppointmentsQueryOptions = (professionalId?: string) =>
+export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
     queryKey: ['appointments', 'weekly', professionalId],
     queryFn: async () => {
@@ -280,7 +280,7 @@ export const updateAppointmentMutationOptions = {
     if (error) throw error;
     return data;
   },
-  onSuccess: (_, variables) => {
+  onSuccess: (_: unknown, _variables: unknown) => {
     // Invalidar queries relacionadas após sucesso
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
@@ -321,7 +321,7 @@ export const confirmAppointmentMutationOptions = {
     if (error) throw error;
     return data;
   },
-  onSuccess: (_, variables) => {
+  onSuccess: (_: unknown, _variables: unknown) => {
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
   },

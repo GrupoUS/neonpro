@@ -10,6 +10,7 @@ import type { Context } from 'hono';
 import { cache } from 'hono/cache';
 import { etag } from 'hono/etag';
 import { z } from 'zod';
+import { badRequest, created, notFound, ok, serverError } from '../utils/responses';
 
 // Consent duration configuration (defaults to 1 year)
 const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
@@ -312,7 +313,7 @@ import { requireAuth } from '../middleware/authn';
 // Routes with optimized caching and validation
 app.get(
   '/patients',
-  requireAuth, 
+  requireAuth,
   cache({
     cacheName: 'patients-list',
     cacheControl: 'private, max-age=300', // 5 minutes cache
@@ -340,11 +341,10 @@ app.get(
       c.header('X-Total-Count', result.pagination.total.toString());
       c.header('X-Page', result.pagination.page.toString());
 
-      import { ok } from '../utils/responses';
       return ok(c, result);
     } catch (error) {
       console.error('Error fetching patients:', error);
-      import { serverError } from '../utils/responses';
+
       return serverError(c, 'Failed to fetch patients', error instanceof Error ? error : undefined);
     }
   },
@@ -353,7 +353,7 @@ app.get(
 // Get single patient by ID
 app.get(
   '/patients/:id',
-  requireAuth, 
+  requireAuth,
   cache({
     cacheName: 'patient-detail',
     cacheControl: 'private, max-age=600', // 10 minutes cache for patient details
@@ -371,11 +371,10 @@ app.get(
       c.header('X-Data-Classification', 'sensitive');
       c.header('X-Retention-Policy', '7-years');
 
-      import { ok } from '../utils/responses';
       return ok(c, patient);
     } catch (error) {
       console.error('Error fetching patient:', error);
-      import { notFound, serverError } from '../utils/responses';
+
       if (error instanceof Error && error.message === 'Patient not found') {
         return notFound(c, 'Patient not found');
       }
@@ -387,7 +386,7 @@ app.get(
 // Create new patient
 app.post(
   '/patients',
-  requireAuth, 
+  requireAuth,
   zValidator('json', PatientCreateSchema),
   validateClinicAccess,
   async c => {
@@ -401,12 +400,16 @@ app.post(
       c.header('X-Created-At', new Date().toISOString());
       c.header('Location', `/patients/${patient.id}`);
 
-      import { created } from '../utils/responses';
       return created(c, patient, `/patients/${patient.id}`);
     } catch (error) {
       console.error('Error creating patient:', error);
-      import { badRequest } from '../utils/responses';
-      return badRequest(c, 'VALIDATION_ERROR', error instanceof Error ? error.message : 'Failed to create patient', error instanceof Error ? error : undefined);
+
+      return badRequest(
+        c,
+        'VALIDATION_ERROR',
+        error instanceof Error ? error.message : 'Failed to create patient',
+        error instanceof Error ? error : undefined,
+      );
     }
   },
 );

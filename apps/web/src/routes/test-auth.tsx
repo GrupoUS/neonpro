@@ -9,7 +9,7 @@ export const Route = createFileRoute('/test-auth')({
   component: TestAuth,
 });
 
-export function TestAuth() {
+function TestAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<string>('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');

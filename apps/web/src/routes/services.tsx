@@ -42,7 +42,8 @@ function ServicesPage() {
         <Card>
           <CardContent className='pt-6'>
             <div className='text-center text-destructive'>
-              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login novamente.
+              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login
+              novamente.
             </div>
           </CardContent>
         </Card>
@@ -52,7 +53,7 @@ function ServicesPage() {
   // Fetch services data
   const { data: servicesResponse, isLoading, error } = useServices({
     clinic_id: clinicId,
-    clinicId: clinicId, // backward compatibility
+    // clinicId is deprecated; use clinic_id only
     is_active: true,
   });
 

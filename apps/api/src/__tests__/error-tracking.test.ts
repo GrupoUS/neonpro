@@ -2,7 +2,7 @@
  * Error tracking integration tests
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ErrorTrackingManager } from '../lib/error-tracking';
 
 describe('ErrorTrackingManager', () => {

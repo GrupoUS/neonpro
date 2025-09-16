@@ -1,6 +1,6 @@
 /**
  * Supabase Connectivity & RLS Smoke Tests
- * 
+ *
  * Integration tests to verify:
  * - Supabase client initialization
  * - RLS policies are enforced (queries fail without proper auth)
@@ -8,8 +8,8 @@
  * - Database connectivity and basic operations
  */
 
-import { describe, expect, it, beforeAll } from 'vitest';
-import { supabaseClient, supabaseAdmin, RLSQueryBuilder } from '../../lib/supabase-client';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { RLSQueryBuilder, supabaseAdmin, supabaseClient } from '../../lib/supabase-client';
 
 describe('Supabase Connectivity & RLS Tests', () => {
   beforeAll(() => {
@@ -112,7 +112,11 @@ describe('Supabase Connectivity & RLS Tests', () => {
         // If no error, data should be empty or limited due to RLS
         expect(Array.isArray(data)).toBe(true);
         // We can't assert data is empty because there might be public data
-        console.log(`📊 Anonymous query returned ${data?.length || 0} records (RLS may be allowing some access)`);
+        console.log(
+          `📊 Anonymous query returned ${
+            data?.length || 0
+          } records (RLS may be allowing some access)`,
+        );
       }
     });
 
@@ -158,7 +162,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       }
 
       const builder = new RLSQueryBuilder('test-user-id', 'user');
-      
+
       try {
         const query = await builder.getPatients({ limit: 1 });
         const { data, error } = await query;
@@ -182,7 +186,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
   describe('Healthcare RLS Utilities', () => {
     it('should provide healthcare-specific RLS functions', async () => {
       const { healthcareRLS } = await import('../../lib/supabase-client');
-      
+
       expect(healthcareRLS.canAccessPatient).toBeDefined();
       expect(healthcareRLS.canAccessClinic).toBeDefined();
       expect(healthcareRLS.getUserClinics).toBeDefined();
@@ -195,7 +199,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       }
 
       const { healthcareRLS } = await import('../../lib/supabase-client');
-      
+
       try {
         const canAccess = await healthcareRLS.canAccessPatient('test-user-id', 'test-patient-id');
         expect(typeof canAccess).toBe('boolean');

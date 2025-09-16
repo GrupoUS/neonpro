@@ -1,23 +1,23 @@
 /**
  * OpenAPI Route Definitions for NeonPro Aesthetic Clinic API
- * 
+ *
  * This module defines OpenAPI route specifications using @hono/zod-openapi
  * for automatic documentation generation and type-safe API contracts.
  */
 
-import { createRoute } from '@hono/zod-openapi'
-import { z } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi';
+import { z } from '@hono/zod-openapi';
 import {
-  HealthResponseSchema,
-  DetailedHealthResponseSchema,
   ApiInfoResponseSchema,
-  ClientsListResponseSchema,
-  ClientDetailResponseSchema,
-  ClientIdParamSchema,
   AppointmentsListResponseSchema,
   AuthStatusResponseSchema,
-  CommonResponses
-} from '../schemas/openapi-schemas'
+  ClientDetailResponseSchema,
+  ClientIdParamSchema,
+  ClientsListResponseSchema,
+  CommonResponses,
+  DetailedHealthResponseSchema,
+  HealthResponseSchema,
+} from '../schemas/openapi-schemas';
 
 // Parameter schemas
 export const PatientIdParamSchema = z.object({
@@ -25,12 +25,12 @@ export const PatientIdParamSchema = z.object({
     param: {
       name: 'patientId',
       in: 'path',
-      description: 'Patient unique identifier'
+      description: 'Patient unique identifier',
     },
     example: 'patient_123',
-    description: 'Must be a valid patient ID'
-  })
-}).openapi('PatientIdParam')
+    description: 'Must be a valid patient ID',
+  }),
+}).openapi('PatientIdParam');
 
 // Health and system routes
 export const healthRoute = createRoute({
@@ -44,13 +44,13 @@ export const healthRoute = createRoute({
       description: 'Service is healthy',
       content: {
         'application/json': {
-          schema: HealthResponseSchema
-        }
-      }
+          schema: HealthResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const detailedHealthRoute = createRoute({
   method: 'get',
@@ -63,13 +63,13 @@ export const detailedHealthRoute = createRoute({
       description: 'Detailed system health information',
       content: {
         'application/json': {
-          schema: DetailedHealthResponseSchema
-        }
-      }
+          schema: DetailedHealthResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const apiInfoRoute = createRoute({
   method: 'get',
@@ -82,13 +82,13 @@ export const apiInfoRoute = createRoute({
       description: 'API information',
       content: {
         'application/json': {
-          schema: ApiInfoResponseSchema
-        }
-      }
+          schema: ApiInfoResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 // Authentication routes
 export const authStatusRoute = createRoute({
@@ -102,65 +102,67 @@ export const authStatusRoute = createRoute({
       description: 'Authentication service status',
       content: {
         'application/json': {
-          schema: AuthStatusResponseSchema
-        }
-      }
+          schema: AuthStatusResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 // Client management routes (LGPD compliant)
 export const listClientsRoute = createRoute({
   method: 'get',
   path: '/v1/clients',
   summary: 'List Clients',
-  description: 'Get a list of active aesthetic clinic clients with LGPD consent (professionals only)',
+  description:
+    'Get a list of active aesthetic clinic clients with LGPD consent (professionals only)',
   tags: ['Clients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   responses: {
     200: {
       description: 'List of clients with LGPD consent',
       content: {
         'application/json': {
-          schema: ClientsListResponseSchema
-        }
-      }
+          schema: ClientsListResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const getClientByIdRoute = createRoute({
   method: 'get',
   path: '/v1/clients/{clientId}',
   summary: 'Get Client Details',
-  description: 'Retrieve detailed information about a specific aesthetic clinic client (requires LGPD consent)',
+  description:
+    'Retrieve detailed information about a specific aesthetic clinic client (requires LGPD consent)',
   tags: ['Clients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   request: {
-    params: ClientIdParamSchema
+    params: ClientIdParamSchema,
   },
   responses: {
     200: {
       description: 'Client details',
       content: {
         'application/json': {
-          schema: ClientDetailResponseSchema
-        }
-      }
+          schema: ClientDetailResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 // Appointment management routes
 export const listAppointmentsRoute = createRoute({
@@ -171,48 +173,49 @@ export const listAppointmentsRoute = createRoute({
   tags: ['Appointments'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   responses: {
     200: {
       description: 'List of appointments',
       content: {
         'application/json': {
-          schema: AppointmentsListResponseSchema
-        }
-      }
+          schema: AppointmentsListResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const getClientAppointmentsRoute = createRoute({
   method: 'get',
   path: '/v1/appointments/client/{clientId}',
   summary: 'Get Client Appointments',
-  description: 'Retrieve appointments for a specific aesthetic clinic client (requires LGPD consent)',
+  description:
+    'Retrieve appointments for a specific aesthetic clinic client (requires LGPD consent)',
   tags: ['Appointments'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   request: {
-    params: ClientIdParamSchema
+    params: ClientIdParamSchema,
   },
   responses: {
     200: {
       description: 'Client appointments',
       content: {
         'application/json': {
-          schema: AppointmentsListResponseSchema
-        }
-      }
+          schema: AppointmentsListResponseSchema,
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 // Patient management routes
 export const listPatientsRoute = createRoute({
@@ -223,8 +226,8 @@ export const listPatientsRoute = createRoute({
   tags: ['Patients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   responses: {
     200: {
@@ -244,22 +247,22 @@ export const listPatientsRoute = createRoute({
               createdAt: z.string(),
               updatedAt: z.string(),
               _count: z.object({
-                appointments: z.number()
-              })
+                appointments: z.number(),
+              }),
             })).openapi('Patient'),
             pagination: z.object({
               page: z.number(),
               limit: z.number(),
               total: z.number(),
-              totalPages: z.number()
-            })
-          })
-        }
-      }
+              totalPages: z.number(),
+            }),
+          }),
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const getPatientByIdRoute = createRoute({
   method: 'get',
@@ -269,11 +272,11 @@ export const getPatientByIdRoute = createRoute({
   tags: ['Patients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   request: {
-    params: PatientIdParamSchema
+    params: PatientIdParamSchema,
   },
   responses: {
     200: {
@@ -300,8 +303,8 @@ export const getPatientByIdRoute = createRoute({
               startTime: z.string(),
               status: z.string(),
               professional: z.object({
-                fullName: z.string()
-              })
+                fullName: z.string(),
+              }),
             })),
             consentRecords: z.array(z.object({
               id: z.string(),
@@ -310,18 +313,18 @@ export const getPatientByIdRoute = createRoute({
               consentType: z.string(),
               legalBasis: z.string(),
               createdAt: z.string(),
-              expiresAt: z.string()
+              expiresAt: z.string(),
             })),
             _count: z.object({
-              appointments: z.number()
-            })
-          })
-        }
-      }
+              appointments: z.number(),
+            }),
+          }),
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const createPatientRoute = createRoute({
   method: 'post',
@@ -331,8 +334,8 @@ export const createPatientRoute = createRoute({
   tags: ['Patients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   request: {
     body: {
@@ -346,11 +349,11 @@ export const createPatientRoute = createRoute({
             birthDate: z.string().datetime().optional(),
             phone: z.string().optional(),
             email: z.string().email().optional(),
-            lgpdConsentGiven: z.boolean().default(false)
-          })
-        }
-      }
-    }
+            lgpdConsentGiven: z.boolean().default(false),
+          }),
+        },
+      },
+    },
   },
   responses: {
     201: {
@@ -373,15 +376,15 @@ export const createPatientRoute = createRoute({
             createdAt: z.string(),
             updatedAt: z.string(),
             _count: z.object({
-              appointments: z.number()
-            })
-          })
-        }
-      }
+              appointments: z.number(),
+            }),
+          }),
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});
 
 export const updatePatientRoute = createRoute({
   method: 'put',
@@ -391,8 +394,8 @@ export const updatePatientRoute = createRoute({
   tags: ['Patients'],
   security: [
     {
-      BearerAuth: []
-    }
+      BearerAuth: [],
+    },
   ],
   request: {
     params: PatientIdParamSchema,
@@ -408,11 +411,11 @@ export const updatePatientRoute = createRoute({
             birthDate: z.string().datetime().optional(),
             phone: z.string().optional(),
             email: z.string().email().optional(),
-            lgpdConsentGiven: z.boolean().default(false)
-          })
-        }
-      }
-    }
+            lgpdConsentGiven: z.boolean().default(false),
+          }),
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -435,12 +438,12 @@ export const updatePatientRoute = createRoute({
             createdAt: z.string(),
             updatedAt: z.string(),
             _count: z.object({
-              appointments: z.number()
-            })
-          })
-        }
-      }
+              appointments: z.number(),
+            }),
+          }),
+        },
+      },
     },
-    ...CommonResponses
-  }
-})
+    ...CommonResponses,
+  },
+});

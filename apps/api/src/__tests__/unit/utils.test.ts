@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { redactPII, checkConsent, ConsentScope } from '../../services/privacy';
+import { checkConsent, ConsentScope, redactPII } from '../../services/privacy';
 
 describe('redactPII', () => {
   test('redacts emails', () => {

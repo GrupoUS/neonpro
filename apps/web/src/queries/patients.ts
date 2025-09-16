@@ -101,7 +101,7 @@ export const patientQueryOptions = (id: string) =>
   });
 
 // Query options para buscar pacientes com LGPD compliance
-export const patientsLGDPQueryOptions = () =>
+export const patientsLGDPQueryOptions: any = () =>
   queryOptions({
     queryKey: ['patients', 'lgpd', 'compliance'],
     queryFn: async () => {
@@ -192,7 +192,7 @@ export const updatePatientMutationOptions = {
     if (error) throw error;
     return data;
   },
-  onSuccess: (_, variables) => {
+  onSuccess: (_: unknown, _variables: unknown) => {
     // Invalidar queries relacionadas após sucesso
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('patients');

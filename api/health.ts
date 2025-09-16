@@ -1,6 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default function handler(_: any, res: any) {
   res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({ ok: true, status: 'ok', ts: new Date().toISOString(), path: '/api/health' });
+  res.statusCode = 200;
+  res.end(
+    JSON.stringify({ ok: true, status: 'ok', ts: new Date().toISOString(), path: '/api/health' })
+  );
 }

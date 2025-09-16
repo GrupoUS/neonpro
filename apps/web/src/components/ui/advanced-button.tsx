@@ -332,4 +332,4 @@ function UniversalButton({
   );
 }
 
-export { UniversalButton, universalButtonVariants };
+export { UniversalButton as AdvancedButton, universalButtonVariants as advancedButtonVariants };

@@ -19,6 +19,7 @@
     "hooks": "src/hooks"
   },
   "registries": {
+    "@shadcn": "https://ui.shadcn.com/registry/{name}.json",
     "@experiment-01": "https://ui-experiments-green.vercel.app/r/experiment-01.json",
     "@kokonutui": "https://kokonutui.com/r/{name}.json",
     "@aceternity": "https://ui.aceternity.com/registry/{name}.json",

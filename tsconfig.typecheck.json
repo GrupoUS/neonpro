@@ -17,6 +17,9 @@
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
+    "apps/web/src/examples/**",
+    "apps/web/src/lib/ai-chat/**",
+    "apps/web/src/lib/prefetching/**",
     "apps/web/lib/**",
     "apps/**/lib/**",
     "packages/**"

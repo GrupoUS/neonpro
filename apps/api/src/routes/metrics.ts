@@ -1,6 +1,6 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { zValidator } from '@hono/zod-validator';
 
 const metricsApi = new Hono();
 
@@ -8,7 +8,7 @@ const metricsApi = new Hono();
 const metrics = {
   webVitals: [] as any[],
   serverMetrics: [] as any[],
-  databaseMetrics: [] as any[]
+  databaseMetrics: [] as any[],
 };
 
 // Web Vitals schema
@@ -21,7 +21,7 @@ const webVitalSchema = z.object({
   url: z.string(),
   sessionId: z.string(),
   userAgent: z.string(),
-  connection: z.string().optional()
+  connection: z.string().optional(),
 });
 
 // Server metrics schema
@@ -29,51 +29,45 @@ const serverMetricSchema = z.object({
   type: z.enum(['cold-start', 'execution-time', 'memory-usage', 'bundle-size']),
   value: z.number(),
   timestamp: z.number(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // Collect Web Vitals
-metricsApi.post('/web-vitals', 
-  zValidator('json', webVitalSchema),
-  async (c) => {
-    const metric = c.req.valid('json');
-    
-    // Store metric
-    metrics.webVitals.push({
-      ...metric,
-      receivedAt: Date.now()
-    });
+metricsApi.post('/web-vitals', zValidator('json', webVitalSchema), async c => {
+  const metric = c.req.valid('json');
 
-    // Keep only last 10,000 metrics
-    if (metrics.webVitals.length > 10000) {
-      metrics.webVitals = metrics.webVitals.slice(-10000);
-    }
+  // Store metric
+  metrics.webVitals.push({
+    ...metric,
+    receivedAt: Date.now(),
+  });
 
-    return c.json({ success: true });
+  // Keep only last 10,000 metrics
+  if (metrics.webVitals.length > 10000) {
+    metrics.webVitals = metrics.webVitals.slice(-10000);
   }
-);
+
+  return c.json({ success: true });
+});
 
 // Collect server metrics
-metricsApi.post('/server',
-  zValidator('json', serverMetricSchema),
-  async (c) => {
-    const metric = c.req.valid('json');
-    
-    metrics.serverMetrics.push({
-      ...metric,
-      receivedAt: Date.now()
-    });
+metricsApi.post('/server', zValidator('json', serverMetricSchema), async c => {
+  const metric = c.req.valid('json');
 
-    if (metrics.serverMetrics.length > 5000) {
-      metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
-    }
+  metrics.serverMetrics.push({
+    ...metric,
+    receivedAt: Date.now(),
+  });
 
-    return c.json({ success: true });
+  if (metrics.serverMetrics.length > 5000) {
+    metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
   }
-);
+
+  return c.json({ success: true });
+});
 
 // Get performance dashboard data
-metricsApi.get('/dashboard', async (c) => {
+metricsApi.get('/dashboard', async c => {
   const now = Date.now();
   const last24Hours = now - (24 * 60 * 60 * 1000);
   const last1Hour = now - (60 * 60 * 1000);
@@ -94,7 +88,7 @@ metricsApi.get('/dashboard', async (c) => {
       average: values.reduce((sum, val) => sum + val, 0) / values.length,
       p95: percentile(values, 95),
       p99: percentile(values, 99),
-      count: values.length
+      count: values.length,
     };
     return acc;
   }, {} as Record<string, any>);
@@ -111,42 +105,42 @@ metricsApi.get('/dashboard', async (c) => {
   const dashboard = {
     timestamp: now,
     period: '24h',
-    
+
     webVitals: webVitalsAverages,
-    
+
     server: {
       coldStarts: {
         average: average(coldStarts),
         p95: percentile(coldStarts, 95),
-        count: coldStarts.length
+        count: coldStarts.length,
       },
       executionTime: {
         average: average(executionTimes),
         p95: percentile(executionTimes, 95),
-        count: executionTimes.length
-      }
+        count: executionTimes.length,
+      },
     },
 
     alerts: generateAlerts(webVitalsAverages, recentServerMetrics),
-    
+
     summary: {
       totalSessions: new Set(recentWebVitals.map(m => m.sessionId)).size,
       totalPageViews: recentWebVitals.filter(m => m.name === 'FCP').length,
-      averageRating: calculateAverageRating(recentWebVitals)
-    }
+      averageRating: calculateAverageRating(recentWebVitals),
+    },
   };
 
   return c.json(dashboard);
 });
 
 // Get real-time metrics (last 5 minutes)
-metricsApi.get('/realtime', async (c) => {
+metricsApi.get('/realtime', async c => {
   const now = Date.now();
   const last5Minutes = now - (5 * 60 * 1000);
 
   const recentMetrics = {
     webVitals: metrics.webVitals.filter(m => m.timestamp > last5Minutes),
-    server: metrics.serverMetrics.filter(m => m.timestamp > last5Minutes)
+    server: metrics.serverMetrics.filter(m => m.timestamp > last5Minutes),
   };
 
   return c.json({
@@ -155,8 +149,8 @@ metricsApi.get('/realtime', async (c) => {
     metrics: recentMetrics,
     counts: {
       webVitals: recentMetrics.webVitals.length,
-      server: recentMetrics.server.length
-    }
+      server: recentMetrics.server.length,
+    },
   });
 });
 
@@ -183,16 +177,16 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
         type: 'warning',
         metric: 'LCP',
         message: `Largest Contentful Paint is ${Math.round(data.average)}ms (target: <2.5s)`,
-        value: data.average
+        value: data.average,
       });
     }
-    
+
     if (name === 'FID' && data.average > 100) {
       alerts.push({
         type: 'warning',
         metric: 'FID',
         message: `First Input Delay is ${Math.round(data.average)}ms (target: <100ms)`,
-        value: data.average
+        value: data.average,
       });
     }
   });
@@ -200,13 +194,13 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
   // Server alerts
   const coldStarts = serverMetrics.filter(m => m.type === 'cold-start');
   const avgColdStart = average(coldStarts.map(m => m.value));
-  
+
   if (avgColdStart > 1000) {
     alerts.push({
       type: 'error',
       metric: 'cold-start',
       message: `Average cold start time is ${Math.round(avgColdStart)}ms (target: <1s)`,
-      value: avgColdStart
+      value: avgColdStart,
     });
   }
 
