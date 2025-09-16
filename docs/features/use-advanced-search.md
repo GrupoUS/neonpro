@@ -55,3 +55,14 @@ pnpm --filter @neonpro/web test
 ## Notes
 - The hook is UI-agnostic; compose with form libs as needed.
 - Consider refactoring formatting/validation to a shared utility if reused across the app.
+
+
+## Shared Utilities
+As of 2025-09-16, CPF and phone formatting/validation have been extracted to the shared utils package and are consumed by this hook:
+- Import from `@neonpro/utils`:
+  - `formatCPF(value: string)`
+  - `validateCPFMask(value: string)`
+  - `formatBRPhone(value: string)`
+  - `validateBRPhoneMask(value: string)`
+
+This ensures consistent masks across the app and centralizes maintenance.

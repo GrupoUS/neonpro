@@ -2,11 +2,15 @@
  * Brazilian Data Formatters
  * Utility functions for formatting Brazilian data (CPF, phone, CEP, etc.)
  * Used by frontend components for consistent data display
+ *
+ * Note: formatPhone is deprecated in favor of formatBRPhone from @neonpro/utils.
  */
 
 /**
  * Format CPF with mask (000.000.000-00)
  */
+import { formatBRPhone } from '@neonpro/utils';
+
 export function formatCPF(cpf: string): string {
   if (!cpf) return '';
   
@@ -42,22 +46,14 @@ export function formatCNPJ(cnpj: string): string {
  * Format Brazilian phone number with mask
  * Supports both landline (00) 0000-0000 and mobile (00) 00000-0000
  */
+/**
+ * DEPRECATED: Use formatBRPhone from @neonpro/utils directly.
+ * This wrapper delegates to shared utils to keep backward compatibility.
+ */
 export function formatPhone(phone: string): string {
   if (!phone) return '';
-  
-  // Remove all non-numeric characters
   const cleaned = phone.replace(/\D/g, '');
-  
-  // Apply phone mask based on length
-  if (cleaned.length === 10) {
-    // Landline: (00) 0000-0000
-    return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-  } else if (cleaned.length === 11) {
-    // Mobile: (00) 00000-0000
-    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  }
-  
-  return phone; // Return original if invalid length
+  return formatBRPhone(cleaned);
 }
 
 /**

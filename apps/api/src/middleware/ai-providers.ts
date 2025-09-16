@@ -1,7 +1,7 @@
 /**
  * AI Provider Integrations Middleware (T072)
  * Multi-model AI provider management with load balancing and failover
- * 
+ *
  * Features:
  * - Multi-model AI provider management (OpenAI, Anthropic, Google, local models)
  * - Load balancing and failover between AI providers
@@ -220,7 +220,9 @@ class AIProviderManager {
         models = models.filter(model => model.healthcareOptimized === filters.healthcareOptimized);
       }
       if (filters.supportsBrazilianPortuguese !== undefined) {
-        models = models.filter(model => model.supportsBrazilianPortuguese === filters.supportsBrazilianPortuguese);
+        models = models.filter(model =>
+          model.supportsBrazilianPortuguese === filters.supportsBrazilianPortuguese
+        );
       }
       if (filters.supportsStreaming !== undefined) {
         models = models.filter(model => model.supportsStreaming === filters.supportsStreaming);
@@ -318,7 +320,8 @@ class AIProviderManager {
 
     // Update rate limits
     const provider = metrics.provider;
-    const limit = this.rateLimits.get(provider) || { requests: 0, resetTime: new Date(Date.now() + 60000) };
+    const limit = this.rateLimits.get(provider)
+      || { requests: 0, resetTime: new Date(Date.now() + 60000) };
     limit.requests++;
     this.rateLimits.set(provider, limit);
 
@@ -340,7 +343,7 @@ class AIProviderManager {
   // Get request metrics
   getRequestMetrics(provider?: AIProvider, limit: number = 100): RequestMetrics[] {
     let metrics = this.requestMetrics;
-    
+
     if (provider) {
       metrics = metrics.filter(m => m.provider === provider);
     }
@@ -351,21 +354,21 @@ class AIProviderManager {
   // Force provider health check
   async checkProviderHealth(provider: AIProvider): Promise<boolean> {
     const startTime = Date.now();
-    
+
     try {
       // TODO: Implement actual health check for each provider
       // For now, simulate health check
       await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
-      
+
       const responseTime = Date.now() - startTime;
       const health = this.providerHealth.get(provider);
-      
+
       if (health) {
         health.isHealthy = true;
         health.lastCheck = new Date();
         health.responseTime = responseTime;
       }
-      
+
       return true;
     } catch (error) {
       const health = this.providerHealth.get(provider);
@@ -435,11 +438,13 @@ export function healthcareContextInjection() {
       isHealthcareProfessional: !!healthcareProfessional,
       crmNumber: healthcareProfessional?.crmNumber,
       specialty: healthcareProfessional?.specialty,
-      patientContext: patientId ? {
-        patientId,
-        hasConsent: !!lgpdConsent,
-        dataCategories: lgpdConsent?.dataCategories || [],
-      } : undefined,
+      patientContext: patientId
+        ? {
+          patientId,
+          hasConsent: !!lgpdConsent,
+          dataCategories: lgpdConsent?.dataCategories || [],
+        }
+        : undefined,
       complianceRequirements: {
         lgpd: true,
         anvisa: !!healthcareProfessional,
@@ -510,5 +515,4 @@ export function aiRequestMetrics() {
 }
 
 // Export types and utilities
-export type { AIModel, ProviderHealth, RequestMetrics, HealthcareContext };
-export { aiProviderManager };
+export type { AIModel, HealthcareContext, ProviderHealth, RequestMetrics };

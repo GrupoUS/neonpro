@@ -45,6 +45,7 @@ import {
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { formatBRPhone } from '@neonpro/utils';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -609,14 +610,10 @@ function BasicInformationStep({ form }: { form: any }) {
 function ContactAddressStep({ form }: { form: any }) {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
-  // Format phone number as user types
+  // Format phone number as user types (shared helper)
   const formatPhone = (value: string) => {
     const cleanPhone = value.replace(/\D/g, '');
-    if (cleanPhone.length <= 10) {
-      return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-    } else {
-      return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-    }
+    return formatBRPhone(cleanPhone);
   };
 
   // Format CEP as user types

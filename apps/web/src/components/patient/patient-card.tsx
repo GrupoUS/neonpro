@@ -40,7 +40,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
-import { formatCEP, formatCPF, formatPhone } from '@/utils/brazilian-formatters';
+import { formatCEP } from '@/utils/brazilian-formatters';
+import { formatCPF, formatBRPhone } from '@neonpro/utils';
 import { Patient } from '@neonpro/shared/types/patient';
 import { cn } from '@neonpro/ui';
 
@@ -157,7 +158,7 @@ export const PatientCard = memo<PatientCardProps>(({
         : patient.name?.split(' ')[0] || 'Paciente',
       cpf: canShowSensitiveData ? formatCPF(patient.cpf) : '***.***.***-**',
       phone: canShowFullData && patient.phone
-        ? formatPhone(patient.phone)
+        ? formatBRPhone(patient.phone)
         : canShowFullData
         ? 'Não informado'
         : '(**) ****-****',

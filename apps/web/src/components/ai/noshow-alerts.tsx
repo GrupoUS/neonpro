@@ -418,7 +418,7 @@ export const NoShowAlerts = ({
   timeRange: initialTimeRange = '48h',
   riskThreshold = 50,
   highRiskOnly = false,
-  healthcareProfessional: _healthcareProfessional,
+  healthcareProfessional: _healthcareProfessional, // unused by design
   lgpdConsent = {
     canViewPatientData: true,
     canSendNotifications: true,

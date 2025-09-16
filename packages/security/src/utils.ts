@@ -304,18 +304,133 @@ export class SecurityUtils {
     }
 
     // No common patterns
-    if (password.includes('123456') || password.includes('password') || password.includes('qwerty')) {
-      feedback.push('Password cannot contain common patterns');
-    } else {
-      score += 1;
+    const commonPatterns = [
+      /password/i,
+      /123456/,
+      /qwerty/i,
+      /abc123/i,
+      /admin/i,
+      /letmein/i,
+      /welcome/i,
+    ];
+
+    if (commonPatterns.some(pattern => pattern.test(password))) {
+      feedback.push('Password contains common patterns');
+      score -= 1;
     }
 
-    const isValid = feedback.length === 0 && score >= 4;
-
     return {
-      isValid,
-      score,
+      isValid: score >= 5,
+      score: Math.max(0, score),
       feedback,
     };
   }
+
+  /**
+   * Generate secure password
+   * @param length Password length (default: 12)
+   * @returns Generated secure password
+   */
+  static generateSecurePassword(length: number = 12): string {
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    const allChars = lowercase + uppercase + numbers + special;
+    let password = '';
+
+    // Ensure at least one character from each category
+    password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+    password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+    password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    password += special.charAt(Math.floor(Math.random() * special.length));
+
+    // Fill the rest with random characters
+    for (let i = password.length; i < length; i++) {
+      password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+
+    // Shuffle the password
+    return password
+      .split('')
+      .sort(() => Math.random() - 0.5)
+      .join('');
+  }
 }
+
+/**
+ * Rate limiting utilities for preventing brute force attacks
+ */
+export class RateLimiter {
+  private attempts: Map<string, { count: number; resetTime: number }> = new Map();
+
+  /**
+   * Check if request is allowed
+   * @param key Identifier for rate limiting (IP, userId, etc.)
+   * @param maxAttempts Maximum allowed attempts
+   * @param windowMs Time window in milliseconds
+   * @returns True if request is allowed
+   */
+  isAllowed(key: string, maxAttempts: number = 5, windowMs: number = 60000): boolean {
+    const now = Date.now();
+    const record = this.attempts.get(key);
+
+    if (!record) {
+      this.attempts.set(key, { count: 1, resetTime: now + windowMs });
+      return true;
+    }
+
+    if (now > record.resetTime) {
+      this.attempts.set(key, { count: 1, resetTime: now + windowMs });
+      return true;
+    }
+
+    if (record.count >= maxAttempts) {
+      return false;
+    }
+
+    record.count++;
+    return true;
+  }
+
+  /**
+   * Get remaining attempts
+   * @param key Identifier for rate limiting
+   * @returns Number of remaining attempts
+   */
+  getRemainingAttempts(key: string, maxAttempts: number = 5, windowMs: number = 60000): number {
+    const now = Date.now();
+    const record = this.attempts.get(key);
+
+    if (!record || now > record.resetTime) {
+      return maxAttempts;
+    }
+
+    return Math.max(0, maxAttempts - record.count);
+  }
+
+  /**
+   * Reset rate limiting for a key
+   * @param key Identifier to reset
+   */
+  reset(key: string): void {
+    this.attempts.delete(key);
+  }
+
+  /**
+   * Clean up expired records
+   */
+  cleanup(): void {
+    const now = Date.now();
+    for (const [key, record] of this.attempts.entries()) {
+      if (now > record.resetTime) {
+        this.attempts.delete(key);
+      }
+    }
+  }
+}
+
+// Export singleton instances
+export const securityUtils = SecurityUtils;
+export const rateLimiter = new RateLimiter();

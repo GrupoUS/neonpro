@@ -20,18 +20,15 @@ import { Input, Label } from '@/components/ui';
 import {
   formatCEP,
   formatCNPJ,
-  formatCPF,
-  formatPhone,
   unformatCEP,
   unformatCNPJ,
   unformatCPF,
   unformatPhone,
 } from '@/utils/brazilian-formatters';
+import { formatCPF, formatBRPhone, validateCPFMask, validateBRPhoneMask } from '@neonpro/utils';
 import {
-  validateBrazilianPhone,
   validateCEP,
   validateCNPJ,
-  validateCPF,
 } from '@neonpro/shared/validators/brazilian';
 import { cn } from '@neonpro/ui';
 
@@ -106,7 +103,7 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleBlur = useCallback(() => {
     const unformatted = unformatCPF(internalValue);
 
-    if (unformatted && !validateCPF(unformatted)) {
+    if (unformatted && !validateCPFMask(unformatted)) {
       setValidationError('CPF inválido');
     } else {
       setValidationError('');
@@ -297,7 +294,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
 
     // Limit to 11 digits
     if (unformatted.length <= 11) {
-      const formatted = formatPhone(unformatted);
+      const formatted = formatBRPhone(unformatted);
       setInternalValue(formatted);
       onChange?.(unformatted);
     }
@@ -306,7 +303,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleBlur = useCallback(() => {
     const unformatted = unformatPhone(internalValue);
 
-    if (unformatted && !validateBrazilianPhone(unformatted)) {
+    if (unformatted && !validateBRPhoneMask(unformatted)) {
       setValidationError('Telefone inválido');
     } else {
       setValidationError('');
