@@ -142,51 +142,51 @@ export function useComponentPreloader() {
 export const routeComponents = {
   // Patient routes
   patients: () => createLazyComponent(
-    () => import('@/routes/patients'),
+    () => import('@/routes/patients').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'patients-route'
   ),
   patientProfile: () => createLazyComponent(
-    () => import('@/routes/patients/$patientId'),
+    () => import('@/routes/patients/$patientId').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'patient-profile-route'
   ),
   patientEdit: () => createLazyComponent(
-    () => import('@/routes/patients/$patientId/edit'),
+    () => import('@/routes/patients/$patientId/edit').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'patient-edit-route'
   ),
   
   // Appointment routes
   appointments: () => createLazyComponent(
-    () => import('@/routes/appointments'),
+    () => import('@/routes/appointments').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'appointments-route'
   ),
   appointmentNew: () => createLazyComponent(
-    () => import('@/routes/appointments/new'),
+    () => import('@/routes/appointments/new').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'appointment-new-route'
   ),
   
   // Service routes
   services: () => createLazyComponent(
-    () => import('@/routes/services'),
+    () => import('@/routes/services').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'services-route'
   ),
   serviceCategories: () => createLazyComponent(
-    () => import('@/routes/service-categories'),
+    () => import('@/routes/service-categories').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'service-categories-route'
   ),
   
   // AI routes
   aiChat: () => createLazyComponent(
-    () => import('@/routes/ai-chat'),
+    () => import('@/routes/ai-chat').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'ai-chat-route'
   ),
   
   // Admin routes
   governance: () => createLazyComponent(
-    () => import('@/routes/governance'),
+    () => import('@/routes/governance').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'governance-route'
   ),
   reports: () => createLazyComponent(
-    () => import('@/routes/reports'),
+    () => import('@/routes/reports').then(m => ({ default: (m as any).Route?.component as ComponentType<any> })),
     'reports-route'
   ),
 };
@@ -207,11 +207,11 @@ export const lazyComponents = {
   
   // Form Components
   patientCreationForm: () => createLazyComponent(
-    () => import('@/components/patients/PatientCreationForm'),
+    () => import('@/components/patients/PatientCreationForm').then(m => ({ default: (m as any).default })),
     'patient-creation-form'
   ),
   brazilianFields: () => createLazyComponent(
-    () => import('@/components/forms/brazilian-fields'),
+    () => import('@/components/forms/brazilian-fields').then(m => ({ default: (m as any).default })),
     'brazilian-fields'
   ),
   

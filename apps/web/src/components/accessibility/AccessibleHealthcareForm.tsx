@@ -190,6 +190,7 @@ export function AccessibleHealthcareForm({
         ) : field.type === 'select' ? (
           <select
             {...fieldProps}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => fieldProps.onChange(e as any)}
             className={`${baseInputClasses} px-3 py-2 rounded-md`}
           >
             <option value="">Selecione uma opção</option>

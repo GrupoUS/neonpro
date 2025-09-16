@@ -20,11 +20,34 @@ import { cn } from '../../lib/utils';
 import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
   lgpdConsentSchema,
-  ConsentType,
-  HealthcareDataType,
-  DataProcessingPurpose,
   healthcareValidationMessages 
 } from '../../utils/healthcare-validation';
+
+// Define LGPD enums locally since utils does not export them yet
+export enum ConsentType {
+  ESSENTIAL = 'essential',
+  FUNCTIONAL = 'functional',
+  ANALYTICS = 'analytics',
+  MARKETING = 'marketing',
+  RESEARCH = 'research',
+}
+
+export enum HealthcareDataType {
+  PERSONAL = 'personal',
+  MEDICAL = 'medical',
+  SENSITIVE = 'sensitive',
+  BIOMETRIC = 'biometric',
+  GENETIC = 'genetic',
+}
+
+export enum DataProcessingPurpose {
+  TREATMENT = 'treatment',
+  PREVENTION = 'prevention',
+  RESEARCH = 'research',
+  ADMINISTRATION = 'administration',
+  LEGAL = 'legal',
+  EMERGENCY = 'emergency',
+}
 import { 
   announceToScreenReader,
   HealthcarePriority,
@@ -180,12 +203,26 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         const consentData = lgpdConsentSchema.parse(parsed);
         
         // Check if all required consents are given
-        const hasAllRequired = requiredConsents.every(consent => 
-          consentData.consents[consent] === true
-        );
+        // Map schema properties to consent types
+        const schemaToConsent = {
+          dataProcessingConsent: ConsentType.ESSENTIAL,
+          marketingConsent: ConsentType.MARKETING,
+          analyticsConsent: ConsentType.ANALYTICS,
+        };
+
+        const hasAllRequired = requiredConsents.every(consent => {
+          // Find matching schema property for this consent type
+          const schemaKey = Object.entries(schemaToConsent).find(([_, consentType]) => consentType === consent)?.[0];
+          return schemaKey ? consentData[schemaKey as keyof typeof consentData] === true : false;
+        });
         
         if (hasAllRequired) {
-          setConsentStatus(consentData.consents);
+          // Convert schema data back to consent status for state
+          const consentStatus: ConsentStatus = {} as ConsentStatus;
+          Object.entries(schemaToConsent).forEach(([schemaKey, consentType]) => {
+            consentStatus[consentType] = Boolean(consentData[schemaKey as keyof typeof consentData]);
+          });
+          setConsentStatus(consentStatus);
           return true;
         }
       }
@@ -269,22 +306,22 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   // Save consent
   const saveConsent = (consents: ConsentStatus) => {
     const consentData = {
-      consents,
-      timestamp: new Date().toISOString(),
-      version: '1.0',
-      dataTypes,
-      processingPurposes,
+      dataProcessingConsent: !!consents[ConsentType.ESSENTIAL],
+      marketingConsent: !!consents[ConsentType.MARKETING],
+      analyticsConsent: !!consents[ConsentType.ANALYTICS],
+      consentTimestamp: new Date().toISOString(),
+      consentVersion: '1.0',
       userAgent: navigator.userAgent,
       ipAddress: '', // Will be filled by backend
     };
     
     try {
-      // Validate consent data
+      // Validate consent data (shape expected by schema)
       lgpdConsentSchema.parse(consentData);
       
-      // Store locally if enabled
+      // Store locally if enabled (persist original map plus validated data)
       if (persistConsent) {
-        localStorage.setItem('lgpd-healthcare-consent', JSON.stringify(consentData));
+        localStorage.setItem('lgpd-healthcare-consent', JSON.stringify({ consents, ...consentData }));
       }
       
       // Notify parent
@@ -534,9 +571,10 @@ export const useLGPDConsent = () => {
       const stored = localStorage.getItem('lgpd-healthcare-consent');
       if (stored) {
         const parsed = JSON.parse(stored);
-        const validated = lgpdConsentSchema.parse(parsed);
-        setConsentData(validated);
-        setHasConsent(true);
+        // Support older shape (consents map) by extracting into ConsentStatus if present
+        const status: ConsentStatus = parsed.consents || {};
+        setConsentData(parsed);
+        setHasConsent(Boolean(status[ConsentType.ESSENTIAL]));
       }
     } catch (error) {
       console.warn('Error reading stored consent:', error);
@@ -546,14 +584,14 @@ export const useLGPDConsent = () => {
   const withdrawConsent = (consentType: ConsentType) => {
     if (consentData) {
       const updatedConsents = {
-        ...consentData.consents,
+        ...(consentData.consents || {}),
         [consentType]: false,
-      };
+      } as ConsentStatus;
       
       const updatedData = {
         ...consentData,
         consents: updatedConsents,
-        timestamp: new Date().toISOString(),
+        consentTimestamp: new Date().toISOString(),
       };
       
       localStorage.setItem('lgpd-healthcare-consent', JSON.stringify(updatedData));

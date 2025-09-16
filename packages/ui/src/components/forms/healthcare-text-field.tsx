@@ -31,8 +31,7 @@ import {
   announceToScreenReader,
   HealthcarePriority,
   useHealthcareFocus,
-  generateAccessibleId,
-  validateAccessibilityRequirements 
+  generateAccessibleId
 } from '../../utils/accessibility';
 
 // Healthcare field types for automatic validation
@@ -48,7 +47,7 @@ export type HealthcareFieldType =
   | 'generic';
 
 // Healthcare text field props
-export interface HealthcareTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur'> {
+export interface HealthcareTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onBlur' | 'size'> {
   // Basic field properties
   name: string;
   label: string;
@@ -305,13 +304,22 @@ export const HealthcareTextField = forwardRef<HTMLInputElement, HealthcareTextFi
     }
   }, [validationErrors, autoFocusOnError, hasBeenBlurred]);
   
-  // Validate accessibility on mount
+  // Validate accessibility on mount (basic label/error checks)
   useEffect(() => {
-    if (inputRef.current) {
-      const violations = validateAccessibilityRequirements(inputRef.current);
-      if (!violations.isValid) {
-        console.warn(`Accessibility violations in field "${name}":`, violations.violations);
-      }
+    const el = inputRef.current;
+    if (!el) return;
+    const violations: string[] = [];
+    const hasLabel = !!(el.getAttribute('aria-label') || el.getAttribute('aria-labelledby'));
+    if (!hasLabel) violations.push('Campo sem rótulo acessível');
+    const isInvalid = el.getAttribute('aria-invalid') === 'true';
+    if (isInvalid && !el.getAttribute('aria-describedby')) {
+      violations.push('Erro sem descrição acessível');
+    }
+    if (el.hasAttribute('required') && !el.getAttribute('aria-required')) {
+      violations.push('Campo obrigatório sem indicação acessível');
+    }
+    if (violations.length) {
+      console.warn(`Accessibility violations in field "${name}":`, violations);
     }
   }, [name]);
   

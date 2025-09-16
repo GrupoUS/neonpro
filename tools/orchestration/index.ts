@@ -8,6 +8,7 @@ export { TDDOrchestrator } from './tdd-orchestrator';
 export { TDDAgentRegistry } from './agent-registry';
 export { WorkflowEngine } from './workflows/workflow-engine';
 export { QualityControlBridge, executeQualityControlCommand, validateQualityControlCommand } from './quality-control-bridge';
+export { TestCoordinator } from './src/test-coordinator';
 
 // Import classes for internal use
 import { TDDOrchestrator } from './tdd-orchestrator';

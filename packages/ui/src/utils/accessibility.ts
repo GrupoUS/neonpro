@@ -90,6 +90,7 @@ export function useHealthcareFocus(shouldFocus: boolean = false) {
 
       return () => clearTimeout(timeoutId);
     }
+    return undefined; // Explicit return for non-active case
   }, [shouldFocus]);
 
   return elementRef;
@@ -174,11 +175,12 @@ export function useTableNavigation() {
     if (!table) return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (!table.contains(event.target as Node)) return;
+      const currentTable = tableRef.current;
+      if (!currentTable || !currentTable.contains(event.target as Node)) return;
 
       const currentCell = event.target as HTMLElement;
       const row = currentCell.closest('tr');
-      const allRows = Array.from(table.querySelectorAll('tbody tr'));
+      const allRows = Array.from(currentTable.querySelectorAll('tbody tr'));
       const allCellsInRow = Array.from(row?.querySelectorAll('td, th') || []);
       
       const currentRowIndex = allRows.indexOf(row as HTMLTableRowElement);

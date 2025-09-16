@@ -9,11 +9,8 @@ export { LGPDConsentBanner, useLGPDConsent } from './lgpd-consent-banner';
 
 export type {
   HealthcareThemeProviderProps,
-  HealthcareTheme,
-  HealthcareThemeContextType,
-  EmergencyModeConfig,
-  AccessibilityConfig,
-  LGPDConfig,
+  HealthcareThemeConfig as HealthcareTheme,
+  HealthcareThemeContextValue as HealthcareThemeContextType,
 } from './healthcare-theme-provider';
 
 export type {

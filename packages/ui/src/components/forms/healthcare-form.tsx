@@ -62,7 +62,7 @@ export interface HealthcareFormContext {
 const HealthcareFormContext = createContext<HealthcareFormContext | null>(null);
 
 // Healthcare form props
-export interface HealthcareFormProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
+export interface HealthcareFormProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onError'> {
   children: ReactNode;
   
   // Form configuration
@@ -128,12 +128,13 @@ export function HealthcareForm({
   
   // Merge refs for emergency forms
   const mergedRef = emergencyForm 
-    ? (node: HTMLFormElement) => {
-        formRef.current = node;
-        if (typeof focusTrapRef === 'function') {
-          focusTrapRef(node);
-        } else if (focusTrapRef) {
-          focusTrapRef.current = node;
+    ? (node: HTMLFormElement | null) => {
+        formRef.current = node as HTMLFormElement | null;
+        const ft = focusTrapRef as unknown as ((n: HTMLElement) => void) | React.RefObject<HTMLElement> | null;
+        if (typeof ft === 'function' && node) {
+          ft(node);
+        } else if (ft && 'current' in ft && node) {
+          (ft as React.RefObject<HTMLElement | null>).current = node as unknown as HTMLElement | null;
         }
       }
     : formRef;

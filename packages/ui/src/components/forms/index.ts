@@ -10,8 +10,7 @@ export { HealthcareSelect } from './healthcare-select';
 
 export type {
   HealthcareFormProps,
-  HealthcareFormState,
-  HealthcareFormContextType,
+  HealthcareFormContext as HealthcareFormContextType,
 } from './healthcare-form';
 
 export type {

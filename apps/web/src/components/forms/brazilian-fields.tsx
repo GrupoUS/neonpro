@@ -497,3 +497,13 @@ export const CEPField = forwardRef<
 });
 
 CEPField.displayName = 'CEPField';
+
+// Default export for lazy loading
+const BrazilianFields = {
+  CPFField,
+  CNPJField,
+  PhoneField,
+  CEPField,
+};
+
+export default BrazilianFields;

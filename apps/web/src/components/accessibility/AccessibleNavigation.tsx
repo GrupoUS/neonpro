@@ -58,7 +58,7 @@ export function AccessibleNavigation({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   
-  const mobileMenuRef = useFocusTrap(isMobileMenuOpen);
+  const mobileMenuRef = useFocusTrap<HTMLDivElement>(isMobileMenuOpen);
   const navigationRef = useRef<HTMLElement>(null);
 
   // Keyboard navigation for main menu items
@@ -144,7 +144,13 @@ export function AccessibleNavigation({
               aria-expanded={isSubmenuOpen}
               aria-haspopup="true"
               aria-label={item.ariaLabel || `${item.label}, submenu`}
-              {...(!isMobile ? getMainItemProps(index) : {})}
+              {...(!isMobile ? {
+                ...getMainItemProps(index),
+                onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => {
+                  const nativeEvent = e.nativeEvent;
+                  getMainItemProps(index).onKeyDown?.(nativeEvent);
+                }
+              } : {})}
             >
               <span className="flex items-center space-x-2">
                 {item.icon && <span aria-hidden="true">{item.icon}</span>}
@@ -215,7 +221,13 @@ export function AccessibleNavigation({
             onClick={() => handleNavigate(item)}
             aria-label={item.ariaLabel || item.label}
             aria-current={item.isActive ? 'page' : undefined}
-            {...(!isMobile ? getMainItemProps(index) : {})}
+            {...(!isMobile ? {
+              ...getMainItemProps(index),
+              onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => {
+                const nativeEvent = e.nativeEvent;
+                getMainItemProps(index).onKeyDown?.(nativeEvent);
+              }
+            } : {})}
           >
             <span className="flex items-center space-x-2">
               {item.icon && <span aria-hidden="true">{item.icon}</span>}

@@ -1,0 +1,51 @@
+{
+  "name": "@neonpro/tools-backend-tests",
+  "version": "1.0.0",
+  "description": "Backend testing suite for NeonPro - API, Integration, Monorepo & Middleware",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:api": "vitest src/api",
+    "test:integration": "vitest src/integration",
+    "test:middleware": "vitest src/middleware",
+    "test:monorepo": "vitest src/monorepo",
+    "lint": "oxlint --fix src",
+    "type-check": "tsc --noEmit",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@neonpro/tools-shared": "workspace:*",
+    "hono": "^4.0.0",
+    "@hono/testing": "^1.0.0",
+    "@hono/zod-validator": "^0.2.0",
+    "zod": "^3.22.0",
+    "supertest": "^6.3.0",
+    "msw": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/supertest": "^6.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "@vitest/ui": "^2.0.0",
+    "oxlint": "^0.15.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "backend",
+    "testing",
+    "api",
+    "hono",
+    "integration",
+    "monorepo",
+    "neonpro"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
+}

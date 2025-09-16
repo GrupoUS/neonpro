@@ -24,8 +24,8 @@ import {
  * Hook for managing focus trap in modals and dialogs
  */
 export function useFocusTrap(isActive: boolean = false) {
-  const containerRef = useRef<HTMLElement>(null);
-  const restoreFocusRef = useRef<() => void>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef<() => void | undefined>(undefined);
 
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
@@ -155,7 +155,7 @@ export function useScreenReaderAnnouncement() {
 export function useLiveRegion() {
   const [message, setMessage] = useState('');
   const [priority, setPriority] = useState<'polite' | 'assertive'>('polite');
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const announce = useCallback((
     newMessage: string,
@@ -326,7 +326,7 @@ export function useAccessibilityPreferences() {
  * Hook for managing skip links
  */
 export function useSkipLinks() {
-  const skipLinksRef = useRef<HTMLElement>(null);
+  const skipLinksRef = useRef<HTMLDivElement>(null);
   const [skipLinks] = useState([
     { href: '#main-content', label: 'Pular para o conteúdo principal' },
     { href: '#main-navigation', label: 'Pular para a navegação principal' },

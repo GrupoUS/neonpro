@@ -8,6 +8,7 @@
  */
 
 import { z } from 'zod';
+import { randomUUID } from 'crypto';
 import { 
   healthcareValidationSchemas, 
   DataSensitivity 
@@ -242,22 +243,22 @@ export class BillingService {
 
     // Sample billing record
     const sampleBilling: Billing = {
-      id: 'billing-123',
+      id: randomUUID(),
       invoiceNumber: 'INV-2025-001',
-      patientId: 'patient-123',
-      clinicId: 'clinic-789',
-      professionalId: 'prof-456',
-      appointmentId: 'appt-789',
+      patientId: randomUUID(),
+      clinicId: randomUUID(),
+      professionalId: randomUUID(),
+      appointmentId: randomUUID(),
       billingType: BillingType.PRIVATE,
       items: [{
-        id: 'item-1',
+        id: randomUUID(),
         procedureCode: sampleProcedures[0],
         quantity: 1,
         unitValue: 150.00,
         totalValue: 150.00,
         discount: 0,
         discountType: 'percentage',
-        professionalId: 'prof-456',
+        professionalId: randomUUID(),
         date: new Date().toISOString(),
       }],
       subtotal: 150.00,
@@ -279,12 +280,12 @@ export class BillingService {
       updatedAt: new Date().toISOString(),
       auditTrail: [{
         action: 'create',
-        performedBy: 'prof-456',
+        performedBy: randomUUID(),
         timestamp: new Date().toISOString(),
       }],
     };
 
-    this.billings.set('billing-123', sampleBilling);
+    this.billings.set(sampleBilling.id, sampleBilling);
     this.isInitialized = true;
   }
 
@@ -316,7 +317,7 @@ export class BillingService {
 
       // Generate billing
       const billing: Billing = {
-        id: `billing-${Date.now()}`,
+        id: randomUUID(),
         invoiceNumber: `INV-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
         patientId: billingData.patientId,
         clinicId: billingData.clinicId,
@@ -504,7 +505,7 @@ export class BillingService {
 
       // Process payment based on method
       let paymentStatus = PaymentStatus.AUTHORIZED;
-      const paymentId = `payment-${Date.now()}`;
+      const paymentId = randomUUID();
 
       switch (request.paymentMethod) {
         case PaymentMethod.CASH:
