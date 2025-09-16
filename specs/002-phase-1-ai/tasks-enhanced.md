@@ -55,11 +55,11 @@
 - [x] T023 OpenAI implementation in `packages/core-services/src/services/openai-provider.ts`
 
 ## Phase 3.4: API Implementation
-- [ ] T024 POST /api/v1/chat/query endpoint in `apps/api/src/routes/chat/query.ts`
-- [ ] T025 GET /api/v1/chat/session/:id endpoint in `apps/api/src/routes/chat/session.ts`
-- [ ] T026 POST /api/v1/chat/explanation endpoint in `apps/api/src/routes/chat/explanation.ts`
-- [ ] T027 GET /api/v1/chat/suggestions endpoint in `apps/api/src/routes/chat/suggestions.ts`
-- [ ] T028 GET /api/v1/chat/health endpoint in `apps/api/src/routes/chat/health.ts`
+- [x] T024 POST /api/v1/chat/query endpoint — implemented in consolidated router `apps/api/src/routes/chat.ts` (POST /v1/chat/query)
+- [x] T025 GET /api/v1/chat/session/:id endpoint — implemented in `apps/api/src/routes/chat.ts` (GET /v1/chat/session/:id)
+- [x] T026 POST /api/v1/chat/explanation endpoint — implemented in `apps/api/src/routes/chat.ts` (POST /v1/chat/explanation)
+- [x] T027 GET /api/v1/chat/suggestions endpoint — implemented in `apps/api/src/routes/chat.ts` (GET /v1/chat/suggestions)
+- [x] T028 GET /api/v1/chat/health endpoint — implemented in `apps/api/src/routes/chat.ts` (GET /v1/chat/health)
 - [ ] T029 Streaming middleware for SSE in `apps/api/src/middleware/streaming.ts`
 - [ ] T030 Rate limiting middleware in `apps/api/src/middleware/rate-limit.ts`
 - [ ] T031 Audit logging middleware in `apps/api/src/middleware/audit-log.ts`

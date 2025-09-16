@@ -523,6 +523,26 @@ app.post('/explanation', async c => {
   }
 });
 
+// GET /suggestions — returns curated suggestions based on locale and optional session
+app.get('/suggestions', async c => {
+  const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
+  const sessionId = c.req.query('sessionId') || null;
+
+  const suggestionsPT = [
+    'Quais foram os últimos tratamentos do paciente?',
+    'Resumo financeiro do paciente',
+    'Agendar retorno para avaliação clínica',
+  ];
+  const suggestionsEN = [
+    'What were the patient\'s most recent treatments?',
+    'Patient financial summary',
+    'Schedule a follow-up appointment',
+  ];
+  const items = locale === 'en-US' ? suggestionsEN : suggestionsPT;
+
+  return c.json({ suggestions: items, sessionId }, 200);
+});
+
 app.get('/health', c => c.json({ status: 'ok', route: 'chat.query' }));
 
 export default app;

@@ -1,3 +1,8 @@
+---
+name: test
+description: Central navigation for testing docs.
+---
+
 # 🧪 Test Agent Orchestration Guide (docs/agents/test.md)
 
 ## 🧠 Intelligent Testing Context Engineering

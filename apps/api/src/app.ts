@@ -1,14 +1,15 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
+import chatRouter from './routes/chat';
 
 // Import security and monitoring libraries
-import { 
-  getSecurityMiddlewareStack, 
-  getProtectedRoutesMiddleware 
-} from '@neonpro/security';
+import security from '@neonpro/security';
 import { initializeErrorTracking, errorTracker } from './lib/error-tracking';
 import { initializeLogger, logger } from './lib/logger';
+
+// Extract middleware functions from security package
+const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
 // Initialize error tracking and logger
 Promise.all([
@@ -142,6 +143,9 @@ app.use('*', async (c, next) => {
     throw error;
   }
 });
+
+// Mount chat routes under /v1/chat
+app.route('/v1/chat', chatRouter);
 
 // Basic health endpoints with enhanced monitoring
 app.get('/health', (c) => {
