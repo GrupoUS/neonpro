@@ -395,11 +395,13 @@ export class RateLimiter {
   }
 
   /**
-   * Get remaining attempts
-   * @param key Identifier for rate limiting
+   * Get remaining attempts for a key
+   * @param key Identifier to check
+   * @param maxAttempts Maximum allowed attempts
+   * @param _windowMs Time window in milliseconds (currently unused in this method)
    * @returns Number of remaining attempts
    */
-  getRemainingAttempts(key: string, maxAttempts: number = 5, windowMs: number = 60000): number {
+  getRemainingAttempts(key: string, maxAttempts: number = 5, _windowMs: number = 60000): number {
     const now = Date.now();
     const record = this.attempts.get(key);
 

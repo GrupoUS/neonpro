@@ -123,3 +123,8 @@ export {
 } from './components/ui/expandable-card';
 export { FocusCards } from './components/ui/focus-cards';
 export { TiltedCard } from './components/ui/tilted-card';
+
+// Export Healthcare components
+export * from './components/healthcare';
+export * from './components/forms';
+export * from './utils';

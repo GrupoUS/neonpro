@@ -504,30 +504,5 @@ export function createDefaultLGPDMetadata(
 // Export All Schemas & Types
 // ============================================================================
 
-export {
-  // Main schemas
-  TelemetryEventSchema,
-  PerformanceMetricsSchema, 
-  ErrorEventSchema,
-  
-  // Component schemas
-  LGPDMetadataSchema,
-  HealthcareContextSchema,
-  WebVitalsSchema,
-  HealthcareMetricsSchema,
-  ResourceUtilizationSchema,
-  EnvironmentContextSchema,
-  HealthcareImpactSchema,
-  UserContextSchema,
-  TechnicalContextSchema,
-  ErrorResolutionSchema,
-  
-  // Enum schemas
-  TelemetryEventTypeSchema,
-  TelemetrySeveritySchema,
-  TelemetrySourceSchema,
-  LGPDDataClassificationSchema,
-  LGPDLegalBasisSchema,
-  HealthcareWorkflowTypeSchema,
-  ErrorTypeSchema,
-};
+// NOTE: Removed duplicate export block to prevent TS2323/TS2484 conflicts.
+// All schemas are already exported via their const declarations above.

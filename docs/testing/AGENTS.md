@@ -24,30 +24,44 @@ applyTo:
 llm:
   mandatory_sequence:
     - sequential-thinking
+    - archon-task-management
+    - serena-codebase-analysis
     - tdd-orchestrator
-    - agent-coordination
   pre_read:
     - path: "docs/AGENTS.md"
-      reason: "Root docs orchestrator"
-    - path: "docs/agents/code-review/tdd-orchestrator.md"
-      reason: "TDD orchestration patterns"
+      reason: "Root docs orchestrator and project patterns"
+    - path: "docs/testing/AGENTS.md"
+      reason: "Testing orchestration guide (this file)"
+    - path: ".claude/CLAUDE.md"
+      reason: "Development workflow and MCP integration rules"
+  must_use_mcps:
+    required: ["archon", "serena", "desktop-commander"]
+    optional: ["context7", "tavily", "supabase"]
+    never: ["native-search", "native-codebase-tools"]
   retrieval_hints:
     prefer:
       - "docs/testing/AGENTS.md"
-      - "docs/testing/**/*.md"
+      - "docs/testing/front-end-testing.md"
+      - "docs/testing/backend-architecture-testing.md"
+      - "docs/testing/database-security-testing.md"
+      - "docs/testing/code-review-auditfix.md"
       - "tools/orchestration/**"
     avoid:
-      - "images/**"
+      - "archived files in /tmp/"
       - "*.pdf"
+      - "removed testing documentation"
   guardrails:
-    tone: "concise, professional, English"
-    formatting: "Markdown with clear headings and short lists"
-    stop_criteria: "finish only when the task is 100% resolved"
+    tone: "concise, professional, English-only"
+    formatting: "Markdown with clear H2/H3 headings, fenced code blocks, one command per line"
+    stop_criteria: "finish end-to-end; only stop when testing is complete and validated"
+    execution: "Always complete full Archon → Serena → Implementation → Validation cycle"
   output_preferences:
-    - "Use short bullets with agent assignments"
-    - "Include relative paths in backticks"
-    - "Provide shell commands in fenced code blocks when applicable"
-    - "Reference agent orchestration patterns"
+    - "Always use TodoWrite tool for task tracking"
+    - "Use Archon MCP for task management and knowledge storage"
+    - "Use Serena MCP for all codebase search and analysis"
+    - "Include agent assignments with specific roles"
+    - "Provide runnable shell commands in fenced blocks"
+    - "Reference consolidated testing guides only"
 ---
 
 # 🧪 Testing Orchestrator with TDD Agent Coordination — Version: 3.0.0
@@ -56,8 +70,41 @@ llm:
 
 Central coordinator for comprehensive testing ecosystem orchestrated by specialized code review agents. Implements systematic TDD cycles with intelligent agent delegation, quality gate enforcement, and healthcare compliance validation.
 
-**Target Audience**: Development teams, QA engineers, DevOps specialists
+**Target Audience**: Development teams, QA engineers, DevOps specialists, LLM agents
 **Integration Level**: Advanced (multi-agent orchestration)
+
+## 🤖 LLM Orchestration Guide
+
+### Mandatory Execution Sequence
+
+**ALWAYS follow this exact sequence when handling testing tasks:**
+
+1. **Sequential Thinking** → Analyze requirements and complexity
+2. **Archon Task Management** → Create/update tasks and check project context
+3. **Serena Codebase Analysis** → Understand existing code and patterns
+4. **TDD Implementation** → Execute red-green-refactor cycles
+5. **Validation & Documentation** → Verify results and update knowledge base
+
+### MCP Integration Rules
+
+```yaml
+CRITICAL_MCPS:
+  archon: "MANDATORY - All task management and knowledge storage"
+  serena: "MANDATORY - All codebase search and semantic analysis"
+  desktop-commander: "MANDATORY - All file operations and terminal commands"
+
+NEVER_USE:
+  - Native search tools
+  - Native codebase analysis tools
+  - Direct file manipulation without desktop-commander
+
+TESTING_WORKFLOW:
+  1. archon.get_task() → Understand current testing requirements
+  2. serena.get_symbols_overview() → Analyze existing test structure
+  3. serena.find_symbol() → Locate relevant test files
+  4. desktop-commander.write_file() → Implement tests in chunks ≤30 lines
+  5. archon.update_task() → Track progress and findings
+```
 
 ## Agent-Orchestrated Testing Framework
 
@@ -190,25 +237,43 @@ refactor_phase:
 
 ## Testing Documentation Matrix
 
-### Core Testing Guides
+### Consolidated Testing Guides
 
-| Document | Agent Coordinator | Focus Area | Use When |
-|----------|-------------------|------------|-----------|
-| **[coverage-policy.md](./coverage-policy.md)** | `code-reviewer` | Coverage thresholds, compliance | Setting coverage requirements |
-| **[react-test-patterns.md](./react-test-patterns.md)** | `test` | React component testing | Testing UI components |
-| **[integration-testing.md](./integration-testing.md)** | `architect-review` | API, database, services | Testing system integration |
-| **[e2e-testing.md](./e2e-testing.md)** | `tdd-orchestrator` | End-to-end workflows | Testing user journeys |
-| **[ci-pipelines.md](./ci-pipelines.md)** | `tdd-orchestrator` | CI/CD integration | Configuring automated testing |
+| Document | Agent Coordinator | MCP Tools Required | Focus Area | Use When |
+|----------|-------------------|-------------------|------------|-----------|
+| **[front-end-testing.md](./front-end-testing.md)** | `test` + `tdd-orchestrator` | `serena`, `desktop-commander`, `shadcn` | React, E2E, accessibility, UI components | Frontend testing, user journeys, component validation |
+| **[backend-architecture-testing.md](./backend-architecture-testing.md)** | `architect-review` + `tdd-orchestrator` | `serena`, `desktop-commander`, `context7` | Hono APIs, integration, monorepo strategies | Backend services, API endpoints, system integration |
+| **[database-security-testing.md](./database-security-testing.md)** | `security-auditor` + `compliance-checker` | `serena`, `supabase`, `desktop-commander` | Supabase, RLS, LGPD, healthcare compliance | Database testing, security validation, compliance checks |
+| **[code-review-auditfix.md](./code-review-auditfix.md)** | `code-reviewer` + `security-auditor` | `archon`, `serena`, `desktop-commander` | Review standards, coverage, CI/CD, audit procedures | Code quality, PR validation, audit fixes, compliance enforcement |
 
-### Specialized Testing Guides
+### LLM Decision Matrix for Testing Tasks
 
-| Document | Agent Coordinator | Focus Area | Use When |
-|----------|-------------------|------------|-----------|
-| **[supabase-testing-guide.md](./supabase-testing-guide.md)** | `security-auditor` | Database, RLS, Auth | Testing Supabase integration |
-| **[hono-api-testing.md](./hono-api-testing.md)** | `architect-review` | API endpoints | Testing Hono routes |
-| **[tanstack-router-testing.md](./tanstack-router-testing.md)** | `code-reviewer` | Route testing | Testing navigation |
-| **[monorepo-testing-strategies.md](./monorepo-testing-strategies.md)** | `tdd-orchestrator` | Monorepo coordination | Managing complex projects |
-| **[code-review-checklist.md](./code-review-checklist.md)** | `code-reviewer` | Review standards | PR validation |
+```yaml
+task_routing:
+  frontend_components:
+    guide: "front-end-testing.md"
+    agents: ["test", "tdd-orchestrator"]
+    mcps: ["serena", "desktop-commander", "shadcn"]
+    triggers: ["React", "component", "UI", "accessibility", "E2E"]
+    
+  api_endpoints:
+    guide: "backend-architecture-testing.md"
+    agents: ["architect-review", "tdd-orchestrator"]
+    mcps: ["serena", "desktop-commander", "context7"]
+    triggers: ["Hono", "API", "endpoint", "integration", "monorepo"]
+    
+  database_security:
+    guide: "database-security-testing.md"
+    agents: ["security-auditor", "compliance-checker"]
+    mcps: ["serena", "supabase", "desktop-commander"]
+    triggers: ["Supabase", "RLS", "database", "LGPD", "compliance"]
+    
+  code_quality:
+    guide: "code-review-auditfix.md"
+    agents: ["code-reviewer", "security-auditor"]
+    mcps: ["archon", "serena", "desktop-commander"]
+    triggers: ["review", "coverage", "audit", "CI/CD", "quality"]
+```
 
 ## Agent Responsibilities Matrix
 
@@ -406,5 +471,133 @@ METRICS_TRACKING:
 - **[TDD Orchestrator](../agents/code-review/tdd-orchestrator.md)** - Complete orchestration framework
 - **[Quality Control Command](../../.claude/commands/quality-control.md)** - Master command interface
 - **[Testing Tools](../../tools/orchestration/)** - Implementation utilities
-- **[CI/CD Integration](./ci-pipelines.md)** - Automated testing workflows
-- **[Coverage Policy](./coverage-policy.md)** - Coverage requirements and enforcement
+- **[Frontend Testing Guide](./front-end-testing.md)** - React, E2E, and accessibility testing
+- **[Backend Architecture Testing](./backend-architecture-testing.md)** - API, integration, and monorepo testing
+- **[Database Security Testing](./database-security-testing.md)** - Supabase, RLS, and compliance testing
+- **[Code Review & Audit Fix](./code-review-auditfix.md)** - Quality standards and audit procedures## 🎯 LLM Quick Start Protocol
+
+### For Any Testing Task
+
+```bash
+# 1. ALWAYS start with sequential thinking
+sequential-thinking → analyze requirements, complexity, and approach
+
+# 2. MANDATORY Archon integration
+archon.list_tasks() → check current testing tasks
+archon.get_task(task_id) → understand specific requirements
+archon.update_task(status="doing") → mark as in progress
+
+# 3. MANDATORY Serena codebase analysis
+serena.get_symbols_overview() → understand project structure
+serena.find_symbol() → locate relevant test files and patterns
+serena.search_for_pattern() → find existing test implementations
+
+# 4. Select appropriate guide and execute
+# Based on triggers above, choose the correct testing guide
+# Follow the specific patterns and examples in that guide
+
+# 5. Implementation with desktop-commander
+desktop-commander.write_file() → create tests in ≤30 line chunks
+desktop-commander.start_process("bun test") → run tests
+desktop-commander.start_process("bun run lint:fix") → fix issues
+
+# 6. MANDATORY task completion
+archon.update_task(status="review") → mark for review
+archon.create_document() → document any new patterns or learnings
+```
+
+### Healthcare Compliance Priority
+
+**CRITICAL**: For patient data or healthcare features, ALWAYS prioritize:
+1. **Security-first testing** → Use `database-security-testing.md`
+2. **LGPD compliance validation** → Include data protection tests
+3. **Audit trail verification** → Test logging and monitoring
+4. **RLS policy enforcement** → Validate access controls
+
+### Common LLM Patterns
+
+```typescript
+// ✅ ALWAYS use this pattern for healthcare tests
+describe('Patient Data Access - LGPD Compliance', () => {
+  beforeEach(async () => {
+    // security-auditor: Setup isolated test environment
+    await setupTestDatabase();
+    await seedTestData();
+  });
+
+  it('enforces RLS policies for cross-clinic access', async () => {
+    // security-auditor: Validate unauthorized access is blocked
+    const unauthorizedAccess = async () => {
+      // Test implementation
+    };
+    await expect(unauthorizedAccess()).rejects.toThrow('Access denied');
+  });
+});
+
+// ✅ ALWAYS include audit logging tests
+it('logs patient data access for compliance', async () => {
+  // compliance-checker: Verify audit trail
+  const patientData = await getPatientData(patientId, userId);
+  const auditLogs = await getAuditLogs({ action: 'patient_data_access' });
+  expect(auditLogs).toHaveLength(1);
+  expect(auditLogs[0]).toMatchObject({
+    userId,
+    patientId,
+    action: 'patient_data_access'
+  });
+});
+```## 📋 LLM Quality Gates
+
+### Before Implementation
+- [ ] Sequential thinking completed with 5-step breakdown
+- [ ] Archon task created/updated with clear requirements
+- [ ] Serena analysis reveals existing patterns and structure
+- [ ] Appropriate testing guide selected based on triggers
+- [ ] MCP tools identified and ready
+
+### During Implementation
+- [ ] Tests written following TDD red-green-refactor cycle
+- [ ] Healthcare compliance patterns applied (if applicable)
+- [ ] Code follows project conventions found via Serena
+- [ ] File operations use desktop-commander with ≤30 line chunks
+- [ ] Progress tracked in Archon throughout process
+
+### After Implementation
+- [ ] All tests pass (`bun test`)
+- [ ] Code quality checks pass (`bun run lint:fix`)
+- [ ] Type checking passes (`bun run type-check`)
+- [ ] Coverage meets thresholds (≥90% for critical paths)
+- [ ] Archon task updated with results and learnings
+- [ ] Documentation updated if new patterns introduced
+
+### Escalation Triggers
+
+```yaml
+escalate_to_human:
+  - "Tests failing >3 consecutive attempts"
+  - "Healthcare compliance uncertainty"
+  - "Breaking changes to existing functionality"
+  - "Security vulnerabilities detected"
+  - "Architecture decisions required"
+
+escalate_to_research:
+  - "Unknown testing patterns needed"
+  - "New library/framework integration"
+  - "Performance optimization required"
+  - "Complex domain logic validation"
+```
+
+## 🔄 Continuous Improvement
+
+### Learning Loop
+1. **Capture Patterns** → Document successful test implementations in Archon
+2. **Identify Gaps** → Note missing test coverage or patterns
+3. **Update Guides** → Enhance testing documentation with new learnings
+4. **Share Knowledge** → Cross-reference between consolidated guides
+
+### Success Metrics
+- **Test Coverage**: ≥90% for critical healthcare paths
+- **Quality Score**: ≥9.5/10 for all implementations
+- **Compliance Rate**: 100% for LGPD and healthcare regulations
+- **Agent Coordination**: Seamless handoffs between specialized agents
+- **MCP Utilization**: 100% compliance with mandatory tool usage

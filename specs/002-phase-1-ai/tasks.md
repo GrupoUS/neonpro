@@ -88,3 +88,11 @@ Validation Checklist
 - [ ] Tests appear before implementation
 - [ ] Parallel tasks independent by file
 - [ ] Paths are explicit and actionable
+
+
+Notes (2025-09-16):
+- Phase 3.4 endpoints consolidated in `apps/api/src/routes/chat.ts` with middlewares:
+  - SSE streaming via `apps/api/src/middleware/streaming.ts`
+  - Rate limiting via `apps/api/src/middleware/rate-limit.ts`
+  - Audit logging via `apps/api/src/middleware/audit-log.ts`
+- Remaining gaps here are earlier phases (Schemas T016–T017, Repos/Services T012–T015) which are covered in the enhanced checklist. API behavior validated via passing contract/integration tests (see enhanced file).

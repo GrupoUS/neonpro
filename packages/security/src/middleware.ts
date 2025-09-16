@@ -169,14 +169,16 @@ export function authentication() {
     
     try {
       // Validate JWT token (placeholder - actual implementation needed)
+      // TODO: Implement actual JWT validation
       // const decoded = await validateJWT(token);
       // c.set('user', decoded);
       
-      // For now, just set a placeholder user
+      // For now, just set a placeholder user but use the token for logging
+      console.log('Token received:', token.substring(0, 10) + '...');
       c.set('user', { id: 'placeholder', role: 'user' });
       
       await next();
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HTTPException(401, { 
         message: 'Invalid or expired token' 
       });
@@ -345,11 +347,14 @@ function sanitizeObject(obj: any): any {
   return sanitized;
 }
 
+// Export utility functions for potential future use
+export { validateJWT, validateLGPDConsent };
+
 /**
  * JWT validation placeholder
  * TODO: Implement actual JWT validation
  */
-async function validateJWT(token: string): Promise<any> {
+async function validateJWT(_token: string): Promise<any> {
   // Placeholder implementation
   // In a real implementation, this would:
   // 1. Verify the token signature
@@ -364,7 +369,7 @@ async function validateJWT(token: string): Promise<any> {
  * LGPD consent validation placeholder
  * TODO: Implement actual LGPD consent validation
  */
-async function validateLGPDConsent(userId: string, patientId: string): Promise<boolean> {
+async function validateLGPDConsent(_userId: string, _patientId: string): Promise<boolean> {
   // Placeholder implementation
   // In a real implementation, this would:
   // 1. Check database for valid consent record

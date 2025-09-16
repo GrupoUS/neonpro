@@ -1,92 +1,60 @@
 /**
- * Simple logging utility for TDD Orchestration Framework
- * Provides structured logging with different levels for development and production
+ * @deprecated Use @neonpro/tools-shared createLogger instead
+ * Legacy logger wrapper for backward compatibility
  */
 
-export interface LogContext {
-  [key: string]: any;
-}
+import { createLogger as createSharedLogger, LogLevel } from '@neonpro/tools-shared';
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'success';
+// Re-export from shared utilities for backward compatibility
+export { LogLevel } from '@neonpro/tools-shared';
+export type { LogContext } from '@neonpro/tools-shared';
 
+// Legacy Logger class - use UnifiedLogger from @neonpro/tools-shared instead
 export class Logger {
-  private context: string;
-  private logLevel: LogLevel;
+  private sharedLogger: ReturnType<typeof createSharedLogger>;
 
-  constructor(context: string = 'TDDOrchestrator', logLevel: LogLevel = 'info') {
-    this.context = context;
-    this.logLevel = logLevel;
+  constructor(context: string = 'TDDOrchestrator', logLevel: LogLevel = LogLevel.INFO) {
+    this.sharedLogger = createSharedLogger(context, {
+      level: logLevel,
+      format: 'pretty',
+      enableConstitutional: true,
+      enablePerformance: true,
+    });
   }
 
-  private shouldLog(level: LogLevel): boolean {
-    const levels = ['debug', 'info', 'warn', 'error', 'success'];
-    const currentLevelIndex = levels.indexOf(this.logLevel);
-    const messageLevelIndex = levels.indexOf(level);
-    return messageLevelIndex >= currentLevelIndex;
+  debug(message: string, context?: any): void {
+    this.sharedLogger.debug(message, context);
   }
 
-  private formatMessage(level: LogLevel, message: string, context?: LogContext): string {
-    const timestamp = new Date().toISOString();
-    const prefix = this.getLevelPrefix(level);
-    const contextStr = context ? ` ${JSON.stringify(context)}` : '';
-    return `${timestamp} ${prefix} [${this.context}] ${message}${contextStr}`;
+  info(message: string, context?: any): void {
+    this.sharedLogger.info(message, context);
   }
 
-  private getLevelPrefix(level: LogLevel): string {
-    switch (level) {
-      case 'debug': return '🐛';
-      case 'info': return 'ℹ️';
-      case 'warn': return '⚠️';
-      case 'error': return '❌';
-      case 'success': return '✅';
-      default: return 'ℹ️';
-    }
+  warn(message: string, context?: any): void {
+    this.sharedLogger.warn(message, context);
   }
 
-  debug(message: string, context?: LogContext): void {
-    if (this.shouldLog('debug')) {
-      console.debug(this.formatMessage('debug', message, context));
-    }
+  error(message: string, error?: Error | any): void {
+    this.sharedLogger.error(message, error);
   }
 
-  info(message: string, context?: LogContext): void {
-    if (this.shouldLog('info')) {
-      console.info(this.formatMessage('info', message, context));
-    }
-  }
-
-  warn(message: string, context?: LogContext): void {
-    if (this.shouldLog('warn')) {
-      console.warn(this.formatMessage('warn', message, context));
-    }
-  }
-
-  error(message: string, error?: Error | LogContext): void {
-    if (this.shouldLog('error')) {
-      const context = error instanceof Error 
-        ? { error: error.message, stack: error.stack }
-        : error;
-      console.error(this.formatMessage('error', message, context));
-    }
-  }
-
-  success(message: string, context?: LogContext): void {
-    if (this.shouldLog('success')) {
-      console.log(this.formatMessage('success', message, context));
-    }
+  success(message: string, context?: any): void {
+    this.sharedLogger.success(message, context);
   }
 
   createChild(childContext: string): Logger {
-    return new Logger(`${this.context}:${childContext}`, this.logLevel);
+    return new Logger(`${this.sharedLogger.context}:${childContext}`, this.sharedLogger.level);
   }
 }
 
-// Default logger instance
-export const logger = new Logger('TDDOrchestrator', 
-  process.env.NODE_ENV === 'development' ? 'debug' : 'info'
-);
+// Default logger instance - migrated to shared logger
+export const logger = createSharedLogger('TDDOrchestrator', {
+  level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO,
+  format: 'pretty',
+  enableConstitutional: true,
+});
 
-// Create specialized loggers for different components
-export const createLogger = (context: string, logLevel?: LogLevel): Logger => {
+// Create specialized loggers using shared system
+export const createLogger = (context: string, logLevel: LogLevel = LogLevel.INFO): Logger => {
   return new Logger(context, logLevel);
 };

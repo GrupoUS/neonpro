@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { SecurityUtils, RateLimiter } from '../utils';
+import { beforeEach } from 'vitest';
 
 describe('SecurityUtils', () => {
   describe('Input Sanitization', () => {

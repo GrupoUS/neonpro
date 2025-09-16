@@ -9,6 +9,14 @@ export { TDDAgentRegistry } from './agent-registry';
 export { WorkflowEngine } from './workflows/workflow-engine';
 export { QualityControlBridge, executeQualityControlCommand, validateQualityControlCommand } from './quality-control-bridge';
 
+// Import classes for internal use
+import { TDDOrchestrator } from './tdd-orchestrator';
+import { TDDAgentRegistry } from './agent-registry';
+import { WorkflowEngine } from './workflows/workflow-engine';
+import { QualityControlBridge } from './quality-control-bridge';
+import { TDDMetricsCollector } from './metrics/collector';
+import { HealthcareComplianceValidator } from './compliance/healthcare-validator';
+
 // Communication System
 export {
   AgentMessageBus,

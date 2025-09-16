@@ -39,6 +39,9 @@ function isRateLimited(userKey: string, now = Date.now()) {
 // (removed unused placeholder redactPII)
 
 // Consent/role gate (stub): require role and consent header
+import { sseHeaders as sseHeadersHelper, sseStreamFromChunks as sseStreamFromChunksHelper } from '../middleware/streaming';
+import { chatRateLimit } from '../middleware/rate-limit';
+import { auditLog } from '../middleware/audit-log';
 const ALLOWED_ROLES = new Set(['ADMIN', 'CLINICAL_STAFF', 'FINANCE_STAFF', 'SUPPORT_READONLY']);
 function checkConsentAndRole(req: Request) {
   const role = req.headers.get('x-role') || 'ANONYMOUS';
@@ -59,22 +62,7 @@ function classifyQueryType(q: string): 'treatment' | 'finance' | 'mixed' | 'othe
 }
 
 function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
-  return new ReadableStream({
-    start(controller) {
-      const enc = new TextEncoder();
-      let i = 0;
-      const id = setInterval(() => {
-        const line = `data: ${JSON.stringify({ type: 'text', delta: chunks[i] })}\n\n`;
-        controller.enqueue(enc.encode(line));
-        i++;
-        if (i >= chunks.length) {
-          clearInterval(id);
-          controller.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-          controller.close();
-        }
-      }, 15);
-    },
-  });
+  return sseStreamFromChunksHelper(chunks);
 }
 
 function mockAnswer(
@@ -116,16 +104,10 @@ function mockAnswer(
 }
 
 function sseHeaders(extra?: Record<string, string>) {
-  return new Headers({
-    'Content-Type': 'text/event-stream; charset=utf-8',
-    'Cache-Control': 'no-cache, no-transform',
-    Connection: 'keep-alive',
-    'X-Chat-Started-At': new Date().toISOString(),
-    ...extra,
-  });
+  return sseHeadersHelper(extra);
 }
 
-app.post('/query', zValidator('json', ChatQuerySchema), async c => {
+app.post('/query', chatRateLimit(), auditLog('chat.query'), zValidator('json', ChatQuerySchema), async c => {
   const t0 = Date.now();
   const { question, sessionId } = c.req.valid('json');
   const userId = c.req.header('x-user-id') || 'anonymous';

@@ -1,7 +1,6 @@
 /**
- * NeonPro Security Package
- * Comprehensive security infrastructure for healthcare platform
- * @version 1.0.0
+ * @neonpro/security - Security utilities and middleware for NeonPro
+ * Provides encryption, authentication, authorization, and security middleware
  */
 
 // Version export
@@ -126,13 +125,5 @@ export default {
   },
 };
 
-// Type exports for better TypeScript support
-export type { EncryptionManager } from './encryption';
-export type { KeyManager } from './encryption';
-export type { SecurityUtils } from './utils';
-export type { RateLimiter } from './utils';
-
-export type {
-  Context,
-  Next,
-} from 'hono';
+// Re-export Hono types for convenience
+export type { Context, Next } from 'hono';

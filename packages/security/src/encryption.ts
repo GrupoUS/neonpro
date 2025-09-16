@@ -39,9 +39,9 @@ export class EncryptionManager {
 
   /**
    * Encrypt data using AES-256-GCM
-   * @param data The plaintext data to encrypt
-   * @param key The encryption key (base64 encoded)
-   * @returns Encrypted data with IV and auth tag
+   * @param data Data to encrypt
+   * @param key Base64 encoded encryption key
+   * @returns Base64 encoded encrypted data with IV and auth tag
    */
   encryptData(data: string, key: string): string {
     if (!this.validateKey(key)) {
@@ -54,7 +54,7 @@ export class EncryptionManager {
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     
-    const authTag = cipher.getAuthTag();
+    const authTag = (cipher as any).getAuthTag();
     
     // Combine IV + encrypted data + auth tag
     const combined = Buffer.concat([
@@ -68,35 +68,35 @@ export class EncryptionManager {
 
   /**
    * Decrypt data using AES-256-GCM
-   * @param encryptedData The encrypted data (base64 encoded)
-   * @param key The decryption key (base64 encoded)
-   * @returns Decrypted plaintext data
+   * @param encryptedData Base64 encoded encrypted data with IV and auth tag
+   * @param key Base64 encoded encryption key
+   * @returns Decrypted data
    */
   decryptData(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error('Invalid decryption key');
+      throw new Error('Invalid encryption key');
     }
 
     const combined = Buffer.from(encryptedData, 'base64');
     
-    // Extract IV, encrypted data, and auth tag
-    const iv = combined.slice(0, this.ivLength);
-    const encrypted = combined.slice(this.ivLength, combined.length - 16);
-    const authTag = combined.slice(combined.length - 16);
+    // Extract IV (first 16 bytes), auth tag (last 16 bytes), and encrypted data (middle)
+    const iv = combined.subarray(0, this.ivLength);
+    const authTag = combined.subarray(-16);
+    const encrypted = combined.subarray(this.ivLength, -16);
     
     const decipher = crypto.createDecipheriv(this.algorithm, Buffer.from(key, 'base64'), iv);
-    decipher.setAuthTag(authTag);
+    (decipher as any).setAuthTag(authTag);
     
-    let decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8');
+    let decrypted = decipher.update(encrypted, undefined, 'utf8');
     decrypted += decipher.final('utf8');
     
     return decrypted;
   }
 
   /**
-   * Encrypt sensitive fields in an object
-   * @param obj The object containing sensitive fields
-   * @param key The encryption key
+   * Encrypt specific fields in an object
+   * @param obj Object to encrypt
+   * @param key Encryption key
    * @param sensitiveFields Array of field names to encrypt
    * @returns Object with encrypted fields
    */
@@ -104,12 +104,12 @@ export class EncryptionManager {
     obj: T,
     key: string,
     sensitiveFields: string[]
-  ): Record<string, any> {
-    const result = { ...obj };
+  ): T {
+    const result = { ...obj } as T;
     
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
-        result[field] = this.encryptData(result[field], key);
+        (result as any)[field] = this.encryptData(result[field], key);
       }
     }
     
@@ -117,9 +117,9 @@ export class EncryptionManager {
   }
 
   /**
-   * Decrypt sensitive fields in an object
-   * @param obj The object containing encrypted fields
-   * @param key The decryption key
+   * Decrypt specific fields in an object
+   * @param obj Object to decrypt
+   * @param key Encryption key
    * @param sensitiveFields Array of field names to decrypt
    * @returns Object with decrypted fields
    */
@@ -127,16 +127,15 @@ export class EncryptionManager {
     obj: T,
     key: string,
     sensitiveFields: string[]
-  ): Record<string, any> {
-    const result = { ...obj };
+  ): T {
+    const result = { ...obj } as T;
     
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         try {
-          result[field] = this.decryptData(result[field], key);
+          (result as any)[field] = this.decryptData(result[field], key);
         } catch (error) {
-          // If decryption fails, keep the original value
-          // This allows for graceful handling of mixed encrypted/unencrypted data
+          // Field might not be encrypted, leave as is
           console.warn(`Failed to decrypt field ${field}:`, error);
         }
       }

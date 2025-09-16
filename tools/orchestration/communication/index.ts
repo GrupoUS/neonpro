@@ -5,16 +5,16 @@
 
 export {
   AgentMessageBus,
-  SharedContext,
-  MessageBusOptions,
+  type SharedContext,
+  type MessageBusOptions,
 } from './message-bus';
 
 export {
   AgentCommunicationProtocol,
-  ProtocolOptions,
-  AgentHandshake,
-  CoordinationRequest,
-  CoordinationResponse,
+  type ProtocolOptions,
+  type AgentHandshake,
+  type CoordinationRequest,
+  type CoordinationResponse,
 } from './agent-protocol';
 
 // Re-export relevant types from the main types file
