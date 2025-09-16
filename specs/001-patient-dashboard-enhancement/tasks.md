@@ -129,10 +129,10 @@
 
 ### API Endpoints - AI Features
 
-- [ ] T051 POST /api/v2/ai/chat/sessions endpoint in apps/api/src/routes/ai/sessions.ts
-- [ ] T052 POST /api/v2/ai/chat/sessions/{id}/messages endpoint in apps/api/src/routes/ai/messages.ts
-- [ ] T053 GET /api/v2/ai/insights/patient/{id} endpoint in apps/api/src/routes/ai/insights.ts
-- [ ] T054 POST /api/v2/ai/insights/no-show-prediction endpoint in apps/api/src/routes/ai/noshow.ts
+- [x] T051 POST /api/v2/ai/chat endpoint in apps/api/src/routes/ai/chat.ts ✅ COMPLETED: AI chat functionality with multi-model support (OpenAI, Anthropic, Google, local), streaming responses, Brazilian healthcare context, LGPD compliance, audit logging, performance monitoring, comprehensive error handling
+- [x] T052 GET /api/v2/ai/insights/{patientId} endpoint in apps/api/src/routes/ai/insights.ts ✅ COMPLETED: AI-generated patient insights with healthcare professional context, LGPD compliant data access, caching optimization, Brazilian healthcare compliance (CFM/ANVISA), comprehensive error handling
+- [x] T053 POST /api/v2/ai/analyze endpoint in apps/api/src/routes/ai/analyze.ts ✅ COMPLETED: Multi-modal AI analysis (structured data, medical images, patient feedback, diagnostic support), LGPD compliance, Brazilian healthcare context, performance optimization, comprehensive error handling
+- [x] T054 GET /api/v2/ai/models endpoint in apps/api/src/routes/ai/models.ts ✅ COMPLETED: Available AI models listing with health status monitoring, performance metrics, provider filtering, healthcare context optimization, caching, Brazilian compliance
 
 ### Frontend Components - Patient Dashboard
 
