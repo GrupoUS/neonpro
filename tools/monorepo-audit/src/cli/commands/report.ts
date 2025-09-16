@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import ora from 'ora';
 import path from 'path';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
-import { ReportFormat, ReportOptions } from '../../specs/contracts/report-generator.contract.js';
+import { ReportFormat, ReportOptions, AuditData, GeneratedReport } from '../../specs/contracts/report-generator.contract.js';
 
 interface GenerateOptions {
   format?: string;
@@ -115,7 +115,7 @@ async function handleReportGenerate(options: GenerateOptions): Promise<void> {
     // Ensure output directory exists
     await fs.mkdir(outputDir, { recursive: true });
 
-    let auditData: any;
+    let auditData: AuditData;
 
     // Load audit data
     if (options.dataFile) {
@@ -124,7 +124,7 @@ async function handleReportGenerate(options: GenerateOptions): Promise<void> {
 
       try {
         const dataContent = await fs.readFile(dataPath, 'utf-8');
-        auditData = JSON.parse(dataContent);
+        auditData = JSON.parse(dataContent) as AuditData;
         spinner.text = 'Audit data loaded successfully';
       } catch (error) {
         spinner.fail('Failed to load audit data');
@@ -151,7 +151,7 @@ async function handleReportGenerate(options: GenerateOptions): Promise<void> {
 
       try {
         const dataContent = await fs.readFile(dataPath, 'utf-8');
-        auditData = JSON.parse(dataContent);
+        auditData = JSON.parse(dataContent) as AuditData;
       } catch (error) {
         spinner.fail('Failed to load audit data');
         console.error(
@@ -196,7 +196,7 @@ async function handleReportGenerate(options: GenerateOptions): Promise<void> {
     };
 
     // Generate report
-    const report = await reportGenerator.generateAuditReport(auditData, reportOptions);
+    const report: GeneratedReport = await reportGenerator.generateAuditReport(auditData, reportOptions);
 
     // Export report (service expects format and output file path)
     const outputFilePath = path.join(outputDir, `audit-report.${format}`);
@@ -259,10 +259,10 @@ async function handleReportExport(options: ExportCliOptions): Promise<void> {
     const outputDir = path.resolve(options.outputDir || './reports');
 
     // Load existing report
-    let reportData: any;
+    let reportData: GeneratedReport;
     try {
       const reportContent = await fs.readFile(inputPath, 'utf-8');
-      reportData = JSON.parse(reportContent);
+      reportData = JSON.parse(reportContent) as GeneratedReport;
     } catch (error) {
       spinner.fail('Failed to load report data');
       console.error(
@@ -349,16 +349,16 @@ async function handleReportCompare(options: CompareOptions): Promise<void> {
     }
 
     // Load both audit results
-    let baselineData: any;
-    let currentData: any;
+    let baselineData: AuditData;
+    let currentData: AuditData;
 
     try {
       const baselineContent = await fs.readFile(baselinePath, 'utf-8');
-      baselineData = JSON.parse(baselineContent);
+      baselineData = JSON.parse(baselineContent) as AuditData;
 
       spinner.text = 'Loading current audit data...';
       const currentContent = await fs.readFile(currentPath, 'utf-8');
-      currentData = JSON.parse(currentContent);
+      currentData = JSON.parse(currentContent) as AuditData;
     } catch (error) {
       spinner.fail('Failed to load audit data');
       console.error(
@@ -375,7 +375,7 @@ async function handleReportCompare(options: CompareOptions): Promise<void> {
     spinner.text = 'Generating comparison report...';
 
     // Generate comparison report (service expects two AuditData parameters)
-    const comparisonReport = await reportGenerator.generateComparisonReport(
+    const comparisonReport: GeneratedReport = await reportGenerator.generateComparisonReport(
       baselineData,
       currentData,
     );
@@ -409,7 +409,6 @@ async function handleReportCompare(options: CompareOptions): Promise<void> {
     // Show key differences
     // Note: comparisonReport may contain a summary section depending on implementation
     // Guarded logging to avoid runtime errors if fields are missing
-    // @ts-ignore - runtime safety
     const summary = (comparisonReport as any).summary;
     if (summary) {
       console.log(chalk.cyan('\n📈 Key Changes:'));
@@ -445,7 +444,7 @@ async function handleDashboard(options: DashboardOptions): Promise<void> {
     const reportGenerator = new ReportGenerator();
     const outputDir = path.resolve(options.outputDir || './reports');
 
-    let auditData: any;
+    let auditData: AuditData;
 
     // Load audit data for dashboard
     if (options.dataFile) {
@@ -453,7 +452,7 @@ async function handleDashboard(options: DashboardOptions): Promise<void> {
       spinner.text = 'Loading audit data...';
 
       const dataContent = await fs.readFile(dataPath, 'utf-8');
-      auditData = JSON.parse(dataContent);
+      auditData = JSON.parse(dataContent) as AuditData;
     } else {
       spinner.stop();
 
@@ -466,7 +465,7 @@ async function handleDashboard(options: DashboardOptions): Promise<void> {
       spinner.start('Loading audit data...');
 
       const dataContent = await fs.readFile(dataPath, 'utf-8');
-      auditData = JSON.parse(dataContent);
+      auditData = JSON.parse(dataContent) as AuditData;
     }
 
     await fs.mkdir(outputDir, { recursive: true });

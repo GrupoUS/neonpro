@@ -137,17 +137,17 @@
 ### Frontend Components - Patient Dashboard
 
 - [x] T055 [P] Patient list component with advanced search in apps/web/src/components/patient/patient-list.tsx ✅ COMPLETED: PatientDataTable with AdvancedSearchDialog, useAdvancedSearch hook, multi-field search (name, CPF, phone, email), date range filtering, Brazilian data validation, debounced search <300ms
-- [ ] T056 [P] Patient card component with mobile optimization in apps/web/src/components/patient/patient-card.tsx
+- [x] T056 [P] Patient card component with mobile optimization in apps/web/src/components/patient/patient-card.tsx ✅ COMPLETED: PatientCard with mobile-first responsive design, Brazilian data display (CPF masking, phone formatting), LGPD compliant data rendering with consent awareness, performance optimization, accessibility compliance (WCAG 2.1 AA+)
 - [x] T057 [P] Patient registration multi-step form in apps/web/src/components/patient/patient-registration-form.tsx ✅ COMPLETED: PatientRegistrationWizard with 5-step form, Brazilian compliance (CPF, CEP, phone), LGPD consent, auto-save functionality, accessibility features
-- [ ] T058 [P] Patient profile view with AI insights in apps/web/src/components/patient/patient-profile.tsx
-- [ ] T059 [P] Brazilian form fields (CPF, CEP, phone) in apps/web/src/components/forms/brazilian-fields.tsx
+- [x] T058 [P] Patient profile view with AI insights in apps/web/src/components/patient/patient-profile.tsx ✅ COMPLETED: PatientProfile with AI insights integration (T051-T054), real-time AI insights display, Brazilian healthcare context with CFM compliance, LGPD compliant data access, performance optimization with caching and lazy loading
+- [x] T059 [P] Brazilian form fields (CPF, CEP, phone) in apps/web/src/components/forms/brazilian-fields.tsx ✅ COMPLETED: CPFField, CNPJField, PhoneField, CEPField with Brazilian validation schemas integration (T037), real-time validation with Portuguese error messages, accessibility compliance, mobile-optimized input handling, auto-formatting and masking
 
 ### Frontend Components - AI & Real-time Features
 
-- [ ] T060 [P] AI chat interface component in apps/web/src/components/ai/ai-chat.tsx
-- [ ] T061 [P] AI insights dashboard in apps/web/src/components/ai/insights-dashboard.tsx
+- [x] T060 [P] AI chat interface component in apps/web/src/components/ai/ai-chat.tsx ✅ COMPLETED: AIChat with POST /api/v2/ai/chat endpoint integration (T051), real-time streaming chat responses, multi-model AI selection interface, Brazilian healthcare context with professional validation, LGPD compliant chat history with data retention policies
+- [x] T061 [P] AI insights dashboard in apps/web/src/components/ai/insights-dashboard.tsx ✅ COMPLETED: AIInsightsDashboard with AI endpoints integration (T051-T054), real-time insights visualization with charts and metrics, Brazilian healthcare compliance with CFM headers, performance optimization with data caching, mobile-responsive dashboard layout
 - [x] T062 [P] Real-time notification component in apps/web/src/components/notifications/real-time-notifications.tsx ✅ COMPLETED: RealTimeStatusIndicator component with connection status monitoring, performance metrics display, Brazilian Portuguese labels, accessibility compliance (WCAG 2.1 AA+), mobile-responsive design
-- [ ] T063 [P] No-show prediction alerts in apps/web/src/components/ai/noshow-alerts.tsx
+- [x] T063 [P] No-show prediction alerts in apps/web/src/components/ai/noshow-alerts.tsx ✅ COMPLETED: NoShowAlerts with AI analysis endpoint integration for prediction algorithms, real-time alert system with notification service integration, Brazilian healthcare context with appointment management, LGPD compliant patient data handling, mobile-optimized alert display
 
 ### Frontend Pages & Navigation
 

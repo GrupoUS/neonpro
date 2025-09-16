@@ -37,6 +37,9 @@
       "@neonpro/shared": [
         "../../packages/shared/src"
       ],
+      "@neonpro/shared/*": [
+        "../../packages/shared/src/*"
+      ],
       "@neonpro/utils": [
         "../../packages/utils/src"
       ],

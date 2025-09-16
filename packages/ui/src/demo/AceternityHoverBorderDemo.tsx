@@ -1,6 +1,4 @@
-import React from "react";
 import { HoverBorderGradient, EnhancedShineBorder } from "../components/aceternity";
-import { ShineBorder } from "../components/magicui";
 
 export function AceternityHoverBorderDemo() {
   return (

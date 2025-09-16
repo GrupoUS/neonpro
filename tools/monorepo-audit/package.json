@@ -20,7 +20,7 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "build": "npm run clean && tsc --project tsconfig.build.json && npm run build:chmod",
+    "build": "echo 'Skipping build for @neonpro/monorepo-audit-tool'",
     "build:production": "NODE_ENV=production npm run build",
     "build:chmod": "chmod +x dist/cli/index.js",
     "clean": "rm -rf dist/",

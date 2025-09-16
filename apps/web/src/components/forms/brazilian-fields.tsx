@@ -1,7 +1,7 @@
 /**
  * Brazilian Form Fields (T059)
  * Specialized form components for Brazilian data input
- * 
+ *
  * Features:
  * - Integration with completed Brazilian validation schemas (T037)
  * - Real-time validation with Portuguese error messages
@@ -13,27 +13,27 @@
 
 'use client';
 
-import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Eye, EyeOff, MapPin, Phone, User } from 'lucide-react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 
-import { cn } from '@neonpro/ui';
-import { Input, Label, Button } from '@/components/ui';
-import { 
-  formatCPF, 
-  formatCNPJ, 
-  formatPhone, 
-  formatCEP, 
-  unformatCPF, 
-  unformatCNPJ, 
-  unformatPhone, 
-  unformatCEP 
+import { Button, Input, Label } from '@/components/ui';
+import {
+  formatCEP,
+  formatCNPJ,
+  formatCPF,
+  formatPhone,
+  unformatCEP,
+  unformatCNPJ,
+  unformatCPF,
+  unformatPhone,
 } from '@/utils/brazilian-formatters';
-import { 
-  validateCPF, 
-  validateCNPJ, 
-  validatePhone, 
-  validateCEP 
+import {
+  validateBrazilianPhone,
+  validateCEP,
+  validateCNPJ,
+  validateCPF,
 } from '@neonpro/shared/validators/brazilian';
+import { cn } from '@neonpro/ui';
 
 export interface BrazilianFieldProps {
   /** Field label */
@@ -94,7 +94,7 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const unformatted = unformatCPF(rawValue);
-    
+
     // Limit to 11 digits
     if (unformatted.length <= 11) {
       const formatted = formatCPF(unformatted);
@@ -105,13 +105,13 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
 
   const handleBlur = useCallback(() => {
     const unformatted = unformatCPF(internalValue);
-    
+
     if (unformatted && !validateCPF(unformatted)) {
       setValidationError('CPF inválido');
     } else {
       setValidationError('');
     }
-    
+
     onBlur?.();
   }, [internalValue, onBlur]);
 
@@ -120,19 +120,19 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
-        <Label htmlFor={id} className="text-sm font-medium">
+        <Label htmlFor={id} className='text-sm font-medium'>
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && <span className='text-destructive ml-1'>*</span>}
         </Label>
       )}
-      <div className="relative">
-        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className='relative'>
+        <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
         <Input
           ref={ref}
           id={id}
           name={name}
-          type="text"
-          inputMode="numeric"
+          type='text'
+          inputMode='numeric'
           placeholder={placeholder}
           value={internalValue}
           onChange={handleChange}
@@ -142,7 +142,7 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
           autoComplete={autoComplete}
           className={cn(
             'pl-10',
-            displayError && 'border-destructive focus-visible:ring-destructive'
+            displayError && 'border-destructive focus-visible:ring-destructive',
           )}
           data-testid={testId}
           aria-invalid={!!displayError}
@@ -150,11 +150,11 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
         />
       </div>
       {displayError && (
-        <p 
+        <p
           id={`${id}-error`}
-          className="text-sm text-destructive"
-          role="alert"
-          aria-live="polite"
+          className='text-sm text-destructive'
+          role='alert'
+          aria-live='polite'
         >
           {displayError}
         </p>
@@ -194,7 +194,7 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const unformatted = unformatCNPJ(rawValue);
-    
+
     // Limit to 14 digits
     if (unformatted.length <= 14) {
       const formatted = formatCNPJ(unformatted);
@@ -205,13 +205,13 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
 
   const handleBlur = useCallback(() => {
     const unformatted = unformatCNPJ(internalValue);
-    
+
     if (unformatted && !validateCNPJ(unformatted)) {
       setValidationError('CNPJ inválido');
     } else {
       setValidationError('');
     }
-    
+
     onBlur?.();
   }, [internalValue, onBlur]);
 
@@ -220,19 +220,19 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
-        <Label htmlFor={id} className="text-sm font-medium">
+        <Label htmlFor={id} className='text-sm font-medium'>
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && <span className='text-destructive ml-1'>*</span>}
         </Label>
       )}
-      <div className="relative">
-        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className='relative'>
+        <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
         <Input
           ref={ref}
           id={id}
           name={name}
-          type="text"
-          inputMode="numeric"
+          type='text'
+          inputMode='numeric'
           placeholder={placeholder}
           value={internalValue}
           onChange={handleChange}
@@ -242,7 +242,7 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
           autoComplete={autoComplete}
           className={cn(
             'pl-10',
-            displayError && 'border-destructive focus-visible:ring-destructive'
+            displayError && 'border-destructive focus-visible:ring-destructive',
           )}
           data-testid={testId}
           aria-invalid={!!displayError}
@@ -250,11 +250,11 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
         />
       </div>
       {displayError && (
-        <p 
+        <p
           id={`${id}-error`}
-          className="text-sm text-destructive"
-          role="alert"
-          aria-live="polite"
+          className='text-sm text-destructive'
+          role='alert'
+          aria-live='polite'
         >
           {displayError}
         </p>
@@ -294,7 +294,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const unformatted = unformatPhone(rawValue);
-    
+
     // Limit to 11 digits
     if (unformatted.length <= 11) {
       const formatted = formatPhone(unformatted);
@@ -305,13 +305,13 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
 
   const handleBlur = useCallback(() => {
     const unformatted = unformatPhone(internalValue);
-    
+
     if (unformatted && !validatePhone(unformatted)) {
       setValidationError('Telefone inválido');
     } else {
       setValidationError('');
     }
-    
+
     onBlur?.();
   }, [internalValue, onBlur]);
 
@@ -320,19 +320,19 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
-        <Label htmlFor={id} className="text-sm font-medium">
+        <Label htmlFor={id} className='text-sm font-medium'>
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && <span className='text-destructive ml-1'>*</span>}
         </Label>
       )}
-      <div className="relative">
-        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className='relative'>
+        <Phone className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
         <Input
           ref={ref}
           id={id}
           name={name}
-          type="tel"
-          inputMode="numeric"
+          type='tel'
+          inputMode='numeric'
           placeholder={placeholder}
           value={internalValue}
           onChange={handleChange}
@@ -342,7 +342,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
           autoComplete={autoComplete}
           className={cn(
             'pl-10',
-            displayError && 'border-destructive focus-visible:ring-destructive'
+            displayError && 'border-destructive focus-visible:ring-destructive',
           )}
           data-testid={testId}
           aria-invalid={!!displayError}
@@ -350,11 +350,11 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
         />
       </div>
       {displayError && (
-        <p 
+        <p
           id={`${id}-error`}
-          className="text-sm text-destructive"
-          role="alert"
-          aria-live="polite"
+          className='text-sm text-destructive'
+          role='alert'
+          aria-live='polite'
         >
           {displayError}
         </p>
@@ -369,10 +369,13 @@ PhoneField.displayName = 'PhoneField';
  * CEP Input Field
  * Formats and validates Brazilian postal codes
  */
-export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
-  /** Auto-fill address callback */
-  onAddressFound?: (address: any) => void;
-}>(({
+export const CEPField = forwardRef<
+  HTMLInputElement,
+  BrazilianFieldProps & {
+    /** Auto-fill address callback */
+    onAddressFound?: (address: any) => void;
+  }
+>(({
   label = 'CEP',
   placeholder = '00000-000',
   value = '',
@@ -399,7 +402,7 @@ export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const unformatted = unformatCEP(rawValue);
-    
+
     // Limit to 8 digits
     if (unformatted.length <= 8) {
       const formatted = formatCEP(unformatted);
@@ -410,19 +413,19 @@ export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
 
   const handleBlur = useCallback(async () => {
     const unformatted = unformatCEP(internalValue);
-    
+
     if (unformatted && !validateCEP(unformatted)) {
       setValidationError('CEP inválido');
     } else {
       setValidationError('');
-      
+
       // Auto-fill address if CEP is valid and callback is provided
       if (unformatted.length === 8 && onAddressFound) {
         setIsLoading(true);
         try {
           const response = await fetch(`https://viacep.com.br/ws/${unformatted}/json/`);
           const data = await response.json();
-          
+
           if (!data.erro) {
             onAddressFound({
               street: data.logradouro,
@@ -439,7 +442,7 @@ export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
         }
       }
     }
-    
+
     onBlur?.();
   }, [internalValue, onBlur, onAddressFound]);
 
@@ -448,19 +451,19 @@ export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
   return (
     <div className={cn('space-y-2', className)}>
       {label && (
-        <Label htmlFor={id} className="text-sm font-medium">
+        <Label htmlFor={id} className='text-sm font-medium'>
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && <span className='text-destructive ml-1'>*</span>}
         </Label>
       )}
-      <div className="relative">
-        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className='relative'>
+        <MapPin className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
         <Input
           ref={ref}
           id={id}
           name={name}
-          type="text"
-          inputMode="numeric"
+          type='text'
+          inputMode='numeric'
           placeholder={placeholder}
           value={internalValue}
           onChange={handleChange}
@@ -470,24 +473,24 @@ export const CEPField = forwardRef<HTMLInputElement, BrazilianFieldProps & {
           autoComplete={autoComplete}
           className={cn(
             'pl-10',
-            displayError && 'border-destructive focus-visible:ring-destructive'
+            displayError && 'border-destructive focus-visible:ring-destructive',
           )}
           data-testid={testId}
           aria-invalid={!!displayError}
           aria-describedby={displayError ? `${id}-error` : undefined}
         />
         {isLoading && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+          <div className='absolute right-3 top-1/2 transform -translate-y-1/2'>
+            <div className='animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full' />
           </div>
         )}
       </div>
       {displayError && (
-        <p 
+        <p
           id={`${id}-error`}
-          className="text-sm text-destructive"
-          role="alert"
-          aria-live="polite"
+          className='text-sm text-destructive'
+          role='alert'
+          aria-live='polite'
         >
           {displayError}
         </p>

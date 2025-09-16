@@ -1,4 +1,3 @@
-import React from "react";
 import { ShineBorder } from "../components/magicui";
 
 export function ShineBorderDemo() {
