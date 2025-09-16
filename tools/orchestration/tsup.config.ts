@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: [
-    'src/index.ts',
+    'index.ts',
     'tdd-orchestrator.ts',
     'agent-registry.ts',
     'quality-control-bridge.ts',
@@ -11,6 +11,15 @@ export default defineConfig({
     'metrics/collector.ts',
     'compliance/healthcare-validator.ts',
     'src/test-coordinator.ts',
+    'execution-pattern-selector.ts',
+    'tool-orchestrator.ts',
+    'quality-control-orchestrator.ts',
+    'result-aggregator.ts',
+    'test-suite-coordinator.ts',
+    'agent-coordination-mapper.ts',
+    'types.ts',
+    'utils/logger.ts',
+    'utils/agent-coordination.ts',
   ],
   format: ['esm', 'cjs'],
   dts: true,

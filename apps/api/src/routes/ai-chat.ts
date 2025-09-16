@@ -3,17 +3,10 @@
 
 import { zValidator } from '@hono/zod-validator';
 import type { CoreMessage, UIMessage } from 'ai';
-import { streamText } from 'ai';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
-import {
-  DEFAULT_PRIMARY,
-  getSuggestionsFromAI,
-  MODEL_REGISTRY,
-  resolveProvider,
-  streamWithFailover,
-} from '../config/ai';
+import { AIProviderFactory, type AIMessage } from '@neonpro/core-services';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 
 // Request validation schemas
@@ -90,100 +83,109 @@ const redactPII = (text: string): string => {
     .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]');
 };
 
-// Allowed models registry
-
-// Streaming AI response endpoint (Vercel AI SDK v5 UIMessage stream)
+// Streaming AI response endpoint with Phase 2 provider integration
 app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
   const t0 = startTimer();
   try {
-    const { messages, text, presetId, locale, clientId, sessionId, model } = c.req.valid('json');
+    const { messages, text, locale, clientId, sessionId, model } = c.req.valid('json');
 
     const url = new URL(c.req.url);
-    const allowExperimental = url.searchParams.get('allowExperimental') === 'true';
     const mockMode = url.searchParams.get('mock') === 'true'
-      || process.env.AI_MOCK === 'true'
-      || (!process.env.OPENAI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY
-        && !process.env.ANTHROPIC_API_KEY);
-    const requestedModel = model && MODEL_REGISTRY[model as keyof typeof MODEL_REGISTRY]
-      ? (model as keyof typeof MODEL_REGISTRY)
-      : undefined;
+      || process.env.AI_CHAT_MOCK_MODE === 'true'
+      || (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY && !process.env.GOOGLE_AI_API_KEY);
 
-    // Build UI messages and convert to model messages per v5 best practices
-    const uiMessages: UIMessage[] = Array.isArray(messages)
-      ? (messages as { role: 'user' | 'assistant' | 'system'; content: string }[]).map(m => ({
-        role: m.role,
-        content: [{ type: 'text', text: m.content }],
-      }))
-      : [];
-
-    if (text && text.trim().length > 0) {
-      uiMessages.push({ role: 'user', content: [{ type: 'text', text }] });
-    }
-
-    // Build CoreMessage[] directly to avoid conversion pitfalls
-    const coreMessages: CoreMessage[] = [
+    // Build AI messages for our provider system
+    const aiMessages: AIMessage[] = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...uiMessages.map(m => ({
-        role: m.role,
-        // Convert UI blocks back to simple string for CoreMessage compatibility
-        content: (Array.isArray(m.content)
-          ? m.content.map(b => (b as any).text).filter(Boolean).join('\n')
-          : ''),
-      })),
     ];
 
-    const chosen = (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY;
+    // Add existing conversation messages
+    if (Array.isArray(messages)) {
+      for (const msg of messages) {
+        aiMessages.push({
+          role: msg.role,
+          content: msg.content,
+        });
+      }
+    }
+
+    // Add new text message if provided
+    if (text && text.trim().length > 0) {
+      aiMessages.push({ role: 'user', content: text.trim() });
+    }
 
     if (mockMode) {
-      // Fallback to existing failover mock to keep behavior consistent
-      const startedAt = new Date().toISOString();
-      const response = await streamWithFailover({
-        model: chosen,
-        allowExperimental,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...((messages as CoreMessage[]) || inputAsMessage),
-        ],
-        mock: true,
+      // Use mock provider from factory
+      const mockStream = AIProviderFactory.generateStreamWithFailover(aiMessages, 1);
+      
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            for await (const chunk of mockStream) {
+              controller.enqueue(encoder.encode(chunk));
+            }
+            controller.close();
+          } catch (error) {
+            controller.error(error);
+          }
+        },
       });
-      const headers = new Headers(response.headers);
-      headers.set('X-Chat-Started-At', startedAt);
+
       const ms = endTimerMs(t0);
-      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: headers.get('X-Chat-Model') });
-      headers.set('X-Response-Time', `${ms}ms`);
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
+      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'mock' });
+      
+      return new Response(stream, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'X-Chat-Model': 'mock:provider',
+          'X-Response-Time': `${ms}ms`,
+          'X-Chat-Started-At': new Date().toISOString(),
+        },
       });
     }
 
-    // Provider resolution and v5 streaming to UI
-    const { adapter } = resolveProvider(chosen);
-    const result = await streamText({
-      model: adapter(chosen),
-      messages: coreMessages,
+    // Use real AI providers with automatic failover
+    const provider = await AIProviderFactory.getProviderWithFailover();
+    const providerName = model || process.env.AI_PROVIDER || 'openai';
+    
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of provider.generateStreamingCompletion(aiMessages)) {
+            controller.enqueue(encoder.encode(chunk));
+          }
+          controller.close();
+        } catch (error) {
+          console.error('Streaming error:', error);
+          controller.error(error);
+        }
+      },
     });
 
     // Audit log minimal info
-    const lastText =
-      (text || (Array.isArray(messages) ? (messages as any)[messages.length - 1]?.content : ''))
-      || '';
+    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '') || '';
     console.log('AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
       sessionId,
       clientId: clientId || 'anonymous',
       userMessage: redactPII(lastText),
-      provider: `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
+      provider: providerName,
       locale,
-      presetId: presetId || null,
     });
 
-    // Return UIMessageStreamResponse per v5
-    return result.toUIMessageStreamResponse({
-      onError: err => {
-        console.error('Stream error:', err);
-        return 'Erro ao gerar resposta';
+    const ms = endTimerMs(t0);
+    logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: providerName });
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Chat-Model': providerName,
+        'X-Response-Time': `${ms}ms`,
+        'X-Chat-Started-At': new Date().toISOString(),
       },
     });
   } catch (error) {
@@ -197,7 +199,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
   }
 });
 
-// Search suggestions endpoint
+// Search suggestions endpoint with AI provider integration
 app.post(
   '/suggestions',
   zValidator(
@@ -233,7 +235,36 @@ app.post(
         }
       }
 
-      const suggestions = await getSuggestionsFromAI(query, webHints);
+      // Generate suggestions using AI provider
+      const suggestionPrompt = `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
+        webHints.join('; ')
+      }. Responda apenas com lista separada por vírgulas, sem numeração.`;
+
+      const messages: AIMessage[] = [
+        { role: 'system', content: 'Você é um especialista em estética que sugere tratamentos relevantes.' },
+        { role: 'user', content: suggestionPrompt },
+      ];
+
+      let suggestions: string[] = [];
+      
+      try {
+        const response = await AIProviderFactory.generateWithFailover(messages);
+        suggestions = response.content
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean)
+          .slice(0, 5);
+      } catch (error) {
+        console.error('AI suggestions failed:', error);
+        // Fallback suggestions
+        suggestions = [
+          'Botox para rugas',
+          'Preenchimento labial',
+          'Limpeza de pele profunda',
+          'Harmonização facial',
+          'Peeling químico',
+        ];
+      }
 
       console.log('Search Suggestions:', {
         timestamp: new Date().toISOString(),
@@ -267,14 +298,16 @@ app.post(
 
 // Health check endpoint
 app.get('/health', c => {
+  const availableProviders = AIProviderFactory.getAvailableProviders();
+  
   return c.json({
     status: 'ok',
     service: 'neonpro-ai-chat',
     timestamp: new Date().toISOString(),
-    providers: {
-      openai: 'available',
-      google: 'available',
-    },
+    providers: availableProviders.reduce((acc, provider) => {
+      acc[provider] = 'available';
+      return acc;
+    }, {} as Record<string, string>),
   });
 });
 

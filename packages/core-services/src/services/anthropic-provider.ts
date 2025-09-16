@@ -1,96 +1,88 @@
-// OpenAI provider (Phase 2) - Real implementation with streaming support
+// Anthropic Claude provider (Phase 2) - Failover implementation
 
 import type { AIProvider, GenerateAnswerInput, GenerateAnswerResult, StreamChunk } from './ai-provider.js';
-import { AI_MODEL_CONFIG, OPENAI_API_KEY } from '@neonpro/config/ai';
+import { AI_MODEL_CONFIG, ANTHROPIC_API_KEY } from '@neonpro/config/ai';
 
-export class OpenAIProvider implements AIProvider {
+export class AnthropicProvider implements AIProvider {
   private apiKey: string;
   private baseURL: string;
 
-  constructor(apiKey: string = OPENAI_API_KEY) {
+  constructor(apiKey: string = ANTHROPIC_API_KEY) {
     this.apiKey = apiKey;
-    this.baseURL = 'https://api.openai.com/v1';
+    this.baseURL = 'https://api.anthropic.com/v1';
   }
 
   async generateAnswer(input: GenerateAnswerInput): Promise<GenerateAnswerResult> {
     if (!this.apiKey) {
-      throw new Error('OpenAI API key is required');
+      throw new Error('Anthropic API key is required');
     }
 
-    const config = AI_MODEL_CONFIG.openai;
-    const messages = [
-      ...(input.system ? [{ role: 'system' as const, content: input.system }] : []),
-      { role: 'user' as const, content: input.prompt }
-    ];
-
-    const response = await fetch(`${this.baseURL}/chat/completions`, {
+    const config = AI_MODEL_CONFIG.anthropic;
+    
+    const response = await fetch(`${this.baseURL}/messages`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: config.model,
-        messages,
         max_tokens: input.maxTokens ?? config.maxTokens,
         temperature: input.temperature ?? config.temperature,
+        system: input.system,
+        messages: [{ role: 'user', content: input.prompt }],
         stream: false,
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${error}`);
+      throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
     const data = await response.json();
-    const choice = data.choices?.[0];
-    
-    if (!choice) {
-      throw new Error('No response from OpenAI API');
-    }
+    const content = data.content?.[0]?.text ?? '';
 
     return {
-      content: choice.message?.content ?? '',
-      tokensUsed: data.usage?.total_tokens,
+      content,
+      tokensUsed: data.usage?.output_tokens + data.usage?.input_tokens,
       model: data.model,
-      finishReason: choice.finish_reason,
+      finishReason: data.stop_reason === 'end_turn' ? 'stop' : data.stop_reason,
     };
   }
 
   async *generateStream(input: GenerateAnswerInput): AsyncIterable<StreamChunk> {
     if (!this.apiKey) {
-      throw new Error('OpenAI API key is required');
+      throw new Error('Anthropic API key is required');
     }
 
-    const config = AI_MODEL_CONFIG.openai;
-    const messages = [
-      ...(input.system ? [{ role: 'system' as const, content: input.system }] : []),
-      { role: 'user' as const, content: input.prompt }
-    ];
-
-    const response = await fetch(`${this.baseURL}/chat/completions`, {
+    const config = AI_MODEL_CONFIG.anthropic;
+    
+    const response = await fetch(`${this.baseURL}/messages`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: config.model,
-        messages,
         max_tokens: input.maxTokens ?? config.maxTokens,
         temperature: input.temperature ?? config.temperature,
+        system: input.system,
+        messages: [{ role: 'user', content: input.prompt }],
         stream: true,
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${error}`);
+      throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
     if (!response.body) {
-      throw new Error('No response body from OpenAI API');
+      throw new Error('No response body from Anthropic API');
     }
 
     const reader = response.body.getReader();
@@ -131,23 +123,24 @@ export class OpenAIProvider implements AIProvider {
 
           try {
             const parsed = JSON.parse(data);
-            const choice = parsed.choices?.[0];
-            const delta = choice?.delta?.content;
             
-            if (delta) {
-              content += delta;
-              yield {
-                content,
-                delta,
-                finished: false,
-              };
+            if (parsed.type === 'content_block_delta') {
+              const delta = parsed.delta?.text;
+              if (delta) {
+                content += delta;
+                yield {
+                  content,
+                  delta,
+                  finished: false,
+                };
+              }
             }
             
-            if (choice?.finish_reason) {
+            if (parsed.type === 'message_stop') {
               yield {
                 content,
                 finished: true,
-                finishReason: choice.finish_reason,
+                finishReason: 'stop',
               };
               return;
             }

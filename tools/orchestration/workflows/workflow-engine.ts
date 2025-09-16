@@ -615,7 +615,7 @@ export class WorkflowEngine implements OrchestrationWorkflow {
   /**
    * Execute agent with context and previous results (OrchestrationWorkflow interface)
    */
-  async executeAgent(
+  async executeAgentWithContext(
     agent: AgentCapability,
     context: OrchestrationContext,
     previousResults: AgentResult[]

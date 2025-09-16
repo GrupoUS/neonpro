@@ -11,6 +11,7 @@ import {
   AgentType,
   AgentPriority,
   AgentSpecialization,
+  AgentCoordinationPattern,
 } from './types';
 
 export class TDDAgentRegistry implements AgentRegistry {

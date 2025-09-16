@@ -26,6 +26,96 @@ QUALITY_INTELLIGENCE:
     quality_standards: "≥9.5/10 quality enforcement"
 ```
 
+## 🧩 **Execution Protocol Alignment**
+
+- Follow the mandatory chain from `docs/testing/AGENTS.md`: sequential-thinking → Archon task sync → Serena analysis → implement with TDD → validate and document.
+- Load the code-review agents before issuing `/quality-control` commands:
+  - `tdd-orchestrator` (`.claude/agents/code-review/tdd-orchestrator.md`) for phase governance.
+  - `architect-review`, `code-reviewer`, `security-auditor`, and `test` (all in `.claude/agents/code-review/`) for specialized reviews per TDD phase.
+- Reference `docs/testing/*.md` to pick the right testing playbook (frontend, backend, database, auditfix) before choosing action flags.
+- Use Archon to register sub-tasks and Serena to inspect impacted code/tests prior to invoking the command.
+- After each `/quality-control` run, review the returned `nextActions` and `recommendations`; the orchestrator now surfaces security/compliance follow-ups even when all agents succeed.
+
+## 🧠 **Agent Suite Integration**
+
+| Agent | File | Primary Focus |
+| --- | --- | --- |
+| `tdd-orchestrator` | `.claude/agents/code-review/tdd-orchestrator.md` | Coordinates red/green/refactor phases and selects orchestration patterns. |
+| `architect-review` | `.claude/agents/code-review/architect-review.md` | Architecture, scalability, pattern compliance, and workflow design. |
+| `code-reviewer` | `.claude/agents/code-review/code-reviewer.md` | Code quality metrics, maintainability, static analysis, performance gates. |
+| `security-auditor` | `.claude/agents/code-review/security-auditor.md` | LGPD/ANVISA/CFM enforcement, vulnerability analysis, zero-trust review. |
+| `test` | `.claude/agents/code-review/test.md` | TDD pattern enforcement, coverage validation, Vitest/Playwright strategy. |
+
+> ✅ Activate the relevant agents per phase using the orchestration patterns defined in `tools/orchestration/agent-registry.ts`.
+
+## 🧪 **Testing Toolkit (tools)**
+
+Run the categorized suites shipped under `tools/` to satisfy the coverage targets from `docs/testing`:
+
+```bash
+pnpm run test:frontend     # @neonpro/tools-frontend-tests
+pnpm run test:backend      # @neonpro/tools-backend-tests
+pnpm run test:database     # @neonpro/tools-database-tests (RLS + compliance)
+pnpm run test:quality      # @neonpro/tools-quality-tests (coverage, performance)
+pnpm run test:orchestrate  # Cross-category orchestration with healthcare mode
+pnpm run test:healthcare   # Full LGPD/ANVISA/CFM validation sweep
+```
+
+- Scope with `pnpm --filter` to re-run focused packages (`test:components`, `test:integration`, etc.).
+- Use `bun` wrappers when speed matters (e.g., `bun run test:parallel` inside `tools/orchestration`).
+- Align results with the coverage thresholds defined in `docs/testing/AGENTS.md` → `COVERAGE_BY_AGENT`.
+
+## 🕹️ **Orchestration Bridge (`tools/orchestration`)**
+
+- `quality-control-orchestrator.ts` links this command with the runtime orchestrator.
+- `tdd-orchestrator.ts`, `agent-registry.ts`, and `execution-pattern-selector.ts` choose the coordination pattern (`sequential`, `parallel`, `hierarchical`, `event-driven`, `consensus`).
+- Use the provided scripts to dry-run coordination flows:
+  
+  ```bash
+  bun run tools/orchestration/scripts/test-integration.ts   # End-to-end quality bridge test
+  bun run tools/orchestration/test-integration.ts           # Legacy alias
+  bun run tools/orchestration/test-parallel.ts              # Parallel agent verification
+  bun run orchestrate                                      # Shortcut defined in package.json
+  ```
+
+- Monitor orchestration metrics via `tools/orchestration/metrics` and compliance logs under `tools/orchestration/logs`.
+
+## ✅ **Sequential Quality Sweep (recommended)**
+
+Run the complete workflow every time you need a full-system assurance check:
+
+```bash
+# 1. Prime orchestrator metrics and agent registry
+pnpm run test:orchestrate -- --healthcare
+
+# 2. Execute every QC action with healthcare mode enabled
+node -e '(
+  async () => {
+    const spec = "./tools/orchestration/dist/quality-control-bridge.js?" + Date.now();
+    const bridge = await import(spec);
+    const commands = [
+      "/quality-control test --healthcare",
+      "/quality-control analyze --parallel",
+      "/quality-control security --depth=L8",
+      "/quality-control comprehensive --healthcare",
+      "/quality-control healthcare --regulation=all",
+      "/quality-control tdd-cycle --feature=full-quality-scan --healthcare"
+    ];
+    for (const cmd of commands) {
+      const result = await bridge.executeQualityControlCommand(cmd, {
+        healthcareMode: true,
+        enableCompliance: true
+      });
+      console.log("\n===", cmd, "===");
+      console.log(JSON.stringify({ success: result.success, qualityScore: result.qualityScore, nextActions: result.nextActions }, null, 2));
+    }
+  }
+)()'
+```
+
+- Confirm each step returns `success: true`, `qualityScore ≥ 8`, and review `nextActions` for follow-up (especially security and healthcare commands which will surface compliance remediation items).
+- If any command fails, inspect `tools/orchestration/dist/quality-control-bridge.js` logs and re-run the failing action individually after fixing the underlying issue.
+
 ## 🚀 **Core Quality Actions**
 
 ### **1. COMPREHENSIVE TESTING (test)**

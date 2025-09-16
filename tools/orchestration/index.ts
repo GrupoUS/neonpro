@@ -10,11 +10,23 @@ export { WorkflowEngine } from './workflows/workflow-engine';
 export { QualityControlBridge, executeQualityControlCommand, validateQualityControlCommand } from './quality-control-bridge';
 export { TestCoordinator } from './src/test-coordinator';
 
+// Enhanced Orchestration Components
+export { ExecutionPatternSelector } from './execution-pattern-selector';
+export { ToolOrchestrator } from './tool-orchestrator';
+export { QualityControlOrchestrator } from './quality-control-orchestrator';
+export { ResultAggregator } from './result-aggregator';
+export { TestSuiteCoordinator } from './test-suite-coordinator';
+
 // Import classes for internal use
 import { TDDOrchestrator } from './tdd-orchestrator';
 import { TDDAgentRegistry } from './agent-registry';
 import { WorkflowEngine } from './workflows/workflow-engine';
 import { QualityControlBridge } from './quality-control-bridge';
+import { ExecutionPatternSelector } from './execution-pattern-selector';
+import { ToolOrchestrator } from './tool-orchestrator';
+import { QualityControlOrchestrator } from './quality-control-orchestrator';
+import { ResultAggregator } from './result-aggregator';
+import { TestSuiteCoordinator } from './test-suite-coordinator';
 import { TDDMetricsCollector } from './metrics/collector';
 import { HealthcareComplianceValidator } from './compliance/healthcare-validator';
 import { createLogger, LogLevel } from './utils/logger';
@@ -94,6 +106,38 @@ export type {
   TDDMetrics,
 } from './types';
 
+// Enhanced Orchestration Types
+export type {
+  // Execution Pattern Selector Types
+  PatternSelectionContext,
+  ExecutionPatternSelection,
+} from './execution-pattern-selector';
+
+export type {
+  // Tool Orchestrator Types
+  ToolExecutionRequest,
+  ToolExecutionResult,
+} from './tool-orchestrator';
+
+export type {
+  // Quality Control Orchestrator Types
+  QualityControlSession,
+  QualityControlStrategy,
+} from './quality-control-orchestrator';
+
+export type {
+  // Result Aggregator Types
+  AggregatedResult,
+  ResultAnalysis,
+  ResultTrend,
+} from './result-aggregator';
+
+export type {
+  // Test Suite Coordinator Types
+  TestSuiteOptions,
+  TestSuiteResult,
+} from './test-suite-coordinator';
+
 /**
  * Create a complete TDD orchestration system
  */
@@ -125,6 +169,13 @@ export function createTDDOrchestrationSystem(options: {
   // Initialize orchestrator
   const orchestrator = new TDDOrchestrator(agentRegistry, workflowEngine);
 
+  // Initialize enhanced orchestration components
+  const executionPatternSelector = new ExecutionPatternSelector();
+  const toolOrchestrator = new ToolOrchestrator();
+  const qualityControlOrchestrator = new QualityControlOrchestrator();
+  const resultAggregator = new ResultAggregator();
+  const testSuiteCoordinator = new TestSuiteCoordinator();
+
   // Initialize metrics collector if enabled
   const metrics = enableMetrics ? new TDDMetricsCollector() : null;
 
@@ -140,6 +191,13 @@ export function createTDDOrchestrationSystem(options: {
     agentRegistry,
     workflowEngine,
     qualityControlBridge,
+
+    // Enhanced orchestration components
+    executionPatternSelector,
+    toolOrchestrator,
+    qualityControlOrchestrator,
+    resultAggregator,
+    testSuiteCoordinator,
 
     // Optional components
     communication: communication || null,
@@ -168,6 +226,11 @@ export function createTDDOrchestrationSystem(options: {
         agentRegistry,
         workflowEngine,
         qualityControlBridge,
+        executionPatternSelector,
+        toolOrchestrator,
+        qualityControlOrchestrator,
+        resultAggregator,
+        testSuiteCoordinator,
         communication,
         metrics,
         complianceValidator,
@@ -242,11 +305,20 @@ export function createTDDOrchestrationSystem(options: {
           agentRegistry: `${agentRegistry.getAllAgents().length} agents registered`,
           workflowEngine: `${workflowEngine.getAvailableWorkflows().length} workflows available`,
           qualityControlBridge: 'active',
+          executionPatternSelector: 'active',
+          toolOrchestrator: 'active',
+          qualityControlOrchestrator: 'active',
+          resultAggregator: 'active',
+          testSuiteCoordinator: 'active',
         },
         capabilities: {
           multiAgentCoordination: true,
           parallelExecution: true,
           qualityControlIntegration: true,
+          executionPatternSelection: true,
+          toolOrchestration: true,
+          resultAggregation: true,
+          testSuiteCoordination: true,
           healthcareCompliance: !!complianceValidator,
           metricsCollection: !!metrics,
           realtimeCommunication: !!communication,

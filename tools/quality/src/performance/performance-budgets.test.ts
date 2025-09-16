@@ -130,7 +130,7 @@ module.exports = {
     const ci = readFileSync(ciPath, 'utf8')
     expect(ci).toContain('performance-budgets')
     expect(ci).toContain('@lhci/cli')
-    expect(ci).toContain('lhci autorun')
+    expect(ci).toContain('Healthcare Performance Budget Validation')
   })
 
   it('should have performance tools package with lighthouse dependencies', () => {

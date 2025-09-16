@@ -248,12 +248,14 @@ export class TDDOrchestrator {
     const coordinationPattern = qualityContext.coordination ||
       (qualityContext.parallel ? 'parallel' : 'sequential');
 
-    return await this.executeCoordinationPattern(
+    const coordinationResult = await this.executeCoordinationPattern(
       coordinationPattern,
       selectedAgents,
       context,
       await this.workflowEngine.selectWorkflow(context)
     );
+
+    return this.extractAgentResults(coordinationResult);
   }
 
   /**
@@ -291,12 +293,14 @@ export class TDDOrchestrator {
       }
     }
 
-    return await this.executeCoordinationPattern(
+    const coordinationResult = await this.executeCoordinationPattern(
       qualityContext.coordination || 'sequential',
       selectedAgents,
       context,
       await this.workflowEngine.selectWorkflow(context)
     );
+
+    return this.extractAgentResults(coordinationResult);
   }
 
   /**
@@ -762,7 +766,17 @@ export class TDDOrchestrator {
       message: success ? 'All agents completed successfully' : 'One or more agents failed',
       results: results.map(r => r.results).flat(),
       agentResults: results,
-    };
+    } as AgentResult & { agentResults: AgentResult[] };
+  }
+
+  private extractAgentResults(result: AgentResult): AgentResult[] {
+    const aggregated = result as AgentResult & { agentResults?: AgentResult[] };
+
+    if (Array.isArray(aggregated.agentResults) && aggregated.agentResults.length > 0) {
+      return aggregated.agentResults;
+    }
+
+    return [result];
   }
 
   private generateCycleId(): string {
@@ -843,7 +857,7 @@ export class TDDOrchestrator {
   ): string[] {
     const recommendations: string[] = [];
 
-    if (orchestrationResult) {
+    if (orchestrationResult?.recommendations?.length) {
       recommendations.push(...orchestrationResult.recommendations);
     }
 
@@ -873,7 +887,7 @@ export class TDDOrchestrator {
   ): string[] {
     const nextActions: string[] = [];
 
-    if (orchestrationResult) {
+    if (orchestrationResult?.nextActions?.length) {
       nextActions.push(...orchestrationResult.nextActions);
     }
 

@@ -142,7 +142,7 @@ export class ExecutionPatternSelector {
     rules.set('standard-tdd', {
       pattern: 'standard-tdd',
       description: 'Standard TDD workflow for general development',
-     适用条件: {
+      applicableConditions: {
         complexity: ['low', 'medium'],
         criticality: ['low', 'medium'],
         teamSize: [1, 2, 3, 4, 5],
@@ -161,7 +161,7 @@ export class ExecutionPatternSelector {
     rules.set('security-critical-tdd', {
       pattern: 'security-critical-tdd',
       description: 'TDD workflow with enhanced security focus',
-     适用条件: {
+      applicableConditions: {
         complexity: ['medium', 'high'],
         criticality: ['high', 'critical'],
         securityRequired: [true],
@@ -180,7 +180,7 @@ export class ExecutionPatternSelector {
     rules.set('microservices-tdd', {
       pattern: 'microservices-tdd',
       description: 'TDD workflow optimized for microservices architecture',
-     适用条件: {
+      applicableConditions: {
         complexity: ['medium', 'high'],
         teamSize: [3, 4, 5, 6, 7, 8],
         performanceRequired: [true],
@@ -198,7 +198,7 @@ export class ExecutionPatternSelector {
     rules.set('legacy-tdd', {
       pattern: 'legacy-tdd',
       description: 'TDD workflow for legacy system integration',
-     适用条件: {
+      applicableConditions: {
         complexity: ['high'],
         criticality: ['medium', 'high'],
         teamSize: [2, 3, 4, 5],
@@ -216,7 +216,7 @@ export class ExecutionPatternSelector {
     rules.set('healthcare-tdd', {
       pattern: 'healthcare-tdd',
       description: 'TDD workflow with healthcare compliance requirements',
-     适用条件: {
+      applicableConditions: {
         healthcareCompliance: [true],
         criticality: ['high', 'critical'],
         complexity: ['medium', 'high'],
@@ -244,7 +244,7 @@ export class ExecutionPatternSelector {
     rules.set('sequential', {
       pattern: 'sequential',
       description: 'Execute agents in sequence',
-     适用条件: {
+      applicableConditions: {
         complexity: ['low'],
         teamSize: [1, 2],
         criticality: ['low'],
@@ -256,7 +256,7 @@ export class ExecutionPatternSelector {
     rules.set('parallel', {
       pattern: 'parallel',
       description: 'Execute agents in parallel',
-     适用条件: {
+      applicableConditions: {
         complexity: ['low', 'medium'],
         teamSize: [3, 4, 5, 6, 7, 8],
         performanceRequired: [true],
@@ -268,7 +268,7 @@ export class ExecutionPatternSelector {
     rules.set('hierarchical', {
       pattern: 'hierarchical',
       description: 'Execute agents in hierarchical order',
-     适用条件: {
+      applicableConditions: {
         complexity: ['medium', 'high'],
         criticality: ['high', 'critical'],
         teamSize: [4, 5, 6, 7, 8],
@@ -280,7 +280,7 @@ export class ExecutionPatternSelector {
     rules.set('event-driven', {
       pattern: 'event-driven',
       description: 'Execute agents based on events',
-     适用条件: {
+      applicableConditions: {
         complexity: ['medium', 'high'],
         teamSize: [3, 4, 5, 6, 7, 8],
         performanceRequired: [true],

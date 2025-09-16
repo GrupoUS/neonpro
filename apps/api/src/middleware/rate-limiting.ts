@@ -559,7 +559,7 @@ export function performanceMonitoring() {
 
 // Cleanup middleware (should be run periodically)
 export function cleanup() {
-  return async (c: Context, next: Next) => {
+  return async (_c: Context, next: Next) => {
     // Clean up expired entries every 100 requests
     if (performanceMetrics.getMetrics().requestCount % 100 === 0) {
       rateLimitManager.cleanup();
@@ -570,5 +570,5 @@ export function cleanup() {
   };
 }
 
-// Export types
-export type { CacheConfig, PerformanceMetrics, RateLimitConfig };
+// Export additional types (CacheConfig and RateLimitConfig already exported above)
+export type { PerformanceMetrics };

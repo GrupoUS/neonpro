@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('T009 performance budget', () => {
   it('contains required metric keys', () => {
-    const p = join(process.cwd(), 'tools', 'testing', 'performance-budget.json');
+    const p = join(process.cwd(), '..', '..', 'tools', 'testing', 'performance-budget.json');
     let data: any;
     try {
       data = JSON.parse(readFileSync(p, 'utf-8'));
