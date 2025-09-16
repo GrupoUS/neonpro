@@ -12,10 +12,10 @@
 
 import { Globe, Paperclip, Send } from "lucide-react";
 import { useState } from "react";
-import { Textarea } from "src/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "motion/react";
-import { cn } from "src/lib/utils";
-import { useAutoResizeTextarea } from "src/hooks/use-auto-resize-textarea";
+import { cn } from "@neonpro/ui";
+import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
 
 export default function AI_Input_Search() {
     const [value, setValue] = useState("");

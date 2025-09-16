@@ -10,7 +10,7 @@ import {
   getEventColorClasses,
   type CalendarEvent,
 } from "."
-import { cn } from "../../lib/utils"
+import { cn } from "@neonpro/ui"
 
 // Using date-fns format with custom formatting:
 // 'h' - hours (1-12)

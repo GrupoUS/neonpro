@@ -8,12 +8,17 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "cd apps/web && npm run build",
-    "dev": "cd apps/web && npm run dev",
-    "start": "cd apps/web && npm run start",
+    "build": "vite build",
+    "dev": "vite",
+    "start": "vite preview",
+    "preview": "vite preview",
     "test": "cd apps/web && npm run test",
-    "lint": "cd apps/web && npm run lint",
-    "type-check": "cd apps/web && npm run type-check"
+    "lint": "cd apps/web && npm run lint", 
+    "type-check": "cd apps/web && npm run type-check",
+    "routes:generate": "cd apps/web && tsr generate",
+    "routes:watch": "cd apps/web && tsr watch",
+    "build:turbo": "cd apps/web && npm run build",
+    "dev:turbo": "cd apps/web && npm run dev"
   },
   "workspaces": [
     "apps/*",

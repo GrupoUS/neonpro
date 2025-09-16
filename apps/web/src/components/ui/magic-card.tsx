@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@neonpro/ui";
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
 

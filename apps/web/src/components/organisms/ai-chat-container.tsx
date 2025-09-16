@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/ai-chat';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Crown, ExternalLink } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'; // React import not needed

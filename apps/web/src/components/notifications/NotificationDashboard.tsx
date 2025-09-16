@@ -7,7 +7,7 @@ import {
   useNotificationStats,
   useProcessPendingNotifications,
 } from '@/hooks/useNotificationScheduler';
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 
 // Simple Progress component since it's not in the UI package
 const Progress = ({ value, className }: { value: number; className?: string }) => (

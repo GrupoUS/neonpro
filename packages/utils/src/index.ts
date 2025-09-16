@@ -1,17 +1,22 @@
 // Utils package exports
 
-// Logging utilities
+// Currency utilities (main exports)
+export * from './lib/currency/brl';
+
+// Additional re-exports for direct access
+export { formatBRL, maskBRLInput, parseBRLInput } from './lib/currency/brl';
+
+// UI utilities  
+export * from './lib/utils';
+
+// Logging utilities  
 export * from './logging/logger';
 export * from './logging/redact';
 
 // CLI utilities
 export * from './cli';
 
-// UI utilities
-export * from './lib/utils';
-export * from './lib/currency/brl';
-
-// Placeholder exports - will be populated with actual utilities
+// Placeholder exports for future utilities
 export const auth = {};
 export const components = {};
 export const analytics = {};
