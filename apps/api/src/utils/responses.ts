@@ -32,3 +32,11 @@ export function serverError(c: Context, message: string, details?: any): Respons
 export function success(c: Context, data: any, status: number = 200): Response {
   return c.json({ data }, status);
 }
+
+export function ok(c: Context, data: any): Response {
+  return c.json({ data }, 200);
+}
+
+export function created(c: Context, data: any): Response {
+  return c.json({ data }, 201);
+}

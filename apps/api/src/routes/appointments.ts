@@ -160,7 +160,7 @@ appointments.post('/', zValidator('json', AppointmentCreateSchema), async c => {
       },
     });
 
-    return created(c, appt, `/appointments/${appt.id}`);
+    return created(c, appt);
   } catch (error) {
     console.error('Error creating appointment:', error);
     return serverError(
