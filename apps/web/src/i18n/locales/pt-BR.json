@@ -20,5 +20,8 @@
   "chat.stage.completed": "concluído",
   "chat.stage.failed": "falhou",
   "a11y.status": "status",
-  "a11y.suggestions": "lista de sugestões"
+  "a11y.suggestions": "lista de sugestões",
+  "chat.consent_notice": "Para continuar, confirme o consentimento para uso de dados.",
+  "chat.consent_accept": "Aceitar",
+  "chat.rate_limit": "Muitas solicitações. Tente novamente em breve."
 }

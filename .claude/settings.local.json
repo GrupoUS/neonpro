@@ -90,13 +90,18 @@
       "mcp__supabase__list_projects",
       "mcp__supabase__list_tables",
       "mcp__supabase__execute_sql",
-      "mcp__Tavily__tavily-crawl"
+      "mcp__Tavily__tavily-crawl",
+      "WebSearch"
     ],
     "deny": [
       "Edit",
       "Read",
       "Write",
-      "Bash"
+      "Bash",
+      "NotebookRead",
+      "NotebookEdit",
+      "WebSearch",
+      "WebFetch"
     ]
   },
   "enableAllProjectMcpServers": true,

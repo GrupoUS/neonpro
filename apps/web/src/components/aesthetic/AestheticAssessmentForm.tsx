@@ -21,6 +21,8 @@ import {
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
+import PDFExportButtons from '../pdf/PDFExportButtons';
+import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
 
 // Schema de validação para o formulário de avaliação estética
 const aestheticAssessmentSchema = z.object({
@@ -459,6 +461,63 @@ export function AestheticAssessmentForm({
           >
             {isLoading ? 'Processando...' : 'Continuar para Análise da Pele'}
           </Button>
+
+          {/* Seção de Exportação PDF */}
+          {(() => {
+            const formData = form.getValues();
+            const hasBasicData = formData.patientData.name && 
+                                 formData.patientData.age && 
+                                 formData.patientData.skinType && 
+                                 formData.patientData.gender;
+            
+            if (hasBasicData) {
+              // Converter dados do formulário para o formato do PDF
+              const pdfData: AestheticAssessmentData = {
+                patientData: {
+                  ...formData.patientData,
+                  skinType: formData.patientData.skinType as any,
+                  gender: formData.patientData.gender as any,
+                },
+                skinAnalysis: {
+                  ...formData.skinAnalysis,
+                  skinCondition: formData.skinAnalysis.skinCondition as any,
+                  sunDamage: formData.skinAnalysis.sunDamage as any,
+                },
+                medicalHistory: formData.medicalHistory,
+                lifestyle: {
+                  ...formData.lifestyle,
+                  sunExposure: formData.lifestyle.sunExposure as any,
+                  alcoholConsumption: formData.lifestyle.alcoholConsumption as any,
+                  exerciseFrequency: formData.lifestyle.exerciseFrequency as any,
+                },
+                lgpdConsent: formData.lgpdConsent,
+              };
+
+              return (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2'>
+                      <FileText className='h-5 w-5' />
+                      Exportar Relatório PDF
+                    </CardTitle>
+                    <CardDescription>
+                      Gere um relatório profissional com os dados preenchidos
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <PDFExportButtons
+                      assessmentData={pdfData}
+                      variant="outline"
+                      size="default"
+                      showPreview={true}
+                      className=""
+                    />
+                  </CardContent>
+                </Card>
+              );
+            }
+            return null;
+          })()}
         </form>
       </Form>
     </div>

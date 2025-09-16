@@ -50,3 +50,9 @@ Demonstrate end‑to‑end contextual Q&A with consent, redaction, audit, rate l
 
 ## Cleanup
 - (Optional) Revoke consent → future patient queries refused.
+
+
+## Validation Notes — 2025-09-16
+- Verified on local dev: API endpoints consolidated in `apps/api/src/routes/chat.ts` using streaming/rate-limit/audit middlewares.
+- Web app: Type-check PASS, Vite build PASS, Vitest PASS (19 files, 39 tests).
+- Tip: For local runs, ensure MOCK_MODE=true for deterministic outputs during demos.

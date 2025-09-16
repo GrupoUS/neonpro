@@ -36,6 +36,8 @@ export default defineConfig({
         // AI Chat integration tests (new)
         'src/__tests__/ai-chat/chat-streaming.test.ts',
         'src/__tests__/ai-chat/chat-errors.test.ts',
+        // PDF Export tests (T105 implementation)
+        'src/__tests__/pdf-utils.test.tsx',
         // Also include curated integration duplicates
         'tests/integration/chat-streaming.test.ts',
         'tests/integration/chat-errors.test.ts',

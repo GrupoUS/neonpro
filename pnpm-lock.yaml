@@ -259,6 +259,9 @@ importers:
       '@trigger.dev/sdk':
         specifier: ^3.3.17
         version: 3.3.17(zod@3.25.76)
+      '@types/file-saver':
+        specifier: ^2.0.7
+        version: 2.0.7
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
@@ -307,6 +310,9 @@ importers:
       dotenv:
         specifier: ^17.2.2
         version: 17.2.2
+      file-saver:
+        specifier: ^2.0.5
+        version: 2.0.5
       framer-motion:
         specifier: ^11.18.2
         version: 11.18.2(react-dom@19.1.1)(react@19.1.1)
@@ -7736,6 +7742,10 @@ packages:
       '@types/serve-static': 1.15.8
     dev: true
 
+  /@types/file-saver@2.0.7:
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
+    dev: false
+
   /@types/fs-extra@11.0.4:
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
     dependencies:
@@ -8109,7 +8119,7 @@ packages:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.19
-      vite: 7.1.5(@types/node@20.19.13)(tsx@4.20.5)
+      vite: 7.1.5(@types/node@22.18.1)(terser@5.44.0)
     dev: true
 
   /@vitest/pretty-format@2.1.9:
@@ -10792,6 +10802,10 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       escape-string-regexp: 1.0.5
+    dev: false
+
+  /file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
     dev: false
 
   /fill-range@7.1.1:
