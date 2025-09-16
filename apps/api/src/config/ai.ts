@@ -104,6 +104,50 @@ export async function streamWithFailover(opts: {
   }
 }
 
+export async function generateWithFailover(opts: {
+  model: keyof typeof MODEL_REGISTRY;
+  prompt: string;
+  allowExperimental?: boolean;
+  temperature?: number;
+  maxOutputTokens?: number;
+  mock?: boolean;
+}) {
+  const { model, prompt, allowExperimental, temperature = 0.7, maxOutputTokens = 400, mock } = opts;
+  const isActive = MODEL_REGISTRY[model]?.active;
+  const chosen = isActive || allowExperimental ? model : DEFAULT_PRIMARY;
+
+  if (mock) {
+    // Return a deterministic explanation for testing
+    const text = `Explicação: ${prompt.slice(0, 80)}`;
+    return {
+      text,
+      headers: new Headers({ 'X-Chat-Model': 'mock:model', 'X-Data-Freshness': 'as-of-now' }),
+    };
+  }
+
+  try {
+    const { adapter } = resolveProvider(chosen);
+    const result = await generateText({ model: adapter(chosen), prompt, temperature, maxOutputTokens });
+    return {
+      text: result.text,
+      headers: new Headers({ 'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}` }),
+    };
+  } catch (primaryError) {
+    console.error('Primary AI provider failed:', primaryError);
+    try {
+      const { adapter } = resolveProvider(DEFAULT_SECONDARY);
+      const result = await generateText({ model: adapter(DEFAULT_SECONDARY), prompt, temperature, maxOutputTokens });
+      return {
+        text: result.text,
+        headers: new Headers({ 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` }),
+      };
+    } catch (fallbackError) {
+      console.error('Secondary AI provider failed:', fallbackError);
+      throw new Error('Serviço de IA temporariamente indisponível');
+    }
+  }
+}
+
 export async function getSuggestionsFromAI(query: string, webHints: string[]) {
   const result = await generateText({
     model: openai(DEFAULT_PRIMARY),

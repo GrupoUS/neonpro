@@ -150,12 +150,6 @@ apps/*/coverage/
 # 🚀 NEONPRO SPECIFIC BUILD TOOLS & CONFIGS
 # =============================================================================
 
-# Bun specific
-bun.lockb
-.bun/
-**/.bun/
-bunfig.toml.local
-
 # TypeScript build cache
 *.tsbuildinfo
 **/*.tsbuildinfo
