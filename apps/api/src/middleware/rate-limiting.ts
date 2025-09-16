@@ -1,7 +1,7 @@
 /**
  * API Rate Limiting and Caching Middleware (T075)
  * Performance optimization for large datasets and API protection
- * 
+ *
  * Features:
  * - Rate limiting with healthcare professional tiers
  * - Response caching with LGPD compliance
@@ -221,7 +221,7 @@ class CacheManager {
       dataCategories?: string[];
       isHealthcareData?: boolean;
       isAIInsight?: boolean;
-    } = {}
+    } = {},
   ): boolean {
     // Check if we should exclude personal data
     if (this.config.excludePersonalData && this.containsPersonalData(data)) {
@@ -263,8 +263,16 @@ class CacheManager {
     }
 
     const personalDataFields = [
-      'cpf', 'rg', 'email', 'phone', 'address', 'birth_date',
-      'full_name', 'name', 'medical_history', 'diagnosis'
+      'cpf',
+      'rg',
+      'email',
+      'phone',
+      'address',
+      'birth_date',
+      'full_name',
+      'name',
+      'medical_history',
+      'diagnosis',
     ];
 
     const checkObject = (obj: any): boolean => {
@@ -385,15 +393,15 @@ class PerformanceMetricsManager {
   // Record response time
   recordResponseTime(time: number) {
     this.responseTimes.push(time);
-    
+
     // Keep only last 1000 response times
     if (this.responseTimes.length > 1000) {
       this.responseTimes = this.responseTimes.slice(-1000);
     }
 
     // Calculate average
-    this.metrics.averageResponseTime = 
-      this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length;
+    this.metrics.averageResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0)
+      / this.responseTimes.length;
   }
 
   // Get metrics
@@ -403,7 +411,9 @@ class PerformanceMetricsManager {
   } {
     const totalCacheRequests = this.metrics.cacheHits + this.metrics.cacheMisses;
     const cacheHitRate = totalCacheRequests > 0 ? this.metrics.cacheHits / totalCacheRequests : 0;
-    const rateLimitRate = this.metrics.requestCount > 0 ? this.metrics.rateLimitHits / this.metrics.requestCount : 0;
+    const rateLimitRate = this.metrics.requestCount > 0
+      ? this.metrics.rateLimitHits / this.metrics.requestCount
+      : 0;
 
     return {
       ...this.metrics,
@@ -441,7 +451,8 @@ export function rateLimit(config: Partial<RateLimitConfig> = {}) {
     const isAIEndpoint = c.req.path.includes('/ai/');
 
     // Generate rate limit key
-    const key = userId || c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'anonymous';
+    const key = userId || c.req.header('x-forwarded-for') || c.req.header('x-real-ip')
+      || 'anonymous';
 
     // Check rate limit
     const result = manager.checkRateLimit(key, isHealthcareProfessional, isAIEndpoint);
@@ -453,7 +464,7 @@ export function rateLimit(config: Partial<RateLimitConfig> = {}) {
 
     if (!result.allowed) {
       performanceMetrics.recordRateLimitHit();
-      
+
       if (result.retryAfter) {
         c.header('Retry-After', String(result.retryAfter));
       }
@@ -559,6 +570,5 @@ export function cleanup() {
   };
 }
 
-// Export types and utilities
-export type { RateLimitConfig, CacheConfig, PerformanceMetrics };
-export { rateLimitManager, cacheManager, performanceMetrics };
+// Export types
+export type { CacheConfig, PerformanceMetrics, RateLimitConfig };

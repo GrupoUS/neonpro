@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { formatCPF, formatBRPhone, validateCPFMask } from '@neonpro/utils';
 
 // Type-safe params schema
 const patientParamsSchema = z.object({
@@ -58,7 +59,7 @@ const patientFormSchema = z.object({
 
   cpf: z.string()
     .optional()
-    .refine(cpf => !cpf || isValidCPF(cpf), {
+    .refine(cpf => !cpf || validateCPFMask(cpf.replace(/\D/g, '')), {
       message: 'CPF inválido',
     }),
 
@@ -387,7 +388,8 @@ function PatientEditPage() {
                     className={errors.cpf ? 'border-destructive' : ''}
                     aria-describedby={errors.cpf ? 'cpf-error' : undefined}
                     onChange={e => {
-                      const formatted = formatCPFInput(e.target.value);
+                      const digits = e.target.value.replace(/\D/g, '');
+                      const formatted = formatCPF(digits);
                       setValue('cpf', formatted, { shouldValidate: true });
                     }}
                   />
@@ -441,7 +443,8 @@ function PatientEditPage() {
                     className={errors.phone ? 'border-destructive' : ''}
                     aria-describedby={errors.phone ? 'phone-error' : undefined}
                     onChange={e => {
-                      const formatted = formatPhoneInput(e.target.value);
+                      const digits = e.target.value.replace(/\D/g, '');
+                      const formatted = formatBRPhone(digits);
                       setValue('phone', formatted, { shouldValidate: true });
                     }}
                   />
@@ -650,54 +653,4 @@ function PatientEditPage() {
   );
 }
 
-// Utility functions
-function formatCPFInput(value: string): string {
-  const cleaned = value.replace(/\D/g, '');
-  const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})$/);
-  if (match) {
-    return [match[1], match[2], match[3], match[4]]
-      .filter(Boolean)
-      .join('.')
-      .replace(/\.(\d{2})$/, '-$1');
-  }
-  return value;
-}
 
-function formatPhoneInput(value: string): string {
-  const cleaned = value.replace(/\D/g, '');
-  const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
-  if (match) {
-    let formatted = '';
-    if (match[1]) formatted += `(${match[1]}`;
-    if (match[2]) formatted += `) ${match[2]}`;
-    if (match[3]) formatted += `-${match[3]}`;
-    return formatted;
-  }
-  return value;
-}
-
-function isValidCPF(cpf: string): boolean {
-  cpf = cpf.replace(/\D/g, '');
-
-  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
-    return false;
-  }
-
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf.charAt(i)) * (10 - i);
-  }
-  let digit = 11 - (sum % 11);
-  if (digit === 10 || digit === 11) digit = 0;
-  if (digit !== parseInt(cpf.charAt(9))) return false;
-
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf.charAt(i)) * (11 - i);
-  }
-  digit = 11 - (sum % 11);
-  if (digit === 10 || digit === 11) digit = 0;
-  if (digit !== parseInt(cpf.charAt(10))) return false;
-
-  return true;
-}

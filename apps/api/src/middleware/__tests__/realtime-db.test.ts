@@ -51,6 +51,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
     // Reset mocks
     vi.clearAllMocks();
+    mockChannel.on.mockReturnThis();
+    mockChannel.subscribe.mockReturnThis();
+
+    // Inject mock Supabase client into the realtime manager
+    (realtimeManager as any).supabase = mockSupabase;
   });
 
   afterEach(() => {
@@ -406,12 +411,9 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
   describe('Error Handling', () => {
     it('should handle Supabase client initialization failure', async () => {
-      // Temporarily remove environment variables
-      const originalUrl = process.env.SUPABASE_URL;
-      const originalKey = process.env.SUPABASE_ANON_KEY;
-
-      delete process.env.SUPABASE_URL;
-      delete process.env.SUPABASE_ANON_KEY;
+      // Temporarily remove the mock Supabase client
+      const originalSupabase = (realtimeManager as any).supabase;
+      (realtimeManager as any).supabase = null;
 
       const config: SubscriptionConfig = {
         table: 'patients',
@@ -425,9 +427,8 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       expect(result).toBe(false);
 
-      // Restore environment variables
-      process.env.SUPABASE_URL = originalUrl;
-      process.env.SUPABASE_ANON_KEY = originalKey;
+      // Restore the mock Supabase client
+      (realtimeManager as any).supabase = originalSupabase;
     });
 
     it('should handle invalid subscription configuration', async () => {

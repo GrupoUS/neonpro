@@ -1,7 +1,7 @@
 /**
  * Error Handling and Logging Middleware (T076)
  * Healthcare context error handling with Brazilian compliance
- * 
+ *
  * Features:
  * - Healthcare-specific error handling and logging
  * - LGPD compliant error messages (no personal data exposure)
@@ -85,43 +85,43 @@ const errorMessages = {
   AUTHENTICATION_REQUIRED: 'Autenticação necessária para acessar este recurso',
   INVALID_TOKEN: 'Token de autenticação inválido ou expirado',
   INSUFFICIENT_PERMISSIONS: 'Permissões insuficientes para realizar esta operação',
-  
+
   // Healthcare professional errors
   HEALTHCARE_PROFESSIONAL_REQUIRED: 'Acesso restrito a profissionais de saúde registrados',
   INVALID_CRM_NUMBER: 'Número do CRM inválido ou não verificado',
   INACTIVE_LICENSE: 'Licença profissional inativa ou suspensa',
-  
+
   // LGPD compliance errors
   LGPD_CONSENT_REQUIRED: 'Consentimento LGPD necessário para processar dados pessoais',
   LGPD_INSUFFICIENT_CONSENT: 'Consentimento LGPD insuficiente para a operação solicitada',
   LGPD_DATA_RETENTION_VIOLATION: 'Violação das políticas de retenção de dados LGPD',
   LGPD_ACCESS_DENIED: 'Acesso negado por restrições de proteção de dados',
-  
+
   // Validation errors
   INVALID_CPF: 'CPF inválido ou mal formatado',
   INVALID_PHONE: 'Número de telefone brasileiro inválido',
   INVALID_CEP: 'CEP inválido ou não encontrado',
   INVALID_EMAIL: 'Endereço de email inválido',
   REQUIRED_FIELD_MISSING: 'Campo obrigatório não informado',
-  
+
   // Business logic errors
   PATIENT_NOT_FOUND: 'Paciente não encontrado',
   APPOINTMENT_CONFLICT: 'Conflito de agendamento detectado',
   MEDICAL_RECORD_LOCKED: 'Prontuário médico bloqueado para edição',
   TREATMENT_NOT_AUTHORIZED: 'Tratamento não autorizado pelo plano de saúde',
-  
+
   // AI service errors
   AI_SERVICE_UNAVAILABLE: 'Serviço de IA temporariamente indisponível',
   AI_ANALYSIS_FAILED: 'Falha na análise de IA - tente novamente',
   AI_MODEL_NOT_FOUND: 'Modelo de IA não encontrado ou indisponível',
   AI_RATE_LIMIT_EXCEEDED: 'Limite de uso do serviço de IA excedido',
-  
+
   // System errors
   INTERNAL_SERVER_ERROR: 'Erro interno do servidor - nossa equipe foi notificada',
   DATABASE_CONNECTION_ERROR: 'Erro de conexão com o banco de dados',
   EXTERNAL_SERVICE_ERROR: 'Erro em serviço externo - tente novamente em alguns minutos',
   RATE_LIMIT_EXCEEDED: 'Limite de requisições excedido - tente novamente em alguns minutos',
-  
+
   // Generic errors
   UNKNOWN_ERROR: 'Erro desconhecido - nossa equipe foi notificada',
   VALIDATION_ERROR: 'Erro de validação nos dados fornecidos',
@@ -192,7 +192,9 @@ class ErrorLogger {
       patientId: context.patientId ? `patient-${context.patientId.slice(-4)}` : undefined,
       timestamp: context.timestamp,
       // Remove potentially sensitive additional data
-      additionalData: context.additionalData ? { keys: Object.keys(context.additionalData) } : undefined,
+      additionalData: context.additionalData
+        ? { keys: Object.keys(context.additionalData) }
+        : undefined,
     };
   }
 
@@ -283,7 +285,7 @@ class ErrorHandler {
   // Create structured error from generic error
   private createStructuredError(error: Error, context: ErrorContext): StructuredError {
     const errorId = crypto.randomUUID();
-    
+
     // Determine error category and severity
     const { category, severity, code } = this.categorizeError(error);
 
@@ -445,11 +447,11 @@ class ErrorHandler {
   // Check if error occurred in healthcare context
   private isHealthcareContext(context: ErrorContext): boolean {
     return !!(
-      context.healthcareProfessional ||
-      context.patientId ||
-      context.endpoint.includes('/patients/') ||
-      context.endpoint.includes('/medical/') ||
-      context.endpoint.includes('/ai/')
+      context.healthcareProfessional
+      || context.patientId
+      || context.endpoint.includes('/patients/')
+      || context.endpoint.includes('/medical/')
+      || context.endpoint.includes('/ai/')
     );
   }
 }
@@ -494,6 +496,5 @@ export function requestId() {
   };
 }
 
-// Export types and utilities
-export type { ErrorContext, StructuredError, ErrorConfig };
-export { ErrorSeverity, ErrorCategory, ErrorLogger, ErrorHandler, errorHandler };
+// Export types
+export type { ErrorConfig, ErrorContext, StructuredError };
