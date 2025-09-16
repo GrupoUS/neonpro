@@ -17,8 +17,6 @@ import {
   AIProvider,
   AIInsightType,
   createAIInsight,
-  validateAIInsight,
-  anonymizeAIInsight,
 } from '../../../../packages/shared/src/types/ai-insights';
 
 // Service response interface
@@ -277,7 +275,7 @@ export class AIChatService {
         success: true,
         data: response,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -306,7 +304,7 @@ export class AIChatService {
         success: true,
         data: response,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -338,7 +336,7 @@ export class AIChatService {
         success: true,
         data: response,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -367,7 +365,7 @@ export class AIChatService {
         success: true,
         data: response,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -398,7 +396,7 @@ export class AIChatService {
         success: true,
         data: conversation,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -436,7 +434,7 @@ export class AIChatService {
         success: true,
         data: message,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -468,7 +466,7 @@ export class AIChatService {
           messages: conversation.messages,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -495,7 +493,7 @@ export class AIChatService {
           conversations: patientConversations,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -544,7 +542,7 @@ export class AIChatService {
           analysisType: params.analysisType,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -573,7 +571,7 @@ export class AIChatService {
           suggestions: suggestions.slice(0, params.maxSuggestions || 3),
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -608,7 +606,7 @@ export class AIChatService {
             : 'Continue monitorando os sintomas e agende consulta se necessário',
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -655,7 +653,7 @@ export class AIChatService {
         success: true,
         data: { accessLogged: true },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -695,7 +693,7 @@ export class AIChatService {
         data: { anonymized: true },
         message: 'Conversa anonimizada com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -721,7 +719,7 @@ export class AIChatService {
           format: params.format,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -745,7 +743,7 @@ export class AIChatService {
         success: true,
         data: rateLimit,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -766,7 +764,7 @@ export class AIChatService {
       }
 
       return this.generateResponse(request);
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',

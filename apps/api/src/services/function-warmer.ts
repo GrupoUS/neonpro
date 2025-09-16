@@ -103,12 +103,17 @@ class FunctionWarmer {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), target.timeout || 5000);
 
-      const response = await fetch(target.url, {
+      // Do not send body for GET requests to satisfy lint rule and HTTP semantics
+      const init: RequestInit = {
         method: target.method,
         headers: target.headers,
-        body: target.body,
         signal: controller.signal,
-      });
+      };
+      if (target.method !== 'GET' && target.body !== undefined) {
+        init.body = target.body;
+      }
+
+      const response = await fetch(target.url, init);
 
       clearTimeout(timeoutId);
       const duration = performance.now() - start;

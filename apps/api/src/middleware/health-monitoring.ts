@@ -181,7 +181,7 @@ class HealthMonitor {
     try {
       const results = await Promise.allSettled(checks);
       
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         if (result.status === 'fulfilled') {
           this.healthChecks.set(result.value.name, result.value);
         } else {

@@ -530,7 +530,7 @@ export function cache(config: Partial<CacheConfig> = {}) {
           isHealthcareData,
           isAIInsight,
         });
-      } catch (error) {
+      } catch {
         // Response is not JSON, skip caching
       }
     }

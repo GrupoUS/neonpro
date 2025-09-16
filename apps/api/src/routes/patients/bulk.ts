@@ -23,7 +23,7 @@ const dataProtection = {
 
 // Mock services - will be replaced with actual service imports
 const PatientService = {
-  async bulkUpdatePatients(params: any) {
+  async bulkUpdatePatients(_params: any) {
     return {
       success: true,
       data: {
@@ -42,7 +42,7 @@ const PatientService = {
       },
     };
   },
-  async bulkDeletePatients(params: any) {
+  async bulkDeletePatients(_params: any) {
     return {
       success: true,
       data: {
@@ -60,7 +60,7 @@ const PatientService = {
       },
     };
   },
-  async bulkExportPatients(params: any) {
+  async bulkExportPatients(_params: any) {
     return {
       success: true,
       data: {
@@ -77,7 +77,7 @@ const PatientService = {
 };
 
 const AuditService = {
-  async logBulkActivity(params: any) {
+  async logBulkActivity(_params: any) {
     return {
       success: true,
       data: { auditId: 'bulk-audit-123' },
@@ -86,7 +86,7 @@ const AuditService = {
 };
 
 const NotificationService = {
-  async sendBulkNotifications(params: any) {
+  async sendBulkNotifications(_params: any) {
     return {
       success: true,
       data: { notificationId: 'bulk-notif-123' },
@@ -95,13 +95,13 @@ const NotificationService = {
 };
 
 const LGPDService = {
-  async validateBulkConsent(params: any) {
+  async validateBulkConsent(_params: any) {
     return {
       success: true,
       data: { consentValid: true, validPatients: ['patient-1', 'patient-2', 'patient-3'] },
     };
   },
-  async processBulkDataDeletion(params: any) {
+  async processBulkDataDeletion(_params: any) {
     return {
       success: true,
       data: { operationId: 'bulk-lgpd-del-123' },

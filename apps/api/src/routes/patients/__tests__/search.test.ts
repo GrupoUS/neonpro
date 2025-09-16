@@ -4,7 +4,6 @@
  * Integration with PatientService, AuditService for LGPD compliance
  */
 
-import { Hono } from 'hono';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services

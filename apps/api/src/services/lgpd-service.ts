@@ -14,14 +14,14 @@
  */
 
 import {
-  anonymizeLGPDData,
+
   createDataSubjectRequest,
   createLGPDConsent,
   DataSubjectRequest,
-  DataSubjectRight,
+
   LegalBasis,
   LGPDConsent,
-  validateLGPDConsent,
+
 } from '../../../../packages/shared/src/types/lgpd-consent';
 
 // Define missing enums locally
@@ -311,7 +311,7 @@ export class LGPDService {
         success: true,
         data: { ...consent, id: consentId },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -364,7 +364,7 @@ export class LGPDService {
         success: true,
         data: updatedConsent,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -416,7 +416,7 @@ export class LGPDService {
         data: revokedConsent,
         message: 'Consentimento revogado com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -450,7 +450,7 @@ export class LGPDService {
           currentConsent,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -499,7 +499,7 @@ export class LGPDService {
           estimatedCompletion,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -529,7 +529,7 @@ export class LGPDService {
           downloadUrl,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -540,7 +540,7 @@ export class LGPDService {
   /**
    * Process data deletion request
    */
-  async processDataDeletionRequest(params: DataDeletionRequest): Promise<
+  async processDataDeletionRequest(_params: DataDeletionRequest): Promise<
     ServiceResponse<{
       requestId: string;
       status: string;
@@ -562,7 +562,7 @@ export class LGPDService {
           scheduledDeletion,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -591,7 +591,7 @@ export class LGPDService {
           status: 'approved',
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -628,7 +628,7 @@ export class LGPDService {
           legalBasis: params.legalBasis,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -681,7 +681,7 @@ export class LGPDService {
           totalActivities: activities.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -692,7 +692,7 @@ export class LGPDService {
   /**
    * Validate processing legality
    */
-  async validateProcessingLegality(params: ProcessingLegalityValidation): Promise<
+  async validateProcessingLegality(_params: ProcessingLegalityValidation): Promise<
     ServiceResponse<{
       isLegal: boolean;
       legalBasis: string;
@@ -717,7 +717,7 @@ export class LGPDService {
           requirements,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -742,7 +742,7 @@ export class LGPDService {
           policyId,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -787,7 +787,7 @@ export class LGPDService {
           nextReview,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -816,7 +816,7 @@ export class LGPDService {
           newRetentionDate: params.newRetentionDate,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -853,7 +853,7 @@ export class LGPDService {
           status: 'draft',
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -903,7 +903,7 @@ export class LGPDService {
           status: updatedAssessment.status,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -946,7 +946,7 @@ export class LGPDService {
           total: assessments.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -992,7 +992,7 @@ export class LGPDService {
           violations,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1021,7 +1021,7 @@ export class LGPDService {
           securityCompliance: 99.1,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1058,7 +1058,7 @@ export class LGPDService {
           status: 'reported',
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1088,7 +1088,7 @@ export class LGPDService {
           method: params.anonymizationMethod,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1099,7 +1099,7 @@ export class LGPDService {
   /**
    * Validate anonymization quality
    */
-  async validateAnonymizationQuality(anonymizationId: string): Promise<
+  async validateAnonymizationQuality(_anonymizationId: string): Promise<
     ServiceResponse<{
       qualityScore: number;
       riskAssessment: string;
@@ -1121,7 +1121,7 @@ export class LGPDService {
           ],
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',

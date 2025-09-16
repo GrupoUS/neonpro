@@ -24,7 +24,7 @@ type OverdueResponse = {
 };
 
 app.post('/overdue', zValidator('json', OverdueRequest), c => {
-  const { clinicId } = c.req.valid('json');
+  const { clinicId: _clinicId } = c.req.valid('json');
   // Minimal GREEN with static demo payload (clinicId echoed for future filtering)
   const items: OverdueInvoice[] = [
     { id: 'inv_001', patient: 'Paciente A', amount: 120.5, dueDate: '2025-08-01', bucket: '31-60' },

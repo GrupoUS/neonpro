@@ -23,7 +23,7 @@ const dataProtection = {
 
 // Mock services - will be replaced with actual service imports
 const AuditService = {
-  async getPatientHistory(params: any) {
+  async getPatientHistory(_params: any) {
     return {
       success: true,
       data: {
@@ -136,7 +136,7 @@ const AuditService = {
       },
     };
   },
-  async logHistoryAccess(params: any) {
+  async logHistoryAccess(_params: any) {
     return {
       success: true,
       data: { auditId: 'history-audit-123' },
@@ -145,7 +145,7 @@ const AuditService = {
 };
 
 const LGPDService = {
-  async validateHistoryAccess(params: any) {
+  async validateHistoryAccess(_params: any) {
     return {
       success: true,
       data: { canAccess: true, accessLevel: 'full' },
@@ -157,7 +157,7 @@ const LGPDService = {
 };
 
 const PatientService = {
-  async validatePatientExists(params: any) {
+  async validatePatientExists(_params: any) {
     return {
       success: true,
       data: { exists: true, patientId: 'patient-123' },

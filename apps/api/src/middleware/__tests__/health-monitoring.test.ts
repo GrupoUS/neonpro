@@ -8,8 +8,8 @@ import {
   healthMonitoringMiddleware,
   healthMonitor,
   HealthStatus,
-  type HealthCheckResult,
-  type MetricEntry,
+  // type HealthCheckResult,
+  // type MetricEntry,
 } from '../health-monitoring';
 
 // Mock crypto.randomUUID
@@ -210,7 +210,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
   describe('Health Monitoring Middleware', () => {
     it('should record request metrics', async () => {
-      const startTime = Date.now();
+      // const startTime = Date.now();
       mockNext.mockImplementation(async () => {
         // Simulate some processing time
         await new Promise(resolve => setTimeout(resolve, 10));
@@ -243,7 +243,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       try {
         await healthMonitoringMiddleware(mockContext, mockNext);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 

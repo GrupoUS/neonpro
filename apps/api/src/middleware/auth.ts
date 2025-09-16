@@ -166,10 +166,10 @@ class SessionManager {
 export const sessionManager = new SessionManager();
 
 // Services - can be injected for testing
-let services: any = null;
+let _services: any = null;
 
 export const setServices = (injectedServices: any) => {
-  services = injectedServices;
+  _services = injectedServices;
 };
 
 // Enhanced authentication middleware

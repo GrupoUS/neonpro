@@ -8,7 +8,7 @@ import { Hono } from 'hono';
 import { cache } from 'hono/cache';
 import { cors } from 'hono/cors';
 import { createMiddleware } from 'hono/factory';
-import { jwt } from 'hono/jwt';
+// import removed: jwt was unused
 import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
 import { z } from 'zod';

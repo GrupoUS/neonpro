@@ -11,7 +11,7 @@ import {
   aiRequestMetrics,
   AIProvider,
   type AIModel,
-  type HealthcareContext,
+
 } from '../ai-providers';
 
 // Mock crypto.randomUUID

@@ -370,7 +370,7 @@ class AIProviderManager {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       const health = this.providerHealth.get(provider);
       if (health) {
         health.isHealthy = false;

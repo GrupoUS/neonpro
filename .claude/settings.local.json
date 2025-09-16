@@ -94,13 +94,6 @@
     ],
     "deny": [
       "Edit",
-      "Read",
-      "Write",
-      "Bash",
-      "NotebookRead",
-      "NotebookEdit",
-      "WebSearch",
-      "WebFetch"
     ]
   },
   "enableAllProjectMcpServers": true,

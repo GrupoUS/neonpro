@@ -179,7 +179,7 @@ export class AuditService {
       const changeHash = this.generateChangeHash(params);
       
       // Mock database insert (in real implementation, this would use Supabase)
-      const auditRecord = {
+      const _auditRecord = {
         id: auditId,
         user_id: params.userId,
         action: params.action,
@@ -211,7 +211,7 @@ export class AuditService {
           sensitivityLevel: params.sensitivityLevel,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -237,7 +237,7 @@ export class AuditService {
       const timestamp = new Date();
 
       // Mock database insert for security events
-      const securityRecord = {
+      const _securityRecord = {
         id: securityEventId,
         event_type: params.eventType,
         severity: params.severity,
@@ -273,7 +273,7 @@ export class AuditService {
           requiresApproval,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -350,7 +350,7 @@ export class AuditService {
         success: true,
         data: result,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -361,7 +361,7 @@ export class AuditService {
   /**
    * Validate audit trail completeness
    */
-  async validateAuditTrailCompleteness(params: {
+  async validateAuditTrailCompleteness(_params: {
     patientId: string;
     startDate: Date;
     endDate: Date;
@@ -385,7 +385,7 @@ export class AuditService {
           integrityScore,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -396,7 +396,7 @@ export class AuditService {
   /**
    * Reconstruct user activity timeline from database
    */
-  async reconstructActivityTimeline(params: ActivityTimeline): Promise<ServiceResponse<{
+  async reconstructActivityTimeline(_params: ActivityTimeline): Promise<ServiceResponse<{
     timeline: any[];
     totalEvents: number;
     timelineHash: string;
@@ -427,7 +427,7 @@ export class AuditService {
           timelineHash,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -438,7 +438,7 @@ export class AuditService {
   /**
    * Analyze data access patterns
    */
-  async analyzeDataAccessPatterns(params: DataAccessPatternAnalysis): Promise<ServiceResponse<{
+  async analyzeDataAccessPatterns(_params: DataAccessPatternAnalysis): Promise<ServiceResponse<{
     patterns: any;
     anomalies: any[];
     riskScore: number;
@@ -474,7 +474,7 @@ export class AuditService {
           recommendations,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -521,7 +521,7 @@ export class AuditService {
           evidenceChain,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -559,7 +559,7 @@ export class AuditService {
           legalAdmissible,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -588,7 +588,7 @@ export class AuditService {
           filterCount,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -615,7 +615,7 @@ export class AuditService {
           finalEventCount: 150, // Mock final count
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -642,7 +642,7 @@ export class AuditService {
           actions: params.actions,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -667,7 +667,7 @@ export class AuditService {
           totalActive: streams.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -678,7 +678,7 @@ export class AuditService {
   /**
    * Verify audit log integrity
    */
-  async verifyAuditLogIntegrity(params: {
+  async verifyAuditLogIntegrity(_params: {
     startDate: Date;
     endDate: Date;
     includeHashChain: boolean;
@@ -701,7 +701,7 @@ export class AuditService {
           hashChainValid,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -712,7 +712,7 @@ export class AuditService {
   /**
    * Detect tampered audit records
    */
-  async detectTamperedRecords(params: {
+  async detectTamperedRecords(_params: {
     auditIds: string[];
     verificationMethod: string;
     includeDetails: boolean;
@@ -734,7 +734,7 @@ export class AuditService {
           verificationTimestamp,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -771,7 +771,7 @@ export class AuditService {
           backupHash,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -805,7 +805,7 @@ export class AuditService {
           restoreTimestamp,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -837,7 +837,7 @@ export class AuditService {
           indexesOptimal: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -848,7 +848,7 @@ export class AuditService {
   /**
    * Perform database maintenance
    */
-  async performDatabaseMaintenance(params: {
+  async performDatabaseMaintenance(_params: {
     operation: string;
     retentionDays: number;
     dryRun: boolean;
@@ -867,7 +867,7 @@ export class AuditService {
           spaceToReclaim,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',

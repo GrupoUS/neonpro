@@ -5,11 +5,9 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  ErrorCategory,
   type ErrorContext,
   errorHandler,
   errorHandling,
-  ErrorSeverity,
 } from '../error-handling';
 
 // Mock crypto.randomUUID

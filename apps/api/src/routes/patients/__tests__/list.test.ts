@@ -5,7 +5,6 @@
  */
 
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
-import { Hono } from 'hono';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -23,15 +22,15 @@ const mockLGPDService = {
 };
 
 // Mock middleware
-const mockRequireAuth = vi.fn((c, next) => {
+const _mockRequireAuth = vi.fn((c, next) => {
   c.set('userId', 'user-123');
   return next();
 });
 
-const mockLGPDMiddleware = vi.fn((c, next) => next());
+const _mockLGPDMiddleware = vi.fn((c, next) => next());
 
 describe('GET /api/v2/patients endpoint (T043)', () => {
-  let app: Hono;
+  // let app: Hono;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -108,7 +107,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -132,7 +131,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -156,7 +155,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -180,7 +179,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -300,7 +299,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(403);
       expect(data.success).toBe(false);
@@ -336,7 +335,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.patients[0].cpf).toBe('***.***.***-**');
@@ -357,7 +356,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
@@ -376,7 +375,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
@@ -400,7 +399,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -421,7 +420,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -476,7 +475,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       };
 
       const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      // const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.patients).toHaveLength(100);

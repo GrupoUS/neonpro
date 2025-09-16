@@ -5,7 +5,6 @@
  */
 
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
-import { Hono } from 'hono';
 
 // Mock the Backend Services
 const mockPatientService = {

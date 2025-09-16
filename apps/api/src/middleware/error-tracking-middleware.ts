@@ -17,7 +17,7 @@ export function errorTrackingMiddleware() {
     try {
       await next();
       return; // Explicit return when no error
-    } catch (error) {
+    } catch {
       const context = errorTracker.extractContextFromHono(c);
 
       // Handle different error types
@@ -120,7 +120,7 @@ export function requestContextMiddleware() {
           endpoint: context.endpoint,
         },
       );
-    } catch (error) {
+    } catch {
       // Add breadcrumb for error
       errorTracker.addBreadcrumb(
         `Request failed: ${context.method} ${context.endpoint}`,
@@ -183,7 +183,7 @@ export function performanceTrackingMiddleware() {
           },
         );
       }
-    } catch (error) {
+    } catch {
       throw error;
     }
   };

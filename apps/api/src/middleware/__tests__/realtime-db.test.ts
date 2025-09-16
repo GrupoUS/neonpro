@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type LGPDFilter,
   patientDataSubscription,
-  type RealtimeEvent,
+  // type RealtimeEvent,
   realtimeManager,
   realtimeSubscription,
   type SubscriptionConfig,

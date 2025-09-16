@@ -13,7 +13,6 @@
 
 import {
   createDataSubjectRequest,
-  LGPDConsent,
 } from '../../../../packages/shared/src/types/lgpd-consent';
 import {
   anonymizePatientData,
@@ -21,9 +20,6 @@ import {
   Patient,
 } from '../../../../packages/shared/src/types/patient';
 import {
-  validateBrazilianPhone,
-  validateCEP,
-  validateCPF,
   validatePatientData,
 } from '../../../../packages/shared/src/validators/brazilian';
 
@@ -232,7 +228,7 @@ export class PatientService {
         data: patient,
         message: 'Paciente criado com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -258,7 +254,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -271,7 +267,7 @@ export class PatientService {
    */
   async searchPatients(
     query: string,
-    options?: SearchOptions,
+    _options?: SearchOptions,
   ): Promise<ServiceResponse<Patient[]>> {
     try {
       const allPatients = Array.from(this.patients.values());
@@ -283,7 +279,7 @@ export class PatientService {
         success: true,
         data: filteredPatients,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -310,7 +306,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -342,7 +338,7 @@ export class PatientService {
           },
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -402,7 +398,7 @@ export class PatientService {
         data: updatedPatient,
         message: 'Paciente atualizado com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -437,7 +433,7 @@ export class PatientService {
         success: true,
         message: 'Paciente removido com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -467,7 +463,7 @@ export class PatientService {
         success: true,
         message: 'Dados anonimizados com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -490,7 +486,7 @@ export class PatientService {
       }
 
       // Create data subject request
-      const request = createDataSubjectRequest({
+      const _request = createDataSubjectRequest({
         patientId,
         requestType,
         requestDate: new Date(),
@@ -507,7 +503,7 @@ export class PatientService {
         },
         message: 'Solicitação processada com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -552,7 +548,7 @@ export class PatientService {
         data: updatedPatient,
         message: 'Dados de saúde atualizados com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -605,7 +601,7 @@ export class PatientService {
         success: true,
         data: { summary },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -650,7 +646,7 @@ export class PatientService {
         success: true,
         data: { accessLogged: true },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -663,7 +659,7 @@ export class PatientService {
    */
   async sendPatientNotification(
     patientId: string,
-    notificationData: NotificationData,
+    _notificationData: NotificationData,
   ): Promise<ServiceResponse<{ notificationSent: boolean }>> {
     try {
       const patient = this.patients.get(patientId);
@@ -683,7 +679,7 @@ export class PatientService {
         data: { notificationSent: true },
         message: 'Notificação enviada com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -725,7 +721,7 @@ export class PatientService {
         success: true,
         data: { insights },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -758,7 +754,7 @@ export class PatientService {
         data: { exportUrl, format },
         message: 'Dados exportados com sucesso',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',

@@ -228,7 +228,7 @@ app.post(
               ? data.results.map((r: any) => r.title).filter(Boolean).slice(0, 5)
               : [];
           }
-        } catch (e) {
+        } catch {
           console.warn('Tavily search failed, continuing without web hints');
         }
       }

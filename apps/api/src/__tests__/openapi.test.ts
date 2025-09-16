@@ -5,7 +5,7 @@
  * and API contract validation.
  */
 
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import app from '../app';
 
 describe('OpenAPI Integration', () => {

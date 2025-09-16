@@ -61,14 +61,14 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     }
 
     const { id: patientId } = paramsValidation.data;
-    const { deletion_type, reason, schedule_anonymization } = queryValidation.data;
+    const { deletion_type, reason } = queryValidation.data;
 
     // Get client IP and User-Agent for audit logging
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
     const userAgent = c.req.header('User-Agent') || 'unknown';
     const healthcareProfessional = c.req.header('X-Healthcare-Professional');
     const lgpdRequest = c.req.header('X-LGPD-Request');
-    const adminOverride = c.req.header('X-Admin-Override');
+    const _adminOverride = c.req.header('X-Admin-Override');
     const medicalDeviceData = c.req.header('X-Medical-Device-Data');
 
     // Get patient data first

@@ -15,7 +15,6 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -282,7 +281,7 @@ export class NotificationService {
       const timestamp = new Date();
 
       // Mock database insert (in real implementation, this would use Supabase)
-      const notificationRecord = {
+      const _notificationRecord = {
         id: notificationId,
         recipient_id: params.recipientId,
         channel: params.channel,
@@ -342,7 +341,7 @@ export class NotificationService {
         success: true,
         data: result,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -371,7 +370,7 @@ export class NotificationService {
           channelCount: params.channels.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -400,7 +399,7 @@ export class NotificationService {
           finalNotificationCount: 25, // Mock count
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -430,7 +429,7 @@ export class NotificationService {
           lastUpdated: new Date(),
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -457,7 +456,7 @@ export class NotificationService {
           totalActive: streams.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -487,7 +486,7 @@ export class NotificationService {
           carrier: 'Vivo', // Mock carrier
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -510,7 +509,7 @@ export class NotificationService {
       this.templates.set(template.templateId, template);
 
       // Mock database insert
-      const templateRecord = {
+      const _templateRecord = {
         id: template.templateId,
         name: template.name,
         description: template.description,
@@ -534,7 +533,7 @@ export class NotificationService {
           persisted: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -589,7 +588,7 @@ export class NotificationService {
           missingVariables,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -633,7 +632,7 @@ export class NotificationService {
           version: 2, // Mock version increment
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -678,7 +677,7 @@ export class NotificationService {
           filteredCount: templates.length,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -703,7 +702,7 @@ export class NotificationService {
           nextRetry,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -734,7 +733,7 @@ export class NotificationService {
           remainingRetries: config.maxRetries - 1,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -745,7 +744,7 @@ export class NotificationService {
   /**
    * Get delivery statistics
    */
-  async getDeliveryStatistics(params: {
+  async getDeliveryStatistics(_params: {
     startDate: Date;
     endDate: Date;
     channels: string[];
@@ -779,7 +778,7 @@ export class NotificationService {
           byChannel,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -814,7 +813,7 @@ export class NotificationService {
           updated: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -850,7 +849,7 @@ export class NotificationService {
           rateLimitBypassed: params.bypassRateLimit || false,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -886,7 +885,7 @@ export class NotificationService {
           currentCount: limit.count,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -922,7 +921,7 @@ export class NotificationService {
           nextProcessAt: new Date(Date.now() + 60000), // Next process in 1 minute
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -967,7 +966,7 @@ export class NotificationService {
           processingRate: 10, // Mock processing rate (notifications per minute)
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -997,7 +996,7 @@ export class NotificationService {
           auditLogged: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1008,7 +1007,7 @@ export class NotificationService {
   /**
    * Validate LGPD consent before sending notification
    */
-  async validateLGPDConsent(params: LGPDConsentValidation): Promise<
+  async validateLGPDConsent(_params: LGPDConsentValidation): Promise<
     ServiceResponse<{
       consentValid: boolean;
       legalBasis: string;
@@ -1027,7 +1026,7 @@ export class NotificationService {
           canSend: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1038,7 +1037,7 @@ export class NotificationService {
   /**
    * Log notification to audit trail
    */
-  async logNotificationToAudit(params: NotificationAuditLog): Promise<
+  async logNotificationToAudit(_params: NotificationAuditLog): Promise<
     ServiceResponse<{
       auditId: string;
       logged: boolean;
@@ -1057,7 +1056,7 @@ export class NotificationService {
           complianceFlags: ['notification_delivery', 'lgpd_compliance'],
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1092,7 +1091,7 @@ export class NotificationService {
           lastSynced: new Date(),
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1126,7 +1125,7 @@ export class NotificationService {
           indexesOptimal: true,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -1137,7 +1136,7 @@ export class NotificationService {
   /**
    * Perform database maintenance
    */
-  async performDatabaseMaintenance(params: {
+  async performDatabaseMaintenance(_params: {
     operation: string;
     retentionDays: number;
     dryRun: boolean;
@@ -1158,7 +1157,7 @@ export class NotificationService {
           spaceToReclaim,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
