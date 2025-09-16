@@ -28,15 +28,15 @@
 - [ ] T001 Configure i18n keys scaffold (pt-BR, en-US) in `packages/shared/src/i18n/ai-chat.ts`
 - [x] T002 Create DB migration for chat tables in `packages/database/migrations/20250915_ai_chat_phase1.sql`
 - [x] T003 Create RLS policies migration in `packages/database/migrations/20250915_ai_chat_rls.sql`
-- [ ] T004 [P] Add AI chat types in `packages/types/src/ai-chat.ts`
-- [ ] T005 [P] Add environment config for AI chat in `packages/config/src/env.ts`
-- [ ] T006 [P] Add LGPD compliance utilities in `packages/utils/src/lgpd.ts`
+- [x] T004 [P] Add AI chat types in `packages/types/src/ai-chat.ts`
+- [x] T005 [P] Add environment config for AI chat in `packages/config/src/env.ts`
+- [x] T006 [P] Add LGPD compliance utilities in `packages/utils/src/lgpd.ts`
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 - [x] T007 [P] Contract test POST /api/v1/chat/query in `apps/api/tests/contract/chat-query.test.ts` (passing)
-- [ ] T008 [P] Contract test GET /api/v1/chat/session/:id in `apps/api/tests/contract/chat-session.test.ts`
-- [ ] T009 [P] Contract test POST /api/v1/chat/explanation in `apps/api/tests/contract/chat-explanation.test.ts`
+- [x] T008 [P] Contract test GET /api/v1/chat/session/:id in `apps/api/tests/contract/chat-session.test.ts`
+- [x] T009 [P] Contract test POST /api/v1/chat/explanation in `apps/api/tests/contract/chat-explanation.test.ts`
 - [x] T010 [P] Integration test consent validation in `apps/api/tests/integration/chat-consent.test.ts`
 - [x] T011 [P] Integration test fairness rate limits in `apps/api/tests/integration/chat-rate-limit.test.ts` (passing)
 - [x] T012 [P] Integration test PII redaction pipeline in `apps/api/tests/integration/chat-redaction.test.ts` (passing)
