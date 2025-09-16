@@ -17,6 +17,8 @@ import { WorkflowEngine } from './workflows/workflow-engine';
 import { QualityControlBridge } from './quality-control-bridge';
 import { TDDMetricsCollector } from './metrics/collector';
 import { HealthcareComplianceValidator } from './compliance/healthcare-validator';
+import { createLogger, LogLevel } from './utils/logger';
+import { createCommunicationSystem } from './communication';
 
 // Communication System
 export {
@@ -146,18 +148,19 @@ export function createTDDOrchestrationSystem(options: {
 
     // Convenience methods
     async initialize() {
-      console.log('🚀 TDD Orchestration System initializing...');
+      const logger = createLogger('TDDOrchestration', LogLevel.INFO);
+      logger.info('🚀 TDD Orchestration System initializing...');
 
       if (communication) {
         await communication.initialize();
       }
 
-      console.log('✅ TDD Orchestration System ready');
-      console.log('📋 Available agents:', agentRegistry.getAllAgents().map(a => a.name).join(', '));
-      console.log('🔧 Available workflows:', workflowEngine.getAvailableWorkflows().join(', '));
+      logger.success('TDD Orchestration System ready');
+      logger.info('📋 Available agents: ' + agentRegistry.getAllAgents().map(a => a.name).join(', '));
+      logger.info('🔧 Available workflows: ' + workflowEngine.getAvailableWorkflows().join(', '));
 
       if (healthcareMode) {
-        console.log('🏥 Healthcare compliance mode enabled (LGPD/ANVISA/CFM)');
+        logger.info('🏥 Healthcare compliance mode enabled (LGPD/ANVISA/CFM)');
       }
 
       return {
@@ -172,7 +175,8 @@ export function createTDDOrchestrationSystem(options: {
     },
 
     async shutdown() {
-      console.log('🛑 TDD Orchestration System shutting down...');
+      const logger = createLogger('TDDOrchestration', LogLevel.INFO);
+      logger.info('🛑 TDD Orchestration System shutting down...');
 
       if (communication) {
         await communication.shutdown();
@@ -182,7 +186,7 @@ export function createTDDOrchestrationSystem(options: {
         metrics.reset();
       }
 
-      console.log('✅ TDD Orchestration System shut down');
+      logger.success('TDD Orchestration System shut down');
     },
 
     // Quality control execution

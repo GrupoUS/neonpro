@@ -772,7 +772,7 @@ function TabContentSkeleton() {
 }
 
 // Utility functions for Brazilian formatting
-import { formatCPF, formatBRPhone } from '@neonpro/utils';
+import { formatBRPhone, formatCPF } from '@neonpro/utils';
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('pt-BR');

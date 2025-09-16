@@ -1,7 +1,7 @@
 /**
  * Observability Contract Tests
  * NeonPro Platform Architecture Improvements
- * 
+ *
  * Tests the contracts for:
  * - Sentry error tracking integration
  * - OpenTelemetry distributed tracing
@@ -9,10 +9,13 @@
  * - Healthcare compliance logging
  */
 
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { SentryConfig, HealthcareErrorContext } from '../../lib/observability/sentry';
-import type { TracingConfig, HealthcareSpanAttributes } from '../../lib/observability/tracing';
-import type { WebVitalsConfig, HealthcarePerformanceContext } from '../../lib/observability/web-vitals';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import type { HealthcareErrorContext, SentryConfig } from '../../lib/observability/sentry';
+import type { HealthcareSpanAttributes, TracingConfig } from '../../lib/observability/tracing';
+import type {
+  HealthcarePerformanceContext,
+  WebVitalsConfig,
+} from '../../lib/observability/web-vitals';
 
 // Mock Sentry
 const mockSentry = {
@@ -135,7 +138,7 @@ describe('Observability Contracts', () => {
       ];
 
       const testError = new Error('Patient data validation failed');
-      
+
       // Test: Error categorization contract
       expect(healthcareErrorCategories).toContain('patient_data_error');
       expect(healthcareErrorCategories).toContain('medical_workflow_error');
@@ -244,15 +247,15 @@ describe('Observability Contracts', () => {
       const healthcareThresholds = {
         emergency: {
           lcp: 1000, // 1 second for emergency screens
-          fid: 50,   // 50ms for emergency interactions
+          fid: 50, // 50ms for emergency interactions
           cls: 0.05, // Very stable layouts for emergency
-          fcp: 800,  // 800ms for first contentful paint
+          fcp: 800, // 800ms for first contentful paint
           ttfb: 200, // 200ms for time to first byte
         },
         patient_care: {
           lcp: 2000, // 2 seconds for patient care screens
-          fid: 100,  // 100ms for patient interactions
-          cls: 0.1,  // Stable layouts for patient data
+          fid: 100, // 100ms for patient interactions
+          cls: 0.1, // Stable layouts for patient data
           fcp: 1200, // 1.2s for first contentful paint
           ttfb: 400, // 400ms for time to first byte
         },

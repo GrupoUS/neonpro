@@ -48,24 +48,26 @@ const translations = {
     'dashboard.title': 'Dashboard',
     'clients.title': 'Clients',
     'appointments.title': 'Appointments',
-    'services.title': 'Services',   
+    'services.title': 'Services',
     'financial.title': 'Financial',
     'settings.title': 'Settings',
-  }
+  },
 };
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocale] = useState('pt-BR');
 
   const t = (key: string, params?: Record<string, string>) => {
-    const translation = translations[locale as keyof typeof translations]?.[key as keyof typeof translations['pt-BR']] || key;
-    
+    const translation =
+      translations[locale as keyof typeof translations]?.[key as keyof typeof translations['pt-BR']]
+      || key;
+
     if (params) {
       return Object.entries(params).reduce((acc, [param, value]) => {
         return acc.replace(`{{${param}}}`, value);
       }, translation);
     }
-    
+
     return translation;
   };
 

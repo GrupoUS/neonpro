@@ -4,8 +4,8 @@
  * Validates the new categorized testing structure
  */
 
-import { TestCoordinator } from '../src/test-coordinator';
-import { TestCategoryManager } from '@neonpro/tools-shared/utils/testing/test-categories';
+import { TestCoordinator } from '../src/test-coordinator.js';
+import { TestCategoryManager } from '../../shared/src/utils/testing/test-categories';
 
 async function testIntegration() {
   console.log('🧪 Testing NeonPro categorized testing structure integration...\n');

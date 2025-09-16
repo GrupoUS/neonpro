@@ -8,7 +8,6 @@ import {
   useProfessionalServicesDetailed,
   useSetPrimaryProfessional,
 } from '@/hooks/useProfessionalServices';
-import { cn } from '@neonpro/ui';
 import {
   getProficiencyColor,
   getProficiencyLabel,
@@ -16,6 +15,7 @@ import {
   type ProficiencyLevel,
 } from '@/types/professional-services';
 import type { ProfessionalServiceDetailed } from '@/types/professional-services';
+import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';

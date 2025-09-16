@@ -1,5 +1,5 @@
 'use client';
-import { cn } from "@neonpro/ui";
+import { cn } from '@neonpro/ui';
 import { motion, useMotionTemplate, useMotionValue } from 'motion/react';
 import * as React from 'react';
 

@@ -19,7 +19,6 @@
   "dependencies": {
     "@neonpro/tools-shared": "workspace:*",
     "hono": "^4.0.0",
-    "@hono/testing": "^1.0.0",
     "@hono/zod-validator": "^0.2.0",
     "zod": "^3.22.0",
     "supertest": "^6.3.0",

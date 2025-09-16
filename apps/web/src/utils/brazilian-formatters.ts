@@ -13,15 +13,15 @@ import { formatBRPhone } from '@neonpro/utils';
 
 export function formatCPF(cpf: string): string {
   if (!cpf) return '';
-  
+
   // Remove all non-numeric characters
   const cleaned = cpf.replace(/\D/g, '');
-  
+
   // Apply CPF mask
   if (cleaned.length <= 11) {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
-  
+
   return cpf; // Return original if invalid length
 }
 
@@ -30,15 +30,15 @@ export function formatCPF(cpf: string): string {
  */
 export function formatCNPJ(cnpj: string): string {
   if (!cnpj) return '';
-  
+
   // Remove all non-numeric characters
   const cleaned = cnpj.replace(/\D/g, '');
-  
+
   // Apply CNPJ mask
   if (cleaned.length <= 14) {
     return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
   }
-  
+
   return cnpj; // Return original if invalid length
 }
 
@@ -61,15 +61,15 @@ export function formatPhone(phone: string): string {
  */
 export function formatCEP(cep: string): string {
   if (!cep) return '';
-  
+
   // Remove all non-numeric characters
   const cleaned = cep.replace(/\D/g, '');
-  
+
   // Apply CEP mask
   if (cleaned.length <= 8) {
     return cleaned.replace(/(\d{5})(\d{3})/, '$1-$2');
   }
-  
+
   return cep; // Return original if invalid length
 }
 
@@ -78,9 +78,9 @@ export function formatCEP(cep: string): string {
  */
 export function formatCurrency(value: number | string): string {
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
-  
+
   if (isNaN(numValue)) return 'R$ 0,00';
-  
+
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -92,11 +92,11 @@ export function formatCurrency(value: number | string): string {
  */
 export function formatDate(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   if (isNaN(dateObj.getTime())) return '';
-  
+
   return dateObj.toLocaleDateString('pt-BR');
 }
 
@@ -105,11 +105,11 @@ export function formatDate(date: string | Date): string {
  */
 export function formatDateTime(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   if (isNaN(dateObj.getTime())) return '';
-  
+
   return dateObj.toLocaleString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -124,11 +124,11 @@ export function formatDateTime(date: string | Date): string {
  */
 export function formatTime(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   if (isNaN(dateObj.getTime())) return '';
-  
+
   return dateObj.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
@@ -166,9 +166,12 @@ export function unformatCEP(cep: string): string {
 /**
  * Mask sensitive data for LGPD compliance
  */
-export function maskSensitiveData(data: string, type: 'cpf' | 'phone' | 'email' | 'address'): string {
+export function maskSensitiveData(
+  data: string,
+  type: 'cpf' | 'phone' | 'email' | 'address',
+): string {
   if (!data) return '';
-  
+
   switch (type) {
     case 'cpf':
       return '***.***.***-**';
@@ -189,35 +192,35 @@ export function maskSensitiveData(data: string, type: 'cpf' | 'phone' | 'email' 
  */
 export function formatState(state: string): string {
   const stateMap: Record<string, string> = {
-    'AC': 'Acre',
-    'AL': 'Alagoas',
-    'AP': 'Amapá',
-    'AM': 'Amazonas',
-    'BA': 'Bahia',
-    'CE': 'Ceará',
-    'DF': 'Distrito Federal',
-    'ES': 'Espírito Santo',
-    'GO': 'Goiás',
-    'MA': 'Maranhão',
-    'MT': 'Mato Grosso',
-    'MS': 'Mato Grosso do Sul',
-    'MG': 'Minas Gerais',
-    'PA': 'Pará',
-    'PB': 'Paraíba',
-    'PR': 'Paraná',
-    'PE': 'Pernambuco',
-    'PI': 'Piauí',
-    'RJ': 'Rio de Janeiro',
-    'RN': 'Rio Grande do Norte',
-    'RS': 'Rio Grande do Sul',
-    'RO': 'Rondônia',
-    'RR': 'Roraima',
-    'SC': 'Santa Catarina',
-    'SP': 'São Paulo',
-    'SE': 'Sergipe',
-    'TO': 'Tocantins',
+    AC: 'Acre',
+    AL: 'Alagoas',
+    AP: 'Amapá',
+    AM: 'Amazonas',
+    BA: 'Bahia',
+    CE: 'Ceará',
+    DF: 'Distrito Federal',
+    ES: 'Espírito Santo',
+    GO: 'Goiás',
+    MA: 'Maranhão',
+    MT: 'Mato Grosso',
+    MS: 'Mato Grosso do Sul',
+    MG: 'Minas Gerais',
+    PA: 'Pará',
+    PB: 'Paraíba',
+    PR: 'Paraná',
+    PE: 'Pernambuco',
+    PI: 'Piauí',
+    RJ: 'Rio de Janeiro',
+    RN: 'Rio Grande do Norte',
+    RS: 'Rio Grande do Sul',
+    RO: 'Rondônia',
+    RR: 'Roraima',
+    SC: 'Santa Catarina',
+    SP: 'São Paulo',
+    SE: 'Sergipe',
+    TO: 'Tocantins',
   };
-  
+
   return stateMap[state.toUpperCase()] || state;
 }
 
@@ -226,11 +229,11 @@ export function formatState(state: string): string {
  */
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 

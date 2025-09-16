@@ -1,7 +1,7 @@
 /**
  * Security Contract Tests
  * NeonPro Platform Architecture Improvements
- * 
+ *
  * Tests the contracts for:
  * - Content Security Policy (CSP) configuration
  * - Subresource Integrity (SRI) validation
@@ -9,10 +9,10 @@
  * - LGPD and ANVISA compliance
  */
 
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { CSPViolationReport } from '../../lib/security/csp';
-import type { SRIViolationReport, HealthcareSRIConfig } from '../../lib/security/sri';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { HealthcareSecurityConfig } from '../../lib/security';
+import type { CSPViolationReport } from '../../lib/security/csp';
+import type { HealthcareSRIConfig, SRIViolationReport } from '../../lib/security/sri';
 
 describe('Security Contracts', () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('Security Contracts', () => {
       // Contract: CSP must protect patient data and comply with healthcare regulations
       const expectedCSPDirectives = [
         'default-src',
-        'script-src', 
+        'script-src',
         'style-src',
         'img-src',
         'connect-src',
@@ -56,21 +56,21 @@ describe('Security Contracts', () => {
     test('should block unsafe sources for patient data protection', () => {
       // Contract: No unsafe-eval or unsafe-inline in production for patient data security
       const unsafeSources = [
-        "'unsafe-eval'",
-        "'unsafe-inline'",
-        "'unsafe-hashes'",
+        '\'unsafe-eval\'',
+        '\'unsafe-inline\'',
+        '\'unsafe-hashes\'',
       ];
 
       const productionCSP = {
-        'script-src': ["'self'", "'unsafe-inline'"], // Only specific inline allowed
-        'style-src': ["'self'", "'unsafe-inline'"],   // Only for medical UI
-        'object-src': ["'none'"],                     // Always blocked
+        'script-src': ['\'self\'', '\'unsafe-inline\''], // Only specific inline allowed
+        'style-src': ['\'self\'', '\'unsafe-inline\''], // Only for medical UI
+        'object-src': ['\'none\''], // Always blocked
       };
 
       // Test: Security restrictions for production
-      expect(productionCSP['object-src']).toContain("'none'");
-      expect(productionCSP['script-src']).toContain("'self'");
-      expect(productionCSP['style-src']).toContain("'self'");
+      expect(productionCSP['object-src']).toContain('\'none\'');
+      expect(productionCSP['script-src']).toContain('\'self\'');
+      expect(productionCSP['style-src']).toContain('\'self\'');
     });
 
     test('should provide CSP violation reporting for healthcare compliance', () => {
@@ -79,8 +79,8 @@ describe('Security Contracts', () => {
         'document-uri': 'https://neonpro.com.br/patients',
         'violated-directive': 'script-src',
         'effective-directive': 'script-src',
-        'original-policy': "default-src 'self'",
-        'disposition': 'enforce',
+        'original-policy': 'default-src \'self\'',
+        disposition: 'enforce',
         'blocked-uri': 'https://malicious-site.com/script.js',
         'line-number': 42,
         'column-number': 15,
@@ -117,7 +117,7 @@ describe('Security Contracts', () => {
       // Contract: Additional security headers for healthcare compliance
       const healthcareHeaders = {
         'X-LGPD-Compliant': 'true',
-        'X-Healthcare-Secure': 'true', 
+        'X-Healthcare-Secure': 'true',
         'X-Patient-Data-Protected': 'true',
         'X-ANVISA-Cybersecurity': 'compliant',
         'X-Medical-Device-Security': 'IEC-62304',
@@ -139,11 +139,11 @@ describe('Security Contracts', () => {
     test('should provide SRI hash generation for healthcare-critical resources', () => {
       // Contract: SRI hashes for all healthcare-critical JavaScript/CSS resources
       const criticalResources = [
-        'chart.js',        // Medical charting
-        'react.js',        // Core UI framework
-        'argon2.js',       // Password hashing
-        'zod.js',          // Data validation
-        'sentry.js',       // Error tracking
+        'chart.js', // Medical charting
+        'react.js', // Core UI framework
+        'argon2.js', // Password hashing
+        'zod.js', // Data validation
+        'sentry.js', // Error tracking
       ];
 
       const sriAlgorithms = ['sha256', 'sha384', 'sha512'];
@@ -161,7 +161,8 @@ describe('Security Contracts', () => {
 
     test('should validate SRI hash format and structure', () => {
       // Contract: SRI hash must follow standard format
-      const validSRIHash = 'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC';
+      const validSRIHash =
+        'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC';
       const sriHashPattern = /^(sha256|sha384|sha512)-[A-Za-z0-9+/]+=*$/;
 
       // Test: SRI hash format validation
@@ -381,7 +382,7 @@ describe('Security Contracts', () => {
       // Contract: Comprehensive security audit trail
       const auditTrailEvents = [
         'csp_violation',
-        'sri_violation', 
+        'sri_violation',
         'rate_limit_exceeded',
         'unauthorized_access',
         'security_header_missing',

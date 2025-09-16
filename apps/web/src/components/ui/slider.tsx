@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from "@neonpro/ui";
+import { cn } from '@neonpro/ui';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import * as React from 'react';
 

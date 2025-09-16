@@ -1,7 +1,7 @@
 /**
  * Mobile Keyboard Navigation Hook
  * T083 - Mobile Accessibility Optimization
- * 
+ *
  * Features:
  * - External keyboard support for mobile devices (Bluetooth keyboards)
  * - Focus management for mobile interfaces
@@ -11,7 +11,7 @@
  * - Brazilian Portuguese keyboard navigation labels
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 
 // Mobile Keyboard Navigation Levels
@@ -23,7 +23,8 @@ export const MOBILE_KEYBOARD_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type MobileKeyboardLevel = typeof MOBILE_KEYBOARD_LEVELS[keyof typeof MOBILE_KEYBOARD_LEVELS];
+export type MobileKeyboardLevel =
+  typeof MOBILE_KEYBOARD_LEVELS[keyof typeof MOBILE_KEYBOARD_LEVELS];
 
 // Healthcare Keyboard Shortcuts
 export const HEALTHCARE_KEYBOARD_SHORTCUTS = {
@@ -155,9 +156,9 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
    */
   const detectExternalKeyboard = useCallback((event: KeyboardEvent) => {
     // Heuristic: external keyboards typically have more key codes available
-    const hasExternalKeyboard = event.code !== '' && 
-      (event.metaKey || event.ctrlKey || event.altKey) &&
-      window.innerWidth <= 768; // Mobile viewport
+    const hasExternalKeyboard = event.code !== ''
+      && (event.metaKey || event.ctrlKey || event.altKey)
+      && window.innerWidth <= 768; // Mobile viewport
 
     setNavigationState(prev => ({
       ...prev,
@@ -185,14 +186,14 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
     ].join(', ');
 
     const elements = Array.from(
-      containerRef.current.querySelectorAll(focusableSelectors)
+      containerRef.current.querySelectorAll(focusableSelectors),
     ) as HTMLElement[];
 
     return elements.filter(el => {
       const style = window.getComputedStyle(el);
-      return style.display !== 'none' && 
-             style.visibility !== 'hidden' && 
-             !el.hasAttribute('aria-hidden');
+      return style.display !== 'none'
+        && style.visibility !== 'hidden'
+        && !el.hasAttribute('aria-hidden');
     });
   }, []);
 
@@ -258,9 +259,13 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
         if (event.key === 'Escape') {
           event.preventDefault();
           // Handle escape key - close modals, cancel operations
-          const activeModal = document.querySelector('[role="dialog"][aria-hidden="false"]') as HTMLElement;
+          const activeModal = document.querySelector(
+            '[role="dialog"][aria-hidden="false"]',
+          ) as HTMLElement;
           if (activeModal) {
-            const closeButton = activeModal.querySelector('[data-close], [aria-label*="fechar"]') as HTMLElement;
+            const closeButton = activeModal.querySelector(
+              '[data-close], [aria-label*="fechar"]',
+            ) as HTMLElement;
             closeButton?.click();
           }
         }
@@ -368,8 +373,8 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
     if (!href) return;
 
     const targetId = href.substring(1); // Remove #
-    const targetElement = document.getElementById(targetId) || 
-                         document.querySelector(href) as HTMLElement;
+    const targetElement = document.getElementById(targetId)
+      || document.querySelector(href) as HTMLElement;
 
     if (targetElement) {
       targetElement.focus();
@@ -381,7 +386,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
    * Focus management
    */
   const focusElement = useCallback((element: HTMLElement | string) => {
-    const targetElement = typeof element === 'string' 
+    const targetElement = typeof element === 'string'
       ? document.querySelector(element) as HTMLElement
       : element;
 
@@ -435,7 +440,8 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
         lastFocusedElementRef.current = event.target;
         setNavigationState(prev => ({
           ...prev,
-          currentFocusedElement: event.target.id || event.target.tagName,
+          currentFocusedElement: (event.target as HTMLElement | null)?.id
+            || (event.target as HTMLElement | null)?.tagName || 'unknown',
         }));
       }
     };

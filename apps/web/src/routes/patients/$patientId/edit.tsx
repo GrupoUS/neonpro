@@ -14,6 +14,7 @@ import { Textarea } from '@neonpro/ui';
 import { Checkbox } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Separator } from '@neonpro/ui';
+import { formatBRPhone, formatCPF, validateCPFMask } from '@neonpro/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,
@@ -31,7 +32,6 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { formatCPF, formatBRPhone, validateCPFMask } from '@neonpro/utils';
 
 // Type-safe params schema
 const patientParamsSchema = z.object({
@@ -652,5 +652,3 @@ function PatientEditPage() {
     </div>
   );
 }
-
-

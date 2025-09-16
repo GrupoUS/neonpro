@@ -104,12 +104,12 @@ export async function clearCaches(): Promise<void> {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration && registration.active) {
         const messageChannel = new MessageChannel();
-        
-        return new Promise((resolve) => {
+
+        return new Promise(resolve => {
           messageChannel.port1.onmessage = () => resolve();
           registration.active!.postMessage(
             { type: 'CLEAR_CACHE' },
-            [messageChannel.port2]
+            [messageChannel.port2],
           );
         });
       }
@@ -136,12 +136,12 @@ export async function preloadCriticalResources(urls: string[]): Promise<void> {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration && registration.active) {
       const messageChannel = new MessageChannel();
-      
-      return new Promise((resolve) => {
+
+      return new Promise(resolve => {
         messageChannel.port1.onmessage = () => resolve();
         registration.active!.postMessage(
           { type: 'CACHE_URLS', urls },
-          [messageChannel.port2]
+          [messageChannel.port2],
         );
       });
     }
@@ -177,7 +177,7 @@ export async function getServiceWorkerStatus(): Promise<{
 
   try {
     const registration = await navigator.serviceWorker.getRegistration();
-    
+
     return {
       supported: true,
       registered: !!registration,
@@ -200,7 +200,7 @@ function showUpdateNotification(): void {
   // This would typically show a toast or modal to the user
   // For now, we'll just log it
   console.log('[SW] New version available! Please refresh the page.');
-  
+
   // You can integrate with your notification system here
   if (typeof window !== 'undefined' && 'Notification' in window) {
     if (Notification.permission === 'granted') {
@@ -239,7 +239,7 @@ export function setupServiceWorkerListeners(): void {
   });
 
   // Listen for messages from service worker
-  navigator.serviceWorker.addEventListener('message', (event) => {
+  navigator.serviceWorker.addEventListener('message', event => {
     console.log('[SW] Message from service worker:', event.data);
   });
 }
@@ -250,16 +250,16 @@ export async function initializeServiceWorker(): Promise<void> {
     await registerServiceWorker();
     setupServiceWorkerListeners();
     await requestNotificationPermission();
-    
+
     // Preload critical resources
     const criticalResources = [
       '/assets/index.css',
       '/assets/index.js',
       '/brand/iconeneonpro.svg',
     ];
-    
+
     await preloadCriticalResources(criticalResources);
-    
+
     console.log('[SW] Service worker initialized successfully');
   } catch (error) {
     console.error('[SW] Service worker initialization failed:', error);

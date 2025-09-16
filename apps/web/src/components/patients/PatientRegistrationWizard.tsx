@@ -32,6 +32,7 @@ import {
   SelectValue,
   Textarea,
 } from '@neonpro/ui';
+import { formatBRPhone } from '@neonpro/utils';
 import {
   Check,
   ChevronLeft,
@@ -45,7 +46,6 @@ import {
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { formatBRPhone } from '@neonpro/utils';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';

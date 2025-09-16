@@ -96,3 +96,11 @@ Notes (2025-09-16):
   - Rate limiting via `apps/api/src/middleware/rate-limit.ts`
   - Audit logging via `apps/api/src/middleware/audit-log.ts`
 - Remaining gaps here are earlier phases (Schemas T016–T017, Repos/Services T012–T015) which are covered in the enhanced checklist. API behavior validated via passing contract/integration tests (see enhanced file).
+
+
+## Status Update — 2025-09-16
+- Type-check: PASS (apps/web)
+- Build: PASS (Vite production build for apps/web)
+- Tests: PASS — Vitest (19 files, 39 tests)
+- Lint: WARN-only — unused vars/imports in some test files (follow-up to clean test warnings)
+- Notes: API endpoints consolidated in `apps/api/src/routes/chat.ts` with streaming/rate-limit/audit middlewares. Aesthetic demo routing export fix applied; UI Button import paths normalized to `@neonpro/ui`.

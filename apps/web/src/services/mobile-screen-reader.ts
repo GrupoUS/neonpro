@@ -1,7 +1,7 @@
 /**
  * Mobile Screen Reader Optimization Service
  * T083 - Mobile Accessibility Optimization
- * 
+ *
  * Features:
  * - Healthcare data structure optimization for mobile screen readers
  * - Proper heading hierarchy for medical content
@@ -22,7 +22,8 @@ export const MOBILE_SCREEN_READER_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type MobileScreenReaderLevel = typeof MOBILE_SCREEN_READER_LEVELS[keyof typeof MOBILE_SCREEN_READER_LEVELS];
+export type MobileScreenReaderLevel =
+  typeof MOBILE_SCREEN_READER_LEVELS[keyof typeof MOBILE_SCREEN_READER_LEVELS];
 
 // Healthcare Content Types for Screen Readers
 export const HEALTHCARE_CONTENT_TYPES = {
@@ -38,7 +39,8 @@ export const HEALTHCARE_CONTENT_TYPES = {
   PRESCRIPTION: 'prescription',
 } as const;
 
-export type HealthcareContentType = typeof HEALTHCARE_CONTENT_TYPES[keyof typeof HEALTHCARE_CONTENT_TYPES];
+export type HealthcareContentType =
+  typeof HEALTHCARE_CONTENT_TYPES[keyof typeof HEALTHCARE_CONTENT_TYPES];
 
 // ARIA Landmark Types for Healthcare
 export const HEALTHCARE_LANDMARKS = {
@@ -65,26 +67,26 @@ export const HEALTHCARE_HEADING_HIERARCHY = {
 // Brazilian Portuguese Medical Terminology Pronunciation
 export const MEDICAL_PRONUNCIATION_PT_BR = {
   // Common medical terms with pronunciation guides
-  'hipertensão': 'hi-per-ten-são',
-  'diabetes': 'di-a-be-tes',
-  'medicação': 'me-di-ca-ção',
-  'prescrição': 'pres-cri-ção',
-  'diagnóstico': 'di-ag-nós-ti-co',
-  'sintoma': 'sin-to-ma',
-  'tratamento': 'tra-ta-men-to',
-  'exame': 'e-xa-me',
-  'consulta': 'con-sul-ta',
-  'emergência': 'e-mer-gên-cia',
-  'alergia': 'a-ler-gi-a',
-  'cirurgia': 'ci-rur-gi-a',
-  'anestesia': 'a-nes-te-si-a',
-  'antibiótico': 'an-ti-bi-ó-ti-co',
-  'cardiovascular': 'car-di-o-vas-cu-lar',
-  'neurológico': 'neu-ro-ló-gi-co',
-  'ortopédico': 'or-to-pé-di-co',
-  'ginecológico': 'gi-ne-co-ló-gi-co',
-  'pediátrico': 'pe-di-á-tri-co',
-  'psiquiátrico': 'psi-qui-á-tri-co',
+  hipertensão: 'hi-per-ten-são',
+  diabetes: 'di-a-be-tes',
+  medicação: 'me-di-ca-ção',
+  prescrição: 'pres-cri-ção',
+  diagnóstico: 'di-ag-nós-ti-co',
+  sintoma: 'sin-to-ma',
+  tratamento: 'tra-ta-men-to',
+  exame: 'e-xa-me',
+  consulta: 'con-sul-ta',
+  emergência: 'e-mer-gên-cia',
+  alergia: 'a-ler-gi-a',
+  cirurgia: 'ci-rur-gi-a',
+  anestesia: 'a-nes-te-si-a',
+  antibiótico: 'an-ti-bi-ó-ti-co',
+  cardiovascular: 'car-di-o-vas-cu-lar',
+  neurológico: 'neu-ro-ló-gi-co',
+  ortopédico: 'or-to-pé-di-co',
+  ginecológico: 'gi-ne-co-ló-gi-co',
+  pediátrico: 'pe-di-á-tri-co',
+  psiquiátrico: 'psi-qui-á-tri-co',
 } as const;
 
 // Screen Reader Element Schema
@@ -110,7 +112,13 @@ export type ScreenReaderElement = z.infer<typeof ScreenReaderElementSchema>;
 // Screen Reader Accessibility Issue
 export interface ScreenReaderAccessibilityIssue {
   id: string;
-  type: 'labeling' | 'hierarchy' | 'landmarks' | 'pronunciation' | 'navigation' | 'content_structure';
+  type:
+    | 'labeling'
+    | 'hierarchy'
+    | 'landmarks'
+    | 'pronunciation'
+    | 'navigation'
+    | 'content_structure';
   severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   description: string;
@@ -202,16 +210,18 @@ export class MobileScreenReaderService {
   /**
    * Validate labeling compliance
    */
-  validateLabelingCompliance(elements: ScreenReaderElement[]): ScreenReaderAccessibilityReport['labelingCompliance'] {
+  validateLabelingCompliance(
+    elements: ScreenReaderElement[],
+  ): ScreenReaderAccessibilityReport['labelingCompliance'] {
     this.issues = [];
-    
+
     const totalElements = elements.filter(el => el.isFocusable || el.role).length;
     const labeledElements = elements.filter(el => el.hasProperLabeling).length;
     const missingLabels = totalElements - labeledElements;
     const issues: ScreenReaderAccessibilityIssue[] = [];
 
     if (missingLabels > 0) {
-      const unlabeledElements = elements.filter(el => 
+      const unlabeledElements = elements.filter(el =>
         (el.isFocusable || el.role) && !el.hasProperLabeling
       );
 
@@ -220,11 +230,14 @@ export class MobileScreenReaderService {
         type: 'labeling',
         severity: 'high',
         title: 'Elementos sem rótulos acessíveis',
-        description: `${missingLabels} elementos interativos não possuem rótulos adequados para leitores de tela`,
-        recommendation: 'Adicionar aria-label, aria-labelledby ou rótulos visíveis para todos os elementos interativos',
+        description:
+          `${missingLabels} elementos interativos não possuem rótulos adequados para leitores de tela`,
+        recommendation:
+          'Adicionar aria-label, aria-labelledby ou rótulos visíveis para todos os elementos interativos',
         affectedElements: unlabeledElements.map(el => el.id),
         wcagReference: 'WCAG 2.1 AA - Critério 4.1.2 (Nome, Função, Valor)',
-        healthcareImpact: 'Impede identificação de funcionalidades médicas críticas por leitores de tela',
+        healthcareImpact:
+          'Impede identificação de funcionalidades médicas críticas por leitores de tela',
         mobileSpecific: true,
         remediation: {
           steps: [
@@ -257,7 +270,9 @@ export class MobileScreenReaderService {
   /**
    * Validate heading hierarchy
    */
-  validateHeadingHierarchy(elements: ScreenReaderElement[]): ScreenReaderAccessibilityReport['headingHierarchy'] {
+  validateHeadingHierarchy(
+    elements: ScreenReaderElement[],
+  ): ScreenReaderAccessibilityReport['headingHierarchy'] {
     const headings = elements.filter(el => el.headingLevel);
     const totalHeadings = headings.length;
     const properHierarchy = headings.filter(el => el.hasProperHierarchy).length;
@@ -270,11 +285,14 @@ export class MobileScreenReaderService {
         type: 'hierarchy',
         severity: 'medium',
         title: 'Hierarquia de cabeçalhos incorreta',
-        description: `${hierarchyViolations} cabeçalhos não seguem a hierarquia adequada para conteúdo médico`,
-        recommendation: 'Organizar cabeçalhos em hierarquia lógica: h1 para título da página, h2 para seções principais, etc.',
+        description:
+          `${hierarchyViolations} cabeçalhos não seguem a hierarquia adequada para conteúdo médico`,
+        recommendation:
+          'Organizar cabeçalhos em hierarquia lógica: h1 para título da página, h2 para seções principais, etc.',
         affectedElements: headings.filter(el => !el.hasProperHierarchy).map(el => el.id),
         wcagReference: 'WCAG 2.1 AA - Critério 1.3.1 (Informações e Relacionamentos)',
-        healthcareImpact: 'Dificulta navegação por seções de informações médicas com leitores de tela',
+        healthcareImpact:
+          'Dificulta navegação por seções de informações médicas com leitores de tela',
         mobileSpecific: true,
         remediation: {
           steps: [
@@ -302,7 +320,8 @@ export class MobileScreenReaderService {
         recommendation: 'Adicionar cabeçalho h1 descrevendo o propósito da página médica',
         affectedElements: ['page-structure'],
         wcagReference: 'WCAG 2.1 AA - Critério 1.3.1 (Informações e Relacionamentos)',
-        healthcareImpact: 'Usuários de leitores de tela não conseguem identificar o contexto médico da página',
+        healthcareImpact:
+          'Usuários de leitores de tela não conseguem identificar o contexto médico da página',
         mobileSpecific: true,
         remediation: {
           steps: [
@@ -335,16 +354,18 @@ export class MobileScreenReaderService {
   /**
    * Validate landmark navigation
    */
-  validateLandmarkNavigation(elements: ScreenReaderElement[]): ScreenReaderAccessibilityReport['landmarkNavigation'] {
+  validateLandmarkNavigation(
+    elements: ScreenReaderElement[],
+  ): ScreenReaderAccessibilityReport['landmarkNavigation'] {
     const landmarks = elements.filter(el => el.landmarkType);
     const totalLandmarks = landmarks.length;
-    const properLandmarks = landmarks.filter(el => 
-      Object.values(HEALTHCARE_LANDMARKS).includes(el.landmarkType as any)
-    ).length;
+    const properLandmarks =
+      landmarks.filter(el => Object.values(HEALTHCARE_LANDMARKS).includes(el.landmarkType as any))
+        .length;
 
     const requiredLandmarks = ['main', 'navigation', 'banner'];
     const presentLandmarks = landmarks.map(el => el.landmarkType).filter(Boolean);
-    const missingLandmarks = requiredLandmarks.filter(landmark => 
+    const missingLandmarks = requiredLandmarks.filter(landmark =>
       !presentLandmarks.includes(landmark)
     );
 
@@ -357,7 +378,8 @@ export class MobileScreenReaderService {
         severity: 'medium',
         title: 'Marcos de navegação ausentes',
         description: `${missingLandmarks.length} marcos de navegação essenciais estão ausentes`,
-        recommendation: 'Implementar marcos de navegação (main, navigation, banner) para facilitar navegação',
+        recommendation:
+          'Implementar marcos de navegação (main, navigation, banner) para facilitar navegação',
         affectedElements: missingLandmarks,
         wcagReference: 'WCAG 2.1 AA - Critério 1.3.6 (Identificar Propósito)',
         healthcareImpact: 'Dificulta navegação rápida entre seções de informações médicas',
@@ -378,8 +400,8 @@ export class MobileScreenReaderService {
 
     this.issues.push(...issues);
 
-    const landmarkRate = requiredLandmarks.length > 0 
-      ? (requiredLandmarks.length - missingLandmarks.length) / requiredLandmarks.length 
+    const landmarkRate = requiredLandmarks.length > 0
+      ? (requiredLandmarks.length - missingLandmarks.length) / requiredLandmarks.length
       : 1;
     const level = this.calculateLandmarkLevel(landmarkRate);
 
@@ -395,13 +417,13 @@ export class MobileScreenReaderService {
   /**
    * Validate pronunciation guides for medical terminology
    */
-  validatePronunciationGuides(elements: ScreenReaderElement[]): ScreenReaderAccessibilityReport['pronunciationGuides'] {
+  validatePronunciationGuides(
+    elements: ScreenReaderElement[],
+  ): ScreenReaderAccessibilityReport['pronunciationGuides'] {
     const medicalTerms = Object.keys(MEDICAL_PRONUNCIATION_PT_BR);
     const contentText = elements.map(el => el.textContent || '').join(' ').toLowerCase();
-    
-    const medicalTermsFound = medicalTerms.filter(term => 
-      contentText.includes(term.toLowerCase())
-    );
+
+    const medicalTermsFound = medicalTerms.filter(term => contentText.includes(term.toLowerCase()));
 
     // Mock implementation - would check for actual pronunciation guides
     const termsWithGuides = Math.floor(medicalTermsFound.length * 0.6); // 60% have guides
@@ -452,16 +474,19 @@ export class MobileScreenReaderService {
   /**
    * Validate content structure for healthcare
    */
-  validateContentStructure(elements: ScreenReaderElement[]): ScreenReaderAccessibilityReport['contentStructure'] {
+  validateContentStructure(
+    elements: ScreenReaderElement[],
+  ): ScreenReaderAccessibilityReport['contentStructure'] {
     const contentElements = elements.filter(el => el.contentType);
-    const structuredContent = contentElements.filter(el => 
-      el.role && (el.ariaLabel || el.ariaLabelledBy)
-    ).length;
+    const structuredContent =
+      contentElements.filter(el => el.role && (el.ariaLabel || el.ariaLabelledBy)).length;
     const unstructuredContent = contentElements.length - structuredContent;
 
-    const healthcarePatterns = Array.from(new Set(
-      contentElements.map(el => el.contentType).filter(Boolean)
-    )) as HealthcareContentType[];
+    const healthcarePatterns = Array.from(
+      new Set(
+        contentElements.map(el => el.contentType).filter(Boolean),
+      ),
+    ) as HealthcareContentType[];
 
     const issues: ScreenReaderAccessibilityIssue[] = [];
 
@@ -471,9 +496,10 @@ export class MobileScreenReaderService {
         type: 'content_structure',
         severity: 'medium',
         title: 'Conteúdo médico não estruturado',
-        description: `${unstructuredContent} elementos de conteúdo médico não possuem estrutura adequada`,
+        description:
+          `${unstructuredContent} elementos de conteúdo médico não possuem estrutura adequada`,
         recommendation: 'Estruturar conteúdo médico com roles ARIA e rótulos apropriados',
-        affectedElements: contentElements.filter(el => 
+        affectedElements: contentElements.filter(el =>
           !el.role || (!el.ariaLabel && !el.ariaLabelledBy)
         ).map(el => el.id),
         wcagReference: 'WCAG 2.1 AA - Critério 1.3.1 (Informações e Relacionamentos)',
@@ -495,7 +521,9 @@ export class MobileScreenReaderService {
 
     this.issues.push(...issues);
 
-    const structureRate = contentElements.length > 0 ? structuredContent / contentElements.length : 1;
+    const structureRate = contentElements.length > 0
+      ? structuredContent / contentElements.length
+      : 1;
     const level = this.calculateContentStructureLevel(structureRate);
 
     return {
@@ -628,8 +656,9 @@ export class MobileScreenReaderService {
     const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8) + (lowIssues * 3);
-    
+    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
+      + (lowIssues * 3);
+
     return Math.max(0, 100 - penalty);
   }
 
@@ -651,7 +680,9 @@ export class MobileScreenReaderService {
       const mediumCount = issues.filter(i => i.severity === 'medium').length;
 
       if (criticalCount > 0) {
-        recommendations.push(`Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`);
+        recommendations.push(
+          `Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`,
+        );
       }
       if (highCount > 0) {
         recommendations.push(`Abordar ${highCount} problema(s) de alta prioridade em ${type}`);

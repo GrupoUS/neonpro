@@ -20,7 +20,7 @@ declare global {
     gtag?: (
       command: 'event' | string,
       action: string,
-      params?: Record<string, any>
+      params?: Record<string, any>,
     ) => void;
   }
 }
@@ -173,7 +173,10 @@ export const logBundleSize = () => {
 };
 
 // Memory usage monitoring
-export const monitorMemoryUsage = (): { used: number; total: number; limit: number } | undefined => {
+export const monitorMemoryUsage = ():
+  | { used: number; total: number; limit: number }
+  | undefined =>
+{
   if (typeof window === 'undefined' || !('performance' in window)) return undefined;
 
   const memory = (performance as any).memory;

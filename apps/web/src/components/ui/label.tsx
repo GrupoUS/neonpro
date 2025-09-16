@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from "@neonpro/ui";
+import { cn } from '@neonpro/ui';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import * as React from 'react';
 

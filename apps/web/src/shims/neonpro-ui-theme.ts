@@ -13,13 +13,19 @@ function resolveTheme(theme: Theme): 'light' | 'dark' {
 
 export function useThemeBridge() {
   const [theme, setThemeState] = useState<Theme>(() => {
-    try { return (localStorage.getItem('neonpro-theme') as Theme) || 'dark'; } catch { return 'dark'; }
+    try {
+      return (localStorage.getItem('neonpro-theme') as Theme) || 'dark';
+    } catch {
+      return 'dark';
+    }
   });
 
   const resolvedTheme = useMemo(() => resolveTheme(theme), [theme]);
 
   useEffect(() => {
-    try { localStorage.setItem('neonpro-theme', theme); } catch {}
+    try {
+      localStorage.setItem('neonpro-theme', theme);
+    } catch {}
     document.documentElement.classList.toggle('dark', resolvedTheme === 'dark');
   }, [theme, resolvedTheme]);
 

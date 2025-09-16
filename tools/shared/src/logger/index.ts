@@ -10,8 +10,8 @@
  * - Healthcare audit trail support
  */
 
-import { appendFileSync, existsSync, mkdirSync, writeFileSync, statSync, renameSync, readdirSync, unlinkSync } from 'fs';
-import { join, dirname } from 'path';
+import { appendFileSync, existsSync, mkdirSync, statSync, renameSync, readdirSync, unlinkSync } from 'fs';
+import { join } from 'path';
 import { performance } from 'perf_hooks';
 import { EventEmitter } from 'events';
 import {
@@ -20,7 +20,6 @@ import {
   LogEntry,
   ConstitutionalContext,
   ErrorInfo,
-  PerformanceMetrics,
   Result,
 } from '../types';
 

@@ -3,17 +3,17 @@
  * T081 - WCAG 2.1 AA+ Accessibility Compliance
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  useAccessibilityPreferences,
+  useAccessibleField,
+  useAccessibleTable,
   useFocusTrap,
   useKeyboardNavigation,
-  useScreenReaderAnnouncement,
   useLiveRegion,
-  useAccessibleField,
-  useAccessibilityPreferences,
+  useScreenReaderAnnouncement,
   useSkipLinks,
-  useAccessibleTable,
 } from '../useAccessibility';
 
 // Mock DOM methods
@@ -90,14 +90,14 @@ afterEach(() => {
 describe('useFocusTrap', () => {
   it('should create focus trap when active', () => {
     const { result } = renderHook(() => useFocusTrap(true));
-    
+
     expect(result.current).toBeDefined();
     expect(result.current.current).toBeNull(); // Initially null until ref is attached
   });
 
   it('should not create focus trap when inactive', () => {
     const { result } = renderHook(() => useFocusTrap(false));
-    
+
     expect(result.current).toBeDefined();
     expect(result.current.current).toBeNull();
   });
@@ -112,7 +112,7 @@ describe('useKeyboardNavigation', () => {
   });
 
   it('should initialize with correct default values', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
@@ -120,12 +120,12 @@ describe('useKeyboardNavigation', () => {
   });
 
   it('should handle keyboard navigation', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
     const mockEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
-    
+
     act(() => {
       result.current.handleKeyDown(mockEvent);
     });
@@ -134,7 +134,7 @@ describe('useKeyboardNavigation', () => {
   });
 
   it('should handle selection with Enter key', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
@@ -143,7 +143,7 @@ describe('useKeyboardNavigation', () => {
       value: vi.fn(),
       writable: true,
     });
-    
+
     act(() => {
       result.current.handleKeyDown(mockEvent);
     });
@@ -152,7 +152,7 @@ describe('useKeyboardNavigation', () => {
   });
 
   it('should provide correct item props', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
@@ -244,9 +244,7 @@ describe('useAccessibleField', () => {
   });
 
   it('should validate required fields', () => {
-    const { result } = renderHook(() => 
-      useAccessibleField('testField', { required: true })
-    );
+    const { result } = renderHook(() => useAccessibleField('testField', { required: true }));
 
     act(() => {
       const isValid = result.current.validateField();
@@ -256,10 +254,9 @@ describe('useAccessibleField', () => {
   });
 
   it('should use custom validation', () => {
-    const customValidate = (value: string) => 
-      value.length < 3 ? 'Mínimo 3 caracteres' : null;
+    const customValidate = (value: string) => value.length < 3 ? 'Mínimo 3 caracteres' : null;
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAccessibleField('testField', { validate: customValidate })
     );
 
@@ -272,9 +269,7 @@ describe('useAccessibleField', () => {
   });
 
   it('should provide correct field props', () => {
-    const { result } = renderHook(() => 
-      useAccessibleField('testField', { required: true })
-    );
+    const { result } = renderHook(() => useAccessibleField('testField', { required: true }));
 
     const { fieldProps } = result.current;
 

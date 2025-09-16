@@ -194,14 +194,14 @@ export const TrendMiniChart = ({
   height = 80,
   ariaLabel = 'Tendências',
   title = 'Tendências',
-  desc = 'Mini gráfico com as tendências no período.'
+  desc = 'Mini gráfico com as tendências no período.',
 }: {
-  data?: TrendData[]
-  width?: number
-  height?: number
-  ariaLabel?: string
-  title?: string
-  desc?: string
+  data?: TrendData[];
+  width?: number;
+  height?: number;
+  ariaLabel?: string;
+  title?: string;
+  desc?: string;
 }) => {
   if (!data || data.length === 0) {
     return (
@@ -209,79 +209,81 @@ export const TrendMiniChart = ({
         <BarChart3 className='h-12 w-12 mx-auto mb-4 opacity-50' />
         <p>Sem dados de tendências</p>
       </div>
-    )
+    );
   }
 
   // Extract numeric values robustly from various possible field names
   const values = data.map((d: any) => {
-    if (typeof d === 'number') return d
-    if (d == null) return 0
-    if (d.value != null) return Number(d.value)
-    if (d.count != null) return Number(d.count)
-    if (d.total != null) return Number(d.total)
-    if (d.amount != null) return Number(d.amount)
-    if (d.y != null) return Number(d.y)
-    return 0
-  })
+    if (typeof d === 'number') return d;
+    if (d == null) return 0;
+    if (d.value != null) return Number(d.value);
+    if (d.count != null) return Number(d.count);
+    if (d.total != null) return Number(d.total);
+    if (d.amount != null) return Number(d.amount);
+    if (d.y != null) return Number(d.y);
+    return 0;
+  });
 
-  const w = Math.max(10, width)
-  const h = Math.max(10, height)
-  const paddingX = 8
-  const paddingY = 6
+  const w = Math.max(10, width);
+  const h = Math.max(10, height);
+  const paddingX = 8;
+  const paddingY = 6;
 
-  const minV = Math.min(...values)
-  const maxV = Math.max(...values)
-  const span = Math.max(1e-6, maxV - minV)
+  const minV = Math.min(...values);
+  const maxV = Math.max(...values);
+  const span = Math.max(1e-6, maxV - minV);
 
-  const innerW = w - paddingX * 2
-  const innerH = h - paddingY * 2
+  const innerW = w - paddingX * 2;
+  const innerH = h - paddingY * 2;
 
-  const n = values.length
-  const stepX = n > 1 ? innerW / (n - 1) : 0
+  const n = values.length;
+  const stepX = n > 1 ? innerW / (n - 1) : 0;
 
-  const toY = (v: number) => paddingY + innerH - ((v - minV) / span) * innerH
+  const toY = (v: number) => paddingY + innerH - ((v - minV) / span) * innerH;
 
-  const points = values.map((v, i) => [paddingX + stepX * i, toY(v)] as const)
+  const points = values.map((v, i) => [paddingX + stepX * i, toY(v)] as const);
 
   const dPath = points
     .map(([x, y], i) => (i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`))
-    .join(' ')
+    .join(' ');
 
   return (
     <svg
-      role="img"
+      role='img'
       aria-label={ariaLabel}
       width={w}
       height={h}
       viewBox={`0 0 ${w} ${h}`}
-      className="block"
-      focusable="false"
+      className='block'
+      focusable='false'
     >
       <title>{title}</title>
       <desc>{desc}</desc>
 
       <path
         d={dPath}
-        fill="none"
-        stroke="currentColor"
+        fill='none'
+        stroke='currentColor'
         strokeOpacity={0.9}
         strokeWidth={2}
-        vectorEffect="non-scaling-stroke"
+        vectorEffect='non-scaling-stroke'
       />
 
       {/* Optional end circle for emphasis */}
-      {points.length > 0 ? (
-        <circle
-          cx={points[points.length - 1][0]}
-          cy={points[points.length - 1][1]}
-          r={2.5}
-          fill="currentColor"
-          opacity={0.9}
-        />
-      ) : null}
+      {points.length > 0
+        ? (
+          <circle
+            cx={points[points.length - 1][0]}
+            cy={points[points.length - 1][1]}
+            r={2.5}
+            fill='currentColor'
+            opacity={0.9}
+          />
+        )
+        : null}
     </svg>
-  )
-}
+  );
+};
 
 export const AIInsightsDashboard = ({
   timeRange: initialTimeRange = '7d',
@@ -310,7 +312,9 @@ export const AIInsightsDashboard = ({
     });
 
   // Fetch trends data
-  const { data: trends, isLoading: trendsLoading, error: trendsError } = useQuery<TrendsApiResponse>({
+  const { data: trends, isLoading: trendsLoading, error: trendsError } = useQuery<
+    TrendsApiResponse
+  >({
     queryKey: ['ai-trends', timeRange, _insightTypes],
     queryFn: () => fetchInsightTrends(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
@@ -395,7 +399,10 @@ export const AIInsightsDashboard = ({
   }
 
   return (
-    <div className={cn('space-y-6', mobileOptimized && 'touch-manipulation select-none')} data-testid={testId}>
+    <div
+      className={cn('space-y-6', mobileOptimized && 'touch-manipulation select-none')}
+      data-testid={testId}
+    >
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>

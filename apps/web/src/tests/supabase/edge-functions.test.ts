@@ -1,7 +1,7 @@
 /**
  * Supabase Edge Functions Tests
  * Healthcare Serverless Functions Testing
- * 
+ *
  * Features:
  * - Healthcare data processing functions
  * - Real-time communication and notifications
@@ -13,14 +13,14 @@
  * - Integration with external APIs
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { 
+import {
   createTestSupabaseClient,
+  type EdgeFunctionMetrics,
   HealthcareTestDataGenerator,
   HealthcareTestValidators,
-  type EdgeFunctionMetrics,
-  type TestUser
+  type TestUser,
 } from '@/lib/testing/supabase-test-client';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 describe('Supabase Edge Functions - Healthcare Processing', () => {
   let testClient: any;
@@ -31,53 +31,67 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       edgeFunctions: true,
-      realTimeFeatures: true
+      realTimeFeatures: true,
     });
     testDataGenerator = new HealthcareTestDataGenerator();
-    
+
     console.log('🧪 Edge Functions Test Environment Setup Complete');
   });
 
   afterAll(async () => {
     await testDataGenerator.cleanupTestData();
-    
+
     // Generate performance report
     console.log('\n📊 Edge Functions Test Summary:');
-    const avgLatency = functionMetrics.reduce((sum, m) => sum + m.latency, 0) / functionMetrics.length;
+    const avgLatency = functionMetrics.reduce((sum, m) => sum + m.latency, 0)
+      / functionMetrics.length;
     console.log(`Average Latency: ${avgLatency.toFixed(2)}ms`);
     console.log(`Total Functions Tested: ${functionMetrics.length}`);
-    console.log(`Success Rate: ${(functionMetrics.filter(m => m.success).length / functionMetrics.length * 100).toFixed(1)}%`);
-    
+    console.log(
+      `Success Rate: ${
+        (functionMetrics.filter(m => m.success).length / functionMetrics.length * 100).toFixed(1)
+      }%`,
+    );
+
     console.log('⚡ Edge Functions Test Environment Cleaned Up');
   });
 
-  const recordFunctionMetrics = (functionName: string, latency: number, success: boolean, details?: any) => {
+  const recordFunctionMetrics = (
+    functionName: string,
+    latency: number,
+    success: boolean,
+    details?: any,
+  ) => {
     const metric: EdgeFunctionMetrics = {
       functionName,
       latency,
       success,
       timestamp: new Date().toISOString(),
-      details: details || {}
+      details: details || {},
     };
     functionMetrics.push(metric);
     return metric;
   };
 
-  const mockEdgeFunction = async (functionName: string, payload: any, expectedLatency: number = 200) => {
+  const mockEdgeFunction = async (
+    functionName: string,
+    payload: any,
+    expectedLatency: number = 200,
+  ) => {
     const startTime = performance.now();
-    
+
     // Simulate edge function execution
     await new Promise(resolve => setTimeout(resolve, Math.random() * expectedLatency));
-    
+
     const latency = performance.now() - startTime;
     const success = Math.random() > 0.05; // 95% success rate
-    
+
     recordFunctionMetrics(functionName, latency, success, { payload });
-    
+
     return {
       data: success ? { result: 'processed', payload } : null,
       error: success ? null : { message: 'Function execution failed' },
-      latency
+      latency,
     };
   };
 
@@ -95,32 +109,32 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             street: 'Rua das Flores, 123',
             city: 'São Paulo',
             state: 'SP',
-            zip_code: '01234-567'
+            zip_code: '01234-567',
           },
           emergency_contact: {
             name: 'Maria Silva',
             relationship: 'spouse',
-            phone: '+55 11 88888-8888'
-          }
+            phone: '+55 11 88888-8888',
+          },
         },
         validation_rules: [
           'cpf_format',
           'email_format',
           'phone_format',
           'required_fields',
-          'data_consistency'
-        ]
+          'data_consistency',
+        ],
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'patient-data-validation',
         patientValidationPayload,
-        150
+        150,
       );
 
       expect(error).toBeNull();
       expect(HealthcareTestValidators.validatePerformance(latency, 'critical_query')).toBe(true);
-      
+
       if (data) {
         expect(data.result).toBe('processed');
         expect(data.payload.patient_data.cpf).toBe('123.456.789-01');
@@ -132,25 +146,26 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
     test('should process medical record classification', async () => {
       // security-auditor: Medical data classification
       const medicalRecordPayload = {
-        record_content: 'Paciente apresenta quadro de hipertensão arterial controlada. Prescrição: Losartana 50mg.',
+        record_content:
+          'Paciente apresenta quadro de hipertensão arterial controlada. Prescrição: Losartana 50mg.',
         classification_criteria: {
           sensitivity_level: 'high',
           data_categories: ['health_data', 'prescription_data'],
           retention_requirements: '20_years',
-          access_restrictions: ['healthcare_professionals_only']
+          access_restrictions: ['healthcare_professionals_only'],
         },
         ai_processing: {
           extract_diagnoses: true,
           extract_medications: true,
           extract_procedures: false,
-          anonymization_required: false
-        }
+          anonymization_required: false,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'medical-record-classifier',
         medicalRecordPayload,
-        300
+        300,
       );
 
       expect(error).toBeNull();
@@ -168,14 +183,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             medication: 'Losartana',
             dosage: '50mg',
             frequency: 'once_daily',
-            duration: '30_days'
+            duration: '30_days',
           },
           {
             medication: 'Atenolol',
             dosage: '25mg',
             frequency: 'twice_daily',
-            duration: '30_days'
-          }
+            duration: '30_days',
+          },
         ],
         patient_allergies: ['penicillin'],
         current_medications: ['Metformina 500mg'],
@@ -183,14 +198,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           'drug_interactions',
           'allergy_contraindications',
           'dosage_validation',
-          'duplicate_therapy_check'
-        ]
+          'duplicate_therapy_check',
+        ],
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'prescription-validator',
         prescriptionPayload,
-        400
+        400,
       );
 
       expect(error).toBeNull();
@@ -209,35 +224,35 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             value: 12.5,
             unit: 'g/dL',
             reference_range: { min: 12.0, max: 16.0 },
-            collection_date: '2024-09-15'
+            collection_date: '2024-09-15',
           },
           {
             test_name: 'Glicose',
             value: 180,
             unit: 'mg/dL',
             reference_range: { min: 70, max: 100 },
-            collection_date: '2024-09-15'
+            collection_date: '2024-09-15',
           },
           {
             test_name: 'Colesterol Total',
             value: 220,
             unit: 'mg/dL',
             reference_range: { min: 0, max: 200 },
-            collection_date: '2024-09-15'
-          }
+            collection_date: '2024-09-15',
+          },
         ],
         analysis_options: {
           flag_abnormal_values: true,
           generate_summary: true,
           compare_with_history: true,
-          alert_critical_values: true
-        }
+          alert_critical_values: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'lab-results-analyzer',
         labResultsPayload,
-        250
+        250,
       );
 
       expect(error).toBeNull();
@@ -254,31 +269,31 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           gender: 'male',
           weight: 85,
           height: 175,
-          medical_history: ['hypertension', 'diabetes_type_2']
+          medical_history: ['hypertension', 'diabetes_type_2'],
         },
         symptoms: [
           { symptom: 'chest_pain', severity: 7, duration: '2_hours' },
           { symptom: 'shortness_of_breath', severity: 6, duration: '1_hour' },
-          { symptom: 'nausea', severity: 4, duration: '30_minutes' }
+          { symptom: 'nausea', severity: 4, duration: '30_minutes' },
         ],
         vital_signs: {
           blood_pressure: '160/95',
           heart_rate: 95,
           temperature: 37.2,
-          oxygen_saturation: 96
+          oxygen_saturation: 96,
         },
         ai_model_config: {
           model_version: 'v2.1',
           confidence_threshold: 0.7,
           max_suggestions: 5,
-          include_emergency_flags: true
-        }
+          include_emergency_flags: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'ai-diagnosis-support',
         diagnosisPayload,
-        800
+        800,
       );
 
       expect(error).toBeNull();
@@ -297,27 +312,27 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         recipient: {
           user_id: 'patient-789',
           notification_preferences: ['push', 'email'],
-          timezone: 'America/Sao_Paulo'
+          timezone: 'America/Sao_Paulo',
         },
         appointment_details: {
           appointment_id: 'apt-123456',
           doctor_name: 'Dr. Ana Santos',
           appointment_date: '2024-09-20T14:30:00.000Z',
           clinic_address: 'Rua da Saúde, 456 - São Paulo',
-          reminder_time: '1_hour_before'
+          reminder_time: '1_hour_before',
         },
         delivery_options: {
           immediate: false,
           scheduled_delivery: new Date(Date.now() + 3600000).toISOString(),
           retry_attempts: 3,
-          fallback_channels: ['sms']
-        }
+          fallback_channels: ['sms'],
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'real-time-notifications',
         notificationPayload,
-        100
+        100,
       );
 
       expect(error).toBeNull();
@@ -336,27 +351,27 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           location: {
             latitude: -23.5505,
             longitude: -46.6333,
-            address: 'Av. Paulista, 1000 - São Paulo'
+            address: 'Av. Paulista, 1000 - São Paulo',
           },
           medical_conditions: ['diabetes', 'cardiac_arrhythmia'],
-          emergency_contacts: ['contact-1', 'contact-2']
+          emergency_contacts: ['contact-1', 'contact-2'],
         },
         alert_recipients: [
           { type: 'emergency_team', team_id: 'team-alpha' },
           { type: 'on_call_doctor', doctor_id: 'doctor-oncall-123' },
-          { type: 'family_member', contact_id: 'family-contact-456' }
+          { type: 'family_member', contact_id: 'family-contact-456' },
         ],
         response_requirements: {
           acknowledgment_required: true,
           estimated_response_time: '5_minutes',
-          escalation_if_no_response: true
-        }
+          escalation_if_no_response: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'emergency-alert-broadcaster',
         emergencyPayload,
-        80
+        80,
       );
 
       expect(error).toBeNull();
@@ -373,26 +388,26 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           user_id: 'patient-websocket-123',
           user_role: 'patient',
           session_id: 'ws-session-456',
-          authentication_token: 'bearer-token-789'
+          authentication_token: 'bearer-token-789',
         },
         connection_config: {
           heartbeat_interval: 30000,
           max_idle_time: 300000,
           reconnection_attempts: 5,
-          data_compression: true
+          data_compression: true,
         },
         subscription_channels: [
           'appointment_updates',
           'lab_results',
           'prescription_notifications',
-          'emergency_alerts'
-        ]
+          'emergency_alerts',
+        ],
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'websocket-connection-manager',
         websocketPayload,
-        50
+        50,
       );
 
       expect(error).toBeNull();
@@ -410,34 +425,34 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             user_id: 'doctor-tele-123',
             name: 'Dr. Carlos Mendes',
             specialization: 'Cardiologia',
-            license: 'CRM/SP-123456'
+            license: 'CRM/SP-123456',
           },
           patient: {
             user_id: 'patient-tele-456',
             name: 'Pedro Santos',
             age: 55,
-            medical_record_id: 'mr-789012'
-          }
+            medical_record_id: 'mr-789012',
+          },
         },
         session_config: {
           video_quality: 'hd',
           audio_quality: 'high',
           recording_enabled: true,
           screen_sharing_allowed: true,
-          session_duration_limit: 3600000 // 1 hour
+          session_duration_limit: 3600000, // 1 hour
         },
         compliance_requirements: {
           consent_recording: true,
           data_encryption: 'end_to_end',
           audit_trail: true,
-          geographic_restrictions: ['brazil']
-        }
+          geographic_restrictions: ['brazil'],
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'telemedicine-coordinator',
         telemedicinePayload,
-        200
+        200,
       );
 
       expect(error).toBeNull();
@@ -460,32 +475,34 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           identifier: [
             {
               use: 'usual',
-              type: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v2-0203', code: 'MR' }] },
-              value: '123456789'
-            }
+              type: {
+                coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v2-0203', code: 'MR' }],
+              },
+              value: '123456789',
+            },
           ],
           name: [
             {
               use: 'official',
               family: 'Silva',
-              given: ['João', 'Carlos']
-            }
+              given: ['João', 'Carlos'],
+            },
           ],
           gender: 'male',
-          birthDate: '1985-03-15'
+          birthDate: '1985-03-15',
         },
         transformation_rules: {
           normalize_identifiers: true,
           validate_coding_systems: true,
           map_to_internal_schema: true,
-          preserve_original: true
-        }
+          preserve_original: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'fhir-data-transformer',
         fhirPayload,
-        300
+        300,
       );
 
       expect(error).toBeNull();
@@ -504,7 +521,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           doctor_id: 'doctor-456',
           appointment_date: '2024-09-25T10:00:00.000Z',
           consultation_type: 'routine_checkup',
-          notes: 'Annual checkup appointment'
+          notes: 'Annual checkup appointment',
         },
         validation_schema: {
           required_fields: ['patient_id', 'doctor_id', 'appointment_date'],
@@ -513,20 +530,20 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             doctor_id: 'string',
             appointment_date: 'iso_datetime',
             consultation_type: 'enum',
-            notes: 'string'
+            notes: 'string',
           },
           business_rules: [
             'appointment_date_future',
             'doctor_availability_check',
-            'patient_existence_check'
-          ]
-        }
+            'patient_existence_check',
+          ],
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'api-schema-validator',
         schemaValidationPayload,
-        150
+        150,
       );
 
       expect(error).toBeNull();
@@ -545,7 +562,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           phone: '(11) 99999-9999',
           cpf: '123.456.789-01',
           address: '  Rua das Flores, 123  ',
-          notes: '<script>alert("test")</script>Observações do paciente'
+          notes: '<script>alert("test")</script>Observações do paciente',
         },
         sanitization_rules: {
           trim_whitespace: true,
@@ -553,22 +570,22 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           format_phone: true,
           validate_cpf: true,
           remove_html_tags: true,
-          escape_special_chars: true
+          escape_special_chars: true,
         },
         validation_rules: {
           required_fields: ['full_name', 'email', 'cpf'],
           max_lengths: {
             full_name: 100,
             email: 254,
-            notes: 1000
-          }
-        }
+            notes: 1000,
+          },
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'input-sanitizer',
         sanitizationPayload,
-        100
+        100,
       );
 
       expect(error).toBeNull();
@@ -589,7 +606,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           marketing_communications: false,
           medical_research: true,
           data_sharing_partners: false,
-          cookies_analytics: true
+          cookies_analytics: true,
         },
         consent_context: {
           consent_version: '2.1',
@@ -597,20 +614,20 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           ip_address: '192.168.1.100',
           user_agent: 'Mozilla/5.0 (compatible)',
           consent_timestamp: new Date().toISOString(),
-          legal_basis_documentation: true
+          legal_basis_documentation: true,
         },
         processing_requirements: {
           audit_trail_required: true,
           notification_required: true,
           data_subject_rights_info: true,
-          withdrawal_instructions: true
-        }
+          withdrawal_instructions: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'lgpd-consent-processor',
         consentPayload,
-        200
+        200,
       );
 
       expect(error).toBeNull();
@@ -630,7 +647,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           suppress_quasi_identifiers: true,
           generalize_sensitive_attributes: true,
           remove_direct_identifiers: true,
-          preserve_statistical_properties: true
+          preserve_statistical_properties: true,
         },
         data_sample: [
           {
@@ -638,27 +655,27 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
             gender: 'male',
             diagnosis: 'hypertension',
             lab_value: 140,
-            city: 'São Paulo'
+            city: 'São Paulo',
           },
           {
             age: 52,
             gender: 'female',
             diagnosis: 'diabetes',
             lab_value: 180,
-            city: 'Rio de Janeiro'
-          }
+            city: 'Rio de Janeiro',
+          },
         ],
         quality_requirements: {
           data_utility_threshold: 0.8,
           privacy_risk_threshold: 0.1,
-          verification_required: true
-        }
+          verification_required: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'data-anonymizer',
         anonymizationPayload,
-        500
+        500,
       );
 
       expect(error).toBeNull();
@@ -675,29 +692,29 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           user_id: 'patient-dsr-789',
           verification_method: 'government_id',
           verification_status: 'verified',
-          contact_preferences: ['email']
+          contact_preferences: ['email'],
         },
         request_scope: {
           data_categories: ['personal_data', 'health_data'],
           date_range: {
             start: '2023-01-01',
-            end: '2024-09-16'
+            end: '2024-09-16',
           },
           include_metadata: true,
-          format_preference: 'structured_json'
+          format_preference: 'structured_json',
         },
         processing_config: {
           automated_response: false,
           human_review_required: true,
           response_deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          encryption_required: true
-        }
+          encryption_required: true,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'data-subject-rights-processor',
         dsrPayload,
-        400
+        400,
       );
 
       expect(error).toBeNull();
@@ -718,19 +735,19 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           parallel_processing: true,
           batch_size: 100,
           error_handling: 'continue_on_error',
-          progress_reporting: true
+          progress_reporting: true,
         },
         performance_requirements: {
           max_processing_time: 30000, // 30 seconds
           memory_limit: '512MB',
-          cpu_limit: '1000m'
-        }
+          cpu_limit: '1000m',
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'high-throughput-processor',
         throughputPayload,
-        1000
+        1000,
       );
 
       expect(error).toBeNull();
@@ -745,26 +762,30 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
       const concurrentRequests = 50;
       const concurrentPayload = {
         operation: 'patient_lookup',
-        patient_id: 'concurrent-test-123'
+        patient_id: 'concurrent-test-123',
       };
 
       const promises = Array.from({ length: concurrentRequests }, async (_, i) => {
         return await mockEdgeFunction(
           'concurrent-patient-lookup',
           { ...concurrentPayload, request_id: i },
-          100
+          100,
         );
       });
 
       const results = await Promise.all(promises);
-      
+
       const successfulRequests = results.filter(r => r.error === null).length;
       const avgLatency = results.reduce((sum, r) => sum + r.latency, 0) / results.length;
 
       expect(successfulRequests).toBeGreaterThan(concurrentRequests * 0.9); // 90% success rate
       expect(avgLatency).toBeLessThan(500); // Average under 500ms
 
-      console.log(`✅ Concurrent execution: ${successfulRequests}/${concurrentRequests} successful, avg latency: ${avgLatency.toFixed(2)}ms`);
+      console.log(
+        `✅ Concurrent execution: ${successfulRequests}/${concurrentRequests} successful, avg latency: ${
+          avgLatency.toFixed(2)
+        }ms`,
+      );
     });
 
     test('should validate function cold start performance', async () => {
@@ -772,14 +793,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
       const coldStartPayloads = [
         { function: 'patient-validator', payload: { patient_id: 'cold-start-1' } },
         { function: 'appointment-scheduler', payload: { appointment_data: {} } },
-        { function: 'prescription-checker', payload: { prescription_id: 'cold-start-2' } }
+        { function: 'prescription-checker', payload: { prescription_id: 'cold-start-2' } },
       ];
 
       for (const test of coldStartPayloads) {
         const { data, error, latency } = await mockEdgeFunction(
           test.function,
           test.payload,
-          300 // Cold start may be slower
+          300, // Cold start may be slower
         );
 
         expect(error).toBeNull();
@@ -797,13 +818,13 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         operation: 'complex_data_analysis',
         timeout_simulation: true,
         expected_duration: 15000, // 15 seconds
-        timeout_limit: 10000 // 10 seconds
+        timeout_limit: 10000, // 10 seconds
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'timeout-handler',
         timeoutPayload,
-        12000 // Simulate timeout scenario
+        12000, // Simulate timeout scenario
       );
 
       // In timeout scenarios, we expect graceful handling
@@ -816,13 +837,13 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         operation: 'large_dataset_processing',
         dataset_size: '1GB',
         memory_limit: '512MB',
-        fallback_strategy: 'stream_processing'
+        fallback_strategy: 'stream_processing',
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'memory-limit-handler',
         memoryPayload,
-        800
+        800,
       );
 
       expect(HealthcareTestValidators.validatePerformance(latency, 'general_query')).toBe(true);
@@ -837,14 +858,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         retry_config: {
           max_retries: 3,
           backoff_strategy: 'exponential',
-          timeout_per_attempt: 5000
-        }
+          timeout_per_attempt: 5000,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'external-service-fallback',
         externalServicePayload,
-        600
+        600,
       );
 
       expect(HealthcareTestValidators.validatePerformance(latency, 'general_query')).toBe(true);
@@ -862,14 +883,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         resource_context: {
           patient_id: 'patient-auth-123',
           organization_id: 'org-456',
-          data_sensitivity: 'high'
-        }
+          data_sensitivity: 'high',
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'jwt-authorizer',
         authPayload,
-        50
+        50,
       );
 
       expect(error).toBeNull();
@@ -886,18 +907,18 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         rate_limit_config: {
           requests_per_minute: 60,
           burst_limit: 10,
-          sliding_window: true
+          sliding_window: true,
         },
         current_usage: {
           requests_last_minute: 55,
-          requests_last_hour: 800
-        }
+          requests_last_hour: 800,
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'rate-limiter',
         rateLimitPayload,
-        30
+        30,
       );
 
       expect(error).toBeNull();
@@ -914,14 +935,14 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         client_context: {
           client_id: 'integration-partner-123',
           client_type: 'healthcare_system',
-          integration_level: 'full_access'
-        }
+          integration_level: 'full_access',
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'api-key-validator',
         apiKeyPayload,
-        80
+        80,
       );
 
       expect(error).toBeNull();
@@ -940,19 +961,19 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         request_type: 'lab_results_query',
         patient_identifier: {
           type: 'cpf',
-          value: '123.456.789-01'
+          value: '123.456.789-01',
         },
         test_codes: ['GLU', 'HGB', 'CHOL'],
         date_range: {
           start: '2024-09-01',
-          end: '2024-09-16'
-        }
+          end: '2024-09-16',
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'lab-system-integrator',
         labIntegrationPayload,
-        1200
+        1200,
       );
 
       expect(error).toBeNull();
@@ -970,23 +991,23 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           prescription_id: 'rx-789012',
           medications: [
             { name: 'Losartana', dosage: '50mg', quantity: 30 },
-            { name: 'Metformina', dosage: '500mg', quantity: 60 }
+            { name: 'Metformina', dosage: '500mg', quantity: 60 },
           ],
           patient_cpf: '123.456.789-01',
-          prescribing_doctor_crm: 'CRM/SP-123456'
+          prescribing_doctor_crm: 'CRM/SP-123456',
         },
         validation_checks: [
           'prescription_authenticity',
           'medication_availability',
           'insurance_coverage',
-          'drug_interactions'
-        ]
+          'drug_interactions',
+        ],
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'pharmacy-integrator',
         pharmacyPayload,
-        800
+        800,
       );
 
       expect(error).toBeNull();
@@ -1005,19 +1026,19 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
           patient_cpf: '123.456.789-01',
           coverage_status: 'active',
           effective_date: '2024-09-16',
-          covered_procedures: ['consultation', 'lab_tests', 'imaging']
+          covered_procedures: ['consultation', 'lab_tests', 'imaging'],
         },
         security_validation: {
           signature_header: 'x-webhook-signature',
           signature_value: 'sha256=abc123...',
-          timestamp_tolerance: 300 // 5 minutes
-        }
+          timestamp_tolerance: 300, // 5 minutes
+        },
       };
 
       const { data, error, latency } = await mockEdgeFunction(
         'webhook-processor',
         webhookPayload,
-        150
+        150,
       );
 
       expect(error).toBeNull();

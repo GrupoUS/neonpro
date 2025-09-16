@@ -166,3 +166,12 @@ Task: "AuditEvent model in packages/core-services/src/models/audit-event.ts"
 - T031 Audit logging: Implemented `auditLog` with Supabase fallback in `apps/api/src/middleware/audit-log.ts`; integrated in chat flow for request/response events.
 - Endpoints consolidated in `apps/api/src/routes/chat.ts` as per spec; headers include SSE and standard CORS. Future: extract per-route files if necessary.
 - Validation: API compiles; web type-check currently failing due to `packages/shared` export conflicts (TS2308/TS2323) — tracked separately and non-blocking for Phase 3.4 API.
+
+
+## Status Update — 2025-09-16
+- Type-check: PASS (apps/web)
+- Build: PASS (Vite production build for apps/web)
+- Tests: PASS — Vitest (19 files, 39 tests)
+- Lint: WARN-only — unused vars/imports in some test files (follow-up item to clean test warnings)
+- Fixes applied: Added required Route export in `apps/web/src/routes/aesthetic-demo.tsx`; corrected Button imports to `@neonpro/ui` in three aesthetic components; resolved an implicit-any handler param.
+- Archon + native TODOs updated accordingly.

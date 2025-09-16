@@ -1,5 +1,10 @@
-import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import { formatCPF as formatCPFUtil, validateCPFMask, formatBRPhone, validateBRPhoneMask } from '@neonpro/utils';
+import {
+  formatBRPhone,
+  formatCPF as formatCPFUtil,
+  validateBRPhoneMask,
+  validateCPFMask,
+} from '@neonpro/utils';
+import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
 export type AdvancedFilters = {
   query?: string;

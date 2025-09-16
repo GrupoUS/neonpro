@@ -1,7 +1,7 @@
 /**
  * Performance Optimization Integration Tests
  * NeonPro Platform Architecture Improvements
- * 
+ *
  * Tests integration between:
  * - Bundle optimization strategies
  * - Code splitting and lazy loading
@@ -10,14 +10,14 @@
  * - Performance monitoring
  */
 
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { performance } from 'perf_hooks';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Mock performance APIs
 const mockPerformanceObserver = vi.fn();
 const mockWebVitals = {
   getCLS: vi.fn(),
-  getFID: vi.fn(), 
+  getFID: vi.fn(),
   getFCP: vi.fn(),
   getLCP: vi.fn(),
   getTTFB: vi.fn(),
@@ -76,7 +76,7 @@ describe('Performance Integration Tests', () => {
         'chart.js': { used: ['Chart', 'LineController'], unused: ['PolarAreaController'] },
         'react-hook-form': { used: ['useForm', 'Controller'], unused: ['useFieldArray'] },
         'date-fns': { used: ['format', 'isAfter'], unused: ['formatDistance'] },
-        'lodash': { used: ['debounce', 'merge'], unused: ['curry', 'partition'] },
+        lodash: { used: ['debounce', 'merge'], unused: ['curry', 'partition'] },
       };
 
       // Verify tree-shaking effectiveness
@@ -110,7 +110,7 @@ describe('Performance Integration Tests', () => {
           exposedModules: ['./PatientList', './PatientDetails', './PatientForm'],
         },
         medicalRecords: {
-          remoteEntry: 'https://records-service.neonpro.com.br/remoteEntry.js', 
+          remoteEntry: 'https://records-service.neonpro.com.br/remoteEntry.js',
           exposedModules: ['./RecordsList', './RecordViewer', './RecordEditor'],
         },
         aiServices: {
@@ -141,10 +141,10 @@ describe('Performance Integration Tests', () => {
 
       const cacheTTL = {
         staticAssets: 86400000, // 24 hours
-        patientData: 300000,    // 5 minutes
+        patientData: 300000, // 5 minutes
         medicalImages: 3600000, // 1 hour
-        aiResponses: 600000,    // 10 minutes
-        emergencyData: 0,       // No cache
+        aiResponses: 600000, // 10 minutes
+        emergencyData: 0, // No cache
       };
 
       // Verify caching strategies
@@ -232,10 +232,10 @@ describe('Performance Integration Tests', () => {
 
       const compressionRatios = {
         javascript: 0.3, // 70% compression
-        css: 0.4,        // 60% compression 
-        html: 0.5,       // 50% compression
-        json: 0.3,       // 70% compression
-        svg: 0.6,        // 40% compression
+        css: 0.4, // 60% compression
+        html: 0.5, // 50% compression
+        json: 0.3, // 70% compression
+        svg: 0.6, // 40% compression
       };
 
       // Verify compression configuration
@@ -317,7 +317,7 @@ describe('Performance Integration Tests', () => {
       // Verify healthcare performance thresholds
       expect(healthcareThresholds.emergency.lcp).toBeLessThan(healthcareThresholds.patientCare.lcp);
       expect(healthcareThresholds.patientCare.lcp).toBeLessThan(healthcareThresholds.general.lcp);
-      
+
       // Check if metrics meet patient care thresholds
       expect(performanceMetrics.lcp).toBeLessThan(healthcareThresholds.patientCare.lcp);
       expect(performanceMetrics.fid).toBeLessThan(healthcareThresholds.patientCare.fid);
@@ -328,22 +328,22 @@ describe('Performance Integration Tests', () => {
       // Test: Performance budgets for healthcare features
       const performanceBudgets = {
         emergency: {
-          totalSize: 100000,    // 100KB
-          mainBundle: 50000,    // 50KB
-          vendor: 30000,        // 30KB
-          assets: 20000,        // 20KB
+          totalSize: 100000, // 100KB
+          mainBundle: 50000, // 50KB
+          vendor: 30000, // 30KB
+          assets: 20000, // 20KB
         },
         patientManagement: {
-          totalSize: 300000,    // 300KB
-          mainBundle: 150000,   // 150KB
-          vendor: 100000,       // 100KB
-          assets: 50000,        // 50KB
+          totalSize: 300000, // 300KB
+          mainBundle: 150000, // 150KB
+          vendor: 100000, // 100KB
+          assets: 50000, // 50KB
         },
         medicalRecords: {
-          totalSize: 400000,    // 400KB
-          mainBundle: 200000,   // 200KB
-          vendor: 150000,       // 150KB
-          assets: 50000,        // 50KB
+          totalSize: 400000, // 400KB
+          mainBundle: 200000, // 200KB
+          vendor: 150000, // 150KB
+          assets: 50000, // 50KB
         },
       };
 
@@ -351,7 +351,7 @@ describe('Performance Integration Tests', () => {
       Object.entries(performanceBudgets).forEach(([workflow, budget]) => {
         const total = budget.mainBundle + budget.vendor + budget.assets;
         expect(total).toBeLessThanOrEqual(budget.totalSize);
-        
+
         if (workflow === 'emergency') {
           expect(budget.totalSize).toBeLessThanOrEqual(150000); // Emergency must be lean
         }
@@ -362,10 +362,10 @@ describe('Performance Integration Tests', () => {
       // Test: Real-time performance monitoring for patient safety
       const performanceAlerts = {
         criticalThresholds: {
-          lcp: 3000,      // Page becomes unusable
-          fid: 300,       // Interactions feel broken
-          cls: 0.25,      // Layout shifts are disruptive
-          ttfb: 1000,     // Server response too slow
+          lcp: 3000, // Page becomes unusable
+          fid: 300, // Interactions feel broken
+          cls: 0.25, // Layout shifts are disruptive
+          ttfb: 1000, // Server response too slow
         },
         alertLevels: {
           info: 'Performance degraded',
@@ -376,9 +376,9 @@ describe('Performance Integration Tests', () => {
       };
 
       const monitoringFrequency = {
-        emergency: 1000,      // Check every 1 second
-        patientCare: 5000,    // Check every 5 seconds
-        general: 30000,       // Check every 30 seconds
+        emergency: 1000, // Check every 1 second
+        patientCare: 5000, // Check every 5 seconds
+        general: 30000, // Check every 30 seconds
       };
 
       // Verify monitoring configuration
@@ -391,11 +391,11 @@ describe('Performance Integration Tests', () => {
     test('should integrate lighthouse CI with healthcare performance standards', async () => {
       // Test: Lighthouse CI for healthcare performance standards
       const lighthouseThresholds = {
-        performance: 85,        // Healthcare apps need good performance
-        accessibility: 95,      // Critical for healthcare accessibility
-        bestPractices: 90,      // Important for security
-        seo: 80,               // Good for marketing pages
-        progressiveWebApp: 85,  // Important for mobile healthcare
+        performance: 85, // Healthcare apps need good performance
+        accessibility: 95, // Critical for healthcare accessibility
+        bestPractices: 90, // Important for security
+        seo: 80, // Good for marketing pages
+        progressiveWebApp: 85, // Important for mobile healthcare
       };
 
       const healthcareAudits = {
@@ -490,7 +490,7 @@ describe('Performance Integration Tests', () => {
       Object.entries(workflowImpacts).forEach(([workflow, impact]) => {
         expect(impact.optimizedTime).toBeLessThan(impact.baseTime);
         expect(parseFloat(impact.improvement)).toBeGreaterThan(30);
-        
+
         if (workflow === 'emergencyResponse') {
           expect(impact.optimizedTime).toBeLessThan(1000); // Emergency must be fast
         }

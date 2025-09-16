@@ -94,6 +94,9 @@
     ],
     "deny": [
       "Edit",
+      "Read",
+      "Write",
+      "Bash"
     ]
   },
   "enableAllProjectMcpServers": true,

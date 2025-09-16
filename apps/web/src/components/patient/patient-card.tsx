@@ -41,9 +41,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui';
 import { formatCEP } from '@/utils/brazilian-formatters';
-import { formatCPF, formatBRPhone } from '@neonpro/utils';
 import { Patient } from '@neonpro/shared/types/patient';
 import { cn } from '@neonpro/ui';
+import { formatBRPhone, formatCPF } from '@neonpro/utils';
 
 export interface PatientCardProps {
   /** Patient data */

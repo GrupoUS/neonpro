@@ -1,7 +1,7 @@
 /**
  * Accessibility Audit Service
  * T081 - WCAG 2.1 AA+ Accessibility Compliance
- * 
+ *
  * Features:
  * - Comprehensive WCAG 2.1 AA+ compliance auditing
  * - Healthcare-specific accessibility validation
@@ -12,11 +12,11 @@
  */
 
 import {
+  ACCESSIBILITY_LABELS_PT_BR,
   calculateContrastRatio,
+  HEALTHCARE_ARIA_ROLES,
   meetsContrastRequirement,
   WCAG_CONTRAST_RATIOS,
-  HEALTHCARE_ARIA_ROLES,
-  ACCESSIBILITY_LABELS_PT_BR,
 } from '../utils/accessibility';
 
 // WCAG 2.1 Success Criteria Levels
@@ -142,31 +142,38 @@ export class AccessibilityAuditService {
    */
   private async auditColorContrast(element: HTMLElement): Promise<void> {
     const textElements = element.querySelectorAll('*');
-    
-    textElements.forEach((el) => {
+
+    textElements.forEach(el => {
       const htmlEl = el as HTMLElement;
       const styles = window.getComputedStyle(htmlEl);
       const color = styles.color;
       const backgroundColor = styles.backgroundColor;
-      
-      if (color && backgroundColor && color !== 'rgba(0, 0, 0, 0)' && backgroundColor !== 'rgba(0, 0, 0, 0)') {
+
+      if (
+        color && backgroundColor && color !== 'rgba(0, 0, 0, 0)'
+        && backgroundColor !== 'rgba(0, 0, 0, 0)'
+      ) {
         const contrast = calculateContrastRatio(color, backgroundColor);
         const fontSize = parseFloat(styles.fontSize);
         const isLargeText = fontSize >= 18 || (fontSize >= 14 && styles.fontWeight === 'bold');
-        
+
         if (!meetsContrastRequirement(color, backgroundColor, 'AA', isLargeText)) {
           this.testResults.colorContrast = false;
           this.addIssue({
             id: `contrast-${Date.now()}-${Math.random()}`,
             title: 'Contraste de cor insuficiente',
-            description: `Elemento não atende aos requisitos de contraste WCAG AA (${contrast.toFixed(2)}:1)`,
+            description: `Elemento não atende aos requisitos de contraste WCAG AA (${
+              contrast.toFixed(2)
+            }:1)`,
             severity: AUDIT_SEVERITY.HIGH,
             wcagLevel: WCAG_LEVELS.AA,
             principle: WCAG_PRINCIPLES.PERCEIVABLE,
             successCriteria: '1.4.3',
             element: htmlEl.tagName.toLowerCase(),
             selector: this.getElementSelector(htmlEl),
-            recommendation: `Ajustar cores para atingir contraste mínimo de ${isLargeText ? '3:1' : '4.5:1'}`,
+            recommendation: `Ajustar cores para atingir contraste mínimo de ${
+              isLargeText ? '3:1' : '4.5:1'
+            }`,
             healthcareImpact: 'Dificulta leitura de informações médicas críticas',
             brazilianCompliance: false,
             autoFixable: false,
@@ -181,13 +188,13 @@ export class AccessibilityAuditService {
    */
   private async auditKeyboardNavigation(element: HTMLElement): Promise<void> {
     const interactiveElements = element.querySelectorAll(
-      'button, a, input, select, textarea, [tabindex], [role="button"], [role="link"]'
+      'button, a, input, select, textarea, [tabindex], [role="button"], [role="link"]',
     );
 
-    interactiveElements.forEach((el) => {
+    interactiveElements.forEach(el => {
       const htmlEl = el as HTMLElement;
       const tabIndex = htmlEl.getAttribute('tabindex');
-      
+
       // Check for keyboard trap
       if (tabIndex === '-1' && !htmlEl.hasAttribute('aria-hidden')) {
         this.testResults.keyboardNavigation = false;
@@ -236,14 +243,14 @@ export class AccessibilityAuditService {
    */
   private async auditAriaLabels(element: HTMLElement): Promise<void> {
     const elementsNeedingLabels = element.querySelectorAll(
-      'input:not([type="hidden"]), select, textarea, button:not([aria-label]):not([aria-labelledby])'
+      'input:not([type="hidden"]), select, textarea, button:not([aria-label]):not([aria-labelledby])',
     );
 
-    elementsNeedingLabels.forEach((el) => {
+    elementsNeedingLabels.forEach(el => {
       const htmlEl = el as HTMLElement;
-      const hasLabel = htmlEl.hasAttribute('aria-label') || 
-                      htmlEl.hasAttribute('aria-labelledby') ||
-                      element.querySelector(`label[for="${htmlEl.id}"]`);
+      const hasLabel = htmlEl.hasAttribute('aria-label')
+        || htmlEl.hasAttribute('aria-labelledby')
+        || element.querySelector(`label[for="${htmlEl.id}"]`);
 
       if (!hasLabel) {
         this.testResults.ariaLabels = false;
@@ -274,9 +281,9 @@ export class AccessibilityAuditService {
     const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let previousLevel = 0;
 
-    headings.forEach((heading) => {
+    headings.forEach(heading => {
       const level = parseInt(heading.tagName.charAt(1));
-      
+
       if (level > previousLevel + 1) {
         this.testResults.focusManagement = false;
         this.addIssue({
@@ -295,7 +302,7 @@ export class AccessibilityAuditService {
           autoFixable: false,
         });
       }
-      
+
       previousLevel = level;
     });
   }
@@ -306,8 +313,8 @@ export class AccessibilityAuditService {
   private async auditScreenReaderSupport(element: HTMLElement): Promise<void> {
     // Check for images without alt text
     const images = element.querySelectorAll('img');
-    
-    images.forEach((img) => {
+
+    images.forEach(img => {
       if (!img.hasAttribute('alt') && !img.hasAttribute('aria-hidden')) {
         this.testResults.screenReaderSupport = false;
         this.addIssue({
@@ -320,7 +327,8 @@ export class AccessibilityAuditService {
           successCriteria: '1.1.1',
           element: 'img',
           selector: this.getElementSelector(img),
-          recommendation: 'Adicionar atributo alt descritivo ou aria-hidden="true" para imagens decorativas',
+          recommendation:
+            'Adicionar atributo alt descritivo ou aria-hidden="true" para imagens decorativas',
           healthcareImpact: 'Impede acesso a informações visuais médicas',
           brazilianCompliance: false,
           autoFixable: true,
@@ -334,8 +342,10 @@ export class AccessibilityAuditService {
    */
   private async auditHealthcareCompliance(element: HTMLElement): Promise<void> {
     // Check for LGPD consent indicators
-    const consentElements = element.querySelectorAll('[data-lgpd], [aria-label*="LGPD"], [aria-label*="consentimento"]');
-    
+    const consentElements = element.querySelectorAll(
+      '[data-lgpd], [aria-label*="LGPD"], [aria-label*="consentimento"]',
+    );
+
     if (consentElements.length === 0) {
       this.addIssue({
         id: `lgpd-${Date.now()}`,
@@ -358,8 +368,8 @@ export class AccessibilityAuditService {
    */
   private async auditBrazilianStandards(element: HTMLElement): Promise<void> {
     // Check for Portuguese language attributes
-    const hasLangPt = element.closest('[lang="pt"], [lang="pt-BR"]') || 
-                     document.documentElement.getAttribute('lang')?.startsWith('pt');
+    const hasLangPt = element.closest('[lang="pt"], [lang="pt-BR"]')
+      || document.documentElement.getAttribute('lang')?.startsWith('pt');
 
     if (!hasLangPt) {
       this.addIssue({
@@ -392,11 +402,11 @@ export class AccessibilityAuditService {
     if (element.id) {
       return `#${element.id}`;
     }
-    
+
     if (element.className) {
       return `${element.tagName.toLowerCase()}.${element.className.split(' ').join('.')}`;
     }
-    
+
     return element.tagName.toLowerCase();
   }
 
@@ -414,13 +424,16 @@ export class AccessibilityAuditService {
     };
 
     // Calculate score (100 - weighted penalty)
-    const score = Math.max(0, 100 - (
-      summary.critical * 25 +
-      summary.high * 10 +
-      summary.medium * 5 +
-      summary.low * 2 +
-      summary.info * 1
-    ));
+    const score = Math.max(
+      0,
+      100 - (
+        summary.critical * 25
+        + summary.high * 10
+        + summary.medium * 5
+        + summary.low * 2
+        + summary.info * 1
+      ),
+    );
 
     // Determine WCAG level
     let level: WCAGLevel = WCAG_LEVELS.AAA;

@@ -24,6 +24,11 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types/index.js",
       "require": "./dist/types/index.cjs"
+    },
+    "./utils/testing/test-categories": {
+      "types": "./dist/utils/testing/test-categories.d.ts",
+      "import": "./dist/utils/testing/test-categories.js",
+      "require": "./dist/utils/testing/test-categories.cjs"
     }
   },
   "scripts": {

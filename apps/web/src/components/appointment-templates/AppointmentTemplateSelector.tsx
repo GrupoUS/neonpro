@@ -7,13 +7,13 @@ import {
   useAppointmentTemplates,
   useDefaultAppointmentTemplates,
 } from '@/hooks/useAppointmentTemplates';
-import { cn } from "@neonpro/ui";
 import {
   APPOINTMENT_TEMPLATE_CATEGORY_COLORS,
   APPOINTMENT_TEMPLATE_CATEGORY_LABELS,
   type AppointmentTemplate,
   type AppointmentTemplateCategory,
 } from '@/types/appointment-templates';
+import { cn } from '@neonpro/ui';
 import { Badge, Button, Card, CardContent, Input, ScrollArea } from '@neonpro/ui';
 import { formatBRL } from '@neonpro/utils';
 import { Clock, DollarSign, Search, Star } from 'lucide-react';

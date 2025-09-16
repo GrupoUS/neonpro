@@ -1,7 +1,7 @@
 /**
  * Mobile Touch Accessibility Utilities
  * T083 - Mobile Accessibility Optimization
- * 
+ *
  * Features:
  * - Touch target size validation (WCAG 2.1 AA+ compliance)
  * - Touch target spacing and overlap detection
@@ -38,7 +38,8 @@ export const TOUCH_ACCESSIBILITY_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type TouchAccessibilityLevel = typeof TOUCH_ACCESSIBILITY_LEVELS[keyof typeof TOUCH_ACCESSIBILITY_LEVELS];
+export type TouchAccessibilityLevel =
+  typeof TOUCH_ACCESSIBILITY_LEVELS[keyof typeof TOUCH_ACCESSIBILITY_LEVELS];
 
 // Healthcare Touch Patterns
 export const HEALTHCARE_TOUCH_PATTERNS = {
@@ -50,7 +51,8 @@ export const HEALTHCARE_TOUCH_PATTERNS = {
   MEDICAL_RECORD_VIEW: 'medical_record_view',
 } as const;
 
-export type HealthcareTouchPattern = typeof HEALTHCARE_TOUCH_PATTERNS[keyof typeof HEALTHCARE_TOUCH_PATTERNS];
+export type HealthcareTouchPattern =
+  typeof HEALTHCARE_TOUCH_PATTERNS[keyof typeof HEALTHCARE_TOUCH_PATTERNS];
 
 // Touch Target Schema
 export const TouchTargetSchema = z.object({
@@ -151,7 +153,7 @@ export class MobileTouchAccessibility {
    */
   validateTouchTargets(targets: TouchTarget[]): TouchAccessibilityReport['touchTargetCompliance'] {
     this.issues = [];
-    
+
     const totalTargets = targets.length;
     let compliantTargets = 0;
     let undersizedTargets = 0;
@@ -181,9 +183,12 @@ export class MobileTouchAccessibility {
         title: 'Áreas de toque muito pequenas',
         description: `${undersizedTargets} áreas de toque não atendem ao tamanho mínimo de 44x44px`,
         recommendation: 'Aumentar o tamanho das áreas de toque para pelo menos 44x44px',
-        affectedElements: targets.filter(t => !this.validateSingleTouchTarget(t)).map(t => t.element),
+        affectedElements: targets.filter(t => !this.validateSingleTouchTarget(t)).map(t =>
+          t.element
+        ),
         wcagReference: 'WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)',
-        healthcareImpact: 'Dificulta o acesso a funcionalidades médicas críticas para pacientes com deficiências motoras',
+        healthcareImpact:
+          'Dificulta o acesso a funcionalidades médicas críticas para pacientes com deficiências motoras',
         remediation: {
           steps: [
             'Identificar elementos com área de toque menor que 44x44px',
@@ -226,7 +231,11 @@ export class MobileTouchAccessibility {
 
     this.issues.push(...issues);
 
-    const level = this.calculateTouchTargetLevel(compliantTargets, totalTargets, overlappingTargets);
+    const level = this.calculateTouchTargetLevel(
+      compliantTargets,
+      totalTargets,
+      overlappingTargets,
+    );
 
     return {
       level,
@@ -257,7 +266,8 @@ export class MobileTouchAccessibility {
         recommendation: 'Fornecer alternativas de botão para todos os gestos complexos',
         affectedElements: ['swipe-navigation', 'pinch-zoom'],
         wcagReference: 'WCAG 2.1 AA - Critério 2.5.1 (Gestos de Ponteiro)',
-        healthcareImpact: 'Impede acesso a funcionalidades médicas para usuários com limitações motoras',
+        healthcareImpact:
+          'Impede acesso a funcionalidades médicas para usuários com limitações motoras',
         remediation: {
           steps: [
             'Identificar gestos complexos sem alternativas',
@@ -365,7 +375,8 @@ export class MobileTouchAccessibility {
         type: 'gesture',
         severity: 'medium',
         title: 'Padrões de toque para saúde ausentes',
-        description: `${missingPatterns.length} padrões de toque específicos para saúde não implementados`,
+        description:
+          `${missingPatterns.length} padrões de toque específicos para saúde não implementados`,
         recommendation: 'Implementar padrões de toque otimizados para aplicações de saúde',
         affectedElements: missingPatterns,
         wcagReference: 'WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)',
@@ -437,27 +448,29 @@ export class MobileTouchAccessibility {
    * Validate single touch target
    */
   private validateSingleTouchTarget(target: TouchTarget): boolean {
-    return target.width >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE && 
-           target.height >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE;
+    return target.width >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE
+      && target.height >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE;
   }
 
   /**
    * Detect overlapping touch targets
    */
-  private detectOverlappingTargets(targets: TouchTarget[]): Array<{target1: TouchTarget, target2: TouchTarget}> {
+  private detectOverlappingTargets(
+    targets: TouchTarget[],
+  ): Array<{ target1: TouchTarget; target2: TouchTarget }> {
     const overlaps = [];
-    
+
     for (let i = 0; i < targets.length; i++) {
       for (let j = i + 1; j < targets.length; j++) {
         const target1 = targets[i];
         const target2 = targets[j];
-        
+
         if (this.targetsOverlap(target1, target2)) {
           overlaps.push({ target1, target2 });
         }
       }
     }
-    
+
     return overlaps;
   }
 
@@ -466,20 +479,20 @@ export class MobileTouchAccessibility {
    */
   private targetsOverlap(target1: TouchTarget, target2: TouchTarget): boolean {
     const spacing = WCAG_TOUCH_TARGETS.MINIMUM_SPACING;
-    
-    return !(target1.x + target1.width + spacing <= target2.x ||
-             target2.x + target2.width + spacing <= target1.x ||
-             target1.y + target1.height + spacing <= target2.y ||
-             target2.y + target2.height + spacing <= target1.y);
+
+    return !(target1.x + target1.width + spacing <= target2.x
+      || target2.x + target2.width + spacing <= target1.x
+      || target1.y + target1.height + spacing <= target2.y
+      || target2.y + target2.height + spacing <= target1.y);
   }
 
   /**
    * Calculate touch target compliance level
    */
   private calculateTouchTargetLevel(
-    compliant: number, 
-    total: number, 
-    overlapping: number
+    compliant: number,
+    total: number,
+    overlapping: number,
   ): TouchAccessibilityLevel {
     const complianceRate = total > 0 ? compliant / total : 1;
     const hasOverlaps = overlapping > 0;
@@ -527,8 +540,9 @@ export class MobileTouchAccessibility {
     const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8) + (lowIssues * 3);
-    
+    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
+      + (lowIssues * 3);
+
     return Math.max(0, 100 - penalty);
   }
 
@@ -550,7 +564,9 @@ export class MobileTouchAccessibility {
       const mediumCount = issues.filter(i => i.severity === 'medium').length;
 
       if (criticalCount > 0) {
-        recommendations.push(`Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`);
+        recommendations.push(
+          `Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`,
+        );
       }
       if (highCount > 0) {
         recommendations.push(`Abordar ${highCount} problema(s) de alta prioridade em ${type}`);

@@ -43,13 +43,13 @@ export function createCommunicationSystem(options?: {
 
     // Convenience methods
     async initialize() {
-      console.log('🚀 Agent communication system initialized');
+      // Agent communication system initialized
       return { messageBus, protocol };
     },
 
     async shutdown() {
       messageBus.clear();
-      console.log('🛑 Agent communication system shut down');
+      // Agent communication system shut down
     },
 
     getSystemStats() {

@@ -18,7 +18,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Bot,
   Brain,
-
   Mic,
   MicOff,
   Paperclip,
@@ -26,7 +25,6 @@ import {
   Settings,
   Stethoscope,
   User,
-
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -42,7 +40,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-
   ScrollArea,
   Select,
   SelectContent,

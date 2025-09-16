@@ -1,7 +1,7 @@
 /**
  * Mobile Accessibility Service
  * T083 - Mobile Accessibility Optimization
- * 
+ *
  * Main orchestrator for mobile accessibility features:
  * - Mobile touch accessibility validation
  * - Mobile responsive accessibility validation
@@ -12,20 +12,20 @@
  */
 
 import { z } from 'zod';
-import MobileTouchAccessibility, { 
-  type TouchTarget, 
-  type TouchAccessibilityReport,
-  TOUCH_ACCESSIBILITY_LEVELS 
-} from '../utils/mobile-touch-accessibility';
-import MobileResponsiveAccessibility, { 
-  type ResponsiveElement, 
+import MobileResponsiveAccessibility, {
+  RESPONSIVE_ACCESSIBILITY_LEVELS,
   type ResponsiveAccessibilityReport,
-  RESPONSIVE_ACCESSIBILITY_LEVELS 
+  type ResponsiveElement,
 } from '../utils/mobile-responsive-accessibility';
-import MobileScreenReaderService, { 
-  type ScreenReaderElement, 
+import MobileTouchAccessibility, {
+  TOUCH_ACCESSIBILITY_LEVELS,
+  type TouchAccessibilityReport,
+  type TouchTarget,
+} from '../utils/mobile-touch-accessibility';
+import MobileScreenReaderService, {
+  MOBILE_SCREEN_READER_LEVELS,
   type ScreenReaderAccessibilityReport,
-  MOBILE_SCREEN_READER_LEVELS 
+  type ScreenReaderElement,
 } from './mobile-screen-reader';
 
 // Mobile Accessibility Levels
@@ -37,7 +37,8 @@ export const MOBILE_ACCESSIBILITY_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type MobileAccessibilityLevel = typeof MOBILE_ACCESSIBILITY_LEVELS[keyof typeof MOBILE_ACCESSIBILITY_LEVELS];
+export type MobileAccessibilityLevel =
+  typeof MOBILE_ACCESSIBILITY_LEVELS[keyof typeof MOBILE_ACCESSIBILITY_LEVELS];
 
 // Mobile Accessibility Configuration
 export const MobileAccessibilityConfigSchema = z.object({
@@ -67,12 +68,12 @@ export interface MobileAccessibilityReport {
   overallScore: number; // 0-100
   lastAuditDate: Date;
   nextAuditDate: Date;
-  
+
   // Individual accessibility reports
   touchAccessibility: TouchAccessibilityReport;
   responsiveAccessibility: ResponsiveAccessibilityReport;
   screenReaderAccessibility: ScreenReaderAccessibilityReport;
-  
+
   // Mobile performance accessibility
   performanceAccessibility: {
     level: MobileAccessibilityLevel;
@@ -92,7 +93,7 @@ export interface MobileAccessibilityReport {
       recommendation: string;
     }>;
   };
-  
+
   // Healthcare-specific mobile compliance
   healthcareCompliance: {
     level: MobileAccessibilityLevel;
@@ -109,11 +110,11 @@ export interface MobileAccessibilityReport {
       recommendation: string;
     }>;
   };
-  
+
   // Consolidated recommendations
   priorityRecommendations: string[];
   allRecommendations: string[];
-  
+
   // Mobile accessibility summary
   summary: {
     totalIssues: number;
@@ -127,7 +128,7 @@ export interface MobileAccessibilityReport {
     deviceCompatibility: string[];
     wcagComplianceLevel: 'AA' | 'AAA' | 'partial' | 'non_compliant';
   };
-  
+
   // Mobile testing recommendations
   testingRecommendations: {
     realDeviceTesting: string[];
@@ -159,18 +160,19 @@ export class MobileAccessibilityService {
     config: MobileAccessibilityConfig,
     touchTargets: TouchTarget[],
     responsiveElements: ResponsiveElement[],
-    screenReaderElements: ScreenReaderElement[]
+    screenReaderElements: ScreenReaderElement[],
   ): Promise<MobileAccessibilityReport> {
     // Run all accessibility validations in parallel
-    const [touchAccessibility, responsiveAccessibility, screenReaderAccessibility] = await Promise.all([
-      Promise.resolve(this.touchAccessibilityService.generateReport(touchTargets)),
-      Promise.resolve(this.responsiveAccessibilityService.generateReport(responsiveElements)),
-      Promise.resolve(this.screenReaderService.generateReport(screenReaderElements)),
-    ]);
+    const [touchAccessibility, responsiveAccessibility, screenReaderAccessibility] = await Promise
+      .all([
+        Promise.resolve(this.touchAccessibilityService.generateReport(touchTargets)),
+        Promise.resolve(this.responsiveAccessibilityService.generateReport(responsiveElements)),
+        Promise.resolve(this.screenReaderService.generateReport(screenReaderElements)),
+      ]);
 
     // Validate mobile performance accessibility
     const performanceAccessibility = await this.validatePerformanceAccessibility(config);
-    
+
     // Validate healthcare-specific mobile compliance
     const healthcareCompliance = await this.validateHealthcareCompliance(config);
 
@@ -180,7 +182,7 @@ export class MobileAccessibilityService {
       responsiveAccessibility,
       screenReaderAccessibility,
       performanceAccessibility,
-      healthcareCompliance
+      healthcareCompliance,
     );
 
     const overallScore = this.calculateOverallScore(
@@ -188,17 +190,18 @@ export class MobileAccessibilityService {
       responsiveAccessibility,
       screenReaderAccessibility,
       performanceAccessibility,
-      healthcareCompliance
+      healthcareCompliance,
     );
 
     // Generate consolidated recommendations
-    const { priorityRecommendations, allRecommendations } = this.generateConsolidatedRecommendations(
-      touchAccessibility,
-      responsiveAccessibility,
-      screenReaderAccessibility,
-      performanceAccessibility,
-      healthcareCompliance
-    );
+    const { priorityRecommendations, allRecommendations } = this
+      .generateConsolidatedRecommendations(
+        touchAccessibility,
+        responsiveAccessibility,
+        screenReaderAccessibility,
+        performanceAccessibility,
+        healthcareCompliance,
+      );
 
     // Generate mobile accessibility summary
     const summary = this.generateMobileAccessibilitySummary(
@@ -207,7 +210,7 @@ export class MobileAccessibilityService {
       screenReaderAccessibility,
       performanceAccessibility,
       healthcareCompliance,
-      config
+      config,
     );
 
     // Generate testing recommendations
@@ -238,14 +241,22 @@ export class MobileAccessibilityService {
     const interactionDelay = 85; // milliseconds
     const renderTime = 14; // milliseconds
     const memoryUsage = 42; // MB
-    
+
     const coreWebVitals = {
       lcp: 2.1, // seconds
       fid: 85, // milliseconds
       cls: 0.08, // score
     };
 
-    const issues = [];
+    const issues: Array<
+      {
+        id: string;
+        severity: 'low' | 'medium' | 'high' | 'critical';
+        title: string;
+        description: string;
+        recommendation: string;
+      }
+    > = [];
 
     // Check interaction delay
     if (interactionDelay > config.performanceThresholds.maxInteractionDelay) {
@@ -253,7 +264,8 @@ export class MobileAccessibilityService {
         id: 'high-interaction-delay',
         severity: 'medium' as const,
         title: 'Atraso de interação elevado',
-        description: `Atraso de interação de ${interactionDelay}ms excede o limite de ${config.performanceThresholds.maxInteractionDelay}ms`,
+        description:
+          `Atraso de interação de ${interactionDelay}ms excede o limite de ${config.performanceThresholds.maxInteractionDelay}ms`,
         recommendation: 'Otimizar manipuladores de eventos e reduzir processamento JavaScript',
       });
     }
@@ -269,13 +281,18 @@ export class MobileAccessibilityService {
       });
     }
 
-    const level = issues.some(i => i.severity === 'critical')
-      ? MOBILE_ACCESSIBILITY_LEVELS.CRITICAL
-      : issues.some(i => i.severity === 'high')
-      ? MOBILE_ACCESSIBILITY_LEVELS.POOR
-      : issues.length > 0
-      ? MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE
-      : MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT;
+    const level: MobileAccessibilityLevel =
+      issues.some((i: { severity: 'low' | 'medium' | 'high' | 'critical' }) =>
+          i.severity === 'critical'
+        )
+        ? MOBILE_ACCESSIBILITY_LEVELS.CRITICAL
+        : issues.some((i: { severity: 'low' | 'medium' | 'high' | 'critical' }) =>
+            i.severity === 'high'
+          )
+        ? MOBILE_ACCESSIBILITY_LEVELS.POOR
+        : issues.length > 0
+        ? MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE
+        : MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT;
 
     return {
       level,
@@ -298,14 +315,23 @@ export class MobileAccessibilityService {
     const emergencyAccessCompliance = true;
     const patientDataMobileCompliance = false; // Intentionally set to false for testing
 
-    const issues = [];
+    const issues: Array<
+      {
+        id: string;
+        severity: 'low' | 'medium' | 'high' | 'critical';
+        title: string;
+        description: string;
+        recommendation: string;
+      }
+    > = [] as any;
 
     if (!patientDataMobileCompliance) {
       issues.push({
         id: 'patient-data-mobile-non-compliant',
         severity: 'high' as const,
         title: 'Dados do paciente não otimizados para mobile',
-        description: 'Visualização de dados do paciente não está otimizada para dispositivos móveis',
+        description:
+          'Visualização de dados do paciente não está otimizada para dispositivos móveis',
         recommendation: 'Implementar padrões de design responsivo para dados médicos sensíveis',
       });
     }
@@ -345,7 +371,7 @@ export class MobileAccessibilityService {
     responsive: ResponsiveAccessibilityReport,
     screenReader: ScreenReaderAccessibilityReport,
     performance: any,
-    healthcare: any
+    healthcare: any,
   ): MobileAccessibilityLevel {
     const levels = [
       touch.overallLevel,
@@ -363,7 +389,9 @@ export class MobileAccessibilityService {
       [MOBILE_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0) / levels.length;
+    const averageScore =
+      levels.reduce((sum, level) => sum + levelScores[level as keyof typeof levelScores], 0)
+      / levels.length;
 
     if (averageScore >= 4.5) return MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT;
     if (averageScore >= 3.5) return MOBILE_ACCESSIBILITY_LEVELS.GOOD;
@@ -380,21 +408,31 @@ export class MobileAccessibilityService {
     responsive: ResponsiveAccessibilityReport,
     screenReader: ScreenReaderAccessibilityReport,
     performance: any,
-    healthcare: any
+    healthcare: any,
   ): number {
     // Weighted average: Touch (25%), Responsive (25%), Screen Reader (25%), Performance (15%), Healthcare (10%)
     return Math.round(
-      (touch.score * 0.25) + 
-      (responsive.score * 0.25) + 
-      (screenReader.score * 0.25) + 
-      (performance.level === MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT ? 100 : 
-       performance.level === MOBILE_ACCESSIBILITY_LEVELS.GOOD ? 85 : 
-       performance.level === MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE ? 70 : 
-       performance.level === MOBILE_ACCESSIBILITY_LEVELS.POOR ? 50 : 25) * 0.15 +
-      (healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT ? 100 : 
-       healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.GOOD ? 85 : 
-       healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE ? 70 : 
-       healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.POOR ? 50 : 25) * 0.10
+      (touch.score * 0.25)
+        + (responsive.score * 0.25)
+        + (screenReader.score * 0.25)
+        + (performance.level === MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT
+            ? 100
+            : performance.level === MOBILE_ACCESSIBILITY_LEVELS.GOOD
+            ? 85
+            : performance.level === MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE
+            ? 70
+            : performance.level === MOBILE_ACCESSIBILITY_LEVELS.POOR
+            ? 50
+            : 25) * 0.15
+        + (healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT
+            ? 100
+            : healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.GOOD
+            ? 85
+            : healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.ACCEPTABLE
+            ? 70
+            : healthcare.level === MOBILE_ACCESSIBILITY_LEVELS.POOR
+            ? 50
+            : 25) * 0.10,
     );
   }
 
@@ -406,7 +444,7 @@ export class MobileAccessibilityService {
     responsive: ResponsiveAccessibilityReport,
     screenReader: ScreenReaderAccessibilityReport,
     performance: any,
-    healthcare: any
+    healthcare: any,
   ) {
     const allRecommendations = [
       ...touch.recommendations,
@@ -431,7 +469,7 @@ export class MobileAccessibilityService {
     screenReader: ScreenReaderAccessibilityReport,
     performance: any,
     healthcare: any,
-    config: MobileAccessibilityConfig
+    config: MobileAccessibilityConfig,
   ) {
     const allIssues = [
       ...this.extractIssuesFromReport(touch),
@@ -448,20 +486,32 @@ export class MobileAccessibilityService {
     const lowPriorityIssues = allIssues.filter(i => i.severity === 'low').length;
 
     const compliancePercentage = Math.round(
-      ((touch.score + responsive.score + screenReader.score) / 3)
+      (touch.score + responsive.score + screenReader.score) / 3,
     );
 
-    const estimatedRemediationTime = criticalIssues > 0 ? '2-4 semanas' :
-      highPriorityIssues > 0 ? '3-6 semanas' :
-      mediumPriorityIssues > 0 ? '4-8 semanas' : '1-2 semanas';
+    const estimatedRemediationTime = criticalIssues > 0
+      ? '2-4 semanas'
+      : highPriorityIssues > 0
+      ? '3-6 semanas'
+      : mediumPriorityIssues > 0
+      ? '4-8 semanas'
+      : '1-2 semanas';
 
-    const estimatedRemediationCost = criticalIssues > 0 ? 'very_high' :
-      highPriorityIssues > 0 ? 'high' :
-      mediumPriorityIssues > 0 ? 'medium' : 'low';
+    const estimatedRemediationCost = criticalIssues > 0
+      ? 'very_high'
+      : highPriorityIssues > 0
+      ? 'high'
+      : mediumPriorityIssues > 0
+      ? 'medium'
+      : 'low';
 
-    const wcagComplianceLevel = compliancePercentage >= 95 ? 'AAA' :
-      compliancePercentage >= 85 ? 'AA' :
-      compliancePercentage >= 70 ? 'partial' : 'non_compliant';
+    const wcagComplianceLevel = compliancePercentage >= 95
+      ? 'AAA'
+      : compliancePercentage >= 85
+      ? 'AA'
+      : compliancePercentage >= 70
+      ? 'partial'
+      : 'non_compliant';
 
     return {
       totalIssues,
@@ -526,9 +576,11 @@ export class MobileAccessibilityService {
   /**
    * Extract issues from accessibility reports
    */
-  private extractIssuesFromReport(report: any): Array<{ severity: string }> {
-    const issues = [];
-    
+  private extractIssuesFromReport(
+    report: any,
+  ): Array<{ severity: 'low' | 'medium' | 'high' | 'critical' }> {
+    const issues: Array<{ severity: 'low' | 'medium' | 'high' | 'critical' }> = [];
+
     // Extract issues from different accessibility areas
     Object.values(report).forEach((value: any) => {
       if (value && typeof value === 'object' && Array.isArray(value.issues)) {

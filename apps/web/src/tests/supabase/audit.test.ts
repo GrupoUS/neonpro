@@ -1,7 +1,7 @@
 /**
  * Supabase Audit Trail Tests
  * LGPD Compliance and Healthcare Data Auditing
- * 
+ *
  * Features:
  * - LGPD compliance auditing and reporting
  * - Data access logging with healthcare context
@@ -11,15 +11,15 @@
  * - Breach detection and incident response
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { 
+import {
+  type AuditEvent,
+  type ComplianceReport,
   createTestSupabaseClient,
   HealthcareTestDataGenerator,
   HealthcareTestValidators,
-  type AuditEvent,
-  type ComplianceReport,
-  type TestUser
+  type TestUser,
 } from '@/lib/testing/supabase-test-client';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 describe('Supabase Audit Trail - LGPD Compliance', () => {
   let testClient: any;
@@ -30,22 +30,26 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       auditTrail: true,
-      securityMonitoring: true
+      securityMonitoring: true,
     });
     testDataGenerator = new HealthcareTestDataGenerator();
-    
+
     console.log('🧪 Audit Trail Test Environment Setup Complete');
   });
 
   afterAll(async () => {
     await testDataGenerator.cleanupTestData();
-    
+
     // Generate audit summary
     console.log('\n📊 Audit Trail Test Summary:');
     console.log(`Total Audit Events Generated: ${auditEvents.length}`);
-    console.log(`LGPD Compliance Events: ${auditEvents.filter(e => e.event_type.includes('lgpd')).length}`);
-    console.log(`Security Events: ${auditEvents.filter(e => e.event_type.includes('security')).length}`);
-    
+    console.log(
+      `LGPD Compliance Events: ${auditEvents.filter(e => e.event_type.includes('lgpd')).length}`,
+    );
+    console.log(
+      `Security Events: ${auditEvents.filter(e => e.event_type.includes('security')).length}`,
+    );
+
     console.log('🔍 Audit Trail Test Environment Cleaned Up');
   });
 
@@ -63,7 +67,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
       user_agent: event.user_agent || 'test-agent/1.0',
       session_id: event.session_id || 'test-session',
       compliance_context: event.compliance_context || 'healthcare',
-      ...event
+      ...event,
     };
     auditEvents.push(auditEvent);
     return auditEvent;
@@ -86,7 +90,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
       const responseTime = performance.now() - startTime;
 
       expect(error).toBeNull();
-      expect(HealthcareTestValidators.validatePerformance(responseTime, 'critical_query')).toBe(true);
+      expect(HealthcareTestValidators.validatePerformance(responseTime, 'critical_query')).toBe(
+        true,
+      );
 
       // Record audit event for data access
       const auditEvent = recordAuditEvent({
@@ -103,9 +109,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           retention_period: '5_years',
           data_subject_consent: true,
           processing_location: 'brazil',
-          third_party_sharing: false
+          third_party_sharing: false,
         },
-        compliance_context: 'lgpd_healthcare'
+        compliance_context: 'lgpd_healthcare',
       });
 
       expect(auditEvent.event_type).toBe('lgpd_data_access');
@@ -130,8 +136,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             data_categories: ['personal_data', 'health_data'],
             processing_purposes: ['healthcare_services', 'appointment_management'],
             retention_period: '5_years',
-            withdrawal_right_informed: true
-          }
+            withdrawal_right_informed: true,
+          },
         },
         {
           action: 'consent_updated',
@@ -141,8 +147,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             previous_consent: false,
             new_consent: true,
             update_reason: 'user_preference_change',
-            consent_method: 'user_portal'
-          }
+            consent_method: 'user_portal',
+          },
         },
         {
           action: 'consent_withdrawn',
@@ -153,9 +159,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             withdrawal_method: 'user_portal',
             withdrawal_reason: 'no_longer_needed',
             data_retention_action: 'schedule_deletion',
-            notification_sent: true
-          }
-        }
+            notification_sent: true,
+          },
+        },
       ];
 
       for (const activity of consentActivities) {
@@ -166,7 +172,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           resource_id: testUser.id,
           action: activity.action,
           details: activity.details,
-          compliance_context: 'lgpd_consent'
+          compliance_context: 'lgpd_consent',
         });
 
         expect(auditEvent.action).toBe(activity.action);
@@ -189,7 +195,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           retention_period: '5_years_post_treatment',
           security_measures: ['encryption_at_rest', 'encryption_in_transit', 'access_controls'],
           transfer_countries: ['brazil'],
-          automated_decision_making: false
+          automated_decision_making: false,
         },
         {
           activity_name: 'medical_consultation',
@@ -203,8 +209,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           security_measures: ['end_to_end_encryption', 'digital_signatures', 'audit_logs'],
           transfer_countries: ['brazil'],
           automated_decision_making: true,
-          automated_decision_details: 'AI-assisted diagnosis support'
-        }
+          automated_decision_details: 'AI-assisted diagnosis support',
+        },
       ];
 
       for (const activity of processingActivities) {
@@ -215,7 +221,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           resource_id: activity.activity_name,
           action: 'document_processing_activity',
           details: activity,
-          compliance_context: 'lgpd_ropa' // Record of Processing Activities
+          compliance_context: 'lgpd_ropa', // Record of Processing Activities
         });
 
         expect(auditEvent.details.legal_basis).toBeDefined();
@@ -237,8 +243,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             request_method: 'user_portal',
             identity_verification: 'government_id',
             response_deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            status: 'in_progress'
-          }
+            status: 'in_progress',
+          },
         },
         {
           request_type: 'data_portability_request',
@@ -247,8 +253,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             data_scope: 'all_personal_data',
             transfer_method: 'secure_download',
             encryption_required: true,
-            status: 'completed'
-          }
+            status: 'completed',
+          },
         },
         {
           request_type: 'data_rectification_request',
@@ -257,8 +263,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             incorrect_value: '+55 11 99999-0000',
             correct_value: '+55 11 88888-1111',
             correction_reason: 'user_reported_error',
-            status: 'completed'
-          }
+            status: 'completed',
+          },
         },
         {
           request_type: 'data_deletion_request',
@@ -267,9 +273,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             retention_override_reason: null,
             deletion_method: 'secure_overwrite',
             anonymization_option: false,
-            status: 'scheduled'
-          }
-        }
+            status: 'scheduled',
+          },
+        },
       ];
 
       for (const request of dataSubjectRequests) {
@@ -280,7 +286,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           resource_id: `request-${Date.now()}`,
           action: request.request_type,
           details: request.details,
-          compliance_context: 'lgpd_dsr' // Data Subject Rights
+          compliance_context: 'lgpd_dsr', // Data Subject Rights
         });
 
         expect(auditEvent.action).toBe(request.request_type);
@@ -303,27 +309,27 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           access_type: 'medical_consultation',
           data_accessed: ['medical_history', 'current_medications', 'allergies'],
           access_reason: 'scheduled_appointment',
-          emergency_access: false
+          emergency_access: false,
         },
         {
           user: testNurse,
           access_type: 'medication_administration',
           data_accessed: ['current_medications', 'dosage_schedule'],
           access_reason: 'medication_round',
-          emergency_access: false
+          emergency_access: false,
         },
         {
           user: testDoctor,
           access_type: 'emergency_consultation',
           data_accessed: ['full_medical_record', 'emergency_contacts', 'allergies'],
           access_reason: 'medical_emergency',
-          emergency_access: true
-        }
+          emergency_access: true,
+        },
       ];
 
       for (const scenario of accessScenarios) {
         const startTime = performance.now();
-        
+
         // Simulate data access
         const { data, error } = await testClient
           .from('medical_records')
@@ -350,8 +356,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             user_role: scenario.user.role,
             organizational_context: 'primary_care',
             data_minimization_applied: true,
-            records_count: data?.length || 0
-          }
+            records_count: data?.length || 0,
+          },
         });
 
         expect(auditEvent.details.access_type).toBe(scenario.access_type);
@@ -368,7 +374,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         requesting_doctor_crm: 'CRM/SP-654321',
         request_purpose: 'specialist_referral',
         patient_consent_id: 'consent-123456',
-        data_sharing_agreement_id: 'dsa-789012'
+        data_sharing_agreement_id: 'dsa-789012',
       };
 
       const auditEvent = recordAuditEvent({
@@ -386,10 +392,10 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           audit_trail_shared: true,
           retention_period_external: '1_year',
           deletion_guarantee: true,
-          compliance_verification: 'lgpd_adequate_country'
+          compliance_verification: 'lgpd_adequate_country',
         },
         ip_address: '10.20.30.40', // External organization IP
-        compliance_context: 'lgpd_international_transfer'
+        compliance_context: 'lgpd_international_transfer',
       });
 
       expect(auditEvent.event_type).toBe('inter_organizational_access');
@@ -406,22 +412,22 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           user_role: 'data_controller',
           purpose: 'compliance_audit',
           records_affected: 1000,
-          data_categories: ['patients', 'appointments', 'medical_records']
+          data_categories: ['patients', 'appointments', 'medical_records'],
         },
         {
           operation_type: 'bulk_anonymization',
           user_role: 'privacy_officer',
           purpose: 'research_dataset_preparation',
           records_affected: 5000,
-          data_categories: ['medical_records', 'lab_results']
+          data_categories: ['medical_records', 'lab_results'],
         },
         {
           operation_type: 'bulk_deletion',
           user_role: 'data_processor',
           purpose: 'retention_policy_enforcement',
           records_affected: 250,
-          data_categories: ['expired_appointments', 'old_temporary_data']
-        }
+          data_categories: ['expired_appointments', 'old_temporary_data'],
+        },
       ];
 
       for (const operation of bulkOperations) {
@@ -438,8 +444,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             supervisor_approval: operation.records_affected > 100 ? 'supervisor-123' : null,
             technical_safeguards: ['backup_created', 'rollback_available'],
             organizational_safeguards: ['approval_workflow', 'audit_review'],
-            compliance_impact_assessment: operation.records_affected > 1000
-          }
+            compliance_impact_assessment: operation.records_affected > 1000,
+          },
         });
 
         expect(auditEvent.action).toBe(operation.operation_type);
@@ -462,8 +468,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             normal_range: '10-30',
             time_period: '1_hour',
             risk_level: 'medium',
-            automated_response: 'rate_limiting_applied'
-          }
+            automated_response: 'rate_limiting_applied',
+          },
         },
         {
           event_type: 'unusual_access_location',
@@ -473,8 +479,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             current_location: 'New York',
             access_method: 'web_portal',
             risk_level: 'high',
-            automated_response: 'mfa_challenge_sent'
-          }
+            automated_response: 'mfa_challenge_sent',
+          },
         },
         {
           event_type: 'off_hours_access',
@@ -484,8 +490,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             usual_hours: '08:00-18:00',
             access_type: 'administrative_functions',
             risk_level: 'medium',
-            automated_response: 'supervisor_notification'
-          }
+            automated_response: 'supervisor_notification',
+          },
         },
         {
           event_type: 'failed_authentication_burst',
@@ -495,9 +501,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             time_window: '5_minutes',
             ip_addresses: ['192.168.1.100', '192.168.1.101'],
             risk_level: 'high',
-            automated_response: 'account_temporary_lock'
-          }
-        }
+            automated_response: 'account_temporary_lock',
+          },
+        },
       ];
 
       for (const event of suspiciousEvents) {
@@ -513,9 +519,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             confidence_score: 0.85,
             investigation_required: event.details.risk_level === 'high',
             escalation_level: event.details.risk_level === 'high' ? 'security_team' : 'supervisor',
-            mitigation_actions: event.details.automated_response
+            mitigation_actions: event.details.automated_response,
           },
-          compliance_context: 'security_monitoring'
+          compliance_context: 'security_monitoring',
         });
 
         expect(auditEvent.event_type).toBe('security_anomaly_detection');
@@ -535,8 +541,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             new_role: 'doctor',
             change_reason: 'professional_certification_update',
             approval_authority: 'hr_manager',
-            effective_date: new Date().toISOString()
-          }
+            effective_date: new Date().toISOString(),
+          },
         },
         {
           action_type: 'system_configuration_change',
@@ -545,8 +551,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             setting_changed: 'password_complexity_requirements',
             previous_value: 'standard',
             new_value: 'high_security',
-            change_reason: 'compliance_requirement'
-          }
+            change_reason: 'compliance_requirement',
+          },
         },
         {
           action_type: 'data_access_permission_grant',
@@ -555,9 +561,9 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             permission_type: 'read_anonymized_data',
             data_categories: ['medical_records', 'lab_results'],
             purpose: 'approved_research_study',
-            expiration_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
-          }
-        }
+            expiration_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          },
+        },
       ];
 
       for (const action of adminActions) {
@@ -573,8 +579,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             approval_workflow_completed: true,
             impact_assessment_performed: true,
             rollback_procedure_available: true,
-            notification_sent_to: ['compliance_team', 'affected_users']
-          }
+            notification_sent_to: ['compliance_team', 'affected_users'],
+          },
         });
 
         expect(auditEvent.action).toBe(action.action_type);
@@ -592,7 +598,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           user_type: 'healthcare_professional',
           query_parameters: { specialty: 'cardiology', location: 'sao_paulo' },
           records_returned: 25,
-          response_time_ms: 150
+          response_time_ms: 150,
         },
         {
           api_endpoint: '/api/v1/medical-records/bulk-export',
@@ -600,7 +606,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           user_type: 'data_controller',
           query_parameters: { date_range: '2024-01-01_to_2024-12-31', format: 'json' },
           records_returned: 10000,
-          response_time_ms: 2500
+          response_time_ms: 2500,
         },
         {
           api_endpoint: '/api/v1/appointments/schedule',
@@ -608,8 +614,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           user_type: 'patient',
           query_parameters: { doctor_id: 'doctor-123', preferred_date: '2024-10-15' },
           records_returned: 1,
-          response_time_ms: 300
-        }
+          response_time_ms: 300,
+        },
       ];
 
       for (const apiEvent of apiEvents) {
@@ -626,9 +632,11 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             authentication_method: 'bearer_token',
             api_version: 'v1',
             user_agent: 'NeonPro-Web/2.0',
-            data_sensitivity_level: apiEvent.api_endpoint.includes('medical-records') ? 'high' : 'medium',
-            compliance_flags: apiEvent.records_returned > 1000 ? ['bulk_access'] : []
-          }
+            data_sensitivity_level: apiEvent.api_endpoint.includes('medical-records')
+              ? 'high'
+              : 'medium',
+            compliance_flags: apiEvent.records_returned > 1000 ? ['bulk_access'] : [],
+          },
         });
 
         expect(auditEvent.event_type).toBe('api_usage_monitoring');
@@ -643,7 +651,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
       // security-auditor: LGPD reporting validation
       const reportingPeriod = {
         start_date: '2024-01-01T00:00:00.000Z',
-        end_date: '2024-12-31T23:59:59.999Z'
+        end_date: '2024-12-31T23:59:59.999Z',
       };
 
       const complianceReport: ComplianceReport = {
@@ -662,27 +670,27 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           consent_withdrawals: 156,
           security_incidents: 2,
           data_breaches: 0,
-          compliance_violations: 0
+          compliance_violations: 0,
         },
         processing_activities: {
           total_activities: 12,
           high_risk_activities: 3,
           automated_decision_making: 2,
           international_transfers: 1,
-          special_categories_processing: 5
+          special_categories_processing: 5,
         },
         security_measures: {
           encryption_coverage: '100%',
           access_control_implementation: '100%',
           audit_logging_coverage: '100%',
           incident_response_tests: 4,
-          staff_training_completion: '98%'
+          staff_training_completion: '98%',
         },
         recommendations: [
           'Implement additional monitoring for high-risk processing activities',
           'Enhance data minimization procedures for research activities',
-          'Update consent management interface for better user experience'
-        ]
+          'Update consent management interface for better user experience',
+        ],
       };
 
       const auditEvent = recordAuditEvent({
@@ -692,7 +700,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         resource_id: complianceReport.report_id,
         action: 'generate_lgpd_report',
         details: complianceReport,
-        compliance_context: 'lgpd_annual_reporting'
+        compliance_context: 'lgpd_annual_reporting',
       });
 
       expect(auditEvent.details.metrics.total_data_subjects).toBe(50000);
@@ -711,28 +719,28 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           cnes_code: '2077469',
           institution_name: 'NeonPro Healthcare Platform',
           institution_type: 'digital_health_platform',
-          primary_activity: 'telemedicine_consultation'
+          primary_activity: 'telemedicine_consultation',
         },
         health_data_metrics: {
           patient_consultations: 15000,
           medical_prescriptions: 8500,
           lab_results_processed: 12000,
           telemedicine_sessions: 6500,
-          emergency_consultations: 250
+          emergency_consultations: 250,
         },
         data_security_compliance: {
           encryption_standard: 'AES-256',
           data_backup_frequency: 'daily',
           disaster_recovery_tested: true,
           access_control_implemented: true,
-          audit_trail_complete: true
+          audit_trail_complete: true,
         },
         adverse_events: {
           system_outages: 1,
           data_loss_incidents: 0,
           security_breaches: 0,
-          patient_safety_incidents: 0
-        }
+          patient_safety_incidents: 0,
+        },
       };
 
       const auditEvent = recordAuditEvent({
@@ -742,7 +750,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         resource_id: anvisaReport.report_id,
         action: 'generate_anvisa_report',
         details: anvisaReport,
-        compliance_context: 'anvisa_rdc_786_2023'
+        compliance_context: 'anvisa_rdc_786_2023',
       });
 
       expect(auditEvent.details.healthcare_institution.cnes_code).toBe('2077469');
@@ -758,7 +766,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         check_type: 'comprehensive_audit_validation',
         period_checked: {
           start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString()
+          end: new Date().toISOString(),
         },
         metrics: {
           total_events_expected: auditEvents.length,
@@ -769,16 +777,16 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             lgpd_compliance: auditEvents.filter(e => e.compliance_context?.includes('lgpd')).length,
             security_monitoring: auditEvents.filter(e => e.event_type.includes('security')).length,
             data_access: auditEvents.filter(e => e.event_type.includes('access')).length,
-            administrative: auditEvents.filter(e => e.event_type.includes('administrative')).length
-          }
+            administrative: auditEvents.filter(e => e.event_type.includes('administrative')).length,
+          },
         },
         validation_results: {
           chronological_order: true,
           event_signatures_valid: true,
           no_gaps_detected: true,
           no_tampering_detected: true,
-          backup_consistency: true
-        }
+          backup_consistency: true,
+        },
       };
 
       const auditEvent = recordAuditEvent({
@@ -788,7 +796,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         resource_id: auditIntegrityCheck.check_id,
         action: 'validate_audit_integrity',
         details: auditIntegrityCheck,
-        compliance_context: 'audit_validation'
+        compliance_context: 'audit_validation',
       });
 
       expect(auditEvent.details.validation_results.no_tampering_detected).toBe(true);
@@ -806,29 +814,29 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           retention_period: '5_years_post_last_consultation',
           legal_basis: 'legitimate_interest_healthcare',
           deletion_method: 'secure_overwrite',
-          anonymization_option: true
+          anonymization_option: true,
         },
         {
           data_category: 'medical_records',
           retention_period: '20_years_permanent_record',
           legal_basis: 'legal_obligation_medical_records',
           deletion_method: 'not_applicable',
-          anonymization_option: false
+          anonymization_option: false,
         },
         {
           data_category: 'appointment_history',
           retention_period: '3_years_administrative',
           legal_basis: 'legitimate_interest_healthcare',
           deletion_method: 'database_deletion',
-          anonymization_option: true
+          anonymization_option: true,
         },
         {
           data_category: 'audit_logs',
           retention_period: '7_years_compliance',
           legal_basis: 'legal_obligation_audit',
           deletion_method: 'archived_secure_storage',
-          anonymization_option: false
-        }
+          anonymization_option: false,
+        },
       ];
 
       for (const policy of retentionPolicies) {
@@ -846,8 +854,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             records_due_for_deletion: 50,
             records_deleted: 45,
             records_anonymized: 5,
-            policy_exceptions: 0
-          }
+            policy_exceptions: 0,
+          },
         });
 
         expect(auditEvent.details.retention_period).toBe(policy.retention_period);
@@ -864,22 +872,22 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           trigger: 'data_subject_request',
           scope: 'all_personal_data',
           patient_count: 1,
-          deletion_method: 'cryptographic_erasure'
+          deletion_method: 'cryptographic_erasure',
         },
         {
           deletion_type: 'automated_retention',
           trigger: 'retention_policy_expiry',
           scope: 'expired_temporary_data',
           records_count: 500,
-          deletion_method: 'secure_overwrite_3_pass'
+          deletion_method: 'secure_overwrite_3_pass',
         },
         {
           deletion_type: 'legal_compliance',
           trigger: 'court_order',
           scope: 'specific_investigation_data',
           records_count: 25,
-          deletion_method: 'forensic_secure_deletion'
-        }
+          deletion_method: 'forensic_secure_deletion',
+        },
       ];
 
       for (const scenario of deletionScenarios) {
@@ -897,8 +905,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             deletion_certificate_generated: true,
             backup_purge_required: true,
             compliance_notification_sent: true,
-            irreversibility_confirmed: true
-          }
+            irreversibility_confirmed: true,
+          },
         });
 
         expect(auditEvent.details.deletion_method).toBeDefined();
@@ -917,22 +925,22 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
           severity: 'medium',
           affected_systems: ['patient_portal'],
           potential_impact: 'limited_personal_data_exposure',
-          detection_method: 'anomaly_detection_algorithm'
+          detection_method: 'anomaly_detection_algorithm',
         },
         {
           breach_type: 'insider_threat_detected',
           severity: 'high',
           affected_systems: ['medical_records_database'],
           potential_impact: 'sensitive_health_data_access',
-          detection_method: 'user_behavior_analytics'
+          detection_method: 'user_behavior_analytics',
         },
         {
           breach_type: 'external_attack_blocked',
           severity: 'critical',
           affected_systems: ['api_gateway', 'authentication_service'],
           potential_impact: 'system_compromise_attempt',
-          detection_method: 'intrusion_detection_system'
-        }
+          detection_method: 'intrusion_detection_system',
+        },
       ];
 
       for (const scenario of breachScenarios) {
@@ -952,8 +960,8 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             regulatory_notification_required: scenario.severity !== 'medium',
             notification_deadline: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
             investigation_status: 'ongoing',
-            forensic_analysis_required: scenario.severity === 'critical'
-          }
+            forensic_analysis_required: scenario.severity === 'critical',
+          },
         });
 
         expect(auditEvent.details.response_team_notified).toBe(true);
@@ -972,34 +980,34 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
             action: 'immediate_containment',
             timestamp: new Date().toISOString(),
             responsible_team: 'security_operations',
-            details: 'Isolated affected systems and revoked suspicious access tokens'
+            details: 'Isolated affected systems and revoked suspicious access tokens',
           },
           {
             action: 'stakeholder_notification',
             timestamp: new Date(Date.now() + 1800000).toISOString(),
             responsible_team: 'incident_commander',
-            details: 'Notified executive team, legal counsel, and compliance officer'
+            details: 'Notified executive team, legal counsel, and compliance officer',
           },
           {
             action: 'forensic_investigation',
             timestamp: new Date(Date.now() + 3600000).toISOString(),
             responsible_team: 'digital_forensics',
-            details: 'Initiated comprehensive forensic analysis of affected systems'
+            details: 'Initiated comprehensive forensic analysis of affected systems',
           },
           {
             action: 'regulatory_notification',
             timestamp: new Date(Date.now() + 7200000).toISOString(),
             responsible_team: 'compliance_team',
-            details: 'Prepared notification to ANPD and other relevant authorities'
-          }
+            details: 'Prepared notification to ANPD and other relevant authorities',
+          },
         ],
         impact_assessment: {
           data_categories_affected: ['personal_data', 'health_data'],
           estimated_records_affected: 1500,
           geographic_scope: 'brazil_national',
           regulatory_jurisdictions: ['anpd_brazil', 'anvisa_brazil'],
-          business_impact: 'moderate_service_disruption'
-        }
+          business_impact: 'moderate_service_disruption',
+        },
       };
 
       const auditEvent = recordAuditEvent({
@@ -1009,7 +1017,7 @@ describe('Supabase Audit Trail - LGPD Compliance', () => {
         resource_id: incidentResponse.incident_id,
         action: 'execute_response_procedures',
         details: incidentResponse,
-        compliance_context: 'incident_response_lgpd'
+        compliance_context: 'incident_response_lgpd',
       });
 
       expect(auditEvent.details.actions_taken).toHaveLength(4);

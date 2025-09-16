@@ -41,7 +41,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-
   Skeleton,
   Tabs,
   TabsContent,
@@ -49,8 +48,8 @@ import {
   TabsTrigger,
 } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
-import { formatCPF, formatBRPhone } from '@neonpro/utils';
 import { Patient } from '@neonpro/shared/types/patient';
+import { formatBRPhone, formatCPF } from '@neonpro/utils';
 // import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
 

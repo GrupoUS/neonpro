@@ -3,24 +3,19 @@
  * Central orchestration system for all test categories
  */
 
-import { createLogger } from '@neonpro/tools-shared';
+import { createLogger, LogLevel } from '../utils/logger';
 import {
   TestCategory,
   TestCategoryManager,
-  TEST_CATEGORIES
-} from '@neonpro/tools-shared/utils/testing/test-categories';
+  TEST_CATEGORIES,
+  TDDPhase
+} from '../utils/test-categories';
 import {
   AgentCoordinator,
-  AgentCoordinationPlan,
-  TDDPhase
-} from '@neonpro/tools-shared/utils/agents/agent-coordination';
+  AgentCoordinationPlan
+} from '../utils/agent-coordination';
 
-const logger = createLogger('TestCoordinator', {
-  level: 'info',
-  format: 'pretty',
-  enableConstitutional: true,
-  enablePerformance: true,
-});
+const logger = createLogger('TestCoordinator', LogLevel.INFO);
 
 export interface TestExecutionOptions {
   categories?: TestCategory[];
@@ -83,7 +78,7 @@ export class TestCoordinator {
     this.startTime = performance.now();
 
     logger.constitutional(
-      'info',
+      LogLevel.INFO,
       'Starting full test suite execution with orchestration',
       {
         compliance: options.healthcareCompliance || false,
@@ -136,7 +131,7 @@ export class TestCoordinator {
       };
 
       logger.constitutional(
-        success ? 'info' : 'error',
+        success ? LogLevel.INFO : LogLevel.ERROR,
         `Test suite execution completed: ${success ? 'SUCCESS' : 'FAILED'}`,
         {
           compliance: success,
@@ -247,7 +242,7 @@ export class TestCoordinator {
       const duration = performance.now() - phaseStartTime;
 
       logger.constitutional(
-        coordination.success ? 'info' : 'warn',
+        coordination.success ? LogLevel.INFO : LogLevel.WARN,
         `Phase ${phase} completed for ${category}: ${coordination.success ? 'SUCCESS' : 'FAILED'}`,
         {
           compliance: coordination.success,
@@ -374,7 +369,7 @@ export class TestCoordinator {
     const overall = { compliant: overallScore >= 90, score: overallScore };
 
     logger.constitutional(
-      overall.compliant ? 'info' : 'warn',
+      overall.compliant ? LogLevel.INFO : LogLevel.WARN,
       `Healthcare compliance validation completed: ${overall.compliant ? 'COMPLIANT' : 'NON-COMPLIANT'}`,
       {
         compliance: overall.compliant,

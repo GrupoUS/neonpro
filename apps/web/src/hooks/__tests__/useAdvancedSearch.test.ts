@@ -57,7 +57,7 @@ describe('useAdvancedSearch', () => {
   });
 });
 
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 // New enhanced tests for formatting, validation, clearing, and metrics
 import { useAdvancedSearch } from '../useAdvancedSearch';
@@ -101,7 +101,7 @@ describe('useAdvancedSearch — clearFilters and metrics', () => {
     const { result } = renderHook(() => useAdvancedSearch());
 
     act(() => {
-      result.current.setFilters((prev) => ({
+      result.current.setFilters(prev => ({
         ...prev,
         query: 'abc',
         email: 'user@example.com',
@@ -133,30 +133,30 @@ describe('useAdvancedSearch — clearFilters and metrics', () => {
     expect(result.current.metrics.totalFilters).toBe(0);
 
     act(() => {
-      result.current.setFilters((prev) => ({ ...prev, query: 'john' }));
+      result.current.setFilters(prev => ({ ...prev, query: 'john' }));
     });
     expect(result.current.metrics.totalFilters).toBe(1);
 
     act(() => {
-      result.current.setFilters((prev) => ({ ...prev, status: ['active', 'inactive'] }));
+      result.current.setFilters(prev => ({ ...prev, status: ['active', 'inactive'] }));
     });
     expect(result.current.metrics.totalFilters).toBe(2);
 
     const start = new Date('2023-01-01');
     act(() => {
-      result.current.setFilters((prev) => ({ ...prev, dateRange: { start, end: null } }));
+      result.current.setFilters(prev => ({ ...prev, dateRange: { start, end: null } }));
     });
     expect(result.current.metrics.totalFilters).toBe(3);
 
     // empty strings should not count
     act(() => {
-      result.current.setFilters((prev) => ({ ...prev, email: '' }));
+      result.current.setFilters(prev => ({ ...prev, email: '' }));
     });
     expect(result.current.metrics.totalFilters).toBe(3);
 
     // adding a valid phone increases count
     act(() => {
-      result.current.setFilters((prev) => ({ ...prev, phone: '(11) 98765-4321' }));
+      result.current.setFilters(prev => ({ ...prev, phone: '(11) 98765-4321' }));
     });
     expect(result.current.metrics.totalFilters).toBe(4);
   });

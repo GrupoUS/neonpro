@@ -1,7 +1,7 @@
 /**
  * Mobile Responsive Accessibility Utilities
  * T083 - Mobile Accessibility Optimization
- * 
+ *
  * Features:
  * - WCAG 2.1 AA+ compliance across mobile breakpoints (320px-768px)
  * - Text scaling support (up to 200% zoom)
@@ -48,7 +48,8 @@ export const RESPONSIVE_ACCESSIBILITY_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type ResponsiveAccessibilityLevel = typeof RESPONSIVE_ACCESSIBILITY_LEVELS[keyof typeof RESPONSIVE_ACCESSIBILITY_LEVELS];
+export type ResponsiveAccessibilityLevel =
+  typeof RESPONSIVE_ACCESSIBILITY_LEVELS[keyof typeof RESPONSIVE_ACCESSIBILITY_LEVELS];
 
 // Healthcare Responsive Patterns
 export const HEALTHCARE_RESPONSIVE_PATTERNS = {
@@ -62,7 +63,8 @@ export const HEALTHCARE_RESPONSIVE_PATTERNS = {
   DATA_TABLE: 'data_table',
 } as const;
 
-export type HealthcareResponsivePattern = typeof HEALTHCARE_RESPONSIVE_PATTERNS[keyof typeof HEALTHCARE_RESPONSIVE_PATTERNS];
+export type HealthcareResponsivePattern =
+  typeof HEALTHCARE_RESPONSIVE_PATTERNS[keyof typeof HEALTHCARE_RESPONSIVE_PATTERNS];
 
 // Responsive Element Schema
 export const ResponsiveElementSchema = z.object({
@@ -168,9 +170,11 @@ export class MobileResponsiveAccessibility {
   /**
    * Validate breakpoint compliance
    */
-  validateBreakpointCompliance(elements: ResponsiveElement[]): ResponsiveAccessibilityReport['breakpointCompliance'] {
+  validateBreakpointCompliance(
+    elements: ResponsiveElement[],
+  ): ResponsiveAccessibilityReport['breakpointCompliance'] {
     this.issues = [];
-    
+
     const testedBreakpoints = Object.values(RESPONSIVE_BREAKPOINTS).slice(0, 4); // Exclude desktop
     const compliantBreakpoints: number[] = [];
     const issues: ResponsiveAccessibilityIssue[] = [];
@@ -178,9 +182,9 @@ export class MobileResponsiveAccessibility {
     testedBreakpoints.forEach(breakpoint => {
       const elementsAtBreakpoint = elements.filter(el => el.breakpoint === breakpoint);
       const accessibleElements = elementsAtBreakpoint.filter(el => el.isAccessible);
-      
-      const complianceRate = elementsAtBreakpoint.length > 0 
-        ? accessibleElements.length / elementsAtBreakpoint.length 
+
+      const complianceRate = elementsAtBreakpoint.length > 0
+        ? accessibleElements.length / elementsAtBreakpoint.length
         : 1;
 
       if (complianceRate >= 0.95) {
@@ -191,10 +195,15 @@ export class MobileResponsiveAccessibility {
           type: 'breakpoint',
           severity: complianceRate < 0.8 ? 'high' : 'medium',
           title: `Não conformidade no breakpoint ${breakpoint}px`,
-          description: `${Math.round((1 - complianceRate) * 100)}% dos elementos não são acessíveis neste breakpoint`,
-          recommendation: `Otimizar elementos para breakpoint ${breakpoint}px com foco em acessibilidade`,
+          description: `${
+            Math.round((1 - complianceRate) * 100)
+          }% dos elementos não são acessíveis neste breakpoint`,
+          recommendation:
+            `Otimizar elementos para breakpoint ${breakpoint}px com foco em acessibilidade`,
           affectedBreakpoints: [breakpoint],
-          affectedElements: elementsAtBreakpoint.filter(el => !el.isAccessible).map(el => el.selector),
+          affectedElements: elementsAtBreakpoint.filter(el => !el.isAccessible).map(el =>
+            el.selector
+          ),
           wcagReference: 'WCAG 2.1 AA - Critério 1.4.10 (Reflow)',
           healthcareImpact: 'Impede acesso a informações médicas críticas em dispositivos móveis',
           remediation: {
@@ -214,7 +223,10 @@ export class MobileResponsiveAccessibility {
 
     this.issues.push(...issues);
 
-    const level = this.calculateBreakpointLevel(compliantBreakpoints.length, testedBreakpoints.length);
+    const level = this.calculateBreakpointLevel(
+      compliantBreakpoints.length,
+      testedBreakpoints.length,
+    );
 
     return {
       level,
@@ -227,7 +239,9 @@ export class MobileResponsiveAccessibility {
   /**
    * Validate text scaling compliance
    */
-  validateTextScalingCompliance(elements: ResponsiveElement[]): ResponsiveAccessibilityReport['textScalingCompliance'] {
+  validateTextScalingCompliance(
+    elements: ResponsiveElement[],
+  ): ResponsiveAccessibilityReport['textScalingCompliance'] {
     const maxZoomTested = TEXT_SCALING_REQUIREMENTS.MAXIMUM_ZOOM;
     const zoomLevelsCompliant: number[] = [];
     const issues: ResponsiveAccessibilityIssue[] = [];
@@ -242,13 +256,13 @@ export class MobileResponsiveAccessibility {
         lineHeight: el.lineHeight,
       }));
 
-      const readableElements = scaledElements.filter(el => 
-        el.fontSize >= TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM &&
-        el.lineHeight >= TEXT_SCALING_REQUIREMENTS.LINE_HEIGHT_MINIMUM
+      const readableElements = scaledElements.filter(el =>
+        el.fontSize >= TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM
+        && el.lineHeight >= TEXT_SCALING_REQUIREMENTS.LINE_HEIGHT_MINIMUM
       );
 
-      const complianceRate = scaledElements.length > 0 
-        ? readableElements.length / scaledElements.length 
+      const complianceRate = scaledElements.length > 0
+        ? readableElements.length / scaledElements.length
         : 1;
 
       if (complianceRate >= 0.95) {
@@ -259,14 +273,17 @@ export class MobileResponsiveAccessibility {
           type: 'text_scaling',
           severity: 'high',
           title: `Texto não legível em zoom ${zoomLevel}%`,
-          description: `${Math.round((1 - complianceRate) * 100)}% do texto não é legível em zoom ${zoomLevel}%`,
+          description: `${
+            Math.round((1 - complianceRate) * 100)
+          }% do texto não é legível em zoom ${zoomLevel}%`,
           recommendation: 'Implementar design responsivo que suporte zoom de texto até 200%',
           affectedBreakpoints: Object.values(RESPONSIVE_BREAKPOINTS).slice(0, 4),
-          affectedElements: scaledElements.filter(el => 
+          affectedElements: scaledElements.filter(el =>
             el.fontSize < TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM
           ).map(el => el.selector),
           wcagReference: 'WCAG 2.1 AA - Critério 1.4.4 (Redimensionar Texto)',
-          healthcareImpact: 'Impede leitura de informações médicas por usuários com deficiências visuais',
+          healthcareImpact:
+            'Impede leitura de informações médicas por usuários com deficiências visuais',
           remediation: {
             steps: [
               'Usar unidades relativas (rem, em) para texto',
@@ -284,7 +301,7 @@ export class MobileResponsiveAccessibility {
 
     this.issues.push(...issues);
 
-    const level = zoomLevelsCompliant.includes(200) 
+    const level = zoomLevelsCompliant.includes(200)
       ? RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT
       : zoomLevelsCompliant.includes(150)
       ? RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD
@@ -301,19 +318,20 @@ export class MobileResponsiveAccessibility {
   /**
    * Validate contrast compliance across breakpoints
    */
-  validateContrastCompliance(elements: ResponsiveElement[]): ResponsiveAccessibilityReport['contrastCompliance'] {
+  validateContrastCompliance(
+    elements: ResponsiveElement[],
+  ): ResponsiveAccessibilityReport['contrastCompliance'] {
     const elementsChecked = elements.length;
-    const compliantElements = elements.filter(el => 
-      el.contrast >= CONTRAST_REQUIREMENTS.NORMAL_TEXT_AA
-    ).length;
-    
-    const averageContrast = elements.length > 0 
-      ? elements.reduce((sum, el) => sum + el.contrast, 0) / elements.length 
+    const compliantElements =
+      elements.filter(el => el.contrast >= CONTRAST_REQUIREMENTS.NORMAL_TEXT_AA).length;
+
+    const averageContrast = elements.length > 0
+      ? elements.reduce((sum, el) => sum + el.contrast, 0) / elements.length
       : 0;
 
     const issues: ResponsiveAccessibilityIssue[] = [];
 
-    const lowContrastElements = elements.filter(el => 
+    const lowContrastElements = elements.filter(el =>
       el.contrast < CONTRAST_REQUIREMENTS.NORMAL_TEXT_AA
     );
 
@@ -323,7 +341,8 @@ export class MobileResponsiveAccessibility {
         type: 'contrast',
         severity: 'high',
         title: 'Elementos com contraste insuficiente',
-        description: `${lowContrastElements.length} elementos não atendem aos requisitos de contraste WCAG AA`,
+        description:
+          `${lowContrastElements.length} elementos não atendem aos requisitos de contraste WCAG AA`,
         recommendation: 'Ajustar cores para atingir contraste mínimo de 4.5:1 para texto normal',
         affectedBreakpoints: Object.values(RESPONSIVE_BREAKPOINTS).slice(0, 4),
         affectedElements: lowContrastElements.map(el => el.selector),
@@ -373,7 +392,8 @@ export class MobileResponsiveAccessibility {
         type: 'layout',
         severity: 'medium',
         title: 'Elementos de layout rígido',
-        description: `${rigidElements} elementos não se adaptam adequadamente a diferentes tamanhos de tela`,
+        description:
+          `${rigidElements} elementos não se adaptam adequadamente a diferentes tamanhos de tela`,
         recommendation: 'Implementar design flexível com CSS Grid e Flexbox',
         affectedBreakpoints: [RESPONSIVE_BREAKPOINTS.SMALL_MOBILE, RESPONSIVE_BREAKPOINTS.MOBILE],
         affectedElements: ['fixed-width-table', 'rigid-form-layout'],
@@ -461,12 +481,14 @@ export class MobileResponsiveAccessibility {
         type: 'content',
         severity: 'medium',
         title: 'Padrões responsivos para saúde ausentes',
-        description: `${missingPatterns.length} padrões responsivos específicos para saúde não implementados`,
+        description:
+          `${missingPatterns.length} padrões responsivos específicos para saúde não implementados`,
         recommendation: 'Implementar padrões responsivos otimizados para aplicações de saúde',
         affectedBreakpoints: Object.values(RESPONSIVE_BREAKPOINTS).slice(0, 4),
         affectedElements: missingPatterns,
         wcagReference: 'WCAG 2.1 AA - Critério 1.4.10 (Reflow)',
-        healthcareImpact: 'Reduz eficiência na visualização de dados médicos em dispositivos móveis',
+        healthcareImpact:
+          'Reduz eficiência na visualização de dados médicos em dispositivos móveis',
         remediation: {
           steps: [
             'Implementar padrões para sinais vitais',
@@ -536,7 +558,7 @@ export class MobileResponsiveAccessibility {
    */
   private calculateBreakpointLevel(compliant: number, total: number): ResponsiveAccessibilityLevel {
     const rate = total > 0 ? compliant / total : 1;
-    
+
     if (rate >= 0.95) return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
     if (rate >= 0.85) return RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD;
     if (rate >= 0.7) return RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE;
@@ -547,7 +569,10 @@ export class MobileResponsiveAccessibility {
   /**
    * Calculate contrast compliance level
    */
-  private calculateContrastLevel(rate: number, averageContrast: number): ResponsiveAccessibilityLevel {
+  private calculateContrastLevel(
+    rate: number,
+    averageContrast: number,
+  ): ResponsiveAccessibilityLevel {
     if (rate >= 0.95 && averageContrast >= CONTRAST_REQUIREMENTS.ENHANCED_AAA) {
       return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
     }
@@ -562,7 +587,10 @@ export class MobileResponsiveAccessibility {
   /**
    * Calculate layout adaptability level
    */
-  private calculateLayoutLevel(adaptabilityRate: number, overflowIssues: number): ResponsiveAccessibilityLevel {
+  private calculateLayoutLevel(
+    adaptabilityRate: number,
+    overflowIssues: number,
+  ): ResponsiveAccessibilityLevel {
     if (adaptabilityRate >= 0.95 && overflowIssues === 0) {
       return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
     }
@@ -577,7 +605,9 @@ export class MobileResponsiveAccessibility {
   /**
    * Calculate healthcare patterns level
    */
-  private calculateHealthcarePatternsLevel(implementationRate: number): ResponsiveAccessibilityLevel {
+  private calculateHealthcarePatternsLevel(
+    implementationRate: number,
+  ): ResponsiveAccessibilityLevel {
     if (implementationRate >= 0.9) return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
     if (implementationRate >= 0.75) return RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD;
     if (implementationRate >= 0.6) return RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE;
@@ -588,7 +618,9 @@ export class MobileResponsiveAccessibility {
   /**
    * Calculate overall accessibility level
    */
-  private calculateOverallLevel(levels: ResponsiveAccessibilityLevel[]): ResponsiveAccessibilityLevel {
+  private calculateOverallLevel(
+    levels: ResponsiveAccessibilityLevel[],
+  ): ResponsiveAccessibilityLevel {
     const levelScores = {
       [RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT]: 5,
       [RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD]: 4,
@@ -615,8 +647,9 @@ export class MobileResponsiveAccessibility {
     const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8) + (lowIssues * 3);
-    
+    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
+      + (lowIssues * 3);
+
     return Math.max(0, 100 - penalty);
   }
 
@@ -638,7 +671,9 @@ export class MobileResponsiveAccessibility {
       const mediumCount = issues.filter(i => i.severity === 'medium').length;
 
       if (criticalCount > 0) {
-        recommendations.push(`Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`);
+        recommendations.push(
+          `Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`,
+        );
       }
       if (highCount > 0) {
         recommendations.push(`Abordar ${highCount} problema(s) de alta prioridade em ${type}`);

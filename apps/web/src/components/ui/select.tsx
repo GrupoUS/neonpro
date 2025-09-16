@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from "@neonpro/ui";
+import { cn } from '@neonpro/ui';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import * as React from 'react';

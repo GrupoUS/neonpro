@@ -1,7 +1,7 @@
 /**
  * Supabase Performance Tests
  * Healthcare-Specific Performance Benchmarks
- * 
+ *
  * Features:
  * - Query optimization validation
  * - Connection management testing
@@ -10,14 +10,14 @@
  * - Load testing for healthcare scenarios
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { 
+import {
   createTestSupabaseClient,
   HealthcareTestDataGenerator,
   HealthcareTestValidators,
   type PerformanceMetrics,
-  type TestUser
+  type TestUser,
 } from '@/lib/testing/supabase-test-client';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 describe('Supabase Performance Tests', () => {
   let testClient: any;
@@ -28,22 +28,23 @@ describe('Supabase Performance Tests', () => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       performanceTracking: true,
-      connectionPooling: true
+      connectionPooling: true,
     });
     testDataGenerator = new HealthcareTestDataGenerator();
-    
+
     console.log('🧪 Performance Test Environment Setup Complete');
   });
 
   afterAll(async () => {
     await testDataGenerator.cleanupTestData();
-    
+
     // Generate performance report
     console.log('\n📊 Performance Test Summary:');
-    const avgResponseTime = performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0) / performanceMetrics.length;
+    const avgResponseTime = performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+      / performanceMetrics.length;
     console.log(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
     console.log(`Total Operations Tested: ${performanceMetrics.length}`);
-    
+
     console.log('⚡ Performance Test Environment Cleaned Up');
   });
 
@@ -53,7 +54,7 @@ describe('Supabase Performance Tests', () => {
       responseTime,
       operationType,
       timestamp: new Date().toISOString(),
-      passed: HealthcareTestValidators.validatePerformance(responseTime, operationType as any)
+      passed: HealthcareTestValidators.validatePerformance(responseTime, operationType as any),
     };
     performanceMetrics.push(metric);
     return metric;
@@ -63,46 +64,50 @@ describe('Supabase Performance Tests', () => {
     test('should validate optimized patient lookup queries', async () => {
       // architect-review: Critical query optimization
       const testPatients = await testDataGenerator.createBulkTestData('patients', 1000);
-      
+
       const optimizationTests = [
         {
           name: 'Patient by CPF (Indexed)',
-          query: () => testClient
-            .from('patients')
-            .select('id, full_name, email')
-            .eq('cpf', '123.456.789-01')
-            .single(),
-          expectedType: 'critical_query'
+          query: () =>
+            testClient
+              .from('patients')
+              .select('id, full_name, email')
+              .eq('cpf', '123.456.789-01')
+              .single(),
+          expectedType: 'critical_query',
         },
         {
           name: 'Patient by Email (Indexed)',
-          query: () => testClient
-            .from('patients')
-            .select('id, full_name, cpf')
-            .eq('email', 'patient@test.com')
-            .single(),
-          expectedType: 'critical_query'
+          query: () =>
+            testClient
+              .from('patients')
+              .select('id, full_name, cpf')
+              .eq('email', 'patient@test.com')
+              .single(),
+          expectedType: 'critical_query',
         },
         {
           name: 'Patient Full Text Search',
-          query: () => testClient
-            .from('patients')
-            .select('id, full_name, email')
-            .textSearch('full_name', 'João Silva')
-            .limit(20),
-          expectedType: 'general_query'
+          query: () =>
+            testClient
+              .from('patients')
+              .select('id, full_name, email')
+              .textSearch('full_name', 'João Silva')
+              .limit(20),
+          expectedType: 'general_query',
         },
         {
           name: 'Patient with Medical History',
-          query: () => testClient
-            .from('patients')
-            .select(`
+          query: () =>
+            testClient
+              .from('patients')
+              .select(`
               id, full_name, email,
               medical_records(id, record_type, created_at)
             `)
-            .eq('id', testPatients[0].id),
-          expectedType: 'critical_query'
-        }
+              .eq('id', testPatients[0].id),
+          expectedType: 'critical_query',
+        },
       ];
 
       for (const test of optimizationTests) {
@@ -111,10 +116,10 @@ describe('Supabase Performance Tests', () => {
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
-        
+
         const metric = recordMetrics(test.name, responseTime, test.expectedType);
         expect(metric.passed).toBe(true);
-        
+
         console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
       }
     });
@@ -125,34 +130,37 @@ describe('Supabase Performance Tests', () => {
       const schedulingTests = [
         {
           name: 'Doctor Availability Check',
-          query: () => testClient
-            .from('appointments')
-            .select('appointment_date, status')
-            .eq('doctor_id', testDoctors[0].id)
-            .gte('appointment_date', new Date().toISOString())
-            .order('appointment_date'),
-          expectedType: 'critical_query'
+          query: () =>
+            testClient
+              .from('appointments')
+              .select('appointment_date, status')
+              .eq('doctor_id', testDoctors[0].id)
+              .gte('appointment_date', new Date().toISOString())
+              .order('appointment_date'),
+          expectedType: 'critical_query',
         },
         {
           name: 'Available Time Slots',
-          query: () => testClient
-            .rpc('get_available_slots', {
-              doctor_id: testDoctors[0].id,
-              date_from: new Date().toISOString(),
-              date_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-            }),
-          expectedType: 'critical_query'
+          query: () =>
+            testClient
+              .rpc('get_available_slots', {
+                doctor_id: testDoctors[0].id,
+                date_from: new Date().toISOString(),
+                date_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              }),
+          expectedType: 'critical_query',
         },
         {
           name: 'Bulk Schedule Validation',
-          query: () => testClient
-            .from('appointments')
-            .select('doctor_id, appointment_date, status')
-            .in('doctor_id', testDoctors.slice(0, 10).map(d => d.id))
-            .gte('appointment_date', new Date().toISOString())
-            .limit(100),
-          expectedType: 'general_query'
-        }
+          query: () =>
+            testClient
+              .from('appointments')
+              .select('doctor_id, appointment_date, status')
+              .in('doctor_id', testDoctors.slice(0, 10).map(d => d.id))
+              .gte('appointment_date', new Date().toISOString())
+              .limit(100),
+          expectedType: 'general_query',
+        },
       ];
 
       for (const test of schedulingTests) {
@@ -161,10 +169,10 @@ describe('Supabase Performance Tests', () => {
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
-        
+
         const metric = recordMetrics(test.name, responseTime, test.expectedType);
         expect(metric.passed).toBe(true);
-        
+
         console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
       }
     });
@@ -175,34 +183,37 @@ describe('Supabase Performance Tests', () => {
       const medicalRecordsTests = [
         {
           name: 'Patient Medical History',
-          query: () => testClient
-            .from('medical_records')
-            .select('*')
-            .eq('patient_id', testPatient.id)
-            .order('created_at', { ascending: false })
-            .limit(50),
-          expectedType: 'critical_query'
+          query: () =>
+            testClient
+              .from('medical_records')
+              .select('*')
+              .eq('patient_id', testPatient.id)
+              .order('created_at', { ascending: false })
+              .limit(50),
+          expectedType: 'critical_query',
         },
         {
           name: 'Records by Date Range',
-          query: () => testClient
-            .from('medical_records')
-            .select('id, record_type, created_at, summary')
-            .eq('patient_id', testPatient.id)
-            .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-            .order('created_at', { ascending: false }),
-          expectedType: 'general_query'
+          query: () =>
+            testClient
+              .from('medical_records')
+              .select('id, record_type, created_at, summary')
+              .eq('patient_id', testPatient.id)
+              .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+              .order('created_at', { ascending: false }),
+          expectedType: 'general_query',
         },
         {
           name: 'Records by Type',
-          query: () => testClient
-            .from('medical_records')
-            .select('id, content, created_at')
-            .eq('patient_id', testPatient.id)
-            .eq('record_type', 'consultation')
-            .limit(20),
-          expectedType: 'general_query'
-        }
+          query: () =>
+            testClient
+              .from('medical_records')
+              .select('id, content, created_at')
+              .eq('patient_id', testPatient.id)
+              .eq('record_type', 'consultation')
+              .limit(20),
+          expectedType: 'general_query',
+        },
       ];
 
       for (const test of medicalRecordsTests) {
@@ -211,10 +222,10 @@ describe('Supabase Performance Tests', () => {
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
-        
+
         const metric = recordMetrics(test.name, responseTime, test.expectedType);
         expect(metric.passed).toBe(true);
-        
+
         console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
       }
     });
@@ -224,7 +235,7 @@ describe('Supabase Performance Tests', () => {
     test('should validate connection pooling under load', async () => {
       // architect-review: Connection pooling validation
       const concurrentConnections = [5, 10, 20, 50];
-      
+
       for (const connectionCount of concurrentConnections) {
         const operationPromises = Array.from({ length: connectionCount }, async (_, i) => {
           const startTime = performance.now();
@@ -232,23 +243,32 @@ describe('Supabase Performance Tests', () => {
             .from('patients')
             .select('count')
             .single();
-          
+
           const responseTime = performance.now() - startTime;
           return { operation: i, responseTime, error };
         });
 
         const results = await Promise.all(operationPromises);
-        
+
         // All operations should succeed
         results.forEach((result, index) => {
           expect(result.error).toBeNull();
-          recordMetrics(`Connection Pool - ${connectionCount} concurrent - Op ${index}`, result.responseTime, 'general_query');
+          recordMetrics(
+            `Connection Pool - ${connectionCount} concurrent - Op ${index}`,
+            result.responseTime,
+            'general_query',
+          );
         });
 
-        const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
+        const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0)
+          / results.length;
         const maxResponseTime = Math.max(...results.map(r => r.responseTime));
-        
-        console.log(`✅ ${connectionCount} concurrent connections: avg=${avgResponseTime.toFixed(2)}ms, max=${maxResponseTime.toFixed(2)}ms`);
+
+        console.log(
+          `✅ ${connectionCount} concurrent connections: avg=${avgResponseTime.toFixed(2)}ms, max=${
+            maxResponseTime.toFixed(2)
+          }ms`,
+        );
       }
     });
 
@@ -259,11 +279,11 @@ describe('Supabase Performance Tests', () => {
           name: 'Connection Timeout Recovery',
           operation: async () => {
             // Simulate timeout scenario
-            const timeoutPromise = new Promise((resolve) => 
+            const timeoutPromise = new Promise(resolve =>
               setTimeout(() => resolve({ data: null, error: null }), 1000)
             );
             return await timeoutPromise;
-          }
+          },
         },
         {
           name: 'Connection Retry Logic',
@@ -276,8 +296,8 @@ describe('Supabase Performance Tests', () => {
               if (!error) return { data, error, attempts };
             }
             return { data: null, error: 'Max retries exceeded', attempts };
-          }
-        }
+          },
+        },
       ];
 
       for (const test of recoveryTests) {
@@ -295,27 +315,29 @@ describe('Supabase Performance Tests', () => {
       const resourceTests = [
         {
           name: 'Connection Cleanup After Operations',
-          operations: 100
+          operations: 100,
         },
         {
           name: 'Memory Usage Stability',
-          operations: 500
-        }
+          operations: 500,
+        },
       ];
 
       for (const test of resourceTests) {
         const startTime = performance.now();
-        
+
         // Perform multiple operations
         for (let i = 0; i < test.operations; i++) {
           await testClient.from('patients').select('count').single();
         }
-        
+
         const responseTime = performance.now() - startTime;
         const avgTimePerOperation = responseTime / test.operations;
-        
+
         recordMetrics(test.name, avgTimePerOperation, 'general_query');
-        console.log(`✅ ${test.name}: ${test.operations} ops, avg=${avgTimePerOperation.toFixed(2)}ms/op`);
+        console.log(
+          `✅ ${test.name}: ${test.operations} ops, avg=${avgTimePerOperation.toFixed(2)}ms/op`,
+        );
       }
     });
   });
@@ -326,16 +348,16 @@ describe('Supabase Performance Tests', () => {
       const cacheTests = [
         {
           name: 'Doctor Specializations Cache',
-          query: () => testClient.from('doctors').select('specialization').distinct()
+          query: () => testClient.from('doctors').select('specialization').distinct(),
         },
         {
           name: 'Organization Data Cache',
-          query: () => testClient.from('organizations').select('id, name, type, city')
+          query: () => testClient.from('organizations').select('id, name, type, city'),
         },
         {
           name: 'Appointment Status Options Cache',
-          query: () => testClient.from('appointments').select('status').distinct()
-        }
+          query: () => testClient.from('appointments').select('status').distinct(),
+        },
       ];
 
       for (const test of cacheTests) {
@@ -363,14 +385,18 @@ describe('Supabase Performance Tests', () => {
         expect(error3).toBeNull();
         recordMetrics(`${test.name} - Cache Hit 2`, responseTime3, 'general_query');
 
-        console.log(`✅ ${test.name}: miss=${responseTime1.toFixed(2)}ms, hit1=${responseTime2.toFixed(2)}ms, hit2=${responseTime3.toFixed(2)}ms`);
+        console.log(
+          `✅ ${test.name}: miss=${responseTime1.toFixed(2)}ms, hit1=${
+            responseTime2.toFixed(2)
+          }ms, hit2=${responseTime3.toFixed(2)}ms`,
+        );
       }
     });
 
     test('should validate cache invalidation strategies', async () => {
       // security-auditor: Cache invalidation validation
       const testDoctor = await testDataGenerator.createTestDoctor();
-      
+
       // Query doctor data (cache population)
       const startTime1 = performance.now();
       const { data: initialData } = await testClient
@@ -399,7 +425,11 @@ describe('Supabase Performance Tests', () => {
 
       recordMetrics('Doctor Data - Post Update', responseTime2, 'general_query');
 
-      console.log(`✅ Cache Invalidation: initial=${responseTime1.toFixed(2)}ms, post-update=${responseTime2.toFixed(2)}ms`);
+      console.log(
+        `✅ Cache Invalidation: initial=${responseTime1.toFixed(2)}ms, post-update=${
+          responseTime2.toFixed(2)
+        }ms`,
+      );
     });
 
     test('should validate distributed cache performance', async () => {
@@ -410,41 +440,43 @@ describe('Supabase Performance Tests', () => {
           test: async () => {
             const client1 = createTestSupabaseClient();
             const client2 = createTestSupabaseClient();
-            
+
             // Client 1 queries data
             const startTime1 = performance.now();
             const { data: data1 } = await client1.from('organizations').select('*').limit(10);
             const responseTime1 = performance.now() - startTime1;
-            
+
             // Client 2 queries same data
             const startTime2 = performance.now();
             const { data: data2 } = await client2.from('organizations').select('*').limit(10);
             const responseTime2 = performance.now() - startTime2;
-            
-            return { responseTime1, responseTime2, dataConsistent: JSON.stringify(data1) === JSON.stringify(data2) };
-          }
+
+            return {
+              responseTime1,
+              responseTime2,
+              dataConsistent: JSON.stringify(data1) === JSON.stringify(data2),
+            };
+          },
         },
         {
           name: 'Cache Warming Performance',
           test: async () => {
             const warmingQueries = [
               'doctors',
-              'organizations', 
+              'organizations',
               'appointment_types',
-              'medical_specializations'
+              'medical_specializations',
             ];
-            
+
             const startTime = performance.now();
             await Promise.all(
-              warmingQueries.map(table => 
-                testClient.from(table).select('*').limit(50)
-              )
+              warmingQueries.map(table => testClient.from(table).select('*').limit(50)),
             );
             const responseTime = performance.now() - startTime;
-            
+
             return { responseTime, queriesWarmed: warmingQueries.length };
-          }
-        }
+          },
+        },
       ];
 
       for (const test of distributedCacheTests) {
@@ -462,23 +494,23 @@ describe('Supabase Performance Tests', () => {
         {
           name: 'Appointment Updates Subscription',
           table: 'appointments',
-          filter: 'doctor_id=eq.test-doctor-123'
+          filter: 'doctor_id=eq.test-doctor-123',
         },
         {
           name: 'Medical Records Subscription',
           table: 'medical_records',
-          filter: 'patient_id=eq.test-patient-123'
+          filter: 'patient_id=eq.test-patient-123',
         },
         {
           name: 'Audit Logs Subscription',
           table: 'audit_logs',
-          filter: 'user_id=eq.test-user-123'
-        }
+          filter: 'user_id=eq.test-user-123',
+        },
       ];
 
       for (const test of subscriptionTests) {
         const startTime = performance.now();
-        
+
         // Mock subscription setup
         const subscription = testClient
           .channel(`test-${test.table}`)
@@ -486,7 +518,7 @@ describe('Supabase Performance Tests', () => {
             event: '*',
             schema: 'public',
             table: test.table,
-            filter: test.filter
+            filter: test.filter,
           }, (payload: any) => {
             console.log(`Real-time update received for ${test.table}:`, payload);
           })
@@ -497,7 +529,7 @@ describe('Supabase Performance Tests', () => {
 
         // Clean up subscription
         await testClient.removeChannel(subscription);
-        
+
         console.log(`✅ ${test.name}: subscription setup in ${responseTime.toFixed(2)}ms`);
       }
     });
@@ -505,38 +537,38 @@ describe('Supabase Performance Tests', () => {
     test('should validate real-time data synchronization latency', async () => {
       // architect-review: Synchronization latency validation
       const testData = await testDataGenerator.createTestAppointment();
-      
+
       const latencyTests = [
         {
           name: 'Appointment Status Update',
           update: { status: 'confirmed' },
-          table: 'appointments'
+          table: 'appointments',
         },
         {
           name: 'Medical Record Addition',
-          update: { 
+          update: {
             content: 'Updated medical record content',
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           },
-          table: 'medical_records'
-        }
+          table: 'medical_records',
+        },
       ];
 
       for (const test of latencyTests) {
         const updateStartTime = performance.now();
-        
+
         // Perform update
         await testClient
           .from(test.table)
           .update(test.update)
           .eq('id', testData.id);
-        
+
         // Simulate real-time notification processing
         await new Promise(resolve => setTimeout(resolve, 10)); // Simulated network latency
-        
+
         const totalLatency = performance.now() - updateStartTime;
         recordMetrics(`${test.name} - Sync Latency`, totalLatency, 'critical_query');
-        
+
         console.log(`✅ ${test.name}: sync latency ${totalLatency.toFixed(2)}ms`);
       }
     });
@@ -546,28 +578,30 @@ describe('Supabase Performance Tests', () => {
       const concurrentOperations = 20;
       const operationPromises = Array.from({ length: concurrentOperations }, async (_, i) => {
         const startTime = performance.now();
-        
+
         // Simulate concurrent real-time operations
         const operations = [
           testClient.from('appointments').select('*').limit(1),
           testClient.from('medical_records').select('*').limit(1),
-          testClient.from('patients').select('*').limit(1)
+          testClient.from('patients').select('*').limit(1),
         ];
-        
+
         await Promise.all(operations);
-        
+
         const responseTime = performance.now() - startTime;
         return { operation: i, responseTime };
       });
 
       const results = await Promise.all(operationPromises);
-      
+
       results.forEach((result, index) => {
         recordMetrics(`Concurrent Real-time Op ${index}`, result.responseTime, 'general_query');
       });
 
       const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
-      console.log(`✅ ${concurrentOperations} concurrent real-time ops: avg=${avgResponseTime.toFixed(2)}ms`);
+      console.log(
+        `✅ ${concurrentOperations} concurrent real-time ops: avg=${avgResponseTime.toFixed(2)}ms`,
+      );
     });
   });
 
@@ -577,42 +611,49 @@ describe('Supabase Performance Tests', () => {
       const peakLoadSimulation = {
         concurrentUsers: 100,
         operationsPerUser: 10,
-        duration: 5000 // 5 seconds
+        duration: 5000, // 5 seconds
       };
 
-      const userOperations = Array.from({ length: peakLoadSimulation.concurrentUsers }, async (_, userId) => {
-        const userStartTime = performance.now();
-        const operations = [];
-        
-        for (let i = 0; i < peakLoadSimulation.operationsPerUser; i++) {
-          const operationType = i % 3;
-          switch (operationType) {
-            case 0:
-              operations.push(testClient.from('patients').select('count').single());
-              break;
-            case 1:
-              operations.push(testClient.from('appointments').select('count').single());
-              break;
-            case 2:
-              operations.push(testClient.from('doctors').select('count').single());
-              break;
+      const userOperations = Array.from(
+        { length: peakLoadSimulation.concurrentUsers },
+        async (_, userId) => {
+          const userStartTime = performance.now();
+          const operations = [];
+
+          for (let i = 0; i < peakLoadSimulation.operationsPerUser; i++) {
+            const operationType = i % 3;
+            switch (operationType) {
+              case 0:
+                operations.push(testClient.from('patients').select('count').single());
+                break;
+              case 1:
+                operations.push(testClient.from('appointments').select('count').single());
+                break;
+              case 2:
+                operations.push(testClient.from('doctors').select('count').single());
+                break;
+            }
           }
-        }
-        
-        await Promise.all(operations);
-        const userResponseTime = performance.now() - userStartTime;
-        
-        return { userId, responseTime: userResponseTime };
-      });
+
+          await Promise.all(operations);
+          const userResponseTime = performance.now() - userStartTime;
+
+          return { userId, responseTime: userResponseTime };
+        },
+      );
 
       const results = await Promise.all(userOperations);
-      
+
       results.forEach(result => {
         recordMetrics(`Peak Load User ${result.userId}`, result.responseTime, 'general_query');
       });
 
       const avgUserTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
-      console.log(`✅ Peak Load Simulation: ${peakLoadSimulation.concurrentUsers} users, avg=${avgUserTime.toFixed(2)}ms/user`);
+      console.log(
+        `✅ Peak Load Simulation: ${peakLoadSimulation.concurrentUsers} users, avg=${
+          avgUserTime.toFixed(2)
+        }ms/user`,
+      );
     });
 
     test('should validate data-intensive operation performance', async () => {
@@ -629,7 +670,7 @@ describe('Supabase Performance Tests', () => {
                 appointments(id, appointment_date, status)
               `)
               .limit(100);
-          }
+          },
         },
         {
           name: 'Medical History Aggregation',
@@ -638,9 +679,9 @@ describe('Supabase Performance Tests', () => {
               .rpc('generate_medical_summary', {
                 patient_ids: Array.from({ length: 50 }, (_, i) => `patient-${i}`),
                 date_from: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
-                date_to: new Date().toISOString()
+                date_to: new Date().toISOString(),
               });
-          }
+          },
         },
         {
           name: 'Healthcare Analytics Query',
@@ -648,10 +689,13 @@ describe('Supabase Performance Tests', () => {
             return await testClient
               .from('appointments')
               .select('doctor_id, status, appointment_date')
-              .gte('appointment_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+              .gte(
+                'appointment_date',
+                new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+              )
               .limit(1000);
-          }
-        }
+          },
+        },
       ];
 
       for (const test of dataIntensiveTests) {
@@ -661,7 +705,7 @@ describe('Supabase Performance Tests', () => {
 
         expect(error).toBeNull();
         recordMetrics(test.name, responseTime, 'general_query');
-        
+
         console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
       }
     });

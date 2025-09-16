@@ -1,7 +1,7 @@
 /**
  * Accessibility Utilities for WCAG 2.1 AA+ Compliance
  * T081 - WCAG 2.1 AA+ Accessibility Compliance
- * 
+ *
  * Features:
  * - WCAG 2.1 AA+ compliance utilities
  * - Healthcare-specific accessibility patterns
@@ -40,32 +40,32 @@ export const ACCESSIBILITY_LABELS_PT_BR = {
   breadcrumb: 'Caminho de navegação',
   skipToContent: 'Pular para o conteúdo principal',
   skipToNavigation: 'Pular para a navegação',
-  
+
   // Forms
   required: 'Campo obrigatório',
   optional: 'Campo opcional',
   invalid: 'Campo inválido',
   validationError: 'Erro de validação',
-  
+
   // Actions
   loading: 'Carregando',
   saving: 'Salvando',
   submitting: 'Enviando',
   processing: 'Processando',
-  
+
   // Healthcare specific
   patientData: 'Dados do paciente',
   medicalHistory: 'Histórico médico',
   appointmentDetails: 'Detalhes do agendamento',
   emergencyContact: 'Contato de emergência',
   lgpdConsent: 'Consentimento LGPD',
-  
+
   // Status messages
   success: 'Sucesso',
   error: 'Erro',
   warning: 'Aviso',
   info: 'Informação',
-  
+
   // Time and dates
   today: 'Hoje',
   tomorrow: 'Amanhã',
@@ -84,20 +84,20 @@ export function calculateContrastRatio(color1: string, color2: string): number {
     const r = parseInt(hex.substr(0, 2), 16) / 255;
     const g = parseInt(hex.substr(2, 2), 16) / 255;
     const b = parseInt(hex.substr(4, 2), 16) / 255;
-    
+
     // Calculate relative luminance
     const sRGB = [r, g, b].map(c => {
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    
+
     return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
   };
-  
+
   const lum1 = getLuminance(color1);
   const lum2 = getLuminance(color2);
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
-  
+
   return (brightest + 0.05) / (darkest + 0.05);
 }
 
@@ -108,13 +108,13 @@ export function meetsContrastRequirement(
   foreground: string,
   background: string,
   level: 'AA' | 'AAA' = 'AA',
-  isLargeText: boolean = false
+  isLargeText: boolean = false,
 ): boolean {
   const ratio = calculateContrastRatio(foreground, background);
-  const requirement = level === 'AA' 
+  const requirement = level === 'AA'
     ? (isLargeText ? WCAG_CONTRAST_RATIOS.AA_LARGE : WCAG_CONTRAST_RATIOS.AA_NORMAL)
     : (isLargeText ? WCAG_CONTRAST_RATIOS.AAA_LARGE : WCAG_CONTRAST_RATIOS.AAA_NORMAL);
-  
+
   return ratio >= requirement;
 }
 
@@ -132,16 +132,17 @@ export function createHealthcareFormAria(
   fieldName: string,
   isRequired: boolean = false,
   hasError: boolean = false,
-  errorMessage?: string
+  errorMessage?: string,
 ) {
   const baseId = generateAccessibleId(fieldName);
-  
+
   return {
     id: baseId,
     'aria-required': isRequired,
     'aria-invalid': hasError,
     'aria-describedby': hasError && errorMessage ? `${baseId}-error` : undefined,
-    'aria-label': ACCESSIBILITY_LABELS_PT_BR[fieldName as keyof typeof ACCESSIBILITY_LABELS_PT_BR] || fieldName,
+    'aria-label': ACCESSIBILITY_LABELS_PT_BR[fieldName as keyof typeof ACCESSIBILITY_LABELS_PT_BR]
+      || fieldName,
   };
 }
 
@@ -150,7 +151,7 @@ export function createHealthcareFormAria(
  */
 export function createLiveRegionAria(
   politeness: 'polite' | 'assertive' = 'polite',
-  atomic: boolean = false
+  atomic: boolean = false,
 ) {
   return {
     'aria-live': politeness,
@@ -164,21 +165,21 @@ export function createLiveRegionAria(
  */
 export class FocusManager {
   private static focusStack: HTMLElement[] = [];
-  
+
   /**
    * Trap focus within an element
    */
   static trapFocus(element: HTMLElement): () => void {
     const focusableElements = element.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     ) as NodeListOf<HTMLElement>;
-    
+
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
-    
+
     const handleTabKey = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
-      
+
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
           lastElement.focus();
@@ -191,51 +192,54 @@ export class FocusManager {
         }
       }
     };
-    
+
     element.addEventListener('keydown', handleTabKey);
     firstElement?.focus();
-    
+
     return () => {
       element.removeEventListener('keydown', handleTabKey);
     };
   }
-  
+
   /**
    * Save current focus and restore later
    */
   static saveFocus(): () => void {
     const activeElement = document.activeElement as HTMLElement;
     this.focusStack.push(activeElement);
-    
+
     return () => {
       const elementToFocus = this.focusStack.pop();
       elementToFocus?.focus();
     };
   }
-  
+
   /**
    * Move focus to element with announcement
    */
   static moveFocusTo(element: HTMLElement, announcement?: string): void {
     element.focus();
-    
+
     if (announcement) {
       this.announceToScreenReader(announcement);
     }
   }
-  
+
   /**
    * Announce message to screen readers
    */
-  static announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
+  static announceToScreenReader(
+    message: string,
+    priority: 'polite' | 'assertive' = 'polite',
+  ): void {
     const announcement = document.createElement('div');
     announcement.setAttribute('aria-live', priority);
     announcement.setAttribute('aria-atomic', 'true');
     announcement.className = 'sr-only';
     announcement.textContent = message;
-    
+
     document.body.appendChild(announcement);
-    
+
     setTimeout(() => {
       document.body.removeChild(announcement);
     }, 1000);
@@ -254,11 +258,11 @@ export class KeyboardNavigation {
     currentIndex: number,
     totalItems: number,
     columns: number,
-    onNavigate: (newIndex: number) => void
+    onNavigate: (newIndex: number) => void,
   ): void {
     const { key } = event;
     let newIndex = currentIndex;
-    
+
     switch (key) {
       case 'ArrowRight':
         newIndex = Math.min(currentIndex + 1, totalItems - 1);
@@ -281,13 +285,13 @@ export class KeyboardNavigation {
       default:
         return;
     }
-    
+
     if (newIndex !== currentIndex) {
       event.preventDefault();
       onNavigate(newIndex);
     }
   }
-  
+
   /**
    * Handle list navigation with arrow keys
    */
@@ -296,14 +300,14 @@ export class KeyboardNavigation {
     currentIndex: number,
     totalItems: number,
     onNavigate: (newIndex: number) => void,
-    wrap: boolean = false
+    wrap: boolean = false,
   ): void {
     const { key } = event;
     let newIndex = currentIndex;
-    
+
     switch (key) {
       case 'ArrowDown':
-        newIndex = wrap 
+        newIndex = wrap
           ? (currentIndex + 1) % totalItems
           : Math.min(currentIndex + 1, totalItems - 1);
         break;
@@ -321,7 +325,7 @@ export class KeyboardNavigation {
       default:
         return;
     }
-    
+
     if (newIndex !== currentIndex) {
       event.preventDefault();
       onNavigate(newIndex);
@@ -339,12 +343,12 @@ export class ScreenReaderUtils {
   static formatHealthcareData(
     label: string,
     value: string | number,
-    unit?: string
+    unit?: string,
   ): string {
     const formattedValue = unit ? `${value} ${unit}` : String(value);
     return `${label}: ${formattedValue}`;
   }
-  
+
   /**
    * Format date for Brazilian Portuguese screen readers
    */
@@ -356,7 +360,7 @@ export class ScreenReaderUtils {
       day: 'numeric',
     }).format(date);
   }
-  
+
   /**
    * Format time for Brazilian Portuguese screen readers
    */
@@ -366,14 +370,14 @@ export class ScreenReaderUtils {
       minute: '2-digit',
     }).format(date);
   }
-  
+
   /**
    * Create accessible table caption
    */
   static createTableCaption(
     title: string,
     rowCount: number,
-    columnCount: number
+    columnCount: number,
   ): string {
     return `${title}. Tabela com ${rowCount} linhas e ${columnCount} colunas.`;
   }
@@ -400,10 +404,10 @@ export function prefersHighContrast(): boolean {
  */
 export function createAccessibleErrorMessage(
   fieldName: string,
-  errorMessage: string
+  errorMessage: string,
 ): { id: string; message: string; ariaAttributes: Record<string, string> } {
   const id = generateAccessibleId(`${fieldName}-error`);
-  
+
   return {
     id,
     message: errorMessage,
