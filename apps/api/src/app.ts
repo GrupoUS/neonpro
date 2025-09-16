@@ -94,8 +94,7 @@ app.use('*', async (c, next) => {
       method: c.req.method,
       endpoint: c.req.path,
       statusCode: c.res.status,
-      duration,
-    });
+    }, { duration });
 
     // Add breadcrumb for request completion
     errorTracker.addBreadcrumb(
@@ -125,9 +124,7 @@ app.use('*', async (c, next) => {
       requestId,
       method: c.req.method,
       endpoint: c.req.path,
-      errorMessage: (error as Error).message,
-      duration,
-    });
+    }, { errorMessage: (error as Error).message, duration });
 
     // Add breadcrumb for error
     errorTracker.addBreadcrumb(
@@ -361,11 +358,9 @@ app.onError((err, c) => {
   // Log error
   logger.error('Unhandled error occurred', {
     requestId,
-    errorMessage: err.message,
-    stack: err.stack,
     method: c.req.method,
     endpoint: c.req.path,
-  });
+  }, { errorMessage: err.message, stack: err.stack });
   
   // Return appropriate error response
   if (process.env.NODE_ENV === 'production') {
