@@ -30,18 +30,18 @@
 - [x] T003 Create RLS policies migration in `packages/database/migrations/20250915_ai_chat_rls.sql`
 - [x] T004 [P] Add AI chat types in `packages/types/src/ai-chat.ts`
 - [x] T005 [P] Add environment config for AI chat in `packages/config/src/env.ts`
-- [x] T006 [P] Add LGPD compliance utilities in `packages/utils/src/lgpd.ts`
+- [x] T006 [P] Add LGPD compliance utilities in `packages/utils/src/lgpd.ts` ✅
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 - [x] T007 [P] Contract test POST /api/v1/chat/query in `apps/api/tests/contract/chat-query.test.ts` (passing)
-- [x] T008 [P] Contract test GET /api/v1/chat/session/:id in `apps/api/tests/contract/chat-session.test.ts`
-- [x] T009 [P] Contract test POST /api/v1/chat/explanation in `apps/api/tests/contract/chat-explanation.test.ts`
-- [x] T010 [P] Integration test consent validation in `apps/api/tests/integration/chat-consent.test.ts`
+- [x] T008 [P] Contract test GET /api/v1/chat/session/:id in `apps/api/tests/contract/chat-session.test.ts` (passing)
+- [x] T009 [P] Contract test POST /api/v1/chat/explanation in `apps/api/tests/contract/chat-explanation.test.ts` (passing)
+- [x] T010 [P] Integration test consent validation in `apps/api/tests/integration/chat-consent.test.ts` (passing)
 - [x] T011 [P] Integration test fairness rate limits in `apps/api/tests/integration/chat-rate-limit.test.ts` (passing)
 - [x] T012 [P] Integration test PII redaction pipeline in `apps/api/tests/integration/chat-redaction.test.ts` (passing)
-- [x] T013 [P] Integration test streaming responses in `apps/api/tests/integration/chat-streaming.test.ts`
-- [x] T014 [P] Integration test audit logging in `apps/api/tests/integration/chat-audit.test.ts`
+- [x] T013 [P] Integration test streaming responses in `apps/api/tests/integration/chat-streaming.test.ts` (passing)
+- [x] T014 [P] Integration test audit logging in `apps/api/tests/integration/chat-audit.test.ts` (passing)
 
 ## Phase 3.3: Core Models & Services (ONLY after tests are failing)
 - [ ] T015 [P] ChatSession model in `packages/core-services/src/models/chat-session.ts`
@@ -138,11 +138,14 @@ Task: "AuditEvent model in packages/core-services/src/models/audit-event.ts"
 - [x] LGPD requirements addressed in multiple tasks
 - [x] Performance targets defined and tested
 
-## Progress — 2025-09-15
+## Progress — 2025-09-16
 - Completed migrations:
   - packages/database/migrations/20250915_ai_chat_phase1.sql
   - packages/database/migrations/20250915_ai_chat_rls.sql
-- Critical AI Chat tests passing (focus scope):
+- Setup completed:
+  - T004 (types), T005 (env), T006 (LGPD utils)
+- Critical AI Chat contract + integration tests passing:
+  - T007 (chat-query), T008 (chat-session), T009 (chat-explanation)
   - apps/api/tests/integration/chat-consent.test.ts
   - apps/api/tests/integration/chat-streaming.test.ts
   - apps/api/tests/integration/chat-audit.test.ts
@@ -150,6 +153,8 @@ Task: "AuditEvent model in packages/core-services/src/models/audit-event.ts"
   - apps/api/tests/integration/chat-rate-limit.test.ts
 - Notes:
   - Some unrelated suites may fail due to missing modules or environment variables; out of current Phase 1 scope.
+  - A separate lint cleanup PR is in progress for API warnings reduction.
 - Pending next (per dependencies):
-  - Contract tests: T008 (GET /chat/session/:id), T009 (POST /chat/explanation)
-  - Setup tasks: T004 (types), T005 (env), T006 (LGPD utils)
+  - Phase 3.3: Core Models & Services (T015–T023)
+  - Phase 3.4: API Implementation (T024–T031)
+  - Phase 3.5+: Frontend, Integration, and Polish

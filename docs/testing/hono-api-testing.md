@@ -47,7 +47,7 @@ it('rejects requests without Authorization header', async () => {
 ## Database & RLS
 
 - Prefer service-role for setup/seed
-- For user flows, authenticate and assert RLS enforcement (see `./supabase-rls-testing.md`)
+- For user flows, authenticate and assert RLS enforcement (see [Supabase Testing Guide](./supabase-testing-guide.md))
 
 ## Tips
 

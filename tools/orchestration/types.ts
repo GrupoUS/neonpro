@@ -9,12 +9,96 @@
 export type TDDPhase = 'red' | 'green' | 'refactor';
 
 // Agent Types (matching code review agents)
-export type AgentName = 
+export type AgentName =
   | 'tdd-orchestrator'
-  | 'architect-review' 
+  | 'architect-review'
   | 'code-reviewer'
   | 'security-auditor'
   | 'test';
+
+export type AgentType = AgentName;
+
+// Agent Coordination Patterns
+export type AgentCoordinationPattern =
+  | 'sequential'
+  | 'parallel'
+  | 'hierarchical'
+  | 'event-driven';
+
+// Agent Priority
+export type AgentPriority = 'primary' | 'secondary' | 'tertiary';
+
+// Agent Specialization
+export type AgentSpecialization = string;
+
+// Quality Control Context
+export interface QualityControlContext {
+  action: string;
+  target?: string;
+  type?: 'test' | 'analyze' | 'debug' | 'validate' | 'compliance' | 'performance' | 'security' | 'cleanup' | 'format';
+  depth?: 'L1' | 'L2' | 'L3' | 'L4' | 'L5' | 'L6' | 'L7' | 'L8' | 'L9' | 'L10';
+  healthcare?: boolean;
+  parallel?: boolean;
+  agents?: AgentName[];
+  orchestrator?: boolean;
+  workflow?: WorkflowType;
+  coordination?: AgentCoordinationPattern;
+}
+
+// Quality Control Result
+export interface QualityControlResult {
+  success: boolean;
+  action: string;
+  duration: number;
+  results: {
+    testing?: any;
+    analysis?: any;
+    debugging?: any;
+    validation?: any;
+    compliance?: any;
+    performance?: any;
+    security?: any;
+    cleanup?: any;
+    formatting?: any;
+  };
+  agentResults?: AgentResult[];
+  orchestrationResult?: OrchestrationResult;
+  qualityScore: number;
+  complianceStatus?: HealthcareComplianceContext;
+  recommendations: string[];
+  nextActions: string[];
+  metrics: any;
+}
+
+// Orchestration Context
+export interface OrchestrationContext {
+  featureName: string;
+  featureType: string;
+  complexity: 'low' | 'medium' | 'high';
+  criticalityLevel: 'low' | 'medium' | 'high' | 'critical';
+  requirements: string[];
+  healthcareCompliance: {
+    required: boolean;
+    lgpd?: boolean;
+    anvisa?: boolean;
+    cfm?: boolean;
+  };
+  qualityControlContext?: QualityControlContext;
+}
+
+// Agent Registry Interface
+export interface AgentRegistry {
+  getAgentsForPhase(phase: TDDPhase, context: OrchestrationContext): AgentCapability[];
+  getAgentsForCapability(capability: string): AgentCapability[];
+  getAgent(agentType: AgentType): AgentCapability | undefined;
+  getAllAgents(): AgentCapability[];
+  selectOptimalAgents(context: OrchestrationContext, phase?: TDDPhase): AgentCapability[];
+}
+
+// Orchestration Workflow Interface
+export interface OrchestrationWorkflow {
+  executeAgent(agent: AgentCapability, context: OrchestrationContext, previousResults: AgentResult[]): Promise<AgentResult>;
+}
 
 // Workflow Types
 export type WorkflowType = 
@@ -43,16 +127,21 @@ export interface FeatureContext {
 
 // Agent Capability Definition
 export interface AgentCapability {
-  name: AgentName;
+  type: AgentType;
+  name: string;
   description: string;
-  specializations: string[];
+  capabilities: string[];
+  specializations: AgentSpecialization[];
+  priority: AgentPriority;
+  phases: TDDPhase[];
   triggers: string[];
-  phases: {
-    red?: AgentAction[];
-    green?: AgentAction[];
-    refactor?: AgentAction[];
+  configuration: Record<string, any>;
+  healthcareCompliance?: {
+    lgpd: boolean;
+    anvisa: boolean;
+    cfm: boolean;
+    auditTrail: boolean;
   };
-  qualityGates: QualityGate[];
 }
 
 // Agent Action
@@ -321,4 +410,40 @@ export class QualityGateError extends Error {
     super(message);
     this.name = 'QualityGateError';
   }
+}
+
+// Healthcare Compliance Result
+export interface HealthcareCompliance {
+  lgpd: boolean;
+  anvisa: boolean;
+  cfm: boolean;
+  international: {
+    hipaa: boolean;
+    gdpr: boolean;
+  };
+  auditTrail: string[];
+}
+
+// TDD Cycle Result
+export interface TDDCycleResult extends OrchestrationResult {
+  cycleId: string;
+  healthcareCompliance?: HealthcareCompliance;
+}
+
+// TDD Metrics
+export interface TDDMetrics {
+  totalCycles: number;
+  successfulCycles: number;
+  failedCycles: number;
+  averageDuration: number;
+  phaseMetrics: {
+    red: { averageDuration: number; successRate: number };
+    green: { averageDuration: number; successRate: number };
+    refactor: { averageDuration: number; successRate: number };
+  };
+  qualityMetrics: {
+    averageQualityScore: number;
+    averageCoverage: number;
+    complianceRate: number;
+  };
 }

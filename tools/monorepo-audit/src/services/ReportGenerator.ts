@@ -35,112 +35,79 @@ export class ReportGenerator implements IReportGenerator {
   /**
    * Generate comprehensive audit report
    */
-  public async generateAuditReport(
-    auditData: AuditData,
-    options: ReportOptions,
-  ): Promise<GeneratedReport> {
+  async generateAuditReport(auditData: AuditData, options: ReportOptions): Promise<GeneratedReport> {
+    const startTime = Date.now();
     const reportId = this.generateReportId();
-    const generatedAt = new Date();
-
-    // Generate metadata
-    const metadata: ReportMetadata = {
-      reportId,
-      generatedAt,
-      format: options.format,
-      detailLevel: options.detailLevel,
-      template: options.template || 'default',
-      version: '1.0.0',
+    
+    // Initialize template
+    await this.initializeTemplate(options.template);
+    
+    // Extract data
+    const extractedData = this.extractReportData(auditData);
+    
+    // Generate content based on format
+    let content: string;
+    switch (options.format) {
+      case 'html':
+        content = this.generateHtmlReport(extractedData, options);
+        break;
+      case 'markdown':
+        content = this.generateMarkdownReport(extractedData, options);
+        break;
+      case 'json':
+        content = JSON.stringify(extractedData, null, 2);
+        break;
+      default:
+        content = this.generateHtmlReport(extractedData, options);
+    }
+    
+    const generationTime = Date.now() - startTime;
+    const size = Buffer.byteLength(content, 'utf8');
+    
+    return {
+      metadata: {
+        reportId,
+        generatedAt: new Date(),
+        format: options.format,
+        size,
+        generationTime
+      },
+      content,
+      attachments: []
     };
-
-    // Generate executive summary
-    const executiveSummary = await this.generateExecutiveSummary(auditData);
-
-    // Generate technical sections based on options
-    const sections: any = {};
-
-    if (options.includeSections.includes('file_analysis' as ReportSection)) {
-      sections.fileAnalysis = this.generateFileAnalysisSection(auditData.fileResults);
-    }
-
-    if (options.includeSections.includes('dependency_analysis' as ReportSection)) {
-      sections.dependencyAnalysis = this.generateDependencyAnalysisSection(
-        auditData.dependencyResults,
-      );
-    }
-
-    if (options.includeSections.includes('architecture_validation' as ReportSection)) {
-      sections.architectureValidation = this.generateArchitectureValidationSection(
-        auditData.architectureResults,
-      );
-    }
-
-    if (options.includeSections.includes('cleanup_results' as ReportSection)) {
-      sections.cleanupResults = this.generateCleanupResultsSection(auditData.cleanupResults);
-    }
-
-    if (options.includeSections.includes('performance_metrics' as ReportSection)) {
-      sections.performanceMetrics = this.generatePerformanceMetricsSection(
-        auditData.performanceMetrics,
-      );
-    }
-
-    // Generate visualizations if requested
-    const visualizations: VisualizationData[] = [];
-    if (options.includeVisualizations) {
-      visualizations.push(...this.generateVisualizations(auditData));
-    }
-
-    // Calculate summary metrics
-    const metricsSummary = this.calculateMetricsSummary(auditData);
-
-    const report: GeneratedReport = {
-      reportId,
-      metadata,
-      executiveSummary,
-      sections,
-      visualizations,
-      metricsSummary,
-      rawData: options.includeRawData ? auditData : undefined,
-    };
-
-    return report;
   }
 
   /**
    * Generate executive summary
    */
-  public async generateExecutiveSummary(auditData: AuditData): Promise<ExecutiveSummary> {
-    // Extract key metrics
-    const totalFiles = this.extractTotalFiles(auditData.fileResults);
-    const unusedFiles = this.extractUnusedFiles(auditData.fileResults);
-    const architectureViolations = this.extractArchitectureViolations(
-      auditData.architectureResults,
-    );
-    const circularDependencies = this.extractCircularDependencies(auditData.dependencyResults);
-    const spaceReclaimed = this.extractSpaceReclaimed(auditData.cleanupResults);
-
-    // Calculate scores
-    const healthScore = this.calculateHealthScore(auditData);
-    const complianceScore = this.calculateComplianceScore(auditData.architectureResults);
-    const efficiencyScore = this.calculateEfficiencyScore(auditData);
-
-    // Generate key findings
-    const keyFindings = this.generateKeyFindings(auditData);
-
-    // Generate recommendations
-    const recommendations = this.generateRecommendations(auditData);
-
+  async generateExecutiveSummary(auditData: AuditData): Promise<ExecutiveSummary> {
+    const extractedData = this.extractReportData(auditData);
+    const overallScore = this.calculateOverallScore(extractedData);
+    
+    // Generate overall assessment
+    const overallAssessment = this.generateOverallAssessment(extractedData, overallScore);
+    
+    // Extract key findings
+    const keyFindings = this.extractKeyFindings(extractedData);
+    
+    // Generate top recommendations
+    const topRecommendations = this.generateTopRecommendations(extractedData);
+    
+    // Create metrics summary
+    const metricsSummary = {
+      overallScore,
+      totalFiles: extractedData.fileResults?.totalFiles || 0,
+      unusedFiles: extractedData.fileResults?.unusedFiles?.length || 0,
+      circularDependencies: extractedData.dependencyResults?.circularDependencies?.length || 0,
+      architectureViolations: extractedData.architectureResults?.violations?.length || 0,
+      spaceReclaimable: extractedData.cleanupResults?.spaceReclaimed || 0
+    };
+    
     return {
-      overallHealthScore: healthScore,
-      complianceScore,
-      efficiencyScore,
-      totalAssetsScanned: totalFiles,
-      unusedAssetsFound: unusedFiles,
-      criticalIssuesFound: architectureViolations.filter((v: any) => v.severity === 'error').length,
-      spaceReclaimable: spaceReclaimed,
+      overallAssessment,
       keyFindings,
-      recommendations,
-      executionTime: auditData.performanceMetrics.totalExecutionTime,
+      topRecommendations,
+      metricsSummary
     };
   }
 
@@ -230,46 +197,57 @@ export class ReportGenerator implements IReportGenerator {
   /**
    * Export report in specified format
    */
-  public async exportReport(
-    report: GeneratedReport,
-    format: ReportFormat,
-    outputPath: string,
-  ): Promise<void> {
-    const exportPath = path.resolve(outputPath);
-
-    // Ensure output directory exists
-    await fs.mkdir(path.dirname(exportPath), { recursive: true });
-
-    switch (format) {
-      case 'json':
-        await this.exportAsJson(report, exportPath);
-        break;
-
-      case 'html':
-        await this.exportAsHtml(report, exportPath);
-        break;
-
-      case 'markdown':
-        await this.exportAsMarkdown(report, exportPath);
-        break;
-
-      case 'pdf':
-        await this.exportAsPdf(report, exportPath);
-        break;
-
-      default:
-        throw new Error(`Unsupported format: ${format}`);
+  async exportReport(report: GeneratedReport, format: ReportFormat, outputPath: string): Promise<void> {
+    try {
+      let exportContent: string;
+      
+      switch (format) {
+        case 'html':
+          exportContent = report.content;
+          break;
+        case 'markdown':
+          exportContent = this.convertToMarkdown(report.content);
+          break;
+        case 'json':
+          exportContent = JSON.stringify({
+            metadata: report.metadata,
+            content: report.content,
+            attachments: report.attachments
+          }, null, 2);
+          break;
+        case 'pdf':
+          // For PDF, we would need a PDF generation library
+          throw new Error('PDF export not yet implemented');
+        case 'csv':
+          exportContent = this.convertToCsv(report);
+          break;
+        case 'xml':
+          exportContent = this.convertToXml(report);
+          break;
+        case 'yaml':
+          exportContent = this.convertToYaml(report);
+          break;
+        default:
+          exportContent = report.content;
+      }
+      
+      // Write to file
+      await this.writeToFile(outputPath, exportContent);
+      
+    } catch (error) {
+      throw new Error(`Failed to export report: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   /**
    * Generate metrics dashboard
    */
-  public async generateDashboard(auditData: AuditData): Promise<string> {
-    const summary = await this.generateExecutiveSummary(auditData);
-    const visualizations = this.generateVisualizations(auditData);
-
-    let html = `
+  async generateDashboard(auditData: AuditData): Promise<string> {
+    const extractedData = this.extractReportData(auditData);
+    const overallScore = this.calculateOverallScore(extractedData);
+    
+    // Generate dashboard HTML
+    const dashboardHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -277,90 +255,168 @@ export class ReportGenerator implements IReportGenerator {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monorepo Audit Dashboard</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .metric-card { background: white; border: 1px solid #e1e5e9; border-radius: 8px; padding: 20px; text-align: center; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .dashboard { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .metric-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .metric-value { font-size: 2em; font-weight: bold; color: #2563eb; }
-        .metric-label { color: #6b7280; margin-top: 8px; }
-        .section { margin-bottom: 40px; }
-        .section h2 { color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
-        .findings { background: #f9fafb; border-radius: 8px; padding: 20px; }
-        .finding { margin-bottom: 12px; padding: 8px; border-radius: 4px; }
-        .finding.error { background: #fee2e2; color: #991b1b; }
-        .finding.warning { background: #fef3c7; color: #92400e; }
-        .finding.info { background: #dbeafe; color: #1e40af; }
+        .metric-label { color: #6b7280; margin-top: 5px; }
+        .score-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: white; margin: 0 auto; }
+        .score-excellent { background: #10b981; }
+        .score-good { background: #f59e0b; }
+        .score-poor { background: #ef4444; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
+    <div class="dashboard">
+        <div class="header">
             <h1>Monorepo Audit Dashboard</h1>
-            <p>Generated on ${new Date().toLocaleDateString()}</p>
-        </header>
-
-        <section class="metrics">
+            <p>Generated on ${new Date().toLocaleString()}</p>
+        </div>
+        
+        <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-value">${summary.overallHealthScore}%</div>
-                <div class="metric-label">Health Score</div>
+                <div class="score-circle ${overallScore >= 80 ? 'score-excellent' : overallScore >= 60 ? 'score-good' : 'score-poor'}">
+                    ${overallScore}%
+                </div>
+                <div class="metric-label">Overall Health Score</div>
             </div>
+            
             <div class="metric-card">
-                <div class="metric-value">${summary.complianceScore}%</div>
-                <div class="metric-label">Compliance Score</div>
+                <div class="metric-value">${extractedData.fileResults?.totalFiles || 0}</div>
+                <div class="metric-label">Total Files</div>
             </div>
+            
             <div class="metric-card">
-                <div class="metric-value">${summary.totalAssetsScanned}</div>
-                <div class="metric-label">Assets Scanned</div>
+                <div class="metric-value">${extractedData.fileResults?.unusedFiles?.length || 0}</div>
+                <div class="metric-label">Unused Files</div>
             </div>
+            
             <div class="metric-card">
-                <div class="metric-value">${summary.unusedAssetsFound}</div>
-                <div class="metric-label">Unused Assets</div>
+                <div class="metric-value">${extractedData.dependencyResults?.circularDependencies?.length || 0}</div>
+                <div class="metric-label">Circular Dependencies</div>
             </div>
+            
             <div class="metric-card">
-                <div class="metric-value">${summary.criticalIssuesFound}</div>
-                <div class="metric-label">Critical Issues</div>
+                <div class="metric-value">${extractedData.architectureResults?.violations?.length || 0}</div>
+                <div class="metric-label">Architecture Violations</div>
             </div>
+            
             <div class="metric-card">
-                <div class="metric-value">${this.formatBytes(summary.spaceReclaimable)}</div>
+                <div class="metric-value">${Math.round((extractedData.cleanupResults?.spaceReclaimed || 0) / 1024 / 1024)}MB</div>
                 <div class="metric-label">Space Reclaimable</div>
             </div>
-        </section>
-
-        <section class="section">
-            <h2>Key Findings</h2>
-            <div class="findings">
-    `;
-
-    // Add findings
-    for (const finding of summary.keyFindings) {
-      html += `<div class="finding ${finding.severity}">${finding.description}</div>`;
-    }
-
-    html += `
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Recommendations</h2>
-            <ul>
-    `;
-
-    // Add recommendations
-    for (const rec of summary.recommendations) {
-      html += `<li>${rec.description} (Priority: ${rec.priority})</li>`;
-    }
-
-    html += `
-            </ul>
-        </section>
+        </div>
     </div>
 </body>
-</html>
-    `;
-
-    return html.trim();
+</html>`;
+    
+    return dashboardHtml;
   } /**
+
+  private convertToMarkdown(htmlContent: string): string {
+    // Simple HTML to Markdown conversion
+    return htmlContent
+      .replace(/<h1[^>]*>(.*?)<\/h1>/g, '# $1')
+      .replace(/<h2[^>]*>(.*?)<\/h2>/g, '## $1')
+      .replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1')
+      .replace(/<p[^>]*>(.*?)<\/p>/g, '$1\n')
+      .replace(/<strong[^>]*>(.*?)<\/strong>/g, '**$1**')
+      .replace(/<em[^>]*>(.*?)<\/em>/g, '*$1*')
+      .replace(/<br\s*\/?>/g, '\n')
+      .replace(/<[^>]*>/g, ''); // Remove remaining HTML tags
+  }
+
+  private convertToCsv(report: GeneratedReport): string {
+    // Convert report data to CSV format
+    const lines = ['Report ID,Generated At,Format,Size'];
+    lines.push(`${report.metadata.reportId},${report.metadata.generatedAt.toISOString()},${report.metadata.format},${report.metadata.size}`);
+    return lines.join('\n');
+  }
+
+  private convertToXml(report: GeneratedReport): string {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<report>
+  <metadata>
+    <reportId>${report.metadata.reportId}</reportId>
+    <generatedAt>${report.metadata.generatedAt.toISOString()}</generatedAt>
+    <format>${report.metadata.format}</format>
+    <size>${report.metadata.size}</size>
+  </metadata>
+  <content><![CDATA[${report.content}]]></content>
+</report>`;
+  }
+
+  private convertToYaml(report: GeneratedReport): string {
+    return `metadata:
+  reportId: ${report.metadata.reportId}
+  generatedAt: ${report.metadata.generatedAt.toISOString()}
+  format: ${report.metadata.format}
+  size: ${report.metadata.size}
+content: |
+  ${report.content.split('\n').map(line => '  ' + line).join('\n')}`;
+  }
+
+  private async writeToFile(outputPath: string, content: string): Promise<void> {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    
+    // Ensure directory exists
+    const dir = path.dirname(outputPath);
+    await fs.mkdir(dir, { recursive: true });
+    
+    // Write file
+    await fs.writeFile(outputPath, content, 'utf8');
+  }
+
+  private generateOverallAssessment(extractedData: any, overallScore: number): string {
+    if (overallScore >= 80) {
+      return 'Excellent - The codebase demonstrates strong architectural patterns and maintainability.';
+    } else if (overallScore >= 60) {
+      return 'Good - The codebase is generally well-structured with some areas for improvement.';
+    } else if (overallScore >= 40) {
+      return 'Fair - The codebase has moderate issues that should be addressed to improve maintainability.';
+    } else {
+      return 'Poor - The codebase has significant issues that require immediate attention.';
+    }
+  }
+
+  private extractKeyFindings(extractedData: any): string[] {
+    const findings: string[] = [];
+    
+    if (extractedData.fileResults?.unusedFiles?.length > 0) {
+      findings.push(`Found ${extractedData.fileResults.unusedFiles.length} unused files that can be removed`);
+    }
+    
+    if (extractedData.dependencyResults?.circularDependencies?.length > 0) {
+      findings.push(`Detected ${extractedData.dependencyResults.circularDependencies.length} circular dependencies`);
+    }
+    
+    if (extractedData.architectureResults?.violations?.length > 0) {
+      findings.push(`Identified ${extractedData.architectureResults.violations.length} architecture violations`);
+    }
+    
+    return findings;
+  }
+
+  private generateTopRecommendations(extractedData: any): string[] {
+    const recommendations: string[] = [];
+    
+    if (extractedData.fileResults?.unusedFiles?.length > 0) {
+      recommendations.push('Remove unused files to reduce codebase size and complexity');
+    }
+    
+    if (extractedData.dependencyResults?.circularDependencies?.length > 0) {
+      recommendations.push('Refactor circular dependencies to improve modularity');
+    }
+    
+    if (extractedData.architectureResults?.violations?.length > 0) {
+      recommendations.push('Address architecture violations to maintain design consistency');
+    }
+    
+    return recommendations;
+  }
    * Create report template
    */
 

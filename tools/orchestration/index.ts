@@ -47,7 +47,7 @@ async function main() {
         break;
         
       case 'workflow-specific':
-        result = await orchestrator.executeWorkflow(options.workflow!, options.feature, options);
+        result = await workflowEngine.executeWorkflow(options.workflow!, options.feature, options);
         break;
         
       default:

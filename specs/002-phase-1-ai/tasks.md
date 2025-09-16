@@ -19,18 +19,18 @@ Path Conventions
 
 ## Phase 3.1: Setup
 - [ ] T001 Configure i18n keys scaffold (pt-BR, en-US) in `packages/shared/src/i18n/ai-chat.ts` [new file]
-- [ ] T002 Create DB migration files for chat + audit tables in `packages/database/migrations/<timestamp>_ai_chat_phase1.sql`
-- [ ] T003 Add types (ChatSession, ChatMessage, AuditEvent enums) in `packages/types/src/ai-chat.ts`
-- [ ] T004 Wire RLS policies drafts for new tables in `packages/database/migrations/<timestamp>_ai_chat_phase1_rls.sql`
-- [ ] T005 Add feature flag `AI_CHAT_MOCK_MODE` to `packages/config/src/env.ts`
+- [x] T002 Create DB migration files for chat + audit tables in `packages/database/migrations/20250915_ai_chat_phase1.sql`
+- [x] T003 Add types (ChatSession, ChatMessage, AuditEvent enums) in `packages/types/src/ai-chat.ts`
+- [x] T004 Wire RLS policies drafts for new tables in `packages/database/migrations/20250915_ai_chat_phase1_rls.sql`
+- [x] T005 Add feature flag `AI_CHAT_MOCK_MODE` to `packages/config/src/env.ts`
 
 ## Phase 3.2: Tests First (TDD) – MUST FAIL BEFORE IMPL
-- [ ] T006 [P] Contract test for `POST /api/v1/chat/query` in `apps/api/tests/contract/chat.query.test.ts`
-- [ ] T007 [P] Integration test: consent validation path in `apps/api/tests/integration/chat.consent.test.ts`
-- [ ] T008 [P] Integration test: fairness gating (10/5m, 30/hr) in `apps/api/tests/integration/chat.rate-limit.test.ts`
-- [ ] T009 [P] Unit tests: redaction regex corpus in `packages/utils/tests/redaction.spec.ts`
-- [ ] T010 [P] Unit tests: session expiration logic in `packages/core-services/tests/chatSession.spec.ts`
-- [ ] T011 [P] Integration test: explanation endpoint mock in `apps/api/tests/integration/chat.explanation.test.ts`
+- [x] T006 [P] Contract test for `POST /api/v1/chat/query` in `apps/api/tests/contract/chat-query.test.ts`
+- [x] T007 [P] Integration test: consent validation path in `apps/api/tests/integration/chat-consent.test.ts`
+- [x] T008 [P] Integration test: fairness gating (10/5m, 30/hr) in `apps/api/tests/integration/chat-rate-limit.test.ts`
+- [x] T009 [P] Unit tests: redaction regex corpus in `packages/utils/tests/redaction.spec.ts`
+- [x] T010 [P] Unit tests: session expiration logic in `packages/core-services/tests/chatSession.spec.ts`
+- [x] T011 [P] Integration test: explanation endpoint mock in `apps/api/tests/integration/chat-explanation.test.ts`
 
 ## Phase 3.3: Core Models & Services
 - [ ] T012 [P] Implement redaction utility in `packages/utils/src/redaction/pii.ts`

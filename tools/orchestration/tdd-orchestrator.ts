@@ -5,21 +5,31 @@
 
 import {
   TDDPhase,
-  TDDCycleResult,
-  OrchestrationContext,
-  OrchestrationWorkflow,
-  AgentRegistry,
+  AgentName,
+  FeatureContext,
+  OrchestrationOptions,
+  OrchestrationResult,
+  PhaseResult,
   QualityGate,
-  HealthcareCompliance,
-  TDDMetrics,
-  WorkflowEngine,
-  AgentCoordinationPattern,
   AgentResult,
   AgentCapability,
+  OrchestrationMetrics,
+  WorkflowType,
+  QualityControlContext,
+  QualityControlResult,
+  OrchestrationContext,
+  AgentCoordinationPattern,
+  HealthcareCompliance,
+  TDDCycleResult,
+  TDDMetrics,
+  AgentRegistry as IAgentRegistry,
+  OrchestrationWorkflow
 } from './types';
+import { WorkflowEngine } from './workflows/workflow-engine';
+import { AgentRegistry } from './agent-registry';
 
 export class TDDOrchestrator {
-  private agentRegistry: AgentRegistry;
+  private agentRegistry: IAgentRegistry;
   private workflowEngine: WorkflowEngine;
   private currentPhase: TDDPhase = 'red';
   private metrics: TDDMetrics;
@@ -34,36 +44,52 @@ export class TDDOrchestrator {
    * Execute complete TDD cycle with multi-agent coordination
    */
   async executeFullTDDCycle(
-    context: OrchestrationContext
-  ): Promise<TDDCycleResult> {
+    feature: FeatureContext,
+    options?: OrchestrationOptions
+  ): Promise<OrchestrationResult> {
     const startTime = Date.now();
     const cycleId = this.generateCycleId();
     
-    console.log(`🚀 Starting TDD Cycle: ${cycleId} for feature: ${context.featureName}`);
+    console.log(`🚀 Starting TDD Cycle: ${cycleId} for feature: ${feature.name}`);
+
+    // Create orchestration context from feature
+    const context: OrchestrationContext = {
+      featureName: feature.name,
+      featureType: feature.domain.join(', '),
+      complexity: feature.complexity,
+      criticalityLevel: feature.complexity === 'high' ? 'critical' : feature.complexity,
+      requirements: feature.requirements,
+      healthcareCompliance: {
+        required: options?.healthcare || false,
+        lgpd: options?.healthcare,
+        anvisa: options?.healthcare,
+        cfm: options?.healthcare,
+      },
+    };
 
     try {
       // Phase 1: RED - Write failing tests
       const redResult = await this.executeRedPhase(context);
       if (!redResult.success) {
-        return this.createFailureResult(cycleId, 'red', redResult.error);
+        return this.createFailureResult(cycleId, 'red', 'RED phase failed');
       }
 
       // Phase 2: GREEN - Make tests pass
       const greenResult = await this.executeGreenPhase(context);
       if (!greenResult.success) {
-        return this.createFailureResult(cycleId, 'green', greenResult.error);
+        return this.createFailureResult(cycleId, 'green', 'GREEN phase failed');
       }
 
       // Phase 3: REFACTOR - Improve code quality
       const refactorResult = await this.executeRefactorPhase(context);
       if (!refactorResult.success) {
-        return this.createFailureResult(cycleId, 'refactor', refactorResult.error);
+        return this.createFailureResult(cycleId, 'refactor', 'REFACTOR phase failed');
       }
 
       // Final validation and compliance check
       const validationResult = await this.executeFinalValidation(context);
       if (!validationResult.success) {
-        return this.createFailureResult(cycleId, 'validation', validationResult.error);
+        return this.createFailureResult(cycleId, 'validation', 'Final validation failed');
       }
 
       const duration = Date.now() - startTime;
@@ -92,6 +118,219 @@ export class TDDOrchestrator {
         error instanceof Error ? error.message : 'Unknown error'
       );
     }
+  }
+
+  /**
+   * Execute Quality Control workflow with multi-agent parallel coordination
+   * Integrates with the quality control command for comprehensive validation
+   */
+  async executeQualityControlWorkflow(
+    qualityContext: QualityControlContext,
+    orchestrationOptions?: OrchestrationOptions
+  ): Promise<QualityControlResult> {
+    const startTime = Date.now();
+    const workflowId = `qc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log(`🔍 Starting Quality Control Workflow: ${workflowId} - Action: ${qualityContext.action}`);
+
+    try {
+      // Create comprehensive orchestration context
+      const context: OrchestrationContext = this.createOrchestrationContext(qualityContext, orchestrationOptions);
+
+      let agentResults: AgentResult[] = [];
+      let orchestrationResult: OrchestrationResult | undefined;
+
+      // Execute based on quality control action type
+      switch (qualityContext.action) {
+        case 'tdd-cycle':
+        case 'tdd-critical':
+          // Full TDD orchestration
+          orchestrationResult = await this.executeFullTDDCycle({
+            name: context.featureName,
+            complexity: context.complexity,
+            domain: [context.featureType],
+            requirements: context.requirements,
+          }, orchestrationOptions);
+          break;
+
+        case 'comprehensive':
+          // Execute all quality dimensions in parallel
+          agentResults = await this.executeComprehensiveQualityCheck(context, qualityContext);
+          break;
+
+        case 'test':
+        case 'analyze':
+        case 'debug':
+        case 'validate':
+        case 'compliance':
+        case 'performance':
+        case 'security':
+        case 'cleanup':
+        case 'format':
+          // Execute specific quality control actions with selected agents
+          agentResults = await this.executeSpecificQualityAction(context, qualityContext);
+          break;
+
+        default:
+          // Fallback to comprehensive check
+          agentResults = await this.executeComprehensiveQualityCheck(context, qualityContext);
+      }
+
+      const duration = Date.now() - startTime;
+
+      // Calculate overall quality score
+      const qualityScore = this.calculateOverallQualityScore(agentResults, orchestrationResult);
+
+      // Generate recommendations
+      const recommendations = this.generateQualityRecommendations(agentResults, orchestrationResult);
+
+      // Generate next actions
+      const nextActions = this.generateNextActions(agentResults, orchestrationResult, qualityContext);
+
+      return {
+        success: true,
+        action: qualityContext.action,
+        duration,
+        results: this.aggregateActionResults(agentResults, orchestrationResult, qualityContext),
+        agentResults,
+        orchestrationResult,
+        qualityScore,
+        complianceStatus: context.healthcareCompliance.required ?
+          await this.validateHealthcareComplianceStatus(context) : undefined,
+        recommendations,
+        nextActions,
+        metrics: this.collectQualityControlMetrics(agentResults, orchestrationResult, duration),
+      };
+
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      console.error(`❌ Quality Control Workflow failed: ${error}`);
+
+      return {
+        success: false,
+        action: qualityContext.action,
+        duration,
+        results: {},
+        agentResults: [],
+        qualityScore: 0,
+        recommendations: [`Fix error: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        nextActions: ['Review error and retry with corrected configuration'],
+        metrics: { error: error instanceof Error ? error.message : 'Unknown error' },
+      };
+    }
+  }
+
+  /**
+   * Execute comprehensive quality check with all relevant agents in parallel
+   */
+  private async executeComprehensiveQualityCheck(
+    context: OrchestrationContext,
+    qualityContext: QualityControlContext
+  ): Promise<AgentResult[]> {
+    console.log('🔍 Executing comprehensive quality check with parallel agent coordination');
+
+    // Select agents based on context and quality control requirements
+    let selectedAgents: AgentCapability[];
+
+    if (qualityContext.agents && qualityContext.agents.length > 0) {
+      // Use explicitly specified agents
+      selectedAgents = qualityContext.agents
+        .map(agentName => this.agentRegistry.getAgent(agentName))
+        .filter((agent): agent is AgentCapability => agent !== undefined);
+    } else {
+      // Auto-select optimal agents based on context
+      selectedAgents = this.agentRegistry.selectOptimalAgents(context);
+    }
+
+    console.log(`📋 Selected ${selectedAgents.length} agents: ${selectedAgents.map(a => a.name).join(', ')}`);
+
+    // Execute agents based on coordination pattern
+    const coordinationPattern = qualityContext.coordination ||
+      (qualityContext.parallel ? 'parallel' : 'sequential');
+
+    return await this.executeCoordinationPattern(
+      coordinationPattern,
+      selectedAgents,
+      context,
+      await this.workflowEngine.selectWorkflow(context)
+    );
+  }
+
+  /**
+   * Execute specific quality control action with targeted agents
+   */
+  private async executeSpecificQualityAction(
+    context: OrchestrationContext,
+    qualityContext: QualityControlContext
+  ): Promise<AgentResult[]> {
+    console.log(`🎯 Executing specific quality action: ${qualityContext.action}`);
+
+    // Map quality control actions to appropriate agents
+    const actionAgentMap: Record<string, string[]> = {
+      'test': ['test'],
+      'analyze': ['code-reviewer', 'architect-review'],
+      'debug': ['code-reviewer', 'architect-review'],
+      'validate': ['test', 'code-reviewer'],
+      'compliance': ['security-auditor'],
+      'performance': ['architect-review', 'test'],
+      'security': ['security-auditor'],
+      'cleanup': ['code-reviewer'],
+      'format': ['code-reviewer'],
+    };
+
+    const targetAgentNames = actionAgentMap[qualityContext.action] || [];
+    const selectedAgents = targetAgentNames
+      .map(agentName => this.agentRegistry.getAgent(agentName as AgentName))
+      .filter((agent): agent is AgentCapability => agent !== undefined);
+
+    // Always include healthcare compliance if required
+    if (context.healthcareCompliance.required) {
+      const securityAgent = this.agentRegistry.getAgent('security-auditor');
+      if (securityAgent && !selectedAgents.includes(securityAgent)) {
+        selectedAgents.push(securityAgent);
+      }
+    }
+
+    return await this.executeCoordinationPattern(
+      qualityContext.coordination || 'sequential',
+      selectedAgents,
+      context,
+      await this.workflowEngine.selectWorkflow(context)
+    );
+  }
+
+  /**
+   * Create orchestration context from quality control context
+   */
+  private createOrchestrationContext(
+    qualityContext: QualityControlContext,
+    options?: OrchestrationOptions
+  ): OrchestrationContext {
+    return {
+      featureName: qualityContext.target || 'Quality Control Check',
+      featureType: qualityContext.type || 'general',
+      complexity: qualityContext.depth ? this.mapDepthToComplexity(qualityContext.depth) : 'medium',
+      criticalityLevel: qualityContext.healthcare ? 'critical' :
+        (qualityContext.type === 'security' || qualityContext.type === 'compliance') ? 'high' : 'medium',
+      requirements: [`${qualityContext.action} validation`, 'Quality assurance', 'Best practices compliance'],
+      healthcareCompliance: {
+        required: qualityContext.healthcare || false,
+        lgpd: qualityContext.healthcare,
+        anvisa: qualityContext.healthcare,
+        cfm: qualityContext.healthcare,
+      },
+      qualityControlContext: qualityContext,
+    };
+  }
+
+  /**
+   * Map quality control depth to complexity level
+   */
+  private mapDepthToComplexity(depth: string): 'low' | 'medium' | 'high' {
+    const depthNumber = parseInt(depth.replace('L', ''));
+    if (depthNumber <= 3) return 'low';
+    if (depthNumber <= 7) return 'medium';
+    return 'high';
   }
 
   /**
@@ -567,9 +806,204 @@ export class TDDOrchestrator {
     } else {
       this.metrics.failedCycles++;
     }
-    
+
     // Update average duration
-    this.metrics.averageDuration = 
+    this.metrics.averageDuration =
       (this.metrics.averageDuration * (this.metrics.totalCycles - 1) + duration) / this.metrics.totalCycles;
+  }
+
+  // Quality Control helper methods
+
+  /**
+   * Calculate overall quality score from agent results and orchestration result
+   */
+  private calculateOverallQualityScore(
+    agentResults: AgentResult[],
+    orchestrationResult?: OrchestrationResult
+  ): number {
+    if (orchestrationResult) {
+      return orchestrationResult.overallQualityScore;
+    }
+
+    if (agentResults.length === 0) return 0;
+
+    const scores = agentResults
+      .map(result => result.qualityScore || 0)
+      .filter(score => score > 0);
+
+    return scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+  }
+
+  /**
+   * Generate quality recommendations based on agent results
+   */
+  private generateQualityRecommendations(
+    agentResults: AgentResult[],
+    orchestrationResult?: OrchestrationResult
+  ): string[] {
+    const recommendations: string[] = [];
+
+    if (orchestrationResult) {
+      recommendations.push(...orchestrationResult.recommendations);
+    }
+
+    // Analyze agent-specific recommendations
+    agentResults.forEach(result => {
+      if (result.warnings && result.warnings.length > 0) {
+        recommendations.push(`${result.agent}: ${result.warnings.join(', ')}`);
+      }
+    });
+
+    // Add general quality recommendations
+    const qualityScore = this.calculateOverallQualityScore(agentResults, orchestrationResult);
+    if (qualityScore < 9.5) {
+      recommendations.push('Consider refactoring to improve quality score to ≥9.5/10');
+    }
+
+    return [...new Set(recommendations)]; // Remove duplicates
+  }
+
+  /**
+   * Generate next actions based on results
+   */
+  private generateNextActions(
+    agentResults: AgentResult[],
+    orchestrationResult?: OrchestrationResult,
+    qualityContext: QualityControlContext
+  ): string[] {
+    const nextActions: string[] = [];
+
+    if (orchestrationResult) {
+      nextActions.push(...orchestrationResult.nextActions);
+    }
+
+    // Check for failed agents
+    const failedAgents = agentResults.filter(result => !result.success);
+    if (failedAgents.length > 0) {
+      nextActions.push(
+        `Investigate and fix issues in: ${failedAgents.map(a => a.agent).join(', ')}`
+      );
+    }
+
+    // Context-specific next actions
+    if (qualityContext.healthcare) {
+      nextActions.push('Verify healthcare compliance requirements are fully met');
+      nextActions.push('Review audit trail for regulatory compliance');
+    }
+
+    if (qualityContext.type === 'security') {
+      nextActions.push('Perform additional security testing');
+      nextActions.push('Review security audit findings');
+    }
+
+    return [...new Set(nextActions)]; // Remove duplicates
+  }
+
+  /**
+   * Aggregate action results based on quality control context
+   */
+  private aggregateActionResults(
+    agentResults: AgentResult[],
+    orchestrationResult?: OrchestrationResult,
+    qualityContext: QualityControlContext
+  ): any {
+    const results: any = {};
+
+    // Map agent results to quality control dimensions
+    agentResults.forEach(result => {
+      switch (result.agent) {
+        case 'test':
+          results.testing = result;
+          break;
+        case 'code-reviewer':
+          if (qualityContext.type === 'analyze') {
+            results.analysis = result;
+          } else if (qualityContext.type === 'cleanup') {
+            results.cleanup = result;
+          } else if (qualityContext.type === 'format') {
+            results.formatting = result;
+          }
+          break;
+        case 'security-auditor':
+          if (qualityContext.type === 'security') {
+            results.security = result;
+          } else if (qualityContext.type === 'compliance') {
+            results.compliance = result;
+          }
+          break;
+        case 'architect-review':
+          if (qualityContext.type === 'analyze') {
+            results.analysis = { ...results.analysis, architecture: result };
+          } else if (qualityContext.type === 'performance') {
+            results.performance = result;
+          }
+          break;
+      }
+    });
+
+    // Add orchestration result if available
+    if (orchestrationResult) {
+      results.orchestration = orchestrationResult;
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate healthcare compliance status
+   */
+  private async validateHealthcareComplianceStatus(
+    context: OrchestrationContext
+  ): Promise<HealthcareComplianceContext> {
+    return {
+      lgpdRequired: context.healthcareCompliance.lgpd || false,
+      anvisaRequired: context.healthcareCompliance.anvisa || false,
+      cfmRequired: context.healthcareCompliance.cfm || false,
+      patientDataInvolved: context.healthcareCompliance.required,
+      auditTrailRequired: context.healthcareCompliance.required,
+      performanceThreshold: context.criticalityLevel === 'critical' ? 100 : 200, // ms
+      dataRetentionPolicies: ['LGPD compliant', 'Medical records retention'],
+    };
+  }
+
+  /**
+   * Collect comprehensive quality control metrics
+   */
+  private collectQualityControlMetrics(
+    agentResults: AgentResult[],
+    orchestrationResult?: OrchestrationResult,
+    duration: number
+  ): any {
+    const metrics = {
+      totalDuration: duration,
+      agentsExecuted: agentResults.length,
+      successfulAgents: agentResults.filter(r => r.success).length,
+      failedAgents: agentResults.filter(r => !r.success).length,
+      averageQualityScore: this.calculateOverallQualityScore(agentResults, orchestrationResult),
+      agentBreakdown: {} as Record<string, any>,
+    };
+
+    // Collect agent-specific metrics
+    agentResults.forEach(result => {
+      metrics.agentBreakdown[result.agent] = {
+        success: result.success,
+        duration: result.duration,
+        qualityScore: result.qualityScore,
+        warningCount: result.warnings?.length || 0,
+        errorCount: result.errors?.length || 0,
+      };
+    });
+
+    // Add orchestration metrics if available
+    if (orchestrationResult) {
+      metrics.agentBreakdown['orchestration'] = {
+        success: orchestrationResult.success,
+        duration: orchestrationResult.duration,
+        qualityScore: orchestrationResult.overallQualityScore,
+        phases: Object.keys(orchestrationResult.phases).length,
+      };
+    }
+
+    return metrics;
   }
 }

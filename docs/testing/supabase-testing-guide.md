@@ -2,7 +2,7 @@
 title: "Supabase Testing Guide - Comprehensive Integration"
 last_updated: 2025-09-16
 form: how-to
-tags: [supabase, testing, rls, auth, database, healthcare, agents]
+tags: [supabase, testing, rls, auth, database, healthcare, agents, consolidated]
 related:
   - ./AGENTS.md
   - ./integration-testing.md
@@ -13,14 +13,59 @@ agent_coordination:
   validation: [rls-enforcement, auth-flows, data-protection]
 ---
 
-# Supabase Testing Guide - Comprehensive Integration — Version: 2.0.0
+# Supabase Testing Guide - Comprehensive Integration — Version: 3.0.0
 
 ## Overview
 
-Complete testing strategy for Supabase integration in healthcare applications, coordinated by **security-auditor** agent with comprehensive RLS, authentication, and LGPD compliance validation. Consolidates all Supabase-specific testing patterns into a unified framework.
+Complete testing strategy for Supabase integration in healthcare applications, coordinated by **security-auditor** agent with comprehensive RLS, authentication, and LGPD compliance validation. Consolidates all Supabase-specific testing patterns, smoke tests, RLS validation, and auth client management into a unified framework.
 
 **Target Audience**: Developers, QA engineers, Security teams
 **Agent Coordinator**: `security-auditor.md` with `architect-review.md` pattern validation
+
+## Prerequisites
+
+- Supabase project with test environment configured
+- Environment variables: `SUPABASE_TEST_URL`, `SUPABASE_TEST_ANON_KEY`, `SUPABASE_TEST_SERVICE_KEY`
+- Vitest testing framework setup
+- Healthcare compliance requirements (LGPD, ANVISA)
+- Test schema or ephemeral database for isolation
+
+## Quick Start
+
+### Basic Test Setup
+```typescript
+import { createClient } from '@supabase/supabase-js';
+import { describe, expect, it } from 'vitest';
+
+// security-auditor: Secure test environment setup
+const createTestSupabaseClient = (options?: {
+  anonymizeData?: boolean;
+  lgpdCompliant?: boolean;
+  auditTrail?: boolean;
+}) => {
+  const config = {
+    url: process.env.SUPABASE_TEST_URL || '',
+    anonKey: process.env.SUPABASE_TEST_ANON_KEY || '',
+    serviceKey: process.env.SUPABASE_TEST_SERVICE_KEY || '',
+    ...options
+  };
+
+  return createClient(config.url, config.anonKey, {
+    auth: { 
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    },
+    db: { schema: 'test_schema' },
+    global: {
+      headers: {
+        'x-test-environment': 'true',
+        'x-lgpd-compliant': options?.lgpdCompliant ? 'true' : 'false'
+      }
+    }
+  });
+};
+```
 
 ## Agent Coordination Framework
 
@@ -40,957 +85,551 @@ supabase_testing_workflow:
     focus: ["Performance validation", "Code quality", "Error handling"]
 ```
 
-## Test Environment Setup (Security-Auditor Coordinated)
+## Testing Categories
 
-### Secure Test Configuration
+### 1. Connectivity & Smoke Tests
+
+#### Database Connectivity Tests
 ```typescript
-// security-auditor: Secure test environment setup
-export const createTestSupabaseClient = (options?: {
-  anonymizeData?: boolean;
-  lgpdCompliant?: boolean;
-  auditTrail?: boolean;
-}) => {
-  const config = {
-    url: process.env.SUPABASE_TEST_URL || process.env.VITE_SUPABASE_URL || '',
-    anonKey: process.env.SUPABASE_TEST_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '',
-    serviceKey: process.env.SUPABASE_TEST_SERVICE_KEY || '', // For setup only
-    ...options
-  };
-
-  if (!config.url || !config.anonKey) {
-    throw new Error('Missing Supabase test configuration');
-  }
-
-  // security-auditor: Ensure test isolation
-  return createClient<Database>(config.url, config.anonKey, {
-    auth: { 
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-    },
-    db: {
-      schema: process.env.NODE_ENV === 'test' ? 'test_schema' : 'public'
-    },
-    global: {
-      headers: {
-        'x-test-environment': 'true',
-        'x-lgpd-compliant': options?.lgpdCompliant ? 'true' : 'false'
-      }
-    }
-  });
-};
-
-// architect-review: Service client configuration
-export const createServiceRoleClient = () => {
-  return createClient<Database>(
-    process.env.SUPABASE_TEST_URL!,
-    process.env.SUPABASE_TEST_SERVICE_KEY!,
-    {
-      auth: { persistSession: false },
-      db: { schema: 'test_schema' }
-    }
-  );
-};
-```
-
-### Test Data Management (LGPD Compliant)
-```typescript
-// security-auditor: LGPD-compliant test data generation
-export class HealthcareTestDataGenerator {
-  private serviceClient: SupabaseClient<Database>;
-  
-  constructor() {
-    this.serviceClient = createServiceRoleClient();
-  }
-
-  // security-auditor: Synthetic data generation
-  async createTestOrganization(): Promise<TestOrganization> {
-    const orgData = {
-      id: faker.datatype.uuid(),
-      name: faker.company.name() + ' - TEST',
-      cnpj: generateTestCNPJ(), // Synthetic CNPJ
-      created_at: new Date().toISOString(),
-      _test_data: true,
-      _lgpd_compliant: true
-    };
-
-    const { data, error } = await this.serviceClient
-      .from('organizations')
-      .insert(orgData)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  // security-auditor: Patient data with anonymization
-  async createTestPatient(orgId: string): Promise<TestPatient> {
-    const patientData = {
-      id: faker.datatype.uuid(),
-      organization_id: orgId,
-      full_name: faker.name.fullName() + ' - TEST',
-      cpf: generateTestCPF(), // Synthetic CPF - not real
-      email: faker.internet.email(),
-      birth_date: faker.date.birthdate().toISOString(),
-      created_at: new Date().toISOString(),
-      _test_data: true,
-      _synthetic: true,
-      _lgpd_safe: true
-    };
-
-    const { data, error } = await this.serviceClient
-      .from('patients')
-      .insert(patientData)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  // security-auditor: Cleanup test data
-  async cleanupTestData(): Promise<void> {
-    // Remove all test data marked with _test_data: true
-    await Promise.all([
-      this.serviceClient.from('patients').delete().eq('_test_data', true),
-      this.serviceClient.from('organizations').delete().eq('_test_data', true),
-      this.serviceClient.from('consultations').delete().eq('_test_data', true)
-    ]);
-  }
-}
-```
-
-## Row Level Security (RLS) Testing (Security-Auditor Primary)
-
-### RLS Policy Validation
-```typescript
-describe('Supabase RLS - Security Auditor Coordinated', () => {
-  let testClient: SupabaseClient<Database>;
-  let testDataGenerator: HealthcareTestDataGenerator;
-  let testOrg: TestOrganization;
-  let testPatient: TestPatient;
+describe('Supabase Connectivity Tests', () => {
+  let supabase: ReturnType<typeof createClient>;
+  let adminSupabase: ReturnType<typeof createClient>;
 
   beforeAll(async () => {
-    // security-auditor: Initialize secure test environment
-    testClient = createTestSupabaseClient({
-      lgpdCompliant: true,
-      auditTrail: true
-    });
-    
-    testDataGenerator = new HealthcareTestDataGenerator();
-    testOrg = await testDataGenerator.createTestOrganization();
-    testPatient = await testDataGenerator.createTestPatient(testOrg.id);
+    supabase = createTestSupabaseClient();
+    adminSupabase = createClient(
+      process.env.SUPABASE_TEST_URL!,
+      process.env.SUPABASE_TEST_SERVICE_KEY!
+    );
   });
 
-  afterAll(async () => {
-    // security-auditor: Mandatory cleanup
-    await testDataGenerator.cleanupTestData();
-  });
-
-  describe('Patient Data RLS Enforcement', () => {
-    it('should enforce organization-level data isolation', async () => {
-      // security-auditor: Test data isolation
-      const { data, error } = await testClient
-        .from('patients')
-        .select('*')
-        .eq('organization_id', testOrg.id);
-
-      expect(error).toBeNull();
-      expect(data).toBeInstanceOf(Array);
+  describe('Basic Connection', () => {
+    it('should connect to Supabase successfully', async () => {
+      const { data, error } = await supabase
+        .from('clinics')
+        .select('count')
+        .limit(1);
       
-      // security-auditor: Validate data boundaries
-      if (data && data.length > 0) {
-        data.forEach(patient => {
-          expect(patient.organization_id).toBe(testOrg.id);
-          expect(patient._test_data).toBe(true);
-        });
-      }
-    });
-
-    it('should deny cross-organization access', async () => {
-      // security-auditor: Test unauthorized access prevention
-      const { data, error } = await testClient
-        .from('patients')
-        .select('*')
-        .eq('organization_id', 'unauthorized-org-id');
-
-      // Should either return error or empty results
-      const isAccessDenied = error?.code === 'PGRST116' || (data && data.length === 0);
-      expect(isAccessDenied).toBeTruthy();
-    });
-
-    it('should deny access without authentication', async () => {
-      // security-auditor: Unauthenticated access test
-      const unauthenticatedClient = createClient<Database>(
-        process.env.SUPABASE_TEST_URL!,
-        process.env.SUPABASE_TEST_ANON_KEY!
-      );
-
-      const { data, error } = await unauthenticatedClient
-        .from('patients')
-        .select('*');
-
-      expect(error).toBeTruthy();
-      expect(data).toBeNull();
-    });
-  });
-
-  describe('Healthcare-Specific RLS Policies', () => {
-    it('should enforce doctor-patient relationship access', async () => {
-      // security-auditor: Role-based access validation
-      const doctorUser = await createTestUser({
-        role: 'doctor',
-        organization_id: testOrg.id,
-        permissions: ['read_patients', 'write_consultations']
-      });
-
-      // Authenticate as doctor
-      await testClient.auth.signInWithPassword({
-        email: doctorUser.email,
-        password: doctorUser.password
-      });
-
-      const { data, error } = await testClient
-        .from('patients')
-        .select('*')
-        .eq('assigned_doctor_id', doctorUser.id);
-
       expect(error).toBeNull();
       expect(data).toBeDefined();
     });
 
-    it('should restrict patient access to own records only', async () => {
-      // security-auditor: Patient self-access validation
-      const patientUser = await createTestUser({
-        role: 'patient',
-        patient_id: testPatient.id
-      });
+    it('should handle connection timeout gracefully', async () => {
+      // Test with invalid URL to simulate timeout
+      const badClient = createClient('https://invalid.supabase.co', 'invalid-key');
+      
+      const { error } = await badClient
+        .from('test_table')
+        .select()
+        .limit(1);
+      
+      expect(error).toBeDefined();
+      expect(error?.message).toMatch(/network|timeout|connection/i);
+    });
+  });
 
-      await testClient.auth.signInWithPassword({
-        email: patientUser.email,
-        password: patientUser.password
-      });
-
-      const { data, error } = await testClient
-        .from('patients')
-        .select('*')
-        .eq('id', testPatient.id);
+  describe('CRUD Operations', () => {
+    it('should handle SELECT operations', async () => {
+      const { data, error } = await supabase
+        .from('clinics')
+        .select('id, name')
+        .limit(5);
 
       expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      expect(data?.[0].id).toBe(testPatient.id);
+      expect(Array.isArray(data)).toBe(true);
+    });
+
+    it('should handle INSERT operations (with service role)', async () => {
+      if (!adminSupabase) {
+        console.warn('Skipping INSERT test - requires service role access');
+        return;
+      }
+
+      const testClinic = {
+        name: `Test Clinic ${Date.now()}`,
+        contact_email: 'test@example.com',
+        contact_phone: '+55 11 99999-9999',
+        address: 'Test Address',
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await adminSupabase
+        .from('clinics')
+        .insert(testClinic)
+        .select()
+        .single();
+
+      expect(error).toBeNull();
+      expect(data).toBeDefined();
+      expect(data?.name).toBe(testClinic.name);
+
+      // Cleanup
+      if (data?.id) {
+        await adminSupabase.from('clinics').delete().eq('id', data.id);
+      }
+    });
+  });
+});
+```### 2. Row Level Security (RLS) Testing
+
+> **security-auditor coordination**: Ensure Row Level Security is enforced for sensitive data in clinic contexts.
+
+#### RLS Setup and Configuration
+- Use separate test schema or ephemeral database for isolation
+- Seed minimal data with service-role key for setup only
+- Use anon key for user-context tests to validate RLS policies
+
+#### Positive & Negative Test Cases
+
+```typescript
+describe('Row Level Security (RLS) Tests', () => {
+  const anon = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
+    auth: { persistSession: false },
+  });
+
+  describe('patients RLS enforcement', () => {
+    it('denies cross-clinic access (negative case)', async () => {
+      // security-auditor: Validate unauthorized access is blocked
+      const { data, error } = await anon
+        .from('patients')
+        .select('*')
+        .eq('clinic_id', 'OTHER_CLINIC_ID');
+      
+      // Expect either explicit error or empty results
+      expect(
+        error?.code === 'PGRST116' || 
+        (data && data.length === 0)
+      ).toBeTruthy();
+    });
+
+    it('allows authorized clinic access (positive case)', async () => {
+      // First, authenticate as a user with clinic access
+      const { data: authData } = await anon.auth.signInWithPassword({
+        email: 'test@clinic1.com',
+        password: 'test-password'
+      });
+
+      if (authData.user) {
+        const { data, error } = await anon
+          .from('patients')
+          .select('*')
+          .eq('clinic_id', 'AUTHORIZED_CLINIC_ID');
+
+        expect(error).toBeNull();
+        expect(Array.isArray(data)).toBe(true);
+        
+        // security-auditor: Verify only authorized data returned
+        if (data && data.length > 0) {
+          expect(data.every(p => p.clinic_id === 'AUTHORIZED_CLINIC_ID')).toBe(true);
+        }
+      }
+
+      await anon.auth.signOut();
+    });
+
+    it('validates multi-tenant data isolation', async () => {
+      // security-auditor: Test strict tenant isolation
+      const tenant1Client = createTestSupabaseClient();
+      const tenant2Client = createTestSupabaseClient();
+
+      // Simulate tenant-specific authentication
+      await tenant1Client.auth.signInWithPassword({
+        email: 'user@tenant1.com',
+        password: 'password'
+      });
+
+      await tenant2Client.auth.signInWithPassword({
+        email: 'user@tenant2.com', 
+        password: 'password'
+      });
+
+      // Verify tenant1 cannot access tenant2 data
+      const { data: t1Data } = await tenant1Client
+        .from('patients')
+        .select('clinic_id');
+
+      const { data: t2Data } = await tenant2Client
+        .from('patients') 
+        .select('clinic_id');
+
+      if (t1Data && t2Data && t1Data.length > 0 && t2Data.length > 0) {
+        const t1Clinics = new Set(t1Data.map(p => p.clinic_id));
+        const t2Clinics = new Set(t2Data.map(p => p.clinic_id));
+        
+        // security-auditor: Ensure no clinic overlap between tenants
+        expect([...t1Clinics].some(c => t2Clinics.has(c))).toBe(false);
+      }
+
+      await tenant1Client.auth.signOut();
+      await tenant2Client.auth.signOut();
+    });
+  });
+
+  describe('audit logging validation', () => {
+    it('creates audit log entries for sensitive access', async () => {
+      // security-auditor: Verify audit trail for compliance
+      const beforeCount = await anon
+        .from('audit_logs')
+        .select('count')
+        .eq('table_name', 'patients');
+
+      // Perform a sensitive operation
+      await anon.from('patients').select('*').limit(1);
+
+      const afterCount = await anon
+        .from('audit_logs')
+        .select('count')
+        .eq('table_name', 'patients');
+
+      // Verify audit log was created
+      expect(afterCount).toBeGreaterThan(beforeCount);
     });
   });
 });
 ```
 
-## Authentication Flow Testing (Security-Auditor Coordinated)
+### 3. Authentication Testing
 
-### LGPD-Compliant Authentication
+#### Auth Flow Validation
 ```typescript
-describe('Supabase Authentication - LGPD Compliant', () => {
-  let testClient: SupabaseClient<Database>;
+describe('Authentication Flow Tests', () => {
+  let supabase: ReturnType<typeof createClient>;
 
-  beforeAll(() => {
-    testClient = createTestSupabaseClient({
-      lgpdCompliant: true
-    });
+  beforeEach(() => {
+    supabase = createTestSupabaseClient();
   });
 
-  describe('User Registration with Consent', () => {
-    it('should register user with LGPD consent tracking', async () => {
-      const testUserData = {
-        email: `test-${Date.now()}@neonpro-test.com`,
-        password: 'SecureTestPassword123!',
-        userData: {
-          full_name: 'João Silva - TEST',
-          consent: {
-            data_processing: true,
-            marketing_communications: false,
-            cookies_analytics: true,
-            lgpd_acknowledged: true,
-            consent_date: new Date().toISOString(),
-            consent_version: '2.0',
-            ip_address: '127.0.0.1', // Test IP
-            user_agent: 'test-agent'
-          }
-        }
-      };
+  afterEach(async () => {
+    await supabase.auth.signOut();
+  });
 
-      // security-auditor: Registration with consent validation
-      const { data, error } = await testClient.auth.signUp({
-        email: testUserData.email,
-        password: testUserData.password,
-        options: {
-          data: testUserData.userData
-        }
+  describe('Sign In/Sign Out Flow', () => {
+    it('should authenticate valid users', async () => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'validpassword'
       });
 
       expect(error).toBeNull();
       expect(data.user).toBeDefined();
-      expect(data.user?.user_metadata).toHaveProperty('consent');
-      expect(data.user?.user_metadata.consent.lgpd_acknowledged).toBe(true);
+      expect(data.session).toBeDefined();
     });
 
-    it('should handle consent withdrawal', async () => {
-      // security-auditor: Consent withdrawal process
-      const testUser = await createAuthenticatedTestUser();
-      
-      const consentUpdate = {
-        data_processing: false,
-        marketing_communications: false,
-        withdrawal_date: new Date().toISOString(),
-        withdrawal_reason: 'user_request'
-      };
-
-      const { data, error } = await testClient.auth.updateUser({
-        data: {
-          consent: consentUpdate
-        }
+    it('should reject invalid credentials', async () => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'wrongpassword'
       });
 
+      expect(error).toBeDefined();
+      expect(data.user).toBeNull();
+      expect(data.session).toBeNull();
+    });
+
+    it('should handle sign out correctly', async () => {
+      // First sign in
+      await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'validpassword'
+      });
+
+      // Then sign out
+      const { error } = await supabase.auth.signOut();
       expect(error).toBeNull();
-      expect(data.user?.user_metadata.consent.data_processing).toBe(false);
+
+      // Verify session is cleared
+      const { data: { session } } = await supabase.auth.getSession();
+      expect(session).toBeNull();
     });
   });
 
   describe('Session Management', () => {
-    it('should handle secure session lifecycle', async () => {
-      const testUser = await createAuthenticatedTestUser();
-
-      // security-auditor: Session validation
-      const { data: session, error } = await testClient.auth.getSession();
-      
-      expect(error).toBeNull();
-      expect(session.session).toBeDefined();
-      expect(session.session?.access_token).toBeDefined();
-
-      // Test session expiration handling
-      await testClient.auth.signOut();
-      
-      const { data: postLogoutSession } = await testClient.auth.getSession();
-      expect(postLogoutSession.session).toBeNull();
-    });
-
-    it('should enforce session security policies', async () => {
-      // security-auditor: Session security validation
-      const testUser = await createAuthenticatedTestUser();
-      
-      // Verify JWT claims
-      const { data: { user } } = await testClient.auth.getUser();
-      
-      expect(user).toBeDefined();
-      expect(user?.aud).toBe('authenticated');
-      expect(user?.role).toBe('authenticated');
-    });
-  });
-});
-```
-
-## Database Integration Testing (Architect-Review Coordinated)
-
-### Schema and Migration Testing
-```typescript
-describe('Supabase Database Integration - Architect Review', () => {
-  let serviceClient: SupabaseClient<Database>;
-
-  beforeAll(() => {
-    serviceClient = createServiceRoleClient();
-  });
-
-  describe('Schema Validation', () => {
-    it('should validate healthcare-specific table structures', async () => {
-      // architect-review: Schema pattern validation
-      const { data: patients, error: patientsError } = await serviceClient
-        .from('patients')
-        .select('*')
-        .limit(1);
-
-      expect(patientsError).toBeNull();
-      
-      // Validate required healthcare fields
-      if (patients && patients.length > 0) {
-        const patient = patients[0];
-        expect(patient).toHaveProperty('id');
-        expect(patient).toHaveProperty('full_name');
-        expect(patient).toHaveProperty('cpf');
-        expect(patient).toHaveProperty('organization_id');
-        expect(patient).toHaveProperty('created_at');
-        expect(patient).toHaveProperty('updated_at');
-      }
-    });
-
-    it('should validate RLS policies are enabled', async () => {
-      // architect-review: RLS policy validation
-      const { data: policies, error } = await serviceClient
-        .rpc('get_rls_policies', { table_name: 'patients' });
-
-      expect(error).toBeNull();
-      expect(policies).toBeInstanceOf(Array);
-      expect(policies?.length).toBeGreaterThan(0);
-
-      // Validate specific healthcare policies
-      const hasOrganizationPolicy = policies?.some(
-        policy => policy.policyname?.includes('organization')
-      );
-      expect(hasOrganizationPolicy).toBe(true);
-    });
-  });
-
-  describe('Data Integrity and Constraints', () => {
-    it('should enforce healthcare data constraints', async () => {
-      // architect-review: Data validation patterns
-      const invalidPatientData = {
-        full_name: '', // Empty name should be rejected
-        cpf: '123', // Invalid CPF format
-        organization_id: null // Required field
-      };
-
-      const { data, error } = await serviceClient
-        .from('patients')
-        .insert(invalidPatientData);
-
-      expect(error).toBeTruthy();
-      expect(data).toBeNull();
-    });
-
-    it('should maintain referential integrity', async () => {
-      // architect-review: Foreign key validation
-      const invalidConsultation = {
-        patient_id: 'non-existent-patient-id',
-        doctor_id: 'non-existent-doctor-id',
-        consultation_date: new Date().toISOString()
-      };
-
-      const { data, error } = await serviceClient
-        .from('consultations')
-        .insert(invalidConsultation);
-
-      expect(error).toBeTruthy();
-      expect(error?.code).toMatch(/foreign_key_violation|23503/);
-    });
-  });
-});
-```
-
-## Realtime Integration Testing (Code-Reviewer Coordinated)
-
-### Performance and Reliability
-```typescript
-describe('Supabase Realtime - Performance Validated', () => {
-  let testClient: SupabaseClient<Database>;
-  let testDataGenerator: HealthcareTestDataGenerator;
-
-  beforeAll(async () => {
-    testClient = createTestSupabaseClient();
-    testDataGenerator = new HealthcareTestDataGenerator();
-  });
-
-  describe('Realtime Subscriptions', () => {
-    it('should handle patient updates in real-time', async () => {
-      return new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('Realtime test timeout'));
-        }, 5000);
-
-        // code-reviewer: Performance monitoring
-        const startTime = performance.now();
-        
-        // Subscribe to patient updates
-        const subscription = testClient
-          .channel('patient-updates')
-          .on('postgres_changes', 
-            { event: 'UPDATE', schema: 'public', table: 'patients' },
-            (payload) => {
-              const endTime = performance.now();
-              const responseTime = endTime - startTime;
-
-              // code-reviewer: Validate realtime performance
-              expect(responseTime).toBeLessThan(1000); // < 1s for realtime
-              expect(payload.new).toBeDefined();
-              
-              clearTimeout(timeout);
-              subscription.unsubscribe();
-              resolve();
-            }
-          )
-          .subscribe();
-
-        // Trigger an update after subscription is ready
-        setTimeout(async () => {
-          const testPatient = await testDataGenerator.createTestPatient('test-org');
-          
-          await testClient
-            .from('patients')
-            .update({ full_name: 'Updated Name - TEST' })
-            .eq('id', testPatient.id);
-        }, 100);
+    it('should handle session refresh', async () => {
+      const { data: loginData } = await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'validpassword'
       });
-    });
 
-    it('should handle connection failures gracefully', async () => {
-      // code-reviewer: Error handling validation
-      const subscription = testClient
-        .channel('test-connection')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'non_existent_table' },
-          () => {}
-        )
-        .subscribe((status, err) => {
-          if (status === 'SUBSCRIBED') {
-            expect(true).toBe(true); // Connection successful
-          } else if (status === 'CHANNEL_ERROR') {
-            expect(err).toBeDefined();
-          }
+      if (loginData.session) {
+        const { data, error } = await supabase.auth.refreshSession({
+          refresh_token: loginData.session.refresh_token
         });
 
-      // Cleanup
-      setTimeout(() => {
-        subscription.unsubscribe();
-      }, 1000);
-    });
-  });
-});
-```
-
-## Performance Testing (Code-Reviewer Coordinated)
-
-### Healthcare Performance Requirements
-```typescript
-describe('Supabase Performance - Healthcare Requirements', () => {
-  let testClient: SupabaseClient<Database>;
-  let serviceClient: SupabaseClient<Database>;
-  let testDataGenerator: HealthcareTestDataGenerator;
-
-  beforeAll(async () => {
-    testClient = createTestSupabaseClient();
-    serviceClient = createServiceRoleClient();
-    testDataGenerator = new HealthcareTestDataGenerator();
-
-    // Generate test dataset
-    const testOrg = await testDataGenerator.createTestOrganization();
-    await Promise.all(
-      Array.from({ length: 100 }, () => 
-        testDataGenerator.createTestPatient(testOrg.id)
-      )
-    );
-  });
-
-  afterAll(async () => {
-    await testDataGenerator.cleanupTestData();
-  });
-
-  describe('Query Performance', () => {
-    it('should meet healthcare data access requirements (≤100ms)', async () => {
-      // code-reviewer: Performance benchmark validation
-      const performanceTests = [
-        () => testClient.from('patients').select('*').limit(10),
-        () => testClient.from('patients').select('id, full_name, cpf').limit(50),
-        () => testClient.from('consultations').select(`
-          *,
-          patients(full_name),
-          doctors(full_name)
-        `).limit(20)
-      ];
-
-      for (const test of performanceTests) {
-        const startTime = performance.now();
-        const { data, error } = await test();
-        const endTime = performance.now();
-        const responseTime = endTime - startTime;
-
         expect(error).toBeNull();
-        expect(data).toBeDefined();
-        // Healthcare requirement: ≤100ms for patient data operations
-        expect(responseTime).toBeLessThan(100);
+        expect(data.session).toBeDefined();
+        expect(data.session?.access_token).not.toBe(loginData.session.access_token);
       }
     });
 
-    it('should handle concurrent operations efficiently', async () => {
-      // code-reviewer: Concurrent load validation
-      const concurrentQueries = Array.from({ length: 50 }, (_, i) => 
-        testClient
-          .from('patients')
-          .select('*')
-          .eq('organization_id', `test-org-${i % 5}`)
-          .limit(10)
-      );
-
-      const startTime = performance.now();
-      const results = await Promise.allSettled(concurrentQueries);
-      const endTime = performance.now();
-      const totalTime = endTime - startTime;
-
-      const successfulQueries = results.filter(
-        result => result.status === 'fulfilled'
-      );
-
-      expect(successfulQueries.length).toBeGreaterThan(45); // 90% success rate
-      expect(totalTime).toBeLessThan(5000); // Complete within 5 seconds
-    });
-  });
-
-  describe('Scalability Testing', () => {
-    it('should maintain performance under load', async () => {
-      // code-reviewer: Scalability validation
-      const loadTest = async (iterations: number) => {
-        const startTime = performance.now();
-        
-        const promises = Array.from({ length: iterations }, () =>
-          testClient
-            .from('patients')
-            .select('id, full_name')
-            .limit(5)
-        );
-
-        await Promise.all(promises);
-        
-        const endTime = performance.now();
-        return endTime - startTime;
-      };
-
-      // Test different load levels
-      const lowLoad = await loadTest(10);
-      const mediumLoad = await loadTest(50);
-      const highLoad = await loadTest(100);
-
-      // Performance should scale linearly (not exponentially)
-      const lowLoadPerQuery = lowLoad / 10;
-      const highLoadPerQuery = highLoad / 100;
+    it('should validate session expiry', async () => {
+      // Mock an expired session scenario
+      const expiredToken = 'expired.jwt.token';
       
-      // High load per-query time should be less than 2x low load
-      expect(highLoadPerQuery).toBeLessThan(lowLoadPerQuery * 2);
-    });
-  });
-});
-```
-
-## Edge Functions Testing (Architect-Review Coordinated)
-
-### Healthcare API Edge Functions
-```typescript
-describe('Supabase Edge Functions - Healthcare APIs', () => {
-  let testClient: SupabaseClient<Database>;
-
-  beforeAll(() => {
-    testClient = createTestSupabaseClient();
-  });
-
-  describe('Patient Processing Functions', () => {
-    it('should validate patient data through edge function', async () => {
-      // architect-review: API contract validation
-      const patientData = {
-        full_name: 'Maria Silva - TEST',
-        cpf: '12345678901',
-        email: 'maria.test@neonpro.com',
-        birth_date: '1990-01-01'
-      };
-
-      const { data, error } = await testClient.functions.invoke(
-        'validate-patient-data',
-        {
-          body: patientData,
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Test-Mode': 'true'
-          }
-        }
-      );
-
-      expect(error).toBeNull();
-      expect(data).toHaveProperty('valid');
-      expect(data).toHaveProperty('sanitized_data');
-      
-      // architect-review: Validate data sanitization
-      if (data.sanitized_data) {
-        expect(data.sanitized_data.cpf).toMatch(/^\*\*\*\.\*\*\*\.\*\*\*-\d{2}$/);
-      }
-    });
-
-    it('should handle LGPD data subject requests', async () => {
-      // security-auditor: LGPD compliance validation
-      const dataRequest = {
-        patient_id: 'test-patient-id',
-        request_type: 'access',
-        requested_by: 'patient'
-      };
-
-      const { data, error } = await testClient.functions.invoke(
-        'lgpd-data-request',
-        {
-          body: dataRequest,
-          headers: {
-            'Authorization': `Bearer ${await getTestAuthToken()}`,
-            'X-Test-Mode': 'true'
-          }
-        }
-      );
-
-      expect(error).toBeNull();
-      expect(data).toHaveProperty('request_id');
-      expect(data).toHaveProperty('estimated_completion');
-      expect(data).toHaveProperty('compliance_verified');
-    });
-  });
-});
-```
-
-## Audit Trail Testing (Security-Auditor Coordinated)
-
-### Healthcare Audit Requirements
-```typescript
-describe('Supabase Audit Trail - Healthcare Compliance', () => {
-  let testClient: SupabaseClient<Database>;
-  let serviceClient: SupabaseClient<Database>;
-
-  beforeAll(() => {
-    testClient = createTestSupabaseClient({ auditTrail: true });
-    serviceClient = createServiceRoleClient();
-  });
-
-  describe('Data Access Auditing', () => {
-    it('should log patient data access', async () => {
-      // security-auditor: Audit trail validation
-      const testUser = await createAuthenticatedTestUser();
-      
-      // Perform a patient data query
-      const { data: patientData } = await testClient
-        .from('patients')
-        .select('*')
-        .eq('id', 'test-patient-id')
-        .limit(1);
-
-      // Verify audit log entry was created
-      const { data: auditLogs } = await serviceClient
-        .from('audit_logs')
-        .select('*')
-        .eq('user_id', testUser.id)
-        .eq('table_name', 'patients')
-        .eq('action', 'SELECT')
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      expect(auditLogs).toHaveLength(1);
-      expect(auditLogs?.[0]).toHaveProperty('timestamp');
-      expect(auditLogs?.[0]).toHaveProperty('user_id', testUser.id);
-      expect(auditLogs?.[0]).toHaveProperty('action', 'SELECT');
-    });
-
-    it('should log data modifications with details', async () => {
-      // security-auditor: Modification audit validation
-      const testUser = await createAuthenticatedTestUser();
-      const testPatient = await createTestPatient();
-
-      // Perform patient data update
-      const { data: updateResult } = await testClient
-        .from('patients')
-        .update({ 
-          full_name: 'Updated Name - TEST',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', testPatient.id);
-
-      // Verify detailed audit log
-      const { data: auditLogs } = await serviceClient
-        .from('audit_logs')
-        .select('*')
-        .eq('user_id', testUser.id)
-        .eq('table_name', 'patients')
-        .eq('action', 'UPDATE')
-        .eq('record_id', testPatient.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      expect(auditLogs).toHaveLength(1);
-      expect(auditLogs?.[0]).toHaveProperty('old_values');
-      expect(auditLogs?.[0]).toHaveProperty('new_values');
-      expect(auditLogs?.[0].new_values).toMatchObject({
-        full_name: 'Updated Name - TEST'
+      const { error } = await supabase.auth.setSession({
+        access_token: expiredToken,
+        refresh_token: 'refresh.token'
       });
+
+      expect(error).toBeDefined();
+    });
+  });
+});
+```### 4. GoTrueClient Multi-Instance Management
+
+> **architect-review coordination**: Prevent GoTrueClient multi-instance warnings during testing.
+
+#### Problem Description
+Multiple GoTrueClient instances can cause warnings and undefined behavior during tests:
+```
+Multiple GoTrueClient instances detected in the same browser context. 
+It is not an error, but this should be avoided as it may produce undefined behavior 
+when used concurrently under the same storage key.
+```
+
+#### Singleton Solution Implementation
+
+**1. Create Singleton Mock Pattern** (`tools/testing/setup/supabase-mock.ts`):
+```typescript
+// Singleton mock Supabase client to prevent multi-instance warnings
+let singletonMockSupabaseClient: unknown;
+
+const createMockSupabaseClient = () => {
+  if (singletonMockSupabaseClient) {
+    return singletonMockSupabaseClient;
+  }
+  
+  singletonMockSupabaseClient = {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnValue({ data: [], error: null }),
+      insert: vi.fn().mockReturnValue({ data: null, error: null }),
+      update: vi.fn().mockReturnValue({ data: null, error: null }),
+      delete: vi.fn().mockReturnValue({ data: null, error: null }),
+    })),
+    auth: {
+      signInWithPassword: vi.fn().mockResolvedValue({ data: { user: null, session: null }, error: null }),
+      signOut: vi.fn().mockResolvedValue({ error: null }),
+      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+    },
+  };
+
+  return singletonMockSupabaseClient;
+};
+
+// Mock GoTrueClient directly to prevent multiple instances
+vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
+  let singletonGoTrueClient: unknown;
+
+  return {
+    GoTrueClient: vi.fn().mockImplementation(() => {
+      if (singletonGoTrueClient) {
+        return singletonGoTrueClient;
+      }
+      
+      singletonGoTrueClient = {
+        signInWithPassword: vi.fn(),
+        signOut: vi.fn(),
+        getSession: vi.fn(),
+        onAuthStateChange: vi.fn(),
+      };
+      
+      return singletonGoTrueClient;
+    }),
+  };
+});
+```
+
+**2. Global Mock Import** (`vitest.setup.ts`):
+```typescript
+import { afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+// Import Supabase mock to prevent GoTrueClient multi-instance warnings
+import './tools/testing/setup/supabase-mock';
+
+// Suppress GoTrueClient warnings in test output
+const originalConsoleWarn = console.warn;
+console.warn = (...args: any[]) => {
+  const message = args.join(' ');
+  if (
+    message.includes('Multiple GoTrueClient instances detected') ||
+    message.includes('GoTrueClient') ||
+    message.includes('Multiple instances of auth client')
+  ) {
+    return; // Suppress these warnings
+  }
+  originalConsoleWarn.apply(console, args);
+};
+```
+
+### 5. Real-time Subscriptions Testing
+
+```typescript
+describe('Real-time Subscriptions', () => {
+  let supabase: ReturnType<typeof createClient>;
+  let subscription: any;
+
+  beforeEach(() => {
+    supabase = createTestSupabaseClient();
+  });
+
+  afterEach(() => {
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+  });
+
+  it('should establish real-time connection', async () => {
+    let receivedUpdates = 0;
+    
+    subscription = supabase
+      .channel('test-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'patients'
+      }, () => {
+        receivedUpdates++;
+      })
+      .subscribe((status) => {
+        expect(status).toBe('SUBSCRIBED');
+      });
+
+    // Simulate a database change
+    if (process.env.SUPABASE_TEST_SERVICE_KEY) {
+      const adminClient = createClient(
+        process.env.SUPABASE_TEST_URL!,
+        process.env.SUPABASE_TEST_SERVICE_KEY!
+      );
+      
+      await adminClient.from('patients').insert({
+        name: 'Real-time Test Patient',
+        clinic_id: 'test-clinic'
+      });
+    }
+
+    // Wait for real-time update
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    expect(receivedUpdates).toBeGreaterThan(0);
+  });
+});
+```
+
+### 6. Healthcare Compliance Testing (LGPD/ANVISA)
+
+```typescript
+describe('Healthcare Compliance Tests', () => {
+  describe('LGPD Data Protection', () => {
+    it('should anonymize patient data in test environment', async () => {
+      const testClient = createTestSupabaseClient({
+        lgpdCompliant: true,
+        anonymizeData: true
+      });
+
+      const { data } = await testClient
+        .from('patients')
+        .select('name, cpf, email')
+        .limit(5);
+
+      if (data && data.length > 0) {
+        data.forEach(patient => {
+          // security-auditor: Verify data anonymization
+          expect(patient.name).toMatch(/^ANON_\d+$/);
+          expect(patient.cpf).toMatch(/^\*+\d{4}$/);
+          expect(patient.email).toMatch(/^\*+@\*+\.\*+$/);
+        });
+      }
+    });
+
+    it('should enforce data retention policies', async () => {
+      const testClient = createTestSupabaseClient();
+      
+      // Query for old test data (older than retention period)
+      const cutoffDate = new Date();
+      cutoffDate.setDays(cutoffDate.getDate() - 30); // 30 days retention
+      
+      const { data } = await testClient
+        .from('test_data_audit')
+        .select('*')
+        .lt('created_at', cutoffDate.toISOString());
+
+      // security-auditor: Verify old data is cleaned up
+      expect(data).toHaveLength(0);
+    });
+  });
+
+  describe('Audit Trail Compliance', () => {
+    it('should log all sensitive data access', async () => {
+      const testClient = createTestSupabaseClient({ auditTrail: true });
+      
+      // Perform sensitive operation
+      await testClient
+        .from('patients')
+        .select('name, cpf')
+        .limit(1);
+
+      // Verify audit log was created
+      const { data: auditLogs } = await testClient
+        .from('audit_logs')
+        .select('*')
+        .eq('table_name', 'patients')
+        .eq('operation', 'SELECT')
+        .gte('created_at', new Date().toISOString().split('T')[0]);
+
+      expect(auditLogs).toBeDefined();
+      expect(auditLogs!.length).toBeGreaterThan(0);
     });
   });
 });
 ```
 
-## CI/CD Integration
+## Troubleshooting
 
-### GitHub Actions Supabase Testing
-```yaml
-# .github/workflows/supabase-tests.yml
-name: Supabase Integration Tests
+### Common Issues
 
-on:
-  pull_request:
-    paths: ['**/*.sql', 'supabase/**', 'apps/**', 'packages/**']
+- **Issue**: Multiple GoTrueClient instances warning
+  **Solution**: Implement singleton pattern as described in section 4
 
-jobs:
-  supabase-tests:
-    runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: supabase/postgres:15.1.0.117
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+- **Issue**: RLS policies not enforcing in tests  
+  **Solution**: Ensure using anon key (not service role) and correct user context
 
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-      
-      # security-auditor: Secure test environment
-      - name: Start Supabase local development
-        run: |
-          supabase start
-          supabase db reset --local
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      
-      # architect-review: Schema validation
-      - name: Run Database Schema Tests
-        run: npm run test:supabase:schema
-        env:
-          SUPABASE_TEST_URL: http://localhost:54321
-          SUPABASE_TEST_ANON_KEY: ${{ secrets.SUPABASE_TEST_ANON_KEY }}
-      
-      # security-auditor: RLS and security validation
-      - name: Run RLS Security Tests
-        run: npm run test:supabase:rls
-        env:
-          SUPABASE_TEST_URL: http://localhost:54321
-          SUPABASE_TEST_SERVICE_KEY: ${{ secrets.SUPABASE_TEST_SERVICE_KEY }}
-      
-      # code-reviewer: Performance validation
-      - name: Run Performance Tests
-        run: npm run test:supabase:performance
-        env:
-          PERFORMANCE_THRESHOLD: 100
-      
-      # Multi-agent: Comprehensive Supabase testing
-      - name: Run Full Supabase Test Suite
-        run: npm run test:supabase
-        env:
-          HEALTHCARE_MODE: true
-          LGPD_COMPLIANCE: true
-```
+- **Issue**: Test data leaking between tests
+  **Solution**: Use test schema isolation and proper cleanup in afterEach hooks
 
-## Test Scripts and Configuration
+- **Issue**: Real-time subscriptions not working in tests
+  **Solution**: Verify websocket connection and use proper channel naming
 
-### Package.json Scripts
-```json
-{
-  "scripts": {
-    "test:supabase": "vitest run --config vitest.supabase.config.ts",
-    "test:supabase:rls": "vitest run tests/supabase/rls --reporter=verbose",
-    "test:supabase:auth": "vitest run tests/supabase/auth --reporter=verbose",
-    "test:supabase:performance": "vitest run tests/supabase/performance --reporter=verbose",
-    "test:supabase:schema": "vitest run tests/supabase/schema --reporter=verbose",
-    "test:supabase:audit": "vitest run tests/supabase/audit --reporter=verbose",
-    "test:supabase:watch": "vitest --config vitest.supabase.config.ts",
-    "test:supabase:coverage": "vitest run --coverage --config vitest.supabase.config.ts"
-  }
-}
-```
+- **Issue**: LGPD compliance validation failing
+  **Solution**: Enable anonymization flags and verify data masking implementations
 
-### Vitest Configuration
+### Performance Optimization
+
 ```typescript
-// vitest.supabase.config.ts
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-  test: {
-    include: [
-      'tests/supabase/**/*.test.ts',
-      'apps/**/src/**/*.supabase.test.ts'
-    ],
-    environment: 'node',
-    setupFiles: ['./tests/supabase/setup.ts'],
-    testTimeout: 10000,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html', 'json'],
-      thresholds: {
-        global: {
-          branches: 80,
-          functions: 85,
-          lines: 85,
-          statements: 85
-        }
-      }
+// Use connection pooling for better test performance
+const createOptimizedTestClient = () => {
+  return createClient(url, key, {
+    db: { 
+      schema: 'test_schema',
+      // Enable connection pooling
+      pool: { min: 1, max: 3 }
+    },
+    // Optimize for testing
+    auth: { 
+      persistSession: false,
+      autoRefreshToken: false 
     }
-  }
-});
+  });
+};
 ```
 
-## Best Practices Summary (Multi-Agent Enforced)
+## Next Steps
 
-### Security-Auditor Enforced
-- ✅ Use synthetic data for all test scenarios
-- ✅ Implement LGPD-compliant test data management
-- ✅ Validate RLS policies in all data access tests
-- ✅ Maintain comprehensive audit trails
-- ✅ Test authentication and authorization flows
-
-### Architect-Review Enforced
-- ✅ Validate database schema and migration patterns
-- ✅ Test API contracts and service boundaries
-- ✅ Ensure proper error handling and recovery
-- ✅ Validate data consistency and integrity
-
-### Code-Reviewer Enforced
-- ✅ Monitor performance and response times (≤100ms healthcare requirement)
-- ✅ Validate code quality in database operations
-- ✅ Test concurrent operations and scalability
-- ✅ Implement comprehensive error scenario testing
-
-## Quality Gates & Metrics
-
-### Supabase-Specific Quality Gates
-```yaml
-SUPABASE_QUALITY_GATES:
-  security_auditor:
-    - "RLS policy coverage ≥100%"
-    - "LGPD compliance validation ≥100%"
-    - "Authentication flow coverage ≥95%"
-    - "Audit trail verification ≥100%"
-  
-  architect_review:
-    - "Database schema validation ≥100%"
-    - "API contract compliance ≥95%"
-    - "Data integrity constraints ≥100%"
-    - "Migration success rate ≥100%"
-  
-  code_reviewer:
-    - "Query performance ≤100ms"
-    - "Concurrent operation success ≥95%"
-    - "Error handling coverage ≥85%"
-    - "Code quality metrics ≥85%"
-```
+- Implement continuous compliance monitoring
+- Add performance benchmarking for database operations  
+- Extend real-time testing for complex scenarios
+- Integrate with CI/CD pipeline for automated compliance checks
 
 ## See Also
 
-- **[AGENTS.md](./AGENTS.md)** - Testing orchestration framework
-- **[Integration Testing](./integration-testing.md)** - Comprehensive integration patterns
-- **[Security Auditor Agent](../agents/code-review/security-auditor.md)** - Security validation
-- **[Coverage Policy](./coverage-policy.md)** - Coverage requirements and thresholds
+- [Integration Testing Guide](./integration-testing.md) - Broader integration patterns
+- [Security Auditor Agent](../agents/code-review/security-auditor.md) - Security validation
+- [Architect Review Agent](../agents/code-review/architect-review.md) - Pattern validation
+- [AGENTS.md](./AGENTS.md) - Agent coordination overview
