@@ -123,12 +123,6 @@ node_modules/
 .pnpm/
 **/.pnpm/
 
-# Lock files (security: can expose vulnerabilities in exact versions)
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lockb
-
 # Package-level build outputs (22 packages)
 packages/*/dist/
 packages/*/build/
