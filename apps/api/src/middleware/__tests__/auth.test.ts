@@ -267,9 +267,10 @@ describe('Authentication Middleware Enhancement (T073)', () => {
     });
 
     it('should update session with AI access permission', async () => {
-      const sessionId = sessionManager.createSession('user-123', {});
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {});
       mockContext.get.mockImplementation((key: string) => {
-        if (key === 'userId') return 'user-123';
+        if (key === 'userId') return userId;
         if (key === 'sessionId') return sessionId;
         if (key === 'healthcareProfessional') {
           return {
