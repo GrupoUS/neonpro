@@ -32,6 +32,7 @@ export default defineConfig({
         'src/__tests__/auth-form.test.tsx',
         'src/components/organisms/__tests__/NotificationCard.test.tsx',
         'src/components/ui/__tests__/SharedAnimatedList.test.tsx',
+        'src/hooks/__tests__/useAdvancedSearch.test.ts',
         // AI Chat integration tests (new)
         'src/__tests__/ai-chat/chat-streaming.test.ts',
         'src/__tests__/ai-chat/chat-errors.test.ts',

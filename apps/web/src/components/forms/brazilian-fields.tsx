@@ -306,7 +306,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
   const handleBlur = useCallback(() => {
     const unformatted = unformatPhone(internalValue);
 
-    if (unformatted && !validatePhone(unformatted)) {
+    if (unformatted && !validateBrazilianPhone(unformatted)) {
       setValidationError('Telefone inválido');
     } else {
       setValidationError('');

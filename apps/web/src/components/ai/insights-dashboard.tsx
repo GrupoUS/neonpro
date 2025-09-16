@@ -223,7 +223,7 @@ export const AIInsightsDashboard = ({
   // Handle refresh
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([refetchMetrics()]);
+    await refetchMetrics();
     setRefreshing(false);
   };
 

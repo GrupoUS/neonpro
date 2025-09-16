@@ -31,30 +31,38 @@ export function useAdvancedSearch(
 ): UseAdvancedSearchResult {
   const [filters, setFilters] = useState<AdvancedFilters>(initial);
 
-  const formatCPF = (value: string) =>
-    value
-      .replace(/\D/g, '')
+  const formatCPF = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11); // cap to 11 digits
+    return digits
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-      .slice(0, 14);
-  const formatPhone = (value: string) =>
-    value
-      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  };
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11); // cap to 11 digits (BR mobile)
+    return digits
       .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d{4})$/, '$1-$2')
-      .slice(0, 15);
+      .replace(/(\d{5})(\d{4})$/, '$1-$2');
+  };
   const validateCPF = (value: string) => /\d{3}\.\d{3}\.\d{3}-\d{2}/.test(value);
   const validatePhone = (value: string) => /\(\d{2}\) \d{5}-\d{4}/.test(value);
 
-  const metrics: AdvancedSearchMetrics = useMemo(
-    () => ({
-      totalFilters: Object.values(filters).filter(Boolean).length,
+  const metrics: AdvancedSearchMetrics = useMemo(() => {
+    const nonEmpty = [
+      filters.query && filters.query.trim() !== '' ? 1 : 0,
+      filters.email && filters.email.trim() !== '' ? 1 : 0,
+      filters.cpf && filters.cpf.trim() !== '' ? 1 : 0,
+      filters.phone && filters.phone.trim() !== '' ? 1 : 0,
+      (filters.status?.length ?? 0) > 0 ? 1 : 0,
+      filters.dateRange?.start ? 1 : 0,
+      filters.dateRange?.end ? 1 : 0,
+    ].reduce((a, b) => a + b, 0);
+    return {
+      totalFilters: nonEmpty,
       lastSearchAt: undefined,
       searchTime: 0,
-    }),
-    [filters],
-  );
+    };
+  }, [filters]);
 
   const clearFilters = () =>
     setFilters({

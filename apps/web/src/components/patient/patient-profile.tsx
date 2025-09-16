@@ -52,8 +52,8 @@ import {
   TabsTrigger,
 } from '@/components/ui';
 import { formatCPF, formatDate, formatDateTime, formatPhone } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
 import { Patient } from '@neonpro/shared/types/patient';
+import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
 
 export interface PatientProfileProps {
@@ -376,20 +376,20 @@ export const PatientProfile = ({
 
     return {
       name: canShowFullData
-        ? patient.personalInfo.fullName
-        : patient.personalInfo.firstName || 'Paciente',
-      cpf: canShowSensitiveData ? formatCPF(patient.personalInfo.cpf) : '***.***.***-**',
-      phone: canShowFullData && patient.contactInfo.primaryPhone
-        ? formatPhone(patient.contactInfo.primaryPhone)
+        ? patient.name
+        : patient.name?.split(' ')[0] || 'Paciente',
+      cpf: canShowSensitiveData ? formatCPF(patient.cpf) : '***.***.***-**',
+      phone: canShowFullData && patient.phone
+        ? formatPhone(patient.phone)
         : '(**) ****-****',
-      email: canShowFullData && patient.contactInfo.email
-        ? patient.contactInfo.email
+      email: canShowFullData && patient.email
+        ? patient.email
         : '***@***.***',
-      birthDate: canShowFullData && patient.personalInfo.birthDate
-        ? formatDate(patient.personalInfo.birthDate)
+      birthDate: canShowFullData && patient.birthDate
+        ? formatDate(patient.birthDate)
         : 'Não informado',
-      address: canShowFullData && patient.contactInfo.address
-        ? `${patient.contactInfo.address.street}, ${patient.contactInfo.address.number} - ${patient.contactInfo.address.neighborhood}, ${patient.contactInfo.address.city}/${patient.contactInfo.address.state}`
+      address: canShowFullData && patient.address
+        ? `${patient.address.street}, ${patient.address.number} - ${patient.address.neighborhood}, ${patient.address.city}/${patient.address.state}`
         : 'Endereço restrito',
     };
   }, [patient, lgpdConsent]);
@@ -542,11 +542,15 @@ export const PatientProfile = ({
               {lgpdConsent.canShowMedicalData
                 ? (
                   <div className='space-y-4'>
-                    {patient.medicalInfo?.allergies && patient.medicalInfo.allergies.length > 0 && (
+                    {patient.healthcareInfo?.allergies
+                      && patient.healthcareInfo.allergies.length > 0 && (
                       <div>
                         <h4 className='font-medium mb-2'>Alergias</h4>
                         <div className='flex flex-wrap gap-2'>
-                          {patient.medicalInfo.allergies.map((allergy: string, index: number) => (
+                          {patient.healthcareInfo.allergies.map((
+                            allergy: string,
+                            index: number,
+                          ) => (
                             <Badge key={index} variant='secondary'>
                               {allergy}
                             </Badge>
@@ -555,12 +559,13 @@ export const PatientProfile = ({
                       </div>
                     )}
 
-                    {patient.medicalInfo?.medications && patient.medicalInfo.medications.length > 0
+                    {patient.healthcareInfo?.medications
+                      && patient.healthcareInfo.medications.length > 0
                       && (
                         <div>
                           <h4 className='font-medium mb-2'>Medicações</h4>
                           <div className='space-y-2'>
-                            {patient.medicalInfo.medications.map((med: any, index: number) => (
+                            {patient.healthcareInfo.medications.map((med: any, index: number) => (
                               <div key={index} className='text-sm'>
                                 <span className='font-medium'>{med.name}</span>
                                 {med.dosage && (
@@ -572,8 +577,8 @@ export const PatientProfile = ({
                         </div>
                       )}
 
-                    {(!patient.medicalInfo?.allergies?.length
-                      && !patient.medicalInfo?.medications?.length) && (
+                    {(!patient.healthcareInfo?.allergies?.length
+                      && !patient.healthcareInfo?.medications?.length) && (
                       <p className='text-muted-foreground'>Nenhuma informação médica registrada.</p>
                     )}
                   </div>
