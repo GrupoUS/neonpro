@@ -2,14 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [
     "**/.env.*local",
-    "**/package.json",
+    "**/package.json", 
     "**/tsconfig.json",
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
-    "package-lock.json",
     ".config/dprint/dprint.json",
-    "bunfig.toml",
-    "bun.lock",
     "packages/database/prisma/schema.prisma",
     "packages/database/src/**/*.ts"
   ],
