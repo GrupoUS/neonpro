@@ -1,34 +1,188 @@
+import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
-import { cn } from '@neonpro/ui';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';
 import {
   IconCalendar,
   IconDashboard,
   IconFileText,
-
   IconMoneybag,
   IconReport,
   IconSettings,
   IconStethoscope,
-  IconUser,
   IconUsers,
 } from '@tabler/icons-react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Link, Outlet } from '@tanstack/react-router';
-import { useState } from 'react';
-import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Outlet, useLocation } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-// Create QueryClient instance
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
-    },
-  },
-});
+// Real-time subscription hook para pacientes
+const usePatientRealtimeSubscription = () => {
+  const { user } = useAuth();
 
-function AppShellWithSidebar() {
+  useEffect(() => {
+    if (!user) return;
+
+    // Canal para real-time updates de pacientes
+    const channel = supabase
+      .channel('patient-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'patients',
+          filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
+        },
+        payload => {
+          console.log('Patient change:', payload);
+
+          // Invalidar queries relacionadas a pacientes
+          queryClient.invalidateQueries({ queryKey: ['patients'] });
+
+          // Mostrar notificação para mudanças importantes
+          if (payload.eventType === 'INSERT') {
+            toast.success('Novo paciente cadastrado!');
+          } else if (payload.eventType === 'UPDATE') {
+            toast.info('Dados do paciente atualizados!');
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+};
+
+// Real-time subscription hook para agendamentos
+const useAppointmentRealtimeSubscription = () => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    // Canal para real-time updates de agendamentos
+    const channel = supabase
+      .channel('appointment-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'appointments',
+          filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
+        },
+        payload => {
+          console.log('Appointment change:', payload);
+
+          // Invalidar queries relacionadas a agendamentos
+          queryClient.invalidateQueries({ queryKey: ['appointments'] });
+
+          // Mostrar notificação para mudanças importantes
+          if (payload.eventType === 'INSERT') {
+            toast.success('Novo agendamento criado!');
+          } else if (payload.eventType === 'UPDATE') {
+            const newStatus = payload.new?.status;
+            const oldStatus = payload.old?.status;
+
+            if (newStatus !== oldStatus) {
+              if (newStatus === 'confirmed') {
+                toast.success('Agendamento confirmado!');
+              } else if (newStatus === 'cancelled') {
+                toast.error('Agendamento cancelado!');
+              } else if (newStatus === 'completed') {
+                toast.success('Agendamento concluído!');
+              }
+            }
+          } else if (payload.eventType === 'DELETE') {
+            toast.info('Agendamento removido!');
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  // Monitorar conexão do Supabase
+  useEffect(() => {
+    const handleConnectionChange = (status: string) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Real-time connection established');
+        toast.success('Conexão em tempo real ativada!');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error('Real-time connection error');
+        toast.error('Erro na conexão em tempo real!');
+      }
+    };
+
+    const channel = supabase.channel('connection-monitor');
+    channel.on('system', { event: 'connection' }, handleConnectionChange);
+    channel.subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+};
+
+// Hook para prefetch de dados com base na rota atual
+const useRoutePrefetch = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Prefetch dados com base na rota
+    if (location.pathname.startsWith('/patients')) {
+      queryClient.prefetchQuery({
+        queryKey: ['patients', 'stats'],
+        queryFn: async () => {
+          const { data } = await supabase
+            .from('patients')
+            .select('*', { count: 'exact', head: true });
+          return { total: data?.length || 0 };
+        },
+        staleTime: 5 * 60 * 1000,
+      });
+    }
+
+    if (location.pathname.startsWith('/appointments')) {
+      queryClient.prefetchQuery({
+        queryKey: ['appointments', 'today'],
+        queryFn: async () => {
+          const today = new Date().toISOString().split('T')[0];
+          const { data } = await supabase
+            .from('appointments')
+            .select('*')
+            .gte('start_time', `${today}T00:00:00`)
+            .lte('start_time', `${today}T23:59:59`);
+          return data;
+        },
+        staleTime: 2 * 60 * 1000,
+      });
+    }
+  }, [location.pathname]);
+};
+
+function AppShellContent() {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+
+  // Ativar real-time subscriptions
+  usePatientRealtimeSubscription();
+  useAppointmentRealtimeSubscription();
+  useRoutePrefetch();
+
+  // Configurar tratamento de erros
+  useEffect(() => {
+    setupQueryErrorHandling();
+  }, []);
 
   const links = [
     {
@@ -44,7 +198,8 @@ function AppShellWithSidebar() {
       icon: (
         <IconUsers className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
-    },    {
+    },
+    {
       label: 'Agenda',
       href: '/appointments',
       icon: (
@@ -71,94 +226,72 @@ function AppShellWithSidebar() {
       icon: (
         <IconFileText className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
-    },    {
+    },
+    {
       label: 'Relatórios',
       href: '/reports',
       icon: (
         <IconReport className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
     },
-    {
+  ];
+
+  // Adicionar link de configurações apenas para usuários autenticados
+  if (user) {
+    links.push({
       label: 'Configurações',
       href: '/settings',
       icon: (
         <IconSettings className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
-    },
-  ];
+    });
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className='mx-auto flex w-full max-w-full flex-1 flex-col overflow-hidden bg-background md:flex-row dark:bg-background h-screen'>
+    <div className='flex h-screen'>
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className='justify-between gap-10'>
-          <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto'>
-            <div className='flex items-center justify-between pr-2'>
-              <Link
-                to='/dashboard'
-                className='relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground'
-              >
-                <img
-                  src='/brand/simboloneonpro.png'
-                  alt='NeonPro'
-                  className='h-6 w-6 shrink-0 rounded-md object-contain'
-                  onError={e => {
-                    // First fallback to SVG version, then to favicon
-                    if ((e.currentTarget as HTMLImageElement).src.includes('.png')) {
-                      (e.currentTarget as HTMLImageElement).src = '/brand/simboloneonpro.svg';
-                    } else {
-                      (e.currentTarget as HTMLImageElement).src = '/neonpro-favicon.svg';
-                    }
-                  }}
+        <SidebarBody>
+          <div className='flex flex-col gap-y-4 p-4'>
+            <div className='flex items-center gap-x-2 px-2'>
+              <IconStethoscope className='h-6 w-6 text-primary' />
+              <span className='text-lg font-semibold'>NeonPro</span>
+            </div>
+            <nav className='space-y-1'>
+              {links.map(link => (
+                <SidebarLink
+                  key={link.href}
+                  link={link}
                 />
-                <span className='font-medium whitespace-pre text-foreground dark:text-foreground'>
-                  NeonPro
-                </span>
-              </Link>
-            </div>
-            <div className='mt-6 flex flex-col gap-2'>
-              {links.map((link, idx) => <SidebarLink key={idx} link={link as any} />)}
-            </div>
-          </div>          <div>
-            <SidebarLink
-              link={{
-                label: 'Perfil',
-                href: '/profile',
-                icon: (
-                  <IconUser className='h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200' />
-                ),
-              }}
-            />
+              ))}
+            </nav>
           </div>
         </SidebarBody>
       </Sidebar>
-      
-      {/* Main Content */}
-      <div
-        className={cn(
-          'transition-all duration-300',
-          open
-            ? 'w-full md:w-[calc(100%-16rem)]'
-            : 'w-full md:w-[calc(100%-4rem)]'
-        )}
-      >
-        <div className='flex h-full w-full flex-col overflow-hidden'>
-          {/* Page Content */}
-          <div className='flex-1 overflow-auto bg-background p-4'>
-            <Outlet />
-          </div>
+
+      <main className='flex-1 overflow-y-auto'>
+        <div className='container mx-auto p-4 md:p-6'>
+          <Outlet />
+        </div>
+      </main>
+
+      <FloatingAIChatSimple />
+
+      {/* Status indicator para real-time */}
+      <div className='fixed bottom-4 right-4 z-50'>
+        <div className='flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm'>
+          <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
+          <span>Real-time Active</span>
         </div>
       </div>
-      
-      {/* Floating AI Chat Button */}
-      <FloatingAIChatSimple 
-        context="procedures"
-        userRole="professional"
-        lgpdCompliant={true}
-      />
-      </div>
-    </QueryClientProvider>
+    </div>
   );
 }
 
-export default AppShellWithSidebar;
+export default function AppShellWithSidebar() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppShellContent />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}

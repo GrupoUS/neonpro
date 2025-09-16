@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ServiceForm } from '../ServiceForm';
 
 vi.mock('@/hooks/useServices', () => ({
@@ -15,7 +15,7 @@ describe('ServiceForm BRL price formatting', () => {
   });
 
   it('formats price input as BRL while keeping numeric state', () => {
-    render(<ServiceForm onSuccess={() => {}} clinicId="clinic-1" />);
+    render(<ServiceForm onSuccess={() => {}} clinicId='clinic-1' />);
 
     const price = screen.getByLabelText(/preço/i) as HTMLInputElement;
     // type raw digits

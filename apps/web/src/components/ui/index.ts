@@ -26,7 +26,7 @@ export * from './beams-background';
 export * from './hover-border-gradient';
 export * from './shine-border';
 export * from './sidebar';
-export * from './universal-button';
+export * from './advanced-button';
 
 // Demo Components removed from public API (moved to _deprecated)
 // If needed for local demos, import directly from the file path under _deprecated.

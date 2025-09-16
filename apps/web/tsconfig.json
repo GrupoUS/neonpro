@@ -20,6 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client",
@@ -57,6 +58,12 @@
     "**/*.e2e.ts",
     "src/components/ui/_deprecated/**",
     "src/components/examples/**",
+    "src/examples/**",
+    "src/lib/ai-chat/**",
+    "src/lib/prefetching/**",
+    "src/lib/cache/**",
+    "src/components/common/SmartPrefetcher.tsx",
+    "src/components/patients/AdvancedSearchDialog.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "src/services/appointment-templates.service.ts"

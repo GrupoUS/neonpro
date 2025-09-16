@@ -59,7 +59,7 @@
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.1",
     "typescript": "^5.9.2",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "keywords": [
     "monorepo",

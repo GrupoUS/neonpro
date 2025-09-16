@@ -1,13 +1,13 @@
-import { renderWithI18n as render, screen } from '../test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { renderWithI18n as render, screen } from '../test-utils';
 
 import { ReasoningSummary } from '@/components/chat/ReasoningSummary';
 
 describe('Reasoning summary (T017)', () => {
   test('is OFF by default, can toggle ON to show summarized text and emits audit event', async () => {
     const onAudit = vi.fn();
-    render(<ReasoningSummary summarized="Paciente com histórico estável." onAudit={onAudit} />);
+    render(<ReasoningSummary summarized='Paciente com histórico estável.' onAudit={onAudit} />);
 
     // OFF by default
     expect(screen.queryByText(/histórico estável/i)).not.toBeInTheDocument();

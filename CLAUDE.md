@@ -171,7 +171,7 @@ RESEARCH_EXECUTION_FRAMEWORK:
 - Break down features: atomic tasks on archon, subtasks on native todos with detailed descriptions what needs to be done
 - Use `serena` to analyze codebase complexity and dependencies
 - Mark tasks as in_progress when starting, completed when finished
-- **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md)
+- **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md) and [`.specify/memory/constitution.md`](../.specify/memory/constitution.md)
 - Follow the Planning & Design Framework below
 
 ```yaml
@@ -207,9 +207,9 @@ phase_3_planning_design:
   2. **GREEN**: Write minimal code to pass the test
   3. **REFACTOR**: Improve code while keeping tests green
   4. **REPEAT**: Continue cycle for next requirement
-  - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
-  - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
-  - ✅ **USEFUL**: UI components with logic, helpers
+  - 🔥 **CRITICAL**: Healthcare compliance (LGPD), patient data operations, AI agents, financial operations
+  - ⚡ **IMPORTANT**: Appointment scheduling, no-show prediction, mobile interfaces, real-time features
+  - ✅ **USEFUL**: UI components with logic, audit logging, CFM validation helpers
 
 - **Implementation Guidelines:**
   - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)

@@ -7,6 +7,7 @@
 export { useHoverBorderGradient } from './useHoverBorderGradient';
 export { useShineBorderAnimation } from './useShineBorderAnimation';
 export { useAnimationPerformance } from './useAnimationPerformance';
+export { usePersistedDashboardLayout } from './use-persisted-dashboard-layout';
 
 // Re-export types for convenience
 export type {

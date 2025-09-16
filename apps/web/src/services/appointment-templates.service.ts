@@ -7,7 +7,9 @@ import type {
 } from '@/types/appointment-templates';
 
 class AppointmentTemplatesServiceStub {
-  async getAppointmentTemplates(_filters?: AppointmentTemplateFilters): Promise<AppointmentTemplate[]> {
+  async getAppointmentTemplates(
+    _filters?: AppointmentTemplateFilters,
+  ): Promise<AppointmentTemplate[]> {
     return [];
   }
 
@@ -36,7 +38,10 @@ class AppointmentTemplatesServiceStub {
     return;
   }
 
-  async getTemplatesByCategory(_category: string, _clinicId?: string): Promise<AppointmentTemplate[]> {
+  async getTemplatesByCategory(
+    _category: string,
+    _clinicId?: string,
+  ): Promise<AppointmentTemplate[]> {
     return [];
   }
 

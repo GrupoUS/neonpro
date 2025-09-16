@@ -1,4 +1,5 @@
 // Config package exports
+export { aiConfig } from './ai';
 
 // Placeholder exports - will be populated with actual configuration
 export const complianceConfig = {};

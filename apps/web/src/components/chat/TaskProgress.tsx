@@ -1,6 +1,6 @@
 import { Progress } from '@/components/ui/progress';
-import { Button } from '@neonpro/ui';
 import { useI18n } from '@/i18n/i18n';
+import { Button } from '@neonpro/ui';
 
 export type TaskStage = 'queued' | 'running' | 'completed' | 'failed';
 
@@ -14,7 +14,12 @@ export function TaskProgress({ stage, percent = 0, onCancel }: TaskProgressProps
   const { t } = useI18n();
   const stageLabel = t(`chat.stage.${stage}`);
   return (
-    <div role='status' aria-live='polite' aria-label={t('a11y.status')} className='flex items-center gap-2'>
+    <div
+      role='status'
+      aria-live='polite'
+      aria-label={t('a11y.status')}
+      className='flex items-center gap-2'
+    >
       <span className='text-xs capitalize'>{stageLabel}</span>
       <Progress value={percent} className='w-40' />
       <span className='text-xs'>{Math.round(percent)}%</span>

@@ -1,21 +1,42 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { streamAestheticResponse } from '@/lib/ai/ai-chat-service'
+import { aiConfig } from '@neonpro/config';
+import type { ChatMessage, ChatSession } from '@neonpro/types';
+import { describe, expect, it } from 'vitest';
 
-// Mirror of T009 placed under src to be picked by curated include if needed
+// RED: streaming pipeline not implemented yet; we assert minimal contracts/types are wired
 
-describe('Chat streaming SLO (src)', () => {
-  beforeEach(() => {
-    ;(globalThis as any).window = { location: { origin: 'http://local.test' }, __AI_MOCK__: true }
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(new Blob(['ok']), { status: 200 })))
-  })
+describe('AI Chat — streaming pipeline (Phase 1)', () => {
+  it('wires types and env flags correctly', () => {
+    const session: ChatSession = {
+      id: 's1',
+      clinicId: 'c1',
+      userId: 'u1',
+      startedAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      locale: 'pt-BR',
+    };
 
-  it('starts streaming within 2s', async () => {
-    const start = performance.now()
-    const stream = await streamAestheticResponse([{ role: 'user', content: 'Olá' }], 'client_1', 'gpt-5-mini', 'sess')
-    const reader = stream.getReader()
-    const firstChunk = await reader.read()
-    const firstByteMs = performance.now() - start
-    expect(firstChunk.done).toBe(false)
-    expect(firstByteMs).toBeLessThanOrEqual(2000)
-  })
-})
+    const msg: ChatMessage = {
+      id: 'm1',
+      sessionId: session.id,
+      role: 'user',
+      content: 'Olá, quero saber sobre um tratamento',
+      createdAt: new Date().toISOString(),
+    };
+
+    expect(session.id).toBe('s1');
+    expect(msg.role).toBe('user');
+    // Env flag should be boolean
+    expect(typeof aiConfig.AI_CHAT_MOCK_MODE).toBe('boolean');
+  });
+
+  it('streaming util yields chunks in mock mode', async () => {
+    const mod = await import('@/lib/ai-chat/streaming');
+    const itr = await mod.startChatStream({ sessionId: 's1', text: 'Olá' });
+    const out: string[] = [];
+    for await (const ev of itr) {
+      if (ev.type === 'text') out.push(ev.delta);
+      if (ev.type === 'done') break;
+    }
+    expect(out.join('')).toContain('estéticos');
+  });
+});

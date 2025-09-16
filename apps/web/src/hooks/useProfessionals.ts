@@ -38,11 +38,12 @@ export function useProfessionalsByServiceType(clinicId: string, serviceTypeId: s
 export function useProfessionalAvailability(
   professionalId: string,
   date: Date,
-  serviceDuration: number = 60
+  serviceDuration: number = 60,
 ) {
   return useQuery({
     queryKey: ['professional-availability', professionalId, date.toDateString(), serviceDuration],
-    queryFn: () => professionalService.getProfessionalAvailability(professionalId, date, serviceDuration),
+    queryFn: () =>
+      professionalService.getProfessionalAvailability(professionalId, date, serviceDuration),
     enabled: !!professionalId && !!date,
     staleTime: 2 * 60 * 1000, // 2 minutes (shorter for availability)
     gcTime: 5 * 60 * 1000, // 5 minutes
@@ -55,11 +56,17 @@ export function useProfessionalAvailability(
 export function useProfessionalAvailabilityCheck(
   professionalId: string,
   startTime: Date | null,
-  endTime: Date | null
+  endTime: Date | null,
 ) {
   return useQuery({
-    queryKey: ['professional-availability-check', professionalId, startTime?.toISOString(), endTime?.toISOString()],
-    queryFn: () => professionalService.isProfessionalAvailable(professionalId, startTime!, endTime!),
+    queryKey: [
+      'professional-availability-check',
+      professionalId,
+      startTime?.toISOString(),
+      endTime?.toISOString(),
+    ],
+    queryFn: () =>
+      professionalService.isProfessionalAvailable(professionalId, startTime!, endTime!),
     enabled: !!professionalId && !!startTime && !!endTime,
     staleTime: 1 * 60 * 1000, // 1 minute (very short for real-time checking)
     gcTime: 2 * 60 * 1000, // 2 minutes

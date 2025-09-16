@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV === 'development',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -70,6 +70,10 @@ export default defineConfig(({ mode }) => ({
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
           supabase: ['@supabase/supabase-js'],
+          ui: ['@neonpro/ui'],
+          animations: ['framer-motion', 'motion'],
+          charts: ['recharts'],
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
         },
       },
     },

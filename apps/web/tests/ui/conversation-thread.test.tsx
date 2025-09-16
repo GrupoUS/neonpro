@@ -1,6 +1,6 @@
-import { renderWithI18n as render, screen } from '../test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { renderWithI18n as render, screen } from '../test-utils';
 
 import { Conversation } from '@/components/chat/Conversation';
 
@@ -12,7 +12,9 @@ describe('Conversation thread (T018)', () => {
     ];
     const onReset = vi.fn();
 
-    render(<Conversation messages={messages as any} onReset={onReset} />, { i18n: { locale: 'en-US' } });
+    render(<Conversation messages={messages as any} onReset={onReset} />, {
+      i18n: { locale: 'en-US' },
+    });
 
     expect(screen.getByText('Olá')).toBeInTheDocument();
     expect(screen.getByText('Como posso ajudar?')).toBeInTheDocument();

@@ -1,5 +1,5 @@
-import React from 'react';
 import { useI18n } from '@/i18n/i18n';
+import React from 'react';
 
 type AuditEvent = { event: string; enabled: boolean };
 export type ReasoningSummaryProps = {

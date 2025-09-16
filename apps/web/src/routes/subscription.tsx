@@ -8,6 +8,7 @@ import SubscriptionUpgrade from '@/components/subscription/SubscriptionUpgrade';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
 import { supabase } from '@/integrations/supabase/client';
+// Explicit extension helps Node ESM/Vercel resolution
 import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';

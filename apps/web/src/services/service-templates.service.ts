@@ -5,15 +5,15 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
-  ServiceTemplate,
-  ServiceTemplateWithItems,
-  CreateServiceTemplateRequest,
-  UpdateServiceTemplateRequest,
   CreateServiceTemplateItemRequest,
-  UpdateServiceTemplateItemRequest,
+  CreateServiceTemplateRequest,
   DuplicateServiceTemplateRequest,
+  ServiceTemplate,
   ServiceTemplateFilters,
   ServiceTemplateStats,
+  ServiceTemplateWithItems,
+  UpdateServiceTemplateItemRequest,
+  UpdateServiceTemplateRequest,
 } from '@/types/service-templates';
 
 class ServiceTemplatesService {
@@ -48,8 +48,8 @@ class ServiceTemplatesService {
     }
 
     const { data, error } = await query.order('is_featured', { ascending: false })
-                                      .order('sort_order', { ascending: true })
-                                      .order('name', { ascending: true });
+      .order('sort_order', { ascending: true })
+      .order('name', { ascending: true });
 
     if (error) {
       throw new Error(`Failed to fetch service templates: ${error.message}`);
@@ -112,7 +112,9 @@ class ServiceTemplatesService {
     }
 
     // Transform the data to match our interface
-    const transformedItems: Array<{ total_price: number } & any> = (items || []).map((item: any) => ({
+    const transformedItems: Array<{ total_price: number } & any> = (items || []).map((
+      item: any,
+    ) => ({
       id: item.id,
       template_id: item.template_id,
       service_id: item.service_id,
@@ -123,7 +125,8 @@ class ServiceTemplatesService {
       is_required: item.is_required,
       discount_percentage: item.discount_percentage,
       notes: item.notes,
-      total_price: item.service_types.price * item.quantity * (1 - (item.discount_percentage || 0) / 100),
+      total_price: item.service_types.price * item.quantity
+        * (1 - (item.discount_percentage || 0) / 100),
       created_at: item.created_at,
     }));
 
@@ -131,7 +134,10 @@ class ServiceTemplatesService {
       ...template,
       category_name: null, // Would need to join with categories
       category_color: null,
-      calculated_price: transformedItems.reduce((sum: number, item: { total_price: number }) => sum + item.total_price, 0 as number),
+      calculated_price: transformedItems.reduce(
+        (sum: number, item: { total_price: number }) => sum + item.total_price,
+        0 as number,
+      ),
       items: transformedItems,
     };
   }
@@ -179,7 +185,9 @@ class ServiceTemplatesService {
     if (request.description !== undefined) updateData.description = request.description;
     if (request.template_type) updateData.template_type = request.template_type;
     if (request.category_id !== undefined) updateData.category_id = request.category_id;
-    if (request.default_duration_minutes) updateData.default_duration_minutes = request.default_duration_minutes;
+    if (request.default_duration_minutes) {
+      updateData.default_duration_minutes = request.default_duration_minutes;
+    }
     if (request.default_price !== undefined) updateData.default_price = request.default_price;
     if (request.price_type) updateData.price_type = request.price_type;
     if (request.is_active !== undefined) updateData.is_active = request.is_active;
@@ -218,7 +226,10 @@ class ServiceTemplatesService {
   /**
    * Add items to a template
    */
-  async addTemplateItems(templateId: string, items: CreateServiceTemplateItemRequest[]): Promise<void> {
+  async addTemplateItems(
+    templateId: string,
+    items: CreateServiceTemplateItemRequest[],
+  ): Promise<void> {
     const itemsData = items.map((item, index) => ({
       template_id: templateId,
       service_id: item.service_id,
@@ -247,7 +258,9 @@ class ServiceTemplatesService {
     if (request.quantity !== undefined) updateData.quantity = request.quantity;
     if (request.sequence_order !== undefined) updateData.sequence_order = request.sequence_order;
     if (request.is_required !== undefined) updateData.is_required = request.is_required;
-    if (request.discount_percentage !== undefined) updateData.discount_percentage = request.discount_percentage;
+    if (request.discount_percentage !== undefined) {
+      updateData.discount_percentage = request.discount_percentage;
+    }
     if (request.notes !== undefined) updateData.notes = request.notes;
 
     const { error } = await this.sb
@@ -340,9 +353,7 @@ class ServiceTemplatesService {
 
     // Find most used template
     const mostUsedTemplate = templates.length > 0
-      ? templates.reduce((max, template) => 
-          template.usage_count > max.usage_count ? template : max
-        )
+      ? templates.reduce((max, template) => template.usage_count > max.usage_count ? template : max)
       : null;
 
     return {
@@ -354,11 +365,13 @@ class ServiceTemplatesService {
       price_types: priceTypes as any,
       average_price: averagePrice,
       average_duration: averageDuration,
-      most_used_template: mostUsedTemplate ? {
-        id: mostUsedTemplate.id,
-        name: mostUsedTemplate.name,
-        usage_count: mostUsedTemplate.usage_count,
-      } : null,
+      most_used_template: mostUsedTemplate
+        ? {
+          id: mostUsedTemplate.id,
+          name: mostUsedTemplate.name,
+          usage_count: mostUsedTemplate.usage_count,
+        }
+        : null,
     };
   }
 }

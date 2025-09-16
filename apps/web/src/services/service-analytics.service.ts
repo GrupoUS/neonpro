@@ -6,13 +6,13 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
-  ServiceAnalytics,
-  RevenueAnalytics,
-  UsageStatistics,
-  ProfessionalPerformance,
-  AnalyticsFilters,
   AnalyticsDashboard,
   AnalyticsExportRequest,
+  AnalyticsFilters,
+  ProfessionalPerformance,
+  RevenueAnalytics,
+  ServiceAnalytics,
+  UsageStatistics,
 } from '@/types/service-analytics';
 
 export class ServiceAnalyticsService {
@@ -22,7 +22,7 @@ export class ServiceAnalyticsService {
    */
   static async getServiceAnalytics(
     clinicId: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<ServiceAnalytics[]> {
     const { data, error } = await (this.sb as any).rpc('get_service_analytics', {
       p_clinic_id: clinicId,
@@ -47,7 +47,7 @@ export class ServiceAnalyticsService {
    */
   static async getRevenueAnalytics(
     clinicId: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<RevenueAnalytics> {
     const { data, error } = await (this.sb as any).rpc('get_revenue_analytics', {
       p_clinic_id: clinicId,
@@ -82,7 +82,7 @@ export class ServiceAnalyticsService {
    */
   static async getUsageStatistics(
     clinicId: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<UsageStatistics> {
     const { data, error } = await (this.sb as any).rpc('get_usage_statistics', {
       p_clinic_id: clinicId,
@@ -115,7 +115,7 @@ export class ServiceAnalyticsService {
   static async getProfessionalPerformance(
     clinicId: string,
     professionalId?: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<ProfessionalPerformance[]> {
     const { data, error } = await (this.sb as any).rpc('get_professional_performance', {
       p_clinic_id: clinicId,
@@ -137,7 +137,7 @@ export class ServiceAnalyticsService {
    */
   static async getAnalyticsDashboard(
     clinicId: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<AnalyticsDashboard> {
     const { data, error } = await (this.sb as any).rpc('get_analytics_dashboard', {
       p_clinic_id: clinicId,
@@ -180,7 +180,7 @@ export class ServiceAnalyticsService {
   static async getServiceComparison(
     clinicId: string,
     serviceIds: string[],
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<ServiceAnalytics[]> {
     const { data, error } = await (this.sb as any).rpc('get_service_comparison', {
       p_clinic_id: clinicId,
@@ -203,7 +203,7 @@ export class ServiceAnalyticsService {
   static async getRevenueTrends(
     clinicId: string,
     granularity: 'daily' | 'weekly' | 'monthly' = 'daily',
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<{ date: string; revenue: number; appointments: number }[]> {
     const { data, error } = await (this.sb as any).rpc('get_revenue_trends', {
       p_clinic_id: clinicId,
@@ -258,7 +258,7 @@ export class ServiceAnalyticsService {
    */
   static async getAnalyticsInsights(
     clinicId: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<AnalyticsDashboard['insights']> {
     const { data, error } = await (this.sb as any).rpc('get_analytics_insights', {
       p_clinic_id: clinicId,

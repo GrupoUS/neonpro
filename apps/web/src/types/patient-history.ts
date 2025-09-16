@@ -3,7 +3,7 @@
  * Types for detailed medical history, treatment tracking, and progress monitoring
  */
 
-export type MedicalRecordType = 
+export type MedicalRecordType =
   | 'consultation'
   | 'treatment'
   | 'procedure'
@@ -18,7 +18,7 @@ export type MedicalRecordType =
   | 'surgery'
   | 'note';
 
-export type TreatmentStatus = 
+export type TreatmentStatus =
   | 'planned'
   | 'in_progress'
   | 'completed'
@@ -26,7 +26,7 @@ export type TreatmentStatus =
   | 'postponed'
   | 'on_hold';
 
-export type ProgressIndicator = 
+export type ProgressIndicator =
   | 'excellent'
   | 'good'
   | 'satisfactory'
@@ -39,13 +39,13 @@ export interface MedicalRecord {
   clinic_id: string;
   appointment_id?: string;
   professional_id: string;
-  
+
   // Record details
   record_type: MedicalRecordType;
   title: string;
   description: string;
   notes?: string;
-  
+
   // Clinical data
   symptoms?: string[];
   diagnosis?: string[];
@@ -57,7 +57,7 @@ export interface MedicalRecord {
     duration: string;
     instructions?: string;
   }[];
-  
+
   // Vital signs
   vital_signs?: {
     blood_pressure?: string;
@@ -68,7 +68,7 @@ export interface MedicalRecord {
     bmi?: number;
     oxygen_saturation?: number;
   };
-  
+
   // Attachments
   attachments?: {
     id: string;
@@ -78,7 +78,7 @@ export interface MedicalRecord {
     url: string;
     description?: string;
   }[];
-  
+
   // Metadata
   record_date: string;
   created_at: string;
@@ -92,12 +92,12 @@ export interface TreatmentPlan {
   patient_id: string;
   clinic_id: string;
   professional_id: string;
-  
+
   // Plan details
   name: string;
   description: string;
   objectives: string[];
-  
+
   // Treatment phases
   phases: {
     id: string;
@@ -116,14 +116,14 @@ export interface TreatmentPlan {
     end_date?: string;
     notes?: string;
   }[];
-  
+
   // Progress tracking
   overall_status: TreatmentStatus;
   progress_percentage: number;
   start_date: string;
   expected_end_date: string;
   actual_end_date?: string;
-  
+
   // Outcomes
   success_metrics: {
     metric: string;
@@ -131,7 +131,7 @@ export interface TreatmentPlan {
     current_value?: string;
     achieved: boolean;
   }[];
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -142,13 +142,13 @@ export interface ProgressNote {
   treatment_plan_id?: string;
   appointment_id?: string;
   professional_id: string;
-  
+
   // Progress details
   date: string;
   progress_indicator: ProgressIndicator;
   summary: string;
   detailed_notes: string;
-  
+
   // Measurements
   measurements?: {
     name: string;
@@ -158,15 +158,15 @@ export interface ProgressNote {
     previous_value?: number;
     change_percentage?: number;
   }[];
-  
+
   // Photos/documentation
   before_photos?: string[];
   after_photos?: string[];
-  
+
   // Next steps
   recommendations: string[];
   next_appointment_notes?: string;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -174,24 +174,24 @@ export interface ProgressNote {
 export interface PatientAllergy {
   id: string;
   patient_id: string;
-  
+
   // Allergy details
   allergen: string;
   allergy_type: 'medication' | 'food' | 'environmental' | 'contact' | 'other';
   severity: 'mild' | 'moderate' | 'severe' | 'life_threatening';
-  
+
   // Reaction details
   reactions: string[];
   onset_date?: string;
-  
+
   // Management
   avoidance_instructions: string;
   emergency_treatment?: string;
-  
+
   // Verification
   verified_by?: string;
   verification_date?: string;
-  
+
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -200,28 +200,28 @@ export interface PatientAllergy {
 export interface PatientCondition {
   id: string;
   patient_id: string;
-  
+
   // Condition details
   condition_name: string;
   icd_code?: string;
   category: string;
   severity: 'mild' | 'moderate' | 'severe';
-  
+
   // Timeline
   onset_date?: string;
   diagnosis_date: string;
   resolution_date?: string;
-  
+
   // Status
   status: 'active' | 'resolved' | 'chronic' | 'in_remission';
-  
+
   // Treatment
   current_treatments: string[];
   medications: string[];
-  
+
   // Notes
   notes?: string;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -231,7 +231,14 @@ export interface PatientTimeline {
   events: {
     id: string;
     date: string;
-    type: 'appointment' | 'treatment' | 'medication' | 'condition' | 'allergy' | 'note' | 'milestone';
+    type:
+      | 'appointment'
+      | 'treatment'
+      | 'medication'
+      | 'condition'
+      | 'allergy'
+      | 'note'
+      | 'milestone';
     title: string;
     description: string;
     professional_name?: string;
@@ -247,17 +254,17 @@ export interface PatientTimeline {
 
 export interface PatientSummary {
   patient_id: string;
-  
+
   // Basic info
   name: string;
   age: number;
   gender: string;
-  
+
   // Medical summary
   active_conditions: PatientCondition[];
   active_allergies: PatientAllergy[];
   current_medications: string[];
-  
+
   // Treatment summary
   active_treatments: TreatmentPlan[];
   recent_appointments: {
@@ -266,24 +273,24 @@ export interface PatientSummary {
     professional_name: string;
     status: string;
   }[];
-  
+
   // Progress indicators
   overall_progress: ProgressIndicator;
   last_visit_date?: string;
   next_appointment_date?: string;
-  
+
   // Risk factors
   risk_factors: {
     factor: string;
     level: 'low' | 'medium' | 'high';
     description: string;
   }[];
-  
+
   // Statistics
   total_appointments: number;
   total_treatments: number;
   satisfaction_score?: number;
-  
+
   last_updated: string;
 }
 
@@ -351,11 +358,11 @@ export function calculateAge(birthDate: string): number {
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
     age--;
   }
-  
+
   return age;
 }
 
@@ -374,20 +381,26 @@ export function getBMICategory(bmi: number): string {
 
 export function getProgressColor(indicator: ProgressIndicator): string {
   switch (indicator) {
-    case 'excellent': return 'green';
-    case 'good': return 'blue';
-    case 'satisfactory': return 'yellow';
-    case 'poor': return 'orange';
-    case 'concerning': return 'red';
-    default: return 'gray';
+    case 'excellent':
+      return 'green';
+    case 'good':
+      return 'blue';
+    case 'satisfactory':
+      return 'yellow';
+    case 'poor':
+      return 'orange';
+    case 'concerning':
+      return 'red';
+    default:
+      return 'gray';
   }
 }
 
 export function formatVitalSigns(vitalSigns: MedicalRecord['vital_signs']): string[] {
   if (!vitalSigns) return [];
-  
+
   const formatted: string[] = [];
-  
+
   if (vitalSigns.blood_pressure) {
     formatted.push(`PA: ${vitalSigns.blood_pressure}`);
   }
@@ -409,6 +422,6 @@ export function formatVitalSigns(vitalSigns: MedicalRecord['vital_signs']): stri
   if (vitalSigns.oxygen_saturation) {
     formatted.push(`SpO2: ${vitalSigns.oxygen_saturation}%`);
   }
-  
+
   return formatted;
 }

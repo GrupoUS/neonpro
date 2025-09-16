@@ -3,17 +3,17 @@
  * React Query hooks for managing service templates and packages
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { serviceTemplatesService } from '@/services/service-templates.service';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 // Only import the types we actually use to avoid TS6196
 import type {
-  ServiceTemplateFilters,
-  CreateServiceTemplateRequest,
-  UpdateServiceTemplateRequest,
   CreateServiceTemplateItemRequest,
-  UpdateServiceTemplateItemRequest,
+  CreateServiceTemplateRequest,
   DuplicateServiceTemplateRequest,
+  ServiceTemplateFilters,
+  UpdateServiceTemplateItemRequest,
+  UpdateServiceTemplateRequest,
 } from '@/types/service-templates';
 
 // NOTE: Keep imports minimal; these types are used in generics below to satisfy TS
@@ -100,7 +100,7 @@ export function useCreateServiceTemplate() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      
+
       toast.success('Template de serviço criado com sucesso!');
     },
     onError: (error: Error) => {
@@ -118,11 +118,11 @@ export function useUpdateServiceTemplate() {
   return useMutation({
     mutationFn: (request: UpdateServiceTemplateRequest) =>
       serviceTemplatesService.updateServiceTemplate(request),
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.detail(data.id) });
-      
+
       toast.success('Template atualizado com sucesso!');
     },
     onError: (error: Error) => {
@@ -142,7 +142,7 @@ export function useDeleteServiceTemplate() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      
+
       toast.success('Template removido com sucesso!');
     },
     onError: (error: Error) => {
@@ -158,13 +158,16 @@ export function useAddTemplateItems() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ templateId, items }: { templateId: string; items: CreateServiceTemplateItemRequest[] }) =>
-      serviceTemplatesService.addTemplateItems(templateId, items),
+    mutationFn: (
+      { templateId, items }: { templateId: string; items: CreateServiceTemplateItemRequest[] },
+    ) => serviceTemplatesService.addTemplateItems(templateId, items),
     onSuccess: (_, variables) => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.detailWithItems(variables.templateId) });
-      
+      queryClient.invalidateQueries({
+        queryKey: serviceTemplatesKeys.detailWithItems(variables.templateId),
+      });
+
       toast.success('Serviços adicionados ao template!');
     },
     onError: (error: Error) => {
@@ -185,7 +188,7 @@ export function useUpdateTemplateItem() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      
+
       toast.success('Item do template atualizado!');
     },
     onError: (error: Error) => {
@@ -205,7 +208,7 @@ export function useRemoveTemplateItem() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      
+
       toast.success('Item removido do template!');
     },
     onError: (error: Error) => {
@@ -245,7 +248,7 @@ export function useDuplicateServiceTemplate() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
-      
+
       toast.success('Template duplicado com sucesso!');
     },
     onError: (error: Error) => {
@@ -268,8 +271,8 @@ export function useToggleTemplateFeatured() {
       });
     },
     onSuccess: (_, { isFeatured }) => {
-      const message = isFeatured 
-        ? 'Template removido dos destaques' 
+      const message = isFeatured
+        ? 'Template removido dos destaques'
         : 'Template adicionado aos destaques';
       toast.success(message);
     },
@@ -293,8 +296,8 @@ export function useToggleTemplateActive() {
       });
     },
     onSuccess: (_, { isActive }) => {
-      const message = isActive 
-        ? 'Template desativado' 
+      const message = isActive
+        ? 'Template desativado'
         : 'Template ativado';
       toast.success(message);
     },

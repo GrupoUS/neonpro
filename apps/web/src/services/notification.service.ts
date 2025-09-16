@@ -29,7 +29,7 @@ export interface NotificationTemplate {
   variables: string[];
 }
 
-export type NotificationType = 
+export type NotificationType =
   | 'appointment_confirmation'
   | 'appointment_reminder'
   | 'appointment_cancellation'
@@ -80,7 +80,7 @@ class NotificationService {
     try {
       // Get patient notification preferences
       const preferences = await this.getNotificationPreferences(data.patientId);
-      
+
       if (!preferences.lgpdConsent) {
         throw new Error('Patient has not provided LGPD consent for notifications');
       }
@@ -93,7 +93,7 @@ class NotificationService {
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
           'appointment_confirmation',
-          data
+          data,
         );
         results.push(emailResult);
       }
@@ -101,7 +101,7 @@ class NotificationService {
       if (preferences.sms && data.patientPhone) {
         const smsResult = await this.sendSMSNotification(
           'appointment_confirmation',
-          data
+          data,
         );
         results.push(smsResult);
       }
@@ -109,7 +109,7 @@ class NotificationService {
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
           'appointment_confirmation',
-          data
+          data,
         );
         results.push(whatsappResult);
       }
@@ -139,7 +139,7 @@ class NotificationService {
 
     try {
       const preferences = await this.getNotificationPreferences(data.patientId);
-      
+
       if (!preferences.lgpdConsent || !preferences.appointmentReminders) {
         return [];
       }
@@ -148,13 +148,13 @@ class NotificationService {
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
           'appointment_reminder',
-          data
+          data,
         );
         results.push(whatsappResult);
       } else if (preferences.sms && data.patientPhone) {
         const smsResult = await this.sendSMSNotification(
           'appointment_reminder',
-          data
+          data,
         );
         results.push(smsResult);
       }
@@ -162,7 +162,7 @@ class NotificationService {
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
           'appointment_reminder',
-          data
+          data,
         );
         results.push(emailResult);
       }
@@ -183,7 +183,7 @@ class NotificationService {
 
     try {
       const preferences = await this.getNotificationPreferences(data.patientId);
-      
+
       if (!preferences.lgpdConsent || !preferences.appointmentCancellations) {
         return [];
       }
@@ -192,7 +192,7 @@ class NotificationService {
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
           'appointment_cancellation',
-          data
+          data,
         );
         results.push(emailResult);
       }
@@ -200,7 +200,7 @@ class NotificationService {
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
           'appointment_cancellation',
-          data
+          data,
         );
         results.push(whatsappResult);
       }
@@ -218,19 +218,21 @@ class NotificationService {
    */
   private async sendEmailNotification(
     type: NotificationType,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<NotificationResult> {
     try {
       const template = this.getTemplate(type, 'email');
       const content = this.processTemplate(template.content, data);
-      const subject = template.subject ? this.processTemplate(template.subject, data) : 'NeonPro - Notificação';
+      const subject = template.subject
+        ? this.processTemplate(template.subject, data)
+        : 'NeonPro - Notificação';
 
       // In a real implementation, you would integrate with an email service like:
       // - SendGrid
       // - AWS SES
       // - Mailgun
       // - Resend
-      
+
       // For now, we'll simulate the email sending
       console.log('Sending email:', {
         to: data.patientEmail,
@@ -262,7 +264,7 @@ class NotificationService {
    */
   private async sendSMSNotification(
     type: NotificationType,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<NotificationResult> {
     try {
       const template = this.getTemplate(type, 'sms');
@@ -273,7 +275,7 @@ class NotificationService {
       // - AWS SNS
       // - Zenvia
       // - TotalVoice (Brazilian provider)
-      
+
       console.log('Sending SMS:', {
         to: data.patientPhone,
         content,
@@ -302,7 +304,7 @@ class NotificationService {
    */
   private async sendWhatsAppNotification(
     type: NotificationType,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<NotificationResult> {
     try {
       const template = this.getTemplate(type, 'whatsapp');
@@ -313,7 +315,7 @@ class NotificationService {
       // - Twilio WhatsApp API
       // - Zenvia WhatsApp
       // - ChatAPI
-      
+
       console.log('Sending WhatsApp:', {
         to: data.patientPhone,
         content,
@@ -377,7 +379,9 @@ class NotificationService {
         appointmentCancellations: anyData.appointment_cancellations || false,
         promotionalMessages: anyData.promotional_messages || false,
         lgpdConsent: anyData.lgpd_consent || false,
-        lgpdConsentDate: anyData.lgpd_consent_date ? new Date(anyData.lgpd_consent_date) : new Date(),
+        lgpdConsentDate: anyData.lgpd_consent_date
+          ? new Date(anyData.lgpd_consent_date)
+          : new Date(),
       };
     } catch (error) {
       console.error('Error getting notification preferences:', error);
@@ -420,15 +424,32 @@ class NotificationService {
         <p>Em caso de dúvidas, entre em contato: {{clinicPhone}}</p>
         <p>Atenciosamente,<br>Equipe {{clinicName}}</p>
       `,
-      variables: ['patientName', 'appointmentDate', 'appointmentTime', 'professionalName', 'serviceName', 'clinicName', 'clinicAddress', 'clinicPhone'],
+      variables: [
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'serviceName',
+        'clinicName',
+        'clinicAddress',
+        'clinicPhone',
+      ],
     });
 
     this.templates.set('appointment_confirmation_sms', {
       id: 'appointment_confirmation_sms',
       type: 'appointment_confirmation',
       channel: 'sms',
-      content: 'Agendamento confirmado! {{patientName}}, sua consulta está marcada para {{appointmentDate}} às {{appointmentTime}} com {{professionalName}}. {{clinicName}} - {{clinicPhone}}',
-      variables: ['patientName', 'appointmentDate', 'appointmentTime', 'professionalName', 'clinicName', 'clinicPhone'],
+      content:
+        'Agendamento confirmado! {{patientName}}, sua consulta está marcada para {{appointmentDate}} às {{appointmentTime}} com {{professionalName}}. {{clinicName}} - {{clinicPhone}}',
+      variables: [
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'clinicName',
+        'clinicPhone',
+      ],
     });
 
     this.templates.set('appointment_confirmation_whatsapp', {
@@ -451,7 +472,16 @@ Seu agendamento foi confirmado:
 📞 Dúvidas? {{clinicPhone}}
 
 Nos vemos em breve! ✨`,
-      variables: ['patientName', 'appointmentDate', 'appointmentTime', 'professionalName', 'serviceName', 'clinicName', 'clinicAddress', 'clinicPhone'],
+      variables: [
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'serviceName',
+        'clinicName',
+        'clinicAddress',
+        'clinicPhone',
+      ],
     });
 
     // Add more templates for reminders, cancellations, etc.
@@ -464,11 +494,11 @@ Nos vemos em breve! ✨`,
   private getTemplate(type: NotificationType, channel: NotificationChannel): NotificationTemplate {
     const templateKey = `${type}_${channel}`;
     const template = this.templates.get(templateKey);
-    
+
     if (!template) {
       throw new Error(`Template not found: ${templateKey}`);
     }
-    
+
     return template;
   }
 
@@ -480,8 +510,9 @@ Nos vemos em breve! ✨`,
 
     // Replace variables
     processed = processed.replace(/{{patientName}}/g, data.patientName || '');
-    processed = processed.replace(/{{appointmentDate}}/g, 
-      data.appointmentDate ? format(data.appointmentDate, 'dd/MM/yyyy', { locale: ptBR }) : ''
+    processed = processed.replace(
+      /{{appointmentDate}}/g,
+      data.appointmentDate ? format(data.appointmentDate, 'dd/MM/yyyy', { locale: ptBR }) : '',
     );
     processed = processed.replace(/{{appointmentTime}}/g, data.appointmentTime || '');
     processed = processed.replace(/{{professionalName}}/g, data.professionalName || '');
@@ -500,7 +531,7 @@ Nos vemos em breve! ✨`,
   private async logNotificationActivity(
     patientId: string,
     type: NotificationType,
-    results: NotificationResult[]
+    results: NotificationResult[],
   ): Promise<void> {
     try {
       const logEntries = results.map(result => ({

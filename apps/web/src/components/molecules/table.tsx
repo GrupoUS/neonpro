@@ -54,7 +54,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
 
 function TableRow({ className, children, ...props }: React.ComponentProps<'tr'>) {
   const sanitizedChildren = React.Children.toArray(children).filter(
-    (child) => !(typeof child === 'string' && child.trim() === '')
+    child => !(typeof child === 'string' && child.trim() === ''),
   );
   return (
     <tr

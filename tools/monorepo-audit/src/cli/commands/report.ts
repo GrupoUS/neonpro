@@ -37,13 +37,11 @@ interface DashboardOptions {
   outputDir?: string;
 }
 
-export default function setupReportCommand(program: Command): Command {
-  const reportCmd = program
-    .command('report')
-    .description('Generate comprehensive audit reports and dashboards')
-    .addHelpText(
-      'after',
-      `
+const reportCommand = new Command('report')
+  .description('Generate comprehensive audit reports and dashboards')
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ audit-tool report generate --data-file audit-results.json
   $ audit-tool report generate --format html --include-dashboard
@@ -51,10 +49,10 @@ Examples:
   $ audit-tool report compare --baseline old-audit.json --current new-audit.json
   $ audit-tool report dashboard --port 3000
 `,
-    );
+  );
 
   // Generate subcommand
-  reportCmd
+  reportCommand
     .command('generate')
     .description('Generate audit report from analysis data')
     .option('-f, --format <format>', 'Output format (html|json|markdown|pdf)', 'html')
@@ -68,7 +66,7 @@ Examples:
     });
 
   // Export subcommand
-  reportCmd
+  reportCommand
     .command('export')
     .description('Export existing report to different formats')
     .option('-f, --format <format>', 'Export format (html|json|markdown|pdf)', 'pdf')
@@ -80,7 +78,7 @@ Examples:
     });
 
   // Compare subcommand
-  reportCmd
+  reportCommand
     .command('compare')
     .description('Compare multiple audit results and generate comparison report')
     .option('-b, --baseline <path>', 'Baseline audit results file')
@@ -92,7 +90,7 @@ Examples:
     });
 
   // Dashboard subcommand
-  reportCmd
+  reportCommand
     .command('dashboard')
     .description('Generate interactive HTML dashboard')
     .option('-p, --port <port>', 'Port for development server', '3000')
@@ -103,8 +101,6 @@ Examples:
       await handleDashboard(options);
     });
 
-  return reportCmd;
-}
 
 async function handleReportGenerate(options: GenerateOptions): Promise<void> {
   console.log(chalk.cyan('📊 Generating Audit Report'));
@@ -531,3 +527,5 @@ function formatBytes(bytes: number): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+
+export default reportCommand;

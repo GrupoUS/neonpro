@@ -1,6 +1,6 @@
-import { renderWithI18n as render, screen } from '../test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { renderWithI18n as render, screen } from '../test-utils';
 
 import { ResponseSummary } from '@/components/chat/ResponseSummary';
 
@@ -9,10 +9,10 @@ describe('Response summaries (T022)', () => {
     const onRefine = vi.fn();
     render(
       <ResponseSummary
-        summary="Resumo atualizado há 2 min"
+        summary='Resumo atualizado há 2 min'
         lastUpdated={Date.now() - 2 * 60 * 1000}
         onRefine={onRefine}
-      />
+      />,
     );
 
     expect(screen.getByText(/atualizado há/i)).toBeInTheDocument();

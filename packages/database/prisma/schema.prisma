@@ -35,13 +35,15 @@ model Clinic {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
-  patients         Patient[]
-  appointments     Appointment[]
-  professionals    Professional[]
-  consentRecords   ConsentRecord[]
-  auditTrails      AuditTrail[]
-  riskAssessments  RiskAssessment[]
-  complianceStatus ComplianceStatus[]
+  patients          Patient[]
+  appointments      Appointment[]
+  professionals     Professional[]
+  consentRecords    ConsentRecord[]
+  auditTrails       AuditTrail[]
+  riskAssessments   RiskAssessment[]
+  complianceStatus  ComplianceStatus[]
+  serviceTypes      ServiceType[]
+  serviceCategories ServiceCategory[]
 
   @@map("clinics")
 }
@@ -128,10 +130,11 @@ model Appointment {
   clinic                 Clinic    @relation(fields: [clinicId], references: [id])
   patientId              String    @map("patient_id")
   patient                Patient   @relation(fields: [patientId], references: [id])
-  professionalId         String    @map("professional_id")
+  professionalId         String      @map("professional_id")
   professional           Professional @relation(fields: [professionalId], references: [id])
-  serviceTypeId          String    @map("service_type_id")
-  status                 String?   @default("scheduled")
+  serviceTypeId          String      @map("service_type_id")
+  serviceType            ServiceType @relation("ServiceTypeAppointments", fields: [serviceTypeId], references: [id])
+  status                 String?     @default("scheduled")
   startTime              DateTime  @map("start_time")
   endTime                DateTime  @map("end_time")
   notes                  String?
@@ -436,12 +439,53 @@ model PolicyManagement {
   @@index([category, status])
 }
 
+// Service Types - Healthcare services offered by clinics
+model ServiceType {
+  id               String    @id @default(uuid())
+  name             String
+  description      String?
+  duration_minutes Int       @map("duration_minutes")
+  price            Decimal   @db.Decimal(10, 2)
+  is_active        Boolean   @default(true) @map("is_active")
+  clinic_id        String          @map("clinic_id")
+  clinic           Clinic          @relation(fields: [clinic_id], references: [id])
+  category_id      String?         @map("category_id")
+  category         ServiceCategory? @relation("CategoryServices", fields: [category_id], references: [id])
+  created_at       DateTime        @default(now()) @map("created_at")
+  updated_at       DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  appointments     Appointment[]   @relation("ServiceTypeAppointments")
+
+  @@map("service_types")
+  @@index([clinic_id])
+  @@index([is_active])
+  @@index([category_id])
+}
+
+// Service Categories for organizing services
+model ServiceCategory {
+  id           String        @id @default(uuid())
+  name         String
+  color        String        @default("#3B82F6") // Default blue color
+  clinic_id    String        @map("clinic_id")
+  clinic       Clinic        @relation(fields: [clinic_id], references: [id])
+  created_at   DateTime      @default(now()) @map("created_at")
+  updated_at   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  services     ServiceType[] @relation("CategoryServices")
+
+  @@map("service_categories")
+  @@index([clinic_id])
+}
+
 // Escalation Workflow Management
 model EscalationWorkflow {
   id              String              @id @default(uuid())
   userId          String
   user            User                @relation(fields: [userId], references: [id])
-  
+
   title           String
   description     String
   category        String              // "Security", "Compliance", "Clinical", etc.

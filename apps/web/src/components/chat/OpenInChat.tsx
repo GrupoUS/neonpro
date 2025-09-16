@@ -14,7 +14,9 @@ export function OpenInChat({ getPrefill, onOpen }: OpenInChatProps) {
 
   return (
     <div>
-      <button onClick={handleOpen} aria-label={t('chat.open_in_chat')}>{t('chat.open_in_chat')}</button>
+      <button onClick={handleOpen} aria-label={t('chat.open_in_chat')}>
+        {t('chat.open_in_chat')}
+      </button>
     </div>
   );
 }

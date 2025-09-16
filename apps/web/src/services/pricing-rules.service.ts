@@ -6,11 +6,11 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type {
-  PricingRule,
   CreatePricingRuleRequest,
-  UpdatePricingRuleRequest,
+  PricingCalculation,
+  PricingRule,
   PricingRuleFilters,
-  PricingCalculation
+  UpdatePricingRuleRequest,
 } from '@/types/pricing-rules';
 
 export class PricingRulesService {
@@ -18,7 +18,10 @@ export class PricingRulesService {
   /**
    * Get all pricing rules for a clinic
    */
-  static async getPricingRules(clinicId: string, filters?: PricingRuleFilters): Promise<PricingRule[]> {
+  static async getPricingRules(
+    clinicId: string,
+    filters?: PricingRuleFilters,
+  ): Promise<PricingRule[]> {
     let query = this.sb
       .from('pricing_rules')
       .select('*')
@@ -73,7 +76,7 @@ export class PricingRulesService {
    */
   static async createPricingRule(
     clinicId: string,
-    request: CreatePricingRuleRequest
+    request: CreatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -97,7 +100,7 @@ export class PricingRulesService {
    */
   static async updatePricingRule(
     id: string,
-    request: UpdatePricingRuleRequest
+    request: UpdatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -150,7 +153,7 @@ export class PricingRulesService {
       appointment_date?: Date;
       client_id?: string;
       is_first_time_client?: boolean;
-    }
+    },
   ): Promise<PricingCalculation> {
     // Get base price from service
     const { data: service, error: serviceError } = await supabase
@@ -172,7 +175,7 @@ export class PricingRulesService {
     const { calculatePricing } = await import('@/types/pricing-rules');
     return calculatePricing(basePrice, rules, {
       service_id: serviceId,
-      ...context
+      ...context,
     });
   }
 
@@ -181,7 +184,7 @@ export class PricingRulesService {
    */
   static async getServicePricingRules(
     clinicId: string,
-    serviceId: string
+    serviceId: string,
   ): Promise<PricingRule[]> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -204,7 +207,7 @@ export class PricingRulesService {
    */
   static async getProfessionalPricingRules(
     clinicId: string,
-    professionalId: string
+    professionalId: string,
   ): Promise<PricingRule[]> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -226,10 +229,10 @@ export class PricingRulesService {
    * Bulk update pricing rule priorities
    */
   static async updatePricingRulePriorities(
-    updates: { id: string; priority: number }[]
+    updates: { id: string; priority: number }[],
   ): Promise<void> {
     const { error } = await (this.sb as any).rpc('bulk_update_pricing_rule_priorities', {
-      updates
+      updates,
     });
 
     if (error) {
@@ -249,7 +252,7 @@ export class PricingRulesService {
     total_savings: number;
   }> {
     const { data, error } = await (this.sb as any).rpc('get_pricing_stats', {
-      p_clinic_id: clinicId
+      p_clinic_id: clinicId,
     });
 
     if (error) {
@@ -262,7 +265,7 @@ export class PricingRulesService {
       active_rules: 0,
       rules_by_type: {},
       avg_discount: 0,
-      total_savings: 0
+      total_savings: 0,
     };
   }
 }
