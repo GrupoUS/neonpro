@@ -12,13 +12,6 @@ import {
   sessionManager,
 } from '../auth';
 
-// Mock Supabase client
-const mockSupabaseClient = {
-  auth: {
-    getUser: vi.fn(),
-  },
-};
-
 // Mock crypto.randomUUID
 Object.defineProperty(global, 'crypto', {
   value: {
@@ -29,11 +22,6 @@ Object.defineProperty(global, 'crypto', {
 // Mock environment variables
 process.env.SUPABASE_URL = 'https://test.supabase.co';
 process.env.SUPABASE_ANON_KEY = 'test-anon-key';
-
-// Mock createClient function
-vi.doMock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => mockSupabaseClient),
-}));
 
 describe('Authentication Middleware Enhancement (T073)', () => {
   let mockContext: any;

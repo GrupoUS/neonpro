@@ -214,7 +214,7 @@ export const AIInsightsDashboard = ({
 
   // Fetch trends data
   const { data: trends, isLoading: trendsLoading, error: trendsError } = useQuery<TrendsApiResponse>({
-    queryKey: ['ai-trends', timeRange, insightTypes],
+    queryKey: ['ai-trends', timeRange, _insightTypes],
     queryFn: () => fetchInsightTrends(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache
