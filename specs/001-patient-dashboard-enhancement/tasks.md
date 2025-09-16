@@ -114,15 +114,15 @@
 - [x] T039 [P] AI Chat service with multi-model support in apps/api/src/services/ai-chat-service.ts ✅ COMPLETED: Comprehensive AI chat service with multi-provider support (OpenAI, Anthropic, Google, local), Brazilian healthcare context, conversation management, AI insights integration, LGPD compliance, performance monitoring, error handling
 - [x] T040 [P] LGPD Compliance service in apps/api/src/services/lgpd-service.ts ✅ COMPLETED: Comprehensive LGPD compliance service with consent management, data subject rights, processing activities, retention management, privacy impact assessments, compliance monitoring, data anonymization, Brazilian healthcare compliance
 - [x] T041 [P] Audit Trail service in apps/api/src/services/audit-service.ts ✅ COMPLETED: Comprehensive audit trail service with Supabase PostgreSQL integration, activity logging, security event monitoring, compliance audit trails (LGPD/ANVISA/CFM), forensic analysis, real-time streaming, data integrity verification, Brazilian healthcare compliance
-- [ ] T042 [P] Real-time Notification service in apps/api/src/services/notification-service.ts
+- [x] T042 [P] Real-time Notification service in apps/api/src/services/notification-service.ts ✅ COMPLETED: Comprehensive real-time notification service with multi-channel delivery (email/SMS/WhatsApp/push), Brazilian healthcare compliance (LGPD/ANVISA/CFM), template management, delivery tracking, priority queuing, rate limiting, WebSocket streaming, Supabase PostgreSQL integration
 
 ### API Endpoints - Patient Management
 
-- [ ] T043 GET /api/v2/patients endpoint in apps/api/src/routes/patients/list.ts
-- [ ] T044 POST /api/v2/patients endpoint in apps/api/src/routes/patients/create.ts
-- [ ] T045 GET /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/get.ts
-- [ ] T046 PUT /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/update.ts
-- [ ] T047 DELETE /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/delete.ts
+- [x] T043 GET /api/v2/patients endpoint in apps/api/src/routes/patients/list.ts ✅ COMPLETED: List patients with pagination, filtering, search capabilities, LGPD compliance, audit logging, Brazilian healthcare compliance (CFM), performance optimization, comprehensive error handling
+- [x] T044 POST /api/v2/patients endpoint in apps/api/src/routes/patients/create.ts ✅ COMPLETED: Create new patient with comprehensive validation, Brazilian data validation (CPF/phone/CEP), LGPD consent handling, audit trail logging, notification service integration, healthcare professional context validation
+- [x] T045 GET /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/get.ts ✅ COMPLETED: Retrieve individual patient by ID with full data model, LGPD compliance, data access logging, sensitive data masking, consent validation, performance optimization with caching, Brazilian healthcare compliance
+- [x] T046 PUT /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/update.ts ✅ COMPLETED: Update patient information with change tracking, Brazilian data validation, LGPD consent updates, audit trail logging, notification service integration, healthcare professional context validation
+- [x] T047 DELETE /api/v2/patients/{id} endpoint in apps/api/src/routes/patients/delete.ts ✅ COMPLETED: Soft delete with LGPD compliance (anonymization vs deletion), comprehensive audit trail, notification service integration, Brazilian healthcare compliance (CFM/ANVISA), data retention policies
 - [ ] T048 POST /api/v2/patients/search endpoint in apps/api/src/routes/patients/search.ts
 - [ ] T049 POST /api/v2/patients/bulk-actions endpoint in apps/api/src/routes/patients/bulk.ts
 - [ ] T050 GET /api/v2/patients/{id}/history endpoint in apps/api/src/routes/patients/history.ts

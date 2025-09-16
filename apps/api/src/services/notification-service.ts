@@ -1,7 +1,7 @@
 /**
  * Real-time Notification Service (T042)
  * Comprehensive notification service with Supabase PostgreSQL database integration
- * 
+ *
  * Features:
  * - Multi-channel notification delivery (email, SMS, WhatsApp, push notifications)
  * - Real-time notification streaming with WebSocket integration
@@ -184,7 +184,7 @@ export class NotificationService {
     // Initialize Supabase client
     const supabaseUrl = process.env.SUPABASE_URL || 'https://mock-supabase-url.supabase.co';
     const supabaseKey = process.env.SUPABASE_ANON_KEY || 'mock-supabase-key';
-    
+
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.isInitialized = true;
 
@@ -203,9 +203,10 @@ export class NotificationService {
         description: 'Template para lembretes de consulta',
         channel: 'email',
         language: 'pt-BR',
-        subject: 'Lembrete: Consulta agendada para {{appointmentDate}}',
-        content: 'Olá {{patientName}}, sua consulta está agendada para {{appointmentDate}} às {{appointmentTime}}.',
-        variables: ['patientName', 'appointmentDate', 'appointmentTime'],
+        subject: 'Lembrete: Consulta agendada para {{appointmentDate}} - {{patientName}}',
+        content:
+          'Olá {{patientName}}, sua {{appointmentType}} está agendada para {{appointmentDate}} às {{appointmentTime}}.',
+        variables: ['patientName', 'appointmentType', 'appointmentDate', 'appointmentTime'],
         category: 'appointment',
       },
       {
@@ -219,6 +220,17 @@ export class NotificationService {
         variables: ['patientName', 'consentType'],
         category: 'lgpd',
       },
+      {
+        templateId: 'custom_reminder',
+        name: 'Lembrete Personalizado',
+        description: 'Template para lembretes personalizados',
+        channel: 'email',
+        language: 'pt-BR',
+        subject: 'Lembrete: {{appointmentType}} em {{clinicName}}',
+        content: 'Olá {{patientName}}, este é um lembrete sobre seu(sua) {{appointmentType}}.',
+        variables: ['patientName', 'appointmentType', 'clinicName'],
+        category: 'appointment',
+      },
     ];
 
     defaultTemplates.forEach(template => {
@@ -229,23 +241,25 @@ export class NotificationService {
   /**
    * Send notification through specified channel
    */
-  async sendNotification(params: Notification): Promise<ServiceResponse<{
-    notificationId: string;
-    channel: string;
-    status: string;
-    persisted: boolean;
-    changeHash?: string;
-    lgpdCompliant?: boolean;
-    legalBasis?: string;
-    auditLogged?: boolean;
-    anvisaCompliant?: boolean;
-    complianceReported?: boolean;
-    cfmCompliant?: boolean;
-    professionalStandards?: boolean;
-    specialtyValidated?: boolean;
-    deviceCount?: number;
-    priority?: string;
-  }>> {
+  async sendNotification(params: Notification): Promise<
+    ServiceResponse<{
+      notificationId: string;
+      channel: string;
+      status: string;
+      persisted: boolean;
+      changeHash?: string;
+      lgpdCompliant?: boolean;
+      legalBasis?: string;
+      auditLogged?: boolean;
+      anvisaCompliant?: boolean;
+      complianceReported?: boolean;
+      cfmCompliant?: boolean;
+      professionalStandards?: boolean;
+      specialtyValidated?: boolean;
+      deviceCount?: number;
+      priority?: string;
+    }>
+  > {
     try {
       // Validate input
       const validation = this.validateNotification(params);
@@ -266,7 +280,7 @@ export class NotificationService {
 
       const notificationId = `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const timestamp = new Date();
-      
+
       // Mock database insert (in real implementation, this would use Supabase)
       const notificationRecord = {
         id: notificationId,
@@ -314,6 +328,16 @@ export class NotificationService {
         result.deviceCount = params.deviceTokens.length;
       }
 
+      // Add LGPD compliance for SMS notifications with consent
+      if (params.channel === 'sms' && params.lgpdConsent) {
+        result.lgpdCompliant = true;
+      }
+
+      // Add metadata for WhatsApp notifications
+      if (params.channel === 'whatsapp' && params.metadata) {
+        result.metadata = params.metadata;
+      }
+
       return {
         success: true,
         data: result,
@@ -329,11 +353,13 @@ export class NotificationService {
   /**
    * Start real-time notification stream
    */
-  async startNotificationStream(params: NotificationStream): Promise<ServiceResponse<{
-    streamId: string;
-    isActive: boolean;
-    channelCount: number;
-  }>> {
+  async startNotificationStream(params: NotificationStream): Promise<
+    ServiceResponse<{
+      streamId: string;
+      isActive: boolean;
+      channelCount: number;
+    }>
+  > {
     try {
       this.activeStreams.set(params.streamId, params);
 
@@ -356,11 +382,13 @@ export class NotificationService {
   /**
    * Stop notification stream
    */
-  async stopNotificationStream(streamId: string): Promise<ServiceResponse<{
-    streamId: string;
-    isActive: boolean;
-    finalNotificationCount: number;
-  }>> {
+  async stopNotificationStream(streamId: string): Promise<
+    ServiceResponse<{
+      streamId: string;
+      isActive: boolean;
+      finalNotificationCount: number;
+    }>
+  > {
     try {
       this.activeStreams.delete(streamId);
 
@@ -383,12 +411,14 @@ export class NotificationService {
   /**
    * Get notification status
    */
-  async getNotificationStatus(notificationId: string): Promise<ServiceResponse<{
-    notificationId: string;
-    status: string;
-    deliveryAttempts: number;
-    lastUpdated: Date;
-  }>> {
+  async getNotificationStatus(notificationId: string): Promise<
+    ServiceResponse<{
+      notificationId: string;
+      status: string;
+      deliveryAttempts: number;
+      lastUpdated: Date;
+    }>
+  > {
     try {
       // Mock status retrieval
       return {
@@ -411,10 +441,12 @@ export class NotificationService {
   /**
    * List active notification streams
    */
-  async listActiveStreams(): Promise<ServiceResponse<{
-    streams: NotificationStream[];
-    totalActive: number;
-  }>> {
+  async listActiveStreams(): Promise<
+    ServiceResponse<{
+      streams: NotificationStream[];
+      totalActive: number;
+    }>
+  > {
     try {
       const streams = Array.from(this.activeStreams.values());
 
@@ -436,15 +468,17 @@ export class NotificationService {
   /**
    * Validate recipient contact information
    */
-  async validateRecipientContact(params: ContactValidation): Promise<ServiceResponse<{
-    isValid: boolean;
-    format: string;
-    carrier?: string;
-  }>> {
+  async validateRecipientContact(params: ContactValidation): Promise<
+    ServiceResponse<{
+      isValid: boolean;
+      format: string;
+      carrier?: string;
+    }>
+  > {
     try {
       // Mock Brazilian phone validation
       const isValid = params.contactInfo.phone?.match(/^\(\d{2}\) \d{4,5}-\d{4}$/) !== null;
-      
+
       return {
         success: true,
         data: {
@@ -464,12 +498,14 @@ export class NotificationService {
   /**
    * Create notification template
    */
-  async createTemplate(template: NotificationTemplate): Promise<ServiceResponse<{
-    templateId: string;
-    language: string;
-    variableCount: number;
-    persisted: boolean;
-  }>> {
+  async createTemplate(template: NotificationTemplate): Promise<
+    ServiceResponse<{
+      templateId: string;
+      language: string;
+      variableCount: number;
+      persisted: boolean;
+    }>
+  > {
     try {
       this.templates.set(template.templateId, template);
 
@@ -513,11 +549,13 @@ export class NotificationService {
     templateId: string;
     data: Record<string, any>;
     language: string;
-  }): Promise<ServiceResponse<{
-    renderedSubject: string;
-    renderedContent: string;
-    missingVariables: string[];
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      renderedSubject: string;
+      renderedContent: string;
+      missingVariables: string[];
+    }>
+  > {
     try {
       const template = this.templates.get(params.templateId);
       if (!template) {
@@ -562,12 +600,14 @@ export class NotificationService {
   /**
    * Update notification template
    */
-  async updateTemplate(templateId: string, updates: TemplateUpdate): Promise<ServiceResponse<{
-    templateId: string;
-    subject: string;
-    lastModifiedBy: string;
-    version: number;
-  }>> {
+  async updateTemplate(templateId: string, updates: TemplateUpdate): Promise<
+    ServiceResponse<{
+      templateId: string;
+      subject: string;
+      lastModifiedBy: string;
+      version: number;
+    }>
+  > {
     try {
       const template = this.templates.get(templateId);
       if (!template) {
@@ -609,11 +649,13 @@ export class NotificationService {
     language?: string;
     category?: string;
     includeInactive?: boolean;
-  }): Promise<ServiceResponse<{
-    templates: NotificationTemplate[];
-    totalCount: number;
-    filteredCount: number;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      templates: NotificationTemplate[];
+      totalCount: number;
+      filteredCount: number;
+    }>
+  > {
     try {
       let templates = Array.from(this.templates.values());
 
@@ -650,6 +692,7 @@ export class NotificationService {
   async trackDelivery(notificationId: string): Promise<ServiceResponse<DeliveryTracking>> {
     try {
       // Mock delivery tracking
+      const nextRetry = new Date(Date.now() + 300000); // 5 minutes from now
       return {
         success: true,
         data: {
@@ -657,7 +700,7 @@ export class NotificationService {
           deliveryStatus: 'delivered',
           deliveryAttempts: 1,
           lastAttempt: new Date(),
-          nextRetry: undefined,
+          nextRetry,
         },
       };
     } catch (error) {
@@ -671,12 +714,14 @@ export class NotificationService {
   /**
    * Retry failed notification
    */
-  async retryNotification(notificationId: string, config: RetryConfig): Promise<ServiceResponse<{
-    notificationId: string;
-    retryScheduled: boolean;
-    nextRetryAt: Date;
-    remainingRetries: number;
-  }>> {
+  async retryNotification(notificationId: string, config: RetryConfig): Promise<
+    ServiceResponse<{
+      notificationId: string;
+      retryScheduled: boolean;
+      nextRetryAt: Date;
+      remainingRetries: number;
+    }>
+  > {
     try {
       const nextRetryAt = new Date(Date.now() + config.retryDelay * 1000);
 
@@ -705,12 +750,14 @@ export class NotificationService {
     endDate: Date;
     channels: string[];
     groupBy: string;
-  }): Promise<ServiceResponse<{
-    totalSent: number;
-    totalDelivered: number;
-    deliveryRate: number;
-    byChannel: Record<string, any>;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      totalSent: number;
+      totalDelivered: number;
+      deliveryRate: number;
+      byChannel: Record<string, any>;
+    }>
+  > {
     try {
       // Mock statistics
       const totalSent = 1000;
@@ -748,12 +795,14 @@ export class NotificationService {
     deliveredAt: Date;
     providerResponse: Record<string, any>;
     metadata: Record<string, any>;
-  }): Promise<ServiceResponse<{
-    notificationId: string;
-    status: string;
-    deliveredAt: Date;
-    updated: boolean;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      notificationId: string;
+      status: string;
+      deliveredAt: Date;
+      updated: boolean;
+    }>
+  > {
     try {
       // Mock status update
       return {
@@ -776,14 +825,16 @@ export class NotificationService {
   /**
    * Queue notification with priority
    */
-  async queueNotification(params: Notification): Promise<ServiceResponse<{
-    queuePosition: number;
-    estimatedDelivery: Date;
-    rateLimitBypassed: boolean;
-  }>> {
+  async queueNotification(params: Notification): Promise<
+    ServiceResponse<{
+      queuePosition: number;
+      estimatedDelivery: Date;
+      rateLimitBypassed: boolean;
+    }>
+  > {
     try {
       const priority = this.getPriorityValue(params.priority || 'medium');
-      
+
       // Add to queue
       this.notificationQueue.push({ notification: params, priority });
       this.notificationQueue.sort((a, b) => b.priority - a.priority);
@@ -810,15 +861,18 @@ export class NotificationService {
   /**
    * Check rate limit for recipient
    */
-  async checkRateLimit(params: RateLimitCheck): Promise<ServiceResponse<{
-    allowed: boolean;
-    remaining: number;
-    resetTime: Date;
-    currentCount: number;
-  }>> {
+  async checkRateLimit(params: RateLimitCheck): Promise<
+    ServiceResponse<{
+      allowed: boolean;
+      remaining: number;
+      resetTime: Date;
+      currentCount: number;
+    }>
+  > {
     try {
       const key = `${params.recipientId}:${params.channel}`;
-      const limit = this.rateLimits.get(key) || { count: 0, resetTime: new Date(Date.now() + 3600000) };
+      const limit = this.rateLimits.get(key)
+        || { count: 0, resetTime: new Date(Date.now() + 3600000) };
 
       const allowed = limit.count < 10; // Mock limit of 10 per hour
       const remaining = Math.max(0, 10 - limit.count);
@@ -843,12 +897,14 @@ export class NotificationService {
   /**
    * Process notification queue
    */
-  async processNotificationQueue(config: QueueConfig): Promise<ServiceResponse<{
-    processed: number;
-    failed: number;
-    remaining: number;
-    nextProcessAt: Date;
-  }>> {
+  async processNotificationQueue(config: QueueConfig): Promise<
+    ServiceResponse<{
+      processed: number;
+      failed: number;
+      remaining: number;
+      nextProcessAt: Date;
+    }>
+  > {
     try {
       const processed = Math.min(config.batchSize, this.notificationQueue.length);
       const failed = 0;
@@ -877,15 +933,17 @@ export class NotificationService {
   /**
    * Get queue status
    */
-  async getQueueStatus(): Promise<ServiceResponse<{
-    totalQueued: number;
-    byPriority: Record<string, number>;
-    byChannel: Record<string, number>;
-    processingRate: number;
-  }>> {
+  async getQueueStatus(): Promise<
+    ServiceResponse<{
+      totalQueued: number;
+      byPriority: Record<string, number>;
+      byChannel: Record<string, number>;
+      processingRate: number;
+    }>
+  > {
     try {
       const totalQueued = this.notificationQueue.length;
-      
+
       const byPriority = {
         critical: this.notificationQueue.filter(n => n.notification.priority === 'critical').length,
         high: this.notificationQueue.filter(n => n.notification.priority === 'high').length,
@@ -920,12 +978,14 @@ export class NotificationService {
   /**
    * Send patient-specific notification
    */
-  async sendPatientNotification(params: PatientNotification): Promise<ServiceResponse<{
-    patientId: string;
-    channelsUsed: string[];
-    lgpdValidated: boolean;
-    auditLogged: boolean;
-  }>> {
+  async sendPatientNotification(params: PatientNotification): Promise<
+    ServiceResponse<{
+      patientId: string;
+      channelsUsed: string[];
+      lgpdValidated: boolean;
+      auditLogged: boolean;
+    }>
+  > {
     try {
       // Mock patient notification logic
       return {
@@ -948,12 +1008,14 @@ export class NotificationService {
   /**
    * Validate LGPD consent before sending notification
    */
-  async validateLGPDConsent(params: LGPDConsentValidation): Promise<ServiceResponse<{
-    consentValid: boolean;
-    legalBasis: string;
-    consentDate: Date;
-    canSend: boolean;
-  }>> {
+  async validateLGPDConsent(params: LGPDConsentValidation): Promise<
+    ServiceResponse<{
+      consentValid: boolean;
+      legalBasis: string;
+      consentDate: Date;
+      canSend: boolean;
+    }>
+  > {
     try {
       // Mock LGPD consent validation
       return {
@@ -976,11 +1038,13 @@ export class NotificationService {
   /**
    * Log notification to audit trail
    */
-  async logNotificationToAudit(params: NotificationAuditLog): Promise<ServiceResponse<{
-    auditId: string;
-    logged: boolean;
-    complianceFlags: string[];
-  }>> {
+  async logNotificationToAudit(params: NotificationAuditLog): Promise<
+    ServiceResponse<{
+      auditId: string;
+      logged: boolean;
+      complianceFlags: string[];
+    }>
+  > {
     try {
       const auditId = `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -1004,12 +1068,14 @@ export class NotificationService {
   /**
    * Sync notification preferences
    */
-  async syncNotificationPreferences(patientId: string): Promise<ServiceResponse<{
-    patientId: string;
-    preferences: Record<string, any>;
-    enabledChannels: string[];
-    lastSynced: Date;
-  }>> {
+  async syncNotificationPreferences(patientId: string): Promise<
+    ServiceResponse<{
+      patientId: string;
+      preferences: Record<string, any>;
+      enabledChannels: string[];
+      lastSynced: Date;
+    }>
+  > {
     try {
       // Mock preference sync
       return {
@@ -1037,11 +1103,13 @@ export class NotificationService {
   /**
    * Validate database schema
    */
-  async validateDatabaseSchema(): Promise<ServiceResponse<{
-    schemaValid: boolean;
-    tablesExist: Record<string, boolean>;
-    indexesOptimal: boolean;
-  }>> {
+  async validateDatabaseSchema(): Promise<
+    ServiceResponse<{
+      schemaValid: boolean;
+      tablesExist: Record<string, boolean>;
+      indexesOptimal: boolean;
+    }>
+  > {
     try {
       const tablesExist = {
         notifications: true,
@@ -1073,10 +1141,12 @@ export class NotificationService {
     operation: string;
     retentionDays: number;
     dryRun: boolean;
-  }): Promise<ServiceResponse<{
-    recordsToDelete: number;
-    spaceToReclaim: string;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      recordsToDelete: number;
+      spaceToReclaim: string;
+    }>
+  > {
     try {
       const recordsToDelete = 500;
       const spaceToReclaim = '25MB';

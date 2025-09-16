@@ -25,14 +25,6 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
   });
 
   it('returns 403 without consent when not in mock mode', async () => {
-    // Ensure any AI call would fail if invoked (it shouldn't be)
-    vi.mock('../../src/config/ai', () => ({
-      DEFAULT_PRIMARY: 'gpt-5-mini',
-      generateWithFailover: vi.fn(async () => {
-        throw new Error('should not be called without consent');
-      }),
-    }));
-
     const app = await buildApp();
     const res = await app.request('http://local.test/v1/chat/explanation', {
       method: 'POST',
@@ -50,14 +42,16 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
   });
 
   it('redacts provider output before returning to client', async () => {
-    const mockGenerate = vi.fn(async () => ({
-      text: 'CPF 123.456.789-10, email user@example.com, tel 11 99999-8888',
-      headers: new Headers({ 'X-Chat-Model': 'openai:gpt-5-mini' }),
+    const hoisted = vi.hoisted(() => ({
+      generate: vi.fn(async () => ({
+        text: 'CPF 123.456.789-10, email user@example.com, tel 11 99999-8888',
+        headers: new Headers({ 'X-Chat-Model': 'openai:gpt-5-mini' }),
+      })),
     }));
 
     vi.mock('../../src/config/ai', () => ({
       DEFAULT_PRIMARY: 'gpt-5-mini',
-      generateWithFailover: mockGenerate,
+      generateWithFailover: hoisted.generate,
     }));
 
     const app = await buildApp();
@@ -85,6 +79,6 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
     expect(json.explanation).not.toMatch(/\b\d{2} \d{5}-\d{4}\b/);
     expect(json.traceId).toMatch(/[0-9a-f-]{36}/);
     // Ensure provider function was called
-    expect(mockGenerate).toHaveBeenCalledTimes(1);
+    expect(hoisted.generate).toHaveBeenCalledTimes(1);
   });
 });

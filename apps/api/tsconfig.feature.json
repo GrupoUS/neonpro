@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "noEmit": true,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "paths": {
+      "@neonpro/database": ["src/types/shims-neonpro.d.ts"],
+      "@neonpro/utils": ["src/types/shims-neonpro.d.ts"]
+    }
+  },
+  "include": [
+    "src/routes/chat.ts",
+    "src/config/ai.ts",
+    "src/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "dist",
+    "node_modules"
+  ]
+}
