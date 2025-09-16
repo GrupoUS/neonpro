@@ -28,7 +28,6 @@ import {
   Shield,
   Stethoscope,
   User,
-  TrendingUp,
 } from 'lucide-react';
 import { Suspense, useMemo, useState } from 'react';
 
@@ -49,7 +48,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-import { formatCPF, formatDate, formatDateTime, formatPhone } from '@/utils/brazilian-formatters';
+import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
+import { formatCPF, formatBRPhone } from '@neonpro/utils';
 import { Patient } from '@neonpro/shared/types/patient';
 // import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
@@ -233,7 +233,6 @@ const AIInsightsSection = ({ patientId, lgpdConsent }: {
         <Card>
           <CardHeader className='pb-3'>
             <CardTitle className='flex items-center gap-2 text-base'>
-              <TrendingUp className='h-4 w-4' />
               Recomendações
             </CardTitle>
           </CardHeader>
@@ -378,7 +377,7 @@ export const PatientProfile = ({
         : patient.name?.split(' ')[0] || 'Paciente',
       cpf: canShowSensitiveData ? formatCPF(patient.cpf) : '***.***.***-**',
       phone: canShowFullData && patient.phone
-        ? formatPhone(patient.phone)
+        ? formatBRPhone(patient.phone)
         : '(**) ****-****',
       email: canShowFullData && patient.email
         ? patient.email

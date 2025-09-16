@@ -21,7 +21,6 @@ import {
   formatCEP,
   formatCNPJ,
   formatCPF,
-  formatPhone,
   unformatCEP,
   unformatCNPJ,
   unformatCPF,

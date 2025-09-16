@@ -186,6 +186,103 @@ const MetricCard = ({
 /**
  * AIInsightsDashboard - Main dashboard component
  */
+
+// Lightweight inline chart: responsive SVG with two lines (insights & confidence)
+export const TrendMiniChart = ({
+  data,
+  width = 240,
+  height = 80,
+  ariaLabel = 'Tendências',
+  title = 'Tendências',
+  desc = 'Mini gráfico com as tendências no período.'
+}: {
+  data?: TrendData[]
+  width?: number
+  height?: number
+  ariaLabel?: string
+  title?: string
+  desc?: string
+}) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className='text-center text-muted-foreground py-8'>
+        <BarChart3 className='h-12 w-12 mx-auto mb-4 opacity-50' />
+        <p>Sem dados de tendências</p>
+      </div>
+    )
+  }
+
+  // Extract numeric values robustly from various possible field names
+  const values = data.map((d: any) => {
+    if (typeof d === 'number') return d
+    if (d == null) return 0
+    if (d.value != null) return Number(d.value)
+    if (d.count != null) return Number(d.count)
+    if (d.total != null) return Number(d.total)
+    if (d.amount != null) return Number(d.amount)
+    if (d.y != null) return Number(d.y)
+    return 0
+  })
+
+  const w = Math.max(10, width)
+  const h = Math.max(10, height)
+  const paddingX = 8
+  const paddingY = 6
+
+  const minV = Math.min(...values)
+  const maxV = Math.max(...values)
+  const span = Math.max(1e-6, maxV - minV)
+
+  const innerW = w - paddingX * 2
+  const innerH = h - paddingY * 2
+
+  const n = values.length
+  const stepX = n > 1 ? innerW / (n - 1) : 0
+
+  const toY = (v: number) => paddingY + innerH - ((v - minV) / span) * innerH
+
+  const points = values.map((v, i) => [paddingX + stepX * i, toY(v)] as const)
+
+  const dPath = points
+    .map(([x, y], i) => (i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`))
+    .join(' ')
+
+  return (
+    <svg
+      role="img"
+      aria-label={ariaLabel}
+      width={w}
+      height={h}
+      viewBox={`0 0 ${w} ${h}`}
+      className="block"
+      focusable="false"
+    >
+      <title>{title}</title>
+      <desc>{desc}</desc>
+
+      <path
+        d={dPath}
+        fill="none"
+        stroke="currentColor"
+        strokeOpacity={0.9}
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+      />
+
+      {/* Optional end circle for emphasis */}
+      {points.length > 0 ? (
+        <circle
+          cx={points[points.length - 1][0]}
+          cy={points[points.length - 1][1]}
+          r={2.5}
+          fill="currentColor"
+          opacity={0.9}
+        />
+      ) : null}
+    </svg>
+  )
+}
+
 export const AIInsightsDashboard = ({
   timeRange: initialTimeRange = '7d',
   insightTypes: _insightTypes = ['patient_insights', 'risk_assessment', 'recommendations'],
@@ -195,7 +292,7 @@ export const AIInsightsDashboard = ({
     canViewPatientInsights: false,
     consentLevel: 'basic',
   },
-  mobileOptimized: _mobileOptimized = true,
+  mobileOptimized = true,
   testId = 'ai-insights-dashboard',
 }: AIInsightsDashboardProps) => {
   const [timeRange, setTimeRange] = useState(initialTimeRange);
@@ -298,7 +395,7 @@ export const AIInsightsDashboard = ({
   }
 
   return (
-    <div className='space-y-6' data-testid={testId}>
+    <div className={cn('space-y-6', mobileOptimized && 'touch-manipulation select-none')} data-testid={testId}>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
@@ -383,11 +480,8 @@ export const AIInsightsDashboard = ({
                 : trends?.data
                 ? (
                   <div className='space-y-4'>
-                    <div className='text-center text-muted-foreground py-8'>
-                      <BarChart3 className='h-12 w-12 mx-auto mb-4 opacity-50' />
-                      <p>Gráfico de tendências seria exibido aqui</p>
-                      <p className='text-sm'>Integração com biblioteca de gráficos necessária</p>
-                    </div>
+                    {/* Lightweight SVG line chart */}
+                    <TrendMiniChart data={(trends.data as any).trends as TrendData[] | undefined} />
 
                     {/* Simple trend data display */}
                     <div className='grid gap-4 md:grid-cols-3'>
