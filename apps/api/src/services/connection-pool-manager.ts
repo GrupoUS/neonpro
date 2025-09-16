@@ -1,7 +1,7 @@
 /**
  * Connection Pool Manager Service
  * T080 - Database Performance Tuning
- * 
+ *
  * Features:
  * - Dynamic connection pool optimization
  * - Healthcare workload-specific pool management
@@ -135,7 +135,7 @@ export class ConnectionPoolManager {
     this.metrics = { ...this.metrics, ...newMetrics };
     this.metrics.utilization = (this.metrics.active / this.metrics.total) * 100;
     this.metrics.healthScore = this.calculateHealthScore();
-    
+
     // Store in history
     this.metricsHistory.push({ ...this.metrics });
     if (this.metricsHistory.length > this.maxHistorySize) {
@@ -189,7 +189,7 @@ export class ConnectionPoolManager {
     if (this.metrics.utilization > 85) {
       alerts.push({
         type: 'high_utilization',
-        severity: this.metrics.utilization > 95 ? 'critical' : 'warning',
+        severity: this.metrics.utilization >= 95 ? 'critical' : 'warning',
         message: `Connection pool utilization at ${this.metrics.utilization.toFixed(1)}%`,
         metrics: { ...this.metrics },
         timestamp: new Date(),
@@ -258,55 +258,76 @@ export class ConnectionPoolManager {
 
     // Analyze utilization patterns
     const avgUtilization = this.getAverageUtilization();
-    
+
     if (avgUtilization > 80) {
       // High utilization - recommend increasing pool size
       const increase = Math.ceil(this.currentConfig.max * 0.3);
       recommendedConfig.max = this.currentConfig.max + increase;
       recommendedConfig.min = Math.min(recommendedConfig.min + 2, recommendedConfig.max);
-      
-      reasoning.push(`High utilization (${avgUtilization.toFixed(1)}%) - increase max connections to ${recommendedConfig.max}`);
+
+      reasoning.push(
+        `High utilization (${
+          avgUtilization.toFixed(1)
+        }%) - increase max connections to ${recommendedConfig.max}`,
+      );
       estimatedImprovement += 25;
       healthcareImpact = 'high';
       implementationRisk = 'medium';
     } else if (avgUtilization < 30) {
       // Low utilization - recommend decreasing pool size
       const decrease = Math.floor(this.currentConfig.max * 0.2);
-      recommendedConfig.max = Math.max(this.currentConfig.max - decrease, this.currentConfig.min + 5);
-      
-      reasoning.push(`Low utilization (${avgUtilization.toFixed(1)}%) - reduce max connections to ${recommendedConfig.max}`);
-      estimatedImprovement += 10;
-      healthcareImpact = 'low';
-      implementationRisk = 'low';
+      const newMax = Math.max(
+        this.currentConfig.max - decrease,
+        this.currentConfig.min + 5,
+      );
+
+      // Only recommend decrease if it would actually be lower
+      if (newMax < this.currentConfig.max) {
+        recommendedConfig.max = newMax;
+        reasoning.push(
+          `Low utilization (${
+            avgUtilization.toFixed(1)
+          }%) - reduce max connections to ${recommendedConfig.max}`,
+        );
+        estimatedImprovement += 10;
+        healthcareImpact = 'low';
+        implementationRisk = 'low';
+      }
     }
 
     // Analyze wait times
     if (this.metrics.averageWaitTime > 500) {
       recommendedConfig.acquireTimeoutMillis = Math.min(
         this.currentConfig.acquireTimeoutMillis * 1.5,
-        60000 // Max 60 seconds
+        60000, // Max 60 seconds
       );
-      
-      reasoning.push(`High wait times - increase acquire timeout to ${recommendedConfig.acquireTimeoutMillis}ms`);
+
+      reasoning.push(
+        `High wait times - increase acquire timeout to ${recommendedConfig.acquireTimeoutMillis}ms`,
+      );
       estimatedImprovement += 15;
       healthcareImpact = 'medium';
     }
 
     // Healthcare-specific optimizations
     const currentHour = new Date().getHours();
-    const isPeakHours = currentHour >= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.start && 
-                       currentHour <= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.end;
+    const isPeakHours = currentHour >= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.start
+      && currentHour <= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.end;
 
     if (isPeakHours && recommendedConfig.max < 25) {
       recommendedConfig.max = Math.max(recommendedConfig.max, 25);
-      reasoning.push('Peak healthcare hours - ensure adequate connections for appointment scheduling');
+      reasoning.push(
+        'Peak healthcare hours - ensure adequate connections for appointment scheduling',
+      );
       healthcareImpact = 'high';
     }
 
     // Connection timeout optimizations for healthcare
     if (recommendedConfig.createTimeoutMillis > 15000) {
       recommendedConfig.createTimeoutMillis = 15000; // 15 seconds max for healthcare
-      reasoning.push('Healthcare workload - reduce connection creation timeout for faster response');
+      reasoning.push(
+        'Healthcare workload - reduce connection creation timeout for faster response',
+      );
       estimatedImprovement += 5;
     }
 
@@ -379,12 +400,12 @@ export class ConnectionPoolManager {
     const isPeakHours = currentHour >= 8 && currentHour <= 18;
     const baseLoad = isPeakHours ? 0.6 : 0.2;
     const randomVariation = Math.random() * 0.3;
-    
+
     const targetUtilization = Math.min(95, (baseLoad + randomVariation) * 100);
     const active = Math.floor((targetUtilization / 100) * this.currentConfig.max);
     const idle = this.currentConfig.max - active;
     const waiting = targetUtilization > 85 ? Math.floor(Math.random() * 5) : 0;
-    
+
     this.updateMetrics({
       active,
       idle,

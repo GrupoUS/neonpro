@@ -1,170 +1,338 @@
-#!/usr/bin/env tsx
-
 /**
- * TDD Orchestration Framework - Main Entry Point
- * 
- * Coordinates test-driven development cycles using specialized code review agents.
- * Implements red-green-refactor discipline with intelligent agent delegation.
- * 
- * Usage:
- *   tsx tools/orchestration/index.ts --workflow=standard --feature=user-auth
- *   tsx tools/orchestration/index.ts --workflow=security-critical --all-agents
- *   tsx tools/orchestration/index.ts --phase=red --agents=test,architect-review
+ * TDD Orchestration Framework - Main Export File
+ * Complete multi-agent TDD orchestration with quality control integration
  */
 
-import { TDDOrchestrator } from './tdd-orchestrator';
-import { AgentRegistry } from './agent-registry';
-import { WorkflowEngine } from './workflows/workflow-engine';
-import { OrchestrationType, FeatureContext, OrchestrationOptions } from './types';
-import { logger } from './utils/logger';
+// Core Orchestration Components
+export { TDDOrchestrator } from './tdd-orchestrator';
+export { TDDAgentRegistry } from './agent-registry';
+export { WorkflowEngine } from './workflows/workflow-engine';
+export { QualityControlBridge, executeQualityControlCommand, validateQualityControlCommand } from './quality-control-bridge';
 
-async function main() {
-  const args = process.argv.slice(2);
-  const options = parseCommandLineArgs(args);
-  
+// Communication System
+export {
+  AgentMessageBus,
+  AgentCommunicationProtocol,
+  createCommunicationSystem,
+  type SharedContext,
+  type MessageBusOptions,
+  type ProtocolOptions,
+  type AgentHandshake,
+  type CoordinationRequest,
+  type CoordinationResponse,
+} from './communication';
+
+// Metrics and Analytics
+export {
+  TDDMetricsCollector,
+  type MetricsSnapshot,
+  type OrchestrationMetrics,
+  type AgentMetrics,
+  type QualityMetrics,
+  type PerformanceMetrics,
+  type HealthcareMetrics,
+  type CoordinationMetrics,
+} from './metrics/collector';
+
+// Healthcare Compliance
+export {
+  HealthcareComplianceValidator,
+  type LGPDValidationResult,
+  type ANVISAValidationResult,
+  type CFMValidationResult,
+  type HealthcareComplianceReport,
+  type AuditEntry,
+} from './compliance/healthcare-validator';
+
+// Type Definitions
+export type {
+  TDDPhase,
+  AgentName,
+  AgentType,
+  AgentCoordinationPattern,
+  AgentPriority,
+  AgentSpecialization,
+  WorkflowType,
+  OrchestrationType,
+  FeatureContext,
+  OrchestrationContext,
+  OrchestrationOptions,
+  OrchestrationResult,
+  OrchestrationMetrics as OrchestrationMetricsType,
+  QualityControlContext,
+  QualityControlResult,
+  AgentCapability,
+  AgentResult,
+  AgentMessage,
+  AgentAction,
+  AgentTask,
+  QualityGate,
+  QualityGateResult,
+  QualityGateStatus,
+  OrchestrationState,
+  PhaseResult,
+  QualityAssessment,
+  HealthcareComplianceContext,
+  WorkflowConfig,
+  PhaseConfig,
+  AgentCoordinationConfig,
+  AgentRegistry,
+  OrchestrationWorkflow,
+  HealthcareCompliance,
+  TDDCycleResult,
+  TDDMetrics,
+} from './types';
+
+/**
+ * Create a complete TDD orchestration system
+ */
+export function createTDDOrchestrationSystem(options: {
+  enableCommunication?: boolean;
+  enableMetrics?: boolean;
+  enableCompliance?: boolean;
+  healthcareMode?: boolean;
+} = {}) {
+  const {
+    enableCommunication = true,
+    enableMetrics = true,
+    enableCompliance = true,
+    healthcareMode = false,
+  } = options;
+
+  // Initialize core components
+  const agentRegistry = new TDDAgentRegistry();
+
+  // Initialize communication system if enabled
+  const communication = enableCommunication ? createCommunicationSystem() : null;
+
+  // Initialize workflow engine with optional communication
+  const workflowEngine = new WorkflowEngine(
+    agentRegistry,
+    communication?.messageBus
+  );
+
+  // Initialize orchestrator
+  const orchestrator = new TDDOrchestrator(agentRegistry, workflowEngine);
+
+  // Initialize metrics collector if enabled
+  const metrics = enableMetrics ? new TDDMetricsCollector() : null;
+
+  // Initialize compliance validator if enabled
+  const complianceValidator = enableCompliance ? new HealthcareComplianceValidator() : null;
+
+  // Initialize quality control bridge
+  const qualityControlBridge = new QualityControlBridge();
+
+  return {
+    // Core components
+    orchestrator,
+    agentRegistry,
+    workflowEngine,
+    qualityControlBridge,
+
+    // Optional components
+    communication: communication || null,
+    metrics: metrics || null,
+    complianceValidator: complianceValidator || null,
+
+    // Convenience methods
+    async initialize() {
+      console.log('🚀 TDD Orchestration System initializing...');
+
+      if (communication) {
+        await communication.initialize();
+      }
+
+      console.log('✅ TDD Orchestration System ready');
+      console.log('📋 Available agents:', agentRegistry.getAllAgents().map(a => a.name).join(', '));
+      console.log('🔧 Available workflows:', workflowEngine.getAvailableWorkflows().join(', '));
+
+      if (healthcareMode) {
+        console.log('🏥 Healthcare compliance mode enabled (LGPD/ANVISA/CFM)');
+      }
+
+      return {
+        orchestrator,
+        agentRegistry,
+        workflowEngine,
+        qualityControlBridge,
+        communication,
+        metrics,
+        complianceValidator,
+      };
+    },
+
+    async shutdown() {
+      console.log('🛑 TDD Orchestration System shutting down...');
+
+      if (communication) {
+        await communication.shutdown();
+      }
+
+      if (metrics) {
+        metrics.reset();
+      }
+
+      console.log('✅ TDD Orchestration System shut down');
+    },
+
+    // Quality control execution
+    async executeQualityControl(command: string, options: any = {}) {
+      const result = await qualityControlBridge.executeQualityControl(command, options);
+
+      if (metrics && result.orchestrationResult) {
+        metrics.recordOrchestration(
+          result.orchestrationResult,
+          {} as OrchestrationContext,
+          result.duration
+        );
+      }
+
+      return result;
+    },
+
+    // Complete TDD cycle execution
+    async executeTDDCycle(feature: FeatureContext, options: OrchestrationOptions = {}) {
+      const result = await orchestrator.executeFullTDDCycle(feature, options);
+
+      if (metrics) {
+        metrics.recordOrchestration(
+          result,
+          {
+            featureName: feature.name,
+            featureType: feature.domain.join(', '),
+            complexity: feature.complexity,
+            criticalityLevel: feature.complexity === 'high' ? 'critical' : feature.complexity,
+            requirements: feature.requirements,
+            healthcareCompliance: {
+              required: options.healthcare || false,
+              lgpd: options.healthcare,
+              anvisa: options.healthcare,
+              cfm: options.healthcare,
+            },
+          },
+          result.duration || 0
+        );
+      }
+
+      return result;
+    },
+
+    // Get system status
+    getStatus() {
+      const status = {
+        system: 'TDD Orchestration Framework',
+        version: '1.0.0',
+        status: 'ready',
+        components: {
+          orchestrator: 'active',
+          agentRegistry: `${agentRegistry.getAllAgents().length} agents registered`,
+          workflowEngine: `${workflowEngine.getAvailableWorkflows().length} workflows available`,
+          qualityControlBridge: 'active',
+        },
+        capabilities: {
+          multiAgentCoordination: true,
+          parallelExecution: true,
+          qualityControlIntegration: true,
+          healthcareCompliance: !!complianceValidator,
+          metricsCollection: !!metrics,
+          realtimeCommunication: !!communication,
+        },
+        healthcareMode,
+      };
+
+      // Add optional component status
+      if (communication) {
+        const commStats = communication.getSystemStats();
+        status.components.communication = `${commStats.protocol.registeredAgents} agents, ${commStats.messageBus.totalMessages} messages`;
+      }
+
+      if (metrics) {
+        const snapshot = metrics.getMetricsSnapshot();
+        status.components.metrics = `${snapshot.orchestration.totalExecutions} executions, ${snapshot.quality.overallQualityScore.toFixed(1)} avg quality`;
+      }
+
+      if (complianceValidator) {
+        status.components.compliance = 'LGPD/ANVISA/CFM validation active';
+      }
+
+      return status;
+    },
+
+    // Get comprehensive metrics
+    getMetrics() {
+      if (!metrics) {
+        return { error: 'Metrics collection not enabled' };
+      }
+
+      return {
+        snapshot: metrics.getMetricsSnapshot(),
+        performance: metrics.getPerformanceAnalytics(),
+        quality: metrics.getQualityReport(),
+        healthcare: complianceValidator ? 'Available via complianceValidator.generateComplianceReport()' : 'Not available',
+      };
+    },
+
+    // Validate healthcare compliance
+    async validateCompliance(context: OrchestrationContext, results: AgentResult[]) {
+      if (!complianceValidator) {
+        throw new Error('Compliance validator not enabled');
+      }
+
+      return await complianceValidator.validateCompliance(context, results);
+    },
+
+    // Get available commands and examples
+    getCommandExamples() {
+      return {
+        availableCommands: qualityControlBridge.getAvailableCommands(),
+        examples: qualityControlBridge.getCommandExamples(),
+        workflows: workflowEngine.getAvailableWorkflows(),
+        agents: agentRegistry.getAllAgents().map(a => ({
+          name: a.name,
+          type: a.type,
+          capabilities: a.capabilities,
+          specializations: a.specializations,
+          healthcareCompliance: a.healthcareCompliance,
+        })),
+      };
+    },
+  };
+}
+
+/**
+ * Convenience function for quick quality control execution
+ */
+export async function executeQualityControl(
+  command: string,
+  options: any = {}
+): Promise<QualityControlResult> {
+  const bridge = new QualityControlBridge();
+  return await bridge.executeQualityControl(command, options);
+}
+
+/**
+ * Convenience function for creating and running a TDD cycle
+ */
+export async function runTDDCycle(
+  feature: FeatureContext,
+  options: OrchestrationOptions & {
+    enableMetrics?: boolean;
+    enableCompliance?: boolean;
+  } = {}
+): Promise<OrchestrationResult> {
+  const system = createTDDOrchestrationSystem({
+    enableMetrics: options.enableMetrics ?? true,
+    enableCompliance: options.enableCompliance ?? options.healthcare,
+    healthcareMode: options.healthcare,
+  });
+
+  await system.initialize();
+
   try {
-    logger.info('🎯 Starting TDD Orchestration Framework', { options });
-    
-    // Initialize orchestration components
-    const agentRegistry = new AgentRegistry();
-    const workflowEngine = new WorkflowEngine(agentRegistry);
-    const orchestrator = new TDDOrchestrator(agentRegistry, workflowEngine);
-    
-    // Execute orchestration based on options
-    let result;
-    
-    switch (options.type) {
-      case 'full-cycle':
-        result = await orchestrator.executeFullTDDCycle(options.feature, options);
-        break;
-        
-      case 'phase-specific':
-        result = await orchestrator.executePhase(options.phase!, options.feature, options);
-        break;
-        
-      case 'agent-specific':
-        result = await orchestrator.executeAgentTasks(options.agents!, options.feature, options);
-        break;
-        
-      case 'workflow-specific':
-        result = await workflowEngine.executeWorkflow(options.workflow!, options.feature, options);
-        break;
-        
-      default:
-        throw new Error(`Unknown orchestration type: ${options.type}`);
-    }
-    
-    // Generate comprehensive report
-    await orchestrator.generateReport(result);
-    
-    logger.success('✅ TDD Orchestration completed successfully');
-    process.exit(0);
-    
-  } catch (error) {
-    logger.error('❌ TDD Orchestration failed', error);
-    process.exit(1);
+    const result = await system.executeTDDCycle(feature, options);
+    return result;
+  } finally {
+    await system.shutdown();
   }
 }
-
-function parseCommandLineArgs(args: string[]): OrchestrationOptions {
-  const options: OrchestrationOptions = {
-    type: 'full-cycle',
-    feature: {
-      name: 'default-feature',
-      complexity: 'medium',
-      domain: ['general'],
-      requirements: []
-    }
-  };
-  
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    
-    if (arg.startsWith('--workflow=')) {
-      options.type = 'workflow-specific';
-      options.workflow = arg.split('=')[1] as any;
-    }
-    
-    else if (arg.startsWith('--phase=')) {
-      options.type = 'phase-specific';
-      options.phase = arg.split('=')[1] as any;
-    }
-    
-    else if (arg.startsWith('--agents=')) {
-      options.type = 'agent-specific';
-      options.agents = arg.split('=')[1].split(',') as any[];
-    }
-    
-    else if (arg.startsWith('--feature=')) {
-      const featureName = arg.split('=')[1];
-      options.feature = inferFeatureContext(featureName);
-    }
-    
-    else if (arg === '--all-agents') {
-      options.allAgents = true;
-    }
-    
-    else if (arg === '--parallel') {
-      options.parallel = true;
-    }
-    
-    else if (arg === '--healthcare') {
-      options.healthcare = true;
-      options.feature.domain.push('healthcare');
-    }
-    
-    else if (arg === '--security-critical') {
-      options.securityCritical = true;
-      options.feature.domain.push('security');
-    }
-    
-    else if (arg === '--verbose') {
-      options.verbose = true;
-    }
-    
-    else if (arg === '--dry-run') {
-      options.dryRun = true;
-    }
-  }
-  
-  return options;
-}
-
-function inferFeatureContext(featureName: string): FeatureContext {
-  const context: FeatureContext = {
-    name: featureName,
-    complexity: 'medium',
-    domain: ['general'],
-    requirements: []
-  };
-  
-  // Infer complexity based on feature name
-  if (featureName.includes('auth') || featureName.includes('payment') || featureName.includes('security')) {
-    context.complexity = 'high';
-    context.domain.push('security');
-  }
-  
-  if (featureName.includes('microservice') || featureName.includes('distributed') || featureName.includes('integration')) {
-    context.complexity = 'high';
-    context.domain.push('architecture');
-  }
-  
-  if (featureName.includes('patient') || featureName.includes('healthcare') || featureName.includes('medical')) {
-    context.domain.push('healthcare');
-    context.requirements.push('LGPD compliance', 'ANVISA compliance');
-  }
-  
-  if (featureName.includes('simple') || featureName.includes('basic') || featureName.includes('util')) {
-    context.complexity = 'low';
-  }
-  
-  return context;
-}
-
-// Run if called directly
-if (require.main === module) {
-  main().catch(console.error);
-}
-
-export { TDDOrchestrator, AgentRegistry, WorkflowEngine };
-export * from './types';

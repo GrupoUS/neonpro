@@ -58,17 +58,27 @@ program.configureHelp({
   subcommandTerm: cmd => cmd.name(),
 });
 
-// Custom help
+// Custom help with constitutional compliance examples
 program.on('--help', () => {
   console.log('');
-  console.log('Examples:');
-  console.log('  $ audit-tool audit --format html --output report.html');
-  console.log('  $ audit-tool scan --include "apps/**" --exclude "**/*.test.ts"');
-  console.log('  $ audit-tool cleanup --dry-run --backup');
-  console.log('  $ audit-tool validate --turborepo --hono --tanstack-router');
+  console.log('🚀 Examples:');
+  console.log('  $ neonpro-audit audit --format html --output report.html --healthcare');
+  console.log('  $ neonpro-audit constitutional --lgpd --anvisa --cfm');
+  console.log('  $ neonpro-audit scan --include "apps/**" --exclude "**/*.test.ts"');
+  console.log('  $ neonpro-audit cleanup --dry-run --backup --constitutional');
+  console.log('  $ neonpro-audit benchmark --performance --verbose');
+  console.log('  $ neonpro-audit quick --healthcare --format dashboard');
   console.log('');
-  console.log('Documentation:');
-  console.log('  https://github.com/neonpro/monorepo-audit-tool');
+  console.log('🏥 Healthcare Compliance:');
+  console.log('  $ neonpro-audit validate --lgpd --anvisa --cfm --output compliance-report.json');
+  console.log('  $ neonpro-audit constitutional --audit-trail --patient-data --requirements');
+  console.log('');
+  console.log('📊 Performance & Quality:');
+  console.log('  $ neonpro-audit benchmark --memory --cpu --throughput');
+  console.log('  $ neonpro-audit analyze --architecture --dependencies --performance');
+  console.log('');
+  console.log('📚 Documentation:');
+  console.log('  https://github.com/neonpro/neonpro/tree/main/tools/audit-consolidated');
 });
 
 // Handle unknown commands

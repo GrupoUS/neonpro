@@ -44,15 +44,15 @@
 - [x] T014 [P] Integration test audit logging in `apps/api/tests/integration/chat-audit.test.ts` (passing)
 
 ## Phase 3.3: Core Models & Services (ONLY after tests are failing)
-- [ ] T015 [P] ChatSession model in `packages/core-services/src/models/chat-session.ts`
-- [ ] T016 [P] ChatMessage model in `packages/core-services/src/models/chat-message.ts`
-- [ ] T017 [P] AuditEvent model in `packages/core-services/src/models/audit-event.ts`
-- [ ] T018 [P] RateCounter service in `packages/core-services/src/services/rate-counter.ts`
-- [ ] T019 [P] PII redaction service in `packages/core-services/src/services/pii-redaction.ts`
-- [ ] T020 ConsentValidation service in `packages/core-services/src/services/consent-validation.ts`
-- [ ] T021 ChatService orchestrator in `packages/core-services/src/services/chat-service.ts`
-- [ ] T022 AI provider interface in `packages/core-services/src/services/ai-provider.ts`
-- [ ] T023 OpenAI implementation in `packages/core-services/src/services/openai-provider.ts`
+- [x] T015 [P] ChatSession model in `packages/core-services/src/models/chat-session.ts`
+- [x] T016 [P] ChatMessage model in `packages/core-services/src/models/chat-message.ts`
+- [x] T017 [P] AuditEvent model in `packages/core-services/src/models/audit-event.ts`
+- [x] T018 [P] RateCounter service in `packages/core-services/src/services/rate-counter.ts`
+- [x] T019 [P] PII redaction service in `packages/core-services/src/services/pii-redaction.ts`
+- [x] T020 ConsentValidation service in `packages/core-services/src/services/consent-validation.ts`
+- [x] T021 ChatService orchestrator in `packages/core-services/src/services/chat-service.ts`
+- [x] T022 AI provider interface in `packages/core-services/src/services/ai-provider.ts`
+- [x] T023 OpenAI implementation in `packages/core-services/src/services/openai-provider.ts`
 
 ## Phase 3.4: API Implementation
 - [ ] T024 POST /api/v1/chat/query endpoint in `apps/api/src/routes/chat/query.ts`

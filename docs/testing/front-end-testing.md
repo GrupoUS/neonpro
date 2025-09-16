@@ -349,4 +349,320 @@ test.describe('Patient Management Flow', () => {
     await expect(errorMessage).toHaveAttribute('aria-live', 'assertive');
   });
 });
+```## Accessibility Testing (WCAG 2.1 AA+)
+
+### 1. Automated Accessibility Tests
+
+```typescript
+// Accessibility testing with jest-axe
+import { render } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { PatientForm } from './PatientForm';
+
+expect.extend(toHaveNoViolations);
+
+describe('PatientForm Accessibility', () => {
+  it('meets WCAG 2.1 AA standards', async () => {
+    const { container } = render(<PatientForm />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('supports keyboard navigation', async () => {
+    render(<PatientForm />);
+    
+    // Test tab order
+    const inputs = screen.getAllByRole('textbox');
+    inputs[0].focus();
+    
+    await user.keyboard('[Tab]');
+    expect(inputs[1]).toHaveFocus();
+    
+    await user.keyboard('[Shift>][Tab][/Shift]');
+    expect(inputs[0]).toHaveFocus();
+  });
+
+  it('provides proper ARIA labels for healthcare data', () => {
+    render(<PatientForm />);
+    
+    expect(screen.getByLabelText(/nome completo do paciente/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/cpf do paciente/i)).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: /condição médica/i })).toBeInTheDocument();
+  });
+});
 ```
+
+### 2. Screen Reader Compatibility
+
+```typescript
+// Test screen reader announcements
+describe('Screen Reader Support', () => {
+  it('announces form errors correctly', async () => {
+    render(<PatientForm />);
+    
+    // Submit invalid form
+    await user.click(screen.getByRole('button', { name: /salvar/i }));
+    
+    // Verify error announcements
+    const errorRegion = screen.getByRole('alert');
+    expect(errorRegion).toHaveTextContent(/nome é obrigatório/i);
+    expect(errorRegion).toHaveAttribute('aria-live', 'assertive');
+  });
+
+  it('provides status updates for async operations', async () => {
+    render(<PatientForm />);
+    
+    // Start save operation
+    await user.click(screen.getByRole('button', { name: /salvar/i }));
+    
+    // Loading state
+    expect(screen.getByText(/salvando paciente/i)).toHaveAttribute('aria-live', 'polite');
+    
+    // Success state
+    await waitFor(() => {
+      expect(screen.getByText(/paciente salvo com sucesso/i))
+        .toHaveAttribute('aria-live', 'polite');
+    });
+  });
+});
+```
+
+## Testing Utilities & Mocks
+
+### 1. Custom Render Function
+
+```typescript
+// apps/web/src/test/utils/render.tsx
+import { ReactElement } from 'react';
+import { render, RenderOptions } from '@testing-library/react';
+import { RouterProvider, createMemoryRouter } from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { routeTree } from '../routeTree.gen';
+
+interface CustomRenderOptions extends RenderOptions {
+  initialEntries?: string[];
+  queryClient?: QueryClient;
+}
+
+const customRender = (
+  ui: ReactElement,
+  options: CustomRenderOptions = {}
+) => {
+  const { 
+    initialEntries = ['/'], 
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    }),
+    ...renderOptions 
+  } = options;
+
+  const router = createMemoryRouter({
+    routeTree,
+    history: initialEntries,
+  });
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router}>
+        {children}
+      </RouterProvider>
+    </QueryClientProvider>
+  );
+
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
+};
+
+export * from '@testing-library/react';
+export { customRender as render };
+```
+
+### 2. Healthcare Data Fixtures
+
+```typescript
+// apps/web/src/test/fixtures/patient.ts
+import type { Patient } from '@/types/patient';
+
+export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => ({
+  id: '1',
+  name: 'João Silva',
+  cpf: '***.***.***-12', // LGPD compliant masking
+  email: 'joao.silva@email.com',
+  phone: '+55 11 99999-9999',
+  birthDate: '1985-03-15',
+  gender: 'M',
+  address: {
+    street: 'Rua das Flores, 123',
+    city: 'São Paulo',
+    state: 'SP',
+    zipCode: '01234-567',
+  },
+  medicalInfo: {
+    conditions: ['Diabetes Tipo 2'],
+    allergies: ['Penicilina'],
+    medications: ['Metformina 500mg'],
+    emergencyContact: {
+      name: 'Maria Silva',
+      phone: '+55 11 88888-8888',
+      relationship: 'Esposa',
+    },
+  },
+  clinicId: 'clinic-123',
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-15T10:30:00Z',
+  ...overrides,
+});
+
+export const createMockPatients = (count: number = 5): Patient[] => {
+  return Array.from({ length: count }, (_, index) => 
+    createMockPatient({
+      id: `patient-${index + 1}`,
+      name: `Paciente ${index + 1}`,
+      cpf: `***.***.***-${String(index + 10).padStart(2, '0')}`,
+    })
+  );
+};
+```
+
+### 3. API Mocks with MSW
+
+```typescript
+// apps/web/src/test/mocks/api.ts
+import { rest } from 'msw';
+import { createMockPatients } from '../fixtures/patient';
+
+export const patientHandlers = [
+  // Get patients list
+  rest.get('/api/patients', (req, res, ctx) => {
+    const search = req.url.searchParams.get('search');
+    const patients = createMockPatients(10);
+    
+    const filtered = search 
+      ? patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+      : patients;
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: filtered,
+        total: filtered.length,
+        page: 1,
+        pageSize: 10,
+      })
+    );
+  }),
+
+  // Get single patient
+  rest.get('/api/patients/:id', (req, res, ctx) => {
+    const { id } = req.params;
+    const patient = createMockPatient({ id: id as string });
+    
+    return res(ctx.status(200), ctx.json({ data: patient }));
+  }),
+
+  // Create patient
+  rest.post('/api/patients', (req, res, ctx) => {
+    return res(
+      ctx.status(201),
+      ctx.json({
+        data: createMockPatient({ id: 'new-patient-id' }),
+        message: 'Paciente criado com sucesso',
+      })
+    );
+  }),
+];
+```
+
+## Troubleshooting
+
+### Common Issues
+
+- **Issue**: TanStack Router tests failing with "No router found"
+  **Solution**: Use `createMemoryRouter` and `RouterProvider` in test setup
+
+- **Issue**: Accessibility tests showing false positives
+  **Solution**: Configure jest-axe with healthcare-specific rules
+
+- **Issue**: E2E tests flaky due to data loading
+  **Solution**: Use proper `waitFor` and `expect.toBeVisible()` patterns
+
+- **Issue**: LGPD compliance failing in tests
+  **Solution**: Ensure all test data uses masked/anonymized values
+
+### Performance Tips
+
+```typescript
+// Optimize test performance
+describe.concurrent('Patient Components', () => {
+  test('renders patient card', async () => {
+    // Run tests in parallel when possible
+  });
+});
+
+// Use test.each for similar test cases
+test.each([
+  ['João Silva', 'valid'],
+  ['', 'invalid'],
+  ['Maria Santos', 'valid'],
+])('validates patient name: %s (%s)', (name, expected) => {
+  const result = validatePatientName(name);
+  expect(result.isValid).toBe(expected === 'valid');
+});
+```
+
+## Examples
+
+### Complete Patient Component Test
+```typescript
+// Complete example combining all patterns
+import { render, screen, fireEvent, waitFor } from '@/test/utils';
+import { PatientCard } from './PatientCard';
+import { createMockPatient } from '@/test/fixtures/patient';
+import { axe } from 'jest-axe';
+
+describe('PatientCard Integration', () => {
+  const mockPatient = createMockPatient();
+  
+  it('renders and handles all interactions', async () => {
+    const onEdit = vi.fn();
+    const onDelete = vi.fn();
+    
+    const { container } = render(
+      <PatientCard 
+        patient={mockPatient} 
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    );
+
+    // Accessibility check
+    expect(await axe(container)).toHaveNoViolations();
+
+    // Content verification
+    expect(screen.getByText('João Silva')).toBeInTheDocument();
+    expect(screen.getByText(/\*\*\*\.\*\*\*\.\*\*\*-12/)).toBeInTheDocument();
+
+    // Interaction testing
+    fireEvent.click(screen.getByRole('button', { name: /editar/i }));
+    expect(onEdit).toHaveBeenCalledWith(mockPatient.id);
+
+    // Confirmation dialog
+    fireEvent.click(screen.getByRole('button', { name: /excluir/i }));
+    const confirmButton = await screen.findByRole('button', { name: /confirmar/i });
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(onDelete).toHaveBeenCalledWith(mockPatient.id);
+    });
+  });
+});
+```
+
+## See Also
+
+- [Backend Architecture Testing](./backend-architecture-testing.md) - API integration patterns
+- [Database Security Testing](./database-security-testing.md) - Data validation
+- [Code Review & Audit](./code-review-auditfix.md) - Quality standards
+- [AGENTS.md](./AGENTS.md) - Testing orchestration guide

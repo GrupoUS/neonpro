@@ -1,7 +1,7 @@
 /**
  * Database Health Monitoring Middleware
  * T080 - Database Performance Tuning
- * 
+ *
  * Features:
  * - Real-time database health monitoring
  * - Healthcare-specific performance thresholds
@@ -12,8 +12,8 @@
  */
 
 import { Context, Next } from 'hono';
-import DatabasePerformanceService from '../services/database-performance';
 import ConnectionPoolManager from '../services/connection-pool-manager';
+import DatabasePerformanceService from '../services/database-performance';
 
 // Database health status
 export interface DatabaseHealthStatus {
@@ -79,9 +79,9 @@ export class DatabaseHealthMonitor {
   constructor() {
     this.performanceService = new DatabasePerformanceService();
     this.poolManager = new ConnectionPoolManager();
-    
+
     // Set up alert forwarding
-    this.poolManager.onAlert((poolAlert) => {
+    this.poolManager.onAlert(poolAlert => {
       const healthAlert: HealthAlert = {
         type: 'connection',
         severity: poolAlert.severity,
@@ -142,28 +142,40 @@ export class DatabaseHealthMonitor {
     let score = 100;
 
     // Check utilization
-    if (poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.critical) {
+    if (
+      poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.critical
+    ) {
       issues.push('Critical connection pool utilization');
       score -= 30;
-    } else if (poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.warning) {
+    } else if (
+      poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.warning
+    ) {
       issues.push('High connection pool utilization');
       score -= 15;
     }
 
     // Check wait times
-    if (poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.critical) {
+    if (
+      poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.critical
+    ) {
       issues.push('Critical connection wait times');
       score -= 25;
-    } else if (poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.warning) {
+    } else if (
+      poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.warning
+    ) {
       issues.push('High connection wait times');
       score -= 10;
     }
 
     // Check errors
-    if (poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.critical) {
+    if (
+      poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.critical
+    ) {
       issues.push('Critical connection error rate');
       score -= 20;
-    } else if (poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.warning) {
+    } else if (
+      poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.warning
+    ) {
       issues.push('Elevated connection errors');
       score -= 10;
     }
@@ -192,10 +204,16 @@ export class DatabaseHealthMonitor {
     let score = 100;
 
     // Check average response time
-    if (queryMetrics.averageResponseTime > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.generalQueries.critical) {
+    if (
+      queryMetrics.averageResponseTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.generalQueries.critical
+    ) {
       issues.push('Critical query response times');
       score -= 30;
-    } else if (queryMetrics.averageResponseTime > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.generalQueries.warning) {
+    } else if (
+      queryMetrics.averageResponseTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.generalQueries.warning
+    ) {
       issues.push('Slow query response times');
       score -= 15;
     }
@@ -204,7 +222,9 @@ export class DatabaseHealthMonitor {
     if (queryMetrics.errorRate > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.critical) {
       issues.push('Critical query error rate');
       score -= 25;
-    } else if (queryMetrics.errorRate > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.warning) {
+    } else if (
+      queryMetrics.errorRate > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.warning
+    ) {
       issues.push('Elevated query errors');
       score -= 10;
     }
@@ -292,16 +312,24 @@ export class DatabaseHealthMonitor {
     let score = 100;
 
     // Check patient query performance
-    if (complianceMetrics.avgPatientQueryTime > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.patientQueries.critical) {
+    if (
+      complianceMetrics.avgPatientQueryTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.patientQueries.critical
+    ) {
       issues.push('Critical patient data query performance');
       score -= 30;
-    } else if (complianceMetrics.avgPatientQueryTime > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.patientQueries.warning) {
+    } else if (
+      complianceMetrics.avgPatientQueryTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.patientQueries.warning
+    ) {
       issues.push('Slow patient data queries');
       score -= 15;
     }
 
     // Check LGPD compliance rate
-    const lgpdRate = (complianceMetrics.lgpdCompliantQueries / complianceMetrics.patientDataQueries) * 100;
+    const lgpdRate = complianceMetrics.patientDataQueries > 0
+      ? (complianceMetrics.lgpdCompliantQueries / complianceMetrics.patientDataQueries) * 100
+      : 100; // Default to 100% if no patient queries
     if (lgpdRate < HEALTHCARE_HEALTH_THRESHOLDS.compliance.lgpdQueries.critical) {
       issues.push('Critical LGPD compliance rate');
       score -= 35;
@@ -360,7 +388,9 @@ export class DatabaseHealthMonitor {
   /**
    * Get alert type for component
    */
-  private getAlertType(componentName: string): 'performance' | 'compliance' | 'connection' | 'query' {
+  private getAlertType(
+    componentName: string,
+  ): 'performance' | 'compliance' | 'connection' | 'query' {
     const typeMap: Record<string, 'performance' | 'compliance' | 'connection' | 'query'> = {
       connectionPool: 'connection',
       queryPerformance: 'query',
@@ -392,7 +422,7 @@ export class DatabaseHealthMonitor {
         warning: 'Healthcare compliance metrics below optimal levels',
       },
     };
-    
+
     return impactMap[componentName]?.[severity] || 'Healthcare operations may be affected';
   }
 
@@ -419,15 +449,18 @@ export class DatabaseHealthMonitor {
   /**
    * Determine overall status
    */
-  private determineOverallStatus(score: number, alerts: HealthAlert[]): 'healthy' | 'warning' | 'critical' {
+  private determineOverallStatus(
+    score: number,
+    alerts: HealthAlert[],
+  ): 'healthy' | 'warning' | 'critical' {
     const hasCriticalAlerts = alerts.some(alert => alert.severity === 'critical');
-    
+
     if (hasCriticalAlerts || score < 60) {
       return 'critical';
     } else if (score < 80 || alerts.length > 0) {
       return 'warning';
     }
-    
+
     return 'healthy';
   }
 
@@ -469,17 +502,17 @@ export const databaseHealthMonitor = new DatabaseHealthMonitor();
 export function createDatabaseHealthMiddleware() {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    
+
     // Add health monitor to context
     c.set('databaseHealthMonitor', databaseHealthMonitor);
-    
+
     await next();
-    
+
     // Record query metrics
     const duration = Date.now() - startTime;
     const endpoint = c.req.path;
     const method = c.req.method;
-    
+
     // Update performance metrics
     const performanceService = databaseHealthMonitor['performanceService'];
     performanceService.getQueryMonitor().recordQuery({
@@ -505,7 +538,7 @@ export function createDatabaseHealthDashboardMiddleware() {
         timestamp: new Date().toISOString(),
       });
     }
-    
+
     if (c.req.path === '/v1/database/health/history') {
       const history = databaseHealthMonitor.getHealthHistory();
       return c.json({
@@ -515,7 +548,7 @@ export function createDatabaseHealthDashboardMiddleware() {
         timestamp: new Date().toISOString(),
       });
     }
-    
+
     await next();
   };
 }
