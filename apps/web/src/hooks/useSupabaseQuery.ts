@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/lib/supabase/types/database';
+// import type { Database } from '@/lib/supabase/types/database';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -83,7 +83,7 @@ export function usePatients(options = {}) {
 }
 
 // Hook para queries de agendamentos
-export function useAppointments(options = {}) {
+export function useAppointments(options = {}): any {
   return useSupabaseQuery(
     ['appointments'],
     async () => {
@@ -107,9 +107,9 @@ export function useAppointments(options = {}) {
 }
 
 // Hook para agendamentos do dia com real-time
-export function useTodayAppointments(professionalId?: string) {
+export function useTodayAppointments(professionalId: string | undefined): any {
   return useSupabaseRealTimeQuery(
-    ['appointments', 'today', professionalId],
+    ['appointments', 'today', professionalId ?? 'all'],
     'appointments',
     async () => {
       const today = new Date().toISOString().split('T')[0];

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { ok, serverError } from '../utils/responses';
 import { prisma } from '../lib/prisma';
 import { dataProtection } from '../middleware/lgpd-middleware';
+import { ok, serverError } from '../utils/responses';
 
 import { requireAuth } from '../middleware/authn';
 
@@ -56,7 +56,11 @@ appointments.get('/', async c => {
     return ok(c, { items });
   } catch (error) {
     console.error('Error fetching appointments:', error);
-    return serverError(c, 'Failed to fetch appointments', error instanceof Error ? error : undefined);
+    return serverError(
+      c,
+      'Failed to fetch appointments',
+      error instanceof Error ? error : undefined,
+    );
   }
 });
 
@@ -97,13 +101,17 @@ appointments.get('/patient/:patientId', async c => {
     return ok(c, { items });
   } catch (error) {
     console.error('Error fetching patient appointments:', error);
-    return serverError(c, 'Failed to fetch patient appointments', error instanceof Error ? error : undefined);
+    return serverError(
+      c,
+      'Failed to fetch patient appointments',
+      error instanceof Error ? error : undefined,
+    );
   }
 });
 
-import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
-import { created, badRequest, notFound } from '../utils/responses';
+import { z } from 'zod';
+import { badRequest, created, notFound } from '../utils/responses';
 
 // Schemas
 const AppointmentCreateSchema = z.object({
@@ -121,17 +129,17 @@ const AppointmentUpdateSchema = AppointmentCreateSchema.partial().extend({
 
 // Conflict detection helper
 // moved to utils/appointments
-import { hasConflict } from '../utils/appointments'
+import { hasConflict } from '../utils/appointments';
 
 // Create appointment
 appointments.post('/', zValidator('json', AppointmentCreateSchema), async c => {
-  const data = c.req.valid('json')
+  const data = c.req.valid('json');
   try {
-    const startTime = new Date(data.startTime)
-    const endTime = new Date(data.endTime)
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
 
     if (endTime <= startTime) {
-      return badRequest(c, 'INVALID_TIME_RANGE', 'endTime must be after startTime')
+      return badRequest(c, 'INVALID_TIME_RANGE', 'endTime must be after startTime');
     }
 
     const conflict = await hasConflict({
@@ -139,9 +147,9 @@ appointments.post('/', zValidator('json', AppointmentCreateSchema), async c => {
       professionalId: data.professionalId,
       startTime,
       endTime,
-    })
+    });
     if (conflict) {
-      return badRequest(c, 'APPOINTMENT_CONFLICT', 'Time slot overlaps an existing appointment')
+      return badRequest(c, 'APPOINTMENT_CONFLICT', 'Time slot overlaps an existing appointment');
     }
 
     const appt = await prisma.appointment.create({
@@ -150,30 +158,34 @@ appointments.post('/', zValidator('json', AppointmentCreateSchema), async c => {
         startTime,
         endTime,
       },
-    })
+    });
 
-    return created(c, appt, `/appointments/${appt.id}`)
+    return created(c, appt, `/appointments/${appt.id}`);
   } catch (error) {
-    console.error('Error creating appointment:', error)
-    return serverError(c, 'Failed to create appointment', error instanceof Error ? error : undefined)
+    console.error('Error creating appointment:', error);
+    return serverError(
+      c,
+      'Failed to create appointment',
+      error instanceof Error ? error : undefined,
+    );
   }
-})
+});
 
 // Update appointment
 appointments.put('/:id', zValidator('json', AppointmentUpdateSchema), async c => {
-  const id = c.req.param('id')
-  const payload = c.req.valid('json')
+  const id = c.req.param('id');
+  const payload = c.req.valid('json');
   try {
-    const existing = await prisma.appointment.findUnique({ where: { id } })
+    const existing = await prisma.appointment.findUnique({ where: { id } });
     if (!existing) {
-      return notFound(c, 'Appointment not found')
+      return notFound(c, 'Appointment not found');
     }
 
-    const startTime = payload.startTime ? new Date(payload.startTime) : existing.startTime
-    const endTime = payload.endTime ? new Date(payload.endTime) : existing.endTime
+    const startTime = payload.startTime ? new Date(payload.startTime) : existing.startTime;
+    const endTime = payload.endTime ? new Date(payload.endTime) : existing.endTime;
 
     if (endTime <= startTime) {
-      return badRequest(c, 'INVALID_TIME_RANGE', 'endTime must be after startTime')
+      return badRequest(c, 'INVALID_TIME_RANGE', 'endTime must be after startTime');
     }
 
     const conflict = await hasConflict({
@@ -182,9 +194,9 @@ appointments.put('/:id', zValidator('json', AppointmentUpdateSchema), async c =>
       startTime,
       endTime,
       excludeId: id,
-    })
+    });
     if (conflict) {
-      return badRequest(c, 'APPOINTMENT_CONFLICT', 'Time slot overlaps an existing appointment')
+      return badRequest(c, 'APPOINTMENT_CONFLICT', 'Time slot overlaps an existing appointment');
     }
 
     const appt = await prisma.appointment.update({
@@ -194,13 +206,17 @@ appointments.put('/:id', zValidator('json', AppointmentUpdateSchema), async c =>
         startTime,
         endTime,
       },
-    })
+    });
 
-    return ok(c, appt)
+    return ok(c, appt);
   } catch (error) {
-    console.error('Error updating appointment:', error)
-    return serverError(c, 'Failed to update appointment', error instanceof Error ? error : undefined)
+    console.error('Error updating appointment:', error);
+    return serverError(
+      c,
+      'Failed to update appointment',
+      error instanceof Error ? error : undefined,
+    );
   }
-})
+});
 
 export default appointments;

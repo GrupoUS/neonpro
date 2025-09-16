@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { startChatStream } from '@/lib/ai-chat/streaming';
+import { describe, expect, it } from 'vitest';
 
 // This test exercises mock mode iterator behavior without hitting network
 

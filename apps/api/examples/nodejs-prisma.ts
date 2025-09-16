@@ -39,30 +39,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       timestamp: new Date().toISOString(),
       runtime: 'nodejs20.x',
       region: process.env.VERCEL_REGION || 'gru1',
-      
+
       // Node.js runtime capabilities
       features: {
         prismaORM: true,
         filesystem: true,
         nativeModules: true,
         memoryLimit: '1024MB',
-        maxDuration: '60s'
+        maxDuration: '60s',
       },
-      
+
       // Database connectivity check
       database: {
         connected: true,
         url: !!process.env.DATABASE_URL,
-        directUrl: !!process.env.DIRECT_URL
+        directUrl: !!process.env.DIRECT_URL,
       },
-      
+
       // Environment check
       environment: {
         nodeEnv: process.env.NODE_ENV || 'development',
         supabaseUrl: !!process.env.SUPABASE_URL,
         supabaseKey: !!process.env.SUPABASE_ANON_KEY,
-        jwtSecret: !!process.env.JWT_SECRET
-      }
+        jwtSecret: !!process.env.JWT_SECRET,
+      },
     };
 
     // Optionally test database connection
@@ -73,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       } catch (error) {
         // Log the full error server-side for troubleshooting
         console.error('Database connection test failed:', error);
-        
+
         healthCheck.database.connected = false;
         // Return sanitized error message to prevent information leakage
         healthCheck.database.error = 'database connection failed';
@@ -87,7 +87,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       status: 'error',
       message: 'Health check failed',
       error: error instanceof Error ? error.message : 'Unknown error',
-      runtime: 'nodejs20.x'
+      runtime: 'nodejs20.x',
     });
   }
 }

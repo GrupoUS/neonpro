@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // RED: no implementation yet; we assert that importing a guard throws until implemented
 

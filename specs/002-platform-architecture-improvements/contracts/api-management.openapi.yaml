@@ -1,0 +1,640 @@
+openapi: 3.1.0
+info:
+  title: NeonPro API Management & Contracts
+  version: 1.0.0
+  description: |
+    API contract management system for NeonPro healthcare platform.
+    Handles API versioning, schema validation, rate limiting, and 
+    compliance monitoring with LGPD and ANVISA requirements.
+  contact:
+    name: NeonPro Development Team
+    email: dev@neonpro.health
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.neonpro.health/v1/contracts
+    description: Production API management endpoint
+  - url: https://staging-api.neonpro.health/v1/contracts
+    description: Staging API management endpoint
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+paths:
+  /schemas:
+    get:
+      summary: List all API schemas
+      description: |
+        Retrieve all registered API schemas with version information.
+        Includes schema validation rules and compliance metadata.
+      operationId: listSchemas
+      tags:
+        - Schema Management
+      parameters:
+        - name: version
+          in: query
+          description: Filter by schema version
+          schema:
+            type: string
+            pattern: '^v\d+(\.\d+)*$'
+            example: "v1.2.0"
+        - name: service
+          in: query
+          description: Filter by service name
+          schema:
+            type: string
+            example: "patient-api"
+        - name: compliance
+          in: query
+          description: Filter by compliance requirements
+          schema:
+            type: string
+            enum: ["lgpd", "anvisa", "cfm", "all"]
+      responses:
+        '200':
+          description: List of API schemas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schemas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/APISchema'
+                  total:
+                    type: integer
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      summary: Register new API schema
+      description: |
+        Register a new API schema with validation rules and compliance metadata.
+        Automatically validates against healthcare compliance requirements.
+      operationId: registerSchema
+      tags:
+        - Schema Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRegistrationRequest'
+      responses:
+        '201':
+          description: Schema successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaRegistrationResponse'
+        '400':
+          description: Invalid schema format
+        '409':
+          description: Schema version already exists
+
+  /schemas/{schemaId}:
+    get:
+      summary: Get specific API schema
+      description: Retrieve detailed information about a specific API schema
+      operationId: getSchema
+      tags:
+        - Schema Management
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          description: Unique schema identifier
+          schema:
+            type: string
+            example: "patient-api-v1.2.0"
+      responses:
+        '200':
+          description: Schema details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APISchemaDetail'
+        '404':
+          description: Schema not found
+
+    put:
+      summary: Update API schema
+      description: |
+        Update an existing API schema. Major version changes require
+        backward compatibility validation.
+      operationId: updateSchema
+      tags:
+        - Schema Management
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaUpdateRequest'
+      responses:
+        '200':
+          description: Schema updated successfully
+        '400':
+          description: Invalid schema update
+        '409':
+          description: Breaking changes detected
+
+  /validation/request:
+    post:
+      summary: Validate API request against schema
+      description: |
+        Validate an API request payload against registered schema.
+        Includes LGPD compliance validation for healthcare data.
+      operationId: validateRequest
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+
+  /compliance/check:
+    post:
+      summary: Check compliance requirements
+      description: |
+        Validate API operation against healthcare compliance requirements
+        including LGPD, ANVISA, and CFM regulations.
+      operationId: checkCompliance
+      tags:
+        - Compliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceCheckRequest'
+      responses:
+        '200':
+          description: Compliance check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceCheckResponse'
+
+  /rate-limits:
+    get:
+      summary: Get rate limiting configuration
+      description: Retrieve current rate limiting rules and quotas
+      operationId: getRateLimits
+      tags:
+        - Rate Limiting
+      responses:
+        '200':
+          description: Rate limiting configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitConfig'
+
+    post:
+      summary: Configure rate limits
+      description: |
+        Configure rate limiting rules for API endpoints.
+        Includes healthcare-specific protections for sensitive operations.
+      operationId: configureRateLimits
+      tags:
+        - Rate Limiting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateLimitConfigRequest'
+      responses:
+        '200':
+          description: Rate limits configured successfully
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    APISchema:
+      type: object
+      required:
+        - id
+        - name
+        - version
+        - service
+        - createdAt
+        - status
+      properties:
+        id:
+          type: string
+          description: Unique schema identifier
+          example: "patient-api-v1.2.0"
+        name:
+          type: string
+          description: Human-readable schema name
+          example: "Patient Management API"
+        version:
+          type: string
+          description: Semantic version
+          pattern: '^v\d+\.\d+\.\d+$'
+          example: "v1.2.0"
+        service:
+          type: string
+          description: Service name
+          example: "patient-api"
+        description:
+          type: string
+          description: Schema description
+        status:
+          type: string
+          enum: ["draft", "active", "deprecated", "retired"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        compliance:
+          $ref: '#/components/schemas/ComplianceMetadata'
+        endpoints:
+          type: integer
+          description: Number of endpoints defined
+        validationRules:
+          type: integer
+          description: Number of validation rules
+
+    APISchemaDetail:
+      allOf:
+        - $ref: '#/components/schemas/APISchema'
+        - type: object
+          properties:
+            openApiSpec:
+              type: object
+              description: Full OpenAPI 3.1 specification
+            validationRules:
+              type: array
+              items:
+                $ref: '#/components/schemas/ValidationRule'
+            complianceChecks:
+              type: array
+              items:
+                $ref: '#/components/schemas/ComplianceCheck'
+            usageMetrics:
+              $ref: '#/components/schemas/SchemaUsageMetrics'
+
+    SchemaRegistrationRequest:
+      type: object
+      required:
+        - name
+        - version
+        - service
+        - openApiSpec
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        version:
+          type: string
+          pattern: '^v\d+\.\d+\.\d+$'
+        service:
+          type: string
+          maxLength: 50
+        description:
+          type: string
+          maxLength: 500
+        openApiSpec:
+          type: object
+          description: OpenAPI 3.1 specification
+        compliance:
+          $ref: '#/components/schemas/ComplianceRequirements'
+        validationRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationRuleDefinition'
+
+    SchemaRegistrationResponse:
+      type: object
+      required:
+        - id
+        - status
+        - validationResults
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: ["registered", "validation_failed"]
+        validationResults:
+          $ref: '#/components/schemas/SchemaValidationResults'
+        complianceResults:
+          $ref: '#/components/schemas/ComplianceValidationResults'
+
+    ValidationRequest:
+      type: object
+      required:
+        - schemaId
+        - operation
+        - payload
+      properties:
+        schemaId:
+          type: string
+          description: Schema to validate against
+        operation:
+          type: string
+          description: API operation (e.g., "POST /patients")
+        payload:
+          type: object
+          description: Request payload to validate
+        headers:
+          type: object
+          description: Request headers
+          additionalProperties:
+            type: string
+        queryParams:
+          type: object
+          description: Query parameters
+          additionalProperties:
+            type: string
+
+    ValidationResponse:
+      type: object
+      required:
+        - valid
+        - timestamp
+      properties:
+        valid:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationWarning'
+        complianceStatus:
+          $ref: '#/components/schemas/ComplianceStatus'
+
+    ValidationError:
+      type: object
+      required:
+        - field
+        - message
+        - code
+      properties:
+        field:
+          type: string
+          description: Field path that failed validation
+        message:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Error code for programmatic handling
+        value:
+          description: Invalid value (redacted if sensitive)
+        constraint:
+          type: string
+          description: Validation constraint that was violated
+
+    ComplianceCheckRequest:
+      type: object
+      required:
+        - operation
+        - dataTypes
+        - purpose
+      properties:
+        operation:
+          type: string
+          description: API operation being checked
+        dataTypes:
+          type: array
+          items:
+            type: string
+            enum: 
+              - "personal_data"
+              - "sensitive_data"
+              - "health_data"
+              - "biometric_data"
+              - "genetic_data"
+          description: Types of data involved
+        purpose:
+          type: string
+          enum:
+            - "treatment"
+            - "prevention"
+            - "research"
+            - "administration"
+            - "quality_improvement"
+          description: Purpose of data processing
+        legalBasis:
+          type: string
+          enum:
+            - "consent"
+            - "contract"
+            - "legal_obligation"
+            - "vital_interests"
+            - "public_interest"
+            - "legitimate_interests"
+        dataSubject:
+          $ref: '#/components/schemas/DataSubjectInfo'
+
+    ComplianceCheckResponse:
+      type: object
+      required:
+        - compliant
+        - requirements
+        - timestamp
+      properties:
+        compliant:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+        requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComplianceRequirement'
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComplianceViolation'
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    RateLimitConfig:
+      type: object
+      properties:
+        global:
+          $ref: '#/components/schemas/RateLimitRule'
+        perEndpoint:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/RateLimitRule'
+        perUser:
+          $ref: '#/components/schemas/RateLimitRule'
+        healthcareProtections:
+          $ref: '#/components/schemas/HealthcareRateLimits'
+
+    RateLimitRule:
+      type: object
+      required:
+        - requests
+        - window
+      properties:
+        requests:
+          type: integer
+          description: Maximum requests allowed
+          minimum: 1
+        window:
+          type: string
+          description: Time window
+          enum: ["1s", "1m", "1h", "1d"]
+        burst:
+          type: integer
+          description: Burst allowance
+          minimum: 0
+
+    ComplianceMetadata:
+      type: object
+      properties:
+        lgpd:
+          $ref: '#/components/schemas/LGPDCompliance'
+        anvisa:
+          $ref: '#/components/schemas/ANVISACompliance'
+        cfm:
+          $ref: '#/components/schemas/CFMCompliance'
+
+    LGPDCompliance:
+      type: object
+      properties:
+        dataProcessingBasis:
+          type: array
+          items:
+            type: string
+            enum: 
+              - "consent"
+              - "contract"
+              - "legal_obligation"
+              - "vital_interests"
+              - "public_interest"
+              - "legitimate_interests"
+        dataRetentionPeriod:
+          type: string
+          description: Maximum data retention period
+        automaticDeletion:
+          type: boolean
+        consentRequired:
+          type: boolean
+        dataSubjectRights:
+          type: array
+          items:
+            type: string
+            enum:
+              - "access"
+              - "rectification"
+              - "erasure"
+              - "portability"
+              - "restriction"
+              - "objection"
+
+    ANVISACompliance:
+      type: object
+      properties:
+        deviceClass:
+          type: string
+          enum: ["class_i", "class_ii", "class_iii", "class_iv"]
+        regulatoryStatus:
+          type: string
+          enum: ["registered", "pending", "exempt"]
+        riskLevel:
+          type: string
+          enum: ["low", "medium", "high"]
+        technicalRequirements:
+          type: array
+          items:
+            type: string
+
+    CFMCompliance:
+      type: object
+      properties:
+        professionalScope:
+          type: array
+          items:
+            type: string
+            enum: ["physician", "nurse", "therapist", "technician"]
+        ethicalGuidelines:
+          type: array
+          items:
+            type: string
+        prescriptionRequirements:
+          type: boolean
+        auditTrailRequired:
+          type: boolean
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+
+tags:
+  - name: Schema Management
+    description: API schema registration and management
+  - name: Validation
+    description: Request/response validation
+  - name: Compliance
+    description: Healthcare compliance checking
+  - name: Rate Limiting
+    description: API rate limiting and quotas
+
+x-healthcare-compliance:
+  lgpd:
+    dataRetention: "Schemas: 7 years, Validation logs: 90 days"
+    legalBasis: "legitimate_interests"
+    automaticDeletion: true
+  anvisa:
+    deviceClassification: "Software as Medical Device (SaMD) Class II"
+    regulatoryCompliance: "RDC 185/2001"
+  cfm:
+    professionalRegulation: "Resolution CFM 1821/2007"
+    ethicalCompliance: "Medical ethics code compliance"

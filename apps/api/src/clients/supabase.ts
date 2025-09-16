@@ -1,10 +1,10 @@
 // Re-export central Supabase clients and helpers for services
 export {
-  createServerClient,
   createAdminClient,
+  createServerClient,
   createUserClient,
-  supabaseClient,
-  supabaseAdmin,
-  RLSQueryBuilder,
   healthcareRLS,
-} from '../lib/supabase/client'
+  RLSQueryBuilder,
+  supabaseAdmin,
+  supabaseClient,
+} from '../lib/supabase/client';

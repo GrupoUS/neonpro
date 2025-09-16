@@ -17,14 +17,14 @@ export default async function handler(request: Request) {
     region: process.env.VERCEL_REGION || 'auto',
     path: pathname,
     method: request.method,
-    
+
     // Edge runtime capabilities
     features: {
       streaming: true,
       globalDistribution: true,
       coldStart: process.env.EDGE_COLD_START || '<100ms',
-      memoryLimit: process.env.EDGE_MEMORY_LIMIT || '128MB'
-    }
+      memoryLimit: process.env.EDGE_MEMORY_LIMIT || '128MB',
+    },
   };
 
   return new Response(JSON.stringify(healthData, null, 2), {
@@ -34,7 +34,7 @@ export default async function handler(request: Request) {
       'Cache-Control': 'public, max-age=60, s-maxage=300',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
   });
 }

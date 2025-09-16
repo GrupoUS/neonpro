@@ -3,21 +3,13 @@
  * Handles Stripe subscription lifecycle events
  */
 
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
 import { supabase } from '@neonpro/database';
+import { Hono } from 'hono';
 
 const app = new Hono();
 
-// Enable CORS for Stripe webhooks
-app.use('*', cors({
-  origin: ['https://api.stripe.com'],
-  allowMethods: ['POST'],
-  allowHeaders: ['Content-Type', 'Stripe-Signature'],
-}));
-
 // Stripe webhook endpoint
-app.post('/stripe/webhook', async (c) => {
+app.post('/stripe/webhook', async c => {
   try {
     const body = await c.req.text();
     const signature = c.req.header('stripe-signature');
@@ -46,7 +38,6 @@ app.post('/stripe/webhook', async (c) => {
       console.error('Webhook processing failed:', result.message);
       return c.json({ error: result.message }, 500);
     }
-
   } catch (error) {
     console.error('Webhook error:', error);
     return c.json({ error: 'Internal server error' }, 500);
@@ -61,22 +52,22 @@ async function handleStripeWebhook(event: any): Promise<{ success: boolean; mess
     switch (event.type) {
       case 'customer.subscription.created':
         return await handleSubscriptionCreated(event.data.object);
-      
+
       case 'customer.subscription.updated':
         return await handleSubscriptionUpdated(event.data.object);
-      
+
       case 'customer.subscription.deleted':
         return await handleSubscriptionDeleted(event.data.object);
-      
+
       case 'invoice.payment_succeeded':
         return await handlePaymentSucceeded(event.data.object);
-      
+
       case 'invoice.payment_failed':
         return await handlePaymentFailed(event.data.object);
-      
+
       case 'customer.subscription.trial_will_end':
         return await handleTrialWillEnd(event.data.object);
-      
+
       default:
         console.log(`Unhandled webhook event type: ${event.type}`);
         return { success: true, message: `Ignored event type: ${event.type}` };
@@ -90,7 +81,9 @@ async function handleStripeWebhook(event: any): Promise<{ success: boolean; mess
 /**
  * Handle subscription created event
  */
-async function handleSubscriptionCreated(subscription: any): Promise<{ success: boolean; message: string }> {
+async function handleSubscriptionCreated(
+  subscription: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = subscription.customer;
   const subscriptionId = subscription.id;
   const status = subscription.status;
@@ -116,9 +109,9 @@ async function handleSubscriptionCreated(subscription: any): Promise<{ success: 
       current_period_end: currentPeriodEnd,
       clinic_id: user.id, // Assuming user ID is clinic ID
       amount: 9900, // R$ 99.00 in cents
-      currency: 'BRL'
+      currency: 'BRL',
     }, {
-      onConflict: 'subscription_code'
+      onConflict: 'subscription_code',
     });
 
   // Update user profile
@@ -126,7 +119,7 @@ async function handleSubscriptionCreated(subscription: any): Promise<{ success: 
     .from('profiles')
     .update({
       subscription_plan: planId,
-      subscription_status: status === 'active' ? 'pro' : status === 'trialing' ? 'trial' : 'free'
+      subscription_status: status === 'active' ? 'pro' : status === 'trialing' ? 'trial' : 'free',
     })
     .eq('id', user.id);
 
@@ -142,7 +135,9 @@ async function handleSubscriptionCreated(subscription: any): Promise<{ success: 
 /**
  * Handle subscription updated event
  */
-async function handleSubscriptionUpdated(subscription: any): Promise<{ success: boolean; message: string }> {
+async function handleSubscriptionUpdated(
+  subscription: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = subscription.customer;
   const subscriptionId = subscription.id;
   const status = subscription.status;
@@ -162,7 +157,7 @@ async function handleSubscriptionUpdated(subscription: any): Promise<{ success: 
       status,
       current_period_start: currentPeriodStart,
       current_period_end: currentPeriodEnd,
-      plan_id: planId
+      plan_id: planId,
     })
     .eq('subscription_code', subscriptionId);
 
@@ -183,7 +178,7 @@ async function handleSubscriptionUpdated(subscription: any): Promise<{ success: 
     .from('profiles')
     .update({
       subscription_plan: planId,
-      subscription_status: userStatus
+      subscription_status: userStatus,
     })
     .eq('id', user.id);
 
@@ -199,7 +194,9 @@ async function handleSubscriptionUpdated(subscription: any): Promise<{ success: 
 /**
  * Handle subscription deleted event
  */
-async function handleSubscriptionDeleted(subscription: any): Promise<{ success: boolean; message: string }> {
+async function handleSubscriptionDeleted(
+  subscription: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = subscription.customer;
   const subscriptionId = subscription.id;
 
@@ -219,7 +216,7 @@ async function handleSubscriptionDeleted(subscription: any): Promise<{ success: 
     .from('profiles')
     .update({
       subscription_plan: null,
-      subscription_status: 'cancelled'
+      subscription_status: 'cancelled',
     })
     .eq('id', user.id);
 
@@ -235,7 +232,9 @@ async function handleSubscriptionDeleted(subscription: any): Promise<{ success: 
 /**
  * Handle payment succeeded event
  */
-async function handlePaymentSucceeded(invoice: any): Promise<{ success: boolean; message: string }> {
+async function handlePaymentSucceeded(
+  invoice: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = invoice.customer;
   const subscriptionId = invoice.subscription;
 
@@ -297,7 +296,9 @@ async function handlePaymentFailed(invoice: any): Promise<{ success: boolean; me
 /**
  * Handle trial will end event
  */
-async function handleTrialWillEnd(subscription: any): Promise<{ success: boolean; message: string }> {
+async function handleTrialWillEnd(
+  subscription: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = subscription.customer;
   const trialEnd = new Date(subscription.trial_end * 1000);
 
@@ -324,7 +325,9 @@ async function handleTrialWillEnd(subscription: any): Promise<{ success: boolean
 /**
  * Find user by Stripe customer ID
  */
-async function findUserByStripeCustomer(customerId: string): Promise<{ id: string; email: string } | null> {
+async function findUserByStripeCustomer(
+  customerId: string,
+): Promise<{ id: string; email: string } | null> {
   try {
     // Try to find by customer ID in subscriptions table
     const { data: subscription } = await supabase
@@ -347,7 +350,7 @@ async function findUserByStripeCustomer(customerId: string): Promise<{ id: strin
 
     // If not found in subscriptions, try to find by email match
     // This would require additional logic to match Stripe customer email with user email
-    
+
     return null;
   } catch (error) {
     console.error('Error finding user by Stripe customer:', error);

@@ -1,12 +1,12 @@
 /**
  * OpenAPI Configuration and Documentation Setup
- * 
+ *
  * This module configures the OpenAPI documentation generator for the NeonPro Healthcare API,
  * providing automatic Swagger UI generation and API schema validation.
  */
 
-import { OpenAPIHono } from '@hono/zod-openapi'
-import type { Environment } from '../types/environment'
+import { OpenAPIHono } from '@hono/zod-openapi';
+import type { Environment } from '../types/environment';
 
 // Security schemes
 const securitySchemes = {
@@ -14,9 +14,9 @@ const securitySchemes = {
     type: 'http' as const,
     scheme: 'bearer',
     bearerFormat: 'JWT',
-    description: 'JWT token for authenticated access'
-  }
-}
+    description: 'JWT token for authenticated access',
+  },
+};
 
 // OpenAPI specification
 export const openAPISpec = {
@@ -66,50 +66,50 @@ For API support, contact: api-support@neonpro.health
     contact: {
       name: 'NeonPro API Support',
       email: 'api-support@neonpro.health',
-      url: 'https://docs.neonpro.health'
+      url: 'https://docs.neonpro.health',
     },
     license: {
       name: 'Proprietary',
-      identifier: 'LicenseRef-NeonPro-Healthcare'
-    }
+      identifier: 'LicenseRef-NeonPro-Healthcare',
+    },
   },
   servers: [
     {
       url: 'https://api.neonpro.health',
-      description: 'Production server'
+      description: 'Production server',
     },
     {
       url: 'https://api-staging.neonpro.health',
-      description: 'Staging server'
+      description: 'Staging server',
     },
     {
       url: 'http://localhost:3000',
-      description: 'Development server'
-    }
+      description: 'Development server',
+    },
   ],
   tags: [
     {
       name: 'System',
-      description: 'System health and information endpoints'
+      description: 'System health and information endpoints',
     },
     {
       name: 'Authentication',
-      description: 'Authentication and authorization endpoints'
+      description: 'Authentication and authorization endpoints',
     },
     {
       name: 'Patients',
-      description: 'Patient management (LGPD compliant)'
+      description: 'Patient management (LGPD compliant)',
     },
     {
       name: 'Appointments',
-      description: 'Appointment scheduling and management'
-    }
+      description: 'Appointment scheduling and management',
+    },
   ],
   components: {
     securitySchemes,
-    schemas: {}
-  }
-}
+    schemas: {},
+  },
+};
 
 /**
  * Create OpenAPI-enabled Hono app instance
@@ -123,14 +123,14 @@ export function createOpenAPIApp() {
             error: 'Validation failed',
             details: result.error.flatten(),
             code: 'VALIDATION_ERROR',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           },
-          400
+          400,
         );
       }
       // Return undefined for successful validation
       return undefined;
-    }
+    },
   });
 }
 
@@ -144,14 +144,14 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
     components: {
       ...openAPISpec.components,
       securitySchemes,
-      schemas: {} // Will be populated automatically by Hono OpenAPI
-    }
-  }
-  
-  app.doc('/openapi.json', finalSpec)
+      schemas: {}, // Will be populated automatically by Hono OpenAPI
+    },
+  };
+
+  app.doc('/openapi.json', finalSpec);
 
   // Swagger UI endpoint
-  app.get('/docs', (c) => {
+  app.get('/docs', c => {
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -212,26 +212,26 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
     </script>
   </body>
 </html>
-    `
-    return c.html(html)
-  })
+    `;
+    return c.html(html);
+  });
 
   // API documentation redirect
-  app.get('/documentation', (c) => {
-    return c.redirect('/docs')
-  })
+  app.get('/documentation', c => {
+    return c.redirect('/docs');
+  });
 
   // Health check for documentation
-  app.get('/docs/health', (c) => {
+  app.get('/docs/health', c => {
     return c.json({
       status: 'ok',
       documentation: 'available',
       endpoints: {
         swagger_ui: '/docs',
         openapi_json: '/openapi.json',
-        documentation_redirect: '/documentation'
+        documentation_redirect: '/documentation',
       },
-      timestamp: new Date().toISOString()
-    })
-  })
+      timestamp: new Date().toISOString(),
+    });
+  });
 }

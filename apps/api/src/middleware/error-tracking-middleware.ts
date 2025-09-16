@@ -40,7 +40,7 @@ export function errorTrackingMiddleware() {
           errorTracker.captureMessage(
             `Client error: ${error.status} - ${error.message}`,
             'warning',
-            context
+            context,
           );
         }
 
@@ -53,7 +53,7 @@ export function errorTrackingMiddleware() {
               requestId: context.requestId,
             },
           },
-          { status: error.status }
+          { status: error.status },
         );
       }
 
@@ -74,14 +74,14 @@ export function errorTrackingMiddleware() {
       return c.json(
         {
           error: {
-            message: process.env.NODE_ENV === 'production' 
-              ? 'Internal server error' 
+            message: process.env.NODE_ENV === 'production'
+              ? 'Internal server error'
               : (error as Error).message,
             status: 500,
             requestId: context.requestId,
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
   };
@@ -104,7 +104,7 @@ export function requestContextMiddleware() {
         endpoint: context.endpoint,
         userAgent: context.userAgent,
         ip: context.ip,
-      }
+      },
     );
 
     try {
@@ -118,9 +118,8 @@ export function requestContextMiddleware() {
           status: c.res.status,
           method: context.method,
           endpoint: context.endpoint,
-        }
+        },
       );
-
     } catch (error) {
       // Add breadcrumb for error
       errorTracker.addBreadcrumb(
@@ -130,7 +129,7 @@ export function requestContextMiddleware() {
           error: (error as Error).message,
           method: context.method,
           endpoint: context.endpoint,
-        }
+        },
       );
 
       throw error;
@@ -165,7 +164,7 @@ export function performanceTrackingMiddleware() {
               threshold: 5000,
               status,
             },
-          }
+          },
         );
       }
 
@@ -181,10 +180,9 @@ export function performanceTrackingMiddleware() {
               threshold: 30000,
               status,
             },
-          }
+          },
         );
       }
-
     } catch (error) {
       throw error;
     }
@@ -200,12 +198,11 @@ export function healthcareAuditTrackingMiddleware() {
     const context = errorTracker.extractContextFromHono(c);
 
     // Check if this is a healthcare-related endpoint
-    const isHealthcareEndpoint = 
-      context.endpoint.includes('/patients') ||
-      context.endpoint.includes('/appointments') ||
-      context.endpoint.includes('/medical-records') ||
-      context.patientId ||
-      context.clinicId;
+    const isHealthcareEndpoint = context.endpoint.includes('/patients')
+      || context.endpoint.includes('/appointments')
+      || context.endpoint.includes('/medical-records')
+      || context.patientId
+      || context.clinicId;
 
     if (isHealthcareEndpoint) {
       // Add healthcare audit breadcrumb
@@ -218,7 +215,7 @@ export function healthcareAuditTrackingMiddleware() {
           patientId: context.patientId ? '[PATIENT_ID]' : undefined, // Redacted for privacy
           clinicId: context.clinicId,
           userId: context.userId,
-        }
+        },
       );
 
       // Track healthcare operations (for audit purposes)
@@ -233,7 +230,7 @@ export function healthcareAuditTrackingMiddleware() {
               hasPatientData: !!context.patientId,
               hasClinicData: !!context.clinicId,
             },
-          }
+          },
         );
       }
     }
@@ -282,7 +279,7 @@ export function securityEventTrackingMiddleware() {
                 userAgent: userAgent.replace(pattern, '[REDACTED]'),
               },
             },
-          }
+          },
         );
 
         // Add security breadcrumb
@@ -293,7 +290,7 @@ export function securityEventTrackingMiddleware() {
             threatType: name,
             endpoint: context.endpoint,
             method: context.method,
-          }
+          },
         );
 
         break;
@@ -312,7 +309,7 @@ export function securityEventTrackingMiddleware() {
             ip: context.ip,
             userAgent: context.userAgent,
           },
-        }
+        },
       );
     }
 
@@ -327,7 +324,7 @@ export function securityEventTrackingMiddleware() {
 export function formatErrorResponse(
   error: Error | HTTPException,
   requestId: string,
-  isProduction: boolean = false
+  isProduction: boolean = false,
 ) {
   if (error instanceof HTTPException) {
     return {

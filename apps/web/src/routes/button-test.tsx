@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { UniversalButton } from '../components/ui/universal-button';
+import { AdvancedButton } from '../components/ui/advanced-button';
 
 export const Route = createFileRoute('/button-test')({
   component: ButtonTestPage,
@@ -11,40 +11,40 @@ function ButtonTestPage() {
       <div className='text-center space-y-4'>
         <h1 className='text-4xl font-bold'>Button Test (Updated)</h1>
         <p className='text-lg text-muted-foreground'>
-          Teste usando UniversalButton que funciona perfeitamente
+          Teste usando AdvancedButton que funciona perfeitamente
         </p>
       </div>
 
-      {/* Teste 1: UniversalButton com hover border */}
+      {/* Teste 1: AdvancedButton com hover border */}
       <section className='space-y-4'>
-        <h2 className='text-2xl font-semibold'>Teste 1: UniversalButton com Hover Border</h2>
+        <h2 className='text-2xl font-semibold'>Teste 1: AdvancedButton com Hover Border</h2>
         <div className='flex flex-wrap gap-4 justify-center'>
-          <UniversalButton
+          <AdvancedButton
             variant='default'
             enableHoverBorder={true}
             hoverBorderDuration={2}
             hoverClockwise={true}
           >
             Hover Border (Clockwise)
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton
+          <AdvancedButton
             variant='secondary'
             enableHoverBorder={true}
             hoverBorderDuration={1}
             hoverClockwise={false}
           >
             Hover Border (Counter)
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton
+          <AdvancedButton
             variant='gradient-neon'
             enableShineBorder={true}
             shineDuration={3}
             shineColor='#AC9469'
           >
             NeonPro Shine
-          </UniversalButton>
+          </AdvancedButton>
         </div>
       </section>
 
@@ -52,17 +52,17 @@ function ButtonTestPage() {
       <section className='space-y-4'>
         <h2 className='text-2xl font-semibold'>Teste 2: Gradient Effects</h2>
         <div className='flex flex-wrap gap-4 justify-center'>
-          <UniversalButton variant='gradient-primary' effect='hover'>
+          <AdvancedButton variant='gradient-primary' effect='hover'>
             Gradient Primary
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton variant='gradient-gold' effect='bounce'>
+          <AdvancedButton variant='gradient-gold' effect='bounce'>
             Gradient Gold
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton variant='gradient-neon' effect='hover'>
+          <AdvancedButton variant='gradient-neon' effect='hover'>
             NeonPro Gradient
-          </UniversalButton>
+          </AdvancedButton>
         </div>
       </section>
 
@@ -70,17 +70,17 @@ function ButtonTestPage() {
       <section className='space-y-4'>
         <h2 className='text-2xl font-semibold'>Teste 3: Neumorph Effects</h2>
         <div className='flex flex-wrap gap-4 justify-center'>
-          <UniversalButton variant='neumorph' effect='neumorph'>
+          <AdvancedButton variant='neumorph' effect='neumorph'>
             Neumorph Default
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton variant='neumorph-primary' effect='neumorph'>
+          <AdvancedButton variant='neumorph-primary' effect='neumorph'>
             Neumorph Primary
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton variant='neumorph-gold' effect='neumorph'>
+          <AdvancedButton variant='neumorph-gold' effect='neumorph'>
             Neumorph Gold
-          </UniversalButton>
+          </AdvancedButton>
         </div>
       </section>
 
@@ -88,7 +88,7 @@ function ButtonTestPage() {
       <section className='space-y-4'>
         <h2 className='text-2xl font-semibold'>Teste 4: Combinações Avançadas</h2>
         <div className='flex flex-wrap gap-4 justify-center'>
-          <UniversalButton
+          <AdvancedButton
             variant='gradient-neon'
             enableShineBorder={true}
             enableHoverBorder={true}
@@ -96,16 +96,16 @@ function ButtonTestPage() {
             size='lg'
           >
             ALL EFFECTS! 🎉
-          </UniversalButton>
+          </AdvancedButton>
 
-          <UniversalButton
+          <AdvancedButton
             variant='neumorph'
             enableHoverBorder={true}
             effect='neumorph'
             size='lg'
           >
             Neumorph + Border
-          </UniversalButton>
+          </AdvancedButton>
         </div>
       </section>
     </div>

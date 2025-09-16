@@ -1,6 +1,6 @@
 /**
  * Environment type definitions for NeonPro API
- * 
+ *
  * This module defines TypeScript types for environment variables and context
  * used throughout the Hono application.
  */
@@ -16,19 +16,19 @@ export interface Environment {
     JWT_SECRET?: string;
     CORS_ORIGIN?: string;
     LOG_LEVEL?: string;
-    
+
     // Error tracking
     ERROR_TRACKING_PROVIDERS?: string;
     SENTRY_DSN?: string;
     ROLLBAR_ACCESS_TOKEN?: string;
     LOGSNAG_API_TOKEN?: string;
     CUSTOM_ERROR_WEBHOOK_URL?: string;
-    
-    // Performance monitoring  
+
+    // Performance monitoring
     ENABLE_PERFORMANCE_MONITORING?: string;
     PERFORMANCE_SAMPLE_RATE?: string;
   };
-  
+
   Variables: {
     requestId?: string;
     startTime?: number;

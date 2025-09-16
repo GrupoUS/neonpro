@@ -1,6 +1,6 @@
 import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
 import { queryClient } from '@/lib/query-client';
-import { appointmentDetailsQueryOptions, appointmentsQueryOptions } from '@/queries/appointments';
+import { appointmentDetailsQueryOptions } from '@/queries/appointments';
 import { patientDetailsQueryOptions, patientsQueryOptions } from '@/queries/patients';
 import type { Appointment, Patient } from '@neonpro/types';
 import React, { useEffect } from 'react';

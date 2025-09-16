@@ -5,3 +5,6 @@ export const aiConfig = {
   ABUSE_Q_60S: Number(process.env.ABUSE_Q_60S ?? 12),
   ABUSE_M_10M: Number(process.env.ABUSE_M_10M ?? 5),
 } as const;
+
+export const AI_PROVIDER = process.env.AI_PROVIDER ?? 'mock';
+export const OPENAI_API_KEY = process.env.OPENAI_API_KEY ?? '';

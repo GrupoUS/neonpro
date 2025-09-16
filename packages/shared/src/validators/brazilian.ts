@@ -1,0 +1,529 @@
+/**
+ * Brazilian Validation Schemas (T037)
+ * Centralized validation utilities for Brazilian healthcare
+ *
+ * Features:
+ * - CPF, CNPJ, phone, CEP validation with proper algorithms
+ * - Healthcare-specific validations (CRM, ANVISA codes, SUS)
+ * - Error messages in Portuguese
+ * - Integration with existing data models
+ * - Comprehensive address and patient data validation
+ */
+
+// Brazilian states
+export const BRAZILIAN_STATES = [
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+];
+
+// Healthcare specialties
+export const HEALTHCARE_SPECIALTIES = [
+  'Clínica Médica',
+  'Cardiologia',
+  'Dermatologia',
+  'Endocrinologia',
+  'Gastroenterologia',
+  'Ginecologia',
+  'Neurologia',
+  'Oftalmologia',
+  'Ortopedia',
+  'Pediatria',
+  'Psiquiatria',
+  'Urologia',
+  'Anestesiologia',
+  'Cirurgia Geral',
+  'Medicina Estética',
+];
+
+// Validation error interface
+export interface ValidationError {
+  field: string;
+  message: string;
+  code: string;
+}
+
+// Validation result interface
+export interface ValidationResult {
+  isValid: boolean;
+  errors: ValidationError[];
+}
+
+// Clean document numbers (remove formatting)
+export function cleanDocument(document: string): string {
+  return document.replace(/[^\d]/g, '');
+}
+
+// CPF Validation
+export function validateCPF(cpf: string): boolean {
+  if (!cpf) return false;
+
+  const cleanCPF = cleanDocument(cpf);
+
+  // Check length
+  if (cleanCPF.length !== 11) return false;
+
+  // Check for known invalid CPFs
+  const invalidCPFs = [
+    '00000000000',
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999',
+  ];
+
+  if (invalidCPFs.includes(cleanCPF)) return false;
+
+  // Validate check digits
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+  }
+
+  let remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+  }
+
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+
+  return true;
+}
+
+// Format CPF
+export function formatCPF(cpf: string): string {
+  const cleanCPF = cleanDocument(cpf);
+  if (cleanCPF.length !== 11) return cpf;
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
+// CNPJ Validation
+export function validateCNPJ(cnpj: string): boolean {
+  if (!cnpj) return false;
+
+  const cleanCNPJ = cleanDocument(cnpj);
+
+  // Check length
+  if (cleanCNPJ.length !== 14) return false;
+
+  // Check for known invalid CNPJs
+  if (cleanCNPJ === '00000000000000') return false;
+  if (/^(\d)\1+$/.test(cleanCNPJ)) return false; // All same digits
+
+  // Validate first check digit
+  let sum = 0;
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weights1[i];
+  }
+
+  let remainder = sum % 11;
+  const digit1 = remainder < 2 ? 0 : 11 - remainder;
+
+  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false;
+
+  // Validate second check digit
+  sum = 0;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weights2[i];
+  }
+
+  remainder = sum % 11;
+  const digit2 = remainder < 2 ? 0 : 11 - remainder;
+
+  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false;
+
+  return true;
+}
+
+// Format CNPJ
+export function formatCNPJ(cnpj: string): string {
+  const cleanCNPJ = cleanDocument(cnpj);
+  if (cleanCNPJ.length !== 14) return cnpj;
+  return cleanCNPJ.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
+
+// Brazilian phone validation
+export function validateBrazilianPhone(phone: string): boolean {
+  if (!phone) return false;
+
+  const cleanPhone = cleanDocument(phone);
+
+  // Check length (10 or 11 digits)
+  if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
+
+  // Check area code (11-99)
+  const areaCode = parseInt(cleanPhone.substring(0, 2));
+  if (areaCode < 11 || areaCode > 99) return false;
+
+  // Check mobile number format (9 digits starting with 9)
+  if (cleanPhone.length === 11) {
+    const firstDigit = parseInt(cleanPhone.charAt(2));
+    if (firstDigit !== 9) return false;
+  }
+
+  return true;
+}
+
+// Format Brazilian phone
+export function formatBrazilianPhone(phone: string): string {
+  const cleanPhone = cleanDocument(phone);
+
+  if (cleanPhone.length === 10) {
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+  } else if (cleanPhone.length === 11) {
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  }
+
+  return phone;
+}
+
+// CEP validation
+export function validateCEP(cep: string): boolean {
+  if (!cep) return false;
+
+  const cleanCEP = cleanDocument(cep);
+
+  // Check length
+  if (cleanCEP.length !== 8) return false;
+
+  // Check for valid pattern (not all zeros)
+  if (cleanCEP === '00000000') return false;
+
+  return true;
+}
+
+// Format CEP
+export function formatCEP(cep: string): string {
+  const cleanCEP = cleanDocument(cep);
+  if (cleanCEP.length !== 8) return cep;
+  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
+}
+
+// CRM validation
+export function validateCRM(crm: string, state?: string): boolean {
+  if (!crm) return false;
+
+  // Extract numbers from CRM
+  const numbers = crm.replace(/[^\d]/g, '');
+
+  // CRM should have 4-6 digits
+  if (numbers.length < 4 || numbers.length > 6) return false;
+
+  // If state is provided, validate it
+  if (state && !BRAZILIAN_STATES.includes(state.toUpperCase())) {
+    return false;
+  }
+
+  return true;
+}
+
+// ANVISA code validation (simplified)
+export function validateANVISACode(code: string): boolean {
+  if (!code) return false;
+
+  const cleanCode = cleanDocument(code);
+
+  // ANVISA codes typically have 13 or 14 digits
+  if (cleanCode.length !== 13 && cleanCode.length !== 14) return false;
+
+  return true;
+}
+
+// SUS card validation
+export function validateSUSCard(card: string): boolean {
+  if (!card) return false;
+
+  const cleanCard = cleanDocument(card);
+
+  // SUS card has 15 digits
+  if (cleanCard.length !== 15) return false;
+
+  return true;
+}
+
+// Brazilian state validation
+export function validateBrazilianState(state: string): boolean {
+  if (!state) return false;
+  return BRAZILIAN_STATES.includes(state.toUpperCase());
+}
+
+// Email validation
+export function validateEmail(email: string): boolean {
+  if (!email) return false;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Get validation message in Portuguese
+export function getValidationMessage(field: string, errorType: string): string {
+  const messages: Record<string, Record<string, string>> = {
+    cpf: {
+      required: 'CPF é obrigatório',
+      invalid: 'CPF inválido',
+      format: 'Formato do CPF inválido',
+    },
+    cnpj: {
+      required: 'CNPJ é obrigatório',
+      invalid: 'CNPJ inválido',
+      format: 'Formato do CNPJ inválido',
+    },
+    phone: {
+      required: 'Telefone é obrigatório',
+      invalid: 'Número de telefone inválido',
+      format: 'formato do telefone inválido',
+    },
+    cep: {
+      required: 'CEP é obrigatório',
+      invalid: 'CEP inválido',
+      format: 'Formato do CEP inválido',
+      not_found: 'CEP não encontrado',
+    },
+    email: {
+      required: 'E-mail é obrigatório',
+      invalid: 'E-mail inválido',
+      format: 'Formato do e-mail inválido',
+    },
+    name: {
+      required: 'Nome é obrigatório',
+      invalid: 'Nome inválido',
+      min_length: 'Nome deve ter pelo menos 2 caracteres',
+    },
+  };
+
+  return messages[field]?.[errorType] || `Campo ${field} inválido`;
+}
+
+// Validate patient data
+export function validatePatientData(data: any): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  // Name validation
+  if (!data.name || data.name.trim() === '') {
+    errors.push({
+      field: 'name',
+      message: getValidationMessage('name', 'required'),
+      code: 'REQUIRED',
+    });
+  } else if (data.name.trim().length < 2) {
+    errors.push({
+      field: 'name',
+      message: getValidationMessage('name', 'min_length'),
+      code: 'MIN_LENGTH',
+    });
+  }
+
+  // CPF validation
+  if (!data.cpf) {
+    errors.push({
+      field: 'cpf',
+      message: getValidationMessage('cpf', 'required'),
+      code: 'REQUIRED',
+    });
+  } else if (!validateCPF(data.cpf)) {
+    errors.push({
+      field: 'cpf',
+      message: getValidationMessage('cpf', 'invalid'),
+      code: 'INVALID',
+    });
+  }
+
+  // Phone validation
+  if (!data.phone) {
+    errors.push({
+      field: 'phone',
+      message: getValidationMessage('phone', 'required'),
+      code: 'REQUIRED',
+    });
+  } else if (!validateBrazilianPhone(data.phone)) {
+    errors.push({
+      field: 'phone',
+      message: getValidationMessage('phone', 'invalid'),
+      code: 'INVALID',
+    });
+  }
+
+  // Email validation (optional)
+  if (data.email && !validateEmail(data.email)) {
+    errors.push({
+      field: 'email',
+      message: getValidationMessage('email', 'invalid'),
+      code: 'INVALID',
+    });
+  }
+
+  // CEP validation (optional)
+  if (data.cep && !validateCEP(data.cep)) {
+    errors.push({
+      field: 'cep',
+      message: getValidationMessage('cep', 'invalid'),
+      code: 'INVALID',
+    });
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+// Validate Brazilian address
+export function validateBrazilianAddress(address: any): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  // Required fields
+  const requiredFields = ['street', 'neighborhood', 'city', 'state', 'cep'];
+
+  requiredFields.forEach(field => {
+    if (!address[field] || address[field].trim() === '') {
+      errors.push({
+        field,
+        message: `${field} é obrigatório`,
+        code: 'REQUIRED',
+      });
+    }
+  });
+
+  // State validation
+  if (address.state && !validateBrazilianState(address.state)) {
+    errors.push({
+      field: 'state',
+      message: 'Estado inválido',
+      code: 'INVALID',
+    });
+  }
+
+  // CEP validation
+  if (address.cep && !validateCEP(address.cep)) {
+    errors.push({
+      field: 'cep',
+      message: getValidationMessage('cep', 'invalid'),
+      code: 'INVALID',
+    });
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+// Create validation schema
+export function createValidationSchema(fields: Record<string, any>): {
+  validate: (data: any) => ValidationResult;
+} {
+  return {
+    validate: (data: any): ValidationResult => {
+      const errors: ValidationError[] = [];
+
+      Object.entries(fields).forEach(([fieldName, config]) => {
+        const value = data[fieldName];
+
+        // Required field validation
+        if (config.required && (!value || value.toString().trim() === '')) {
+          errors.push({
+            field: fieldName,
+            message: getValidationMessage(fieldName, 'required'),
+            code: 'REQUIRED',
+          });
+          return;
+        }
+
+        // Skip validation if field is empty and not required
+        if (!value) return;
+
+        // Field-specific validation
+        switch (fieldName) {
+          case 'cpf':
+            if (!validateCPF(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'cnpj':
+            if (!validateCNPJ(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'phone':
+            if (!validateBrazilianPhone(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'cep':
+            if (!validateCEP(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'email':
+            if (!validateEmail(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+        }
+      });
+
+      return {
+        isValid: errors.length === 0,
+        errors,
+      };
+    },
+  };
+}
