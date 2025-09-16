@@ -263,7 +263,7 @@ describe('API Performance Monitoring', () => {
 
       try {
         await app.request('/api/error-test');
-      } catch (_error) {
+      } catch {
         // Expected error
       }
       

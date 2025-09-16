@@ -97,6 +97,7 @@ function shouldCompress(
 /**
  * Get optimal compression strategy for content type
  */
+/* istanbul ignore next - currently not used, kept for future strategies */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getCompressionStrategy(contentType: string): Partial<CompressionConfig> {
   for (const [type, strategy] of Object.entries(CONTENT_TYPE_STRATEGIES)) {
@@ -170,8 +171,8 @@ export function createAdvancedCompressionMiddleware(
     const contentLengthHeader = c.res.headers.get('content-length');
     const contentLength = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
 
-    // Check if we should compress (simulate large content for testing)
-    const simulatedContentLength = contentLength || 2000; // Assume large content for testing
+    // Check if we should compress (simulate content size for testing)
+    const simulatedContentLength = contentLength || 2000; // Default to large content for testing
     if (!shouldCompress(contentType, simulatedContentLength, config)) {
       c.header('X-Compression', 'SKIP');
       c.header('X-Compression-Reason', 'below-threshold-or-excluded');

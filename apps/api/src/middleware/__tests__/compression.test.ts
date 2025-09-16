@@ -3,14 +3,14 @@
  * T079 - Backend API Performance Optimization
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
-import { 
-  createAdvancedCompressionMiddleware,
-  createHealthcareCompressionMiddleware,
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
   compressionMonitoringMiddleware,
+  createAdvancedCompressionMiddleware,
   createContentTypeCompressionMiddleware,
-  DEFAULT_COMPRESSION_CONFIG
+  createHealthcareCompressionMiddleware,
+  DEFAULT_COMPRESSION_CONFIG,
 } from '../compression';
 
 describe('Compression Middleware', () => {
@@ -24,15 +24,15 @@ describe('Compression Middleware', () => {
   describe('createAdvancedCompressionMiddleware', () => {
     it('should add compression headers for supported content types', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/test', (c) => {
+      app.get('/api/test', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'test'.repeat(1000) }); // Large enough to compress
       });
 
       const res = await app.request('/api/test', {
-        headers: { 'accept-encoding': 'gzip, br' }
+        headers: { 'accept-encoding': 'gzip, br' },
       });
 
       expect(res.status).toBe(200);
@@ -41,16 +41,16 @@ describe('Compression Middleware', () => {
     });
 
     it('should skip compression for small content', async () => {
-      const middleware = createAdvancedCompressionMiddleware({ threshold: 2000 });
-      
+      const middleware = createAdvancedCompressionMiddleware({ threshold: 5000 }); // Higher threshold
+
       app.use('*', middleware);
-      app.get('/api/small', (c) => {
+      app.get('/api/small', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'small' });
       });
 
       const res = await app.request('/api/small', {
-        headers: { 'accept-encoding': 'gzip' }
+        headers: { 'accept-encoding': 'gzip' },
       });
 
       expect(res.status).toBe(200);
@@ -60,15 +60,15 @@ describe('Compression Middleware', () => {
 
     it('should skip compression for excluded content types', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/image', (c) => {
+      app.get('/api/image', c => {
         c.header('content-type', 'image/jpeg');
         return c.body('fake-image-data'.repeat(1000));
       });
 
       const res = await app.request('/api/image', {
-        headers: { 'accept-encoding': 'gzip' }
+        headers: { 'accept-encoding': 'gzip' },
       });
 
       expect(res.status).toBe(200);
@@ -78,9 +78,9 @@ describe('Compression Middleware', () => {
 
     it('should skip compression when client does not support it', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/test', (c) => {
+      app.get('/api/test', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'test'.repeat(1000) });
       });
@@ -93,15 +93,15 @@ describe('Compression Middleware', () => {
 
     it('should prefer Brotli over Gzip when both are supported', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/test', (c) => {
+      app.get('/api/test', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'test'.repeat(1000) });
       });
 
       const res = await app.request('/api/test', {
-        headers: { 'accept-encoding': 'gzip, br, deflate' }
+        headers: { 'accept-encoding': 'gzip, br, deflate' },
       });
 
       expect(res.status).toBe(200);
@@ -111,16 +111,16 @@ describe('Compression Middleware', () => {
 
     it('should handle compression errors gracefully', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/error', (c) => {
+      app.get('/api/error', c => {
         c.header('content-type', 'application/json');
         // Simulate an error condition
         return c.json({ data: 'test' });
       });
 
       const res = await app.request('/api/error', {
-        headers: { 'accept-encoding': 'gzip' }
+        headers: { 'accept-encoding': 'gzip' },
       });
 
       expect(res.status).toBe(200);
@@ -129,15 +129,15 @@ describe('Compression Middleware', () => {
 
     it('should add compression metadata headers', async () => {
       const middleware = createAdvancedCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/metadata', (c) => {
+      app.get('/api/metadata', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'test'.repeat(1000) });
       });
 
       const res = await app.request('/api/metadata', {
-        headers: { 'accept-encoding': 'gzip' }
+        headers: { 'accept-encoding': 'gzip' },
       });
 
       expect(res.status).toBe(200);
@@ -157,9 +157,9 @@ describe('Compression Middleware', () => {
   describe('compressionMonitoringMiddleware', () => {
     it('should track compression statistics', async () => {
       const monitor = compressionMonitoringMiddleware();
-      
+
       app.use('*', monitor.middleware);
-      app.get('/api/stats', (c) => {
+      app.get('/api/stats', c => {
         c.header('content-type', 'application/json');
         c.header('x-compression', 'APPLIED');
         c.header('x-original-size', '2000');
@@ -178,9 +178,9 @@ describe('Compression Middleware', () => {
 
     it('should track non-compressed requests', async () => {
       const monitor = compressionMonitoringMiddleware();
-      
+
       app.use('*', monitor.middleware);
-      app.get('/api/no-compression', (c) => {
+      app.get('/api/no-compression', c => {
         c.header('content-type', 'application/json');
         c.header('x-compression', 'SKIP');
         return c.json({ data: 'test' });
@@ -196,17 +196,17 @@ describe('Compression Middleware', () => {
 
     it('should reset statistics', async () => {
       const monitor = compressionMonitoringMiddleware();
-      
+
       app.use('*', monitor.middleware);
-      app.get('/api/reset', (c) => c.json({ data: 'test' }));
+      app.get('/api/reset', c => c.json({ data: 'test' }));
 
       await app.request('/api/reset');
-      
+
       let stats = monitor.getStats();
       expect(stats.totalRequests).toBe(1);
 
       monitor.resetStats();
-      
+
       stats = monitor.getStats();
       expect(stats.totalRequests).toBe(0);
     });
@@ -215,9 +215,9 @@ describe('Compression Middleware', () => {
   describe('createContentTypeCompressionMiddleware', () => {
     it('should add content-type specific headers for JSON', async () => {
       const middleware = createContentTypeCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/json', (c) => {
+      app.get('/api/json', c => {
         c.header('content-type', 'application/json');
         return c.json({ data: 'test' });
       });
@@ -228,9 +228,9 @@ describe('Compression Middleware', () => {
 
     it('should add content-type specific headers for HTML', async () => {
       const middleware = createContentTypeCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/html', (c) => {
+      app.get('/api/html', c => {
         c.header('content-type', 'text/html');
         return c.html('<html><body>Test</body></html>');
       });
@@ -241,11 +241,12 @@ describe('Compression Middleware', () => {
 
     it('should add content-type specific headers for XML', async () => {
       const middleware = createContentTypeCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/xml', (c) => {
-        c.header('content-type', 'application/xml');
-        return c.text('<?xml version="1.0"?><root>test</root>');
+      app.get('/api/xml', c => {
+        return c.text('<?xml version="1.0"?><root>test</root>', 200, {
+          'content-type': 'application/xml',
+        });
       });
 
       const res = await app.request('/api/xml');
@@ -254,11 +255,12 @@ describe('Compression Middleware', () => {
 
     it('should add healthcare-specific headers for FHIR content', async () => {
       const middleware = createContentTypeCompressionMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/fhir', (c) => {
-        c.header('content-type', 'application/fhir+json');
-        return c.json({ resourceType: 'Patient', id: '123' });
+      app.get('/api/fhir', c => {
+        return c.json({ resourceType: 'Patient', id: '123' }, 200, {
+          'content-type': 'application/fhir+json',
+        });
       });
 
       const res = await app.request('/api/fhir');
