@@ -9,11 +9,7 @@ describe('ErrorTrackingManager', () => {
   let errorTracker: ErrorTrackingManager;
 
   beforeEach(() => {
-    errorTracker = new ErrorTrackingManager({
-      provider: 'custom',
-      environment: 'test',
-      enableInTesting: true,
-    });
+    errorTracker = new ErrorTrackingManager();
   });
 
   describe('Configuration', () => {

@@ -304,3 +304,18 @@ export class SecurityUtils {
     }
 
     // No common patterns
+    if (password.includes('123456') || password.includes('password') || password.includes('qwerty')) {
+      feedback.push('Password cannot contain common patterns');
+    } else {
+      score += 1;
+    }
+
+    const isValid = feedback.length === 0 && score >= 4;
+
+    return {
+      isValid,
+      score,
+      feedback,
+    };
+  }
+}
