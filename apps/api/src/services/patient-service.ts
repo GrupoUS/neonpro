@@ -171,6 +171,51 @@ export class PatientService {
     };
 
     this.patients.set('patient-123', mockPatient);
+
+    // Add test patient used in contract tests
+    const testPatient: Patient = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'Maria Santos',
+      cpf: '222.555.888-46',
+      email: 'maria.santos@example.com',
+      phone: '(11) 98888-7777',
+      birthDate: new Date('1985-05-15'),
+      gender: 'female',
+      address: {
+        street: 'Avenida Paulista, 1000',
+        neighborhood: 'Bela Vista',
+        city: 'São Paulo',
+        state: 'SP',
+        cep: '01310-100',
+        country: 'Brasil',
+      },
+      lgpdConsent: {
+        id: 'consent-test-550e8400',
+        patientId: '550e8400-e29b-41d4-a716-446655440000',
+        consentVersion: '1.0',
+        consentDate: new Date(),
+        legalBasis: 'consent',
+        processingPurposes: ['healthcare', 'ai_analysis'],
+        dataCategories: ['personal', 'health', 'behavioral'],
+        dataProcessing: true,
+        marketing: false,
+        analytics: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      auditTrail: {
+        createdAt: new Date(),
+        createdBy: 'system',
+        updatedAt: new Date(),
+        updatedBy: 'system',
+        accessLog: [],
+      },
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    this.patients.set('550e8400-e29b-41d4-a716-446655440000', testPatient);
     this.isInitialized = true;
   }
 
@@ -753,6 +798,47 @@ export class PatientService {
         success: true,
         data: { exportUrl, format },
         message: 'Dados exportados com sucesso',
+      };
+    } catch {
+      return {
+        success: false,
+        error: 'Erro interno do servidor',
+      };
+    }
+  }
+
+  /**
+   * Get patient context for AI chat
+   */
+  async getPatientContext(params: {
+    patientId: string;
+    userId: string;
+    includeHistory?: boolean;
+  }): Promise<ServiceResponse<any>> {
+    try {
+      const patient = this.patients.get(params.patientId);
+      
+      if (!patient) {
+        return {
+          success: false,
+          error: 'Paciente não encontrado',
+        };
+      }
+
+      // Mock patient context
+      const context = {
+        patientId: params.patientId,
+        name: patient.basicInfo.name,
+        age: new Date().getFullYear() - new Date(patient.basicInfo.dateOfBirth).getFullYear(),
+        conditions: patient.healthcareData?.conditions || [],
+        medications: patient.healthcareData?.medications || [],
+        allergies: patient.healthcareData?.allergies || [],
+        lastVisit: patient.healthcareData?.lastVisit,
+      };
+
+      return {
+        success: true,
+        data: context,
       };
     } catch {
       return {

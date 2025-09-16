@@ -3,7 +3,7 @@
  * Central orchestration system for all test categories
  */
 
-import { createLogger, LogLevel } from '../utils/logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 import {
   TestCategory,
   TestCategoryManager,

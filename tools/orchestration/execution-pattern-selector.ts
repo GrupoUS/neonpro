@@ -3,7 +3,7 @@
  * Intelligently selects optimal execution patterns based on context and requirements
  */
 
-import { createLogger, LogLevel } from './utils/logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 import type {
   WorkflowType,
   AgentCoordinationPattern,

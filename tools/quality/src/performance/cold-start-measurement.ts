@@ -138,6 +138,7 @@ export class ColdStartMeasurement {
         await this.measureRequest('/api/health');
         return;
       } catch (error) {
+        console.warn(`Server not ready, attempt ${attempt}/${maxAttempts}:`, error);
         if (attempt === maxAttempts) {
           throw new Error(`Server not ready after ${maxAttempts} attempts`);
         }

@@ -7,9 +7,8 @@ import {
   AgentName,
   AgentCoordinationPattern,
   QualityControlContext,
-  OrchestrationContext,
 } from './types';
-import { createLogger, LogLevel } from './utils/logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 
 const logger = createLogger('AgentCoordinationMapper', LogLevel.INFO);
 

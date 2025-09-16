@@ -91,7 +91,8 @@
       "mcp__supabase__list_tables",
       "mcp__supabase__execute_sql",
       "mcp__Tavily__tavily-crawl",
-      "WebSearch"
+      "WebSearch",
+      "mcp__desktop-commander__stop_search"
     ],
     "deny": [
       "Edit",

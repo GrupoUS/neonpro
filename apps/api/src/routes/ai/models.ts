@@ -7,6 +7,8 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
+import { AIChatService } from '../../services/ai-chat-service.js';
+import { AuditService } from '../../services/audit-service.js';
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: any, next: any) => {
@@ -49,15 +51,10 @@ export const setServices = (injectedServices: any) => {
 const getServices = () => {
   if (services) return services;
   
+  // Use real service instances in production
   return {
-    aiChatService: {
-      getAvailableModels: async () => ({ success: false, error: 'Service not initialized' }),
-      getModelHealth: async () => ({ success: false, error: 'Service not initialized' }),
-      getModelMetrics: async () => ({ success: false, error: 'Service not initialized' }),
-    },
-    auditService: {
-      logActivity: async () => ({ success: false, error: 'Service not initialized' }),
-    },
+    aiChatService: new AIChatService(),
+    auditService: new AuditService(),
   };
 };
 

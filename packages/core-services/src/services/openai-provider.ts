@@ -1,7 +1,7 @@
 // OpenAI provider (Phase 2) - Real implementation with streaming support
 
 import type { AIProvider, GenerateAnswerInput, GenerateAnswerResult, StreamChunk } from './ai-provider.js';
-import { AI_MODEL_CONFIG, OPENAI_API_KEY } from '@neonpro/config/ai';
+import { AI_MODEL_CONFIG, OPENAI_API_KEY } from '@neonpro/config';
 
 export class OpenAIProvider implements AIProvider {
   private apiKey: string;

@@ -3,7 +3,7 @@
  * Coordinates execution of multiple tools with intelligent scheduling and conflict resolution
  */
 
-import { createLogger, LogLevel } from './utils/logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 import type {
   AgentName,
   AgentCapability,

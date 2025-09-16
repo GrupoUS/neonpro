@@ -7,6 +7,10 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
+import { AIChatService } from '../../services/ai-chat-service.js';
+import { PatientService } from '../../services/patient-service.js';
+import { AuditService } from '../../services/audit-service.js';
+import { LGPDService } from '../../services/lgpd-service.js';
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: any, next: any) => {
@@ -63,20 +67,12 @@ export const setServices = (injectedServices: any) => {
 const getServices = () => {
   if (services) return services;
   
+  // Use real service instances in production
   return {
-    aiChatService: {
-      analyzeData: async () => ({ success: false, error: 'Service not initialized' }),
-      analyzeImage: async () => ({ success: false, error: 'Service not initialized' }),
-      analyzeText: async () => ({ success: false, error: 'Service not initialized' }),
-      analyzeMultiModal: async () => ({ success: false, error: 'Service not initialized' }),
-    },
-    auditService: {
-      logActivity: async () => ({ success: false, error: 'Service not initialized' }),
-    },
-    lgpdService: {
-      validateDataAccess: async () => ({ success: false, error: 'Service not initialized' }),
-      maskSensitiveData: (data: any) => data,
-    },
+    aiChatService: new AIChatService(),
+    auditService: new AuditService(),
+    lgpdService: new LGPDService(),
+    patientService: new PatientService(),
   };
 };
 

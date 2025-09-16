@@ -23,6 +23,9 @@ export default defineConfig({
     alias: {
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src/index.ts'),
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src/index.ts'),
+      '@neonpro/security': path.resolve(__dirname, '../../packages/security/src/index.ts'),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src/index.ts'),
+      '@neonpro/core-services': path.resolve(__dirname, '../../packages/core-services/src/index.ts'),
     },
   },
 });

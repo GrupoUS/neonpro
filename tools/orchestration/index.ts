@@ -29,7 +29,7 @@ import { ResultAggregator } from './result-aggregator';
 import { TestSuiteCoordinator } from './test-suite-coordinator';
 import { TDDMetricsCollector } from './metrics/collector';
 import { HealthcareComplianceValidator } from './compliance/healthcare-validator';
-import { createLogger, LogLevel } from './utils/logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 import { createCommunicationSystem } from './communication';
 
 // Communication System

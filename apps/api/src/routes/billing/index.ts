@@ -8,10 +8,10 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { BillingService, InvoiceStatus, PaymentMethod, PaymentStatus } from '../../services/billing-service';
+import { BillingService, PaymentMethod, PaymentStatus } from '../../services/billing-service';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { auditLogger } from '../../middleware/audit-log';
+import { auditLog } from '../../middleware/audit-log';
 import { ok, created, badRequest, notFound, forbidden, serverError } from '../../utils/responses';
 
 // Initialize service
@@ -23,7 +23,7 @@ const billing = new Hono();
 // Apply middleware
 billing.use('*', requireAuth);
 billing.use('*', dataProtection.billing);
-billing.use('*', auditLogger('billing'));
+billing.use('*', auditLog('billing'));
 
 // Validation schemas
 const createInvoiceSchema = z.object({
@@ -62,7 +62,7 @@ const processPaymentSchema = z.object({
 const searchInvoicesSchema = z.object({
   patientId: z.string().uuid().optional(),
   clinicId: z.string().uuid().optional(),
-  status: z.nativeEnum(InvoiceStatus).optional(),
+  status: z.nativeEnum(PaymentStatus).optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
   query: z.string().optional(),

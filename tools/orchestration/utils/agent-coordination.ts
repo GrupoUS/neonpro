@@ -4,7 +4,7 @@
  */
 
 import { TestCategory, TDDPhase } from './test-categories';
-import { createLogger, LogLevel } from './logger';
+import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
 
 const logger = createLogger('AgentCoordination', LogLevel.INFO);
 
