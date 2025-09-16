@@ -590,7 +590,7 @@ export class TDDAgentRegistry implements AgentRegistry {
    */
   getRecommendedWorkflow(context: OrchestrationContext): AgentType[] {
     const workflow: AgentType[] = [];
-    
+
     // Always start with orchestrator for coordination
     workflow.push('tdd-orchestrator');
 
@@ -607,5 +607,315 @@ export class TDDAgentRegistry implements AgentRegistry {
     }
 
     return workflow;
+  }
+
+  /**
+   * Get agents optimized for parallel execution
+   */
+  getParallelOptimizedAgents(context: OrchestrationContext): AgentCapability[] {
+    const allAgents = this.selectOptimalAgents(context);
+
+    // Filter agents that can run independently in parallel
+    const parallelCapableAgents = allAgents.filter(agent => {
+      // Exclude orchestrator from parallel execution (it coordinates others)
+      if (agent.type === 'tdd-orchestrator') return false;
+
+      // Include agents that have independent analysis capabilities
+      return agent.capabilities.some(capability =>
+        capability.includes('analysis') ||
+        capability.includes('validation') ||
+        capability.includes('assessment') ||
+        capability.includes('scanning')
+      );
+    });
+
+    return parallelCapableAgents;
+  }
+
+  /**
+   * Get agents grouped by coordination patterns for optimal parallel execution
+   */
+  getAgentCoordinationGroups(context: OrchestrationContext): {
+    independent: AgentCapability[];
+    dependent: AgentCapability[];
+    sequential: AgentCapability[];
+  } {
+    const agents = this.selectOptimalAgents(context);
+
+    const independent: AgentCapability[] = [];
+    const dependent: AgentCapability[] = [];
+    const sequential: AgentCapability[] = [];
+
+    agents.forEach(agent => {
+      // Independent agents - can run completely in parallel
+      if (this.isIndependentAgent(agent)) {
+        independent.push(agent);
+      }
+      // Dependent agents - need results from other agents
+      else if (this.isDependentAgent(agent)) {
+        dependent.push(agent);
+      }
+      // Sequential agents - must run in specific order
+      else {
+        sequential.push(agent);
+      }
+    });
+
+    return { independent, dependent, sequential };
+  }
+
+  /**
+   * Get execution plan for parallel agent coordination
+   */
+  getParallelExecutionPlan(
+    context: OrchestrationContext,
+    coordinationPattern: AgentCoordinationPattern = 'parallel'
+  ): {
+    phases: {
+      phase: number;
+      agents: AgentCapability[];
+      mode: 'parallel' | 'sequential';
+      dependencies?: string[];
+    }[];
+    estimatedDuration: number;
+    coordination: AgentCoordinationPattern;
+  } {
+    const groups = this.getAgentCoordinationGroups(context);
+    const phases: any[] = [];
+    let estimatedDuration = 0;
+
+    switch (coordinationPattern) {
+      case 'parallel':
+        // Phase 1: All independent agents in parallel
+        if (groups.independent.length > 0) {
+          phases.push({
+            phase: 1,
+            agents: groups.independent,
+            mode: 'parallel' as const,
+          });
+          estimatedDuration += this.estimateAgentExecutionTime(groups.independent, 'parallel');
+        }
+
+        // Phase 2: Dependent agents (may need parallel groups)
+        if (groups.dependent.length > 0) {
+          phases.push({
+            phase: 2,
+            agents: groups.dependent,
+            mode: 'parallel' as const,
+            dependencies: groups.independent.map(a => a.name),
+          });
+          estimatedDuration += this.estimateAgentExecutionTime(groups.dependent, 'parallel');
+        }
+
+        // Phase 3: Sequential agents
+        if (groups.sequential.length > 0) {
+          phases.push({
+            phase: 3,
+            agents: groups.sequential,
+            mode: 'sequential' as const,
+            dependencies: [...groups.independent, ...groups.dependent].map(a => a.name),
+          });
+          estimatedDuration += this.estimateAgentExecutionTime(groups.sequential, 'sequential');
+        }
+        break;
+
+      case 'hierarchical':
+        // Primary agents first
+        const primaryAgents = [...groups.independent, ...groups.dependent, ...groups.sequential]
+          .filter(a => a.priority === 'primary');
+        const secondaryAgents = [...groups.independent, ...groups.dependent, ...groups.sequential]
+          .filter(a => a.priority === 'secondary');
+
+        if (primaryAgents.length > 0) {
+          phases.push({
+            phase: 1,
+            agents: primaryAgents,
+            mode: 'parallel' as const,
+          });
+          estimatedDuration += this.estimateAgentExecutionTime(primaryAgents, 'parallel');
+        }
+
+        if (secondaryAgents.length > 0) {
+          phases.push({
+            phase: 2,
+            agents: secondaryAgents,
+            mode: 'parallel' as const,
+            dependencies: primaryAgents.map(a => a.name),
+          });
+          estimatedDuration += this.estimateAgentExecutionTime(secondaryAgents, 'parallel');
+        }
+        break;
+
+      case 'sequential':
+      default:
+        // All agents in sequence
+        const allAgents = [...groups.independent, ...groups.dependent, ...groups.sequential];
+        phases.push({
+          phase: 1,
+          agents: allAgents,
+          mode: 'sequential' as const,
+        });
+        estimatedDuration += this.estimateAgentExecutionTime(allAgents, 'sequential');
+    }
+
+    return {
+      phases,
+      estimatedDuration,
+      coordination: coordinationPattern,
+    };
+  }
+
+  /**
+   * Check if agent can run independently (no dependencies)
+   */
+  private isIndependentAgent(agent: AgentCapability): boolean {
+    // Agents that can analyze code/architecture independently
+    return agent.capabilities.some(cap =>
+      cap.includes('analysis') ||
+      cap.includes('scanning') ||
+      cap.includes('assessment')
+    ) && !agent.capabilities.some(cap =>
+      cap.includes('coordination') ||
+      cap.includes('orchestration')
+    );
+  }
+
+  /**
+   * Check if agent has dependencies on other agents
+   */
+  private isDependentAgent(agent: AgentCapability): boolean {
+    // Agents that enhance or build upon other agent results
+    return agent.capabilities.some(cap =>
+      cap.includes('validation') ||
+      cap.includes('enhancement') ||
+      cap.includes('compliance-validation')
+    );
+  }
+
+  /**
+   * Estimate execution time for agents based on coordination mode
+   */
+  private estimateAgentExecutionTime(
+    agents: AgentCapability[],
+    mode: 'parallel' | 'sequential'
+  ): number {
+    const baseTime = 30000; // 30 seconds base time per agent
+    const complexityMultiplier = 1.5; // Factor for complex agents
+
+    if (mode === 'parallel') {
+      // Parallel execution time is the maximum of all agents
+      const maxTime = Math.max(...agents.map(agent => {
+        const complexity = agent.specializations.length > 3 ? complexityMultiplier : 1;
+        return baseTime * complexity;
+      }));
+      return maxTime;
+    } else {
+      // Sequential execution time is the sum of all agents
+      return agents.reduce((total, agent) => {
+        const complexity = agent.specializations.length > 3 ? complexityMultiplier : 1;
+        return total + (baseTime * complexity);
+      }, 0);
+    }
+  }
+
+  /**
+   * Get conflict resolution strategy for parallel execution
+   */
+  getConflictResolutionStrategy(
+    agents: AgentCapability[],
+    context: OrchestrationContext
+  ): 'priority-based' | 'consensus' | 'coordinator-decides' {
+    // Healthcare and security contexts require coordinator decision
+    if (context.healthcareCompliance.required || context.criticalityLevel === 'critical') {
+      return 'coordinator-decides';
+    }
+
+    // Multiple primary agents suggest consensus
+    const primaryAgents = agents.filter(a => a.priority === 'primary');
+    if (primaryAgents.length > 2) {
+      return 'consensus';
+    }
+
+    // Default to priority-based resolution
+    return 'priority-based';
+  }
+
+  /**
+   * Get shared context requirements for parallel execution
+   */
+  getSharedContextRequirements(agents: AgentCapability[]): {
+    featureSpec: boolean;
+    codeChanges: boolean;
+    testSuite: boolean;
+    qualityMetrics: boolean;
+    securityFindings: boolean;
+    architectureDecisions: boolean;
+  } {
+    const requirements = {
+      featureSpec: false,
+      codeChanges: false,
+      testSuite: false,
+      qualityMetrics: false,
+      securityFindings: false,
+      architectureDecisions: false,
+    };
+
+    agents.forEach(agent => {
+      // Determine what context each agent needs
+      if (agent.capabilities.includes('architecture-validation')) {
+        requirements.featureSpec = true;
+        requirements.architectureDecisions = true;
+      }
+
+      if (agent.capabilities.includes('code-quality-analysis')) {
+        requirements.codeChanges = true;
+        requirements.qualityMetrics = true;
+      }
+
+      if (agent.capabilities.includes('test-pattern-enforcement')) {
+        requirements.testSuite = true;
+        requirements.codeChanges = true;
+      }
+
+      if (agent.capabilities.includes('security-vulnerability-scanning')) {
+        requirements.securityFindings = true;
+        requirements.codeChanges = true;
+      }
+    });
+
+    return requirements;
+  }
+
+  /**
+   * Create parallel execution context for agents
+   */
+  createParallelExecutionContext(
+    agents: AgentCapability[],
+    baseContext: OrchestrationContext
+  ): OrchestrationContext & {
+    parallelExecution: {
+      totalAgents: number;
+      agentGroups: string[];
+      sharedContext: Record<string, any>;
+      conflictResolution: string;
+    };
+  } {
+    const groups = this.getAgentCoordinationGroups(baseContext);
+    const sharedContext = this.getSharedContextRequirements(agents);
+    const conflictResolution = this.getConflictResolutionStrategy(agents, baseContext);
+
+    return {
+      ...baseContext,
+      parallelExecution: {
+        totalAgents: agents.length,
+        agentGroups: [
+          `Independent: ${groups.independent.map(a => a.name).join(', ')}`,
+          `Dependent: ${groups.dependent.map(a => a.name).join(', ')}`,
+          `Sequential: ${groups.sequential.map(a => a.name).join(', ')}`,
+        ],
+        sharedContext,
+        conflictResolution,
+      },
+    };
   }
 }

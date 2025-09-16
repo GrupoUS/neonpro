@@ -93,6 +93,16 @@ export interface AgentRegistry {
   getAgent(agentType: AgentType): AgentCapability | undefined;
   getAllAgents(): AgentCapability[];
   selectOptimalAgents(context: OrchestrationContext, phase?: TDDPhase): AgentCapability[];
+  getParallelOptimizedAgents(context: OrchestrationContext): AgentCapability[];
+  getAgentCoordinationGroups(context: OrchestrationContext): {
+    independent: AgentCapability[];
+    dependent: AgentCapability[];
+    sequential: AgentCapability[];
+  };
+  getParallelExecutionPlan(context: OrchestrationContext, coordinationPattern?: AgentCoordinationPattern): any;
+  getConflictResolutionStrategy(agents: AgentCapability[], context: OrchestrationContext): 'priority-based' | 'consensus' | 'coordinator-decides';
+  getSharedContextRequirements(agents: AgentCapability[]): Record<string, boolean>;
+  createParallelExecutionContext(agents: AgentCapability[], baseContext: OrchestrationContext): any;
 }
 
 // Orchestration Workflow Interface
