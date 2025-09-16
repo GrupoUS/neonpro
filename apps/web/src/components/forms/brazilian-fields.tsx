@@ -20,12 +20,12 @@ import { Input, Label } from '@/components/ui';
 import {
   formatCEP,
   formatCNPJ,
-  formatCPF,
   unformatCEP,
   unformatCNPJ,
   unformatCPF,
   unformatPhone,
 } from '@/utils/brazilian-formatters';
+import { formatCPF, formatBRPhone, validateCPFMask, validateBRPhoneMask } from '@neonpro/utils';
 import {
   validateBrazilianPhone,
   validateCEP,

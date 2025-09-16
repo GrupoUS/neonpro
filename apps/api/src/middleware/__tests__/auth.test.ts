@@ -294,7 +294,8 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
   describe('Session Management', () => {
     it('should create and track sessions', () => {
-      const sessionId = sessionManager.createSession('user-123', {
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {
         ipAddress: '192.168.1.1',
         userAgent: 'Mozilla/5.0',
       });
@@ -303,12 +304,13 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
       const session = sessionManager.getSession(sessionId);
       expect(session).toBeDefined();
-      expect(session?.userId).toBe('user-123');
+      expect(session?.userId).toBe(userId);
       expect(session?.ipAddress).toBe('192.168.1.1');
     });
 
     it('should update session activity', () => {
-      const sessionId = sessionManager.createSession('user-123', {});
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {});
       const originalActivity = sessionManager.getSession(sessionId)?.lastActivity;
 
       // Wait a bit to ensure different timestamp
@@ -322,7 +324,8 @@ describe('Authentication Middleware Enhancement (T073)', () => {
     });
 
     it('should remove sessions', () => {
-      const sessionId = sessionManager.createSession('user-123', {});
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {});
 
       expect(sessionManager.getSession(sessionId)).toBeDefined();
 
@@ -332,11 +335,13 @@ describe('Authentication Middleware Enhancement (T073)', () => {
     });
 
     it('should get user sessions', () => {
-      const sessionId1 = sessionManager.createSession('user-123', {});
-      const sessionId2 = sessionManager.createSession('user-123', {});
-      const sessionId3 = sessionManager.createSession('user-456', {});
+      const userId1 = '550e8400-e29b-41d4-a716-446655440001';
+      const userId2 = '550e8400-e29b-41d4-a716-446655440002';
+      const sessionId1 = sessionManager.createSession(userId1, {});
+      const sessionId2 = sessionManager.createSession(userId1, {});
+      const sessionId3 = sessionManager.createSession(userId2, {});
 
-      const userSessions = sessionManager.getUserSessions('user-123');
+      const userSessions = sessionManager.getUserSessions(userId1);
       expect(userSessions).toHaveLength(2);
       expect(userSessions.map(s => s.sessionId)).toContain(sessionId1);
       expect(userSessions.map(s => s.sessionId)).toContain(sessionId2);
@@ -344,7 +349,8 @@ describe('Authentication Middleware Enhancement (T073)', () => {
     });
 
     it('should clean expired sessions', () => {
-      const sessionId = sessionManager.createSession('user-123', {});
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {});
 
       // Simulate old session
       const session = sessionManager.getSession(sessionId);
@@ -361,7 +367,8 @@ describe('Authentication Middleware Enhancement (T073)', () => {
 
   describe('Integration with WebSocket', () => {
     it('should handle real-time session creation', () => {
-      const sessionId = sessionManager.createSession('user-123', {
+      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId = sessionManager.createSession(userId, {
         isRealTimeSession: true,
       });
 
