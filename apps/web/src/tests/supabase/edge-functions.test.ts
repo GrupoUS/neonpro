@@ -126,7 +126,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         ],
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'patient-data-validation',
         patientValidationPayload,
         150,
@@ -162,7 +162,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'medical-record-classifier',
         medicalRecordPayload,
         300,
@@ -202,7 +202,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         ],
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'prescription-validator',
         prescriptionPayload,
         400,
@@ -249,7 +249,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'lab-results-analyzer',
         labResultsPayload,
         250,
@@ -290,7 +290,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'ai-diagnosis-support',
         diagnosisPayload,
         800,
@@ -329,7 +329,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'real-time-notifications',
         notificationPayload,
         100,
@@ -368,7 +368,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'emergency-alert-broadcaster',
         emergencyPayload,
         80,
@@ -404,7 +404,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         ],
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'websocket-connection-manager',
         websocketPayload,
         50,
@@ -449,7 +449,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'telemedicine-coordinator',
         telemedicinePayload,
         200,
@@ -499,7 +499,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'fhir-data-transformer',
         fhirPayload,
         300,
@@ -540,7 +540,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'api-schema-validator',
         schemaValidationPayload,
         150,
@@ -582,7 +582,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'input-sanitizer',
         sanitizationPayload,
         100,
@@ -624,7 +624,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'lgpd-consent-processor',
         consentPayload,
         200,
@@ -672,7 +672,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'data-anonymizer',
         anonymizationPayload,
         500,
@@ -711,7 +711,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'data-subject-rights-processor',
         dsrPayload,
         400,
@@ -744,7 +744,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'high-throughput-processor',
         throughputPayload,
         1000,
@@ -797,7 +797,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
       ];
 
       for (const test of coldStartPayloads) {
-        const { data, error, latency } = await mockEdgeFunction(
+        const { error, latency } = await mockEdgeFunction(
           test.function,
           test.payload,
           300, // Cold start may be slower
@@ -821,7 +821,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         timeout_limit: 10000, // 10 seconds
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'timeout-handler',
         timeoutPayload,
         12000, // Simulate timeout scenario
@@ -840,7 +840,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         fallback_strategy: 'stream_processing',
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'memory-limit-handler',
         memoryPayload,
         800,
@@ -862,7 +862,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'external-service-fallback',
         externalServicePayload,
         600,
@@ -887,7 +887,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'jwt-authorizer',
         authPayload,
         50,
@@ -915,7 +915,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'rate-limiter',
         rateLimitPayload,
         30,
@@ -939,7 +939,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'api-key-validator',
         apiKeyPayload,
         80,
@@ -970,7 +970,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'lab-system-integrator',
         labIntegrationPayload,
         1200,
@@ -1004,7 +1004,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         ],
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'pharmacy-integrator',
         pharmacyPayload,
         800,
@@ -1035,7 +1035,7 @@ describe('Supabase Edge Functions - Healthcare Processing', () => {
         },
       };
 
-      const { data, error, latency } = await mockEdgeFunction(
+      const { error, latency } = await mockEdgeFunction(
         'webhook-processor',
         webhookPayload,
         150,

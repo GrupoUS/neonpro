@@ -1,0 +1,671 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1102341,
+          "path": ".>lovable-tagger>vite>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": null,
+      "target": null,
+      "depth": 3
+    },
+    {
+      "action": "review",
+      "module": "d3-color",
+      "resolves": [
+        {
+          "id": 1088594,
+          "path": "tools__quality>0x>d3-fg>d3-scale>d3-interpolate>d3-color",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "got",
+      "resolves": [
+        {
+          "id": 1088948,
+          "path": "tools__quality>clinic>update-notifier>latest-version>package-json>got",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "request",
+      "resolves": [
+        {
+          "id": 1096727,
+          "path": "tools__quality>clinic>insight>request",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "tough-cookie",
+      "resolves": [
+        {
+          "id": 1097682,
+          "path": "tools__quality>clinic>insight>request>tough-cookie",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "ws",
+      "resolves": [
+        {
+          "id": 1098392,
+          "path": "tools__performance>@lhci/cli>lighthouse>puppeteer-core>ws",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "cookie",
+      "resolves": [
+        {
+          "id": 1103907,
+          "path": "tools__performance>@lhci/cli>lighthouse>@sentry/node>cookie",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "tar-fs",
+      "resolves": [
+        {
+          "id": 1104677,
+          "path": "tools__performance>@lhci/cli>lighthouse>puppeteer-core>tar-fs",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1106930,
+          "path": "tools__performance>@lhci/cli>lighthouse>puppeteer-core>tar-fs",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "form-data",
+      "resolves": [
+        {
+          "id": 1106509,
+          "path": "tools__quality>clinic>insight>request>form-data",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "tmp",
+      "resolves": [
+        {
+          "id": 1106849,
+          "path": "tools__performance>@lhci/cli>inquirer>external-editor>tmp",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1106849,
+          "path": "tools__performance>@lhci/cli>tmp",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1088594": {
+      "findings": [
+        {
+          "version": "1.4.1",
+          "paths": [
+            "tools/quality > 0x@5.8.0 > d3-fg@6.14.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-color@1.4.1",
+            "tools/quality > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/bubbleprof@9.1.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/bubbleprof@9.1.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/bubbleprof@9.1.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/bubbleprof@9.1.0 > d3-transition@1.3.2 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/bubbleprof@9.1.0 > d3-transition@1.3.2 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/doctor@10.1.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > 0x@5.8.0 > d3-fg@6.14.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > 0x@5.8.0 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > d3-fg@6.14.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/flame@12.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/heap-profiler@4.1.1 > d3-fg@6.14.0 > d3-scale@3.3.0 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/heap-profiler@4.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-interpolate@1.4.0 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/heap-profiler@4.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-color@1.4.1",
+            "tools/quality > clinic@12.1.0 > @clinic/heap-profiler@4.1.1 > d3-fg@6.14.0 > d3-zoom@1.8.3 > d3-transition@1.3.2 > d3-interpolate@1.4.0 > d3-color@1.4.1"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/d3/d3-color/pull/100\n- https://github.com/d3/d3-color/releases/tag/v3.1.0\n- https://security.snyk.io/vuln/SNYK-JS-D3COLOR-1076592\n- https://github.com/advisories/GHSA-36jr-mh4h-2g58",
+      "created": "2022-09-29T14:12:55.000Z",
+      "id": 1088594,
+      "npm_advisory_id": null,
+      "overview": "The d3-color module provides representations for various color spaces in the browser. Versions prior to 3.1.0 are vulnerable to a Regular expression Denial of Service. This issue has been patched in version 3.1.0. There are no known workarounds.",
+      "reported_by": null,
+      "title": "d3-color vulnerable to ReDoS",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "d3-color",
+      "vulnerable_versions": "<3.1.0",
+      "github_advisory_id": "GHSA-36jr-mh4h-2g58",
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "patched_versions": ">=3.1.0",
+      "updated": "2023-01-13T05:04:43.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-400"
+      ],
+      "url": "https://github.com/advisories/GHSA-36jr-mh4h-2g58"
+    },
+    "1088948": {
+      "findings": [
+        {
+          "version": "9.6.0",
+          "paths": [
+            "tools/quality > clinic@12.1.0 > update-notifier@5.1.0 > latest-version@5.1.0 > package-json@6.5.0 > got@9.6.0"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2022-33987\n- https://github.com/sindresorhus/got/pull/2047\n- https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0\n- https://github.com/sindresorhus/got/commit/861ccd9ac2237df762a9e2beed7edd88c60782dc\n- https://github.com/sindresorhus/got/releases/tag/v11.8.5\n- https://github.com/sindresorhus/got/releases/tag/v12.1.0\n- https://github.com/advisories/GHSA-pfrx-2q88-qq97",
+      "created": "2022-06-19T00:00:21.000Z",
+      "id": 1088948,
+      "npm_advisory_id": null,
+      "overview": "The got package before 11.8.5 and 12.1.0 for Node.js allows a redirect to a UNIX socket.",
+      "reported_by": null,
+      "title": "Got allows a redirect to a UNIX socket",
+      "metadata": null,
+      "cves": [
+        "CVE-2022-33987"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "got",
+      "vulnerable_versions": "<11.8.5",
+      "github_advisory_id": "GHSA-pfrx-2q88-qq97",
+      "recommendation": "Upgrade to version 11.8.5 or later",
+      "patched_versions": ">=11.8.5",
+      "updated": "2023-01-27T05:05:01.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [],
+      "url": "https://github.com/advisories/GHSA-pfrx-2q88-qq97"
+    },
+    "1096727": {
+      "findings": [
+        {
+          "version": "2.88.2",
+          "paths": [
+            "tools/quality > clinic@12.1.0 > insight@0.11.1 > request@2.88.2"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-28155\n- https://github.com/request/request/issues/3442\n- https://github.com/request/request/pull/3444\n- https://doyensec.com/resources/Doyensec_Advisory_RequestSSRF_Q12023.pdf\n- https://github.com/github/advisory-database/pull/2500\n- https://github.com/cypress-io/request/blob/master/lib/redirect.js#L116\n- https://github.com/request/request/blob/master/lib/redirect.js#L111\n- https://github.com/cypress-io/request/pull/28\n- https://github.com/cypress-io/request/commit/c5bcf21d40fb61feaff21a0e5a2b3934a440024f\n- https://github.com/cypress-io/request/releases/tag/v3.0.0\n- https://security.netapp.com/advisory/ntap-20230413-0007\n- https://github.com/advisories/GHSA-p8p7-x288-28g6",
+      "created": "2023-03-16T15:30:19.000Z",
+      "id": 1096727,
+      "npm_advisory_id": null,
+      "overview": "The `request` package through 2.88.2 for Node.js and the `@cypress/request` package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\n\nNOTE: The `request` package is no longer supported by the maintainer.",
+      "reported_by": null,
+      "title": "Server-Side Request Forgery in Request",
+      "metadata": null,
+      "cves": [
+        "CVE-2023-28155"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "request",
+      "vulnerable_versions": "<=2.88.2",
+      "github_advisory_id": "GHSA-p8p7-x288-28g6",
+      "recommendation": "None",
+      "patched_versions": "<0.0.0",
+      "updated": "2024-03-21T17:47:21.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
+    },
+    "1097682": {
+      "findings": [
+        {
+          "version": "2.5.0",
+          "paths": [
+            "tools/quality > clinic@12.1.0 > insight@0.11.1 > request@2.88.2 > tough-cookie@2.5.0"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-26136\n- https://github.com/salesforce/tough-cookie/issues/282\n- https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e\n- https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3\n- https://security.snyk.io/vuln/SNYK-JS-TOUGHCOOKIE-5672873\n- https://lists.debian.org/debian-lts-announce/2023/07/msg00010.html\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3HUE6ZR5SL73KHL7XUPAOEL6SB7HUDT2\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6PVVPNSAGSDS63HQ74PJ7MZ3MU5IYNVZ\n- https://security.netapp.com/advisory/ntap-20240621-0006\n- https://github.com/advisories/GHSA-72xf-g2v4-qvf3",
+      "created": "2023-07-01T06:30:16.000Z",
+      "id": 1097682,
+      "npm_advisory_id": null,
+      "overview": "Versions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. This issue arises from the manner in which the objects are initialized.",
+      "reported_by": null,
+      "title": "tough-cookie Prototype Pollution vulnerability",
+      "metadata": null,
+      "cves": [
+        "CVE-2023-26136"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "tough-cookie",
+      "vulnerable_versions": "<4.1.3",
+      "github_advisory_id": "GHSA-72xf-g2v4-qvf3",
+      "recommendation": "Upgrade to version 4.1.3 or later",
+      "patched_versions": ">=4.1.3",
+      "updated": "2024-06-21T21:33:53.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-1321"
+      ],
+      "url": "https://github.com/advisories/GHSA-72xf-g2v4-qvf3"
+    },
+    "1098392": {
+      "findings": [
+        {
+          "version": "8.13.0",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > ws@8.13.0",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > ws@8.13.0"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/websockets/ws/security/advisories/GHSA-3h5v-q93c-6h6q\n- https://github.com/websockets/ws/issues/2230\n- https://github.com/websockets/ws/pull/2231\n- https://github.com/websockets/ws/commit/22c28763234aa75a7e1b76f5c01c181260d7917f\n- https://github.com/websockets/ws/commit/4abd8f6de4b0b65ef80b3ff081989479ed93377e\n- https://github.com/websockets/ws/commit/e55e5106f10fcbaac37cfa89759e4cc0d073a52c\n- https://github.com/websockets/ws/commit/eeb76d313e2a00dd5247ca3597bba7877d064a63\n- https://github.com/advisories/GHSA-3h5v-q93c-6h6q",
+      "created": "2024-06-17T19:09:10.000Z",
+      "id": 1098392,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nA request with a number of headers exceeding the[`server.maxHeadersCount`][] threshold could be used to crash a ws server.\n\n### Proof of concept\n\n```js\nconst http = require('http');\nconst WebSocket = require('ws');\n\nconst wss = new WebSocket.Server({ port: 0 }, function () {\n  const chars = \"!#$%&'*+-.0123456789abcdefghijklmnopqrstuvwxyz^_`|~\".split('');\n  const headers = {};\n  let count = 0;\n\n  for (let i = 0; i < chars.length; i++) {\n    if (count === 2000) break;\n\n    for (let j = 0; j < chars.length; j++) {\n      const key = chars[i] + chars[j];\n      headers[key] = 'x';\n\n      if (++count === 2000) break;\n    }\n  }\n\n  headers.Connection = 'Upgrade';\n  headers.Upgrade = 'websocket';\n  headers['Sec-WebSocket-Key'] = 'dGhlIHNhbXBsZSBub25jZQ==';\n  headers['Sec-WebSocket-Version'] = '13';\n\n  const request = http.request({\n    headers: headers,\n    host: '127.0.0.1',\n    port: wss.address().port\n  });\n\n  request.end();\n});\n```\n\n### Patches\n\nThe vulnerability was fixed in ws@8.17.1 (https://github.com/websockets/ws/commit/e55e5106f10fcbaac37cfa89759e4cc0d073a52c) and backported to ws@7.5.10 (https://github.com/websockets/ws/commit/22c28763234aa75a7e1b76f5c01c181260d7917f), ws@6.2.3 (https://github.com/websockets/ws/commit/eeb76d313e2a00dd5247ca3597bba7877d064a63), and ws@5.2.4 (https://github.com/websockets/ws/commit/4abd8f6de4b0b65ef80b3ff081989479ed93377e)\n\n### Workarounds\n\nIn vulnerable versions of ws, the issue can be mitigated in the following ways:\n\n1. Reduce the maximum allowed length of the request headers using the [`--max-http-header-size=size`][] and/or the [`maxHeaderSize`][] options so that no more headers than the `server.maxHeadersCount` limit can be sent.\n2. Set `server.maxHeadersCount` to `0` so that no limit is applied.\n\n### Credits\n\nThe vulnerability was reported by [Ryan LaPointe](https://github.com/rrlapointe) in https://github.com/websockets/ws/issues/2230.\n\n### References\n\n- https://github.com/websockets/ws/issues/2230\n- https://github.com/websockets/ws/pull/2231\n\n[`--max-http-header-size=size`]: https://nodejs.org/api/cli.html#--max-http-header-sizesize\n[`maxHeaderSize`]: https://nodejs.org/api/http.html#httpcreateserveroptions-requestlistener\n[`server.maxHeadersCount`]: https://nodejs.org/api/http.html#servermaxheaderscount\n",
+      "reported_by": null,
+      "title": "ws affected by a DoS when handling a request with many HTTP headers",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-37890"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "ws",
+      "vulnerable_versions": ">=8.0.0 <8.17.1",
+      "github_advisory_id": "GHSA-3h5v-q93c-6h6q",
+      "recommendation": "Upgrade to version 8.17.1 or later",
+      "patched_versions": ">=8.17.1",
+      "updated": "2024-08-05T05:02:34.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-476"
+      ],
+      "url": "https://github.com/advisories/GHSA-3h5v-q93c-6h6q"
+    },
+    "1102341": {
+      "findings": [
+        {
+          "version": "0.21.5",
+          "paths": [
+            ". > lovable-tagger@1.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/backend > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/database > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/frontend > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/coverage-v8@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > @vitest/ui@2.1.9 > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > vite@5.4.20 > esbuild@0.21.5",
+            "tools/quality > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.20 > esbuild@0.21.5"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99\n- https://github.com/evanw/esbuild/commit/de85afd65edec9ebc44a11e245fd9e9a2e99760d\n- https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+      "created": "2025-02-10T17:48:07.000Z",
+      "id": 1102341,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\n### Details\n\nesbuild sets `Access-Control-Allow-Origin: *` header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\n\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n\n**Attack scenario**:\n\n1. The attacker serves a malicious web page (`http://malicious.example.com`).\n1. The user accesses the malicious web page.\n1. The attacker sends a `fetch('http://127.0.0.1:8000/main.js')` request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of `http://127.0.0.1:8000/main.js`.\n\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n\n- Fetching `/index.html`: normally you have a script tag here\n- Fetching `/assets`: it's common to have a `assets` directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting `/esbuild` SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (`new EventSource('/esbuild').addEventListener('change', e => console.log(e.type, e.data))`)\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\n\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n\n### PoC\n\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run `npm i`\n1. Run `npm run watch`\n1. Run `fetch('http://127.0.0.1:8000/app.js').then(r => r.text()).then(content => console.log(content))` in a different website's dev tools.\n\n![image](https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\n\n### Impact\n\nUsers using the serve feature may get the source code stolen by malicious websites.",
+      "reported_by": null,
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "esbuild",
+      "vulnerable_versions": "<=0.24.2",
+      "github_advisory_id": "GHSA-67mh-4wv8-2f99",
+      "recommendation": "Upgrade to version 0.25.0 or later",
+      "patched_versions": ">=0.25.0",
+      "updated": "2025-02-10T17:48:08.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-346"
+      ],
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
+    },
+    "1103907": {
+      "findings": [
+        {
+          "version": "0.4.2",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > @sentry/node@6.19.7 > cookie@0.4.2",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > @sentry/node@6.19.7 > cookie@0.4.2",
+            "tools/performance > lighthouse@11.7.1 > @sentry/node@6.19.7 > cookie@0.4.2"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/jshttp/cookie/security/advisories/GHSA-pxg6-pf52-xh8x\n- https://github.com/jshttp/cookie/pull/167\n- https://github.com/jshttp/cookie/commit/e10042845354fea83bd8f34af72475eed1dadf5c\n- https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+      "created": "2024-10-04T20:31:00.000Z",
+      "id": 1103907,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe cookie name could be used to set other fields of the cookie, resulting in an unexpected cookie value. For example, `serialize(\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a\", value)` would result in `\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a=test\"`, setting `userName` cookie to `<script>` and ignoring `value`.\n\nA similar escape can be used for `path` and `domain`, which could be abused to alter other fields of the cookie.\n\n### Patches\n\nUpgrade to 0.7.0, which updates the validation for `name`, `path`, and `domain`.\n\n### Workarounds\n\nAvoid passing untrusted or arbitrary values for these fields, ensure they are set by the application instead of user input.\n\n### References\n\n* https://github.com/jshttp/cookie/pull/167",
+      "reported_by": null,
+      "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-47764"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "cookie",
+      "vulnerable_versions": "<0.7.0",
+      "github_advisory_id": "GHSA-pxg6-pf52-xh8x",
+      "recommendation": "Upgrade to version 0.7.0 or later",
+      "patched_versions": ">=0.7.0",
+      "updated": "2025-04-15T13:56:44.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-74"
+      ],
+      "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x"
+    },
+    "1104677": {
+      "findings": [
+        {
+          "version": "2.1.1",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > @puppeteer/browsers@0.5.0 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > @puppeteer/browsers@0.5.0 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > tar-fs@2.1.1"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-12905\n- https://github.com/mafintosh/tar-fs/commit/a1dd7e7c7f4b4a8bd2ab60f513baca573b44e2ed\n- https://github.com/advisories/GHSA-pq67-2wwv-3xjx",
+      "created": "2025-03-27T18:31:28.000Z",
+      "id": 1104677,
+      "npm_advisory_id": null,
+      "overview": "An Improper Link Resolution Before File Access (\"Link Following\") and Improper Limitation of a Pathname to a Restricted Directory (\"Path Traversal\"). This vulnerability occurs when extracting a maliciously crafted tar file, which can result in unauthorized file writes or overwrites outside the intended extraction directory. The issue is associated with index.js in the tar-fs package.\n\nThis issue affects tar-fs: from 0.0.0 before 1.16.4, from 2.0.0 before 2.1.2, from 3.0.0 before 3.0.7.",
+      "reported_by": null,
+      "title": "tar-fs Vulnerable to Link Following and Path Traversal via Extracting a Crafted tar File",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-12905"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar-fs",
+      "vulnerable_versions": ">=2.0.0 <2.1.2",
+      "github_advisory_id": "GHSA-pq67-2wwv-3xjx",
+      "recommendation": "Upgrade to version 2.1.2 or later",
+      "patched_versions": ">=2.1.2",
+      "updated": "2025-05-20T17:57:27.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-pq67-2wwv-3xjx"
+    },
+    "1106509": {
+      "findings": [
+        {
+          "version": "2.3.3",
+          "paths": [
+            "tools/quality > clinic@12.1.0 > insight@0.11.1 > request@2.88.2 > form-data@2.3.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/form-data/form-data/security/advisories/GHSA-fjxv-7rqg-78g4\n- https://nvd.nist.gov/vuln/detail/CVE-2025-7783\n- https://github.com/form-data/form-data/commit/3d1723080e6577a66f17f163ecd345a21d8d0fd0\n- https://github.com/benweissmann/CVE-2025-7783-poc\n- https://github.com/advisories/GHSA-fjxv-7rqg-78g4",
+      "created": "2025-07-21T19:04:54.000Z",
+      "id": 1106509,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nform-data uses `Math.random()` to select a boundary value for multipart form-encoded data. This can lead to a security issue if an attacker:\n1. can observe other values produced by Math.random in the target application, and\n2. can control one field of a request made using form-data\n\nBecause the values of Math.random() are pseudo-random and predictable (see: https://blog.securityevaluators.com/hacking-the-javascript-lottery-80cc437e3b7f), an attacker who can observe a few sequential values can determine the state of the PRNG and predict future values, includes those used to generate form-data's boundary value. The allows the attacker to craft a value that contains a boundary value, allowing them to inject additional parameters into the request.\n\nThis is largely the same vulnerability as was [recently found in `undici`](https://hackerone.com/reports/2913312) by [`parrot409`](https://hackerone.com/parrot409?type=user) -- I'm not affiliated with that researcher but want to give credit where credit is due! My PoC is largely based on their work.\n\n### Details\n\nThe culprit is this line here: https://github.com/form-data/form-data/blob/426ba9ac440f95d1998dac9a5cd8d738043b048f/lib/form_data.js#L347\n\nAn attacker who is able to predict the output of Math.random() can predict this boundary value, and craft a payload that contains the boundary value, followed by another, fully attacker-controlled field. This is roughly equivalent to any sort of improper escaping vulnerability, with the caveat that the attacker must find a way to observe other Math.random() values generated by the application to solve for the state of the PRNG. However, Math.random() is used in all sorts of places that might be visible to an attacker (including by form-data itself, if the attacker can arrange for the vulnerable application to make a request to an attacker-controlled server using form-data, such as a user-controlled webhook -- the attacker could observe the boundary values from those requests to observe the Math.random() outputs). A common example would be a `x-request-id` header added by the server. These sorts of headers are often used for distributed tracing, to correlate errors across the frontend and backend. `Math.random()` is a fine place to get these sorts of IDs (in fact, [opentelemetry uses Math.random for this purpose](https://github.com/open-telemetry/opentelemetry-js/blob/2053f0d3a44631ade77ea04f656056a2c8a2ae76/packages/opentelemetry-sdk-trace-base/src/platform/node/RandomIdGenerator.ts#L22))\n\n### PoC\n\nPoC here: https://github.com/benweissmann/CVE-2025-7783-poc\n\nInstructions are in that repo. It's based on the PoC from https://hackerone.com/reports/2913312 but simplified somewhat; the vulnerable application has a more direct side-channel from which to observe Math.random() values (a separate endpoint that happens to include a randomly-generated request ID). \n\n### Impact\n\nFor an application to be vulnerable, it must:\n- Use `form-data` to send data including user-controlled data to some other system. The attacker must be able to do something malicious by adding extra parameters (that were not intended to be user-controlled) to this request. Depending on the target system's handling of repeated parameters, the attacker might be able to overwrite values in addition to appending values (some multipart form handlers deal with repeats by overwriting values instead of representing them as an array)\n- Reveal values of Math.random(). It's easiest if the attacker can observe multiple sequential values, but more complex math could recover the PRNG state to some degree of confidence with non-sequential values. \n\nIf an application is vulnerable, this allows an attacker to make arbitrary requests to internal systems.",
+      "reported_by": null,
+      "title": "form-data uses unsafe random function in form-data for choosing boundary",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-7783"
+      ],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "form-data",
+      "vulnerable_versions": "<2.5.4",
+      "github_advisory_id": "GHSA-fjxv-7rqg-78g4",
+      "recommendation": "Upgrade to version 2.5.4 or later",
+      "patched_versions": ">=2.5.4",
+      "updated": "2025-07-21T19:04:58.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-330"
+      ],
+      "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4"
+    },
+    "1106849": {
+      "findings": [
+        {
+          "version": "0.0.33",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > inquirer@6.5.2 > external-editor@3.1.0 > tmp@0.0.33",
+            "tools/quality > clinic@12.1.0 > insight@0.11.1 > inquirer@6.5.2 > external-editor@3.1.0 > tmp@0.0.33"
+          ]
+        },
+        {
+          "version": "0.1.0",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > tmp@0.1.0"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/raszi/node-tmp/security/advisories/GHSA-52f5-9888-hmc6\n- https://github.com/raszi/node-tmp/commit/188b25e529496e37adaf1a1d9dccb40019a08b1b\n- https://nvd.nist.gov/vuln/detail/CVE-2025-54798\n- https://github.com/raszi/node-tmp/issues/207\n- https://github.com/advisories/GHSA-52f5-9888-hmc6",
+      "created": "2025-08-06T17:06:04.000Z",
+      "id": 1106849,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\n`tmp@0.2.3` is vulnerable to an Arbitrary temporary file / directory write via symbolic link `dir` parameter.\n\n\n### Details\n\nAccording to the documentation there are some conditions that must be held:\n\n```\n// https://github.com/raszi/node-tmp/blob/v0.2.3/README.md?plain=1#L41-L50\n\nOther breaking changes, i.e.\n\n- template must be relative to tmpdir\n- name must be relative to tmpdir\n- dir option must be relative to tmpdir //<-- this assumption can be bypassed using symlinks\n\nare still in place.\n\nIn order to override the system's tmpdir, you will have to use the newly\nintroduced tmpdir option.\n\n\n// https://github.com/raszi/node-tmp/blob/v0.2.3/README.md?plain=1#L375\n* `dir`: the optional temporary directory that must be relative to the system's default temporary directory.\n     absolute paths are fine as long as they point to a location under the system's default temporary directory.\n     Any directories along the so specified path must exist, otherwise a ENOENT error will be thrown upon access, \n     as tmp will not check the availability of the path, nor will it establish the requested path for you.\n```\n\nRelated issue: https://github.com/raszi/node-tmp/issues/207.\n\n\nThe issue occurs because `_resolvePath` does not properly handle symbolic link when resolving paths:\n```js\n// https://github.com/raszi/node-tmp/blob/v0.2.3/lib/tmp.js#L573-L579\nfunction _resolvePath(name, tmpDir) {\n  if (name.startsWith(tmpDir)) {\n    return path.resolve(name);\n  } else {\n    return path.resolve(path.join(tmpDir, name));\n  }\n}\n```\n\nIf the `dir` parameter points to a symlink that resolves to a folder outside the `tmpDir`, it's possible to bypass the `_assertIsRelative` check used in `_assertAndSanitizeOptions`:\n```js\n// https://github.com/raszi/node-tmp/blob/v0.2.3/lib/tmp.js#L590-L609\nfunction _assertIsRelative(name, option, tmpDir) {\n  if (option === 'name') {\n    // assert that name is not absolute and does not contain a path\n    if (path.isAbsolute(name))\n      throw new Error(`${option} option must not contain an absolute path, found \"${name}\".`);\n    // must not fail on valid .<name> or ..<name> or similar such constructs\n    let basename = path.basename(name);\n    if (basename === '..' || basename === '.' || basename !== name)\n      throw new Error(`${option} option must not contain a path, found \"${name}\".`);\n  }\n  else { // if (option === 'dir' || option === 'template') {\n    // assert that dir or template are relative to tmpDir\n    if (path.isAbsolute(name) && !name.startsWith(tmpDir)) {\n      throw new Error(`${option} option must be relative to \"${tmpDir}\", found \"${name}\".`);\n    }\n    let resolvedPath = _resolvePath(name, tmpDir); //<--- \n    if (!resolvedPath.startsWith(tmpDir))\n      throw new Error(`${option} option must be relative to \"${tmpDir}\", found \"${resolvedPath}\".`);\n  }\n}\n```\n\n\n### PoC\n\nThe following PoC demonstrates how writing a tmp file on a folder outside the `tmpDir` is possible.\nTested on a Linux machine.\n\n- Setup: create a symbolic link inside the `tmpDir` that points to a directory outside of it\n```bash\nmkdir $HOME/mydir1\n\nln -s $HOME/mydir1 ${TMPDIR:-/tmp}/evil-dir\n```\n\n- check the folder is empty:\n```bash\nls -lha $HOME/mydir1 | grep \"tmp-\"\n```\n\n- run the poc\n```bash\nnode main.js\nFile:  /tmp/evil-dir/tmp-26821-Vw87SLRaBIlf\ntest 1: ENOENT: no such file or directory, open '/tmp/mydir1/tmp-[random-id]'\ntest 2: dir option must be relative to \"/tmp\", found \"/foo\".\ntest 3: dir option must be relative to \"/tmp\", found \"/home/user/mydir1\".\n```\n\n- the temporary file is created under `$HOME/mydir1` (outside the `tmpDir`):\n```bash\nls -lha $HOME/mydir1 | grep \"tmp-\"\n-rw------- 1 user user    0 Apr  X XX:XX tmp-[random-id]\n```\n\n\n- `main.js`\n```js\n// npm i tmp@0.2.3\n\nconst tmp = require('tmp');\n\nconst tmpobj = tmp.fileSync({ 'dir': 'evil-dir'});\nconsole.log('File: ', tmpobj.name);\n\ntry {\n    tmp.fileSync({ 'dir': 'mydir1'});\n} catch (err) {\n    console.log('test 1:', err.message)\n}\n\ntry {\n    tmp.fileSync({ 'dir': '/foo'});\n} catch (err) {\n    console.log('test 2:', err.message)\n}\n\ntry {\n    const fs = require('node:fs');\n    const resolved = fs.realpathSync('/tmp/evil-dir');\n    tmp.fileSync({ 'dir': resolved});\n} catch (err) {\n    console.log('test 3:', err.message)\n}\n```\n\n\nA Potential fix could be to call `fs.realpathSync` (or similar) that resolves also symbolic links.\n```js\nfunction _resolvePath(name, tmpDir) {\n  let resolvedPath;\n  if (name.startsWith(tmpDir)) {\n    resolvedPath = path.resolve(name);\n  } else {\n    resolvedPath = path.resolve(path.join(tmpDir, name));\n  }\n  return fs.realpathSync(resolvedPath);\n}\n```\n\n\n### Impact\n\nArbitrary temporary file / directory write via symlink",
+      "reported_by": null,
+      "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-54798"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "tmp",
+      "vulnerable_versions": "<=0.2.3",
+      "github_advisory_id": "GHSA-52f5-9888-hmc6",
+      "recommendation": "Upgrade to version 0.2.4 or later",
+      "patched_versions": ">=0.2.4",
+      "updated": "2025-08-07T15:11:23.000Z",
+      "cvss": {
+        "score": 2.5,
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-59"
+      ],
+      "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6"
+    },
+    "1106930": {
+      "findings": [
+        {
+          "version": "2.1.1",
+          "paths": [
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > @puppeteer/browsers@0.5.0 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > @lhci/utils@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > @puppeteer/browsers@0.5.0 > tar-fs@2.1.1",
+            "tools/performance > @lhci/cli@0.12.0 > lighthouse@10.1.0 > puppeteer-core@19.11.1 > tar-fs@2.1.1"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/mafintosh/tar-fs/security/advisories/GHSA-8cj5-5rvv-wf4v\n- https://nvd.nist.gov/vuln/detail/CVE-2025-48387\n- https://github.com/mafintosh/tar-fs/commit/647447b572bc135c41035e82ca7b894f02b17f0f\n- https://github.com/google/security-research/security/advisories/GHSA-xrg4-qp5w-2c3w\n- https://github.com/advisories/GHSA-8cj5-5rvv-wf4v",
+      "created": "2025-06-03T06:14:25.000Z",
+      "id": 1106930,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n v3.0.8, v2.1.2, v1.16.4 and below\n\n### Patches\nHas been patched in 3.0.9, 2.1.3, and 1.16.5\n\n### Workarounds\nYou can use the ignore option to ignore non files/directories.\n\n```js\n  ignore (_, header) {\n    // pass files & directories, ignore e.g. symlinks\n    return header.type !== 'file' && header.type !== 'directory'\n  }\n```\n\n### Credit\nThank you Caleb Brown from Google Open Source Security Team for reporting this in detail.",
+      "reported_by": null,
+      "title": "tar-fs can extract outside the specified dir with a specific tarball",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-48387"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar-fs",
+      "vulnerable_versions": ">=2.0.0 <2.1.3",
+      "github_advisory_id": "GHSA-8cj5-5rvv-wf4v",
+      "recommendation": "Upgrade to version 2.1.3 or later",
+      "patched_versions": ">=2.1.3",
+      "updated": "2025-08-14T19:26:17.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-8cj5-5rvv-wf4v"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 3,
+      "moderate": 4,
+      "high": 4,
+      "critical": 1
+    },
+    "dependencies": 2118,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 2118
+  }
+}

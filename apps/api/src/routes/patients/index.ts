@@ -9,6 +9,9 @@ import getPatientHistory from './history';
 import bulkActions from './bulk';
 
 const patientsRouter = new Hono();
+// Documents upload endpoint placeholder added via documents-upload route above
+import documentsUpload from './documents-upload'; // POST /patients/:id/documents
+patientsRouter.route('/patients', documentsUpload);
 
 // Mount patient endpoints
 patientsRouter.route('/patients', listPatients);           // GET /patients

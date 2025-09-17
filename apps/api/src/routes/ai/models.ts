@@ -5,13 +5,19 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
+import { Hono, Context, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 import { AuditService } from '../../services/audit-service.js';
 
+// Type definitions
+interface ServiceInterface {
+  aiChatService: AIChatService;
+  auditService: AuditService;
+}
+
 // Mock middleware for testing
-const mockAuthMiddleware = (c: any, next: any) => {
+const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
     return c.json({
@@ -40,10 +46,10 @@ const modelsQuerySchema = z.object({
 });
 
 // Services - will be injected during testing or use real services in production
-let services: any = null;
+let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: any) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 

@@ -982,8 +982,15 @@ export class HealthcareAuthMiddleware {
    */
   private async validateToken(token: string): Promise<any> {
     try {
-      // TODO: Replace with actual JWT secret from environment
-      const secret = process.env.JWT_SECRET || 'healthcare-secret-key';
+      const secret = process.env.JWT_SECRET;
+      
+      if (!secret) {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('JWT_SECRET environment variable is not set in production.');
+        } else {
+          throw new Error('JWT_SECRET environment variable is required for token validation.');
+        }
+      }
 
       const decoded = await verify(token, secret, this.config.jwt.algorithm);
 
@@ -1081,7 +1088,7 @@ export class HealthcareAuthMiddleware {
           createdAt: now,
           lastActivity: now,
           expiresAt: new Date(Date.now() + this.config.session.absoluteTimeout * 1000).toISOString(),
-          ipAddress: this.anonymizeIP(c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'),
+          ipAddress: this.anonymizeIP((c.req.header('x-forwarded-for')?.split(',')[0].trim()) || c.req.header('x-real-ip') || 'unknown'),
           userAgent: c.req.header('user-agent') || 'unknown',
           deviceType: this.detectDeviceType(c.req.header('user-agent')),
           authenticationMethod: decoded.authMethod || 'password',
@@ -1171,6 +1178,11 @@ export class HealthcareAuthMiddleware {
       )[0];
 
       await this.expireSession(oldestSession.sessionId, 'CONCURRENT_LIMIT');
+      
+      // If the current session is the one being expired, return false
+      if (oldestSession.sessionId === session.sessionId) {
+        return false;
+      }
     }
 
     // Validate LGPD consent if required
@@ -1450,7 +1462,7 @@ export class HealthcareAuthMiddleware {
     const failureLog = {
       endpoint: c.req.path,
       method: c.req.method,
-      ipAddress: this.anonymizeIP(c.req.header('x-forwarded-for') || 'unknown'),
+      ipAddress: this.anonymizeIP((c.req.header('x-forwarded-for')?.split(',')[0].trim()) || c.req.header('x-real-ip') || 'unknown'),
       userAgent: c.req.header('user-agent'),
       errorCode: authResult.errorCode,
       errorMessage: authResult.errorMessage,
@@ -1535,18 +1547,26 @@ export class HealthcareAuthMiddleware {
    * Anonymize IP address for LGPD compliance
    */
   private anonymizeIP(ip: string): string {
-    if (ip === 'unknown') return ip;
+    if (!ip || ip === 'unknown') return 'unknown';
 
-    // IPv4 anonymization
-    if (ip.includes('.')) {
-      const parts = ip.split('.');
-      return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
-    }
+    try {
+      // IPv4 anonymization
+      if (ip.includes('.')) {
+        const parts = ip.split('.');
+        if (parts.length >= 3) {
+          return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
+        }
+      }
 
-    // IPv6 anonymization
-    if (ip.includes(':')) {
-      const parts = ip.split(':');
-      return parts.slice(0, 4).join(':') + '::';
+      // IPv6 anonymization
+      if (ip.includes(':')) {
+        const parts = ip.split(':');
+        if (parts.length >= 4) {
+          return parts.slice(0, 4).join(':') + '::';
+        }
+      }
+    } catch (error) {
+      console.warn(`IP anonymization failed for value: ${ip}`);
     }
 
     return 'anonymized';

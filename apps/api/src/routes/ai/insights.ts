@@ -5,15 +5,44 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
+import { Hono, Context, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 import { PatientService } from '../../services/patient-service.js';
 import { AuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
 
+// Type definitions
+interface ServiceInterface {
+  aiChatService: AIChatService;
+  patientService: PatientService;
+  auditService: AuditService;
+  lgpdService: LGPDService;
+}
+
+interface CacheData {
+  data: unknown;
+  timestamp: number;
+}
+
+interface QueryParams {
+  includeHistory?: string;
+  medicalSpecialty?: string;
+  context?: string;
+}
+
+interface InsightsResponse {
+  success: boolean;
+  data: {
+    insights?: unknown;
+    healthSummary?: unknown;
+    metrics?: unknown;
+    [key: string]: unknown;
+  };
+}
+
 // Mock middleware for testing
-const mockAuthMiddleware = (c: any, next: any) => {
+const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
     return c.json({
@@ -32,9 +61,9 @@ const mockAuthMiddleware = (c: any, next: any) => {
   
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
   return next();
-};
+};;
 
-const mockLGPDMiddleware = (c: any, next: any) => next();
+const mockLGPDMiddleware = (c: Context, next: Next) => next();;
 
 const app = new Hono();
 
@@ -43,9 +72,9 @@ const cache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
 
 // Function to get cache key
-const getCacheKey = (patientId: string, queryParams: any, userId: string, medicalSpecialty?: string) => {
+const getCacheKey = (patientId: string, queryParams: QueryParams, userId: string, medicalSpecialty?: string) => {
   return `insights:${patientId}:${userId}:${JSON.stringify(queryParams)}:${medicalSpecialty || 'none'}`;
-};
+};;
 
 // Function to check cache
 const getFromCache = (key: string) => {
@@ -58,12 +87,12 @@ const getFromCache = (key: string) => {
 };
 
 // Function to set cache
-const setCache = (key: string, data: any) => {
+const setCache = (key: string, data: unknown) => {
   cache.set(key, {
     data,
     timestamp: Date.now(),
   });
-};
+};;
 
 // Path parameter validation schema
 const pathSchema = z.object({
@@ -87,12 +116,12 @@ const insightsQuerySchema = z.object({
 });
 
 // Services - will be injected during testing or use real services in production
-let services: any = null;
+let services: ServiceInterface | null = null;;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: any) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
-};
+};;
 
 // Default services for production
 const getServices = () => {
@@ -363,7 +392,7 @@ app.get(
       });
 
       // Prepare final response
-      const finalResponse: any = {
+      const finalResponse: InsightsResponse = {
         success: true,
         data: responseData,
       };

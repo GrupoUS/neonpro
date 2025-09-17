@@ -1,92 +1,49 @@
-/**
- * Audit Tool Type Definitions
- * Consolidated types for the audit system
- */
-
-export type AssetType = 'source' | 'test' | 'config' | 'documentation' | 'assets' | 'build';
-
-export interface CodeAsset {
-  path: string;
-  relativePath: string;
-  type: AssetType;
-  size: number;
-  extension: string;
-  lastModified: Date;
-  dependencies?: string[];
-  exports?: string[];
-  complexity?: number;
-}
+export type OutputFormat = 'json' | 'text';
 
 export interface ScanOptions {
-  patterns: string[];
-  excludePatterns: string[];
-  followSymlinks: boolean;
-  maxDepth: number;
-  maxFileSize: number;
-  enableMetrics: boolean;
-  enableProgress: boolean;
+  root: string;
+  include?: string[];
+  exclude?: string[];
+  maxDepth?: number;
 }
 
-export interface ScanProgress {
-  totalFiles: number;
-  processedFiles: number;
-  currentFile: string;
-  percentage: number;
-  estimatedTimeRemaining: number;
-}
-
-export interface ScanWarning {
-  type: 'permission' | 'size' | 'symlink' | 'encoding';
+export interface ScannedFile {
   path: string;
-  message: string;
-  severity: 'low' | 'medium' | 'high';
-}
-
-export interface ScanMetrics {
-  startTime: Date;
-  endTime?: Date;
-  duration?: number;
-  filesProcessed: number;
-  bytesProcessed: number;
-  averageFileSize: number;
-  filesPerSecond: number;
-  memoryUsage: number;
-  warnings: ScanWarning[];
+  size: number;
+  modified: Date;
 }
 
 export interface ScanResult {
-  assets: CodeAsset[];
-  metrics: ScanMetrics;
-  warnings: ScanWarning[];
-  summary: {
-    totalFiles: number;
+  files: ScannedFile[];
+  totalSize: number;
+  durationMs: number;
+  warnings: string[];
+}
+
+export interface DependencySummary {
+  totalFiles: number;
+  totalImports: number;
+  entryPoints: string[];
+  unusedFiles: string[];
+}
+
+export interface AuditOptions extends Partial<ScanOptions> {
+  outputFormat?: OutputFormat;
+  output?: string;
+  verbose?: boolean;
+}
+
+export interface AuditReport {
+  generatedAt: Date;
+  root: string;
+  scan: {
+    fileCount: number;
     totalSize: number;
-    typeBreakdown: Record<AssetType, number>;
-    largestFiles: CodeAsset[];
-    oldestFiles: CodeAsset[];
+    warnings: string[];
   };
+  dependency: {
+    totalImports: number;
+    unusedFiles: string[];
+  };
+  recommendations: string[];
 }
-
-export interface IFileScanner {
-  scan(rootPath: string, options?: Partial<ScanOptions>): Promise<ScanResult>;
-  cancel(): void;
-  isScanning(): boolean;
-  getProgress(): ScanProgress | null;
-}
-
-export const DEFAULT_SCAN_OPTIONS: ScanOptions = {
-  patterns: ['**/*.{ts,tsx,js,jsx,vue,svelte,py,rb,php,java,cs,cpp,c,h,hpp,go,rs,swift}'],
-  excludePatterns: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**'],
-  followSymlinks: false,
-  maxDepth: 10,
-  maxFileSize: 10 * 1024 * 1024, // 10MB
-  enableMetrics: true,
-  enableProgress: true,
-};
-
-export const PERFORMANCE_REQUIREMENTS = {
-  maxScanTimeMs: 30000, // 30 seconds
-  maxMemoryUsageMB: 512, // 512MB
-  minFilesPerSecond: 100,
-  maxConcurrentFiles: 50,
-};

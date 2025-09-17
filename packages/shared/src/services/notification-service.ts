@@ -999,9 +999,53 @@ export class NotificationService {
    * Validate consent for notification delivery
    */
   private async validateConsent(notification: Notification): Promise<boolean> {
-    // TODO: Implement actual consent validation
-    console.log(`🔒 [NotificationService] Validating consent for notification: ${notification.id}`);
-    return true;
+    // Skip consent validation for emergency notifications
+    if (notification.priority === 'emergency' || 
+        notification.category === 'emergency_notification' ||
+        notification.category === 'patient_safety_alert') {
+      console.log(`🚨 [NotificationService] Emergency notification - bypassing consent check: ${notification.id}`);
+      return true;
+    }
+    
+    // Check user's consent status for this notification category
+    const consentStatus = notification.healthcareContext?.patientContext?.consentStatus;
+    
+    if (!consentStatus) {
+      console.warn(`⚠️ [NotificationService] No consent data available for notification: ${notification.id}`);
+      return false;
+    }
+    
+    // Validate based on notification category
+    let hasConsent = false;
+    
+    switch (notification.category) {
+      case 'appointment_reminder':
+      case 'appointment_confirmation':
+      case 'appointment_cancellation':
+      case 'test_results_available':
+      case 'prescription_ready':
+      case 'medication_reminder':
+        hasConsent = consentStatus.communicationConsent;
+        break;
+        
+      case 'insurance_update':
+      case 'payment_reminder':
+        hasConsent = consentStatus.communicationConsent;
+        break;
+        
+      case 'policy_update':
+      case 'consent_renewal':
+      case 'privacy_policy_update':
+      case 'lgpd_data_request':
+        hasConsent = consentStatus.dataProcessingConsent;
+        break;
+        
+      default:
+        hasConsent = false;
+    }
+    
+    console.log(`🔒 [NotificationService] Consent validation for ${notification.id}: ${hasConsent ? 'Granted' : 'Denied'}`);
+    return hasConsent;
   }
 
   /**

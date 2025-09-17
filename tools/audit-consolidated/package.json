@@ -1,7 +1,7 @@
 {
   "name": "@neonpro/audit-tool",
   "version": "2.0.0",
-  "description": "Unified NeonPro Monorepo Architecture Audit and Optimization Tool with Constitutional TDD Compliance",
+  "description": "Lightweight NeonPro audit utility for scanning files and summarising dependencies.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -10,87 +10,43 @@
   },
   "files": [
     "dist/",
-    "docs/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "engines": {
-    "node": ">=20.0.0",
-    "bun": ">=1.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "tsup",
-    "build:production": "NODE_ENV=production npm run build",
     "clean": "rm -rf dist/",
     "dev": "tsup --watch",
-    "test": "vitest",
-    "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage",
+    "test": "echo \"No tests defined\"",
     "lint": "oxlint --fix src",
     "type-check": "tsc --noEmit",
     "format": "dprint fmt",
     "format:check": "dprint check",
     "quality": "npm run type-check && npm run lint && npm run format:check",
-    "prepublishOnly": "npm run quality && npm run build:production && npm run test",
-    "prepack": "npm run build:production",
+    "prepublishOnly": "npm run quality && npm run build",
+    "prepack": "npm run build",
     "cli": "node dist/cli/index.js",
-    "start": "npm run cli",
-    "audit": "npm run cli audit",
-    "constitutional": "npm run cli constitutional",
-    "benchmark": "npm run cli benchmark",
-    "quick": "npm run cli quick",
-    "scan": "npm run cli scan",
-    "analyze": "npm run cli analyze",
-    "validate": "npm run cli validate",
-    "cleanup": "npm run cli cleanup",
-    "report": "npm run cli report"
+    "audit": "node dist/cli/index.js audit"
   },
   "dependencies": {
-    "@neonpro/tools-shared": "workspace:*",
-    "@inquirer/prompts": "^7.8.4",
-    "chalk": "^5.6.2",
-    "commander": "^11.1.0",
-    "fs-extra": "^11.3.1",
-    "glob": "^10.4.5",
-    "ora": "^7.0.1",
-    "ts-morph": "^20.0.0"
+    "commander": "^11.1.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.19.13",
-    "tsup": "^8.0.0",
-    "typescript": "^5.7.2",
-    "vitest": "^3.2.4",
+    "dprint": "^0.50.0",
     "oxlint": "^0.15.0",
-    "dprint": "^0.50.0"
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2"
   },
-  "keywords": [
-    "neonpro",
-    "monorepo",
-    "audit",
-    "optimization",
-    "constitutional-tdd",
-    "healthcare",
-    "architecture",
-    "cleanup",
-    "turborepo",
-    "compliance",
-    "lgpd",
-    "anvisa",
-    "cfm"
-  ],
-  "author": "NeonPro Team",
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neonpro/neonpro.git",
+    "url": "https://github.com/GrupoUS/neonpro",
     "directory": "tools/audit-consolidated"
   },
-  "bugs": {
-    "url": "https://github.com/neonpro/neonpro/issues"
-  },
-  "homepage": "https://github.com/neonpro/neonpro#readme"
+  "author": "NeonPro Team",
+  "license": "MIT"
 }

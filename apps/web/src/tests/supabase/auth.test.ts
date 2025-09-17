@@ -65,7 +65,7 @@ describe('Supabase Authentication - LGPD Compliant', () => {
       // security-auditor: Registration with consent validation
       const startTime = performance.now();
 
-      const { data, error } = await testClient.auth.signUp({
+      const { data: _data, error: _error } = await testClient.auth.signUp({
         email: testUserData.email,
         password: testUserData.password,
         options: {
@@ -146,7 +146,7 @@ describe('Supabase Authentication - LGPD Compliant', () => {
         },
       };
 
-      const { data, error } = await testClient.auth.signUp({
+      const { data: _data, error: _error } = await testClient.auth.signUp({
         email: invalidUserData.email,
         password: invalidUserData.password,
         options: {
@@ -181,7 +181,7 @@ describe('Supabase Authentication - LGPD Compliant', () => {
         },
       };
 
-      const { data, error } = await testClient.auth.signUp({
+      const { data: _data, error: _error } = await testClient.auth.signUp({
         email: doctorUserData.email,
         password: doctorUserData.password,
         options: {
@@ -411,7 +411,7 @@ describe('Supabase Authentication - LGPD Compliant', () => {
       ];
 
       for (const weakPassword of weakPasswords) {
-        const { data, error } = await testClient.auth.signUp({
+        const { data: _data, error: _error } = await testClient.auth.signUp({
           email: `test-weak-${Date.now()}@neonpro-test.com`,
           password: weakPassword,
         });
