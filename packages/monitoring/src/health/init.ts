@@ -5,7 +5,6 @@ interface HealthConfig {
   interval: number;
 }
 
-let healthChecks: HealthCheck[] = [];
 let healthInterval: NodeJS.Timeout | null = null;
 
 export function initializeHealthChecks(config: HealthConfig): void {
@@ -23,7 +22,7 @@ export function initializeHealthChecks(config: HealthConfig): void {
   console.log(`🏥 Health checks running every ${config.interval}ms`);
 }
 
-export function registerHealthCheck(name: string, checkFn: () => Promise<HealthCheck>): void {
+export function registerHealthCheck(name: string, _checkFn: () => Promise<HealthCheck>): void {
   console.log(`📋 Registering health check: ${name}`);
 }
 
