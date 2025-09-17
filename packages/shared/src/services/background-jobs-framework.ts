@@ -541,87 +541,80 @@ export function requiresEmergencyProcessing(
 /**
  * Get default job configuration for healthcare job type
  */
-export function getDefaultJobConfig(
-  jobType: HealthcareJobType,
-  context?: HealthcareJobContext
-): JobConfig {
-  const baseConfig: JobConfig = {
-    maxRetries: 3,
-    retryDelay: 5000,
-    exponentialBackoff: true,
-    maxRetryDelay: 300000,
-    jobTimeout: 300000,
-    emergencyOverride: false,
-    patientSafetyRelevant: false,
-    auditRequired: true,
-    lgpdCompliant: true,
-    delay: 0,
-    timezone: 'UTC',
-    memoryLimit: 128 * 1024 * 1024,
-    cpuLimit: 1,
-    tags: [],
-    metadata: {}
-  };
-  
-  // Job type specific configurations
-  switch (jobType) {
+export function getDefaultJobConfig(type: HealthcareJobType, _context?: HealthcareJobContext): JobConfig {
+  switch (type) {
     case HealthcareJobType.EMERGENCY_NOTIFICATION:
       return {
-        ...baseConfig,
-        maxRetries: 5,
+        maxRetries: 3,
         retryDelay: 1000,
-        jobTimeout: 60000, // 1 minute
+        exponentialBackoff: true,
+        maxRetryDelay: 30000,
+        jobTimeout: 30000,
         emergencyOverride: true,
         patientSafetyRelevant: true,
-        auditRequired: true
+        auditRequired: true,
+        lgpdCompliant: true,
+        delay: 0,
+        timezone: 'UTC',
+        memoryLimit: 128 * 1024 * 1024,
+        cpuLimit: 1,
+        tags: [],
+        metadata: {},
       };
-      
     case HealthcareJobType.PATIENT_DATA_SYNC:
       return {
-        ...baseConfig,
-        maxRetries: 3,
-        jobTimeout: 600000, // 10 minutes
-        patientSafetyRelevant: true,
-        lgpdCompliant: true
-      };
-      
-    case HealthcareJobType.CLINICAL_REPORT_GENERATION:
-      return {
-        ...baseConfig,
         maxRetries: 2,
-        jobTimeout: 1800000, // 30 minutes
-        memoryLimit: 256 * 1024 * 1024, // 256MB
-        patientSafetyRelevant: true
+        retryDelay: 5000,
+        exponentialBackoff: true,
+        maxRetryDelay: 60000,
+        jobTimeout: 60000,
+        emergencyOverride: false,
+        patientSafetyRelevant: false,
+        auditRequired: true,
+        lgpdCompliant: true,
+        delay: 0,
+        timezone: 'UTC',
+        memoryLimit: 128 * 1024 * 1024,
+        cpuLimit: 1,
+        tags: [],
+        metadata: {},
       };
-      
     case HealthcareJobType.COMPLIANCE_AUDIT:
       return {
-        ...baseConfig,
         maxRetries: 1,
-        jobTimeout: 3600000, // 1 hour
+        retryDelay: 15000,
+        exponentialBackoff: false,
+        maxRetryDelay: 120000,
+        jobTimeout: 120000,
+        emergencyOverride: false,
+        patientSafetyRelevant: true,
         auditRequired: true,
-        lgpdCompliant: true
-      };
-      
-    case HealthcareJobType.DATA_RETENTION_CLEANUP:
-      return {
-        ...baseConfig,
-        maxRetries: 2,
-        jobTimeout: 7200000, // 2 hours
         lgpdCompliant: true,
-        delay: 3600000 // 1 hour delay
+        delay: 0,
+        timezone: 'UTC',
+        memoryLimit: 128 * 1024 * 1024,
+        cpuLimit: 1,
+        tags: [],
+        metadata: {},
       };
-      
-    case HealthcareJobType.SYSTEM_MAINTENANCE:
-      return {
-        ...baseConfig,
-        maxRetries: 1,
-        jobTimeout: 1800000, // 30 minutes
-        auditRequired: false
-      };
-      
     default:
-      return baseConfig;
+      return {
+        maxRetries: 3,
+        retryDelay: 5000,
+        exponentialBackoff: true,
+        maxRetryDelay: 300000,
+        jobTimeout: 300000,
+        emergencyOverride: false,
+        patientSafetyRelevant: false,
+        auditRequired: true,
+        lgpdCompliant: true,
+        delay: 0,
+        timezone: 'UTC',
+        memoryLimit: 128 * 1024 * 1024,
+        cpuLimit: 1,
+        tags: [],
+        metadata: {},
+      };
   }
 }
 

@@ -71,7 +71,15 @@ export class JobManager {
 
     // Get job configuration
     const config = {
-      ...getDefaultJobConfig(request.type, request.healthcareContext),
+      ...getDefaultJobConfig({
+        dataClassification: request.healthcareContext?.dataClassification as string || 'internal',
+        urgencyLevel: request.healthcareContext?.urgencyLevel || 'routine',
+        facilityId: request.healthcareContext?.facilityId,
+        departmentId: request.healthcareContext?.departmentId,
+        patientId: request.healthcareContext?.patientId,
+        providerId: request.healthcareContext?.providerId,
+        regulatoryRequirement: request.healthcareContext?.regulatoryRequirement
+      }),
       ...request.config,
     };
 

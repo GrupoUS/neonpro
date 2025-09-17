@@ -92,7 +92,8 @@
       "mcp__supabase__execute_sql",
       "mcp__Tavily__tavily-crawl",
       "WebSearch",
-      "mcp__desktop-commander__stop_search"
+      "mcp__desktop-commander__stop_search",
+      "mcp__archon__find_projects"
     ],
     "deny": [
       "Edit",
