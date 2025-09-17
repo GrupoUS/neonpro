@@ -10,32 +10,6 @@ import type { MonitoringConfig } from './types';
 
 let sdk: NodeSDK | null = null;
 
-export interface MonitoringConfig {
-  serviceName: string;
-  serviceVersion: string;
-  environment: string;
-  metrics: {
-    enabled: boolean;
-    port?: number;
-    endpoint?: string;
-  };
-  tracing: {
-    enabled: boolean;
-    jaegerEndpoint?: string;
-    sampleRate?: number;
-  };
-  logging: {
-    level: 'error' | 'warn' | 'info' | 'debug' | 'trace';
-    format: 'json' | 'pretty';
-    transports: ('console' | 'file')[];
-  };
-  health: {
-    enabled: boolean;
-    endpoint?: string;
-    interval?: number;
-  };
-}
-
 export function initializeMonitoring(config: MonitoringConfig): void {
   console.log(`🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`);
 

@@ -1,4 +1,4 @@
-import { Registry, register } from 'prom-client';
+import { Registry, collectDefaultMetrics } from 'prom-client';
 
 let prometheusRegistry: Registry | null = null;
 
@@ -17,7 +17,7 @@ export function createPrometheusRegistry(serviceName: string): Registry {
   });
 
   // Collect default metrics (CPU, memory, etc.)
-  register.collectDefaultMetrics({
+  collectDefaultMetrics({
     register: prometheusRegistry,
     prefix: `${serviceName.replace(/-/g, '_')}_`,
   });

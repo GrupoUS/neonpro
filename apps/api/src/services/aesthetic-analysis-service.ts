@@ -570,8 +570,9 @@ export class AestheticAnalysisService {
       throw new Error('LGPD_CONSENT_REQUIRED');
     }
 
+    const granted = Array.isArray(consent.granted_permissions) ? consent.granted_permissions : [];
     const hasAllPermissions = requiredPermissions.every(permission =>
-      consent.granted_permissions.includes(permission)
+      granted.includes(permission)
     );
 
     if (!hasAllPermissions) {

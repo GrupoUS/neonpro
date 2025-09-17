@@ -157,6 +157,78 @@ export class PatientDocumentService {
 
     return { success: true, data: dto };
   }
+
+  /**
+   * Get a document by ID with RLS enforcement
+   */
+  async getDocument(documentId: string, userId: string): Promise<PatientDocumentDTO | null> {
+    try {
+      if (this.persist && this.supabase) {
+        const { data, error } = await this.supabase
+          .from(this.table)
+          .select('*')
+          .eq('id', documentId)
+          .single();
+
+        if (error) {
+          if (error.code === 'PGRST116') {
+            return null; // Document not found or no access
+          }
+          throw error;
+        }
+
+        // Transform database row to DTO format
+        return {
+          documentId: data.id,
+          patient_id: data.patient_id,
+          original_name: data.original_name,
+          mime_type: data.mime_type,
+          size_bytes: data.size_bytes,
+          checksum_sha256: data.checksum_sha256,
+          storage_path: `supabase://${this.bucket}/${data.storage_path}`,
+          created_at: data.created_at,
+        };
+      } else {
+        // In-memory fallback - return null for now
+        console.warn('In-memory mode: getDocument not implemented');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting document:', error);
+      throw new Error('Failed to retrieve document');
+    }
+  }
+
+  /**
+   * Get file content from storage
+   */
+  async getFileContent(storagePath: string): Promise<ArrayBuffer> {
+    try {
+      // Extract the actual path from the full storage path
+      const actualPath = storagePath.replace(`supabase://${this.bucket}/`, '');
+      
+      if (this.persist && this.supabase) {
+        // Get file from Supabase Storage
+        const { data, error } = await this.supabase.storage
+          .from(this.bucket)
+          .download(actualPath);
+
+        if (error) {
+          throw error;
+        }
+
+        return await data.arrayBuffer();
+      } else {
+        // In-memory fallback - return mock content for testing
+        console.warn('In-memory mode: returning mock file content');
+        const encoder = new TextEncoder();
+        return encoder.encode('Mock file content for testing').buffer;
+      }
+    } catch (error) {
+      console.error('Error getting file content:', error);
+      throw new Error('Failed to retrieve file content');
+    }
+  }
 }
 
 export default PatientDocumentService;

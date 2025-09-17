@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
-import { PatientDocumentUpload } from '@/components/patient-documents';
+import { PatientDocumentUpload, type PatientDocument as UploadedPatientDocument } from '@/components/patient-documents';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -299,14 +299,14 @@ function PatientDocumentsPage() {
         {/* Upload section */}
         <PatientDocumentUpload
           patientId={patientId}
-          onUploadSuccess={(files) => {
-            toast.success(`${files.length} documento(s) enviado(s) com sucesso!`);
+          category="medical"
+          maxFiles={20}
+          maxFileSize={25}
+          onDocumentsUploaded={(documents: UploadedPatientDocument[]) => {
+            toast.success(`${documents.length} documento(s) enviado(s) com sucesso!`);
             // TODO: Refresh documents list
           }}
-          onUploadError={(error) => {
-            toast.error(`Erro no upload: ${error.message}`);
-          }}
-          className="w-full sm:w-auto"
+          className="w-full"
         />
       </div>
 

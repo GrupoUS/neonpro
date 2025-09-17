@@ -318,7 +318,7 @@ test.describe('Patient Dashboard Load Testing', () => {
     // Analyze performance under heavy load
     const loadTimes = metrics.map(metric => metric.navigation.loadEventEnd);
     const avgPageLoadTime = loadTimes.reduce((sum, time) => sum + time, 0) / loadTimes.length;
-    const p95PageLoadTime = loadTimes.sort((a, b) => a - b)[Math.floor(loadTimes.length * 0.95)];
+    const p95PageLoadTime = [...loadTimes].sort((a, b) => a - b)[Math.floor(loadTimes.length * 0.95)];
 
     const memoryUsages = metrics.map(metric =>
       metric.memory ? metric.memory.usedJSHeapSize / 1024 / 1024 : 0

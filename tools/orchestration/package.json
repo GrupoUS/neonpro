@@ -18,6 +18,9 @@
     "clean": "rm -rf dist",
     "lint": "oxlint --fix src",
     "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
     "orchestrate": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js",
     "orchestrate:parallel": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
   },
@@ -26,8 +29,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.7.2",
+    "vitest": "^2.0.0",
     "oxlint": "^1.15.0"
   },
   "peerDependencies": {

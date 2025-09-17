@@ -6,13 +6,8 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import {
-  AgentCoordinator,
-  createMockLGPDData,
-  createTDDSuite,
-  LGPDValidator,
-  TDDCycle,
-} from '../src';
+import { createMockLGPDData, createTDDSuite, LGPDValidator, TDDCycle } from '../src';
+import { AgentCoordinator } from '../src/agents';
 
 describe('NeonPro Testing Toolkit Examples', () => {
   describe('TDD Cycle Example', () => {
