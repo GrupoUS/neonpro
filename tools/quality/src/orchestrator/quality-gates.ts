@@ -108,7 +108,7 @@ export class QualityGatesSystem extends EventEmitter {
   private async validateArchitecture(
     phase: TDDPhase,
     results: AgentResult[],
-    context: FeatureContext
+    _context: FeatureContext
   ): Promise<QualityGateStatus> {
     const architectResults = results.filter(r => r.agent === 'architect-review');
     
@@ -158,7 +158,7 @@ export class QualityGatesSystem extends EventEmitter {
   private async validateCodeQuality(
     phase: TDDPhase,
     results: AgentResult[],
-    context: FeatureContext
+    _context: FeatureContext
   ): Promise<QualityGateStatus> {
     const codeReviewResults = results.filter(r => r.agent === 'code-reviewer');
     
@@ -185,7 +185,7 @@ export class QualityGatesSystem extends EventEmitter {
   private async validateTestCoverage(
     phase: TDDPhase,
     results: AgentResult[],
-    context: FeatureContext
+    _context: FeatureContext
   ): Promise<QualityGateStatus> {
     if (phase === 'red') {
       return 'skipped'; // No coverage expected in red phase
@@ -214,11 +214,11 @@ export class QualityGatesSystem extends EventEmitter {
    * Validate performance quality gate
    */
   private async validatePerformance(
-    phase: TDDPhase,
+    _phase: TDDPhase,
     results: AgentResult[],
-    context: FeatureContext
+    _context: FeatureContext
   ): Promise<QualityGateStatus> {
-    if (phase === 'red') {
+    if (_phase === 'red') {
       return 'skipped'; // No performance testing in red phase
     }
 

@@ -20,7 +20,7 @@ export class TestAgent extends BaseAgent {
   /**
    * Check if agent can handle the given phase and context
    */
-  canHandle(phase: TDDPhase, context: FeatureContext): boolean {
+  canHandle(phase: TDDPhase, _context: FeatureContext): boolean {
     // Test agent can handle all TDD phases
     return ['red', 'green', 'refactor'].includes(phase);
   }

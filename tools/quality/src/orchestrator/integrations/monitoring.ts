@@ -11,9 +11,7 @@ import {
   OrchestrationState, 
   TDDPhase, 
   AgentName, 
-  AgentResult,
-  OrchestrationMetrics,
-  WorkflowType
+  OrchestrationMetrics
 } from '../types';
 
 export interface OrchestrationMonitoringConfig {
@@ -34,7 +32,7 @@ export class OrchestrationMonitoring {
   /**
    * Start tracking an orchestration workflow
    */
-  startOrchestrationTracking(orchestrationId: string, workflowType: string): void {
+  startOrchestrationTracking(orchestrationId: string, _workflowType: string): void {
     if (!this.config.enablePerformanceTracking) return;
 
     const timerKey = `orchestration-${orchestrationId}`;
@@ -143,7 +141,7 @@ export class OrchestrationMonitoring {
     return globalPerformanceTracker.getCurrentMetrics();
   }
 
-  private getCompletedPhases(state: OrchestrationState): string[] {
+  private getCompletedPhases(_state: OrchestrationState): string[] {
     // This would track which phases have been completed
     // For now, return empty array as phase tracking needs to be implemented
     return [];
@@ -157,7 +155,7 @@ export class OrchestrationMonitoring {
     return Object.values(state.qualityGates).filter(status => status === 'failed').length;
   }
 
-  private calculatePhaseDurations(state: OrchestrationState): Record<TDDPhase, number> {
+  private calculatePhaseDurations(_state: OrchestrationState): Record<TDDPhase, number> {
     // For now, return empty durations - this would need to be tracked during execution
     return {
       red: 0,
@@ -166,7 +164,7 @@ export class OrchestrationMonitoring {
     };
   }
 
-  private calculateAgentDurations(state: OrchestrationState): Record<AgentName, number> {
+  private calculateAgentDurations(_state: OrchestrationState): Record<AgentName, number> {
     // For now, return empty durations - this would need to be tracked during execution
     return {
       test: 0,
@@ -176,12 +174,12 @@ export class OrchestrationMonitoring {
     };
   }
 
-  private countFindings(state: OrchestrationState): Record<string, number> {
+  private countFindings(_state: OrchestrationState): Record<string, number> {
     // For now, return empty counts - this would need to be aggregated from agent results
     return {};
   }
 
-  private countRecommendations(state: OrchestrationState): Record<string, number> {
+  private countRecommendations(_state: OrchestrationState): Record<string, number> {
     // For now, return empty counts - this would need to be aggregated from agent results
     return {};
   }

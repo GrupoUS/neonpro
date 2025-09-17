@@ -112,7 +112,7 @@ describe('Supabase Performance Tests', () => {
 
       for (const test of optimizationTests) {
         const startTime = performance.now();
-        const { data, error } = await test.query();
+        const { error } = await test.query();
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
@@ -165,7 +165,7 @@ describe('Supabase Performance Tests', () => {
 
       for (const test of schedulingTests) {
         const startTime = performance.now();
-        const { data, error } = await test.query();
+        const { error } = await test.query();
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
@@ -218,7 +218,7 @@ describe('Supabase Performance Tests', () => {
 
       for (const test of medicalRecordsTests) {
         const startTime = performance.now();
-        const { data, error } = await test.query();
+        const { error } = await test.query();
         const responseTime = performance.now() - startTime;
 
         expect(error).toBeNull();
@@ -239,7 +239,7 @@ describe('Supabase Performance Tests', () => {
       for (const connectionCount of concurrentConnections) {
         const operationPromises = Array.from({ length: connectionCount }, async (_, i) => {
           const startTime = performance.now();
-          const { data, error } = await testClient
+          const { error } = await testClient
             .from('patients')
             .select('count')
             .single();
@@ -363,7 +363,7 @@ describe('Supabase Performance Tests', () => {
       for (const test of cacheTests) {
         // First request (cache miss)
         const startTime1 = performance.now();
-        const { data: data1, error: error1 } = await test.query();
+        const { error: error1 } = await test.query();
         const responseTime1 = performance.now() - startTime1;
 
         expect(error1).toBeNull();
@@ -371,7 +371,7 @@ describe('Supabase Performance Tests', () => {
 
         // Second request (cache hit)
         const startTime2 = performance.now();
-        const { data: data2, error: error2 } = await test.query();
+        const { error: error2 } = await test.query();
         const responseTime2 = performance.now() - startTime2;
 
         expect(error2).toBeNull();
@@ -379,7 +379,7 @@ describe('Supabase Performance Tests', () => {
 
         // Third request (cache hit)
         const startTime3 = performance.now();
-        const { data: data3, error: error3 } = await test.query();
+        const { error: error3 } = await test.query();
         const responseTime3 = performance.now() - startTime3;
 
         expect(error3).toBeNull();
@@ -399,7 +399,7 @@ describe('Supabase Performance Tests', () => {
 
       // Query doctor data (cache population)
       const startTime1 = performance.now();
-      const { data: initialData } = await testClient
+      await testClient
         .from('doctors')
         .select('*')
         .eq('id', testDoctor.id)
@@ -416,7 +416,7 @@ describe('Supabase Performance Tests', () => {
 
       // Query again (cache should be invalidated)
       const startTime2 = performance.now();
-      const { data: updatedData } = await testClient
+      await testClient
         .from('doctors')
         .select('*')
         .eq('id', testDoctor.id)

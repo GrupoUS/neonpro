@@ -55,7 +55,7 @@ describe('Supabase Database Integration', () => {
       ];
 
       for (const tableName of expectedTables) {
-        const { data, error } = await testClient
+        const { error } = await testClient
           .from(tableName)
           .select('*')
           .limit(0); // Just check if table exists
@@ -75,7 +75,7 @@ describe('Supabase Database Integration', () => {
       ];
 
       for (const tableName of lgpdTables) {
-        const { data, error } = await testClient
+        const { error } = await testClient
           .from(tableName)
           .select('*')
           .limit(0);
@@ -85,17 +85,7 @@ describe('Supabase Database Integration', () => {
       }
 
       // Validate consent_records has required LGPD fields (mock check)
-      const mockConsentRecord = {
-        user_id: 'test-user-123',
-        consent_type: 'data_processing',
-        consent_given: true,
-        consent_date: new Date().toISOString(),
-        consent_version: '2.0',
-        withdrawal_date: null,
-        legal_basis: 'consent',
-        purpose: 'healthcare_services',
-      };
-
+      // (Estrutura validada de forma conceitual – objeto exemplo removido pois não é utilizado em asserts)
       console.log('✅ LGPD consent record structure validated');
     });
 
@@ -193,7 +183,7 @@ describe('Supabase Database Integration', () => {
       expect(insertError).toBeNull();
 
       // Update the record
-      const { data: updatedRecord, error: updateError } = await testClient
+      const { error: updateError } = await testClient
         .from('medical_records')
         .update({
           content: 'Updated consultation notes',
@@ -259,7 +249,7 @@ describe('Supabase Database Integration', () => {
         testClient.from('appointments').select('count').single(),
       ]);
 
-      const results = await operations;
+      await operations;
       const responseTime = performance.now() - startTime;
 
       expect(HealthcareTestValidators.validatePerformance(responseTime, 'general_query')).toBe(
@@ -404,14 +394,14 @@ describe('Supabase Database Integration', () => {
       for (const test of cacheTestQueries) {
         // First request (cache miss)
         const startTime1 = performance.now();
-        const { data: data1, error: error1 } = await test.query();
+        const { error: error1 } = await test.query();
         const responseTime1 = performance.now() - startTime1;
 
         expect(error1).toBeNull();
 
         // Second request (cache hit - in real implementation)
         const startTime2 = performance.now();
-        const { data: data2, error: error2 } = await test.query();
+        const { error: error2 } = await test.query();
         const responseTime2 = performance.now() - startTime2;
 
         expect(error2).toBeNull();
@@ -447,12 +437,7 @@ describe('Supabase Database Integration', () => {
       expect(validData.patient_id).toBe(testPatient.id);
 
       // Test invalid foreign key reference (should fail in real DB)
-      const invalidAppointment = {
-        patient_id: 'non-existent-patient-id',
-        doctor_id: 'valid-doctor-123',
-        appointment_date: new Date().toISOString(),
-        status: 'scheduled',
-      };
+      // invalidAppointment scenario (mock) omitido pois não utilizado diretamente
 
       console.log('✅ Foreign key constraints validated (mock)');
     });
@@ -466,7 +451,7 @@ describe('Supabase Database Integration', () => {
       };
 
       // First insertion should succeed
-      const { data: firstUser, error: firstError } = await testClient
+      const { error: firstError } = await testClient
         .from('patients')
         .insert(testUserData)
         .select()

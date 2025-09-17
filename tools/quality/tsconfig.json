@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./",
     "moduleResolution": "bundler",
     "target": "ES2022",
     "module": "ESNext",
@@ -24,9 +23,7 @@
     }
   },
   "include": [
-    "src/**/*.ts",
-    "../../packages/monitoring/src/**/*.ts",
-    "../../packages/core-services/src/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

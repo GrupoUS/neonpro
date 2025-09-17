@@ -18,9 +18,8 @@ import {
   type EdgeFunctionMetrics,
   HealthcareTestDataGenerator,
   HealthcareTestValidators,
-  type TestUser,
 } from '@/lib/testing/supabase-test-client';
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 describe('Supabase Edge Functions - Healthcare Processing', () => {
   let testClient: any;

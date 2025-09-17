@@ -5,8 +5,7 @@ import type {
   AgentResult,
   FeatureContext,
   Finding,
-  Recommendation,
-  QualityGateStatus
+  Recommendation
 } from '../types';
 
 // Extended agent state for individual agent tracking
@@ -140,7 +139,7 @@ export abstract class BaseAgent extends EventEmitter {
   /**
    * Post-process results after execution
    */
-  protected async postProcess(result: AgentResult, phase: TDDPhase, context: FeatureContext): Promise<AgentResult> {
+  protected async postProcess(result: AgentResult, _phase: TDDPhase, _context: FeatureContext): Promise<AgentResult> {
     // Add execution metrics
     result.metrics = {
       ...result.metrics,

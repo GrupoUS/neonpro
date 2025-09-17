@@ -9,7 +9,6 @@ import {
   AgentName, 
   AgentCapabilities, 
   TDDPhase, 
-  ComplexityLevel,
   FeatureContext 
 } from './types';
 
@@ -181,12 +180,12 @@ export class AgentRegistry {
     }
 
     // Complexity-based selection
-    if (feature.complexity === 'high') {
+    if (feature.complexity >= 7) {
       // High complexity features need all agents
       this.getAllAgents().forEach(agent => {
         selectedAgents.add(agent.name);
       });
-    } else if (feature.complexity === 'medium') {
+    } else if (feature.complexity >= 4) {
       // Medium complexity adds code reviewer if not already included
       selectedAgents.add('code-reviewer');
     }
@@ -312,7 +311,7 @@ export class AgentRegistry {
   /**
    * Validate agent configuration
    */
-  validateAgentConfig(agentName: AgentName, config: Record<string, any>): boolean {
+  validateAgentConfig(agentName: AgentName, _config: Record<string, any>): boolean {
     const agent = this.agents.get(agentName);
     if (!agent) {
       throw new Error(`Unknown agent: ${agentName}`);

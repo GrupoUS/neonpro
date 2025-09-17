@@ -72,7 +72,7 @@ export class ColdStartMeasurement {
 
       let serverReady = false;
 
-      this.serverProcess.stdout.on('data', (data: Buffer) => {
+      this.serverProcess.stdout?.on('data', (data: Buffer) => {
         const output = data.toString();
         if (output.includes('listening on') && !serverReady) {
           serverReady = true;
@@ -82,7 +82,7 @@ export class ColdStartMeasurement {
         }
       });
 
-      this.serverProcess.stderr.on('data', (data: Buffer) => {
+      this.serverProcess.stderr?.on('data', (data: Buffer) => {
         console.error(`Server error: ${data.toString()}`);
       });
 
@@ -368,7 +368,7 @@ export class ColdStartMeasurement {
   async cleanup(): Promise<void> {
     if (this.serverProcess) {
       this.serverProcess.kill();
-      this.serverProcess = null;
+      this.serverProcess = undefined;
     }
   }
 }

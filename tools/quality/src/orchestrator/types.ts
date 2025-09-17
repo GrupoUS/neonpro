@@ -109,18 +109,15 @@ export interface AgentCapabilities {
 
 // Workflow Configuration
 export interface WorkflowConfig {
-  type: WorkflowType;
+  name?: string;
+  description?: string;
+  type?: WorkflowType;
   phases: {
-    [K in TDDPhase]: {
-      primary: AgentName;
-      secondary: AgentName[];
-      parallel: boolean;
-      timeout: number;
-      qualityGates: string[];
-    };
+    [K in TDDPhase]: PhaseConfig;
   };
-  triggers: string[];
-  complianceRequirements: string[];
+  qualityGates?: string[];
+  triggers?: string[];
+  complianceRequirements?: string[];
 }
 
 /**

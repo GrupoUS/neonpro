@@ -813,7 +813,7 @@ export class NotificationService {
     // Find notification in queues
     let notification: Notification | undefined;
     
-    for (const [priority, queue] of this.notificationQueue.entries()) {
+    for (const [_priority, queue] of this.notificationQueue.entries()) {
       const index = queue.findIndex(n => n.id === notificationId);
       if (index !== -1) {
         notification = queue.splice(index, 1)[0];
@@ -863,22 +863,13 @@ export class NotificationService {
           await this.deliverSMS(notification, attempt);
           break;
         case 'push':
-          await this.deliverPush(notification, _attempt: DeliveryAttempt): Promise<void> {
-            // Implementation for push notifications
-            return this.deliverGeneric(notification, NotificationChannel.PUSH);
-          }
+          await this.deliverPush(notification, attempt);
           break;
         case 'in_app':
-          await this.deliverInApp(notification, _attempt: DeliveryAttempt): Promise<void> {
-            // Implementation for in-app notifications
-            return this.deliverGeneric(notification, NotificationChannel.IN_APP);
-          }
+          await this.deliverInApp(notification, attempt);
           break;
         case 'voice':
-          await this.deliverVoice(notification, _attempt: DeliveryAttempt): Promise<void> {
-            // Implementation for voice notifications
-            return this.deliverGeneric(notification, NotificationChannel.VOICE);
-          }
+          await this.deliverVoice(notification, attempt);
           break;
         default:
           throw new Error(`Unsupported delivery channel: ${channel}`);
@@ -902,7 +893,7 @@ export class NotificationService {
   /**
    * Deliver email notification (mock implementation)
    */
-  private async deliverEmail(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
+  private async deliverEmail(notification: Notification, _attempt: DeliveryAttempt): Promise<void> {
     console.log(`📧 [NotificationService] Delivering email notification: ${notification.id}`);
     // TODO: Implement actual email delivery
   }
@@ -910,7 +901,7 @@ export class NotificationService {
   /**
    * Deliver SMS notification (mock implementation)
    */
-  private async deliverSMS(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
+  private async deliverSMS(notification: Notification, _attempt: DeliveryAttempt): Promise<void> {
     console.log(`📱 [NotificationService] Delivering SMS notification: ${notification.id}`);
     // TODO: Implement actual SMS delivery
   }
@@ -918,7 +909,7 @@ export class NotificationService {
   /**
    * Deliver push notification (mock implementation)
    */
-  private async deliverPush(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
+  private async deliverPush(notification: Notification, _attempt: DeliveryAttempt): Promise<void> {
     console.log(`🔔 [NotificationService] Delivering push notification: ${notification.id}`);
     // TODO: Implement actual push notification delivery
   }
@@ -926,7 +917,7 @@ export class NotificationService {
   /**
    * Deliver in-app notification (mock implementation)
    */
-  private async deliverInApp(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
+  private async deliverInApp(notification: Notification, _attempt: DeliveryAttempt): Promise<void> {
     console.log(`💬 [NotificationService] Delivering in-app notification: ${notification.id}`);
     // TODO: Implement actual in-app notification delivery
   }
@@ -934,7 +925,7 @@ export class NotificationService {
   /**
    * Deliver voice call (mock implementation)
    */
-  private async deliverVoice(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
+  private async deliverVoice(notification: Notification, _attempt: DeliveryAttempt): Promise<void> {
     console.log(`📞 [NotificationService] Delivering voice notification: ${notification.id}`);
     // TODO: Implement actual voice call delivery
   }
@@ -994,7 +985,7 @@ export class NotificationService {
   /**
    * Check channel rate limits
    */
-  private checkChannelRateLimit(channel: DeliveryChannel, notification: Notification): boolean {
+  private checkChannelRateLimit(_channel: DeliveryChannel, notification: Notification): boolean {
     // Emergency notifications bypass rate limits
     if (notification.priority === 'emergency' && this.config.healthcareSettings.emergencyBypass) {
       return true;
