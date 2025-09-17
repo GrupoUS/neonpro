@@ -5,11 +5,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  type AccessibilityAuditResult,
   AccessibilityAuditService,
-  AUDIT_SEVERITY,
   WCAG_LEVELS,
-  WCAG_PRINCIPLES,
 } from '../accessibility-audit';
 
 // Mock DOM methods

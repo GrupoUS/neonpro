@@ -1,19 +1,32 @@
 /**
  * POST /api/v2/patients/:id/documents (FR-003)
- * Minimal placeholder implementation to satisfy initial TDD failing tests.
- * - Auth required
- * - Accepts multipart/form-data with single 'file' field
- * - Validates presence of file and basic MIME allowlist
- * - Size limit enforcement will be added later (bodyLimit middleware)
- * - Persists nothing yet (service layer to be wired next)
+ * Phase 1 implementation: validation + dependency injection hooks (no persistence/storage yet).
+ * Next phase will integrate Supabase storage + patient_documents insert + audit trail.
  */
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
+import { bodyLimit } from 'hono/body-limit';
 
 const app = new Hono();
 
-// Allowed MIME types (initial subset) - full list to be expanded
+// Dependency Injection scaffold for forthcoming service layer
+interface DocumentService {
+  uploadPatientDocument(args: {
+    patientId: string;
+    file: File;
+  }): Promise<{
+    success: boolean;
+    data?: any;
+    error?: string;
+  }>;
+}
+
+let documentService: DocumentService | null = null;
+export function setDocumentService(svc: DocumentService) { documentService = svc; }
+export function getDocumentService() { return documentService; }
+
+// Allowed MIME types (initial subset) - will be expanded based on spec
 const ALLOWED_MIME = new Set([
   'application/pdf',
   'image/jpeg',
@@ -26,7 +39,13 @@ const ALLOWED_MIME = new Set([
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
-app.post('/:id/documents', requireAuth, async c => {
+// Apply body size limit (10MB)
+app.use('/:id/documents', bodyLimit({
+  maxSize: 10 * 1024 * 1024,
+  onError: (c) => c.json({ success: false, error: 'Arquivo excede tamanho máximo (10MB)' }, 413),
+}));
+
+app.post('/:id/documents', requireAuth, async (c) => {
   // Validate patient id param
   const params = ParamsSchema.safeParse(c.req.param());
   if (!params.success) {
@@ -37,7 +56,7 @@ app.post('/:id/documents', requireAuth, async c => {
   let form: FormData;
   try {
     form = await c.req.formData();
-  } catch (e) {
+  } catch {
     return c.json({ success: false, error: 'Formato multipart inválido' }, 400);
   }
 
@@ -46,22 +65,28 @@ app.post('/:id/documents', requireAuth, async c => {
     return c.json({ success: false, error: 'Arquivo é obrigatório (campo file)' }, 400);
   }
 
-  // Basic size check (10MB) - refine later with bodyLimit middleware
-  const MAX_BYTES = 10 * 1024 * 1024;
-  if (file.size > MAX_BYTES) {
-    return c.json({ success: false, error: 'Arquivo excede tamanho máximo (10MB)' }, 413);
-  }
-
   if (!ALLOWED_MIME.has(file.type)) {
     return c.json({ success: false, error: 'Tipo de arquivo não suportado', mimeType: file.type }, 415);
   }
 
-  // Placeholder document metadata (service integration pending)
   const now = new Date().toISOString();
   const docId = crypto.randomUUID();
   const patientId = params.data.id;
 
-  // TODO: integrate with storage + patient_documents insertion + audit trail
+  // Phase 1: If a service has been injected (tests), delegate to it
+  if (documentService) {
+    try {
+      const result = await documentService.uploadPatientDocument({ patientId, file });
+      if (!result.success) {
+        return c.json({ success: false, error: result.error || 'Falha no upload' }, 500);
+      }
+      return c.json(result, 201);
+    } catch (err: any) {
+      return c.json({ success: false, error: err?.message || 'Erro interno' }, 500);
+    }
+  }
+
+  // Default placeholder success response (no persistence yet)
   return c.json({
     success: true,
     data: {
@@ -71,7 +96,6 @@ app.post('/:id/documents', requireAuth, async c => {
       mimeType: file.type,
       size: file.size,
       createdAt: now,
-      // storagePath, checksum, scanStatus will come after service integration
     },
   }, 201);
 });

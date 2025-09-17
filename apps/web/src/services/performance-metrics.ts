@@ -17,7 +17,6 @@ import {
   PerformanceMetrics,
   PerformanceMetricsSchema,
   ResourceUtilization,
-  sanitizeTelemetryEvent,
   WebVitals,
 } from '@neonpro/shared';
 

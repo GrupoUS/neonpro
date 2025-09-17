@@ -29,6 +29,7 @@ export interface FeatureContext {
   priority: 'low' | 'medium' | 'high' | 'critical';
   estimatedEffort: number;
   dependencies: string[];
+  requirements: string[];
   securityCritical: boolean;
   complianceRequirements: string[];
   acceptanceCriteria: string[];
@@ -194,6 +195,15 @@ export interface AgentResult {
   metrics: Record<string, number>;
   duration: number;
   timestamp: Date;
+}
+
+// Workflow Engine Configuration
+export interface WorkflowEngineConfig {
+  workflows: {
+    [K in WorkflowType]: WorkflowConfig;
+  };
+  defaultTimeout: number;
+  retryAttempts: number;
 }
 
 // Orchestrator Configuration

@@ -25,7 +25,6 @@ import {
   JobPriority,
   JobQueue,
   JobStatus,
-  requiresEmergencyProcessing,
   validateHealthcareContext,
   WorkerConfig,
 } from './background-jobs-framework';
@@ -436,7 +435,10 @@ export class Worker {
         // Check emergency jobs only restriction
         if (
           this.config.emergencyJobsOnly
-          && !requiresEmergencyProcessing(job.type, job.healthcareContext)
+          && !(
+            job.type === HealthcareJobType.EMERGENCY_NOTIFICATION ||
+            job.healthcareContext?.clinicalContext === 'emergency'
+          )
         ) {
           // Put job back in queue
           await this.jobQueue.updateJob(job.jobId, { status: JobStatus.PENDING });

@@ -18,11 +18,6 @@ export class SecurityAuditorAgent extends BaseAgent {
     super('security-auditor' as AgentName);
   }
 
-  private domainIncludes(context: FeatureContext, keyword: string): boolean {
-    const domains = Array.isArray(context.domain) ? context.domain : [context.domain];
-    return domains.some(domain => domain.toLowerCase().includes(keyword.toLowerCase()));
-  }
-
   /**
    * Check if agent can handle the given phase and context
    */
@@ -31,11 +26,11 @@ export class SecurityAuditorAgent extends BaseAgent {
     // Also important for compliance requirements and high-risk domains
     return context.securityCritical ||
            context.complianceRequirements.length > 0 ||
-           this.domainIncludes(context, 'auth') ||
-           this.domainIncludes(context, 'payment') ||
-           this.domainIncludes(context, 'data') ||
-           this.domainIncludes(context, 'api') ||
-           this.domainIncludes(context, 'user');
+           context.domain.includes('auth') ||
+           context.domain.includes('payment') ||
+           context.domain.includes('data') ||
+           context.domain.includes('api') ||
+           context.domain.includes('user');
   }
 
   /**
@@ -61,7 +56,6 @@ export class SecurityAuditorAgent extends BaseAgent {
           throw new Error(`Unsupported phase: ${phase}`);
       }
 
-      const executionTime = Math.max(Date.now() - startTime, 1);
       return {
         agent: this.agentType,
         phase,
@@ -69,48 +63,42 @@ export class SecurityAuditorAgent extends BaseAgent {
         findings,
         recommendations,
         metrics: {
-          executionTime,
-          securityIssues: findings.filter(f => f.type.toLowerCase().startsWith('security')).length,
+          executionTime: Date.now() - startTime,
+          securityIssues: findings.filter(f => f.type.startsWith('security')).length,
           vulnerabilities: findings.filter(f => f.severity === 'critical' || f.severity === 'high').length,
           complianceIssues: findings.filter(f => f.type === 'compliance').length,
           securityRecommendations: recommendations.filter(r => r.type === 'security-testing').length,
           riskScore: this.calculateRiskScore(findings)
         },
-        duration: executionTime,
+        duration: Date.now() - startTime,
         timestamp: new Date()
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      if (error instanceof Error && error.message.includes('Unsupported phase')) {
-        throw error;
-      }
-
-      const executionTime = Math.max(Date.now() - startTime, 1);
-
+      
       return {
         agent: this.agentType,
         phase,
         status: 'failure',
         findings: [
           this.createFinding(
-            'security-implementation',
-            `Security audit failed: ${errorMessage}`,
-            'high',
-            context.files?.implementation || 'unknown',
-            'Review security analysis tools and audit infrastructure'
-          )
+          'security-implementation',
+          `Security audit failed: ${errorMessage}`,
+          'high',
+          context.files?.implementation || 'unknown',
+          'Review security analysis tools and audit infrastructure'
+        )
         ],
         recommendations: [
           this.createRecommendation(
-            'security-testing',
-            `Fix security audit issue: ${errorMessage}`,
-            'high',
-            'Debug and resolve the security audit infrastructure problem'
-          )
+          'security-testing',
+          `Fix security audit issue: ${errorMessage}`,
+          'high',
+          'Debug and resolve the security audit infrastructure problem'
+        )
         ],
-        metrics: { executionTime, errorCount: 1 },
-        duration: executionTime,
+        metrics: { executionTime: Date.now() - startTime, errorCount: 1 },
+        duration: Date.now() - startTime,
         timestamp: new Date()
       };
     }
@@ -147,7 +135,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Authentication and authorization testing
-    if (this.domainIncludes(context, 'auth') || this.domainIncludes(context, 'user')) {
+    if (context.domain.includes('auth') || context.domain.includes('user')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -169,7 +157,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Data protection and privacy testing
-    if (this.domainIncludes(context, 'data') || this.domainIncludes(context, 'user')) {
+    if (context.domain.includes('data') || context.domain.includes('user')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -191,7 +179,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // API security testing
-    if (this.domainIncludes(context, 'api')) {
+    if (context.domain.includes('api')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -212,28 +200,8 @@ export class SecurityAuditorAgent extends BaseAgent {
       );
     }
 
-    // Baseline input validation coverage
-    findings.push(
-      this.createFinding(
-        'security-implementation',
-        'Ensure comprehensive input validation test coverage',
-        'high',
-        context.files?.tests || 'tests/',
-        'Validate positive and negative scenarios for all critical inputs and enforce strict validation rules'
-      )
-    );
-
-    recommendations.push(
-      this.createRecommendation(
-        'security-testing',
-        'Establish input validation controls',
-        'high',
-        'Document validation requirements, add negative test cases, and enable centralized sanitization utilities'
-      )
-    );
-
     // Payment and financial security
-    if (this.domainIncludes(context, 'payment') || this.domainIncludes(context, 'financial')) {
+    if (context.domain.includes('payment') || context.domain.includes('financial')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -301,7 +269,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Authentication implementation validation
-    if (this.domainIncludes(context, 'auth')) {
+    if (context.domain.includes('auth')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -323,7 +291,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Data encryption and protection
-    if (this.domainIncludes(context, 'data') || context.securityCritical) {
+    if (context.domain.includes('data') || context.securityCritical) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -344,18 +312,8 @@ export class SecurityAuditorAgent extends BaseAgent {
       );
     }
 
-    // Runtime security controls
-    recommendations.push(
-      this.createRecommendation(
-        'security-testing' as RecommendationType,
-        'Implement runtime security controls',
-        'high',
-        'Verify authorization guards, rate limiting, and security monitoring controls are enforced'
-      )
-    );
-
     // API security implementation
-    if (this.domainIncludes(context, 'api')) {
+    if (context.domain.includes('api')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -417,27 +375,6 @@ export class SecurityAuditorAgent extends BaseAgent {
         )
       );
     }
-
-    if (context.complianceRequirements.length > 0) {
-      findings.push(
-        this.createFinding(
-          'compliance',
-          'Ensure implementation enforces compliance controls',
-          'high',
-          context.files?.implementation || 'src/',
-          'Verify access controls, audit logging, and data retention meet regulatory requirements'
-        )
-      );
-
-      recommendations.push(
-        this.createRecommendation(
-          'compliance',
-          'Implement runtime compliance controls',
-          'high',
-          'Add automated compliance checks, detailed audit logging, and reporting for regulatory standards'
-        )
-      );
-    }
   }
 
   /**
@@ -482,7 +419,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Cryptographic implementation review
-    if (this.domainIncludes(context, 'crypto') || this.domainIncludes(context, 'encryption')) {
+    if (context.domain.includes('crypto') || context.domain.includes('encryption')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -501,19 +438,10 @@ export class SecurityAuditorAgent extends BaseAgent {
           'Use proven cryptographic libraries, secure key management, and proper algorithm selection'
         )
       );
-    } else if (context.securityCritical) {
-      recommendations.push(
-        this.createRecommendation(
-          'security-testing',
-          'Review cryptographic posture',
-          'high',
-          'Evaluate encryption algorithms, rotate keys regularly, and audit cryptographic dependencies'
-        )
-      );
     }
 
     // Access control and authorization improvements
-    if (this.domainIncludes(context, 'auth') || this.domainIncludes(context, 'user')) {
+    if (context.domain.includes('auth') || context.domain.includes('user')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -609,7 +537,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     }
 
     // Privacy and data protection improvements
-    if (this.domainIncludes(context, 'user') || this.domainIncludes(context, 'data')) {
+    if (context.domain.includes('user') || context.domain.includes('data')) {
       findings.push(
         this.createFinding(
           'security-implementation',
@@ -664,11 +592,6 @@ export class SecurityAuditorAgent extends BaseAgent {
   getCapabilities(): string[] {
     return [
       'vulnerability-assessment',
-      'security-analysis',
-      'vulnerability-detection',
-      'compliance-checking',
-      'threat-modeling',
-      'security-testing',
       'security-code-review',
       'authentication-validation',
       'authorization-testing',
@@ -701,13 +624,6 @@ export class SecurityAuditorAgent extends BaseAgent {
         'xss', 'deserialization', 'logging', 'monitoring'
       ],
       securityTools: ['sonarqube', 'snyk', 'bandit', 'eslint-security', 'semgrep'],
-      threatCategories: [
-        'application',
-        'infrastructure',
-        'identity',
-        'data-protection',
-        'compliance'
-      ],
       riskThresholds: {
         low: 10,
         medium: 25,

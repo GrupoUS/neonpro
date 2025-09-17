@@ -91,13 +91,6 @@ export abstract class BaseAgent extends EventEmitter {
       return processedResult;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      if (error instanceof Error && error.message.includes('Unsupported phase')) {
-        this.updateState('error', phase);
-        this.emit('execution:failed', { agent: this.agentType, phase, error: errorMessage });
-        throw error;
-      }
-
       this.state.errors.push({
         message: errorMessage,
         timestamp: new Date().toISOString(),

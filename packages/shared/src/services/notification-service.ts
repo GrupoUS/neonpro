@@ -783,8 +783,8 @@ export class NotificationService {
         return;
       }
       
-      // Validate consent if required
-      if (notification.lgpdCompliance.requiresConsent && this.config.healthcareSettings.consentValidation) {
+      // Validate consent if enabled in config
+      if (this.config.healthcareSettings.consentValidation) {
         const hasConsent = await this.validateConsent(notification);
         if (!hasConsent) {
           await this.updateNotificationStatus(notification.id, 'cancelled');
@@ -863,13 +863,22 @@ export class NotificationService {
           await this.deliverSMS(notification, attempt);
           break;
         case 'push':
-          await this.deliverPush(notification, attempt);
+          await this.deliverPush(notification, _attempt: DeliveryAttempt): Promise<void> {
+            // Implementation for push notifications
+            return this.deliverGeneric(notification, NotificationChannel.PUSH);
+          }
           break;
         case 'in_app':
-          await this.deliverInApp(notification, attempt);
+          await this.deliverInApp(notification, _attempt: DeliveryAttempt): Promise<void> {
+            // Implementation for in-app notifications
+            return this.deliverGeneric(notification, NotificationChannel.IN_APP);
+          }
           break;
         case 'voice':
-          await this.deliverVoice(notification, attempt);
+          await this.deliverVoice(notification, _attempt: DeliveryAttempt): Promise<void> {
+            // Implementation for voice notifications
+            return this.deliverGeneric(notification, NotificationChannel.VOICE);
+          }
           break;
         default:
           throw new Error(`Unsupported delivery channel: ${channel}`);
@@ -1171,19 +1180,3 @@ export const notificationService = new NotificationService({
     consentValidation: true
   }
 });
-
-/**
- * Export types for external use
- */
-export type {
-  NotificationPriority,
-  NotificationCategory,
-  DeliveryChannel,
-  NotificationStatus,
-  Notification,
-  NotificationTemplate,
-  HealthcareNotificationContext,
-  LGPDNotificationCompliance,
-  DeliveryAttempt,
-  NotificationQueueConfig
-};
