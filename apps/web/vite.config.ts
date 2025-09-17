@@ -95,8 +95,8 @@ function healthcareAssetValidation() {
         if (typeof content === 'string') {
           sensitivePatterns.forEach(pattern => {
             if (pattern.test(content)) {
-              console.warn(`[HEALTHCARE_SECURITY_WARNING] Potential sensitive data found in ${fileName}`);
-              // In a real implementation, this could fail the build
+              throw new Error(`[HEALTHCARE_SECURITY_ERROR] Potential sensitive data found in ${fileName}. Build failed to prevent accidental deployment of sensitive data.`);
+              // Build is aborted to prevent accidental deployment of sensitive data
             }
           });
         }
