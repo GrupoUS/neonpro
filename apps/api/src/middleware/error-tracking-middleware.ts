@@ -120,7 +120,7 @@ export function requestContextMiddleware() {
           endpoint: context.endpoint,
         },
       );
-    } catch (error) {
+    } catch {
       // Add breadcrumb for error
       errorTracker.addBreadcrumb(
         `Request failed: ${context.method} ${context.endpoint}`,
@@ -184,6 +184,14 @@ export function performanceTrackingMiddleware() {
         );
       }
     } catch (error) {
+      // Log the error for observability
+      logger.error('Error in performanceTrackingMiddleware:', error);
+      errorTracker.captureException?.(error, {
+        context: {
+          ...context,
+          middleware: 'performanceTrackingMiddleware',
+        },
+      });
       throw error;
     }
   };

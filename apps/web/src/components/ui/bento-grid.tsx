@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 import { motion, useReducedMotion } from 'framer-motion';
 import React from 'react';
@@ -38,7 +38,7 @@ interface BentoGridItemProps {
 
 // Feature flag for Kokonut UI (default enabled for gradual migration)
 const NEONPRO_FEATURE_BENTO_KOKONUT =
-  (import.meta.env.VITE_NEONPRO_FEATURE_BENTO_KOKONUT ?? 'true') !== 'false';
+  ((import.meta as any).env?.VITE_NEONPRO_FEATURE_BENTO_KOKONUT ?? 'true') !== 'false';
 
 /**
  * Enhanced NeonPro Bento Grid Container with Kokonut UI integration

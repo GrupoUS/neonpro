@@ -257,3 +257,9 @@ A licensed aesthetic professional wants precise, LGPD-compliant answers about pa
 **Next Phase**: Implementation Planning with Enhanced Requirements
 
 ---
+
+## Finalization Status — 2025-09-16
+- Implementation snapshot: Phase 3.4 API endpoints consolidated in `apps/api/src/routes/chat.ts` with streaming, rate-limit, and audit middlewares.
+- Web app QA: Type-check PASS, Vite build PASS, Vitest PASS (19 files, 39 tests), Lint WARN-only (tests).
+- Compliance artifacts: LGPD redaction utilities, audit logging, and fairness gating validated via passing contract/integration tests.
+- Notes: Remaining frontend tasks are tracked in tasks-enhanced.md; this spec is research-validated and implementation-ready.

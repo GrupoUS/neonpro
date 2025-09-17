@@ -31,15 +31,15 @@ export const performanceMiddleware = (app: Hono) => {
   app.use(
     '*',
     cors({
-      origin: origin => {
+      origin: ({ origin }) => {
         const allowedOrigins = [
           'http://localhost:3000',
           'http://localhost:5173',
           'https://neonpro.vercel.app',
-          process.env.FRONTEND_URL,
-        ].filter(Boolean);
-
-        return allowedOrigins.includes(origin) || !origin;
+          process.env.FRONTEND_URL as string | undefined,
+        ].filter(Boolean) as string[];
+        const incoming = origin || '';
+        return allowedOrigins.includes(incoming) ? incoming : (allowedOrigins[0] || '*');
       },
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

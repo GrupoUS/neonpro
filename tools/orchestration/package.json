@@ -1,0 +1,56 @@
+{
+  "name": "@neonpro/tools-orchestration",
+  "version": "1.0.0",
+  "description": "Tooling orchestrator for NeonPro development utilities",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "lint": "oxlint --fix src",
+    "type-check": "tsc --noEmit",
+    "orchestrate": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js",
+    "orchestrate:parallel": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
+  },
+  "dependencies": {
+    "@neonpro/tools-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2",
+    "oxlint": "^1.15.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neonpro/neonpro.git",
+    "directory": "tools/orchestration"
+  },
+  "keywords": [
+    "neonpro",
+    "tooling",
+    "orchestration",
+    "automation"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neonpro/neonpro/issues"
+  },
+  "homepage": "https://github.com/neonpro/neonpro#readme"
+}

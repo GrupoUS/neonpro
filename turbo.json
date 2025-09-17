@@ -2,14 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [
     "**/.env.*local",
-    "**/package.json",
+    "**/package.json", 
     "**/tsconfig.json",
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
-    "package-lock.json",
     ".config/dprint/dprint.json",
-    "bunfig.toml",
-    "bun.lock",
     "packages/database/prisma/schema.prisma",
     "packages/database/src/**/*.ts"
   ],
@@ -266,12 +263,22 @@
         ".config/testing/vitest.setup.*",
         "vitest.d.ts",
         "src/**/*.{ts,tsx,js,jsx}",
+        "tools/frontend/src/**/*.{test,spec}.{ts,tsx,js,jsx}",
+        "tools/backend/src/**/*.{test,spec}.{ts,js}",
+        "tools/database/src/**/*.{test,spec}.{ts,js}",
+        "tools/quality/src/**/*.{test,spec}.{ts,js}",
+        "tools/shared/src/**/*.{test,spec}.{ts,js}",
+        "tools/*/vitest.config.*",
         "package.json",
         "tsconfig.json"
       ],
       "outputs": [
         "coverage/**",
-        "tools/testing/reports/**",
+        "tools/*/reports/**",
+        "tools/frontend/reports/**",
+        "tools/backend/reports/**",
+        "tools/database/reports/**",
+        "tools/quality/reports/**",
         "junit.xml",
         ".vitest/**",
         "node_modules/.vitest/**"
@@ -319,8 +326,16 @@
     },
     "test:e2e": {
       "dependsOn": ["build"],
-      "inputs": ["**/*.e2e.*", "**/e2e/**", ".config/testing/playwright.config.*"],
-      "outputs": ["playwright-report/**", "test-results/**"]
+      "inputs": [
+        "**/*.e2e.*",
+        "tools/frontend/src/e2e/**",
+        ".config/testing/playwright.config.*"
+      ],
+      "outputs": [
+        "playwright-report/**",
+        "test-results/**",
+        "tools/frontend/reports/e2e/**"
+      ]
     },
     "test:e2e:install": {
       "cache": false,

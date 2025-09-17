@@ -41,6 +41,7 @@ import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as AnimationValidationSuiteRouteImport } from './routes/animation-validation-suite'
 import { Route as AiChatRouteImport } from './routes/ai-chat'
+import { Route as AestheticDemoRouteImport } from './routes/aesthetic-demo'
 import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-animations-test'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
@@ -213,6 +214,11 @@ const AiChatRoute = AiChatRouteImport.update({
   path: '/ai-chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AestheticDemoRoute = AestheticDemoRouteImport.update({
+  id: '/aesthetic-demo',
+  path: '/aesthetic-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdvancedAnimationsTestRoute = AdvancedAnimationsTestRouteImport.update({
   id: '/advanced-animations-test',
   path: '/advanced-animations-test',
@@ -270,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
+  '/aesthetic-demo': typeof AestheticDemoRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
   '/api-test': typeof ApiTestRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
+  '/aesthetic-demo': typeof AestheticDemoRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
   '/api-test': typeof ApiTestRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
+  '/aesthetic-demo': typeof AestheticDemoRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
   '/api-test': typeof ApiTestRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/advanced-animations-test'
+    | '/aesthetic-demo'
     | '/ai-chat'
     | '/animation-validation-suite'
     | '/api-test'
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/advanced-animations-test'
+    | '/aesthetic-demo'
     | '/ai-chat'
     | '/animation-validation-suite'
     | '/api-test'
@@ -493,6 +504,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/advanced-animations-test'
+    | '/aesthetic-demo'
     | '/ai-chat'
     | '/animation-validation-suite'
     | '/api-test'
@@ -538,6 +550,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AdvancedAnimationsTestRoute: typeof AdvancedAnimationsTestRoute
+  AestheticDemoRoute: typeof AestheticDemoRoute
   AiChatRoute: typeof AiChatRoute
   AnimationValidationSuiteRoute: typeof AnimationValidationSuiteRoute
   ApiTestRoute: typeof ApiTestRoute
@@ -800,6 +813,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aesthetic-demo': {
+      id: '/aesthetic-demo'
+      path: '/aesthetic-demo'
+      fullPath: '/aesthetic-demo'
+      preLoaderRoute: typeof AestheticDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/advanced-animations-test': {
       id: '/advanced-animations-test'
       path: '/advanced-animations-test'
@@ -916,6 +936,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AdvancedAnimationsTestRoute: AdvancedAnimationsTestRoute,
+  AestheticDemoRoute: AestheticDemoRoute,
   AiChatRoute: AiChatRoute,
   AnimationValidationSuiteRoute: AnimationValidationSuiteRoute,
   ApiTestRoute: ApiTestRoute,

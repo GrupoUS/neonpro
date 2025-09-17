@@ -320,7 +320,7 @@ export function calculateReliabilityScore(insight: Partial<AIInsight>): number {
 }
 
 // Helper function to get model reliability
-function getModelReliability(model?: string, provider?: string): number {
+function getModelReliability(model?: string, _provider?: string): number {
   const reliabilityMap: Record<string, number> = {
     'gpt-4': 0.9,
     'gpt-3.5-turbo': 0.8,

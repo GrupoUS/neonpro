@@ -70,7 +70,7 @@ metricsApi.post('/server', zValidator('json', serverMetricSchema), async c => {
 metricsApi.get('/dashboard', async c => {
   const now = Date.now();
   const last24Hours = now - (24 * 60 * 60 * 1000);
-  const last1Hour = now - (60 * 60 * 1000);
+  // const last1Hour = now - (60 * 60 * 1000); // unused
 
   // Filter recent metrics
   const recentWebVitals = metrics.webVitals.filter(m => m.timestamp > last24Hours);

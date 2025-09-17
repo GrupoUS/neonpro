@@ -1,9 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
-import { sanitizeForAI } from '@neonpro/database';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { DEFAULT_PRIMARY, MODEL_REGISTRY, streamWithFailover } from '../config/ai';
+import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)
 // POST /api/v1/chat/query → 200 SSE | 400 | 403 | 429
@@ -37,20 +36,12 @@ function isRateLimited(userKey: string, now = Date.now()) {
   return limited;
 }
 
-// Minimal PII redaction delegated to shared utils
-function redactPII(text: string): string {
-  try {
-    return sanitizeForAI(text);
-  } catch {
-    return text
-      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '<CPF>')
-      .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '<CNPJ>')
-      .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '<PHONE>')
-      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '<EMAIL>');
-  }
-}
+// (removed unused placeholder redactPII)
 
 // Consent/role gate (stub): require role and consent header
+import { sseHeaders as sseHeadersHelper, sseStreamFromChunks as sseStreamFromChunksHelper } from '../middleware/streaming';
+import { chatRateLimit } from '../middleware/rate-limit';
+import { auditLog } from '../middleware/audit-log';
 const ALLOWED_ROLES = new Set(['ADMIN', 'CLINICAL_STAFF', 'FINANCE_STAFF', 'SUPPORT_READONLY']);
 function checkConsentAndRole(req: Request) {
   const role = req.headers.get('x-role') || 'ANONYMOUS';
@@ -71,22 +62,7 @@ function classifyQueryType(q: string): 'treatment' | 'finance' | 'mixed' | 'othe
 }
 
 function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
-  return new ReadableStream({
-    start(controller) {
-      const enc = new TextEncoder();
-      let i = 0;
-      const id = setInterval(() => {
-        const line = `data: ${JSON.stringify({ type: 'text', delta: chunks[i] })}\n\n`;
-        controller.enqueue(enc.encode(line));
-        i++;
-        if (i >= chunks.length) {
-          clearInterval(id);
-          controller.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-          controller.close();
-        }
-      }, 15);
-    },
-  });
+  return sseStreamFromChunksHelper(chunks);
 }
 
 function mockAnswer(
@@ -128,16 +104,10 @@ function mockAnswer(
 }
 
 function sseHeaders(extra?: Record<string, string>) {
-  return new Headers({
-    'Content-Type': 'text/event-stream; charset=utf-8',
-    'Cache-Control': 'no-cache, no-transform',
-    Connection: 'keep-alive',
-    'X-Chat-Started-At': new Date().toISOString(),
-    ...extra,
-  });
+  return sseHeadersHelper(extra);
 }
 
-app.post('/query', zValidator('json', ChatQuerySchema), async c => {
+app.post('/query', chatRateLimit(), auditLog('chat.query'), zValidator('json', ChatQuerySchema), async c => {
   const t0 = Date.now();
   const { question, sessionId } = c.req.valid('json');
   const userId = c.req.header('x-user-id') || 'anonymous';
@@ -175,7 +145,8 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
       } catch (e) {
         console.warn('Audit DB insert failed', e);
       }
-    } else {
+    }
+    else {
       console.log('AuditEvent', {
         eventId: crypto.randomUUID(),
         userId,
@@ -194,7 +165,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
   }
 
   // Consent + role gate
-  const { ok, consentStatus, role } = checkConsentAndRole(c.req.raw);
+  const { ok, consentStatus } = checkConsentAndRole(c.req.raw);
   if (!ok && !question.toLowerCase().includes('mock')) {
     console.log('AuditEvent', {
       eventId: crypto.randomUUID(),
@@ -216,7 +187,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
           user_id: userId,
           session_id: sessionId || null,
           action_type: 'query',
-          consent_status,
+          consent_status: consentStatus,
           query_type: classifyQueryType(question),
           redaction_applied: false,
           outcome: 'refusal',
@@ -262,7 +233,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
             user_id: userId,
             session_id: sessionId || null,
             action_type: 'query',
-            consent_status: ok ? 'valid' : consentStatus,
+            consent_status: ok ? 'valid' : (consentStatus as string),
             query_type: classifyQueryType(question),
             redaction_applied: true,
             outcome,
@@ -290,13 +261,13 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
     }
 
     // Real path: call AI with failover, then bridge to SSE
-    const messages = [
+    const messages: { role: 'system' | 'user'; content: string }[] = [
       {
         role: 'system',
         content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.',
       },
       { role: 'user', content: question },
-    ] as const;
+    ];
 
     const aiResp = await streamWithFailover({ model: DEFAULT_PRIMARY, messages });
     const reader = aiResp.body?.getReader();
@@ -337,7 +308,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
           user_id: userId,
           session_id: sessionId || null,
           action_type: 'query',
-          consent_status: ok ? 'valid' : consentStatus,
+          consent_status: ok ? 'valid' : (consentStatus as string),
           query_type: classifyQueryType(question),
           redaction_applied: true,
           outcome: 'success',
@@ -372,7 +343,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
           user_id: userId,
           session_id: sessionId || null,
           action_type: 'query',
-          consent_status: ok ? 'valid' : consentStatus,
+          consent_status: ok ? 'valid' : (consentStatus as string),
           query_type: classifyQueryType(question),
           redaction_applied: true,
           outcome: 'error',
@@ -400,38 +371,158 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
   }
 });
 
-// GET /session/:id — returns session skeleton in mock mode
-app.get('/session/:id', c => {
+// GET /session/:id — returns session info (mock fallback)
+app.get('/session/:id', async c => {
   const id = c.req.param('id');
   const userId = c.req.header('x-user-id') || 'anonymous';
+  const clinicId = c.req.header('x-clinic-id') || 'unknown';
   const url = new URL(c.req.url);
   const mock = url.searchParams.get('mock') === 'true' || process.env.MOCK_MODE === 'true' || process.env.AI_MOCK === 'true';
-  if (!mock) {
-    return c.json({ message: 'Not implemented' }, 501);
+
+  // In real mode, attempt to fetch from DB; fallback to mock if table not available
+  if (!mock && process.env.AI_AUDIT_DB === 'true') {
+    try {
+      const { data, error } = await supabase
+        .from('ai_chat_sessions')
+        .select('id, user_id, clinic_id, started_at, last_activity_at, locale')
+        .eq('id', id)
+        .maybeSingle();
+      if (error) throw error;
+      if (data) {
+        return c.json({
+          id: data.id,
+          userId: data.user_id,
+          clinicId: data.clinic_id,
+          locale: data.locale || (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR',
+          startedAt: data.started_at,
+          lastActivityAt: data.last_activity_at,
+        }, 200);
+      }
+      // create minimal session row if not found
+      const now = new Date().toISOString();
+      const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
+      const ins = await supabase.from('ai_chat_sessions').insert({
+        id,
+        user_id: userId,
+        clinic_id: clinicId,
+        started_at: now,
+        last_activity_at: now,
+        locale,
+      }).select('id, user_id, clinic_id, started_at, last_activity_at, locale').single();
+      if (ins.error) throw ins.error;
+      return c.json({
+        id: ins.data.id,
+        userId: ins.data.user_id,
+        clinicId: ins.data.clinic_id,
+        locale: ins.data.locale,
+        startedAt: ins.data.started_at,
+        lastActivityAt: ins.data.last_activity_at,
+      }, 200);
+    } catch (e) {
+      console.warn('Session DB operation failed, falling back to mock:', e);
+    }
   }
+
+  // Mock fallback
   const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
   const now = new Date().toISOString();
   return c.json({ id, userId, locale, startedAt: now, lastActivityAt: now }, 200);
 });
 
-// POST /explanation — returns concise explanation in mock mode
+// POST /explanation — returns concise explanation with LGPD safeguards
 app.post('/explanation', async c => {
+  const t0 = Date.now();
   const url = new URL(c.req.url);
   const mock = url.searchParams.get('mock') === 'true' || process.env.MOCK_MODE === 'true' || process.env.AI_MOCK === 'true';
-  if (!mock) {
-    return c.json({ message: 'Not implemented' }, 501);
-  }
+
+  // Parse and validate payload
   let payload: any = {};
   try {
     payload = await c.req.json();
   } catch {}
-  const text: string = typeof payload?.text === 'string' ? payload.text : '';
-  const locale = (payload?.locale as string) || 'pt-BR';
-  const prefix = locale === 'en-US' ? 'Explanation: ' : 'Explicação: ';
-  const snippet = text && text.length > 0 ? text.slice(0, 80) : (locale === 'en-US' ? 'This is a mock explanation.' : 'Esta é uma explicação mock.');
-  const explanation = `${prefix}${snippet}`;
-  const traceId = crypto.randomUUID();
-  return c.json({ explanation, traceId }, 200);
+  const BodySchema = z.object({ text: z.string().min(1).max(8000), locale: z.string().default('pt-BR') });
+  const parsed = BodySchema.safeParse(payload);
+  if (!parsed.success) return c.json({ message: 'Invalid payload' }, 422);
+  const { text, locale } = parsed.data;
+
+  // Consent + role gate
+  const { ok, consentStatus } = checkConsentAndRole(c.req.raw);
+  if (!ok && !mock) {
+    // Refusal without processing text
+    return c.json({ message: locale === 'en-US' ? 'Cannot answer without valid consent.' : 'Não é possível responder sem consentimento válido.' }, 403);
+  }
+
+  // Minimal LGPD redaction on input prior to model usage/logging
+  const { redact } = await import('@neonpro/utils');
+  const redactedInput = redact(String(text));
+
+  try {
+    if (mock) {
+      const prefix = locale === 'en-US' ? 'Explanation: ' : 'Explicação: ';
+      const snippet = redactedInput.slice(0, 160);
+      const explanation = `${prefix}${snippet}`;
+      const traceId = crypto.randomUUID();
+      return c.json({ explanation, traceId }, 200);
+    }
+
+    // Non-streaming generation with failover
+    const { generateWithFailover } = await import('../config/ai');
+    const prompt = locale === 'en-US'
+      ? `Explain concisely and safely for a patient: ${redactedInput}`
+      : `Explique de forma concisa e segura para um paciente: ${redactedInput}`;
+
+    const result = await generateWithFailover({ model: DEFAULT_PRIMARY, prompt });
+
+    // Final output redaction as defense in depth
+    const explanation = redact(result.text);
+    const traceId = crypto.randomUUID();
+
+    // Optional DB audit
+    const userId = c.req.header('x-user-id') || 'anonymous';
+    const clinicId = c.req.header('x-clinic-id') || 'unknown';
+    if (process.env.AI_AUDIT_DB === 'true') {
+      try {
+        await supabase.from('ai_audit_events').insert({
+          clinic_id: clinicId,
+          user_id: userId,
+          session_id: null,
+          action_type: 'explanation',
+          consent_status: ok ? 'valid' : (consentStatus as string),
+          query_type: 'other',
+          redaction_applied: true,
+          outcome: 'success',
+          latency_ms: Date.now() - t0,
+        });
+      } catch (e) {
+        console.warn('Audit DB insert failed', e);
+      }
+    }
+
+    return c.json({ explanation, traceId }, 200);
+  } catch (err) {
+    console.error('Explanation error:', err);
+    return c.json({ message: locale === 'en-US' ? 'Service temporarily unavailable' : 'Serviço temporariamente indisponível' }, 500);
+  }
+});
+
+// GET /suggestions — returns curated suggestions based on locale and optional session
+app.get('/suggestions', async c => {
+  const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
+  const sessionId = c.req.query('sessionId') || null;
+
+  const suggestionsPT = [
+    'Quais foram os últimos tratamentos do paciente?',
+    'Resumo financeiro do paciente',
+    'Agendar retorno para avaliação clínica',
+  ];
+  const suggestionsEN = [
+    'What were the patient\'s most recent treatments?',
+    'Patient financial summary',
+    'Schedule a follow-up appointment',
+  ];
+  const items = locale === 'en-US' ? suggestionsEN : suggestionsPT;
+
+  return c.json({ suggestions: items, sessionId }, 200);
 });
 
 app.get('/health', c => c.json({ status: 'ok', route: 'chat.query' }));

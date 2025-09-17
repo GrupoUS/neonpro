@@ -1,5 +1,6 @@
 // Export theme utilities
 export * from './utils';
+export { cn } from './lib/utils';
 
 // Re-export theme APIs at the root to avoid subpath resolution issues in some bundlers/test runners
 export { installThemeStyles, themeCss } from './theme';
@@ -122,3 +123,8 @@ export {
 } from './components/ui/expandable-card';
 export { FocusCards } from './components/ui/focus-cards';
 export { TiltedCard } from './components/ui/tilted-card';
+
+// Export Healthcare components
+export * from './components/healthcare';
+export * from './components/forms';
+export * from './utils';

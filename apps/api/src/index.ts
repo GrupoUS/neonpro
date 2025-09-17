@@ -1,14 +1,14 @@
-import app from './app';
+import { serve } from '@hono/node-server';
+import app from './app.js';
 
-// Development server for local runs
-if (process.env.NODE_ENV === 'development') {
-  // Lazy import to avoid bundling into serverless handler
-  import('@hono/node-server').then(({ serve }) => {
-    const port = Number.parseInt(process.env.PORT || '3004', 10);
-    serve({ fetch: app.fetch, port });
-    // eslint-disable-next-line no-console
-    console.log(`[api] Hono listening on http://localhost:${port}`);
-  });
+// This is the Node entrypoint for the API. In serverless/Vercel, we use files under vercel/.
+const port = Number(process.env.PORT || 3005);
+
+if (process.env.VERCEL === undefined) {
+  // Only start a local server when not running on Vercel
+  serve({ fetch: app.fetch, port });
+  // eslint-disable-next-line no-console
+  console.log(`[api] listening on http://localhost:${port}`);
 }
 
 export default app;

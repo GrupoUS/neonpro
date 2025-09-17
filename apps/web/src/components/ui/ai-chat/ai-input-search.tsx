@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import { Search, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react'; // React import not needed
 import type { AIInputSearchProps } from './types';

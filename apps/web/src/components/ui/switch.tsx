@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as React from 'react';
 

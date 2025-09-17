@@ -102,3 +102,10 @@ An authorized clinic staff member wants a concise, privacy‑respecting answer a
 - [x] Review checklist passed
 
 ---
+
+
+## Finalization Status — 2025-09-16
+- Status: Draft spec validated against implementation snapshot.
+- QA summary: Type-check PASS, Build PASS, Tests PASS, Lint WARN-only (tests).
+- Consolidation note: Endpoints implemented via `apps/api/src/routes/chat.ts` using middlewares.
+- Next: See tasks-enhanced.md for remaining frontend/integration tasks.

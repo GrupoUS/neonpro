@@ -88,7 +88,7 @@ function ApiTestComponent() {
             <div className='mt-4'>
               <h3 className='font-semibold mb-2'>📋 Clientes (via TanStack Query):</h3>
               <ul className='space-y-2'>
-                {clients.data.slice(0, 3).map((client, index) => (
+                {clients.data.slice(0, 3).map((client: any, index: number) => (
                   <li key={index} className='bg-gray-50 dark:bg-gray-600 p-2 rounded'>
                     <strong>{client.fullName}</strong> - {client.email}
                   </li>
@@ -101,7 +101,7 @@ function ApiTestComponent() {
             <div className='mt-4'>
               <h3 className='font-semibold mb-2'>📅 Agendamentos:</h3>
               <ul className='space-y-2'>
-                {appointments.data.slice(0, 2).map((appointment, index) => (
+                {appointments.data.slice(0, 2).map((appointment: any, index: number) => (
                   <li key={index} className='bg-gray-50 dark:bg-gray-600 p-2 rounded'>
                     <strong>{appointment.client.fullName}</strong> - {appointment.status}
                   </li>

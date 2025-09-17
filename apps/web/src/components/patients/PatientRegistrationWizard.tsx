@@ -32,6 +32,7 @@ import {
   SelectValue,
   Textarea,
 } from '@neonpro/ui';
+import { formatBRPhone } from '@neonpro/utils';
 import {
   Check,
   ChevronLeft,
@@ -609,14 +610,10 @@ function BasicInformationStep({ form }: { form: any }) {
 function ContactAddressStep({ form }: { form: any }) {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
-  // Format phone number as user types
+  // Format phone number as user types (shared helper)
   const formatPhone = (value: string) => {
     const cleanPhone = value.replace(/\D/g, '');
-    if (cleanPhone.length <= 10) {
-      return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-    } else {
-      return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-    }
+    return formatBRPhone(cleanPhone);
   };
 
   // Format CEP as user types

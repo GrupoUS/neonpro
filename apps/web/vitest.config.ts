@@ -26,15 +26,19 @@ export default defineConfig({
         'src/**/*.{test,spec}.{ts,tsx}',
         'lib/**/*.{test,spec}.{ts,tsx}',
         'tools/tests/**/*.{test,spec}.{ts,tsx}',
+        'tests/**/*.{test,spec}.{ts,tsx}', // Add tests directory
       ]
       : [
         // Core passing tests
         'src/__tests__/auth-form.test.tsx',
         'src/components/organisms/__tests__/NotificationCard.test.tsx',
         'src/components/ui/__tests__/SharedAnimatedList.test.tsx',
+        'src/hooks/__tests__/useAdvancedSearch.test.ts',
         // AI Chat integration tests (new)
         'src/__tests__/ai-chat/chat-streaming.test.ts',
         'src/__tests__/ai-chat/chat-errors.test.ts',
+        // PDF Export tests (T105 implementation)
+        'src/__tests__/pdf-utils.test.tsx',
         // Also include curated integration duplicates
         'tests/integration/chat-streaming.test.ts',
         'tests/integration/chat-errors.test.ts',

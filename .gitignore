@@ -122,12 +122,7 @@ node_modules/
 **/node_modules/
 .pnpm/
 **/.pnpm/
-
-# Lock files (security: can expose vulnerabilities in exact versions)
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lockb
+.bun/
 
 # Package-level build outputs (22 packages)
 packages/*/dist/
@@ -149,12 +144,6 @@ apps/*/coverage/
 # =============================================================================
 # 🚀 NEONPRO SPECIFIC BUILD TOOLS & CONFIGS
 # =============================================================================
-
-# Bun specific
-bun.lockb
-.bun/
-**/.bun/
-bunfig.toml.local
 
 # TypeScript build cache
 *.tsbuildinfo
@@ -471,6 +460,7 @@ node-compile-cache/
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 # Local configuration overrides
 *local.config*

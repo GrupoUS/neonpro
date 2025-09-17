@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono';
 import { badRequest, forbidden, notFound, serverError, unauthorized } from '../utils/responses';
 
-export async function errorHandler(c: Context, next: Next) {
+export async function errorHandler(c: Context, next: Next): Promise<Response | void> {
   try {
     await next();
 

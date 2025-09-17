@@ -38,3 +38,5 @@ export function PatientCreationForm({
     />
   );
 }
+
+export default PatientCreationForm;

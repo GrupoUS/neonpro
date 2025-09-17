@@ -213,7 +213,7 @@ export function AuditTrailTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditData?.entries.map(entry => {
+              {auditData?.entries.map((entry: any) => {
                 const actionBadge = getActionBadge(entry.action);
                 const statusBadge = getStatusBadge(entry.status);
                 const riskLevelBadge = getRiskLevelBadge(entry.riskLevel);

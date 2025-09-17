@@ -5,7 +5,7 @@ applyTo: "**/*"
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
-> **⚠️ IMPORTANT:** Execute entire workflow without interruption. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps.
+> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 

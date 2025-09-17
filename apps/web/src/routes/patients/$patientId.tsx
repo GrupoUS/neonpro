@@ -523,7 +523,7 @@ function OverviewTab({ patient }: { patient: PatientData }) {
         <CardContent className='space-y-4'>
           <InfoItem
             label='Telefone'
-            value={patient.phone ? formatPhone(patient.phone) : 'Não informado'}
+            value={patient.phone ? formatBRPhone(patient.phone) : 'Não informado'}
             icon={Phone}
           />
           <InfoItem
@@ -772,19 +772,7 @@ function TabContentSkeleton() {
 }
 
 // Utility functions for Brazilian formatting
-function formatCPF(cpf: string): string {
-  const cleaned = cpf.replace(/\D/g, '');
-  return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
-
-function formatPhone(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length <= 10) {
-    return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-  } else {
-    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  }
-}
+import { formatBRPhone, formatCPF } from '@neonpro/utils';
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('pt-BR');

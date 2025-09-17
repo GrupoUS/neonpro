@@ -5,7 +5,6 @@
 
 import { randomUUID } from 'crypto';
 import type { Context, Next } from 'hono';
-import { errorTracker } from '../lib/error-tracking';
 import { logger, logUtils } from '../lib/logger';
 
 /**
@@ -216,7 +215,7 @@ async function getRequestBody(c: Context): Promise<any> {
     }
 
     return { contentType, size: c.req.header('content-length') };
-  } catch (error) {
+  } catch {
     return { error: 'Failed to parse request body' };
   }
 }

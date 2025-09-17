@@ -40,7 +40,8 @@
     "**/supabase/types/**",
     "**/*.generated.*",
     "**/*.d.ts",
-    "tools/e2e/reports/**",
+    "tools/*/reports/**",
+    "tools/frontend/reports/**",
     // Ignore compiled JS artifacts inside source trees to reduce noise
     "packages/utils/src/**/*.js",
     "packages/ai/src/**/*.js",
@@ -389,7 +390,8 @@
     "**/WORKFLOW-EXECUTION-REPORT.md",
 
     // Test report artifacts and vendors
-    "tools/e2e/reports/**"
+    "tools/*/reports/**",
+    "tools/frontend/reports/**"
   ],
   "overrides": [
     {
@@ -426,7 +428,17 @@
       }
     },
     {
-      "files": ["**/test/**", "**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
+      "files": [
+        "**/test/**",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/__tests__/**",
+        "tools/frontend/src/**/*.test.*",
+        "tools/backend/src/**/*.test.*",
+        "tools/database/src/**/*.test.*",
+        "tools/quality/src/**/*.test.*",
+        "tools/shared/src/**/*.test.*"
+      ],
 
       "globals": {
         "vi": "readonly",
@@ -454,7 +466,12 @@
       }
     },
     {
-      "files": ["tools/e2e/**", "**/e2e/**", "**/*.e2e.*", "**/playwright/**"],
+      "files": [
+        "tools/frontend/src/e2e/**",
+        "**/e2e/**",
+        "**/*.e2e.*",
+        "**/playwright/**"
+      ],
 
       "env": {
         "browser": true,
@@ -634,6 +651,7 @@
     "**/supabase/types/**",
     "**/*.generated.*",
     "**/*.d.ts",
-    "tools/e2e/reports/**"
+    "tools/*/reports/**",
+    "tools/frontend/reports/**"
   ]
 }

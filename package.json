@@ -24,6 +24,17 @@
     "dev:web": "bunx turbo dev --filter=@neonpro/web --concurrency=5",
     "dev:web:pnpm": "pnpm --filter @neonpro/web dev",
     "test": "bunx turbo test",
+    "test:frontend": "pnpm --filter @neonpro/tools-frontend-tests test",
+    "test:backend": "pnpm --filter @neonpro/tools-backend-tests test",
+    "test:database": "pnpm --filter @neonpro/tools-database-tests test",
+    "test:quality": "pnpm --filter @neonpro/tools-quality-tests test",
+    "test:orchestrate": "pnpm --filter @neonpro/tools-orchestration orchestrate",
+    "test:all-categories": "pnpm run test:orchestrate -- --all-categories",
+    "test:healthcare": "pnpm run test:orchestrate -- --healthcare-compliance",
+    "test:e2e": "pnpm --filter @neonpro/tools-frontend-tests test:e2e",
+    "test:a11y": "pnpm --filter @neonpro/tools-frontend-tests test:a11y",
+    "test:rls": "pnpm --filter @neonpro/tools-database-tests test:rls",
+    "test:compliance": "pnpm --filter @neonpro/tools-database-tests test:compliance",
     "lint": "bunx turbo lint",
     "type-check": "bunx turbo type-check",
     "clean": "bunx turbo clean",
@@ -53,6 +64,7 @@
   "dependencies": {
     "dotenv": "^17.2.2",
     "lodash.debounce": "^4.0.8",
+    "lovable-tagger": "^1.1.9",
     "turbo": "^2.5.6"
   },
   "devDependencies": {

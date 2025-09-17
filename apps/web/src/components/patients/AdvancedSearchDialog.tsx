@@ -47,7 +47,7 @@ export function AdvancedSearchDialog({
   const { measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
     useSearchPerformance();
 
-  const [localFilters, setLocalFilters] = useState(filters);
+  const [localFilters, setLocalFilters] = useState<typeof filters>(filters);
 
   const handleApply = async () => {
     // Measure search performance

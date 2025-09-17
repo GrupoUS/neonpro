@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 import { useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@neonpro/ui';
 import {
   Badge,
   Button,
@@ -114,14 +114,11 @@ const statusFilterFn: FilterFn<PatientTableData> = (
   return filterValue.includes(status);
 };
 
+import { formatBRPhone } from '@neonpro/utils';
+
 const formatPhone = (phone: string | undefined): string => {
   if (!phone) return '';
-  const cleanPhone = phone.replace(/\D/g, '');
-  if (cleanPhone.length <= 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-  } else {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  }
+  return formatBRPhone(phone);
 };
 
 const formatDate = (date: string | undefined): string => {

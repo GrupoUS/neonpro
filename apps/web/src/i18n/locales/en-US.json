@@ -20,5 +20,8 @@
   "chat.stage.completed": "completed",
   "chat.stage.failed": "failed",
   "a11y.status": "status",
-  "a11y.suggestions": "suggestions list"
+  "a11y.suggestions": "suggestions list",
+  "chat.consent_notice": "To continue, please confirm consent for data use.",
+  "chat.consent_accept": "Accept",
+  "chat.rate_limit": "Too many requests. Please try again shortly."
 }

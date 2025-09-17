@@ -133,7 +133,7 @@ export function AIGovernanceMetrics() {
       <div className='space-y-3'>
         <h3 className='text-md font-semibold'>Active Models</h3>
         <div className='grid gap-4'>
-          {aiData?.models.map(model => {
+          {aiData?.models.map((model: any) => {
             const statusBadge = getStatusBadge(model.status);
 
             return (
@@ -204,7 +204,10 @@ export function AIGovernanceMetrics() {
       {aiData?.alerts && aiData.alerts.length > 0 && (
         <div className='space-y-3'>
           <h3 className='text-md font-semibold'>Governance Alerts</h3>
-          {aiData.alerts.map((alert, index) => (
+          {aiData.alerts.map((
+            alert: { type: 'warning' | 'info'; message: string },
+            index: number,
+          ) => (
             <Alert key={index} variant={alert.type === 'warning' ? 'destructive' : 'default'}>
               <AlertTitle>AI Governance Alert</AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>
