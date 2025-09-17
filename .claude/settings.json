@@ -1,5 +1,5 @@
 {
   "env": {
-      "ANTHROPIC_MODEL": "glm-4.5"
+      "ANTHROPIC_MODEL": "claude-3-5-sonnet-20250106"
   }
 }
