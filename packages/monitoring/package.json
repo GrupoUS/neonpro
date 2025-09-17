@@ -1,0 +1,60 @@
+{
+  "name": "@neonpro/monitoring",
+  "version": "1.0.0",
+  "description": "Performance monitoring and observability for NeonPro applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/sdk-node": "^0.45.0",
+    "@opentelemetry/instrumentation": "^0.45.0",
+    "@opentelemetry/instrumentation-http": "^0.45.0",
+    "@opentelemetry/instrumentation-express": "^0.34.0",
+    "@opentelemetry/instrumentation-postgres": "^0.38.0",
+    "@opentelemetry/exporter-prometheus": "^0.45.0",
+    "@opentelemetry/exporter-jaeger": "^1.17.0",
+    "@opentelemetry/semantic-conventions": "^1.17.0",
+    "prom-client": "^15.1.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./metrics": {
+      "import": "./dist/metrics/index.js",
+      "require": "./dist/metrics/index.js",
+      "types": "./dist/metrics/index.d.ts"
+    },
+    "./tracing": {
+      "import": "./dist/tracing/index.js",
+      "require": "./dist/tracing/index.js",
+      "types": "./dist/tracing/index.d.ts"
+    },
+    "./logging": {
+      "import": "./dist/logging/index.js",
+      "require": "./dist/logging/index.js",
+      "types": "./dist/logging/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ]
+}

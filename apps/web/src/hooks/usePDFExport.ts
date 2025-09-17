@@ -1,5 +1,11 @@
-import { pdf } from '@react-pdf/renderer';
+import { pdf, type DocumentProps as PDFDocumentProps } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
+
+/**
+ * Narrow PDF Document props type.
+ * If the upstream library changes its export name or structure, adjust here centrally.
+ */
+export type DocumentProps = PDFDocumentProps;
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -12,11 +18,11 @@ interface UsePDFExportOptions {
 interface UsePDFExportReturn {
   isGenerating: boolean;
   generatePDF: (
-    component: React.ReactElement<any>,
+    component: React.ReactElement<PDFDocumentProps>,
     options?: UsePDFExportOptions,
   ) => Promise<Blob | null>;
-  downloadPDF: (component: React.ReactElement<any>, filename: string) => Promise<void>;
-  previewPDF: (component: React.ReactElement<any>) => Promise<void>;
+  downloadPDF: (component: React.ReactElement<PDFDocumentProps>, filename: string) => Promise<void>;
+  previewPDF: (component: React.ReactElement<PDFDocumentProps>) => Promise<void>;
   error: string | null;
 }
 
@@ -25,7 +31,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const generatePDF = async (
-    component: React.ReactElement<any>,
+    component: React.ReactElement<PDFDocumentProps>,
     options?: UsePDFExportOptions,
   ): Promise<Blob | null> => {
     try {
@@ -35,7 +41,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
       const startTime = performance.now();
 
       // Gerar o PDF
-      const blob = await pdf(component as any).toBlob();
+      const blob = await pdf(component).toBlob();
 
       const endTime = performance.now();
       const duration = (endTime - startTime) / 1000;
@@ -74,7 +80,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
   };
 
   const downloadPDF = async (
-    component: React.ReactElement<any>,
+    component: React.ReactElement<PDFDocumentProps>,
     filename: string,
   ): Promise<void> => {
     await generatePDF(component, {

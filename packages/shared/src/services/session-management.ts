@@ -15,6 +15,10 @@
  */
 
 import { z } from 'zod';
+import { webcrypto } from 'node:crypto';
+
+// Ensure crypto is available in both Node.js and browser environments
+const crypto = globalThis.crypto || webcrypto;
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -339,13 +343,14 @@ export function generateSessionId(): string {
 export function generateCSRFToken(): string {
   const array = new Uint8Array(32);
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    (crypto.getRandomValues as (array: Uint8Array) => Uint8Array)(array);
+  } else {
+    // Fallback for environments without crypto
+    for (let i = 0; i < array.length; i++) {
+      array[i] = Math.floor(Math.random() * 256);
+    }
   }
-  
-  // Fallback for environments without crypto
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -758,7 +763,12 @@ export class SessionManagementService {
         ipAddress: currentIpAddress,
         userAgent: currentUserAgent,
         details: { violation: 'session_binding_mismatch' },
-        securityLevel: session.securityLevel
+        securityLevel: session.securityLevel,
+        complianceContext: {
+          lgpdApplicable: false,
+          auditRequired: true,
+          dataRetentionApplied: false
+        }
       });
       
       return {
@@ -813,7 +823,8 @@ export class SessionManagementService {
       ipAddress: session.ipAddress,
       userAgent: session.userAgent,
       details: { newExpiresAt },
-      securityLevel: session.securityLevel
+      securityLevel: session.securityLevel,
+      complianceContext: { lgpdApplicable: false, auditRequired: true, dataRetentionApplied: false }
     });
     
     const updatedSession = await this.store.get(sessionId);
@@ -850,7 +861,12 @@ export class SessionManagementService {
       ipAddress: session.ipAddress,
       userAgent: session.userAgent,
       details: { reason: reason || 'manual_termination' },
-      securityLevel: session.securityLevel
+      securityLevel: session.securityLevel,
+      complianceContext: {
+        lgpdApplicable: false,
+        auditRequired: true,
+        dataRetentionApplied: false
+      }
     });
   }
   
@@ -880,7 +896,12 @@ export class SessionManagementService {
       ipAddress: session.ipAddress,
       userAgent: session.userAgent,
       details: { reason: reason || 'manual_revocation' },
-      securityLevel: session.securityLevel
+      securityLevel: session.securityLevel,
+      complianceContext: {
+        lgpdApplicable: false,
+        auditRequired: true,
+        dataRetentionApplied: false
+      }
     });
   }
   
@@ -910,7 +931,12 @@ export class SessionManagementService {
       ipAddress: session.ipAddress,
       userAgent: session.userAgent,
       details: { reason: 'automatic_expiration' },
-      securityLevel: session.securityLevel
+      securityLevel: session.securityLevel,
+      complianceContext: {
+        lgpdApplicable: false,
+        auditRequired: true,
+        dataRetentionApplied: false
+      }
     });
   }
   
@@ -1072,11 +1098,19 @@ export class InMemorySessionStore implements SessionStore {
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
     
     let cleanedCount = 0;
-    for (const [sessionId, session] of this.sessions.entries()) {
+    const sessionsToDelete: string[] = [];
+    
+    // Collect sessions to delete
+    for (const [sessionId, session] of Array.from(this.sessions.entries())) {
       if (session.dataRetentionDate && session.dataRetentionDate < cutoffDate) {
-        this.sessions.delete(sessionId);
-        cleanedCount++;
+        sessionsToDelete.push(sessionId);
       }
+    }
+    
+    // Delete collected sessions
+    for (const sessionId of sessionsToDelete) {
+      this.sessions.delete(sessionId);
+      cleanedCount++;
     }
     
     return cleanedCount;
@@ -1086,11 +1120,5 @@ export class InMemorySessionStore implements SessionStore {
 // ============================================================================
 // EXPORTS
 // ============================================================================
-
-export {
-  SessionManagementService,
-  InMemorySessionStore,
-  type SessionStore
-};
 
 export default SessionManagementService;

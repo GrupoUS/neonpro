@@ -895,6 +895,7 @@ export class JobScheduler {
         type: jobTemplate.type,
         priority: jobTemplate.priority || JobPriority.MEDIUM,
         status: JobStatus.PENDING,
+        progress: 0,
         payload: jobTemplate.payload,
         createdAt: new Date(),
         attemptCount: 0,
@@ -967,11 +968,6 @@ export class JobScheduler {
 // EXPORTS
 // ============================================================================
 
-export {
-  InMemoryJobQueue,
-  JobScheduler,
-  type JobHandler,
-  type JobQueue
-};
 
+// Removed duplicate named re-exports to avoid conflicts with existing exported declarations
 export default InMemoryJobQueue;

@@ -32,7 +32,7 @@ interface MeasurementConfig {
  */
 export class ColdStartMeasurement {
   private config: MeasurementConfig;
-  private serverProcess?: any;
+  private serverProcess?: import('node:child_process').ChildProcess;
 
   constructor(config: Partial<MeasurementConfig> = {}) {
     this.config = {
@@ -414,9 +414,9 @@ async function runColdStartMeasurement() {
 }
 
 // Export for programmatic use
-export { runColdStartMeasurement, ColdStartMeasurement };
+export { runColdStartMeasurement };
 
 // CLI execution
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   runColdStartMeasurement();
 }

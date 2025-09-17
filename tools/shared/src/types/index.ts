@@ -30,6 +30,7 @@ export interface ConstitutionalContext {
   requirement?: string;
   impact?: string;
   standard?: 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR' | 'ISO27001';
+  [key: string]: unknown;
 }
 
 // Error information with stack traces

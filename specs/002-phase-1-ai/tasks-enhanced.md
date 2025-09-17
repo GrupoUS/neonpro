@@ -65,32 +65,32 @@
 - [x] T031 Audit logging middleware in `apps/api/src/middleware/audit-log.ts`
 
 ## Phase 3.5: Frontend Implementation
-- [ ] T032 [P] Chat session hook in `apps/web/src/hooks/use-chat-session.ts`
-- [ ] T033 [P] Chat streaming hook in `apps/web/src/hooks/use-chat-streaming.ts`
-- [ ] T034 [P] Chat message component in `apps/web/src/components/chat/chat-message.tsx`
-- [ ] T035 [P] Chat input component in `apps/web/src/components/chat/chat-input.tsx`
-- [ ] T036 Chat container component in `apps/web/src/components/chat/chat-container.tsx`
-- [ ] T037 Chat session manager in `apps/web/src/components/chat/chat-session-manager.tsx`
-- [ ] T038 Consent prompt component in `apps/web/src/components/chat/consent-prompt.tsx`
-- [ ] T039 Rate limit notification in `apps/web/src/components/chat/rate-limit-notice.tsx`
+- [x] T032 [P] Chat session hook in `apps/web/src/hooks/use-chat-session.ts`
+- [x] T033 [P] Chat streaming hook in `apps/web/src/hooks/use-chat-streaming.ts`
+- [x] T034 [P] Chat message component in `apps/web/src/components/chat/chat-message.tsx`
+- [x] T035 [P] Chat input component in `apps/web/src/components/chat/chat-input.tsx`
+- [x] T036 Chat container component in `apps/web/src/components/chat/chat-container.tsx`
+- [x] T037 Chat session manager in `apps/web/src/components/chat/chat-session-manager.tsx`
+- [x] T038 Consent prompt component in `apps/web/src/components/chat/consent-prompt.tsx`
+- [x] T039 Rate limit notification in `apps/web/src/components/chat/rate-limit-notice.tsx`
 
 ## Phase 3.6: Integration & Configuration
-- [ ] T040 Connect ChatService to Supabase in `packages/core-services/src/database/chat-repository.ts`
-- [ ] T041 Configure OpenAI client in `packages/core-services/src/config/ai-config.ts`
-- [ ] T042 Setup structured logging in `packages/core-services/src/utils/logger.ts`
-- [ ] T043 Configure CORS for streaming in `apps/api/src/config/cors.ts`
-- [ ] T044 Setup session management in `apps/api/src/middleware/session.ts`
-- [ ] T045 Configure deterministic mock mode in `packages/core-services/src/services/mock-ai-provider.ts`
+- [x] T040 Connect ChatService to Supabase in `packages/core-services/src/database/chat-repository.ts`
+- [x] T041 Configure OpenAI client in `packages/core-services/src/config/ai-config.ts`
+- [x] T042 Setup structured logging in `packages/core-services/src/utils/logger.ts`
+- [x] T043 Configure CORS for streaming in `apps/api/src/config/cors.ts`
+- [x] T044 Setup session management in `apps/api/src/middleware/session.ts`
+- [x] T045 Configure deterministic mock mode in `packages/core-services/src/services/mock-ai-provider.ts`
 
 ## Phase 3.7: Polish & Performance
-- [ ] T046 [P] Unit tests for redaction utils in `packages/utils/tests/lgpd.test.ts`
-- [ ] T047 [P] Unit tests for rate counter in `packages/core-services/tests/rate-counter.test.ts`
-- [ ] T048 [P] Performance tests (<2s response time) in `apps/api/tests/performance/chat-latency.test.ts`
-- [ ] T049 [P] E2E tests with Playwright in `apps/web/tests/e2e/chat-flow.spec.ts`
-- [ ] T050 [P] Update API documentation in `docs/apis/chat-api.md`
-- [ ] T051 [P] Update feature documentation in `docs/features/ai-chat-phase-1.md`
-- [ ] T052 LGPD compliance audit checklist in `docs/compliance/ai-chat-lgpd.md`
-- [ ] T053 Performance monitoring setup in `apps/api/src/monitoring/chat-metrics.ts`
+- [x] T046 [P] Unit tests for redaction utils in `packages/utils/tests/lgpd.test.ts`
+- [x] T047 [P] Unit tests for rate counter in `packages/core-services/tests/rate-counter.test.ts`
+- [x] T048 [P] Performance tests (<2s response time) in `apps/api/tests/performance/chat-latency.test.ts`
+- [x] T049 [P] E2E tests with Playwright in `apps/web/tests/e2e/chat-flow.spec.ts`
+- [x] T050 [P] Update API documentation in `docs/apis/chat-api.md`
+- [x] T051 [P] Update feature documentation in `docs/features/ai-chat-phase-1.md`
+- [x] T052 LGPD compliance audit checklist in `docs/compliance/lgpd-audit-checklist.md`
+- [x] T053 Performance monitoring setup in `packages/monitoring/` (complete package)
 
 ## Dependencies
 **Critical Path:**

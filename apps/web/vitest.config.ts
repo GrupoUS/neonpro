@@ -26,6 +26,7 @@ export default defineConfig({
         'src/**/*.{test,spec}.{ts,tsx}',
         'lib/**/*.{test,spec}.{ts,tsx}',
         'tools/tests/**/*.{test,spec}.{ts,tsx}',
+        'tests/**/*.{test,spec}.{ts,tsx}', // Add tests directory
       ]
       : [
         // Core passing tests

@@ -12,13 +12,10 @@ import { promisify } from 'util';
 import {
   Result,
   FileOperationOptions,
-  AsyncOperation,
-  ToolConfig,
   ValidationResult,
   PackageInfo,
   ToolError,
   ValidationError,
-  ConfigurationError,
 } from '../types';
 
 const execAsync = promisify(exec);
@@ -495,6 +492,9 @@ export function getFileNameWithoutExtension(filePath: string): string {
 // Array and Object Utilities
 // ========================================
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 /**
  * Remove duplicates from array
  */
@@ -522,36 +522,39 @@ export function groupBy<T, K extends string | number | symbol>(
 /**
  * Deep merge objects
  */
-export function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
-  const result = { ...target };
+export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
+  const result = { ...target } as Record<string, unknown>;
 
-  for (const key in source) {
-    if (source.hasOwnProperty(key)) {
-      const sourceValue = source[key];
-      const targetValue = result[key];
+  const keys = Object.keys(source as Record<string, unknown>) as (keyof T)[];
 
-      if (
-        sourceValue &&
-        typeof sourceValue === 'object' &&
-        !Array.isArray(sourceValue) &&
-        targetValue &&
-        typeof targetValue === 'object' &&
-        !Array.isArray(targetValue)
-      ) {
-        result[key] = deepMerge(targetValue, sourceValue);
-      } else {
-        result[key] = sourceValue as T[Extract<keyof T, string>];
-      }
+  for (const key of keys) {
+    const sourceValue = source[key];
+    if (sourceValue === undefined) {
+      continue;
+    }
+
+    const targetValue = result[key as string];
+
+    if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
+      result[key as string] = deepMerge(
+        targetValue as Record<string, unknown>,
+        sourceValue as Record<string, unknown>
+      );
+    } else {
+      result[key as string] = sourceValue as unknown;
     }
   }
 
-  return result;
+  return result as T;
 }
 
 /**
  * Pick specific keys from object
  */
-export function pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+export function pick<T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> {
   const result = {} as Pick<T, K>;
   for (const key of keys) {
     if (key in obj) {
@@ -564,12 +567,15 @@ export function pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
 /**
  * Omit specific keys from object
  */
-export function omit<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
-  const result = { ...obj } as any;
+export function omit<T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Omit<T, K> {
+  const result = { ...obj } as Record<string, unknown>;
   for (const key of keys) {
-    delete result[key];
+    delete result[key as string];
   }
-  return result;
+  return result as Omit<T, K>;
 }
 
 // ========================================

@@ -4,9 +4,10 @@
  */
 
 import { createLogger } from '../../logger';
+import { LogLevel } from '../../types';
 
 const logger = createLogger('AgentCoordination', {
-  level: 'info',
+  level: LogLevel.INFO,
   format: 'pretty',
   enableConstitutional: true,
 });
@@ -151,12 +152,16 @@ export class AgentCoordinator {
     };
 
     logger.constitutional(
-      'info',
+      LogLevel.INFO,
       `Agent coordination plan created for ${category}:${phase}`,
       {
-        compliance: options.healthcareCompliance || false,
+        compliance: Boolean(options.healthcareCompliance),
         requirement: 'Agent Coordination Planning',
-        standard: 'TDD',
+      },
+      {
+        component: 'AgentCoordinator',
+        operation: 'createCoordinationPlan',
+        metadata: { category, phase },
       }
     );
 
@@ -195,18 +200,26 @@ export class AgentCoordinator {
 
       // Validate quality gates
       for (const gate of plan.qualityGates) {
-        qualityGateResults[gate] = await this.validateQualityGate(gate, results);
+        qualityGateResults[gate] = await this.validateQualityGate(gate);
       }
 
       const allGatesPassed = Object.values(qualityGateResults).every(passed => passed);
 
       logger.constitutional(
-        allGatesPassed ? 'info' : 'warn',
+        allGatesPassed ? LogLevel.INFO : LogLevel.WARN,
         `Coordination plan execution completed. Quality gates: ${allGatesPassed ? 'PASSED' : 'FAILED'}`,
         {
           compliance: allGatesPassed,
           requirement: 'Quality Gate Validation',
-          standard: 'TDD',
+        },
+        {
+          component: 'AgentCoordinator',
+          operation: 'executeCoordinationPlan',
+          metadata: {
+            category: plan.category,
+            phase: plan.phase,
+            workflow: plan.workflow,
+          },
         }
       );
 
@@ -217,7 +230,15 @@ export class AgentCoordinator {
       };
 
     } catch (error) {
-      logger.error('Agent coordination plan execution failed', error);
+      logger.error(
+        'Agent coordination plan execution failed',
+        {
+          component: 'AgentCoordinator',
+          operation: 'executeCoordinationPlan',
+          metadata: { category: plan.category, phase: plan.phase },
+        },
+        error instanceof Error ? error : new Error(String(error))
+      );
 
       return {
         success: false,
@@ -252,9 +273,13 @@ export class AgentCoordinator {
     };
   }
 
-  private static async validateQualityGate(gate: string, results: Record<string, any>): Promise<boolean> {
+  private static async validateQualityGate(gate: string): Promise<boolean> {
     // Simulated quality gate validation
-    logger.debug(`Validating quality gate: ${gate}`);
+    logger.debug(`Validating quality gate: ${gate}`, {
+      component: 'AgentCoordinator',
+      operation: 'validateQualityGate',
+      metadata: { gate },
+    });
 
     // In real implementation, this would analyze the actual results
     // and validate against specific thresholds

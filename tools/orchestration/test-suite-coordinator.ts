@@ -3,7 +3,7 @@
  * Coordinates test execution across all test categories with parallel/sequential support
  */
 
-import { createLogger, LogLevel } from '@neonpro/tools-shared/logger';
+import { createLogger, LogLevel } from './utils/logger';
 import {
   TestCategory,
   TestCategoryManager,

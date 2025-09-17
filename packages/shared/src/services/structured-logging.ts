@@ -979,15 +979,3 @@ export const logger = new StructuredLogger({
     enableMetricsCorrelation: true
   }
 });
-
-/**
- * Export types for external use
- */
-export type {
-  LogLevel,
-  LogEntry,
-  HealthcareContext,
-  TechnicalContext,
-  LGPDCompliance,
-  StructuredLoggingConfig
-};

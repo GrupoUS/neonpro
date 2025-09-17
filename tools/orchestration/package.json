@@ -1,7 +1,8 @@
 {
   "name": "@neonpro/tools-orchestration",
   "version": "1.0.0",
-  "description": "TDD Orchestration Framework for NeonPro development tools",
+  "description": "Tooling orchestrator for NeonPro development utilities",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -9,21 +10,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./orchestrator": {
-      "types": "./dist/tdd-orchestrator.d.ts",
-      "import": "./dist/tdd-orchestrator.js",
-      "require": "./dist/tdd-orchestrator.cjs"
-    },
-    "./quality-control": {
-      "types": "./dist/quality-control-bridge.d.ts",
-      "import": "./dist/quality-control-bridge.js",
-      "require": "./dist/quality-control-bridge.cjs"
-    },
-    "./test-coordinator": {
-      "types": "./dist/src/test-coordinator.d.ts",
-      "import": "./dist/src/test-coordinator.js",
-      "require": "./dist/src/test-coordinator.cjs"
     }
   },
   "scripts": {
@@ -32,9 +18,8 @@
     "clean": "rm -rf dist",
     "lint": "oxlint --fix src",
     "type-check": "tsc --noEmit",
-    "test": "bun test",
-    "test:parallel": "bun run src/test-parallel.ts",
-    "orchestrate": "bun run src/test-coordinator.ts"
+    "orchestrate": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js",
+    "orchestrate:parallel": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
   },
   "dependencies": {
     "@neonpro/tools-shared": "workspace:*"
@@ -58,18 +43,12 @@
   },
   "keywords": [
     "neonpro",
-    "tdd",
+    "tooling",
     "orchestration",
-    "agents",
-    "quality-control",
-    "healthcare",
-    "compliance",
-    "testing",
-    "parallel"
+    "automation"
   ],
   "author": "NeonPro Team",
   "license": "MIT",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/neonpro/neonpro/issues"
   },

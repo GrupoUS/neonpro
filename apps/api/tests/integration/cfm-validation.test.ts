@@ -15,7 +15,7 @@ import { z } from 'zod';
 
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import('../../../src/app');
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }

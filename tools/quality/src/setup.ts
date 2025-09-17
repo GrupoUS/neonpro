@@ -1,23 +1,31 @@
 /**
- * 🧪 Quality Tests Setup - NeonPro Healthcare
- * ==========================================
- * 
- * Global test setup for quality and performance testing
- * - Mock configurations for healthcare compliance
- * - Performance monitoring utilities
- * - Test environment initialization
+ * Testing setup utilities for NeonPro quality tests
+ * Provides global mocks and utilities for healthcare compliance testing
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
-
-// Global test configuration
-const TEST_CONFIG = {
-  MOCK_API_BASE_URL: 'http://localhost:3000',
+// Test environment configuration
+export const TEST_CONFIG = {
+  DATABASE_URL: process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/neonpro_test',
+  API_BASE_URL: process.env.TEST_API_URL || 'http://localhost:3000',
   PERFORMANCE_TIMEOUT: 60000,
   HEALTHCARE_COMPLIANCE_MODE: true,
   LGPD_VALIDATION_ENABLED: true,
   AUDIT_LOGGING_ENABLED: true,
 };
+
+// Extend global interface for test utilities
+declare global {
+  var simulateDirectAPICall: (endpoint: string) => Promise<{status: number, data: any}>;
+  var simulateAuditedOperation: (operation: string, resourceId: string) => Promise<{operation: string, resourceId: string, auditId: string}>;
+  var validatePatientConsent: (patientId: string, consentType: string) => Promise<boolean>;
+  var simulateDatabaseQuery: (queryType: string, options: Record<string, unknown>) => Promise<any>;
+  var simulateDatabaseOperation: (connection: unknown, operation: string) => Promise<boolean>;
+  var simulateDBConnectionRelease: (connection: unknown) => Promise<void>;
+  var simulateLGPDOperation: (operationType: string, data: Record<string, unknown>) => Promise<boolean>;
+  var simulateAuditLogCreation: (logData: Record<string, unknown>) => Promise<string>;
+  var simulateEmergencyScenario: (scenarioType: string, options: Record<string, unknown>) => Promise<void>;
+  var simulateHealthcareOperation: (operationType: string, options: Record<string, unknown>) => Promise<boolean>;
+}
 
 // Mock global functions for performance testing
 global.simulateDirectAPICall = async (endpoint: string) => {
@@ -33,106 +41,65 @@ global.simulateAuditedOperation = async (operation: string, resourceId: string) 
 };
 
 global.validatePatientConsent = async (_patientId: string, _consentType: string) => {
-  // Simulate consent validation
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 2));
-  return Math.random() > 0.1; // 90% consent rate
-};
-
-global.simulateDatabaseQuery = async (queryType: string, options: any) => {
-  // Simulate database query with varying complexity
-  const complexity = options.complexity || 'simple';
-  const delay = complexity === 'complex' ? Math.random() * 30 : Math.random() * 10;
-  await new Promise(resolve => setTimeout(resolve, delay));
-  return { queryType, options, resultCount: Math.floor(Math.random() * 100) };
-};
-
-global.simulateDBConnectionAcquisition = async () => {
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 5));
-  return { connectionId: `conn_${Date.now()}`, acquired: true };
-};
-
-global.simulateDatabaseOperation = async (connection: any, operation: string) => {
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
-  return { connection, operation, success: true };
-};
-
-global.simulateDBConnectionRelease = async (connection: any) => {
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 2));
-  return { connectionId: connection.connectionId, released: true };
-};
-
-global.simulateLGPDOperation = async (operationType: string, data: any) => {
-  // Simulate LGPD compliance operations
-  await new Promise(resolve => setTimeout(resolve, Math.random() * 8));
-  return { operationType, data, compliant: true, timestamp: Date.now() };
-};
-
-global.simulateAuditLogCreation = async (logData: any) => {
-  // Simulate audit log creation
+  // Simulate LGPD consent validation
   await new Promise(resolve => setTimeout(resolve, Math.random() * 3));
-  return { ...logData, logId: `log_${Date.now()}`, created: true };
+  return true; // Assume consent granted for tests
 };
 
-global.simulateEmergencyScenario = async (scenarioType: string, options: any) => {
-  // Simulate emergency healthcare scenarios
-  const urgencyDelay = options.urgency === 'CRITICAL' ? Math.random() * 50 : Math.random() * 100;
-  await new Promise(resolve => setTimeout(resolve, urgencyDelay));
-  return { scenarioType, options, handled: true, responseTime: urgencyDelay };
+global.simulateDatabaseQuery = async (queryType: string, options: Record<string, unknown>) => {
+  // Simulate database query with healthcare compliance
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 20));
+  
+  if (queryType === 'patient_data') {
+    return {
+      id: 'patient_123',
+      name: 'Test Patient',
+      ...options
+    };
+  }
+  
+  return { queryType, options, result: 'success' };
 };
 
-global.simulateHealthcareOperation = async (operationType: string, options: any) => {
-  // Simulate various healthcare operations
-  const operationDelay = Math.random() * 20;
-  await new Promise(resolve => setTimeout(resolve, operationDelay));
-  return { operationType, options, completed: true, duration: operationDelay };
+global.simulateDatabaseOperation = async (connection: unknown, operation: string) => {
+  // Simulate database operation (create, update, delete)
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 15));
+  return operation !== 'error_simulation';
 };
 
-// Global setup
-beforeAll(async () => {
-  console.log('🧪 Initializing Quality Tests Setup...');
-  
-  // Initialize performance monitoring
-  if (typeof global.gc === 'function') {
-    console.log('✅ Garbage collection available for memory leak testing');
-  } else {
-    console.log('⚠️  Garbage collection not available - run with --expose-gc for memory leak tests');
-  }
-  
-  // Set test environment variables
-  process.env.NODE_ENV = 'test';
-  process.env.HEALTHCARE_COMPLIANCE_MODE = 'true';
-  process.env.LGPD_VALIDATION_ENABLED = 'true';
-  process.env.AUDIT_LOGGING_ENABLED = 'true';
-  
-  console.log('✅ Quality Tests Setup Complete');
-});
+global.simulateDBConnectionRelease = async (connection: unknown) => {
+  // Simulate connection cleanup
+  await new Promise(resolve => setTimeout(resolve, 1));
+};
 
-afterAll(async () => {
-  console.log('🧹 Cleaning up Quality Tests...');
-  
-  // Force garbage collection if available
-  if (typeof global.gc === 'function') {
-    global.gc();
-  }
-  
-  console.log('✅ Quality Tests Cleanup Complete');
-});
+global.simulateLGPDOperation = async (operationType: string, data: Record<string, unknown>) => {
+  // Simulate LGPD compliance operations
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
+  return operationType === 'data_deletion' || operationType === 'consent_validation';
+};
 
-beforeEach(() => {
-  // Reset performance counters before each test
-  if (global.performance && global.performance.clearMarks) {
-    global.performance.clearMarks();
-    global.performance.clearMeasures();
-  }
-});
+global.simulateAuditLogCreation = async (logData: Record<string, unknown>) => {
+  // Simulate audit log creation
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 5));
+  return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
 
-afterEach(() => {
-  // Clean up after each test
-  if (global.performance && global.performance.clearMarks) {
-    global.performance.clearMarks();
-    global.performance.clearMeasures();
-  }
-});
+global.simulateEmergencyScenario = async (scenarioType: string, options: Record<string, unknown>) => {
+  // Simulate emergency access scenarios
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 8));
+  console.log(`Emergency scenario: ${scenarioType}`, options);
+};
 
-// Export test configuration for use in tests
-export { TEST_CONFIG };
+global.simulateHealthcareOperation = async (operationType: string, options: Record<string, unknown>) => {
+  // Simulate healthcare-specific operations
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 12));
+  return !operationType.includes('unauthorized');
+};
+
+// Setup function to initialize test environment
+export function setupQualityTests(): void {
+  console.log('🏥 Quality test environment initialized');
+  console.log('   - Healthcare compliance mode enabled');
+  console.log('   - LGPD validation enabled');
+  console.log('   - Audit logging enabled');
+}

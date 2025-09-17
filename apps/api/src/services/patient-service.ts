@@ -735,7 +735,7 @@ export class PatientService {
   /**
    * Generate AI insights for patient (integration with AI service)
    */
-  async generateAIInsights(patientId: string): Promise<ServiceResponse<{ insights: any[] }>> {
+  async generateAIInsights(patientId: string, includeRecommendations: boolean = false): Promise<ServiceResponse<{ insights: any[], recommendations?: any[] }>> {
     try {
       const patient = this.patients.get(patientId);
 
@@ -746,25 +746,61 @@ export class PatientService {
         };
       }
 
-      // Mock AI insights generation
+      // Mock AI insights generation with multiple AI models
       const insights = [
         {
           type: 'health_analysis',
           title: 'Análise de Saúde',
           content: 'Paciente apresenta indicadores normais',
           confidence: 0.85,
+          aiModels: ['gpt-4', 'claude-3'],
+          clinicalRelevance: 0.92,
         },
         {
           type: 'risk_assessment',
           title: 'Avaliação de Risco',
           content: 'Baixo risco cardiovascular',
           confidence: 0.78,
+          aiModels: ['gemini-pro', 'gpt-4'],
+          clinicalRelevance: 0.88,
+          riskProfile: {
+            overall: 'low',
+            cardiovascular: 'low',
+            diabetes: 'moderate'
+          },
+          riskFactors: [
+            'Pressão arterial normal',
+            'Histórico familiar de diabetes',
+            'Sedentarismo leve'
+          ]
         },
       ];
 
+      const result: any = { insights };
+      
+      // Add recommendations if requested
+      if (includeRecommendations) {
+        result.recommendations = [
+          {
+            type: 'prevention',
+            title: 'Prevenção',
+            content: 'Manter hábitos saudáveis de alimentação',
+            priority: 'high',
+            timeframe: '3-6 months'
+          },
+          {
+            type: 'monitoring',
+            title: 'Monitoramento',
+            content: 'Acompanhamento regular de sinais vitais',
+            priority: 'medium',
+            timeframe: '1-3 months'
+          }
+        ];
+      }
+
       return {
         success: true,
-        data: { insights },
+        data: result,
       };
     } catch {
       return {
