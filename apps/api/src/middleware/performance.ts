@@ -31,7 +31,7 @@ export const performanceMiddleware = (app: Hono) => {
   app.use(
     '*',
     cors({
-      origin: (origin) => {
+      origin: ({ origin }) => {
         const allowedOrigins = [
           'http://localhost:3000',
           'http://localhost:5173',
