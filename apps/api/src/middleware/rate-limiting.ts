@@ -1,574 +1,432 @@
+import { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+
 /**
- * API Rate Limiting and Caching Middleware (T075)
- * Performance optimization for large datasets and API protection
- *
- * Features:
- * - Rate limiting with healthcare professional tiers
- * - Response caching with LGPD compliance
- * - Performance monitoring and metrics
- * - Brazilian healthcare context optimization
- * - Integration with AI provider rate limits (T072)
+ * Rate limiting infrastructure for healthcare APIs
+ * 
+ * Implements sliding window rate limiting with:
+ * - Per-endpoint configuration
+ * - Clinic IP allowlisting
+ * - Healthcare workflow efficiency
+ * - LGPD compliance logging
+ * - Memory-based storage for development
  */
 
-import { Context, Next } from 'hono';
-import { z } from 'zod';
-
-// Rate limiting configuration
-const rateLimitConfigSchema = z.object({
-  windowMs: z.number().min(1000).default(60000), // 1 minute default
-  maxRequests: z.number().min(1).default(100),
-  skipSuccessfulRequests: z.boolean().default(false),
-  skipFailedRequests: z.boolean().default(false),
-  keyGenerator: z.function().optional(),
-  onLimitReached: z.function().optional(),
-  healthcareProfessionalMultiplier: z.number().min(1).default(2),
-  aiEndpointMultiplier: z.number().min(0.1).default(0.5),
-});
-
-export type RateLimitConfig = z.infer<typeof rateLimitConfigSchema>;
-
-// Cache configuration
-const cacheConfigSchema = z.object({
-  ttl: z.number().min(1000).default(300000), // 5 minutes default
-  maxSize: z.number().min(1).default(1000),
-  lgpdCompliant: z.boolean().default(true),
-  excludePersonalData: z.boolean().default(true),
-  healthcareDataTtl: z.number().min(1000).default(60000), // 1 minute for healthcare data
-  aiInsightsTtl: z.number().min(1000).default(600000), // 10 minutes for AI insights
-});
-
-export type CacheConfig = z.infer<typeof cacheConfigSchema>;
-
-// Rate limit entry
-interface RateLimitEntry {
-  count: number;
-  resetTime: number;
-  firstRequest: number;
+export interface RateLimitRule {
+  /** Maximum requests per window */
+  maxRequests: number;
+  /** Window duration in milliseconds */
+  windowMs: number;
+  /** Healthcare workflow priority (emergency endpoints get higher limits) */
+  priority?: 'emergency' | 'routine' | 'administrative';
+  /** Skip rate limiting for specific roles */
+  skipRoles?: string[];
+  /** Custom error message for healthcare context */
+  message?: string;
 }
 
-// Cache entry
-interface CacheEntry {
-  data: any;
+export interface RateLimitConfig {
+  /** Default rate limit for unspecified endpoints */
+  default: RateLimitRule;
+  /** Per-endpoint rate limit overrides */
+  endpoints: Record<string, RateLimitRule>;
+  /** Allowlisted clinic IP addresses */
+  allowlistedIPs?: string[];
+  /** Enable audit logging for compliance */
+  auditLogging?: boolean;
+  /** Redis connection for production scaling */
+  redisUrl?: string;
+}
+
+export interface RateLimitAttempt {
+  /** Request timestamp */
   timestamp: number;
-  ttl: number;
-  lgpdCompliant: boolean;
-  dataCategories: string[];
+  /** Client IP address */
+  ip: string;
+  /** User ID if authenticated */
   userId?: string;
+  /** Clinic ID for multi-tenant isolation */
+  clinicId?: string;
+  /** Endpoint being accessed */
+  endpoint: string;
+  /** Request method */
+  method: string;
 }
 
-// Performance metrics
-interface PerformanceMetrics {
-  requestCount: number;
-  cacheHits: number;
-  cacheMisses: number;
-  rateLimitHits: number;
-  averageResponseTime: number;
-  lastUpdated: Date;
+export interface RateLimitStatus {
+  /** Current request count in window */
+  currentRequests: number;
+  /** Maximum allowed requests */
+  maxRequests: number;
+  /** Window start time */
+  windowStart: number;
+  /** Window duration in ms */
+  windowMs: number;
+  /** Remaining requests in current window */
+  remainingRequests: number;
+  /** Time until window reset (ms) */
+  resetTime: number;
+  /** Whether request is allowed */
+  allowed: boolean;
 }
 
-// Rate limiting manager
-class RateLimitManager {
-  private limits = new Map<string, RateLimitEntry>();
-  private config: RateLimitConfig;
+/**
+ * Healthcare-specific rate limiting configurations
+ */
+export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
+  // Emergency endpoints - higher limits for critical care
+  '/api/v1/emergency/': {
+    maxRequests: 1000,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'emergency',
+    skipRoles: ['emergency_responder', 'physician_on_call'],
+    message: 'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
+  },
+  
+  // Patient data access - moderate limits with audit logging
+  '/api/v1/patients/': {
+    maxRequests: 300,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'routine',
+    message: 'Patient data access rate limit exceeded. This is logged for LGPD compliance.',
+  },
+  
+  // Authentication endpoints - stricter limits to prevent brute force
+  '/api/v1/auth/': {
+    maxRequests: 10,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'administrative',
+    message: 'Authentication rate limit exceeded. Account may be temporarily locked for security.',
+  },
+  
+  // File upload endpoints - very strict limits for resource protection
+  '/api/v1/files/upload': {
+    maxRequests: 20,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'administrative',
+    message: 'File upload rate limit exceeded. Large files should be uploaded during off-peak hours.',
+  },
+  
+  // AI inference endpoints - moderate limits to manage compute costs
+  '/api/v1/ai/': {
+    maxRequests: 100,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'routine',
+    message: 'AI service rate limit exceeded. Consider batching requests for efficiency.',
+  },
+  
+  // Reports and analytics - lower limits for resource-intensive operations
+  '/api/v1/reports/': {
+    maxRequests: 30,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'administrative',
+    message: 'Report generation rate limit exceeded. Schedule large reports during off-peak hours.',
+  },
+};
 
-  constructor(config: Partial<RateLimitConfig> = {}) {
-    this.config = rateLimitConfigSchema.parse(config);
+/**
+ * Default rate limiting configuration for healthcare platform
+ */
+export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  default: {
+    maxRequests: 100,
+    windowMs: 60 * 1000, // 1 minute
+    priority: 'routine',
+    message: 'Rate limit exceeded. Please reduce request frequency.',
+  },
+  endpoints: HEALTHCARE_RATE_LIMITS,
+  auditLogging: true,
+  allowlistedIPs: [
+    // Add clinic IP addresses here
+    // '192.168.1.0/24', // Example clinic network
+  ],
+};
+
+/**
+ * In-memory storage for rate limiting data
+ * Note: In production, use Redis for distributed rate limiting
+ */
+class MemoryRateLimitStore {
+  private attempts: Map<string, RateLimitAttempt[]> = new Map();
+  private readonly maxStorageTime = 24 * 60 * 60 * 1000; // 24 hours
+
+  /**
+   * Get attempts for a specific key within the window
+   */
+  getAttempts(key: string, windowMs: number): RateLimitAttempt[] {
+    const now = Date.now();
+    const windowStart = now - windowMs;
+    
+    const allAttempts = this.attempts.get(key) || [];
+    const validAttempts = allAttempts.filter(attempt => attempt.timestamp >= windowStart);
+    
+    // Update stored attempts to only keep valid ones
+    this.attempts.set(key, validAttempts);
+    
+    return validAttempts;
   }
 
-  // Check if request is within rate limit
-  checkRateLimit(key: string, isHealthcareProfessional = false, isAIEndpoint = false): {
-    allowed: boolean;
-    remaining: number;
-    resetTime: number;
-    retryAfter?: number;
-  } {
+  /**
+   * Record a new attempt
+   */
+  recordAttempt(key: string, attempt: RateLimitAttempt): void {
+    const existing = this.attempts.get(key) || [];
+    existing.push(attempt);
+    this.attempts.set(key, existing);
+    
+    // Cleanup old attempts periodically
+    this.cleanup();
+  }
+
+  /**
+   * Clean up old attempts to prevent memory leaks
+   */
+  private cleanup(): void {
     const now = Date.now();
-    const entry = this.limits.get(key);
-
-    // Calculate effective limit based on user type and endpoint
-    let effectiveLimit = this.config.maxRequests;
-    if (isHealthcareProfessional) {
-      effectiveLimit *= this.config.healthcareProfessionalMultiplier;
+    const cutoff = now - this.maxStorageTime;
+    
+    for (const [key, attempts] of this.attempts.entries()) {
+      const validAttempts = attempts.filter(attempt => attempt.timestamp >= cutoff);
+      if (validAttempts.length === 0) {
+        this.attempts.delete(key);
+      } else {
+        this.attempts.set(key, validAttempts);
+      }
     }
-    if (isAIEndpoint) {
-      effectiveLimit *= this.config.aiEndpointMultiplier;
+  }
+
+  /**
+   * Get current statistics for monitoring
+   */
+  getStats(): { totalKeys: number; totalAttempts: number } {
+    let totalAttempts = 0;
+    for (const attempts of this.attempts.values()) {
+      totalAttempts += attempts.length;
     }
-    effectiveLimit = Math.floor(effectiveLimit);
-
-    if (!entry) {
-      // First request for this key
-      this.limits.set(key, {
-        count: 1,
-        resetTime: now + this.config.windowMs,
-        firstRequest: now,
-      });
-
-      return {
-        allowed: true,
-        remaining: effectiveLimit - 1,
-        resetTime: now + this.config.windowMs,
-      };
-    }
-
-    // Check if window has expired
-    if (now >= entry.resetTime) {
-      // Reset the window
-      entry.count = 1;
-      entry.resetTime = now + this.config.windowMs;
-      entry.firstRequest = now;
-
-      return {
-        allowed: true,
-        remaining: effectiveLimit - 1,
-        resetTime: entry.resetTime,
-      };
-    }
-
-    // Check if within limit
-    if (entry.count < effectiveLimit) {
-      entry.count++;
-      return {
-        allowed: true,
-        remaining: effectiveLimit - entry.count,
-        resetTime: entry.resetTime,
-      };
-    }
-
-    // Rate limit exceeded
+    
     return {
-      allowed: false,
-      remaining: 0,
-      resetTime: entry.resetTime,
-      retryAfter: Math.ceil((entry.resetTime - now) / 1000),
-    };
-  }
-
-  // Clean expired entries
-  cleanup() {
-    const now = Date.now();
-    for (const [key, entry] of this.limits) {
-      if (now >= entry.resetTime) {
-        this.limits.delete(key);
-      }
-    }
-  }
-
-  // Get current limits for key
-  getCurrentLimit(key: string): RateLimitEntry | null {
-    return this.limits.get(key) || null;
-  }
-
-  // Get all active limits
-  getActiveLimits(): Map<string, RateLimitEntry> {
-    return new Map(this.limits);
-  }
-}
-
-// Cache manager
-class CacheManager {
-  private cache = new Map<string, CacheEntry>();
-  private config: CacheConfig;
-
-  constructor(config: Partial<CacheConfig> = {}) {
-    this.config = cacheConfigSchema.parse(config);
-  }
-
-  // Generate cache key
-  private generateKey(method: string, path: string, query?: string, userId?: string): string {
-    const baseKey = `${method}:${path}`;
-    if (query) {
-      return `${baseKey}:${query}`;
-    }
-    if (userId && this.config.lgpdCompliant) {
-      return `${baseKey}:user:${userId}`;
-    }
-    return baseKey;
-  }
-
-  // Get from cache
-  get(method: string, path: string, query?: string, userId?: string): any | null {
-    const key = this.generateKey(method, path, query, userId);
-    const entry = this.cache.get(key);
-
-    if (!entry) {
-      return null;
-    }
-
-    // Check if expired
-    const now = Date.now();
-    if (now > entry.timestamp + entry.ttl) {
-      this.cache.delete(key);
-      return null;
-    }
-
-    // LGPD compliance check
-    if (this.config.lgpdCompliant && userId && entry.userId !== userId) {
-      return null; // Don't serve cached data to different users
-    }
-
-    return entry.data;
-  }
-
-  // Set cache entry
-  set(
-    method: string,
-    path: string,
-    data: any,
-    options: {
-      query?: string;
-      userId?: string;
-      ttl?: number;
-      dataCategories?: string[];
-      isHealthcareData?: boolean;
-      isAIInsight?: boolean;
-    } = {},
-  ): boolean {
-    // Check if we should exclude personal data
-    if (this.config.excludePersonalData && this.containsPersonalData(data)) {
-      return false;
-    }
-
-    // Determine TTL based on data type
-    let ttl = options.ttl || this.config.ttl;
-    if (options.isHealthcareData) {
-      ttl = this.config.healthcareDataTtl;
-    } else if (options.isAIInsight) {
-      ttl = this.config.aiInsightsTtl;
-    }
-
-    const key = this.generateKey(method, path, options.query, options.userId);
-
-    // Check cache size limit
-    if (this.cache.size >= this.config.maxSize) {
-      this.evictOldest();
-    }
-
-    const entry: CacheEntry = {
-      data,
-      timestamp: Date.now(),
-      ttl,
-      lgpdCompliant: this.config.lgpdCompliant,
-      dataCategories: options.dataCategories || [],
-      userId: options.userId,
-    };
-
-    this.cache.set(key, entry);
-    return true;
-  }
-
-  // Check if data contains personal information
-  private containsPersonalData(data: any): boolean {
-    if (!data || typeof data !== 'object') {
-      return false;
-    }
-
-    const personalDataFields = [
-      'cpf',
-      'rg',
-      'email',
-      'phone',
-      'address',
-      'birth_date',
-      'full_name',
-      'name',
-      'medical_history',
-      'diagnosis',
-    ];
-
-    const checkObject = (obj: any): boolean => {
-      if (Array.isArray(obj)) {
-        return obj.some(item => checkObject(item));
-      }
-
-      if (obj && typeof obj === 'object') {
-        for (const key of Object.keys(obj)) {
-          if (personalDataFields.includes(key.toLowerCase())) {
-            return true;
-          }
-          if (checkObject(obj[key])) {
-            return true;
-          }
-        }
-      }
-
-      return false;
-    };
-
-    return checkObject(data);
-  }
-
-  // Evict oldest entry
-  private evictOldest() {
-    let oldestKey: string | null = null;
-    let oldestTime = Date.now();
-
-    for (const [key, entry] of this.cache) {
-      if (entry.timestamp < oldestTime) {
-        oldestTime = entry.timestamp;
-        oldestKey = key;
-      }
-    }
-
-    if (oldestKey) {
-      this.cache.delete(oldestKey);
-    }
-  }
-
-  // Clean expired entries
-  cleanup() {
-    const now = Date.now();
-    for (const [key, entry] of this.cache) {
-      if (now > entry.timestamp + entry.ttl) {
-        this.cache.delete(key);
-      }
-    }
-  }
-
-  // Clear cache for user (LGPD compliance)
-  clearUserCache(userId: string) {
-    for (const [key, entry] of this.cache) {
-      if (entry.userId === userId) {
-        this.cache.delete(key);
-      }
-    }
-  }
-
-  // Get cache statistics
-  getStats(): {
-    size: number;
-    maxSize: number;
-    hitRate: number;
-    entries: Array<{ key: string; timestamp: number; ttl: number; userId?: string }>;
-  } {
-    const entries = Array.from(this.cache.entries()).map(([key, entry]) => ({
-      key,
-      timestamp: entry.timestamp,
-      ttl: entry.ttl,
-      userId: entry.userId,
-    }));
-
-    return {
-      size: this.cache.size,
-      maxSize: this.config.maxSize,
-      hitRate: 0, // Will be calculated by performance metrics
-      entries,
+      totalKeys: this.attempts.size,
+      totalAttempts,
     };
   }
 }
 
-// Performance metrics manager
-class PerformanceMetricsManager {
-  private metrics: PerformanceMetrics = {
-    requestCount: 0,
-    cacheHits: 0,
-    cacheMisses: 0,
-    rateLimitHits: 0,
-    averageResponseTime: 0,
-    lastUpdated: new Date(),
-  };
+// Global rate limit store instance
+const rateLimitStore = new MemoryRateLimitStore();
 
-  private responseTimes: number[] = [];
-
-  // Record request
-  recordRequest() {
-    this.metrics.requestCount++;
-    this.metrics.lastUpdated = new Date();
+/**
+ * Extract client IP address with proxy support
+ */
+function getClientIP(c: Context): string {
+  // Check common proxy headers
+  const xForwardedFor = c.req.header('x-forwarded-for');
+  if (xForwardedFor) {
+    return xForwardedFor.split(',')[0].trim();
   }
-
-  // Record cache hit
-  recordCacheHit() {
-    this.metrics.cacheHits++;
+  
+  const xRealIP = c.req.header('x-real-ip');
+  if (xRealIP) {
+    return xRealIP;
   }
-
-  // Record cache miss
-  recordCacheMiss() {
-    this.metrics.cacheMisses++;
-  }
-
-  // Record rate limit hit
-  recordRateLimitHit() {
-    this.metrics.rateLimitHits++;
-  }
-
-  // Record response time
-  recordResponseTime(time: number) {
-    this.responseTimes.push(time);
-
-    // Keep only last 1000 response times
-    if (this.responseTimes.length > 1000) {
-      this.responseTimes = this.responseTimes.slice(-1000);
-    }
-
-    // Calculate average
-    this.metrics.averageResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0)
-      / this.responseTimes.length;
-  }
-
-  // Get metrics
-  getMetrics(): PerformanceMetrics & {
-    cacheHitRate: number;
-    rateLimitRate: number;
-  } {
-    const totalCacheRequests = this.metrics.cacheHits + this.metrics.cacheMisses;
-    const cacheHitRate = totalCacheRequests > 0 ? this.metrics.cacheHits / totalCacheRequests : 0;
-    const rateLimitRate = this.metrics.requestCount > 0
-      ? this.metrics.rateLimitHits / this.metrics.requestCount
-      : 0;
-
-    return {
-      ...this.metrics,
-      cacheHitRate,
-      rateLimitRate,
-    };
-  }
-
-  // Reset metrics
-  reset() {
-    this.metrics = {
-      requestCount: 0,
-      cacheHits: 0,
-      cacheMisses: 0,
-      rateLimitHits: 0,
-      averageResponseTime: 0,
-      lastUpdated: new Date(),
-    };
-    this.responseTimes = [];
-  }
+  
+  // Fallback to connection IP (may not be available in all environments)
+  return c.req.header('cf-connecting-ip') || '0.0.0.0';
 }
 
-// Global managers
-export const rateLimitManager = new RateLimitManager();
-export const cacheManager = new CacheManager();
-export const performanceMetrics = new PerformanceMetricsManager();
-
-// Rate limiting middleware
-export function rateLimit(config: Partial<RateLimitConfig> = {}) {
-  const manager = new RateLimitManager(config);
-
-  return async (c: Context, next: Next) => {
-    const userId = c.get('userId');
-    const isHealthcareProfessional = !!c.get('healthcareProfessional');
-    const isAIEndpoint = c.req.path.includes('/ai/');
-
-    // Generate rate limit key
-    const key = userId || c.req.header('x-forwarded-for') || c.req.header('x-real-ip')
-      || 'anonymous';
-
-    // Check rate limit
-    const result = manager.checkRateLimit(key, isHealthcareProfessional, isAIEndpoint);
-
-    // Add rate limit headers
-    c.header('X-RateLimit-Limit', String(config.maxRequests || 100));
-    c.header('X-RateLimit-Remaining', String(result.remaining));
-    c.header('X-RateLimit-Reset', String(result.resetTime));
-
-    if (!result.allowed) {
-      performanceMetrics.recordRateLimitHit();
-
-      if (result.retryAfter) {
-        c.header('Retry-After', String(result.retryAfter));
-      }
-
-      return c.json({
-        success: false,
-        error: 'Limite de requisições excedido',
-        code: 'RATE_LIMIT_EXCEEDED',
-        retryAfter: result.retryAfter,
-      }, 429);
+/**
+ * Check if IP is in allowlist
+ */
+function isIPAllowlisted(ip: string, allowlistedIPs: string[] = []): boolean {
+  // Simple implementation - in production, use proper CIDR matching
+  return allowlistedIPs.some(allowlistedIP => {
+    if (allowlistedIP.includes('/')) {
+      // CIDR notation - simplified check
+      const [network] = allowlistedIP.split('/');
+      return ip.startsWith(network.split('.').slice(0, 3).join('.'));
     }
+    return ip === allowlistedIP;
+  });
+}
 
-    performanceMetrics.recordRequest();
-    return next();
+/**
+ * Generate rate limit key for request grouping
+ */
+function generateRateLimitKey(c: Context, _rule: RateLimitRule): string {
+  const ip = getClientIP(c);
+  const path = c.req.path;
+  const method = c.req.method;
+  
+  // Include user ID for authenticated requests
+  const userId = c.get('userId') || 'anonymous';
+  
+  // Include clinic ID for multi-tenant isolation
+  const clinicId = c.get('clinicId') || 'default';
+  
+  return `${ip}:${method}:${path}:${userId}:${clinicId}`;
+}
+
+/**
+ * Check rate limit status for a request
+ */
+function checkRateLimit(c: Context, rule: RateLimitRule): RateLimitStatus {
+  const key = generateRateLimitKey(c, rule);
+  const now = Date.now();
+  const windowStart = now - rule.windowMs;
+  
+  // Get current attempts in window
+  const attempts = rateLimitStore.getAttempts(key, rule.windowMs);
+  const currentRequests = attempts.length;
+  
+  return {
+    currentRequests,
+    maxRequests: rule.maxRequests,
+    windowStart,
+    windowMs: rule.windowMs,
+    remainingRequests: Math.max(0, rule.maxRequests - currentRequests),
+    resetTime: rule.windowMs - (now - windowStart),
+    allowed: currentRequests < rule.maxRequests,
   };
 }
 
-// Caching middleware
-export function cache(config: Partial<CacheConfig> = {}) {
-  const manager = new CacheManager(config);
+/**
+ * Record rate limit attempt for audit logging
+ */
+function recordAttempt(c: Context, rule: RateLimitRule, status: RateLimitStatus): void {
+  const key = generateRateLimitKey(c, rule);
+  const ip = getClientIP(c);
+  
+  const attempt: RateLimitAttempt = {
+    timestamp: Date.now(),
+    ip,
+    userId: c.get('userId'),
+    clinicId: c.get('clinicId'),
+    endpoint: c.req.path,
+    method: c.req.method,
+  };
+  
+  rateLimitStore.recordAttempt(key, attempt);
+  
+  // Log for LGPD compliance if audit logging is enabled
+  if (DEFAULT_RATE_LIMIT_CONFIG.auditLogging) {
+    console.log('RATE_LIMIT_AUDIT', {
+      timestamp: new Date().toISOString(),
+      ip: attempt.ip,
+      userId: attempt.userId,
+      clinicId: attempt.clinicId,
+      endpoint: attempt.endpoint,
+      method: attempt.method,
+      allowed: status.allowed,
+      currentRequests: status.currentRequests,
+      maxRequests: status.maxRequests,
+      // Remove sensitive data for logging
+      userAgent: c.req.header('user-agent')?.substring(0, 100),
+    });
+  }
+}
 
+/**
+ * Get rate limit rule for endpoint
+ */
+function getRateLimitRule(endpoint: string, config: RateLimitConfig): RateLimitRule {
+  // Find most specific matching endpoint rule
+  const matchingEndpoint = Object.keys(config.endpoints)
+    .sort((a, b) => b.length - a.length) // Longest match first
+    .find(pattern => endpoint.startsWith(pattern));
+  
+  return matchingEndpoint ? config.endpoints[matchingEndpoint] : config.default;
+}
+
+/**
+ * Rate limiting middleware factory
+ */
+export function rateLimitMiddleware(config: RateLimitConfig = DEFAULT_RATE_LIMIT_CONFIG) {
   return async (c: Context, next: Next) => {
-    const method = c.req.method;
-    const path = c.req.path;
-    const query = c.req.query();
-    const userId = c.get('userId');
-    const isHealthcareData = path.includes('/patients/') || path.includes('/medical/');
-    const isAIInsight = path.includes('/ai/insights');
-
-    // Only cache GET requests
-    if (method !== 'GET') {
+    const ip = getClientIP(c);
+    const endpoint = c.req.path;
+    
+    // Skip rate limiting for allowlisted IPs
+    if (isIPAllowlisted(ip, config.allowlistedIPs)) {
       return next();
     }
-
-    // Check cache
-    const queryString = Object.keys(query).length > 0 ? JSON.stringify(query) : undefined;
-    const cached = manager.get(method, path, queryString, userId);
-
-    if (cached) {
-      performanceMetrics.recordCacheHit();
-      c.header('X-Cache', 'HIT');
-      return c.json(cached);
+    
+    // Get applicable rate limit rule
+    const rule = getRateLimitRule(endpoint, config);
+    
+    // Skip rate limiting for privileged roles
+    const userRole = c.get('userRole');
+    if (rule.skipRoles && userRole && rule.skipRoles.includes(userRole)) {
+      return next();
     }
-
-    performanceMetrics.recordCacheMiss();
-    c.header('X-Cache', 'MISS');
-
-    // Continue with request
-    const startTime = Date.now();
-    await next();
-    const responseTime = Date.now() - startTime;
-
-    performanceMetrics.recordResponseTime(responseTime);
-
-    // Cache successful responses
-    const response = c.res;
-    if (response.status === 200) {
-      try {
-        const responseData = await response.clone().json();
-        manager.set(method, path, responseData, {
-          query: queryString,
-          userId,
-          isHealthcareData,
-          isAIInsight,
-        });
-      } catch {
-        // Response is not JSON, skip caching
-      }
+    
+    // Check rate limit status
+    const status = checkRateLimit(c, rule);
+    
+    // Record attempt for audit logging
+    recordAttempt(c, rule, status);
+    
+    // Set rate limit headers
+    c.header('X-RateLimit-Limit', rule.maxRequests.toString());
+    c.header('X-RateLimit-Remaining', status.remainingRequests.toString());
+    c.header('X-RateLimit-Reset', new Date(Date.now() + status.resetTime).toISOString());
+    c.header('X-RateLimit-Window', rule.windowMs.toString());
+    
+    // Check if request is allowed
+    if (!status.allowed) {
+      // Enhanced error response for healthcare context
+      const errorResponse = {
+        error: 'RATE_LIMIT_EXCEEDED',
+        message: rule.message || 'Rate limit exceeded',
+        details: {
+          maxRequests: rule.maxRequests,
+          windowMs: rule.windowMs,
+          resetTime: new Date(Date.now() + status.resetTime).toISOString(),
+          priority: rule.priority,
+          endpoint: endpoint,
+        },
+        // Healthcare-specific guidance
+        guidance: rule.priority === 'emergency' 
+          ? 'If this is a medical emergency, contact emergency services immediately'
+          : 'Consider reducing request frequency or contact system administrator',
+        // Compliance information
+        compliance: {
+          logged: config.auditLogging,
+          standard: 'LGPD-Article-33-Security-Measures',
+        },
+      };
+      
+      throw new HTTPException(429, {
+        message: JSON.stringify(errorResponse),
+        cause: 'Rate limit exceeded',
+      });
     }
-  };
-}
-
-// Performance monitoring middleware
-export function performanceMonitoring() {
-  return async (c: Context, next: Next) => {
-    const startTime = Date.now();
-
-    // Add performance utilities to context
-    c.set('performanceMetrics', performanceMetrics);
-    c.set('cacheManager', cacheManager);
-    c.set('rateLimitManager', rateLimitManager);
-
-    await next();
-
-    const responseTime = Date.now() - startTime;
-    performanceMetrics.recordResponseTime(responseTime);
-
-    // Add performance headers
-    c.header('X-Response-Time', `${responseTime}ms`);
-  };
-}
-
-// Cleanup middleware (should be run periodically)
-export function cleanup() {
-  return async (_c: Context, next: Next) => {
-    // Clean up expired entries every 100 requests
-    if (performanceMetrics.getMetrics().requestCount % 100 === 0) {
-      rateLimitManager.cleanup();
-      cacheManager.cleanup();
-    }
-
+    
+    // Add rate limit context to request
+    c.set('rateLimitStatus', status);
+    c.set('rateLimitRule', rule);
+    
     return next();
   };
 }
 
-// Export additional types (CacheConfig and RateLimitConfig already exported above)
-export type { PerformanceMetrics };
+/**
+ * Get current rate limit statistics for monitoring
+ */
+export function getRateLimitStats(): {
+  store: { totalKeys: number; totalAttempts: number };
+  config: { endpointCount: number; auditLogging: boolean };
+} {
+  return {
+    store: rateLimitStore.getStats(),
+    config: {
+      endpointCount: Object.keys(DEFAULT_RATE_LIMIT_CONFIG.endpoints).length,
+      auditLogging: DEFAULT_RATE_LIMIT_CONFIG.auditLogging || false,
+    },
+  };
+}
+
+/**
+ * Reset rate limits for testing purposes
+ */
+export function resetRateLimits(): void {
+  (rateLimitStore as any).attempts.clear();
+}

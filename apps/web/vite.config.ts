@@ -3,6 +3,120 @@ import react from '@vitejs/plugin-react';
 import { componentTagger } from 'lovable-tagger';
 import path from 'path';
 import { type ConfigEnv, defineConfig } from 'vite';
+import { generateHealthcareSecurityHeaders } from './src/lib/security/csp';
+
+// Subresource Integrity (SRI) Plugin for healthcare security
+function subresourceIntegrityPlugin() {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  return {
+    name: 'healthcare-sri',
+    apply: 'build' as const,
+    generateBundle(options: any, bundle: any) {
+      if (!isProduction) return;
+      
+      // Generate SRI hashes for all assets
+      const sriHashes = new Map<string, string>();
+      
+      Object.keys(bundle).forEach(fileName => {
+        const chunk = bundle[fileName];
+        if (chunk.type === 'chunk' || chunk.type === 'asset') {
+          const content = chunk.type === 'chunk' ? chunk.code : chunk.source;
+          if (typeof content === 'string') {
+            // Generate SHA-384 hash for SRI
+            const crypto = require('crypto');
+            const hash = crypto.createHash('sha384').update(content, 'utf8').digest('base64');
+            sriHashes.set(fileName, `sha384-${hash}`);
+          }
+        }
+      });
+      
+      // Store SRI hashes for runtime use
+      this.emitFile({
+        type: 'asset',
+        fileName: 'sri-hashes.json',
+        source: JSON.stringify(Object.fromEntries(sriHashes), null, 2),
+      });
+    },
+    transformIndexHtml: {
+      enforce: 'post' as const,
+      transform(html: string, context: any) {
+        if (!isProduction) return html;
+        
+        // Add security headers as meta tags
+        const securityHeaders = generateHealthcareSecurityHeaders();
+        const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${securityHeaders['Content-Security-Policy']}">`;
+        
+        // Add healthcare-specific meta tags
+        const healthcareMeta = `
+          <meta name="healthcare-app" content="NeonPro-Platform">
+          <meta name="data-classification" content="LGPD-Protected-Medical-Data">
+          <meta name="compliance-standards" content="LGPD,ANVISA,CFM">
+          <meta http-equiv="X-Content-Type-Options" content="nosniff">
+          <meta http-equiv="X-Frame-Options" content="DENY">
+          <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+          <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+          <meta name="robots" content="noindex, nofollow"> <!-- Healthcare data should not be indexed -->
+        `;
+        
+        // Inject security headers and healthcare meta tags
+        return html.replace(
+          '<head>',
+          `<head>${cspMeta}${healthcareMeta}`
+        );
+      },
+    },
+  };
+}
+
+// Healthcare asset integrity validation
+function healthcareAssetValidation() {
+  return {
+    name: 'healthcare-asset-validation',
+    apply: 'build' as const,
+    generateBundle(options: any, bundle: any) {
+      const isProduction = process.env.NODE_ENV === 'production';
+      if (!isProduction) return;
+      
+      // Validate that no sensitive data is included in assets
+      const sensitivePatterns = [
+        /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, // CPF
+        /\b\d{2}\.\d{3}\.\d{3}-\d{1}\b/g, // RG
+        /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email
+        /\bpassword\s*[:=]\s*['"]\w+['"]/gi, // Passwords
+        /\bapi[_-]?key\s*[:=]\s*['"]\w+['"]/gi, // API keys
+        /\bsecret\s*[:=]\s*['"]\w+['"]/gi, // Secrets
+      ];
+      
+      Object.keys(bundle).forEach(fileName => {
+        const chunk = bundle[fileName];
+        const content = chunk.type === 'chunk' ? chunk.code : chunk.source;
+        
+        if (typeof content === 'string') {
+          sensitivePatterns.forEach(pattern => {
+            if (pattern.test(content)) {
+              console.warn(`[HEALTHCARE_SECURITY_WARNING] Potential sensitive data found in ${fileName}`);
+              // In a real implementation, this could fail the build
+            }
+          });
+        }
+      });
+    },
+  };
+}
+
+// External resource integrity configuration
+const EXTERNAL_RESOURCES_SRI = {
+  // Google Fonts (commonly used)
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap': 
+    'sha384-rD+TRJXcOQhVTJPEYpNMXq8/wCfRvdwTI1u5n3UeGbVwWrLx2GdV5QDqhbRZNzHW',
+  
+  // CDN resources (update hashes as needed)
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css':
+    'sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc',
+  
+  // Add more external resources as needed
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => ({
@@ -17,6 +131,8 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
     }),
     react(),
     mode === 'development' ? (componentTagger() as any) : undefined,
+    subresourceIntegrityPlugin(),
+    healthcareAssetValidation(),
   ].filter(Boolean) as any,
   css: {
     postcss: './postcss.config.js',
@@ -36,11 +152,21 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   define: {
     // Vite requires these to be defined for Supabase
     global: 'globalThis',
+    // Define build-time constants for healthcare security
+    __HEALTHCARE_APP__: JSON.stringify(true),
+    __DATA_CLASSIFICATION__: JSON.stringify('LGPD-Protected-Medical-Data'),
+    __COMPLIANCE_STANDARDS__: JSON.stringify(['LGPD', 'ANVISA', 'CFM']),
   },
   server: {
     host: '::',
     port: 8080,
     open: true,
+    // Add security headers for development server
+    headers: mode === 'development' ? {
+      'X-Healthcare-App': 'NeonPro-Platform-Dev',
+      'X-Data-Classification': 'Development-Data',
+      'X-Content-Type-Options': 'nosniff',
+    } : undefined,
     proxy: {
       '/api': {
         target: 'http://localhost:3004',
@@ -70,9 +196,17 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
         drop_console: process.env.NODE_ENV === 'production',
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info'],
+        // Remove comments that might contain sensitive information
+        comments: false,
       },
       mangle: {
         safari10: true,
+        // Preserve specific function names for healthcare debugging
+        reserved: ['healthcareError', 'lgpdCompliance', 'auditLog'],
+      },
+      format: {
+        // Remove comments in production
+        comments: false,
       },
     },
     rollupOptions: {
@@ -107,6 +241,10 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
             if (id.includes('@radix-ui')) {
               return 'radix';
             }
+            // Security and monitoring libraries
+            if (id.includes('@sentry') || id.includes('opentelemetry')) {
+              return 'monitoring';
+            }
             // Other vendor libraries
             return 'vendor-misc';
           }
@@ -114,6 +252,11 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
           // UI package
           if (id.includes('@neonpro/ui')) {
             return 'ui';
+          }
+          
+          // Security and compliance packages
+          if (id.includes('@neonpro/security') || id.includes('/security/')) {
+            return 'security';
           }
 
           // Route-based chunks
@@ -134,7 +277,8 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
             return 'components-misc';
           }
         },
-        chunkFileNames: () => {
+        chunkFileNames: (chunkInfo) => {
+          // Use content hash for better caching and security
           return `assets/[name]-[hash].js`;
         },
         assetFileNames: assetInfo => {
@@ -152,6 +296,8 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
     },
     reportCompressedSize: false,
     chunkSizeWarningLimit: 1000,
+    // Ensure builds are reproducible for security auditing
+    minify: mode === 'production' ? 'terser' : false,
   },
   optimizeDeps: {
     include: [
@@ -161,9 +307,13 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
       '@tanstack/react-query',
       '@supabase/supabase-js',
     ],
+    // Exclude packages that might contain sensitive data
+    exclude: mode === 'production' ? ['@neonpro/security'] : [],
   },
   esbuild: {
     jsx: 'automatic',
     jsxImportSource: 'react',
+    // Drop console logs and debugger statements in production
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
 }));

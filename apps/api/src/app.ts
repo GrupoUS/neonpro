@@ -12,11 +12,12 @@ import patientsRouter from './routes/patients';
 // import security from '@neonpro/security';
 import { errorTracker, initializeErrorTracking } from './lib/error-tracking';
 import { initializeLogger, logger } from './lib/logger';
+import { initializeSentry } from './lib/sentry';
 
 // Extract middleware functions from security package
 // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
-// Initialize error tracking and logger
+// Initialize error tracking, logger, and Sentry
 Promise.all([
   initializeErrorTracking({
     enabled: true,
@@ -42,6 +43,7 @@ Promise.all([
     enableStructured: true,
     sanitizeContext: true,
   }),
+  initializeSentry(),
 ]).then(() => {
   logger.info('Application monitoring initialized successfully');
 }).catch(error => {

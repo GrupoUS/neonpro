@@ -10,7 +10,7 @@ import {
   validateBrazilianPhone as validatePhone,
   validateCEP,
   validateCPF,
-} from '../../../packages/shared/src/validators/brazilian';
+} from '@neonpro/shared/validators/brazilian';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { AuditService } from '../../services/audit-service';

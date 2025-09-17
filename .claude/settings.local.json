@@ -96,7 +96,8 @@
       "mcp__archon__find_projects",
       "mcp__archon__find_tasks",
       "mcp__supabase__get_advisors",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "mcp__desktop-commander__read_multiple_files"
     ],
     "deny": [
       "Edit",
