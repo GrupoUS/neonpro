@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { generatePDFFilename } from '../hooks/usePDFExport';
 
 describe('PDF Export Utils', () => {
@@ -14,7 +14,11 @@ describe('PDF Export Utils', () => {
     });
 
     it('should clean special characters from name', () => {
-      const filename = generatePDFFilename('consent', 'José Carlos-Silva (Jr.)', new Date('2024-03-20'));
+      const filename = generatePDFFilename(
+        'consent',
+        'José Carlos-Silva (Jr.)',
+        new Date('2024-03-20'),
+      );
       expect(filename).toBe('termo_consentimento_jose_carlos_silva_jr_2024-03-20.pdf');
     });
 

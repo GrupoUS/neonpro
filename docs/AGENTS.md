@@ -135,6 +135,28 @@ navigation_matrix:
 **📚 Documentation Consultation:**
 ⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
 
+**🎯 Intelligent Context Loading Strategy:**
+Follow the layered approach from `docs/architecture/context-engineering.md`:
+1. **Task Meta** (Layer 0): Classify task type → reference matrix below
+2. **Topology** (Layer 1): Use `source-tree.md` to identify target location  
+3. **Contracts** (Layer 2): Load only relevant types/interfaces from `packages/types/*`
+4. **Implementation** (Layer 3): Sample 1-2 existing patterns, avoid broad scanning
+5. **Cross-Cutting** (Layer 4): Check security/compliance ONLY if handling PII/patient data
+6. **Tests** (Layer 5): Find existing test pattern before writing new code
+7. **Edge/Perf** (Layer 6): Only if introducing latency/concurrency concerns
+
+**📋 Documentation Loading Matrix (Task Type → Priority Files):**
+| Task Type | Load First | Then Maybe | Avoid Initially |
+|-----------|------------|------------|----------------|
+| **Add API endpoint** | `apis/AGENTS.md`, similar route file | Core services used, type definitions | Full packages/ scan |
+| **UI feature/screen** | `architecture/source-tree.md` (web), analogous route | Related features/ patterns | Backend packages |
+| **Domain type change** | Specific file in `packages/types`, usage grep | Affected services | Unrelated UI features |
+| **Backend bug fix** | Failing test + implicated service | Type definitions, RLS helpers | Frontend routes |
+| **Database/schema** | `database-schema/AGENTS.md`, RLS notes | Migration patterns | UI styling |
+| **Compliance/security** | `security/` docs, RLS helpers | Service call sites | UI styling files |
+
+**📂 Folder-Specific Consultation:**
+
 - agents/ — Orchestrator: [./agents/AGENTS.md](./agents/AGENTS.md)
   - Key documents: apex-dev, apex-researcher, apex-ui-ux-designer, test, prd, briefing, documentation, rules
 

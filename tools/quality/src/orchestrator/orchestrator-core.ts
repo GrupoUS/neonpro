@@ -15,19 +15,18 @@ import {
   AgentResult,
   OrchestratorEvent,
   OrchestrationMetrics,
-  QualityGateStatus,
   OrchestratorConfig
 } from './types';
 import { AgentRegistry } from './agent-registry';
 import { WorkflowEngine } from './workflow-engine';
-import { QualityGateValidator } from './quality-gates';
-import { CommunicationManager } from './communication';
+import { QualityGatesSystem } from './quality-gates';
+import { CommunicationSystem } from './communication';
 
 export class TDDOrchestrator extends EventEmitter {
   private registry: AgentRegistry;
   private workflowEngine: WorkflowEngine;
-  private qualityGates: QualityGateValidator;
-  private communication: CommunicationManager;
+  private qualityGates: QualityGatesSystem;
+  private communication: CommunicationSystem;
   private activeOrchestrations: Map<string, OrchestrationState> = new Map();
   private config: OrchestratorConfig;
 
@@ -35,9 +34,13 @@ export class TDDOrchestrator extends EventEmitter {
     super();
     this.config = config;
     this.registry = new AgentRegistry();
-    this.workflowEngine = new WorkflowEngine(config.workflows);
-    this.qualityGates = new QualityGateValidator(config.qualityGates);
-    this.communication = new CommunicationManager(config.communication);
+    this.workflowEngine = new WorkflowEngine({
+      workflows: config.workflows,
+      defaultTimeout: 30000,
+      retryAttempts: 3
+    });
+    this.qualityGates = new QualityGatesSystem(config.qualityGates);
+    this.communication = new CommunicationSystem(config.communication);
     
     this.setupEventHandlers();
   }
@@ -143,7 +146,7 @@ export class TDDOrchestrator extends EventEmitter {
 
     // Get workflow configuration for this phase
     const workflowConfig = this.workflowEngine.getWorkflowConfig(state.workflow);
-    const phaseConfig = workflowConfig.phases[phase];
+    const _phaseConfig = workflowConfig.phases[phase];
 
     // Execute agents for this phase
     const agentsForPhase = state.agents.pending.filter(agent => {
@@ -200,11 +203,19 @@ export class TDDOrchestrator extends EventEmitter {
       }
 
       // Execute agent through workflow engine
+      const transformedAgentConfig = {
+        enabled: agentConfig.enabled,
+        timeout: agentConfig.timeout,
+        retryAttempts: agentConfig.retries,
+        capabilities: [],
+        triggers: []
+      };
+      
       const result = await this.workflowEngine.executeAgent(
         agentName,
         phase,
         state,
-        agentConfig
+        transformedAgentConfig
       );
 
       // Move agent to completed
@@ -225,7 +236,7 @@ export class TDDOrchestrator extends EventEmitter {
       state.agents.active = state.agents.active.filter(a => a !== agentName);
       state.agents.failed.push(agentName);
 
-      const result: AgentResult = {
+      const _result: AgentResult = {
         agent: agentName,
         phase,
         status: 'failure',
@@ -258,30 +269,32 @@ export class TDDOrchestrator extends EventEmitter {
     if (!state) return;
 
     const workflowConfig = this.workflowEngine.getWorkflowConfig(state.workflow);
-    const phaseConfig = workflowConfig.phases[phase];
+    const _phaseConfig = workflowConfig.phases[phase];
 
-    for (const gateType of phaseConfig.qualityGates) {
-      const gateResult = await this.qualityGates.validateGate(
-        gateType,
-        state,
-        this.getAgentResults(orchestrationId, phase)
+    const gates = await this.qualityGates.validatePhase(
+      phase,
+      this.getAgentResults(orchestrationId, phase),
+      state.feature
+    );
+
+    // Update state with all quality gate results
+    state.qualityGates = gates;
+
+    // Check if any critical gates failed
+    const passedGates = this.qualityGates.areQualityGatesPassed(gates);
+    if (!passedGates) {
+      this.emitEvent('quality-gate-failed', orchestrationId, {
+        gate: 'multiple',
+        phase
+      });
+      
+      // Check if any failed gates are critical for this phase
+      const criticalFailures = Object.entries(gates).filter(([gateName, status]) => 
+        status === 'failed' && this.isGateCritical(gateName, phase)
       );
-
-      // Update quality gate status
-      if (gateType in state.qualityGates) {
-        (state.qualityGates as any)[gateType] = gateResult ? 'passed' : 'failed';
-      }
-
-      if (!gateResult) {
-        this.emitEvent('quality-gate-failed', orchestrationId, {
-          gate: gateType,
-          phase
-        });
-        
-        // Decide whether to continue or fail
-        if (this.isGateCritical(gateType, phase)) {
-          throw new Error(`Critical quality gate failed: ${gateType} in ${phase} phase`);
-        }
+      
+      if (criticalFailures.length > 0) {
+        throw new Error(`Critical quality gates failed in ${phase} phase: ${criticalFailures.map(([name]) => name).join(', ')}`);
       }
     }
 

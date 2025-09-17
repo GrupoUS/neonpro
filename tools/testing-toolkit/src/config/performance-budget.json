@@ -1,0 +1,27 @@
+{
+  "LCP": {
+    "budget": 2500,
+    "unit": "ms",
+    "description": "Largest Contentful Paint - Healthcare compliance requires ≤2.5s"
+  },
+  "CLS": {
+    "budget": 0.1,
+    "unit": "score",
+    "description": "Cumulative Layout Shift - Medical interfaces require stability"
+  },
+  "TTFB": {
+    "budget": 600,
+    "unit": "ms", 
+    "description": "Time to First Byte - Critical for healthcare data access"
+  },
+  "FID": {
+    "budget": 100,
+    "unit": "ms",
+    "description": "First Input Delay - Medical form responsiveness"
+  },
+  "TBT": {
+    "budget": 300,
+    "unit": "ms",
+    "description": "Total Blocking Time - Healthcare workflow efficiency"
+  }
+}

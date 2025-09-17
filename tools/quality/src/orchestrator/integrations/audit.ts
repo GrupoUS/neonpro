@@ -8,14 +8,13 @@
  * Note: Adapts orchestration events to the existing AI audit interface
  */
 
-import { writeAudit, AuditEventInput, AuditOutcome } from '../../../../../packages/core-services/src/audit/writer';
+import { writeAudit, AuditEventInput } from '../../../../../packages/core-services/src/audit/writer';
 import { 
   OrchestrationState, 
   TDDPhase, 
   AgentName, 
   AgentResult,
   OrchestratorEvent,
-  WorkflowType,
   QualityGateStatus
 } from '../types';
 
@@ -77,9 +76,9 @@ export class OrchestrationAudit {
    */
   async logPhaseTransition(
     orchestrationId: string,
-    fromPhase: TDDPhase | null,
+    _fromPhase: TDDPhase | null,
     toPhase: TDDPhase,
-    iteration: number
+    _iteration: number
   ): Promise<void> {
     if (!this.config.enablePhaseTransitions) return;
 
@@ -122,7 +121,7 @@ export class OrchestrationAudit {
     orchestrationId: string,
     gateName: string,
     status: QualityGateStatus,
-    details?: Record<string, any>
+    _details?: Record<string, any>
   ): Promise<void> {
     if (!this.config.enableQualityGateEvents) return;
 

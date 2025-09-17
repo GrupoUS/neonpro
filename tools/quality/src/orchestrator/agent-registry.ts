@@ -179,13 +179,13 @@ export class AgentRegistry {
       selectedAgents.add('code-reviewer');
     }
 
-    // Complexity-based selection (complexity is a number, where higher means more complex)
-    if (feature.complexity >= 8) {
+    // Complexity-based selection
+    if (feature.complexity >= 7) {
       // High complexity features need all agents
       this.getAllAgents().forEach(agent => {
         selectedAgents.add(agent.name);
       });
-    } else if (feature.complexity >= 5) {
+    } else if (feature.complexity >= 4) {
       // Medium complexity adds code reviewer if not already included
       selectedAgents.add('code-reviewer');
     }
@@ -203,7 +203,7 @@ export class AgentRegistry {
     const featureText = [
       feature.name,
       ...feature.domain,
-      ...feature.complianceRequirements,
+      ...feature.requirements,
       ...feature.complianceRequirements
     ].join(' ').toLowerCase();
 
@@ -222,7 +222,7 @@ export class AgentRegistry {
     const featureText = [
       feature.name,
       ...feature.domain,
-      ...feature.complianceRequirements
+      ...feature.requirements
     ].join(' ').toLowerCase();
 
     return architectAgent.triggers.some(trigger => 
@@ -240,7 +240,7 @@ export class AgentRegistry {
     const featureText = [
       feature.name,
       ...feature.domain,
-      ...feature.complianceRequirements
+      ...feature.requirements
     ].join(' ').toLowerCase();
 
     return codeReviewerAgent.triggers.some(trigger => 
@@ -311,7 +311,7 @@ export class AgentRegistry {
   /**
    * Validate agent configuration
    */
-  validateAgentConfig(agentName: AgentName, config: Record<string, any>): boolean {
+  validateAgentConfig(agentName: AgentName, _config: Record<string, any>): boolean {
     const agent = this.agents.get(agentName);
     if (!agent) {
       throw new Error(`Unknown agent: ${agentName}`);

@@ -20,7 +20,7 @@ export class CodeReviewerAgent extends BaseAgent {
   /**
    * Check if agent can handle the given phase and context
    */
-  canHandle(phase: TDDPhase, context: FeatureContext): boolean {
+  canHandle(phase: TDDPhase, _context: FeatureContext): boolean {
     // Code reviewer is most active during green and refactor phases
     return ['green', 'refactor'].includes(phase);
   }

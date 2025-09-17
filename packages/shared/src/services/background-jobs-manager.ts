@@ -13,13 +13,11 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from 'zod';
 import {
   calculateRetryDelay,
   CreateJobRequest,
   generateJobId,
   getDefaultJobConfig,
-  HealthcareJobContext,
   HealthcareJobType,
   JobData,
   JobExecutionResult,
@@ -27,7 +25,6 @@ import {
   JobPriority,
   JobQueue,
   JobStatus,
-  requiresEmergencyProcessing,
   validateHealthcareContext,
   WorkerConfig,
 } from './background-jobs-framework';
@@ -71,15 +68,7 @@ export class JobManager {
 
     // Get job configuration
     const config = {
-      ...getDefaultJobConfig({
-        dataClassification: request.healthcareContext?.dataClassification as string || 'internal',
-        urgencyLevel: request.healthcareContext?.urgencyLevel || 'routine',
-        facilityId: request.healthcareContext?.facilityId,
-        departmentId: request.healthcareContext?.departmentId,
-        patientId: request.healthcareContext?.patientId,
-        providerId: request.healthcareContext?.providerId,
-        regulatoryRequirement: request.healthcareContext?.regulatoryRequirement
-      }),
+      ...getDefaultJobConfig(request.type, request.healthcareContext),
       ...request.config,
     };
 
@@ -102,6 +91,7 @@ export class JobManager {
       auditEvents: [],
       lgpdCompliant: true,
       dependents: [],
+      progress: 0,
     };
 
     // Validate payload with handler if available
@@ -445,7 +435,10 @@ export class Worker {
         // Check emergency jobs only restriction
         if (
           this.config.emergencyJobsOnly
-          && !requiresEmergencyProcessing(job.type, job.healthcareContext)
+          && !(
+            job.type === HealthcareJobType.EMERGENCY_NOTIFICATION ||
+            job.healthcareContext?.clinicalContext === 'emergency'
+          )
         ) {
           // Put job back in queue
           await this.jobQueue.updateJob(job.jobId, { status: JobStatus.PENDING });

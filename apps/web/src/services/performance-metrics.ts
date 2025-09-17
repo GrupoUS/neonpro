@@ -17,7 +17,6 @@ import {
   PerformanceMetrics,
   PerformanceMetricsSchema,
   ResourceUtilization,
-  sanitizeTelemetryEvent,
   WebVitals,
 } from '@neonpro/shared';
 
@@ -193,7 +192,7 @@ export class PerformanceMetricsService {
 
       try {
         observer.observe({ entryTypes: ['paint', 'largest-contentful-paint'] });
-      } catch (e) {
+      } catch {
         // Fallback for older browsers
         console.warn(`[PerformanceMetrics] ${metricName} observation not supported`);
       }
@@ -215,7 +214,7 @@ export class PerformanceMetricsService {
 
       try {
         observer.observe({ entryTypes: ['layout-shift'] });
-      } catch (e) {
+      } catch {
         console.warn('[PerformanceMetrics] CLS observation not supported');
       }
     }
@@ -240,7 +239,7 @@ export class PerformanceMetricsService {
 
       try {
         observer.observe({ entryTypes: ['event'] });
-      } catch (e) {
+      } catch {
         console.warn(`[PerformanceMetrics] ${metricName} observation not supported`);
       }
     }
@@ -261,7 +260,7 @@ export class PerformanceMetricsService {
 
       try {
         observer.observe({ entryTypes: ['navigation'] });
-      } catch (e) {
+      } catch {
         console.warn('[PerformanceMetrics] TTFB observation not supported');
       }
     }
@@ -288,7 +287,7 @@ export class PerformanceMetricsService {
             callback(tti);
           }, 1000);
         });
-      } catch (e) {
+      } catch {
         console.warn('[PerformanceMetrics] TTI observation not supported');
       }
     }
@@ -765,11 +764,11 @@ export class PerformanceMetricsService {
   // Event Handlers for Web Vitals
   // ============================================================================
 
-  private handleFirstContentfulPaint(value: number, entry?: PerformanceEntry): void {
+  private handleFirstContentfulPaint(value: number): void {
     console.log('[PerformanceMetrics] FCP:', value.toFixed(2), 'ms');
   }
 
-  private handleLargestContentfulPaint(value: number, entry?: PerformanceEntry): void {
+  private handleLargestContentfulPaint(value: number): void {
     console.log('[PerformanceMetrics] LCP:', value.toFixed(2), 'ms');
 
     // Check if LCP exceeds healthcare threshold
@@ -787,11 +786,11 @@ export class PerformanceMetricsService {
     }
   }
 
-  private handleFirstInputDelay(value: number, entry?: PerformanceEntry): void {
+  private handleFirstInputDelay(value: number): void {
     console.log('[PerformanceMetrics] FID:', value.toFixed(2), 'ms');
   }
 
-  private handleTimeToFirstByte(value: number, entry?: PerformanceEntry): void {
+  private handleTimeToFirstByte(value: number): void {
     console.log('[PerformanceMetrics] TTFB:', value.toFixed(2), 'ms');
   }
 
@@ -799,7 +798,7 @@ export class PerformanceMetricsService {
     console.log('[PerformanceMetrics] TTI:', value.toFixed(2), 'ms');
   }
 
-  private handleInteractionToNextPaint(value: number, entry?: PerformanceEntry): void {
+  private handleInteractionToNextPaint(value: number): void {
     console.log('[PerformanceMetrics] INP:', value.toFixed(2), 'ms');
   }
 
@@ -841,7 +840,7 @@ export class PerformanceMetricsService {
   private setupPerformanceObserver(): void {
     // Additional performance observations can be set up here
     if ('PerformanceObserver' in window) {
-      this.observer = new PerformanceObserver(list => {
+      this.observer = new PerformanceObserver(() => {
         // Handle additional performance entries as needed
       });
     }

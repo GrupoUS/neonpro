@@ -1,18 +1,18 @@
 /**
  * Billing API Routes
- * 
+ *
  * RESTful API endpoints for billing and financial management with Brazilian
  * tax compliance, SUS integration, and health plan support.
  */
 
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
 import { z } from 'zod';
-import { BillingService, PaymentMethod, PaymentStatus } from '../../services/billing-service';
+import { auditLog } from '../../middleware/audit-log';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { auditLog } from '../../middleware/audit-log';
-import { ok, created, badRequest, notFound, forbidden, serverError } from '../../utils/responses';
+import { BillingService, PaymentMethod, PaymentStatus } from '../../services/billing-service';
+import { badRequest, created, forbidden, notFound, ok, serverError } from '../../utils/responses';
 
 // Initialize service
 const billingService = new BillingService();
@@ -87,7 +87,7 @@ const financialReportSchema = z.object({
 billing.post(
   '/invoices',
   zValidator('json', createInvoiceSchema),
-  async (c) => {
+  async c => {
     try {
       const invoiceData = c.req.valid('json');
       const userId = c.get('userId');
@@ -103,14 +103,14 @@ billing.post(
       console.error('Error creating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
-  }
+  },
 );
 
 /**
  * GET /billing/invoices/:id
  * Get a specific invoice by ID
  */
-billing.get('/invoices/:id', async (c) => {
+billing.get('/invoices/:id', async c => {
   try {
     const invoiceId = c.req.param('id');
     const userId = c.get('userId');
@@ -145,7 +145,7 @@ billing.get('/invoices/:id', async (c) => {
 billing.get(
   '/invoices',
   zValidator('query', searchInvoicesSchema),
-  async (c) => {
+  async c => {
     try {
       const searchParams = c.req.valid('query');
       const userId = c.get('userId');
@@ -168,7 +168,7 @@ billing.get(
       console.error('Error searching invoices:', error);
       return serverError(c, 'Erro interno do servidor');
     }
-  }
+  },
 );
 
 /**
@@ -178,7 +178,7 @@ billing.get(
 billing.put(
   '/invoices/:id',
   zValidator('json', updateInvoiceSchema),
-  async (c) => {
+  async c => {
     try {
       const invoiceId = c.req.param('id');
       const updateData = c.req.valid('json');
@@ -205,14 +205,14 @@ billing.put(
       console.error('Error updating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
-  }
+  },
 );
 
 /**
  * DELETE /billing/invoices/:id
  * Cancel an invoice (soft delete with audit trail)
  */
-billing.delete('/invoices/:id', async (c) => {
+billing.delete('/invoices/:id', async c => {
   try {
     const invoiceId = c.req.param('id');
     const userId = c.get('userId');
@@ -247,7 +247,7 @@ billing.delete('/invoices/:id', async (c) => {
 billing.post(
   '/invoices/:id/payments',
   zValidator('json', processPaymentSchema),
-  async (c) => {
+  async c => {
     try {
       const invoiceId = c.req.param('id');
       const paymentData = c.req.valid('json');
@@ -271,14 +271,14 @@ billing.post(
       console.error('Error processing payment:', error);
       return serverError(c, 'Erro interno do servidor');
     }
-  }
+  },
 );
 
 /**
  * GET /billing/invoices/:id/payments
  * Get payment history for an invoice
  */
-billing.get('/invoices/:id/payments', async (c) => {
+billing.get('/invoices/:id/payments', async c => {
   try {
     const invoiceId = c.req.param('id');
     const userId = c.get('userId');
@@ -310,7 +310,7 @@ billing.get('/invoices/:id/payments', async (c) => {
 billing.get(
   '/reports/financial',
   zValidator('query', financialReportSchema),
-  async (c) => {
+  async c => {
     try {
       const reportParams = c.req.valid('query');
       const userId = c.get('userId');
@@ -333,14 +333,14 @@ billing.get(
       console.error('Error generating financial report:', error);
       return serverError(c, 'Erro interno do servidor');
     }
-  }
+  },
 );
 
 /**
  * GET /billing/dashboard/stats
  * Get billing dashboard statistics
  */
-billing.get('/dashboard/stats', async (c) => {
+billing.get('/dashboard/stats', async c => {
   try {
     const clinicId = c.get('clinicId');
     const userId = c.get('userId');
@@ -363,7 +363,7 @@ billing.get('/dashboard/stats', async (c) => {
  * GET /billing/sus/procedures
  * Get SUS procedure codes
  */
-billing.get('/sus/procedures', async (c) => {
+billing.get('/sus/procedures', async c => {
   try {
     const query = c.req.query('q') || '';
     const limit = Number(c.req.query('limit')) || 50;
@@ -385,18 +385,21 @@ billing.get('/sus/procedures', async (c) => {
  * POST /billing/insurance/verify
  * Verify insurance coverage
  */
-billing.post('/insurance/verify', async (c) => {
+billing.post('/insurance/verify', async c => {
   try {
     const { patientId, procedureCode, insuranceCard } = await c.req.json();
 
     if (!patientId || !procedureCode || !insuranceCard) {
-      return badRequest(c, 'Dados de verificação obrigatórios: patientId, procedureCode, insuranceCard');
+      return badRequest(
+        c,
+        'Dados de verificação obrigatórios: patientId, procedureCode, insuranceCard',
+      );
     }
 
     const result = await billingService.verifyInsuranceCoverage(
       patientId,
       procedureCode,
-      insuranceCard
+      insuranceCard,
     );
 
     if (!result.success) {
@@ -414,7 +417,7 @@ billing.post('/insurance/verify', async (c) => {
  * GET /billing/tax/calculation
  * Calculate taxes for billing amount
  */
-billing.get('/tax/calculation', async (c) => {
+billing.get('/tax/calculation', async c => {
   try {
     const amount = Number(c.req.query('amount'));
     const serviceType = c.req.query('serviceType') || 'medical_consultation';

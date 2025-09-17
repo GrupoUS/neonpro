@@ -3,13 +3,13 @@
  * T079 - Backend API Performance Optimization
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Hono } from 'hono';
-import { 
-  createCacheMiddleware, 
-  CacheInvalidator, 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  CACHE_CONFIGS,
+  CacheInvalidator,
+  createCacheMiddleware,
   healthcareComplianceCacheHeaders,
-  CACHE_CONFIGS 
 } from '../caching';
 
 describe('Caching Middleware', () => {
@@ -27,9 +27,9 @@ describe('Caching Middleware', () => {
   describe('createCacheMiddleware', () => {
     it('should cache GET requests for public services', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/list', (c) => c.json({ services: ['service1', 'service2'] }));
+      app.get('/api/services/list', c => c.json({ services: ['service1', 'service2'] }));
 
       // First request - cache miss
       const res1 = await app.request('/api/services/list');
@@ -44,9 +44,9 @@ describe('Caching Middleware', () => {
 
     it('should not cache POST requests', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.post('/api/services/create', (c) => c.json({ success: true }));
+      app.post('/api/services/create', c => c.json({ success: true }));
 
       const res = await app.request('/api/services/create', { method: 'POST' });
       expect(res.status).toBe(200);
@@ -55,9 +55,9 @@ describe('Caching Middleware', () => {
 
     it('should not cache sensitive patient data', async () => {
       const middleware = createCacheMiddleware('patients');
-      
+
       app.use('/api/patients/*', middleware);
-      app.get('/api/patients/123', (c) => c.json({ patient: { id: 123, name: 'John Doe' } }));
+      app.get('/api/patients/123', c => c.json({ patient: { id: 123, name: 'John Doe' } }));
 
       const res = await app.request('/api/patients/123');
       expect(res.status).toBe(200);
@@ -66,30 +66,30 @@ describe('Caching Middleware', () => {
 
     it('should vary cache by authorization header for private data', async () => {
       const middleware = createCacheMiddleware('appointments-list');
-      
+
       app.use('/api/appointments/*', middleware);
-      app.get('/api/appointments/list', (c) => {
+      app.get('/api/appointments/list', c => {
         const auth = c.req.header('authorization');
         return c.json({ appointments: [`appointment-${auth}`] });
       });
 
       // Request with first auth token
       const res1 = await app.request('/api/appointments/list', {
-        headers: { 'authorization': 'Bearer token1' }
+        headers: { authorization: 'Bearer token1' },
       });
       expect(res1.status).toBe(200);
       expect(res1.headers.get('x-cache')).toBe('MISS');
 
       // Request with different auth token - should be cache miss
       const res2 = await app.request('/api/appointments/list', {
-        headers: { 'authorization': 'Bearer token2' }
+        headers: { authorization: 'Bearer token2' },
       });
       expect(res2.status).toBe(200);
       expect(res2.headers.get('x-cache')).toBe('MISS');
 
       // Request with first auth token again - should be cache hit
       const res3 = await app.request('/api/appointments/list', {
-        headers: { 'authorization': 'Bearer token1' }
+        headers: { authorization: 'Bearer token1' },
       });
       expect(res3.status).toBe(200);
       expect(res3.headers.get('x-cache')).toBe('HIT');
@@ -97,9 +97,9 @@ describe('Caching Middleware', () => {
 
     it('should not cache error responses', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/error', (c) => c.json({ error: 'Not found' }, 404));
+      app.get('/api/services/error', c => c.json({ error: 'Not found' }, 404));
 
       const res1 = await app.request('/api/services/error');
       expect(res1.status).toBe(404);
@@ -113,9 +113,9 @@ describe('Caching Middleware', () => {
     it('should respect cache TTL', async () => {
       const shortTTLConfig = { ttl: 1 }; // 1 second
       const middleware = createCacheMiddleware('services', shortTTLConfig);
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/ttl-test', (c) => c.json({ timestamp: Date.now() }));
+      app.get('/api/services/ttl-test', c => c.json({ timestamp: Date.now() }));
 
       // First request
       const res1 = await app.request('/api/services/ttl-test');
@@ -140,9 +140,9 @@ describe('Caching Middleware', () => {
 
     it('should add appropriate cache control headers', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/headers', (c) => c.json({ data: 'test' }));
+      app.get('/api/services/headers', c => c.json({ data: 'test' }));
 
       const res = await app.request('/api/services/headers');
       expect(res.status).toBe(200);
@@ -154,9 +154,9 @@ describe('Caching Middleware', () => {
   describe('CacheInvalidator', () => {
     it('should invalidate cache by tags', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/test', (c) => c.json({ data: 'original' }));
+      app.get('/api/services/test', c => c.json({ data: 'original' }));
 
       // Cache the response
       const res1 = await app.request('/api/services/test');
@@ -176,10 +176,10 @@ describe('Caching Middleware', () => {
 
     it('should clear all cache entries', async () => {
       const middleware = createCacheMiddleware('services');
-      
+
       app.use('/api/services/*', middleware);
-      app.get('/api/services/test1', (c) => c.json({ data: 'test1' }));
-      app.get('/api/services/test2', (c) => c.json({ data: 'test2' }));
+      app.get('/api/services/test1', c => c.json({ data: 'test1' }));
+      app.get('/api/services/test2', c => c.json({ data: 'test2' }));
 
       // Cache multiple responses
       await app.request('/api/services/test1');
@@ -209,7 +209,7 @@ describe('Caching Middleware', () => {
   describe('healthcareComplianceCacheHeaders', () => {
     it('should add healthcare compliance headers', async () => {
       app.use('*', healthcareComplianceCacheHeaders());
-      app.get('/test', (c) => c.json({ data: 'test' }));
+      app.get('/test', c => c.json({ data: 'test' }));
 
       const res = await app.request('/test');
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');

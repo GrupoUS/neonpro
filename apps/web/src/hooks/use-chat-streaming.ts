@@ -23,7 +23,7 @@ export function useChatStreaming(opts: {
         if (mock) url.searchParams.set('mock', 'true');
         const res = await fetch(url.toString(), {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+          headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
           body: JSON.stringify({ question }),
           signal: controller.signal,
         });

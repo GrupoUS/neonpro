@@ -4,7 +4,7 @@
  */
 
 // Core orchestrator
-export { QualityOrchestrator } from './orchestrator-core';
+export { TDDOrchestrator } from './orchestrator-core';
 
 // Agent registry
 export { AgentRegistry } from './agent-registry';
@@ -13,10 +13,10 @@ export { AgentRegistry } from './agent-registry';
 export { WorkflowEngine } from './workflow-engine';
 
 // Quality gates
-export { QualityGateManager } from './quality-gates';
+export { QualityGatesSystem } from './quality-gates';
 
 // Communication system
-export { CommunicationBridge } from './communication';
+export { CommunicationSystem } from './communication';
 
 // Available agent implementations
 export { BaseAgent } from './agents/base-agent';

@@ -82,7 +82,7 @@ export async function createMockPatient() {
  */
 export async function setupTestAuth(userId: string): Promise<Record<string, string>> {
   return {
-    'Authorization': `Bearer test-token`,
+    Authorization: `Bearer test-token`,
     'Content-Type': 'application/json',
     'X-User-ID': userId,
     'X-User-Role': 'professional',
@@ -117,7 +117,7 @@ export function createMockSupabaseClient() {
     auth: {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      signInWithPassword: (credentials: any) => 
+      signInWithPassword: (credentials: any) =>
         Promise.resolve({ data: { user: testUser, session: null }, error: null }),
       signOut: () => Promise.resolve({ error: null }),
     },
@@ -136,7 +136,7 @@ export function createMockSupabaseClient() {
  */
 export function createTestHeaders(user = testUser) {
   return {
-    'Authorization': `Bearer test-token`,
+    Authorization: `Bearer test-token`,
     'Content-Type': 'application/json',
     'X-User-ID': user.id,
     'X-User-Role': user.role,
@@ -164,7 +164,7 @@ export function validateTestEnvironment() {
   ];
 
   const missing = required.filter(key => !process.env[key]);
-  
+
   if (missing.length > 0) {
     console.warn(`⚠️  Missing test environment variables: ${missing.join(', ')}`);
     console.warn('Some integration tests may be skipped or use mock data.');

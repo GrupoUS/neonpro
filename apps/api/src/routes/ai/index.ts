@@ -4,9 +4,9 @@
  */
 
 import { Hono } from 'hono';
+import analyzeRoutes from './analyze';
 import chatRoutes from './chat';
 import insightsRoutes from './insights';
-import analyzeRoutes from './analyze';
 import modelsRoutes from './models';
 
 const app = new Hono();

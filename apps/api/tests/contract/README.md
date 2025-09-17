@@ -13,6 +13,7 @@ Expected: 5 failing tests (one per contract) until implementations are added.
 ## Contracts covered
 
 ### Original AI Chat Contracts
+
 - Chat API streaming (`chat.test.ts`) — UI messages + metadata + structured errors
 - Explanation Summary (`explanation.test.ts`) — concise summary with trace id
 - Finance: Overdue invoices (`tools.finance.test.ts`) — aging buckets and totals
@@ -20,6 +21,7 @@ Expected: 5 failing tests (one per contract) until implementations are added.
 - Clinical: Patient balance (`tools.clinical.balance.test.ts`) — balance with consent check
 
 ### Patient API Contracts (T011-T018) - ✅ IMPLEMENTED
+
 - **patients-list.test.ts** (GET /api/v2/patients) — Pagination, filtering, LGPD compliance
 - **patients-create.test.ts** (POST /api/v2/patients) — Brazilian validation, LGPD consent
 - **patients-get.test.ts** (GET /api/v2/patients/{id}) — Individual patient data with security

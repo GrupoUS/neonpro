@@ -1,6 +1,6 @@
 /**
  * INTEGRATION TEST: CFM (Conselho Federal de Medicina) validation (T026)
- * 
+ *
  * Tests CFM regulatory compliance for Brazilian medical practice:
  * - CRM number validation and verification
  * - Digital prescription compliance
@@ -10,7 +10,7 @@
  * - Regulatory reporting
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -81,7 +81,7 @@ const TelemedicineSessionSchema = z.object({
 
 describe('CFM Validation Integration Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-User-Role': 'physician',
@@ -119,7 +119,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(crmValidationResponse.status).toBe(200);
       const validation = await crmValidationResponse.json();
-      
+
       expect(validation).toMatchObject({
         crm: 'CRM-123456',
         state: 'SP',
@@ -136,11 +136,11 @@ describe('CFM Validation Integration Tests', () => {
 
     it('should reject invalid CRM formats', async () => {
       const invalidCrmTests = [
-        'CRM123456',       // Missing dash
-        'CRM-12',          // Too short
-        'CRM-1234567890',  // Too long
-        'XRM-123456',      // Wrong prefix
-        '123456',          // No prefix
+        'CRM123456', // Missing dash
+        'CRM-12', // Too short
+        'CRM-1234567890', // Too long
+        'XRM-123456', // Wrong prefix
+        '123456', // No prefix
       ];
 
       for (const invalidCrm of invalidCrmTests) {
@@ -161,7 +161,7 @@ describe('CFM Validation Integration Tests', () => {
 
     it('should check CRM registration across different state councils', async () => {
       const states = ['SP', 'RJ', 'MG', 'RS', 'PR'];
-      
+
       for (const state of states) {
         const stateValidationResponse = await api('/api/v2/cfm/validate-crm', {
           method: 'POST',
@@ -174,7 +174,7 @@ describe('CFM Validation Integration Tests', () => {
         });
 
         expect(stateValidationResponse.status).toBeOneOf([200, 404]);
-        
+
         if (stateValidationResponse.status === 200) {
           const validation = await stateValidationResponse.json();
           expect(validation.state).toBe(state);
@@ -196,7 +196,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(specialtyValidationResponse.status).toBe(200);
       const specialtyValidation = await specialtyValidationResponse.json();
-      
+
       expect(specialtyValidation).toMatchObject({
         crm: testPhysicianCrm,
         specialtyValidation: expect.arrayContaining([
@@ -250,7 +250,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(prescriptionResponse.status).toBe(201);
       const prescription = await prescriptionResponse.json();
-      
+
       expect(prescription).toMatchObject({
         id: expect.any(String),
         prescriptionNumber: expect.stringMatching(/^RX-\d{4}-\d{6}$/),
@@ -305,7 +305,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(controlledResponse.status).toBe(201);
       const controlledPrescription = await controlledResponse.json();
-      
+
       expect(controlledPrescription).toMatchObject({
         prescriptionNumber: expect.stringMatching(/^RXC-\d{4}-\d{6}$/), // Controlled substance prefix
         medications: expect.arrayContaining([
@@ -354,13 +354,16 @@ describe('CFM Validation Integration Tests', () => {
       const prescription = await createResponse.json();
 
       // Validate the digital signature
-      const signatureValidationResponse = await api(`/api/v2/prescriptions/${prescription.id}/validate-signature`, {
-        headers: testAuthHeaders,
-      });
+      const signatureValidationResponse = await api(
+        `/api/v2/prescriptions/${prescription.id}/validate-signature`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(signatureValidationResponse.status).toBe(200);
       const signatureValidation = await signatureValidationResponse.json();
-      
+
       expect(signatureValidation).toMatchObject({
         prescriptionId: prescription.id,
         signatureValid: true,
@@ -411,7 +414,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(recordResponse.status).toBe(201);
       const medicalRecord = await recordResponse.json();
-      
+
       expect(medicalRecord).toMatchObject({
         id: expect.any(String),
         recordNumber: expect.stringMatching(/^MR-\d{4}-\d{6}$/),
@@ -438,7 +441,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(retentionPolicyResponse.status).toBe(200);
       const retentionPolicy = await retentionPolicyResponse.json();
-      
+
       expect(retentionPolicy).toMatchObject({
         policies: expect.arrayContaining([
           expect.objectContaining({
@@ -497,7 +500,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(sessionResponse.status).toBe(201);
       const session = await sessionResponse.json();
-      
+
       expect(session).toMatchObject({
         id: expect.any(String),
         sessionNumber: expect.stringMatching(/^TM-\d{4}-\d{6}$/),
@@ -602,7 +605,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(incidentResponse.status).toBe(201);
       const incident = await incidentResponse.json();
-      
+
       expect(incident).toMatchObject({
         incidentId: expect.any(String),
         incidentNumber: expect.stringMatching(/^INC-\d{4}-\d{6}$/),
@@ -626,7 +629,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(cmeComplianceResponse.status).toBe(200);
       const cmeCompliance = await cmeComplianceResponse.json();
-      
+
       expect(cmeCompliance).toMatchObject({
         crm: testPhysicianCrm,
         period: '2024',
@@ -655,7 +658,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(complianceReportResponse.status).toBe(200);
       const complianceReport = await complianceReportResponse.json();
-      
+
       expect(complianceReport).toMatchObject({
         reportType: 'cfm_compliance',
         period: expect.any(Object),
@@ -702,7 +705,7 @@ describe('CFM Validation Integration Tests', () => {
 
       expect(notificationResponse.status).toBe(201);
       const notification = await notificationResponse.json();
-      
+
       expect(notification).toMatchObject({
         notificationId: expect.any(String),
         cfmProtocol: expect.stringMatching(/^CFM-AE-\d{4}-\d{6}$/),

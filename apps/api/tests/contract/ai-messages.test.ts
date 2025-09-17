@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/ai/chat/sessions/{id}/messages (T020)
- * 
+ *
  * Tests AI chat message endpoint contract:
  * - Message request/response schema validation
  * - Streaming and non-streaming responses
@@ -10,7 +10,7 @@
  * - Multi-modal support (text, images, documents)
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -83,7 +83,7 @@ const MessageResponseSchema = z.object({
 describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
   const testSessionId = '550e8400-e29b-41d4-a716-446655440000';
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-CFM-License': 'CFM-12345',
@@ -120,9 +120,9 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(201);
-      
+
       // Skip full schema validation for now since this is a contract test
       // In real implementation, this would validate against actual AI response
       expect(response).toBeDefined();
@@ -142,7 +142,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(201);
       expect(response.headers.get('Content-Type')).toContain('text/event-stream');
     });
@@ -171,7 +171,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(201);
       // Contract validation would happen here
     });
@@ -188,7 +188,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -203,7 +203,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(404);
     });
 
@@ -217,7 +217,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -240,7 +240,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(413);
     });
   });
@@ -248,7 +248,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should respond within 3 seconds for text messages', async () => {
       const startTime = Date.now();
-      
+
       const messageRequest = {
         content: 'Pergunta rápida sobre cuidados dermatológicos.',
         settings: { stream: false },
@@ -267,7 +267,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
 
     it('should start streaming within 1 second', async () => {
       const startTime = Date.now();
-      
+
       const messageRequest = {
         content: 'Pergunta para teste de streaming.',
         settings: { stream: true },
@@ -342,9 +342,9 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(messageRequest),
       });
-      
+
       expect(response.status).toBe(201);
-      
+
       // Contract ensures Brazilian regulatory context
       const responseText = await response.text();
       expect(responseText).toContain('ANVISA');

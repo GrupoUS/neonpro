@@ -5,13 +5,19 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
+import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 import { AuditService } from '../../services/audit-service.js';
 
+// Type definitions
+interface ServiceInterface {
+  aiChatService: AIChatService;
+  auditService: AuditService;
+}
+
 // Mock middleware for testing
-const mockAuthMiddleware = (c: any, next: any) => {
+const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
     return c.json({
@@ -40,17 +46,17 @@ const modelsQuerySchema = z.object({
 });
 
 // Services - will be injected during testing or use real services in production
-let services: any = null;
+let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: any) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
 // Default services for production
 const getServices = () => {
   if (services) return services;
-  
+
   // Use real service instances in production
   return {
     aiChatService: new AIChatService(),
@@ -62,7 +68,7 @@ app.get(
   '/',
   mockAuthMiddleware,
   zValidator('query', modelsQuerySchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
     const user = c.get('user');
     const queryParams = c.req.valid('query');
@@ -75,7 +81,14 @@ app.get(
 
       // Validate filter parameters
       const validProviders = ['openai', 'anthropic', 'google'];
-      const validCapabilities = ['chat', 'analysis', 'insights', 'image_analysis', 'medical_imaging', 'reasoning'];
+      const validCapabilities = [
+        'chat',
+        'analysis',
+        'insights',
+        'image_analysis',
+        'medical_imaging',
+        'reasoning',
+      ];
       const validStatuses = ['available', 'limited', 'degraded', 'unavailable'];
 
       if (queryParams.provider && !validProviders.includes(queryParams.provider)) {
@@ -88,7 +101,8 @@ app.get(
       if (queryParams.capability && !validCapabilities.includes(queryParams.capability)) {
         return c.json({
           success: false,
-          error: 'Parâmetros de filtro inválidos. Capacidades válidas: ' + validCapabilities.join(', '),
+          error: 'Parâmetros de filtro inválidos. Capacidades válidas: '
+            + validCapabilities.join(', '),
         }, 400);
       }
 
@@ -130,10 +144,11 @@ app.get(
         if (modelsResponse.error?.includes('unavailable')) {
           return c.json({
             success: false,
-            error: 'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+            error:
+              'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
           }, 503);
         }
-        
+
         return c.json({
           success: false,
           error: modelsResponse.error || 'Erro interno do serviço de modelos de IA',
@@ -189,10 +204,15 @@ app.get(
 
       // Add model-specific headers
       if (modelsResponse.data.summary) {
-        responseHeaders['X-Total-Models'] = (modelsResponse.data.summary.totalModels || 0).toString();
-        responseHeaders['X-Available-Models'] = (modelsResponse.data.summary.availableModels || 0).toString();
-        responseHeaders['X-Healthy-Models'] = (modelsResponse.data.summary.healthyModels || 0).toString();
-        responseHeaders['X-Model-Providers'] = (modelsResponse.data.summary.providers || []).join(',');
+        responseHeaders['X-Total-Models'] = (modelsResponse.data.summary.totalModels || 0)
+          .toString();
+        responseHeaders['X-Available-Models'] = (modelsResponse.data.summary.availableModels || 0)
+          .toString();
+        responseHeaders['X-Healthy-Models'] = (modelsResponse.data.summary.healthyModels || 0)
+          .toString();
+        responseHeaders['X-Model-Providers'] = (modelsResponse.data.summary.providers || []).join(
+          ',',
+        );
       }
 
       if (modelsResponse.data.metadata) {
@@ -219,7 +239,6 @@ app.get(
       }
 
       return c.json(finalResponse);
-
     } catch (error) {
       console.error('AI Models endpoint error:', error);
 
@@ -242,7 +261,8 @@ app.get(
       if (error instanceof Error && error.message.includes('unavailable')) {
         return c.json({
           success: false,
-          error: 'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+          error:
+            'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
         }, 503);
       }
 
@@ -251,7 +271,7 @@ app.get(
         error: 'Erro interno do servidor. Tente novamente mais tarde.',
       }, 500);
     }
-  }
+  },
 );
 
 export default app;

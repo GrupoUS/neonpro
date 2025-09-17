@@ -2,9 +2,9 @@
  * Tests for security utilities
  */
 
-import { describe, it, expect } from 'vitest';
-import { SecurityUtils, RateLimiter } from '../utils';
+import { describe, expect, it } from 'vitest';
 import { beforeEach } from 'vitest';
+import { RateLimiter, SecurityUtils } from '../utils';
 
 describe('SecurityUtils', () => {
   describe('Input Sanitization', () => {
@@ -201,7 +201,7 @@ describe('SecurityUtils', () => {
         'UNION SELECT username, password FROM users',
         'DROP TABLE users',
         'INSERT INTO users VALUES',
-        "UPDATE users SET admin='1'",
+        'UPDATE users SET admin=\'1\'',
       ];
 
       maliciousInputs.forEach(input => {
@@ -297,7 +297,7 @@ describe('SecurityUtils', () => {
 
     it('should provide helpful feedback', () => {
       const result = SecurityUtils.validatePasswordStrength('weak');
-      
+
       expect(result.feedback).toContain('Password must be at least 8 characters long');
       expect(result.feedback).toContain('Password must contain lowercase letters');
       expect(result.feedback).toContain('Password must contain uppercase letters');
@@ -309,7 +309,7 @@ describe('SecurityUtils', () => {
   describe('Password Generation', () => {
     it('should generate secure passwords', () => {
       const password = SecurityUtils.generateSecurePassword();
-      
+
       expect(password.length).toBe(12);
       expect(/[a-z]/.test(password)).toBe(true); // Contains lowercase
       expect(/[A-Z]/.test(password)).toBe(true); // Contains uppercase
@@ -325,7 +325,7 @@ describe('SecurityUtils', () => {
     it('should generate unique passwords', () => {
       const password1 = SecurityUtils.generateSecurePassword();
       const password2 = SecurityUtils.generateSecurePassword();
-      
+
       expect(password1).not.toBe(password2);
     });
   });

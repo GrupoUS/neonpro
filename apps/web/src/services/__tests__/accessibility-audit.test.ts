@@ -4,13 +4,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  type AccessibilityAuditResult,
-  AccessibilityAuditService,
-  AUDIT_SEVERITY,
-  WCAG_LEVELS,
-  WCAG_PRINCIPLES,
-} from '../accessibility-audit';
+import { AccessibilityAuditService, WCAG_LEVELS } from '../accessibility-audit';
 
 // Mock DOM methods
 const mockGetComputedStyle = vi.fn();

@@ -4,7 +4,7 @@
  * Integration with PatientService, AuditService, NotificationService
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -31,7 +31,7 @@ const mockLGPDService = {
 describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.bulkUpdatePatients.mockResolvedValue({
       success: true,
@@ -111,7 +111,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   describe('Successful Bulk Operations', () => {
     it('should perform bulk update operation', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
@@ -129,7 +129,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -148,7 +148,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should perform bulk delete operation', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'delete',
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
@@ -163,7 +163,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -185,7 +185,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should perform bulk export operation', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'export',
         patientIds: ['patient-1', 'patient-2', 'patient-3', 'patient-4', 'patient-5'],
@@ -201,7 +201,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -219,7 +219,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should include operation progress headers', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2'],
@@ -230,7 +230,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -266,7 +266,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       });
 
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2', 'patient-3', 'patient-4', 'patient-5'],
@@ -277,7 +277,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -297,7 +297,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   describe('LGPD Compliance and Bulk Consent', () => {
     it('should validate LGPD consent for bulk operations', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
@@ -311,7 +311,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -329,7 +329,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should log bulk activity for audit trail', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'delete',
         patientIds: ['patient-1', 'patient-2'],
@@ -340,7 +340,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Real-IP': '192.168.1.100',
           'User-Agent': 'Mozilla/5.0',
@@ -381,7 +381,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       });
 
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'export',
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
@@ -392,7 +392,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -409,7 +409,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should process bulk LGPD data deletion', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'delete',
         patientIds: ['patient-1', 'patient-2'],
@@ -423,7 +423,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-LGPD-Request': 'bulk_data_subject_deletion',
         }),
@@ -444,7 +444,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const mockRequest = {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
@@ -464,7 +464,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should handle validation errors for bulk data', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const invalidBulkData = {
         action: 'invalid_action',
         patientIds: [], // Empty array
@@ -475,7 +475,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(invalidBulkData),
@@ -497,7 +497,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       });
 
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1'],
@@ -508,7 +508,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -526,7 +526,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       mockPatientService.bulkUpdatePatients.mockRejectedValue(new Error('Operation timeout'));
 
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: Array.from({ length: 1000 }, (_, i) => `patient-${i}`), // Large batch
@@ -537,7 +537,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -555,7 +555,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2'],
@@ -566,7 +566,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -581,7 +581,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should validate healthcare professional context for bulk medical operations', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: ['patient-1', 'patient-2'],
@@ -596,7 +596,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Healthcare-Professional': 'CRM-SP-123456',
           'X-Healthcare-Context': 'bulk_medical_update',
@@ -611,7 +611,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456',
           healthcareContext: 'bulk_medical_update',
-        })
+        }),
       );
     });
   });
@@ -619,7 +619,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   describe('Performance and Batch Processing', () => {
     it('should handle large batch operations efficiently', async () => {
       const largeBatch = Array.from({ length: 100 }, (_, i) => `patient-${i}`);
-      
+
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: true,
         data: {
@@ -639,7 +639,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       });
 
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'update',
         patientIds: largeBatch,
@@ -653,7 +653,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),
@@ -672,7 +672,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     it('should include performance metrics for bulk operations', async () => {
       const { default: bulkRoute } = require('../bulk');
-      
+
       const bulkData = {
         action: 'export',
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
@@ -683,7 +683,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         method: 'POST',
         url: '/api/v2/patients/bulk-actions',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(bulkData),

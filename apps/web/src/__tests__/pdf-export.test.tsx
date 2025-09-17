@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { toast } from 'sonner';
-import { usePDFExport, generatePDFFilename } from '../hooks/usePDFExport';
+import { describe, expect, it, vi } from 'vitest';
 import { type AestheticAssessmentData } from '../components/pdf/AestheticReportPDF';
+import { generatePDFFilename, usePDFExport } from '../hooks/usePDFExport';
 
 // Mock dependencies
 vi.mock('sonner', () => ({
@@ -25,7 +25,7 @@ vi.mock('@react-pdf/renderer', () => ({
   Text: vi.fn(({ children }) => children),
   View: vi.fn(({ children }) => children),
   StyleSheet: {
-    create: vi.fn((styles) => styles),
+    create: vi.fn(styles => styles),
   },
   Font: {
     register: vi.fn(),
@@ -82,7 +82,11 @@ describe('PDF Export System', () => {
     });
 
     it('should clean special characters from name', () => {
-      const filename = generatePDFFilename('consent', 'José Carlos-Silva (Jr.)', new Date('2024-03-20'));
+      const filename = generatePDFFilename(
+        'consent',
+        'José Carlos-Silva (Jr.)',
+        new Date('2024-03-20'),
+      );
       expect(filename).toBe('termo_consentimento_jose_carlos_silva__jr___2024-03-20.pdf');
     });
   });
@@ -93,8 +97,8 @@ describe('PDF Export System', () => {
         const { isGenerating, error } = usePDFExport();
         return (
           <div>
-            <span data-testid="generating">{isGenerating.toString()}</span>
-            <span data-testid="error">{error || 'null'}</span>
+            <span data-testid='generating'>{isGenerating.toString()}</span>
+            <span data-testid='error'>{error || 'null'}</span>
           </div>
         );
       };
@@ -113,7 +117,7 @@ describe('PDF Export System', () => {
 
       const TestComponent = () => {
         const { generatePDF } = usePDFExport();
-        
+
         const handleGenerate = async () => {
           await generatePDF(<div>Mock PDF Component</div>);
         };
@@ -122,11 +126,11 @@ describe('PDF Export System', () => {
       };
 
       render(<TestComponent />);
-      
+
       // The hook should not log warning for fast generation (<2s)
       const consoleSpy = vi.spyOn(console, 'warn');
       expect(consoleSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining('PDF generation took')
+        expect.stringContaining('PDF generation took'),
       );
     });
   });
@@ -135,7 +139,7 @@ describe('PDF Export System', () => {
     it('should handle PDF generation errors gracefully', () => {
       const TestComponent = () => {
         const { error } = usePDFExport();
-        return <div data-testid="error-state">{error || 'no-error'}</div>;
+        return <div data-testid='error-state'>{error || 'no-error'}</div>;
       };
 
       const { getByTestId } = render(<TestComponent />);

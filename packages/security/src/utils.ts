@@ -78,12 +78,12 @@ export class SecurityUtils {
 
     // Remove all non-digit characters
     const digitsOnly = phone.replace(/\D/g, '');
-    
+
     // Validate Brazilian phone number length
     if (digitsOnly.length === 10 || digitsOnly.length === 11) {
       return digitsOnly;
     }
-    
+
     return '';
   }
 
@@ -99,12 +99,12 @@ export class SecurityUtils {
 
     // Remove all non-digit characters
     const digitsOnly = cpf.replace(/\D/g, '');
-    
+
     // Validate CPF length
     if (digitsOnly.length !== 11) {
       return '';
     }
-    
+
     return digitsOnly;
   }
 
@@ -142,8 +142,8 @@ export class SecurityUtils {
 
     // Check if verification digits match
     return (
-      parseInt(sanitized[9]) === digit1 &&
-      parseInt(sanitized[10]) === digit2
+      parseInt(sanitized[9]) === digit1
+      && parseInt(sanitized[10]) === digit2
     );
   }
 

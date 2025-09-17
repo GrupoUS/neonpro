@@ -12,7 +12,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { HealthcareSecurityConfig } from '../../lib/security';
 import type { CSPViolationReport } from '../../lib/security/csp';
-import type { HealthcareSRIConfig, SRIViolationReport } from '../../lib/security/sri';
+import type { SRIViolationReport } from '../../lib/security/sri';
 
 describe('Security Contracts', () => {
   beforeEach(() => {
@@ -55,12 +55,7 @@ describe('Security Contracts', () => {
 
     test('should block unsafe sources for patient data protection', () => {
       // Contract: No unsafe-eval or unsafe-inline in production for patient data security
-      const unsafeSources = [
-        '\'unsafe-eval\'',
-        '\'unsafe-inline\'',
-        '\'unsafe-hashes\'',
-      ];
-
+      // NOTE: Lista de fontes inseguras ilustrativa removida para evitar warning de variável não usada.
       const productionCSP = {
         'script-src': ['\'self\'', '\'unsafe-inline\''], // Only specific inline allowed
         'style-src': ['\'self\'', '\'unsafe-inline\''], // Only for medical UI

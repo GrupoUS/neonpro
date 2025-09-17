@@ -75,7 +75,7 @@ All data modifications are automatically logged for compliance.
         },
         CID10Code: {
           type: 'string',
-          pattern: '^[A-Z]\\d{2}(\\.\\d)?$',
+          pattern: '^[A-Z][0-9]{2}(\\.[0-9]+)?$',
           example: 'Z00.0'
         },
         CBHPMCode: {

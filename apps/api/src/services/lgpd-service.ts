@@ -14,14 +14,11 @@
  */
 
 import {
-
   createDataSubjectRequest,
   createLGPDConsent,
   DataSubjectRequest,
-
   LegalBasis,
   LGPDConsent,
-
 } from '../../../../packages/shared/src/types/lgpd-consent';
 
 // Define missing enums locally
@@ -1198,9 +1195,11 @@ export class LGPDService {
     purpose: string;
     legalBasis: string;
     patientId?: string;
-  }): Promise<ServiceResponse<{
-    accessLevel?: string;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      accessLevel?: string;
+    }>
+  > {
     try {
       // For contract tests, always pass validation
       return {

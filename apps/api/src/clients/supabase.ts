@@ -2,9 +2,15 @@
 export const supabaseAdmin: any = null;
 export const supabaseClient: any = null;
 
-export function createAdminClient(): any { return null; }
-export function createServerClient(): any { return null; }
-export function createUserClient(): any { return null; }
+export function createAdminClient(): any {
+  return null;
+}
+export function createServerClient(): any {
+  return null;
+}
+export function createUserClient(): any {
+  return null;
+}
 
 export const healthcareRLS = {
   canAccessClinic: async () => true,

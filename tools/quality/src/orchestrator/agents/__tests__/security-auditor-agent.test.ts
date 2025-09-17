@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { SecurityAuditorAgent } from '../security-auditor-agent';
-import type { FeatureContext, TDDPhase, AgentResult } from '../../types';
+import type { FeatureContext, TDDPhase } from '../../types';
 
 describe('SecurityAuditorAgent', () => {
   let agent: SecurityAuditorAgent;
@@ -9,6 +9,7 @@ describe('SecurityAuditorAgent', () => {
   beforeEach(() => {
     agent = new SecurityAuditorAgent();
     mockContext = {
+      requirements: [],
       name: 'test-feature',
       description: 'Test authentication feature',
       domain: ['authentication'],
@@ -101,8 +102,7 @@ describe('SecurityAuditorAgent', () => {
 
   describe('red phase execution', () => {
     it('should identify authentication vulnerabilities', async () => {
-      const authContext = { ...mockContext, domain: 'authentication' };
-      const result = await agent.executePhase('red', authContext);
+      const result = await agent.execute('red', { ...mockContext, domain: ['authentication'] });
 
       const authFindings = result.findings.filter(f => 
         f.description.toLowerCase().includes('authentication')
@@ -111,8 +111,8 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should identify authorization vulnerabilities', async () => {
-      const authzContext = { ...mockContext, domain: 'authorization' };
-      const result = await agent.executePhase('red', authzContext);
+      const _authzContext = { ...mockContext, domain: 'authorization' };
+      const result = await agent.execute('red', { ...mockContext, domain: ['authorization'] });
 
       const authzFindings = result.findings.filter(f => 
         f.description.toLowerCase().includes('authorization')
@@ -121,7 +121,7 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should identify input validation issues', async () => {
-      const result = await agent.executePhase('red', mockContext);
+      const result = await agent.execute('red', mockContext);
 
       const validationFindings = result.findings.filter(f => 
         f.description.toLowerCase().includes('validation')
@@ -130,7 +130,7 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should create security-testing recommendations', async () => {
-      const result = await agent.executePhase('red', mockContext);
+      const result = await agent.execute('red', mockContext);
 
       const securityRecommendations = result.recommendations.filter(r => 
         r.type === 'security-testing'
@@ -141,7 +141,7 @@ describe('SecurityAuditorAgent', () => {
 
   describe('green phase execution', () => {
     it('should provide implementation guidance', async () => {
-      const result = await agent.executePhase('green', mockContext);
+      const result = await agent.execute('green', mockContext);
 
       const implementationFindings = result.findings.filter(f => 
         f.type === 'security-implementation'
@@ -150,7 +150,7 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should recommend security controls', async () => {
-      const result = await agent.executePhase('green', mockContext);
+      const result = await agent.execute('green', mockContext);
 
       const controlRecommendations = result.recommendations.filter(r => 
         r.description.toLowerCase().includes('control')
@@ -159,8 +159,8 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should handle compliance requirements', async () => {
-      const complianceContext = { ...mockContext, domain: 'healthcare' };
-      const result = await agent.executePhase('green', complianceContext);
+      const complianceContext = { ...mockContext, domain: ['healthcare'] };
+      const result = await agent.execute('green', complianceContext);
 
       const complianceFindings = result.findings.filter(f => 
         f.type === 'compliance'
@@ -171,7 +171,7 @@ describe('SecurityAuditorAgent', () => {
 
   describe('refactor phase execution', () => {
     it('should suggest security architecture improvements', async () => {
-      const result = await agent.executePhase('refactor', mockContext);
+      const result = await agent.execute('refactor', mockContext);
 
       const architectureRecommendations = result.recommendations.filter(r => 
         r.description.toLowerCase().includes('architecture')
@@ -180,7 +180,7 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should recommend cryptographic improvements', async () => {
-      const result = await agent.executePhase('refactor', mockContext);
+      const result = await agent.execute('refactor', mockContext);
 
       const cryptoRecommendations = result.recommendations.filter(r => 
         r.description.toLowerCase().includes('cryptographic')
@@ -189,7 +189,7 @@ describe('SecurityAuditorAgent', () => {
     });
 
     it('should suggest access control improvements', async () => {
-      const result = await agent.executePhase('refactor', mockContext);
+      const result = await agent.execute('refactor', mockContext);
 
       const accessControlRecommendations = result.recommendations.filter(r => 
         r.description.toLowerCase().includes('access control')
@@ -201,13 +201,13 @@ describe('SecurityAuditorAgent', () => {
   describe('risk calculation', () => {
     it('should calculate higher risk for critical findings', async () => {
       const criticalContext = { ...mockContext, securityCritical: true };
-      const result = await agent.executePhase('red', criticalContext);
+      const result = await agent.execute('red', criticalContext);
 
       expect(result.metrics.riskScore).toBeGreaterThan(0);
     });
 
     it('should track security metrics', async () => {
-      const result = await agent.executePhase('red', mockContext);
+      const result = await agent.execute('red', mockContext);
 
       expect(result.metrics.securityIssues).toBeDefined();
       expect(result.metrics.vulnerabilities).toBeDefined();
@@ -240,16 +240,21 @@ describe('SecurityAuditorAgent', () => {
   describe('edge cases', () => {
     it('should handle empty context gracefully', async () => {
       const emptyContext: FeatureContext = {
-        feature: '',
-        domain: '',
-        files: {},
+        name: '',
+        description: '',
+        domain: [],
+        complexity: 1,
+        priority: 'low',
+        estimatedEffort: 1,
+        dependencies: [],
         requirements: [],
         securityCritical: false,
-        performanceCritical: false,
-        userFacing: false
+        complianceRequirements: [],
+        acceptanceCriteria: [],
+        files: {}
       };
 
-      const result = await agent.executePhase('red', emptyContext);
+      const result = await agent.execute('red', emptyContext);
       expect(result).toBeDefined();
       expect(result.findings).toBeDefined();
       expect(result.recommendations).toBeDefined();
@@ -257,7 +262,7 @@ describe('SecurityAuditorAgent', () => {
 
     it('should handle missing files in context', async () => {
       const contextWithoutFiles = { ...mockContext, files: {} };
-      const result = await agent.executePhase('red', contextWithoutFiles);
+      const result = await agent.execute('red', contextWithoutFiles);
       
       expect(result).toBeDefined();
       expect(result.findings.length).toBeGreaterThan(0);
@@ -266,9 +271,9 @@ describe('SecurityAuditorAgent', () => {
     it('should handle multiple domain contexts', async () => {
       const multiDomainContext = { 
         ...mockContext, 
-        domain: 'authentication,authorization,data-processing' 
+        domain: ['authentication', 'authorization', 'data-processing'] 
       };
-      const result = await agent.executePhase('red', multiDomainContext);
+      const result = await agent.execute('red', multiDomainContext);
       
       expect(result.findings.length).toBeGreaterThan(0);
       expect(result.recommendations.length).toBeGreaterThan(0);

@@ -10,11 +10,10 @@
  */
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { HealthcareErrorContext, SentryConfig } from '../../lib/observability/sentry';
-import type { HealthcareSpanAttributes, TracingConfig } from '../../lib/observability/tracing';
+import type { HealthcareErrorContext } from '../../lib/observability/sentry';
+import type { HealthcareSpanAttributes } from '../../lib/observability/tracing';
 import type {
-  HealthcarePerformanceContext,
-  WebVitalsConfig,
+  HealthcarePerformanceContext, // used in performance context test
 } from '../../lib/observability/web-vitals';
 
 // Mock Sentry

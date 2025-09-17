@@ -8,8 +8,6 @@ import E2ETestingService, {
   E2E_TEST_TYPES,
   type E2ETestConfig,
   E2ETestConfigSchema,
-  type E2ETestReport,
-  type E2ETestScenario,
   HEALTHCARE_WORKFLOWS,
   TEST_ENVIRONMENTS,
 } from '../e2e-testing';

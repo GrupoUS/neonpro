@@ -1,7 +1,7 @@
 // Audit logging helper (Phase 3.4 T031)
 // Thin wrapper over existing audit middleware/services with Supabase toggle.
-import type { Context, Next } from 'hono';
 import { createClient } from '@supabase/supabase-js';
+import type { Context, Next } from 'hono';
 
 function getSupabase() {
   const url = process.env.SUPABASE_URL;

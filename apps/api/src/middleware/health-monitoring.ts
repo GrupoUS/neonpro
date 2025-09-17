@@ -1,7 +1,7 @@
 /**
  * Health Monitoring and Metrics Middleware (T077)
  * System health monitoring with healthcare compliance metrics
- * 
+ *
  * Features:
  * - System health monitoring and alerting
  * - Performance metrics collection and analysis
@@ -180,7 +180,7 @@ class HealthMonitor {
 
     try {
       const results = await Promise.allSettled(checks);
-      
+
       results.forEach((result, _index) => {
         if (result.status === 'fulfilled') {
           this.healthChecks.set(result.value.name, result.value);
@@ -193,7 +193,6 @@ class HealthMonitor {
       await this.updateSystemMetrics();
       await this.updateComplianceMetrics();
       await this.updatePerformanceMetrics();
-
     } catch (error) {
       console.error('Error running health checks:', error);
     }
@@ -202,14 +201,14 @@ class HealthMonitor {
   // Check database health
   private async checkDatabase(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // TODO: Implement actual database health check
       // For now, simulate database check
       await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         name: 'database',
         status: responseTime < 1000 ? HealthStatus.HEALTHY : HealthStatus.WARNING,
@@ -235,14 +234,14 @@ class HealthMonitor {
   // Check AI providers health
   private async checkAIProviders(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // TODO: Integrate with AI provider manager from T072
       // For now, simulate AI provider check
       await new Promise(resolve => setTimeout(resolve, Math.random() * 200));
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         name: 'ai_providers',
         status: HealthStatus.HEALTHY,
@@ -269,13 +268,13 @@ class HealthMonitor {
   // Check external services health
   private async checkExternalServices(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // Check external services (email, SMS, etc.)
       await new Promise(resolve => setTimeout(resolve, Math.random() * 150));
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         name: 'external_services',
         status: HealthStatus.HEALTHY,
@@ -302,13 +301,13 @@ class HealthMonitor {
   // Check healthcare compliance
   private async checkHealthcareCompliance(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // Check LGPD, ANVISA, CFM compliance
       await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         name: 'healthcare_compliance',
         status: HealthStatus.HEALTHY,
@@ -335,23 +334,23 @@ class HealthMonitor {
   // Check system resources
   private async checkSystemResources(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get system resource usage
       const memoryUsage = process.memoryUsage();
       const uptime = process.uptime();
-      
+
       const memoryPercentage = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
-      
+
       let status = HealthStatus.HEALTHY;
       if (memoryPercentage > 90) {
         status = HealthStatus.CRITICAL;
       } else if (memoryPercentage > 75) {
         status = HealthStatus.WARNING;
       }
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         name: 'system_resources',
         status,
@@ -510,7 +509,7 @@ class HealthMonitor {
     timestamp: Date;
   } {
     const checks = Array.from(this.healthChecks.values());
-    
+
     // Determine overall status
     let status = HealthStatus.HEALTHY;
     for (const check of checks) {
@@ -580,7 +579,6 @@ export function healthMonitoring(config: Partial<HealthCheckConfig> = {}) {
         endpoint: c.req.path,
         status: String(c.res.status),
       });
-
     } catch (error) {
       // Record error metric
       monitor.recordMetric('http_errors_total', MetricType.COUNTER, 1, {
@@ -638,5 +636,12 @@ export function metricsEndpoint() {
 }
 
 // Export types and utilities
-export type { HealthCheckConfig, HealthCheckResult, SystemMetrics, ComplianceMetrics, PerformanceMetrics, MetricEntry };
-export { HealthStatus, MetricType, HealthMonitor, healthMonitor };
+export type {
+  ComplianceMetrics,
+  HealthCheckConfig,
+  HealthCheckResult,
+  MetricEntry,
+  PerformanceMetrics,
+  SystemMetrics,
+};
+export { HealthMonitor, healthMonitor, HealthStatus, MetricType };

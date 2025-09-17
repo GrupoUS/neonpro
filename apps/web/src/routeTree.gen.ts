@@ -8,408 +8,405 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as ValidationReportRouteImport } from './routes/validation-report'
-import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test'
-import { Route as TestAuthRouteImport } from './routes/test-auth'
-import { Route as SubscriptionTestRouteImport } from './routes/subscription-test'
-import { Route as SubscriptionRouteImport } from './routes/subscription'
-import { Route as SignupDemoRouteImport } from './routes/signup-demo'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ShineTestRouteImport } from './routes/shine-test'
-import { Route as ShadcnTestRouteImport } from './routes/shadcn-test'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as ServiceTemplatesRouteImport } from './routes/service-templates'
-import { Route as ServiceCategoriesRouteImport } from './routes/service-categories'
-import { Route as ServiceAnalyticsRouteImport } from './routes/service-analytics'
-import { Route as ReportsRouteImport } from './routes/reports'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as ProfessionalServicesRouteImport } from './routes/professional-services'
-import { Route as PricingRulesRouteImport } from './routes/pricing-rules'
-import { Route as PatientsRouteImport } from './routes/patients'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as HealthcareTestRouteImport } from './routes/healthcare-test'
-import { Route as GovernanceRouteImport } from './routes/governance'
-import { Route as FinancialRouteImport } from './routes/financial'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ComprehensiveButtonTestRouteImport } from './routes/comprehensive-button-test'
-import { Route as ClientsRouteImport } from './routes/clients'
-import { Route as ButtonTestRouteImport } from './routes/button-test'
-import { Route as BentoGridTestRouteImport } from './routes/bento-grid-test'
-import { Route as AppointmentsRouteImport } from './routes/appointments'
-import { Route as ApiTestRouteImport } from './routes/api-test'
-import { Route as AnimationValidationSuiteRouteImport } from './routes/animation-validation-suite'
-import { Route as AiChatRouteImport } from './routes/ai-chat'
-import { Route as AestheticDemoRouteImport } from './routes/aesthetic-demo'
-import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-animations-test'
-import { Route as R404RouteImport } from './routes/404'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
-import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
-import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
-import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
-import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
-import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
-import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
+import { Route as R404RouteImport } from './routes/404';
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-animations-test';
+import { Route as AestheticDemoRouteImport } from './routes/aesthetic-demo';
+import { Route as AiChatRouteImport } from './routes/ai-chat';
+import { Route as AnimationValidationSuiteRouteImport } from './routes/animation-validation-suite';
+import { Route as ApiTestRouteImport } from './routes/api-test';
+import { Route as AppointmentsRouteImport } from './routes/appointments';
+import { Route as AppointmentsNewRouteImport } from './routes/appointments/new';
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback';
+import { Route as AuthConfirmRouteImport } from './routes/auth/confirm';
+import { Route as BentoGridTestRouteImport } from './routes/bento-grid-test';
+import { Route as ButtonTestRouteImport } from './routes/button-test';
+import { Route as ClientsRouteImport } from './routes/clients';
+import { Route as ComprehensiveButtonTestRouteImport } from './routes/comprehensive-button-test';
+import { Route as DashboardRouteImport } from './routes/dashboard';
+import { Route as FinancialRouteImport } from './routes/financial';
+import { Route as GovernanceRouteImport } from './routes/governance';
+import { Route as HealthcareTestRouteImport } from './routes/healthcare-test';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as PatientsRouteImport } from './routes/patients';
+import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId';
+import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents';
+import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit';
+import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history';
+import { Route as PricingRulesRouteImport } from './routes/pricing-rules';
+import { Route as ProfessionalServicesRouteImport } from './routes/professional-services';
+import { Route as ProfileRouteImport } from './routes/profile';
+import { Route as ReportsRouteImport } from './routes/reports';
+import { Route as ServiceAnalyticsRouteImport } from './routes/service-analytics';
+import { Route as ServiceCategoriesRouteImport } from './routes/service-categories';
+import { Route as ServiceTemplatesRouteImport } from './routes/service-templates';
+import { Route as ServicesRouteImport } from './routes/services';
+import { Route as SettingsRouteImport } from './routes/settings';
+import { Route as ShadcnTestRouteImport } from './routes/shadcn-test';
+import { Route as ShineTestRouteImport } from './routes/shine-test';
+import { Route as SignupRouteImport } from './routes/signup';
+import { Route as SignupDemoRouteImport } from './routes/signup-demo';
+import { Route as SubscriptionRouteImport } from './routes/subscription';
+import { Route as SubscriptionTestRouteImport } from './routes/subscription-test';
+import { Route as TestAuthRouteImport } from './routes/test-auth';
+import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test';
+import { Route as ValidationReportRouteImport } from './routes/validation-report';
 
 const ValidationReportRoute = ValidationReportRouteImport.update({
   id: '/validation-report',
   path: '/validation-report',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const UniversalButtonTestRoute = UniversalButtonTestRouteImport.update({
   id: '/universal-button-test',
   path: '/universal-button-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TestAuthRoute = TestAuthRouteImport.update({
   id: '/test-auth',
   path: '/test-auth',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SubscriptionTestRoute = SubscriptionTestRouteImport.update({
   id: '/subscription-test',
   path: '/subscription-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SignupDemoRoute = SignupDemoRouteImport.update({
   id: '/signup-demo',
   path: '/signup-demo',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ShineTestRoute = ShineTestRouteImport.update({
   id: '/shine-test',
   path: '/shine-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ShadcnTestRoute = ShadcnTestRouteImport.update({
   id: '/shadcn-test',
   path: '/shadcn-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServiceTemplatesRoute = ServiceTemplatesRouteImport.update({
   id: '/service-templates',
   path: '/service-templates',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServiceCategoriesRoute = ServiceCategoriesRouteImport.update({
   id: '/service-categories',
   path: '/service-categories',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServiceAnalyticsRoute = ServiceAnalyticsRouteImport.update({
   id: '/service-analytics',
   path: '/service-analytics',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProfessionalServicesRoute = ProfessionalServicesRouteImport.update({
   id: '/professional-services',
   path: '/professional-services',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PricingRulesRoute = PricingRulesRouteImport.update({
   id: '/pricing-rules',
   path: '/pricing-rules',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsRoute = PatientsRouteImport.update({
   id: '/patients',
   path: '/patients',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const HealthcareTestRoute = HealthcareTestRouteImport.update({
   id: '/healthcare-test',
   path: '/healthcare-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const GovernanceRoute = GovernanceRouteImport.update({
   id: '/governance',
   path: '/governance',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const FinancialRoute = FinancialRouteImport.update({
   id: '/financial',
   path: '/financial',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ComprehensiveButtonTestRoute = ComprehensiveButtonTestRouteImport.update({
   id: '/comprehensive-button-test',
   path: '/comprehensive-button-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ClientsRoute = ClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ButtonTestRoute = ButtonTestRouteImport.update({
   id: '/button-test',
   path: '/button-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const BentoGridTestRoute = BentoGridTestRouteImport.update({
   id: '/bento-grid-test',
   path: '/bento-grid-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AppointmentsRoute = AppointmentsRouteImport.update({
   id: '/appointments',
   path: '/appointments',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiTestRoute = ApiTestRouteImport.update({
   id: '/api-test',
   path: '/api-test',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AnimationValidationSuiteRoute =
-  AnimationValidationSuiteRouteImport.update({
-    id: '/animation-validation-suite',
-    path: '/animation-validation-suite',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+} as any);
+const AnimationValidationSuiteRoute = AnimationValidationSuiteRouteImport.update({
+  id: '/animation-validation-suite',
+  path: '/animation-validation-suite',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const AiChatRoute = AiChatRouteImport.update({
   id: '/ai-chat',
   path: '/ai-chat',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AestheticDemoRoute = AestheticDemoRouteImport.update({
   id: '/aesthetic-demo',
   path: '/aesthetic-demo',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdvancedAnimationsTestRoute = AdvancedAnimationsTestRouteImport.update({
   id: '/advanced-animations-test',
   path: '/advanced-animations-test',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/$patientId',
   path: '/$patientId',
   getParentRoute: () => PatientsRoute,
-} as any)
+} as any);
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
   path: '/auth/confirm',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AppointmentsNewRoute = AppointmentsNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AppointmentsRoute,
-} as any)
-const PatientsPatientIdHistoryRoute =
-  PatientsPatientIdHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => PatientsPatientIdRoute,
-  } as any)
+} as any);
+const PatientsPatientIdHistoryRoute = PatientsPatientIdHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => PatientsPatientIdRoute,
+} as any);
 const PatientsPatientIdEditRoute = PatientsPatientIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
   getParentRoute: () => PatientsPatientIdRoute,
-} as any)
-const PatientsPatientIdDocumentsRoute =
-  PatientsPatientIdDocumentsRouteImport.update({
-    id: '/documents',
-    path: '/documents',
-    getParentRoute: () => PatientsPatientIdRoute,
-  } as any)
+} as any);
+const PatientsPatientIdDocumentsRoute = PatientsPatientIdDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => PatientsPatientIdRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
-  '/aesthetic-demo': typeof AestheticDemoRoute
-  '/ai-chat': typeof AiChatRoute
-  '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
-  '/appointments': typeof AppointmentsRouteWithChildren
-  '/bento-grid-test': typeof BentoGridTestRoute
-  '/button-test': typeof ButtonTestRoute
-  '/clients': typeof ClientsRoute
-  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute
-  '/dashboard': typeof DashboardRoute
-  '/financial': typeof FinancialRoute
-  '/governance': typeof GovernanceRoute
-  '/healthcare-test': typeof HealthcareTestRoute
-  '/login': typeof LoginRoute
-  '/patients': typeof PatientsRouteWithChildren
-  '/pricing-rules': typeof PricingRulesRoute
-  '/professional-services': typeof ProfessionalServicesRoute
-  '/profile': typeof ProfileRoute
-  '/reports': typeof ReportsRoute
-  '/service-analytics': typeof ServiceAnalyticsRoute
-  '/service-categories': typeof ServiceCategoriesRoute
-  '/service-templates': typeof ServiceTemplatesRoute
-  '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRoute
-  '/shadcn-test': typeof ShadcnTestRoute
-  '/shine-test': typeof ShineTestRoute
-  '/signup': typeof SignupRoute
-  '/signup-demo': typeof SignupDemoRoute
-  '/subscription': typeof SubscriptionRoute
-  '/subscription-test': typeof SubscriptionTestRoute
-  '/test-auth': typeof TestAuthRoute
-  '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute;
+  '/aesthetic-demo': typeof AestheticDemoRoute;
+  '/ai-chat': typeof AiChatRoute;
+  '/animation-validation-suite': typeof AnimationValidationSuiteRoute;
+  '/api-test': typeof ApiTestRoute;
+  '/appointments': typeof AppointmentsRouteWithChildren;
+  '/bento-grid-test': typeof BentoGridTestRoute;
+  '/button-test': typeof ButtonTestRoute;
+  '/clients': typeof ClientsRoute;
+  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute;
+  '/dashboard': typeof DashboardRoute;
+  '/financial': typeof FinancialRoute;
+  '/governance': typeof GovernanceRoute;
+  '/healthcare-test': typeof HealthcareTestRoute;
+  '/login': typeof LoginRoute;
+  '/patients': typeof PatientsRouteWithChildren;
+  '/pricing-rules': typeof PricingRulesRoute;
+  '/professional-services': typeof ProfessionalServicesRoute;
+  '/profile': typeof ProfileRoute;
+  '/reports': typeof ReportsRoute;
+  '/service-analytics': typeof ServiceAnalyticsRoute;
+  '/service-categories': typeof ServiceCategoriesRoute;
+  '/service-templates': typeof ServiceTemplatesRoute;
+  '/services': typeof ServicesRoute;
+  '/settings': typeof SettingsRoute;
+  '/shadcn-test': typeof ShadcnTestRoute;
+  '/shine-test': typeof ShineTestRoute;
+  '/signup': typeof SignupRoute;
+  '/signup-demo': typeof SignupDemoRoute;
+  '/subscription': typeof SubscriptionRoute;
+  '/subscription-test': typeof SubscriptionTestRoute;
+  '/test-auth': typeof TestAuthRoute;
+  '/universal-button-test': typeof UniversalButtonTestRoute;
+  '/validation-report': typeof ValidationReportRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
-  '/aesthetic-demo': typeof AestheticDemoRoute
-  '/ai-chat': typeof AiChatRoute
-  '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
-  '/appointments': typeof AppointmentsRouteWithChildren
-  '/bento-grid-test': typeof BentoGridTestRoute
-  '/button-test': typeof ButtonTestRoute
-  '/clients': typeof ClientsRoute
-  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute
-  '/dashboard': typeof DashboardRoute
-  '/financial': typeof FinancialRoute
-  '/governance': typeof GovernanceRoute
-  '/healthcare-test': typeof HealthcareTestRoute
-  '/login': typeof LoginRoute
-  '/patients': typeof PatientsRouteWithChildren
-  '/pricing-rules': typeof PricingRulesRoute
-  '/professional-services': typeof ProfessionalServicesRoute
-  '/profile': typeof ProfileRoute
-  '/reports': typeof ReportsRoute
-  '/service-analytics': typeof ServiceAnalyticsRoute
-  '/service-categories': typeof ServiceCategoriesRoute
-  '/service-templates': typeof ServiceTemplatesRoute
-  '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRoute
-  '/shadcn-test': typeof ShadcnTestRoute
-  '/shine-test': typeof ShineTestRoute
-  '/signup': typeof SignupRoute
-  '/signup-demo': typeof SignupDemoRoute
-  '/subscription': typeof SubscriptionRoute
-  '/subscription-test': typeof SubscriptionTestRoute
-  '/test-auth': typeof TestAuthRoute
-  '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute;
+  '/aesthetic-demo': typeof AestheticDemoRoute;
+  '/ai-chat': typeof AiChatRoute;
+  '/animation-validation-suite': typeof AnimationValidationSuiteRoute;
+  '/api-test': typeof ApiTestRoute;
+  '/appointments': typeof AppointmentsRouteWithChildren;
+  '/bento-grid-test': typeof BentoGridTestRoute;
+  '/button-test': typeof ButtonTestRoute;
+  '/clients': typeof ClientsRoute;
+  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute;
+  '/dashboard': typeof DashboardRoute;
+  '/financial': typeof FinancialRoute;
+  '/governance': typeof GovernanceRoute;
+  '/healthcare-test': typeof HealthcareTestRoute;
+  '/login': typeof LoginRoute;
+  '/patients': typeof PatientsRouteWithChildren;
+  '/pricing-rules': typeof PricingRulesRoute;
+  '/professional-services': typeof ProfessionalServicesRoute;
+  '/profile': typeof ProfileRoute;
+  '/reports': typeof ReportsRoute;
+  '/service-analytics': typeof ServiceAnalyticsRoute;
+  '/service-categories': typeof ServiceCategoriesRoute;
+  '/service-templates': typeof ServiceTemplatesRoute;
+  '/services': typeof ServicesRoute;
+  '/settings': typeof SettingsRoute;
+  '/shadcn-test': typeof ShadcnTestRoute;
+  '/shine-test': typeof ShineTestRoute;
+  '/signup': typeof SignupRoute;
+  '/signup-demo': typeof SignupDemoRoute;
+  '/subscription': typeof SubscriptionRoute;
+  '/subscription-test': typeof SubscriptionTestRoute;
+  '/test-auth': typeof TestAuthRoute;
+  '/universal-button-test': typeof UniversalButtonTestRoute;
+  '/validation-report': typeof ValidationReportRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
-  '/aesthetic-demo': typeof AestheticDemoRoute
-  '/ai-chat': typeof AiChatRoute
-  '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
-  '/appointments': typeof AppointmentsRouteWithChildren
-  '/bento-grid-test': typeof BentoGridTestRoute
-  '/button-test': typeof ButtonTestRoute
-  '/clients': typeof ClientsRoute
-  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute
-  '/dashboard': typeof DashboardRoute
-  '/financial': typeof FinancialRoute
-  '/governance': typeof GovernanceRoute
-  '/healthcare-test': typeof HealthcareTestRoute
-  '/login': typeof LoginRoute
-  '/patients': typeof PatientsRouteWithChildren
-  '/pricing-rules': typeof PricingRulesRoute
-  '/professional-services': typeof ProfessionalServicesRoute
-  '/profile': typeof ProfileRoute
-  '/reports': typeof ReportsRoute
-  '/service-analytics': typeof ServiceAnalyticsRoute
-  '/service-categories': typeof ServiceCategoriesRoute
-  '/service-templates': typeof ServiceTemplatesRoute
-  '/services': typeof ServicesRoute
-  '/settings': typeof SettingsRoute
-  '/shadcn-test': typeof ShadcnTestRoute
-  '/shine-test': typeof ShineTestRoute
-  '/signup': typeof SignupRoute
-  '/signup-demo': typeof SignupDemoRoute
-  '/subscription': typeof SubscriptionRoute
-  '/subscription-test': typeof SubscriptionTestRoute
-  '/test-auth': typeof TestAuthRoute
-  '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/advanced-animations-test': typeof AdvancedAnimationsTestRoute;
+  '/aesthetic-demo': typeof AestheticDemoRoute;
+  '/ai-chat': typeof AiChatRoute;
+  '/animation-validation-suite': typeof AnimationValidationSuiteRoute;
+  '/api-test': typeof ApiTestRoute;
+  '/appointments': typeof AppointmentsRouteWithChildren;
+  '/bento-grid-test': typeof BentoGridTestRoute;
+  '/button-test': typeof ButtonTestRoute;
+  '/clients': typeof ClientsRoute;
+  '/comprehensive-button-test': typeof ComprehensiveButtonTestRoute;
+  '/dashboard': typeof DashboardRoute;
+  '/financial': typeof FinancialRoute;
+  '/governance': typeof GovernanceRoute;
+  '/healthcare-test': typeof HealthcareTestRoute;
+  '/login': typeof LoginRoute;
+  '/patients': typeof PatientsRouteWithChildren;
+  '/pricing-rules': typeof PricingRulesRoute;
+  '/professional-services': typeof ProfessionalServicesRoute;
+  '/profile': typeof ProfileRoute;
+  '/reports': typeof ReportsRoute;
+  '/service-analytics': typeof ServiceAnalyticsRoute;
+  '/service-categories': typeof ServiceCategoriesRoute;
+  '/service-templates': typeof ServiceTemplatesRoute;
+  '/services': typeof ServicesRoute;
+  '/settings': typeof SettingsRoute;
+  '/shadcn-test': typeof ShadcnTestRoute;
+  '/shine-test': typeof ShineTestRoute;
+  '/signup': typeof SignupRoute;
+  '/signup-demo': typeof SignupDemoRoute;
+  '/subscription': typeof SubscriptionRoute;
+  '/subscription-test': typeof SubscriptionTestRoute;
+  '/test-auth': typeof TestAuthRoute;
+  '/universal-button-test': typeof UniversalButtonTestRoute;
+  '/validation-report': typeof ValidationReportRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/404'
@@ -453,8 +450,8 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
-  fileRoutesByTo: FileRoutesByTo
+    | '/patients/$patientId/history';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/404'
@@ -498,7 +495,7 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
+    | '/patients/$patientId/history';
   id:
     | '__root__'
     | '/'
@@ -543,394 +540,395 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
-  fileRoutesById: FileRoutesById
+    | '/patients/$patientId/history';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  R404Route: typeof R404Route
-  AdvancedAnimationsTestRoute: typeof AdvancedAnimationsTestRoute
-  AestheticDemoRoute: typeof AestheticDemoRoute
-  AiChatRoute: typeof AiChatRoute
-  AnimationValidationSuiteRoute: typeof AnimationValidationSuiteRoute
-  ApiTestRoute: typeof ApiTestRoute
-  AppointmentsRoute: typeof AppointmentsRouteWithChildren
-  BentoGridTestRoute: typeof BentoGridTestRoute
-  ButtonTestRoute: typeof ButtonTestRoute
-  ClientsRoute: typeof ClientsRoute
-  ComprehensiveButtonTestRoute: typeof ComprehensiveButtonTestRoute
-  DashboardRoute: typeof DashboardRoute
-  FinancialRoute: typeof FinancialRoute
-  GovernanceRoute: typeof GovernanceRoute
-  HealthcareTestRoute: typeof HealthcareTestRoute
-  LoginRoute: typeof LoginRoute
-  PatientsRoute: typeof PatientsRouteWithChildren
-  PricingRulesRoute: typeof PricingRulesRoute
-  ProfessionalServicesRoute: typeof ProfessionalServicesRoute
-  ProfileRoute: typeof ProfileRoute
-  ReportsRoute: typeof ReportsRoute
-  ServiceAnalyticsRoute: typeof ServiceAnalyticsRoute
-  ServiceCategoriesRoute: typeof ServiceCategoriesRoute
-  ServiceTemplatesRoute: typeof ServiceTemplatesRoute
-  ServicesRoute: typeof ServicesRoute
-  SettingsRoute: typeof SettingsRoute
-  ShadcnTestRoute: typeof ShadcnTestRoute
-  ShineTestRoute: typeof ShineTestRoute
-  SignupRoute: typeof SignupRoute
-  SignupDemoRoute: typeof SignupDemoRoute
-  SubscriptionRoute: typeof SubscriptionRoute
-  SubscriptionTestRoute: typeof SubscriptionTestRoute
-  TestAuthRoute: typeof TestAuthRoute
-  UniversalButtonTestRoute: typeof UniversalButtonTestRoute
-  ValidationReportRoute: typeof ValidationReportRoute
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthConfirmRoute: typeof AuthConfirmRoute
+  IndexRoute: typeof IndexRoute;
+  R404Route: typeof R404Route;
+  AdvancedAnimationsTestRoute: typeof AdvancedAnimationsTestRoute;
+  AestheticDemoRoute: typeof AestheticDemoRoute;
+  AiChatRoute: typeof AiChatRoute;
+  AnimationValidationSuiteRoute: typeof AnimationValidationSuiteRoute;
+  ApiTestRoute: typeof ApiTestRoute;
+  AppointmentsRoute: typeof AppointmentsRouteWithChildren;
+  BentoGridTestRoute: typeof BentoGridTestRoute;
+  ButtonTestRoute: typeof ButtonTestRoute;
+  ClientsRoute: typeof ClientsRoute;
+  ComprehensiveButtonTestRoute: typeof ComprehensiveButtonTestRoute;
+  DashboardRoute: typeof DashboardRoute;
+  FinancialRoute: typeof FinancialRoute;
+  GovernanceRoute: typeof GovernanceRoute;
+  HealthcareTestRoute: typeof HealthcareTestRoute;
+  LoginRoute: typeof LoginRoute;
+  PatientsRoute: typeof PatientsRouteWithChildren;
+  PricingRulesRoute: typeof PricingRulesRoute;
+  ProfessionalServicesRoute: typeof ProfessionalServicesRoute;
+  ProfileRoute: typeof ProfileRoute;
+  ReportsRoute: typeof ReportsRoute;
+  ServiceAnalyticsRoute: typeof ServiceAnalyticsRoute;
+  ServiceCategoriesRoute: typeof ServiceCategoriesRoute;
+  ServiceTemplatesRoute: typeof ServiceTemplatesRoute;
+  ServicesRoute: typeof ServicesRoute;
+  SettingsRoute: typeof SettingsRoute;
+  ShadcnTestRoute: typeof ShadcnTestRoute;
+  ShineTestRoute: typeof ShineTestRoute;
+  SignupRoute: typeof SignupRoute;
+  SignupDemoRoute: typeof SignupDemoRoute;
+  SubscriptionRoute: typeof SubscriptionRoute;
+  SubscriptionTestRoute: typeof SubscriptionTestRoute;
+  TestAuthRoute: typeof TestAuthRoute;
+  UniversalButtonTestRoute: typeof UniversalButtonTestRoute;
+  ValidationReportRoute: typeof ValidationReportRoute;
+  AuthCallbackRoute: typeof AuthCallbackRoute;
+  AuthConfirmRoute: typeof AuthConfirmRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/validation-report': {
-      id: '/validation-report'
-      path: '/validation-report'
-      fullPath: '/validation-report'
-      preLoaderRoute: typeof ValidationReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/validation-report';
+      path: '/validation-report';
+      fullPath: '/validation-report';
+      preLoaderRoute: typeof ValidationReportRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/universal-button-test': {
-      id: '/universal-button-test'
-      path: '/universal-button-test'
-      fullPath: '/universal-button-test'
-      preLoaderRoute: typeof UniversalButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/universal-button-test';
+      path: '/universal-button-test';
+      fullPath: '/universal-button-test';
+      preLoaderRoute: typeof UniversalButtonTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/test-auth': {
-      id: '/test-auth'
-      path: '/test-auth'
-      fullPath: '/test-auth'
-      preLoaderRoute: typeof TestAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/test-auth';
+      path: '/test-auth';
+      fullPath: '/test-auth';
+      preLoaderRoute: typeof TestAuthRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/subscription-test': {
-      id: '/subscription-test'
-      path: '/subscription-test'
-      fullPath: '/subscription-test'
-      preLoaderRoute: typeof SubscriptionTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/subscription-test';
+      path: '/subscription-test';
+      fullPath: '/subscription-test';
+      preLoaderRoute: typeof SubscriptionTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/subscription': {
-      id: '/subscription'
-      path: '/subscription'
-      fullPath: '/subscription'
-      preLoaderRoute: typeof SubscriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/subscription';
+      path: '/subscription';
+      fullPath: '/subscription';
+      preLoaderRoute: typeof SubscriptionRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/signup-demo': {
-      id: '/signup-demo'
-      path: '/signup-demo'
-      fullPath: '/signup-demo'
-      preLoaderRoute: typeof SignupDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/signup-demo';
+      path: '/signup-demo';
+      fullPath: '/signup-demo';
+      preLoaderRoute: typeof SignupDemoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/signup';
+      path: '/signup';
+      fullPath: '/signup';
+      preLoaderRoute: typeof SignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/shine-test': {
-      id: '/shine-test'
-      path: '/shine-test'
-      fullPath: '/shine-test'
-      preLoaderRoute: typeof ShineTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/shine-test';
+      path: '/shine-test';
+      fullPath: '/shine-test';
+      preLoaderRoute: typeof ShineTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/shadcn-test': {
-      id: '/shadcn-test'
-      path: '/shadcn-test'
-      fullPath: '/shadcn-test'
-      preLoaderRoute: typeof ShadcnTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/shadcn-test';
+      path: '/shadcn-test';
+      fullPath: '/shadcn-test';
+      preLoaderRoute: typeof ShadcnTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/settings';
+      path: '/settings';
+      fullPath: '/settings';
+      preLoaderRoute: typeof SettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services';
+      path: '/services';
+      fullPath: '/services';
+      preLoaderRoute: typeof ServicesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/service-templates': {
-      id: '/service-templates'
-      path: '/service-templates'
-      fullPath: '/service-templates'
-      preLoaderRoute: typeof ServiceTemplatesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/service-templates';
+      path: '/service-templates';
+      fullPath: '/service-templates';
+      preLoaderRoute: typeof ServiceTemplatesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/service-categories': {
-      id: '/service-categories'
-      path: '/service-categories'
-      fullPath: '/service-categories'
-      preLoaderRoute: typeof ServiceCategoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/service-categories';
+      path: '/service-categories';
+      fullPath: '/service-categories';
+      preLoaderRoute: typeof ServiceCategoriesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/service-analytics': {
-      id: '/service-analytics'
-      path: '/service-analytics'
-      fullPath: '/service-analytics'
-      preLoaderRoute: typeof ServiceAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/service-analytics';
+      path: '/service-analytics';
+      fullPath: '/service-analytics';
+      preLoaderRoute: typeof ServiceAnalyticsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/reports': {
-      id: '/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof ReportsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/reports';
+      path: '/reports';
+      fullPath: '/reports';
+      preLoaderRoute: typeof ReportsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/profile';
+      path: '/profile';
+      fullPath: '/profile';
+      preLoaderRoute: typeof ProfileRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/professional-services': {
-      id: '/professional-services'
-      path: '/professional-services'
-      fullPath: '/professional-services'
-      preLoaderRoute: typeof ProfessionalServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/professional-services';
+      path: '/professional-services';
+      fullPath: '/professional-services';
+      preLoaderRoute: typeof ProfessionalServicesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/pricing-rules': {
-      id: '/pricing-rules'
-      path: '/pricing-rules'
-      fullPath: '/pricing-rules'
-      preLoaderRoute: typeof PricingRulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/pricing-rules';
+      path: '/pricing-rules';
+      fullPath: '/pricing-rules';
+      preLoaderRoute: typeof PricingRulesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients': {
-      id: '/patients'
-      path: '/patients'
-      fullPath: '/patients'
-      preLoaderRoute: typeof PatientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/patients';
+      path: '/patients';
+      fullPath: '/patients';
+      preLoaderRoute: typeof PatientsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/healthcare-test': {
-      id: '/healthcare-test'
-      path: '/healthcare-test'
-      fullPath: '/healthcare-test'
-      preLoaderRoute: typeof HealthcareTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/healthcare-test';
+      path: '/healthcare-test';
+      fullPath: '/healthcare-test';
+      preLoaderRoute: typeof HealthcareTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/governance': {
-      id: '/governance'
-      path: '/governance'
-      fullPath: '/governance'
-      preLoaderRoute: typeof GovernanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/governance';
+      path: '/governance';
+      fullPath: '/governance';
+      preLoaderRoute: typeof GovernanceRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/financial': {
-      id: '/financial'
-      path: '/financial'
-      fullPath: '/financial'
-      preLoaderRoute: typeof FinancialRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/financial';
+      path: '/financial';
+      fullPath: '/financial';
+      preLoaderRoute: typeof FinancialRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard';
+      path: '/dashboard';
+      fullPath: '/dashboard';
+      preLoaderRoute: typeof DashboardRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/comprehensive-button-test': {
-      id: '/comprehensive-button-test'
-      path: '/comprehensive-button-test'
-      fullPath: '/comprehensive-button-test'
-      preLoaderRoute: typeof ComprehensiveButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/comprehensive-button-test';
+      path: '/comprehensive-button-test';
+      fullPath: '/comprehensive-button-test';
+      preLoaderRoute: typeof ComprehensiveButtonTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/clients': {
-      id: '/clients'
-      path: '/clients'
-      fullPath: '/clients'
-      preLoaderRoute: typeof ClientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/clients';
+      path: '/clients';
+      fullPath: '/clients';
+      preLoaderRoute: typeof ClientsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/button-test': {
-      id: '/button-test'
-      path: '/button-test'
-      fullPath: '/button-test'
-      preLoaderRoute: typeof ButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/button-test';
+      path: '/button-test';
+      fullPath: '/button-test';
+      preLoaderRoute: typeof ButtonTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/bento-grid-test': {
-      id: '/bento-grid-test'
-      path: '/bento-grid-test'
-      fullPath: '/bento-grid-test'
-      preLoaderRoute: typeof BentoGridTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/bento-grid-test';
+      path: '/bento-grid-test';
+      fullPath: '/bento-grid-test';
+      preLoaderRoute: typeof BentoGridTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/appointments': {
-      id: '/appointments'
-      path: '/appointments'
-      fullPath: '/appointments'
-      preLoaderRoute: typeof AppointmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/appointments';
+      path: '/appointments';
+      fullPath: '/appointments';
+      preLoaderRoute: typeof AppointmentsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api-test': {
-      id: '/api-test'
-      path: '/api-test'
-      fullPath: '/api-test'
-      preLoaderRoute: typeof ApiTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api-test';
+      path: '/api-test';
+      fullPath: '/api-test';
+      preLoaderRoute: typeof ApiTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/animation-validation-suite': {
-      id: '/animation-validation-suite'
-      path: '/animation-validation-suite'
-      fullPath: '/animation-validation-suite'
-      preLoaderRoute: typeof AnimationValidationSuiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/animation-validation-suite';
+      path: '/animation-validation-suite';
+      fullPath: '/animation-validation-suite';
+      preLoaderRoute: typeof AnimationValidationSuiteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/ai-chat': {
-      id: '/ai-chat'
-      path: '/ai-chat'
-      fullPath: '/ai-chat'
-      preLoaderRoute: typeof AiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/ai-chat';
+      path: '/ai-chat';
+      fullPath: '/ai-chat';
+      preLoaderRoute: typeof AiChatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/aesthetic-demo': {
-      id: '/aesthetic-demo'
-      path: '/aesthetic-demo'
-      fullPath: '/aesthetic-demo'
-      preLoaderRoute: typeof AestheticDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/aesthetic-demo';
+      path: '/aesthetic-demo';
+      fullPath: '/aesthetic-demo';
+      preLoaderRoute: typeof AestheticDemoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/advanced-animations-test': {
-      id: '/advanced-animations-test'
-      path: '/advanced-animations-test'
-      fullPath: '/advanced-animations-test'
-      preLoaderRoute: typeof AdvancedAnimationsTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/advanced-animations-test';
+      path: '/advanced-animations-test';
+      fullPath: '/advanced-animations-test';
+      preLoaderRoute: typeof AdvancedAnimationsTestRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/404': {
-      id: '/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof R404RouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/404';
+      path: '/404';
+      fullPath: '/404';
+      preLoaderRoute: typeof R404RouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients/$patientId': {
-      id: '/patients/$patientId'
-      path: '/$patientId'
-      fullPath: '/patients/$patientId'
-      preLoaderRoute: typeof PatientsPatientIdRouteImport
-      parentRoute: typeof PatientsRoute
-    }
+      id: '/patients/$patientId';
+      path: '/$patientId';
+      fullPath: '/patients/$patientId';
+      preLoaderRoute: typeof PatientsPatientIdRouteImport;
+      parentRoute: typeof PatientsRoute;
+    };
     '/auth/confirm': {
-      id: '/auth/confirm'
-      path: '/auth/confirm'
-      fullPath: '/auth/confirm'
-      preLoaderRoute: typeof AuthConfirmRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/confirm';
+      path: '/auth/confirm';
+      fullPath: '/auth/confirm';
+      preLoaderRoute: typeof AuthConfirmRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/callback';
+      path: '/auth/callback';
+      fullPath: '/auth/callback';
+      preLoaderRoute: typeof AuthCallbackRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/appointments/new': {
-      id: '/appointments/new'
-      path: '/new'
-      fullPath: '/appointments/new'
-      preLoaderRoute: typeof AppointmentsNewRouteImport
-      parentRoute: typeof AppointmentsRoute
-    }
+      id: '/appointments/new';
+      path: '/new';
+      fullPath: '/appointments/new';
+      preLoaderRoute: typeof AppointmentsNewRouteImport;
+      parentRoute: typeof AppointmentsRoute;
+    };
     '/patients/$patientId/history': {
-      id: '/patients/$patientId/history'
-      path: '/history'
-      fullPath: '/patients/$patientId/history'
-      preLoaderRoute: typeof PatientsPatientIdHistoryRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/history';
+      path: '/history';
+      fullPath: '/patients/$patientId/history';
+      preLoaderRoute: typeof PatientsPatientIdHistoryRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
     '/patients/$patientId/edit': {
-      id: '/patients/$patientId/edit'
-      path: '/edit'
-      fullPath: '/patients/$patientId/edit'
-      preLoaderRoute: typeof PatientsPatientIdEditRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/edit';
+      path: '/edit';
+      fullPath: '/patients/$patientId/edit';
+      preLoaderRoute: typeof PatientsPatientIdEditRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
     '/patients/$patientId/documents': {
-      id: '/patients/$patientId/documents'
-      path: '/documents'
-      fullPath: '/patients/$patientId/documents'
-      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/documents';
+      path: '/documents';
+      fullPath: '/patients/$patientId/documents';
+      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
   }
 }
 
 interface AppointmentsRouteChildren {
-  AppointmentsNewRoute: typeof AppointmentsNewRoute
+  AppointmentsNewRoute: typeof AppointmentsNewRoute;
 }
 
 const AppointmentsRouteChildren: AppointmentsRouteChildren = {
   AppointmentsNewRoute: AppointmentsNewRoute,
-}
+};
 
 const AppointmentsRouteWithChildren = AppointmentsRoute._addFileChildren(
   AppointmentsRouteChildren,
-)
+);
 
 interface PatientsPatientIdRouteChildren {
-  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
-  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute
-  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute
+  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute;
+  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute;
+  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute;
 }
 
 const PatientsPatientIdRouteChildren: PatientsPatientIdRouteChildren = {
   PatientsPatientIdDocumentsRoute: PatientsPatientIdDocumentsRoute,
   PatientsPatientIdEditRoute: PatientsPatientIdEditRoute,
   PatientsPatientIdHistoryRoute: PatientsPatientIdHistoryRoute,
-}
+};
 
-const PatientsPatientIdRouteWithChildren =
-  PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
+const PatientsPatientIdRouteWithChildren = PatientsPatientIdRoute._addFileChildren(
+  PatientsPatientIdRouteChildren,
+);
 
 interface PatientsRouteChildren {
-  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
+  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren;
 }
 
 const PatientsRouteChildren: PatientsRouteChildren = {
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
-}
+};
 
 const PatientsRouteWithChildren = PatientsRoute._addFileChildren(
   PatientsRouteChildren,
-)
+);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -971,7 +969,7 @@ const rootRouteChildren: RootRouteChildren = {
   ValidationReportRoute: ValidationReportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

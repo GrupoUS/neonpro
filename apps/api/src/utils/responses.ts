@@ -20,12 +20,12 @@ export function notFound(c: Context, message: string): Response {
 }
 
 export function serverError(c: Context, message: string, details?: any): Response {
-  return c.json({ 
-    error: { 
-      code: 'INTERNAL_ERROR', 
+  return c.json({
+    error: {
+      code: 'INTERNAL_ERROR',
       message,
-      ...(details && { details })
-    } 
+      ...(details && { details }),
+    },
   }, 500);
 }
 

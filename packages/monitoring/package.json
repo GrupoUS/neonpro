@@ -18,7 +18,7 @@
     "@opentelemetry/instrumentation": "^0.45.0",
     "@opentelemetry/instrumentation-http": "^0.45.0",
     "@opentelemetry/instrumentation-express": "^0.34.0",
-    "@opentelemetry/instrumentation-postgres": "^0.38.0",
+    "@opentelemetry/instrumentation-pg": "^0.45.0",
     "@opentelemetry/exporter-prometheus": "^0.45.0",
     "@opentelemetry/exporter-jaeger": "^1.17.0",
     "@opentelemetry/semantic-conventions": "^1.17.0",

@@ -67,18 +67,18 @@ global.simulateDatabaseOperation = async (connection: unknown, operation: string
   return operation !== 'error_simulation';
 };
 
-global.simulateDBConnectionRelease = async (connection: unknown) => {
+global.simulateDBConnectionRelease = async (_connection: unknown) => {
   // Simulate connection cleanup
   await new Promise(resolve => setTimeout(resolve, 1));
 };
 
-global.simulateLGPDOperation = async (operationType: string, data: Record<string, unknown>) => {
+global.simulateLGPDOperation = async (operationType: string, _data: Record<string, unknown>) => {
   // Simulate LGPD compliance operations
   await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
   return operationType === 'data_deletion' || operationType === 'consent_validation';
 };
 
-global.simulateAuditLogCreation = async (logData: Record<string, unknown>) => {
+global.simulateAuditLogCreation = async (_logData: Record<string, unknown>) => {
   // Simulate audit log creation
   await new Promise(resolve => setTimeout(resolve, Math.random() * 5));
   return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -90,7 +90,7 @@ global.simulateEmergencyScenario = async (scenarioType: string, options: Record<
   console.log(`Emergency scenario: ${scenarioType}`, options);
 };
 
-global.simulateHealthcareOperation = async (operationType: string, options: Record<string, unknown>) => {
+global.simulateHealthcareOperation = async (operationType: string, _options: Record<string, unknown>) => {
   // Simulate healthcare-specific operations
   await new Promise(resolve => setTimeout(resolve, Math.random() * 12));
   return !operationType.includes('unauthorized');

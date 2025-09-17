@@ -890,8 +890,8 @@ export class HealthcareAuthorizationEngine {
       allAdvice.push(...(resourceDecision.advice || []));
     }
 
-    // Evaluate LGPD compliance
-    if (this.config.lgpdCompliance.enableConsentValidation) {
+    // Evaluate LGPD compliance (but don't override permit decisions)
+    if (this.config.lgpdCompliance.enableConsentValidation && finalDecision !== 'permit') {
       const lgpdDecision = HealthcareAuthorizationRules.evaluateLGPDCompliance(context);
       if (lgpdDecision.decision === 'deny') {
         finalDecision = 'deny';

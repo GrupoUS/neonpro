@@ -472,7 +472,7 @@ export function assessSessionSecurityRisk(
  * Calculate LGPD data retention date
  */
 export function calculateDataRetentionDate(
-  sessionType: SessionType,
+  _sessionType: SessionType,
   config: SessionConfig,
   healthcareContext?: HealthcareSessionContext
 ): Date {
@@ -564,13 +564,9 @@ export function validateHealthcareContext(
 /**
  * Get emergency session override
  */
-export function getEmergencySessionOverride(): Partial<SessionConfig> {
+export function getEmergencySessionOverride(): SessionConfig {
   return {
-    maxIdleTime: 7200, // 2 hours
-    maxSessionDuration: 86400, // 24 hours
-    requireMFA: false,
-    enableSessionBinding: false,
-    auditLevel: 'comprehensive'
+    ...DEFAULT_SESSION_CONFIGS[SessionType.EMERGENCY]
   };
 }
 
@@ -713,7 +709,10 @@ export class SessionManagementService {
     if (!session) {
       return {
         isValid: false,
-        reason: 'Session not found'
+        reason: 'Session not found',
+        requiresRefresh: false,
+        securityFlags: [],
+        complianceFlags: []
       };
     }
     
@@ -722,7 +721,10 @@ export class SessionManagementService {
       return {
         isValid: false,
         session,
-        reason: `Session status: ${session.status}`
+        reason: `Session status: ${session.status}`,
+        requiresRefresh: false,
+        securityFlags: [],
+        complianceFlags: []
       };
     }
     
@@ -732,7 +734,10 @@ export class SessionManagementService {
       return {
         isValid: false,
         session,
-        reason: 'Session expired'
+        reason: 'Session expired',
+        requiresRefresh: false,
+        securityFlags: [],
+        complianceFlags: []
       };
     }
     
@@ -745,7 +750,10 @@ export class SessionManagementService {
       return {
         isValid: false,
         session,
-        reason: 'Session idle timeout'
+        reason: 'Session idle timeout',
+        requiresRefresh: false,
+        securityFlags: [],
+        complianceFlags: []
       };
     }
     
@@ -775,7 +783,9 @@ export class SessionManagementService {
         isValid: false,
         session,
         reason: 'Session binding validation failed',
-        securityFlags
+        securityFlags,
+        requiresRefresh: false,
+        complianceFlags: []
       };
     }
     
@@ -788,7 +798,8 @@ export class SessionManagementService {
       isValid: true,
       session,
       securityFlags,
-      requiresRefresh: securityFlags.length > 0
+      requiresRefresh: securityFlags.length > 0,
+      complianceFlags: []
     };
   }
   
@@ -1027,7 +1038,8 @@ export class SessionManagementService {
         clinicalContext: 'emergency',
         dataClassification: 'restricted'
       },
-      config: getEmergencySessionOverride()
+      config: getEmergencySessionOverride(),
+      metadata: { reason: 'emergency_access', emergencyCode }
     });
     
     // Log emergency access

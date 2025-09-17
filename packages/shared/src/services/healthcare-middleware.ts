@@ -459,12 +459,17 @@ export class HealthcareMiddlewareService {
   private async extractUserContext(c: Context): Promise<HealthcareRequestContext['userContext']> {
     // TODO: Integrate with authentication service
     const authHeader = c.req.header('authorization');
-    const userRole = c.req.header('x-user-role') as any;
+    
+    // SECURITY FIX: Never trust user role from headers - must come from verified JWT
+    // const decodedToken = await verifyAndDecodeJWT(authHeader);
+    // const userRole = decodedToken?.role;
+    // const facilityId = decodedToken?.facilityId;
+    const userRole = 'guest'; // Default to guest until proper auth is implemented
     const facilityId = c.req.header('x-facility-id');
     
     return {
       anonymizedUserId: authHeader ? `user_${nanoid(8)}` : undefined,
-      userRole: userRole || 'guest',
+      userRole: userRole, // Role should come from a verified token, not a header
       facilityId,
       departmentId: c.req.header('x-department-id'),
       accessLevel: 'public', // Default to public, should be determined by auth
@@ -484,7 +489,7 @@ export class HealthcareMiddlewareService {
     const req = c.req;
     
     return {
-      clientIpAddress: this.anonymizeIP(req.header('x-forwarded-for') || req.header('x-real-ip') || 'unknown'),
+      clientIpAddress: this.anonymizeIP((req.header('x-forwarded-for')?.split(',')[0].trim()) || req.header('x-real-ip') || 'unknown'),
       userAgent: req.header('user-agent'),
       deviceType: this.detectDeviceType(req.header('user-agent')),
       httpMethod: req.method,
@@ -891,7 +896,13 @@ export class HealthcareMiddlewareService {
       throw new Error('CSRF_TOKEN_MISSING: CSRF token required for state-changing operations');
     }
     
-    // TODO: Implement actual CSRF token validation
+    // Get the expected token from session or cookie
+    const expectedToken = c.req.cookie('csrf-token') || c.get('session')?.csrfToken;
+    
+    if (!expectedToken || csrfToken !== expectedToken) {
+      throw new Error('CSRF_TOKEN_INVALID: Invalid CSRF token provided');
+    }
+    
     console.log('🛡️ [HealthcareMiddlewareService] CSRF token validated');
   }
 
@@ -900,7 +911,8 @@ export class HealthcareMiddlewareService {
    */
   private async validateDataMinimization(c: Context, context: HealthcareRequestContext): Promise<void> {
     // Check if request is collecting more data than necessary
-    const body = await this.getRequestBody(c);
+    // BUGFIX: Use pre-parsed body to avoid consuming request stream
+    const body = c.get('parsedBody'); // Assume body is parsed earlier and stored in context
     
     if (body && typeof body === 'object') {
       const sensitiveFields = ['cpf', 'ssn', 'birthDate', 'fullName', 'address'];

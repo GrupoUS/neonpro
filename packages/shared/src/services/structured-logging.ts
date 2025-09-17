@@ -860,8 +860,8 @@ export class StructuredLogger {
    */
   private async sendPatientSafetyAlert(
     message: string,
-    data?: Record<string, unknown>,
-    context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
+    _data?: Record<string, unknown>,
+    _context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
   ): Promise<void> {
     console.log('🚨🏥 [StructuredLogger] PATIENT SAFETY ALERT:', message);
     // TODO: Implement actual alert system
@@ -872,8 +872,8 @@ export class StructuredLogger {
    */
   private async sendEmergencyAlert(
     message: string,
-    data?: Record<string, unknown>,
-    context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
+    _data?: Record<string, unknown>,
+    _context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
   ): Promise<void> {
     console.log('🆘🏥 [StructuredLogger] EMERGENCY ALERT:', message);
     // TODO: Implement actual emergency alert system

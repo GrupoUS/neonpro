@@ -29,6 +29,7 @@ export interface FeatureContext {
   priority: 'low' | 'medium' | 'high' | 'critical';
   estimatedEffort: number;
   dependencies: string[];
+  requirements: string[];
   securityCritical: boolean;
   complianceRequirements: string[];
   acceptanceCriteria: string[];
@@ -108,18 +109,15 @@ export interface AgentCapabilities {
 
 // Workflow Configuration
 export interface WorkflowConfig {
-  type: WorkflowType;
+  name?: string;
+  description?: string;
+  type?: WorkflowType;
   phases: {
-    [K in TDDPhase]: {
-      primary: AgentName;
-      secondary: AgentName[];
-      parallel: boolean;
-      timeout: number;
-      qualityGates: string[];
-    };
+    [K in TDDPhase]: PhaseConfig;
   };
-  triggers: string[];
-  complianceRequirements: string[];
+  qualityGates?: string[];
+  triggers?: string[];
+  complianceRequirements?: string[];
 }
 
 /**
@@ -194,6 +192,15 @@ export interface AgentResult {
   metrics: Record<string, number>;
   duration: number;
   timestamp: Date;
+}
+
+// Workflow Engine Configuration
+export interface WorkflowEngineConfig {
+  workflows: {
+    [K in WorkflowType]: WorkflowConfig;
+  };
+  defaultTimeout: number;
+  retryAttempts: number;
 }
 
 // Orchestrator Configuration

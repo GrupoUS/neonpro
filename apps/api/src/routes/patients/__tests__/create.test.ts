@@ -4,7 +4,7 @@
  * Integration with PatientService, AuditService, NotificationService
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -34,7 +34,7 @@ const mockBrazilianValidator = {
 describe('POST /api/v2/patients endpoint (T044)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.createPatient.mockResolvedValue({
       success: true,
@@ -96,7 +96,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('Successful Patient Creation', () => {
     it('should create a new patient with complete data', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         cpf: '123.456.789-00',
@@ -120,7 +120,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -138,7 +138,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should create patient with minimal required data', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'Maria Santos',
         email: 'maria@example.com',
@@ -151,7 +151,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -173,7 +173,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should include Location header with created patient URL', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -184,7 +184,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -198,7 +198,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should send welcome notification after patient creation', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -210,7 +210,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -235,7 +235,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('Brazilian Data Validation', () => {
     it('should validate CPF format', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         cpf: '123.456.789-00',
@@ -247,7 +247,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -262,7 +262,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       mockBrazilianValidator.validateCPF.mockReturnValue(false);
 
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         cpf: '111.111.111-11', // Invalid CPF
@@ -274,7 +274,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -289,13 +289,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         expect.objectContaining({
           field: 'cpf',
           message: 'CPF inválido',
-        })
+        }),
       );
     });
 
     it('should validate Brazilian phone number format', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         phone: '(11) 99999-9999',
@@ -307,7 +307,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -320,7 +320,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should validate CEP format in address', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -337,7 +337,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -352,7 +352,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('LGPD Consent Handling', () => {
     it('should validate LGPD consent before creation', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -366,7 +366,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -383,7 +383,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should reject creation without required LGPD consent', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -394,7 +394,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -409,13 +409,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         expect.objectContaining({
           field: 'lgpdConsent',
           message: 'Consentimento LGPD é obrigatório',
-        })
+        }),
       );
     });
 
     it('should create consent record after patient creation', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -429,7 +429,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -449,7 +449,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('Audit Trail Logging', () => {
     it('should log patient creation activity', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -460,7 +460,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -485,7 +485,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should include LGPD compliance in audit log', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -496,7 +496,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -508,7 +508,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         expect.objectContaining({
           complianceContext: 'LGPD',
           sensitivityLevel: 'high',
-        })
+        }),
       );
     });
   });
@@ -516,7 +516,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const mockRequest = {
         method: 'POST',
         url: '/api/v2/patients',
@@ -536,7 +536,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should handle validation errors', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const invalidData = {
         // Missing required name field
         email: 'invalid-email',
@@ -547,7 +547,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(invalidData),
@@ -569,7 +569,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       });
 
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -580,7 +580,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -602,7 +602,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       });
 
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         cpf: '123.456.789-00',
@@ -614,7 +614,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -633,7 +633,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -644,7 +644,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(patientData),
@@ -659,7 +659,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
     it('should validate healthcare professional context', async () => {
       const { default: createRoute } = require('../create');
-      
+
       const patientData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -670,7 +670,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         method: 'POST',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Healthcare-Professional': 'CRM-SP-123456',
         }),
@@ -683,7 +683,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(mockPatientService.createPatient).toHaveBeenCalledWith(
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456',
-        })
+        }),
       );
     });
   });

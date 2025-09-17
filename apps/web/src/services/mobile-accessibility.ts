@@ -13,17 +13,14 @@
 
 import { z } from 'zod';
 import MobileResponsiveAccessibility, {
-  RESPONSIVE_ACCESSIBILITY_LEVELS,
   type ResponsiveAccessibilityReport,
   type ResponsiveElement,
 } from '../utils/mobile-responsive-accessibility';
 import MobileTouchAccessibility, {
-  TOUCH_ACCESSIBILITY_LEVELS,
   type TouchAccessibilityReport,
   type TouchTarget,
 } from '../utils/mobile-touch-accessibility';
 import MobileScreenReaderService, {
-  MOBILE_SCREEN_READER_LEVELS,
   type ScreenReaderAccessibilityReport,
   type ScreenReaderElement,
 } from './mobile-screen-reader';

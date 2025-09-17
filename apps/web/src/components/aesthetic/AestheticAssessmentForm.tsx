@@ -6,6 +6,8 @@ import { AlertTriangle, FileText, Upload, User } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
+import PDFExportButtons from '../pdf/PDFExportButtons';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -21,8 +23,6 @@ import {
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import PDFExportButtons from '../pdf/PDFExportButtons';
-import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
 
 // Schema de validação para o formulário de avaliação estética
 const aestheticAssessmentSchema = z.object({
@@ -465,11 +465,11 @@ export function AestheticAssessmentForm({
           {/* Seção de Exportação PDF */}
           {(() => {
             const formData = form.getValues();
-            const hasBasicData = formData.patientData.name && 
-                                 formData.patientData.age && 
-                                 formData.patientData.skinType && 
-                                 formData.patientData.gender;
-            
+            const hasBasicData = formData.patientData.name
+              && formData.patientData.age
+              && formData.patientData.skinType
+              && formData.patientData.gender;
+
             if (hasBasicData) {
               // Converter dados do formulário para o formato do PDF
               const pdfData: AestheticAssessmentData = {
@@ -507,10 +507,10 @@ export function AestheticAssessmentForm({
                   <CardContent>
                     <PDFExportButtons
                       assessmentData={pdfData}
-                      variant="outline"
-                      size="default"
+                      variant='outline'
+                      size='default'
                       showPreview={true}
-                      className=""
+                      className=''
                     />
                   </CardContent>
                 </Card>

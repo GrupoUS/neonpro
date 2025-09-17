@@ -2,11 +2,11 @@
 // Handles AI chat requests with LGPD compliance and audit logging
 
 import { zValidator } from '@hono/zod-validator';
+import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
 import type { CoreMessage, UIMessage } from 'ai';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
-import { AIProviderFactory, type AIMessage } from '@neonpro/core-services';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 
 // Request validation schemas
@@ -92,7 +92,8 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     const url = new URL(c.req.url);
     const mockMode = url.searchParams.get('mock') === 'true'
       || process.env.AI_CHAT_MOCK_MODE === 'true'
-      || (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY && !process.env.GOOGLE_AI_API_KEY);
+      || (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY
+        && !process.env.GOOGLE_AI_API_KEY);
 
     // Build AI messages for our provider system
     const aiMessages: AIMessage[] = [
@@ -117,7 +118,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     if (mockMode) {
       // Use mock provider from factory
       const mockStream = AIProviderFactory.generateStreamWithFailover(aiMessages, 1);
-      
+
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
@@ -134,7 +135,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'mock' });
-      
+
       return new Response(stream, {
         status: 200,
         headers: {
@@ -149,7 +150,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     // Use real AI providers with automatic failover
     const provider = await AIProviderFactory.getProviderWithFailover();
     const providerName = model || process.env.AI_PROVIDER || 'openai';
-    
+
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -166,7 +167,8 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     });
 
     // Audit log minimal info
-    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '') || '';
+    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
+      || '';
     console.log('AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
       sessionId,
@@ -236,17 +238,21 @@ app.post(
       }
 
       // Generate suggestions using AI provider
-      const suggestionPrompt = `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
-        webHints.join('; ')
-      }. Responda apenas com lista separada por vírgulas, sem numeração.`;
+      const suggestionPrompt =
+        `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
+          webHints.join('; ')
+        }. Responda apenas com lista separada por vírgulas, sem numeração.`;
 
       const messages: AIMessage[] = [
-        { role: 'system', content: 'Você é um especialista em estética que sugere tratamentos relevantes.' },
+        {
+          role: 'system',
+          content: 'Você é um especialista em estética que sugere tratamentos relevantes.',
+        },
         { role: 'user', content: suggestionPrompt },
       ];
 
       let suggestions: string[] = [];
-      
+
       try {
         const response = await AIProviderFactory.generateWithFailover(messages);
         suggestions = response.content
@@ -299,7 +305,7 @@ app.post(
 // Health check endpoint
 app.get('/health', c => {
   const availableProviders = AIProviderFactory.getAvailableProviders();
-  
+
   return c.json({
     status: 'ok',
     service: 'neonpro-ai-chat',

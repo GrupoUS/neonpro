@@ -1,15 +1,20 @@
 /**
  * Billing API Integration Test
- * 
+ *
  * Tests API endpoints for billing and financial management with Brazilian
  * tax compliance, SUS integration, and health plan support validation.
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { testClient } from 'hono/testing';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import app from '../../app';
-import { setupTestAuth, createMockUser, createMockPatient, createMockAppointment } from '../helpers/auth';
-import { setupTestDb, clearTestData } from '../helpers/database';
+import {
+  createMockAppointment,
+  createMockPatient,
+  createMockUser,
+  setupTestAuth,
+} from '../helpers/auth';
+import { clearTestData, setupTestDb } from '../helpers/database';
 
 describe('Billing API', () => {
   let authHeaders: Record<string, string>;
@@ -349,13 +354,13 @@ describe('Billing API', () => {
       expect(res.status).toBe(201);
       const data = await res.json();
       expect(data.data.amount).toBe(75.00);
-      
+
       // Check that invoice is still partially paid
       const invoiceRes = await testClient(app).billing.invoices[':id'].$get({
         param: { id: testInvoiceId },
         header: authHeaders,
       });
-      
+
       const invoiceData = await invoiceRes.json();
       expect(invoiceData.data.status).toBe('partially_paid');
     });
@@ -606,7 +611,7 @@ describe('Billing API', () => {
     it('should log audit trail for billing operations', async () => {
       // This test verifies that audit logs are created
       // for billing operations (create, read, update, payment)
-      
+
       const invoiceData = {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
@@ -628,7 +633,7 @@ describe('Billing API', () => {
       });
 
       expect(res.status).toBe(201);
-      
+
       // In a real implementation, you would check audit logs here
       // For this test, we're ensuring the operation succeeds
       // and trusting that the audit middleware is functioning
@@ -658,7 +663,7 @@ describe('Billing API', () => {
       });
 
       expect(res.status).toBe(201);
-      
+
       // Verify that sensitive data is properly protected
       // (actual implementation would check encryption, masking, etc.)
       const data = await res.json();

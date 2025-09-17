@@ -13,7 +13,11 @@ import {
   AgentResult,
   WorkflowConfig,
   PhaseConfig,
-  AgentConfig
+  AgentConfig,
+  Finding,
+  Recommendation,
+  FindingType,
+  RecommendationType
 } from './types';
 
 export interface WorkflowEngineConfig {
@@ -126,18 +130,18 @@ export class WorkflowEngine {
   private async executeTestAgent(
     phase: TDDPhase,
     state: OrchestrationState,
-    agentConfig: AgentConfig,
-    phaseConfig: PhaseConfig
+    _agentConfig: AgentConfig,
+    _phaseConfig: PhaseConfig
   ): Promise<Omit<AgentResult, 'duration' | 'timestamp'>> {
-    const findings = [];
-    const recommendations = [];
+    const findings: Finding[] = [];
+    const recommendations: Recommendation[] = [];
     const metrics: Record<string, number> = {};
 
     switch (phase) {
       case 'red':
         // Write failing tests
         findings.push({
-          type: 'test-creation',
+          type: 'test-creation' as FindingType,
           severity: 'info',
           description: `Created failing tests for ${state.feature.name}`,
           location: state.feature.files.tests || 'tests/',
@@ -145,7 +149,7 @@ export class WorkflowEngine {
         });
         
         recommendations.push({
-          type: 'test-strategy',
+          type: 'test-strategy' as RecommendationType,
           priority: 'high',
           description: 'Write comprehensive unit tests that fail initially',
           action: 'create_failing_tests'
@@ -157,7 +161,7 @@ export class WorkflowEngine {
       case 'green':
         // Validate tests pass
         findings.push({
-          type: 'test-validation',
+          type: 'test-validation' as FindingType,
           severity: 'info',
           description: 'Validating that all tests now pass',
           location: state.feature.files.tests || 'tests/',
@@ -170,7 +174,7 @@ export class WorkflowEngine {
       case 'refactor':
         // Ensure tests still pass after refactoring
         findings.push({
-          type: 'test-stability',
+          type: 'test-stability' as FindingType,
           severity: 'info',
           description: 'Ensuring test stability during refactoring',
           location: state.feature.files.tests || 'tests/',
@@ -197,18 +201,18 @@ export class WorkflowEngine {
   private async executeCodeReviewAgent(
     phase: TDDPhase,
     state: OrchestrationState,
-    agentConfig: AgentConfig,
-    phaseConfig: PhaseConfig
+    _agentConfig: AgentConfig,
+    _phaseConfig: PhaseConfig
   ): Promise<Omit<AgentResult, 'duration' | 'timestamp'>> {
-    const findings = [];
-    const recommendations = [];
+    const findings: Finding[] = [];
+    const recommendations: Recommendation[] = [];
     const metrics: Record<string, number> = {};
 
     switch (phase) {
       case 'red':
         // Review test quality
         findings.push({
-          type: 'test-quality',
+          type: 'test-quality' as FindingType,
           severity: 'info',
           description: 'Reviewing test structure and clarity',
           location: state.feature.files.tests || 'tests/',
@@ -219,7 +223,7 @@ export class WorkflowEngine {
       case 'green':
         // Review implementation quality
         findings.push({
-          type: 'code-quality',
+          type: 'code-quality' as FindingType,
           severity: 'info',
           description: 'Reviewing implementation for code quality',
           location: state.feature.files.implementation || 'src/',
@@ -227,7 +231,7 @@ export class WorkflowEngine {
         });
         
         recommendations.push({
-          type: 'code-improvement',
+          type: 'code-improvement' as RecommendationType,
           priority: 'medium',
           description: 'Consider extracting complex logic into separate functions',
           action: 'refactor_complex_code'
@@ -237,7 +241,7 @@ export class WorkflowEngine {
       case 'refactor':
         // Review refactoring quality
         findings.push({
-          type: 'refactoring-quality',
+          type: 'refactoring-quality' as FindingType,
           severity: 'info',
           description: 'Reviewing refactoring improvements',
           location: state.feature.files.implementation || 'src/',
@@ -264,18 +268,18 @@ export class WorkflowEngine {
   private async executeArchitectAgent(
     phase: TDDPhase,
     state: OrchestrationState,
-    agentConfig: AgentConfig,
-    phaseConfig: PhaseConfig
+    _agentConfig: AgentConfig,
+    _phaseConfig: PhaseConfig
   ): Promise<Omit<AgentResult, 'duration' | 'timestamp'>> {
-    const findings = [];
-    const recommendations = [];
+    const findings: Finding[] = [];
+    const recommendations: Recommendation[] = [];
     const metrics: Record<string, number> = {};
 
     switch (phase) {
       case 'red':
         // Review architectural design
         findings.push({
-          type: 'architecture-design',
+          type: 'architecture-design' as FindingType,
           severity: 'info',
           description: 'Reviewing architectural approach for feature',
           location: state.feature.files.implementation || 'src/',
@@ -286,7 +290,7 @@ export class WorkflowEngine {
       case 'green':
         // Review implementation architecture
         findings.push({
-          type: 'architecture-implementation',
+          type: 'architecture-implementation' as FindingType,
           severity: 'info',
           description: 'Reviewing implementation against architectural principles',
           location: state.feature.files.implementation || 'src/',
@@ -297,7 +301,7 @@ export class WorkflowEngine {
       case 'refactor':
         // Review architectural improvements
         findings.push({
-          type: 'architecture-improvement',
+          type: 'architecture-improvement' as FindingType,
           severity: 'info',
           description: 'Reviewing architectural improvements from refactoring',
           location: state.feature.files.implementation || 'src/',
@@ -324,11 +328,11 @@ export class WorkflowEngine {
   private async executeSecurityAgent(
     phase: TDDPhase,
     state: OrchestrationState,
-    agentConfig: AgentConfig,
-    phaseConfig: PhaseConfig
+    _agentConfig: AgentConfig,
+    _phaseConfig: PhaseConfig
   ): Promise<Omit<AgentResult, 'duration' | 'timestamp'>> {
-    const findings = [];
-    const recommendations = [];
+    const findings: Finding[] = [];
+    const recommendations: Recommendation[] = [];
     const metrics: Record<string, number> = {};
 
     if (state.feature.securityCritical) {
@@ -336,7 +340,7 @@ export class WorkflowEngine {
         case 'red':
           // Security test requirements
           findings.push({
-            type: 'security-test-requirements',
+            type: 'security-test-requirements' as FindingType,
             severity: 'high',
             description: 'Defining security test requirements',
             location: state.feature.files.tests || 'tests/',
@@ -344,7 +348,7 @@ export class WorkflowEngine {
           });
           
           recommendations.push({
-            type: 'security-testing',
+            type: 'security-testing' as RecommendationType,
             priority: 'high',
             description: 'Implement security-specific test cases',
             action: 'create_security_tests'
@@ -354,7 +358,7 @@ export class WorkflowEngine {
         case 'green':
           // Security implementation review
           findings.push({
-            type: 'security-implementation',
+            type: 'security-implementation' as FindingType,
             severity: 'high',
             description: 'Reviewing implementation for security vulnerabilities',
             location: state.feature.files.implementation || 'src/',
@@ -365,7 +369,7 @@ export class WorkflowEngine {
         case 'refactor':
           // Security impact of refactoring
           findings.push({
-            type: 'security-refactoring',
+            type: 'security-refactoring' as FindingType,
             severity: 'medium',
             description: 'Assessing security impact of refactoring changes',
             location: state.feature.files.implementation || 'src/',

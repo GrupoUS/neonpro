@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 async function buildApp() {
   // Minimal env defaults used by tests
