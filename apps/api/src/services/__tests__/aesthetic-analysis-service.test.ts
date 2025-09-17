@@ -10,7 +10,6 @@ import {
   AestheticAssessmentRequest,
 } from '../aesthetic-analysis-service';
 
-
 // Mock Supabase client - Fixed to support proper chaining
 const createChainableMock = (tableName: string) => {
   const orderMock = vi.fn(() => {

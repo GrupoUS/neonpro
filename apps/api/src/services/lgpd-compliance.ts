@@ -322,7 +322,7 @@ export class LGPDComplianceService {
       // Check if patient data exceeds retention period
       const retentionLimit = new Date();
       retentionLimit.setFullYear(retentionLimit.getFullYear() - 7); // 7 years retention for medical data
-      
+
       // Log retention check
       console.log(`LGPD: Checking retention compliance for patient ${patientId}`);
     }
@@ -381,13 +381,16 @@ export class LGPDComplianceService {
     if (patientId) {
       // Check if patient has any pending data subject requests
       console.log(`LGPD: Validating data subject rights for patient ${patientId}`);
-      
+
       // Simulate checking for pending requests (access, correction, deletion)
       const pendingRequests = []; // Would query actual database
-      
+
       if (pendingRequests.length > 0) {
-        this.addIssue('pending_data_subject_requests', 
-          'Patient has pending data subject rights requests', 'medium');
+        this.addIssue(
+          'pending_data_subject_requests',
+          'Patient has pending data subject rights requests',
+          'medium',
+        );
       }
     }
     // Mock implementation - would query actual rights requests
@@ -450,13 +453,16 @@ export class LGPDComplianceService {
     // Validate audit trail compliance for patient data operations
     if (patientId) {
       console.log(`LGPD: Validating audit compliance for patient ${patientId}`);
-      
+
       // Check if all patient data operations are properly audited
       const auditCoverage = 0.95; // Would calculate actual coverage
-      
+
       if (auditCoverage < 0.98) {
-        this.addIssue('incomplete_audit_trail', 
-          'Audit trail coverage below required threshold', 'high');
+        this.addIssue(
+          'incomplete_audit_trail',
+          'Audit trail coverage below required threshold',
+          'high',
+        );
       }
     }
     // Mock implementation - would query actual audit logs

@@ -16,14 +16,15 @@ Use this prompt as the single source of truth for multi-agent orchestrated audit
 
 ### Core Code Review Agents
 
-| Agent                | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     |
-| -------------------- | -------------------------------------- | ----------------------- | ---------------- | ---------------- |
-| **architect-review** | System design, patterns, scalability   | Architecture validation | ✅               | None             |
-| **security-auditor** | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             |
-| **code-reviewer**    | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review |
-| **test**             | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    |
+| Agent                | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     | TDD Integration          |
+| -------------------- | -------------------------------------- | ----------------------- | ---------------- | ---------------- | ------------------------ |
+| **architect-review** | System design, patterns, scalability   | Architecture validation | ✅               | None             | RED/GREEN/REFACTOR       |
+| **security-auditor** | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             | ALL phases (healthcare)  |
+| **code-reviewer**    | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review | GREEN/REFACTOR           |
+| **test**             | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    | RED (primary)             |
+| **compliance-validator** | Healthcare regulatory validation    | Compliance checking     | ✅               | security-auditor | ALL phases (mandatory)    |
 
-### Agent Activation Triggers
+### Enhanced Agent Activation Triggers
 
 ```yaml
 AGENT_TRIGGERS:
@@ -31,21 +32,93 @@ AGENT_TRIGGERS:
     keywords: ["microservice", "architecture", "system design", "patterns", "scalability"]
     file_patterns: ["**/routes/**", "**/api/**", "**/services/**"]
     always_active: true
-
+    tdd_integration: "Validates architectural test patterns and design compliance"
+    
   security-auditor:
     keywords: ["authentication", "authorization", "payment", "personal data", "compliance"]
     file_patterns: ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"]
     healthcare_critical: true
-
+    tdd_integration: "Security-first approach for all TDD phases in healthcare contexts"
+    
   code-reviewer:
     keywords: ["performance", "maintainability", "technical debt", "code quality"]
     file_patterns: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
     always_active: true
-
+    tdd_integration: "Quality gates enforcement during GREEN/REFACTOR phases"
+    
   test:
     keywords: ["tdd", "testing", "coverage", "test patterns"]
     file_patterns: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
     always_active: true
+    tdd_integration: "Primary coordinator for RED phase with test structure definition"
+    
+  compliance-validator:
+    keywords: ["lgpd", "gdpr", "hipaa", "anvisa", "cfm", "healthcare", "patient", "clinic"]
+    file_patterns: ["**/*patient*", "**/*clinic*", "**/healthcare/**", "**/compliance/**"]
+    healthcare_critical: true
+    always_active: false  # Only activated for healthcare features
+    tdd_integration: "Mandatory validation in ALL phases for healthcare features"
+```
+
+### TDD Phase Agent Coordination Matrix
+
+```yaml
+TDD_PHASE_COORDINATION:
+  RED_PHASE:
+    primary_agent: test
+    support_agents:
+      - architect-review    # Design validation
+      - security-auditor   # Security requirements (if triggered)
+      - compliance-validator # Healthcare compliance (if applicable)
+    mandatory_tools:
+      - "sequential-thinking"
+      - "archon"
+      - "serena"
+      - "desktop-commander"
+    quality_gates:
+      - "Test patterns compliance ≥95%"
+      - "Architecture alignment ≥90%"
+      - "Security coverage ≥100% (if applicable)"
+      - "Compliance validation ≥100% (healthcare)"
+
+  GREEN_PHASE:
+    primary_agent: code-reviewer
+    support_agents:
+      - architect-review    # Pattern compliance
+      - security-auditor   # Vulnerability scanning
+      - test              # Test validation
+      - compliance-validator # Implementation compliance
+    mandatory_tools:
+      - "desktop-commander"
+      - "serena"
+      - "archon"
+      - "context7/tavily" (if complexity ≥7)
+    quality_gates:
+      - "All tests passing ≥100%"
+      - "Code quality metrics ≥85%"
+      - "Security validation ≥100%"
+      - "Pattern compliance ≥90%"
+      - "Compliance validation ≥100% (healthcare)"
+
+  REFACTOR_PHASE:
+    coordination: parallel
+    agents:
+      - code-reviewer     # Code quality improvements
+      - architect-review  # Design optimization
+      - security-auditor  # Security hardening
+      - test             # Test optimization
+      - compliance-validator # Compliance optimization
+    mandatory_tools:
+      - "sequential-thinking"
+      - "serena"
+      - "desktop-commander"
+      - "archon"
+    quality_gates:
+      - "Quality metrics improved ≥10%"
+      - "Architecture score maintained ≥90%"
+      - "Security posture improved ≥100%"
+      - "Test performance improved ≥5%"
+      - "Compliance maintained/improved ≥100%"
 ```
 
 ---
@@ -63,7 +136,7 @@ orchestration_setup:
   5. workflow_selection: "Choose orchestration pattern (standard/security-critical/microservices)"
 ```
 
-### Mandatory MCP Integration
+### Mandatory MCP Integration & Tool Sequences
 
 ```yaml
 CRITICAL_MCPS:
@@ -71,7 +144,55 @@ CRITICAL_MCPS:
   serena: "MANDATORY - Codebase analysis and semantic search"
   desktop-commander: "MANDATORY - File operations and command execution"
   supabase: "CONDITIONAL - Database and RLS validation when applicable"
+  context7: "CONDITIONAL - Documentation and best practices research"
+  tavily: "CONDITIONAL - Real-time information and trends"
 
+MANDATORY_TOOL_SEQUENCES:
+  RED_PHASE_SEQUENCE:
+    - "sequential-thinking"  # Always first - analyze requirements
+    - "archon"              # Task management and coordination
+    - "serena"              # Codebase analysis
+    - "context7/tavily"     # Research if complexity ≥7
+    - "desktop-commander"   # Test implementation
+
+  GREEN_PHASE_SEQUENCE:
+    - "desktop-commander"   # File operations
+    - "serena"              # Code analysis
+    - "archon"              # Task updates
+    - "context7/tavily"     # Research if stuck
+    - "shadcn"             # UI components if applicable
+
+  REFACTOR_PHASE_SEQUENCE:
+    - "sequential-thinking"  # Analysis and optimization
+    - "serena"              # Code quality assessment
+    - "desktop-commander"   # Refactoring operations
+    - "archon"              # Documentation and updates
+
+  COMPLIANCE_SEQUENCE:
+    - "security-auditor"    # Primary compliance validation
+    - "supabase"            # Database compliance checks
+    - "archon"              # Compliance documentation
+    - "desktop-commander"   # Compliance fixes
+
+HEALTHCARE_MANDATORY_SEQUENCES:
+  patient_data_operations:
+    - "sequential-thinking"  # Risk assessment
+    - "security-auditor"    # LGPD compliance validation
+    - "supabase"            # RLS policy verification
+    - "serena"              # Code analysis for PHI handling
+    - "desktop-commander"   # Implementation
+    - "archon"              # Compliance documentation
+
+  compliance_validation:
+    - "security-auditor"    # Primary validation
+    - "compliance-validator" # Healthcare specific checks
+    - "supabase"            # Database compliance
+    - "archon"              # Audit trail documentation
+```
+
+### Enhanced Documentation Preload with Agent Integration
+
+```yaml
 DOCUMENTATION_PRELOAD:
   architecture:
     - "docs/architecture/source-tree.md"
@@ -80,9 +201,50 @@ DOCUMENTATION_PRELOAD:
     - "docs/testing/AGENTS.md"
     - "docs/testing/coverage-policy.md"
     - "docs/testing/integration-testing.md"
+    - ".claude/agents/code-review/tdd-orchestrator.md"
   standards:
     - "docs/rules/coding-standards.md"
-    - ".claude/agents/code-review/tdd-orchestrator.md"
+    - ".claude/agents/code-review/architect-review.md"
+    - ".claude/agents/code-review/code-reviewer.md"
+    - ".claude/agents/code-review/security-auditor.md"
+  healthcare_compliance:
+    - "docs/compliance/lgpd-requirements.md"
+    - "docs/compliance/anvisa-standards.md"
+    - "docs/compliance/cfm-guidelines.md"
+```
+
+### Agent Quality Gate Integration
+
+```yaml
+AGENT_QUALITY_GATE_COORDINATION:
+  orchestrator:
+    primary: "tdd-orchestrator"
+    responsibilities:
+      - "Agent activation and coordination"
+      - "Quality gate validation"
+      - "Workflow progression management"
+      - "Compliance enforcement"
+  
+  quality_gate_validation:
+    architect-review:
+      gates: ["architecture_compliance", "design_patterns", "scalability"]
+      thresholds: ["≥90%", "≥85%", "≥80%"]
+    
+    security-auditor:
+      gates: ["security_vulnerabilities", "compliance_validation", "data_protection"]
+      thresholds: ["0 critical", "≥100%", "≥100%"]
+    
+    code-reviewer:
+      gates: ["code_quality", "maintainability", "performance"]
+      thresholds: ["≥85%", "≥80%", "≥75%"]
+    
+    test:
+      gates: ["test_coverage", "test_quality", "tdd_patterns"]
+      thresholds: ["≥90%", "≥85%", "≥95%"]
+    
+    compliance-validator:
+      gates: ["lgpd_compliance", "healthcare_standards", "audit_trail"]
+      thresholds: ["≥100%", "≥100%", "≥100%"]
 ```
 
 ---

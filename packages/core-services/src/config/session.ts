@@ -284,7 +284,7 @@ export function sessionMiddleware(options?: {
         : null,
     );
 
-    await next();
+    return await next();
   };
 }
 

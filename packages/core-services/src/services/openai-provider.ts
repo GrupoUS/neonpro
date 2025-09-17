@@ -7,8 +7,8 @@ import type {
 
 // Placeholder OpenAI provider. Real implementation will be added in a future phase.
 export class OpenAIProvider implements AIProvider {
-  constructor(private readonly apiKey: string) {
-    if (!apiKey) {
+  constructor(private readonly _apiKey: string) {
+    if (!this._apiKey) {
       throw new Error('OpenAI API key is required');
     }
   }

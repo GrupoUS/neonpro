@@ -32,26 +32,26 @@ export interface ConsentRecord {
 export function dataProtectionMiddleware(options: DataProtectionOptions) {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    
+
     try {
       // 1. LGPD Article 8 - User consent validation
       if (options.requireActiveConsent) {
         const userId = await getCurrentUserId(c);
         if (userId) {
           const hasValidConsent = await validateUserConsent(
-            userId, 
-            options.purpose, 
+            userId,
+            options.purpose,
             options.dataCategories,
-            options.minimumConsentLevel || 'basic'
+            options.minimumConsentLevel || 'basic',
           );
-          
+
           if (!hasValidConsent) {
             return c.json({
               error: 'LGPD_CONSENT_REQUIRED',
               message: 'Consentimento LGPD necessário para esta operação',
               purpose: options.purpose,
               dataCategories: options.dataCategories,
-              consentUrl: '/api/lgpd/consent'
+              consentUrl: '/api/lgpd/consent',
             }, 403);
           }
         }
@@ -69,9 +69,9 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
           ipAddress: getClientIP(c),
           userAgent: c.req.header('User-Agent'),
           sessionId: c.req.header('X-Session-ID') || 'anonymous',
-          requestId: generateRequestId()
+          requestId: generateRequestId(),
         };
-        
+
         // Log to structured audit system (not console in production)
         if (process.env.NODE_ENV === 'production') {
           await logAuditEvent('LGPD_DATA_ACCESS', auditData);
@@ -86,14 +86,14 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
         c.header('X-Data-Protection', 'LGPD-Compliant');
         c.header('X-Data-Purpose', options.purpose);
         c.header('X-Data-Categories', options.dataCategories.join(','));
-        
+
         // Security headers for PHI protection
         c.header('X-Content-Type-Options', 'nosniff');
         c.header('X-Frame-Options', 'DENY');
         c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
         c.header('Cache-Control', 'no-cache, no-store, must-revalidate, private');
         c.header('Pragma', 'no-cache');
-        
+
         // Data retention information
         if (options.retentionPeriodDays) {
           c.header('X-Data-Retention-Days', options.retentionPeriodDays.toString());
@@ -106,9 +106,10 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
       // 5. Response time audit for performance monitoring
       const responseTime = Date.now() - startTime;
       if (options.auditAllRequests && responseTime > 1000) {
-        console.warn(`[LGPD PERFORMANCE] Slow response: ${responseTime}ms for ${c.req.method} ${c.req.path}`);
+        console.warn(
+          `[LGPD PERFORMANCE] Slow response: ${responseTime}ms for ${c.req.method} ${c.req.path}`,
+        );
       }
-
     } catch (error) {
       // 6. LGPD Article 48 - Security incident logging
       const errorData = {
@@ -118,15 +119,15 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
         path: c.req.path,
         purpose: options.purpose,
         userId: await getCurrentUserId(c).catch(() => null),
-        ipAddress: getClientIP(c)
+        ipAddress: getClientIP(c),
       };
-      
+
       console.error('[LGPD ERROR]', errorData);
-      
+
       // Don't expose internal errors to client
       return c.json({
         error: 'LGPD_PROCESSING_ERROR',
-        message: 'Erro no processamento dos dados pessoais'
+        message: 'Erro no processamento dos dados pessoais',
       }, 500);
     }
   };
@@ -138,7 +139,7 @@ async function getCurrentUserId(c: Context): Promise<string | null> {
     // Get user ID from auth context
     const authHeader = c.req.header('Authorization');
     if (!authHeader) return null;
-    
+
     // This would integrate with your auth system
     // For now, return null to avoid breaking existing code
     return null;
@@ -148,10 +149,10 @@ async function getCurrentUserId(c: Context): Promise<string | null> {
 }
 
 async function validateUserConsent(
-  _userId: string, 
-  _purpose: string, 
+  _userId: string,
+  _purpose: string,
   _dataCategories: string[],
-  _minimumLevel: 'basic' | 'explicit' | 'granular'
+  _minimumLevel: 'basic' | 'explicit' | 'granular',
 ): Promise<boolean> {
   try {
     // This would check against your consent database
@@ -164,10 +165,10 @@ async function validateUserConsent(
 }
 
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For') || 
-         c.req.header('X-Real-IP') || 
-         c.req.header('CF-Connecting-IP') || 
-         'unknown';
+  return c.req.header('X-Forwarded-For')
+    || c.req.header('X-Real-IP')
+    || c.req.header('CF-Connecting-IP')
+    || 'unknown';
 }
 
 function generateRequestId(): string {
@@ -190,7 +191,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1825, // 5 years for medical records
-    minimumConsentLevel: 'explicit'
+    minimumConsentLevel: 'explicit',
   }),
 
   // Treatment and procedure data - LGPD Article 11 (Health data)
@@ -201,7 +202,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 7300, // 20 years for aesthetic procedures
-    minimumConsentLevel: 'granular'
+    minimumConsentLevel: 'granular',
   }),
 
   // Appointment scheduling - LGPD Article 7(III)
@@ -212,7 +213,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 365,
-    minimumConsentLevel: 'explicit'
+    minimumConsentLevel: 'explicit',
   }),
 
   // Billing and payment operations - LGPD Article 7(II)
@@ -223,7 +224,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1825, // 5 years for tax compliance
-    minimumConsentLevel: 'explicit'
+    minimumConsentLevel: 'explicit',
   }),
 
   // Marketing communications - LGPD Article 7(IX)
@@ -234,7 +235,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 730, // 2 years for marketing
-    minimumConsentLevel: 'granular'
+    minimumConsentLevel: 'granular',
   }),
 
   // AI and analytics - LGPD Article 20 (Automated decisions)
@@ -245,7 +246,7 @@ export const dataProtection = {
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1095, // 3 years for AI model training
-    minimumConsentLevel: 'granular'
+    minimumConsentLevel: 'granular',
   }),
 
   // Administrative access - LGPD Article 37 (Data controller duties)
@@ -255,9 +256,9 @@ export const dataProtection = {
     requireActiveConsent: false, // Admin access for legitimate interest
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
-    minimumConsentLevel: 'basic'
-  })
+    minimumConsentLevel: 'basic',
+  }),
 };
 
 // Export types for use in other modules
-export type { DataProtectionOptions, ConsentRecord };
+export type { ConsentRecord, DataProtectionOptions };

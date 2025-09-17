@@ -2,8 +2,6 @@
  * Authentication helpers for integration tests
  */
 
-
-
 // Mock user for testing
 export const testUser = {
   id: '123e4567-e89b-12d3-a456-426614174000',

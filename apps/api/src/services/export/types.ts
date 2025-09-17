@@ -1,100 +1,100 @@
 export interface ExportFormat {
-  format: 'csv' | 'xlsx'
-  mimeType: string
-  extension: string
+  format: 'csv' | 'xlsx';
+  mimeType: string;
+  extension: string;
 }
 
 export const EXPORT_FORMATS: Record<string, ExportFormat> = {
   csv: {
     format: 'csv',
     mimeType: 'text/csv',
-    extension: 'csv'
+    extension: 'csv',
   },
   xlsx: {
     format: 'xlsx',
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    extension: 'xlsx'
-  }
-}
+    extension: 'xlsx',
+  },
+};
 
 export interface ExportOptions {
-  format: 'csv' | 'xlsx'
-  includeHeaders: boolean
-  delimiter?: string
-  encoding?: string
-  compression?: boolean
+  format: 'csv' | 'xlsx';
+  includeHeaders: boolean;
+  delimiter?: string;
+  encoding?: string;
+  compression?: boolean;
 }
 
 export interface ExportFilter {
-  search?: string
-  status?: string
+  search?: string;
+  status?: string;
   dateRange?: {
-    start: Date
-    end: Date
-  }
-  fields?: string[]
+    start: Date;
+    end: Date;
+  };
+  fields?: string[];
 }
 
 export interface ExportPagination {
-  page: number
-  limit: number
-  offset: number
+  page: number;
+  limit: number;
+  offset: number;
 }
 
 export interface ExportConfig {
-  maxRecords: number
-  chunkSize: number
-  timeout: number
-  rateLimit: number
+  maxRecords: number;
+  chunkSize: number;
+  timeout: number;
+  rateLimit: number;
 }
 
 export interface ExportJob {
-  id: string
-  userId: string
-  format: 'csv' | 'xlsx'
-  filters: ExportFilter
-  pagination: ExportPagination
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+  id: string;
+  userId: string;
+  format: 'csv' | 'xlsx';
+  filters: ExportFilter;
+  pagination: ExportPagination;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
   progress: {
-    processed: number
-    total: number
-    percentage: number
-  }
+    processed: number;
+    total: number;
+    percentage: number;
+  };
   result?: {
-    url: string
-    size: number
-    recordCount: number
-    expiresAt: Date
-  }
-  error?: string
-  createdAt: Date
-  updatedAt: Date
-  completedAt?: Date
+    url: string;
+    size: number;
+    recordCount: number;
+    expiresAt: Date;
+  };
+  error?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  completedAt?: Date;
 }
 
 export interface ExportMetrics {
-  totalRecords: number
-  exportedRecords: number
-  processingTime: number
-  fileSize: number
-  averageSpeed: number
+  totalRecords: number;
+  exportedRecords: number;
+  processingTime: number;
+  fileSize: number;
+  averageSpeed: number;
 }
 
 export interface LGPDComplianceOptions {
-  anonymizeSensitiveFields: boolean
-  excludeRestrictedFields: boolean
-  purpose: string
-  retentionDays: number
-  consentRequired: boolean
+  anonymizeSensitiveFields: boolean;
+  excludeRestrictedFields: boolean;
+  purpose: string;
+  retentionDays: number;
+  consentRequired: boolean;
 }
 
 export interface PatientExportField {
-  field: string
-  label: string
-  type: 'string' | 'number' | 'date' | 'boolean' | 'array'
-  sensitive: boolean
-  required: boolean
-  formatter?: (value: any) => string
+  field: string;
+  label: string;
+  type: 'string' | 'number' | 'date' | 'boolean' | 'array';
+  sensitive: boolean;
+  required: boolean;
+  formatter?: (value: any) => string;
 }
 
 export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
@@ -103,28 +103,28 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     label: 'ID',
     type: 'string',
     sensitive: false,
-    required: true
+    required: true,
   },
   {
     field: 'name',
     label: 'Nome Completo',
     type: 'string',
     sensitive: true,
-    required: true
+    required: true,
   },
   {
     field: 'email',
     label: 'Email',
     type: 'string',
     sensitive: true,
-    required: true
+    required: true,
   },
   {
     field: 'phone',
     label: 'Telefone',
     type: 'string',
     sensitive: true,
-    required: false
+    required: false,
   },
   {
     field: 'cpf',
@@ -132,7 +132,8 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'string',
     sensitive: true,
     required: false,
-    formatter: (value: string) => value ? value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : ''
+    formatter: (value: string) =>
+      value ? value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : '',
   },
   {
     field: 'dateOfBirth',
@@ -140,21 +141,21 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'date',
     sensitive: true,
     required: false,
-    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : ''
+    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : '',
   },
   {
     field: 'gender',
     label: 'Gênero',
     type: 'string',
     sensitive: true,
-    required: false
+    required: false,
   },
   {
     field: 'bloodType',
     label: 'Tipo Sanguíneo',
     type: 'string',
     sensitive: false,
-    required: false
+    required: false,
   },
   {
     field: 'allergies',
@@ -162,7 +163,7 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'array',
     sensitive: true,
     required: false,
-    formatter: (value: string[]) => Array.isArray(value) ? value.join('; ') : ''
+    formatter: (value: string[]) => Array.isArray(value) ? value.join('; ') : '',
   },
   {
     field: 'medications',
@@ -170,21 +171,21 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'array',
     sensitive: true,
     required: false,
-    formatter: (value: string[]) => Array.isArray(value) ? value.join('; ') : ''
+    formatter: (value: string[]) => Array.isArray(value) ? value.join('; ') : '',
   },
   {
     field: 'emergencyContact',
     label: 'Contato de Emergência',
     type: 'string',
     sensitive: true,
-    required: false
+    required: false,
   },
   {
     field: 'status',
     label: 'Status',
     type: 'string',
     sensitive: false,
-    required: true
+    required: true,
   },
   {
     field: 'createdAt',
@@ -192,7 +193,7 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'date',
     sensitive: false,
     required: true,
-    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : ''
+    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : '',
   },
   {
     field: 'updatedAt',
@@ -200,6 +201,6 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     type: 'date',
     sensitive: false,
     required: true,
-    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : ''
-  }
-]
+    formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : '',
+  },
+];

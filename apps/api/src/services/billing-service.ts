@@ -10,7 +10,6 @@
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 
-
 // Brazilian tax and billing enums
 export enum BillingType {
   SUS = 'sus',

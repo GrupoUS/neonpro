@@ -416,12 +416,17 @@ export class AestheticAnalysisService {
     // Generate educational content based on procedures and skin type
     const content = procedures.map(procedure => ({
       title: `Understanding ${procedure.name}`,
-      description: `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
+      description:
+        `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
       risks: procedure.contraindications || [],
       benefits: [`Improves ${procedure.target_area}`, 'Professional treatment'],
-      aftercare: ['Follow post-treatment instructions', 'Avoid sun exposure', 'Use recommended skincare']
+      aftercare: [
+        'Follow post-treatment instructions',
+        'Avoid sun exposure',
+        'Use recommended skincare',
+      ],
     }));
-    
+
     return content;
     return {
       pre_treatment: [
@@ -501,7 +506,7 @@ export class AestheticAnalysisService {
     // Calculate severity based on condition and patient request context
     const patientAge = request.patient_data?.age || 25;
     const hasAllergies = request.patient_data?.allergies?.length > 0;
-    
+
     if (condition.severity_score > 0.8 || hasAllergies || patientAge > 65) {
       return 'high';
     } else if (condition.severity_score > 0.5 || patientAge > 45) {

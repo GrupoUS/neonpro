@@ -1,12 +1,4 @@
 import type {
-  AIProvider,
-  GenerateAnswerInput,
-  GenerateAnswerResult,
-  StreamChunk,
-} from './ai-provider.js';
-
-// Placeholder Anthropic provider. Real integration will be implemented in a later phase.
-import type {
   AIProviderInterface,
   GenerateAnswerInput,
   GenerateAnswerResult,
@@ -15,8 +7,8 @@ import type {
 
 // Placeholder Anthropic provider. Real integration will be implemented in a later phase.
 export class AnthropicProvider implements AIProviderInterface {
-  constructor(private readonly apiKey: string) {
-    if (!apiKey) {
+  constructor(private readonly _apiKey: string) {
+    if (!this._apiKey) {
       throw new Error('Anthropic API key is required');
     }
   }

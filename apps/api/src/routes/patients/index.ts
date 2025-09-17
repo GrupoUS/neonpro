@@ -2,12 +2,12 @@ import { Hono } from 'hono';
 import bulkActions from './bulk';
 import createPatient from './create';
 import deletePatient from './delete';
+import { patientsExportRouter } from './export';
 import getPatient from './get';
 import getPatientHistory from './history';
 import listPatients from './list';
 import searchPatients from './search';
 import updatePatient from './update';
-import { patientsExportRouter } from './export';
 
 const patientsRouter = new Hono();
 // Documents upload endpoint placeholder added via documents-upload route above

@@ -1,71 +1,74 @@
-import React, { useState, useEffect } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card'
-import { Button } from '@components/ui/button'
-import { Badge } from '@components/ui/badge'
-import { Progress } from '@components/ui/progress'
-import { Input } from '@components/ui/input'
-import { EnhancedTable } from '@components/ui/enhanced-table'
-import { UniversalButton } from '@components/ui/universal-button'
-import { FocusCards } from '@components/ui/focus-cards'
-import { AnimatedModal } from '@components/ui/animated-modal'
-import { useToast } from '@hooks/use-toast'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { AnimatedModal } from '@components/ui/animated-modal';
+import { Badge } from '@components/ui/badge';
+import { Button } from '@components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
+import { EnhancedTable } from '@components/ui/enhanced-table';
+import { FocusCards } from '@components/ui/focus-cards';
+import { Input } from '@components/ui/input';
+import { Progress } from '@components/ui/progress';
+import { UniversalButton } from '@components/ui/universal-button';
+import { useToast } from '@hooks/use-toast';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import React, { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/patients/dashboard/')({
   component: PatientDashboard,
-})
+});
 
 interface Patient {
-  id: string
-  name: string
-  email: string
-  phone: string
-  status: string
-  riskScore?: number
-  lastVisit?: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+  riskScore?: number;
+  lastVisit?: string;
   nextAppointment?: {
-    date: string
-    time: string
-  }
+    date: string;
+    time: string;
+  };
   healthInsurance?: {
-    provider: string
-  }
+    provider: string;
+  };
 }
 
 interface PatientDashboardStats {
-  totalPatients: number
-  newThisMonth: number
-  highRiskPatients: number
-  appointmentsToday: number
-  noShowRate: number
+  totalPatients: number;
+  newThisMonth: number;
+  highRiskPatients: number;
+  appointmentsToday: number;
+  noShowRate: number;
 }
 
 interface PatientCardProps {
-  patient: Patient
-  onClick: (patientId: string) => void
+  patient: Patient;
+  onClick: (patientId: string) => void;
 }
 
 function PatientCard({ patient, onClick }: PatientCardProps) {
   const getRiskColor = (riskScore: number) => {
-    if (riskScore >= 0.8) return 'destructive'
-    if (riskScore >= 0.6) return 'warning'
-    return 'default'
-  }
+    if (riskScore >= 0.8) return 'destructive';
+    if (riskScore >= 0.6) return 'warning';
+    return 'default';
+  };
 
   const getRiskLabel = (riskScore: number) => {
-    if (riskScore >= 0.8) return 'Alto Risco'
-    if (riskScore >= 0.6) return 'Médio Risco'
-    return 'Baixo Risco'
-  }
+    if (riskScore >= 0.8) return 'Alto Risco';
+    if (riskScore >= 0.6) return 'Médio Risco';
+    return 'Baixo Risco';
+  };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onClick(patient.id)}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{patient.name}</CardTitle>
+    <Card
+      className='hover:shadow-lg transition-shadow cursor-pointer'
+      onClick={() => onClick(patient.id)}
+    >
+      <CardHeader className='pb-3'>
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-lg'>{patient.name}</CardTitle>
           <Badge variant={getRiskColor(patient.riskScore || 0)}>
             {getRiskLabel(patient.riskScore || 0)}
           </Badge>
@@ -74,38 +77,42 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
           {patient.email} • {patient.phone}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex justify-between text-sm">
+      <CardContent className='space-y-3'>
+        <div className='flex justify-between text-sm'>
           <span>Última consulta:</span>
-          <span>{patient.lastVisit ? format(new Date(patient.lastVisit), 'dd/MM/yyyy', { locale: ptBR }) : 'Nunca'}</span>
+          <span>
+            {patient.lastVisit
+              ? format(new Date(patient.lastVisit), 'dd/MM/yyyy', { locale: ptBR })
+              : 'Nunca'}
+          </span>
         </div>
-        <div className="flex justify-between text-sm">
+        <div className='flex justify-between text-sm'>
           <span>Plano de saúde:</span>
           <span>{patient.healthInsurance?.provider || 'Particular'}</span>
         </div>
-        <div className="flex justify-between text-sm">
+        <div className='flex justify-between text-sm'>
           <span>Status:</span>
-          <Badge variant="outline">{patient.status}</Badge>
+          <Badge variant='outline'>{patient.status}</Badge>
         </div>
         {patient.nextAppointment && (
-          <div className="pt-2 border-t">
-            <div className="text-sm font-medium">Próxima consulta:</div>
-            <div className="text-sm text-muted-foreground">
+          <div className='pt-2 border-t'>
+            <div className='text-sm font-medium'>Próxima consulta:</div>
+            <div className='text-sm text-muted-foreground'>
               {format(new Date(patient.nextAppointment.date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
             </div>
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function PatientDashboard() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const { toast } = useToast()
-  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Mock data for development
   const mockStats: PatientDashboardStats = {
@@ -113,8 +120,8 @@ export function PatientDashboard() {
     newThisMonth: 45,
     highRiskPatients: 89,
     appointmentsToday: 24,
-    noShowRate: 8.5
-  }
+    noShowRate: 8.5,
+  };
 
   const mockPatients: Patient[] = [
     {
@@ -127,11 +134,11 @@ export function PatientDashboard() {
       lastVisit: '2024-01-15',
       nextAppointment: {
         date: '2024-02-01',
-        time: '14:30'
+        time: '14:30',
       },
       healthInsurance: {
-        provider: 'Unimed'
-      }
+        provider: 'Unimed',
+      },
     },
     {
       id: '2',
@@ -142,8 +149,8 @@ export function PatientDashboard() {
       riskScore: 0.7,
       lastVisit: '2024-01-10',
       healthInsurance: {
-        provider: 'Amil'
-      }
+        provider: 'Amil',
+      },
     },
     {
       id: '3',
@@ -154,42 +161,40 @@ export function PatientDashboard() {
       riskScore: 0.9,
       lastVisit: '2023-12-20',
       healthInsurance: {
-        provider: 'Bradesco Saúde'
-      }
-    }
-  ]
+        provider: 'Bradesco Saúde',
+      },
+    },
+  ];
 
-  const stats = mockStats
-  const patients = mockPatients.filter(patient => 
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const stats = mockStats;
+  const patients = mockPatients.filter(patient =>
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    || patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handlePatientClick = (patientId: string) => {
-    navigate({ to: '/patients/$patientId', params: { patientId } })
-  }
+    navigate({ to: '/patients/$patientId', params: { patientId } });
+  };
 
   const handleDeletePatient = (patient: Patient) => {
-    setSelectedPatient(patient)
-    setIsModalOpen(true)
-  }
+    setSelectedPatient(patient);
+    setIsModalOpen(true);
+  };
 
   const confirmDelete = () => {
     toast({
       title: 'Paciente excluído com sucesso',
       description: 'O paciente foi removido do sistema.',
-    })
-    setIsModalOpen(false)
-    setSelectedPatient(null)
-  }
+    });
+    setIsModalOpen(false);
+    setSelectedPatient(null);
+  };
 
   const tableColumns = [
     {
       accessorKey: 'name',
       header: 'Nome',
-      cell: (info: any) => (
-        <div className="font-medium">{info.getValue()}</div>
-      ),
+      cell: (info: any) => <div className='font-medium'>{info.getValue()}</div>,
     },
     {
       accessorKey: 'email',
@@ -204,70 +209,69 @@ export function PatientDashboard() {
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: (info: any) => (
-        <Badge variant="outline">{info.getValue()}</Badge>
-      ),
+      cell: (info: any) => <Badge variant='outline'>{info.getValue()}</Badge>,
     },
     {
       accessorKey: 'riskScore',
       header: 'Risco',
       cell: (info: any) => {
-        const score = info.getValue()
-        let variant: 'default' | 'destructive' | 'outline' = 'default'
-        let label = 'Baixo'
-        
+        const score = info.getValue();
+        let variant: 'default' | 'destructive' | 'outline' = 'default';
+        let label = 'Baixo';
+
         if (score >= 0.8) {
-          variant = 'destructive'
-          label = 'Alto'
+          variant = 'destructive';
+          label = 'Alto';
         } else if (score >= 0.6) {
-          variant = 'outline'
-          label = 'Médio'
+          variant = 'outline';
+          label = 'Médio';
         }
-        
-        return <Badge variant={variant}>{label}</Badge>
+
+        return <Badge variant={variant}>{label}</Badge>;
       },
     },
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
       cell: (info: any) => {
-        const date = info.getValue()
-        return date ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR }) : 'Nunca'
+        const date = info.getValue();
+        return date ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR }) : 'Nunca';
       },
     },
     {
       id: 'actions',
       header: 'Ações',
       cell: (info: any) => {
-        const patient = info.row.original
+        const patient = info.row.original;
         return (
-          <div className="flex gap-2">
+          <div className='flex gap-2'>
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={() => handlePatientClick(patient.id)}
             >
               Ver
             </Button>
             <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate({ to: '/patients/$patientId/edit', params: { patientId: patient.id } })}
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                navigate({ to: '/patients/$patientId/edit', params: { patientId: patient.id } })}
             >
               Editar
             </Button>
             <Button
-              variant="destructive"
-              size="sm"
+              variant='destructive'
+              size='sm'
               onClick={() => handleDeletePatient(patient)}
             >
               Excluir
             </Button>
           </div>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const statsCards = [
     {
@@ -298,28 +302,28 @@ export function PatientDashboard() {
       changeType: 'decrease' as const,
       description: 'Redução este mês',
     },
-  ]
+  ];
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className='container mx-auto p-6 space-y-6'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard de Pacientes</h1>
-          <p className="text-muted-foreground">
+          <h1 className='text-3xl font-bold tracking-tight'>Dashboard de Pacientes</h1>
+          <p className='text-muted-foreground'>
             Gerencie pacientes, consultas e acompanhamento em tempo real
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className='flex gap-3'>
           <UniversalButton
-            variant="primary"
+            variant='primary'
             onClick={() => navigate({ to: '/patients/register' })}
-            className="bg-blue-600 hover:bg-blue-700"
+            className='bg-blue-600 hover:bg-blue-700'
           >
             Novo Paciente
           </UniversalButton>
           <UniversalButton
-            variant="outline"
+            variant='outline'
             onClick={() => navigate({ to: '/ai/insights' })}
           >
             Insights de IA
@@ -328,18 +332,20 @@ export function PatientDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {statsCards.map((stat) => (
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        {statsCards.map(stat => (
           <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>{stat.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">
-                <span className={`inline-flex items-center ${
-                  stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
-                }`}>
+              <div className='text-2xl font-bold'>{stat.value}</div>
+              <p className='text-xs text-muted-foreground'>
+                <span
+                  className={`inline-flex items-center ${
+                    stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
                   {stat.changeType === 'increase' ? '↑' : '↓'} {stat.change}
                 </span>{' '}
                 {stat.description}
@@ -358,15 +364,15 @@ export function PatientDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-2 mb-4">
+          <div className='flex items-center space-x-2 mb-4'>
             <Input
-              placeholder="Buscar pacientes por nome, email ou CPF..."
+              placeholder='Buscar pacientes por nome, email ou CPF...'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
+              onChange={e => setSearchTerm(e.target.value)}
+              className='max-w-sm'
             />
           </div>
-          
+
           <EnhancedTable
             columns={tableColumns}
             data={patients}
@@ -411,24 +417,24 @@ export function PatientDashboard() {
       <AnimatedModal
         isOpen={isModalOpen}
         onClose={() => {
-          setIsModalOpen(false)
-          setSelectedPatient(null)
+          setIsModalOpen(false);
+          setSelectedPatient(null);
         }}
-        title="Confirmar Exclusão"
+        title='Confirmar Exclusão'
         description={`Tem certeza que deseja excluir o paciente "${selectedPatient?.name}"? Esta ação não pode ser desfeita.`}
       >
-        <div className="flex justify-end gap-3 mt-6">
+        <div className='flex justify-end gap-3 mt-6'>
           <UniversalButton
-            variant="outline"
+            variant='outline'
             onClick={() => {
-              setIsModalOpen(false)
-              setSelectedPatient(null)
+              setIsModalOpen(false);
+              setSelectedPatient(null);
             }}
           >
             Cancelar
           </UniversalButton>
           <UniversalButton
-            variant="destructive"
+            variant='destructive'
             onClick={confirmDelete}
           >
             Excluir Paciente
@@ -436,5 +442,5 @@ export function PatientDashboard() {
         </div>
       </AnimatedModal>
     </div>
-  )
+  );
 }

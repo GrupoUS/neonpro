@@ -1,6 +1,7 @@
 // T043: CORS and security headers configuration
-import type { Context, Next } from 'hono';
 import type { MiddlewareHandler } from 'hono';
+
+
 
 export interface CORSConfig {
   origin: string | string[] | ((origin: string) => boolean);
@@ -121,7 +122,7 @@ export function corsMiddleware(config?: CORSConfig): MiddlewareHandler {
         }
       }
 
-      return c.newResponse(null, corsConfig.optionsSuccessStatus);
+      return c.newResponse(null, { status: corsConfig.optionsSuccessStatus as any });
     }
 
     if (origin) {
@@ -145,7 +146,7 @@ export function corsMiddleware(config?: CORSConfig): MiddlewareHandler {
       }
     }
 
-    await next();
+    return await next();
   };
 }
 
@@ -238,24 +239,126 @@ export function securityMiddleware(options?: {
   enableRateLimit?: boolean;
   enableRequestId?: boolean;
 }): MiddlewareHandler {
-  const middlewareStack: MiddlewareHandler[] = [];
+  return async (c, next) => {
+    // Apply request ID middleware
+    if (options?.enableRequestId !== false) {
+      const requestId = c.req.header('X-Request-ID') || generateRequestId();
+      c.set('requestId', requestId);
+      c.header('X-Request-ID', requestId);
+    }
 
-  if (options?.enableRequestId !== false) {
-    middlewareStack.push(requestIdMiddleware());
-  }
+    // Apply CORS logic inline
+    const corsConfig = options?.cors || createCORSConfig();
+    const origin = c.req.header('Origin');
 
-  middlewareStack.push(corsMiddleware(options?.cors));
-  middlewareStack.push(securityHeadersMiddleware(options?.security));
+    // Handle preflight requests
+    if (c.req.method === 'OPTIONS') {
+      let allowOrigin = false;
+      if (typeof corsConfig.origin === 'string') {
+        allowOrigin = corsConfig.origin === '*' || corsConfig.origin === origin;
+      } else if (Array.isArray(corsConfig.origin)) {
+        allowOrigin = origin ? corsConfig.origin.includes(origin) : false;
+      } else if (typeof corsConfig.origin === 'function') {
+        allowOrigin = corsConfig.origin(origin || '');
+      }
 
-  if (options?.enableRateLimit !== false) {
-    middlewareStack.push(rateLimitHeadersMiddleware());
-  }
+      if (allowOrigin) {
+        c.header('Access-Control-Allow-Origin', origin || '*');
+        c.header('Access-Control-Allow-Methods', corsConfig.methods.join(', '));
+        c.header('Access-Control-Allow-Headers', corsConfig.headers.join(', '));
+        c.header('Access-Control-Max-Age', corsConfig.maxAge.toString());
 
-  if (middlewareStack.length === 0) {
-    return async (_c, next) => {
-      await next();
-    };
-  }
+        if (corsConfig.credentials) {
+          c.header('Access-Control-Allow-Credentials', 'true');
+        }
+      }
 
-  return compose(middlewareStack);
+      return c.newResponse(null, { status: corsConfig.optionsSuccessStatus as any });
+    }
+
+    if (origin) {
+      let allowOrigin = false;
+      if (typeof corsConfig.origin === 'string') {
+        allowOrigin = corsConfig.origin === '*' || corsConfig.origin === origin;
+      } else if (Array.isArray(corsConfig.origin)) {
+        allowOrigin = corsConfig.origin.includes(origin);
+      } else if (typeof corsConfig.origin === 'function') {
+        allowOrigin = corsConfig.origin(origin);
+      }
+
+      if (allowOrigin) {
+        c.header('Access-Control-Allow-Origin', origin);
+        if (corsConfig.credentials) {
+          c.header('Access-Control-Allow-Credentials', 'true');
+        }
+        if (corsConfig.exposeHeaders.length > 0) {
+          c.header('Access-Control-Expose-Headers', corsConfig.exposeHeaders.join(', '));
+        }
+      }
+    }
+
+    // Apply security headers inline
+    const securityConfig = options?.security || createSecurityHeadersConfig();
+    
+    if (securityConfig.contentSecurityPolicy.enabled) {
+      const cspDirectives = Object.entries(securityConfig.contentSecurityPolicy.directives)
+        .map(([directive, values]) => {
+          const valueString = Array.isArray(values) ? values.join(' ') : values;
+          return `${directive} ${valueString}`;
+        })
+        .join('; ');
+      c.header('Content-Security-Policy', cspDirectives);
+    }
+
+    if (securityConfig.hsts.enabled) {
+      let hstsValue = `max-age=${securityConfig.hsts.maxAge}`;
+      if (securityConfig.hsts.includeSubDomains) {
+        hstsValue += '; includeSubDomains';
+      }
+      if (securityConfig.hsts.preload) {
+        hstsValue += '; preload';
+      }
+      c.header('Strict-Transport-Security', hstsValue);
+    }
+
+    c.header('X-Frame-Options', securityConfig.frameOptions);
+
+    if (securityConfig.contentTypeOptions) {
+      c.header('X-Content-Type-Options', 'nosniff');
+    }
+
+    if (securityConfig.xssProtection) {
+      c.header('X-XSS-Protection', '1; mode=block');
+    }
+
+    c.header('Referrer-Policy', securityConfig.referrerPolicy);
+
+    const permissionsPolicyDirectives = Object.entries(securityConfig.permissionsPolicy)
+      .map(([directive, allowlist]) => {
+        if (allowlist.length === 0) {
+          return `${directive}=()`;
+        }
+        return `${directive}=(${allowlist.join(' ')})`;
+      })
+      .join(', ');
+    if (permissionsPolicyDirectives) {
+      c.header('Permissions-Policy', permissionsPolicyDirectives);
+    }
+
+    c.header('X-DNS-Prefetch-Control', 'off');
+    c.header('X-Download-Options', 'noopen');
+    c.header('X-Permitted-Cross-Domain-Policies', 'none');
+
+    // Apply rate limit headers
+    if (options?.enableRateLimit !== false) {
+      const rateLimit = c.get('rateLimit');
+      if (rateLimit) {
+        c.header('X-Rate-Limit-Limit', rateLimit.limit.toString());
+        c.header('X-Rate-Limit-Remaining', rateLimit.remaining.toString());
+        c.header('X-Rate-Limit-Reset', rateLimit.reset.toString());
+      }
+    }
+
+    return await next();
+  };
 }

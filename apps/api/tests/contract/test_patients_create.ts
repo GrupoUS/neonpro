@@ -1,20 +1,20 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { Hono } from 'hono'
-import { createApp } from '../../src/app'
-import { createTestClient } from '../helpers/auth'
+import { Hono } from 'hono';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createApp } from '../../src/app';
+import { createTestClient } from '../helpers/auth';
 
 describe('Patient API Contract Tests - POST /api/v2/patients', () => {
-  let app: Hono
-  let testClient: any
+  let app: Hono;
+  let testClient: any;
 
   beforeEach(async () => {
-    app = createApp()
-    testClient = await createTestClient()
-  })
+    app = createApp();
+    testClient = await createTestClient();
+  });
 
   afterEach(async () => {
     // Cleanup test data
-  })
+  });
 
   it('should create patient with valid data', async () => {
     const patientData = {
@@ -30,12 +30,12 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
         neighborhood: 'Bairro Teste',
         city: 'São Paulo',
         state: 'SP',
-        cep: '01234567'
+        cep: '01234567',
       },
       emergencyContact: {
         name: 'Maria Silva',
         phone: '+5511988888888',
-        relationship: 'spouse'
+        relationship: 'spouse',
       },
       healthcareInfo: {
         healthPlan: 'Unimed',
@@ -43,7 +43,7 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
         bloodType: 'O+',
         allergies: ['Penicilina'],
         medications: ['Losartana'],
-        chronicConditions: ['Hipertensão']
+        chronicConditions: ['Hipertensão'],
       },
       lgpdConsent: {
         dataProcessing: true,
@@ -51,31 +51,31 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
         sharing: false,
         retentionPeriod: '10_years',
         legalBasis: 'consent',
-        consentDate: new Date().toISOString()
-      }
-    }
+        consentDate: new Date().toISOString(),
+      },
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${testClient.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(201)
-    
-    const data = await response.json()
-    expect(data).toHaveProperty('patient')
-    expect(data.patient).toHaveProperty('id')
-    expect(data.patient.name).toBe(patientData.name)
-    expect(data.patient.cpf).toBe(patientData.cpf)
-    expect(data.patient).toHaveProperty('lgpdConsent')
-    expect(data.patient).toHaveProperty('auditTrail')
-    expect(data.patient).toHaveProperty('createdAt')
-    expect(data.patient).toHaveProperty('updatedAt')
-  })
+    expect(response.status).toBe(201);
+
+    const data = await response.json();
+    expect(data).toHaveProperty('patient');
+    expect(data.patient).toHaveProperty('id');
+    expect(data.patient.name).toBe(patientData.name);
+    expect(data.patient.cpf).toBe(patientData.cpf);
+    expect(data.patient).toHaveProperty('lgpdConsent');
+    expect(data.patient).toHaveProperty('auditTrail');
+    expect(data.patient).toHaveProperty('createdAt');
+    expect(data.patient).toHaveProperty('updatedAt');
+  });
 
   it('should return 400 with invalid CPF', async () => {
     const patientData = {
@@ -84,45 +84,45 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
       email: 'joao.silva@example.com',
       phone: '+5511999999999',
       birthDate: '1990-01-01',
-      gender: 'male'
-    }
+      gender: 'male',
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${testClient.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(400)
-    
-    const data = await response.json()
-    expect(data).toHaveProperty('error')
-    expect(data.error).toHaveProperty('message')
-  })
+    expect(response.status).toBe(400);
+
+    const data = await response.json();
+    expect(data).toHaveProperty('error');
+    expect(data.error).toHaveProperty('message');
+  });
 
   it('should return 400 with missing required fields', async () => {
     const patientData = {
-      name: 'João Silva'
+      name: 'João Silva',
       // Missing required fields: cpf, email, phone, birthDate, gender
-    }
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${testClient.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(400)
-    
-    const data = await response.json()
-    expect(data).toHaveProperty('error')
-  })
+    expect(response.status).toBe(400);
+
+    const data = await response.json();
+    expect(data).toHaveProperty('error');
+  });
 
   it('should return 401 without authentication', async () => {
     const patientData = {
@@ -131,19 +131,19 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
       email: 'joao.silva@example.com',
       phone: '+5511999999999',
       birthDate: '1990-01-01',
-      gender: 'male'
-    }
+      gender: 'male',
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(401)
-  })
+    expect(response.status).toBe(401);
+  });
 
   it('should validate LGPD consent requirements', async () => {
     const patientData = {
@@ -159,25 +159,25 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
         sharing: false,
         retentionPeriod: '10_years',
         legalBasis: 'consent',
-        consentDate: new Date().toISOString()
-      }
-    }
+        consentDate: new Date().toISOString(),
+      },
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${testClient.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(400)
-    
-    const data = await response.json()
-    expect(data).toHaveProperty('error')
-    expect(data.error.message).toContain('LGPD')
-  })
+    expect(response.status).toBe(400);
+
+    const data = await response.json();
+    expect(data).toHaveProperty('error');
+    expect(data.error.message).toContain('LGPD');
+  });
 
   it('should create audit trail entry', async () => {
     const patientData = {
@@ -193,24 +193,24 @@ describe('Patient API Contract Tests - POST /api/v2/patients', () => {
         sharing: false,
         retentionPeriod: '10_years',
         legalBasis: 'consent',
-        consentDate: new Date().toISOString()
-      }
-    }
+        consentDate: new Date().toISOString(),
+      },
+    };
 
     const response = await app.request('/api/v2/patients', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${testClient.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patientData)
-    })
+      body: JSON.stringify(patientData),
+    });
 
-    expect(response.status).toBe(201)
-    
-    const data = await response.json()
-    expect(data.patient.auditTrail).toHaveProperty('createdAt')
-    expect(data.patient.auditTrail).toHaveProperty('createdBy')
-    expect(data.patient.auditTrail).toHaveProperty('action', 'CREATE')
-  })
-})
+    expect(response.status).toBe(201);
+
+    const data = await response.json();
+    expect(data.patient.auditTrail).toHaveProperty('createdAt');
+    expect(data.patient.auditTrail).toHaveProperty('createdBy');
+    expect(data.patient.auditTrail).toHaveProperty('action', 'CREATE');
+  });
+});

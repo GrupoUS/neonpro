@@ -1,6 +1,5 @@
 import type {
   AIProviderInterface,
-  AIMessage,
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,

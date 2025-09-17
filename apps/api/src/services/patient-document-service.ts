@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 import { createHash } from 'crypto';
 
-
 /** Minimal implementation for TDD GREEN phase.
  * NOTE: Persistence (Supabase storage + DB insert + audit event) will be added in next iterations.
  */
