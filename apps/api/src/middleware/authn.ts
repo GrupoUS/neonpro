@@ -29,7 +29,7 @@ export async function requireAuth(c: Context, next: Next) {
 
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {
-    return unauthorized(c, 'Invalid or expired token');
+    return unauthorized(c, 'Invalid or expired token', error);
   }
 
   // Attach user info to context for downstream handlers
