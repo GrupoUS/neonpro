@@ -17,7 +17,7 @@ export function errorTrackingMiddleware() {
     try {
       await next();
       return; // Explicit return when no error
-    } catch {
+    } catch (error) {
       const context = errorTracker.extractContextFromHono(c);
 
       // Handle different error types
