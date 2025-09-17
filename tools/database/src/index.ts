@@ -3,18 +3,6 @@
  * Database testing utilities for RLS, Security, Compliance & Migrations
  */
 
-// Export RLS testing utilities
-export * from './rls';
-
-// Export security testing utilities
-export * from './security';
-
-// Export compliance testing utilities
-export * from './compliance';
-
-// Export migration testing utilities
-export * from './migrations';
-
 // Re-export shared utilities for convenience
 export * from '@neonpro/tools-shared';
 

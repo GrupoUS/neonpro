@@ -71,7 +71,7 @@ export default defineConfig({
     ],
 
     // Reporter configuration
-    reporter: ['verbose', 'json', 'html'],
+    reporters: ['verbose', 'json', 'html'],
     outputFile: {
       json: './coverage/test-results.json',
       html: './coverage/test-results.html',
@@ -84,11 +84,11 @@ export default defineConfig({
 
     // Watch mode configuration
     watch: false,
-    watchExclude: [
-      'node_modules/**',
-      'dist/**',
-      'coverage/**',
-    ],
+    // watchExclude: [
+    //   'node_modules/**',
+    //   'dist/**',
+    //   'coverage/**',
+    // ],
   },
 
   // Resolve configuration for imports

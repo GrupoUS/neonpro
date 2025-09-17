@@ -1,6 +1,6 @@
 import { PatientDocumentService } from './src/services/patient-document-service.js';
 
-console.log('Creating service instance...');
+console.log('Creating service with named import...');
 const service = new PatientDocumentService();
 
 console.log('Service methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(service)));

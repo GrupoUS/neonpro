@@ -1,15 +1,9 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: {
-    'index': 'src/index.ts',
-    'components/index': 'src/components/index.ts',
-    'e2e/index': 'src/e2e/index.ts',
-    'utils/index': 'utils/index.ts',
-    'fixtures/index': 'fixtures/index.ts',
-  },
+  entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
-  dts: true,
+  dts: false,
   splitting: false,
   sourcemap: true,
   clean: true,

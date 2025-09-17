@@ -7,7 +7,7 @@
  * @fileoverview Accessibility utilities and helpers for healthcare UI
  */
 
-import { RefObject, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // ARIA live region types for healthcare announcements
 export type AriaLiveType = 'off' | 'polite' | 'assertive';

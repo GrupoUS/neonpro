@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import path from 'path';
+import * as path from 'path';
 
 export default defineConfig({
   test: {
@@ -12,7 +12,7 @@ export default defineConfig({
       'dist/**',
       '.vercel/**'
     ],
-    timeout: 30000, // 30 seconds for integration tests
+    testTimeout: 30000, // 30 seconds for integration tests
     bail: 1,
     reporters: ['verbose', 'json'],
     outputFile: {

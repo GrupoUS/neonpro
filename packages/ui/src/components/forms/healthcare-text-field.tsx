@@ -20,7 +20,8 @@ import React, {
 import { z } from 'zod';
 import { cn } from '../../lib/utils';
 import { useHealthcareForm } from './healthcare-form';
-import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+// TODO: Implement theme usage
+// import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
   healthcareValidationSchemas,
   DataSensitivity,
@@ -29,9 +30,7 @@ import {
 } from '../../utils/healthcare-validation';
 import { 
   announceToScreenReader,
-  HealthcarePriority,
-  useHealthcareFocus,
-  generateAccessibleId
+  HealthcarePriority
 } from '../../utils/accessibility';
 
 // Healthcare field types for automatic validation
@@ -121,7 +120,7 @@ export const HealthcareTextField = forwardRef<HTMLInputElement, HealthcareTextFi
 }, ref) => {
   // Context and theme
   const formContext = useHealthcareForm();
-  const { theme, accessibility } = useHealthcareTheme();
+  // const { theme, accessibility } = useHealthcareTheme(); // TODO: Implement theme and accessibility features
   
   // Local state
   const [internalValue, setInternalValue] = useState<string>(

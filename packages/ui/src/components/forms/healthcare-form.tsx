@@ -23,9 +23,7 @@ import { cn } from '../../lib/utils';
 import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
   DataSensitivity, 
-  lgpdConsentSchema,
-  validateEmergencyData,
-  healthcareValidationMessages 
+  validateEmergencyData
 } from '../../utils/healthcare-validation';
 import { 
   announceToScreenReader, 
@@ -112,7 +110,9 @@ export function HealthcareForm({
   ...props
 }: HealthcareFormProps) {
   // Theme and accessibility context
-  const { theme, accessibility } = useHealthcareTheme();
+  const { accessibility } = useHealthcareTheme();
+  // TODO: Implement theme usage
+  // const { theme, accessibility } = useHealthcareTheme();
   
   // Form state
   const [isSubmitting, setIsSubmitting] = useState(false);

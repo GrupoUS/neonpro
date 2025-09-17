@@ -3,21 +3,6 @@
  * Frontend testing utilities for React, E2E, Accessibility & Healthcare UI
  */
 
-// Export component testing utilities
-export * from './components';
-
-// Export route testing utilities
-export * from './routes';
-
-// Export E2E testing utilities
-export * from './e2e';
-
-// Export accessibility testing utilities
-export * from './accessibility';
-
-// Export healthcare UI testing utilities
-export * from './healthcare-ui';
-
 // Re-export shared utilities for convenience
 export * from '@neonpro/tools-shared';
 

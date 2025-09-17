@@ -21,7 +21,8 @@ import React, {
 import { z } from 'zod';
 import { cn } from '../../lib/utils';
 import { useHealthcareForm } from './healthcare-form';
-import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+// TODO: Re-enable when useHealthcareTheme is actually used
+// import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
   healthcareValidationSchemas,
   DataSensitivity,
@@ -30,8 +31,9 @@ import {
 } from '../../utils/healthcare-validation';
 import { 
   announceToScreenReader,
-  HealthcarePriority,
-  generateAccessibleId
+  HealthcarePriority
+  // TODO: Implement generateAccessibleId usage
+  // generateAccessibleId
 } from '../../utils/accessibility';
 
 // Healthcare select option
@@ -221,7 +223,8 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
 }, ref) => {
   // Context and theme
   const formContext = useHealthcareForm();
-  const { theme, accessibility } = useHealthcareTheme();
+  // TODO: Re-enable when theme and accessibility are actually used
+  // const { theme, accessibility } = useHealthcareTheme();
   
   // Local state
   const [internalValue, setInternalValue] = useState<string>(
