@@ -16,6 +16,7 @@
 
 import { z } from 'zod';
 import { nanoid } from 'nanoid';
+import { apiRateLimitingService, type RateLimitContext } from './api-rate-limiting.js';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -834,58 +835,54 @@ export class NotificationService {
    * Deliver notification to specific channel
    */
   private async deliverToChannel(notification: Notification, channel: DeliveryChannel): Promise<void> {
-    const attemptId = `attempt_${nanoid(8)}`;
-    const attempt: DeliveryAttempt = {
-      id: attemptId,
-      channel,
-      timestamp: new Date().toISOString(),
-      status: 'processing',
-      retryCount: 0
-    };
-    
     try {
-      // Add attempt to notification
-      notification.deliveryAttempts.push(attempt);
+      // Check rate limits for this channel
+      const rateLimitCheck = await this.checkChannelRateLimit(channel, notification);
       
-      // Check channel rate limits
-      if (!this.checkChannelRateLimit(channel, notification)) {
-        attempt.status = 'failed';
-        attempt.errorMessage = 'Rate limit exceeded';
-        return;
+      if (!rateLimitCheck.allowed) {
+        // Rate limit exceeded - schedule retry if retryAfter is provided
+        if (rateLimitCheck.retryAfter) {
+          await this.scheduleRetry(notification, channel, rateLimitCheck.retryAfter);
+          return;
+        } else {
+          // No retry allowed - drop the notification
+          await this.updateNotificationStatus(notification.id, 'failed', 'Rate limit exceeded - no retry allowed');
+          return;
+        }
       }
       
-      // Deliver based on channel
+      // Attempt delivery based on channel type
       switch (channel) {
         case 'email':
-          await this.deliverEmail(notification, attempt);
+          await this.deliverEmail(notification);
           break;
         case 'sms':
-          await this.deliverSMS(notification, attempt);
+          await this.deliverSMS(notification);
           break;
         case 'push':
-          await this.deliverPush(notification, attempt);
+          await this.deliverPush(notification);
           break;
         case 'in_app':
-          await this.deliverInApp(notification, attempt);
+          await this.deliverInApp(notification);
           break;
-        case 'voice':
-          await this.deliverVoice(notification, attempt);
+        case 'whatsapp':
+          await this.deliverWhatsApp(notification);
           break;
         default:
           throw new Error(`Unsupported delivery channel: ${channel}`);
       }
       
-      // Update attempt status
-      attempt.status = 'sent';
-      attempt.timestamp = new Date().toISOString();
+      // Update status to delivered
+      await this.updateNotificationStatus(notification.id, 'delivered');
       
     } catch (error) {
-      attempt.status = 'failed';
-      attempt.errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`Failed to deliver notification ${notification.id} via ${channel}:`, error);
       
-      // Schedule retry if applicable
-      if (attempt.retryCount < this.config.retrySettings.maxRetries) {
-        this.scheduleRetry(notification, attempt);
+      // Schedule retry if within retry limits
+      if (notification.retryCount < this.config.maxRetries) {
+        await this.scheduleRetry(notification, channel);
+      } else {
+        await this.updateNotificationStatus(notification.id, 'failed', error instanceof Error ? error.message : 'Unknown error');
       }
     }
   }
@@ -985,14 +982,40 @@ export class NotificationService {
   /**
    * Check channel rate limits
    */
-  private checkChannelRateLimit(_channel: DeliveryChannel, notification: Notification): boolean {
+  private async checkChannelRateLimit(channel: DeliveryChannel, notification: Notification): Promise<{ allowed: boolean; retryAfter?: number }> {
     // Emergency notifications bypass rate limits
     if (notification.priority === 'emergency' && this.config.healthcareSettings.emergencyBypass) {
-      return true;
+      return { allowed: true };
     }
     
-    // TODO: Implement actual rate limiting logic
-    return true;
+    // Patient safety notifications bypass rate limits
+    if (notification.category === 'patient_safety_alert' && this.config.healthcareSettings.patientSafetyPriority) {
+      return { allowed: true };
+    }
+    
+    // Map notification data to RateLimitContext
+    const rateLimitContext: RateLimitContext = {
+      userId: notification.recipientId,
+      userType: notification.recipientType,
+      channel: channel,
+      notificationCategory: notification.category,
+      priority: notification.priority,
+      healthcareContext: notification.healthcareContext,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        notificationId: notification.id,
+        correlationId: notification.correlationId,
+        ...notification.metadata
+      }
+    };
+    
+    // Check rate limit using the API rate limiting service
+    const rateLimitResult = await apiRateLimitingService.checkRateLimit(rateLimitContext);
+    
+    return {
+      allowed: rateLimitResult.allowed,
+      retryAfter: rateLimitResult.retryAfter
+    };
   }
 
   /**
@@ -1059,16 +1082,28 @@ export class NotificationService {
   /**
    * Schedule retry for failed delivery
    */
-  private scheduleRetry(notification: Notification, attempt: DeliveryAttempt): void {
-    const retryDelay = this.calculateRetryDelay(attempt.retryCount);
-    const nextRetry = new Date(Date.now() + retryDelay);
+  private async scheduleRetry(notification: Notification, channel: DeliveryChannel, overrideDelay?: number): Promise<void> {
+    // Get the current retry count from the last delivery attempt for this channel
+    const lastAttempt = notification.deliveryAttempts
+      .filter(attempt => attempt.channel === channel)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
     
-    attempt.nextRetryAt = nextRetry.toISOString();
-    attempt.retryCount++;
+    const retryCount = (lastAttempt?.retryCount ?? 0) + 1;
     
-    console.log(`🔄 [NotificationService] Scheduling retry for notification ${notification.id} at ${nextRetry.toISOString()}`);
+    // Use override delay if provided (from rate limiting), otherwise calculate normal retry delay
+    const retryDelay = overrideDelay ?? this.calculateRetryDelay(retryCount);
+    const nextRetryAt = new Date(Date.now() + retryDelay * 1000);
     
-    // TODO: Implement actual retry scheduling
+    const retryNotification: Notification = {
+      ...notification,
+      id: nanoid(), // Generate new ID for retry
+      nextRetryAt: nextRetryAt.toISOString(),
+      scheduledAt: nextRetryAt.toISOString(),
+      status: 'pending' // Use 'pending' instead of 'scheduled' as it's a valid status
+    };
+    
+    // TODO: Implement persistence - store retry notification in queue/database
+    console.log(`Scheduled retry ${retryCount} for notification ${notification.id} via ${channel} at ${nextRetryAt.toISOString()}`);
   }
 
   /**

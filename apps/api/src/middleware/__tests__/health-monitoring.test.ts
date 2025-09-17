@@ -5,8 +5,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  healthMonitoringMiddleware,
   healthMonitor,
+  healthMonitoringMiddleware,
   HealthStatus,
   // type HealthCheckResult,
   // type MetricEntry,
@@ -63,7 +63,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
       await healthMonitor.runHealthChecks();
 
       expect(healthCheck).toHaveBeenCalled();
-      
+
       const result = healthMonitor.getHealthCheck(checkName);
       expect(result?.status).toBe(HealthStatus.HEALTHY);
       expect(result?.message).toBe('Database connection OK');
@@ -89,25 +89,34 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
     it('should calculate overall health status', async () => {
       // Register multiple health checks
-      healthMonitor.registerHealthCheck('service1', vi.fn().mockResolvedValue({
-        status: HealthStatus.HEALTHY,
-        message: 'Service 1 OK',
-      }));
+      healthMonitor.registerHealthCheck(
+        'service1',
+        vi.fn().mockResolvedValue({
+          status: HealthStatus.HEALTHY,
+          message: 'Service 1 OK',
+        }),
+      );
 
-      healthMonitor.registerHealthCheck('service2', vi.fn().mockResolvedValue({
-        status: HealthStatus.WARNING,
-        message: 'Service 2 degraded',
-      }));
+      healthMonitor.registerHealthCheck(
+        'service2',
+        vi.fn().mockResolvedValue({
+          status: HealthStatus.WARNING,
+          message: 'Service 2 degraded',
+        }),
+      );
 
-      healthMonitor.registerHealthCheck('service3', vi.fn().mockResolvedValue({
-        status: HealthStatus.CRITICAL,
-        message: 'Service 3 down',
-      }));
+      healthMonitor.registerHealthCheck(
+        'service3',
+        vi.fn().mockResolvedValue({
+          status: HealthStatus.CRITICAL,
+          message: 'Service 3 down',
+        }),
+      );
 
       await healthMonitor.runHealthChecks();
 
       const overallHealth = healthMonitor.getOverallHealth();
-      
+
       // Overall status should be CRITICAL due to service3
       expect(overallHealth.status).toBe(HealthStatus.CRITICAL);
       expect(overallHealth.checks).toHaveLength(3);
@@ -130,7 +139,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
     it('should aggregate metrics over time windows', () => {
       const metricName = 'response_time';
-      
+
       // Record multiple metrics
       healthMonitor.recordMetric(metricName, 100);
       healthMonitor.recordMetric(metricName, 200);
@@ -147,15 +156,15 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
     it('should clean old metrics', () => {
       const metricName = 'old_metric';
-      
+
       // Mock old timestamp
       const oldTimestamp = new Date(Date.now() - 25 * 60 * 60 * 1000); // 25 hours ago
       const metrics = (healthMonitor as any).metrics;
-      
+
       if (!metrics.has(metricName)) {
         metrics.set(metricName, []);
       }
-      
+
       metrics.get(metricName).push({
         value: 1,
         timestamp: oldTimestamp,
@@ -168,7 +177,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
       const cleanedCount = healthMonitor.cleanOldMetrics(24); // 24 hours retention
 
       expect(cleanedCount).toBe(1);
-      
+
       const remainingMetrics = healthMonitor.getMetrics(metricName);
       expect(remainingMetrics).toHaveLength(1);
       expect(remainingMetrics[0].value).toBe(2);
@@ -189,7 +198,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
       // Record LGPD compliance metrics
       healthMonitor.recordMetric('lgpd_consent_checks', 1, { result: 'valid' });
       healthMonitor.recordMetric('lgpd_consent_checks', 1, { result: 'invalid' });
-      
+
       // Record healthcare professional validations
       healthMonitor.recordMetric('healthcare_validations', 1, { status: 'active' });
       healthMonitor.recordMetric('healthcare_validations', 1, { status: 'suspended' });
@@ -199,10 +208,10 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       expect(lgpdMetrics).toHaveLength(2);
       expect(healthcareMetrics).toHaveLength(2);
-      
+
       const validConsents = lgpdMetrics.filter(m => m.tags?.result === 'valid');
       const activeValidations = healthcareMetrics.filter(m => m.tags?.status === 'active');
-      
+
       expect(validConsents).toHaveLength(1);
       expect(activeValidations).toHaveLength(1);
     });
@@ -226,7 +235,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       expect(requestMetrics.length).toBeGreaterThan(0);
       expect(responseTimeMetrics.length).toBeGreaterThan(0);
-      
+
       const lastRequest = requestMetrics[requestMetrics.length - 1];
       expect(lastRequest.tags).toEqual({
         method: 'GET',
@@ -249,7 +258,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       const errorMetrics = healthMonitor.getMetrics('http_errors');
       expect(errorMetrics.length).toBeGreaterThan(0);
-      
+
       const lastError = errorMetrics[errorMetrics.length - 1];
       expect(lastError.tags).toEqual({
         method: 'GET',
@@ -261,11 +270,13 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
     it('should track healthcare professional requests', async () => {
       mockContext.get.mockImplementation((key: string) => {
         if (key === 'isHealthcareProfessional') return true;
-        if (key === 'healthcareProfessional') return {
-          id: 'hp-123',
-          crmNumber: '12345-SP',
-          specialty: 'Dermatologia',
-        };
+        if (key === 'healthcareProfessional') {
+          return {
+            id: 'hp-123',
+            crmNumber: '12345-SP',
+            specialty: 'Dermatologia',
+          };
+        }
         return undefined;
       });
 
@@ -273,7 +284,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       const healthcareMetrics = healthMonitor.getMetrics('healthcare_professional_requests');
       expect(healthcareMetrics.length).toBeGreaterThan(0);
-      
+
       const lastMetric = healthcareMetrics[healthcareMetrics.length - 1];
       expect(lastMetric.tags).toEqual({
         crmNumber: '12345-SP',
@@ -285,10 +296,12 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
     it('should track LGPD consent metrics', async () => {
       mockContext.get.mockImplementation((key: string) => {
         if (key === 'hasLGPDConsent') return true;
-        if (key === 'lgpdConsent') return {
-          purposes: ['healthcare_service', 'ai_assistance'],
-          dataCategories: ['personal_data', 'health_data'],
-        };
+        if (key === 'lgpdConsent') {
+          return {
+            purposes: ['healthcare_service', 'ai_assistance'],
+            dataCategories: ['personal_data', 'health_data'],
+          };
+        }
         return undefined;
       });
 
@@ -296,7 +309,7 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       const lgpdMetrics = healthMonitor.getMetrics('lgpd_consent_usage');
       expect(lgpdMetrics.length).toBeGreaterThan(0);
-      
+
       const lastMetric = lgpdMetrics[lgpdMetrics.length - 1];
       expect(lastMetric.tags?.purposes).toContain('healthcare_service');
       expect(lastMetric.tags?.dataCategories).toContain('health_data');
@@ -304,15 +317,21 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
     it('should provide health check endpoint data', async () => {
       // Register some health checks
-      healthMonitor.registerHealthCheck('database', vi.fn().mockResolvedValue({
-        status: HealthStatus.HEALTHY,
-        message: 'DB OK',
-      }));
+      healthMonitor.registerHealthCheck(
+        'database',
+        vi.fn().mockResolvedValue({
+          status: HealthStatus.HEALTHY,
+          message: 'DB OK',
+        }),
+      );
 
-      healthMonitor.registerHealthCheck('cache', vi.fn().mockResolvedValue({
-        status: HealthStatus.WARNING,
-        message: 'Cache slow',
-      }));
+      healthMonitor.registerHealthCheck(
+        'cache',
+        vi.fn().mockResolvedValue({
+          status: HealthStatus.WARNING,
+          message: 'Cache slow',
+        }),
+      );
 
       await healthMonitor.runHealthChecks();
 

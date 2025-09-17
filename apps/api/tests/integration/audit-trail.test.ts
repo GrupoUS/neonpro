@@ -1,6 +1,6 @@
 /**
  * INTEGRATION TEST: Healthcare audit trail (T025)
- * 
+ *
  * Tests comprehensive audit trail for healthcare operations:
  * - Patient data access logging
  * - Medical procedure tracking
@@ -10,7 +10,7 @@
  * - Regulatory compliance (ANVISA, CFM)
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -101,7 +101,7 @@ const AuditReportSchema = z.object({
 
 describe('Healthcare Audit Trail Integration Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-User-Role': 'physician',
@@ -152,7 +152,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(auditResponse.status).toBe(200);
       const auditEvents = await auditResponse.json();
-      
+
       expect(auditEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'patient_access',
@@ -166,7 +166,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           }),
           outcome: 'success',
           riskLevel: 'low',
-        })
+        }),
       );
     });
 
@@ -196,11 +196,11 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(auditResponse.status).toBe(200);
       const auditEvents = await auditResponse.json();
-      
+
       const sensitiveAccess = auditEvents.events.find(
-        (event: any) => event.details.accessedFields?.includes('medicalHistory')
+        (event: any) => event.details.accessedFields?.includes('medicalHistory'),
       );
-      
+
       expect(sensitiveAccess).toBeDefined();
       expect(sensitiveAccess.details.dataClassification).toBe('restricted');
       expect(sensitiveAccess.riskLevel).toBe('medium');
@@ -211,7 +211,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
       // Attempt access without proper authorization
       const unauthorizedResponse = await api(`/api/v2/patients/${testPatientId}`, {
         headers: {
-          'Authorization': 'Bearer invalid-token',
+          Authorization: 'Bearer invalid-token',
           'Content-Type': 'application/json',
         },
       });
@@ -231,7 +231,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(securityAuditResponse.status).toBe(200);
       const securityEvents = await securityAuditResponse.json();
-      
+
       expect(securityEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'security_event',
@@ -241,7 +241,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           details: expect.objectContaining({
             attemptedResource: expect.stringContaining(testPatientId),
           }),
-        })
+        }),
       );
     });
   });
@@ -283,7 +283,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(medicalAuditResponse.status).toBe(200);
       const medicalEvents = await medicalAuditResponse.json();
-      
+
       expect(medicalEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'medical_record_update',
@@ -298,7 +298,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
             lgpdBasis: 'healthcare_treatment',
             regulatoryRequirement: expect.arrayContaining(['CFM', 'ANVISA']),
           }),
-        })
+        }),
       );
     });
 
@@ -345,7 +345,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(prescriptionAuditResponse.status).toBe(200);
       const prescriptionEvents = await prescriptionAuditResponse.json();
-      
+
       expect(prescriptionEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'prescription_create',
@@ -360,7 +360,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           complianceMetadata: expect.objectContaining({
             regulatoryRequirement: expect.arrayContaining(['CFM', 'ANVISA']),
           }),
-        })
+        }),
       );
     });
   });
@@ -396,7 +396,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(authAuditResponse.status).toBe(200);
       const authEvents = await authAuditResponse.json();
-      
+
       expect(authEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'user_login',
@@ -408,7 +408,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           }),
           outcome: 'success',
           riskLevel: 'low',
-        })
+        }),
       );
     });
 
@@ -441,7 +441,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(failedAuthAuditResponse.status).toBe(200);
       const failedAuthEvents = await failedAuthAuditResponse.json();
-      
+
       expect(failedAuthEvents.events).toContainEqual(
         expect.objectContaining({
           eventType: 'user_login',
@@ -451,7 +451,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           details: expect.objectContaining({
             failureReason: 'invalid_credentials',
           }),
-        })
+        }),
       );
     });
 
@@ -484,7 +484,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(anomalyResponse.status).toBe(200);
       const anomalies = await anomalyResponse.json();
-      
+
       expect(anomalies.anomalies).toContainEqual(
         expect.objectContaining({
           type: 'rapid_patient_access',
@@ -493,7 +493,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
             patientCount: suspiciousPatientIds.length,
             timeWindow: '10m',
           }),
-        })
+        }),
       );
     });
   });
@@ -514,7 +514,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(lgpdReportResponse.status).toBe(200);
       const lgpdReport = await lgpdReportResponse.json();
-      
+
       expect(lgpdReport).toMatchObject({
         reportType: 'lgpd_compliance',
         complianceScore: expect.any(Number),
@@ -548,7 +548,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(cfmReportResponse.status).toBe(200);
       const cfmReport = await cfmReportResponse.json();
-      
+
       expect(cfmReport).toMatchObject({
         reportType: 'cfm_regulatory',
         period: expect.any(Object),
@@ -588,7 +588,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(investigationResponse.status).toBe(200);
       const investigation = await investigationResponse.json();
-      
+
       expect(investigation).toMatchObject({
         queryId: expect.any(String),
         totalEvents: expect.any(Number),
@@ -610,7 +610,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(retentionResponse.status).toBe(200);
       const retention = await retentionResponse.json();
-      
+
       expect(retention).toMatchObject({
         policies: expect.arrayContaining([
           expect.objectContaining({
@@ -645,7 +645,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(anonymizationResponse.status).toBe(200);
       const anonymization = await anonymizationResponse.json();
-      
+
       expect(anonymization).toMatchObject({
         eligibleRecords: expect.any(Number),
         anonymizationPlan: expect.any(Array),
@@ -682,7 +682,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(streamResponse.status).toBe(200);
       const stream = await streamResponse.json();
-      
+
       expect(stream).toMatchObject({
         streamId: expect.any(String),
         endpoint: expect.stringContaining('ws://'),
@@ -714,7 +714,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
       expect(alertsResponse.status).toBe(200);
       const alerts = await alertsResponse.json();
-      
+
       expect(alerts.alerts).toContainEqual(
         expect.objectContaining({
           severity: 'critical',
@@ -722,7 +722,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           triggerEvent: 'mass_data_export',
           notificationsSent: expect.any(Array),
           responseRequired: true,
-        })
+        }),
       );
     });
   });

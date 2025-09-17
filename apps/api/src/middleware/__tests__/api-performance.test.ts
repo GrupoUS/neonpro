@@ -3,14 +3,14 @@
  * T079 - Backend API Performance Optimization
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Hono } from 'hono';
-import { 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
   APIPerformanceMonitor,
   apiPerformanceMonitor,
-  createPerformanceMonitoringMiddleware,
   createPerformanceDashboardMiddleware,
-  HEALTHCARE_THRESHOLDS
+  createPerformanceMonitoringMiddleware,
+  HEALTHCARE_THRESHOLDS,
 } from '../api-performance';
 
 describe('API Performance Monitoring', () => {
@@ -48,7 +48,7 @@ describe('API Performance Monitoring', () => {
 
     it('should calculate performance statistics correctly', () => {
       const baseTime = new Date();
-      
+
       // Add multiple metrics
       for (let i = 0; i < 10; i++) {
         monitor.recordMetrics({
@@ -68,7 +68,7 @@ describe('API Performance Monitoring', () => {
 
     it('should calculate error rate correctly', () => {
       const baseTime = new Date();
-      
+
       // Add successful requests
       for (let i = 0; i < 8; i++) {
         monitor.recordMetrics({
@@ -98,7 +98,7 @@ describe('API Performance Monitoring', () => {
 
     it('should identify slowest endpoints', () => {
       const baseTime = new Date();
-      
+
       // Add fast endpoint
       monitor.recordMetrics({
         endpoint: '/api/fast',
@@ -125,7 +125,7 @@ describe('API Performance Monitoring', () => {
 
     it('should calculate healthcare-specific metrics', () => {
       const baseTime = new Date();
-      
+
       // Add patient data access
       monitor.recordMetrics({
         endpoint: '/api/patients/123',
@@ -168,7 +168,7 @@ describe('API Performance Monitoring', () => {
           type: 'response_time',
           severity: 'critical',
           message: expect.stringContaining('Critical response time: 600ms'),
-        })
+        }),
       );
     });
 
@@ -190,7 +190,7 @@ describe('API Performance Monitoring', () => {
           type: 'healthcare_compliance',
           severity: 'warning',
           message: expect.stringContaining('Patient data access slower than recommended'),
-        })
+        }),
       );
     });
 
@@ -207,7 +207,7 @@ describe('API Performance Monitoring', () => {
       expect(stats.totalRequests).toBe(1);
 
       monitor.clearMetrics();
-      
+
       stats = monitor.getStats();
       expect(stats.totalRequests).toBe(0);
     });
@@ -216,12 +216,12 @@ describe('API Performance Monitoring', () => {
   describe('createPerformanceMonitoringMiddleware', () => {
     it('should add performance headers', async () => {
       const middleware = createPerformanceMonitoringMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/test', (c) => c.json({ data: 'test' }));
+      app.get('/api/test', c => c.json({ data: 'test' }));
 
       const res = await app.request('/api/test');
-      
+
       expect(res.status).toBe(200);
       expect(res.headers.get('x-response-time')).toMatch(/\d+ms/);
       expect(res.headers.get('x-memory-usage')).toMatch(/\d+MB/);
@@ -230,12 +230,12 @@ describe('API Performance Monitoring', () => {
 
     it('should add healthcare compliance headers for patient endpoints', async () => {
       const middleware = createPerformanceMonitoringMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/patients/123', (c) => c.json({ patient: { id: 123 } }));
+      app.get('/api/patients/123', c => c.json({ patient: { id: 123 } }));
 
       const res = await app.request('/api/patients/123');
-      
+
       expect(res.status).toBe(200);
       expect(res.headers.get('x-healthcare-performance')).toBe('monitored');
       expect(res.headers.get('x-lgpd-compliant')).toBe('true');
@@ -243,21 +243,21 @@ describe('API Performance Monitoring', () => {
 
     it('should record metrics for successful requests', async () => {
       const middleware = createPerformanceMonitoringMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/metrics-test', (c) => c.json({ data: 'test' }));
+      app.get('/api/metrics-test', c => c.json({ data: 'test' }));
 
       await app.request('/api/metrics-test');
-      
+
       const stats = apiPerformanceMonitor.getStats();
       expect(stats.totalRequests).toBeGreaterThan(0);
     });
 
     it('should record metrics for error requests', async () => {
       const middleware = createPerformanceMonitoringMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/error-test', (_c) => {
+      app.get('/api/error-test', _c => {
         throw new Error('Test error');
       });
 
@@ -266,19 +266,19 @@ describe('API Performance Monitoring', () => {
       } catch {
         // Expected error
       }
-      
+
       const stats = apiPerformanceMonitor.getStats();
       expect(stats.totalRequests).toBeGreaterThan(0);
     });
 
     it('should set appropriate performance tier', async () => {
       const middleware = createPerformanceMonitoringMiddleware();
-      
+
       app.use('*', middleware);
-      app.get('/api/fast', (c) => c.json({ data: 'fast' }));
+      app.get('/api/fast', c => c.json({ data: 'fast' }));
 
       const res = await app.request('/api/fast');
-      
+
       const performanceTier = res.headers.get('x-performance-tier');
       expect(['excellent', 'good', 'acceptable', 'slow', 'critical']).toContain(performanceTier);
     });
@@ -287,11 +287,11 @@ describe('API Performance Monitoring', () => {
   describe('createPerformanceDashboardMiddleware', () => {
     it('should provide performance statistics endpoint', async () => {
       const middleware = createPerformanceDashboardMiddleware();
-      
+
       app.use('*', middleware);
 
       const res = await app.request('/v1/performance/stats');
-      
+
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data).toHaveProperty('api');
@@ -302,11 +302,11 @@ describe('API Performance Monitoring', () => {
 
     it('should accept time window parameter', async () => {
       const middleware = createPerformanceDashboardMiddleware();
-      
+
       app.use('*', middleware);
 
       const res = await app.request('/v1/performance/stats?window=1800000'); // 30 minutes
-      
+
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data).toHaveProperty('api');
@@ -314,11 +314,11 @@ describe('API Performance Monitoring', () => {
 
     it('should provide healthcare compliance status', async () => {
       const middleware = createPerformanceDashboardMiddleware();
-      
+
       app.use('*', middleware);
 
       const res = await app.request('/v1/performance/stats');
-      
+
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.healthcareCompliance).toHaveProperty('patientDataPerformance');

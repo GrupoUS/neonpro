@@ -5,12 +5,12 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono, Context, Next } from 'hono';
+import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { PatientService } from '../../services/patient-service.js';
 import { AuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
+import { PatientService } from '../../services/patient-service.js';
 
 // Type definitions
 interface ServiceInterface {
@@ -39,7 +39,13 @@ const app = new Hono();
 
 // Request validation schema
 const analyzeRequestSchema = z.object({
-  analysisType: z.enum(['structured_data', 'medical_image', 'patient_feedback', 'multi_modal', 'diagnostic_support']),
+  analysisType: z.enum([
+    'structured_data',
+    'medical_image',
+    'patient_feedback',
+    'multi_modal',
+    'diagnostic_support',
+  ]),
   data: z.object({
     patientId: z.string().optional(),
     imageUrl: z.string().optional(),
@@ -74,7 +80,7 @@ export const setServices = (injectedServices: ServiceInterface) => {
 // Default services for production
 const getServices = () => {
   if (services) return services;
-  
+
   // Use real service instances in production
   return {
     aiChatService: new AIChatService(),
@@ -89,7 +95,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', analyzeRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
     const user = c.get('user');
     const requestData = c.req.valid('json');
@@ -102,7 +108,13 @@ app.post(
       const currentServices = getServices();
 
       // Validate supported analysis type
-      const supportedTypes = ['structured_data', 'medical_image', 'patient_feedback', 'multi_modal', 'diagnostic_support'];
+      const supportedTypes = [
+        'structured_data',
+        'medical_image',
+        'patient_feedback',
+        'multi_modal',
+        'diagnostic_support',
+      ];
       if (!supportedTypes.includes(requestData.analysisType)) {
         return c.json({
           success: false,
@@ -203,11 +215,16 @@ app.post(
       // Add AI-specific headers
       if (analysisResponse.data.metadata) {
         responseHeaders['X-AI-Model'] = analysisResponse.data.metadata.model || 'unknown';
-        responseHeaders['X-AI-Confidence'] = (analysisResponse.data.metadata.confidence || 0).toString();
-        responseHeaders['X-AI-Processing-Time'] = `${analysisResponse.data.metadata.processingTime || 0}ms`;
+        responseHeaders['X-AI-Confidence'] = (analysisResponse.data.metadata.confidence || 0)
+          .toString();
+        responseHeaders['X-AI-Processing-Time'] = `${
+          analysisResponse.data.metadata.processingTime || 0
+        }ms`;
         responseHeaders['X-Analysis-Type'] = requestData.analysisType;
-        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion || 'unknown';
-        responseHeaders['X-AI-Data-Points'] = (analysisResponse.data.metadata.dataPoints || 0).toString();
+        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion
+          || 'unknown';
+        responseHeaders['X-AI-Data-Points'] = (analysisResponse.data.metadata.dataPoints || 0)
+          .toString();
       }
 
       // Set all headers
@@ -219,7 +236,6 @@ app.post(
         success: true,
         data: analysisResponse.data,
       });
-
     } catch (error) {
       console.error('AI Analyze endpoint error:', error);
 
@@ -245,7 +261,7 @@ app.post(
         error: 'Erro interno do servidor. Tente novamente mais tarde.',
       }, 500);
     }
-  }
+  },
 );
 
 export default app;

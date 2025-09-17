@@ -1,13 +1,18 @@
 /**
  * Billing Service Unit Test
- * 
- * Tests the core functionality of BillingService without 
+ *
+ * Tests the core functionality of BillingService without
  * HTTP dependencies for faster validation.
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import { BillingService, BillingType, PaymentMethod, PaymentStatus } from '../../services/billing-service';
 import { randomUUID } from 'crypto';
+import { beforeAll, describe, expect, it } from 'vitest';
+import {
+  BillingService,
+  BillingType,
+  PaymentMethod,
+  PaymentStatus,
+} from '../../services/billing-service';
 
 describe('BillingService', () => {
   let service: BillingService;

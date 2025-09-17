@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { ScanOptions, ScanResult, ScannedFile } from '../types.js';
+import { ScannedFile, ScanOptions, ScanResult } from '../types.js';
 
 const DEFAULT_MAX_DEPTH = 6;
 
@@ -58,7 +58,9 @@ async function walk(options: TraversalOptions): Promise<void> {
     entries = await fs.readdir(options.root);
   } catch (error) {
     options.warnings.push(
-      `Cannot read directory ${options.root}: ${error instanceof Error ? error.message : String(error)}`,
+      `Cannot read directory ${options.root}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
     );
     return;
   }

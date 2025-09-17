@@ -6,6 +6,7 @@
 
 export * from './mock-factories';
 export * from './performance';
+export type { HealthcarePerformanceBudget } from './performance';
 export * from './test-helpers';
 
 // Common test utilities

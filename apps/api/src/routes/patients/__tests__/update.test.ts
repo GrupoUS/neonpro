@@ -4,7 +4,7 @@
  * Integration with PatientService, AuditService, NotificationService
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -35,7 +35,7 @@ const mockBrazilianValidator = {
 describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.updatePatient.mockResolvedValue({
       success: true,
@@ -117,7 +117,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   describe('Successful Patient Update', () => {
     it('should update patient with complete data', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
         email: 'joao.santos@example.com',
@@ -140,7 +140,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -158,7 +158,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should update patient with partial data', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         phone: '(11) 77777-7777',
         lgpdConsent: {
@@ -170,7 +170,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -193,7 +193,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should send notification after successful update', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         email: 'newemail@example.com',
       };
@@ -202,7 +202,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -226,7 +226,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should include Last-Modified header', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
       };
@@ -235,7 +235,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -252,7 +252,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   describe('Change Tracking and Audit Trail', () => {
     it('should log patient update activity with change details', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
         email: 'joao.santos@example.com',
@@ -262,7 +262,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Real-IP': '192.168.1.100',
         }),
@@ -297,7 +297,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should track sensitive data changes separately', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         cpf: '987.654.321-00',
         healthcareInfo: {
@@ -310,7 +310,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -325,13 +325,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
             changedFields: ['cpf', 'healthcareInfo'],
           }),
           sensitivityLevel: 'critical',
-        })
+        }),
       );
     });
 
     it('should validate change permissions before update', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
       };
@@ -340,7 +340,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -360,7 +360,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   describe('Brazilian Data Validation', () => {
     it('should validate updated CPF format', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         cpf: '987.654.321-00',
       };
@@ -369,7 +369,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -384,7 +384,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       mockBrazilianValidator.validateCPF.mockReturnValue(false);
 
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         cpf: '111.111.111-11', // Invalid CPF
       };
@@ -393,7 +393,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -408,13 +408,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         expect.objectContaining({
           field: 'cpf',
           message: 'CPF inválido',
-        })
+        }),
       );
     });
 
     it('should validate updated phone number format', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         phone: '(11) 77777-7777',
       };
@@ -423,7 +423,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -436,7 +436,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should validate updated address CEP', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         address: {
           street: 'Rua Nova, 789',
@@ -450,7 +450,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -465,7 +465,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   describe('LGPD Consent Updates', () => {
     it('should validate LGPD consent updates', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         lgpdConsent: {
           marketing: false,
@@ -477,7 +477,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -494,7 +494,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should update consent record after successful update', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
         lgpdConsent: {
@@ -506,7 +506,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -524,7 +524,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should handle consent withdrawal', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         lgpdConsent: {
           marketing: false,
@@ -536,7 +536,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -559,7 +559,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       });
 
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
       };
@@ -568,7 +568,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/nonexistent-id',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -585,7 +585,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should handle authentication errors', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const mockRequest = {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
@@ -605,7 +605,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should handle validation errors', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const invalidData = {
         email: 'invalid-email-format',
         phone: 'invalid-phone',
@@ -616,7 +616,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(invalidData),
@@ -639,7 +639,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       });
 
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         name: 'João Silva Santos',
       };
@@ -648,7 +648,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -671,7 +671,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       });
 
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         cpf: '987.654.321-00',
       };
@@ -680,7 +680,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -699,7 +699,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         healthcareInfo: {
           allergies: ['Penicilina', 'Dipirona'],
@@ -710,7 +710,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
         body: JSON.stringify(updateData),
@@ -725,7 +725,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
     it('should validate healthcare professional context for medical updates', async () => {
       const { default: updateRoute } = require('../update');
-      
+
       const updateData = {
         healthcareInfo: {
           medicalHistory: ['Hipertensão', 'Diabetes Tipo 2'],
@@ -737,7 +737,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         method: 'PUT',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Healthcare-Professional': 'CRM-SP-123456',
           'X-Healthcare-Context': 'medical_consultation',
@@ -752,7 +752,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456',
           healthcareContext: 'medical_consultation',
-        })
+        }),
       );
     });
   });

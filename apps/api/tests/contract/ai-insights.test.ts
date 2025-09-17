@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: GET /api/v2/ai/insights/patient/{id} (T021)
- * 
+ *
  * Tests AI patient insights endpoint contract:
  * - Patient analysis and insights generation
  * - Multi-model AI analysis aggregation
@@ -10,7 +10,7 @@
  * - Clinical relevance scoring
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -98,7 +98,7 @@ const PatientInsightsResponseSchema = z.object({
 describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
   const testPatientId = '550e8400-e29b-41d4-a716-446655440000';
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-CFM-License': 'CFM-12345',
@@ -118,30 +118,36 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
       const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Skip full schema validation for now since this is a contract test
       // In real implementation, this would validate against actual AI insights
       expect(response).toBeDefined();
     });
 
     it('should support query parameters for specific insights', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?focus=risk_analysis&depth=detailed`, {
-        headers: testAuthHeaders,
-      });
-      
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?focus=risk_analysis&depth=detailed`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
+
       expect(response.status).toBe(200);
       // Contract validation would happen here
     });
 
     it('should aggregate insights from multiple AI models', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?models=openai,anthropic,google`, {
-        headers: testAuthHeaders,
-      });
-      
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?models=openai,anthropic,google`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures multiple models are used
       const responseText = await response.text();
       expect(responseText).toContain('aiModels');
@@ -151,7 +157,7 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
   describe('Error Handling', () => {
     it('should return 401 for missing authentication', async () => {
       const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`);
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -160,18 +166,18 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
       const response = await api(`/api/v2/ai/insights/patient/${invalidPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(404);
     });
 
     it('should return 403 for insufficient healthcare permissions', async () => {
       const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: {
-          'Authorization': 'Bearer limited-token',
+          Authorization: 'Bearer limited-token',
           'Content-Type': 'application/json',
         },
       });
-      
+
       expect(response.status).toBe(403);
     });
 
@@ -180,7 +186,7 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
       const response = await api(`/api/v2/ai/insights/patient/${invalidPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(422);
     });
   });
@@ -188,7 +194,7 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should generate insights within 2 seconds', async () => {
       const startTime = Date.now();
-      
+
       const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: testAuthHeaders,
       });
@@ -203,15 +209,15 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
       const firstResponse = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       expect(firstResponse.status).toBe(200);
-      
+
       // Second request should be faster due to caching
       const startTime = Date.now();
       const secondResponse = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500); // Should be much faster from cache
       expect(secondResponse.status).toBe(200);
@@ -242,12 +248,15 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     });
 
     it('should include Brazilian healthcare context', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?context=brazilian_healthcare`, {
-        headers: testAuthHeaders,
-      });
-      
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?context=brazilian_healthcare`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures Brazilian regulatory context
       const responseText = await response.text();
       expect(responseText).toContain('brazilianContext');
@@ -256,15 +265,18 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     });
 
     it('should provide specialty-specific insights', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?specialty=dermatologia`, {
-        headers: {
-          ...testAuthHeaders,
-          'X-Medical-Specialty': 'dermatologia',
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?specialty=dermatologia`,
+        {
+          headers: {
+            ...testAuthHeaders,
+            'X-Medical-Specialty': 'dermatologia',
+          },
         },
-      });
-      
+      );
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures specialty-specific analysis
       const responseText = await response.text();
       expect(responseText).toContain('dermatologia');
@@ -276,9 +288,9 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
       const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures clinical relevance scoring
       const responseText = await response.text();
       expect(responseText).toContain('clinicalRelevance');
@@ -286,12 +298,15 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     });
 
     it('should provide risk stratification', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?analysis_type=risk_stratification`, {
-        headers: testAuthHeaders,
-      });
-      
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?analysis_type=risk_stratification`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures risk analysis
       const responseText = await response.text();
       expect(responseText).toContain('riskProfile');
@@ -299,12 +314,15 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     });
 
     it('should generate actionable recommendations', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}?include_recommendations=true`, {
-        headers: testAuthHeaders,
-      });
-      
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}?include_recommendations=true`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures actionable recommendations
       const responseText = await response.text();
       expect(responseText).toContain('recommendations');

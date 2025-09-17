@@ -7,81 +7,61 @@
 export const SECURITY_VERSION = '1.0.0';
 
 // Core encryption and key management
-export {
-  EncryptionManager,
-  KeyManager,
-  encryptionManager,
-  keyManager,
-} from './encryption';
+export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';
 
 // Security utilities and validation
-export {
-  SecurityUtils,
-  RateLimiter,
-  securityUtils,
-  rateLimiter,
-} from './utils';
+export { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
 
 // Security middleware for Hono framework
 export {
-  securityHeaders,
-  inputValidation,
-  rateLimiting,
-  csrfProtection,
   authentication,
   authorization,
-  requestId,
-  securityLogging,
-  healthcareDataProtection,
-  getSecurityMiddlewareStack,
+  csrfProtection,
   getProtectedRoutesMiddleware,
+  getSecurityMiddlewareStack,
+  healthcareDataProtection,
+  inputValidation,
+  rateLimiting,
+  requestId,
+  securityHeaders,
+  securityLogging,
 } from './middleware';
 
 // Import required classes for default export
-import {
-  EncryptionManager,
-  KeyManager,
-  encryptionManager,
-  keyManager,
-} from './encryption';
+import { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';
+
+import { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
 
 import {
-  SecurityUtils,
-  RateLimiter,
-  securityUtils,
-  rateLimiter,
-} from './utils';
-
-import {
-  securityHeaders,
-  inputValidation,
-  rateLimiting,
-  csrfProtection,
   authentication,
   authorization,
-  requestId,
-  securityLogging,
-  healthcareDataProtection,
-  getSecurityMiddlewareStack,
+  csrfProtection,
   getProtectedRoutesMiddleware,
+  getSecurityMiddlewareStack,
+  healthcareDataProtection,
+  inputValidation,
+  rateLimiting,
+  requestId,
+  securityHeaders,
+  securityLogging,
 } from './middleware';
 
 // Default export with all components
 export default {
   version: SECURITY_VERSION,
-  
+
   // Core classes
   EncryptionManager,
   KeyManager,
   SecurityUtils,
   RateLimiter,
-  
+
   // Singleton instances
   encryptionManager,
   keyManager,
   securityUtils,
   rateLimiter,
-  
+
   // Middleware functions
   securityHeaders,
   inputValidation,
@@ -94,7 +74,7 @@ export default {
   healthcareDataProtection,
   getSecurityMiddlewareStack,
   getProtectedRoutesMiddleware,
-  
+
   // Convenience exports
   utils: {
     SecurityUtils,
@@ -102,14 +82,14 @@ export default {
     securityUtils,
     rateLimiter,
   },
-  
+
   encryption: {
     EncryptionManager,
     KeyManager,
     encryptionManager,
     keyManager,
   },
-  
+
   middleware: {
     securityHeaders,
     inputValidation,

@@ -9,7 +9,7 @@ const ALLOWED_MIME = [
   'application/pdf',
   'image/jpeg',
   'image/png',
-  'image/webp'
+  'image/webp',
 ];
 
 export interface UploadPatientDocumentParams {
@@ -56,7 +56,9 @@ export class PatientDocumentService {
     this.persist = options.enablePersistence !== false && !!this.supabase;
   }
 
-  async uploadPatientDocument(params: UploadPatientDocumentParams): Promise<{ success: boolean; data: PatientDocumentDTO; }> {
+  async uploadPatientDocument(
+    params: UploadPatientDocumentParams,
+  ): Promise<{ success: boolean; data: PatientDocumentDTO }> {
     const { patientId, originalName, mimeType, size, data } = params;
 
     if (!ALLOWED_MIME.includes(mimeType)) {
@@ -79,14 +81,14 @@ export class PatientDocumentService {
         success: true,
         data: {
           documentId,
-            patient_id: patientId,
-            original_name: originalName,
-            mime_type: mimeType,
-            size_bytes: size,
-            checksum_sha256,
-            storage_path: `in-memory://${storage_path}`,
-            created_at
-        }
+          patient_id: patientId,
+          original_name: originalName,
+          mime_type: mimeType,
+          size_bytes: size,
+          checksum_sha256,
+          storage_path: `in-memory://${storage_path}`,
+          created_at,
+        },
       };
     }
 
@@ -97,7 +99,7 @@ export class PatientDocumentService {
       .upload(storage_path, data, {
         contentType: mimeType,
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
       });
 
     if (uploadRes.error) {
@@ -113,7 +115,7 @@ export class PatientDocumentService {
       size_bytes: size,
       checksum_sha256,
       storage_path,
-      created_at
+      created_at,
     };
 
     const { error: dbError } = await this.supabase
@@ -134,7 +136,7 @@ export class PatientDocumentService {
       size_bytes: size,
       checksum_sha256,
       storage_path: `supabase://${this.bucket}/${storage_path}`,
-      created_at
+      created_at,
     };
 
     // 3. Audit trail (non-blocking)
@@ -148,9 +150,9 @@ export class PatientDocumentService {
           patientId,
           mimeType,
           sizeBytes: size,
-          checksum: checksum_sha256
-        }
-      }).catch(() => { /* swallow audit errors */ });
+          checksum: checksum_sha256,
+        },
+      }).catch(() => {/* swallow audit errors */});
     }
 
     return { success: true, data: dto };

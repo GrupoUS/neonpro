@@ -1,7 +1,7 @@
 /**
  * AI Chat Service with Multi-Model Support (T039)
  * Comprehensive AI chat service for Brazilian healthcare
- * 
+ *
  * Features:
  * - Multi-provider support (OpenAI, Anthropic, Google, local models)
  * - Brazilian healthcare context with Portuguese responses
@@ -14,8 +14,8 @@
 
 import {
   AIInsight,
-  AIProvider,
   AIInsightType,
+  AIProvider,
   createAIInsight,
 } from '../../../../packages/shared/src/types/ai-insights';
 
@@ -205,7 +205,8 @@ export class AIChatService {
         {
           id: 'msg-2',
           role: 'assistant',
-          content: 'Entendo sua preocupação. Há quanto tempo você está sentindo essa dor de cabeça?',
+          content:
+            'Entendo sua preocupação. Há quanto tempo você está sentindo essa dor de cabeça?',
           timestamp: new Date(),
         },
       ],
@@ -262,7 +263,8 @@ export class AIChatService {
 
       const responseTime = Date.now() - startTime;
       const response: AIResponse = {
-        response: mockResponses[request.provider as keyof typeof mockResponses] || 'Resposta padrão',
+        response: mockResponses[request.provider as keyof typeof mockResponses]
+          || 'Resposta padrão',
         provider: request.provider,
         model: request.model,
         responseTime,
@@ -293,10 +295,12 @@ export class AIChatService {
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
-        response: `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
+        response:
+          `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
         language: 'pt-BR',
         context: params.context,
-        disclaimer: 'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
+        disclaimer:
+          'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
         sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
       };
 
@@ -322,7 +326,8 @@ export class AIChatService {
   }): Promise<ServiceResponse<PersonalizedResponse>> {
     try {
       const response: PersonalizedResponse = {
-        response: `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params.query}.`,
+        response:
+          `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params.query}.`,
         personalized: true,
         patientId: params.patientId,
         patientContext: {
@@ -354,9 +359,11 @@ export class AIChatService {
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
       const response: MedicalInfo = {
-        response: `Informações médicas sobre ${params.query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
+        response:
+          `Informações médicas sobre ${params.query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
         compliance: params.complianceLevel,
-        disclaimer: 'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
+        disclaimer:
+          'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
         sources: ['ANVISA', 'Bulário Eletrônico', 'RDC ANVISA'],
         lastUpdated: new Date(),
       };
@@ -410,7 +417,7 @@ export class AIChatService {
   async addMessage(params: MessageAddition): Promise<ServiceResponse<ChatMessage>> {
     try {
       const conversation = this.conversations.get(params.conversationId);
-      
+
       if (!conversation) {
         return {
           success: false,
@@ -445,13 +452,15 @@ export class AIChatService {
   /**
    * Get conversation history
    */
-  async getConversationHistory(conversationId: string): Promise<ServiceResponse<{
-    conversationId: string;
-    messages: ChatMessage[];
-  }>> {
+  async getConversationHistory(conversationId: string): Promise<
+    ServiceResponse<{
+      conversationId: string;
+      messages: ChatMessage[];
+    }>
+  > {
     try {
       const conversation = this.conversations.get(conversationId);
-      
+
       if (!conversation) {
         return {
           success: false,
@@ -477,10 +486,12 @@ export class AIChatService {
   /**
    * List patient conversations
    */
-  async listConversations(patientId: string): Promise<ServiceResponse<{
-    patientId: string;
-    conversations: Conversation[];
-  }>> {
+  async listConversations(patientId: string): Promise<
+    ServiceResponse<{
+      patientId: string;
+      conversations: Conversation[];
+    }>
+  > {
     try {
       const patientConversations = Array.from(this.conversations.values())
         .filter(conv => conv.patientId === patientId)
@@ -504,13 +515,15 @@ export class AIChatService {
   /**
    * Generate insights from conversation
    */
-  async generateInsights(params: InsightsGeneration): Promise<ServiceResponse<{
-    insights: AIInsight[];
-    analysisType: string;
-  }>> {
+  async generateInsights(params: InsightsGeneration): Promise<
+    ServiceResponse<{
+      insights: AIInsight[];
+      analysisType: string;
+    }>
+  > {
     try {
       const conversation = this.conversations.get(params.conversationId);
-      
+
       if (!conversation) {
         return {
           success: false,
@@ -553,9 +566,11 @@ export class AIChatService {
   /**
    * Suggest follow-up questions
    */
-  async suggestFollowUp(params: FollowUpSuggestion): Promise<ServiceResponse<{
-    suggestions: string[];
-  }>> {
+  async suggestFollowUp(params: FollowUpSuggestion): Promise<
+    ServiceResponse<{
+      suggestions: string[];
+    }>
+  > {
     try {
       const suggestions = [
         'Há quanto tempo você está sentindo esses sintomas?',
@@ -582,18 +597,18 @@ export class AIChatService {
   /**
    * Detect urgent symptoms
    */
-  async detectUrgentSymptoms(params: UrgentSymptomsDetection): Promise<ServiceResponse<{
-    urgent: boolean;
-    urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
-    recommendation: string;
-  }>> {
+  async detectUrgentSymptoms(params: UrgentSymptomsDetection): Promise<
+    ServiceResponse<{
+      urgent: boolean;
+      urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+      recommendation: string;
+    }>
+  > {
     try {
       // Mock urgent symptom detection
       const urgentKeywords = ['dor no peito', 'falta de ar', 'desmaio', 'sangramento'];
-      const hasUrgentSymptoms = params.messages.some(msg => 
-        urgentKeywords.some(keyword => 
-          msg.content.toLowerCase().includes(keyword)
-        )
+      const hasUrgentSymptoms = params.messages.some(msg =>
+        urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
       );
 
       return {
@@ -601,7 +616,7 @@ export class AIChatService {
         data: {
           urgent: hasUrgentSymptoms,
           urgencyLevel: hasUrgentSymptoms ? 'high' : 'low',
-          recommendation: hasUrgentSymptoms 
+          recommendation: hasUrgentSymptoms
             ? 'Procure atendimento médico imediatamente ou ligue para o SAMU (192)'
             : 'Continue monitorando os sintomas e agende consulta se necessário',
         },
@@ -617,12 +632,14 @@ export class AIChatService {
   /**
    * Track conversation access for LGPD audit
    */
-  async trackConversationAccess(params: AccessTracking): Promise<ServiceResponse<{
-    accessLogged: boolean;
-  }>> {
+  async trackConversationAccess(params: AccessTracking): Promise<
+    ServiceResponse<{
+      accessLogged: boolean;
+    }>
+  > {
     try {
       const conversation = this.conversations.get(params.conversationId);
-      
+
       if (!conversation) {
         return {
           success: false,
@@ -634,7 +651,7 @@ export class AIChatService {
       if (!conversation.metadata) {
         conversation.metadata = {};
       }
-      
+
       if (!conversation.metadata.accessLog) {
         conversation.metadata.accessLog = [];
       }
@@ -664,12 +681,14 @@ export class AIChatService {
   /**
    * Anonymize conversation data for LGPD compliance
    */
-  async anonymizeConversation(conversationId: string): Promise<ServiceResponse<{
-    anonymized: boolean;
-  }>> {
+  async anonymizeConversation(conversationId: string): Promise<
+    ServiceResponse<{
+      anonymized: boolean;
+    }>
+  > {
     try {
       const conversation = this.conversations.get(conversationId);
-      
+
       if (!conversation) {
         return {
           success: false,
@@ -704,10 +723,12 @@ export class AIChatService {
   /**
    * Export conversation data for LGPD requests
    */
-  async exportConversationData(params: DataExport): Promise<ServiceResponse<{
-    exportUrl: string;
-    format: string;
-  }>> {
+  async exportConversationData(params: DataExport): Promise<
+    ServiceResponse<{
+      exportUrl: string;
+      format: string;
+    }>
+  > {
     try {
       // Mock export URL generation
       const exportUrl = `/exports/conversations-${params.patientId}-${Date.now()}.${params.format}`;
@@ -754,7 +775,9 @@ export class AIChatService {
   /**
    * Generate response with timeout handling
    */
-  async generateResponseWithTimeout(request: AIRequest & { timeout: number }): Promise<ServiceResponse<AIResponse>> {
+  async generateResponseWithTimeout(
+    request: AIRequest & { timeout: number },
+  ): Promise<ServiceResponse<AIResponse>> {
     try {
       if (request.timeout < 100) {
         return {
@@ -777,7 +800,7 @@ export class AIChatService {
    */
   getHealthStatus(): HealthStatus {
     const uptime = Date.now() - this.startTime.getTime();
-    
+
     return {
       status: 'healthy',
       providers: {

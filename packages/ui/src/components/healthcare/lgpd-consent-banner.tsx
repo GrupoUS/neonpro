@@ -584,7 +584,7 @@ export const useLGPDConsent = () => {
   const withdrawConsent = (consentType: ConsentType) => {
     if (consentData) {
       const updatedConsents = {
-        ...(consentData.consents || {}),
+        ...consentData.consents,
         [consentType]: false,
       } as ConsentStatus;
       

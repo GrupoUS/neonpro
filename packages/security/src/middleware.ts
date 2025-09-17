@@ -6,7 +6,7 @@
 
 import type { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { SecurityUtils, RateLimiter } from './utils';
+import { RateLimiter, SecurityUtils } from './utils';
 
 /**
  * Security headers middleware
@@ -19,7 +19,10 @@ export function securityHeaders() {
     c.header('X-Frame-Options', 'DENY');
     c.header('X-XSS-Protection', '1; mode=block');
     c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    c.header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';");
+    c.header(
+      'Content-Security-Policy',
+      'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: https:; font-src \'self\' data:; connect-src \'self\' https:; frame-ancestors \'none\';',
+    );
     c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
     c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     c.header('X-Permitted-Cross-Domain-Policies', 'none');
@@ -42,11 +45,11 @@ export function inputValidation() {
       if (typeof value === 'string') {
         // Check for suspicious patterns
         if (SecurityUtils.containsSuspiciousPatterns(value)) {
-          throw new HTTPException(400, { 
-            message: 'Invalid input detected' 
+          throw new HTTPException(400, {
+            message: 'Invalid input detected',
           });
         }
-        
+
         // Sanitize input
         queryParams[key] = SecurityUtils.sanitizeInput(value);
       }
@@ -56,11 +59,11 @@ export function inputValidation() {
     if (['POST', 'PUT', 'PATCH'].includes(c.req.method)) {
       try {
         const contentType = c.req.header('content-type') || '';
-        
+
         if (contentType.includes('application/json')) {
           const body = await c.req.json();
           const sanitizedBody = sanitizeObject(body);
-          
+
           // Replace the request body with sanitized version
           // Note: This requires custom request handling in Hono
           c.set('sanitizedBody', sanitizedBody);
@@ -91,24 +94,25 @@ export function rateLimiting(options: {
   const {
     maxAttempts = 100,
     windowMs = 60000, // 1 minute
-    keyGenerator = (c: Context) => c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
+    keyGenerator = (c: Context) =>
+      c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown',
   } = options;
 
   const rateLimiter = new RateLimiter();
 
   return async (c: Context, next: Next) => {
     const key = keyGenerator(c);
-    
+
     if (!rateLimiter.isAllowed(key, maxAttempts, windowMs)) {
       const remaining = rateLimiter.getRemainingAttempts(key, maxAttempts, windowMs);
-      
+
       c.header('X-RateLimit-Limit', maxAttempts.toString());
       c.header('X-RateLimit-Remaining', remaining.toString());
       c.header('X-RateLimit-Reset', (Date.now() + windowMs).toString());
       c.header('Retry-After', Math.ceil(windowMs / 1000).toString());
-      
-      throw new HTTPException(429, { 
-        message: 'Too many requests. Please try again later.' 
+
+      throw new HTTPException(429, {
+        message: 'Too many requests. Please try again later.',
       });
     }
 
@@ -135,15 +139,15 @@ export function csrfProtection() {
     }
 
     // Check CSRF token for state-changing methods
-    const csrfToken = c.req.header('x-csrf-token') || 
-                     c.req.header('x-xsrf-token') || 
-                     c.get('csrfToken');
+    const csrfToken = c.req.header('x-csrf-token')
+      || c.req.header('x-xsrf-token')
+      || c.get('csrfToken');
 
     const sessionToken = c.get('sessionCsrfToken');
 
     if (!csrfToken || !sessionToken || csrfToken !== sessionToken) {
-      throw new HTTPException(403, { 
-        message: 'Invalid CSRF token' 
+      throw new HTTPException(403, {
+        message: 'Invalid CSRF token',
       });
     }
 
@@ -158,32 +162,32 @@ export function csrfProtection() {
 export function authentication() {
   return async (c: Context, next: Next) => {
     const authHeader = c.req.header('authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new HTTPException(401, { 
-        message: 'Missing or invalid authorization header' 
+      throw new HTTPException(401, {
+        message: 'Missing or invalid authorization header',
       });
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    
+
     try {
       // Validate JWT token (placeholder - actual implementation needed)
       // TODO: Implement actual JWT validation
       // const decoded = await validateJWT(token);
       // c.set('user', decoded);
-      
+
       // For now, just set a placeholder user but use the token for logging
       console.log('Token received:', token.substring(0, 10) + '...');
       c.set('user', { id: 'placeholder', role: 'user' });
-      
+
       await next();
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('JWT validation error:', error.message);
       }
-      throw new HTTPException(401, { 
-        message: 'Invalid or expired token' 
+      throw new HTTPException(401, {
+        message: 'Invalid or expired token',
       });
     }
   };
@@ -196,16 +200,16 @@ export function authentication() {
 export function authorization(roles: string[] = []) {
   return async (c: Context, next: Next) => {
     const user = c.get('user');
-    
+
     if (!user) {
-      throw new HTTPException(401, { 
-        message: 'Authentication required' 
+      throw new HTTPException(401, {
+        message: 'Authentication required',
       });
     }
 
     if (roles.length > 0 && !roles.includes(user.role)) {
-      throw new HTTPException(403, { 
-        message: 'Insufficient permissions' 
+      throw new HTTPException(403, {
+        message: 'Insufficient permissions',
       });
     }
 
@@ -235,9 +239,9 @@ export function securityLogging() {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
     const requestId = c.get('requestId');
-    const clientIp = c.req.header('x-forwarded-for') || 
-                    c.req.header('x-real-ip') || 
-                    'unknown';
+    const clientIp = c.req.header('x-forwarded-for')
+      || c.req.header('x-real-ip')
+      || 'unknown';
     const userAgent = c.req.header('user-agent') || 'unknown';
 
     try {
@@ -257,10 +261,9 @@ export function securityLogging() {
         userAgent: userAgent.substring(0, 100), // Truncate for privacy
         timestamp: new Date().toISOString(),
       });
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       // Log errors and security events
       console.error('[Security Error]', {
         requestId,
@@ -285,10 +288,10 @@ export function securityLogging() {
 export function healthcareDataProtection() {
   return async (c: Context, next: Next) => {
     // Check if this is a healthcare-related endpoint
-    const isHealthcareEndpoint = c.req.path.includes('/patients') ||
-                                c.req.path.includes('/appointments') ||
-                                c.req.path.includes('/medical-records') ||
-                                c.req.path.includes('/healthcare');
+    const isHealthcareEndpoint = c.req.path.includes('/patients')
+      || c.req.path.includes('/appointments')
+      || c.req.path.includes('/medical-records')
+      || c.req.path.includes('/healthcare');
 
     if (isHealthcareEndpoint) {
       // Add healthcare-specific security headers
@@ -298,7 +301,7 @@ export function healthcareDataProtection() {
       // Log healthcare data access
       const user = c.get('user');
       const patientId = c.req.param('patientId') || c.req.query('patientId');
-      
+
       console.log('[Healthcare Access]', {
         requestId: c.get('requestId'),
         userId: user?.id || 'anonymous',
@@ -364,7 +367,7 @@ async function validateJWT(_token: string): Promise<any> {
   // 2. Check expiration
   // 3. Validate claims
   // 4. Return decoded payload
-  
+
   throw new Error('JWT validation not implemented');
 }
 
@@ -379,7 +382,7 @@ async function validateLGPDConsent(_userId: string, _patientId: string): Promise
   // 2. Validate consent purpose matches request
   // 3. Check consent expiration
   // 4. Return true/false
-  
+
   return false;
 }
 

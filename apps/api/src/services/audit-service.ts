@@ -1,7 +1,7 @@
 /**
  * Audit Trail Service (T041)
  * Comprehensive audit trail service with Supabase PostgreSQL database integration
- * 
+ *
  * Features:
  * - Activity logging for all patient data access and modifications
  * - Security event monitoring and threat detection
@@ -140,7 +140,7 @@ export class AuditService {
     // Initialize Supabase client
     const supabaseUrl = process.env.SUPABASE_URL || 'https://mock-supabase-url.supabase.co';
     const supabaseKey = process.env.SUPABASE_ANON_KEY || 'mock-supabase-key';
-    
+
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.isInitialized = true;
   }
@@ -148,14 +148,16 @@ export class AuditService {
   /**
    * Log activity to Supabase database
    */
-  async logActivity(params: ActivityLog): Promise<ServiceResponse<{
-    auditId: string;
-    timestamp: Date;
-    persisted: boolean;
-    changeHash?: string;
-    complianceFlags?: string[];
-    sensitivityLevel?: string;
-  }>> {
+  async logActivity(params: ActivityLog): Promise<
+    ServiceResponse<{
+      auditId: string;
+      timestamp: Date;
+      persisted: boolean;
+      changeHash?: string;
+      complianceFlags?: string[];
+      sensitivityLevel?: string;
+    }>
+  > {
     try {
       // Validate input
       const validation = this.validateActivityLog(params);
@@ -177,7 +179,7 @@ export class AuditService {
       const auditId = `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const timestamp = new Date();
       const changeHash = this.generateChangeHash(params);
-      
+
       // Mock database insert (in real implementation, this would use Supabase)
       const _auditRecord = {
         id: auditId,
@@ -222,16 +224,18 @@ export class AuditService {
   /**
    * Log security event to Supabase database
    */
-  async logSecurityEvent(params: SecurityEvent): Promise<ServiceResponse<{
-    securityEventId: string;
-    severity: string;
-    threatLevel?: string;
-    alertTriggered?: boolean;
-    investigationRequired?: boolean;
-    immediateAlert?: boolean;
-    anomalyDetected?: boolean;
-    requiresApproval?: boolean;
-  }>> {
+  async logSecurityEvent(params: SecurityEvent): Promise<
+    ServiceResponse<{
+      securityEventId: string;
+      severity: string;
+      threatLevel?: string;
+      alertTriggered?: boolean;
+      investigationRequired?: boolean;
+      immediateAlert?: boolean;
+      anomalyDetected?: boolean;
+      requiresApproval?: boolean;
+    }>
+  > {
     try {
       const securityEventId = `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const timestamp = new Date();
@@ -257,7 +261,8 @@ export class AuditService {
       const alertTriggered = params.severity === 'high' || params.severity === 'critical';
       const immediateAlert = params.severity === 'critical';
       const investigationRequired = params.requiresInvestigation || params.severity === 'high';
-      const anomalyDetected = params.eventType.includes('anomaly') || params.eventType.includes('suspicious');
+      const anomalyDetected = params.eventType.includes('anomaly')
+        || params.eventType.includes('suspicious');
       const requiresApproval = params.eventType.includes('export') && params.severity === 'high';
 
       return {
@@ -284,17 +289,19 @@ export class AuditService {
   /**
    * Generate compliance audit trail from Supabase database
    */
-  async generateComplianceAuditTrail(params: ComplianceAuditTrail): Promise<ServiceResponse<{
-    framework: string;
-    auditEvents: any[];
-    complianceScore: number;
-    violations: any[];
-    medicalDeviceEvents?: any[];
-    healthDataEvents?: any[];
-    medicalRecordEvents?: any[];
-    prescriptionEvents?: any[];
-    professionalStandardsCompliance?: any;
-  }>> {
+  async generateComplianceAuditTrail(params: ComplianceAuditTrail): Promise<
+    ServiceResponse<{
+      framework: string;
+      auditEvents: any[];
+      complianceScore: number;
+      violations: any[];
+      medicalDeviceEvents?: any[];
+      healthDataEvents?: any[];
+      medicalRecordEvents?: any[];
+      prescriptionEvents?: any[];
+      professionalStandardsCompliance?: any;
+    }>
+  > {
     try {
       // Mock compliance audit trail generation
       const auditEvents = [
@@ -328,7 +335,11 @@ export class AuditService {
           { device_id: 'device-1', usage_timestamp: new Date(), compliance_status: 'compliant' },
         ];
         result.healthDataEvents = [
-          { data_type: 'health_record', access_timestamp: new Date(), compliance_status: 'compliant' },
+          {
+            data_type: 'health_record',
+            access_timestamp: new Date(),
+            compliance_status: 'compliant',
+          },
         ];
       }
 
@@ -366,11 +377,13 @@ export class AuditService {
     startDate: Date;
     endDate: Date;
     expectedEvents: string[];
-  }): Promise<ServiceResponse<{
-    isComplete: boolean;
-    missingEvents: string[];
-    integrityScore: number;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      isComplete: boolean;
+      missingEvents: string[];
+      integrityScore: number;
+    }>
+  > {
     try {
       // Mock validation logic
       const missingEvents: string[] = [];
@@ -396,11 +409,13 @@ export class AuditService {
   /**
    * Reconstruct user activity timeline from database
    */
-  async reconstructActivityTimeline(_params: ActivityTimeline): Promise<ServiceResponse<{
-    timeline: any[];
-    totalEvents: number;
-    timelineHash: string;
-  }>> {
+  async reconstructActivityTimeline(_params: ActivityTimeline): Promise<
+    ServiceResponse<{
+      timeline: any[];
+      totalEvents: number;
+      timelineHash: string;
+    }>
+  > {
     try {
       // Mock timeline reconstruction
       const timeline = [
@@ -438,12 +453,14 @@ export class AuditService {
   /**
    * Analyze data access patterns
    */
-  async analyzeDataAccessPatterns(_params: DataAccessPatternAnalysis): Promise<ServiceResponse<{
-    patterns: any;
-    anomalies: any[];
-    riskScore: number;
-    recommendations: string[];
-  }>> {
+  async analyzeDataAccessPatterns(_params: DataAccessPatternAnalysis): Promise<
+    ServiceResponse<{
+      patterns: any;
+      anomalies: any[];
+      riskScore: number;
+      recommendations: string[];
+    }>
+  > {
     try {
       const patterns = {
         averageAccessesPerDay: 25,
@@ -485,15 +502,17 @@ export class AuditService {
   /**
    * Investigate data breach
    */
-  async investigateDataBreach(params: DataBreachInvestigation): Promise<ServiceResponse<{
-    investigationId: string;
-    affectedRecords: number;
-    suspiciousActivities: any[];
-    evidenceChain: any[];
-  }>> {
+  async investigateDataBreach(params: DataBreachInvestigation): Promise<
+    ServiceResponse<{
+      investigationId: string;
+      affectedRecords: number;
+      suspiciousActivities: any[];
+      evidenceChain: any[];
+    }>
+  > {
     try {
       const investigationId = `inv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const suspiciousActivities = [
         {
           timestamp: params.suspectedStartTime,
@@ -538,12 +557,14 @@ export class AuditService {
     includeEvidence: boolean;
     includeRecommendations: boolean;
     reportFormat: string;
-  }): Promise<ServiceResponse<{
-    reportId: string;
-    evidenceCount: number;
-    reportHash: string;
-    legalAdmissible: boolean;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      reportId: string;
+      evidenceCount: number;
+      reportHash: string;
+      legalAdmissible: boolean;
+    }>
+  > {
     try {
       const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const evidenceCount = 15;
@@ -570,11 +591,13 @@ export class AuditService {
   /**
    * Start real-time audit stream
    */
-  async startAuditStream(params: AuditStream): Promise<ServiceResponse<{
-    streamId: string;
-    isActive: boolean;
-    filterCount: number;
-  }>> {
+  async startAuditStream(params: AuditStream): Promise<
+    ServiceResponse<{
+      streamId: string;
+      isActive: boolean;
+      filterCount: number;
+    }>
+  > {
     try {
       this.activeStreams.set(params.streamId, params);
 
@@ -599,11 +622,13 @@ export class AuditService {
   /**
    * Stop audit stream
    */
-  async stopAuditStream(streamId: string): Promise<ServiceResponse<{
-    streamId: string;
-    isActive: boolean;
-    finalEventCount: number;
-  }>> {
+  async stopAuditStream(streamId: string): Promise<
+    ServiceResponse<{
+      streamId: string;
+      isActive: boolean;
+      finalEventCount: number;
+    }>
+  > {
     try {
       this.activeStreams.delete(streamId);
 
@@ -626,11 +651,13 @@ export class AuditService {
   /**
    * Configure audit alerts
    */
-  async configureAuditAlerts(params: AuditAlertConfig): Promise<ServiceResponse<{
-    alertId: string;
-    isActive: boolean;
-    actions: string[];
-  }>> {
+  async configureAuditAlerts(params: AuditAlertConfig): Promise<
+    ServiceResponse<{
+      alertId: string;
+      isActive: boolean;
+      actions: string[];
+    }>
+  > {
     try {
       this.alertConfigs.set(params.alertId, params);
 
@@ -653,10 +680,12 @@ export class AuditService {
   /**
    * List active audit streams
    */
-  async listActiveStreams(): Promise<ServiceResponse<{
-    streams: AuditStream[];
-    totalActive: number;
-  }>> {
+  async listActiveStreams(): Promise<
+    ServiceResponse<{
+      streams: AuditStream[];
+      totalActive: number;
+    }>
+  > {
     try {
       const streams = Array.from(this.activeStreams.values());
 
@@ -683,11 +712,13 @@ export class AuditService {
     endDate: Date;
     includeHashChain: boolean;
     verifySignatures: boolean;
-  }): Promise<ServiceResponse<{
-    integrityScore: number;
-    tamperedRecords: any[];
-    hashChainValid: boolean;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      integrityScore: number;
+      tamperedRecords: any[];
+      hashChainValid: boolean;
+    }>
+  > {
     try {
       const integrityScore = 98.5; // 0-100 scale
       const tamperedRecords: any[] = [];
@@ -716,11 +747,13 @@ export class AuditService {
     auditIds: string[];
     verificationMethod: string;
     includeDetails: boolean;
-  }): Promise<ServiceResponse<{
-    tamperedRecords: any[];
-    integrityViolations: any[];
-    verificationTimestamp: Date;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      tamperedRecords: any[];
+      integrityViolations: any[];
+      verificationTimestamp: Date;
+    }>
+  > {
     try {
       const tamperedRecords: any[] = [];
       const integrityViolations: any[] = [];
@@ -751,12 +784,14 @@ export class AuditService {
     endDate: Date;
     compressionEnabled: boolean;
     encryptionEnabled: boolean;
-  }): Promise<ServiceResponse<{
-    backupId: string;
-    recordCount: number;
-    backupSize: string;
-    backupHash: string;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      backupId: string;
+      recordCount: number;
+      backupSize: string;
+      backupHash: string;
+    }>
+  > {
     try {
       const recordCount = 10000;
       const backupSize = '250MB';
@@ -787,11 +822,13 @@ export class AuditService {
     targetDate: Date;
     verifyIntegrity: boolean;
     overwriteExisting: boolean;
-  }): Promise<ServiceResponse<{
-    restoredRecords: number;
-    integrityVerified: boolean;
-    restoreTimestamp: Date;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      restoredRecords: number;
+      integrityVerified: boolean;
+      restoreTimestamp: Date;
+    }>
+  > {
     try {
       const restoredRecords = 5000;
       const integrityVerified = params.verifyIntegrity;
@@ -816,11 +853,13 @@ export class AuditService {
   /**
    * Validate database schema
    */
-  async validateDatabaseSchema(): Promise<ServiceResponse<{
-    schemaValid: boolean;
-    tablesExist: Record<string, boolean>;
-    indexesOptimal: boolean;
-  }>> {
+  async validateDatabaseSchema(): Promise<
+    ServiceResponse<{
+      schemaValid: boolean;
+      tablesExist: Record<string, boolean>;
+      indexesOptimal: boolean;
+    }>
+  > {
     try {
       const tablesExist = {
         audit_logs: true,
@@ -852,10 +891,12 @@ export class AuditService {
     operation: string;
     retentionDays: number;
     dryRun: boolean;
-  }): Promise<ServiceResponse<{
-    recordsToDelete: number;
-    spaceToReclaim: string;
-  }>> {
+  }): Promise<
+    ServiceResponse<{
+      recordsToDelete: number;
+      spaceToReclaim: string;
+    }>
+  > {
     try {
       const recordsToDelete = 1000;
       const spaceToReclaim = '50MB';
@@ -955,7 +996,8 @@ export class AuditService {
    * Generate change hash for audit integrity
    */
   private generateChangeHash(params: ActivityLog): string {
-    const data = `${params.userId}:${params.action}:${params.resourceType}:${params.resourceId}:${Date.now()}`;
+    const data =
+      `${params.userId}:${params.action}:${params.resourceType}:${params.resourceId}:${Date.now()}`;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 

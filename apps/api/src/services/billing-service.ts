@@ -1,17 +1,17 @@
 /**
  * Billing Service for Brazilian Healthcare System
- * 
+ *
  * Comprehensive billing and payment management with Brazilian tax compliance,
  * SUS integration, health plan processing, and LGPD data protection.
- * 
+ *
  * @fileoverview Healthcare billing with Brazilian regulations compliance
  */
 
-import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { 
-  healthcareValidationSchemas, 
-  DataSensitivity 
+import { z } from 'zod';
+import {
+  DataSensitivity,
+  healthcareValidationSchemas,
 } from '../../../../../packages/ui/src/utils/healthcare-validation';
 
 // Brazilian tax and billing enums
@@ -196,7 +196,7 @@ export interface PaymentProcessingRequest {
 
 /**
  * Billing Service
- * 
+ *
  * Handles all billing and payment operations for Brazilian healthcare,
  * including SUS integration, health plan processing, and tax compliance.
  */
@@ -331,7 +331,8 @@ export class BillingService {
         total,
         paymentStatus: PaymentStatus.PENDING,
         paymentMethod: billingData.paymentMethod,
-        dueDate: billingData.dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: billingData.dueDate
+          || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         healthPlan: billingData.healthPlan,
         taxInfo: billingData.taxInfo,
         notes: billingData.notes,
@@ -404,7 +405,9 @@ export class BillingService {
   /**
    * Search billings with filters
    */
-  async searchBillings(options: BillingSearchOptions): Promise<ServiceResponse<{ billings: Billing[]; pagination: any }>> {
+  async searchBillings(
+    options: BillingSearchOptions,
+  ): Promise<ServiceResponse<{ billings: Billing[]; pagination: any }>> {
     try {
       let allBillings = Array.from(this.billings.values());
 
@@ -418,7 +421,9 @@ export class BillingService {
       }
 
       if (options.professionalId) {
-        allBillings = allBillings.filter(billing => billing.professionalId === options.professionalId);
+        allBillings = allBillings.filter(billing =>
+          billing.professionalId === options.professionalId
+        );
       }
 
       if (options.billingType) {
@@ -426,19 +431,19 @@ export class BillingService {
       }
 
       if (options.paymentStatus) {
-        allBillings = allBillings.filter(billing => billing.paymentStatus === options.paymentStatus);
+        allBillings = allBillings.filter(billing =>
+          billing.paymentStatus === options.paymentStatus
+        );
       }
 
       if (options.dateFrom) {
-        allBillings = allBillings.filter(billing => 
+        allBillings = allBillings.filter(billing =>
           new Date(billing.createdAt) >= options.dateFrom!
         );
       }
 
       if (options.dateTo) {
-        allBillings = allBillings.filter(billing => 
-          new Date(billing.createdAt) <= options.dateTo!
-        );
+        allBillings = allBillings.filter(billing => new Date(billing.createdAt) <= options.dateTo!);
       }
 
       // Sorting
@@ -446,7 +451,7 @@ export class BillingService {
         allBillings.sort((a, b) => {
           const aValue = (a as any)[options.sortBy!];
           const bValue = (b as any)[options.sortBy!];
-          
+
           if (options.sortOrder === 'desc') {
             return bValue > aValue ? 1 : -1;
           }
@@ -485,7 +490,9 @@ export class BillingService {
   /**
    * Process payment
    */
-  async processPayment(request: PaymentProcessingRequest): Promise<ServiceResponse<{ paymentId: string; status: PaymentStatus }>> {
+  async processPayment(
+    request: PaymentProcessingRequest,
+  ): Promise<ServiceResponse<{ paymentId: string; status: PaymentStatus }>> {
     try {
       const billing = this.billings.get(request.billingId);
 
@@ -543,8 +550,12 @@ export class BillingService {
             installmentNumber: i,
             amount: installmentAmount,
             dueDate: new Date(Date.now() + i * 30 * 24 * 60 * 60 * 1000).toISOString(),
-            status: i === 1 && paymentStatus === PaymentStatus.PAID ? PaymentStatus.PAID : PaymentStatus.PENDING,
-            paymentDate: i === 1 && paymentStatus === PaymentStatus.PAID ? new Date().toISOString() : undefined,
+            status: i === 1 && paymentStatus === PaymentStatus.PAID
+              ? PaymentStatus.PAID
+              : PaymentStatus.PENDING,
+            paymentDate: i === 1 && paymentStatus === PaymentStatus.PAID
+              ? new Date().toISOString()
+              : undefined,
             paymentMethod: request.paymentMethod,
           });
         }
@@ -579,7 +590,7 @@ export class BillingService {
   async getFinancialSummary(
     clinicId?: string,
     dateFrom?: Date,
-    dateTo?: Date
+    dateTo?: Date,
   ): Promise<ServiceResponse<FinancialSummary>> {
     try {
       let billings = Array.from(this.billings.values());
@@ -591,15 +602,11 @@ export class BillingService {
 
       // Filter by date range
       if (dateFrom) {
-        billings = billings.filter(billing => 
-          new Date(billing.createdAt) >= dateFrom
-        );
+        billings = billings.filter(billing => new Date(billing.createdAt) >= dateFrom);
       }
 
       if (dateTo) {
-        billings = billings.filter(billing => 
-          new Date(billing.createdAt) <= dateTo
-        );
+        billings = billings.filter(billing => new Date(billing.createdAt) <= dateTo);
       }
 
       // Calculate summary
@@ -617,7 +624,9 @@ export class BillingService {
         .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
         .reduce((sum, b) => sum + b.total, 0);
 
-      const averageTicket = billings.length > 0 ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length : 0;
+      const averageTicket = billings.length > 0
+        ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length
+        : 0;
 
       // Revenue by type
       const revenueByType = Object.values(BillingType).reduce((acc, type) => {
@@ -666,7 +675,7 @@ export class BillingService {
 
     const issAmount = amount * (taxInfo.issAliquot || 0.05);
     // Add other taxes if needed (PIS, COFINS, etc.)
-    
+
     return issAmount;
   }
 
@@ -692,7 +701,9 @@ export class BillingService {
   /**
    * Calculate top procedures by revenue
    */
-  private calculateTopProcedures(billings: Billing[]): Array<{ procedure: string; count: number; revenue: number }> {
+  private calculateTopProcedures(
+    billings: Billing[],
+  ): Array<{ procedure: string; count: number; revenue: number }> {
     const procedureStats: Record<string, { count: number; revenue: number }> = {};
 
     billings

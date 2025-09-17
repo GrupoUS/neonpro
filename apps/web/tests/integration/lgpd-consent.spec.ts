@@ -1,6 +1,6 @@
 /**
  * INTEGRATION TEST: LGPD consent flow (T023)
- * 
+ *
  * Tests LGPD consent management integration:
  * - End-to-end consent collection and validation
  * - Granular consent options for different data processing
@@ -10,7 +10,7 @@
  * - Integration with patient registration workflow
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -72,7 +72,7 @@ const LGPDConsentSchema = z.object({
 
 describe('LGPD Consent Flow Integration Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
   };
@@ -146,7 +146,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(201);
-      
+
       // Verify LGPD consent was properly recorded
       const patientData = await response.json();
       expect(patientData.lgpdConsents).toBeDefined();
@@ -175,7 +175,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(201);
-      
+
       // Verify selective consent is respected
       const consentData = await response.json();
       expect(consentData.consents.dataProcessing.granted).toBe(true);
@@ -254,7 +254,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       // Verify audit trail records the change
       const updatedConsent = await response.json();
       expect(updatedConsent.consents.aiAnalysis.granted).toBe(false);
@@ -262,7 +262,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
         expect.objectContaining({
           action: 'withdrawn',
           reason: 'Patient preference change',
-        })
+        }),
       );
     });
 
@@ -280,7 +280,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       const validationResult = await response.json();
       expect(validationResult.status).toBe('expired');
       expect(validationResult.actions.required).toContain('renewal_request');
@@ -303,7 +303,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       // Verify comprehensive data export
       const exportData = await response.json();
       expect(exportData.personalData).toBeDefined();
@@ -332,7 +332,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       // Verify rectification was applied and logged
       const result = await response.json();
       expect(result.status).toBe('completed');
@@ -340,7 +340,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
         expect.objectContaining({
           action: 'data_rectified',
           fields: ['email', 'phone'],
-        })
+        }),
       );
     });
 
@@ -360,7 +360,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       // Verify erasure process initiated
       const result = await response.json();
       expect(result.status).toBe('scheduled');
@@ -384,7 +384,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       // Verify portable data package
       const result = await response.json();
       expect(result.downloadUrl).toBeDefined();
@@ -408,7 +408,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       const metrics = await response.json();
       expect(metrics.consentRates).toBeDefined();
       expect(metrics.withdrawalRates).toBeDefined();
@@ -431,7 +431,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       const report = await response.json();
       expect(report.summary).toBeDefined();
       expect(report.consentManagement).toBeDefined();
@@ -457,7 +457,7 @@ describe('LGPD Consent Flow Integration Tests', () => {
       });
 
       expect(response.status).toBe(200);
-      
+
       const validation = await response.json();
       expect(validation.compliant).toBe(true);
       expect(validation.requirements).toBeDefined();

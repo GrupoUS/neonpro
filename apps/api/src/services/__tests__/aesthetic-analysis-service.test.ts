@@ -4,8 +4,11 @@
  * Validates Brazilian aesthetic clinic compliance (ANVISA, LGPD)
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { AestheticAnalysisService, AestheticAssessmentRequest } from '../aesthetic-analysis-service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  AestheticAnalysisService,
+  AestheticAssessmentRequest,
+} from '../aesthetic-analysis-service';
 import { AuditService } from '../audit-service';
 
 // Mock Supabase client - Fixed to support proper chaining
@@ -19,10 +22,10 @@ const createChainableMock = (tableName: string) => {
             timestamp: new Date().toISOString(),
             action: 'aesthetic_assessment',
             patient_id: 'patient_123',
-            data: { assessment_type: 'comprehensive' }
-          }
+            data: { assessment_type: 'comprehensive' },
+          },
         ],
-        error: null
+        error: null,
       });
     } else if (tableName === 'patient_consents') {
       return Promise.resolve({
@@ -31,10 +34,10 @@ const createChainableMock = (tableName: string) => {
             id: 'consent_001',
             patient_id: 'patient_123',
             consent_timestamp: new Date().toISOString(),
-            granted_permissions: ['skin_analysis', 'procedure_recommendation']
-          }
+            granted_permissions: ['skin_analysis', 'procedure_recommendation'],
+          },
         ],
-        error: null
+        error: null,
       });
     }
     return Promise.resolve({ data: [], error: null });
@@ -43,34 +46,36 @@ const createChainableMock = (tableName: string) => {
   // This is the key fix: eq() must return an object with order method
   const eqReturnValue = {
     eq: vi.fn(() => ({
-      single: vi.fn(() => Promise.resolve({
-        data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] },
-        error: null
-      }))
+      single: vi.fn(() =>
+        Promise.resolve({
+          data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] },
+          error: null,
+        })
+      ),
     })),
-    order: orderMock  // This is the missing piece!
+    order: orderMock, // This is the missing piece!
   };
 
   const eqMock = vi.fn(() => eqReturnValue);
 
   const selectMock = vi.fn(() => ({
     eq: eqMock,
-    order: orderMock
+    order: orderMock,
   }));
 
   return {
     select: selectMock,
-    insert: vi.fn(() => Promise.resolve({ data: null, error: null }))
+    insert: vi.fn(() => Promise.resolve({ data: null, error: null })),
   };
 };
 
 const mockSupabase = {
-  from: vi.fn((tableName: string) => createChainableMock(tableName))
+  from: vi.fn((tableName: string) => createChainableMock(tableName)),
 } as any;
 
 // Mock Audit service
 const mockAuditService = {
-  logError: vi.fn(() => Promise.resolve())
+  logError: vi.fn(() => Promise.resolve()),
 } as any;
 
 describe('AestheticAnalysisService', () => {
@@ -79,7 +84,7 @@ describe('AestheticAnalysisService', () => {
 
   beforeEach(() => {
     service = new AestheticAnalysisService(mockSupabase, mockAuditService);
-    
+
     mockPatientRequest = {
       sex: 'female',
       age: { value: 35, unit: 'year' },
@@ -90,18 +95,18 @@ describe('AestheticAnalysisService', () => {
           condition_id: 'wrinkles',
           severity: 'moderate',
           facial_area: 'periorbital',
-          confidence: 'high'
-        }
+          confidence: 'high',
+        },
       ],
       lifestyle_factors: {
         sun_exposure: 'moderate',
         smoking: false,
         skincare_routine: 'moderate',
-        previous_procedures: []
+        previous_procedures: [],
       },
       assessment_type: 'comprehensive',
       max_recommendations: 3,
-      include_contraindications: true
+      include_contraindications: true,
     };
 
     vi.clearAllMocks();
@@ -113,14 +118,14 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       expect(result).toHaveProperty('recommended_procedures');
       expect(result).toHaveProperty('contraindications');
       expect(result).toHaveProperty('educational_content');
       expect(result).toHaveProperty('follow_up_recommendations');
-      
+
       expect(Array.isArray(result.recommended_procedures)).toBe(true);
       expect(Array.isArray(result.contraindications)).toBe(true);
     });
@@ -130,11 +135,11 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       const botoxRecommendation = result.recommended_procedures.find(
-        rec => rec.procedure.category === 'neurotoxin'
+        rec => rec.procedure.category === 'neurotoxin',
       );
 
       expect(botoxRecommendation).toBeDefined();
@@ -146,18 +151,18 @@ describe('AestheticAnalysisService', () => {
     it('should identify age-related contraindications for minors', async () => {
       const minorRequest = {
         ...mockPatientRequest,
-        age: { value: 16, unit: 'year' }
+        age: { value: 16, unit: 'year' },
       };
 
       const result = await service.performAestheticAssessment(
         minorRequest,
         'patient-minor',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       const ageContraindication = result.contraindications.find(
-        contra => contra.contraindication === 'patient_under_18'
+        contra => contra.contraindication === 'patient_under_18',
       );
 
       expect(ageContraindication).toBeDefined();
@@ -170,7 +175,7 @@ describe('AestheticAnalysisService', () => {
         ...mockPatientRequest,
         lifestyle_factors: {
           ...mockPatientRequest.lifestyle_factors!,
-          smoking: true
+          smoking: true,
         },
         analysis_data: [
           {
@@ -178,20 +183,20 @@ describe('AestheticAnalysisService', () => {
             condition_id: 'pigmentation',
             severity: 'moderate',
             facial_area: 'cheeks',
-            confidence: 'high'
-          }
-        ]
+            confidence: 'high',
+          },
+        ],
       };
 
       const result = await service.performAestheticAssessment(
         smokingPatientRequest,
         'patient-smoker',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       const smokingContraindication = result.contraindications.find(
-        contra => contra.contraindication === 'smoking_laser_therapy'
+        contra => contra.contraindication === 'smoking_laser_therapy',
       );
 
       if (result.recommended_procedures.some(rec => rec.procedure.category === 'laser')) {
@@ -205,17 +210,17 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       expect(result.educational_content.pre_treatment).toContain(
-        'Evitar exposição solar direta 2 semanas antes do procedimento'
+        'Evitar exposição solar direta 2 semanas antes do procedimento',
       );
       expect(result.educational_content.post_treatment).toContain(
-        'Aplicar protetor solar FPS 50+ diariamente'
+        'Aplicar protetor solar FPS 50+ diariamente',
       );
       expect(result.educational_content.maintenance).toContain(
-        'Proteção solar contínua'
+        'Proteção solar contínua',
       );
     });
 
@@ -223,14 +228,14 @@ describe('AestheticAnalysisService', () => {
       // Test older patient
       const olderPatientRequest = {
         ...mockPatientRequest,
-        age: { value: 50, unit: 'year' }
+        age: { value: 50, unit: 'year' },
       };
 
       const result = await service.performAestheticAssessment(
         olderPatientRequest,
         'patient-older',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       expect(result.follow_up_recommendations.maintenance_schedule).toBe('Avaliação trimestral');
@@ -238,17 +243,19 @@ describe('AestheticAnalysisService', () => {
       // Test younger patient
       const youngerPatientRequest = {
         ...mockPatientRequest,
-        age: { value: 25, unit: 'year' }
+        age: { value: 25, unit: 'year' },
       };
 
       const resultYounger = await service.performAestheticAssessment(
         youngerPatientRequest,
         'patient-younger',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
-      expect(resultYounger.follow_up_recommendations.maintenance_schedule).toBe('Avaliação semestral');
+      expect(resultYounger.follow_up_recommendations.maintenance_schedule).toBe(
+        'Avaliação semestral',
+      );
     });
 
     it('should handle skin type contraindications for darker skin', async () => {
@@ -261,27 +268,27 @@ describe('AestheticAnalysisService', () => {
             condition_id: 'pigmentation',
             severity: 'moderate',
             facial_area: 'cheeks',
-            confidence: 'high'
-          }
-        ]
+            confidence: 'high',
+          },
+        ],
       };
 
       const result = await service.performAestheticAssessment(
         darkSkinRequest,
         'patient-dark-skin',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       const laserRecommendation = result.recommended_procedures.find(
-        rec => rec.procedure.category === 'laser'
+        rec => rec.procedure.category === 'laser',
       );
 
       if (laserRecommendation) {
         const skinTypeContraindication = result.contraindications.find(
-          contra => contra.contraindication === 'skin_type_incompatible'
+          contra => contra.contraindication === 'skin_type_incompatible',
         );
-        
+
         expect(skinTypeContraindication).toBeDefined();
         expect(skinTypeContraindication?.explanation).toContain('Fototipo VI');
       }
@@ -292,15 +299,15 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       for (const recommendation of result.recommended_procedures) {
         expect(recommendation.estimated_cost_brl.min).toBeGreaterThan(0);
         expect(recommendation.estimated_cost_brl.max).toBeGreaterThan(
-          recommendation.estimated_cost_brl.min
+          recommendation.estimated_cost_brl.min,
         );
-        
+
         // Reasonable price ranges for Brazilian market
         expect(recommendation.estimated_cost_brl.min).toBeGreaterThanOrEqual(300);
         expect(recommendation.estimated_cost_brl.max).toBeLessThanOrEqual(5000);
@@ -313,10 +320,10 @@ describe('AestheticAnalysisService', () => {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() => Promise.resolve({ data: null }))
-            }))
-          }))
-        }))
+              single: vi.fn(() => Promise.resolve({ data: null })),
+            })),
+          })),
+        })),
       }));
 
       await expect(
@@ -324,8 +331,8 @@ describe('AestheticAnalysisService', () => {
           mockPatientRequest,
           'patient-no-consent',
           'professional-456',
-          'clinic-789'
-        )
+          'clinic-789',
+        ),
       ).rejects.toThrow('LGPD_CONSENT_REQUIRED');
     });
 
@@ -336,22 +343,24 @@ describe('AestheticAnalysisService', () => {
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() => Promise.resolve({
-                data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] }
-              }))
-            }))
-          }))
+              single: vi.fn(() =>
+                Promise.resolve({
+                  data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] },
+                })
+              ),
+            })),
+          })),
         })),
-        insert: insertMock
+        insert: insertMock,
       }));
-      
+
       mockSupabase.from = fromMock;
 
       await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       // Verify audit record was created
@@ -367,7 +376,7 @@ describe('AestheticAnalysisService', () => {
       expect(protocol).toBeDefined();
       expect(protocol?.protocol_steps).toHaveLength(2);
       expect(protocol?.recovery_timeline).toHaveLength(1);
-      
+
       // Verify protocol includes Brazilian regulatory compliance
       expect(protocol?.protocol_steps[0].precautions).toContain('Técnica asséptica rigorosa');
       expect(protocol?.recovery_timeline[0].warning_signs).toContain('Dor intensa');
@@ -390,10 +399,10 @@ describe('AestheticAnalysisService', () => {
                         timestamp: new Date().toISOString(),
                         action: 'aesthetic_assessment',
                         patient_id: 'patient_123',
-                        data: { assessment_type: 'comprehensive' }
-                      }
+                        data: { assessment_type: 'comprehensive' },
+                      },
                     ],
-                    error: null
+                    error: null,
                   });
                 } else if (tableName === 'patient_consents') {
                   return Promise.resolve({
@@ -402,28 +411,31 @@ describe('AestheticAnalysisService', () => {
                         id: 'consent_001',
                         patient_id: 'patient_123',
                         consent_timestamp: new Date().toISOString(),
-                        granted_permissions: ['skin_analysis', 'procedure_recommendation']
-                      }
+                        granted_permissions: ['skin_analysis', 'procedure_recommendation'],
+                      },
                     ],
-                    error: null
+                    error: null,
                   });
                 }
                 return Promise.resolve({ data: [], error: null });
-              })
-            }))
-          }))
-        }))
+              }),
+            })),
+          })),
+        })),
       };
 
       // Create service with the specific mock for this test
-      const testService = new AestheticAnalysisService(mockSupabaseForThisTest as any, mockAuditService);
-      
+      const testService = new AestheticAnalysisService(
+        mockSupabaseForThisTest as any,
+        mockAuditService,
+      );
+
       const patientData = await testService.getPatientAestheticData('patient-123');
 
       expect(patientData).toHaveProperty('assessments');
       expect(patientData).toHaveProperty('consent_history');
       expect(patientData).toHaveProperty('data_usage');
-      
+
       expect(Array.isArray(patientData.assessments)).toBe(true);
       expect(Array.isArray(patientData.consent_history)).toBe(true);
       expect(Array.isArray(patientData.data_usage)).toBe(true);
@@ -436,7 +448,7 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       for (const recommendation of result.recommended_procedures) {
@@ -449,11 +461,13 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       expect(result.follow_up_recommendations.red_flags).toContain('Dor intensa ou persistente');
-      expect(result.follow_up_recommendations.red_flags).toContain('Sinais de infecção (vermelhidão, calor, secreção)');
+      expect(result.follow_up_recommendations.red_flags).toContain(
+        'Sinais de infecção (vermelhidão, calor, secreção)',
+      );
     });
 
     it('should provide bilingual content appropriate for Brazilian clinics', async () => {
@@ -461,7 +475,7 @@ describe('AestheticAnalysisService', () => {
         mockPatientRequest,
         'patient-123',
         'professional-456',
-        'clinic-789'
+        'clinic-789',
       );
 
       // Check for Portuguese content

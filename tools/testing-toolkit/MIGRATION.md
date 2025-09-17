@@ -22,6 +22,7 @@ tools/
 ```
 
 **Problems:**
+
 - 9 separate `package.json` files to maintain
 - Complex interdependencies between packages
 - Duplicate code across packages
@@ -47,6 +48,7 @@ tools/testing-toolkit/
 ```
 
 **Benefits:**
+
 - Single package to install and maintain
 - Unified API for all testing needs
 - Consistent patterns across all test types
@@ -71,29 +73,32 @@ pnpm build
 ### 2. Update Import Statements
 
 **Before (multiple imports):**
+
 ```typescript
-import { frontendUtils } from '@neonpro/frontend-tools';
 import { backendUtils } from '@neonpro/backend-tools';
-import { dbUtils } from '@neonpro/database-tools';
-import { qualityGates } from '@neonpro/quality-tools';
 import { lgpdValidator } from '@neonpro/compliance-tools';
+import { dbUtils } from '@neonpro/database-tools';
+import { frontendUtils } from '@neonpro/frontend-tools';
+import { qualityGates } from '@neonpro/quality-tools';
 ```
 
 **After (single import):**
+
 ```typescript
-import { 
-  TDDCycle,
+import {
   AgentCoordinator,
+  createMockLGPDData,
   LGPDValidator,
-  QualityGateValidator,
   mockAuthService,
-  createMockLGPDData
+  QualityGateValidator,
+  TDDCycle,
 } from '@neonpro/testing-toolkit';
 ```
 
 ### 3. Update Test Patterns
 
 **Before (scattered patterns):**
+
 ```typescript
 // Different patterns across packages
 describe('Frontend Test', () => {
@@ -101,13 +106,14 @@ describe('Frontend Test', () => {
 });
 
 describe('Backend Test', () => {
-  // Backend-specific setup  
+  // Backend-specific setup
 });
 ```
 
 **After (unified patterns):**
+
 ```typescript
-import { createTDDSuite, createLGPDTestSuite } from '@neonpro/testing-toolkit';
+import { createLGPDTestSuite, createTDDSuite } from '@neonpro/testing-toolkit';
 
 // Unified TDD pattern
 createTDDSuite('user-registration', {
@@ -119,7 +125,7 @@ createTDDSuite('user-registration', {
   },
   refactorPhase: () => {
     // Improve code quality
-  }
+  },
 });
 
 // Unified compliance testing
@@ -129,12 +135,14 @@ createLGPDTestSuite('patient-data', mockPatientData);
 ### 4. Update Configuration Files
 
 **Before (multiple configs):**
+
 - `tools/frontend/vitest.config.ts`
 - `tools/backend/vitest.config.ts`
 - `tools/database/vitest.config.ts`
 - etc.
 
 **After (single config):**
+
 ```typescript
 // Use the toolkit's unified configuration
 import { defineConfig } from 'vitest/config';
@@ -143,13 +151,14 @@ export default defineConfig({
   test: {
     setupFiles: ['@neonpro/testing-toolkit/setup'],
     // Other configuration...
-  }
+  },
 });
 ```
 
 ### 5. Update Package Dependencies
 
 **Before (in each package.json):**
+
 ```json
 {
   "devDependencies": {
@@ -163,6 +172,7 @@ export default defineConfig({
 ```
 
 **After (single dependency):**
+
 ```json
 {
   "devDependencies": {
@@ -173,17 +183,17 @@ export default defineConfig({
 
 ## Feature Mapping
 
-| Old Package | New Location | Notes |
-|-------------|--------------|-------|
-| `frontend/` | `core/`, `fixtures/` | Unified with backend patterns |
-| `backend/` | `core/`, `fixtures/` | Integrated API testing |
-| `database/` | `fixtures/healthcare-data.ts` | Mock data generation |
-| `quality/` | `core/quality-gates.ts` | Quality validation |
-| `orchestration/` | `agents/coordinator.ts` | Agent coordination |
-| `shared/` | `utils/` | Common utilities |
-| `integration/` | `core/test-runner.ts` | Integration testing |
-| `performance/` | `utils/performance.ts` | Performance testing |
-| `compliance/` | `compliance/` | Enhanced compliance |
+| Old Package      | New Location                  | Notes                         |
+| ---------------- | ----------------------------- | ----------------------------- |
+| `frontend/`      | `core/`, `fixtures/`          | Unified with backend patterns |
+| `backend/`       | `core/`, `fixtures/`          | Integrated API testing        |
+| `database/`      | `fixtures/healthcare-data.ts` | Mock data generation          |
+| `quality/`       | `core/quality-gates.ts`       | Quality validation            |
+| `orchestration/` | `agents/coordinator.ts`       | Agent coordination            |
+| `shared/`        | `utils/`                      | Common utilities              |
+| `integration/`   | `core/test-runner.ts`         | Integration testing           |
+| `performance/`   | `utils/performance.ts`        | Performance testing           |
+| `compliance/`    | `compliance/`                 | Enhanced compliance           |
 
 ## New Features
 

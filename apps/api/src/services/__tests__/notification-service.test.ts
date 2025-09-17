@@ -4,7 +4,7 @@
  * CRITICAL: All notification data must be persisted to Supabase PostgreSQL
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Real-time Notification Service (T042)', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send email notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
@@ -40,7 +40,7 @@ describe('Real-time Notification Service (T042)', () => {
         priority: 'high',
         scheduledFor: new Date(Date.now() + 3600000), // 1 hour from now
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBeDefined();
       expect(result.data.channel).toBe('email');
@@ -51,7 +51,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send SMS notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'sms',
@@ -64,7 +64,7 @@ describe('Real-time Notification Service (T042)', () => {
         priority: 'medium',
         lgpdConsent: true,
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.channel).toBe('sms');
       expect(result.data.lgpdCompliant).toBe(true);
@@ -74,7 +74,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send WhatsApp notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'whatsapp',
@@ -90,7 +90,7 @@ describe('Real-time Notification Service (T042)', () => {
           doctorId: 'doctor-123',
         },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.channel).toBe('whatsapp');
       expect(result.data.metadata).toBeDefined();
@@ -100,7 +100,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send push notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'push',
@@ -114,7 +114,7 @@ describe('Real-time Notification Service (T042)', () => {
         priority: 'high',
         deviceTokens: ['token1', 'token2'],
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.channel).toBe('push');
       expect(result.data.deviceCount).toBe(2);
@@ -126,7 +126,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should start notification stream', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.startNotificationStream({
         streamId: 'stream-123',
         recipientId: 'patient-123',
@@ -136,7 +136,7 @@ describe('Real-time Notification Service (T042)', () => {
           categories: ['appointment', 'treatment'],
         },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.streamId).toBe('stream-123');
       expect(result.data.isActive).toBe(true);
@@ -146,9 +146,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should stop notification stream', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.stopNotificationStream('stream-123');
-      
+
       expect(result.success).toBe(true);
       expect(result.data.streamId).toBe('stream-123');
       expect(result.data.isActive).toBe(false);
@@ -158,9 +158,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should get real-time notification status', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.getNotificationStatus('notification-123');
-      
+
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
       expect(result.data.status).toBeDefined();
@@ -171,9 +171,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should list active notification streams', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.listActiveStreams();
-      
+
       expect(result.success).toBe(true);
       expect(Array.isArray(result.data.streams)).toBe(true);
       expect(result.data.totalActive).toBeGreaterThanOrEqual(0);
@@ -184,7 +184,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send LGPD compliant notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
@@ -202,7 +202,7 @@ describe('Real-time Notification Service (T042)', () => {
         },
         priority: 'high',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.lgpdCompliant).toBe(true);
       expect(result.data.legalBasis).toBe('consent');
@@ -212,7 +212,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send ANVISA compliant medical notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'sms',
@@ -230,7 +230,7 @@ describe('Real-time Notification Service (T042)', () => {
         },
         priority: 'critical',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.anvisaCompliant).toBe(true);
       expect(result.data.complianceReported).toBe(true);
@@ -240,7 +240,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should send CFM compliant professional notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'doctor-123',
         channel: 'email',
@@ -259,7 +259,7 @@ describe('Real-time Notification Service (T042)', () => {
         },
         priority: 'medium',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.cfmCompliant).toBe(true);
       expect(result.data.professionalStandards).toBe(true);
@@ -269,7 +269,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should validate Brazilian phone number format', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.validateRecipientContact({
         recipientId: 'patient-123',
         channel: 'sms',
@@ -278,7 +278,7 @@ describe('Real-time Notification Service (T042)', () => {
           countryCode: '+55',
         },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.isValid).toBe(true);
       expect(result.data.format).toBe('brazilian_mobile');
@@ -290,7 +290,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should create notification template', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.createTemplate({
         templateId: 'custom_reminder',
         name: 'Lembrete Personalizado',
@@ -311,10 +311,16 @@ describe('Real-time Notification Service (T042)', () => {
           Atenciosamente,
           Equipe {{clinicName}}
         `,
-        variables: ['patientName', 'appointmentType', 'appointmentDate', 'appointmentTime', 'clinicName'],
+        variables: [
+          'patientName',
+          'appointmentType',
+          'appointmentDate',
+          'appointmentTime',
+          'clinicName',
+        ],
         category: 'appointment',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.templateId).toBe('custom_reminder');
       expect(result.data.language).toBe('pt-BR');
@@ -325,7 +331,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should render template with dynamic content', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.renderTemplate({
         templateId: 'appointment_reminder',
         data: {
@@ -338,7 +344,7 @@ describe('Real-time Notification Service (T042)', () => {
         },
         language: 'pt-BR',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.renderedSubject).toContain('João Silva');
       expect(result.data.renderedContent).toContain('Consulta Dermatológica');
@@ -349,14 +355,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should update notification template', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.updateTemplate('custom_reminder', {
         subject: 'ATUALIZADO: {{appointmentType}} em {{clinicName}}',
         content: 'Conteúdo atualizado do template...',
         variables: ['patientName', 'appointmentType', 'clinicName'],
         lastModifiedBy: 'admin-123',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.templateId).toBe('custom_reminder');
       expect(result.data.subject).toContain('ATUALIZADO:');
@@ -367,14 +373,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should list available templates', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.listTemplates({
         channel: 'email',
         language: 'pt-BR',
         category: 'appointment',
         includeInactive: false,
       });
-      
+
       expect(result.success).toBe(true);
       expect(Array.isArray(result.data.templates)).toBe(true);
       expect(result.data.totalCount).toBeGreaterThanOrEqual(0);
@@ -386,9 +392,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should track notification delivery', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.trackDelivery('notification-123');
-      
+
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
       expect(result.data.deliveryStatus).toBeDefined();
@@ -400,14 +406,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should retry failed notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.retryNotification('notification-123', {
         reason: 'Temporary delivery failure',
         maxRetries: 3,
         retryDelay: 300, // 5 minutes
         escalateAfter: 3,
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
       expect(result.data.retryScheduled).toBe(true);
@@ -418,14 +424,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should get delivery statistics', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.getDeliveryStatistics({
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
         channels: ['email', 'sms', 'whatsapp'],
         groupBy: 'channel',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.totalSent).toBeGreaterThanOrEqual(0);
       expect(result.data.totalDelivered).toBeGreaterThanOrEqual(0);
@@ -436,7 +442,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should update notification status', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.updateNotificationStatus('notification-123', {
         status: 'delivered',
         deliveredAt: new Date(),
@@ -450,7 +456,7 @@ describe('Real-time Notification Service (T042)', () => {
           provider: 'twilio',
         },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
       expect(result.data.status).toBe('delivered');
@@ -463,7 +469,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should queue high priority notification', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.queueNotification({
         recipientId: 'patient-123',
         channel: 'sms',
@@ -475,7 +481,7 @@ describe('Real-time Notification Service (T042)', () => {
         },
         bypassRateLimit: true,
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.queuePosition).toBe(1); // Critical priority goes first
       expect(result.data.estimatedDelivery).toBeDefined();
@@ -485,13 +491,13 @@ describe('Real-time Notification Service (T042)', () => {
     it('should apply rate limiting', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.checkRateLimit({
         recipientId: 'patient-123',
         channel: 'sms',
         timeWindow: '1 hour',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.allowed).toBeDefined();
       expect(result.data.remaining).toBeGreaterThanOrEqual(0);
@@ -502,13 +508,13 @@ describe('Real-time Notification Service (T042)', () => {
     it('should process notification queue', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.processNotificationQueue({
         batchSize: 10,
         priorityOrder: ['critical', 'high', 'medium', 'low'],
         respectRateLimits: true,
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.processed).toBeGreaterThanOrEqual(0);
       expect(result.data.failed).toBeGreaterThanOrEqual(0);
@@ -519,9 +525,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should get queue status', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.getQueueStatus();
-      
+
       expect(result.success).toBe(true);
       expect(result.data.totalQueued).toBeGreaterThanOrEqual(0);
       expect(result.data.byPriority).toBeDefined();
@@ -534,7 +540,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should integrate with Patient model', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendPatientNotification({
         patientId: 'patient-123',
         notificationType: 'appointment_reminder',
@@ -542,7 +548,7 @@ describe('Real-time Notification Service (T042)', () => {
         preferredChannels: ['email', 'sms'],
         urgency: 'high',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.patientId).toBe('patient-123');
       expect(result.data.channelsUsed).toContain('email');
@@ -553,14 +559,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should validate LGPD consent before sending', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.validateLGPDConsent({
         patientId: 'patient-123',
         channel: 'email',
         purpose: 'marketing',
         dataCategories: ['personal_data', 'contact_data'],
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.consentValid).toBeDefined();
       expect(result.data.legalBasis).toBeDefined();
@@ -571,7 +577,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should log notification to audit trail', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.logNotificationToAudit({
         notificationId: 'notification-123',
         recipientId: 'patient-123',
@@ -584,7 +590,7 @@ describe('Real-time Notification Service (T042)', () => {
           ipAddress: '127.0.0.1',
         },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.auditId).toBeDefined();
       expect(result.data.logged).toBe(true);
@@ -594,9 +600,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should sync with notification preferences', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.syncNotificationPreferences('patient-123');
-      
+
       expect(result.success).toBe(true);
       expect(result.data.patientId).toBe('patient-123');
       expect(result.data.preferences).toBeDefined();
@@ -609,7 +615,7 @@ describe('Real-time Notification Service (T042)', () => {
     it('should handle database connection errors gracefully', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
@@ -617,7 +623,7 @@ describe('Real-time Notification Service (T042)', () => {
         data: { test: 'data' },
         simulateDbError: true,
       });
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toContain('Erro de conexão com banco de dados');
     });
@@ -625,9 +631,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should validate database schema', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.validateDatabaseSchema();
-      
+
       expect(result.success).toBe(true);
       expect(result.data.schemaValid).toBe(true);
       expect(result.data.tablesExist).toBeDefined();
@@ -637,13 +643,13 @@ describe('Real-time Notification Service (T042)', () => {
     it('should perform database maintenance', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.performDatabaseMaintenance({
         operation: 'cleanup_old_notifications',
         retentionDays: 90,
         dryRun: true,
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.data.recordsToDelete).toBeGreaterThanOrEqual(0);
       expect(result.data.spaceToReclaim).toBeDefined();
@@ -654,14 +660,14 @@ describe('Real-time Notification Service (T042)', () => {
     it('should handle invalid notification parameters', async () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const result = await service.sendNotification({
         recipientId: '',
         channel: '',
         templateId: '',
         data: {},
       });
-      
+
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
       expect(result.errors.length).toBeGreaterThan(0);
@@ -670,9 +676,9 @@ describe('Real-time Notification Service (T042)', () => {
     it('should validate service configuration', () => {
       const { NotificationService } = require('../notification-service');
       const service = new NotificationService();
-      
+
       const config = service.getServiceConfiguration();
-      
+
       expect(config.databaseConnection).toBeDefined();
       expect(config.supportedChannels).toBeDefined();
       expect(config.rateLimits).toBeDefined();

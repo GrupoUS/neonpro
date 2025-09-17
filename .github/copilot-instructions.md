@@ -2,6 +2,12 @@
 
 Concise project-specific guidance for AI coding agents. Focus on this repository's real architecture, workflows, and conventions. Keep answers actionable and reference concrete files.
 
+# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
+
+- **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
+- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
+- **🔍 Always Read the @tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
+
 ## 1. Big Picture
 - Monorepo (Turborepo + Bun-first workflow; PNPM workspace metadata still present) with two primary apps: `apps/api` (Hono-based backend / edge oriented) and `apps/web` (React 19 + TanStack Router + Vite + Tailwind + shadcn/ui). Shared code in `packages/*` (types, utils, ui, security, database, etc.).
 - Compliance-driven (LGPD / ANVISA / CFM) → treat personal/medical data defensively; never introduce logging of PHI outside secure utilities.

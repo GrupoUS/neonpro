@@ -1,4 +1,4 @@
-import { pdf, type DocumentProps as PDFDocumentProps } from '@react-pdf/renderer';
+import { type DocumentProps as PDFDocumentProps, pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 
 /**

@@ -5,12 +5,12 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono, Context, Next } from 'hono';
+import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { PatientService } from '../../services/patient-service.js';
 import { AuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
+import { PatientService } from '../../services/patient-service.js';
 
 // Type definitions
 interface ServiceInterface {
@@ -277,7 +277,7 @@ const sessionRequestSchema = z.object({
       dataProcessing: z.boolean(),
       aiAnalysis: z.boolean().optional(),
       consentTimestamp: z.string().optional(),
-    })
+    }),
   ]).optional(),
   context: z.object({
     healthcareProfessional: z.object({
@@ -334,46 +334,46 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', sessionRequestSchema),
-  async (c) => {
+  async c => {
     const user = c.get('user');
     const requestData = c.req.valid('json');
-    
+
     try {
       // Validate model/provider combination
       const validCombinations = {
-        'openai': ['gpt-4', 'gpt-4o', 'gpt-3.5-turbo'],
-        'anthropic': ['claude-3-opus', 'claude-3-sonnet'],
-        'google': ['gemini-pro', 'gemini-pro-vision'],
-        'local': ['local-llama', 'local-mistral', 'local-phi']
+        openai: ['gpt-4', 'gpt-4o', 'gpt-3.5-turbo'],
+        anthropic: ['claude-3-opus', 'claude-3-sonnet'],
+        google: ['gemini-pro', 'gemini-pro-vision'],
+        local: ['local-llama', 'local-mistral', 'local-phi'],
       };
 
       const provider = requestData.provider || 'openai';
       const model = requestData.model || 'gpt-4o';
-      
+
       if (!validCombinations[provider] || !validCombinations[provider].includes(model)) {
         return c.json({
           success: false,
           error: 'Combinação inválida de modelo e provedor.',
-          code: 'INVALID_MODEL_PROVIDER_COMBINATION'
+          code: 'INVALID_MODEL_PROVIDER_COMBINATION',
         }, 400);
       }
 
       // Check LGPD consent (mock validation for testing)
-      const hasLGPDConsent = requestData.lgpdConsent === true || 
-                            (requestData.lgpdConsent && typeof requestData.lgpdConsent === 'object' && 
-                             requestData.lgpdConsent.dataProcessing === true) ||
-                            (requestData.context?.lgpdConsent?.dataProcessing === true);
+      const hasLGPDConsent = requestData.lgpdConsent === true
+        || (requestData.lgpdConsent && typeof requestData.lgpdConsent === 'object'
+          && requestData.lgpdConsent.dataProcessing === true)
+        || (requestData.context?.lgpdConsent?.dataProcessing === true);
       if (!hasLGPDConsent) {
         return c.json({
           success: false,
           error: 'Consentimento LGPD obrigatório para processamento de dados de IA.',
-          code: 'LGPD_CONSENT_REQUIRED'
+          code: 'LGPD_CONSENT_REQUIRED',
         }, 403);
       }
 
       // Mock session creation
       const sessionId = `session-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Add Brazilian context if specified
       let responseData: ChatResponse['data'] = {
         sessionId,
@@ -385,14 +385,16 @@ app.post(
       };
 
       // Add Brazilian context
-      if (requestData.healthcareContext === 'brazilian_healthcare' || 
-          requestData.language === 'pt-BR' ||
-          requestData.context?.language === 'pt-BR') {
+      if (
+        requestData.healthcareContext === 'brazilian_healthcare'
+        || requestData.language === 'pt-BR'
+        || requestData.context?.language === 'pt-BR'
+      ) {
         responseData.context = {
           language: 'pt-BR',
           region: 'brazil',
           regulations: ['ANVISA', 'CFM', 'LGPD'],
-          healthcareSystem: 'SUS'
+          healthcareSystem: 'SUS',
         };
 
         // Include healthcare specialty if provided
@@ -403,7 +405,7 @@ app.post(
 
       return c.json({
         success: true,
-        data: responseData
+        data: responseData,
       }, 201);
     } catch (error) {
       return c.json({
@@ -411,7 +413,7 @@ app.post(
         error: 'Erro interno do servidor.',
       }, 500);
     }
-  }
+  },
 );
 
 // POST /sessions/{id}/messages - Send message to session
@@ -420,11 +422,11 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', messageRequestSchema),
-  async (c) => {
+  async c => {
     const user = c.get('user');
     const sessionId = c.req.param('sessionId');
     const requestData = c.req.valid('json');
-    
+
     try {
       // Validate session ID (basic UUID format check)
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -432,19 +434,20 @@ app.post(
         return c.json({
           success: false,
           error: 'Formato de ID de sessão inválido.',
-          code: 'INVALID_SESSION_ID_FORMAT'
+          code: 'INVALID_SESSION_ID_FORMAT',
         }, 404);
       }
 
       // Check if session exists (mock validation)
       const validTestSessions = ['550e8400-e29b-41d4-a716-446655440000'];
-      const isValidSession = validTestSessions.includes(sessionId) || sessionId.startsWith('session-');
-      
+      const isValidSession = validTestSessions.includes(sessionId)
+        || sessionId.startsWith('session-');
+
       if (!isValidSession) {
         return c.json({
           success: false,
           error: 'Sessão não encontrada.',
-          code: 'SESSION_NOT_FOUND'
+          code: 'SESSION_NOT_FOUND',
         }, 404);
       }
 
@@ -453,7 +456,7 @@ app.post(
         return c.json({
           success: false,
           error: 'Conteúdo da mensagem não pode estar vazio.',
-          code: 'EMPTY_MESSAGE_CONTENT'
+          code: 'EMPTY_MESSAGE_CONTENT',
         }, 400);
       }
 
@@ -467,31 +470,37 @@ app.post(
           } else if (attachment.metadata?.size) {
             attachmentSize = attachment.metadata.size;
           }
-          
+
           if (attachmentSize > 1048576) { // 1MB limit
             return c.json({
               success: false,
               error: 'Anexo muito grande. Limite máximo de 1MB.',
-              code: 'ATTACHMENT_TOO_LARGE'
+              code: 'ATTACHMENT_TOO_LARGE',
             }, 413);
           }
-          
+
           // Validate attachment type for multi-modal
-          const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'text/plain', 'application/pdf'];
+          const supportedTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'text/plain',
+            'application/pdf',
+          ];
           const supportedGenericTypes = ['image', 'text', 'document'];
-          
+
           // Prioritize specific MIME type over generic type
           const attachmentType = attachment.metadata?.mimeType || attachment.type;
-          
+
           if (attachmentType) {
             const isSpecificTypeSupported = supportedTypes.includes(attachmentType);
             const isGenericTypeSupported = supportedGenericTypes.includes(attachmentType);
-            
+
             if (!isSpecificTypeSupported && !isGenericTypeSupported) {
               return c.json({
                 success: false,
                 error: 'Tipo de anexo não suportado.',
-                code: 'UNSUPPORTED_ATTACHMENT_TYPE'
+                code: 'UNSUPPORTED_ATTACHMENT_TYPE',
               }, 400);
             }
           }
@@ -500,17 +509,20 @@ app.post(
 
       // Check if streaming is requested
       const isStreaming = requestData.settings?.stream === true;
-      
+
       // Mock message response
       const messageId = `msg-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Generate response content with Brazilian context if needed
       let responseContent = `Mock AI response to: ${requestData.content}`;
-      const containsPortuguese = /português|brasil|anvisa|cfm|lgpd|toxina|botulínica/i.test(requestData.content);
+      const containsPortuguese = /português|brasil|anvisa|cfm|lgpd|toxina|botulínica/i.test(
+        requestData.content,
+      );
       const isEmergency = /emergência|urgente|grave|crítico|risco/i.test(requestData.content);
-      
+
       if (containsPortuguese) {
-        responseContent += ' [Contexto brasileiro: Regulamentações ANVISA e CFM aplicáveis. Resposta em pt-BR.]';
+        responseContent +=
+          ' [Contexto brasileiro: Regulamentações ANVISA e CFM aplicáveis. Resposta em pt-BR.]';
       }
 
       const responseData = {
@@ -523,7 +535,7 @@ app.post(
           promptTokens: 50,
           completionTokens: 100,
           totalTokens: 150,
-        }
+        },
       };
 
       // Set appropriate headers
@@ -551,12 +563,12 @@ app.post(
         c.header('Content-Type', 'text/event-stream');
         c.header('Cache-Control', 'no-cache');
         c.header('Connection', 'keep-alive');
-        
+
         // Set other headers
         Object.entries(headers).forEach(([key, value]) => {
           c.header(key, value);
         });
-        
+
         // Return streaming response (simplified for testing)
         return new Response(
           `data: ${JSON.stringify(responseData)}\n\n`,
@@ -565,21 +577,21 @@ app.post(
             headers: {
               'Content-Type': 'text/event-stream',
               'Cache-Control': 'no-cache',
-              'Connection': 'keep-alive',
-              ...headers
-            }
-          }
+              Connection: 'keep-alive',
+              ...headers,
+            },
+          },
         );
       } else {
         // Set headers for regular response
         Object.entries(headers).forEach(([key, value]) => {
           c.header(key, value);
         });
-        
+
         // Return regular JSON response
         return c.json({
           success: true,
-          data: responseData
+          data: responseData,
         }, 201);
       }
     } catch (error) {
@@ -588,7 +600,7 @@ app.post(
         error: 'Erro interno do servidor.',
       }, 500);
     }
-  }
+  },
 );
 
 export default app;

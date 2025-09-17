@@ -4,11 +4,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  type ErrorContext,
-  errorHandler,
-  errorHandling,
-} from '../error-handling';
+import { type ErrorContext, errorHandler, errorHandling } from '../error-handling';
 
 // Mock crypto.randomUUID
 Object.defineProperty(global, 'crypto', {

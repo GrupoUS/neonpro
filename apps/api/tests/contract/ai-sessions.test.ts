@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/ai/chat/sessions (T019)
- * 
+ *
  * Tests AI chat session creation endpoint contract:
  * - Request/response schema validation
  * - AI model selection and configuration
@@ -10,7 +10,7 @@
  * - Multi-model provider support
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -86,7 +86,7 @@ const SessionResponseSchema = z.object({
 
 describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-CFM-License': 'CFM-12345',
@@ -131,9 +131,9 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(201);
-      
+
       // Skip full schema validation for now since this is a contract test
       // In real implementation, this would validate against actual API response
       expect(response).toBeDefined();
@@ -162,7 +162,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(201);
       // Contract validation would happen here
     });
@@ -196,7 +196,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
           headers: testAuthHeaders,
           body: JSON.stringify(sessionRequest),
         });
-        
+
         expect(response.status).toBe(201);
       }
     });
@@ -222,7 +222,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -245,7 +245,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -268,7 +268,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(403);
     });
   });
@@ -276,7 +276,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should initialize session within 2 seconds', async () => {
       const startTime = Date.now();
-      
+
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
@@ -352,9 +352,9 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(sessionRequest),
       });
-      
+
       expect(response.status).toBe(201);
-      
+
       // Contract ensures Brazilian context is preserved
       const responseText = await response.text();
       expect(responseText).toContain('pt-BR');

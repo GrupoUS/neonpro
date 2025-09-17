@@ -1,15 +1,15 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
+import aiRouter from './routes/ai';
+import { billing } from './routes/billing';
 import chatRouter from './routes/chat';
 import { medicalRecords } from './routes/medical-records';
-import { billing } from './routes/billing';
 import patientsRouter from './routes/patients';
-import aiRouter from './routes/ai';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { initializeErrorTracking, errorTracker } from './lib/error-tracking';
+import { errorTracker, initializeErrorTracking } from './lib/error-tracking';
 import { initializeLogger, logger } from './lib/logger';
 
 // Extract middleware functions from security package
@@ -43,7 +43,7 @@ Promise.all([
   }),
 ]).then(() => {
   logger.info('Application monitoring initialized successfully');
-}).catch((error) => {
+}).catch(error => {
   console.error('Failed to initialize monitoring:', error);
 });
 
@@ -76,7 +76,7 @@ app.use('*', errorHandler);
 app.use('*', async (c, next) => {
   const startTime = Date.now();
   const requestId = c.get('requestId');
-  
+
   try {
     // Add breadcrumb for request start
     errorTracker.addBreadcrumb(
@@ -86,13 +86,13 @@ app.use('*', async (c, next) => {
         method: c.req.method,
         endpoint: c.req.path,
         requestId,
-      }
+      },
     );
 
     await next();
 
     const duration = Date.now() - startTime;
-    
+
     // Log successful request
     logger.info('Request completed', {
       requestId,
@@ -111,12 +111,11 @@ app.use('*', async (c, next) => {
         statusCode: c.res.status,
         duration,
         requestId,
-      }
+      },
     );
-
   } catch (error) {
     const duration = Date.now() - startTime;
-    
+
     // Capture error with context
     const errorContext = errorTracker.extractContextFromHono(c);
     errorTracker.captureException(error as Error, errorContext, {
@@ -141,7 +140,7 @@ app.use('*', async (c, next) => {
         errorMessage: (error as Error).message,
         duration,
         requestId,
-      }
+      },
     );
 
     throw error;
@@ -157,30 +156,30 @@ app.route('/v1/medical-records', medicalRecords);
 // Mount billing routes under /v1/billing
 app.route('/v1/billing', billing);
 
-// Mount patient routes under /v2/patients  
+// Mount patient routes under /v2/patients
 app.route('/api/v2', patientsRouter);
 
 // Mount AI routes under /api/v2/ai
 app.route('/api/v2/ai', aiRouter);
 
 // Basic health endpoints with enhanced monitoring
-app.get('/health', (c) => {
+app.get('/health', c => {
   const requestId = c.get('requestId');
-  
+
   logger.debug('Health check requested', { requestId });
-  
-  return c.json({ 
+
+  return c.json({
     status: 'ok',
     requestId,
     timestamp: new Date().toISOString(),
   });
 });
 
-app.get('/v1/health', (c) => {
+app.get('/v1/health', c => {
   const requestId = c.get('requestId');
-  
+
   logger.info('Detailed health check requested', { requestId });
-  
+
   const healthData = {
     status: 'healthy',
     version: 'v1',
@@ -201,15 +200,15 @@ app.get('/v1/health', (c) => {
   };
 
   logger.healthcare('health_check', 'Detailed health check completed', { requestId }, healthData);
-  
+
   return c.json(healthData);
 });
 
-app.get('/v1/info', (c) => {
+app.get('/v1/info', c => {
   const requestId = c.get('requestId');
-  
+
   logger.debug('System info requested', { requestId });
-  
+
   const infoData = {
     name: 'NeonPro API',
     version: 'v1',
@@ -232,20 +231,20 @@ app.get('/v1/info', (c) => {
   };
 
   logger.audit('system_info', 'System information accessed', { requestId }, infoData);
-  
+
   return c.json(infoData);
 });
 
 // Security endpoints (protected)
-app.get('/v1/security/status', /* ...getProtectedRoutesMiddleware(['admin']), */ (c) => {
+app.get('/v1/security/status', /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
   const requestId = c.get('requestId');
   const user = c.get('user');
-  
-  logger.security('security_status', 'Security status accessed', { 
-    requestId, 
-    userId: user?.id 
+
+  logger.security('security_status', 'Security status accessed', {
+    requestId,
+    userId: user?.id,
   });
-  
+
   const securityStatus = {
     encryption: {
       enabled: true,
@@ -276,64 +275,72 @@ app.get('/v1/security/status', /* ...getProtectedRoutesMiddleware(['admin']), */
   };
 
   logger.audit('security_status', 'Security status retrieved', { requestId }, securityStatus);
-  
+
   return c.json(securityStatus);
 });
 
 // LGPD compliance endpoint
-app.get('/v1/compliance/lgpd', /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c) => {
-  const requestId = c.get('requestId');
-  const user = c.get('user');
-  
-  logger.lgpd('compliance_check', 'LGPD compliance status requested', { 
-    requestId, 
-    userId: user?.id 
-  });
-  
-  const complianceData = {
-    lgpdCompliance: {
-      enabled: true,
-      dataProcessing: {
-        lawfulBasis: ['consent', 'legitimate_interest'],
-        purposeLimitation: 'enabled',
-        dataMinimization: 'enabled',
-        storageLimitation: 'enabled',
-      },
-      dataSubjectRights: {
-        access: 'enabled',
-        rectification: 'enabled',
-        erasure: 'enabled',
-        portability: 'enabled',
-        objection: 'enabled',
-      },
-      securityMeasures: {
-        encryption: 'AES-256-GCM',
-        accessControl: 'role_based',
-        auditLogging: 'enabled',
-        breachNotification: 'enabled',
-      },
-      dataRetention: {
-        policy: 'defined',
-        automatedDeletion: 'enabled',
-        consentExpiration: 'enabled',
-      },
-    },
-    timestamp: new Date().toISOString(),
-    requestId,
-  };
+app.get(
+  '/v1/compliance/lgpd',
+  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ c => {
+    const requestId = c.get('requestId');
+    const user = c.get('user');
 
-  logger.lgpd('compliance_status', 'LGPD compliance status retrieved', { requestId }, complianceData);
-  
-  return c.json(complianceData);
-});
+    logger.lgpd('compliance_check', 'LGPD compliance status requested', {
+      requestId,
+      userId: user?.id,
+    });
+
+    const complianceData = {
+      lgpdCompliance: {
+        enabled: true,
+        dataProcessing: {
+          lawfulBasis: ['consent', 'legitimate_interest'],
+          purposeLimitation: 'enabled',
+          dataMinimization: 'enabled',
+          storageLimitation: 'enabled',
+        },
+        dataSubjectRights: {
+          access: 'enabled',
+          rectification: 'enabled',
+          erasure: 'enabled',
+          portability: 'enabled',
+          objection: 'enabled',
+        },
+        securityMeasures: {
+          encryption: 'AES-256-GCM',
+          accessControl: 'role_based',
+          auditLogging: 'enabled',
+          breachNotification: 'enabled',
+        },
+        dataRetention: {
+          policy: 'defined',
+          automatedDeletion: 'enabled',
+          consentExpiration: 'enabled',
+        },
+      },
+      timestamp: new Date().toISOString(),
+      requestId,
+    };
+
+    logger.lgpd(
+      'compliance_status',
+      'LGPD compliance status retrieved',
+      { requestId },
+      complianceData,
+    );
+
+    return c.json(complianceData);
+  },
+);
 
 // Error tracking test endpoint (for development)
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/v1/test/error', (c) => {
+  app.get('/v1/test/error', c => {
     const requestId = c.get('requestId');
-    
+
     logger.warn('Error test endpoint called', { requestId });
-    
+
     // Test error tracking
     try {
       throw new Error('This is a test error for error tracking');
@@ -345,9 +352,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // 404 handler with logging
-app.notFound((c) => {
+app.notFound(c => {
   const requestId = c.get('requestId');
-  
+
   logger.warn('Route not found', {
     requestId,
     method: c.req.method,
@@ -355,8 +362,8 @@ app.notFound((c) => {
     userAgent: c.req.header('user-agent'),
     ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
   });
-  
-  return c.json({ 
+
+  return c.json({
     error: 'Not Found',
     message: 'The requested resource was not found',
     requestId,
@@ -367,31 +374,31 @@ app.notFound((c) => {
 // Global error handler
 app.onError((err, c) => {
   const requestId = c.get('requestId');
-  
+
   // Capture error with full context
   const errorContext = errorTracker.extractContextFromHono(c);
   errorTracker.captureException(err, errorContext, {
     requestId,
     unhandled: true,
   });
-  
+
   // Log error
   logger.error('Unhandled error occurred', {
     requestId,
     method: c.req.method,
     endpoint: c.req.path,
   }, { errorMessage: err.message, stack: err.stack });
-  
+
   // Return appropriate error response
   if (process.env.NODE_ENV === 'production') {
-    return c.json({ 
+    return c.json({
       error: 'Internal Server Error',
       message: 'An unexpected error occurred',
       requestId,
       timestamp: new Date().toISOString(),
     }, 500);
   } else {
-    return c.json({ 
+    return c.json({
       error: 'Internal Server Error',
       message: err.message,
       stack: err.stack,

@@ -4,7 +4,7 @@
  * Integration with PatientService, AuditService for LGPD compliance
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -24,7 +24,7 @@ const mockLGPDService = {
 describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.getPatientById.mockResolvedValue({
       success: true,
@@ -76,7 +76,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       data: { canAccess: true, accessLevel: 'full' },
     });
 
-    mockLGPDService.maskSensitiveData.mockImplementation((data) => data);
+    mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
   afterEach(() => {
@@ -93,12 +93,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   describe('Successful Patient Retrieval', () => {
     it('should get patient by valid ID', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -114,12 +114,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should include complete patient data model', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -136,12 +136,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should include LGPD compliance headers', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -155,12 +155,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should include cache control headers', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -174,12 +174,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   describe('LGPD Compliance and Data Access', () => {
     it('should validate LGPD data access permissions', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -196,12 +196,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should log data access for audit trail', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Real-IP': '192.168.1.100',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         }),
@@ -234,12 +234,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -270,12 +270,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer limited-token',
+          authorization: 'Bearer limited-token',
         }),
       };
 
@@ -305,12 +305,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -330,12 +330,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/nonexistent-id',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -350,7 +350,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should handle authentication errors', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
@@ -369,12 +369,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should handle invalid patient ID format', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/invalid-id-format',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -387,7 +387,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         expect.objectContaining({
           field: 'id',
           message: 'ID do paciente deve ser um UUID válido',
-        })
+        }),
       );
     });
 
@@ -395,12 +395,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       mockPatientService.getPatientById.mockRejectedValue(new Error('Database connection failed'));
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -416,12 +416,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       mockAuditService.logActivity.mockRejectedValue(new Error('Audit service unavailable'));
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -438,13 +438,13 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   describe('Performance and Caching', () => {
     it('should support conditional requests with ETag', async () => {
       const { default: getRoute } = require('../get');
-      
+
       // First request to get ETag
       const firstRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -456,7 +456,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'If-None-Match': etag,
         }),
       };
@@ -468,12 +468,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should include performance headers', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -487,12 +487,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -505,12 +505,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should validate healthcare professional access', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Healthcare-Professional': 'CRM-SP-123456',
           'X-Healthcare-Context': 'medical_consultation',
         }),
@@ -529,12 +529,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
     it('should include data retention policy headers', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -548,12 +548,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   describe('Access Control and Permissions', () => {
     it('should validate user access to specific patient', async () => {
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -574,12 +574,12 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
 
       const { default: getRoute } = require('../get');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 

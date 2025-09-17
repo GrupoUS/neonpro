@@ -1,6 +1,6 @@
 /**
  * INTEGRATION TEST: Patient data encryption (T024)
- * 
+ *
  * Tests patient data encryption integration:
  * - End-to-end data encryption/decryption flows
  * - Field-level encryption for sensitive data
@@ -10,7 +10,7 @@
  * - Database encryption at rest and in transit
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -56,7 +56,7 @@ const PatientDataEncryptionSchema = z.object({
 
 describe('Patient Data Encryption Integration Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
   };
@@ -107,9 +107,9 @@ describe('Patient Data Encryption Integration Tests', () => {
       });
 
       expect(response.status).toBe(201);
-      
+
       const createdPatient = await response.json();
-      
+
       // Verify sensitive fields are encrypted
       expect(createdPatient.cpf).toMatchObject({
         value: expect.stringMatching(/^[A-Za-z0-9+/]+=*$/), // Base64 encrypted value
@@ -120,7 +120,7 @@ describe('Patient Data Encryption Integration Tests', () => {
           dataClassification: 'restricted',
         }),
       });
-      
+
       expect(createdPatient.medicalHistory).toMatchObject({
         value: expect.stringMatching(/^[A-Za-z0-9+/]+=*$/),
         keyId: expect.any(String),
@@ -164,7 +164,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(getResponse.status).toBe(200);
       const retrieved = await getResponse.json();
-      
+
       // Verify decrypted values match original
       expect(retrieved.cpf.decrypted).toBe('987.654.321-00');
       expect(retrieved.phone.decrypted).toBe('(21) 88888-8888');
@@ -215,7 +215,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(keysResponse.status).toBe(200);
       const keys = await keysResponse.json();
-      
+
       expect(keys.active).toBeDefined();
       expect(keys.active.length).toBeGreaterThan(0);
       expect(keys.retired).toBeDefined();
@@ -278,7 +278,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(integrityResponse.status).toBe(200);
       const validation = await integrityResponse.json();
-      
+
       expect(validation.status).toBe('healthy');
       expect(validation.checkedRecords).toBeGreaterThan(0);
       expect(validation.corruptedRecords).toBe(0);
@@ -315,10 +315,10 @@ describe('Patient Data Encryption Integration Tests', () => {
       });
 
       const duration = Date.now() - startTime;
-      
+
       expect(response.status).toBe(201);
       expect(duration).toBeLessThan(2000); // Should complete within 2 seconds
-      
+
       const responseData = await response.json();
       expect(responseData.encryptionMetadata.encryptionStandard).toBe('AES-256-GCM');
     });
@@ -327,7 +327,9 @@ describe('Patient Data Encryption Integration Tests', () => {
       const batchSize = 10;
       const patients = Array.from({ length: batchSize }, (_, i) => ({
         name: `Batch Patient ${i + 1}`,
-        cpf: `${String(i + 1).padStart(3, '0')}.${String(i + 1).padStart(3, '0')}.${String(i + 1).padStart(3, '0')}-${String(i + 1).padStart(2, '0')}`,
+        cpf: `${String(i + 1).padStart(3, '0')}.${String(i + 1).padStart(3, '0')}.${
+          String(i + 1).padStart(3, '0')
+        }-${String(i + 1).padStart(2, '0')}`,
         phone: `(11) ${String(i + 1).padStart(5, '0')}-${String(i + 1).padStart(4, '0')}`,
         email: `batch${i + 1}@test.com`,
       }));
@@ -344,7 +346,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(batchResponse.status).toBe(201);
       expect(duration).toBeLessThan(5000); // Batch should complete within 5 seconds
-      
+
       const batchResult = await batchResponse.json();
       expect(batchResult.created).toBe(batchSize);
       expect(batchResult.encrypted).toBe(batchSize);
@@ -390,21 +392,21 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(auditResponse.status).toBe(200);
       const auditLogs = await auditResponse.json();
-      
+
       expect(auditLogs.events).toContainEqual(
         expect.objectContaining({
           operation: 'encrypt',
           patientId: patient.id,
           fields: expect.arrayContaining(['cpf', 'medicalHistory']),
-        })
+        }),
       );
-      
+
       expect(auditLogs.events).toContainEqual(
         expect.objectContaining({
           operation: 'decrypt',
           patientId: patient.id,
           userId: expect.any(String),
-        })
+        }),
       );
     });
 
@@ -415,7 +417,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(complianceResponse.status).toBe(200);
       const compliance = await complianceResponse.json();
-      
+
       // Verify compliance with healthcare standards
       expect(compliance.standards).toContain('LGPD');
       expect(compliance.standards).toContain('ANVISA');
@@ -440,7 +442,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(breachResponse.status).toBe(201);
       const response = await breachResponse.json();
-      
+
       // Verify breach response procedures
       expect(response.incidentId).toBeDefined();
       expect(response.immediateActions).toContain('key_rotation_triggered');
@@ -468,7 +470,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(response.status).toBe(503); // Service Unavailable
       expect(response.headers.get('Retry-After')).toBeDefined();
-      
+
       const errorResponse = await response.json();
       expect(errorResponse.error).toBe('encryption_service_unavailable');
       expect(errorResponse.fallbackAvailable).toBe(false);
@@ -487,7 +489,7 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(validationResponse.status).toBe(200);
       const validation = await validationResponse.json();
-      
+
       expect(validation.status).toBe('healthy');
       expect(validation.integrityViolations).toBe(0);
       expect(validation.encryptionConsistency).toBe(100);

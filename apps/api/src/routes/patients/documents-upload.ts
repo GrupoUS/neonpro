@@ -4,9 +4,9 @@
  * Next phase will integrate Supabase storage + patient_documents insert + audit trail.
  */
 import { Hono } from 'hono';
+import { bodyLimit } from 'hono/body-limit';
 import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
-import { bodyLimit } from 'hono/body-limit';
 
 const app = new Hono();
 
@@ -23,8 +23,12 @@ interface DocumentService {
 }
 
 let documentService: DocumentService | null = null;
-export function setDocumentService(svc: DocumentService) { documentService = svc; }
-export function getDocumentService() { return documentService; }
+export function setDocumentService(svc: DocumentService) {
+  documentService = svc;
+}
+export function getDocumentService() {
+  return documentService;
+}
 
 // Allowed MIME types (initial subset) - will be expanded based on spec
 const ALLOWED_MIME = new Set([
@@ -40,12 +44,15 @@ const ALLOWED_MIME = new Set([
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
 // Apply body size limit (10MB)
-app.use('/:id/documents', bodyLimit({
-  maxSize: 10 * 1024 * 1024,
-  onError: (c) => c.json({ success: false, error: 'Arquivo excede tamanho máximo (10MB)' }, 413),
-}));
+app.use(
+  '/:id/documents',
+  bodyLimit({
+    maxSize: 10 * 1024 * 1024,
+    onError: c => c.json({ success: false, error: 'Arquivo excede tamanho máximo (10MB)' }, 413),
+  }),
+);
 
-app.post('/:id/documents', requireAuth, async (c) => {
+app.post('/:id/documents', requireAuth, async c => {
   // Validate patient id param
   const params = ParamsSchema.safeParse(c.req.param());
   if (!params.success) {
@@ -66,14 +73,30 @@ app.post('/:id/documents', requireAuth, async (c) => {
   }
 
   if (!ALLOWED_MIME.has(file.type)) {
-    return c.json({ success: false, error: 'Tipo de arquivo não suportado', mimeType: file.type }, 415);
+    return c.json(
+      { success: false, error: 'Tipo de arquivo não suportado', mimeType: file.type },
+      415,
+    );
   }
 
   const now = new Date().toISOString();
   const docId = crypto.randomUUID();
   const patientId = params.data.id;
 
-  // Phase 1: If a service has been injected (tests), delegate to it
+  // Instantiate default service lazily if not injected (production path)
+  if (!documentService) {
+    const { PatientDocumentService } = await import('../../services/patient-document-service');
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    let supabaseClient: any = undefined;
+    if (supabaseUrl && supabaseKey) {
+      const { createClient } = await import('@supabase/supabase-js');
+      supabaseClient = createClient(supabaseUrl, supabaseKey);
+    }
+    documentService = new PatientDocumentService({ supabaseClient });
+  }
+
+  // Delegate to service (injected or default)
   if (documentService) {
     try {
       const result = await documentService.uploadPatientDocument({ patientId, file });

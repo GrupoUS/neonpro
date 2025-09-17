@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
+import { PatientDocumentUpload } from '@/components/patient-documents';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -327,23 +328,18 @@ function PatientDocumentsPage() {
           </p>
         </div>
 
-        {/* Upload button */}
-        <div className='flex items-center gap-2'>
-          <input
-            type='file'
-            multiple
-            accept='.pdf,.jpg,.jpeg,.png,.doc,.docx'
-            onChange={e => handleFileUpload(e.target.files)}
-            className='hidden'
-            id='file-upload'
-          />
-          <Button asChild>
-            <label htmlFor='file-upload' className='cursor-pointer'>
-              <Upload className='w-4 h-4 mr-2' />
-              Enviar Documentos
-            </label>
-          </Button>
-        </div>
+        {/* Upload section */}
+        <PatientDocumentUpload
+          patientId={patientId}
+          onUploadSuccess={(files) => {
+            toast.success(`${files.length} documento(s) enviado(s) com sucesso!`);
+            // TODO: Refresh documents list
+          }}
+          onUploadError={(error) => {
+            toast.error(`Erro no upload: ${error.message}`);
+          }}
+          className="w-full sm:w-auto"
+        />
       </div>
 
       {/* Upload Progress */}

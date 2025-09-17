@@ -14,7 +14,6 @@ import type { HealthcareErrorContext } from '../../lib/observability/sentry';
 import type { HealthcareSpanAttributes } from '../../lib/observability/tracing';
 import type {
   HealthcarePerformanceContext, // used in performance context test
-
 } from '../../lib/observability/web-vitals';
 
 // Mock Sentry

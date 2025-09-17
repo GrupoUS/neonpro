@@ -3,15 +3,14 @@
  * Comprehensive test suite for multi-model AI provider management
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  type AIModel,
+  AIProvider,
   aiProviderManager,
   aiProviderSelection,
-  healthcareContextInjection,
   aiRequestMetrics,
-  AIProvider,
-  type AIModel,
-
+  healthcareContextInjection,
 } from '../ai-providers';
 
 // Mock crypto.randomUUID
@@ -48,9 +47,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
   describe('AI Provider Manager', () => {
     it('should initialize with default models', () => {
       const models = aiProviderManager.getAvailableModels();
-      
+
       expect(models.length).toBeGreaterThan(0);
-      
+
       // Check for expected providers
       const providers = models.map(m => m.provider);
       expect(providers).toContain(AIProvider.OPENAI);
@@ -130,7 +129,7 @@ describe('AI Provider Integrations Middleware (T072)', () => {
 
       expect(model).toBeDefined();
       expect(model?.supportsBrazilianPortuguese).toBe(true);
-      
+
       // Should be one of the lower-cost models
       expect(model?.costPerToken).toBeLessThan(0.00005);
     });
@@ -212,7 +211,7 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       await middleware(mockContext, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
-      
+
       // Check that a streaming-capable model was selected
       const setCall = mockContext.set.mock.calls.find((call: any) => call[0] === 'selectedAIModel');
       if (setCall) {
@@ -229,7 +228,7 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       await middleware(mockContext, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
-      
+
       // Check that a healthcare-optimized model was selected
       const setCall = mockContext.set.mock.calls.find((call: any) => call[0] === 'selectedAIModel');
       if (setCall) {
@@ -254,7 +253,7 @@ describe('AI Provider Integrations Middleware (T072)', () => {
           error: 'Nenhum modelo de IA disponível para os requisitos especificados',
           code: 'NO_AVAILABLE_MODEL',
         }),
-        503
+        503,
       );
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -284,21 +283,24 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const middleware = healthcareContextInjection();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('healthcareContext', expect.objectContaining({
-        isHealthcareProfessional: true,
-        crmNumber: '12345-SP',
-        specialty: 'Dermatologia',
-        patientContext: expect.objectContaining({
-          patientId: 'patient-123',
-          hasConsent: true,
-          dataCategories: ['personal_data', 'health_data'],
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'healthcareContext',
+        expect.objectContaining({
+          isHealthcareProfessional: true,
+          crmNumber: '12345-SP',
+          specialty: 'Dermatologia',
+          patientContext: expect.objectContaining({
+            patientId: 'patient-123',
+            hasConsent: true,
+            dataCategories: ['personal_data', 'health_data'],
+          }),
+          complianceRequirements: expect.objectContaining({
+            lgpd: true,
+            anvisa: true,
+            cfm: true,
+          }),
         }),
-        complianceRequirements: expect.objectContaining({
-          lgpd: true,
-          anvisa: true,
-          cfm: true,
-        }),
-      }));
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -310,15 +312,18 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const middleware = healthcareContextInjection();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('healthcareContext', expect.objectContaining({
-        isHealthcareProfessional: false,
-        patientContext: undefined,
-        complianceRequirements: expect.objectContaining({
-          lgpd: true,
-          anvisa: false,
-          cfm: false,
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'healthcareContext',
+        expect.objectContaining({
+          isHealthcareProfessional: false,
+          patientContext: undefined,
+          complianceRequirements: expect.objectContaining({
+            lgpd: true,
+            anvisa: false,
+            cfm: false,
+          }),
         }),
-      }));
+      );
       expect(mockNext).toHaveBeenCalled();
     });
   });
@@ -377,9 +382,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       });
 
       const middleware = aiRequestMetrics();
-      
+
       await expect(middleware(mockContext, mockNext)).rejects.toThrow('Test error');
-      
+
       expect(mockContext.set).toHaveBeenCalledWith('aiRequestId', expect.any(String));
       expect(mockContext.set).toHaveBeenCalledWith('aiRequestStartTime', expect.any(Date));
     });

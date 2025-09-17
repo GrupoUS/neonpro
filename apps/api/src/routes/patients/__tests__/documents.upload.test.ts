@@ -11,7 +11,7 @@
  * NOTE: Service layer (uploadPatientDocument) will be mocked in this test to isolate route validation concerns.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Prepare mocks for future service integration
 const mockDocumentService = {
@@ -79,7 +79,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       method: 'POST',
       body: formData,
       headers: new Headers({
-        'authorization': 'Bearer valid-token',
+        authorization: 'Bearer valid-token',
       }),
     });
 
@@ -99,7 +99,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       method: 'POST',
       body: formData,
       headers: new Headers({
-        'authorization': 'Bearer valid-token',
+        authorization: 'Bearer valid-token',
       }),
     });
 
@@ -131,7 +131,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       method: 'POST',
       body: formData,
       headers: new Headers({
-        'authorization': 'Bearer valid-token',
+        authorization: 'Bearer valid-token',
       }),
     });
 

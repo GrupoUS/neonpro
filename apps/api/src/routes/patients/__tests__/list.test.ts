@@ -4,7 +4,7 @@
  * Integration with PatientService, AuditService for LGPD compliance
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -34,7 +34,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.listPatients.mockResolvedValue({
       success: true,
@@ -95,13 +95,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
   describe('Successful Patient Listing', () => {
     it('should list patients with default pagination', async () => {
       const { default: listRoute } = require('../list');
-      
+
       // Mock request
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -121,12 +121,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should list patients with custom pagination', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients?page=2&limit=10',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -145,12 +145,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should list patients with search query', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients?search=João&page=1&limit=20',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -169,12 +169,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should list patients with status filter', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients?status=active&gender=male',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -196,12 +196,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should include LGPD compliance headers', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -214,12 +214,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should include pagination headers', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -234,12 +234,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
   describe('LGPD Compliance and Audit Logging', () => {
     it('should log data access for audit trail', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -263,12 +263,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should validate LGPD data access permissions', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -289,12 +289,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       });
 
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -325,12 +325,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       });
 
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer limited-token',
+          authorization: 'Bearer limited-token',
         }),
       };
 
@@ -346,7 +346,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
@@ -365,12 +365,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
     it('should handle invalid pagination parameters', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients?page=invalid&limit=abc',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -389,12 +389,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       });
 
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -410,12 +410,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       mockPatientService.listPatients.mockRejectedValue(new Error('Database connection failed'));
 
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -431,12 +431,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
   describe('Performance and Caching', () => {
     it('should include performance headers', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -465,12 +465,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       });
 
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients?limit=100',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -485,12 +485,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should validate Brazilian healthcare data access', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Healthcare-Context': 'medical_consultation',
         }),
       };
@@ -501,18 +501,18 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(mockPatientService.listPatients).toHaveBeenCalledWith(
         expect.objectContaining({
           healthcareContext: 'medical_consultation',
-        })
+        }),
       );
     });
 
     it('should include CFM compliance headers', async () => {
       const { default: listRoute } = require('../list');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 

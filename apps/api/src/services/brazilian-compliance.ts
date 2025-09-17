@@ -1,12 +1,12 @@
 /**
  * Brazilian Healthcare Compliance Validation Service
  * T082 - Brazilian Healthcare Compliance Validation
- * 
+ *
  * Orchestrates compliance validation across all Brazilian healthcare regulatory frameworks:
  * - LGPD (Lei Geral de Proteção de Dados) - Data Protection
  * - ANVISA (Agência Nacional de Vigilância Sanitária) - Medical Device Regulations
  * - CFM (Conselho Federal de Medicina) - Professional Standards
- * 
+ *
  * Features:
  * - Comprehensive compliance validation
  * - Automated compliance reporting
@@ -16,20 +16,20 @@
  */
 
 import { z } from 'zod';
-import LGPDComplianceService, { 
-  type LGPDComplianceReport, 
-  LGPD_COMPLIANCE_LEVELS 
-} from './lgpd-compliance';
-import ANVISAComplianceService, { 
-  type ANVISAComplianceReport, 
+import ANVISAComplianceService, {
   ANVISA_COMPLIANCE_LEVELS,
   ANVISA_DEVICE_CLASSES,
-  ANVISA_SOFTWARE_CATEGORIES 
+  ANVISA_SOFTWARE_CATEGORIES,
+  type ANVISAComplianceReport,
 } from './anvisa-compliance';
-import CFMComplianceService, { 
-  type CFMComplianceReport, 
-  CFM_COMPLIANCE_LEVELS 
+import CFMComplianceService, {
+  CFM_COMPLIANCE_LEVELS,
+  type CFMComplianceReport,
 } from './cfm-compliance';
+import LGPDComplianceService, {
+  LGPD_COMPLIANCE_LEVELS,
+  type LGPDComplianceReport,
+} from './lgpd-compliance';
 
 // Brazilian Compliance Levels
 export const BRAZILIAN_COMPLIANCE_LEVELS = {
@@ -40,7 +40,8 @@ export const BRAZILIAN_COMPLIANCE_LEVELS = {
   UNDER_REVIEW: 'under_review',
 } as const;
 
-export type BrazilianComplianceLevel = typeof BRAZILIAN_COMPLIANCE_LEVELS[keyof typeof BRAZILIAN_COMPLIANCE_LEVELS];
+export type BrazilianComplianceLevel =
+  typeof BRAZILIAN_COMPLIANCE_LEVELS[keyof typeof BRAZILIAN_COMPLIANCE_LEVELS];
 
 // Healthcare Data Security Levels
 export const HEALTHCARE_SECURITY_LEVELS = {
@@ -50,7 +51,8 @@ export const HEALTHCARE_SECURITY_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-export type HealthcareSecurityLevel = typeof HEALTHCARE_SECURITY_LEVELS[keyof typeof HEALTHCARE_SECURITY_LEVELS];
+export type HealthcareSecurityLevel =
+  typeof HEALTHCARE_SECURITY_LEVELS[keyof typeof HEALTHCARE_SECURITY_LEVELS];
 
 // Brazilian Healthcare Compliance Configuration
 export const BrazilianComplianceConfigSchema = z.object({
@@ -75,12 +77,12 @@ export interface BrazilianComplianceReport {
   securityLevel: HealthcareSecurityLevel;
   lastAuditDate: Date;
   nextAuditDate: Date;
-  
+
   // Individual compliance reports
   lgpdCompliance: LGPDComplianceReport;
   anvisaCompliance: ANVISAComplianceReport;
   cfmCompliance: CFMComplianceReport;
-  
+
   // Healthcare data security validation
   healthcareDataSecurity: {
     level: HealthcareSecurityLevel;
@@ -97,7 +99,7 @@ export interface BrazilianComplianceReport {
       recommendation: string;
     }>;
   };
-  
+
   // Brazilian healthcare interoperability
   interoperabilityCompliance: {
     level: BrazilianComplianceLevel;
@@ -113,11 +115,11 @@ export interface BrazilianComplianceReport {
       recommendation: string;
     }>;
   };
-  
+
   // Consolidated recommendations
   priorityRecommendations: string[];
   allRecommendations: string[];
-  
+
   // Compliance summary
   summary: {
     totalIssues: number;
@@ -129,7 +131,7 @@ export interface BrazilianComplianceReport {
     estimatedRemediationTime: string;
     estimatedRemediationCost: 'low' | 'medium' | 'high' | 'very_high';
   };
-  
+
   // Regulatory status
   regulatoryStatus: {
     lgpdStatus: 'compliant' | 'non_compliant' | 'partial';
@@ -160,18 +162,21 @@ export class BrazilianComplianceService {
    */
   async validateCompliance(
     config: BrazilianComplianceConfig,
-    patientId?: string
+    patientId?: string,
   ): Promise<BrazilianComplianceReport> {
     // Run all compliance validations in parallel
     const [lgpdCompliance, anvisaCompliance, cfmCompliance] = await Promise.all([
       this.lgpdService.validateCompliance(patientId),
-      this.anvisaService.validateCompliance(config.anvisaDeviceClass, config.anvisaSoftwareCategory),
+      this.anvisaService.validateCompliance(
+        config.anvisaDeviceClass,
+        config.anvisaSoftwareCategory,
+      ),
       this.cfmService.validateCompliance(),
     ]);
 
     // Validate healthcare data security
     const healthcareDataSecurity = await this.validateHealthcareDataSecurity();
-    
+
     // Validate Brazilian healthcare interoperability
     const interoperabilityCompliance = await this.validateInteroperabilityCompliance();
 
@@ -179,25 +184,26 @@ export class BrazilianComplianceService {
     const overallCompliance = this.calculateOverallCompliance(
       lgpdCompliance,
       anvisaCompliance,
-      cfmCompliance
+      cfmCompliance,
     );
 
     const overallScore = this.calculateOverallScore(
       lgpdCompliance,
       anvisaCompliance,
-      cfmCompliance
+      cfmCompliance,
     );
 
     const securityLevel = this.determineSecurityLevel(healthcareDataSecurity);
 
     // Generate consolidated recommendations
-    const { priorityRecommendations, allRecommendations } = this.generateConsolidatedRecommendations(
-      lgpdCompliance,
-      anvisaCompliance,
-      cfmCompliance,
-      healthcareDataSecurity,
-      interoperabilityCompliance
-    );
+    const { priorityRecommendations, allRecommendations } = this
+      .generateConsolidatedRecommendations(
+        lgpdCompliance,
+        anvisaCompliance,
+        cfmCompliance,
+        healthcareDataSecurity,
+        interoperabilityCompliance,
+      );
 
     // Generate compliance summary
     const summary = this.generateComplianceSummary(
@@ -205,14 +211,14 @@ export class BrazilianComplianceService {
       anvisaCompliance,
       cfmCompliance,
       healthcareDataSecurity,
-      interoperabilityCompliance
+      interoperabilityCompliance,
     );
 
     // Determine regulatory status
     const regulatoryStatus = this.determineRegulatoryStatus(
       lgpdCompliance,
       anvisaCompliance,
-      cfmCompliance
+      cfmCompliance,
     );
 
     return {
@@ -319,7 +325,7 @@ export class BrazilianComplianceService {
   private calculateOverallCompliance(
     lgpd: LGPDComplianceReport,
     anvisa: ANVISAComplianceReport,
-    cfm: CFMComplianceReport
+    cfm: CFMComplianceReport,
   ): BrazilianComplianceLevel {
     const nonCompliantCount = [
       lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT,
@@ -351,11 +357,11 @@ export class BrazilianComplianceService {
   private calculateOverallScore(
     lgpd: LGPDComplianceReport,
     anvisa: ANVISAComplianceReport,
-    cfm: CFMComplianceReport
+    cfm: CFMComplianceReport,
   ): number {
     // Weighted average: LGPD (40%), ANVISA (35%), CFM (25%)
     return Math.round(
-      (lgpd.score * 0.4) + (anvisa.score * 0.35) + (cfm.score * 0.25)
+      (lgpd.score * 0.4) + (anvisa.score * 0.35) + (cfm.score * 0.25),
     );
   }
 
@@ -374,7 +380,7 @@ export class BrazilianComplianceService {
     anvisa: ANVISAComplianceReport,
     cfm: CFMComplianceReport,
     security: any,
-    interoperability: any
+    interoperability: any,
   ) {
     const allRecommendations = [
       ...lgpd.recommendations,
@@ -398,7 +404,7 @@ export class BrazilianComplianceService {
     anvisa: ANVISAComplianceReport,
     cfm: CFMComplianceReport,
     security: any,
-    interoperability: any
+    interoperability: any,
   ) {
     const allIssues = [
       ...this.extractIssuesFromReport(lgpd),
@@ -415,16 +421,24 @@ export class BrazilianComplianceService {
     const lowPriorityIssues = allIssues.filter(i => i.severity === 'low').length;
 
     const compliancePercentage = Math.round(
-      ((lgpd.score + anvisa.score + cfm.score) / 3)
+      (lgpd.score + anvisa.score + cfm.score) / 3,
     );
 
-    const estimatedRemediationTime = criticalIssues > 0 ? '30-60 dias' :
-      highPriorityIssues > 0 ? '60-90 dias' :
-      mediumPriorityIssues > 0 ? '90-120 dias' : '30 dias';
+    const estimatedRemediationTime = criticalIssues > 0
+      ? '30-60 dias'
+      : highPriorityIssues > 0
+      ? '60-90 dias'
+      : mediumPriorityIssues > 0
+      ? '90-120 dias'
+      : '30 dias';
 
-    const estimatedRemediationCost = criticalIssues > 0 ? 'very_high' :
-      highPriorityIssues > 0 ? 'high' :
-      mediumPriorityIssues > 0 ? 'medium' : 'low';
+    const estimatedRemediationCost = criticalIssues > 0
+      ? 'very_high'
+      : highPriorityIssues > 0
+      ? 'high'
+      : mediumPriorityIssues > 0
+      ? 'medium'
+      : 'low';
 
     return {
       totalIssues,
@@ -444,15 +458,24 @@ export class BrazilianComplianceService {
   private determineRegulatoryStatus(
     lgpd: LGPDComplianceReport,
     anvisa: ANVISAComplianceReport,
-    cfm: CFMComplianceReport
+    cfm: CFMComplianceReport,
   ) {
     return {
-      lgpdStatus: lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.COMPLIANT ? 'compliant' :
-        lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.PARTIAL ? 'partial' : 'non_compliant',
-      anvisaStatus: anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.COMPLIANT ? 'compliant' :
-        anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.PARTIAL ? 'partial' : 'non_compliant',
-      cfmStatus: cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.COMPLIANT ? 'compliant' :
-        cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.PARTIAL ? 'partial' : 'non_compliant',
+      lgpdStatus: lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
+      anvisaStatus: anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
+      cfmStatus: cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
       ethicsCommitteeReviewRequired: cfm.ethicsCommitteeReview,
       regulatoryFilingRequired: anvisa.registrationStatus === 'required',
       auditRecommended: lgpd.score < 90 || anvisa.score < 90 || cfm.score < 90,
@@ -483,7 +506,7 @@ export class BrazilianComplianceService {
    */
   private extractIssuesFromReport(report: any): Array<{ severity: string }> {
     const issues = [];
-    
+
     // Extract issues from different compliance areas
     Object.values(report).forEach((value: any) => {
       if (value && typeof value === 'object' && Array.isArray(value.issues)) {

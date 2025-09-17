@@ -2,7 +2,7 @@
  * Tests for encryption utilities
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { EncryptionManager, KeyManager } from '../encryption';
 
 describe('EncryptionManager', () => {
@@ -62,7 +62,7 @@ describe('EncryptionManager', () => {
 
     it('should throw error for invalid key', () => {
       const plaintext = 'Test data';
-      
+
       expect(() => {
         encryptionManager.encryptData(plaintext, 'invalid');
       }).toThrow('Invalid encryption key');

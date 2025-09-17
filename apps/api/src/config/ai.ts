@@ -127,7 +127,12 @@ export async function generateWithFailover(opts: {
 
   try {
     const { adapter } = resolveProvider(chosen);
-    const result = await generateText({ model: adapter(chosen), prompt, temperature, maxOutputTokens });
+    const result = await generateText({
+      model: adapter(chosen),
+      prompt,
+      temperature,
+      maxOutputTokens,
+    });
     return {
       text: result.text,
       headers: new Headers({ 'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}` }),
@@ -136,7 +141,12 @@ export async function generateWithFailover(opts: {
     console.error('Primary AI provider failed:', primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
-      const result = await generateText({ model: adapter(DEFAULT_SECONDARY), prompt, temperature, maxOutputTokens });
+      const result = await generateText({
+        model: adapter(DEFAULT_SECONDARY),
+        prompt,
+        temperature,
+        maxOutputTokens,
+      });
       return {
         text: result.text,
         headers: new Headers({ 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` }),

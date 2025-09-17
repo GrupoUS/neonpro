@@ -1,7 +1,7 @@
 /**
  * Database Index Optimizer Service
  * T080 - Database Performance Tuning
- * 
+ *
  * Features:
  * - Automated index analysis and recommendations
  * - Healthcare-specific index optimization
@@ -62,11 +62,14 @@ export const HEALTHCARE_INDEX_PATTERNS = {
     indexes: ['patients(clinic_id, cpf)'],
   },
   patientFullTextSearch: {
-    pattern: 'SELECT * FROM patients WHERE full_name ILIKE ? OR phone_primary ILIKE ? OR email ILIKE ?',
+    pattern:
+      'SELECT * FROM patients WHERE full_name ILIKE ? OR phone_primary ILIKE ? OR email ILIKE ?',
     frequency: 'medium',
-    indexes: ['patients USING gin(to_tsvector(\'portuguese\', full_name || \' \' || phone_primary || \' \' || email))'],
+    indexes: [
+      'patients USING gin(to_tsvector(\'portuguese\', full_name || \' \' || phone_primary || \' \' || email))',
+    ],
   },
-  
+
   // Appointment patterns
   professionalSchedule: {
     pattern: 'SELECT * FROM appointments WHERE professional_id = ? AND start_time BETWEEN ? AND ?',
@@ -79,19 +82,22 @@ export const HEALTHCARE_INDEX_PATTERNS = {
     indexes: ['appointments(patient_id, start_time)'],
   },
   dailySchedule: {
-    pattern: 'SELECT * FROM appointments WHERE clinic_id = ? AND start_time::date = ? ORDER BY start_time',
+    pattern:
+      'SELECT * FROM appointments WHERE clinic_id = ? AND start_time::date = ? ORDER BY start_time',
     frequency: 'very_high',
     indexes: ['appointments(clinic_id, start_time)'],
   },
-  
+
   // LGPD compliance patterns
   consentTracking: {
-    pattern: 'SELECT * FROM consent_records WHERE patient_id = ? AND consent_type = ? AND is_active = true',
+    pattern:
+      'SELECT * FROM consent_records WHERE patient_id = ? AND consent_type = ? AND is_active = true',
     frequency: 'medium',
     indexes: ['consent_records(patient_id, consent_type, is_active)'],
   },
   auditTrail: {
-    pattern: 'SELECT * FROM audit_logs WHERE table_name = ? AND record_id = ? ORDER BY created_at DESC',
+    pattern:
+      'SELECT * FROM audit_logs WHERE table_name = ? AND record_id = ? ORDER BY created_at DESC',
     frequency: 'medium',
     indexes: ['audit_logs(table_name, record_id, created_at)'],
   },
@@ -110,14 +116,14 @@ export class IndexOptimizerService {
   async analyzeTableIndexes(tableName: string): Promise<IndexAnalysis> {
     const cacheKey = `table_${tableName}`;
     const cached = this.analysisCache.get(cacheKey);
-    
+
     if (cached && this.isCacheValid(cacheKey)) {
       return cached;
     }
 
     const analysis = await this.performTableAnalysis(tableName);
     this.analysisCache.set(cacheKey, analysis);
-    
+
     return analysis;
   }
 
@@ -128,13 +134,17 @@ export class IndexOptimizerService {
     const existingIndexes = await this.getExistingIndexes(tableName);
     const recommendedIndexes = this.getRecommendedIndexes(tableName);
     const unusedIndexes = this.identifyUnusedIndexes(existingIndexes);
-    const missingIndexes = this.identifyMissingIndexes(tableName, existingIndexes, recommendedIndexes);
-    
+    const missingIndexes = this.identifyMissingIndexes(
+      tableName,
+      existingIndexes,
+      recommendedIndexes,
+    );
+
     const optimizationScore = this.calculateOptimizationScore(
       existingIndexes,
       recommendedIndexes,
       unusedIndexes,
-      missingIndexes
+      missingIndexes,
     );
 
     return {
@@ -235,7 +245,7 @@ export class IndexOptimizerService {
     return existingIndexes.filter(index => {
       // Don't consider primary keys as unused
       if (index.isPrimary) return false;
-      
+
       // Consider index unused if very low usage
       return index.usage.scans < 10 || index.usage.tuples < 100;
     });
@@ -247,11 +257,11 @@ export class IndexOptimizerService {
   private identifyMissingIndexes(
     tableName: string,
     existingIndexes: DatabaseIndex[],
-    recommendedIndexes: IndexRecommendation[]
+    recommendedIndexes: IndexRecommendation[],
   ): IndexRecommendation[] {
     return recommendedIndexes.filter(recommended => {
       // Check if a similar index already exists
-      return !existingIndexes.some(existing => 
+      return !existingIndexes.some(existing =>
         this.indexesAreSimilar(existing.columns, recommended.columns)
       );
     });
@@ -272,7 +282,7 @@ export class IndexOptimizerService {
     existingIndexes: DatabaseIndex[],
     recommendedIndexes: IndexRecommendation[],
     unusedIndexes: DatabaseIndex[],
-    missingIndexes: IndexRecommendation[]
+    missingIndexes: IndexRecommendation[],
   ): number {
     let score = 100;
 
@@ -315,11 +325,12 @@ export class IndexOptimizerService {
     return missingIndexes.map(index => {
       const indexName = `idx_${index.table}_${index.columns.join('_')}`;
       const columnsStr = index.columns.join(', ');
-      
+
       let sql: string;
       if (index.type === 'gin') {
         // Special handling for GIN indexes (full-text search)
-        sql = `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} USING gin(to_tsvector('portuguese', ${columnsStr}));`;
+        sql =
+          `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} USING gin(to_tsvector('portuguese', ${columnsStr}));`;
       } else {
         sql = `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} (${columnsStr});`;
       }
@@ -350,7 +361,7 @@ export class IndexOptimizerService {
 
     const tableTime = baseTime[index.table as keyof typeof baseTime] || 20;
     const complexityMultiplier = index.type === 'gin' ? 2 : 1;
-    
+
     return tableTime * complexityMultiplier;
   }
 
@@ -359,13 +370,13 @@ export class IndexOptimizerService {
    */
   private assessHealthcareImpact(index: IndexRecommendation): 'low' | 'medium' | 'high' {
     const criticalTables = ['patients', 'appointments', 'consent_records'];
-    
+
     if (criticalTables.includes(index.table) && index.priority === 'critical') {
       return 'high';
     } else if (criticalTables.includes(index.table)) {
       return 'medium';
     }
-    
+
     return 'low';
   }
 
@@ -374,12 +385,18 @@ export class IndexOptimizerService {
    */
   async analyzeAllHealthcareTables(): Promise<Map<string, IndexAnalysis>> {
     const healthcareTables = [
-      'patients', 'appointments', 'professionals', 'clinics',
-      'consent_records', 'audit_logs', 'medical_records', 'services'
+      'patients',
+      'appointments',
+      'professionals',
+      'clinics',
+      'consent_records',
+      'audit_logs',
+      'medical_records',
+      'services',
     ];
 
     const analyses = new Map<string, IndexAnalysis>();
-    
+
     for (const table of healthcareTables) {
       const analysis = await this.analyzeTableIndexes(table);
       analyses.set(table, analysis);
@@ -398,7 +415,7 @@ export class IndexOptimizerService {
     creationScripts: IndexCreationScript[];
   }> {
     const tableAnalyses = await this.analyzeAllHealthcareTables();
-    
+
     // Calculate overall score
     const scores = Array.from(tableAnalyses.values()).map(analysis => analysis.optimizationScore);
     const overallScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
@@ -414,7 +431,7 @@ export class IndexOptimizerService {
       const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       const aPriority = priorityOrder[a.priority];
       const bPriority = priorityOrder[b.priority];
-      
+
       if (aPriority !== bPriority) return bPriority - aPriority;
       return b.estimatedImprovement - a.estimatedImprovement;
     });

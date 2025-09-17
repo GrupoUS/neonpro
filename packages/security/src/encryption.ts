@@ -50,19 +50,19 @@ export class EncryptionManager {
 
     const iv = crypto.randomBytes(this.ivLength);
     const cipher = crypto.createCipheriv(this.algorithm, Buffer.from(key, 'base64'), iv);
-    
+
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const authTag = (cipher as any).getAuthTag();
-    
+
     // Combine IV + encrypted data + auth tag
     const combined = Buffer.concat([
       iv,
       Buffer.from(encrypted, 'hex'),
-      authTag
+      authTag,
     ]);
-    
+
     return combined.toString('base64');
   }
 
@@ -78,18 +78,18 @@ export class EncryptionManager {
     }
 
     const combined = Buffer.from(encryptedData, 'base64');
-    
+
     // Extract IV (first 16 bytes), auth tag (last 16 bytes), and encrypted data (middle)
     const iv = combined.subarray(0, this.ivLength);
     const authTag = combined.subarray(-16);
     const encrypted = combined.subarray(this.ivLength, -16);
-    
+
     const decipher = crypto.createDecipheriv(this.algorithm, Buffer.from(key, 'base64'), iv);
     (decipher as any).setAuthTag(authTag);
-    
+
     let decrypted = decipher.update(encrypted, undefined, 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 
@@ -103,16 +103,16 @@ export class EncryptionManager {
   encryptObject<T extends Record<string, any>>(
     obj: T,
     key: string,
-    sensitiveFields: string[]
+    sensitiveFields: string[],
   ): T {
     const result = { ...obj } as T;
-    
+
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         (result as any)[field] = this.encryptData(result[field], key);
       }
     }
-    
+
     return result;
   }
 
@@ -126,10 +126,10 @@ export class EncryptionManager {
   decryptObject<T extends Record<string, any>>(
     obj: T,
     key: string,
-    sensitiveFields: string[]
+    sensitiveFields: string[],
   ): T {
     const result = { ...obj } as T;
-    
+
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         try {
@@ -140,7 +140,7 @@ export class EncryptionManager {
         }
       }
     }
-    
+
     return result;
   }
 
@@ -192,7 +192,7 @@ export class KeyManager {
     this.keys.set(keyId, key);
     this.keyMetadata.set(keyId, {
       createdAt: new Date(),
-      expiresAt
+      expiresAt,
     });
   }
 
@@ -204,18 +204,18 @@ export class KeyManager {
   getKey(keyId: string): string | null {
     const key = this.keys.get(keyId);
     const metadata = this.keyMetadata.get(keyId);
-    
+
     if (!key || !metadata) {
       return null;
     }
-    
+
     // Check if key has expired
     if (metadata.expiresAt && new Date() > metadata.expiresAt) {
       this.keys.delete(keyId);
       this.keyMetadata.delete(keyId);
       return null;
     }
-    
+
     return key;
   }
 
@@ -245,16 +245,16 @@ export class KeyManager {
   rotateKey(keyId: string, ttl: number = 3600): string {
     const oldKey = this.getKey(keyId);
     const newKey = new EncryptionManager().generateKey();
-    
+
     // Store new key
     this.storeKey(keyId, newKey);
-    
+
     // Keep old key for TTL period
     if (oldKey) {
       const expiresAt = new Date(Date.now() + ttl * 1000);
       this.storeKey(`${keyId}_old`, oldKey, expiresAt);
     }
-    
+
     return newKey;
   }
 

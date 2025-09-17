@@ -4,7 +4,7 @@
  * Integration with PatientService, LGPDService, AuditService, NotificationService
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockPatientService = {
@@ -30,7 +30,7 @@ const mockNotificationService = {
 describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockPatientService.getPatientById.mockResolvedValue({
       success: true,
@@ -102,12 +102,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   describe('Successful Patient Deletion', () => {
     it('should perform soft delete by default (LGPD compliance)', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -132,12 +132,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123?deletion_type=data_subject_request',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-LGPD-Request': 'data_subject_deletion',
         }),
       };
@@ -157,12 +157,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
     it('should send deletion confirmation notification', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -185,12 +185,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
     it('should include deletion confirmation headers', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -206,12 +206,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   describe('LGPD Compliance and Data Deletion', () => {
     it('should validate LGPD deletion request', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -246,12 +246,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123?reason=consent_expired',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -280,12 +280,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Healthcare-Context': 'medical_records',
         }),
       };
@@ -311,12 +311,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -333,12 +333,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   describe('Audit Trail and Compliance Logging', () => {
     it('should log patient deletion activity', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Real-IP': '192.168.1.100',
           'User-Agent': 'Mozilla/5.0',
         }),
@@ -375,12 +375,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123?deletion_type=anonymization',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -394,18 +394,18 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
             anonymizationLevel: 'full',
           }),
           sensitivityLevel: 'critical',
-        })
+        }),
       );
     });
 
     it('should create deletion audit trail', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -418,7 +418,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
             auditTrailPreserved: true,
             deletionCompliant: true,
           }),
-        })
+        }),
       );
     });
   });
@@ -432,12 +432,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/nonexistent-id',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -452,7 +452,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
     it('should handle authentication errors', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
@@ -477,12 +477,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -497,12 +497,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
     it('should handle invalid patient ID format', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/invalid-id-format',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -515,7 +515,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         expect.objectContaining({
           field: 'id',
           message: 'ID do paciente deve ser um UUID válido',
-        })
+        }),
       );
     });
 
@@ -523,12 +523,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       mockPatientService.deletePatient.mockRejectedValue(new Error('Database connection failed'));
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -544,12 +544,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 
@@ -562,12 +562,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
     it('should validate healthcare professional context for deletion', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Healthcare-Professional': 'CRM-SP-123456',
           'X-Deletion-Reason': 'medical_record_cleanup',
         }),
@@ -580,18 +580,18 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456',
           deletionReason: 'medical_record_cleanup',
-        })
+        }),
       );
     });
 
     it('should handle ANVISA compliance for medical device data', async () => {
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'X-Medical-Device-Data': 'true',
         }),
       };
@@ -617,12 +617,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123?deletion_type=hard_delete&reason=test_data',
         headers: new Headers({
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
           'X-Admin-Override': 'true',
         }),
       };
@@ -648,12 +648,12 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
 
       const { default: deleteRoute } = require('../delete');
-      
+
       const mockRequest = {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123?schedule_anonymization=true',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
         }),
       };
 

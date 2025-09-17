@@ -1,7 +1,7 @@
 /**
  * LGPD (Lei Geral de Proteção de Dados) Compliance Validation Service
  * T082 - Brazilian Healthcare Compliance Validation
- * 
+ *
  * Features:
  * - Consent management validation
  * - Data retention policy compliance
@@ -21,7 +21,8 @@ export const LGPD_COMPLIANCE_LEVELS = {
   UNKNOWN: 'unknown',
 } as const;
 
-export type LGPDComplianceLevel = typeof LGPD_COMPLIANCE_LEVELS[keyof typeof LGPD_COMPLIANCE_LEVELS];
+export type LGPDComplianceLevel =
+  typeof LGPD_COMPLIANCE_LEVELS[keyof typeof LGPD_COMPLIANCE_LEVELS];
 
 // LGPD Data Processing Purposes
 export const LGPD_PROCESSING_PURPOSES = {
@@ -34,7 +35,8 @@ export const LGPD_PROCESSING_PURPOSES = {
   EMERGENCY_CARE: 'emergency_care',
 } as const;
 
-export type LGPDProcessingPurpose = typeof LGPD_PROCESSING_PURPOSES[keyof typeof LGPD_PROCESSING_PURPOSES];
+export type LGPDProcessingPurpose =
+  typeof LGPD_PROCESSING_PURPOSES[keyof typeof LGPD_PROCESSING_PURPOSES];
 
 // LGPD Data Subject Rights
 export const LGPD_DATA_SUBJECT_RIGHTS = {
@@ -46,7 +48,8 @@ export const LGPD_DATA_SUBJECT_RIGHTS = {
   RESTRICTION: 'restriction',
 } as const;
 
-export type LGPDDataSubjectRight = typeof LGPD_DATA_SUBJECT_RIGHTS[keyof typeof LGPD_DATA_SUBJECT_RIGHTS];
+export type LGPDDataSubjectRight =
+  typeof LGPD_DATA_SUBJECT_RIGHTS[keyof typeof LGPD_DATA_SUBJECT_RIGHTS];
 
 // LGPD Consent Record Schema
 export const LGPDConsentRecordSchema = z.object({
@@ -73,7 +76,15 @@ export type LGPDConsentRecord = z.infer<typeof LGPDConsentRecordSchema>;
 export const LGPDAuditLogSchema = z.object({
   id: z.string(),
   patientId: z.string(),
-  action: z.enum(['access', 'create', 'update', 'delete', 'export', 'consent_given', 'consent_withdrawn']),
+  action: z.enum([
+    'access',
+    'create',
+    'update',
+    'delete',
+    'export',
+    'consent_given',
+    'consent_withdrawn',
+  ]),
   dataCategory: z.string(),
   purpose: z.nativeEnum(LGPD_PROCESSING_PURPOSES),
   userId: z.string(),
@@ -224,9 +235,12 @@ export class LGPDComplianceService {
     ];
 
     const totalConsents = mockConsents.length;
-    const validConsents = mockConsents.filter(c => c.consentGiven && !c.consentWithdrawnDate).length;
+    const validConsents =
+      mockConsents.filter(c => c.consentGiven && !c.consentWithdrawnDate).length;
     const expiredConsents = mockConsents.filter(c => {
-      const expiryDate = new Date(c.consentDate.getTime() + c.retentionPeriod * 24 * 60 * 60 * 1000);
+      const expiryDate = new Date(
+        c.consentDate.getTime() + c.retentionPeriod * 24 * 60 * 60 * 1000,
+      );
       return expiryDate < new Date();
     }).length;
     const withdrawnConsents = mockConsents.filter(c => c.consentWithdrawnDate).length;
@@ -235,7 +249,10 @@ export class LGPDComplianceService {
 
     // Check for missing explicit consent
     mockConsents.forEach(consent => {
-      if (consent.consentMethod !== 'explicit' && consent.purpose !== LGPD_PROCESSING_PURPOSES.EMERGENCY_CARE) {
+      if (
+        consent.consentMethod !== 'explicit'
+        && consent.purpose !== LGPD_PROCESSING_PURPOSES.EMERGENCY_CARE
+      ) {
         issues.push({
           id: `consent-${consent.id}`,
           type: 'consent',
@@ -484,8 +501,9 @@ export class LGPDComplianceService {
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
     // Calculate penalty based on issue severity
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8) + (lowIssues * 3);
-    
+    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
+      + (lowIssues * 3);
+
     return Math.max(0, 100 - penalty);
   }
 
@@ -507,7 +525,9 @@ export class LGPDComplianceService {
       const highCount = issues.filter(i => i.severity === 'high').length;
 
       if (criticalCount > 0) {
-        recommendations.push(`Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`);
+        recommendations.push(
+          `Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`,
+        );
       }
       if (highCount > 0) {
         recommendations.push(`Abordar ${highCount} problema(s) de alta prioridade em ${type}`);

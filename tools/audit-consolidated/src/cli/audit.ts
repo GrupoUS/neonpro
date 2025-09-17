@@ -30,7 +30,9 @@ export function createAuditCommand(): Command {
           const json = JSON.stringify(report, null, 2);
           if (options.output) {
             await writeOutput(options.output, json);
-            console.log(`✅ Audit complete. JSON report written to ${path.resolve(options.output)}`);
+            console.log(
+              `✅ Audit complete. JSON report written to ${path.resolve(options.output)}`,
+            );
           } else {
             console.log(json);
           }
@@ -38,7 +40,9 @@ export function createAuditCommand(): Command {
           const text = formatAuditReport(report);
           if (options.output) {
             await writeOutput(options.output, text);
-            console.log(`✅ Audit complete. Text report written to ${path.resolve(options.output)}`);
+            console.log(
+              `✅ Audit complete. Text report written to ${path.resolve(options.output)}`,
+            );
           } else {
             console.log(text);
           }
@@ -53,8 +57,12 @@ export function createAuditCommand(): Command {
 }
 
 function normaliseOptions(raw: any): AuditOptions {
-  const include = typeof raw.include === 'string' ? raw.include.split(',').map((p: string) => p.trim()).filter(Boolean) : undefined;
-  const exclude = typeof raw.exclude === 'string' ? raw.exclude.split(',').map((p: string) => p.trim()).filter(Boolean) : undefined;
+  const include = typeof raw.include === 'string'
+    ? raw.include.split(',').map((p: string) => p.trim()).filter(Boolean)
+    : undefined;
+  const exclude = typeof raw.exclude === 'string'
+    ? raw.exclude.split(',').map((p: string) => p.trim()).filter(Boolean)
+    : undefined;
 
   return {
     root: path.resolve(raw.root ?? process.cwd()),

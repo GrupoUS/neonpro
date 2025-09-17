@@ -6,6 +6,15 @@
 
 import { describe, it } from 'vitest';
 
+// Healthcare-specific performance budget interface
+export interface HealthcarePerformanceBudget {
+  LCP: { budget: number; unit: string; description: string };
+  CLS: { budget: number; unit: string; description: string };
+  TTFB: { budget: number; unit: string; description: string };
+  FID: { budget: number; unit: string; description: string };
+  TBT: { budget: number; unit: string; description: string };
+}
+
 export interface PerformanceMetrics {
   executionTime: number;
   memoryUsage?: {
@@ -233,6 +242,88 @@ export function createPerformanceTestSuite(
     tests.forEach(test => {
       it(`should meet performance budget for ${test.name}`, async () => {
         await expectPerformance(test.fn, test.budget);
+      });
+    });
+  });
+}
+
+/**
+ * Healthcare performance budgets (from config)
+ */
+export const HEALTHCARE_PERFORMANCE_BUDGETS: HealthcarePerformanceBudget = {
+  LCP: {
+    budget: 2500,
+    unit: 'ms',
+    description: 'Largest Contentful Paint - Healthcare compliance requires ≤2.5s',
+  },
+  CLS: {
+    budget: 0.1,
+    unit: 'score',
+    description: 'Cumulative Layout Shift - Medical interfaces require stability',
+  },
+  TTFB: {
+    budget: 600,
+    unit: 'ms',
+    description: 'Time to First Byte - Critical for healthcare data access',
+  },
+  FID: {
+    budget: 100,
+    unit: 'ms',
+    description: 'First Input Delay - Medical form responsiveness',
+  },
+  TBT: {
+    budget: 300,
+    unit: 'ms',
+    description: 'Total Blocking Time - Healthcare workflow efficiency',
+  },
+};
+
+/**
+ * Create healthcare-compliant performance budget
+ */
+export function createHealthcarePerformanceBudget(
+  overrides: Partial<PerformanceBudget> = {},
+): PerformanceBudget {
+  return {
+    maxExecutionTime: HEALTHCARE_PERFORMANCE_BUDGETS.LCP.budget,
+    maxMemoryUsage: 50 * 1024 * 1024, // 50MB default
+    minIterationsPerSecond: 10, // Default minimum performance
+    ...overrides,
+  };
+}
+
+/**
+ * Validate healthcare performance requirements
+ */
+export function validateHealthcarePerformance<T>(
+  fn: () => Promise<T> | T,
+  metric: keyof HealthcarePerformanceBudget = 'LCP',
+): Promise<T> {
+  const budget = HEALTHCARE_PERFORMANCE_BUDGETS[metric];
+  return expectPerformance(fn, {
+    maxExecutionTime: budget.budget,
+    maxMemoryUsage: 100 * 1024 * 1024, // 100MB for healthcare apps
+  });
+}
+
+/**
+ * Create healthcare-specific performance test suite
+ */
+export function createHealthcarePerformanceTestSuite(
+  name: string,
+  tests: Array<{
+    name: string;
+    fn: () => Promise<any> | any;
+    metric?: keyof HealthcarePerformanceBudget;
+  }>,
+) {
+  describe(`Healthcare Performance: ${name}`, () => {
+    tests.forEach(test => {
+      const metric = test.metric || 'LCP';
+      const budget = HEALTHCARE_PERFORMANCE_BUDGETS[metric];
+
+      it(`should meet ${metric} budget for ${test.name} (≤${budget.budget}${budget.unit})`, async () => {
+        await validateHealthcarePerformance(test.fn, metric);
       });
     });
   });

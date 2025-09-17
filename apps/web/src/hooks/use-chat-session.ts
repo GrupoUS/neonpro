@@ -22,7 +22,9 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
         setLoading(true);
         const url = new URL(`/api/v1/chat/session/${sessionId}`, window.location.origin);
         if (opts?.mock) url.searchParams.set('mock', 'true');
-        const res = await fetch(url.toString(), { headers: { 'x-locale': navigator.language as any } });
+        const res = await fetch(url.toString(), {
+          headers: { 'x-locale': navigator.language as any },
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as ChatSessionInfo;
         if (!cancelled) setData(json);
@@ -32,7 +34,9 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [sessionId, opts?.mock]);
 
   return { data, loading, error } as const;

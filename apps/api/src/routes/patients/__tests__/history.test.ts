@@ -4,7 +4,7 @@
  * Integration with AuditService, LGPDService for patient history
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockAuditService = {
@@ -24,7 +24,7 @@ const mockPatientService = {
 describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock successful service responses by default
     mockAuditService.getPatientHistory.mockResolvedValue({
       success: true,
@@ -148,7 +148,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       data: { canAccess: true, accessLevel: 'full' },
     });
 
-    mockLGPDService.maskHistoryData.mockImplementation((data) => data);
+    mockLGPDService.maskHistoryData.mockImplementation(data => data);
 
     mockPatientService.validatePatientExists.mockResolvedValue({
       success: true,
@@ -170,12 +170,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   describe('Successful Patient History Retrieval', () => {
     it('should retrieve patient history with default parameters', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -194,12 +194,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should retrieve patient history with pagination', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?page=2&limit=10',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -219,12 +219,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should retrieve patient history with event type filters', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?eventTypes=patient_updated,lgpd_consent_updated',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -246,12 +246,13 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should retrieve patient history with date range filters', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
-        url: '/api/v2/patients/patient-123/history?startDate=2024-01-15T00:00:00Z&endDate=2024-01-16T23:59:59Z',
+        url:
+          '/api/v2/patients/patient-123/history?startDate=2024-01-15T00:00:00Z&endDate=2024-01-16T23:59:59Z',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -274,12 +275,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should retrieve patient history with severity filters', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?severity=high,critical',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -301,12 +302,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should include history metadata headers', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -324,12 +325,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   describe('LGPD Compliance and History Access', () => {
     it('should validate LGPD history access permissions', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -347,12 +348,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should log history access for audit trail', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?eventTypes=patient_updated',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Real-IP': '192.168.1.100',
           'User-Agent': 'Mozilla/5.0',
@@ -388,12 +389,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -439,12 +440,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       ]);
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer limited-token',
+          authorization: 'Bearer limited-token',
           'content-type': 'application/json',
         }),
       };
@@ -462,7 +463,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
@@ -487,12 +488,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/nonexistent-patient/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -508,12 +509,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should handle validation errors for query parameters', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?page=-1&limit=1000&startDate=invalid-date',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -534,12 +535,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -556,12 +557,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       mockAuditService.getPatientHistory.mockRejectedValue(new Error('History retrieval timeout'));
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -578,12 +579,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -598,12 +599,13 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
     it('should validate healthcare professional context for medical history', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
-        url: '/api/v2/patients/patient-123/history?eventTypes=medical_consultation,treatment_update',
+        url:
+          '/api/v2/patients/patient-123/history?eventTypes=medical_consultation,treatment_update',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
           'X-Healthcare-Professional': 'CRM-SP-123456',
           'X-Healthcare-Context': 'medical_history_review',
@@ -617,18 +619,18 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456',
           healthcareContext: 'medical_history_review',
-        })
+        }),
       );
     });
 
     it('should include data retention policy information', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -636,7 +638,9 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       const response = await historyRoute.request(mockRequest);
 
       expect(response.status).toBe(200);
-      expect(response.headers.get('X-Data-Retention-Policy')).toBe('7-years-standard-20-years-medical');
+      expect(response.headers.get('X-Data-Retention-Policy')).toBe(
+        '7-years-standard-20-years-medical',
+      );
       expect(response.headers.get('X-Legal-Basis')).toBe('legitimate_interest');
     });
   });
@@ -644,12 +648,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   describe('Performance and Caching', () => {
     it('should include performance headers', async () => {
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };
@@ -696,12 +700,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
 
       const { default: historyRoute } = require('../history');
-      
+
       const mockRequest = {
         method: 'GET',
         url: '/api/v2/patients/patient-123/history?limit=100',
         headers: new Headers({
-          'authorization': 'Bearer valid-token',
+          authorization: 'Bearer valid-token',
           'content-type': 'application/json',
         }),
       };

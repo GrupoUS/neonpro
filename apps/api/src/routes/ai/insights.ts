@@ -5,12 +5,12 @@
  */
 
 import { zValidator } from '@hono/zod-validator';
-import { Hono, Context, Next } from 'hono';
+import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { PatientService } from '../../services/patient-service.js';
 import { AuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
+import { PatientService } from '../../services/patient-service.js';
 
 // Type definitions
 interface ServiceInterface {
@@ -50,7 +50,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       error: 'Não autorizado. Token de acesso necessário.',
     }, 401);
   }
-  
+
   // Check for insufficient permissions (mock logic for testing)
   if (authHeader.includes('limited-token')) {
     return c.json({
@@ -58,12 +58,12 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       error: 'Acesso negado. Permissões de profissional de saúde necessárias.',
     }, 403);
   }
-  
+
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
   return next();
-};;
+};
 
-const mockLGPDMiddleware = (c: Context, next: Next) => next();;
+const mockLGPDMiddleware = (c: Context, next: Next) => next();
 
 const app = new Hono();
 
@@ -72,9 +72,16 @@ const cache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
 
 // Function to get cache key
-const getCacheKey = (patientId: string, queryParams: QueryParams, userId: string, medicalSpecialty?: string) => {
-  return `insights:${patientId}:${userId}:${JSON.stringify(queryParams)}:${medicalSpecialty || 'none'}`;
-};;
+const getCacheKey = (
+  patientId: string,
+  queryParams: QueryParams,
+  userId: string,
+  medicalSpecialty?: string,
+) => {
+  return `insights:${patientId}:${userId}:${JSON.stringify(queryParams)}:${
+    medicalSpecialty || 'none'
+  }`;
+};
 
 // Function to check cache
 const getFromCache = (key: string) => {
@@ -92,7 +99,7 @@ const setCache = (key: string, data: unknown) => {
     data,
     timestamp: Date.now(),
   });
-};;
+};
 
 // Path parameter validation schema
 const pathSchema = z.object({
@@ -116,17 +123,17 @@ const insightsQuerySchema = z.object({
 });
 
 // Services - will be injected during testing or use real services in production
-let services: ServiceInterface | null = null;;
+let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
 export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
-};;
+};
 
 // Default services for production
 const getServices = () => {
   if (services) return services;
-  
+
   // Use real service instances in production
   return {
     aiChatService: new AIChatService(),
@@ -150,7 +157,7 @@ app.get(
     }
   }),
   zValidator('query', insightsQuerySchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
     const user = c.get('user');
     const patientId = c.req.param('patientId');
@@ -168,15 +175,15 @@ app.get(
       const cacheKey = getCacheKey(patientId, queryParams, user.id, medicalSpecialty);
       const cachedResult = getFromCache(cacheKey);
       let cacheStatus = 'miss';
-      
+
       if (cachedResult) {
         cacheStatus = 'hit';
-        
+
         // Set cache headers
         c.header('X-Response-Time', `${Date.now() - startTime}ms`);
         c.header('X-Cache-Status', cacheStatus);
         c.header('Cache-Control', 'private, max-age=1800');
-        
+
         return c.json(cachedResult);
       }
 
@@ -226,7 +233,10 @@ app.get(
 
       // Generate patient insights using PatientService instead of AIChatService
       // since this is for patient-level insights, not conversation-based insights
-      const insightsResponse = await currentServices.patientService.generateAIInsights(patientId, queryParams.include_recommendations);
+      const insightsResponse = await currentServices.patientService.generateAIInsights(
+        patientId,
+        queryParams.include_recommendations,
+      );
 
       if (!insightsResponse.success) {
         if (insightsResponse.error?.includes('Dados insuficientes')) {
@@ -236,7 +246,7 @@ app.get(
             code: 'INSUFFICIENT_DATA',
           }, 422);
         }
-        
+
         return c.json({
           success: false,
           error: insightsResponse.error || 'Erro interno do serviço de insights de IA',
@@ -249,7 +259,7 @@ app.get(
           type: 'risk_analysis',
           content: 'Análise de risco padrão',
           confidence: 0.85,
-          sources: ['medical_history', 'current_symptoms']
+          sources: ['medical_history', 'current_symptoms'],
         }],
         recommendations: ['Acompanhamento regular', 'Exames complementares'],
         metadata: {
@@ -257,8 +267,8 @@ app.get(
           confidence: 0.85,
           dataPoints: 15,
           processingTime: Date.now() - startTime,
-          analysisVersion: 'v2.1'
-        }
+          analysisVersion: 'v2.1',
+        },
       };
 
       // Add specialty-specific insights if medical specialty is provided
@@ -268,7 +278,7 @@ app.get(
           specializedAnalysis: `Análise especializada em ${medicalSpecialty}`,
           recommendations: [`Recomendações específicas para ${medicalSpecialty}`],
         };
-        
+
         // Add specialty to metadata if it exists
         if (responseData.metadata) {
           responseData.metadata.medicalSpecialty = medicalSpecialty;
@@ -286,14 +296,16 @@ app.get(
       }
 
       // Add Brazilian healthcare context if specified
-      if (queryParams.analysisType === 'brazilian_healthcare' || 
-          healthcareContext === 'brazilian' || 
-          queryParams.context === 'brazilian_healthcare') {
+      if (
+        queryParams.analysisType === 'brazilian_healthcare'
+        || healthcareContext === 'brazilian'
+        || queryParams.context === 'brazilian_healthcare'
+      ) {
         responseData.context = {
           language: 'pt-BR',
           region: 'brazil',
           regulations: ['ANVISA', 'CFM', 'LGPD'],
-          healthcareSystem: 'SUS'
+          healthcareSystem: 'SUS',
         };
         responseData.brazilianContext = true; // Add this field for the test
       }
@@ -369,9 +381,11 @@ app.get(
       }
 
       // Add Brazilian context headers
-      if (queryParams.analysisType === 'brazilian_healthcare' || 
-          healthcareContext === 'brazilian' || 
-          queryParams.context === 'brazilian_healthcare') {
+      if (
+        queryParams.analysisType === 'brazilian_healthcare'
+        || healthcareContext === 'brazilian'
+        || queryParams.context === 'brazilian_healthcare'
+      ) {
         responseHeaders['X-Brazilian-Context'] = 'true';
         responseHeaders['X-ANVISA-Compliant'] = 'true';
         responseHeaders['X-Healthcare-Professional-Validated'] = 'true';
@@ -409,7 +423,6 @@ app.get(
       setCache(cacheKey, finalResponse);
 
       return c.json(finalResponse);
-
     } catch (error) {
       console.error('AI Insights endpoint error:', error);
 
@@ -435,7 +448,7 @@ app.get(
         error: 'Erro interno do servidor. Tente novamente mais tarde.',
       }, 500);
     }
-  }
+  },
 );
 
 // POST /no-show-prediction endpoint for AI no-show prediction
@@ -461,7 +474,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', noShowRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
     const user = c.get('user');
     const requestData = c.req.valid('json');
@@ -476,7 +489,7 @@ app.post(
         return c.json({
           success: false,
           error: 'Lista de consultas não pode estar vazia.',
-          code: 'EMPTY_APPOINTMENTS_ARRAY'
+          code: 'EMPTY_APPOINTMENTS_ARRAY',
         }, 400);
       }
 
@@ -486,7 +499,7 @@ app.post(
           return c.json({
             success: false,
             error: 'Dados de consulta inválidos. ID, patientId e datetime são obrigatórios.',
-            code: 'INVALID_APPOINTMENT_DATA'
+            code: 'INVALID_APPOINTMENT_DATA',
           }, 422);
         }
       }
@@ -507,15 +520,15 @@ app.post(
         recommendations: [
           'Enviar lembrete 24h antes',
           'Confirmar presença por telefone',
-          'Oferecer reagendamento flexível'
+          'Oferecer reagendamento flexível',
         ],
         culturalFactors: {
           brazilian: {
             sus_dependency: Math.random() > 0.5,
             transport_challenges: Math.random() > 0.3,
-            work_flexibility: Math.random() > 0.4
-          }
-        }
+            work_flexibility: Math.random() > 0.4,
+          },
+        },
       }));
 
       const processingTime = Date.now() - startTime;
@@ -562,20 +575,19 @@ app.post(
             processingTime,
             confidence: 0.85,
             model: 'no-show-predictor-v1',
-            culturalContext: 'brazilian_healthcare'
-          }
-        }
+            culturalContext: 'brazilian_healthcare',
+          },
+        },
       });
-
     } catch (error) {
       console.error('No-show prediction endpoint error:', error);
-      
+
       return c.json({
         success: false,
         error: 'Erro interno do servidor. Tente novamente mais tarde.',
       }, 500);
     }
-  }
+  },
 );
 
 export default app;

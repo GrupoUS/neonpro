@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -25,7 +25,10 @@ export default defineConfig({
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src/index.ts'),
       '@neonpro/security': path.resolve(__dirname, '../../packages/security/src/index.ts'),
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src/index.ts'),
-      '@neonpro/core-services': path.resolve(__dirname, '../../packages/core-services/src/index.ts'),
+      '@neonpro/core-services': path.resolve(
+        __dirname,
+        '../../packages/core-services/src/index.ts',
+      ),
     },
   },
 });

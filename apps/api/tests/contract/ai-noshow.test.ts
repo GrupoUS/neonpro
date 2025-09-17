@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/ai/insights/no-show-prediction (T022)
- * 
+ *
  * Tests AI no-show prediction endpoint contract:
  * - Appointment no-show risk prediction
  * - Multi-factor analysis (patient history, weather, etc.)
@@ -10,7 +10,7 @@
  * - Actionable intervention recommendations
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -133,7 +133,7 @@ const NoShowResponseSchema = z.object({
 
 describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
     'X-Healthcare-Professional': 'CRM-123456',
     'X-CFM-License': 'CFM-12345',
@@ -180,9 +180,9 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Skip full schema validation for now since this is a contract test
       // In real implementation, this would validate against actual prediction response
       expect(response).toBeDefined();
@@ -233,7 +233,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(200);
       // Contract validation would happen here
     });
@@ -276,9 +276,9 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures contextual factors are considered
       const responseText = await response.text();
       expect(responseText).toContain('weatherImpact');
@@ -313,7 +313,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -327,7 +327,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -357,7 +357,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(422);
     });
   });
@@ -365,7 +365,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should generate predictions within 1 second', async () => {
       const startTime = Date.now();
-      
+
       const predictionRequest = {
         appointments: [{
           id: '550e8400-e29b-41d4-a716-446655440000',
@@ -399,7 +399,7 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
 
     it('should handle batch processing efficiently', async () => {
       const startTime = Date.now();
-      
+
       // Create 10 test appointments
       const appointments = Array.from({ length: 10 }, (_, i) => ({
         id: `550e8400-e29b-41d4-a716-44665544000${i}`,
@@ -463,9 +463,9 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures Brazilian context is considered
       const responseText = await response.text();
       expect(responseText).toContain('brazilianContext');
@@ -501,9 +501,9 @@ describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures intervention recommendations
       const responseText = await response.text();
       expect(responseText).toContain('interventions');
