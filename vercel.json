@@ -17,6 +17,17 @@
       "VITE_APP_ENV": "production"
     }
   },
-
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.vercel.app https://*.supabase.co https://api.openai.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; report-uri https://neonpro-api.vercel.app/csp-report; report-to csp-endpoint" },
+        { "key": "Report-To", "value": "{\\"group\\":\\"csp-endpoint\\",\\"max_age\\":10886400,\\"endpoints\\":[{\\"url\\":\\"https://neonpro-api.vercel.app/csp-report\\"}]}" },
+        { "key": "Reporting-Endpoints", "value": "csp-endpoint=\"https://neonpro-api.vercel.app/csp-report\"" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ],
   "regions": ["gru1"]
 }

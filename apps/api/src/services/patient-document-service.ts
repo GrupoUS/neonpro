@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import { createHash } from 'crypto';
-import crypto from 'node:crypto';
+
 
 /** Minimal implementation for TDD GREEN phase.
  * NOTE: Persistence (Supabase storage + DB insert + audit event) will be added in next iterations.
@@ -159,12 +159,12 @@ export class PatientDocumentService {
     return { success: true, data: dto };
   }
 
-  async getDocument(documentId: string, userId: string): Promise<PatientDocumentDTO | null> {
+  async getDocument(_documentId: string, _userId: string): Promise<PatientDocumentDTO | null> {
     console.warn('In-memory mode: getDocument not implemented');
     return null;
   }
 
-  async getFileContent(storagePath: string): Promise<ArrayBuffer> {
+  async getFileContent(_storagePath: string): Promise<ArrayBuffer> {
     console.warn('In-memory mode: returning mock file content');
     const encoder = new TextEncoder();
     return encoder.encode('Mock file content for testing').buffer;

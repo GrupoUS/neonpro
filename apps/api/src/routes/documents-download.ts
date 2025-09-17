@@ -13,7 +13,7 @@
 
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { streamText } from 'hono/streaming';
+
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth';
 import { PatientDocumentService } from '../services/patient-document-service';

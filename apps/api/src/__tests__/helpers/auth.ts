@@ -2,7 +2,7 @@
  * Authentication helpers for integration tests
  */
 
-import { createClient } from '@supabase/supabase-js';
+
 
 // Mock user for testing
 export const testUser = {
@@ -95,37 +95,37 @@ export async function setupTestAuth(userId: string): Promise<Record<string, stri
 export function createMockSupabaseClient() {
   // Return a mock client that doesn't make real API calls
   return {
-    from: (table: string) => ({
-      select: (columns = '*') => ({
-        eq: (column: string, value: any) => ({
+    from: (_table: string) => ({
+      select: (_columns = '*') => ({
+        eq: (_column: string, _value: any) => ({
           single: () => Promise.resolve({ data: null, error: null }),
-          limit: (n: number) => Promise.resolve({ data: [], error: null }),
+          limit: (_n: number) => Promise.resolve({ data: [], error: null }),
         }),
-        limit: (n: number) => Promise.resolve({ data: [], error: null }),
-        order: (column: string, options?: any) => ({
-          limit: (n: number) => Promise.resolve({ data: [], error: null }),
+        limit: (_n: number) => Promise.resolve({ data: [], error: null }),
+        order: (_column: string, _options?: any) => ({
+          limit: (_n: number) => Promise.resolve({ data: [], error: null }),
         }),
       }),
-      insert: (data: any) => Promise.resolve({ data: null, error: null }),
-      update: (data: any) => ({
-        eq: (column: string, value: any) => Promise.resolve({ data: null, error: null }),
+      insert: (_data: any) => Promise.resolve({ data: null, error: null }),
+      update: (_data: any) => ({
+        eq: (_column: string, _value: any) => Promise.resolve({ data: null, error: null }),
       }),
       delete: () => ({
-        eq: (column: string, value: any) => Promise.resolve({ data: null, error: null }),
+        eq: (_column: string, _value: any) => Promise.resolve({ data: null, error: null }),
       }),
     }),
     auth: {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      signInWithPassword: (credentials: any) =>
+      signInWithPassword: (_credentials: any) =>
         Promise.resolve({ data: { user: testUser, session: null }, error: null }),
       signOut: () => Promise.resolve({ error: null }),
     },
     storage: {
-      from: (bucket: string) => ({
-        upload: (path: string, file: any) => Promise.resolve({ data: null, error: null }),
-        download: (path: string) => Promise.resolve({ data: null, error: null }),
-        remove: (paths: string[]) => Promise.resolve({ data: null, error: null }),
+      from: (_bucket: string) => ({
+        upload: (_path: string, _file: any) => Promise.resolve({ data: null, error: null }),
+        download: (_path: string) => Promise.resolve({ data: null, error: null }),
+        remove: (_paths: string[]) => Promise.resolve({ data: null, error: null }),
       }),
     },
   };

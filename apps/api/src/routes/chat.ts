@@ -1,6 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 

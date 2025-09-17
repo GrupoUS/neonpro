@@ -91,7 +91,7 @@ app.post(
   zValidator('json', chatRequestSchema),
   async c => {
     const startTime = Date.now();
-    const user = c.get('user');
+    const _user = c.get('user');
     const requestData = c.req.valid('json');
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
     const userAgent = c.req.header('User-Agent') || 'unknown';
@@ -132,7 +132,7 @@ app.post(
       }
 
       // Prepare AI chat request
-      const aiChatRequest = {
+      const _aiChatRequest = {
         userId: user.id,
         message: requestData.message,
         conversationId: requestData.conversationId,
@@ -335,7 +335,7 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', sessionRequestSchema),
   async c => {
-    const user = c.get('user');
+    const _user = c.get('user');
     const requestData = c.req.valid('json');
 
     try {
@@ -408,6 +408,7 @@ app.post(
         data: responseData,
       }, 201);
     } catch (error) {
+      console.error('Chat request failed:', error);
       return c.json({
         success: false,
         error: 'Erro interno do servidor.',
@@ -423,7 +424,7 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', messageRequestSchema),
   async c => {
-    const user = c.get('user');
+    const _user = c.get('user');
     const sessionId = c.req.param('sessionId');
     const requestData = c.req.valid('json');
 
@@ -595,6 +596,7 @@ app.post(
         }, 201);
       }
     } catch (error) {
+      console.error('Chat request failed:', error);
       return c.json({
         success: false,
         error: 'Erro interno do servidor.',

@@ -1,9 +1,4 @@
-import {
-  formatBRPhone,
-  formatCPF as formatCPFUtil,
-  validateBRPhoneMask,
-  validateCPFMask,
-} from '@neonpro/utils';
+
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
 export type AdvancedFilters = {
@@ -37,10 +32,29 @@ export function useAdvancedSearch(
 ): UseAdvancedSearchResult {
   const [filters, setFilters] = useState<AdvancedFilters>(initial);
 
-  const formatCPF = (value: string) => formatCPFUtil(value);
-  const formatPhone = (value: string) => formatBRPhone(value);
-  const validateCPF = (value: string) => validateCPFMask(value);
-  const validatePhone = (value: string) => validateBRPhoneMask(value);
+  // Progressive CPF formatter: caps to 11 digits and adds mask step-by-step
+  const formatCPF = (value: string) => {
+    const digits = (value ?? '').replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9)
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+  };
+
+  // Progressive BR phone formatter: (DD) DDDDD-DDDD, caps to 11 digits
+  const formatPhone = (value: string) => {
+    const digits = (value ?? '').replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 2) return digits;
+    const ddd = digits.slice(0, 2);
+    const rest = digits.slice(2);
+    if (rest.length <= 5) return `(${ddd}) ${rest}`;
+    return `(${ddd}) ${rest.slice(0, 5)}-${rest.slice(5, 9)}`;
+  };
+
+  // Strict mask validations (format-only, not checksum):
+  const validateCPF = (value: string) => /^(\d{3})\.(\d{3})\.(\d{3})-(\d{2})$/.test(value ?? '');
+  const validatePhone = (value: string) => /^\(\d{2}\) \d{5}-\d{4}$/.test(value ?? '');
 
   const metrics: AdvancedSearchMetrics = useMemo(() => {
     const nonEmpty = [

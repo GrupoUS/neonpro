@@ -1,4 +1,4 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Text, View } from '@react-pdf/renderer';
 import styles from './pdf-styles';
 
 export interface ClinicBrandingData {
@@ -21,9 +21,9 @@ interface ClinicHeaderProps {
 
 export const ClinicHeader: React.FC<ClinicHeaderProps> = ({
   clinicData,
-  documentTitle,
-  patientName,
-  generatedAt = new Date(),
+  _documentTitle,
+  _patientName,
+  _generatedAt = new Date(),
 }) => {
   return (
     <View style={styles.header}>

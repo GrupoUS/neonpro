@@ -1,5 +1,6 @@
 export * from './aesthetic-data';
 export * from './ai-chat';
+export * from './ai-provider';
 // Healthcare types
 export interface Patient {
   id: string;

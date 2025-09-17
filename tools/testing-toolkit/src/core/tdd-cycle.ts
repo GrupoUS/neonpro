@@ -59,7 +59,7 @@ export class TDDCycle {
       testDefinition();
       this.testResults.set('red-phase', false);
       return false; // Tests should fail in RED phase
-    } catch (_error) {
+    } catch {
       this.testResults.set('red-phase', true);
       console.log('✅ RED Phase complete - Tests failing as expected');
       return true;

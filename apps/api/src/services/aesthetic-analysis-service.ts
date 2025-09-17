@@ -413,6 +413,16 @@ export class AestheticAnalysisService {
     procedures: AestheticAssessmentResult['recommended_procedures'],
     skinType: string,
   ): Promise<AestheticAssessmentResult['educational_content']> {
+    // Generate educational content based on procedures and skin type
+    const content = procedures.map(procedure => ({
+      title: `Understanding ${procedure.name}`,
+      description: `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
+      risks: procedure.contraindications || [],
+      benefits: [`Improves ${procedure.target_area}`, 'Professional treatment'],
+      aftercare: ['Follow post-treatment instructions', 'Avoid sun exposure', 'Use recommended skincare']
+    }));
+    
+    return content;
     return {
       pre_treatment: [
         'Evitar exposição solar direta 2 semanas antes do procedimento',
@@ -488,6 +498,16 @@ export class AestheticAnalysisService {
     condition: SkinAnalysisData,
     request: AestheticAssessmentRequest,
   ): 'high' | 'medium' | 'low' {
+    // Calculate severity based on condition and patient request context
+    const patientAge = request.patient_data?.age || 25;
+    const hasAllergies = request.patient_data?.allergies?.length > 0;
+    
+    if (condition.severity_score > 0.8 || hasAllergies || patientAge > 65) {
+      return 'high';
+    } else if (condition.severity_score > 0.5 || patientAge > 45) {
+      return 'medium';
+    }
+    return 'low';
     if (condition.severity === 'severe' || condition.confidence === 'high') {
       return 'high';
     }

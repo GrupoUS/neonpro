@@ -449,7 +449,7 @@ export class IndexOptimizerService {
   /**
    * Check if cache is valid
    */
-  private isCacheValid(cacheKey: string): boolean {
+  private isCacheValid(_cacheKey: string): boolean {
     // Simple cache validation - in production, you'd want more sophisticated cache management
     return true; // For now, assume cache is always valid within the expiry period
   }

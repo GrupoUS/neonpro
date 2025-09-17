@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
 import aiRouter from './routes/ai';
+import appointmentsRouter from './routes/appointments';
 import { billing } from './routes/billing';
 import chatRouter from './routes/chat';
 import { medicalRecords } from './routes/medical-records';
@@ -149,6 +150,9 @@ app.use('*', async (c, next) => {
 
 // Mount chat routes under /v1/chat
 app.route('/v1/chat', chatRouter);
+
+// Mount appointments routes under /v1/appointments
+app.route('/v1/appointments', appointmentsRouter);
 
 // Mount medical records routes under /v1/medical-records
 app.route('/v1/medical-records', medicalRecords);

@@ -379,8 +379,8 @@ export class BrazilianComplianceService {
     lgpd: LGPDComplianceReport,
     anvisa: ANVISAComplianceReport,
     cfm: CFMComplianceReport,
-    security: any,
-    interoperability: any,
+    _security: any,
+    _interoperability: any,
   ) {
     const allRecommendations = [
       ...lgpd.recommendations,
@@ -403,8 +403,8 @@ export class BrazilianComplianceService {
     lgpd: LGPDComplianceReport,
     anvisa: ANVISAComplianceReport,
     cfm: CFMComplianceReport,
-    security: any,
-    interoperability: any,
+    _security: any,
+    _interoperability: any,
   ) {
     const allIssues = [
       ...this.extractIssuesFromReport(lgpd),

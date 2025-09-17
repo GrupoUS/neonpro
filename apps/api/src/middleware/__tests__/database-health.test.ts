@@ -61,7 +61,7 @@ vi.mock('../services/connection-pool-manager', () => ({
         healthScore: 85,
       };
     }
-    onAlert(callback: any) {
+    onAlert(_callback: any) {
       // Store callback for testing
     }
   },

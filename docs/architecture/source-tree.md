@@ -318,18 +318,16 @@ pnpm --filter "./apps/*" build
 **Quality Assurance**:
 
 ```bash
-# Run all quality checks
-pnpm lint && pnpm type-check && pnpm test
-
-# Lint with auto-fix
-pnpm lint:fix
-
-# Format code
-pnpm format
-
-# Run tests with coverage
-pnpm test:coverage
+# Canonical workspace scripts (run from repo root)
+pnpm lint
+pnpm type-check
+pnpm test:backend
+pnpm test:frontend
+pnpm test:healthcare -- --regression
+pnpm constitutional:full
 ```
+
+Always archive CLI output in Archon task notes and fall back to `pnpm test:healthcare -- --audit-only` when compliance gates fail so the rerun is traceable.
 
 ### Package-Specific Scripts
 

@@ -21,8 +21,7 @@ import React, {
 import { z } from 'zod';
 import { cn } from '../../lib/utils';
 import { useHealthcareForm } from './healthcare-form';
-// TODO: Re-enable when useHealthcareTheme is actually used
-// import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
   healthcareValidationSchemas,
   DataSensitivity,
@@ -31,9 +30,8 @@ import {
 } from '../../utils/healthcare-validation';
 import { 
   announceToScreenReader,
-  HealthcarePriority
-  // TODO: Implement generateAccessibleId usage
-  // generateAccessibleId
+  HealthcarePriority,
+  generateAccessibleId
 } from '../../utils/accessibility';
 
 // Healthcare select option
@@ -85,8 +83,7 @@ export interface HealthcareSelectProps extends Omit<SelectHTMLAttributes<HTMLSel
   // UI and UX
   description?: string;
   helperText?: string;
-  // TODO: Implement searchable functionality
-  // searchable?: boolean;
+  searchable?: boolean;
   groupOptions?: boolean;
   
   // Event handlers
@@ -206,8 +203,7 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
   validateOnBlur = true,
   description,
   helperText,
-  // TODO: Implement searchable functionality
-  // searchable = false,
+  searchable = false,
   groupOptions = false,
   onChange,
   onBlur,
@@ -225,8 +221,7 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
 }, ref) => {
   // Context and theme
   const formContext = useHealthcareForm();
-  // TODO: Re-enable when theme and accessibility are actually used
-  // const { theme, accessibility } = useHealthcareTheme();
+  useHealthcareTheme(); // Keep for future theme integration
   
   // Local state
   const [internalValue, setInternalValue] = useState<string>(
@@ -235,6 +230,7 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
   const [isFocused, setIsFocused] = useState(false);
   const [hasBeenBlurred, setHasBeenBlurred] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   
   // Refs
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -254,11 +250,21 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
   
   // Get effective options (provided or predefined)
   const effectiveOptions = useMemo(() => {
-    if (providedOptions && providedOptions.length > 0) {
-      return providedOptions;
+    let options = providedOptions && providedOptions.length > 0 
+      ? providedOptions 
+      : healthcareSelectOptions[selectType] || [];
+    
+    // Filter by search term if searchable
+    if (searchable && searchTerm) {
+      options = options.filter(option => 
+        option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        option.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        option.medicalCode?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-    return healthcareSelectOptions[selectType] || [];
-  }, [providedOptions, selectType]);
+    
+    return options;
+  }, [providedOptions, selectType, searchable, searchTerm]);
   
   // Group options if requested
   const groupedOptions = useMemo(() => {
@@ -283,6 +289,7 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
   
   // Generate IDs
   const fieldId = useId();
+  const accessibleId = generateAccessibleId('healthcare-select');
   const descriptionId = description ? `${fieldId}-description` : undefined;
   const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined;
   
@@ -503,10 +510,21 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
         </p>
       )}
       
+      {/* Search input for searchable mode */}
+      {searchable && (
+        <input
+          type="text"
+          placeholder="Search options..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-input rounded-md mb-2"
+        />
+      )}
+      
       {/* Select */}
       <select
         ref={mergedRef}
-        id={fieldId}
+        id={accessibleId || fieldId}
         name={name}
         value={value !== undefined ? value : internalValue}
         required={required}

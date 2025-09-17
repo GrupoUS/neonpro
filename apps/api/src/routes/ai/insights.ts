@@ -20,7 +20,7 @@ interface ServiceInterface {
   lgpdService: LGPDService;
 }
 
-interface CacheData {
+interface _CacheData {
   data: unknown;
   timestamp: number;
 }
@@ -220,7 +220,7 @@ app.get(
       }
 
       // Generate patient insights
-      const insightsRequest = {
+      const _insightsRequest = {
         patientId,
         userId: user.id,
         analysisType: queryParams.analysisType,

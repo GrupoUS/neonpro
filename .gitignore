@@ -201,6 +201,7 @@ serena/
 **/serena/
 .serena/
 **/.serena/**
+.code/**
 
 # Project cleanup and reports
 cleanup-reports/

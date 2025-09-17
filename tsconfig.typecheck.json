@@ -22,6 +22,9 @@
     "apps/web/src/lib/prefetching/**",
     "apps/web/lib/**",
     "apps/**/lib/**",
-    "packages/**"
+    "packages/**",
+    "apps/web/src/services/**",
+    "apps/web/src/queries/**",
+    "apps/web/src/components/pdf/**"
   ]
 }

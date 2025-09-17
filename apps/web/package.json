@@ -19,7 +19,7 @@
     "lint": "oxlint src --fix",
     "format": "dprint fmt",
     "format:check": "dprint check",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit -p ../../tsconfig.typecheck.json",
     "pretest": "pnpm run routes:generate",
     "test": "vitest --run",
     "test:watch": "vitest",

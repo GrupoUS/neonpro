@@ -74,6 +74,16 @@ export function createAIConfig(): AIConfig {
         },
         timeout: parseInt(process.env.GOOGLE_AI_TIMEOUT || '30000'),
       },
+
+      mock: {
+        enabled: true,
+        apiKey: 'mock',
+        baseUrl: 'mock://provider',
+        models: {
+          default: 'mock-model',
+        },
+        timeout: 0,
+      },
     },
 
     rateLimit: {

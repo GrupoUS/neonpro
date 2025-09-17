@@ -7,6 +7,7 @@ import getPatientHistory from './history';
 import listPatients from './list';
 import searchPatients from './search';
 import updatePatient from './update';
+import { patientsExportRouter } from './export';
 
 const patientsRouter = new Hono();
 // Documents upload endpoint placeholder added via documents-upload route above
@@ -22,5 +23,6 @@ patientsRouter.route('/patients', deletePatient); // DELETE /patients/:id
 patientsRouter.route('/patients/search', searchPatients); // GET /patients/search
 patientsRouter.route('/patients', getPatientHistory); // GET /patients/:id/history
 patientsRouter.route('/patients/bulk-actions', bulkActions); // POST /patients/bulk-actions
+patientsRouter.route('/patients', patientsExportRouter); // Export endpoints
 
 export default patientsRouter;

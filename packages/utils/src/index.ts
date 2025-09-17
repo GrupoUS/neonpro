@@ -42,4 +42,14 @@ export const auth = {};
 export const components = {};
 export const analytics = {};
 export const performance = {};
-export const compliance = {};
+export const compliance = {
+  lgpdCompliance: (input: string) => {
+    // Use dynamic import to keep tree-shaking friendly and avoid CJS require in ESM builds
+    // Note: callers should handle async if we switch to true dynamic import later
+    // For now, keep sync require but fix double export typo
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { lgpdCompliance } = require('./lgpd');
+    return lgpdCompliance(input);
+  },
+};
+

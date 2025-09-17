@@ -1189,7 +1189,7 @@ export class LGPDService {
   /**
    * Validate data access for LGPD compliance
    */
-  async validateDataAccess(params: {
+  async validateDataAccess(_params: {
     userId: string;
     dataType: string;
     purpose: string;
