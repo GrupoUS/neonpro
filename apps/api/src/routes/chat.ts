@@ -137,7 +137,7 @@ app.post(
         latencyMs: Date.now() - t0,
         sessionId: sessionId || null,
       };
-      
+
       if (process.env.AI_AUDIT_DB === 'true') {
         try {
           await supabase.from('ai_audit_events').insert({

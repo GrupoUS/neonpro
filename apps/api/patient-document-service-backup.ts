@@ -1,6 +1,6 @@
-import crypto from 'node:crypto';
 import { randomUUID } from 'crypto';
 import { createHash } from 'crypto';
+import crypto from 'node:crypto';
 
 /** Minimal implementation for TDD GREEN phase.
  * NOTE: Persistence (Supabase storage + DB insert + audit event) will be added in next iterations.
@@ -201,7 +201,7 @@ export class PatientDocumentService {
     try {
       // Extract the actual path from the full storage path
       const actualPath = storagePath.replace(`supabase://${this.bucket}/`, '');
-      
+
       if (this.persist && this.supabase) {
         // Get file from Supabase Storage
         const { data, error } = await this.supabase.storage

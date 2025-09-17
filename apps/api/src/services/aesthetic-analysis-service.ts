@@ -571,9 +571,7 @@ export class AestheticAnalysisService {
     }
 
     const granted = Array.isArray(consent.granted_permissions) ? consent.granted_permissions : [];
-    const hasAllPermissions = requiredPermissions.every(permission =>
-      granted.includes(permission)
-    );
+    const hasAllPermissions = requiredPermissions.every(permission => granted.includes(permission));
 
     if (!hasAllPermissions) {
       throw new Error('LGPD_INSUFFICIENT_CONSENT');

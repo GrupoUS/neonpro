@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { streamAestheticResponse } from '@/lib/ai/ai-chat-service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // T012: Integration — Error handling (provider/rate limit/timeout)
 

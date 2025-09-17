@@ -160,7 +160,7 @@ export const useDocumentDelete = () => {
 export const downloadDocument = async (patientId: string, documentId: string, filename: string) => {
   try {
     const response = await fetch(`/api/v1/patients/${patientId}/documents/${documentId}/download`);
-    
+
     if (!response.ok) {
       throw new Error('Download failed');
     }

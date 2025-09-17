@@ -85,7 +85,8 @@ export interface HealthcareSelectProps extends Omit<SelectHTMLAttributes<HTMLSel
   // UI and UX
   description?: string;
   helperText?: string;
-  searchable?: boolean;
+  // TODO: Implement searchable functionality
+  // searchable?: boolean;
   groupOptions?: boolean;
   
   // Event handlers
@@ -205,7 +206,8 @@ export const HealthcareSelect = forwardRef<HTMLSelectElement, HealthcareSelectPr
   validateOnBlur = true,
   description,
   helperText,
-  searchable = false,
+  // TODO: Implement searchable functionality
+  // searchable = false,
   groupOptions = false,
   onChange,
   onBlur,

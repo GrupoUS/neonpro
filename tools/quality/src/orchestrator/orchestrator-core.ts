@@ -15,7 +15,9 @@ import {
   AgentResult,
   OrchestratorEvent,
   OrchestrationMetrics,
-  OrchestratorConfig
+  OrchestratorConfig,
+  normalizeDomain,
+  normalizeComplexity
 } from './types';
 import { AgentRegistry } from './agent-registry';
 import { WorkflowEngine } from './workflow-engine';
@@ -388,11 +390,12 @@ export class TDDOrchestrator extends EventEmitter {
       return 'security-critical';
     }
     
-    if (feature.domain.some(d => d.includes('microservice') || d.includes('api'))) {
+    const domainArray = normalizeDomain(feature.domain);
+    if (domainArray.some((d: string) => d.includes('microservice') || d.includes('api'))) {
       return 'microservices';
     }
     
-    if (feature.domain.some(d => d.includes('legacy'))) {
+    if (domainArray.some((d: string) => d.includes('legacy'))) {
       return 'legacy';
     }
     

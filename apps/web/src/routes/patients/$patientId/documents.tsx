@@ -3,25 +3,26 @@
  * Features: Upload, organize, preview, secure sharing, audit trail
  */
 
+import {
+  type PatientDocument as UploadedPatientDocument,
+  PatientDocumentUpload,
+} from '@/components/patient-documents';
 import { usePatient } from '@/hooks/usePatients';
+import {
+  downloadDocument,
+  type PatientDocument,
+  patientDocumentsQueryOptions,
+  useDocumentDelete,
+  useDocumentUpload,
+} from '@/queries/documents';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
-import { PatientDocumentUpload, type PatientDocument as UploadedPatientDocument } from '@/components/patient-documents';
-import { 
-  patientDocumentsQueryOptions, 
-  useDocumentUpload, 
-  useDocumentDelete, 
-  downloadDocument,
-  type PatientDocument 
-} from '@/queries/documents';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import {
   AlertCircle,
   Clock,
@@ -39,6 +40,8 @@ import {
   Trash2,
   User,
 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -145,12 +148,12 @@ function PatientDocumentsPage() {
 
   // Data fetching
   const { data: patient, isLoading: patientLoading } = usePatient(patientId);
-  
+
   // Fetch documents with real API
-  const { 
-    data: documents = [], 
-    isLoading: documentsLoading, 
-    error: documentsError 
+  const {
+    data: documents = [],
+    isLoading: documentsLoading,
+    error: documentsError,
   } = useQuery(patientDocumentsQueryOptions({
     patientId,
     category: category !== 'all' ? category : undefined,
@@ -160,7 +163,7 @@ function PatientDocumentsPage() {
   // Mutations for upload and delete
   const uploadMutation = useDocumentUpload();
   const deleteMutation = useDocumentDelete();
-  
+
   // Mock documents for development (replace with real data from API)
   const mockDocuments = [
     {
@@ -225,14 +228,19 @@ function PatientDocumentsPage() {
     }
   };
 
-  const handleUpload = async (file: File, category: string, description?: string, tags?: string[]) => {
+  const handleUpload = async (
+    file: File,
+    category: string,
+    description?: string,
+    tags?: string[],
+  ) => {
     try {
-      await uploadMutation.mutateAsync({ 
-        patientId, 
-        file, 
-        category, 
-        description, 
-        tags 
+      await uploadMutation.mutateAsync({
+        patientId,
+        file,
+        category,
+        description,
+        tags,
       });
       toast.success('Documento enviado com sucesso');
     } catch (error) {
@@ -369,15 +377,14 @@ function PatientDocumentsPage() {
         {/* Upload section */}
         <PatientDocumentUpload
           patientId={patientId}
-          category="medical"
+          category='medical'
           maxFiles={20}
           maxFileSize={25}
           onDocumentsUploaded={(documents: UploadedPatientDocument[]) => {
             // Documents are automatically refreshed via React Query invalidation
             toast.success(`${documents.length} documento(s) enviado(s) com sucesso!`);
           }}
-          onUploadFile={handleUpload}
-          className="w-full"
+          className='w-full'
         />
       </div>
 
@@ -573,8 +580,10 @@ function DocumentCard({
 
   const handleDelete = async () => {
     if (!onDelete) return;
-    
-    const confirmed = globalThis.confirm(`Tem certeza que deseja excluir o documento "${document.name}"?`);
+
+    const confirmed = globalThis.confirm(
+      `Tem certeza que deseja excluir o documento "${document.name}"?`,
+    );
     if (!confirmed) return;
 
     try {
@@ -706,42 +715,42 @@ function DocumentCard({
 
           {/* Actions */}
           <div className='flex items-center gap-1 pt-2'>
-            <Button 
-              variant='outline' 
-              size='sm' 
+            <Button
+              variant='outline'
+              size='sm'
               className='flex-1'
               onClick={handleView}
             >
               <Eye className='w-3 h-3 mr-1' />
               Ver
             </Button>
-            <Button 
-              variant='outline' 
-              size='sm' 
+            <Button
+              variant='outline'
+              size='sm'
               className='flex-1'
               onClick={handleDownload}
               disabled={isDownloading}
             >
-              {isDownloading ? (
-                <div className='w-3 h-3 mr-1 animate-spin rounded-full border-2 border-current border-t-transparent' />
-              ) : (
-                <Download className='w-3 h-3 mr-1' />
-              )}
+              {isDownloading
+                ? (
+                  <div className='w-3 h-3 mr-1 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                )
+                : <Download className='w-3 h-3 mr-1' />}
               {isDownloading ? 'Baixando...' : 'Baixar'}
             </Button>
             {onDelete && (
-              <Button 
-                variant='outline' 
-                size='sm' 
+              <Button
+                variant='outline'
+                size='sm'
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className='text-destructive hover:text-destructive'
               >
-                {isDeleting ? (
-                  <div className='w-3 h-3 animate-spin rounded-full border-2 border-current border-t-transparent' />
-                ) : (
-                  <Trash2 className='w-3 h-3' />
-                )}
+                {isDeleting
+                  ? (
+                    <div className='w-3 h-3 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                  )
+                  : <Trash2 className='w-3 h-3' />}
               </Button>
             )}
           </div>

@@ -5,8 +5,10 @@ import type {
   AgentResult,
   FeatureContext,
   Finding,
-  Recommendation
+  Recommendation,
+  ComplexityLevel
 } from '../types';
+import { normalizeComplexity } from '../types';
 
 /**
  * Architect Review Agent - Responsible for architectural design validation
@@ -23,9 +25,11 @@ export class ArchitectReviewAgent extends BaseAgent {
   canHandle(phase: TDDPhase, context: FeatureContext): boolean {
     // Architect review is valuable in all phases but most critical during refactor
     // Also important for complex features and system-level changes
-    return context.complexity >= 5 || 
-           context.domain.includes('architecture') ||
-           context.domain.includes('system') ||
+    const complexityLevel = normalizeComplexity(context.complexity);
+    const domainArray = Array.isArray(context.domain) ? context.domain : [context.domain];
+    return complexityLevel >= 5 || 
+           domainArray.includes('architecture') ||
+           domainArray.includes('system') ||
            context.domain.includes('integration');
   }
 
@@ -62,7 +66,7 @@ export class ArchitectReviewAgent extends BaseAgent {
           executionTime: Date.now() - startTime,
           architecturalIssues: findings.filter(f => f.type.startsWith('architecture')).length,
           designRecommendations: recommendations.filter(r => r.type === 'architecture').length,
-          complexityScore: context.complexity,
+          complexityScore: normalizeComplexity(context.complexity),
           scalabilityIssues: findings.filter(f => f.description.includes('scalability')).length
         },
         duration: Date.now() - startTime,
@@ -108,7 +112,8 @@ export class ArchitectReviewAgent extends BaseAgent {
     recommendations: Recommendation[]
   ): Promise<void> {
     // Validate architectural test requirements
-    if (context.complexity >= 7) {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    if (complexityLevel >= 7) {
       findings.push(
         this.createFinding(
           'architecture-design',
@@ -185,6 +190,8 @@ export class ArchitectReviewAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Validate implementation follows architectural patterns
     if (context.files?.implementation) {
       findings.push(
@@ -221,7 +228,7 @@ export class ArchitectReviewAgent extends BaseAgent {
     }
 
     // Performance architecture considerations
-    if (context.complexity >= 8) {
+    if (complexityLevel >= 8) {
       findings.push(
         this.createFinding(
           'performance',
@@ -254,6 +261,8 @@ export class ArchitectReviewAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Comprehensive architectural analysis
     findings.push(
       this.createFinding(
@@ -276,7 +285,7 @@ export class ArchitectReviewAgent extends BaseAgent {
     );
 
     // Design patterns application
-    if (context.complexity >= 6) {
+    if (complexityLevel >= 6) {
       recommendations.push(
         this.createRecommendation(
           'architecture',
@@ -366,7 +375,7 @@ export class ArchitectReviewAgent extends BaseAgent {
     }
 
     // Technical debt and maintainability
-    if (context.complexity >= 9) {
+    if (complexityLevel >= 9) {
       findings.push(
         this.createFinding(
           'architecture-improvement',

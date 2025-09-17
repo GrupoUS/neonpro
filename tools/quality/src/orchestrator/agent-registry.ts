@@ -9,7 +9,8 @@ import {
   AgentName, 
   AgentCapabilities, 
   TDDPhase, 
-  FeatureContext 
+  FeatureContext,
+  normalizeComplexity
 } from './types';
 
 export class AgentRegistry {
@@ -180,12 +181,13 @@ export class AgentRegistry {
     }
 
     // Complexity-based selection
-    if (feature.complexity >= 7) {
+    const complexityLevel = normalizeComplexity(feature.complexity);
+    if (complexityLevel >= 7) {
       // High complexity features need all agents
       this.getAllAgents().forEach(agent => {
         selectedAgents.add(agent.name);
       });
-    } else if (feature.complexity >= 4) {
+    } else if (complexityLevel >= 4) {
       // Medium complexity adds code reviewer if not already included
       selectedAgents.add('code-reviewer');
     }
@@ -202,9 +204,9 @@ export class AgentRegistry {
 
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements,
-      ...feature.complianceRequirements
+      ...(Array.isArray(feature.domain) ? feature.domain : []),
+      ...(Array.isArray(feature.requirements) ? feature.requirements : []),
+      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
     ].join(' ').toLowerCase();
 
     return securityAgent.triggers.some(trigger => 
@@ -219,10 +221,13 @@ export class AgentRegistry {
     const architectAgent = this.agents.get('architect-review');
     if (!architectAgent) return false;
 
+    const domains = Array.isArray(feature.domain) ? feature.domain : [];
+    const requirements = feature.requirements ?? [];
+
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements
+      ...domains,
+      ...requirements
     ].join(' ').toLowerCase();
 
     return architectAgent.triggers.some(trigger => 
@@ -237,10 +242,13 @@ export class AgentRegistry {
     const codeReviewerAgent = this.agents.get('code-reviewer');
     if (!codeReviewerAgent) return false;
 
+    const domains = Array.isArray(feature.domain) ? feature.domain : [];
+    const requirements = feature.requirements ?? [];
+
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements
+      ...domains,
+      ...requirements
     ].join(' ').toLowerCase();
 
     return codeReviewerAgent.triggers.some(trigger => 

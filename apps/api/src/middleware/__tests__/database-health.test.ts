@@ -3,7 +3,7 @@
  * T080 - Database Performance Tuning
  */
 
-import { Context } from 'hono';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createDatabaseHealthDashboardMiddleware,

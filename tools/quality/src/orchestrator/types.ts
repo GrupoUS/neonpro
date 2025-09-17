@@ -16,6 +16,35 @@ export type ComplexityLevel = 'low' | 'medium' | 'high';
 
 export type QualityGateStatus = 'pending' | 'passed' | 'failed' | 'skipped';
 
+// Complexity Level Utilities
+export function normalizeComplexity(complexity: number | ComplexityLevel): number {
+  if (typeof complexity === 'number') {
+    return complexity;
+  }
+  
+  switch (complexity) {
+    case 'low': return 1;
+    case 'medium': return 5;
+    case 'high': return 9;
+    default: return 1;
+  }
+}
+
+export function getComplexityLevel(complexity: number | ComplexityLevel): ComplexityLevel {
+  if (typeof complexity === 'string') {
+    return complexity;
+  }
+  
+  if (complexity <= 3) return 'low';
+  if (complexity <= 7) return 'medium';
+  return 'high';
+}
+
+// Domain Utilities
+export function normalizeDomain(domain: string | string[]): string[] {
+  return Array.isArray(domain) ? domain : [domain];
+}
+
 export type MessageType = 'analysis' | 'recommendation' | 'validation' | 'error';
 
 export type Priority = 'low' | 'medium' | 'high' | 'critical';
@@ -24,12 +53,12 @@ export type Priority = 'low' | 'medium' | 'high' | 'critical';
 export interface FeatureContext {
   name: string;
   description: string;
-  domain: string[];
-  complexity: number;
+  domain: string | string[];
+  complexity: number | ComplexityLevel;
   priority: 'low' | 'medium' | 'high' | 'critical';
   estimatedEffort: number;
   dependencies: string[];
-  requirements: string[];
+  requirements?: string[];
   securityCritical: boolean;
   complianceRequirements: string[];
   acceptanceCriteria: string[];

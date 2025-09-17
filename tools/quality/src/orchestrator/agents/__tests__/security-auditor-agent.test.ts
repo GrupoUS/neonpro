@@ -69,7 +69,9 @@ describe('SecurityAuditorAgent', () => {
       expect(result.agent).toBe('security-auditor');
       expect(result.phase).toBe('red');
       expect(result.findings).toBeDefined();
-      expect(result.recommendations).toBeDefined();
+      expect(result.findings.length).toBeGreaterThan(0);
+      expect(result.recommendations).toBeDefined(); 
+      expect(result.recommendations.length).toBeGreaterThan(0);
       expect(result.metrics).toBeDefined();
       expect(result.duration).toBeGreaterThan(0);
       expect(result.timestamp).toBeInstanceOf(Date);

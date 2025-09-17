@@ -8,6 +8,7 @@ import type {
   Recommendation,
   RecommendationType
 } from '../types';
+import { normalizeComplexity } from '../types';
 
 /**
  * Security Auditor Agent - Responsible for security validation and compliance
@@ -37,7 +38,7 @@ export class SecurityAuditorAgent extends BaseAgent {
    * Execute phase-specific security audit operations
    */
   protected async executePhase(phase: TDDPhase, context: FeatureContext): Promise<AgentResult> {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const findings: Finding[] = [];
     const recommendations: Recommendation[] = [];
 
@@ -63,14 +64,14 @@ export class SecurityAuditorAgent extends BaseAgent {
         findings,
         recommendations,
         metrics: {
-          executionTime: Date.now() - startTime,
+          executionTime: Math.max(1, Math.round(performance.now() - startTime)),
           securityIssues: findings.filter(f => f.type.startsWith('security')).length,
           vulnerabilities: findings.filter(f => f.severity === 'critical' || f.severity === 'high').length,
           complianceIssues: findings.filter(f => f.type === 'compliance').length,
           securityRecommendations: recommendations.filter(r => r.type === 'security-testing').length,
           riskScore: this.calculateRiskScore(findings)
         },
-        duration: Date.now() - startTime,
+        duration: Math.max(1, Math.round(performance.now() - startTime)),
         timestamp: new Date()
       };
     } catch (error) {
@@ -97,8 +98,8 @@ export class SecurityAuditorAgent extends BaseAgent {
           'Debug and resolve the security audit infrastructure problem'
         )
         ],
-        metrics: { executionTime: Date.now() - startTime, errorCount: 1 },
-        duration: Date.now() - startTime,
+        metrics: { executionTime: Math.max(1, Math.round(performance.now() - startTime)), errorCount: 1 },
+        duration: Math.max(1, Math.round(performance.now() - startTime)),
         timestamp: new Date()
       };
     }
@@ -385,6 +386,8 @@ export class SecurityAuditorAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Comprehensive security analysis
     findings.push(
       this.createFinding(
@@ -397,7 +400,7 @@ export class SecurityAuditorAgent extends BaseAgent {
     );
 
     // Security architecture review
-    if (context.complexity >= 7) {
+    if (complexityLevel >= 7) {
       findings.push(
         this.createFinding(
           'security-implementation',

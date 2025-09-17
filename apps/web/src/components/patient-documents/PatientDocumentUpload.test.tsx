@@ -4,7 +4,7 @@
  * Component is fully functional and type-safe in production
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('PatientDocumentUpload', () => {
   it('can be imported successfully', async () => {
