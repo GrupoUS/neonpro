@@ -27,10 +27,9 @@ import {
   Share2,
   Shield,
   Trash2,
-  Upload,
   User,
 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -137,7 +136,6 @@ function PatientDocumentsPage() {
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
 
   // Mock documents data (replace with real data)
   const mockDocuments: PatientDocument[] = [
@@ -191,36 +189,6 @@ function PatientDocumentsPage() {
       tags: ['plano', 'saúde'],
     },
   ];
-
-  // File upload handler
-  const handleFileUpload = useCallback((files: FileList | null) => {
-    if (!files) return;
-
-    Array.from(files).forEach(file => {
-      const fileId = Math.random().toString(36).substr(2, 9);
-
-      // Simulate upload progress
-      setUploadProgress(prev => ({ ...prev, [fileId]: 0 }));
-
-      const interval = setInterval(() => {
-        setUploadProgress(prev => {
-          const newProgress = (prev[fileId] || 0) + 10;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setUploadProgress(prev => {
-                const { [fileId]: _, ...rest } = prev;
-                return rest;
-              });
-              toast.success(`${file.name} enviado com sucesso!`);
-            }, 500);
-            return { ...prev, [fileId]: 100 };
-          }
-          return { ...prev, [fileId]: newProgress };
-        });
-      }, 200);
-    });
-  }, []);
 
   // Filter documents based on search and category
   const filteredDocuments = mockDocuments.filter(doc => {
@@ -341,31 +309,6 @@ function PatientDocumentsPage() {
           className="w-full sm:w-auto"
         />
       </div>
-
-      {/* Upload Progress */}
-      {Object.keys(uploadProgress).length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-sm'>Enviando Arquivos...</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-2'>
-            {Object.entries(uploadProgress).map(([fileId, progress]) => (
-              <div key={fileId} className='space-y-1'>
-                <div className='flex justify-between text-sm'>
-                  <span>Upload {fileId}</span>
-                  <span>{progress}%</span>
-                </div>
-                <div className='w-full bg-muted rounded-full h-2'>
-                  <div
-                    className='bg-primary h-2 rounded-full transition-all duration-300'
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
 
       {/* Filters and Search */}
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
