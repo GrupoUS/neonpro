@@ -183,7 +183,15 @@ export function performanceTrackingMiddleware() {
           },
         );
       }
-    } catch {
+    } catch (error) {
+      // Log the error for observability
+      logger.error('Error in performanceTrackingMiddleware:', error);
+      errorTracker.captureException?.(error, {
+        context: {
+          ...context,
+          middleware: 'performanceTrackingMiddleware',
+        },
+      });
       throw error;
     }
   };
