@@ -3,7 +3,7 @@
  * T081-A4 - Validate 100% WCAG 2.1 AA+ Compliance
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { AccessibilityValidator } from '../../../utils/accessibility-validation';
 
 describe('Accessibility Validation Simple Test', () => {

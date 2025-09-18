@@ -7,16 +7,15 @@
 
 import { NextRequest } from 'next/server';
 import type { Database } from '../../../../../packages/database/src/types/supabase';
-import { createAdminClient } from '../../../lib/supabase/client';
-import { createHealthcareResponse } from '../../../middleware/edge-runtime';
+import { createAdminClient } from '../../../../lib/supabase/client';
+import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 import {
   type AppointmentReminder,
   whatsappReminderService,
-} from '../../../services/whatsapp-reminder-service';
+} from '../../../../services/whatsapp-reminder-service';
 
 // Configure for edge runtime
 export const runtime = 'edge';
-export const regions = ['sao1', 'gru1'];
 
 // Type for the appointment query result with joined tables
 type AppointmentWithRelations = Database['public']['Tables']['appointments']['Row'] & {

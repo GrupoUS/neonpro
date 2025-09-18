@@ -16,7 +16,7 @@
 import type { NextRequest, NextResponse } from 'next/server';
 
 // Brazilian healthcare compliance configuration
-export const BRASIL_HEALTHCARE_CONFIG = {
+const BRASIL_HEALTHCARE_CONFIG = {
   // LGPD (Lei Geral de Proteção de Dados) Configuration
   lgpd: {
     // Data processing lawful bases under LGPD Art. 7º
@@ -122,7 +122,7 @@ export const BRASIL_HEALTHCARE_CONFIG = {
 } as const;
 
 // Security headers for Brazilian healthcare compliance
-export const HEALTHCARE_SECURITY_HEADERS = {
+const HEALTHCARE_SECURITY_HEADERS = {
   // LGPD compliance headers
   'X-LGPD-Compliant': 'true',
   'X-Data-Controller': 'NeonPro Healthcare Platform',

@@ -4,16 +4,16 @@
 
 **Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
 **Princípio**: KISS + YAGNI - Simplicidade que funciona sobre complexidade que não funciona
-**Coordenação**: [**📋 Guia Master de Agentes**](./.claude/agents/CLAUDE.md) - Referência definitiva para coordenação inteligente
+**Coordenação**: Especialização focada com workflows inteligentes - Agente certo, hora certa
 
 ## 🎯 REGRAS UNIVERSAIS OBRIGATÓRIAS
 
-### **ARCHON-FIRST RULE** 
+### **ARCHON-FIRST RULE**
 Sempre usar Archon MCP para task management, knowledge management e organização do projeto.
 
 ### **SEQUÊNCIA MCP OBRIGATÓRIA**
 1. **`sequential-thinking`** → Análise e decomposição (SEMPRE primeiro)
-2. **`archon`** → Task setup e knowledge base  
+2. **`archon`** → Task setup e knowledge base
 3. **`serena`** → Análise de codebase (NUNCA busca nativa)
 4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
 5. **`desktop-commander`** → Implementação e operações
@@ -21,12 +21,92 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 ### **FERRAMENTAS MCP MANDATÓRIAS**
 - **`serena mcp`**: Busca e análise semântica de código _(NUNCA usar busca nativa)_
 - **`supabase mcp`**: Operações de database
-- **`archon mcp`**: Task e knowledge management  
+- **`archon mcp`**: Task e knowledge management
 - **`desktop-commander mcp`**: Operações de arquivo e sistema
 - **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
 - **`tavily mcp`**: Pesquisas web em tempo real
 
 ## 🤖 COORDENAÇÃO DE AGENTES
+
+### **📋 Registro de Agentes**
+
+#### 🚀 Agentes Core (Sempre Disponíveis)
+
+**`apex-dev`** - Coordenador Principal
+- **Triggers**: "desenvolver", "implementar", "código", "feature", "bug", "refatorar", "auditoria"
+- **Especialização**: Full-stack + healthcare + refatoração + segurança integrada
+- **Tecnologias**: TanStack Router + Vite + React 19 + TypeScript + tRPC
+- **Modos**: Standard, Architecture, Refactor, Security Audit
+
+**`apex-researcher`** - Inteligência de Pesquisa
+- **Triggers**: "pesquisar", "analisar", "investigar", "validar", "research", "compliance"
+- **Especialização**: Multi-fonte (Context7 → Tavily → Archon) + validação cruzada ≥95%
+- **Capacidades**: Evidence-based implementation, compliance validation
+
+**`apex-ui-ux-designer`** - Excelência em Design
+- **Triggers**: "design", "ui", "ux", "interface", "página", "componente", "acessibilidade"
+- **Especialização**: WCAG 2.1 AA+ + shadcn/ui v4 + mobile-first + healthcare UX
+- **MCP**: Integração automática com registries shadcn
+
+#### ⚙️ Agentes Especializados (Sob Demanda)
+
+**`code-reviewer`** - Qualidade de Código
+- **Triggers**: "revisar", "qualidade", "review", "análise", "performance"
+- **Especialização**: Análise AI-powered + security scanning + performance
+
+**`security-auditor`** - DevSecOps Expert
+- **Triggers**: "segurança", "vulnerabilidade", "auditoria", "compliance", "security"
+- **Especialização**: OWASP + penetration testing + compliance frameworks
+
+**`architect-review`** - Arquitetura de Sistema
+- **Triggers**: "arquitetura", "design", "sistema", "microservices", "patterns"
+- **Especialização**: Clean architecture + DDD + distributed systems
+
+**`tdd-orchestrator`** - Coordenação TDD
+- **Triggers**: "tdd", "teste", "testing", "quality", "coverage"
+- **Especialização**: Red-Green-Refactor + multi-agent coordination
+
+### **🎯 Matriz de Ativação Inteligente**
+
+#### Por Complexidade
+
+**Baixa Complexidade**
+- **Agente**: `apex-dev` (solo)
+- **Situação**: Bug fixes, feature simples, refatoração local
+- **MCP**: sequential-thinking → archon → serena → desktop-commander
+
+**Média Complexidade**
+- **Agentes**: `apex-dev` + 1-2 especialistas
+- **Situação**: Features com UI, APIs, integração
+- **MCP**: + context7 para research adicional
+
+**Alta Complexidade**
+- **Agentes**: Coordenação multi-agent
+- **Situação**: Arquitetura, sistemas distribuídos, compliance crítico
+- **MCP**: + tavily para validação abrangente
+
+#### Por Palavra-chave (Auto-ativação)
+
+```yaml
+TRIGGERS_AUTOMATICOS:
+  desenvolvimento: ["desenvolver", "implementar", "código", "feature", "bug"]
+  pesquisa: ["pesquisar", "analisar", "investigar", "validar", "research"]
+  design: ["design", "ui", "ux", "interface", "página", "componente"]
+  qualidade: ["revisar", "quality", "performance", "otimizar", "refactor"]
+  segurança: ["security", "vulnerabilidade", "audit", "compliance"]
+  arquitetura: ["architecture", "sistema", "patterns", "microservices"]
+  testes: ["teste", "tdd", "testing", "coverage", "quality"]
+```
+
+#### Decisão: Sequential vs Paralelo
+
+**Sequential (Dependências lineares)**
+- Research → Development → Design → Testing
+- Architecture → Implementation → Security Review
+
+**Paralelo (Tarefas independentes)**
+- Code Review + Security Audit + Performance Analysis
+- UI Design + Backend Development (após definição de contratos)
 
 ### **Decisão Rápida de Agente**
 ```yaml
@@ -40,13 +120,68 @@ QUANDO_USAR_AGENTES:
   arquitetura: "@architect-review (clean architecture + patterns)"
 ```
 
-### **Guia Completo de Agentes**
-**📋 [CONSULTE O GUIA MASTER](./.claude/agents/CLAUDE.md)** para:
-- Registro completo de agentes e triggers
-- Workflows predefinidos por cenário  
-- Comandos prontos para usar
-- Matriz de ativação inteligente
-- Coordenação sequential vs paralelo
+## 🔄 WORKFLOWS ESSENCIAIS
+
+### 1. Desenvolvimento Completo de Feature
+```yaml
+sequence:
+  1. apex-researcher → "Validação tecnológica e best practices"
+  2. apex-dev → "Implementação core + architecture mode se necessário"
+  3. apex-ui-ux-designer → "Interface otimizada (se aplicável)"
+  4. code-reviewer → "Validação final de qualidade"
+output: "Feature production-ready com qualidade validada"
+```
+
+### 2. Research-Driven Implementation
+```yaml
+sequence:
+  1. apex-researcher → "Multi-source research e compliance"
+  2. apex-dev → "Implementação baseada em evidências"
+  3. code-reviewer → "Quality gates e security check"
+output: "Implementação evidence-based com qualidade garantida"
+```
+
+### 3. Qualidade & Segurança Integrada
+```yaml
+parallel:
+  - code-reviewer → "Análise de qualidade e performance"
+  - security-auditor → "Auditoria segurança e vulnerabilidades"
+  - apex-dev → "Correções coordenadas e otimizações"
+output: "Código seguro e otimizado"
+```
+
+### 4. Arquitetura & Sistema
+```yaml
+sequence:
+  1. architect-review → "Design e padrões arquiteturais"
+  2. apex-dev → "Implementação seguindo architecture mode"
+  3. security-auditor → "Validação segurança arquitetural"
+output: "Sistema bem arquitetado e seguro"
+```
+
+## ⚡ COMANDOS RÁPIDOS
+
+### Agente Único
+```bash
+@apex-dev "implementar autenticação JWT com refresh token"
+@apex-researcher "validar padrões LGPD para dados de pacientes"
+@apex-ui-ux-designer "criar interface de agendamento acessível"
+@code-reviewer "analisar performance da API de pacientes"
+```
+
+### Múltiplos Agentes (Paralelo)
+```bash
+@apex-dev,code-reviewer "implementar e revisar sistema de notificações"
+@apex-ui-ux-designer,apex-dev "criar dashboard responsivo com backend"
+@security-auditor,code-reviewer "auditoria completa de segurança"
+```
+
+### Workflows Completos
+```bash
+@apex-researcher,apex-dev "pesquisar e implementar integração FHIR"
+@architect-review,apex-dev,security-auditor "design e implementação microservice seguro"
+@apex-researcher,apex-dev,apex-ui-ux-designer,code-reviewer "feature completa de telemedicina"
+```
 
 ## 📋 WORKFLOW ARCHON OBRIGATÓRIO
 
@@ -71,7 +206,7 @@ QUANDO_USAR_AGENTES:
 - Reduzir carga cognitiva
 - Evitar over-engineering
 
-### **YAGNI Principle**  
+### **YAGNI Principle**
 - Construir apenas o que requisitos especificam
 - Resistir features "por precaução"
 - Refatorar quando requisitos emergirem
@@ -86,7 +221,7 @@ QUANDO_USAR_AGENTES:
 ## 🚀 METODOLOGIA A.P.T.E
 
 **Analyze** → Análise abrangente de requisitos
-**Plan** → Planejamento estratégico de implementação  
+**Plan** → Planejamento estratégico de implementação
 **Think** → Meta-cognição e avaliação multi-perspectiva
 **Execute** → Implementação sistemática com quality gates
 
@@ -96,7 +231,7 @@ QUANDO_USAR_AGENTES:
 
 ### **Build & Runtime**
 - **Turborepo**: Cache inteligente para builds 3-5x mais rápidos
-- **Bun**: Scripts e testes (3-5x performance vs npm) 
+- **Bun**: Scripts e testes (3-5x performance vs npm)
 - **PNPM**: Package management eficiente
 - **Vite**: Dev server <2s startup, HMR <100ms
 
@@ -110,7 +245,7 @@ QUANDO_USAR_AGENTES:
 
 ### **Healthcare Compliance (Automático)**
 - **LGPD**: Proteção de dados de pacientes
-- **ANVISA**: Regulamentações de dispositivos médicos  
+- **ANVISA**: Regulamentações de dispositivos médicos
 - **CFM**: Padrões profissionais médicos
 - **WCAG 2.1 AA+**: Acessibilidade obrigatória
 
@@ -128,7 +263,7 @@ QUANDO_USAR_AGENTES:
 - Funcionalidade existente preservada
 - Backward compatibility mantida
 
-### **Segurança**  
+### **Segurança**
 - Zero vulnerabilidades introduzidas
 - Compliance mantido
 - Audit trail completo
@@ -143,6 +278,38 @@ QUANDO_USAR_AGENTES:
 - Documentação adequada
 - Test coverage ≥90% (componentes críticos)
 
+## 🔧 MCP TOOLS ESSENCIAIS
+
+### Obrigatórios (Todos os Agentes)
+- **`sequential-thinking`**: SEMPRE primeiro passo - análise e decomposição
+- **`archon`**: Task management e knowledge base (nunca pular)
+- **`serena`**: Análise de codebase (NUNCA usar busca nativa)
+
+### Por Contexto
+```yaml
+research_stack:
+  - context7: Documentação oficial e frameworks
+  - tavily: Informações atuais e trends
+  - exa: Implementações reais (complexidade ≥5)
+
+development_stack:
+  - desktop-commander: Operações de arquivo e sistema
+  - supabase-mcp: Database operations
+  - shadcn-ui: Componentes e registries (UI/UX agent)
+
+quality_stack:
+  - Integração CI/CD via desktop-commander
+  - Testes automatizados e coverage
+  - Security scanning tools
+```
+
+### Sequência MCP Padrão
+1. **sequential-thinking** (análise)
+2. **archon** (task setup)
+3. **serena** (codebase context)
+4. **Contextuais** (conforme necessidade)
+5. **desktop-commander** (implementação)
+
 ## 🚫 RESTRIÇÕES UNIVERSAIS
 
 ### **NUNCA FAÇA**
@@ -153,7 +320,7 @@ QUANDO_USAR_AGENTES:
 - Proceder com <85% de confiança
 - Deletar arquivos `/docs` sem aprovação
 
-### **SEMPRE FAÇA**  
+### **SEMPRE FAÇA**
 - Iniciar com sequential-thinking
 - Completar ciclo Archon antes de código
 - Pesquisar antes de implementações críticas
@@ -166,7 +333,6 @@ QUANDO_USAR_AGENTES:
 
 ### **Documentação Obrigatória**
 - **[Workflow Completo](./docs/AGENTS.md)** - Processo de desenvolvimento mandatório
-- **[Guia de Agentes](./agents/CLAUDE.md)** - Coordenação inteligente de especialistas
 - **[Tech Stack](./docs/architecture/tech-stack.md)** - Decisões tecnológicas e rationale
 - **[Source Tree](./docs/architecture/source-tree.md)** - Organização do código
 
@@ -175,10 +341,18 @@ QUANDO_USAR_AGENTES:
 - **[Frontend Architecture](./docs/architecture/frontend-architecture.md)** - Estrutura de frontend
 - **[Database Schema](./docs/database-schema/AGENTS.md)** - Organização de dados
 
+### **Agentes Individuais**
+- **[APEX Dev](./agents/apex-dev.md)** - Especialização full-stack
+- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa
+- **[APEX UI/UX](./agents/apex-ui-ux-designer.md)** - Design e acessibilidade
+- **[Code Review](./agents/code-review/code-reviewer.md)** - Qualidade de código
+- **[Security](./agents/code-review/security-auditor.md)** - Auditoria de segurança
+- **[Architecture](./agents/code-review/architect-review.md)** - Arquitetura de sistema
+
 ---
 
-**🎯 REGRA DE OURO**: Em caso de dúvida, consulte o [**Guia Master de Agentes**](./.claude/agents/CLAUDE.md) para coordenação inteligente e workflows predefinidos.
+**🎯 REGRA DE OURO**: Em caso de dúvida, comece com `@apex-dev` - ele coordena e ativa outros conforme necessário.
 
-**⚡ EFICIÊNCIA**: Use o agente certo na hora certa. O apex-dev coordena tudo quando necessário.
+**⚡ EFICIÊNCIA**: Use o agente certo na hora certa. Use workflows predefinidos para tarefas complexas, agentes únicos para tarefas focadas.
 
 **🔄 MELHORIA CONTÍNUA**: Sistema Archon captura learnings - feedback sempre integrado aos workflows.

@@ -1,4 +1,3 @@
-import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 // import { SupabaseCacheManager } from '@/lib/cache/supabase-cache-manager'; // disabled for production type-check
 // import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher'; // disabled for production type-check

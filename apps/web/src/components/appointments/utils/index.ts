@@ -6,7 +6,6 @@
  */
 
 import {
-  addMinutes,
   differenceInMinutes,
   format,
   isPast,
@@ -15,7 +14,7 @@ import {
   parseISO,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import type { Appointment, NoShowRisk, RiskLevel, TimeSlot } from '../types';
+import type { Appointment, RiskLevel, TimeSlot } from '../types';
 
 /**
  * Format appointment time for Brazilian healthcare context

@@ -275,7 +275,7 @@ export function useHealthcareAccessibilityAudit(
     };
 
     updateContext(context);
-    return runAudit(context);
+    return runAudit(context, adjustedOptions);
   }, [updateContext, runAudit, axeOptions]);
 
   // Simulate emergency scenario

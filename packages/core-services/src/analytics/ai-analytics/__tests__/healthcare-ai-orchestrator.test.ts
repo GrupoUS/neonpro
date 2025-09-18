@@ -6,17 +6,25 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { HealthcareAIOrchestrator } from '../healthcare-ai-orchestrator';
+import { PredictiveAnalyticsService } from '../predictive-analytics.service';
 import { StubModelProvider } from '../../ml/stub-provider';
 
 describe('HealthcareAIOrchestrator', () => {
   let orchestrator: HealthcareAIOrchestrator;
 
   beforeEach(() => {
-    orchestrator = new HealthcareAIOrchestrator({
-      enablePredictiveAnalytics: true,
-      enableLGPDCompliance: true,
-      modelProvider: new StubModelProvider()
-    });
+    const predictiveService = new PredictiveAnalyticsService(
+      new StubModelProvider(),
+      true // Enable LGPD compliance
+    );
+    
+    orchestrator = new HealthcareAIOrchestrator(
+      predictiveService,
+      {
+        enablePredictiveAnalytics: true,
+        enableLGPDCompliance: true
+      }
+    );
   });
 
   describe('generateHealthcareInsights', () => {
@@ -85,7 +93,7 @@ describe('HealthcareAIOrchestrator', () => {
       expect(dashboard).toHaveProperty('status');
 
       expect(['healthy', 'warning', 'critical']).toContain(dashboard.status);
-      expect(Array.isArray(dashboard.insights)).toBe(true);
+      expect(Array.isArray(dashboard.insights.insights)).toBe(true);
     });
 
     it('should determine status correctly', async () => {
@@ -157,12 +165,14 @@ describe('HealthcareAIOrchestrator', () => {
 
   describe('Error Handling', () => {
     it('should handle errors gracefully', async () => {
-      const failingOrchestrator = new HealthcareAIOrchestrator({
-        modelProvider: {
-          predict: async () => { throw new Error('Provider failed'); },
-          isAvailable: () => false
-        }
-      });
+      const failingModelProvider = {
+        predict: async () => { throw new Error('Provider failed'); },
+        isAvailable: () => false,
+        initialize: async () => { throw new Error('Failed to initialize'); }
+      };
+
+      const failingPredictiveService = new PredictiveAnalyticsService(failingModelProvider, true);
+      const failingOrchestrator = new HealthcareAIOrchestrator(failingPredictiveService);
 
       await expect(failingOrchestrator.generateHealthcareInsights())
         .rejects.toThrow('Failed to generate healthcare insights');

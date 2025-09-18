@@ -6,11 +6,10 @@
  */
 
 import { NextRequest } from 'next/server';
-import { createHealthcareResponse } from '../../../middleware/edge-runtime';
+import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 
 // Configure for edge runtime
 export const runtime = 'edge';
-export const regions = ['sao1', 'gru1'];
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();

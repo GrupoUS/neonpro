@@ -18,7 +18,6 @@ import {
   Activity,
   AlertTriangle,
   Brain,
-  Calendar,
   CheckCircle,
   Clock,
   Cloud,

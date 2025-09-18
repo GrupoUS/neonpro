@@ -12,7 +12,7 @@ export interface AIAnalyticsConfig {
   modelProvider?: any;
 }
 
-export interface HealthcareInsight {
+export interface HealthcareInsights {
   category: 'clinical' | 'operational' | 'financial' | 'regulatory';
   insights: any[];
   metrics: any;
@@ -20,11 +20,33 @@ export interface HealthcareInsight {
   generatedAt: Date;
 }
 
-export interface ComplianceAudit {
+export interface HealthcareComplianceAudit {
   lgpdCompliant: boolean;
   anvisaCompliant: boolean;
   cfmCompliant: boolean;
   auditTrail: string[];
   recommendations: string[];
   lastAuditDate: Date;
+  overallScore: number;
+  issues: string[];
+  nextAuditDue: Date;
+}
+
+export interface BrazilianHealthcareKPIs {
+  anvisa: {
+    deviceCompliance: number;
+    auditScore: number;
+    lastInspection: Date;
+  };
+  sus: {
+    integrationPerformance: number;
+    patientFlow: number;
+    waitingTimeCompliance: number;
+  };
+  lgpd: {
+    dataProtectionScore: number;
+    consentRate: number;
+    breachCount: number;
+  };
+  lastUpdated: Date;
 }

@@ -6,12 +6,11 @@
  */
 
 import { NextRequest } from 'next/server';
-import { createHealthcareResponse } from '../../../middleware/edge-runtime';
-import { whatsappReminderService } from '../../../services/whatsapp-reminder-service';
+import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
+import { whatsappReminderService } from '../../../../services/whatsapp-reminder-service';
 
 // Configure for edge runtime
 export const runtime = 'edge';
-export const regions = ['sao1', 'gru1'];
 
 /**
  * Handle WhatsApp webhook verification (GET)

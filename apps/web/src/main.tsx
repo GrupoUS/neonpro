@@ -5,7 +5,7 @@ import ErrorBoundary from './components/error-pages/ErrorBoundary';
 import LocalErrorBoundary from './components/monitoring/LocalErrorBoundary';
 import { ThemeProvider } from './components/theme-provider';
 import { ConsentProvider } from './contexts/ConsentContext';
-import { criticalComponents, useComponentPreloader } from './hooks/useLazyComponent';
+import { criticalComponents } from './hooks/useLazyComponent';
 // import { initializeSentry } from './lib/sentry'; // temporarily disabled to unblock deploy
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';

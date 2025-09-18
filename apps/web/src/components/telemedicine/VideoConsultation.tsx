@@ -1,556 +1,568 @@
 /**
- * Enhanced Video Consultation Interface
- *
- * Features:
- * - CFM Resolution 2,314/2022 compliance
- * - ICP-Brasil digital certificate validation
- * - NGS2 Level 3 security standards
- * - WebRTC healthcare-grade video quality
- * - Real-time Portuguese medical terminology support
- * - Emergency escalation protocols
- * - LGPD-compliant session recording
- * - Professional license validation
+ * Enhanced Video Consultation Component
+ * Integrates with WebRTC infrastructure for real-time video/audio calls
+ * Features CFM compliance, LGPD privacy controls, and session recording
  */
 
-import {
-  Activity,
-  AlertTriangle,
-  Camera,
-  CameraOff,
-  CheckCircle,
-  Clock,
-  FileText,
-  Heart,
-  MessageSquare,
-  Mic,
-  MicOff,
-  Monitor,
-  Phone,
-  PhoneOff,
-  Settings,
-  Shield,
-  Stethoscope,
-  UserCheck,
-  Users,
-  Video,
-  VideoOff,
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { 
+  Video, VideoOff, Mic, MicOff, Phone, PhoneOff, Monitor, MonitorOff,
+  Settings, Volume2, VolumeX, Maximize, Minimize, Record, Square,
+  Users, MessageSquare, FileText, Shield, Activity, AlertTriangle,
+  Camera, CameraOff, Wifi, WifiOff, Clock, Heart
 } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from 'sonner';
 
-import { useAIChat } from '@/hooks/use-ai-chat';
-import { useTelemedicineSession } from '@/hooks/use-telemedicine';
-import { cn } from '@/lib/utils';
+import { 
+  useTelemedicineSession, 
+  useVideoCall, 
+  useRealTimeChat, 
+  useSessionRecording,
+  useSessionConsent,
+  useEmergencyEscalation
+} from '@/hooks/use-telemedicine';
 
 interface VideoConsultationProps {
-  appointmentId: string;
-  patientId: string;
-  professionalId: string;
-  sessionType: 'consultation' | 'followup' | 'emergency';
-  onSessionEnd?: (sessionData: any) => void;
+  sessionId: string;
+  onSessionEnd?: () => void;
   className?: string;
 }
 
-interface SessionQuality {
-  video: {
-    resolution: string;
-    fps: number;
-    bitrate: number;
-    quality: 'excellent' | 'good' | 'poor' | 'critical';
-  };
-  audio: {
-    quality: 'excellent' | 'good' | 'poor' | 'critical';
-    latency: number;
-  };
-  connection: {
-    rtt: number; // Round trip time
-    packetLoss: number;
-    bandwidth: number;
-  };
+interface ParticipantInfo {
+  id: string;
+  name: string;
+  role: 'patient' | 'physician' | 'observer';
+  avatar?: string;
+  isConnected: boolean;
+  connectionQuality: 'excellent' | 'good' | 'poor' | 'critical';
 }
 
-interface CFMValidation {
-  professionalCRM: string;
-  licenseValid: boolean;
-  specialties: string[];
-  certificateType: 'A1' | 'A3' | 'S1' | 'S3' | 'T3';
-  icpBrasilValid: boolean;
-  lastValidation: Date;
-}
-
-export function VideoConsultation({
-  appointmentId,
-  patientId,
-  professionalId,
-  sessionType,
+export function VideoConsultation({ 
+  sessionId, 
   onSessionEnd,
-  className,
+  className = '' 
 }: VideoConsultationProps) {
-  // Video/Audio state
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  // Hooks
+  const { session, updateSession, endSession, isEnding } = useTelemedicineSession({ sessionId });
+  const { callState, localVideoRef, remoteVideoRef, initializeCall, toggleMute, toggleVideo, startScreenShare, endCall } = useVideoCall(sessionId);
+  const { messages, sendMessage, isSending } = useRealTimeChat({ sessionId, enableAI: true });
+  const { isRecording, startRecording, stopRecording } = useSessionRecording(sessionId);
+  const { consent, updateConsent } = useSessionConsent(sessionId);
+  const { escalateEmergency } = useEmergencyEscalation(sessionId);
 
-  // Session state
-  const [sessionStarted, setSessionStarted] = useState(false);
+  // State
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(0);
-  const [sessionQuality, setSessionQuality] = useState<SessionQuality | null>(null);
-  const [cfmValidation, setCfmValidation] = useState<CFMValidation | null>(null);
+  const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
+  const [networkQuality, setNetworkQuality] = useState<'excellent' | 'good' | 'poor' | 'critical'>('excellent');
+  const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
 
-  // UI state
-  const [showSettings, setShowSettings] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
-  const [consultationNotes, setConsultationNotes] = useState('');
+  // Refs
+  const sessionStartTime = useRef<Date>(new Date());
+  const durationInterval = useRef<NodeJS.Timeout>();
+  const chatMessageRef = useRef<HTMLInputElement>(null);
 
-  // Refs for video elements
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-
-  // Custom hooks
-  const aiChat = useAIChat({
-    context: 'telemedicine',
-    language: 'portuguese',
-    medicalTerminology: true,
-  });
-
-  const telemedicineSession = useTelemedicineSession({
-    appointmentId,
-    patientId,
-    professionalId,
-    cfmValidation: true,
-  });
-
-  // Initialize session with CFM validation
+  // Initialize video call when component mounts
   useEffect(() => {
-    initializeSession();
-  }, []);
-
-  // Session duration timer
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (sessionStarted) {
-      interval = setInterval(() => {
-        setSessionDuration(prev => prev + 1);
-      }, 1000);
+    if (sessionId) {
+      initializeCall();
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      endCall();
     };
-  }, [sessionStarted]);
+  }, [sessionId, initializeCall, endCall]);
 
-  const initializeSession = async () => {
-    try {
-      // Validate CFM license
-      const validation = await telemedicineSession.validateCFMLicense();
-      setCfmValidation(validation);
+  // Session duration timer
+  useEffect(() => {
+    durationInterval.current = setInterval(() => {
+      setSessionDuration(Math.floor((Date.now() - sessionStartTime.current.getTime()) / 1000));
+    }, 1000);
 
-      if (!validation.licenseValid) {
-        throw new Error('Licença médica inválida - consulta não pode prosseguir');
+    return () => {
+      if (durationInterval.current) {
+        clearInterval(durationInterval.current);
       }
+    };
+  }, []);
 
-      // Initialize WebRTC connection
-      await initializeWebRTC();
-
-      // Start quality monitoring
-      startQualityMonitoring();
-    } catch (error) {
-      console.error('Failed to initialize telemedicine session:', error);
+  // Monitor connection quality
+  useEffect(() => {
+    if (callState.connectionQuality) {
+      setNetworkQuality(callState.connectionQuality);
     }
-  };
+  }, [callState.connectionQuality]);
 
-  const initializeWebRTC = async () => {
-    try {
-      // Get user media with healthcare quality constraints
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { min: 1280, ideal: 1920 },
-          height: { min: 720, ideal: 1080 },
-          frameRate: { min: 24, ideal: 30 },
+  // Update participants list
+  useEffect(() => {
+    if (session) {
+      const participantsList: ParticipantInfo[] = [
+        {
+          id: session.patientId,
+          name: session.metadata.patientName,
+          role: 'patient',
+          isConnected: callState.isConnected,
+          connectionQuality: callState.connectionQuality,
         },
-        audio: {
-          sampleRate: 48000,
-          channelCount: 2,
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
-      });
-
-      mediaStreamRef.current = stream;
-
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error('Failed to get user media:', error);
+        {
+          id: session.professionalId,
+          name: session.metadata.professionalName,
+          role: 'physician',
+          isConnected: callState.isConnected,
+          connectionQuality: callState.connectionQuality,
+        }
+      ];
+      setParticipants(participantsList);
     }
-  };
+  }, [session, callState.isConnected, callState.connectionQuality]);
 
-  const startQualityMonitoring = () => {
-    // Simulate quality monitoring - in real implementation would use WebRTC stats
-    const interval = setInterval(() => {
-      setSessionQuality({
-        video: {
-          resolution: '1080p',
-          fps: 30,
-          bitrate: 2500,
-          quality: 'excellent',
-        },
-        audio: {
-          quality: 'excellent',
-          latency: 45,
-        },
-        connection: {
-          rtt: 25,
-          packetLoss: 0.1,
-          bandwidth: 5000,
-        },
-      });
-    }, 5000);
-
-    return () => clearInterval(interval);
-  };
-
-  const toggleVideo = () => {
-    if (mediaStreamRef.current) {
-      const videoTrack = mediaStreamRef.current.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsVideoEnabled(videoTrack.enabled);
-      }
-    }
-  };
-
-  const toggleAudio = () => {
-    if (mediaStreamRef.current) {
-      const audioTrack = mediaStreamRef.current.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsAudioEnabled(audioTrack.enabled);
-      }
-    }
-  };
-
-  const startScreenShare = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true,
-      });
-
-      // Replace video track for screen sharing
-      setIsScreenSharing(true);
-    } catch (error) {
-      console.error('Failed to start screen share:', error);
-    }
-  };
-
-  const endSession = async () => {
-    try {
-      // Stop all media tracks
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      }
-
-      // Save consultation notes
-      const sessionData = {
-        appointmentId,
-        duration: sessionDuration,
-        notes: consultationNotes,
-        quality: sessionQuality,
-        recordingConsent: isRecording,
-        endedAt: new Date(),
-      };
-
-      await telemedicineSession.endSession(sessionData);
-      onSessionEnd?.(sessionData);
-    } catch (error) {
-      console.error('Failed to end session:', error);
-    }
-  };
-
-  const formatDuration = (seconds: number): string => {
+  // Format duration
+  const formatDuration = useCallback((seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
-  const getQualityColor = (quality: string) => {
+  // Get connection quality color
+  const getQualityColor = useCallback((quality: string) => {
     switch (quality) {
-      case 'excellent':
-        return 'text-green-600';
-      case 'good':
-        return 'text-blue-600';
-      case 'poor':
-        return 'text-yellow-600';
-      case 'critical':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
+      case 'excellent': return 'text-green-500';
+      case 'good': return 'text-yellow-500';
+      case 'poor': return 'text-orange-500';
+      case 'critical': return 'text-red-500';
+      default: return 'text-gray-500';
     }
-  };
+  }, []);
+
+  // Handle session end
+  const handleEndSession = useCallback(async () => {
+    try {
+      await endSession('normal_completion');
+      endCall();
+      onSessionEnd?.();
+      toast.success('Sessão finalizada com sucesso');
+    } catch (error) {
+      toast.error('Erro ao finalizar sessão');
+    }
+  }, [endSession, endCall, onSessionEnd]);
+
+  // Handle emergency escalation
+  const handleEmergencyEscalation = useCallback(async (emergencyType: 'medical' | 'technical') => {
+    try {
+      await escalateEmergency({
+        emergencyType,
+        severity: 'high',
+        description: `Emergency escalated during telemedicine session ${sessionId}`,
+      });
+      toast.success('Emergência escalada com sucesso');
+      setShowEmergencyDialog(false);
+    } catch (error) {
+      toast.error('Erro ao escalar emergência');
+    }
+  }, [escalateEmergency, sessionId]);
+
+  // Handle screen sharing
+  const handleScreenShare = useCallback(async () => {
+    try {
+      await startScreenShare();
+      toast.success(callState.isScreenSharing ? 'Compartilhamento de tela interrompido' : 'Compartilhamento de tela iniciado');
+    } catch (error) {
+      toast.error('Erro no compartilhamento de tela');
+    }
+  }, [startScreenShare, callState.isScreenSharing]);
+
+  // Handle recording toggle
+  const handleRecordingToggle = useCallback(async () => {
+    try {
+      if (isRecording) {
+        await stopRecording();
+        toast.success('Gravação finalizada');
+      } else {
+        await startRecording();
+        toast.success('Gravação iniciada');
+      }
+    } catch (error) {
+      toast.error('Erro na gravação');
+    }
+  }, [isRecording, startRecording, stopRecording]);
+
+  // Handle chat message send
+  const handleSendMessage = useCallback(async (content: string) => {
+    if (!content.trim()) return;
+    
+    try {
+      await sendMessage(content);
+      if (chatMessageRef.current) {
+        chatMessageRef.current.value = '';
+      }
+    } catch (error) {
+      toast.error('Erro ao enviar mensagem');
+    }
+  }, [sendMessage]);
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <Activity className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Carregando sessão...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={cn('flex flex-col h-screen bg-gray-900', className)}>
-      {/* Header with CFM validation and session info */}
-      <div className='bg-white border-b p-4'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-4'>
-            <div className='flex items-center gap-2'>
-              <Shield className='h-5 w-5 text-green-600' />
-              <span className='text-sm font-medium'>CFM Validado</span>
-              {cfmValidation && (
-                <Badge variant='outline' className='text-xs'>
-                  CRM: {cfmValidation.professionalCRM}
-                </Badge>
-              )}
+    <div className={`h-screen flex flex-col bg-gray-900 text-white ${className}`}>
+      {/* Session Header */}
+      <div className="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
+        <div className="flex items-center space-x-4">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={session.metadata.patientName} />
+            <AvatarFallback className="bg-blue-600">
+              {session.metadata.patientName.split(' ').map(n => n[0]).join('').toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div>
+            <h2 className="font-semibold">{session.metadata.patientName}</h2>
+            <div className="flex items-center space-x-2 text-sm text-gray-300">
+              <span>{session.sessionType}</span>
+              <span>•</span>
+              <div className="flex items-center space-x-1">
+                <Clock className="h-3 w-3" />
+                <span>{formatDuration(sessionDuration)}</span>
+              </div>
+              <span>•</span>
+              <div className={`flex items-center space-x-1 ${getQualityColor(networkQuality)}`}>
+                <Wifi className="h-3 w-3" />
+                <span className="capitalize">{networkQuality}</span>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <div className='flex items-center gap-2'>
-              <Clock className='h-4 w-4 text-muted-foreground' />
-              <span className='text-sm'>{formatDuration(sessionDuration)}</span>
-            </div>
-
-            {sessionQuality && (
-              <Badge
-                variant='outline'
-                className={cn('text-xs', getQualityColor(sessionQuality.video.quality))}
-              >
-                Qualidade: {sessionQuality.video.quality}
+        <div className="flex items-center space-x-4">
+          {/* Compliance Indicators */}
+          <div className="flex items-center space-x-1">
+            {session.cfmCompliant && (
+              <Badge variant="outline" className="text-xs bg-green-900 text-green-300 border-green-700">
+                CFM
+              </Badge>
+            )}
+            {session.lgpdCompliant && (
+              <Badge variant="outline" className="text-xs bg-blue-900 text-blue-300 border-blue-700">
+                LGPD
+              </Badge>
+            )}
+            {session.consentGiven && (
+              <Badge variant="outline" className="text-xs bg-purple-900 text-purple-300 border-purple-700">
+                Consent
+              </Badge>
+            )}
+            {isRecording && (
+              <Badge variant="outline" className="text-xs bg-red-900 text-red-300 border-red-700 animate-pulse">
+                REC
               </Badge>
             )}
           </div>
 
-          <div className='flex items-center gap-2'>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => setShowSettings(true)}
-            >
-              <Settings className='h-4 w-4' />
-            </Button>
-
-            <Button
-              variant='destructive'
-              onClick={endSession}
-            >
-              <PhoneOff className='h-4 w-4 mr-2' />
-              Encerrar
-            </Button>
+          {/* Participants Count */}
+          <div className="flex items-center space-x-1 text-sm text-gray-300">
+            <Users className="h-4 w-4" />
+            <span>{participants.filter(p => p.isConnected).length}/{participants.length}</span>
           </div>
         </div>
       </div>
 
-      {/* Main video area */}
-      <div className='flex-1 flex'>
-        {/* Video panels */}
-        <div className='flex-1 relative bg-black'>
-          {/* Remote video (patient) */}
+      {/* Main Video Area */}
+      <div className="flex-1 relative">
+        {/* Remote Video (Patient) */}
+        <video
+          ref={remoteVideoRef}
+          className="w-full h-full object-cover bg-gray-800"
+          autoPlay
+          playsInline
+        />
+
+        {/* Local Video (Physician) - Picture-in-Picture */}
+        <div className="absolute top-4 right-4 w-48 h-36 bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-600 shadow-lg">
           <video
-            ref={remoteVideoRef}
-            className='w-full h-full object-cover'
+            ref={localVideoRef}
+            className="w-full h-full object-cover"
             autoPlay
             playsInline
+            muted
           />
-
-          {/* Local video (professional) - picture in picture */}
-          <div className='absolute top-4 right-4 w-64 h-48 bg-gray-800 rounded-lg overflow-hidden border-2 border-white'>
-            <video
-              ref={localVideoRef}
-              className='w-full h-full object-cover'
-              autoPlay
-              playsInline
-              muted
-            />
-            {!isVideoEnabled && (
-              <div className='absolute inset-0 flex items-center justify-center bg-gray-800'>
-                <CameraOff className='h-8 w-8 text-white' />
-              </div>
-            )}
+          
+          {/* Local Video Controls */}
+          <div className="absolute bottom-2 right-2 flex space-x-1">
+            <Button
+              size="sm"
+              variant={callState.isVideoEnabled ? "default" : "destructive"}
+              className="h-6 w-6 p-0"
+              onClick={toggleVideo}
+            >
+              {callState.isVideoEnabled ? <Video className="h-3 w-3" /> : <VideoOff className="h-3 w-3" />}
+            </Button>
           </div>
-
-          {/* Quality indicators */}
-          {sessionQuality && (
-            <div className='absolute top-4 left-4 space-y-2'>
-              <Badge variant='outline' className='bg-black/50 text-white border-white/20'>
-                {sessionQuality.video.resolution} @ {sessionQuality.video.fps}fps
-              </Badge>
-              <Badge variant='outline' className='bg-black/50 text-white border-white/20'>
-                RTT: {sessionQuality.connection.rtt}ms
-              </Badge>
-            </div>
-          )}
         </div>
 
-        {/* Side panel for chat/notes */}
-        {(showChat || showNotes) && (
-          <div className='w-80 bg-white border-l'>
-            <Tabs value={showChat ? 'chat' : 'notes'} className='h-full'>
-              <TabsList className='grid w-full grid-cols-2'>
-                <TabsTrigger
-                  value='chat'
-                  onClick={() => {
-                    setShowChat(true);
-                    setShowNotes(false);
-                  }}
-                >
-                  Chat IA
-                </TabsTrigger>
-                <TabsTrigger
-                  value='notes'
-                  onClick={() => {
-                    setShowNotes(true);
-                    setShowChat(false);
-                  }}
-                >
-                  Anotações
-                </TabsTrigger>
-              </TabsList>
+        {/* Participants List */}
+        <div className="absolute top-4 left-4 space-y-2">
+          {participants.map((participant) => (
+            <div key={participant.id} className="flex items-center space-x-2 bg-gray-800/80 backdrop-blur-sm rounded-lg p-2">
+              <div className={`w-2 h-2 rounded-full ${participant.isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-sm font-medium">{participant.name}</span>
+              <Badge variant="outline" className="text-xs">
+                {participant.role}
+              </Badge>
+            </div>
+          ))}
+        </div>
 
-              <TabsContent value='chat' className='p-4 h-full'>
-                <div className='h-full flex flex-col'>
-                  <div className='flex-1 overflow-y-auto mb-4'>
-                    {/* AI Chat messages would go here */}
-                    <div className='space-y-2'>
-                      <div className='bg-blue-50 p-3 rounded-lg'>
-                        <p className='text-sm'>
-                          IA: Posso ajudar com terminologia médica ou sugestões durante a consulta.
-                        </p>
-                      </div>
+        {/* Chat Panel */}
+        {isChatOpen && (
+          <div className="absolute right-0 top-0 h-full w-80 bg-gray-800/95 backdrop-blur-sm border-l border-gray-700">
+            <div className="p-4 border-b border-gray-700">
+              <h3 className="font-semibold">Chat da Consulta</h3>
+            </div>
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-3">
+                {messages.map((message) => (
+                  <div key={message.id} className={`flex ${message.senderType === 'professional' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs rounded-lg p-3 ${
+                      message.senderType === 'professional' 
+                        ? 'bg-blue-600 text-white' 
+                        : message.senderType === 'ai_assistant'
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-700 text-white'
+                    }`}>
+                      <p className="text-sm">{message.content}</p>
+                      <p className="text-xs opacity-70 mt-1">
+                        {new Date(message.timestamp).toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
+                ))}
+              </div>
+            </ScrollArea>
+            <div className="p-4 border-t border-gray-700">
+              <div className="flex space-x-2">
+                <input
+                  ref={chatMessageRef}
+                  type="text"
+                  placeholder="Digite sua mensagem..."
+                  className="flex-1 bg-gray-700 rounded-lg px-3 py-2 text-sm"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSendMessage(e.currentTarget.value);
+                    }
+                  }}
+                />
+                <Button 
+                  size="sm" 
+                  onClick={() => {
+                    if (chatMessageRef.current?.value) {
+                      handleSendMessage(chatMessageRef.current.value);
+                    }
+                  }}
+                  disabled={isSending}
+                >
+                  Enviar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
-                  <div className='flex gap-2'>
-                    <input
-                      type='text'
-                      placeholder='Digite sua pergunta...'
-                      className='flex-1 p-2 border rounded'
-                    />
-                    <Button size='sm'>Enviar</Button>
-                  </div>
-                </div>
-              </TabsContent>
+        {/* Connection Issues Alert */}
+        {!callState.isConnected && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+            <Alert className="bg-yellow-900 border-yellow-700 text-yellow-300">
+              <Activity className="h-4 w-4 animate-spin" />
+              <AlertDescription>
+                Estabelecendo conexão... Verifique sua internet.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
-              <TabsContent value='notes' className='p-4 h-full'>
-                <div className='h-full flex flex-col'>
-                  <h3 className='font-medium mb-4'>Anotações da Consulta</h3>
-                  <Textarea
-                    value={consultationNotes}
-                    onChange={e => setConsultationNotes(e.target.value)}
-                    placeholder='Digite as anotações da consulta...'
-                    className='flex-1 resize-none'
-                  />
-                  <div className='mt-4 flex justify-between items-center'>
-                    <span className='text-xs text-muted-foreground'>
-                      {consultationNotes.length} caracteres
-                    </span>
-                    <Button size='sm' variant='outline'>
-                      Salvar
-                    </Button>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+        {/* Network Quality Warning */}
+        {networkQuality === 'poor' || networkQuality === 'critical' && (
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50">
+            <Alert className="bg-orange-900 border-orange-700 text-orange-300">
+              <WifiOff className="h-4 w-4" />
+              <AlertDescription>
+                Qualidade da conexão baixa. A experiência pode ser comprometida.
+              </AlertDescription>
+            </Alert>
           </div>
         )}
       </div>
 
-      {/* Control bar */}
-      <div className='bg-gray-800 p-4'>
-        <div className='flex items-center justify-center gap-4'>
-          {/* Audio control */}
-          <Button
-            variant={isAudioEnabled ? 'default' : 'destructive'}
-            size='lg'
-            onClick={toggleAudio}
-            className='rounded-full w-12 h-12'
-          >
-            {isAudioEnabled ? <Mic className='h-5 w-5' /> : <MicOff className='h-5 w-5' />}
-          </Button>
+      {/* Bottom Controls */}
+      <div className="p-4 bg-gray-800 border-t border-gray-700">
+        <div className="flex items-center justify-between">
+          {/* Left Controls - Media */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant={callState.isMuted ? "destructive" : "outline"}
+              size="sm"
+              onClick={toggleMute}
+              title={callState.isMuted ? "Ligar microfone" : "Desligar microfone"}
+            >
+              {callState.isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+            
+            <Button
+              variant={callState.isVideoEnabled ? "outline" : "destructive"}
+              size="sm"
+              onClick={toggleVideo}
+              title={callState.isVideoEnabled ? "Desligar câmera" : "Ligar câmera"}
+            >
+              {callState.isVideoEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+            </Button>
+            
+            <Button
+              variant={callState.isScreenSharing ? "default" : "outline"}
+              size="sm"
+              onClick={handleScreenShare}
+              title="Compartilhar tela"
+            >
+              {callState.isScreenSharing ? <MonitorOff className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+            </Button>
+          </div>
 
-          {/* Video control */}
-          <Button
-            variant={isVideoEnabled ? 'default' : 'destructive'}
-            size='lg'
-            onClick={toggleVideo}
-            className='rounded-full w-12 h-12'
-          >
-            {isVideoEnabled ? <Video className='h-5 w-5' /> : <VideoOff className='h-5 w-5' />}
-          </Button>
+          {/* Center Controls - Features */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant={isChatOpen ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              title="Chat"
+            >
+              <MessageSquare className="h-4 w-4" />
+              {messages.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {messages.length}
+                </Badge>
+              )}
+            </Button>
+            
+            <Button
+              variant={isRecording ? "destructive" : "outline"}
+              size="sm"
+              onClick={handleRecordingToggle}
+              title={isRecording ? "Parar gravação" : "Iniciar gravação"}
+            >
+              {isRecording ? <Square className="h-4 w-4" /> : <Record className="h-4 w-4" />}
+            </Button>
 
-          {/* Screen share */}
-          <Button
-            variant={isScreenSharing ? 'default' : 'outline'}
-            size='lg'
-            onClick={startScreenShare}
-            className='rounded-full w-12 h-12'
-          >
-            <Monitor className='h-5 w-5' />
-          </Button>
+            <Dialog open={showEmergencyDialog} onOpenChange={setShowEmergencyDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" title="Emergência">
+                  <AlertTriangle className="h-4 w-4 text-red-500" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-gray-800 text-white">
+                <DialogHeader>
+                  <DialogTitle>Escalar Emergência</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-300">
+                    Selecione o tipo de emergência para escalar adequadamente:
+                  </p>
+                  <div className="flex space-x-4">
+                    <Button 
+                      variant="destructive" 
+                      onClick={() => handleEmergencyEscalation('medical')}
+                      className="flex-1"
+                    >
+                      <Heart className="h-4 w-4 mr-2" />
+                      Emergência Médica
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleEmergencyEscalation('technical')}
+                      className="flex-1"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Problema Técnico
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              title="Tela cheia"
+            >
+              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            </Button>
+          </div>
 
-          {/* Chat toggle */}
-          <Button
-            variant={showChat ? 'default' : 'outline'}
-            size='lg'
-            onClick={() => {
-              setShowChat(!showChat);
-              setShowNotes(false);
-            }}
-            className='rounded-full w-12 h-12'
-          >
-            <MessageSquare className='h-5 w-5' />
-          </Button>
-
-          {/* Notes toggle */}
-          <Button
-            variant={showNotes ? 'default' : 'outline'}
-            size='lg'
-            onClick={() => {
-              setShowNotes(!showNotes);
-              setShowChat(false);
-            }}
-            className='rounded-full w-12 h-12'
-          >
-            <FileText className='h-5 w-5' />
-          </Button>
-
-          {/* Recording indicator */}
-          {isRecording && (
-            <div className='flex items-center gap-2 ml-4'>
-              <div className='w-3 h-3 bg-red-500 rounded-full animate-pulse'></div>
-              <span className='text-white text-sm'>Gravando</span>
+          {/* Right Controls - Session */}
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-gray-300 flex items-center space-x-2">
+              <Clock className="h-4 w-4" />
+              <span>{formatDuration(sessionDuration)}</span>
             </div>
-          )}
+            
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleEndSession}
+              disabled={isEnding}
+              title="Encerrar consulta"
+            >
+              <PhoneOff className="h-4 w-4 mr-2" />
+              {isEnding ? 'Encerrando...' : 'Encerrar'}
+            </Button>
+          </div>
+        </div>
+
+        {/* Connection Quality Indicator */}
+        <div className="flex items-center justify-center mt-2">
+          <div className="flex items-center space-x-2 text-xs text-gray-400">
+            <div className="flex space-x-1">
+              <div className={`w-1 h-3 rounded ${networkQuality === 'critical' ? 'bg-red-500' : 'bg-gray-600'}`} />
+              <div className={`w-1 h-3 rounded ${['poor', 'good', 'excellent'].includes(networkQuality) ? 'bg-yellow-500' : 'bg-gray-600'}`} />
+              <div className={`w-1 h-3 rounded ${['good', 'excellent'].includes(networkQuality) ? 'bg-green-500' : 'bg-gray-600'}`} />
+              <div className={`w-1 h-3 rounded ${networkQuality === 'excellent' ? 'bg-green-500' : 'bg-gray-600'}`} />
+            </div>
+            <span>Qualidade: {networkQuality}</span>
+            {callState.bandwidth > 0 && (
+              <>
+                <span>•</span>
+                <span>{Math.round(callState.bandwidth / 1000)} kbps</span>
+              </>
+            )}
+            {callState.rtt > 0 && (
+              <>
+                <span>•</span>
+                <span>{callState.rtt}ms</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Session quality alert */}
-      {sessionQuality && sessionQuality.video.quality === 'poor' && (
-        <Alert className='m-4'>
-          <AlertTriangle className='h-4 w-4' />
-          <AlertDescription>
-            Qualidade de vídeo baixa detectada. Verifique sua conexão de internet.
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
