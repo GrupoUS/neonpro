@@ -13,7 +13,6 @@
 
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { TRPCError } from '@trpc/server';
 
 // RLS Policy Types
 type RLSPolicy = 'clinic_isolation' | 'user_context' | 'professional_access' | 'emergency_override';

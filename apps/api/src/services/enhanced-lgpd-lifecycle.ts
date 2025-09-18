@@ -484,7 +484,8 @@ export class EnhancedLGPDLifecycleService {
           this.processingRecords.set(record.id, record);
           anonymizedRecords++;
         } catch (error) {
-          errors.push(`Failed to anonymize record ${record.id}: ${error.message}`);
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          errors.push(`Failed to anonymize record ${record.id}: ${errorMessage}`);
         }
       }
 
@@ -503,7 +504,8 @@ export class EnhancedLGPDLifecycleService {
         errors,
       };
     } catch (error) {
-      errors.push(`Anonymization process failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      errors.push(`Anonymization process failed: ${errorMessage}`);
       return {
         success: false,
         anonymizedRecords,
@@ -574,11 +576,13 @@ export class EnhancedLGPDLifecycleService {
             }
           }
         } catch (error) {
-          results.errors.push(`Failed to process record ${recordId}: ${error.message}`);
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          results.errors.push(`Failed to process record ${recordId}: ${errorMessage}`);
         }
       }
     } catch (error) {
-      results.errors.push(`Retention enforcement failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      results.errors.push(`Retention enforcement failed: ${errorMessage}`);
     }
 
     return results;
@@ -794,15 +798,15 @@ export class EnhancedLGPDLifecycleService {
 
   private async encryptData(record: DataProcessingRecord): Promise<any> {
     // Encrypt data with anonymization key
-    const cipher = crypto.createCipher(
-      'aes-256-cbc',
-      process.env.ANONYMIZATION_KEY || 'default-key',
-    );
+    const key = crypto.scryptSync(process.env.ANONYMIZATION_KEY || 'default-key', 'salt', 32);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
     let encrypted = cipher.update(JSON.stringify(record), 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
     return {
       encryptedData: encrypted,
+      iv: iv.toString('hex'),
       encryptionMethod: 'aes-256-cbc',
       dataCategory: record.dataCategory,
       anonymizationDate: new Date(),

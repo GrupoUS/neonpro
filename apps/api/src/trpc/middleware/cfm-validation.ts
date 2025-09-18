@@ -12,7 +12,6 @@
  */
 
 import { TRPCError } from '@trpc/server';
-import { TRPCError } from '@trpc/server';
 import { createHash, createVerify } from 'crypto';
 
 // CFM Medical Specialties (partial list - expand as needed)

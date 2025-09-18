@@ -73,7 +73,7 @@ interface PredictionTrend {
   impact: number;
 }
 
-export function AIInsightsPage() {
+function AIInsightsPage() {
   const navigate = useNavigate();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [models, setModels] = useState<AIModel[]>([]);

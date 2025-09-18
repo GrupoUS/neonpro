@@ -12,7 +12,6 @@
 
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { TRPCError } from '@trpc/server';
 import { createHash, createHmac } from 'crypto';
 
 // LGPD Data Categories for audit classification

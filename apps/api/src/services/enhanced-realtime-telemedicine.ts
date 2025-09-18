@@ -103,7 +103,7 @@ class EncryptionService {
 
   encrypt(text: string, key: Buffer): { encrypted: string; iv: string; tag: string } {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher(this.algorithm, key);
+    const cipher = crypto.createCipheriv(this.algorithm, key, iv);
     cipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'));
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -119,7 +119,8 @@ class EncryptionService {
   }
 
   decrypt(encryptedData: { encrypted: string; iv: string; tag: string }, key: Buffer): string {
-    const decipher = crypto.createDecipher(this.algorithm, key);
+    const iv = Buffer.from(encryptedData.iv, 'hex');
+    const decipher = crypto.createDecipheriv(this.algorithm, key, iv);
     decipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'));
     decipher.setAuthTag(Buffer.from(encryptedData.tag, 'hex'));
 

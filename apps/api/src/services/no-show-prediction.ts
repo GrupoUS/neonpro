@@ -283,7 +283,8 @@ export class NoShowPredictionService {
 
       return prediction;
     } catch (error) {
-      throw new Error(`No-show prediction failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`No-show prediction failed: ${errorMessage}`);
     }
   }
 
@@ -568,7 +569,8 @@ export class NoShowPredictionService {
       this.behaviorProfiles.set(patientId, profile);
       return profile;
     } catch (error) {
-      throw new Error(`Failed to get behavior profile: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to get behavior profile: ${errorMessage}`);
     }
   }
 

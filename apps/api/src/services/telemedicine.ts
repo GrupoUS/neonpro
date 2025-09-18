@@ -1196,13 +1196,12 @@ export class TelemedicineService {
   private encryptSessionData(session: TelemedicineSession): string {
     // In real implementation, use proper encryption
     const sessionData = JSON.stringify(session);
-    const cipher = crypto.createCipher(
-      'aes-256-cbc',
-      process.env.ARCHIVE_ENCRYPTION_KEY || 'default-key',
-    );
+    const key = crypto.scryptSync(process.env.ARCHIVE_ENCRYPTION_KEY || 'default-key', 'salt', 32);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
     let encrypted = cipher.update(sessionData, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return encrypted;
+    return iv.toString('hex') + ':' + encrypted;
   }
 
   /**
