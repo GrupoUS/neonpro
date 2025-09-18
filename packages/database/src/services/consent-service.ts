@@ -337,7 +337,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
           .eq('session_id', sessionId);
 
         await this.supabase
-          .from('webrtc_audit_logs')
+          .from('audit_logs')
           .delete()
           .eq('user_id', userId)
           .eq('session_id', sessionId);
@@ -353,9 +353,6 @@ export class ConsentService extends BaseService implements RTCConsentManager {
           .delete()
           .eq('user_id', userId)
           .eq('session_id', sessionId);
-
-        // Note: We might want to anonymize rather than delete audit logs
-        // for legal compliance in some jurisdictions
       }
 
       // Create final audit log entry
@@ -374,8 +371,8 @@ export class ConsentService extends BaseService implements RTCConsentManager {
             sessionId || 'all'
           }`,
           user_role: 'system',
-          data_classification: 'general-medical'
-        }
+          data_classification: 'general-medical',
+        },
       });
     } catch (error) {
       console.error('ConsentService.deleteUserData error:', error);
