@@ -116,17 +116,17 @@ export class AgentRegistry {
   private setupActivationRules(): void {
     // Security-critical features
     this.activationRules.set('security-critical', [
-      'security-auditor', 'test', 'code-reviewer'
+      'security-auditor', 'apex-dev', 'code-reviewer'
     ]);
 
     // Architecture-heavy features
     this.activationRules.set('architecture-heavy', [
-      'architect-review', 'test', 'code-reviewer'
+      'architect-review', 'apex-dev', 'code-reviewer'
     ]);
 
     // Performance-critical features
     this.activationRules.set('performance-critical', [
-      'code-reviewer', 'architect-review', 'test'
+      'code-reviewer', 'architect-review', 'apex-dev'
     ]);
 
     // Standard features
@@ -136,7 +136,7 @@ export class AgentRegistry {
 
     // Legacy code modernization
     this.activationRules.set('legacy', [
-      'code-reviewer', 'architect-review', 'test', 'security-auditor'
+      'code-reviewer', 'architect-review', 'apex-dev', 'security-auditor'
     ]);
   }
 

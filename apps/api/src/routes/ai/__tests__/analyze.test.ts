@@ -181,11 +181,9 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI analyze route handler', () => {
-    expect(() => {
-      const module = await import('../analyze');
-      expect(module.default).toBeDefined();
-    }).not.toThrow();
+  it('should export AI analyze route handler', async () => {
+    const module = await import('../analyze');
+    expect(module.default).toBeDefined();
   });
 
   describe('Successful AI Analysis Operations', () => {

@@ -26,10 +26,14 @@ import {
   CameraOff,
   UserCheck,
   FileText,
-  AlertTriangle
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import ConsentDialog from './ConsentDialog';
+import useLGPDConsent from '@/hooks/useLGPDConsent';
+import type { MedicalDataClassification } from '@neonpro/types';
 
 // Types for waiting room data
 export interface QueuedPatient {
@@ -93,6 +97,22 @@ export interface WaitingRoomProps {
   realTimeUpdates?: boolean;
   /** Current time for display */
   currentTime?: Date;
+  
+  // LGPD Consent Management
+  /** Session ID for WebRTC session */
+  sessionId: string;
+  /** Patient user ID for consent */
+  userId: string;
+  /** Clinic ID for audit logging */
+  clinicId: string;
+  /** Types of medical data to be processed */
+  dataTypes?: MedicalDataClassification[];
+  /** Purpose of data processing */
+  purpose?: 'telemedicine' | 'medical_treatment' | 'ai_assistance' | 'communication';
+  /** Doctor name for consent dialog */
+  doctorName?: string;
+  /** Clinic name for consent dialog */
+  clinicName?: string;
 }
 
 // Mock data generator for development
@@ -168,10 +188,39 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
   onToggleCamera,
   onSendMessage,
   realTimeUpdates = true,
-  currentTime = new Date()
+  currentTime = new Date(),
+  // LGPD props
+  sessionId,
+  userId,
+  clinicId,
+  dataTypes = ['general-medical'],
+  purpose = 'telemedicine',
+  doctorName,
+  clinicName
 }: WaitingRoomProps) {
   const [currentDisplayTime, setCurrentDisplayTime] = useState(currentTime);
   const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'fair' | 'poor'>('good');
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+
+  // LGPD Consent Management
+  const {
+    hasValidConsent,
+    isLoading: consentLoading,
+    error: consentError,
+    checkConsent,
+    requestConsent,
+    grantConsent,
+    startSession,
+    endSession,
+    logDataAccess
+  } = useLGPDConsent({
+    userId,
+    sessionId,
+    clinicId,
+    dataTypes,
+    purpose,
+    autoCheck: true
+  });
 
   // Update current time every minute if real-time updates are enabled
   useEffect(() => {
@@ -210,7 +259,67 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
     if (totalWaitTime <= 15) return 'good';
     if (totalWaitTime <= 30) return 'fair';
     return 'concerning';
-  }, [totalWaitTime]);  // Status badge color mapping
+  }, [totalWaitTime]);
+
+  // LGPD Consent Handling
+  useEffect(() => {
+    // Show consent dialog if consent is not valid
+    if (!consentLoading && !hasValidConsent) {
+      setShowConsentDialog(true);
+    }
+  }, [consentLoading, hasValidConsent]);
+
+  // Handle consent dialog response
+  const handleConsentResponse = async (granted: boolean) => {
+    setShowConsentDialog(false);
+    
+    if (granted) {
+      // Request consent for the specified data types
+      const success = await requestConsent();
+      if (success) {
+        // Log successful consent
+        await logDataAccess(
+          'general-medical',
+          'User granted consent for telemedicine session',
+          'patient',
+          { purpose, dataTypes }
+        );
+      }
+    } else {
+      // User denied consent - log and potentially restrict access
+      await logDataAccess(
+        'general-medical',
+        'User denied consent for telemedicine session',
+        'patient',
+        { purpose, dataTypes, denied: true }
+      );
+    }
+  };
+
+  // Enhanced join consultation with LGPD logging
+  const handleJoinConsultation = async () => {
+    if (!hasValidConsent) {
+      setShowConsentDialog(true);
+      return;
+    }
+
+    // Log session start
+    await startSession(professional.id);
+    
+    // Log data access
+    await logDataAccess(
+      'general-medical',
+      'Patient joined telemedicine consultation',
+      'patient',
+      { 
+        professional: professional.name,
+        appointmentTime: currentPatient.appointmentTime.toISOString()
+      }
+    );
+
+    // Call original handler
+    onJoinConsultation?.();
+  };  // Status badge color mapping
   const getStatusColor = (status: QueuedPatient['status']) => {
     switch (status) {
       case 'waiting': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -278,7 +387,9 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
         {config.text}
       </Badge>
     );
-  };  return (
+  };
+
+  return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
@@ -312,7 +423,8 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
                 <User className="h-5 w-5" />
                 Your Appointment
               </CardTitle>
-            </CardHeader>            <CardContent>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -440,13 +552,99 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
                   <Video className="h-4 w-4 mr-2" />
                   Test Audio/Video
                 </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    className="flex-1"
+                    onClick={handleJoinConsultation}
+                    disabled={!hasValidConsent || !isConnected}
+                  >
+                    <Video className="h-4 w-4 mr-2" />
+                    {hasValidConsent ? 'Join Consultation' : 'Consent Required'}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={onTechnicalTest}
+                    disabled={!isConnected}
+                  >
+                    <Monitor className="h-4 w-4 mr-2" />
+                    Test Setup
+                  </Button>
+                </div>
+              </div>
+                
+              <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm">
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Contact Support
                 </Button>
               </div>
             </CardContent>
-          </Card>          {/* Queue Status */}
+          </Card>
+
+          {/* LGPD Consent Status */}
+          <Card className={cn(
+            "border-2",
+            hasValidConsent ? "border-green-200 bg-green-50" : "border-orange-200 bg-orange-50"
+          )}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Status de Consentimento LGPD
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  {hasValidConsent ? (
+                    <>
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <div>
+                        <p className="font-medium text-green-800">Consentimento Válido</p>
+                        <p className="text-sm text-green-600">
+                          Autorizado para: {purpose === 'telemedicine' ? 'Telemedicina' : purpose}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="h-5 w-5 text-orange-600" />
+                      <div>
+                        <p className="font-medium text-orange-800">Consentimento Necessário</p>
+                        <p className="text-sm text-orange-600">
+                          Clique para autorizar o tratamento de dados
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {!hasValidConsent && (
+                  <Button
+                    onClick={() => setShowConsentDialog(true)}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Gerenciar Consentimento
+                  </Button>
+                )}
+
+                {consentError && (
+                  <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+                    Erro: {consentError}
+                  </div>
+                )}
+
+                <div className="text-xs text-gray-600 space-y-1">
+                  <p>• Seus dados são protegidos pela LGPD</p>
+                  <p>• Você pode revogar o consentimento a qualquer momento</p>
+                  <p>• ID da Sessão: {sessionId}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Queue Status */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -659,6 +857,18 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
           </Card>
         </div>
       </div>
+
+      {/* LGPD Consent Dialog */}
+      <ConsentDialog
+        isOpen={showConsentDialog}
+        onClose={() => setShowConsentDialog(false)}
+        onConsent={handleConsentResponse}
+        sessionId={sessionId}
+        dataTypes={dataTypes}
+        purpose={purpose}
+        doctorName={doctorName || professional.name}
+        clinicName={clinicName}
+      />
     </div>
   );
 };

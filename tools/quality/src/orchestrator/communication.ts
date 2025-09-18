@@ -85,7 +85,7 @@ export class CommunicationSystem extends EventEmitter {
    */
   private async broadcastMessage(message: AgentMessage): Promise<void> {
     const agents: (AgentName | 'orchestrator')[] = [
-      'test', 'code-reviewer', 'architect-review', 'security-auditor', 'orchestrator'
+      'apex-dev', 'code-reviewer', 'architect-review', 'security-auditor', 'orchestrator'
     ];
 
     for (const agent of agents) {

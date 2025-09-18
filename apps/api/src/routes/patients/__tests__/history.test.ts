@@ -161,10 +161,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   });
 
   it('should export patient history route handler', async () => {
-    await expect(async () => {
-      const module = await import('../history');
-      expect(module.default).toBeDefined();
-    }).resolves.not.toThrow();
+    const module = await import('../history');
+    expect(module.default).toBeDefined();
   });
 
   describe('Successful Patient History Retrieval', () => {

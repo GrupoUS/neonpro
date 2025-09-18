@@ -1,46 +1,34 @@
-// Healthcare Governance Service Implementation
-// Extends SupabaseGovernanceService with healthcare-specific metrics and CFM/ANVISA compliance
+// Healthcare Governance Service - CFM/ANVISA Compliance
+// Extends base governance with healthcare-specific metrics and policies
 
 import { Injectable } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseGovernanceService } from './supabase-governance.service';
-import {
+import { 
   HealthcareGovernanceService as IHealthcareGovernanceService,
   HealthcareMetric,
-  PatientSafetyKPI,
-  CFMPolicy,
-  ANVISAPolicy,
-  HealthcareAlert,
-  ComplianceReport,
   CreateHealthcareMetric,
   UpdateHealthcareMetric,
-  CreatePatientSafetyKPI,
-  UpdatePatientSafetyKPI,
-  CreateHealthcareAlert,
-  UpdateHealthcareAlert,
-  HealthcareMetricFilters,
-  PatientSafetyKPIFilters,
-  HealthcareAlertFilters,
-  HealthcareComplianceStatus,
-  HealthcareRiskAssessment,
-  CreateHealthcareRiskAssessment,
-  UpdateHealthcareRiskAssessment,
+  HealthcarePolicy,
   CreateHealthcarePolicy,
-  HealthcarePolicyFilters,
-  HealthcareComplianceReport,
-  ComplianceReportFilters,
+  PatientSafetyKPI,
+  HealthcareAlert,
   HealthcareAuditEvent,
+  HealthcareComplianceReport,
   HealthcareDashboardData,
+  HealthcareMetricFilters,
+  HealthcarePolicyFilters,
+  HealthcareAlertFilters,
+  ComplianceReportFilters,
   HealthcareMetricType,
   HealthcareMetricCategory,
   HealthcareMetricStatus
-} from '../../../../types/healthcare-governance.types';
-import { AuditTrailEntry, CreateAuditTrailEntry } from '../../../../types/governance.types';
+} from '@neonpro/types';
+import { AuditTrailEntry } from '@neonpro/types';
 
 @Injectable()
 export class HealthcareGovernanceService extends SupabaseGovernanceService implements IHealthcareGovernanceService {
-  constructor(supabase: SupabaseClient) {
-    super(supabase);
+  constructor(supabaseUrl: string, supabaseKey: string) {
+    super(supabaseUrl, supabaseKey);
   }
 
   // Healthcare Metrics Management
@@ -116,11 +104,15 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'CREATE',
-        resourceType: 'healthcare_metric',
+        resource: `healthcare-metric-${data.id}`,
+        resourceType: 'HEALTHCARE_METRIC',
         resourceId: data.id,
         userId: 'system', // TODO: Get from context
-        details: `Created healthcare metric: ${metric.name}`,
-        metadata: { metric },
+        ipAddress: '127.0.0.1', // TODO: Get from context
+        userAgent: 'healthcare-service', // TODO: Get from context
+        status: 'SUCCESS',
+        additionalInfo: `Created healthcare metric: ${metric.name}`,
+        encryptedDetails: { metric },
         healthcareContext: {
           complianceFramework: metric.complianceFramework,
           clinicalContext: `Healthcare metric creation for ${metric.category}`
@@ -162,11 +154,15 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'UPDATE',
-        resourceType: 'healthcare_metric',
+        resource: `healthcare-metric-${update.id}`,
+        resourceType: 'HEALTHCARE_METRIC',
         resourceId: update.id,
         userId: 'system', // TODO: Get from context
-        details: `Updated healthcare metric: ${data.name}`,
-        metadata: { update },
+        ipAddress: '127.0.0.1', // TODO: Get from context
+        userAgent: 'healthcare-service', // TODO: Get from context
+        status: 'SUCCESS',
+        additionalInfo: `Updated healthcare metric: ${data.name}`,
+        encryptedDetails: { update },
         healthcareContext: {
           complianceFramework: data.compliance_framework,
           clinicalContext: `Healthcare metric update for ${data.category}`
@@ -194,11 +190,15 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'DELETE',
-        resourceType: 'healthcare_metric',
+        resource: `healthcare-metric-${id}`,
+        resourceType: 'HEALTHCARE_METRIC',
         resourceId: id,
         userId: 'system', // TODO: Get from context
-        details: `Deleted healthcare metric: ${id}`,
-        metadata: { deletedId: id },
+        ipAddress: '127.0.0.1', // TODO: Get from context
+        userAgent: 'healthcare-service', // TODO: Get from context
+        status: 'SUCCESS',
+        additionalInfo: `Deleted healthcare metric: ${id}`,
+        encryptedDetails: { deletedId: id },
         healthcareContext: {
           complianceFramework: 'GENERAL',
           clinicalContext: 'Healthcare metric deletion'
@@ -488,7 +488,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       };
 
       // Store the report
-      const { data, error } = await this.supabase
+      const { error } = await this.supabase
         .from('compliance_reports')
         .insert({
           id: report.id,
@@ -557,14 +557,18 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
   async createHealthcareAuditEntry(entry: HealthcareAuditEvent): Promise<AuditTrailEntry> {
     try {
       // Create the base audit entry
-      const auditEntry = await this.createAuditTrailEntry({
+      const auditEntry = await this.createAuditEntry({
         action: entry.action,
+        resource: entry.resourceId || 'unknown',
         resourceType: entry.resourceType,
         resourceId: entry.resourceId,
         userId: entry.userId,
-        details: entry.details,
-        metadata: {
-          ...entry.metadata,
+        ipAddress: '127.0.0.1', // TODO: Get from context
+        userAgent: 'healthcare-service', // TODO: Get from context
+        status: 'SUCCESS',
+        additionalInfo: entry.additionalInfo || '',
+        encryptedDetails: {
+          ...(entry.encryptedDetails || {}),
           healthcareContext: entry.healthcareContext
         }
       });
@@ -694,8 +698,13 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       name: data.name,
       description: data.description,
       category: data.category,
-      version: data.version || '1.0',
+      framework: data.framework || 'LGPD',
       status: data.status || 'ACTIVE',
+      version: data.version || '1.0',
+      enforcementRate: data.enforcement_rate || 0,
+      violationCount: data.violation_count || 0,
+      lastReview: data.last_review ? new Date(data.last_review) : undefined,
+      nextReview: data.next_review ? new Date(data.next_review) : undefined,
       content: data.content,
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),

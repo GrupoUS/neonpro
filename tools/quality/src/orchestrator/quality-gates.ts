@@ -191,7 +191,7 @@ export class QualityGatesSystem extends EventEmitter {
       return 'skipped'; // No coverage expected in red phase
     }
 
-    const testResults = results.filter(r => r.agent === 'test');
+    const testResults = results.filter(r => r.agent === 'apex-dev');
     
     if (testResults.length === 0) {
       return 'failed';

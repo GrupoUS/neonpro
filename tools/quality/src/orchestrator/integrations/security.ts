@@ -38,7 +38,7 @@ export class OrchestrationSecurity {
   constructor(config: Partial<SecurityConfig> = {}) {
     this.config = {
       maxExecutionTime: 300000, // 5 minutes
-      allowedAgents: ['test', 'code-reviewer', 'architect-review', 'security-auditor'],
+      allowedAgents: ['apex-dev', 'code-reviewer', 'architect-review', 'security-auditor'],
       enableValidation: true,
       maxMessageSize: 1024 * 1024, // 1MB
       ...config
@@ -199,7 +199,7 @@ export class OrchestrationSecurity {
 // Default configuration
 export const defaultSecurityConfig: SecurityConfig = {
   maxExecutionTime: 300000, // 5 minutes
-  allowedAgents: ['test', 'code-reviewer', 'architect-review', 'security-auditor'],
+  allowedAgents: ['apex-dev', 'code-reviewer', 'architect-review', 'security-auditor'],
   enableValidation: true,
   maxMessageSize: 1024 * 1024 // 1MB
 };

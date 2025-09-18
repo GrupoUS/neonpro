@@ -2,6 +2,8 @@ export * from './aesthetic-data';
 export * from './ai-chat';
 export * from './ai-provider';
 export * from './webrtc';
+export * from './healthcare-governance.types';
+export * from './governance.types';
 // Healthcare types
 export interface Patient {
   id: string;

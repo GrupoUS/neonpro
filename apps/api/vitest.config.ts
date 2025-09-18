@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    setupFiles: ['./src/test-setup.ts'],
     env: {
       // Load env vars for tests
       SUPABASE_URL: process.env.SUPABASE_URL || 'https://ownkoxryswokcdanrdgj.supabase.co',

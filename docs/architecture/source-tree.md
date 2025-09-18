@@ -1,6 +1,6 @@
 ---
 title: "NeonPro Source Tree Organization"
-last_updated: 2025-09-09
+last_updated: 2025-09-17
 form: reference
 tags: [codebase, organization, monorepo, navigation]
 related:
@@ -43,12 +43,34 @@ neonpro/
 │           ├── 📄 index.css              # Global styles
 │           ├── 📁 routes/                # File-based routing (TanStack Router)
 │           │   ├── 📄 __root.tsx         # Root layout route
-│           │   └── 📄 index.tsx          # Homepage route
+│           │   ├── 📄 404.tsx            # 404 error page
+│           │   ├── 📄 index.tsx          # Homepage route
+│           │   ├── 📁 __tests__/          # Route test files
+│           │   ├── 📁 demos/              # Demo and showcase pages
+│           │   ├── 📁 auth/               # Authentication routes
+│           │   ├── 📁 dashboard/          # Dashboard and analytics
+│           │   ├── 📁 financial/          # Financial and billing features
+│           │   ├── 📁 services/           # Service management routes
+│           │   ├── 📁 admin/              # Administration panel
+│           │   ├── 📁 profile/            # User profile management
+│           │   ├── 📁 ai/                 # AI-powered features
+│           │   ├── 📁 appointments/       # Appointment scheduling
+│           │   └── 📁 patients/           # Patient management
 │           ├── 📁 components/            # React components
 │           │   └── 📁 ui/                # shadcn/ui components
-│           ├── 📁 pages/                 # Page components
+│           ├── 📁 __tests__/             # Consolidated test directory
+│           │   ├── 📁 contracts/         # Contract tests
+│           │   ├── 📁 e2e/               # End-to-end tests
+│           │   ├── 📁 integration/       # Integration tests
+│           │   ├── 📁 mobile/            # Mobile-specific tests
+│           │   ├── 📁 performance/       # Performance tests
+│           │   ├── 📁 ui/                # UI component tests
+│           │   └── 📄 test-utils.tsx    # Test utilities
 │           ├── 📁 types/                 # Frontend-specific types
-│           ├── 📁 test/                  # Test utilities & setup
+│           ├── 📁 docs/                  # Documentation (moved from components)
+│           │   ├── 📁 backup/            # Backup of removed files
+│           │   ├── 📁 components/        # Component documentation
+│           │   └── 📁 research/          # Research and notes
 │           └── 📁 integrations/          # External service integrations
 │               └── 📁 supabase/          # Supabase client & types
 │

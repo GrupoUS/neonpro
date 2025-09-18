@@ -118,7 +118,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       const mockRequest = {
         method: 'POST',
-        url: '/api/v2/patients',
+        url: '/',
         headers: new Headers({
           authorization: 'Bearer valid-token',
           'content-type': 'application/json',
@@ -127,7 +127,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       };
 
       const response = await createRoute.request(mockRequest);
-      const data = await response.json();
+      
+      // Debug: Log raw response
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+      
+      // Parse as JSON
+      const data = JSON.parse(responseText);
 
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);

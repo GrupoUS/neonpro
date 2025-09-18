@@ -17,7 +17,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['./src/__tests__/setup.ts'],
     pool: 'forks',
     // Curated, fast test suite (5–6 core tests) by default.
     // To run FULL suite (including legacy/excluídos), set FULL_TESTS=1

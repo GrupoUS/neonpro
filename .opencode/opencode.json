@@ -1,0 +1,65 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "shadcn": {
+      "type": "local",
+      "command": ["bunx", "shadcn@latest", "mcp"],
+      "enabled": true
+    },
+    "archon": {
+      "type": "local",
+      "command": ["bunx", "mcp-remote", "http://31.97.170.4:8051/mcp", "--allow-http"],
+      "enabled": true
+    },
+    "desktop-commander": {
+      "type": "local",
+      "command": ["bunx", "@wonderwhy-er/desktop-commander@latest"],
+      "enabled": true,
+      "environment": {
+        "MAX_MCP_OUTPUT_TOKENS": "20000"
+      }
+    },
+    "Tavily": {
+      "type": "local",
+      "command": ["bunx", "tavily-mcp@latest"],
+      "enabled": true,
+      "environment": {
+        "TAVILY_API_KEY": "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",
+        "TAVILY_MAX_RESULTS": "10",
+        "TAVILY_SEARCH_DEPTH": "advanced",
+        "TAVILY_TIMEOUT": "20000"
+      }
+    },
+    "context7": {
+      "type": "local",
+      "command": ["bunx", "@upstash/context7-mcp@latest"],
+      "enabled": true,
+      "environment": {
+        "CONTEXT7_MAX_TOKENS": "10000",
+        "CONTEXT7_TIMEOUT": "15000",
+        "CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA"
+      }
+    },
+    "Sequential Thinking": {
+      "type": "local",
+      "command": ["bunx", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true,
+      "environment": {
+        "DISABLE_THOUGHT_LOGGING": "false",
+        "SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
+        "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
+        "SEQUENTIAL_THINKING_TIMEOUT": "15000"
+      }
+    },
+    "supabase": {
+      "type": "local",
+      "command": ["bunx", "@supabase/mcp-server-supabase@latest", "--access-token", "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"],
+      "enabled": true
+    },
+    "serena": {
+      "type": "local",
+      "command": ["uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "ide-assistant", "--project", "/home/vibecode/neonpro"],
+      "enabled": true
+    }
+  }
+}

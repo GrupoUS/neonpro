@@ -16,6 +16,11 @@
       "types": "./governance.types.ts",
       "import": "./governance.types.ts",
       "require": "./governance.types.ts"
+    },
+    "./healthcare-governance.types": {
+      "types": "./healthcare-governance.types.ts",
+      "import": "./healthcare-governance.types.ts",
+      "require": "./healthcare-governance.types.ts"
     }
   },
   "scripts": {

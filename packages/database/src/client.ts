@@ -106,6 +106,10 @@ export const createServiceSupabaseClient = (): SupabaseClient => {
   );
 };
 
+// Export generic createClient for backwards compatibility
+export const createClient = createNodeSupabaseClient;
+export const createServiceClient = createServiceSupabaseClient;
+
 // Global instances
 export const supabase = createOptimizedSupabaseClient();
 export const supabaseBrowser = createBrowserSupabaseClient();
