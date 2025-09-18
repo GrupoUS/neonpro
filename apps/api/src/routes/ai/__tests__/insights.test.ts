@@ -161,11 +161,9 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI insights route handler', () => {
-    expect(() => {
-      const module = await import('../insights');
-      expect(module.default).toBeDefined();
-    }).not.toThrow();
+  it('should export AI insights route handler', async () => {
+    const module = await import('../insights');
+    expect(module.default).toBeDefined();
   });
 
   describe('Successful AI Insights Generation', () => {

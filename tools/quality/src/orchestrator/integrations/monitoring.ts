@@ -167,7 +167,7 @@ export class OrchestrationMonitoring {
   private calculateAgentDurations(_state: OrchestrationState): Record<AgentName, number> {
     // For now, return empty durations - this would need to be tracked during execution
     return {
-      test: 0,
+      'apex-dev': 0,
       'code-reviewer': 0,
       'architect-review': 0,
       'security-auditor': 0

@@ -1,46 +1,32 @@
-// Healthcare Governance Service Implementation
-// Extends SupabaseGovernanceService with healthcare-specific metrics and CFM/ANVISA compliance
+// Healthcare Governance Service - CFM/ANVISA Compliance
+// Extends base governance with healthcare-specific metrics and policies
 
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseGovernanceService } from './supabase-governance.service';
-import {
+import { 
   HealthcareGovernanceService as IHealthcareGovernanceService,
   HealthcareMetric,
-  PatientSafetyKPI,
-  CFMPolicy,
-  ANVISAPolicy,
-  HealthcareAlert,
-  ComplianceReport,
   CreateHealthcareMetric,
   UpdateHealthcareMetric,
-  CreatePatientSafetyKPI,
-  UpdatePatientSafetyKPI,
-  CreateHealthcareAlert,
-  UpdateHealthcareAlert,
-  HealthcareMetricFilters,
-  PatientSafetyKPIFilters,
-  HealthcareAlertFilters,
-  HealthcareComplianceStatus,
-  HealthcareRiskAssessment,
-  CreateHealthcareRiskAssessment,
-  UpdateHealthcareRiskAssessment,
+  HealthcarePolicy,
   CreateHealthcarePolicy,
-  HealthcarePolicyFilters,
-  HealthcareComplianceReport,
-  ComplianceReportFilters,
+  PatientSafetyKPI,
+  HealthcareAlert,
   HealthcareAuditEvent,
+  HealthcareComplianceReport,
   HealthcareDashboardData,
-  HealthcareMetricType,
-  HealthcareMetricCategory,
-  HealthcareMetricStatus
-} from '../../../../types/healthcare-governance.types';
-import { AuditTrailEntry, CreateAuditTrailEntry } from '../../../../types/governance.types';
+  HealthcareMetricFilters,
+  HealthcarePolicyFilters,
+  HealthcareAlertFilters,
+  ComplianceReportFilters
+} from '@neonpro/types';
+import { AuditTrailEntry, CreateAuditTrailEntry } from '@neonpro/types';
 
 @Injectable()
 export class HealthcareGovernanceService extends SupabaseGovernanceService implements IHealthcareGovernanceService {
-  constructor(supabase: SupabaseClient) {
-    super(supabase);
+  constructor(supabaseUrl: string, supabaseKey: string) {
+    super(supabaseUrl, supabaseKey);
   }
 
   // Healthcare Metrics Management
@@ -557,7 +543,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
   async createHealthcareAuditEntry(entry: HealthcareAuditEvent): Promise<AuditTrailEntry> {
     try {
       // Create the base audit entry
-      const auditEntry = await this.createAuditTrailEntry({
+      const auditEntry = await this.createAuditEntry({
         action: entry.action,
         resourceType: entry.resourceType,
         resourceId: entry.resourceId,

@@ -20,7 +20,7 @@ import {
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseGovernanceService implements GovernanceService {
-  private supabase: SupabaseClient;
+  protected supabase: SupabaseClient;
 
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.supabase = createClient(supabaseUrl, supabaseKey);

@@ -15,6 +15,9 @@ export {
 // Import prisma for internal use
 import { prisma } from './client.js';
 
+// Export Database type from Supabase types
+export type { Database } from './types/supabase.js';
+
 // Base service class and utilities
 export type { AuditLogData } from './services/base.service';
 export { BaseService } from './services/base.service.js';
@@ -33,7 +36,6 @@ export type {
   Appointment,
   AuditTrail,
   Clinic,
-  ConsentRecord,
   Patient,
   Professional,
   User,

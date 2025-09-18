@@ -1,8 +1,8 @@
 import type { Database } from '@neonpro/database';
-import type { 
-  RTCConsentManager, 
-  RTCAuditLogEntry, 
-  MedicalDataClassification 
+import type {
+  MedicalDataClassification,
+  RTCAuditLogEntry,
+  RTCConsentManager,
 } from '@neonpro/types';
 import { createClient } from '@supabase/supabase-js';
 import { BaseService } from './base.service';
@@ -20,17 +20,21 @@ export interface ConsentRequest {
 export interface ConsentRecord {
   id: string;
   patientId: string;
+  clinicId: string;
+  consentType: string;
   purpose: string;
+  legalBasis: string;
   status: 'pending' | 'granted' | 'withdrawn' | 'expired';
-  dataTypes: string[];
-  sessionId?: string;
-  grantedAt?: Date;
-  expiresAt?: Date;
+  givenAt?: Date;
   withdrawnAt?: Date;
-  withdrawnReason?: string;
-  version: number;
-  createdAt: Date;
-  updatedAt: Date;
+  expiresAt?: Date;
+  collectionMethod: string;
+  ipAddress?: string;
+  userAgent?: string;
+  evidence?: any;
+  dataCategories: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -57,7 +61,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
     userId: string,
     dataTypes: MedicalDataClassification[],
     purpose: string,
-    sessionId: string
+    sessionId: string,
   ): Promise<boolean> {
     try {
       // Get patient ID from user ID
@@ -77,7 +81,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         p_data_types: dataTypes,
         p_purpose: purpose,
         p_session_id: sessionId,
-        p_expires_at: null // Default to no expiration
+        p_expires_at: null, // Default to no expiration
       });
 
       if (error) {
@@ -102,7 +106,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   async verifyConsent(
     userId: string,
     dataType: MedicalDataClassification,
-    sessionId: string
+    sessionId: string,
   ): Promise<boolean> {
     try {
       // Get patient ID from user ID
@@ -121,7 +125,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         p_patient_id: patient.id,
         p_session_id: sessionId,
         p_data_types: [dataType],
-        p_clinic_id: patient.clinic_id
+        p_clinic_id: patient.clinic_id,
       });
 
       if (error) {
@@ -147,7 +151,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
     userId: string,
     dataType: MedicalDataClassification,
     sessionId: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     try {
       // Get patient ID from user ID
@@ -168,7 +172,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
           status: 'withdrawn',
           withdrawn_at: new Date().toISOString(),
           withdrawn_reason: reason || 'User revoked consent',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('patient_id', patient.id)
         .eq('session_id', sessionId)
@@ -190,7 +194,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         p_ip_address: null, // Will be set by RLS
         p_user_agent: null, // Will be set by RLS
         p_clinic_id: patient.clinic_id,
-        p_metadata: { reason, dataType }
+        p_metadata: { reason, dataType },
       });
     } catch (error) {
       console.error('ConsentService.revokeConsent error:', error);
@@ -246,8 +250,8 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         complianceCheck: {
           isCompliant: (log.compliance_check as any)?.isCompliant || true,
           violations: (log.compliance_check as any)?.violations || [],
-          riskLevel: (log.compliance_check as any)?.riskLevel || 'low'
-        }
+          riskLevel: (log.compliance_check as any)?.riskLevel || 'low',
+        },
       }));
     } catch (error) {
       console.error('ConsentService.getConsentHistory error:', error);
@@ -297,7 +301,8 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         consentRecords: consentRecords || [],
         webrtcAuditLogs: auditLogs || [],
         generalAuditLogs: generalAuditLogs || [],
-        note: 'This export contains all personal data processed by NeonPro according to LGPD requirements.'
+        note:
+          'This export contains all personal data processed by NeonPro according to LGPD requirements.',
       };
     } catch (error) {
       console.error('ConsentService.exportUserData error:', error);
@@ -359,11 +364,13 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         p_user_id: userId,
         p_user_role: 'system',
         p_data_classification: 'general-medical',
-        p_description: `User data deleted per LGPD Right to Erasure. Session: ${sessionId || 'all'}`,
+        p_description: `User data deleted per LGPD Right to Erasure. Session: ${
+          sessionId || 'all'
+        }`,
         p_ip_address: null,
         p_user_agent: 'system',
         p_clinic_id: patient.clinic_id,
-        p_metadata: { action: 'data_deletion', sessionId }
+        p_metadata: { action: 'data_deletion', sessionId },
       });
     } catch (error) {
       console.error('ConsentService.deleteUserData error:', error);
@@ -382,8 +389,8 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .from('consent_records')
         .update({
           status: 'granted',
-          granted_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          given_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq('id', consentId)
         .eq('patient_id', patientId)
@@ -423,17 +430,21 @@ export class ConsentService extends BaseService implements RTCConsentManager {
       return consents.map(consent => ({
         id: consent.id,
         patientId: consent.patient_id,
+        clinicId: consent.clinic_id,
+        consentType: consent.consent_type,
         purpose: consent.purpose,
+        legalBasis: consent.legal_basis,
         status: consent.status as any,
-        dataTypes: consent.data_types || [],
-        sessionId: consent.session_id,
-        grantedAt: consent.granted_at ? new Date(consent.granted_at) : undefined,
-        expiresAt: consent.expires_at ? new Date(consent.expires_at) : undefined,
+        givenAt: consent.given_at ? new Date(consent.given_at) : undefined,
         withdrawnAt: consent.withdrawn_at ? new Date(consent.withdrawn_at) : undefined,
-        withdrawnReason: consent.withdrawn_reason,
-        version: consent.version,
-        createdAt: new Date(consent.created_at),
-        updatedAt: new Date(consent.updated_at)
+        expiresAt: consent.expires_at ? new Date(consent.expires_at) : undefined,
+        collectionMethod: consent.collection_method,
+        ipAddress: consent.ip_address,
+        userAgent: consent.user_agent,
+        evidence: consent.evidence,
+        dataCategories: consent.data_categories || [],
+        createdAt: consent.created_at ? new Date(consent.created_at) : undefined,
+        updatedAt: consent.updated_at ? new Date(consent.updated_at) : undefined,
       }));
     } catch (error) {
       console.error('ConsentService.getPendingConsents error:', error);

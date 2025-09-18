@@ -107,7 +107,7 @@ export class WorkflowEngine {
     phaseConfig: PhaseConfig
   ): Promise<Omit<AgentResult, 'duration' | 'timestamp'>> {
     switch (agentName) {
-      case 'test':
+      case 'apex-dev':
         return this.executeTestAgent(phase, state, agentConfig, phaseConfig);
       
       case 'code-reviewer':
@@ -186,7 +186,7 @@ export class WorkflowEngine {
     }
 
     return {
-      agent: 'test',
+      agent: 'apex-dev',
       phase,
       status: 'success',
       findings,
@@ -401,14 +401,14 @@ export class WorkflowEngine {
         description: 'Standard Test-Driven Development workflow',
         phases: {
           red: {
-            agents: ['test', 'code-reviewer'],
+            agents: ['apex-dev', 'code-reviewer'],
             qualityGates: ['testCoverage'],
             parallelizable: false,
             timeout: 300000, // 5 minutes
             retryAttempts: 2
           },
           green: {
-            agents: ['test', 'code-reviewer'],
+            agents: ['apex-dev', 'code-reviewer'],
             qualityGates: ['testCoverage', 'codeQuality'],
             parallelizable: false,
             timeout: 600000, // 10 minutes
@@ -430,14 +430,14 @@ export class WorkflowEngine {
         description: 'TDD workflow with enhanced security validation',
         phases: {
           red: {
-            agents: ['test', 'security-auditor', 'code-reviewer'],
+            agents: ['apex-dev', 'security-auditor', 'code-reviewer'],
             qualityGates: ['testCoverage', 'security'],
             parallelizable: false,
             timeout: 450000, // 7.5 minutes
             retryAttempts: 2
           },
           green: {
-            agents: ['test', 'security-auditor', 'code-reviewer'],
+            agents: ['apex-dev', 'security-auditor', 'code-reviewer'],
             qualityGates: ['testCoverage', 'security', 'codeQuality'],
             parallelizable: false,
             timeout: 900000, // 15 minutes
@@ -459,14 +459,14 @@ export class WorkflowEngine {
         description: 'TDD workflow optimized for microservices architecture',
         phases: {
           red: {
-            agents: ['test', 'architect-review'],
+            agents: ['apex-dev', 'architect-review'],
             qualityGates: ['testCoverage', 'architecture'],
             parallelizable: false,
             timeout: 450000,
             retryAttempts: 2
           },
           green: {
-            agents: ['test', 'code-reviewer', 'architect-review'],
+            agents: ['apex-dev', 'code-reviewer', 'architect-review'],
             qualityGates: ['testCoverage', 'codeQuality', 'architecture'],
             parallelizable: true,
             timeout: 900000,
@@ -488,14 +488,14 @@ export class WorkflowEngine {
         description: 'TDD workflow adapted for legacy code integration',
         phases: {
           red: {
-            agents: ['test', 'architect-review'],
+            agents: ['apex-dev', 'architect-review'],
             qualityGates: ['testCoverage'],
             parallelizable: false,
             timeout: 600000, // More time for legacy analysis
             retryAttempts: 3
           },
           green: {
-            agents: ['test', 'code-reviewer', 'architect-review'],
+            agents: ['apex-dev', 'code-reviewer', 'architect-review'],
             qualityGates: ['testCoverage', 'codeQuality'],
             parallelizable: false,
             timeout: 1200000,

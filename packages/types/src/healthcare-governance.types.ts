@@ -1,35 +1,32 @@
 // Healthcare Governance Types for CFM/ANVISA Compliance
 // Extends the base governance system with healthcare-specific metrics and policies
 
-import { 
-  GovernanceService, 
-  AuditTrailEntry, 
+import {
+  GovernanceService,
+  AuditTrailEntry,
   CreateAuditTrailEntry,
-  KPIMetric,
-  ComplianceStatus,
-  RiskAssessment,
-  PolicyManagement 
+  PolicyManagement
 } from './governance.types';
 
 // Healthcare Metric Enums (matching database schema)
-export type HealthcareMetricType = 
-  | 'PATIENT_SAFETY' 
-  | 'CLINICAL_QUALITY' 
-  | 'OPERATIONAL_EFFICIENCY' 
-  | 'COMPLIANCE_SCORE' 
-  | 'TELEMEDICINE_QUALITY' 
-  | 'DATA_SECURITY' 
-  | 'RESPONSE_TIME' 
+export type HealthcareMetricType =
+  | 'PATIENT_SAFETY'
+  | 'CLINICAL_QUALITY'
+  | 'OPERATIONAL_EFFICIENCY'
+  | 'COMPLIANCE_SCORE'
+  | 'TELEMEDICINE_QUALITY'
+  | 'DATA_SECURITY'
+  | 'RESPONSE_TIME'
   | 'ERROR_RATE';
 
 export type HealthcareMetricStatus = 'ACTIVE' | 'INACTIVE' | 'UNDER_REVIEW' | 'CRITICAL';
 
-export type HealthcareMetricCategory = 
-  | 'CFM_COMPLIANCE' 
-  | 'ANVISA_COMPLIANCE' 
-  | 'PATIENT_SAFETY' 
-  | 'CLINICAL_OUTCOMES' 
-  | 'OPERATIONAL' 
+export type HealthcareMetricCategory =
+  | 'CFM_COMPLIANCE'
+  | 'ANVISA_COMPLIANCE'
+  | 'PATIENT_SAFETY'
+  | 'CLINICAL_OUTCOMES'
+  | 'OPERATIONAL'
   | 'SECURITY';
 
 // Healthcare Metrics Types
@@ -108,7 +105,11 @@ export interface PatientSafetyKPI {
   id: string;
   clinicId: string;
   kpiName: string;
-  category: 'MEDICATION_SAFETY' | 'DIAGNOSTIC_ACCURACY' | 'TREATMENT_OUTCOMES' | 'INFECTION_CONTROL';
+  category:
+    | 'MEDICATION_SAFETY'
+    | 'DIAGNOSTIC_ACCURACY'
+    | 'TREATMENT_OUTCOMES'
+    | 'INFECTION_CONTROL';
   currentValue: number;
   targetValue: number;
   benchmark: number; // Industry benchmark
@@ -184,7 +185,10 @@ export interface HealthcareComplianceReport {
 // Healthcare Governance Service Interface
 export interface HealthcareGovernanceService extends GovernanceService {
   // Healthcare Metrics
-  getHealthcareMetrics(clinicId: string, filters?: HealthcareMetricFilters): Promise<HealthcareMetric[]>;
+  getHealthcareMetrics(
+    clinicId: string,
+    filters?: HealthcareMetricFilters,
+  ): Promise<HealthcareMetric[]>;
   createHealthcareMetric(metric: CreateHealthcareMetric): Promise<HealthcareMetric>;
   updateHealthcareMetric(update: UpdateHealthcareMetric): Promise<HealthcareMetric>;
   deleteHealthcareMetric(id: string): Promise<void>;
@@ -199,17 +203,29 @@ export interface HealthcareGovernanceService extends GovernanceService {
   updateHealthcarePolicy(id: string, updates: Partial<HealthcarePolicy>): Promise<HealthcarePolicy>;
 
   // Real-time Monitoring
-  getHealthcareAlerts(clinicId: string, filters?: HealthcareAlertFilters): Promise<HealthcareAlert[]>;
-  createHealthcareAlert(alert: Omit<HealthcareAlert, 'id' | 'createdAt' | 'updatedAt'>): Promise<HealthcareAlert>;
+  getHealthcareAlerts(
+    clinicId: string,
+    filters?: HealthcareAlertFilters,
+  ): Promise<HealthcareAlert[]>;
+  createHealthcareAlert(
+    alert: Omit<HealthcareAlert, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<HealthcareAlert>;
   updateHealthcareAlert(id: string, updates: Partial<HealthcareAlert>): Promise<HealthcareAlert>;
 
   // Compliance Reporting
-  generateComplianceReport(clinicId: string, reportType: HealthcareComplianceReport['reportType'], period: { startDate: Date; endDate: Date }): Promise<HealthcareComplianceReport>;
-  getComplianceReports(clinicId: string, filters?: ComplianceReportFilters): Promise<HealthcareComplianceReport[]>;
+  generateComplianceReport(
+    clinicId: string,
+    reportType: HealthcareComplianceReport['reportType'],
+    period: { startDate: Date; endDate: Date },
+  ): Promise<HealthcareComplianceReport>;
+  getComplianceReports(
+    clinicId: string,
+    filters?: ComplianceReportFilters,
+  ): Promise<HealthcareComplianceReport[]>;
 
   // Integration with Audit System
   createHealthcareAuditEntry(entry: HealthcareAuditEvent): Promise<AuditTrailEntry>;
-  
+
   // Dashboard Data
   getHealthcareDashboardData(clinicId: string): Promise<HealthcareDashboardData>;
 }

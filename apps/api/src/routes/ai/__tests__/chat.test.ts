@@ -180,10 +180,8 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
   });
 
   it('should export AI chat route handler', async () => {
-    expect(async () => {
-      const module = await import('../chat.js');
-      expect(module.default).toBeDefined();
-    }).not.toThrow();
+    const module = await import('../chat.js');
+    expect(module.default).toBeDefined();
   });
 
   describe('Successful AI Chat Operations', () => {

@@ -231,11 +231,9 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI models route handler', () => {
-    expect(() => {
-      const module = await import('../models');
-      expect(module.default).toBeDefined();
-    }).not.toThrow();
+  it('should export AI models route handler', async () => {
+    const module = await import('../models');
+    expect(module.default).toBeDefined();
   });
 
   describe('Successful AI Models Listing', () => {
