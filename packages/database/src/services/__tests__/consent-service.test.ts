@@ -56,6 +56,7 @@ describe('ConsentService', () => {
   let consentService: ConsentService;
   let mockFrom: any;
   let mockSelect: any;
+  let mockInsert: any;
   let mockEq: any;
   let mockSingle: any;
   let mockUpdate: any;
@@ -70,10 +71,12 @@ describe('ConsentService', () => {
     mockSingle = vi.fn();
     mockEq = vi.fn().mockReturnThis();
     mockSelect = vi.fn().mockReturnThis();
+    mockInsert = vi.fn().mockReturnThis();
     mockUpdate = vi.fn().mockReturnThis();
     mockDelete = vi.fn().mockReturnThis();
     mockFrom = vi.fn().mockReturnValue({
       select: mockSelect,
+      insert: mockInsert,
       update: mockUpdate,
       delete: mockDelete,
       eq: mockEq,
@@ -87,6 +90,8 @@ describe('ConsentService', () => {
 
     // Setup default success responses
     mockSelect.eq = mockEq;
+    mockInsert.select = mockSelect;
+    mockInsert.single = mockSingle;
     mockEq.single = mockSingle;
     mockEq.order = mockOrder;
     mockEq.eq = mockEq;
@@ -110,9 +115,9 @@ describe('ConsentService', () => {
         error: null
       });
 
-      // Mock RPC call
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: 'consent-123',
+      // Mock consent record insert
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'consent-123' },
         error: null
       });
 
@@ -125,13 +130,15 @@ describe('ConsentService', () => {
 
       expect(result).toBe(true);
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('patients');
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('request_webrtc_consent', {
-        p_patient_id: 'patient-123',
-        p_data_types: ['general-medical'],
-        p_purpose: 'telemedicine',
-        p_session_id: 'session-123',
-        p_expires_at: null
-      });
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
+      expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+        patient_id: 'patient-123',
+        clinic_id: 'clinic-456',
+        consent_type: 'webrtc',
+        purpose: 'telemedicine',
+        status: 'pending',
+        data_categories: ['general-medical']
+      }));
     });
 
     it('should return false when patient not found', async () => {
@@ -148,18 +155,18 @@ describe('ConsentService', () => {
       );
 
       expect(result).toBe(false);
-      expect(mockSupabaseClient.rpc).not.toHaveBeenCalled();
+      expect(mockInsert).not.toHaveBeenCalled();
     });
 
-    it('should return false when RPC call fails', async () => {
+    it('should return false when insert fails', async () => {
       mockSingle.mockResolvedValueOnce({
         data: mockPatient,
         error: null
       });
 
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
+      mockSingle.mockResolvedValueOnce({
         data: null,
-        error: { message: 'Database error' }
+        error: { message: 'Insert failed' }
       });
 
       const result = await consentService.requestConsent(

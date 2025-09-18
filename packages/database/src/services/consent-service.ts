@@ -119,6 +119,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   async verifyConsent(
     userId: string,
     dataType: MedicalDataClassification,
+    sessionId?: string
   ): Promise<boolean> {
     try {
       // Get patient ID from user ID
@@ -132,32 +133,20 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         return false;
       }
 
-      // Check for valid consent record directly in database
-      // First get all consent records for the patient
-      const { data: consentRecords, error: consentError } = await this.supabase
-        .from('consent_records')
-        .select('*')
-        .eq('patient_id', patient.id)
-        .eq('clinic_id', patient.clinic_id)
-        .eq('status', 'granted');
+      // Use RPC function for consent validation
+      const { data: isValid, error } = await this.supabase.rpc('validate_webrtc_consent', {
+        p_patient_id: patient.id,
+        p_session_id: sessionId || '',
+        p_data_types: [dataType],
+        p_clinic_id: patient.clinic_id
+      });
 
-      if (consentError) {
-        console.error('Failed to verify consent:', consentError);
+      if (error) {
+        console.error('Failed to verify consent:', error);
         return false;
       }
 
-      // Manually filter for data type and expiration on client side
-      const validConsent = consentRecords?.find(consent => {
-        const hasDataType = Array.isArray(consent.data_categories) && 
-                           consent.data_categories.includes(dataType);
-        const hasTelemedicinePurpose = Array.isArray(consent.processing_purposes) && 
-                                     consent.processing_purposes.includes('telemedicine');
-        const notExpired = !consent.expires_at || new Date(consent.expires_at) > new Date();
-        
-        return hasDataType && hasTelemedicinePurpose && notExpired;
-      });
-
-      return !!validConsent;
+      return !!isValid;
     } catch (error) {
       console.error('ConsentService.verifyConsent error:', error);
       return false;

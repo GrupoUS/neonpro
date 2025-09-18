@@ -327,14 +327,13 @@ export class AuditService extends BaseService {
    * @param clinicId - Clinic ID for access control
    * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
    */
-  async getSessionAuditLogs(sessionId: string, clinicId: string): Promise<RTCAuditLogEntry[]> {
+  async getSessionAuditLogs(sessionId: string, clinicId?: string): Promise<RTCAuditLogEntry[]> {
     try {
       const { data: auditLogs, error } = await this.supabase
-        .from('audit_logs')
+        .from('webrtc_audit_logs')
         .select('*')
-        .eq('resource_id', sessionId) // session_id is stored in resource_id
-        .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: true });
+        .eq('session_id', sessionId)
+        .order('timestamp', { ascending: false });
 
       if (error) {
         console.error('Failed to get session audit logs:', error);
@@ -343,25 +342,21 @@ export class AuditService extends BaseService {
 
       return auditLogs.map(log => ({
         id: log.id,
-        sessionId: log.resource_id || sessionId,
-        eventType: log.action as any,
-        timestamp: log.created_at || new Date().toISOString(),
+        sessionId: log.session_id,
+        eventType: log.event_type as any,
+        timestamp: log.timestamp,
         userId: log.user_id,
-        userRole: 'patient' as any, // Default role, should be determined from user data
-        dataClassification: 'internal' as MedicalDataClassification,
-        description: log.resource_type || 'Audit log entry', // Use resource_type for description
-        ipAddress: log.ip_address as string || 'unknown',
-        userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id || 'unknown', // Provide default for null case
-        metadata: {
-          lgpd_basis: log.lgpd_basis,
-          old_values: log.old_values,
-          new_values: log.new_values
-        },
-        complianceCheck: {
-          isCompliant: true, // Default to compliant since status field doesn't exist in schema
+        userRole: log.user_role as any,
+        dataClassification: log.data_classification as MedicalDataClassification,
+        description: log.description,
+        ipAddress: log.ip_address,
+        userAgent: log.user_agent,
+        clinicId: log.clinic_id,
+        metadata: log.metadata || {},
+        complianceCheck: log.compliance_check || {
+          isCompliant: true,
           violations: [],
-          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
+          riskLevel: 'low' as 'low' | 'medium' | 'high'
         }
       }));
     } catch (error) {

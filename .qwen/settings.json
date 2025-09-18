@@ -89,6 +89,7 @@
             "env": {
                 "DISABLE_THOUGHT_LOGGING": "false",
                 "SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
+                "MAX_THOUGHTS": "10",
                 "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
                 "SEQUENTIAL_THINKING_TIMEOUT": "15000"
             },

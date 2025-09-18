@@ -61,9 +61,11 @@ describe('AuditService', () => {
     mockOrder = vi.fn().mockReturnThis();
     mockEq = vi.fn().mockReturnThis();
     mockSelect = vi.fn().mockReturnThis();
+    const mockInsert = vi.fn().mockReturnThis();
     
     mockFrom = vi.fn().mockReturnValue({
       select: mockSelect,
+      insert: mockInsert,
       eq: mockEq,
       order: mockOrder,
       gte: mockGte,
@@ -77,6 +79,8 @@ describe('AuditService', () => {
 
     // Setup chaining
     mockSelect.eq = mockEq;
+    mockInsert.select = mockSelect;
+    mockInsert.single = vi.fn();
     mockEq.order = mockOrder;
     mockEq.gte = mockGte;
     mockEq.lte = mockLte;
@@ -104,34 +108,56 @@ describe('AuditService', () => {
     vi.clearAllMocks();
   });
 
-  describe('logEvent', () => {
+  describe('createAuditLog', () => {
     it('should successfully log an audit event', async () => {
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: 'audit-123',
+      const mockSingle = vi.fn().mockResolvedValueOnce({
+        data: { id: 'audit-123' },
         error: null
       });
 
-      const result = await auditService.logEvent(mockAuditLogData);
+      // Mock the insert chain
+      const mockInsert = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: mockSingle
+        })
+      });
+
+      mockFrom.mockReturnValueOnce({
+        insert: mockInsert
+      });
+
+      const result = await auditService.createAuditLog(mockAuditLogData);
 
       expect(result).toBe('audit-123');
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('create_webrtc_audit_log', {
-        p_session_id: 'session-123',
-        p_event_type: 'video-call-start',
-        p_user_id: 'user-123',
-        p_user_role: 'patient',
-        p_data_classification: 'general-medical',
-        p_description: 'Patient started video call',
-        p_ip_address: '192.168.1.1',
-        p_user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        p_clinic_id: 'clinic-456',
-        p_metadata: { sessionDuration: 1800 }
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockInsert).toHaveBeenCalledWith({
+        action: 'video-call-start',
+        user_id: 'user-123',
+        resource: 'Patient started video call',
+        resource_type: 'session',
+        ip_address: '192.168.1.1',
+        user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        clinic_id: 'clinic-456',
+        lgpd_basis: null,
+        old_values: null,
+        new_values: null
       });
     });
 
     it('should handle missing optional fields', async () => {
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: 'audit-124',
+      const mockSingle = vi.fn().mockResolvedValueOnce({
+        data: { id: 'audit-124' },
         error: null
+      });
+
+      const mockInsert = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: mockSingle
+        })
+      });
+
+      mockFrom.mockReturnValueOnce({
+        insert: mockInsert
       });
 
       const minimalData = {
@@ -143,51 +169,67 @@ describe('AuditService', () => {
         description: 'Patient started video call'
       };
 
-      const result = await auditService.logEvent(minimalData);
+      const result = await auditService.createAuditLog(minimalData);
 
       expect(result).toBe('audit-124');
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('create_webrtc_audit_log', {
-        p_session_id: 'session-123',
-        p_event_type: 'video-call-start',
-        p_user_id: 'user-123',
-        p_user_role: 'patient',
-        p_data_classification: 'general-medical',
-        p_description: 'Patient started video call',
-        p_ip_address: null,
-        p_user_agent: null,
-        p_clinic_id: null,
-        p_metadata: null
+      expect(mockInsert).toHaveBeenCalledWith({
+        action: 'video-call-start',
+        user_id: 'user-123',
+        resource: 'Patient started video call',
+        resource_type: 'session',
+        ip_address: 'unknown',
+        user_agent: 'unknown',
+        clinic_id: undefined,
+        lgpd_basis: null,
+        old_values: null,
+        new_values: null
       });
     });
 
-    it('should throw error when RPC call fails', async () => {
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
+    it('should throw error when insert fails', async () => {
+      const mockSingle = vi.fn().mockResolvedValueOnce({
         data: null,
         error: { message: 'Database error', code: 'DB_ERROR' }
       });
 
+      const mockInsert = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: mockSingle
+        })
+      });
+
+      mockFrom.mockReturnValueOnce({
+        insert: mockInsert
+      });
+
       await expect(
-        auditService.logEvent(mockAuditLogData)
+        auditService.createAuditLog(mockAuditLogData)
       ).rejects.toThrow('Failed to create audit log: Database error');
     });
 
     it('should handle network errors', async () => {
-      mockSupabaseClient.rpc.mockRejectedValueOnce(new Error('Network connection failed'));
+      const mockInsert = vi.fn().mockImplementation(() => {
+        throw new Error('Network connection failed');
+      });
+
+      mockFrom.mockReturnValueOnce({
+        insert: mockInsert
+      });
 
       await expect(
-        auditService.logEvent(mockAuditLogData)
+        auditService.createAuditLog(mockAuditLogData)
       ).rejects.toThrow('Network connection failed');
     });
   });
 
-  describe('getSessionAuditLog', () => {
+  describe('getSessionAuditLogs', () => {
     it('should retrieve audit logs for a session', async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLogResponse],
         error: null
       });
 
-      const result = await auditService.getSessionAuditLog('session-123');
+      const result = await auditService.getSessionAuditLogs('session-123');
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -212,7 +254,7 @@ describe('AuditService', () => {
         error: null
       });
 
-      const result = await auditService.getSessionAuditLog('nonexistent-session');
+      const result = await auditService.getSessionAuditLogs('nonexistent-session');
 
       expect(result).toEqual([]);
     });
@@ -223,20 +265,20 @@ describe('AuditService', () => {
         error: { message: 'Query failed' }
       });
 
-      const result = await auditService.getSessionAuditLog('session-123');
+      const result = await auditService.getSessionAuditLogs('session-123');
 
       expect(result).toEqual([]);
     });
   });
 
-  describe('getUserAuditLog', () => {
+  describe('getUserAuditLogs', () => {
     it('should retrieve audit logs for a user', async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLogResponse],
         error: null
       });
 
-      const result = await auditService.getUserAuditLog('user-123');
+      const result = await auditService.getUserAuditLogs('user-123');
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -254,7 +296,7 @@ describe('AuditService', () => {
         error: null
       });
 
-      await auditService.getUserAuditLog('user-123', 50);
+      await auditService.getUserAuditLogs('user-123', 50);
 
       expect(mockLimit).toHaveBeenCalledWith(50);
     });
@@ -265,7 +307,7 @@ describe('AuditService', () => {
         error: null
       });
 
-      const result = await auditService.getUserAuditLog('nonexistent-user');
+      const result = await auditService.getUserAuditLogs('nonexistent-user');
 
       expect(result).toEqual([]);
     });
