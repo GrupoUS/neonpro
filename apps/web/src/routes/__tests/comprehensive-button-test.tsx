@@ -3,7 +3,7 @@ import { Button } from '@neonpro/ui'; // shadcn/ui Button for conflict testing
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-export const Route = createFileRoute('/comprehensive-button-test')({
+export const Route = createFileRoute('/__tests/comprehensive-button-test')({
   component: ComprehensiveButtonTest,
 });
 

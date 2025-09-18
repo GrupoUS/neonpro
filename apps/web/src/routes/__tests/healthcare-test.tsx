@@ -14,7 +14,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export const Route = createFileRoute('/healthcare-test')({
+export const Route = createFileRoute('/__tests/healthcare-test')({
   component: HealthcareTestComponent,
 });
 

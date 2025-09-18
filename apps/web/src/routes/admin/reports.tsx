@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neon
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { BarChart3, FileText, PieChart, TrendingUp } from 'lucide-react';
 
-export const Route = createFileRoute('/reports')({
+export const Route = createFileRoute('/admin/reports')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

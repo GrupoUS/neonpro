@@ -27,7 +27,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users } from 'lucide-react';
 import React from 'react';
 
-export const Route = createFileRoute('/settings')({
+export const Route = createFileRoute('/admin/settings')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

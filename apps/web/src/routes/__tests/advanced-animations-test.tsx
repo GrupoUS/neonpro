@@ -623,7 +623,7 @@ function AdvancedAnimationsTest() {
   );
 }
 
-export const Route = createFileRoute('/advanced-animations-test')(
+export const Route = createFileRoute('/__tests/advanced-animations-test')(
   {
     component: AdvancedAnimationsTest,
   },

@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useState } from 'react';
 
-export const Route = createFileRoute('/patients/register/')({
+export const Route = createFileRoute('/patients/register')({
   component: PatientRegister,
 });
 

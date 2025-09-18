@@ -1,14 +1,16 @@
 {
   "name": "@neonpro/api",
   "version": "1.0.0",
-  "description": "NeonPro API - Hono.dev backend for aesthetic clinics management",
+  "description": "NeonPro API - Edge-optimized healthcare platform for Brazilian clinics",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch --env-file=.env src/index.ts",
     "dev:api": "NODE_ENV=development PORT=3004 tsx --env-file=.env src/index.ts",
-    "build": "tsup src/index.ts --format esm --target esnext --clean",
-    "start": "node dist/index.js",
+    "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
+    "build:edge": "NODE_ENV=production EDGE_RUNTIME=true next build",
+    "start": "next start",
     "prepare": "echo 'prepare script temporarily disabled for workspace install'",
     "postinstall": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
     "type-check": "tsc -p tsconfig.feature.json --noEmit",
@@ -21,7 +23,14 @@
     "lint:fix": "oxlint src --fix",
     "format": "dprint fmt",
     "prisma:generate": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
-    "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma"
+    "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma",
+    "bundle:analyze": "node ../../scripts/analyze-healthcare-bundle.js",
+    "bundle:optimize": "npm run build:edge && npm run bundle:analyze",
+    "edge:test": "NODE_ENV=test EDGE_RUNTIME=true vitest --run",
+    "healthcare:compliance": "node -e \"require('./src/utils/bundle-optimizer.js').healthcarePerformanceMonitor.monitorEdgePerformance()\"",
+    "performance:monitor": "node scripts/performance-monitor.js",
+    "deploy:edge": "vercel --prod --regions sao1,gru1",
+    "deploy:preview": "vercel --regions sao1,gru1"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.15",
@@ -41,20 +50,30 @@
     "@trpc/server": "^11.5.1",
     "ai": "^5.0.39",
     "bcryptjs": "^3.0.2",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.2",
     "hono": "^4.9.7",
     "jose": "^5.10.0",
     "msw-trpc": "^2.0.1",
     "nanoid": "^5.1.5",
+    "next": "^15.1.7",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "stream-browserify": "^3.0.0",
     "superjson": "^2.2.2",
     "valibot": "^1.1.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.1.7",
+    "@sentry/nextjs": "^8.55.0",
     "@sentry/node": "^8.55.0",
     "@types/express": "^5.0.3",
     "@types/node": "^20.19.13",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
     "@types/supertest": "^6.0.0",
     "msw": "^2.11.2",
     "prisma": "^5.22.0",
@@ -64,22 +83,59 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "prisma": {
     "schema": "../../packages/database/prisma/schema.prisma"
+  },
+  "bundleAnalyzer": {
+    "enabled": true,
+    "openAnalyzer": false,
+    "analyzerMode": "json",
+    "reportFilename": "../../healthcare-bundle-report.json"
+  },
+  "edgeRuntime": {
+    "regions": ["sao1", "gru1"],
+    "maxDuration": 15,
+    "memory": 256,
+    "healthcareCompliance": true,
+    "lgpdEnforcement": "strict",
+    "cfmCertified": true,
+    "anvisaApproved": true
   },
   "keywords": [
     "neonpro",
     "aesthetic-clinics",
     "healthcare",
-    "hono",
+    "edge-runtime",
+    "next.js",
     "typescript",
     "supabase",
     "prisma",
     "lgpd",
-    "anvisa"
+    "cfm",
+    "anvisa",
+    "brazilian-healthcare",
+    "telemedicine",
+    "medical-grade"
   ],
   "author": "NeonPro Team",
-  "license": "PROPRIETARY"
+  "license": "PROPRIETARY",
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.3%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

@@ -152,6 +152,6 @@ function ServiceTemplatesPage() {
   );
 }
 
-export const Route = createFileRoute('/service-templates')({
+export const Route = createFileRoute('/services/service-templates')({
   component: ServiceTemplatesPage,
 });

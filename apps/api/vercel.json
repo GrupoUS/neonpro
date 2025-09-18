@@ -1,0 +1,180 @@
+{
+  "version": 2,
+  "name": "neonpro-healthcare-api",
+  "alias": ["api.neonpro.com.br"],
+  "regions": ["sao1", "gru1"],
+  "projectSettings": {
+    "devCommand": "bun run dev",
+    "buildCommand": "bun run build",
+    "outputDirectory": ".next",
+    "installCommand": "bun install"
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "VERCEL_REGION": "sao1",
+    "HEALTHCARE_COMPLIANCE_MODE": "brazil",
+    "LGPD_ENFORCEMENT": "strict",
+    "CFM_VALIDATION": "enabled",
+    "ANVISA_REPORTING": "enabled"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "SKIP_BUILD_STATIC_GENERATION": "false"
+    }
+  },
+  "functions": {
+    "apps/api/src/pages/api/**/*.ts": {
+      "runtime": "edge",
+      "regions": ["sao1", "gru1"],
+      "memory": 128,
+      "maxDuration": 10
+    },
+    "apps/api/src/app/api/**/*.ts": {
+      "runtime": "edge", 
+      "regions": ["sao1", "gru1"],
+      "memory": 256,
+      "maxDuration": 15
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-LGPD-Compliant",
+          "value": "true"
+        },
+        {
+          "key": "X-CFM-Compliant", 
+          "value": "true"
+        },
+        {
+          "key": "X-ANVISA-Compliant",
+          "value": "true"
+        },
+        {
+          "key": "X-Data-Residency",
+          "value": "brazil-only"
+        },
+        {
+          "key": "X-Healthcare-Grade",
+          "value": "medical"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=self, microphone=self, geolocation=(), payment=(), usb=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' wss: ws:; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        }
+      ]
+    },
+    {
+      "source": "/api/patients/(.*)",
+      "headers": [
+        {
+          "key": "X-Data-Classification",
+          "value": "sensitive"
+        },
+        {
+          "key": "X-LGPD-Basis",
+          "value": "health-protection"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, private"
+        }
+      ]
+    },
+    {
+      "source": "/api/telemedicine/(.*)",
+      "headers": [
+        {
+          "key": "X-CFM-Standard",
+          "value": "Resolution-2314-2022"
+        },
+        {
+          "key": "X-Medical-Grade",
+          "value": "true"
+        },
+        {
+          "key": "X-Session-Encryption",
+          "value": "AES-256-GCM"
+        }
+      ]
+    },
+    {
+      "source": "/api/adverse-events/(.*)",
+      "headers": [
+        {
+          "key": "X-ANVISA-Standard",
+          "value": "RDC-657-2022"
+        },
+        {
+          "key": "X-Medical-Device-Reporting",
+          "value": "enabled"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/health",
+      "destination": "/api/health",
+      "permanent": false
+    },
+    {
+      "source": "/compliance",
+      "destination": "/api/compliance/report",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/v1/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/health/check",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/compliance/audit",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/performance/metrics",
+      "schedule": "*/1 * * * *"
+    },
+    {
+      "path": "/api/anvisa/adverse-events/sync",
+      "schedule": "0 */6 * * *"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}

@@ -328,6 +328,6 @@ function AnimationValidationSuite() {
   );
 }
 
-export const Route = createFileRoute('/animation-validation-suite')({
+export const Route = createFileRoute('/__tests/animation-validation-suite')({
   component: AnimationValidationSuite,
 });

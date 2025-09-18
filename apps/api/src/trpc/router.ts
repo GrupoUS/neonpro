@@ -8,6 +8,7 @@ import { patientsRouter } from './routers/patients';
 import { appointmentsRouter } from './routers/appointments';
 import { aiRouter } from './routers/ai';
 import { healthcareServicesRouter } from './routers/healthcare-services';
+import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
 
 /**
  * App Router - Main tRPC router for the healthcare platform
@@ -20,6 +21,11 @@ import { healthcareServicesRouter } from './routers/healthcare-services';
  *   - LGPD data lifecycle management
  *   - AI-powered no-show prediction
  *   - CFM-compliant telemedicine sessions
+ * - Real-Time Telemedicine router with Phase 3.4 T031 features:
+ *   - WebSocket subscriptions for video consultation updates
+ *   - Real-time encrypted chat with LGPD compliance
+ *   - Presence detection for healthcare professionals
+ *   - Connection quality monitoring (<50ms latency targets)
  * - Comprehensive audit logging for all operations
  */
 export const appRouter = router({
@@ -27,6 +33,7 @@ export const appRouter = router({
   appointments: appointmentsRouter,
   ai: aiRouter,
   healthcareServices: healthcareServicesRouter,
+  realtimeTelemedicine: realtimeTelemedicineRouter,
 });
 
 // Export the router type for use in clients

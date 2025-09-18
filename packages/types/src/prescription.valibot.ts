@@ -343,8 +343,8 @@ export const DurationSchema = v.pipe(
  */
 export const PrescriptionExpirationSchema = v.pipe(
   v.object({
-    issue_date: v.pipe(v.string(), v.isoDateTime('Data de emissão deve estar em formato ISO')),
-    expiration_date: v.pipe(v.string(), v.isoDateTime('Data de validade deve estar em formato ISO')),
+    issue_date: v.pipe(v.string(), v.isoDate('Data de emissão deve estar em formato ISO')),
+    expiration_date: v.pipe(v.string(), v.isoDate('Data de validade deve estar em formato ISO')),
   }),
   v.check(
     (data: any) => validatePrescriptionExpiration(data.issue_date, data.expiration_date),
@@ -428,8 +428,8 @@ export const DigitalCertificateSchema = v.object({
   certificate_serial: v.pipe(v.string(), v.minLength(10), v.maxLength(50)),
   issuer_name: v.pipe(v.string(), v.minLength(5), v.maxLength(200)),
   subject_name: v.pipe(v.string(), v.minLength(5), v.maxLength(200)),
-  valid_from: v.pipe(v.string(), v.isoDateTime()),
-  valid_until: v.pipe(v.string(), v.isoDateTime()),
+  valid_from: v.pipe(v.string(), v.isoDate()),
+  valid_until: v.pipe(v.string(), v.isoDate()),
   is_valid: v.boolean(),
   thumbprint: v.pipe(v.string(), v.minLength(40), v.maxLength(64)),
   key_usage: v.array(v.string()),
@@ -453,7 +453,7 @@ export const PrescriptionAuditTrailSchema = v.object({
   ], 'Ação de auditoria inválida'),
   
   performed_by: v.pipe(v.string(), v.uuid('ID do usuário deve ser UUID válido')),
-  performed_at: v.pipe(v.string(), v.isoDateTime()),
+  performed_at: v.pipe(v.string(), v.isoDate()),
   ip_address: v.optional(v.pipe(v.string(), v.ip('Endereço IP inválido'))),
   user_agent: v.optional(v.pipe(v.string(), v.maxLength(500))),
   location: v.optional(v.pipe(v.string(), v.maxLength(200))),
@@ -504,8 +504,8 @@ export const PrescriptionCreationSchema = v.pipe(
     digital_certificate: DigitalCertificateSchema,
     
     // Validity
-    issue_date: v.pipe(v.string(), v.isoDateTime('Data de emissão deve estar em formato ISO')),
-    expiration_date: v.pipe(v.string(), v.isoDateTime('Data de validade deve estar em formato ISO')),
+    issue_date: v.pipe(v.string(), v.isoDate('Data de emissão deve estar em formato ISO')),
+    expiration_date: v.pipe(v.string(), v.isoDate('Data de validade deve estar em formato ISO')),
     
     // Clinical context
     diagnosis: v.optional(v.pipe(v.string(), v.minLength(10), v.maxLength(500))),
@@ -559,7 +559,7 @@ export const PrescriptionUpdateSchema = v.object({
   // Updatable fields (limited after issuance)
   status: v.optional(PrescriptionStatusSchema),
   pharmacy_notes: v.optional(v.pipe(v.string(), v.maxLength(500))),
-  dispensed_at: v.optional(v.pipe(v.string(), v.isoDateTime())),
+  dispensed_at: v.optional(v.pipe(v.string(), v.isoDate())),
   dispensed_by: v.optional(v.pipe(v.string(), v.uuid())),
   pharmacy_id: v.optional(v.pipe(v.string(), v.uuid())),
   
@@ -567,7 +567,7 @@ export const PrescriptionUpdateSchema = v.object({
   partially_dispensed_items: v.optional(v.array(v.object({
     medication_index: v.pipe(v.number(), v.minValue(0)),
     quantity_dispensed: v.pipe(v.number(), v.minValue(0)),
-    dispensed_at: v.pipe(v.string(), v.isoDateTime()),
+    dispensed_at: v.pipe(v.string(), v.isoDate()),
     remaining_quantity: v.pipe(v.number(), v.minValue(0))
   }))),
   
@@ -592,10 +592,10 @@ export const PrescriptionQuerySchema = v.object({
   prescription_type: v.optional(PrescriptionTypeSchema),
   
   // Date filters
-  issue_date_from: v.optional(v.pipe(v.string(), v.isoDateTime())),
-  issue_date_to: v.optional(v.pipe(v.string(), v.isoDateTime())),
-  expiration_date_from: v.optional(v.pipe(v.string(), v.isoDateTime())),
-  expiration_date_to: v.optional(v.pipe(v.string(), v.isoDateTime())),
+  issue_date_from: v.optional(v.pipe(v.string(), v.isoDate())),
+  issue_date_to: v.optional(v.pipe(v.string(), v.isoDate())),
+  expiration_date_from: v.optional(v.pipe(v.string(), v.isoDate())),
+  expiration_date_to: v.optional(v.pipe(v.string(), v.isoDate())),
   
   // Medication filters
   medication_name: v.optional(v.pipe(v.string(), v.minLength(2))),

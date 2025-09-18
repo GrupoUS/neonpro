@@ -268,7 +268,7 @@ export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareS
 
   validateEnvironment();
 
-  const serverClient = createSSRServerClient<Database>(
+  const baseClient = createSSRServerClient<Database>(
     getSupabaseUrl(),
     getSupabaseAnonKey(),
     {
@@ -286,12 +286,10 @@ export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareS
         detectSessionInUrl: false,
       },
     }
-  ) as HealthcareServerClient;
+  );
 
-  // Add session property for context isolation
-  serverClient.session = null;
-
-  return serverClient;
+  // Create the healthcare server client by extending the base client
+  return { ...baseClient, session: null } as HealthcareServerClient;
 }
 
 /**
@@ -301,12 +299,13 @@ export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareS
 export function createUserClient(): HealthcareUserClient {
   validateEnvironment();
 
-  const userClient = createBrowserClient<Database>(
+  const baseClient = createBrowserClient<Database>(
     getSupabaseUrl(),
     getSupabaseAnonKey()
-  ) as HealthcareUserClient;
+  );
 
-  return userClient;
+  // Return the client with proper typing - extending with auth methods
+  return { ...baseClient } as HealthcareUserClient;
 }
 
 /**
@@ -346,22 +345,22 @@ export const healthcareRLS = {
       const adminClient = createAdminClient();
       
       // Get user's clinic associations
-      const { data: userClinics } = await adminClient
-        .from('clinic_memberships' as any)
+      const { data: userClinics } = await (adminClient as any)
+        .from('clinic_memberships')
         .select('clinic_id')
         .eq('user_id', userId)
-        .eq('status', 'active');
+        .eq('status', 'active') as { data: Array<{ clinic_id: string }> | null };
 
       if (!userClinics?.length) return false;
 
       // Check if patient belongs to any of user's clinics
       const clinicIds = userClinics.map(c => c.clinic_id);
-      const { data: patientClinic } = await adminClient
-        .from('patient_clinic_associations' as any)
+      const { data: patientClinic } = await (adminClient as any)
+        .from('patient_clinic_associations')
         .select('clinic_id')
         .eq('patient_id', patientId)
         .in('clinic_id', clinicIds)
-        .single();
+        .single() as { data: { clinic_id: string } | null };
 
       return !!patientClinic;
     } catch (error) {

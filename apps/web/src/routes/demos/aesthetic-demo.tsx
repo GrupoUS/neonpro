@@ -302,6 +302,6 @@ function AestheticDemo() {
   );
 }
 
-export const Route = createFileRoute('/aesthetic-demo')({
+export const Route = createFileRoute('/demos/aesthetic-demo')({
   component: AestheticDemo,
 });

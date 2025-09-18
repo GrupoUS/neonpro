@@ -5,7 +5,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { CheckCircle, Chrome, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/test-auth')({
+export const Route = createFileRoute('/__tests/test-auth')({
   component: TestAuth,
 });
 

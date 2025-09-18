@@ -24,6 +24,6 @@ function ValidationReportRoute() {
   );
 }
 
-export const Route = createFileRoute('/validation-report')({
+export const Route = createFileRoute('/__tests/validation-report')({
   component: ValidationReportRoute,
 });

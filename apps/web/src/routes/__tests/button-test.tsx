@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdvancedButton } from '../components/ui/advanced-button';
 
-export const Route = createFileRoute('/button-test')({
+export const Route = createFileRoute('/__tests/button-test')({
   component: ButtonTestPage,
 });
 

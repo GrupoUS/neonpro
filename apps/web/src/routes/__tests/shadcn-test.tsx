@@ -1,7 +1,7 @@
 import { TestShadcnSetup } from '@/components/test-shadcn-setup';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/shadcn-test')({
+export const Route = createFileRoute('/__tests/shadcn-test')({
   component: ShadcnTestPage,
 });
 

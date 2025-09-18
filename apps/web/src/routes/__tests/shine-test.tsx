@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ShineBorder } from '../components/magicui/shine-border';
 
-export const Route = createFileRoute('/shine-test')({
+export const Route = createFileRoute('/__tests/shine-test')({
   component: ShineTestPage,
 });
 

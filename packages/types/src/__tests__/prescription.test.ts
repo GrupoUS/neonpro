@@ -236,8 +236,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
   describe('Prescription Expiration Validation', () => {
     it('should validate correct expiration dates', () => {
       const now = new Date();
-      const issueDate = now.toISOString();
-      const validExpiration = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString(); // 30 days later
+      const issueDate = now.toISOString().split('T')[0]; // Date only format YYYY-MM-DD
+      const validExpiration = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]; // 30 days later
       
       const expirationData = {
         issue_date: issueDate,
@@ -250,8 +250,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
     
     it('should reject expired prescriptions at issue', () => {
       const now = new Date();
-      const issueDate = now.toISOString();
-      const expiredDate = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString(); // Yesterday
+      const issueDate = now.toISOString().split('T')[0];
+      const expiredDate = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString().split('T')[0]; // Yesterday
       
       const expirationData = {
         issue_date: issueDate,
@@ -264,8 +264,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
     
     it('should reject prescriptions with excessive validity period', () => {
       const now = new Date();
-      const issueDate = now.toISOString();
-      const tooLongExpiration = new Date(now.getTime() + (200 * 24 * 60 * 60 * 1000)).toISOString(); // 200 days later
+      const issueDate = now.toISOString().split('T')[0];
+      const tooLongExpiration = new Date(now.getTime() + (200 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]; // 200 days later
       
       const expirationData = {
         issue_date: issueDate,
@@ -307,7 +307,7 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
         active_principle: 'Paracetamol',
         medication_type: 'common',
         anvisa_register: '1.2345.6789.123-4',
-        barcode: '7891234567890',
+        barcode: '7891234567895',
         manufacturer: 'Laboratório Exemplo',
         presentation: 'Comprimidos revestidos 500mg cx 10 un',
         concentration: '500mg',
@@ -382,8 +382,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
         certificate_serial: 'ABC123456789',
         issuer_name: 'Autoridade Certificadora Exemplo',
         subject_name: 'Dr. João Silva - CRM/SP 123456',
-        valid_from: '2024-01-01T00:00:00.000Z',
-        valid_until: '2025-01-01T00:00:00.000Z',
+        valid_from: '2024-01-01',
+        valid_until: '2025-01-01',
         is_valid: true,
         thumbprint: '1234567890abcdef1234567890abcdef12345678',
         key_usage: ['digital_signature', 'key_encipherment'],
@@ -402,8 +402,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
         certificate_serial: 'ABC123456789',
         issuer_name: 'Autoridade Certificadora Exemplo',
         subject_name: 'Dr. João Silva',
-        valid_from: '2024-01-01T00:00:00.000Z',
-        valid_until: '2025-01-01T00:00:00.000Z',
+        valid_from: '2024-01-01',
+        valid_until: '2025-01-01',
         is_valid: true,
         thumbprint: '1234567890abcdef1234567890abcdef12345678',
         key_usage: ['digital_signature'],
@@ -451,14 +451,14 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
           certificate_serial: 'ABC123456789',
           issuer_name: 'Autoridade Certificadora Exemplo',
           subject_name: 'Dr. João Silva - CRM/SP 123456',
-          valid_from: '2024-01-01T00:00:00.000Z',
-          valid_until: '2025-01-01T00:00:00.000Z',
+          valid_from: '2024-01-01',
+          valid_until: '2025-01-01',
           is_valid: true,
           thumbprint: '1234567890abcdef1234567890abcdef12345678',
           key_usage: ['digital_signature']
         },
-        issue_date: now.toISOString(),
-        expiration_date: expiration.toISOString(),
+        issue_date: now.toISOString().split('T')[0],
+        expiration_date: expiration.toISOString().split('T')[0],
         cfm_compliance_verified: true,
         anvisa_compliance_verified: true
       };
@@ -501,14 +501,14 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
           certificate_serial: 'ABC123456789',
           issuer_name: 'Autoridade Certificadora Exemplo',
           subject_name: 'Dr. João Silva - CRM/SP 123456',
-          valid_from: '2024-01-01T00:00:00.000Z',
-          valid_until: '2025-01-01T00:00:00.000Z',
+          valid_from: '2024-01-01',
+          valid_until: '2025-01-01',
           is_valid: true,
           thumbprint: '1234567890abcdef1234567890abcdef12345678',
           key_usage: ['digital_signature']
         },
-        issue_date: now.toISOString(),
-        expiration_date: expiration.toISOString(),
+        issue_date: now.toISOString().split('T')[0],
+        expiration_date: expiration.toISOString().split('T')[0],
         cfm_compliance_verified: false, // Invalid - must be true
         anvisa_compliance_verified: true
       };
@@ -551,14 +551,14 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
           certificate_serial: 'ABC123456789',
           issuer_name: 'Autoridade Certificadora Exemplo',
           subject_name: 'Dr. João Silva - CRM/SP 123456',
-          valid_from: '2024-01-01T00:00:00.000Z',
-          valid_until: '2025-01-01T00:00:00.000Z',
+          valid_from: '2024-01-01',
+          valid_until: '2025-01-01',
           is_valid: true,
           thumbprint: '1234567890abcdef1234567890abcdef12345678',
           key_usage: ['digital_signature']
         },
-        issue_date: now.toISOString(),
-        expiration_date: expiration.toISOString(),
+        issue_date: now.toISOString().split('T')[0],
+        expiration_date: expiration.toISOString().split('T')[0],
         cfm_compliance_verified: true,
         anvisa_compliance_verified: true
       };
@@ -699,8 +699,8 @@ describe('Digital Prescription Validation - TDD RED Phase', () => {
         patient_id: '223e4567-e89b-12d3-a456-426614174000',
         status: 'issued',
         prescription_type: 'simple',
-        issue_date_from: '2024-01-01T00:00:00.000Z',
-        issue_date_to: '2024-12-31T23:59:59.999Z',
+        issue_date_from: '2024-01-01',
+        issue_date_to: '2024-12-31',
         medication_type: 'common',
         controlled_substances_only: false,
         limit: 50,

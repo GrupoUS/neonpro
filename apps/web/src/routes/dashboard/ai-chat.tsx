@@ -1,7 +1,7 @@
 import AIChatContainer from '@/components/organisms/ai-chat-container';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/ai-chat')({
+export const Route = createFileRoute('/dashboard/ai-chat')({
   component: Page,
 });
 

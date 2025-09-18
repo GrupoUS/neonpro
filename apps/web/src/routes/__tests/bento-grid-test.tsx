@@ -246,6 +246,6 @@ function BentoGridTestPage() {
   );
 }
 
-export const Route = createFileRoute('/bento-grid-test')({
+export const Route = createFileRoute('/__tests/bento-grid-test')({
   component: BentoGridTestPage,
 });
