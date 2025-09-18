@@ -1,0 +1,155 @@
+{
+  "tddOrchestrator": {
+    "version": "2.0.0",
+    "initialized": "2025-09-18T00:34:05.457Z",
+    "auditTarget": "api directory",
+    "phase": "0 - Initialization"
+  },
+  "agentRegistry": {
+    "specializedAgents": {
+      "architect-review": {
+        "role": "System design and patterns",
+        "focus": "Architecture validation, scalability, design patterns",
+        "activationTriggers": ["microservice", "architecture", "system design", "patterns", "scalability"],
+        "filePatterns": ["**/routes/**", "**/api/**", "**/services/**"],
+        "status": "registered",
+        "tddIntegration": "Validates architectural test patterns and design compliance"
+      },
+      "security-auditor": {
+        "role": "DevSecOps and compliance",
+        "focus": "Security analysis, vulnerability assessment, compliance validation",
+        "activationTriggers": ["authentication", "authorization", "payment", "personal data", "compliance"],
+        "filePatterns": ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"],
+        "status": "registered",
+        "healthcareCritical": true,
+        "tddIntegration": "Security-first approach for all TDD phases in healthcare contexts"
+      },
+      "code-reviewer": {
+        "role": "Code quality and maintainability",
+        "focus": "Quality analysis, performance optimization, technical debt reduction",
+        "activationTriggers": ["performance", "maintainability", "technical debt", "code quality"],
+        "filePatterns": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+        "status": "registered",
+        "tddIntegration": "Quality gates enforcement during GREEN/REFACTOR phases"
+      },
+      "test": {
+        "role": "TDD patterns and test orchestration",
+        "focus": "Test structure definition, coverage analysis, TDD discipline",
+        "activationTriggers": ["tdd", "testing", "coverage", "test patterns"],
+        "filePatterns": ["**/*.test.*", "**/*.spec.*", "**/tests/**"],
+        "status": "registered",
+        "tddIntegration": "Primary coordinator for RED phase with test structure definition"
+      },
+      "compliance-validator": {
+        "role": "Healthcare regulatory validation",
+        "focus": "LGPD, ANVISA, CFM compliance, audit trail validation",
+        "activationTriggers": ["lgpd", "gdpr", "hipaa", "anvisa", "cfm", "healthcare", "patient", "clinic"],
+        "filePatterns": ["**/*patient*", "**/*clinic*", "**/healthcare/**", "**/compliance/**"],
+        "status": "registered",
+        "healthcareCritical": true,
+        "tddIntegration": "Mandatory validation in ALL phases for healthcare features"
+      }
+    },
+    "agentCoordination": {
+      "workflow": "standard-tdd",
+      "healthcareComplianceEnabled": true,
+      "parallelExecutionEnabled": true,
+      "qualityGateValidation": true
+    }
+  },
+  "mcpToolSequence": {
+    "mandatorySequence": [
+      "sequential-thinking",
+      "archon",
+      "serena",
+      "desktop-commander"
+    ],
+    "availableSequence": [
+      "sequential-thinking",
+      "filesystem",
+      "context7"
+    ],
+    "adaptationNote": "archon, serena, and desktop-commander MCP servers are not available. Using available MCP servers: sequential-thinking, filesystem, context7.",
+    "healthcareComplianceSequence": [
+      "sequential-thinking",
+      "filesystem",
+      "context7"
+    ]
+  },
+  "qualityGates": {
+    "redPhase": {
+      "testStructure": "Tests follow established patterns ≥95%",
+      "securityCoverage": "Security test requirements defined ≥100%",
+      "architectureAlignment": "Design tests validate architecture ≥90%",
+      "complianceValidation": "Compliance requirements ≥100% (healthcare)"
+    },
+    "greenPhase": {
+      "testPassage": "All tests pass ≥100%",
+      "codeQuality": "Quality metrics threshold ≥85%",
+      "securityValidation": "No critical vulnerabilities ≥100%",
+      "patternCompliance": "Architectural patterns followed ≥90%",
+      "complianceImplementation": "Compliance validation ≥100% (healthcare)"
+    },
+    "refactorPhase": {
+      "codeImprovement": "Quality metrics improved ≥10%",
+      "testOptimization": "Test suite performance improved ≥5%",
+      "securityHardening": "Security posture maintained or improved ≥100%",
+      "designEnhancement": "Architecture score improved or maintained ≥90%",
+      "complianceOptimization": "Compliance maintained/improved ≥100%"
+    },
+    "agentSpecificThresholds": {
+      "architect-review": {
+        "architecture_compliance": "≥90%",
+        "design_patterns": "≥85%",
+        "scalability": "≥80%"
+      },
+      "security-auditor": {
+        "security_vulnerabilities": "0 critical",
+        "compliance_validation": "≥100%",
+        "data_protection": "≥100%"
+      },
+      "code-reviewer": {
+        "code_quality": "≥85%",
+        "maintainability": "≥80%",
+        "performance": "≥75%"
+      },
+      "test": {
+        "test_coverage": "≥90%",
+        "test_quality": "≥85%",
+        "tdd_patterns": "≥95%"
+      },
+      "compliance-validator": {
+        "lgpd_compliance": "≥100%",
+        "healthcare_standards": "≥100%",
+        "audit_trail": "≥100%"
+      }
+    }
+  },
+  "auditContext": {
+    "targetDirectory": "api",
+    "auditScope": "Comprehensive quality control audit",
+    "auditPhases": [
+      "Phase 0: Orchestration Initialization",
+      "Phase 1: Backend/Database Integration",
+      "Phase 2: LGPD & Healthcare Security",
+      "Phase 3: Code Quality & Build Checks",
+      "Phase 4: Intelligent Test Orchestration",
+      "Phase 5: Systematic Fixing",
+      "Phase 6: Comprehensive Quality Gates"
+    ],
+    "healthcareComplianceFocus": true,
+    "regulatoryFrameworks": ["LGPD", "ANVISA", "CFM"],
+    "securityClassification": "high",
+    "complexityAssessment": "medium",
+    "auditTriggers": ["api", "healthcare", "patient-data", "compliance"]
+  },
+  "initializationStatus": {
+    "tddOrchestratorInitialized": true,
+    "agentRegistryLoaded": true,
+    "mcpToolSequenceEstablished": true,
+    "qualityGatesDefined": true,
+    "auditContextInitialized": true,
+    "overallStatus": "completed",
+    "notes": "TDD orchestrator initialization completed with adaptations for available MCP servers. All specialized agents registered, quality gates defined, and audit context established for API directory quality control audit."
+  }
+}

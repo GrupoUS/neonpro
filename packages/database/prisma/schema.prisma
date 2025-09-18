@@ -387,6 +387,35 @@ enum EscalationStatus {
   CLOSED
 }
 
+enum HealthcareMetricType {
+  CFM_COMPLIANCE_RATE
+  ANVISA_AUDIT_SCORE
+  LGPD_COMPLIANCE_SCORE
+  PATIENT_SAFETY_INCIDENTS
+  DATA_BREACH_INCIDENTS
+  CONSENT_COMPLIANCE_RATE
+  AVERAGE_RESPONSE_TIME
+  ERROR_RATE
+  SYSTEM_AVAILABILITY
+  AUDIT_COMPLETION_RATE
+}
+
+enum HealthcareMetricStatus {
+  COMPLIANT
+  WARNING
+  CRITICAL
+  UNKNOWN
+}
+
+enum HealthcareMetricCategory {
+  CFM
+  ANVISA
+  LGPD
+  PERFORMANCE
+  SAFETY
+  AUDIT
+}
+
 // AI Governance and Model Performance
 model AIGovernanceMetric {
   id                    String         @id @default(uuid())

@@ -260,7 +260,7 @@ export async function runTDDCycle(
 ): Promise<TDDOrchestratorResult> {
   const config: TDDOrchestratorConfig = {
     feature,
-    agents: ['architect-review', 'code-reviewer', 'security-auditor'],
+    agents: ['apex-dev', 'architect-review', 'code-reviewer', 'security-auditor'],
     workflow: 'standard-tdd',
     coordination: 'sequential',
     qualityGates: ['coverage', 'complexity', 'security'],

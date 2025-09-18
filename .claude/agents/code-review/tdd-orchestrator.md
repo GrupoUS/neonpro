@@ -66,7 +66,7 @@ workflow: "security-critical-tdd"
 
 | Agent | RED Phase | GREEN Phase | REFACTOR Phase | Specialization |
 |-------|-----------|-------------|----------------|----------------|
-| **test.md** | Test patterns, TDD structure | Test validation | Test optimization | Test orchestration, TDD discipline |
+| **apex-dev** | Code audit, test patterns, TDD structure | Implementation validation | Code refactoring, optimization | Code quality, testing, TDD discipline |
 | **architect-review.md** | Architecture tests, design validation | Pattern compliance | Design improvements | System architecture, patterns |
 | **code-reviewer.md** | Test code quality | Implementation analysis | Refactoring opportunities | Code quality, maintainability |
 | **security-auditor.md** | Security test requirements | Vulnerability scanning | Security hardening | DevSecOps, compliance |
@@ -101,13 +101,17 @@ AGENT_TRIGGERS:
     - "refactoring"
     - "optimization"
   
-  test:
+  apex-dev:
     - "tdd"
     - "testing"
     - "coverage"
     - "test patterns"
     - "unit tests"
     - "integration tests"
+    - "code audit"
+    - "code quality"
+    - "refactoring"
+    - "implementation"
   
   compliance-validator:
     - "healthcare"
@@ -178,7 +182,7 @@ graph TD
 1. **RED Phase Orchestration**
    ```yaml
    phase: RED
-   primary_agent: test.md
+   primary_agent: apex-dev
    support_agents:
      - architect-review.md  # Design test validation
      - security-auditor.md  # Security test requirements (if triggered)
@@ -188,6 +192,7 @@ graph TD
      - Validate architectural test approach
      - Ensure security test coverage
      - Create failing tests (RED state)
+     - Perform code audit and analysis
    ```
 
 2. **GREEN Phase Orchestration**
@@ -211,16 +216,17 @@ graph TD
    phase: REFACTOR
    coordination: parallel_execution
    agents:
+     - apex-dev           # Code refactoring and optimization
      - code-reviewer.md     # Code quality improvements
      - architect-review.md  # Design optimization
      - security-auditor.md  # Security hardening
-     - test.md             # Test optimization
    
    actions:
      - Identify refactoring opportunities
      - Apply design improvements
      - Enhance security measures
      - Optimize test suite
+     - Perform comprehensive code audit and refactoring
    ```
 
 ### 2. Security-Critical TDD Workflow
@@ -309,7 +315,7 @@ phase_sequence:
 ## Enhanced TDD Phase Coordination with Healthcare Integration
 
 ### Healthcare-Integrated RED Phase (Test Definition)
-- **Primary Agent**: `test.md` - Pattern enforcement and structure
+- **Primary Agent**: `apex-dev` - Pattern enforcement and structure with code audit
 - **Support Agents**:
   - `architect-review.md` - Design validation and architecture tests
   - `security-auditor.md` - Security test requirements (compliance-driven)
@@ -670,7 +676,7 @@ INTEGRATION_POINTS:
   ide_integration:
     vscode_extension:
       - command: "tdd.orchestrate"
-        agents: ["test", "code-reviewer"]
+        agents: ["apex-dev", "code-reviewer"]
     
     jetbrains_plugin:
       - action: "orchestrate_tdd_cycle"
@@ -696,20 +702,20 @@ INTEGRATION_POINTS:
 AGENT_ACTIVATION_MATRIX:
   complexity_based:
     low_complexity:
-      primary_agent: "test"
+      primary_agent: "apex-dev"
       support_agents: ["code-reviewer"]
       workflow: "standard-tdd"
       mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander"]
     
     medium_complexity:
       primary_agent: "code-reviewer"
-      support_agents: ["test", "architect-review"]
+      support_agents: ["apex-dev", "architect-review"]
       workflow: "enhanced-tdd"
       mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander", "context7"]
     
     high_complexity:
       primary_agent: "tdd-orchestrator"
-      support_agents: ["architect-review", "code-reviewer", "security-auditor", "test"]
+      support_agents: ["architect-review", "code-reviewer", "security-auditor", "apex-dev"]
       workflow: "multi-agent-tdd"
       mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander", "context7", "tavily"]
   
@@ -837,8 +843,8 @@ function selectAgents(context: AgentSelectionContext): AgentConfiguration {
 ```mermaid
 graph TD
     A[Feature Request Analysis] --> B{Complexity Assessment}
-    B -->|Low| C[Standard TDD<br/>test + code-reviewer]
-    B -->|Medium| D[Enhanced TDD<br/>code-reviewer + test + architect-review]
+    B -->|Low| C[Standard TDD<br/>apex-dev + code-reviewer]
+    B -->|Medium| D[Enhanced TDD<br/>code-reviewer + apex-dev + architect-review]
     B -->|High| E[Multi-Agent TDD<br/>All agents coordination]
     
     C --> F{Domain Specific?}
@@ -869,11 +875,13 @@ graph TD
 ```yaml
 AGENT_PERFORMANCE_METRICS:
   effectiveness_indicators:
-    test_agent:
-      - "Test coverage improvement"
-      - "Bug detection rate"
-      - "Test execution efficiency"
+    apex_dev:
+      - "Code quality improvement"
+      - "Test coverage optimization"
+      - "Bug detection and resolution"
       - "Pattern compliance score"
+      - "Code audit effectiveness"
+      - "Refactoring efficiency"
     
     compliance_validator:
       - "Compliance violation detection"
