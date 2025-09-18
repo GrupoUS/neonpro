@@ -174,19 +174,19 @@
   - Setup reminder type validation for multi-channel communication
 
 ### Enhanced Healthcare Middleware
-- [ ] **T021** Create LGPD audit middleware with Prisma integration in `apps/api/src/trpc/middleware/lgpd-audit.ts`
+- [x] **T021** Create LGPD audit middleware with Prisma integration in `apps/api/src/trpc/middleware/lgpd-audit.ts` ✅ COMPLETED
   - Implement automatic audit logging for all patient data access
   - Add cryptographic proof generation for consent operations
   - Create data minimization enforcement for LGPD compliance
   - Setup performance monitoring for <200ms audit overhead
 
-- [ ] **T022** Create CFM validation middleware in `apps/api/src/trpc/middleware/cfm-validation.ts`
+- [x] **T022** Create CFM validation middleware in `apps/api/src/trpc/middleware/cfm-validation.ts` ✅ COMPLETED
   - Implement medical license validation with active status checking
   - Add ICP-Brasil certificate verification for telemedicine
   - Create professional identity validation for healthcare operations
   - Setup NGS2 security standards enforcement
 
-- [ ] **T023** Create Prisma RLS enforcement middleware in `apps/api/src/trpc/middleware/prisma-rls.ts`
+- [x] **T023** Create Prisma RLS enforcement middleware in `apps/api/src/trpc/middleware/prisma-rls.ts` ✅ COMPLETED
   - Implement automatic clinic-based data isolation
   - Add user context validation for multi-tenant access
   - Create RLS policy enforcement for all database operations
@@ -212,19 +212,19 @@
   - Setup healthcare insights generation with compliance validation
 
 ### Enhanced Healthcare Services
-- [ ] **T027** [P] Create LGPD compliance service in `apps/api/src/services/lgpd-compliance.ts`
+- [x] **T027** [P] Create LGPD compliance service in `apps/api/src/services/lgpd-compliance.ts` ✅ COMPLETED
   - Implement automated data lifecycle management
   - Add consent withdrawal processing with legal validity
   - Create data anonymization workflows for patient privacy
   - Setup retention period enforcement with automatic deletion
 
-- [ ] **T028** [P] Create no-show prediction service in `apps/api/src/services/no-show-prediction.ts`
+- [x] **T028** [P] Create no-show prediction service in `apps/api/src/services/no-show-prediction.ts` ✅ COMPLETED
   - Implement AI model integration for appointment attendance prediction
   - Add Brazilian patient behavior analysis
   - Create intervention recommendation engine
   - Setup model performance monitoring and retraining
 
-- [ ] **T029** [P] Create telemedicine service with CFM compliance in `apps/api/src/services/telemedicine.ts`
+- [x] **T029** [P] Create telemedicine service with CFM compliance in `apps/api/src/services/telemedicine.ts` ✅ COMPLETED
   - Implement session management with NGS2 security standards
   - Add ICP-Brasil certificate validation
   - Create real-time communication with healthcare quality requirements

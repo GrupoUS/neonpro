@@ -187,7 +187,7 @@ class MemoryRateLimitStore {
     const now = Date.now();
     const cutoff = now - this.maxStorageTime;
 
-    for (const [key, attempts] of this.attempts.entries()) {
+    for (const [key, attempts] of Array.from(this.attempts.entries())) {
       const validAttempts = attempts.filter(attempt => attempt.timestamp >= cutoff);
       if (validAttempts.length === 0) {
         this.attempts.delete(key);
@@ -202,7 +202,7 @@ class MemoryRateLimitStore {
    */
   getStats(): { totalKeys: number; totalAttempts: number } {
     let totalAttempts = 0;
-    for (const attempts of this.attempts.values()) {
+    for (const attempts of Array.from(this.attempts.values())) {
       totalAttempts += attempts.length;
     }
 
