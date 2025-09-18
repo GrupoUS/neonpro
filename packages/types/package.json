@@ -34,7 +34,8 @@
     "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

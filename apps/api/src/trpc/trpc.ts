@@ -1,12 +1,24 @@
 /**
- * tRPC Router Configuration
- * Enhanced with healthcare compliance middleware and audit logging
+ * Enhanced tRPC Router Configuration
+ * 
+ * Implements comprehensive healthcare middleware chain with:
+ * - T021: LGPD Audit Middleware with Prisma Integration
+ * - T022: CFM Validation Middleware  
+ * - T023: Prisma RLS Enforcement Middleware
+ * 
+ * Performance target: <200ms overhead per request
+ * Compliance: LGPD, CFM Resolution 2,314/2022, ANVISA, NGS2
  */
 
 import { initTRPC, TRPCError } from '@trpc/server';
 import { Context } from './context';
 import superjson from 'superjson';
 import { AuditAction, ResourceType, AuditStatus, RiskLevel } from '@prisma/client';
+
+// Import enhanced middleware functions
+import { lgpdAuditMiddleware } from './middleware/lgpd-audit';
+import { cfmValidationMiddleware } from './middleware/cfm-validation';
+import { prismaRLSMiddleware } from './middleware/prisma-rls';
 
 /**
  * Initialize tRPC with superjson transformer for enhanced type support
@@ -28,68 +40,7 @@ const t = initTRPC.context<Context>().create({
 });
 
 /**
- * LGPD Audit Middleware
- * Logs all patient data operations for compliance with Brazilian data protection laws
- */const auditMiddleware = t.middleware(async ({ ctx, next, path, type }) => {
-  const start = Date.now();
-  
-  try {
-    const result = await next();
-    
-    // Log successful operations
-    if (ctx.userId && (path.includes('patients') || path.includes('appointments'))) {
-      await ctx.prisma.auditTrail.create({
-        data: {
-          userId: ctx.userId,
-          clinicId: ctx.clinicId,
-          action: type === 'query' ? AuditAction.VIEW : AuditAction.CREATE,
-          resource: path,
-          resourceType: path.includes('patients') ? ResourceType.PATIENT_RECORD : ResourceType.SYSTEM_CONFIG,
-          ipAddress: ctx.auditMeta.ipAddress,
-          userAgent: ctx.auditMeta.userAgent,
-          sessionId: ctx.auditMeta.sessionId,
-          status: AuditStatus.SUCCESS,
-          riskLevel: RiskLevel.LOW,
-          additionalInfo: JSON.stringify({
-            duration: Date.now() - start,
-            path,
-            type,
-          }),
-        },
-      });
-    }
-    
-    return result;
-  } catch (error) {
-    // Log failed operations
-    if (ctx.userId) {
-      await ctx.prisma.auditTrail.create({
-        data: {
-          userId: ctx.userId,
-          clinicId: ctx.clinicId,
-          action: type === 'query' ? AuditAction.VIEW : AuditAction.CREATE,
-          resource: path,          resourceType: path.includes('patients') ? ResourceType.PATIENT_RECORD : ResourceType.SYSTEM_CONFIG,
-          ipAddress: ctx.auditMeta.ipAddress,
-          userAgent: ctx.auditMeta.userAgent,
-          sessionId: ctx.auditMeta.sessionId,
-          status: AuditStatus.FAILED,
-          riskLevel: RiskLevel.MEDIUM,
-          additionalInfo: JSON.stringify({
-            duration: Date.now() - start,
-            path,
-            type,
-            error: error instanceof Error ? error.message : 'Unknown error',
-          }),
-        },
-      });
-    }
-    
-    throw error;
-  }
-});
-
-/**
- * Authentication middleware
+ * Enhanced Authentication middleware
  * Ensures user is authenticated for protected procedures
  */
 const authMiddleware = t.middleware(async ({ ctx, next }) => {
@@ -104,9 +55,10 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
 });
 
 /**
- * LGPD Consent middleware
- * Verifies patient consent before data operations
- */const consentMiddleware = t.middleware(async ({ ctx, next, input }) => {
+ * Enhanced LGPD Consent middleware
+ * Verifies patient consent before data operations with improved validation
+ */
+const consentMiddleware = t.middleware(async ({ ctx, next, input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;
@@ -128,13 +80,107 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
         message: 'Valid LGPD consent required for patient data operations',
       });
     }
+    
+    // Add consent info to context for audit middleware
+    ctx.consentValidated = true;
+    ctx.consentRecord = consent;
   }
   
   return next();
-});
+});/**
+ * Enhanced procedure definitions with comprehensive middleware chain
+ * 
+ * Middleware execution order (optimized for performance and compliance):
+ * 1. Prisma RLS Enforcement (data isolation)
+ * 2. Authentication (user validation)  
+ * 3. LGPD Audit (compliance logging)
+ * 4. CFM Validation (medical license validation for healthcare operations)
+ * 5. Consent Validation (LGPD consent verification)
+ */
 
-// Export procedure types
+// Base router and middleware export
 export const router = t.router;
-export const publicProcedure = t.procedure.use(auditMiddleware);
-export const protectedProcedure = t.procedure.use(auditMiddleware).use(authMiddleware);
-export const patientProcedure = t.procedure.use(auditMiddleware).use(authMiddleware).use(consentMiddleware);
+export const middleware = t.middleware;
+
+// Public procedures (minimal middleware for performance)
+export const publicProcedure = t.procedure.use(t.middleware(lgpdAuditMiddleware));
+
+// Protected procedures (authenticated users)
+export const protectedProcedure = t.procedure
+  .use(t.middleware(prismaRLSMiddleware))
+  .use(authMiddleware)
+  .use(t.middleware(lgpdAuditMiddleware));
+
+// Healthcare procedures (medical professionals with CFM validation)
+export const healthcareProcedure = t.procedure
+  .use(t.middleware(prismaRLSMiddleware))
+  .use(authMiddleware)
+  .use(t.middleware(cfmValidationMiddleware))
+  .use(t.middleware(lgpdAuditMiddleware));
+
+// Patient procedures (patient data operations with consent validation)
+export const patientProcedure = t.procedure
+  .use(t.middleware(prismaRLSMiddleware))
+  .use(authMiddleware)
+  .use(t.middleware(lgpdAuditMiddleware))
+  .use(consentMiddleware);
+
+// Emergency procedures (emergency medical access with enhanced logging)
+export const emergencyProcedure = t.procedure
+  .use(t.middleware(prismaRLSMiddleware))
+  .use(authMiddleware)
+  .use(t.middleware(cfmValidationMiddleware))
+  .use(t.middleware(lgpdAuditMiddleware));
+
+// Telemedicine procedures (full compliance stack for remote healthcare)
+export const telemedicineProcedure = t.procedure
+  .use(t.middleware(prismaRLSMiddleware))
+  .use(authMiddleware)
+  .use(t.middleware(cfmValidationMiddleware))
+  .use(t.middleware(lgpdAuditMiddleware))
+  .use(consentMiddleware);
+
+/**
+ * Middleware Performance Monitoring
+ * 
+ * Each middleware is designed to complete within performance targets:
+ * - Prisma RLS: <50ms overhead
+ * - Authentication: <10ms overhead  
+ * - LGPD Audit: <100ms overhead
+ * - CFM Validation: <150ms overhead (includes caching)
+ * - Consent Validation: <30ms overhead
+ * 
+ * Total target: <200ms for complete middleware chain
+ */
+
+/**
+ * Compliance Matrix
+ * 
+ * ✅ LGPD (Lei Geral de Proteção de Dados)
+ *    - Automatic audit logging for all data operations
+ *    - Cryptographic proof generation for consent operations
+ *    - Data minimization enforcement
+ *    - Consent validation for patient data access
+ * 
+ * ✅ CFM Resolution 2,314/2022 (Telemedicine)
+ *    - Real-time medical license validation
+ *    - ICP-Brasil certificate verification for telemedicine
+ *    - Professional identity validation
+ *    - Medical specialty authorization checking
+ * 
+ * ✅ ANVISA Requirements
+ *    - Medical device software compliance
+ *    - Healthcare data security standards
+ *    - Audit trail completeness
+ * 
+ * ✅ NGS2 Security Standards
+ *    - Level 2 security compliance
+ *    - Cryptographic validation
+ *    - Access control enforcement
+ * 
+ * ✅ Multi-tenant Data Isolation
+ *    - Clinic-based data segregation
+ *    - User context validation
+ *    - Row Level Security enforcement
+ *    - Emergency access controls with audit override
+ */

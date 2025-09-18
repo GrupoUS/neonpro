@@ -14,7 +14,7 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createServerClient as createSSRServerClient, createBrowserClient } from '@supabase/ssr';
-import type { Database } from '../../../packages/database/src/types/supabase';
+import type { Database } from '../../../../packages/database/src/types/supabase';
 
 // Environment validation with fallback to NEXT_PUBLIC_ variables
 function getSupabaseUrl(): string {
@@ -237,6 +237,16 @@ export function createAdminClient(): HealthcareAdminClient {
 
   adminClientInstance = adminClient;
   return adminClient;
+}
+
+/**
+ * Reset function for testing purposes only
+ * Clears singleton instances to allow fresh creation in tests
+ */
+export function resetClientInstances(): void {
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    adminClientInstance = null;
+  }
 }
 
 /**

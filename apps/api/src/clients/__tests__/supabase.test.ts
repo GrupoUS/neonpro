@@ -121,13 +121,10 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
 
     it('should configure admin client with disabled session persistence', async () => {
       const { createClient } = await import('@supabase/supabase-js');
+      const { createAdminClient, resetClientInstances } = await import('../supabase');
       
-      // Clear any existing mocks to ensure fresh call tracking
-      vi.clearAllMocks();
-      
-      // Force a fresh import to reset singleton
-      delete require.cache[require.resolve('../supabase')];
-      const { createAdminClient } = await import('../supabase');
+      // Reset singleton to ensure fresh creation and mock tracking
+      resetClientInstances();
       
       createAdminClient();
       
@@ -197,7 +194,22 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     it('should throw error when cookie handlers are missing', async () => {
       const { createServerClient } = await import('../supabase');
       
-      expect(() => createServerClient(null as any)).toThrow('Cookie handlers are required for server client');
+      // Temporarily override NODE_ENV to test production behavior
+      const originalNodeEnv = process.env.NODE_ENV;
+      const originalVitest = process.env.VITEST;
+      
+      process.env.NODE_ENV = 'production';
+      delete process.env.VITEST;
+      
+      try {
+        expect(() => createServerClient(null as any)).toThrow('Cookie handlers are required for server client');
+      } finally {
+        // Restore original environment
+        process.env.NODE_ENV = originalNodeEnv;
+        if (originalVitest) {
+          process.env.VITEST = originalVitest;
+        }
+      }
     });
   });
 

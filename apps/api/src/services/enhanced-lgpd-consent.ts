@@ -425,13 +425,45 @@ export class EnhancedLGPDConsentService {
   }
 
   private async getCurrentPrivacyPolicyVersion(): Promise<string> {
-    // This should fetch the current privacy policy version from configuration
-    return '2024.1';
+    try {
+      // Fetch the current privacy policy version from configuration table
+      const { data, error } = await this.supabase
+        .from('configurations')
+        .select('value')
+        .eq('key', 'privacy_policy_version')
+        .single();
+
+      if (error || !data) {
+        console.warn('Privacy policy version not found in configuration, using default');
+        return '2024.1';
+      }
+
+      return data.value;
+    } catch (error) {
+      console.error('Error fetching privacy policy version:', error);
+      return '2024.1'; // Fallback to default
+    }
   }
 
   private async getCurrentTermsVersion(): Promise<string> {
-    // This should fetch the current terms version from configuration
-    return '2024.1';
+    try {
+      // Fetch the current terms version from configuration table
+      const { data, error } = await this.supabase
+        .from('configurations')
+        .select('value')
+        .eq('key', 'terms_version')
+        .single();
+
+      if (error || !data) {
+        console.warn('Terms version not found in configuration, using default');
+        return '2024.1';
+      }
+
+      return data.value;
+    } catch (error) {
+      console.error('Error fetching terms version:', error);
+      return '2024.1'; // Fallback to default
+    }
   }
 
   private async logConsentAuditEvent(eventType: string, eventData: any): Promise<void> {
@@ -448,11 +480,20 @@ export class EnhancedLGPDConsentService {
         }
       };
 
-      // This would insert into audit_logs table
-      // For now, we'll log to console with structured format
-      console.log(`[LGPD CONSENT AUDIT] ${eventType}`, auditEntry);
+      // Insert into audit_logs table
+      const { error } = await this.supabase
+        .from('audit_logs')
+        .insert(auditEntry);
+
+      if (error) {
+        console.error('Failed to insert audit log:', error);
+        // Fallback to console logging if database insert fails
+        console.log(`[LGPD CONSENT AUDIT] ${eventType}`, auditEntry);
+      }
     } catch (error) {
       console.error('Error logging consent audit event:', error);
+      // Fallback to console logging if database operation fails
+      console.log(`[LGPD CONSENT AUDIT] ${eventType}`, eventData);
     }
   }
 }

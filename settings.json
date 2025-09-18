@@ -1,0 +1,213 @@
+{
+    "selectedAuthType": "oauth-personal",
+    "mcpServers": {
+        "shadcn": {
+            "command": "bunx",
+            "args": [
+                "shadcn@latest",
+                "mcp"
+            ]
+        },
+        "desktop-commander": {
+            "command": "bunx",
+            "args": [
+                "@wonderwhy-er/desktop-commander@latest"
+            ],
+            "env": {
+                "MAX_MCP_OUTPUT_TOKENS": "20000"
+            },
+            "alwaysAllow": [
+                "start_process",
+                "get_config",
+                "set_config_value",
+                "read_file",
+                "read_multiple_files",
+                "write_file",
+                "create_directory",
+                "list_directory",
+                "move_file",
+                "start_search",
+                "get_more_search_results",
+                "stop_search",
+                "list_searches",
+                "get_file_info",
+                "edit_block",
+                "read_process_output",
+                "interact_with_process",
+                "force_terminate",
+                "list_sessions",
+                "list_processes",
+                "kill_process",
+                "search_files"
+            ],
+            "disabledTools": [
+                "give_feedback_to_desktop_commander",
+                "get_usage_stats"
+            ]
+        },
+        "Tavily": {
+            "command": "bunx",
+            "args": [
+                "tavily-mcp@latest"
+            ],
+            "env": {
+                "TAVILY_API_KEY": "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",
+                "TAVILY_MAX_RESULTS": "10",
+                "TAVILY_SEARCH_DEPTH": "advanced",
+                "TAVILY_TIMEOUT": "20000"
+            },
+            "type": "stdio",
+            "fromGalleryId": "tavily-ai.tavily-mcp",
+            "alwaysAllow": [
+                "tavily-search",
+                "tavily-extract",
+                "tavily-crawl",
+                "tavily-map"
+            ]
+        },
+        "context7": {
+            "command": "bunx",
+            "args": [
+                "@upstash/context7-mcp@latest"
+            ],
+            "env": {
+                "CONTEXT7_MAX_TOKENS": "10000",
+                "CONTEXT7_TIMEOUT": "15000",
+                "CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA"
+            },
+            "type": "stdio",
+            "fromGalleryId": "upstash.context7",
+            "alwaysAllow": [
+                "resolve-library-id",
+                "get-library-docs"
+            ]
+        },
+        "Sequential Thinking": {
+            "command": "bunx",
+            "args": [
+                "@modelcontextprotocol/server-sequential-thinking"
+            ],
+            "env": {
+                "DISABLE_THOUGHT_LOGGING": "false",
+                "SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
+                "MAX_THOUGHTS": "10",
+                "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
+                "SEQUENTIAL_THINKING_TIMEOUT": "15000"
+            },
+            "type": "stdio",
+            "fromGalleryId": "modelcontextprotocol.servers_sequentialthinking",
+            "alwaysAllow": [
+                "sequentialthinking"
+            ]
+        },
+        "supabase": {
+            "command": "bunx",
+            "args": [
+                "@supabase/mcp-server-supabase@latest",
+                "--access-token",
+                "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
+            ],
+            "alwaysAllow": [
+                "search_docs",
+                "list_organizations",
+                "get_organization",
+                "list_projects",
+                "get_project",
+                "create_project",
+                "list_tables",
+                "list_extensions",
+                "list_migrations",
+                "apply_migration",
+                "execute_sql",
+                "get_logs",
+                "get_advisors",
+                "get_project_url",
+                "get_anon_key",
+                "generate_typescript_types",
+                "list_edge_functions",
+                "get_edge_function",
+                "deploy_edge_function",
+                "create_branch",
+                "list_branches",
+                "delete_branch",
+                "merge_branch",
+                "reset_branch",
+                "rebase_branch"
+            ],
+            "disabledTools": [
+                "get_cost",
+                "confirm_cost",
+                "pause_project",
+                "restore_project"
+            ]
+        },
+        "serena": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/oraios/serena",
+                "serena",
+                "start-mcp-server",
+                "--context",
+                "ide-assistant",
+                "--project",
+                "/home/vibecode/neonpro"
+            ],
+            "env": {},
+            "alwaysAllow": [
+                "list_dir",
+                "find_file",
+                "search_for_pattern",
+                "find_symbol",
+                "get_symbols_overview",
+                "find_referencing_symbols",
+                "replace_symbol_body",
+                "insert_after_symbol",
+                "insert_before_symbol",
+                "write_memory",
+                "read_memory",
+                "list_memories",
+                "delete_memory",
+                "check_onboarding_performed",
+                "onboarding",
+                "think_about_collected_information",
+                "think_about_task_adherence",
+                "think_about_whether_you_are_done",
+                "activate_project"
+            ]
+        },
+            "archon": {
+                "type": "http",
+                "url": "http://31.97.170.4:8051/mcp",
+                "allowHttp": true,
+                "alwaysAllow": [
+                    "list_tasks",
+                    "health_check",
+                    "session_info",
+                    "get_available_sources",
+                    "perform_rag_query",
+                    "search_code_examples",
+                    "create_project",
+                    "list_projects",
+                    "get_project",
+                    "delete_project",
+                    "update_project",
+                    "create_task",
+                    "get_task",
+                    "update_task",
+                    "delete_task",
+                    "create_document",
+                    "list_documents",
+                    "get_document",
+                    "update_document",
+                    "delete_document",
+                    "list_versions",
+                    "create_version",
+                    "get_version",
+                    "restore_version",
+                    "get_project_features"
+                ]
+            }
+        }
+    }

@@ -2,7 +2,7 @@
 // Comprehensive metrics system for LGPD, CFM, ANVISA compliance tracking
 // Note: Keep PII out of labels and logs
 
-import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '../clients/supabase';
 
 export type Timer = { start: bigint };
 
@@ -84,7 +84,7 @@ export class HealthcareMetricsService {
   private kpis: Map<string, ComplianceKPI> = new Map();
 
   constructor() {
-    this.supabase = createServerClient();
+    this.supabase = createAdminClient();
     this.initializeHealthcareKPIs();
   }
 
@@ -366,14 +366,18 @@ export class HealthcareMetricsService {
       let totalScore = 0;
       let criticalViolations = 0;
 
-      for (const [kpiId, kpi] of this.kpis) {
+      // Process each KPI using forEach to avoid iteration issues
+      for (const kpiId of this.kpis.keys()) {
+        const kpi = this.kpis.get(kpiId);
+        if (!kpi) continue;
+        
         const status = await this.getKPIStatus(kpiId);
         if (status.success && status.currentValue !== undefined) {
           const kpiData = {
             kpi,
             currentValue: status.currentValue,
-            complianceStatus: status.complianceStatus!,
-            trend: status.trend!
+            complianceStatus: status.complianceStatus || 'violation',
+            trend: status.trend || 'stable'
           };
           
           kpiStatuses.push(kpiData);
@@ -512,7 +516,7 @@ export class HealthcareMetricsService {
 
   endTimerMs(t: Timer): number {
     const ns = process.hrtime.bigint() - t.start;
-    return Number(ns / 1000000n);
+    return Number(ns / BigInt(1000000));
   }
 
   logMetric(event: Record<string, unknown>) {
@@ -534,7 +538,7 @@ export function startTimer(): Timer {
 
 export function endTimerMs(t: Timer): number {
   const ns = process.hrtime.bigint() - t.start;
-  return Number(ns / 1000000n);
+  return Number(ns / BigInt(1000000));
 }
 
 export function logMetric(event: Record<string, unknown>) {

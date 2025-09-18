@@ -2,12 +2,16 @@
 // Extends base governance with healthcare-specific metrics and policies
 
 import { Injectable } from '@nestjs/common';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseGovernanceService } from './supabase-governance.service';
 import { 
   HealthcareGovernanceService as IHealthcareGovernanceService,
   HealthcareMetric,
   CreateHealthcareMetric,
   UpdateHealthcareMetric,
+  HealthcareMetricType,
+  HealthcareMetricCategory,
+  HealthcareMetricStatus,
   HealthcarePolicy,
   CreateHealthcarePolicy,
   PatientSafetyKPI,
@@ -18,12 +22,9 @@ import {
   HealthcareMetricFilters,
   HealthcarePolicyFilters,
   HealthcareAlertFilters,
-  ComplianceReportFilters,
-  HealthcareMetricType,
-  HealthcareMetricCategory,
-  HealthcareMetricStatus
+  ComplianceReportFilters
 } from '@neonpro/types';
-import { AuditTrailEntry } from '@neonpro/types';
+import { AuditTrailEntry, CreateAuditTrailEntry, ResourceType } from '@neonpro/types';
 
 @Injectable()
 export class HealthcareGovernanceService extends SupabaseGovernanceService implements IHealthcareGovernanceService {
@@ -104,13 +105,14 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'CREATE',
-        resource: `healthcare-metric-${data.id}`,
-        resourceType: 'HEALTHCARE_METRIC',
+        resource: 'healthcare_metric',
+        resourceType: 'REPORT',
         resourceId: data.id,
         userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
-        userAgent: 'healthcare-service', // TODO: Get from context
+        userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
+        riskLevel: 'LOW',
         additionalInfo: `Created healthcare metric: ${metric.name}`,
         encryptedDetails: { metric },
         healthcareContext: {
@@ -154,13 +156,14 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'UPDATE',
-        resource: `healthcare-metric-${update.id}`,
-        resourceType: 'HEALTHCARE_METRIC',
+        resource: 'healthcare_metric',
+        resourceType: 'REPORT',
         resourceId: update.id,
         userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
-        userAgent: 'healthcare-service', // TODO: Get from context
+        userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
+        riskLevel: 'LOW',
         additionalInfo: `Updated healthcare metric: ${data.name}`,
         encryptedDetails: { update },
         healthcareContext: {
@@ -190,13 +193,14 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create audit trail entry
       await this.createHealthcareAuditEntry({
         action: 'DELETE',
-        resource: `healthcare-metric-${id}`,
-        resourceType: 'HEALTHCARE_METRIC',
+        resource: 'healthcare_metric',
+        resourceType: 'REPORT',
         resourceId: id,
         userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
-        userAgent: 'healthcare-service', // TODO: Get from context
+        userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
+        riskLevel: 'LOW',
         additionalInfo: `Deleted healthcare metric: ${id}`,
         encryptedDetails: { deletedId: id },
         healthcareContext: {
@@ -488,7 +492,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       };
 
       // Store the report
-      const { error } = await this.supabase
+      const { data, error } = await this.supabase
         .from('compliance_reports')
         .insert({
           id: report.id,
@@ -559,16 +563,20 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       // Create the base audit entry
       const auditEntry = await this.createAuditEntry({
         action: entry.action,
-        resource: entry.resourceId || 'unknown',
+        resource: entry.resource,
         resourceType: entry.resourceType,
         resourceId: entry.resourceId,
         userId: entry.userId,
-        ipAddress: '127.0.0.1', // TODO: Get from context
-        userAgent: 'healthcare-service', // TODO: Get from context
-        status: 'SUCCESS',
-        additionalInfo: entry.additionalInfo || '',
+        clinicId: entry.clinicId,
+        patientId: entry.patientId,
+        ipAddress: entry.ipAddress,
+        userAgent: entry.userAgent,
+        sessionId: entry.sessionId,
+        status: entry.status,
+        riskLevel: entry.riskLevel,
+        additionalInfo: entry.additionalInfo,
         encryptedDetails: {
-          ...(entry.encryptedDetails || {}),
+          ...entry.encryptedDetails,
           healthcareContext: entry.healthcareContext
         }
       });
@@ -698,13 +706,8 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       name: data.name,
       description: data.description,
       category: data.category,
-      framework: data.framework || 'LGPD',
-      status: data.status || 'ACTIVE',
       version: data.version || '1.0',
-      enforcementRate: data.enforcement_rate || 0,
-      violationCount: data.violation_count || 0,
-      lastReview: data.last_review ? new Date(data.last_review) : undefined,
-      nextReview: data.next_review ? new Date(data.next_review) : undefined,
+      status: data.status || 'ACTIVE',
       content: data.content,
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
@@ -714,7 +717,11 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       applicableServices: data.applicable_services || [],
       complianceDeadline: data.compliance_deadline ? new Date(data.compliance_deadline) : undefined,
       auditFrequency: data.audit_frequency,
-      criticalityLevel: data.criticality_level
+      criticalityLevel: data.criticality_level,
+      // Add missing properties from PolicyManagement interface
+      framework: data.framework || 'GENERAL',
+      enforcementRate: data.enforcement_rate || 0,
+      violationCount: data.violation_count || 0
     };
   }
 

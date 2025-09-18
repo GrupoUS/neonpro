@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createTRPCMsw } from 'msw-trpc';
-import { rest } from 'msw';
+import { http } from 'msw';
 import { setupServer } from 'msw/node';
-// Placeholder type for TDD - will be implemented in GREEN phase
-type AppRouter = any;
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTestClient, generateTestCPF } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
+import type { AppRouter } from '../../src/trpc';
+import superjson from 'superjson';
 
 /**
  * T006: Contract Test for Appointments Router - No-Show Prevention
@@ -35,18 +35,23 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     testClient = await createTestClient({ role: 'admin' });
 
     // Setup MSW server for external service mocking
-    const trpcMsw = createTRPCMsw<AppRouter>();
+    const trpcMsw = createTRPCMsw<AppRouter>({
+      transformer: {
+        input: superjson,
+        output: superjson,
+      },
+    });
     server = setupServer(
       // Mock CFM license validation API
-      rest.get('https://portal.cfm.org.br/api/medicos/:crm', (req, res, ctx) => {
-        return res(ctx.json({
+      http.get('https://portal.cfm.org.br/api/medicos/:crm', () => {
+        return Response.json({
           situacao: 'ATIVO',
           nome: 'Dr. Carlos Alberto Medicina',
           especialidades: ['Cardiologia', 'Clínica Médica'],
-          registro_primario: req.params.crm,
+          registro_primario: '12345',
           inscricoes: [
             {
-              crm: req.params.crm,
+              crm: '12345',
               uf: 'SP',
               situacao: 'ATIVO',
               tipo_inscricao: 'PRIMÁRIA'
@@ -54,23 +59,23 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           ],
           telemedicine_authorized: true,
           anvisa_compliance: true
-        }));
+        });
       }),
 
       // Mock WhatsApp Business API
-      rest.post('https://graph.facebook.com/v17.0/:phone_number_id/messages', (req, res, ctx) => {
-        return res(ctx.json({
+      http.post('https://graph.facebook.com/v17.0/:phone_number_id/messages', () => {
+        return Response.json({
           messaging_product: 'whatsapp',
           contacts: [{ input: '+5511999999999', wa_id: '5511999999999' }],
           messages: [{ id: 'wamid.appointment_reminder_123' }],
           success: true,
           delivery_status: 'sent'
-        }));
+        });
       }),
 
       // Mock AI/ML No-Show Prediction Service
-      rest.post('https://api.openai.com/v1/chat/completions', (req, res, ctx) => {
-        return res(ctx.json({
+      http.post('https://api.openai.com/v1/chat/completions', () => {
+        return Response.json({
           choices: [{
             message: {
               content: JSON.stringify({
@@ -89,17 +94,17 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               })
             }
           }]
-        }));
+        });
       }),
 
       // Mock Brazilian Weather API for no-show prediction
-      rest.get('https://api.openweathermap.org/data/2.5/weather', (req, res, ctx) => {
-        return res(ctx.json({
+      http.get('https://api.openweathermap.org/data/2.5/weather', () => {
+        return Response.json({
           weather: [{ main: 'Rain', description: 'heavy intensity rain' }],
           main: { temp: 18 },
           visibility: 5000,
           impact_on_appointments: 'high_no_show_risk'
-        }));
+        });
       })
     );
     server.listen();
@@ -110,10 +115,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         httpBatchLink({
           url: 'http://localhost:3000/api/trpc',
           headers: {
-            Authorization: `Bearer ${testClient.token}`,
+            'x-user-id': testClient.userId,
+            'x-clinic-id': testClient.clinicId,
+            'x-session-id': testClient.headers['x-session-id'],
           },
         }),
       ],
+      transformer: superjson,
     });
 
     // Create test patient and doctor

@@ -172,6 +172,9 @@ export const setServices = (injectedServices: any) => {
   _services = injectedServices;
 };
 
+// Import database client
+import { createAdminClient } from '../clients/supabase';
+
 // Enhanced authentication middleware
 export async function requireAuth(c: Context, next: Next) {
   const auth = c.req.header('authorization') || c.req.header('Authorization');
@@ -237,25 +240,44 @@ export function requireHealthcareProfessional() {
     }
 
     try {
-      // TODO: Integrate with healthcare professional database
-      // For now, use mock data or check user metadata
+      // Use injected services for testing or real services in production
+      const supabase = _services?.supabase || createAdminClient();
 
-      const healthcareProfessional: HealthcareProfessional = {
-        id: userId,
-        crmNumber: '12345-SP', // This would come from database
-        specialty: 'Dermatologia',
-        licenseStatus: 'active',
-        verificationDate: new Date(),
-        permissions: {
-          canAccessAI: true,
-          canViewPatientData: true,
-          canModifyPatientData: true,
-          canAccessReports: true,
+      // Query healthcare professional data from database
+      const { data: healthcareProfessional, error } = await supabase
+        .from('healthcare_professionals')
+        .select(`
+          *,
+          permissions:healthcare_professional_permissions(*)
+        `)
+        .eq('user_id', userId)
+        .single();
+
+      if (error || !healthcareProfessional) {
+        return c.json({
+          success: false,
+          error: 'Profissional de saúde não encontrado',
+          code: 'HEALTHCARE_PROFESSIONAL_NOT_FOUND',
+        }, 404);
+      }
+
+      // Transform database record to match schema
+      const transformedProfessional: HealthcareProfessional = {
+        id: healthcareProfessional.id,
+        crmNumber: healthcareProfessional.crm_number,
+        specialty: healthcareProfessional.specialty,
+        licenseStatus: healthcareProfessional.license_status,
+        verificationDate: new Date(healthcareProfessional.verification_date),
+        permissions: healthcareProfessional.permissions?.[0] || {
+          canAccessAI: false,
+          canViewPatientData: false,
+          canModifyPatientData: false,
+          canAccessReports: false,
         },
       };
 
       // Validate healthcare professional data
-      const validatedProfessional = healthcareProfessionalSchema.parse(healthcareProfessional);
+      const validatedProfessional = healthcareProfessionalSchema.parse(transformedProfessional);
 
       // Check license status
       if (validatedProfessional.licenseStatus !== 'active') {
@@ -304,22 +326,42 @@ export function requireLGPDConsent(
     }
 
     try {
-      // TODO: Integrate with LGPD consent database
-      // For now, use mock consent data
+      // Use injected services for testing or real services in production
+      const supabase = _services?.supabase || createAdminClient();
 
-      const lgpdConsent: LGPDConsent = {
-        userId,
-        consentDate: new Date(),
-        consentVersion: '1.0',
-        purposes: ['healthcare_service', 'ai_assistance', 'notifications'],
-        dataCategories: ['personal_data', 'health_data', 'contact_data'],
-        retentionPeriod: 365,
-        canWithdraw: true,
-        isActive: true,
+      // Query LGPD consent data from database
+      const { data: consentRecords, error } = await supabase
+        .from('lgpd_consents')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .order('consent_date', { ascending: false })
+        .limit(1);
+
+      if (error || !consentRecords || consentRecords.length === 0) {
+        return c.json({
+          success: false,
+          error: 'Consentimento LGPD não encontrado',
+          code: 'LGPD_CONSENT_NOT_FOUND',
+        }, 404);
+      }
+
+      const consentRecord = consentRecords[0];
+
+      // Transform database record to match schema
+      const transformedConsent: LGPDConsent = {
+        userId: consentRecord.user_id,
+        consentDate: new Date(consentRecord.consent_date),
+        consentVersion: consentRecord.consent_version,
+        purposes: consentRecord.purposes,
+        dataCategories: consentRecord.data_categories,
+        retentionPeriod: consentRecord.retention_period,
+        canWithdraw: consentRecord.can_withdraw,
+        isActive: consentRecord.is_active,
       };
 
       // Validate consent data
-      const validatedConsent = lgpdConsentSchema.parse(lgpdConsent);
+      const validatedConsent = lgpdConsentSchema.parse(transformedConsent);
 
       // Check if consent is active
       if (!validatedConsent.isActive) {
@@ -447,5 +489,3 @@ export function sessionCleanup(maxInactiveHours: number = 24) {
   };
 }
 
-// Export types and utilities
-export type { HealthcareProfessional, LGPDConsent, SessionMetadata };
