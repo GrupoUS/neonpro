@@ -285,7 +285,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
 
       // Get audit logs for this user
       const { data: auditLogs } = await this.supabase
-        .from('webrtc_audit_logs')
+        .from('audit_logs')
         .select('*')
         .eq('user_id', userId);
 
@@ -349,28 +349,33 @@ export class ConsentService extends BaseService implements RTCConsentManager {
           .eq('patient_id', patient.id);
 
         await this.supabase
-          .from('webrtc_audit_logs')
+          .from('audit_logs')
           .delete()
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .eq('session_id', sessionId);
 
         // Note: We might want to anonymize rather than delete audit logs
         // for legal compliance in some jurisdictions
       }
 
       // Create final audit log entry
-      await this.supabase.rpc('create_webrtc_audit_log', {
-        p_session_id: sessionId || 'data-deletion',
-        p_event_type: 'data-access',
-        p_user_id: userId,
-        p_user_role: 'system',
-        p_data_classification: 'general-medical',
-        p_description: `User data deleted per LGPD Right to Erasure. Session: ${
-          sessionId || 'all'
-        }`,
-        p_ip_address: null,
-        p_user_agent: 'system',
-        p_clinic_id: patient.clinic_id,
-        p_metadata: { action: 'data_deletion', sessionId },
+      await this.supabase.from('audit_logs').insert({
+        session_id: sessionId || 'data-deletion',
+        action: 'data-access',
+        user_id: userId,
+        resource: 'user-data',
+        resource_type: 'data-deletion',
+        ip_address: null,
+        user_agent: null,
+        status: 'success',
+        risk_level: 'low',
+        additional_info: {
+          description: `User data deleted per LGPD Right to Erasure. Session: ${
+            sessionId || 'all'
+          }`,
+          user_role: 'system',
+          data_classification: 'general-medical'
+        }
       });
     } catch (error) {
       console.error('ConsentService.deleteUserData error:', error);
@@ -434,13 +439,13 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         consentType: consent.consent_type,
         purpose: consent.purpose,
         legalBasis: consent.legal_basis,
-        status: consent.status as any,
+        status: consent.status as 'pending' | 'granted' | 'withdrawn' | 'expired',
         givenAt: consent.given_at ? new Date(consent.given_at) : undefined,
         withdrawnAt: consent.withdrawn_at ? new Date(consent.withdrawn_at) : undefined,
         expiresAt: consent.expires_at ? new Date(consent.expires_at) : undefined,
         collectionMethod: consent.collection_method,
-        ipAddress: consent.ip_address,
-        userAgent: consent.user_agent,
+        ipAddress: consent.ip_address as string | undefined,
+        userAgent: consent.user_agent as string | undefined,
         evidence: consent.evidence,
         dataCategories: consent.data_categories || [],
         createdAt: consent.created_at ? new Date(consent.created_at) : undefined,

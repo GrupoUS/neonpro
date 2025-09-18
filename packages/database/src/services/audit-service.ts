@@ -416,7 +416,7 @@ export class AuditService extends BaseService {
   async getComplianceReport(clinicId: string, startDate: Date, endDate: Date): Promise<any> {
     try {
       const { data: auditLogs, error } = await this.supabase
-        .from('webrtc_audit_logs')
+        .from('audit_logs')
         .select('*')
         .eq('clinic_id', clinicId)
         .gte('timestamp', startDate.toISOString())
