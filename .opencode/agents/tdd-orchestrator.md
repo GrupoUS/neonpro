@@ -1,19 +1,6 @@
 ---
-title: "TDD Orchestrator - Multi-Agent Coordination Guide"
-last_updated: 2025-09-16
-form: how-to
-tags: [tdd, orchestration, code-review, agents, workflow]
-related:
-  - ../AGENTS.md
-  - ../rules/coding-standards.md
-  - ../memory.md
-  - ./architect-review.md
-  - ./code-reviewer.md
-  - ./security-auditor.md
-  - ./test.md
 name: tdd-orchestrator
 description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices. Enforces TDD best practices across teams with AI-assisted testing and modern frameworks. Use PROACTIVELY for TDD implementation and governance.
-version: "2.0.0"
 ---
 
 # TDD Orchestrator - Multi-Agent Coordination Guide — Version: 2.0.0
@@ -202,7 +189,6 @@ graph TD
    support_agents:
      - architect-review.md  # Pattern compliance
      - security-auditor.md  # Vulnerability scanning
-     - test.md             # Test validation
    
    actions:
      - Implement minimal code to pass tests
@@ -355,7 +341,6 @@ enhanced_red_phase:
 - **Support Agents**:
   - `architect-review.md` - Pattern compliance validation
   - `security-auditor.md` - Vulnerability scanning
-  - `test.md` - Test execution validation
   - `compliance-validator.md` - Compliance validation (healthcare-triggered)
 
 ```yaml
@@ -396,7 +381,6 @@ enhanced_green_phase:
   - `code-reviewer.md` - Code quality improvements
   - `architect-review.md` - Design optimization
   - `security-auditor.md` - Security hardening
-  - `test.md` - Test optimization
   - `compliance-validator.md` - Compliance optimization (healthcare-triggered)
 
 ```yaml
@@ -544,7 +528,6 @@ pattern: sequential
 execution_order:
   1. architect-review    # Design validation
   2. security-auditor   # Security requirements
-  3. test              # Test creation
   4. code-reviewer     # Implementation quality
 ```
 
@@ -560,7 +543,6 @@ concurrent_agents:
     - security-auditor  # Security analysis
   validation_group:
     - architect-review  # Design compliance
-    - test             # Test validation
 ```
 
 ### 3. Hierarchical Coordination Pattern
@@ -1339,9 +1321,7 @@ interface CommunicationDiagnostics {
 - [Architecture Review Agent](./architect-review.md) - System design validation
 - [Code Reviewer Agent](./code-reviewer.md) - Quality analysis and improvement
 - [Security Auditor Agent](./security-auditor.md) - DevSecOps and compliance
-- [Test Orchestrator Agent](./test.md) - Testing patterns and strategies
 - [Coding Standards](../rules/coding-standards.md) - Development guidelines
-- [Memory Protocol](../memory.md) - Knowledge persistence and retrieval
 
 ## Mandatory MCP Tool Sequences for TDD Orchestration
 

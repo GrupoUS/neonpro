@@ -352,7 +352,7 @@ export class AuditService extends BaseService {
         description: log.resource_type || 'Audit log entry', // Use resource_type for description
         ipAddress: log.ip_address as string || 'unknown',
         userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id,
+        clinicId: log.clinic_id || 'unknown', // Provide default for null case
         metadata: {
           lgpd_basis: log.lgpd_basis,
           old_values: log.old_values,
@@ -361,7 +361,7 @@ export class AuditService extends BaseService {
         complianceCheck: {
           isCompliant: true, // Default to compliant since status field doesn't exist in schema
           violations: [],
-          riskLevel: 'low' // Default risk level since field doesn't exist in schema
+          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
         }
       }));
     } catch (error) {
@@ -396,7 +396,7 @@ export class AuditService extends BaseService {
         description: log.resource_type || 'Audit log entry', // Use resource_type for description
         ipAddress: log.ip_address as string || 'unknown',
         userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id,
+        clinicId: log.clinic_id || 'unknown', // Provide default for null case
         metadata: {
           lgpd_basis: log.lgpd_basis,
           old_values: log.old_values,
@@ -405,7 +405,7 @@ export class AuditService extends BaseService {
         complianceCheck: {
           isCompliant: true, // Default to compliant since status field doesn't exist in schema
           violations: [],
-          riskLevel: 'low' // Default risk level since field doesn't exist in schema
+          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
         }
       }));
     } catch (error) {
@@ -544,7 +544,7 @@ export class AuditService extends BaseService {
         description: log.resource_type || 'Audit log entry', // Use resource_type for description
         ipAddress: log.ip_address as string || 'unknown',
         userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id,
+        clinicId: log.clinic_id || 'unknown', // Provide default for null case
         metadata: {
           lgpd_basis: log.lgpd_basis,
           old_values: log.old_values,
@@ -553,7 +553,7 @@ export class AuditService extends BaseService {
         complianceCheck: {
           isCompliant: true, // Default to compliant since status field doesn't exist in schema
           violations: [],
-          riskLevel: 'low' // Default risk level since field doesn't exist in schema
+          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
         }
       }));
 

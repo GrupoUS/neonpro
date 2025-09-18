@@ -3,7 +3,7 @@
 
 // Enums matching database schema
 export type AuditAction = 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
-export type ResourceType = 'PATIENT_RECORD' | 'REPORT' | 'SYSTEM_CONFIG' | 'USER_ACCOUNT';
+export type ResourceType = 'PATIENT_RECORD' | 'REPORT' | 'SYSTEM_CONFIG' | 'USER_ACCOUNT' | 'HEALTHCARE_METRIC';
 export type AuditStatus = 'SUCCESS' | 'FAILED' | 'BLOCKED';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type KPIStatus = 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL';
