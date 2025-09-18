@@ -3,7 +3,6 @@
  * Comprehensive Row Level Security with multi-tenant isolation and healthcare compliance
  */
 
-import type { Database } from '../../../../packages/database/src/types/supabase';
 import { createServerClient } from '../clients/supabase.js';
 
 export interface RLSContext {

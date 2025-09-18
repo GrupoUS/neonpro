@@ -80,7 +80,7 @@ export class PatientErrorBoundary
     // Remove common Brazilian sensitive data patterns
     message = message.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF-REMOVED]');
     message = message.replace(/\(\d{2}\)\s?\d{4,5}-?\d{4}/g, '[PHONE-REMOVED]');
-    message = message.replace(/[\w\.-]+@[\w\.-]+\.\w+/g, '[EMAIL-REMOVED]');
+    message = message.replace(/[\w.-]+@[\w.-]+\.\w+/g, '[EMAIL-REMOVED]');
     message = message.replace(/\d{3}\s\d{4}\s\d{4}\s\d{4}/g, '[CNS-REMOVED]');
     message = message.replace(/\d{5}-?\d{3}/g, '[CEP-REMOVED]');
 

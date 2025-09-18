@@ -107,7 +107,7 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
   );
 }
 
-export function PatientDashboard() {
+function PatientDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -19,17 +19,7 @@
       "VITE_APP_ENV": "production"
     }
   },
-  "functions": {
-    "api/aesthetic/**/*.ts": {
-      "runtime": "edge"
-    },
-    "api/whatsapp/**/*.ts": {
-      "runtime": "edge"
-    },
-    "api/edge/**/*.ts": {
-      "runtime": "edge"
-    }
-  },
+
   "headers": [
     {
       "source": "/(.*)",

@@ -5,6 +5,6 @@
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
-    "padding": 0 // Opcional: definir como 0 para permitir que a linha de status vá até a borda
+    "padding": 0
   }
 }

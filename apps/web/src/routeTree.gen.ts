@@ -36,6 +36,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
+import { Route as AiInsightsRouteImport } from './routes/ai/insights'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
@@ -182,6 +183,11 @@ const AppointmentsNewRoute = AppointmentsNewRouteImport.update({
   path: '/appointments/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiInsightsRoute = AiInsightsRouteImport.update({
+  id: '/ai/insights',
+  path: '/ai/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai/insights': typeof AiInsightsRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai/insights': typeof AiInsightsRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai/insights': typeof AiInsightsRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai/insights'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai/insights'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai/insights'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AiInsightsRoute: typeof AiInsightsRoute
   AppointmentsNewRoute: typeof AppointmentsNewRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
@@ -653,6 +666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai/insights': {
+      id: '/ai/insights'
+      path: '/ai/insights'
+      fullPath: '/ai/insights'
+      preLoaderRoute: typeof AiInsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -719,6 +739,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AiInsightsRoute: AiInsightsRoute,
   AppointmentsNewRoute: AppointmentsNewRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,

@@ -12,7 +12,8 @@ export * from './types/clinical-kpis';
 export * from './types/financial-kpis';
 export * from './types/ingestion';
 
-// Ingestion Adapters
+// Ingestion System
+export * from './ingestion';
 export * from './adapters/ingestion-adapter';
 
 // Re-export commonly used types for convenience

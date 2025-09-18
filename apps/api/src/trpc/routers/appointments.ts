@@ -32,7 +32,6 @@ import {
   patientProcedure,
   protectedProcedure,
   router,
-  telemedicineProcedure,
 } from '../trpc';
 
 // =====================================
@@ -116,7 +115,7 @@ async function validateCFMLicenseRealTime(
  * Mock CFM Validation (replace with real API in production)
  */
 
-async function mockCFMValidation(licenseNumber: string, state: string) {
+async function mockCFMValidation(_licenseNumber: string, _state: string) {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 200));
 

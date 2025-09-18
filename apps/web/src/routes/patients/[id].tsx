@@ -107,7 +107,7 @@ interface AIInsight {
   createdAt: string;
 }
 
-export function PatientDetailPage() {
+function PatientDetailPage() {
   const { id } = useParams({ from: '/patients/$id' });
   const navigate = useNavigate();
   const [patient, setPatient] = useState<Patient | null>(null);

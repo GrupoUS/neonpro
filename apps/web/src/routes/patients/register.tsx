@@ -119,7 +119,7 @@ const insuranceProviders = [
   'Outra',
 ];
 
-export function PatientRegister() {
+function PatientRegister() {
   const [formData, setFormData] = useState<PatientFormData>({
     name: '',
     email: '',

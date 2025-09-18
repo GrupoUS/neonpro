@@ -1,4 +1,3 @@
-import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
 import aiRouter from './routes/ai';

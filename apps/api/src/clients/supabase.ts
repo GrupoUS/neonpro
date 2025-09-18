@@ -139,9 +139,9 @@ export function createAdminClient(): HealthcareAdminClient {
 
   adminClient.validateConnection = async (): Promise<boolean> => {
     try {
-      const { data, error } = await adminClient.from('clinics').select('id').limit(1);
+      const { error } = await adminClient.from('clinics').select('id').limit(1);
       return !error;
-    } catch (error) {
+    } catch {
       return false;
     }
   };

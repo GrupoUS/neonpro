@@ -134,7 +134,8 @@ const createPatientRoute = createHealthcareRoute({
 app.openapi(createPatientRoute, requireAuth, dataProtection.clientView, async c => {
   try {
     const userId = c.get('userId');
-    const body = await c.req.json();
+    // TODO: Implement patient creation logic
+    // const body = await c.req.json();
 
     // Get validated data from OpenAPI request
     const patientData = c.req.valid('json');

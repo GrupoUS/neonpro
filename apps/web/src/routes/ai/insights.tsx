@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -359,6 +359,8 @@ function AIInsightsPage() {
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <Button variant='ghost' size='sm' onClick={() => navigate({ to: '/dashboard' })}>
+
+
             <ArrowLeft className='h-4 w-4 mr-2' />
             Voltar
           </Button>
@@ -733,3 +735,7 @@ function AIInsightsPage() {
     </div>
   );
 }
+
+export const Route = createFileRoute('/ai/insights')({
+  component: AIInsightsPage,
+});
