@@ -1004,12 +1004,5 @@ export const apiRateLimitingService = new APIRateLimitingService({
 /**
  * Export types for external use
  */
-export type {
-  RateLimitAlgorithm as RateLimitAlgorithmType,
-  RequestPriority,
-  HealthcareRequestCategory,
-  RateLimitTier,
-  RateLimitContext,
-  RateLimitResult,
-  RateLimitConfig
-};
+// Note: All types are already exported above with their definitions
+// No need to re-export them here to avoid TS2484 conflicts

@@ -2,6 +2,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { componentTagger } from 'lovable-tagger';
 import path from 'path';
+import { createHash } from 'crypto';
 import { type ConfigEnv, defineConfig } from 'vite';
 import { generateHealthcareSecurityHeaders } from './src/lib/security/csp';
 
@@ -24,8 +25,7 @@ function subresourceIntegrityPlugin() {
           const content = chunk.type === 'chunk' ? chunk.code : chunk.source;
           if (typeof content === 'string') {
             // Generate SHA-384 hash for SRI
-            const crypto = require('crypto');
-            const hash = crypto.createHash('sha384').update(content, 'utf8').digest('base64');
+            const hash = createHash('sha384').update(content, 'utf8').digest('base64');
             sriHashes.set(fileName, `sha384-${hash}`);
           }
         }
@@ -38,33 +38,30 @@ function subresourceIntegrityPlugin() {
         source: JSON.stringify(Object.fromEntries(sriHashes), null, 2),
       });
     },
-    transformIndexHtml: {
-      enforce: 'post' as const,
-      transform(html: string, context: any) {
-        if (!isProduction) return html;
-        
-        // Add security headers as meta tags
-        const securityHeaders = generateHealthcareSecurityHeaders();
-        const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${securityHeaders['Content-Security-Policy']}">`;
-        
-        // Add healthcare-specific meta tags
-        const healthcareMeta = `
-          <meta name="healthcare-app" content="NeonPro-Platform">
-          <meta name="data-classification" content="LGPD-Protected-Medical-Data">
-          <meta name="compliance-standards" content="LGPD,ANVISA,CFM">
-          <meta http-equiv="X-Content-Type-Options" content="nosniff">
-          <meta http-equiv="X-Frame-Options" content="DENY">
-          <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-          <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-          <meta name="robots" content="noindex, nofollow"> <!-- Healthcare data should not be indexed -->
-        `;
-        
-        // Inject security headers and healthcare meta tags
-        return html.replace(
-          '<head>',
-          `<head>${cspMeta}${healthcareMeta}`
-        );
-      },
+    transformIndexHtml(html: string) {
+      if (!isProduction) return html;
+      
+      // Add security headers as meta tags
+      const securityHeaders = generateHealthcareSecurityHeaders();
+      const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${securityHeaders['Content-Security-Policy']}">`;
+      
+      // Add healthcare-specific meta tags
+      const healthcareMeta = `
+        <meta name="healthcare-app" content="NeonPro-Platform">
+        <meta name="data-classification" content="LGPD-Protected-Medical-Data">
+        <meta name="compliance-standards" content="LGPD,ANVISA,CFM">
+        <meta http-equiv="X-Content-Type-Options" content="nosniff">
+        <meta http-equiv="X-Frame-Options" content="DENY">
+        <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+        <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+        <meta name="robots" content="noindex, nofollow"> <!-- Healthcare data should not be indexed -->
+      `;
+      
+      // Inject security headers and healthcare meta tags
+      return html.replace(
+        '<head>',
+        `<head>${cspMeta}${healthcareMeta}`
+      );
     },
   };
 }
@@ -190,14 +187,11 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     target: 'es2020',
-    minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: process.env.NODE_ENV === 'production',
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info'],
-        // Remove comments that might contain sensitive information
-        comments: false,
       },
       mangle: {
         safari10: true,
@@ -210,6 +204,13 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
       },
     },
     rollupOptions: {
+      external: [
+        // OpenTelemetry packages that should be external for frontend builds
+        '@opentelemetry/auto-instrumentations-node',
+        '@opentelemetry/exporter-otlp-http',
+        '@opentelemetry/exporter-otlp-grpc',
+        '@opentelemetry/sdk-node'
+      ],
       output: {
         manualChunks: id => {
           // Vendor chunks

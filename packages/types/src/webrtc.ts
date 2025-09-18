@@ -519,19 +519,5 @@ export interface RTCConsentManager {
 // ============================================================================
 // Export Types
 // ============================================================================
-
-export type {
-  RTCConnectionState,
-  TelemedicineCallType,
-  MedicalDataClassification,
-  RTCSignalingMessage,
-  RTCSignalingServer,
-  CallParticipant,
-  TelemedicineCallSession,
-  RTCHealthcareConfiguration,
-  RTCCallManager,
-  RTCCallQualityMetrics,
-  RTCError,
-  RTCAuditLogEntry,
-  RTCConsentManager
-};
+// Note: All types are already exported above with their definitions
+// No need to re-export them here to avoid TS2484 conflicts

@@ -11,9 +11,7 @@ import type {
   CallParticipant,
   RTCCallQualityMetrics,
   RTCError,
-  RTCConnectionState,
-  TelemedicineCallType,
-  MedicalDataClassification
+  RTCConnectionState
 } from '@neonpro/types';
 
 /**

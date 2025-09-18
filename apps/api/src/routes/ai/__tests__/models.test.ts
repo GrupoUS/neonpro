@@ -19,7 +19,7 @@ const mockAuditService = {
 };
 
 describe('GET /api/v2/ai/models endpoint (T054)', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint

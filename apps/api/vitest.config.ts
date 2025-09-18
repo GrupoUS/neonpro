@@ -1,7 +1,9 @@
 import path from 'path';
 import { defineConfig } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   test: {
     environment: 'node',
     globals: true,
@@ -37,6 +39,10 @@ export default defineConfig({
       '@neonpro/security': path.resolve(__dirname, '../../packages/security/src/index.ts'),
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src/index.ts'),
       '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@neonpro/shared/validators': path.resolve(
+        __dirname,
+        '../../packages/shared/src/validators'
+      ),
       '@neonpro/core-services': path.resolve(
         __dirname,
         '../../packages/core-services/src/index.ts',

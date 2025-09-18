@@ -233,16 +233,14 @@ export function initializeHealthcareErrorTracking(overrides?: SentryOptionsOverr
     debug: config.environment !== 'production' && readEnv('VITE_SENTRY_DEBUG') === 'true',
   });
 
-  Sentry.configureScope(scope => {
-    scope.addEventProcessor(event => {
-      if (event.user) {
-        event.user = event.user.id ? { id: String(event.user.id) } : undefined;
-      }
-      return event;
-    });
-    scope.setTag('platform', 'neonpro-web');
-    scope.setTag('healthcare.compliance', 'lgpd');
+  Sentry.getCurrentScope().addEventProcessor(event => {
+    if (event.user) {
+      event.user = event.user.id ? { id: String(event.user.id) } : undefined;
+    }
+    return event;
   });
+  Sentry.setTag('platform', 'neonpro-web');
+  Sentry.setTag('healthcare.compliance', 'lgpd');
 
   initialized = true;
 }
@@ -323,35 +321,33 @@ export async function trackHealthcarePerformance<T>(
 ): Promise<T> {
   ensureInitialized();
 
-  const transaction = Sentry.startTransaction({
+  return await Sentry.startSpan({
     name: operationName,
     op: 'healthcare_operation',
-    tags: {
+    attributes: {
       healthcare_context: 'true',
       medical_context: context.medicalContext ?? 'unknown',
     },
+  }, async () => {
+    try {
+      const result = await operation();
+      Sentry.withScope(scope => {
+        scope.setContext('performance', sanitizeData({
+          medicalContext: context.medicalContext,
+          workflowStep: context.workflowStep,
+          timestamp: new Date().toISOString(),
+        }));
+        Sentry.captureMessage(`Healthcare operation '${operationName}' completed`, 'info');
+      });
+      return result;
+    } catch (error) {
+      trackHealthcareError(error as Error, {
+        ...context,
+        feature: operationName,
+      });
+      throw error;
+    }
   });
-
-  try {
-    const result = await operation();
-    return result;
-  } catch (error) {
-    trackHealthcareError(error as Error, {
-      ...context,
-      feature: operationName,
-    });
-    throw error;
-  } finally {
-    transaction.finish();
-    Sentry.withScope(scope => {
-      scope.setContext('performance', sanitizeData({
-        medicalContext: context.medicalContext,
-        workflowStep: context.workflowStep,
-        timestamp: new Date().toISOString(),
-      }));
-      Sentry.captureMessage(`Healthcare operation '${operationName}' completed`, 'info');
-    });
-  }
 }
 
 export function captureHealthcareError(error: Error, context: HealthcareErrorContext = {}) {

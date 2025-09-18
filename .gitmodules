@@ -1,0 +1,3 @@
+[submodule ".claude/workflows/claude-code-workflows"]
+	path = .claude/workflows/claude-code-workflows
+	url = https://github.com/OneRedOak/claude-code-workflows.git

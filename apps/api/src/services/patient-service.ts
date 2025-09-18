@@ -13,13 +13,13 @@
  * - CFM professional license validation
  */
 
-import { createDataSubjectRequest } from '../../../../packages/shared/src/types/lgpd-consent';
+import { createDataSubjectRequest } from '@neonpro/shared';
 import {
   anonymizePatientData,
   createPatientWithDefaults,
   Patient,
-} from '../../../../packages/shared/src/types/patient';
-import { validatePatientData } from '../../../../packages/shared/src/validators/brazilian';
+} from '@neonpro/shared';
+import { validatePatientData } from '@neonpro/shared';
 import { 
   getHealthcarePrismaClient, 
   createPrismaWithContext,

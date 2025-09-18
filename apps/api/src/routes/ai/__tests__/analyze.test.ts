@@ -24,7 +24,7 @@ const mockLGPDService = {
 };
 
 describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint

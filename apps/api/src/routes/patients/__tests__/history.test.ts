@@ -160,16 +160,16 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export patient history route handler', () => {
-    expect(() => {
-      const module = require('../history');
+  it('should export patient history route handler', async () => {
+    await expect(async () => {
+      const module = await import('../history');
       expect(module.default).toBeDefined();
-    }).not.toThrow();
+    }).resolves.not.toThrow();
   });
 
   describe('Successful Patient History Retrieval', () => {
     it('should retrieve patient history with default parameters', async () => {
-      const { default: historyRoute } = require('../history');
+      const { default: historyRoute } = await import('../history');
 
       const mockRequest = {
         method: 'GET',
@@ -193,7 +193,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
 
     it('should retrieve patient history with pagination', async () => {
-      const { default: historyRoute } = require('../history');
+      const { default: historyRoute } = await import('../history');
 
       const mockRequest = {
         method: 'GET',

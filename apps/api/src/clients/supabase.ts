@@ -243,9 +243,17 @@ export function createAdminClient(): HealthcareAdminClient {
  * Creates server client with SSR cookie management
  * For use in Hono.js server-side rendering
  */
-export function createServerClient(cookieHandlers: CookieHandlers): HealthcareServerClient {
+export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareServerClient {
+  // In test environment, provide no-op cookie handlers to simplify usage
   if (!cookieHandlers) {
-    throw new Error('Cookie handlers are required for server client');
+    if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+      cookieHandlers = {
+        getAll: () => [],
+        setAll: () => {}
+      } as CookieHandlers;
+    } else {
+      throw new Error('Cookie handlers are required for server client');
+    }
   }
 
   validateEnvironment();

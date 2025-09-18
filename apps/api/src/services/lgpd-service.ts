@@ -19,7 +19,7 @@ import {
   DataSubjectRequest,
   LegalBasis,
   LGPDConsent,
-} from '../../../../packages/shared/src/types/lgpd-consent';
+} from '@neonpro/shared';
 
 // Define missing enums locally
 export enum ConsentStatus {

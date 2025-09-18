@@ -20,7 +20,13 @@ import {
   AlertCircle,
   CheckCircle,
   WifiOff,
-  Wifi
+  Wifi,
+  Monitor,
+  Camera,
+  CameraOff,
+  UserCheck,
+  FileText,
+  AlertTriangle
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
@@ -236,6 +242,42 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
   const getConnectionText = () => {
     if (!isConnected) return 'Disconnected';
     return `Connection: ${connectionQuality}`;
+  };
+
+  // Helper functions for badges
+  const getStatusBadge = (status: QueuedPatient['status']) => {
+    const variants = {
+      waiting: { variant: 'secondary' as const, text: 'Aguardando' },
+      preparing: { variant: 'default' as const, text: 'Preparando' },
+      ready: { variant: 'default' as const, text: 'Pronto' },
+      'in-consultation': { variant: 'outline' as const, text: 'Em Consulta' },
+      'technical-issues': { variant: 'destructive' as const, text: 'Problemas Técnicos' },
+    };
+
+    const config = variants[status] || { variant: 'secondary' as const, text: 'Aguardando' };
+
+    return (
+      <Badge variant={config.variant}>
+        {config.text}
+      </Badge>
+    );
+  };
+
+  const getPriorityBadge = (priority: QueuedPatient['priority']) => {
+    const variants = {
+      urgent: { variant: 'destructive' as const, text: 'Urgente' },
+      high: { variant: 'default' as const, text: 'Alta' },
+      normal: { variant: 'secondary' as const, text: 'Normal' },
+      low: { variant: 'outline' as const, text: 'Baixa' },
+    };
+
+    const config = variants[priority] || { variant: 'secondary' as const, text: 'Normal' };
+
+    return (
+      <Badge variant={config.variant}>
+        {config.text}
+      </Badge>
+    );
   };  return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header Section */}
@@ -487,7 +529,7 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setIsCameraEnabled(!isCameraEnabled)}
+                      onClick={onToggleCamera}
                       className={cn(
                         "flex items-center gap-2",
                         isCameraEnabled ? "text-green-600 border-green-300" : "text-red-600 border-red-300"
@@ -499,14 +541,14 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setIsMicrophoneEnabled(!isMicrophoneEnabled)}
+                      onClick={onToggleMic}
                       className={cn(
                         "flex items-center gap-2",
-                        isMicrophoneEnabled ? "text-green-600 border-green-300" : "text-red-600 border-red-300"
+                        isMicEnabled ? "text-green-600 border-green-300" : "text-red-600 border-red-300"
                       )}
                     >
-                      {isMicrophoneEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
-                      {isMicrophoneEnabled ? 'Mic On' : 'Mic Off'}
+                      {isMicEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+                      {isMicEnabled ? 'Mic On' : 'Mic Off'}
                     </Button>
                   </div>
                   
@@ -530,32 +572,32 @@ export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPa
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserCheck className="h-5 w-5" />
-                Dr. {professionalStatus.name}
+                Dr. {professional.name}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  {professionalStatus.isOnline ? (
+                  {professional.status === 'online' ? (
                     <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                   ) : (
                     <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
                   )}
                   <span className="text-sm">
-                    {professionalStatus.isOnline ? 'Online' : 'Offline'}
+                    {professional.status === 'online' ? 'Online' : 'Offline'}
                   </span>
                 </div>
                 
-                {professionalStatus.currentActivity && (
+                {professional.specialty && (
                   <div className="text-sm text-gray-600">
-                    <p>{professionalStatus.currentActivity}</p>
+                    <p>{professional.specialty}</p>
                   </div>
                 )}
                 
-                {professionalStatus.estimatedCallTime && (
+                {professional.totalConsultations && (
                   <div className="flex items-center gap-2 text-sm text-blue-600">
                     <Clock className="h-4 w-4" />
-                    <span>Estimated call time: {professionalStatus.estimatedCallTime}</span>
+                    <span>Total consultations: {professional.totalConsultations}</span>
                   </div>
                 )}
               </div>
