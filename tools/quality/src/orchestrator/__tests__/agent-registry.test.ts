@@ -11,6 +11,7 @@ describe('AgentRegistry', () => {
     priority: 'medium',
     estimatedEffort: 5,
     dependencies: [],
+    requirements: ['Basic functionality required'],
     securityCritical: false,
     complianceRequirements: [],
     acceptanceCriteria: ['AC-1'],
@@ -24,9 +25,9 @@ describe('AgentRegistry', () => {
   it('activates security auditor when domain is provided as string containing auth keywords', () => {
     const registry = new AgentRegistry();
     const feature = createBaseFeature({
-      domain: 'authentication',
+      domain: ['authentication'],
       securityCritical: false
-    } as Partial<FeatureContext>);
+    });
 
     const agents = registry.selectAgentsForFeature(feature);
 

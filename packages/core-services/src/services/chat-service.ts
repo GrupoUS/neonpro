@@ -37,12 +37,6 @@ export class ChatService {
         content: res.content,
         createdAt: new Date().toISOString(),
         redactionFlags: ['lgpd'],
-        metadata: {
-          model: res.model,
-          provider: res.provider,
-          tokensUsed: res.tokensUsed,
-          latency: res.latency,
-        },
       };
       
       return message;
@@ -69,12 +63,6 @@ export class ChatService {
           content: chunk.content,
           createdAt: new Date().toISOString(),
           redactionFlags: ['lgpd'],
-          metadata: {
-            provider: chunk.provider,
-            delta: chunk.delta,
-            finished: chunk.finished,
-            finishReason: chunk.finishReason,
-          },
         };
         
         yield message;
@@ -104,11 +92,6 @@ export class ChatService {
         messageId,
         content: res.content,
         createdAt: new Date().toISOString(),
-        metadata: {
-          model: res.model,
-          provider: res.provider,
-          tokensUsed: res.tokensUsed,
-        },
       };
     } catch (error) {
       console.error('Explanation service error:', error);

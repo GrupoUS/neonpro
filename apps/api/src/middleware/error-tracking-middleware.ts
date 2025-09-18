@@ -1,11 +1,13 @@
 /**
+/**
  * Error tracking middleware for Hono
  * Integrates error tracking service with request handling
+ * Enhanced with Sentry integration for advanced monitoring
  */
 
 import type { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { errorTracker } from '../lib/error-tracking';
+import { errorTracker } from '../lib/sentry.js';
 import { logger } from '../lib/logger';
 
 /**

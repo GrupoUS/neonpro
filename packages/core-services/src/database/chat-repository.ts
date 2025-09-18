@@ -135,7 +135,7 @@ export class ChatRepository {
   async closeSession(sessionId: string): Promise<ChatSession> {
     return this.updateSession(sessionId, {
       status: 'closed',
-      ended_at: new Date().toISOString()
+      endedAt: new Date().toISOString()
     });
   }
 

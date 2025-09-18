@@ -8,14 +8,14 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./governance.types": {
+      "types": "./governance.types.ts",
       "import": "./governance.types.ts",
-      "require": "./governance.types.ts",
-      "types": "./governance.types.ts"
+      "require": "./governance.types.ts"
     }
   },
   "scripts": {

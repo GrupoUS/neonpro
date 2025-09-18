@@ -1,18 +1,21 @@
 /**
- * GET /api/v2/patients endpoint (T043)
+ * GET /api/v2/patients endpoint (Updated)
  * List patients with pagination, filtering, and search capabilities
- * Integration with PatientService, AuditService for LGPD compliance
+ * Integration with real Prisma database and enhanced RLS middleware
+ * OpenAPI documented with healthcare compliance
  */
 
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi';
 import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { AuditService } from '../../services/audit-service';
+import { patientAccessMiddleware, getHealthcareContext } from '../../middleware/prisma-rls';
+import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { PatientService } from '../../services/patient-service';
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 
-const app = new Hono();
+const app = new OpenAPIHono();
 
 // Query parameters validation schema
 const ListPatientsQuerySchema = z.object({
@@ -25,129 +28,254 @@ const ListPatientsQuerySchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).default('asc'),
 });
 
-app.get('/', requireAuth, dataProtection.clientView, async c => {
-  const startTime = Date.now();
+// Patient summary schema for list response
+const PatientSummarySchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  cpf: z.string().optional(),
+  birthDate: z.string().datetime().optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  status: z.enum(['active', 'inactive', 'archived']).optional(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
 
-  try {
-    const userId = c.get('userId');
-    const query = c.req.query();
+// OpenAPI route definition
+const listPatientsRoute = createHealthcareRoute({
+  method: 'get',
+  path: '/',
+  tags: ['Patients'],
+  summary: 'List patients',
+  description: 'List patients with pagination, filtering, and search capabilities. Includes LGPD compliance and audit logging.',
+  dataClassification: 'medical',
+  auditRequired: true,
+  request: {
+    query: ListPatientsQuerySchema,
+  },
+  responses: {
+    200: {
+      description: 'Patients list retrieved successfully',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              patients: z.array(PatientSummarySchema),
+              pagination: z.object({
+                page: z.number(),
+                limit: z.number(),
+                total: z.number(),
+                totalPages: z.number(),
+              }),
+            }),
+            metadata: z.object({
+              responseTime: z.number(),
+              databaseIntegration: z.string(),
+              rlsEnforced: z.boolean(),
+              auditLogged: z.boolean(),
+              lgpdCompliant: z.boolean(),
+              cfmValidated: z.boolean(),
+            }),
+          }),
+        },
+      },
+    },
+    403: {
+      description: 'LGPD access denied',
+      content: {
+        'application/json': {
+          schema: HealthcareSchemas.ErrorResponse,
+        },
+      },
+    },
+  },
+});
 
-    // Validate query parameters
-    const validationResult = ListPatientsQuerySchema.safeParse(query);
-    if (!validationResult.success) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros de consulta inválidos',
-        errors: validationResult.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
-    }
+app.openapi(listPatientsRoute,
+  requireAuth, 
+  dataProtection.patientView,
+  patientAccessMiddleware({ 
+    requiredPermissions: ['patient_read'],
+    logAccess: true 
+  }),
+  async c => {
+    const startTime = Date.now();
 
-    const { page, limit, search, status, gender, sortBy, sortOrder } = validationResult.data;
+    try {
+      // Get validated query parameters from OpenAPI request
+      const { page, limit, search, status, gender, sortBy, sortOrder } = c.req.valid('query');
 
-    // Build filters object
-    const filters: Record<string, any> = {};
-    if (status) filters.status = status;
-    if (gender) filters.gender = gender;
+      // Get healthcare context from RLS middleware
+      const { prisma, healthcareContext, userId, clinicId } = getHealthcareContext(c);
 
-    // Get client IP and User-Agent for audit logging
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+      // Build filters object
+      const filters: Record<string, any> = {};
+      if (status) filters.status = status;
+      if (gender) filters.gender = gender;
 
-    // Validate LGPD data access permissions
-    const lgpdService = new LGPDService();
-    const lgpdValidation = await lgpdService.validateDataAccess({
-      userId,
-      dataType: 'patient_list',
-      purpose: 'healthcare_management',
-      legalBasis: 'legitimate_interest',
-    });
+      // Get client IP and User-Agent for audit logging
+      const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
+      const userAgent = c.req.header('User-Agent') || 'unknown';
 
-    if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: 'Acesso negado por política LGPD',
-        code: 'LGPD_ACCESS_DENIED',
-      }, 403);
-    }
+      // Validate LGPD data access permissions
+      const lgpdService = new LGPDService();
+      const lgpdValidation = await lgpdService.validateDataAccess({
+        userId,
+        dataType: 'patient_list',
+        purpose: 'healthcare_management',
+        legalBasis: 'legitimate_interest',
+      });
 
-    // Get healthcare context from headers
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+      if (!lgpdValidation.success) {
+        return c.json({
+          success: false,
+          error: 'Acesso negado por política LGPD',
+          code: 'LGPD_ACCESS_DENIED',
+        }, 403);
+      }      // Create PatientService with healthcare context
+      const patientService = new PatientService(healthcareContext);
 
-    // List patients using PatientService
-    const patientService = new PatientService();
-    const result = await patientService.listPatients({
-      userId,
-      page,
-      limit,
-      search,
-      filters,
-      sortBy,
-      sortOrder,
-      healthcareContext,
-    });
-
-    if (!result.success) {
-      return c.json({
-        success: false,
-        error: result.error || 'Erro interno do serviço',
-      }, 500);
-    }
-
-    // Log data access for audit trail
-    const auditService = new AuditService();
-    await auditService.logActivity({
-      userId,
-      action: 'patient_list_access',
-      resourceType: 'patient',
-      resourceId: 'list',
-      details: {
+      // List patients using enhanced PatientService with real database
+      const result = await patientService.listPatients({
+        userId,
         page,
         limit,
         search,
         filters,
-        resultCount: result.data.patients.length,
-        totalCount: result.data.pagination.total,
-      },
-      ipAddress,
-      userAgent,
-      complianceContext: 'LGPD',
-      sensitivityLevel: 'high',
-    }).catch(err => {
-      console.error('Audit logging failed:', err);
-    });
+        sortBy,
+        sortOrder,
+        healthcareContext: JSON.stringify(healthcareContext),
+      });
 
-    const responseTime = Date.now() - startTime;
+      if (!result.success) {
+        return c.json({
+          success: false,
+          error: result.error || 'Erro interno do serviço',
+        }, 500);
+      }
 
-    // Set response headers
-    c.header('X-Data-Classification', 'sensitive');
-    c.header('X-LGPD-Compliant', 'true');
-    c.header('X-Audit-Logged', 'true');
-    c.header('X-Total-Count', result.data.pagination.total.toString());
-    c.header('X-Page', result.data.pagination.page.toString());
-    c.header('X-Total-Pages', result.data.pagination.totalPages.toString());
-    c.header('X-Response-Time', `${responseTime}ms`);
-    c.header('Cache-Control', 'private, max-age=300');
-    c.header('X-CFM-Compliant', 'true');
-    c.header('X-Medical-Record-Access', 'logged');
+      // Log data access for audit trail using enhanced Prisma client
+      try {
+        await prisma.createAuditLog(
+          'PATIENT_LIST_ACCESS',
+          'PATIENT_LIST',
+          clinicId,
+          {
+            page,
+            limit,
+            search,
+            filters,
+            resultCount: result.data?.patients.length || 0,
+            totalCount: result.data?.pagination.total || 0,
+            ipAddress,
+            userAgent,
+            complianceContext: 'LGPD',
+            sensitivityLevel: 'high',
+          }
+        );
+      } catch (auditError) {
+        console.error('Enhanced audit logging failed:', auditError);
+        
+        // Fallback to legacy audit service
+        try {
+          const auditService = new ComprehensiveAuditService();
+          await auditService.logEvent(
+            'patient_list_access',
+            {
+              page,
+              limit,
+              search,
+              filters,
+              resultCount: result.data?.patients.length || 0,
+              totalCount: result.data?.pagination.total || 0,
+            },
+            {
+              userId,
+              ipAddress,
+              userAgent,
+              complianceFlags: {
+                lgpd_compliant: true,
+                rls_enforced: true,
+                consent_validated: true,
+              },
+            }
+          );
+        } catch (legacyAuditError) {
+          console.error('Legacy audit logging also failed:', legacyAuditError);
+        }
+      }
 
-    return c.json({
-      success: true,
-      data: {
-        patients: result.data.patients,
-        pagination: result.data.pagination,
-      },
-    });
-  } catch (error) {
-    console.error('Error listing patients:', error);
+      const responseTime = Date.now() - startTime;      // Set enhanced response headers
+      c.header('X-Data-Classification', 'sensitive');
+      c.header('X-LGPD-Compliant', 'true');
+      c.header('X-Audit-Logged', 'true');
+      c.header('X-RLS-Enforced', 'true');
+      c.header('X-Healthcare-Context', JSON.stringify({
+        clinicId,
+        role: healthcareContext.role,
+        cfmValidated: healthcareContext.cfmValidated,
+      }));
+      c.header('X-Total-Count', (result.data?.pagination.total || 0).toString());
+      c.header('X-Page', (result.data?.pagination.page || 1).toString());
+      c.header('X-Total-Pages', (result.data?.pagination.totalPages || 1).toString());
+      c.header('X-Response-Time', `${responseTime}ms`);
+      c.header('Cache-Control', 'private, max-age=300');
+      c.header('X-CFM-Compliant', 'true');
+      c.header('X-Medical-Record-Access', 'logged');
+      c.header('X-Database-Integration', 'prisma');
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
-  }
-});
+      return c.json({
+        success: true,
+        data: {
+          patients: result.data?.patients || [],
+          pagination: result.data?.pagination || {
+            page: 1,
+            limit: 20,
+            total: 0,
+            totalPages: 0,
+          },
+        },
+        metadata: {
+          responseTime,
+          databaseIntegration: 'prisma',
+          rlsEnforced: true,
+          auditLogged: true,
+          lgpdCompliant: true,
+          cfmValidated: healthcareContext.cfmValidated,
+        },
+      });
+    } catch (error) {
+      console.error('Error listing patients:', error);
+
+      // Enhanced error handling for healthcare compliance errors
+      if (error.name === 'HealthcareComplianceError') {
+        return c.json({
+          success: false,
+          error: 'Violação de conformidade de saúde',
+          code: error.code,
+          framework: error.complianceFramework,
+          message: error.message,
+        }, 403);
+      }
+
+      if (error.name === 'UnauthorizedHealthcareAccessError') {
+        return c.json({
+          success: false,
+          error: 'Acesso não autorizado a dados de saúde',
+          resourceType: error.resourceType,
+          resourceId: error.resourceId,
+          message: error.message,
+        }, 403);
+      }
+
+      return c.json({
+        success: false,
+        error: 'Erro interno do servidor',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      }, 500);
+    }
+  });
 
 export default app;

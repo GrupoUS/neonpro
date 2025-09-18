@@ -8,6 +8,7 @@
 export * from './quality-gates';
 export * from './setup';
 export * from './tdd-cycle';
+export * from './tdd-orchestrator';
 export * from './test-runner';
 export * from './types';
 

@@ -1,5 +1,7 @@
 // T043: CORS and security headers configuration
-import type { Context, Next } from 'hono';
+import type { MiddlewareHandler } from 'hono';
+
+
 
 export interface CORSConfig {
   origin: string | string[] | ((origin: string) => boolean);
@@ -92,21 +94,19 @@ export function createSecurityHeadersConfig(): SecurityHeadersConfig {
   };
 }
 
-export function corsMiddleware(config?: CORSConfig) {
+export function corsMiddleware(config?: CORSConfig): MiddlewareHandler {
   const corsConfig = config || createCORSConfig();
 
-  return async (c: Context, next: Next) => {
+  return async (c, next) => {
     const origin = c.req.header('Origin');
-    const requestMethod = c.req.header('Access-Control-Request-Method');
 
     // Handle preflight requests
     if (c.req.method === 'OPTIONS') {
-      // Check if origin is allowed
       let allowOrigin = false;
       if (typeof corsConfig.origin === 'string') {
         allowOrigin = corsConfig.origin === '*' || corsConfig.origin === origin;
       } else if (Array.isArray(corsConfig.origin)) {
-        allowOrigin = corsConfig.origin.includes(origin || '');
+        allowOrigin = origin ? corsConfig.origin.includes(origin) : false;
       } else if (typeof corsConfig.origin === 'function') {
         allowOrigin = corsConfig.origin(origin || '');
       }
@@ -116,16 +116,15 @@ export function corsMiddleware(config?: CORSConfig) {
         c.header('Access-Control-Allow-Methods', corsConfig.methods.join(', '));
         c.header('Access-Control-Allow-Headers', corsConfig.headers.join(', '));
         c.header('Access-Control-Max-Age', corsConfig.maxAge.toString());
-        
+
         if (corsConfig.credentials) {
           c.header('Access-Control-Allow-Credentials', 'true');
         }
       }
 
-      return c.text('', corsConfig.optionsSuccessStatus);
+      return c.newResponse(null, { status: corsConfig.optionsSuccessStatus as any });
     }
 
-    // Handle actual requests
     if (origin) {
       let allowOrigin = false;
       if (typeof corsConfig.origin === 'string') {
@@ -147,15 +146,14 @@ export function corsMiddleware(config?: CORSConfig) {
       }
     }
 
-    await next();
+    return await next();
   };
 }
 
-export function securityHeadersMiddleware(config?: SecurityHeadersConfig) {
+export function securityHeadersMiddleware(config?: SecurityHeadersConfig): MiddlewareHandler {
   const securityConfig = config || createSecurityHeadersConfig();
 
-  return async (c: Context, next: Next) => {
-    // Content Security Policy
+  return async (c, next) => {
     if (securityConfig.contentSecurityPolicy.enabled) {
       const cspDirectives = Object.entries(securityConfig.contentSecurityPolicy.directives)
         .map(([directive, values]) => {
@@ -166,7 +164,6 @@ export function securityHeadersMiddleware(config?: SecurityHeadersConfig) {
       c.header('Content-Security-Policy', cspDirectives);
     }
 
-    // HTTP Strict Transport Security
     if (securityConfig.hsts.enabled) {
       let hstsValue = `max-age=${securityConfig.hsts.maxAge}`;
       if (securityConfig.hsts.includeSubDomains) {
@@ -178,23 +175,18 @@ export function securityHeadersMiddleware(config?: SecurityHeadersConfig) {
       c.header('Strict-Transport-Security', hstsValue);
     }
 
-    // X-Frame-Options
     c.header('X-Frame-Options', securityConfig.frameOptions);
 
-    // X-Content-Type-Options
     if (securityConfig.contentTypeOptions) {
       c.header('X-Content-Type-Options', 'nosniff');
     }
 
-    // X-XSS-Protection
     if (securityConfig.xssProtection) {
       c.header('X-XSS-Protection', '1; mode=block');
     }
 
-    // Referrer-Policy
     c.header('Referrer-Policy', securityConfig.referrerPolicy);
 
-    // Permissions-Policy
     const permissionsPolicyDirectives = Object.entries(securityConfig.permissionsPolicy)
       .map(([directive, allowlist]) => {
         if (allowlist.length === 0) {
@@ -207,7 +199,6 @@ export function securityHeadersMiddleware(config?: SecurityHeadersConfig) {
       c.header('Permissions-Policy', permissionsPolicyDirectives);
     }
 
-    // Additional security headers
     c.header('X-DNS-Prefetch-Control', 'off');
     c.header('X-Download-Options', 'noopen');
     c.header('X-Permitted-Cross-Domain-Policies', 'none');
@@ -216,12 +207,10 @@ export function securityHeadersMiddleware(config?: SecurityHeadersConfig) {
   };
 }
 
-// Middleware for rate limiting headers
-export function rateLimitHeadersMiddleware() {
-  return async (c: Context, next: Next) => {
+export function rateLimitHeadersMiddleware(): MiddlewareHandler {
+  return async (c, next) => {
     await next();
 
-    // Add rate limit headers if they exist in the context
     const rateLimit = c.get('rateLimit');
     if (rateLimit) {
       c.header('X-Rate-Limit-Limit', rateLimit.limit.toString());
@@ -231,9 +220,8 @@ export function rateLimitHeadersMiddleware() {
   };
 }
 
-// Request ID middleware
-export function requestIdMiddleware() {
-  return async (c: Context, next: Next) => {
+export function requestIdMiddleware(): MiddlewareHandler {
+  return async (c, next) => {
     const requestId = c.req.header('X-Request-ID') || generateRequestId();
     c.set('requestId', requestId);
     c.header('X-Request-ID', requestId);
@@ -245,30 +233,132 @@ function generateRequestId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
-// Composite middleware that applies all security measures
 export function securityMiddleware(options?: {
   cors?: CORSConfig;
   security?: SecurityHeadersConfig;
   enableRateLimit?: boolean;
   enableRequestId?: boolean;
-}) {
-  const middlewares = [];
-
-  if (options?.enableRequestId !== false) {
-    middlewares.push(requestIdMiddleware());
-  }
-
-  middlewares.push(corsMiddleware(options?.cors));
-  middlewares.push(securityHeadersMiddleware(options?.security));
-
-  if (options?.enableRateLimit !== false) {
-    middlewares.push(rateLimitHeadersMiddleware());
-  }
-
-  return async (c: Context, next: Next) => {
-    for (const middleware of middlewares) {
-      await middleware(c, next);
-      next = async () => {}; // Prevent multiple calls to next()
+}): MiddlewareHandler {
+  return async (c, next) => {
+    // Apply request ID middleware
+    if (options?.enableRequestId !== false) {
+      const requestId = c.req.header('X-Request-ID') || generateRequestId();
+      c.set('requestId', requestId);
+      c.header('X-Request-ID', requestId);
     }
+
+    // Apply CORS logic inline
+    const corsConfig = options?.cors || createCORSConfig();
+    const origin = c.req.header('Origin');
+
+    // Handle preflight requests
+    if (c.req.method === 'OPTIONS') {
+      let allowOrigin = false;
+      if (typeof corsConfig.origin === 'string') {
+        allowOrigin = corsConfig.origin === '*' || corsConfig.origin === origin;
+      } else if (Array.isArray(corsConfig.origin)) {
+        allowOrigin = origin ? corsConfig.origin.includes(origin) : false;
+      } else if (typeof corsConfig.origin === 'function') {
+        allowOrigin = corsConfig.origin(origin || '');
+      }
+
+      if (allowOrigin) {
+        c.header('Access-Control-Allow-Origin', origin || '*');
+        c.header('Access-Control-Allow-Methods', corsConfig.methods.join(', '));
+        c.header('Access-Control-Allow-Headers', corsConfig.headers.join(', '));
+        c.header('Access-Control-Max-Age', corsConfig.maxAge.toString());
+
+        if (corsConfig.credentials) {
+          c.header('Access-Control-Allow-Credentials', 'true');
+        }
+      }
+
+      return c.newResponse(null, { status: corsConfig.optionsSuccessStatus as any });
+    }
+
+    if (origin) {
+      let allowOrigin = false;
+      if (typeof corsConfig.origin === 'string') {
+        allowOrigin = corsConfig.origin === '*' || corsConfig.origin === origin;
+      } else if (Array.isArray(corsConfig.origin)) {
+        allowOrigin = corsConfig.origin.includes(origin);
+      } else if (typeof corsConfig.origin === 'function') {
+        allowOrigin = corsConfig.origin(origin);
+      }
+
+      if (allowOrigin) {
+        c.header('Access-Control-Allow-Origin', origin);
+        if (corsConfig.credentials) {
+          c.header('Access-Control-Allow-Credentials', 'true');
+        }
+        if (corsConfig.exposeHeaders.length > 0) {
+          c.header('Access-Control-Expose-Headers', corsConfig.exposeHeaders.join(', '));
+        }
+      }
+    }
+
+    // Apply security headers inline
+    const securityConfig = options?.security || createSecurityHeadersConfig();
+    
+    if (securityConfig.contentSecurityPolicy.enabled) {
+      const cspDirectives = Object.entries(securityConfig.contentSecurityPolicy.directives)
+        .map(([directive, values]) => {
+          const valueString = Array.isArray(values) ? values.join(' ') : values;
+          return `${directive} ${valueString}`;
+        })
+        .join('; ');
+      c.header('Content-Security-Policy', cspDirectives);
+    }
+
+    if (securityConfig.hsts.enabled) {
+      let hstsValue = `max-age=${securityConfig.hsts.maxAge}`;
+      if (securityConfig.hsts.includeSubDomains) {
+        hstsValue += '; includeSubDomains';
+      }
+      if (securityConfig.hsts.preload) {
+        hstsValue += '; preload';
+      }
+      c.header('Strict-Transport-Security', hstsValue);
+    }
+
+    c.header('X-Frame-Options', securityConfig.frameOptions);
+
+    if (securityConfig.contentTypeOptions) {
+      c.header('X-Content-Type-Options', 'nosniff');
+    }
+
+    if (securityConfig.xssProtection) {
+      c.header('X-XSS-Protection', '1; mode=block');
+    }
+
+    c.header('Referrer-Policy', securityConfig.referrerPolicy);
+
+    const permissionsPolicyDirectives = Object.entries(securityConfig.permissionsPolicy)
+      .map(([directive, allowlist]) => {
+        if (allowlist.length === 0) {
+          return `${directive}=()`;
+        }
+        return `${directive}=(${allowlist.join(' ')})`;
+      })
+      .join(', ');
+    if (permissionsPolicyDirectives) {
+      c.header('Permissions-Policy', permissionsPolicyDirectives);
+    }
+
+    c.header('X-DNS-Prefetch-Control', 'off');
+    c.header('X-Download-Options', 'noopen');
+    c.header('X-Permitted-Cross-Domain-Policies', 'none');
+
+    // Apply rate limit headers
+    if (options?.enableRateLimit !== false) {
+      const rateLimit = c.get('rateLimit');
+      if (rateLimit) {
+        c.header('X-Rate-Limit-Limit', rateLimit.limit.toString());
+        c.header('X-Rate-Limit-Remaining', rateLimit.remaining.toString());
+        c.header('X-Rate-Limit-Reset', rateLimit.reset.toString());
+      }
+    }
+
+    return await next();
   };
 }

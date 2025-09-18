@@ -28,11 +28,11 @@ const mockLGPDService = {
 };
 
 describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
-    const { setServices } = require('../insights');
+    const { setServices } = await import('../insights');
     setServices({
       aiChatService: mockAIChatService,
       patientService: mockPatientService,
@@ -163,14 +163,14 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
   it('should export AI insights route handler', () => {
     expect(() => {
-      const module = require('../insights');
+      const module = await import('../insights');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful AI Insights Generation', () => {
     it('should generate comprehensive patient insights', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -194,7 +194,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should generate insights with specific analysis type', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights?analysisType=risk_assessment', {
@@ -219,7 +219,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should generate insights with time range filter', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights?timeRange=6months&includeHistory=true', {
@@ -245,7 +245,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should include AI insights performance headers', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -266,7 +266,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should generate insights with healthcare professional context', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -293,7 +293,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should cache insights for performance optimization', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -313,7 +313,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
   describe('LGPD Compliance and Data Access', () => {
     it('should validate LGPD data access for patient insights', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -335,7 +335,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should log insights access for audit trail', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       await insightsRoute.request(
         new Request('http://localhost/patient-123/insights?analysisType=risk_assessment', {
@@ -375,7 +375,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'LGPD_AI_INSIGHTS_DENIED',
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -421,7 +421,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         ],
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -443,7 +443,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -468,7 +468,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'PATIENT_NOT_FOUND',
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/nonexistent-patient/insights', {
@@ -494,7 +494,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         error: 'Erro interno do serviço de insights de IA',
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -529,7 +529,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'INSUFFICIENT_DATA',
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-minimal/insights', {
@@ -552,7 +552,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -571,7 +571,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should validate healthcare professional context for medical insights', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights?analysisType=diagnostic_support', {
@@ -595,7 +595,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
 
     it('should include data retention policy information', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -618,7 +618,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
   describe('Performance and Caching', () => {
     it('should include performance headers', async () => {
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -658,7 +658,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         },
       });
 
-      const { default: insightsRoute } = require('../insights');
+      const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-large-data/insights', {

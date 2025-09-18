@@ -44,6 +44,8 @@ export default defineConfig({
         'tests/integration/chat-errors.test.ts',
         // New UI tests
         'tests/ui/**/*.test.tsx',
+        // Telemedicine tests (T102.2 implementation)
+        'src/components/telemedicine/__tests__/**/*.test.tsx',
         // Temporarily quarantine legacy route tests
         '!src/__tests__/routes/**',
       ],

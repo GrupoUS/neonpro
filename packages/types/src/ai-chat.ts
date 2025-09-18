@@ -1,13 +1,20 @@
 // Types for Phase 1 AI Chat
 export type ChatRole = 'user' | 'assistant' | 'system';
 
+export type ChatSessionStatus = 'active' | 'closed' | 'error';
+
 export interface ChatSession {
   id: string;
   clinicId: string;
   userId: string;
+  locale: 'pt-BR' | 'en-US';
   startedAt: string; // ISO
   lastActivityAt: string; // ISO
-  locale: 'pt-BR' | 'en-US';
+  status?: ChatSessionStatus;
+  metadata?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
+  endedAt?: string | null;
 }
 
 export interface ChatMessage {
@@ -17,6 +24,8 @@ export interface ChatMessage {
   content: string;
   redactionFlags?: string[];
   createdAt: string; // ISO
+  provider?: string;
+  metadata?: Record<string, any>;
 }
 
 export type AuditOutcome = 'success' | 'refusal' | 'error' | 'limit';
@@ -34,4 +43,5 @@ export interface AuditEvent {
   outcome: AuditOutcome;
   latencyMs: number;
   createdAt: string; // ISO
+  metadata?: Record<string, any>;
 }

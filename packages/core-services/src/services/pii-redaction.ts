@@ -1,10 +1,9 @@
 // PII Redaction service (Phase 1)
-// Uses shared LGPD utils as a pipeline
-
-import { lgpdCompliance } from '@neonpro/utils';
+// Placeholder implementation – real LGPD-aware redaction will be added later.
 
 export class PIIRedactionService {
   redact(input: string): string {
-    return lgpdCompliance(input);
+    const { compliance } = require('@neonpro/utils');
+    return compliance.lgpdCompliance(input);
   }
 }

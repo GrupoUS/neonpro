@@ -3,7 +3,7 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
-import type { CoreMessage, UIMessage } from 'ai';
+
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';

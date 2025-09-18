@@ -1,326 +1,455 @@
 /**
- * API Rate Limiting and Caching Middleware Tests (T075)
- * Comprehensive test suite for rate limiting and caching with healthcare context
+ * Rate Limiting Test Suite for Healthcare APIs
+ * 
+ * Tests rate limiting middleware with healthcare-specific scenarios:
+ * - Emergency endpoint bypass
+ * - LGPD compliance logging
+ * - Multi-tenant isolation
+ * - Sliding window accuracy
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cache, cacheManager, rateLimit, rateLimitManager } from '../rate-limiting';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { Context } from 'hono';
+import {
+  rateLimitMiddleware,
+  getRateLimitStats,
+  resetRateLimits,
+  HEALTHCARE_RATE_LIMITS,
+  DEFAULT_RATE_LIMIT_CONFIG,
+  type RateLimitRule,
+} from '../rate-limiting';
 
-// Mock crypto.randomUUID
-Object.defineProperty(global, 'crypto', {
-  value: {
-    randomUUID: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
-  },
-});
+// Mock Hono Context
+function createMockContext(overrides: Partial<{
+  path: string;
+  method: string;
+  headers: Record<string, string>;
+  userId: string;
+  clinicId: string;
+  userRole: string;
+}>): Context {
+  const headers = new Map(Object.entries(overrides.headers || {}));
+  const variables = new Map();
+  
+  if (overrides.userId) variables.set('userId', overrides.userId);
+  if (overrides.clinicId) variables.set('clinicId', overrides.clinicId);
+  if (overrides.userRole) variables.set('userRole', overrides.userRole);
 
-describe('API Rate Limiting and Caching Middleware (T075)', () => {
-  let mockContext: any;
-  let mockNext: any;
+  return {
+    req: {
+      path: overrides.path || '/api/v1/test',
+      method: overrides.method || 'GET',
+      header: (key: string) => headers.get(key.toLowerCase()),
+    },
+    header: vi.fn(),
+    get: (key: string) => variables.get(key),
+    set: (key: string, value: any) => variables.set(key, value),
+  } as any;
+}
 
+describe('Rate Limiting Middleware', () => {
   beforeEach(() => {
-    mockContext = {
-      req: {
-        header: vi.fn(),
-        param: vi.fn(),
-        query: vi.fn(),
-        url: 'https://api.example.com/test',
-        method: 'GET',
-      },
-      set: vi.fn(),
-      json: vi.fn(),
-      get: vi.fn(),
-    };
-    mockNext = vi.fn();
-
-    // Reset managers
-    (rateLimitManager as any).limits.clear();
-    (cacheManager as any).cache.clear();
-
-    // Reset mocks
+    resetRateLimits();
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  describe('Basic Rate Limiting', () => {
+    it('allows requests within limit', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 5, windowMs: 60000 },
+        endpoints: {},
+      });
 
-  describe('Rate Limit Manager', () => {
-    it('should allow requests within rate limit', () => {
-      const key = 'test-user';
+      const context = createMockContext({ path: '/api/v1/test' });
+      const next = vi.fn();
 
-      const result = rateLimitManager.checkRateLimit(key, false, false);
-
-      expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(99); // Default limit is 100
-      expect(result.resetTime).toBeGreaterThan(Date.now());
-    });
-
-    it('should apply higher limits for healthcare professionals', () => {
-      const key = 'healthcare-user';
-
-      const result = rateLimitManager.checkRateLimit(key, true, false);
-
-      expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(499); // Healthcare professional limit is 500
-    });
-
-    it('should apply special limits for AI endpoints', () => {
-      const key = 'ai-user';
-
-      const result = rateLimitManager.checkRateLimit(key, false, true);
-
-      expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(49); // AI endpoint limit is 50
-    });
-
-    it('should block requests when rate limit exceeded', () => {
-      const key = 'blocked-user';
-
-      // Exhaust the rate limit
-      for (let i = 0; i < 100; i++) {
-        rateLimitManager.checkRateLimit(key, false, false);
+      // Should allow first 5 requests
+      for (let i = 0; i < 5; i++) {
+        await middleware(context, next);
+        expect(next).toHaveBeenCalledTimes(i + 1);
       }
-
-      const result = rateLimitManager.checkRateLimit(key, false, false);
-
-      expect(result.allowed).toBe(false);
-      expect(result.remaining).toBe(0);
-      expect(result.retryAfter).toBeGreaterThan(0);
     });
 
-    it('should reset rate limit after window expires', () => {
-      const key = 'reset-user';
+    it('blocks requests exceeding limit', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 2, windowMs: 60000 },
+        endpoints: {},
+      });
 
-      // Mock time to simulate window expiration
-      const originalNow = Date.now;
-      Date.now = vi.fn(() => 1000000);
+      const context = createMockContext({ 
+        path: '/api/v1/test',
+        headers: { 'x-forwarded-for': '192.168.1.100' }
+      });
+      const next = vi.fn();
+
+      // Allow first 2 requests
+      await middleware(context, next);
+      await middleware(context, next);
+      expect(next).toHaveBeenCalledTimes(2);
+
+      // Block 3rd request
+      await expect(middleware(context, next)).rejects.toThrow();
+      expect(next).toHaveBeenCalledTimes(2); // Still only 2 calls
+    });
+
+    it('sets correct rate limit headers', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 10, windowMs: 60000 },
+        endpoints: {},
+      });
+
+      const context = createMockContext({});
+      const next = vi.fn();
+
+      await middleware(context, next);
+
+      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Limit', '10');
+      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Remaining', '9');
+      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Window', '60000');
+    });
+  });
+
+  describe('Healthcare-Specific Rules', () => {
+    it('applies emergency endpoint rules correctly', async () => {
+      const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
+      const context = createMockContext({ path: '/api/v1/emergency/cardiac-alert' });
+      const next = vi.fn();
+
+      // Emergency endpoints should have higher limits (1000 requests/minute)
+      const emergencyRule = HEALTHCARE_RATE_LIMITS['/api/v1/emergency/'];
+      expect(emergencyRule.maxRequests).toBe(1000);
+      expect(emergencyRule.priority).toBe('emergency');
+
+      await middleware(context, next);
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('bypasses rate limiting for emergency responders', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {
+          '/api/v1/emergency/': {
+            maxRequests: 1,
+            windowMs: 60000,
+            skipRoles: ['emergency_responder'],
+          },
+        },
+      });
+
+      const context = createMockContext({
+        path: '/api/v1/emergency/test',
+        userRole: 'emergency_responder',
+      });
+      const next = vi.fn();
+
+      // Should allow multiple requests for emergency responder
+      await middleware(context, next);
+      await middleware(context, next);
+      await middleware(context, next);
+
+      expect(next).toHaveBeenCalledTimes(3);
+    });
+
+    it('applies strict limits to authentication endpoints', async () => {
+      const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
+      
+      const authRule = HEALTHCARE_RATE_LIMITS['/api/v1/auth/'];
+      expect(authRule.maxRequests).toBe(10); // Strict limit for auth
+      expect(authRule.priority).toBe('administrative');
+    });
+
+    it('handles patient data access with audit logging', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      
+      const middleware = rateLimitMiddleware({
+        ...DEFAULT_RATE_LIMIT_CONFIG,
+        auditLogging: true,
+      });
+
+      const context = createMockContext({
+        path: '/api/v1/patients/12345',
+        userId: 'doc123',
+        clinicId: 'clinic456',
+      });
+      const next = vi.fn();
+
+      await middleware(context, next);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'RATE_LIMIT_AUDIT',
+        expect.objectContaining({
+          endpoint: '/api/v1/patients/12345',
+          userId: 'doc123',
+          clinicId: 'clinic456',
+          allowed: true,
+        })
+      );
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('Multi-tenant Isolation', () => {
+    it('isolates rate limits by clinic ID', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 2, windowMs: 60000 },
+        endpoints: {},
+      });
+
+      const clinic1Context = createMockContext({
+        path: '/api/v1/test',
+        clinicId: 'clinic1',
+        headers: { 'x-forwarded-for': '192.168.1.100' }
+      });
+
+      const clinic2Context = createMockContext({
+        path: '/api/v1/test',
+        clinicId: 'clinic2',
+        headers: { 'x-forwarded-for': '192.168.1.100' } // Same IP
+      });
+
+      const next = vi.fn();
+
+      // Use up limit for clinic1
+      await middleware(clinic1Context, next);
+      await middleware(clinic1Context, next);
+      expect(next).toHaveBeenCalledTimes(2);
+
+      // Third request for clinic1 should fail
+      await expect(middleware(clinic1Context, next)).rejects.toThrow();
+
+      // But clinic2 should still work (different clinic ID)
+      await middleware(clinic2Context, next);
+      expect(next).toHaveBeenCalledTimes(3);
+    });
+
+    it('isolates rate limits by user ID', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {},
+      });
+
+      const user1Context = createMockContext({
+        path: '/api/v1/test',
+        userId: 'user1',
+        headers: { 'x-forwarded-for': '192.168.1.100' }
+      });
+
+      const user2Context = createMockContext({
+        path: '/api/v1/test',
+        userId: 'user2',
+        headers: { 'x-forwarded-for': '192.168.1.100' } // Same IP
+      });
+
+      const next = vi.fn();
+
+      // Use up limit for user1
+      await middleware(user1Context, next);
+      expect(next).toHaveBeenCalledTimes(1);
+
+      // Second request for user1 should fail
+      await expect(middleware(user1Context, next)).rejects.toThrow();
+
+      // But user2 should still work (different user ID)
+      await middleware(user2Context, next);
+      expect(next).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('IP Allowlisting', () => {
+    it('bypasses rate limiting for allowlisted IPs', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {},
+        allowlistedIPs: ['192.168.1.100'],
+      });
+
+      const context = createMockContext({
+        headers: { 'x-forwarded-for': '192.168.1.100' }
+      });
+      const next = vi.fn();
+
+      // Should allow multiple requests from allowlisted IP
+      await middleware(context, next);
+      await middleware(context, next);
+      await middleware(context, next);
+
+      expect(next).toHaveBeenCalledTimes(3);
+    });
+
+    it('enforces rate limiting for non-allowlisted IPs', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {},
+        allowlistedIPs: ['192.168.1.100'],
+      });
+
+      const context = createMockContext({
+        headers: { 'x-forwarded-for': '10.0.0.1' } // Not allowlisted
+      });
+      const next = vi.fn();
+
+      // Allow first request
+      await middleware(context, next);
+      expect(next).toHaveBeenCalledTimes(1);
+
+      // Block second request
+      await expect(middleware(context, next)).rejects.toThrow();
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Sliding Window Behavior', () => {
+    it('resets count after window expires', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 2, windowMs: 1000 }, // 1 second window
+        endpoints: {},
+      });
+
+      const context = createMockContext({});
+      const next = vi.fn();
 
       // Use up the limit
-      for (let i = 0; i < 100; i++) {
-        rateLimitManager.checkRateLimit(key, false, false);
-      }
+      await middleware(context, next);
+      await middleware(context, next);
+      expect(next).toHaveBeenCalledTimes(2);
 
-      // Advance time beyond window
-      Date.now = vi.fn(() => 1000000 + 61 * 60 * 1000); // 61 minutes later
+      // Should block third request
+      await expect(middleware(context, next)).rejects.toThrow();
 
-      const result = rateLimitManager.checkRateLimit(key, false, false);
+      // Wait for window to expire
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
-      expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(99);
-
-      // Restore original Date.now
-      Date.now = originalNow;
+      // Should allow requests again
+      await middleware(context, next);
+      expect(next).toHaveBeenCalledTimes(3);
     });
 
-    it('should clean expired rate limit entries', () => {
-      const key1 = 'user1';
-      const key2 = 'user2';
+    it('maintains accurate counts during window', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 3, windowMs: 2000 },
+        endpoints: {},
+      });
 
-      // Create entries
-      rateLimitManager.checkRateLimit(key1, false, false);
-      rateLimitManager.checkRateLimit(key2, false, false);
+      const context = createMockContext({});
+      const next = vi.fn();
 
-      // Mock expired entry
-      const limits = (rateLimitManager as any).limits;
-      const entry = limits.get(key1);
-      if (entry) {
-        entry.resetTime = Date.now() - 1000; // Expired 1 second ago
-      }
+      // Make requests with delays
+      await middleware(context, next);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await middleware(context, next);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await middleware(context, next);
+      expect(next).toHaveBeenCalledTimes(3);
 
-      const cleanedCount = rateLimitManager.cleanExpiredEntries();
-
-      expect(cleanedCount).toBe(1);
-      expect(limits.has(key1)).toBe(false);
-      expect(limits.has(key2)).toBe(true);
+      // Fourth request should be blocked
+      await expect(middleware(context, next)).rejects.toThrow();
     });
   });
 
-  describe('Cache Manager', () => {
-    it('should store and retrieve cached responses', () => {
-      const method = 'GET';
-      const path = '/api/patients';
-      const data = { patients: [{ id: 1, name: 'Test' }] };
-
-      const stored = cacheManager.set(method, path, data, {
-        ttl: 300,
-        lgpdCompliant: true,
+  describe('Error Handling and Messages', () => {
+    it('provides healthcare-specific error messages', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {
+          '/api/v1/emergency/': {
+            maxRequests: 1,
+            windowMs: 60000,
+            priority: 'emergency',
+            message: 'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
+          },
+        },
       });
 
-      expect(stored).toBe(true);
+      const context = createMockContext({ path: '/api/v1/emergency/test' });
+      const next = vi.fn();
 
-      const retrieved = cacheManager.get(method, path);
-      expect(retrieved).toEqual(data);
+      // Use up the limit
+      await middleware(context, next);
+
+      // Should throw with healthcare-specific message
+      try {
+        await middleware(context, next);
+        expect.fail('Should have thrown rate limit error');
+      } catch (error: any) {
+        const errorData = JSON.parse(error.message);
+        expect(errorData.guidance).toContain('medical emergency');
+        expect(errorData.compliance.standard).toBe('LGPD-Article-33-Security-Measures');
+      }
     });
 
-    it('should return null for expired cache entries', () => {
-      const method = 'GET';
-      const path = '/api/expired';
-      const data = { test: 'data' };
-
-      // Store with very short TTL
-      cacheManager.set(method, path, data, { ttl: 0.001 });
-
-      // Wait for expiration
-      setTimeout(() => {
-        const retrieved = cacheManager.get(method, path);
-        expect(retrieved).toBeNull();
-      }, 10);
-    });
-
-    it('should handle user-specific caching', () => {
-      const method = 'GET';
-      const path = '/api/user-data';
-      const userId = 'user-123';
-      const data = { userData: 'sensitive' };
-
-      const stored = cacheManager.set(method, path, data, {
-        ttl: 300,
-        userId,
-        lgpdCompliant: true,
+    it('includes LGPD compliance information in errors', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 1, windowMs: 60000 },
+        endpoints: {},
+        auditLogging: true,
       });
 
-      expect(stored).toBe(true);
+      const context = createMockContext({});
+      const next = vi.fn();
 
-      // Should retrieve with same user
-      const retrieved = cacheManager.get(method, path, undefined, userId);
-      expect(retrieved).toEqual(data);
+      await middleware(context, next);
 
-      // Should not retrieve with different user
-      const notRetrieved = cacheManager.get(method, path, undefined, 'other-user');
-      expect(notRetrieved).toBeNull();
-    });
-
-    it('should not cache non-LGPD compliant data', () => {
-      const method = 'GET';
-      const path = '/api/sensitive';
-      const data = { sensitive: 'data' };
-
-      const stored = cacheManager.set(method, path, data, {
-        ttl: 300,
-        lgpdCompliant: false,
-      });
-
-      expect(stored).toBe(false);
-
-      const retrieved = cacheManager.get(method, path);
-      expect(retrieved).toBeNull();
-    });
-
-    it('should clean expired cache entries', () => {
-      const data = { test: 'data' };
-
-      // Store entries with different expiration times
-      cacheManager.set('GET', '/api/valid', data, { ttl: 300 });
-      cacheManager.set('GET', '/api/expired', data, { ttl: 0.001 });
-
-      // Wait for one to expire
-      setTimeout(() => {
-        const cleanedCount = cacheManager.cleanExpiredEntries();
-        expect(cleanedCount).toBe(1);
-
-        expect(cacheManager.get('GET', '/api/valid')).toEqual(data);
-        expect(cacheManager.get('GET', '/api/expired')).toBeNull();
-      }, 10);
-    });
-
-    it('should get cache statistics', () => {
-      // Create some cache entries
-      cacheManager.set('GET', '/api/test1', { data: 1 }, { ttl: 300 });
-      cacheManager.set('GET', '/api/test2', { data: 2 }, { ttl: 300 });
-
-      // Generate some hits and misses
-      cacheManager.get('GET', '/api/test1'); // hit
-      cacheManager.get('GET', '/api/test1'); // hit
-      cacheManager.get('GET', '/api/missing'); // miss
-
-      const stats = cacheManager.getStats();
-
-      expect(stats.totalEntries).toBe(2);
-      expect(stats.hits).toBe(2);
-      expect(stats.misses).toBe(1);
-      expect(stats.hitRate).toBe(2 / 3);
+      try {
+        await middleware(context, next);
+        expect.fail('Should have thrown rate limit error');
+      } catch (error: any) {
+        const errorData = JSON.parse(error.message);
+        expect(errorData.compliance).toEqual({
+          logged: true,
+          standard: 'LGPD-Article-33-Security-Measures',
+        });
+      }
     });
   });
 
-  describe('Rate Limiting Middleware', () => {
-    it('should allow requests within rate limit', async () => {
-      const middleware = rateLimit();
-
-      mockContext.req.header.mockImplementation((header: string) => {
-        if (header === 'x-forwarded-for') return '192.168.1.1';
-        return undefined;
+  describe('Statistics and Monitoring', () => {
+    it('provides accurate statistics', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 10, windowMs: 60000 },
+        endpoints: {},
       });
 
-      await middleware(mockContext, mockNext);
+      const context1 = createMockContext({ 
+        headers: { 'x-forwarded-for': '192.168.1.1' }
+      });
+      const context2 = createMockContext({ 
+        headers: { 'x-forwarded-for': '192.168.1.2' }
+      });
+      const next = vi.fn();
 
-      expect(mockContext.set).toHaveBeenCalledWith('rateLimitRemaining', expect.any(Number));
-      expect(mockContext.set).toHaveBeenCalledWith('rateLimitReset', expect.any(Number));
-      expect(mockNext).toHaveBeenCalled();
+      // Make some requests
+      await middleware(context1, next);
+      await middleware(context2, next);
+      await middleware(context1, next);
+
+      const stats = getRateLimitStats();
+      expect(stats.store.totalKeys).toBe(2); // Two different IPs
+      expect(stats.store.totalAttempts).toBe(3); // Three total requests
+      expect(stats.config.endpointCount).toBeGreaterThan(0);
     });
 
-    it('should block requests when rate limit exceeded', async () => {
-      const middleware = rateLimit();
-      const clientIp = '192.168.1.100';
-
-      mockContext.req.header.mockImplementation((header: string) => {
-        if (header === 'x-forwarded-for') return clientIp;
-        return undefined;
+    it('tracks rate limit status in context', async () => {
+      const middleware = rateLimitMiddleware({
+        default: { maxRequests: 5, windowMs: 60000 },
+        endpoints: {},
       });
 
-      // Exhaust rate limit
-      for (let i = 0; i < 100; i++) {
-        rateLimitManager.checkRateLimit(clientIp, false, false);
-      }
+      const context = createMockContext({});
+      const next = vi.fn();
 
-      await middleware(mockContext, mockNext);
+      await middleware(context, next);
 
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          success: false,
-          error: 'Limite de requisições excedido',
-          code: 'RATE_LIMIT_EXCEEDED',
-        }),
-        429,
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
+      const status = context.get('rateLimitStatus');
+      const rule = context.get('rateLimitRule');
 
-    it('should apply healthcare professional rate limits', async () => {
-      const middleware = rateLimit();
-
-      mockContext.req.header.mockImplementation((header: string) => {
-        if (header === 'x-forwarded-for') return '192.168.1.2';
-        return undefined;
-      });
-
-      mockContext.get.mockImplementation((key: string) => {
-        if (key === 'healthcareProfessional') return { id: 'hp-123' };
-        return undefined;
-      });
-
-      await middleware(mockContext, mockNext);
-
-      expect(mockContext.set).toHaveBeenCalledWith('rateLimitRemaining', 499); // Healthcare limit
-      expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should handle caching for GET requests', async () => {
-      const middleware = cache();
-
-      mockContext.req.method = 'GET';
-      mockContext.req.path = '/api/cached-endpoint';
-
-      // Mock a cached response
-      const cachedData = { cached: true };
-      cacheManager.set('GET', '/api/cached-endpoint', cachedData, {
-        ttl: 300,
-        lgpdCompliant: true,
-      });
-
-      await middleware(mockContext, mockNext);
-
-      expect(mockContext.json).toHaveBeenCalledWith(cachedData);
-      expect(mockNext).not.toHaveBeenCalled();
+      expect(status).toBeDefined();
+      expect(status.allowed).toBe(true);
+      expect(status.remainingRequests).toBe(4);
+      expect(rule).toBeDefined();
+      expect(rule.maxRequests).toBe(5);
     });
   });
 });

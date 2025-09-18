@@ -124,7 +124,7 @@ app.post(
     // Rate limit first
     if (isRateLimited(userId)) {
       // Audit (limit)
-      console.log('AuditEvent', {
+      const auditEvent = {
         eventId: crypto.randomUUID(),
         userId,
         clinicId,
@@ -136,37 +136,26 @@ app.post(
         outcome: 'limit',
         latencyMs: Date.now() - t0,
         sessionId: sessionId || null,
-      });
+      };
+
       if (process.env.AI_AUDIT_DB === 'true') {
         try {
           await supabase.from('ai_audit_events').insert({
-            clinic_id: clinicId,
-            user_id: userId,
-            session_id: sessionId || null,
-            action_type: 'query',
-            consent_status: 'n/a',
-            query_type: classifyQueryType(question),
-            redaction_applied: false,
-            outcome: 'limit',
-            latency_ms: Date.now() - t0,
+            clinic_id: auditEvent.clinicId,
+            user_id: auditEvent.userId,
+            session_id: auditEvent.sessionId,
+            action_type: auditEvent.actionType,
+            consent_status: auditEvent.consentStatus,
+            query_type: auditEvent.queryType,
+            redaction_applied: auditEvent.redactionApplied,
+            outcome: auditEvent.outcome,
+            latency_ms: auditEvent.latencyMs,
           });
         } catch (e) {
           console.warn('Audit DB insert failed', e);
         }
       } else {
-        console.log('AuditEvent', {
-          eventId: crypto.randomUUID(),
-          userId,
-          clinicId,
-          timestampUTC: new Date().toISOString(),
-          actionType: 'query',
-          consentStatus: 'n/a',
-          queryType: classifyQueryType(question),
-          redactionApplied: false,
-          outcome: 'limit',
-          latencyMs: Date.now() - t0,
-          sessionId: sessionId || null,
-        });
+        console.log('AuditEvent', auditEvent);
       }
       return c.json({ message: 'Please retry shortly' }, 429);
     }

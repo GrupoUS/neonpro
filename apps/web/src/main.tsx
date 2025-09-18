@@ -2,11 +2,14 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ErrorBoundary from './components/error-pages/ErrorBoundary';
+import { SentryErrorBoundary } from './components/monitoring/SentryErrorBoundary';
 import { ThemeProvider } from './components/theme-provider';
 import { ConsentProvider } from './contexts/ConsentContext';
 import { criticalComponents, useComponentPreloader } from './hooks/useLazyComponent';
+import { initializeSentry } from './lib/sentry';
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';
+import { sdk as telemetrySDK } from '@neonpro/shared/telemetry';
 
 import './index.css';
 
@@ -39,6 +42,16 @@ if ((import.meta as any).env?.DEV) {
   });
   // Boot log
   console.log('[NeonPro] Bootstrapping app...');
+}
+
+// Initialize Sentry monitoring and OpenTelemetry
+initializeSentry();
+
+// Initialize OpenTelemetry for web tracing
+if (telemetrySDK) {
+  telemetrySDK.start().catch(error => {
+    console.warn('Failed to initialize OpenTelemetry:', error);
+  });
 }
 
 async function bootstrap() {
@@ -80,13 +93,15 @@ async function bootstrap() {
 
     root.render(
       <React.StrictMode>
-        <ThemeProvider attribute='class' defaultTheme='system'>
-          <ErrorBoundary>
-            <ConsentProvider>
-              <RouterProvider router={router} />
-            </ConsentProvider>
-          </ErrorBoundary>
-        </ThemeProvider>
+        <SentryErrorBoundary>
+          <ThemeProvider attribute='class' defaultTheme='system'>
+            <ErrorBoundary>
+              <ConsentProvider>
+                <RouterProvider router={router} />
+              </ConsentProvider>
+            </ErrorBoundary>
+          </ThemeProvider>
+        </SentryErrorBoundary>
       </React.StrictMode>,
     );
 

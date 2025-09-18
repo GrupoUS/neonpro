@@ -16,6 +16,10 @@ export interface MockAIProviderConfig extends AIProviderConfig {
   failureRate?: number;
   streamingChunkSize?: number;
   streamingDelay?: number;
+  rateLimits?: {
+    requestsPerMinute: number;
+    tokensPerMinute: number;
+  };
 }
 
 export interface MockResponse {
@@ -31,7 +35,6 @@ export interface MockResponse {
 
 export class MockAIProvider {
   private config: MockAIProviderConfig;
-  private responseIndex = 0;
 
   constructor(config: MockAIProviderConfig) {
     this.config = {
@@ -167,19 +170,20 @@ export class MockAIProvider {
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       content: mockResponse.response,
-      role: 'assistant',
+      role: 'assistant' as const,
       model: this.config.models?.default || 'mock-model',
       provider: 'mock' as AIProvider,
       usage: {
-        inputTokens,
-        outputTokens,
-        totalTokens: inputTokens + outputTokens,
+        input: inputTokens,
+        output: outputTokens,
+        total: inputTokens + outputTokens,
       },
       metadata: {
         ...mockResponse.metadata,
         mockProvider: true,
         timestamp: new Date().toISOString(),
       },
+      timestamp: new Date(),
     };
   }
 
@@ -290,7 +294,6 @@ export class MockAIProvider {
       failureRate: 0,
       latency: { min: 100, max: 500 },
     };
-    this.responseIndex = 0;
   }
 }
 

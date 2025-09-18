@@ -9,18 +9,17 @@ import { describe, it, expect } from 'vitest';
 
 describe('Healthcare Components Integration', () => {
   it('should export healthcare validation utilities', async () => {
-    const { healthcareValidationSchemas, DataSensitivity, ConsentType } = await import(
-      '@neonpro/ui/utils'
+    const { healthcareValidationSchemas, DataSensitivity } = await import(
+      '../utils/healthcare-validation'
     );
     
     expect(healthcareValidationSchemas).toBeDefined();
     expect(DataSensitivity).toBeDefined();
-    expect(ConsentType).toBeDefined();
   });
   
   it('should export accessibility utilities', async () => {
     const { announceToScreenReader, HealthcarePriority, generateAccessibleId } = await import(
-      '@neonpro/ui/utils'
+      '../utils/accessibility'
     );
     
     expect(announceToScreenReader).toBeDefined();
@@ -30,7 +29,7 @@ describe('Healthcare Components Integration', () => {
   
   it('should export healthcare theme provider', async () => {
     const { HealthcareThemeProvider, useHealthcareTheme } = await import(
-      '@neonpro/ui'
+      '../components/healthcare/healthcare-theme-provider'
     );
     
     expect(HealthcareThemeProvider).toBeDefined();
@@ -38,17 +37,24 @@ describe('Healthcare Components Integration', () => {
   });
   
   it('should export LGPD consent banner', async () => {
-    const { LGPDConsentBanner, useLGPDConsent } = await import(
-      '@neonpro/ui'
+    const { LGPDConsentBanner, useLGPDConsent, ConsentType } = await import(
+      '../components/healthcare/lgpd-consent-banner'
     );
     
     expect(LGPDConsentBanner).toBeDefined();
     expect(useLGPDConsent).toBeDefined();
+    expect(ConsentType).toBeDefined();
   });
   
   it('should export healthcare form components', async () => {
-    const { HealthcareForm, HealthcareTextField, HealthcareSelect } = await import(
-      '@neonpro/ui'
+    const { HealthcareForm } = await import(
+      '../components/forms/healthcare-form'
+    );
+    const { HealthcareTextField } = await import(
+      '../components/forms/healthcare-text-field'
+    );
+    const { HealthcareSelect } = await import(
+      '../components/forms/healthcare-select'
     );
     
     expect(HealthcareForm).toBeDefined();

@@ -1,6 +1,5 @@
 // T044: Session management and authentication middleware
-import type { Context, Next } from 'hono';
-import type { ChatSession } from '@neonpro/types';
+import type { Context, Next, MiddlewareHandler } from 'hono';
 
 export interface SessionConfig {
   cookieName: string;
@@ -38,9 +37,8 @@ export class MemorySessionStore implements SessionStore {
   private cleanupInterval: NodeJS.Timeout;
 
   constructor(cleanupIntervalMs = 60000) {
-    // Clean up expired sessions every minute
     this.cleanupInterval = setInterval(() => {
-      this.cleanup();
+      void this.cleanup();
     }, cleanupIntervalMs);
   }
 
@@ -48,7 +46,6 @@ export class MemorySessionStore implements SessionStore {
     const session = this.sessions.get(sessionId);
     if (!session) return null;
 
-    // Check if session is expired
     if (new Date(session.expiresAt) < new Date()) {
       this.sessions.delete(sessionId);
       return null;
@@ -211,7 +208,6 @@ export function createSessionConfig(): SessionConfig {
   };
 }
 
-// Global session manager instance
 let sessionManagerInstance: SessionManager | null = null;
 
 export function createSessionManager(config?: SessionConfig, store?: SessionStore): SessionManager {
@@ -228,17 +224,15 @@ export function getSessionManager(): SessionManager {
   return sessionManagerInstance;
 }
 
-// Middleware for session handling
 export function sessionMiddleware(options?: {
   required?: boolean;
   roles?: string[];
   permissions?: string[];
-}) {
+}): MiddlewareHandler {
   return async (c: Context, next: Next) => {
     const sessionManager = getSessionManager();
     const config = createSessionConfig();
 
-    // Extract session ID from cookie or header
     const cookieSessionId = getCookieValue(c.req.header('Cookie') || '', config.cookieName);
     const headerSessionId = c.req.header('X-Session-ID');
     const sessionId = headerSessionId || cookieSessionId;
@@ -248,54 +242,52 @@ export function sessionMiddleware(options?: {
     if (sessionId) {
       session = await sessionManager.getSession(sessionId);
 
-      // Renew session if needed
       if (session && sessionManager.shouldRenewSession(session)) {
         session = await sessionManager.renewSession(sessionId);
         if (session) {
-          // Set renewed session cookie
           c.header('Set-Cookie', sessionManager.createSessionCookie(sessionId));
         }
       }
     }
 
-    // Check if session is required
     if (options?.required && !session) {
       return c.json({ error: 'Authentication required' }, 401);
     }
 
-    // Check role requirements
     if (session && options?.roles && options.roles.length > 0) {
       if (!session.role || !options.roles.includes(session.role)) {
         return c.json({ error: 'Insufficient permissions' }, 403);
       }
     }
 
-    // Check permission requirements
     if (session && options?.permissions && options.permissions.length > 0) {
       const userPermissions = session.permissions || [];
-      const hasAllPermissions = options.permissions.every(permission => 
-        userPermissions.includes(permission)
+      const hasAllPermissions = options.permissions.every(permission =>
+        userPermissions.includes(permission),
       );
-      
+
       if (!hasAllPermissions) {
         return c.json({ error: 'Insufficient permissions' }, 403);
       }
     }
 
-    // Store session in context
     c.set('session', session);
-    c.set('user', session ? {
-      id: session.userId,
-      email: session.email,
-      role: session.role,
-      permissions: session.permissions,
-    } : null);
+    c.set(
+      'user',
+      session
+        ? {
+            id: session.userId,
+            email: session.email,
+            role: session.role,
+            permissions: session.permissions,
+          }
+        : null,
+    );
 
-    await next();
+    return await next();
   };
 }
 
-// Helper function to parse cookies
 function getCookieValue(cookieHeader: string, name: string): string | null {
   const cookies = cookieHeader.split(';').map(cookie => cookie.trim());
   for (const cookie of cookies) {
@@ -307,19 +299,17 @@ function getCookieValue(cookieHeader: string, name: string): string | null {
   return null;
 }
 
-// Authentication middleware for API endpoints
 export function requireAuth(options?: {
   roles?: string[];
   permissions?: string[];
-}) {
+}): MiddlewareHandler {
   return sessionMiddleware({
     required: true,
     ...options,
   });
 }
 
-// Optional authentication middleware
-export function optionalAuth() {
+export function optionalAuth(): MiddlewareHandler {
   return sessionMiddleware({
     required: false,
   });

@@ -202,5 +202,13 @@ export function createMockAuditTrail(
       resourceId,
       details: { reason: 'Medical consultation' },
     },
+    {
+      timestamp: new Date(baseTime.getTime() + 240000), // +4 minutes
+      action: 'delete',
+      userId: 'user-321',
+      resourceType,
+      resourceId,
+      details: { reason: 'Patient requested data removal' },
+    },
   ];
 }

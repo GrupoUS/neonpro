@@ -8,6 +8,13 @@
 import { AGENT_REGISTRY, QUALITY_GATES } from './index';
 import type { AgentType } from './types';
 
+const QUALITY_GATE_KEY_MAP: Record<AgentType, keyof typeof QUALITY_GATES> = {
+  'architect-review': 'ARCHITECTURE',
+  'code-reviewer': 'CODE_QUALITY',
+  'security-auditor': 'SECURITY',
+  'tdd-orchestrator': 'TDD',
+};
+
 export interface CoordinationConfig {
   pattern: 'sequential' | 'parallel' | 'hierarchical';
   agents: AgentType[];
@@ -198,8 +205,9 @@ export class AgentCoordinator {
    * Evaluate if agent execution was successful
    */
   private evaluateSuccess(agent: AgentType, metrics: Record<string, number>): boolean {
-    const gates =
-      QUALITY_GATES[agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES];
+    const mappedKey = QUALITY_GATE_KEY_MAP[agent]
+      ?? (agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES);
+    const gates = QUALITY_GATES[mappedKey];
     if (!gates) return true;
 
     return Object.entries(gates).every(([key, threshold]) => {

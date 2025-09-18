@@ -7,6 +7,7 @@ import type {
   Finding,
   Recommendation
 } from '../types';
+import { normalizeComplexity } from '../types';
 
 /**
  * Test Agent - Responsible for test creation, validation, and quality
@@ -101,6 +102,8 @@ export class TestAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Analyze acceptance criteria for test creation
     if (!context.acceptanceCriteria || context.acceptanceCriteria.length === 0) {
       findings.push(
@@ -138,7 +141,7 @@ export class TestAgent extends BaseAgent {
     }
 
     // Check for edge cases and error scenarios
-    if (context.complexity > 5) {
+    if (complexityLevel > 5) {
       recommendations.push(
         this.createRecommendation(
           'test-strategy',
@@ -170,6 +173,8 @@ export class TestAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Check if tests are now passing
     findings.push(
       this.createFinding(
@@ -182,7 +187,7 @@ export class TestAgent extends BaseAgent {
     );
 
     // Validate implementation quality
-    if (context.complexity > 7) {
+    if (complexityLevel > 7) {
       findings.push(
         this.createFinding(
           'test-stability',
@@ -213,6 +218,8 @@ export class TestAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Check test maintainability
     findings.push(
       this.createFinding(
@@ -235,7 +242,7 @@ export class TestAgent extends BaseAgent {
     );
 
     // Performance considerations for complex features
-    if (context.complexity > 6) {
+    if (complexityLevel > 6) {
       recommendations.push(
         this.createRecommendation(
           'performance',

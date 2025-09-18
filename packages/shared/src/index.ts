@@ -139,3 +139,6 @@ export * from './hooks/useRealtimeQuery';
 
 // Internationalization
 export * from './i18n/ai-chat';
+
+// WebRTC infrastructure
+export * from './webrtc';

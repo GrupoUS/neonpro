@@ -15,17 +15,17 @@ describe('Audit Trail Service (T041)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export AuditService class', () => {
-    expect(() => {
-      const module = require('../audit-service');
-      expect(module.AuditService).toBeDefined();
+  it('should export ComprehensiveAuditService class', async () => {
+    expect(async () => {
+      const module = await import('../audit-service');
+      expect(module.ComprehensiveAuditService).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Activity Logging', () => {
     it('should log patient data access activity', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logActivity({
         userId: 'doctor-123',
@@ -47,8 +47,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should log patient data modification activity', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logActivity({
         userId: 'doctor-123',
@@ -71,8 +71,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should log LGPD consent changes', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logActivity({
         userId: 'patient-123',
@@ -94,8 +94,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should log AI chat interactions', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logActivity({
         userId: 'patient-123',
@@ -120,8 +120,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Security Event Monitoring', () => {
     it('should log failed authentication attempts', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logSecurityEvent({
         eventType: 'authentication_failure',
@@ -143,8 +143,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should log suspicious data access patterns', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logSecurityEvent({
         eventType: 'suspicious_access_pattern',
@@ -167,8 +167,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should log unauthorized access attempts', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logSecurityEvent({
         eventType: 'unauthorized_access',
@@ -192,8 +192,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should detect and log data export anomalies', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logSecurityEvent({
         eventType: 'data_export_anomaly',
@@ -217,8 +217,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Compliance Audit Trails', () => {
     it('should generate LGPD compliance audit trail', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.generateComplianceAuditTrail({
         complianceFramework: 'LGPD',
@@ -237,8 +237,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should generate ANVISA compliance audit trail', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.generateComplianceAuditTrail({
         complianceFramework: 'ANVISA',
@@ -255,8 +255,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should generate CFM compliance audit trail', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.generateComplianceAuditTrail({
         complianceFramework: 'CFM',
@@ -275,8 +275,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should validate audit trail completeness', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.validateAuditTrailCompleteness({
         patientId: 'patient-123',
@@ -294,8 +294,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Forensic Analysis', () => {
     it('should reconstruct user activity timeline', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.reconstructActivityTimeline({
         userId: 'doctor-123',
@@ -312,8 +312,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should analyze data access patterns', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.analyzeDataAccessPatterns({
         userId: 'doctor-123',
@@ -330,8 +330,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should perform data breach investigation', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.investigateDataBreach({
         incidentId: 'incident-123',
@@ -349,8 +349,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should generate forensic evidence report', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.generateForensicReport({
         investigationId: 'investigation-123',
@@ -370,8 +370,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Real-time Audit Streaming', () => {
     it('should start real-time audit stream', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.startAuditStream({
         streamId: 'stream-123',
@@ -390,8 +390,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should stop audit stream', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.stopAuditStream('stream-123');
 
@@ -402,8 +402,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should configure audit alerts', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.configureAuditAlerts({
         alertId: 'alert-123',
@@ -425,8 +425,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should list active audit streams', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.listActiveStreams();
 
@@ -438,8 +438,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Data Integrity Verification', () => {
     it('should verify audit log integrity', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.verifyAuditLogIntegrity({
         startDate: new Date('2024-01-01'),
@@ -456,8 +456,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should detect tampered audit records', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.detectTamperedRecords({
         auditIds: ['audit-123', 'audit-456', 'audit-789'],
@@ -472,8 +472,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should create audit log backup', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.createAuditLogBackup({
         backupId: 'backup-123',
@@ -491,8 +491,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should restore audit logs from backup', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.restoreAuditLogsFromBackup({
         backupId: 'backup-123',
@@ -510,8 +510,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Database Integration', () => {
     it('should handle database connection errors gracefully', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       // Mock database error
       const result = await service.logActivity({
@@ -527,8 +527,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should validate database schema', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.validateDatabaseSchema();
 
@@ -539,8 +539,8 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should perform database maintenance', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.performDatabaseMaintenance({
         operation: 'cleanup_old_logs',
@@ -556,8 +556,8 @@ describe('Audit Trail Service (T041)', () => {
 
   describe('Error Handling and Validation', () => {
     it('should handle invalid audit log parameters', async () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+      const { ComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveAuditService();
 
       const result = await service.logActivity({
         userId: '',
@@ -571,9 +571,9 @@ describe('Audit Trail Service (T041)', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should validate service configuration', () => {
-      const { AuditService } = require('../audit-service');
-      const service = new AuditService();
+    it('should validate service configuration', async () => {
+      const { ComprehensiveComprehensiveAuditService } = await import('../audit-service');
+      const service = new ComprehensiveComprehensiveAuditService();
 
       const config = service.getServiceConfiguration();
 

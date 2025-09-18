@@ -7,6 +7,7 @@ import type {
   Finding,
   Recommendation
 } from '../types';
+import { normalizeComplexity } from '../types';
 
 /**
  * Code Reviewer Agent - Responsible for code quality analysis and improvement
@@ -103,6 +104,8 @@ export class CodeReviewerAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Review test code structure and quality
     if (context.files?.tests) {
       findings.push(
@@ -127,7 +130,7 @@ export class CodeReviewerAgent extends BaseAgent {
     }
 
     // High complexity features need extra test review attention
-    if (context.complexity > 6) {
+    if (complexityLevel > 6) {
       recommendations.push(
         this.createRecommendation(
           'test-strategy',
@@ -147,6 +150,8 @@ export class CodeReviewerAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Basic code quality checks
     if (context.files?.implementation) {
       findings.push(
@@ -183,7 +188,7 @@ export class CodeReviewerAgent extends BaseAgent {
     }
 
     // Performance considerations for complex features
-    if (context.complexity > 7) {
+    if (complexityLevel > 7) {
       findings.push(
         this.createFinding(
           'performance',
@@ -214,6 +219,8 @@ export class CodeReviewerAgent extends BaseAgent {
     findings: Finding[],
     recommendations: Recommendation[]
   ): Promise<void> {
+    const complexityLevel = normalizeComplexity(context.complexity);
+    
     // Comprehensive code quality analysis
     if (context.files?.implementation) {
       findings.push(
@@ -283,7 +290,7 @@ export class CodeReviewerAgent extends BaseAgent {
     }
 
     // Technical debt identification
-    if (context.complexity > 8) {
+    if (complexityLevel > 8) {
       findings.push(
         this.createFinding(
           'refactoring-quality',

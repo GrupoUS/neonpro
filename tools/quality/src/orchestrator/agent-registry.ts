@@ -9,7 +9,8 @@ import {
   AgentName, 
   AgentCapabilities, 
   TDDPhase, 
-  FeatureContext 
+  FeatureContext,
+  normalizeComplexity
 } from './types';
 
 export class AgentRegistry {
@@ -25,23 +26,30 @@ export class AgentRegistry {
    * Initialize all available agents with their capabilities
    */
   private initializeAgents(): void {
-    // Test Agent - TDD orchestration and test patterns
-    this.agents.set('test', {
-      name: 'test',
+    // Apex Dev Agent - Advanced development with code audit and TDD
+    this.agents.set('apex-dev', {
+      name: 'apex-dev',
       phases: ['red', 'green', 'refactor'],
       specializations: [
         'tdd-discipline',
         'test-patterns',
         'test-optimization',
         'coverage-analysis',
-        'test-structure'
+        'test-structure',
+        'code-audit',
+        'code-quality',
+        'refactoring',
+        'implementation',
+        'performance-optimization'
       ],
       triggers: [
         'tdd', 'testing', 'coverage', 'test patterns',
-        'unit test', 'integration test', 'e2e test'
+        'unit test', 'integration test', 'e2e test',
+        'code audit', 'code quality', 'refactoring',
+        'implementation', 'performance'
       ],
       dependencies: [],
-      parallelizable: false // Primary TDD coordinator
+      parallelizable: false // Primary TDD coordinator and code auditor
     });
 
     // Architect Review Agent - System design and patterns
@@ -78,7 +86,7 @@ export class AgentRegistry {
         'performance', 'maintainability', 'technical debt',
         'code quality', 'refactor', 'optimization'
       ],
-      dependencies: ['test'],
+      dependencies: ['apex-dev'],
       parallelizable: true
     });
 
@@ -123,7 +131,7 @@ export class AgentRegistry {
 
     // Standard features
     this.activationRules.set('standard', [
-      'test', 'code-reviewer'
+      'apex-dev', 'code-reviewer'
     ]);
 
     // Legacy code modernization
@@ -161,8 +169,8 @@ export class AgentRegistry {
   selectAgentsForFeature(feature: FeatureContext): AgentName[] {
     const selectedAgents = new Set<AgentName>();
     
-    // Always include test agent for TDD
-    selectedAgents.add('test');
+    // Always include apex-dev agent for TDD
+    selectedAgents.add('apex-dev');
 
     // Check for security triggers
     if (this.hasSecurityTriggers(feature)) {
@@ -180,14 +188,17 @@ export class AgentRegistry {
     }
 
     // Complexity-based selection
-    if (feature.complexity >= 7) {
+    const complexityLevel = normalizeComplexity(feature.complexity);
+    if (complexityLevel >= 7) {
       // High complexity features need all agents
       this.getAllAgents().forEach(agent => {
         selectedAgents.add(agent.name);
       });
-    } else if (feature.complexity >= 4) {
+    } else if (complexityLevel >= 4) {
       // Medium complexity adds code reviewer if not already included
-      selectedAgents.add('code-reviewer');
+      if (!selectedAgents.has('code-reviewer')) {
+        selectedAgents.add('code-reviewer');
+      }
     }
 
     return Array.from(selectedAgents);
@@ -202,9 +213,9 @@ export class AgentRegistry {
 
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements,
-      ...feature.complianceRequirements
+      ...(Array.isArray(feature.domain) ? feature.domain : []),
+      ...(Array.isArray(feature.requirements) ? feature.requirements : []),
+      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
     ].join(' ').toLowerCase();
 
     return securityAgent.triggers.some(trigger => 
@@ -219,10 +230,13 @@ export class AgentRegistry {
     const architectAgent = this.agents.get('architect-review');
     if (!architectAgent) return false;
 
+    const domains = Array.isArray(feature.domain) ? feature.domain : [];
+    const requirements = feature.requirements ?? [];
+
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements
+      ...domains,
+      ...requirements
     ].join(' ').toLowerCase();
 
     return architectAgent.triggers.some(trigger => 
@@ -237,10 +251,13 @@ export class AgentRegistry {
     const codeReviewerAgent = this.agents.get('code-reviewer');
     if (!codeReviewerAgent) return false;
 
+    const domains = Array.isArray(feature.domain) ? feature.domain : [];
+    const requirements = feature.requirements ?? [];
+
     const featureText = [
       feature.name,
-      ...feature.domain,
-      ...feature.requirements
+      ...domains,
+      ...requirements
     ].join(' ').toLowerCase();
 
     return codeReviewerAgent.triggers.some(trigger => 

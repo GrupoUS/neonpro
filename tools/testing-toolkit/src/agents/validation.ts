@@ -102,6 +102,14 @@ export function validateHealthcareCompliance(data: any): {
     violations.push('Missing or incomplete audit trail (LGPD/ANVISA violation)');
   }
 
+  if (!data.incidentReports || !Array.isArray(data.incidentReports) || data.incidentReports.length === 0) {
+    violations.push('Missing incident response records (LGPD/ANVISA violation)');
+  }
+
+  if (!data.dataRetentionPolicy) {
+    violations.push('Missing data retention policy (LGPD violation)');
+  }
+
   // Determine risk level
   let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
   if (violations.length > 0) {

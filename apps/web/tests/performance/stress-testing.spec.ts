@@ -209,6 +209,8 @@ class StressTester {
           await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
         } catch (recoveryError) {
           this.recordError('recovery_failure', `User ${userIndex} recovery failed`);
+          // If recovery fails, stop executing actions for this user.
+          break;
         }
       }
     }

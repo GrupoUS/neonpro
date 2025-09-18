@@ -201,6 +201,7 @@ serena/
 **/serena/
 .serena/
 **/.serena/**
+.code/**
 
 # Project cleanup and reports
 cleanup-reports/
@@ -291,6 +292,9 @@ dist/
 **/dist/
 lib/
 **/lib/
+!apps/web/src/lib/
+apps/web/src/lib/**
+!apps/web/src/lib/sentry.ts
 
 # Production builds
 /build

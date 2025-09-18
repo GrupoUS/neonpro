@@ -7,14 +7,16 @@
  * - Real-time error alerting for patient safety
  * - Structured error data collection and analysis
  * - Integration with observability infrastructure
+ * - Sentry integration for advanced error monitoring
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author NeonPro Development Team
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
+import { errorTracker, captureException, captureMessage, addBreadcrumb } from '../lib/sentry.js';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -473,21 +475,53 @@ export class ErrorTrackingService {
   }
 
   /**
-   * Store error in database (mock implementation)
+   * Store error in database and send to Sentry
    */
   private async storeError(error: ErrorEvent): Promise<void> {
-    // TODO: Implement actual Supabase storage
-    console.log('📁 Storing error in database:', {
-      id: error.id,
-      type: error.errorType,
-      severity: error.healthcareImpact.severity,
-      patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
-      timestamp: error.timestamp,
-    });
+    try {
+      // Store locally (TODO: Implement actual Supabase storage)
+      console.log('📁 Storing error in database:', {
+        id: error.id,
+        type: error.errorType,
+        severity: error.healthcareImpact.severity,
+        patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
+        timestamp: error.timestamp,
+      });
+
+      // Send to Sentry with context
+      const sentryError = new Error(error.message);
+      sentryError.name = `${error.errorType}_error`;
+      sentryError.stack = error.stack;
+
+      const sentryContext = {
+        errorId: error.id,
+        healthcareImpact: error.healthcareImpact,
+        userContext: error.userContext,
+        technicalContext: error.technicalContext,
+        hasPatientData: error.healthcareImpact.patientSafetyRisk,
+      };
+
+      captureException(sentryError, sentryContext);
+
+      // Add breadcrumb for tracking
+      addBreadcrumb(
+        `Error tracked: ${error.errorType} - ${error.healthcareImpact.severity}`,
+        'error_tracking',
+        {
+          errorId: error.id,
+          severity: error.healthcareImpact.severity,
+          patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
+        }
+      );
+
+    } catch (sentryError) {
+      console.error('❌ Failed to send error to Sentry:', sentryError);
+      // Continue with local storage even if Sentry fails
+    }
   }
 
   /**
-   * Send critical error alerts
+   * Send critical error alerts including Sentry notifications
    */
   private async sendCriticalErrorAlert(error: ErrorEvent): Promise<void> {
     console.log('🚨 CRITICAL ERROR ALERT:', {
@@ -498,7 +532,19 @@ export class ErrorTrackingService {
       workflowDisruption: error.healthcareImpact.workflowDisruption,
     });
 
-    // TODO: Implement actual alerting (Slack, email, etc.)
+    // Send high-priority message to Sentry
+    captureMessage(
+      `CRITICAL HEALTHCARE ERROR: ${error.message}`,
+      'fatal',
+      {
+        errorId: error.id,
+        healthcareImpact: error.healthcareImpact,
+        patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
+        workflowDisruption: error.healthcareImpact.workflowDisruption,
+      }
+    );
+
+    // Traditional alerting channels
     if (this.config.enableEmailAlerts) {
       await this.sendEmailAlert(error);
     }

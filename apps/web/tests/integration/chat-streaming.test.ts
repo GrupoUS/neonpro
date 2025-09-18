@@ -1,5 +1,5 @@
+import { streamAestheticResponse } from '@/lib/ai/ai-chat-service';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { streamAestheticResponse } from '../../src/lib/ai/ai-chat-service';
 
 // T009: Integration — Chat streaming start ≤2s
 

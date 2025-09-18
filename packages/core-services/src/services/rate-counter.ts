@@ -1,7 +1,7 @@
 // RateCounter service (Phase 1)
 // Memory-only counters for fairness limits: 10/5m and 30/1h per user.
 
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 
 interface Counters { c5: number; c60: number; t5: number; t60: number }
 

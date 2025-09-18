@@ -9,7 +9,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { HealthcareA11yContext, HealthcarePriority, announceToScreenReader } from '../../utils/accessibility';
 import { DataSensitivity } from '../../utils/healthcare-validation';
 

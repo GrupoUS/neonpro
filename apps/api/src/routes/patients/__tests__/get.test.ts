@@ -83,16 +83,16 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export get patient route handler', () => {
-    expect(() => {
-      const module = require('../get');
+  it('should export get patient route handler', async () => {
+    expect(async () => {
+      const module = await import('../get');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful Patient Retrieval', () => {
     it('should get patient by valid ID', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -113,7 +113,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should include complete patient data model', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -135,7 +135,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should include LGPD compliance headers', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -154,7 +154,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should include cache control headers', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -173,7 +173,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
   describe('LGPD Compliance and Data Access', () => {
     it('should validate LGPD data access permissions', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -195,7 +195,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should log data access for audit trail', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -233,7 +233,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         code: 'LGPD_ACCESS_DENIED',
       });
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -269,7 +269,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         // Healthcare info removed for limited access
       });
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -304,7 +304,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         },
       });
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -329,7 +329,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         code: 'PATIENT_NOT_FOUND',
       });
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -349,7 +349,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should handle authentication errors', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -368,7 +368,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should handle invalid patient ID format', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -394,7 +394,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     it('should handle service errors gracefully', async () => {
       mockPatientService.getPatientById.mockRejectedValue(new Error('Database connection failed'));
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -415,7 +415,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     it('should handle audit logging failures gracefully', async () => {
       mockAuditService.logActivity.mockRejectedValue(new Error('Audit service unavailable'));
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -437,7 +437,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
   describe('Performance and Caching', () => {
     it('should support conditional requests with ETag', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       // First request to get ETag
       const firstRequest = {
@@ -467,7 +467,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should include performance headers', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -486,7 +486,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -504,7 +504,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should validate healthcare professional access', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -528,7 +528,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should include data retention policy headers', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -547,7 +547,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
   describe('Access Control and Permissions', () => {
     it('should validate user access to specific patient', async () => {
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',
@@ -573,7 +573,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
         code: 'INSUFFICIENT_PERMISSIONS',
       });
 
-      const { default: getRoute } = require('../get');
+      const { default: getRoute } = await import('../get');
 
       const mockRequest = {
         method: 'GET',

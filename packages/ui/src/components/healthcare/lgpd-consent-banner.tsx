@@ -15,12 +15,13 @@ import React, {
   useCallback,
   useMemo
 } from 'react';
-import { z } from 'zod';
+// import { z } from 'zod'; // TODO: Add Zod validation for consent data
 import { cn } from '../../lib/utils';
 import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 import { 
-  lgpdConsentSchema,
-  healthcareValidationMessages 
+  lgpdConsentSchema
+  // TODO: Implement healthcareValidationMessages usage
+  // healthcareValidationMessages 
 } from '../../utils/healthcare-validation';
 
 // Define LGPD enums locally since utils does not export them yet
@@ -50,8 +51,9 @@ export enum DataProcessingPurpose {
 }
 import { 
   announceToScreenReader,
-  HealthcarePriority,
-  generateAccessibleId 
+  HealthcarePriority
+  // TODO: Implement generateAccessibleId usage
+  // generateAccessibleId 
 } from '../../utils/accessibility';
 
 // Consent banner props
@@ -159,13 +161,16 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   autoShow = true,
   persistConsent = true,
   onConsentGiven,
-  onConsentWithdrawn,
+  // TODO: Re-enable when onConsentWithdrawn is actually used
+  // onConsentWithdrawn,
   onPrivacyPolicyView,
   onDataProcessingView,
   className,
 }) => {
   // Context and theme
-  const { theme, accessibility } = useHealthcareTheme();
+  const { theme } = useHealthcareTheme();
+  // TODO: Implement accessibility features
+  // const { theme, accessibility } = useHealthcareTheme();
   
   // Local state
   const [isVisible, setIsVisible] = useState(false);
@@ -345,19 +350,19 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     }
   };
   
-  // Handle withdraw consent
-  const handleWithdrawConsent = (consentType: ConsentType) => {
-    if (requiredConsents.includes(consentType)) {
-      announceToScreenReader(
-        'Consentimentos obrigatórios não podem ser retirados',
-        HealthcarePriority.HIGH
-      );
-      return;
-    }
-    
-    handleConsentChange(consentType, false);
-    onConsentWithdrawn?.(consentType);
-  };
+  // Handle withdraw consent (currently unused but kept for future functionality)
+  // const handleWithdrawConsent = (consentType: ConsentType) => {
+  //   if (requiredConsents.includes(consentType)) {
+  //     announceToScreenReader(
+  //       'Consentimentos obrigatórios não podem ser retirados',
+  //       HealthcarePriority.HIGH
+  //     );
+  //     return;
+  //   }
+  //   
+  //   handleConsentChange(consentType, false);
+  //   onConsentWithdrawn?.(consentType);
+  // };
   
   // Don't render if not visible
   if (!isVisible) return null;

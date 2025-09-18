@@ -8,7 +8,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { AuditService } from '../../services/audit-service.js';
+import { ComprehensiveAuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
 import { PatientService } from '../../services/patient-service.js';
 
@@ -20,7 +20,7 @@ interface ServiceInterface {
   lgpdService: LGPDService;
 }
 
-interface CacheData {
+interface _CacheData {
   data: unknown;
   timestamp: number;
 }
@@ -220,7 +220,7 @@ app.get(
       }
 
       // Generate patient insights
-      const insightsRequest = {
+      const _insightsRequest = {
         patientId,
         userId: user.id,
         analysisType: queryParams.analysisType,

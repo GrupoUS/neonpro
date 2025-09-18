@@ -1474,11 +1474,5 @@ export const healthcareAuthorizationEngine = new HealthcareAuthorizationEngine({
 /**
  * Export types for external use
  */
-export type {
-  HealthcareResourceType,
-  ResourceSensitivity,
-  AuthorizationContext,
-  AuthorizationDecision,
-  AuthorizationPolicy,
-  AuthorizationConfig
-};
+// Note: All types are already exported above with their definitions
+// No need to re-export them here to avoid TS2484 conflicts

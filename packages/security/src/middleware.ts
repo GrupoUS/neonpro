@@ -375,15 +375,39 @@ async function validateJWT(_token: string): Promise<any> {
  * LGPD consent validation placeholder
  * TODO: Implement actual LGPD consent validation
  */
-async function validateLGPDConsent(_userId: string, _patientId: string): Promise<boolean> {
-  // Placeholder implementation
-  // In a real implementation, this would:
-  // 1. Check database for valid consent record
-  // 2. Validate consent purpose matches request
-  // 3. Check consent expiration
-  // 4. Return true/false
-
-  return false;
+async function validateLGPDConsent(userId: string, patientId: string, sessionId?: string): Promise<boolean> {
+  try {
+    // Import ConsentService dynamically to avoid circular dependencies
+    const { ConsentService } = await import('@neonpro/database/services/consent-service');
+    const { createClient } = await import('@supabase/supabase-js');
+    
+    // Create Supabase client (this should ideally be injected as dependency)
+    const supabase = createClient(
+      process.env.SUPABASE_URL || '',
+      process.env.SUPABASE_ANON_KEY || ''
+    );
+    
+    const consentService = new ConsentService(supabase);
+    
+    // Verify consent for general medical data access during telemedicine
+    const hasConsent = await consentService.verifyConsent(
+      userId,
+      'general-medical',
+      sessionId || 'default-session'
+    );
+    
+    // If no specific consent for telemedicine, check for general medical treatment consent
+    if (!hasConsent && sessionId) {
+      // Check for broader medical treatment consent
+      return await consentService.verifyConsent(userId, 'general-medical', 'medical-treatment');
+    }
+    
+    return hasConsent;
+  } catch (error) {
+    console.error('LGPD consent validation failed:', error);
+    // Fail securely - deny access if consent validation fails
+    return false;
+  }
 }
 
 /**

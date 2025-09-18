@@ -19,6 +19,15 @@ import { prisma } from './client.js';
 export type { AuditLogData } from './services/base.service';
 export { BaseService } from './services/base.service.js';
 
+// LGPD Consent and Audit Services
+export { ConsentService, AuditService } from './services/index.js';
+export type { 
+  ConsentRequest, 
+  ConsentRecord, 
+  AuditLogRequest, 
+  ComplianceCheck 
+} from './services/index.js';
+
 // Re-export Prisma types for type sharing across packages
 export type {
   Appointment,

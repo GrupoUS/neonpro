@@ -101,16 +101,16 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export bulk actions route handler', () => {
-    expect(() => {
-      const module = require('../bulk');
+  it('should export bulk actions route handler', async () => {
+    expect(async () => {
+      const module = await import('../bulk');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful Bulk Operations', () => {
     it('should perform bulk update operation', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -147,7 +147,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should perform bulk delete operation', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'delete',
@@ -184,7 +184,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should perform bulk export operation', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'export',
@@ -218,7 +218,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should include operation progress headers', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -265,7 +265,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       });
 
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -296,7 +296,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
   describe('LGPD Compliance and Bulk Consent', () => {
     it('should validate LGPD consent for bulk operations', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -328,7 +328,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should log bulk activity for audit trail', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'delete',
@@ -380,7 +380,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       });
 
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'export',
@@ -408,7 +408,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should process bulk LGPD data deletion', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'delete',
@@ -443,7 +443,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const mockRequest = {
         method: 'POST',
@@ -463,7 +463,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should handle validation errors for bulk data', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const invalidBulkData = {
         action: 'invalid_action',
@@ -496,7 +496,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         error: 'Erro interno do serviço de operações em lote',
       });
 
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -525,7 +525,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it('should handle bulk operation timeout', async () => {
       mockPatientService.bulkUpdatePatients.mockRejectedValue(new Error('Operation timeout'));
 
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -554,7 +554,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -580,7 +580,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should validate healthcare professional context for bulk medical operations', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -638,7 +638,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       });
 
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'update',
@@ -671,7 +671,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should include performance metrics for bulk operations', async () => {
-      const { default: bulkRoute } = require('../bulk');
+      const { default: bulkRoute } = await import('../bulk');
 
       const bulkData = {
         action: 'export',

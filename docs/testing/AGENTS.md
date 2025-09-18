@@ -1,7 +1,7 @@
 ---
 title: "Testing Orchestrator with TDD Agent Coordination"
-version: 3.0.0
-last_updated: 2025-09-16
+version: 3.1.0
+last_updated: 2025-09-17
 language: en
 form: how-to
 tags: [testing, orchestration, tdd, agents, quality]
@@ -209,31 +209,32 @@ refactor_phase:
 ### Agent-Specific Testing
 
 ```bash
-# Architecture validation tests
-/quality-control architect --validate-patterns --check-scalability
+# Backend ↔ database regression (architect-review + code-reviewer)
+pnpm test:backend
 
-# Code quality and performance tests  
-/quality-control code-review --quality-metrics --performance
+# Frontend regression & accessibility (test + code-reviewer)
+pnpm test:frontend
+pnpm test:a11y
 
-# Security and compliance validation
-/quality-control security --scan-vulnerabilities --check-compliance
-
-# TDD cycle and pattern enforcement
-/quality-control test --red-green-refactor --validate-coverage
+# Healthcare compliance suites (security-auditor primary)
+pnpm test:healthcare -- --regression
+pnpm test:healthcare -- --audit-only
 ```
 
 ### Master Orchestration Commands
 
 ```bash
-# Complete TDD cycle with all agents
-/quality-control orchestrate --full-cycle --all-agents
+# Full constitutional audit (all agents)
+pnpm constitutional:full
 
-# Workflow-specific orchestration
-/quality-control orchestrate --workflow=security-critical --feature=authentication
+# Quick audit smoke
+pnpm constitutional:quick
 
-# Phase-specific validation
-/quality-control orchestrate --phase=red --agents=test,architect-review
+# Performance benchmark snapshot
+pnpm constitutional:benchmark
 ```
+
+Log every run ID and console summary in Archon task notes so audit evidence stays traceable.
 
 ## Testing Documentation Matrix
 
@@ -322,7 +323,7 @@ COVERAGE_BY_AGENT:
   
   test:
     patterns: "≥90% TDD pattern compliance"
-    coverage: "≥90% test coverage critical paths"
+    coverage: "≥90% critical / ≥85% important / ≥80% useful with Vitest report attached"
     structure: "≥95% test structure compliance"
 ```
 
@@ -374,6 +375,11 @@ CI_ORCHESTRATION:
     - "Security compliance verified"
     - "Performance benchmarks achieved"
 ```
+
+### Audit Workflow Alignment (Prompt v3.2.0)
+- Preload the audit prompt’s **Process & Tooling Integration** section and stick to the workspace scripts listed there.
+- Record every `pnpm test:healthcare -- --regression` and `-- --audit-only` execution in Archon with links to Vitest/Playwright artifacts.
+- When the prompt version increments, attach the documentation diff and schedule the mandated 48h follow-up task.
 
 ### IDE Integration
 

@@ -17,7 +17,7 @@ import {
   AIInsightType,
   AIProvider,
   createAIInsight,
-} from '../../../../packages/shared/src/types/ai-insights';
+} from '@neonpro/shared';
 
 // Service response interface
 export interface ServiceResponse<T = any> {

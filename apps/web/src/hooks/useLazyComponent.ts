@@ -105,7 +105,7 @@ export function useComponentPreloader() {
     }
 
     try {
-      const component = createLazyComponent(importFn, cacheKey);
+      const _component = createLazyComponent(importFn, cacheKey);
       preloadedComponents.current.add(cacheKey);
 
       // Trigger the import to cache it

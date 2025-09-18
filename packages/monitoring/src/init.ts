@@ -1,40 +1,15 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { createLogger } from './logging';
 import { initializeMetrics } from './metrics';
 import { initializeHealthChecks } from './health';
 import type { MonitoringConfig } from './types';
 
-let sdk: NodeSDK | null = null;
+export type { MonitoringConfig };
 
-export interface MonitoringConfig {
-  serviceName: string;
-  serviceVersion: string;
-  environment: string;
-  metrics: {
-    enabled: boolean;
-    port?: number;
-    endpoint?: string;
-  };
-  tracing: {
-    enabled: boolean;
-    jaegerEndpoint?: string;
-    sampleRate?: number;
-  };
-  logging: {
-    level: 'error' | 'warn' | 'info' | 'debug' | 'trace';
-    format: 'json' | 'pretty';
-    transports: ('console' | 'file')[];
-  };
-  health: {
-    enabled: boolean;
-    endpoint?: string;
-    interval?: number;
-  };
-}
+let sdk: NodeSDK | null = null;
 
 export function initializeMonitoring(config: MonitoringConfig): void {
   console.log(`🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`);
@@ -59,25 +34,10 @@ export function initializeMonitoring(config: MonitoringConfig): void {
 
   // Initialize tracing
   if (config.tracing.enabled) {
-    const instrumentations = getNodeAutoInstrumentations({
-      '@opentelemetry/instrumentation-fs': {
-        enabled: false, // Disable file system instrumentation for performance
-      },
-    });
-
-    const metricReaders = [];
-    
-    if (config.metrics.enabled) {
-      metricReaders.push(
-        new PeriodicExportingMetricReader({
-          exporter: new PrometheusExporter({
-            port: config.metrics.port || 9464,
-            endpoint: config.metrics.endpoint || '/metrics',
-          }),
-          exportIntervalMillis: 10000, // Export every 10 seconds
-        })
-      );
-    }
+    const instrumentations = [
+      new HttpInstrumentation(),
+      new ExpressInstrumentation(),
+    ];
 
     const traceExporter = config.tracing.jaegerEndpoint 
       ? new JaegerExporter({
@@ -87,9 +47,7 @@ export function initializeMonitoring(config: MonitoringConfig): void {
 
     sdk = new NodeSDK({
       serviceName: config.serviceName,
-      serviceVersion: config.serviceVersion,
       instrumentations,
-      metricReader: metricReaders.length > 0 ? metricReaders[0] : undefined,
       traceExporter,
     });
 

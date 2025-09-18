@@ -1179,9 +1179,6 @@ export const healthcareMiddlewareService = new HealthcareMiddlewareService({
 
 /**
  * Export types for external use
+ * Note: All types are already exported above with their definitions
+ * No need to re-export them here to avoid TS2484 conflicts
  */
-export type {
-  HealthcareRequestContext,
-  MiddlewareConfig,
-  RequestMetrics
-};

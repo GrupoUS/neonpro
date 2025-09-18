@@ -94,7 +94,11 @@
       "WebSearch",
       "mcp__desktop-commander__stop_search",
       "mcp__archon__find_projects",
-      "mcp__archon__find_tasks"
+      "mcp__archon__find_tasks",
+      "mcp__supabase__get_advisors",
+      "mcp__supabase__apply_migration",
+      "mcp__desktop-commander__read_multiple_files",
+      "mcp__serena__find_referencing_symbols"
     ],
     "deny": [
       "Edit",

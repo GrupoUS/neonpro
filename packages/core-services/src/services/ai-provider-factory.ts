@@ -1,166 +1,126 @@
-// AI Provider Factory (Phase 2) - Provider selection and failover logic
+import type {
+  AIProviderInterface,
+  GenerateAnswerInput,
+  GenerateAnswerResult,
+  StreamChunk,
+  AIProvider,
+} from '@neonpro/types';
 
-import type { AIProvider, AIMessage } from './ai-provider.js';
-import { OpenAIProvider } from './openai-provider.js';
-import { AnthropicProvider } from './anthropic-provider.js';
-import { GoogleAIProvider } from './google-provider.js';
-import { AI_PROVIDER, aiConfig } from '@neonpro/config/ai';
-import { createError } from '@neonpro/utils/errors';
+export type AIProviderType = AIProvider | 'mock';
 
-export type AIProviderType = 'openai' | 'anthropic' | 'google' | 'mock';
-
-// Mock provider for development and testing
-class MockProvider implements AIProvider {
-  async generateCompletion(messages: AIMessage[]) {
-    const lastMessage = messages[messages.length - 1];
-    const prompt = lastMessage?.content || 'Hello';
-    
+class MockProvider implements AIProviderInterface {
+  async generateAnswer(input: GenerateAnswerInput): Promise<GenerateAnswerResult> {
+    const content = input.prompt || 'Olá! Como posso ajudar?';
     return {
-      content: `Mock response for: ${prompt.slice(0, 100)}...`,
-      usage: {
-        prompt_tokens: Math.min(256, prompt.length),
-        completion_tokens: 50,
-        total_tokens: Math.min(306, prompt.length + 50)
-      },
-      model: 'mock-provider'
+      content: `Mock response for: ${content.slice(0, 120)}`,
+      tokensUsed: Math.floor(Math.random() * 100) + 50,
+      model: 'mock-model',
+      provider: 'mock',
+      finishReason: 'stop',
     };
   }
 
-  async *generateStreamingCompletion(messages: AIMessage[]) {
-    const lastMessage = messages[messages.length - 1];
-    const content = lastMessage?.content || 'Hello';
-    const response = `Mock streaming response for: ${content.slice(0, 100)}...`;
-    const words = response.split(' ');
-    
-    for (const word of words) {
-      yield word + ' ';
-      // Simulate streaming delay
-      await new Promise(resolve => setTimeout(resolve, 50));
+  async *generateStream(input: GenerateAnswerInput): AsyncIterable<StreamChunk> {
+    const content = input.prompt || 'Olá!';
+    const words = `Mock streaming response for: ${content.slice(0, 120)}`.split(' ');
+
+    for (let i = 0; i < words.length; i++) {
+      const chunkContent = `${words[i]} `;
+      yield {
+        content: chunkContent,
+        delta: chunkContent,
+        finished: i === words.length - 1,
+        finishReason: i === words.length - 1 ? 'stop' : undefined,
+        provider: 'mock',
+      };
+      await new Promise(resolve => setTimeout(resolve, 25));
     }
   }
 }
 
 export class AIProviderFactory {
-  private static providers: Map<AIProviderType, AIProvider> = new Map();
+  private static providers: Map<AIProviderType, AIProviderInterface> = new Map();
   private static fallbackOrder: AIProviderType[] = ['openai', 'anthropic', 'google', 'mock'];
 
-  static getProvider(providerName?: AIProviderType): AIProvider {
-    // Use mock mode if enabled
-    if (aiConfig.AI_CHAT_MOCK_MODE) {
-      return this.getCachedProvider('mock');
-    }
-
-    const selectedProvider = (providerName || AI_PROVIDER) as AIProviderType;
-    return this.getCachedProvider(selectedProvider);
+  static getProvider(providerName?: AIProviderType): AIProviderInterface {
+    const selected = providerName || 'mock';
+    return this.getCachedProvider(selected);
   }
 
-  private static getCachedProvider(providerName: AIProviderType): AIProvider {
+  private static getCachedProvider(providerName: AIProviderType): AIProviderInterface {
     if (!this.providers.has(providerName)) {
       this.providers.set(providerName, this.createProvider(providerName));
     }
     return this.providers.get(providerName)!;
   }
 
-  private static createProvider(providerName: AIProviderType): AIProvider {
-    switch (providerName.toLowerCase()) {
-      case 'openai':
-        if (!aiConfig.OPENAI_API_KEY) {
-          throw createError('CONFIGURATION_ERROR', 'OpenAI API key not configured');
-        }
-        return new OpenAIProvider(aiConfig.OPENAI_API_KEY, aiConfig.OPENAI_MODEL);
-        
-      case 'anthropic':
-        if (!aiConfig.ANTHROPIC_API_KEY) {
-          throw createError('CONFIGURATION_ERROR', 'Anthropic API key not configured');
-        }
-        return new AnthropicProvider(aiConfig.ANTHROPIC_API_KEY, aiConfig.ANTHROPIC_MODEL);
-        
-      case 'google':
-        if (!aiConfig.GOOGLE_AI_API_KEY) {
-          throw createError('CONFIGURATION_ERROR', 'Google AI API key not configured');
-        }
-        return new GoogleAIProvider(aiConfig.GOOGLE_AI_API_KEY);
-        
+  private static createProvider(providerName: AIProviderType): AIProviderInterface {
+    switch (providerName) {
       case 'mock':
         return new MockProvider();
-        
+      case 'openai':
+      case 'anthropic':
+      case 'google':
       default:
-        console.warn(`Unknown AI provider: ${providerName}, falling back to mock`);
+        console.warn(`Provider ${providerName} not implemented. Falling back to mock provider.`);
         return new MockProvider();
     }
   }
 
-  /**
-   * Try to generate completion with automatic failover
-   */
-  static async generateWithFailover(messages: AIMessage[], maxRetries = 2): Promise<any> {
+  static async generateWithFailover(input: GenerateAnswerInput, maxRetries = 3): Promise<GenerateAnswerResult> {
     let lastError: Error | null = null;
-    
+
     for (let i = 0; i < Math.min(maxRetries, this.fallbackOrder.length); i++) {
       const providerName = this.fallbackOrder[i];
-      
       try {
         const provider = this.getProvider(providerName);
-        const startTime = Date.now();
-        const result = await provider.generateCompletion(messages);
-        const latency = Date.now() - startTime;
-        
-        console.log(`AI response generated successfully with ${providerName} (${latency}ms)`);
-        return { ...result, provider: providerName, latency };
+        const result = await provider.generateAnswer(input);
+        return {
+          ...result,
+          provider: result.provider ?? providerName,
+        };
       } catch (error) {
         lastError = error as Error;
-        console.warn(`AI provider ${providerName} failed:`, error);
-        
-        // Don't retry on certain error types
-        if (error instanceof Error && error.message.includes('API key')) {
-          continue; // Try next provider
-        }
+        console.warn(`Provider ${providerName} failed:`, error);
       }
     }
-    
-    throw lastError || new Error('All AI providers failed');
+
+    throw lastError ?? new Error('All AI providers failed');
   }
 
-  /**
-   * Stream with automatic failover
-   */
-  static async *generateStreamWithFailover(messages: AIMessage[], maxRetries = 2): AsyncIterable<string> {
+  static async *generateStreamWithFailover(
+    input: GenerateAnswerInput,
+    maxRetries = 3,
+  ): AsyncIterable<StreamChunk> {
     let lastError: Error | null = null;
-    
+
     for (let i = 0; i < Math.min(maxRetries, this.fallbackOrder.length); i++) {
       const providerName = this.fallbackOrder[i];
-      
       try {
         const provider = this.getProvider(providerName);
-        
-        for await (const chunk of provider.generateStreamingCompletion(messages)) {
-          yield chunk;
+        if (!provider.generateStream) {
+          throw new Error(`Provider ${providerName} does not support streaming`);
         }
-        return; // Success, no need to try other providers
+
+        for await (const chunk of provider.generateStream(input)) {
+          yield {
+            ...chunk,
+            provider: chunk.provider ?? providerName,
+          };
+        }
+        return;
       } catch (error) {
         lastError = error as Error;
-        console.warn(`AI provider ${providerName} failed for streaming:`, error);
-        continue; // Try next provider
+        console.warn(`Streaming provider ${providerName} failed:`, error);
       }
     }
-    
-    throw lastError || new Error('All AI providers failed for streaming');
+
+    throw lastError ?? new Error('All streaming AI providers failed');
   }
 
-  /**
-   * Get available providers based on configuration
-   */
   static getAvailableProviders(): AIProviderType[] {
-    const available: AIProviderType[] = [];
-    
-    if (aiConfig.OPENAI_API_KEY) available.push('openai');
-    if (aiConfig.ANTHROPIC_API_KEY) available.push('anthropic');
-    if (aiConfig.GOOGLE_AI_API_KEY) available.push('google');
-    available.push('mock'); // Always available
-    
-    return available;
+    return [...this.fallbackOrder];
   }
 }
 
-// Export default factory
 export const aiProviderFactory = AIProviderFactory;

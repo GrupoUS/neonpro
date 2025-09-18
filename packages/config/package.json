@@ -3,19 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "types": "src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
     },
     "./ai": {
-      "import": "./dist/ai.mjs",
-      "require": "./dist/ai.js",
-      "types": "./dist/ai.d.ts"
+      "import": "./src/ai.js",
+      "types": "./src/ai.d.ts"
     }
   },
   "scripts": {

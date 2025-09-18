@@ -46,7 +46,7 @@ import {
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type ControllerRenderProps, type FieldPath, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { FileUploadIntegration, type UploadedFile } from './FileUploadIntegration';
@@ -520,7 +520,9 @@ function BasicInformationStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='fullName'
-            render={({ field }) => (
+            render={(
+              { field }: { field: ControllerRenderProps<PatientRegistrationData, 'fullName'> },
+            ) => (
               <FormItem>
                 <FormLabel>Nome Completo *</FormLabel>
                 <FormControl>

@@ -107,16 +107,16 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export update patient route handler', () => {
-    expect(() => {
-      const module = require('../update');
+  it('should export update patient route handler', async () => {
+    expect(async () => {
+      const module = await import('../update');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful Patient Update', () => {
     it('should update patient with complete data', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -157,7 +157,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should update patient with partial data', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         phone: '(11) 77777-7777',
@@ -192,7 +192,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should send notification after successful update', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         email: 'newemail@example.com',
@@ -225,7 +225,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should include Last-Modified header', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -251,7 +251,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
   describe('Change Tracking and Audit Trail', () => {
     it('should log patient update activity with change details', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -296,7 +296,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should track sensitive data changes separately', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         cpf: '987.654.321-00',
@@ -330,7 +330,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should validate change permissions before update', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -359,7 +359,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
   describe('Brazilian Data Validation', () => {
     it('should validate updated CPF format', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         cpf: '987.654.321-00',
@@ -383,7 +383,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it('should reject invalid CPF update', async () => {
       mockBrazilianValidator.validateCPF.mockReturnValue(false);
 
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         cpf: '111.111.111-11', // Invalid CPF
@@ -413,7 +413,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should validate updated phone number format', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         phone: '(11) 77777-7777',
@@ -435,7 +435,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should validate updated address CEP', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         address: {
@@ -464,7 +464,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
   describe('LGPD Consent Updates', () => {
     it('should validate LGPD consent updates', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         lgpdConsent: {
@@ -493,7 +493,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should update consent record after successful update', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -523,7 +523,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should handle consent withdrawal', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         lgpdConsent: {
@@ -558,7 +558,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'PATIENT_NOT_FOUND',
       });
 
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -584,7 +584,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should handle authentication errors', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const mockRequest = {
         method: 'PUT',
@@ -604,7 +604,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should handle validation errors', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const invalidData = {
         email: 'invalid-email-format',
@@ -638,7 +638,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'INSUFFICIENT_PERMISSIONS',
       });
 
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         name: 'João Silva Santos',
@@ -670,7 +670,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'LGPD_UPDATE_DENIED',
       });
 
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         cpf: '987.654.321-00',
@@ -698,7 +698,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         healthcareInfo: {
@@ -724,7 +724,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     });
 
     it('should validate healthcare professional context for medical updates', async () => {
-      const { default: updateRoute } = require('../update');
+      const { default: updateRoute } = await import('../update');
 
       const updateData = {
         healthcareInfo: {

@@ -9,7 +9,6 @@ import {
   AestheticAnalysisService,
   AestheticAssessmentRequest,
 } from '../aesthetic-analysis-service';
-import { AuditService } from '../audit-service';
 
 // Mock Supabase client - Fixed to support proper chaining
 const createChainableMock = (tableName: string) => {

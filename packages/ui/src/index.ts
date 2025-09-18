@@ -1,6 +1,5 @@
 // Export theme utilities
 export * from './utils';
-export { cn } from './lib/utils';
 
 // Re-export theme APIs at the root to avoid subpath resolution issues in some bundlers/test runners
 export { installThemeStyles, themeCss } from './theme';

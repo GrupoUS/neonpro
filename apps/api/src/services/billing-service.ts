@@ -9,10 +9,6 @@
 
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
-import {
-  DataSensitivity,
-  healthcareValidationSchemas,
-} from '../../../../../packages/ui/src/utils/healthcare-validation';
 
 // Brazilian tax and billing enums
 export enum BillingType {
@@ -369,6 +365,7 @@ export class BillingService {
         message: 'Cobrança criada com sucesso',
       };
     } catch (error) {
+      console.error('Billing operation failed:', error);
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -395,6 +392,7 @@ export class BillingService {
         data: billing,
       };
     } catch (error) {
+      console.error('Billing operation failed:', error);
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -480,6 +478,7 @@ export class BillingService {
         },
       };
     } catch (error) {
+      console.error('Billing operation failed:', error);
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -577,6 +576,7 @@ export class BillingService {
         message: 'Pagamento processado com sucesso',
       };
     } catch (error) {
+      console.error('Billing operation failed:', error);
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -658,6 +658,7 @@ export class BillingService {
         data: summary,
       };
     } catch (error) {
+      console.error('Billing operation failed:', error);
       return {
         success: false,
         error: 'Erro interno do servidor',

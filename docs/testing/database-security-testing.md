@@ -1,6 +1,6 @@
 ---
 title: "Database Security Testing - Supabase, RLS & LGPD"
-last_updated: 2025-09-16
+last_updated: 2025-09-17
 form: how-to
 tags: [database, security, supabase, rls, lgpd, anvisa, healthcare, compliance]
 agent_coordination:
@@ -13,7 +13,7 @@ related:
   - ../agents/code-review/security-auditor.md
 ---
 
-# Database Security Testing - Supabase, RLS & LGPD — Version: 3.0.0
+# Database Security Testing - Supabase, RLS & LGPD — Version: 3.1.0
 
 ## Overview
 
@@ -68,6 +68,13 @@ export const createTestSupabaseClient = (options?: {
     }
   });
 };
+```
+
+### Audit Workflow Hooks (Prompt v3.2.0)
+- Run `pnpm test:healthcare -- --regression` for every backend or schema change and attach Supabase/Vitest artifacts to the Archon task.
+- When an LGPD/RLS gate fails, rerun `pnpm test:healthcare -- --audit-only` and document the remediation before promoting the fix.
+- Mask PHI before sharing fixtures or logs and log anonymization confirmation in Archon.
+- Record the audit run ID plus a follow-up reminder (48h) so documentation sync stays on track.
 
 // architect-review: Service client configuration
 export const createServiceRoleClient = () => {
@@ -961,6 +968,11 @@ describe('Database Performance Security', () => {
 
 - **Issue**: GoTrueClient multi-instance warnings
   **Solution**: Implement singleton pattern as shown in section above
+
+### Emergency Access Validation
+- Simulate break-glass access with a privileged service role and confirm alert delivery, time-bound session expiry, and audit log entries.
+- Rerun `pnpm test:healthcare -- --audit-only` after remediation and upload the evidence bundle to Archon.
+- Document reviewer name, timestamp, and outcome in Archon so the 48h follow-up task can confirm closure.
 
 ### Security Test Data Management
 

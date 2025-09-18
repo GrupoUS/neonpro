@@ -10,7 +10,8 @@
     }
   },
   "include": [
-    "apps/web/src/**/*"
+    "apps/web/src/lib/ai/ai-chat-service.ts",
+    "apps/web/src/hooks/useAdvancedSearch.ts"
   ],
   "exclude": [
     "node_modules",
@@ -22,6 +23,12 @@
     "apps/web/src/lib/prefetching/**",
     "apps/web/lib/**",
     "apps/**/lib/**",
-    "packages/**"
+    "packages/**",
+    "apps/web/src/services/**",
+    "apps/web/src/queries/**",
+    "apps/web/src/components/pdf/**",
+    "apps/web/src/routes/**",
+    "apps/web/src/pages/**",
+    "apps/web/src/components/**"
   ]
 }

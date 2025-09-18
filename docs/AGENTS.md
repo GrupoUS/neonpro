@@ -155,6 +155,12 @@ Follow the layered approach from `docs/architecture/context-engineering.md`:
 | **Database/schema** | `database-schema/AGENTS.md`, RLS notes | Migration patterns | UI styling |
 | **Compliance/security** | `security/` docs, RLS helpers | Service call sites | UI styling files |
 
+### Code Quality Audit Prompt (v3.2.0)
+- Treat `.github/prompts/code-quality-audit.prompt.md` as the execution blueprint for audits—read the **Process & Tooling Integration** block before running checks.
+- Prefer workspace scripts (`pnpm test:backend`, `pnpm test:frontend`, `pnpm test:healthcare`, `pnpm lint`, `pnpm type-check`, `pnpm constitutional:*`) over ad-hoc commands and capture CLI logs in Archon task notes.
+- Register regression suites (`pnpm test:healthcare -- --regression`, `pnpm test:healthcare -- --audit-only`) in Archon with run IDs and attach artifacts before closing the task.
+- When the prompt version changes, schedule a 48h documentation follow-up and cross-link updates in `docs/features/code-quality-audit.md`.
+
 **📂 Folder-Specific Consultation:**
 
 - agents/ — Orchestrator: [./agents/AGENTS.md](./agents/AGENTS.md)

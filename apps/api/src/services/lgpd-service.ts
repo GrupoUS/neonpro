@@ -19,7 +19,7 @@ import {
   DataSubjectRequest,
   LegalBasis,
   LGPDConsent,
-} from '../../../../packages/shared/src/types/lgpd-consent';
+} from '@neonpro/shared';
 
 // Define missing enums locally
 export enum ConsentStatus {
@@ -1189,7 +1189,7 @@ export class LGPDService {
   /**
    * Validate data access for LGPD compliance
    */
-  async validateDataAccess(params: {
+  async validateDataAccess(_params: {
     userId: string;
     dataType: string;
     purpose: string;

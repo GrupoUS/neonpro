@@ -7,11 +7,20 @@
 
 import { describe, expect, it } from 'vitest';
 
+export interface IncidentReport {
+  id: string;
+  resolved: boolean;
+  timestamp: Date;
+  description?: string;
+}
+
 export interface LGPDTestData {
   personalData: Record<string, any>;
   consentGiven: boolean;
   dataProcessingPurpose: string;
   auditTrail: AuditEntry[];
+  incidentReports: IncidentReport[];
+  dataRetentionPolicy: string;
   dataSubjectRights: DataSubjectRights;
 }
 
@@ -189,6 +198,15 @@ export function createMockLGPDData(overrides: Partial<LGPDTestData> = {}): LGPDT
         purpose: 'Healthcare service provision',
       },
     ],
+    incidentReports: [
+      {
+        id: 'incident-001',
+        resolved: true,
+        timestamp: new Date(),
+        description: 'Routine access review with no anomalies',
+      },
+    ],
+    dataRetentionPolicy: 'Retain records for 5 years with annual audits',
     dataSubjectRights: {
       accessRight: true,
       rectificationRight: true,

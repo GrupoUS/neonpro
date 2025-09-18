@@ -102,8 +102,7 @@ export class QualityGateValidator {
       try {
         const result = this.validateGate(gateName, value);
         results.push(result);
-      } catch (_error) {
-        // Skip unknown gates
+      } catch {
         console.warn(`Skipping unknown quality gate: ${gateName}`);
       }
     });

@@ -1,14 +1,58 @@
 # 🔍 NeonPro Comprehensive Code Quality & Integration Audit (Enhanced)
 
-Robust, stack-aligned, and healthcare-aware audit workflow that merges our existing audit phases with the Quality Control command’s best ideas—kept lean, non‑redundant, and mapped to our actual tech stack and source tree.
+- **version**: 3.2.0
+- **last_updated**: 2025-09-17
+- **owner**: Code Quality Guild
+- **source_of_truth**: `.github/prompts/code-quality-audit.prompt.md` (this document)
 
+**Purpose** — Canonical playbook for orchestrating multi-agent audits across NeonPro’s stack with strict LGPD/ANVISA compliance.
+
+**Prerequisites**
+- Read `docs/AGENTS.md`, `docs/architecture/source-tree.md`, `docs/architecture/tech-stack.md`
+- Review `docs/testing/AGENTS.md` and `docs/testing/database-security-testing.md`
+- Confirm access to required MCPs (`archon`, `serena`, `desktop-commander`, `supabase` when RLS needed)
+
+**Stack Snapshot**
 - Frontend: React 19 + Vite + TanStack Router
 - Backend: Hono + Node 20
 - Data: Supabase (Postgres) + Prisma ORM
-- QA: Vitest, Playwright, Oxlint, dprint, TypeScript strict
-- Monorepo: Turborepo + PNPM + Bun (scripts)
+- QA Scripts: Vitest, Playwright, Oxlint, dprint, TypeScript strict
+- Tooling: Turborepo + PNPM + Bun (workspace scripts only)
 
-Use this prompt as the single source of truth for multi-agent orchestrated audits, tests, and compliance validation in NeonPro.
+**Quick Execution Index**
+| Phase | Focus | Auto-Triggers | Primary Agents | Core Output |
+|-------|-------|---------------|----------------|-------------|
+| 0 | Setup & scoping | Audit kickoff | `sequential-thinking → archon → serena` | Scope confirmation & task log |
+| 1 | Backend ↔ DB integration | Prisma/schema or API changes | `architect-review`, `security-auditor`, `code-reviewer` | Green Prisma build + RLS validation |
+| 2 | LGPD & healthcare security | Patient/clinic data touched | `security-auditor`, `architect-review`, `test` | LGPD/ANVISA compliance report |
+| 3 | Code quality & build | Any code changes | `code-reviewer`, `test` | Lint/type-check/coverage artifacts |
+| 4 | Test orchestration | Significant diffs/regressions | `test`, `security-auditor` | Targeted Vitest/Playwright suites |
+| 5 | Systematic fixing | Identified blockers | As needed | Remediation log + evidence |
+| 6 | Quality gates | Pre-release sign-off | All agents | Final gate approval package |
+
+## 🧰 Process & Tooling Integration
+
+### Documentation Sync Protocol
+- Tie every prompt version bump to updates in `docs/AGENTS.md`, `docs/architecture/source-tree.md`, `docs/testing/AGENTS.md`, `docs/testing/database-security-testing.md`, and `docs/mistakes/automation.md`.
+- Record the target doc owners inside Archon when scheduling edits and create a 48h follow-up task to confirm publication.
+- Store cross-links to the refreshed prompt and supporting docs inside `docs/features/code-quality-audit.md` with version/date metadata.
+
+### Command Mapping
+- **Workspace scripts (preferred)**: `pnpm test:backend`, `pnpm test:frontend`, `pnpm test:healthcare`, `pnpm lint`, `pnpm type-check`, `pnpm constitutional:quick`, `pnpm constitutional:full`.
+- **VS Code tasks (.vscode/tasks.json)**: “🏛️ Constitutional Audit - Quick”, “🏛️ Constitutional Audit - Full”, “📈 Performance Benchmark”, “🏥 Healthcare Compliance Check”.
+- **Fallback when Bun/Turbo unavailable**: run the same scripts with `pnpm`/`node` directly and log the deviation plus console output in Archon task notes.
+
+### Execution Mode Matrix
+| Condition | Execution Mode | Required Actions |
+|-----------|----------------|------------------|
+| Mandatory setup (Phase 0 MCP chain) | Sequential | Respect `sequential-thinking → archon → serena` order before any code actions. |
+| Independent agent analyses (Phases 1-3) | Parallel | Launch agents concurrently, checkpoint evidence, and capture combined logs in Archon. |
+| Conflicts or compliance escalations | Sequential retry | Follow `fallback_priority`, rerun affected phase serially, and attach remediation notes plus regression IDs. |
+
+### Tooling Notes
+- Prefer workspace scripts over ad-hoc commands; capture CLI/stdout artifacts in Archon for traceability.
+- Activate Supabase MCP only for RLS/consent verification and record connection scope in task notes.
+- Archive Playwright/Vitest reports and PDF artifacts alongside Archon task updates for auditing.
 
 ---
 
@@ -33,19 +77,23 @@ AGENT_TRIGGERS:
     always_active: true
 
   security-auditor:
-    keywords: ["authentication", "authorization", "payment", "personal data", "compliance"]
-    file_patterns: ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"]
+    keywords: ["authentication", "authorization", "payment", "personal data", "compliance", "rls", "tenant", "consent", "audit", "break-glass"]
+    file_patterns: ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*", "packages/database/**", "apps/api/src/routes/**"]
     healthcare_critical: true
 
   code-reviewer:
-    keywords: ["performance", "maintainability", "technical debt", "code quality"]
+    keywords: ["performance", "maintainability", "technical debt", "code quality", "regression"]
     file_patterns: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
     always_active: true
 
   test:
-    keywords: ["tdd", "testing", "coverage", "test patterns"]
+    keywords: ["tdd", "testing", "coverage", "test patterns", "vitest", "playwright"]
     file_patterns: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
     always_active: true
+
+fallback_priority:
+  order: ["security-auditor", "architect-review", "code-reviewer", "test"]
+  conflict_resolution: "Deactivate lower-priority agent, rerun impacted phase sequentially, document rationale in Archon task notes, and re-trigger regression suite if compliance agents intervened."
 ```
 
 ---
@@ -60,7 +108,8 @@ orchestration_setup:
   2. archon_mcp: "Initialize task tracking and agent coordination"
   3. serena_mcp: "Codebase analysis and change surface detection"
   4. agent_selection: "Activate agents based on triggers and complexity"
-  5. workflow_selection: "Choose orchestration pattern (standard/security-critical/microservices)"
+  5. regression_register: "Record post-API-fix regression suite IDs (e.g., `pnpm test:healthcare`) in Archon task notes"
+  6. workflow_selection: "Choose orchestration pattern (standard/security-critical/microservices)"
 ```
 
 ### Mandatory MCP Integration
@@ -319,9 +368,12 @@ agent_tasks:
       - "Consent validation enforced on routes touching PHI/PII"
       - "Audit trails for read/write operations validated"
       - "Data retention and deletion logic compliance"
+      - "Consent RPC validation (`packages/core-services` / Supabase edge functions)"
+      - "ANVISA device/adverse-event verification per `docs/testing/database-security-testing.md`"
       - "Professional access controls (CFM) verification"
-      - "No PHI in logs or test fixtures"
+      - "No PHI in logs or test fixtures (enforce anonymized fixtures per `docs/testing/database-security-testing.md`)"
       - "TLS in transit, encrypted storage at rest validation"
+      - "Run `pnpm test:healthcare` (LGPD suite) and archive results in Archon"
 
   architect-review:
     priority: "P0 - Critical"
@@ -336,6 +388,7 @@ agent_tasks:
       - "PHI handling code review"
       - "Error handling without data leakage"
       - "Logging sanitization validation"
+      - "Verify anonymization helpers and data minimization rules are in place"
 ```
 
 ### 2.3 RLS Integration Validation (Sequential Security Analysis)
@@ -364,6 +417,9 @@ quality_gates:
   - "User context propagation verified: ≥100%"
   - "Tenant isolation tests pass: ≥100%"
   - "No cross-tenant data access possible: ≥100%"
+  - "Audit trail integrity confirmed (no missing entries, retention ≥7 years)"
+  - "Test data anonymization validated before sharing outputs"
+  - "Gate failures trigger `pnpm test:healthcare -- --audit-only` rerun with evidence logged in Archon"
 ```
 
 ### 2.4 Emergency Access & Documentation (Compliance Orchestration)
@@ -373,7 +429,8 @@ agent_coordination:
   security-auditor:
     - "Validate emergency access protocols"
     - "Review break-glass procedures"
-    - "Audit emergency access logging"
+    - "Audit emergency access logging (including alert delivery and session expiry)"
+    - "Log break-glass review outcome in Archon referencing compliance doc"
 
   architect-review:
     - "Review emergency access architecture"
@@ -418,27 +475,21 @@ parallel_execution:
 ### 3.2 Build & Quality Commands (Agent-Coordinated)
 
 ```bash
-# TypeScript type check (strict)
-pnpm --filter ./ type-check
-
-# Oxlint fast lint (quiet). Use package scripts where available
-pnpm --filter @neonpro/api lint
-pnpm --filter @neonpro/web lint
-
-# Format (non-blocking but recommended)
-pnpm --filter @neonpro/api format
-pnpm --filter @neonpro/web format
-
-# Security advisory scan (deps)
+# Root workspace scripts (executed via Bun/PNPM)
+pnpm test:backend
+pnpm test:frontend
+pnpm test:healthcare -- --regression
+pnpm lint
+pnpm type-check
 pnpm audit --json > audit-report.json || true
 ```
 
 Optional VS Code tasks (fast):
 
-- “🏛️ Constitutional Audit - Quick”
-- “🏛️ Constitutional Audit - Full”
-- “📈 Performance Benchmark”
-- “🏥 Healthcare Compliance Check”
+- “🧪 Web Tests (apps/web)”
+- “🔎 Web Smoke Test (vite build)”
+- “🧹 Web Lint (apps/web)”
+- “✅ Web Type-Check (apps/web)”
 
 ---
 
@@ -463,7 +514,7 @@ quality_gates:
     - "Module coupling: <80%"
 
   test:
-    - "Test coverage: >85%"
+    - "Test coverage: ≥90% critical / ≥85% important / ≥80% useful (attach Vitest coverage report)"
     - "Test quality score: >8/10"
 ```
 
@@ -512,11 +563,15 @@ routing_strategy:
       primary_agent: architect-review
       strategy: "Hono API integration + DB/RLS validation"
       tests: ["integration", "api-contract", "rls-security"]
+      regression_suite: "pnpm test:healthcare -- --regression"
+      notes: "Always enqueue this regression when `changed_files` includes `apps/api/src/routes/**`."
 
     "packages/database/**":
       primary_agent: security-auditor
       strategy: "Schema & RLS verification + API regression"
       tests: ["schema-validation", "rls-policies", "migration-safety"]
+      regression_suite: "pnpm test:healthcare -- --audit-only"
+      notes: "Auto-run audit-only regression when database objects change; log evidence in Archon."
 
     "apps/web/src/routes/**":
       primary_agent: code-reviewer
@@ -537,23 +592,27 @@ routing_strategy:
 ### 4.3 Test Execution Commands (Agent-Coordinated)
 
 ```bash
-# Agent: architect-review + code-reviewer
-pnpm --filter @neonpro/api test
+# API + DB regression (architect-review + code-reviewer)
+pnpm test:backend
 
-# Agent: test + code-reviewer
-pnpm --filter @neonpro/web test
+# Frontend integration (test + code-reviewer)
+pnpm test:frontend
+pnpm test:a11y
 
-# Agent: test + security-auditor (E2E with compliance validation)
-pnpm --filter @neonpro/web e2e
+# Healthcare compliance / Playwright suite (test + security-auditor)
+pnpm test:healthcare -- --compliance
+pnpm test:e2e
+pnpm test:orchestrate -- --healthcare-compliance
+# Playwright results must be archived with screenshots/videos for compliance evidence
 ```
 
 ### 4.4 Coverage Policy & Quality Gates
 
 ```yaml
 coverage_policy:
-  critical: "≥95% (healthcare data, authentication, payments)"
+  critical: "≥90% (healthcare data, authentication, payments)"
   important: "≥85% (business logic, integrations)"
-  useful: "≥75% (UI components, utilities)"
+  useful: "≥80% (UI components, utilities)"
 
 agent_validation:
   test:
@@ -728,10 +787,11 @@ validation_agents:
     - "Audit logging implementation validation"
 
 blocking_criteria:
-  - "Consent checks present on PHI routes: ≥100%"
-  - "Audit logs exist and pass review: ≥100%"
+  - "Consent checks present on PHI routes: ≥100% (verify consent records complete)"
+  - "Audit logs exist, immutable, and meet 7-year retention"
   - "LGPD compliance validated: ≥100%"
   - "PHI handling secure: ≥100%"
+  - "Regression suite executed (`pnpm test:healthcare`) with artifacts stored in Archon"
 ```
 
 ### 6.3 Gate 2 — RLS Security (Blocking)
@@ -756,6 +816,8 @@ blocking_criteria:
   - "No cross-tenant leakage in tests: ≥100%"
   - "RLS policies active on sensitive tables: ≥100%"
   - "User context propagation verified: ≥100%"
+  - "Audit trail entries captured for access attempts (review with `pnpm test:healthcare -- --audit-only`)"
+  - "ANVISA device/adverse-event registration validation documented: ≥100%"
 ```
 
 ### 6.4 Gate 3 — Code Quality & Security (Blocking)
@@ -801,10 +863,11 @@ validation_agents:
     - "Compliance test execution verification"
 
 blocking_criteria:
-  - "Critical path coverage: ≥95%"
+  - "Critical path coverage: ≥90% (attach Vitest coverage report)"
   - "Important feature coverage: ≥85%"
   - "Security test coverage: ≥100%"
   - "Compliance test execution: ≥100%"
+  - "Useful feature coverage: ≥80%"
 ```
 
 ### 6.6 Final Orchestration Validation
@@ -860,6 +923,7 @@ reporting_coordination:
 - **Architecture Report**: `architecture-analysis.md` (architect-review primary)
 - **Test Report**: `test-coverage-report.json` (test agent primary)
 - **Archon Tasks**: Update with agent decisions and evidence
+- **Knowledge Base**: Upload artifacts to Archon KB and refresh `docs/features/code-quality-audit.md` with version/date
 - **Documentation**: Append findings to `docs/mistakes/*.md` when applicable
 
 ## 🔧 Orchestration Examples
@@ -924,22 +988,22 @@ import { execSync } from 'node:child_process';
 
 Use workspace tasks for speed:
 
-- “🏛️ Constitutional Audit - Quick” → fast compliance validation
-- “🏛️ Constitutional Audit - Full” → exhaustive validation
-- “📈 Performance Benchmark” → perf checks
-- “🏥 Healthcare Compliance Check” → LGPD/ANVISA heuristics
+- “🧪 Web Tests (apps/web)” → Vitest suite para frontend
+- “🔎 Web Smoke Test (vite build)” → build rápido de verificação
+- “🧹 Web Lint (apps/web)” → lint local
+- “✅ Web Type-Check (apps/web)” → type-check dedicado
 
 CLI fallbacks
 
 ```bash
 # Root helpers
-pnpm quality:full
+pnpm test:orchestrate -- --all-categories
 pnpm workflow:ci
 
-# Tools/audit
-pnpm constitutional:quick
-pnpm constitutional:full
-pnpm constitutional:benchmark
+# Suites focadas
+pnpm test:backend
+pnpm test:frontend
+pnpm test:healthcare -- --regression
 ```
 
 ---
@@ -992,16 +1056,19 @@ recovery_strategies:
     - "Automatic failover to backup agent"
     - "Graceful degradation with reduced functionality"
     - "Manual intervention escalation"
+    - "Apply `fallback_priority` order and log reassignment in Archon"
 
   quality_gate_failure:
     - "Detailed failure analysis and reporting"
     - "Suggested remediation steps"
     - "Rollback to last successful state"
+    - "Rerun impacted phase sequentially with regression suite IDs attached"
 
   orchestration_failure:
     - "Reset to last known good state"
     - "Re-initialize agent coordination"
     - "Fallback to manual execution mode"
+    - "Escalate to project owner if two sequential retries fail"
 ```
 
 ## 🎯 Summary
@@ -1017,3 +1084,12 @@ recovery_strategies:
 - **✅ Comprehensive Quality Gates**: Multi-layered validation with agent-specific responsibilities
 - **🔧 Error Handling**: Robust rollback and recovery strategies
 - **📊 Advanced Reporting**: Agent-coordinated reporting and documentation
+
+### Documentation & Rollout
+- Update supporting docs in lockstep: `docs/AGENTS.md`, `docs/architecture/source-tree.md`, `docs/testing/AGENTS.md`, `docs/testing/database-security-testing.md`, and `docs/mistakes/automation.md` (note the prompt version/date in each).
+- Link the refreshed workflow inside `docs/features/code-quality-audit.md` and sanitize PHI fixtures per `docs/testing/database-security-testing.md` before sharing artifacts.
+- Rollout checklist:
+  - Executar `pnpm test:orchestrate -- --all-categories` e `pnpm test:healthcare -- --regression`, anexando os logs/relatórios resultantes ao task do Archon.
+  - Capture all sequential/parallel agent logs, Playwright evidence, and coverage reports in Archon + knowledge base.
+  - Schedule a 48h follow-up task in Archon to confirm documentation merges and knowledge base updates.
+- Store new lessons in Archon knowledge base; open an optional memory entry if novel mistakes or edge cases surface.

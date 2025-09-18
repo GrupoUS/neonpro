@@ -3,12 +3,23 @@
  * Features: Upload, organize, preview, secure sharing, audit trail
  */
 
+import {
+  type PatientDocument as UploadedPatientDocument,
+  PatientDocumentUpload,
+} from '@/components/patient-documents';
 import { usePatient } from '@/hooks/usePatients';
+import {
+  downloadDocument,
+  type PatientDocument,
+  patientDocumentsQueryOptions,
+  useDocumentDelete,
+  useDocumentUpload,
+} from '@/queries/documents';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
-import { PatientDocumentUpload } from '@/components/patient-documents';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -130,15 +141,30 @@ function PatientDocumentsPage() {
   const { category, sortBy, sortOrder } = Route.useSearch();
   const navigate = useNavigate();
 
-  // Data fetching
-  const { data: patient, isLoading: patientLoading } = usePatient(patientId);
-
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
 
-  // Mock documents data (replace with real data)
-  const mockDocuments: PatientDocument[] = [
+  // Data fetching
+  const { data: patient, isLoading: patientLoading } = usePatient(patientId);
+
+  // Fetch documents with real API
+  const {
+    data: documents = [],
+    isLoading: documentsLoading,
+    error: documentsError,
+  } = useQuery(patientDocumentsQueryOptions({
+    patientId,
+    category: category !== 'all' ? category : undefined,
+    search: searchQuery,
+  }));
+
+  // Mutations for upload and delete
+  const uploadMutation = useDocumentUpload();
+  const deleteMutation = useDocumentDelete();
+
+  // Mock documents for development (replace with real data from API)
+  const mockDocuments = [
     {
       id: '1',
       name: 'Exame de Sangue - Janeiro 2024.pdf',
@@ -189,17 +215,47 @@ function PatientDocumentsPage() {
       tags: ['plano', 'saúde'],
     },
   ];
+  // Document management handlers
+  const handleDeleteDocument = async (documentId: string) => {
+    try {
+      await deleteMutation.mutateAsync({ patientId, documentId });
+      setSelectedDocuments(prev => prev.filter(id => id !== documentId));
+      toast.success('Documento excluído com sucesso');
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast.error('Erro ao excluir documento');
+    }
+  };
 
-  // Filter documents based on search and category
-  const filteredDocuments = mockDocuments.filter(doc => {
+  const handleUpload = async (
+    file: File,
+    category: string,
+    description?: string,
+    tags?: string[],
+  ) => {
+    try {
+      await uploadMutation.mutateAsync({
+        patientId,
+        file,
+        category,
+        description,
+        tags,
+      });
+      toast.success('Documento enviado com sucesso');
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      toast.error('Erro ao enviar documento');
+    }
+  };
+
+  // Filter documents based on search (now handled by query)
+  const filteredDocuments = documents.filter(doc => {
     const matchesSearch = searchQuery === ''
       || doc.name.toLowerCase().includes(searchQuery.toLowerCase())
       || doc.description?.toLowerCase().includes(searchQuery.toLowerCase())
       || doc.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesCategory = category === 'all' || doc.category === category;
-
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   // Sort documents
@@ -224,7 +280,7 @@ function PatientDocumentsPage() {
     return sortOrder === 'desc' ? -comparison : comparison;
   });
 
-  if (patientLoading) {
+  if (patientLoading || documentsLoading) {
     return (
       <div className='container mx-auto p-4 md:p-6 space-y-6'>
         <div className='animate-pulse space-y-6'>
@@ -235,6 +291,27 @@ function PatientDocumentsPage() {
             ))}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (documentsError) {
+    return (
+      <div className='container mx-auto p-4 md:p-6'>
+        <Card className='max-w-lg mx-auto text-center'>
+          <CardHeader>
+            <AlertCircle className='w-12 h-12 text-destructive mx-auto mb-4' />
+            <CardTitle>Erro ao Carregar Documentos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className='text-muted-foreground mb-4'>
+              Não foi possível carregar os documentos do paciente.
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -299,14 +376,14 @@ function PatientDocumentsPage() {
         {/* Upload section */}
         <PatientDocumentUpload
           patientId={patientId}
-          onUploadSuccess={(files) => {
-            toast.success(`${files.length} documento(s) enviado(s) com sucesso!`);
-            // TODO: Refresh documents list
+          category='medical'
+          maxFiles={20}
+          maxFileSize={25}
+          onDocumentsUploaded={(documents: UploadedPatientDocument[]) => {
+            // Documents are automatically refreshed via React Query invalidation
+            toast.success(`${documents.length} documento(s) enviado(s) com sucesso!`);
           }}
-          onUploadError={(error) => {
-            toast.error(`Erro no upload: ${error.message}`);
-          }}
-          className="w-full sm:w-auto"
+          className='w-full'
         />
       </div>
 
@@ -390,6 +467,7 @@ function PatientDocumentsPage() {
                       setSelectedDocuments(prev => prev.filter(id => id !== document.id));
                     }
                   }}
+                  onDelete={handleDeleteDocument}
                 />
               ))}
             </div>
@@ -475,11 +553,53 @@ function DocumentCard({
   document,
   isSelected,
   onSelect,
+  onDelete,
 }: {
   document: PatientDocument;
   isSelected: boolean;
   onSelect: (selected: boolean) => void;
+  onDelete?: (documentId: string) => void;
 }) {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { patientId } = Route.useParams();
+
+  const handleDownload = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadDocument(patientId, document.id, document.name);
+      toast.success('Download concluído');
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast.error('Erro ao baixar documento');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+
+    const confirmed = globalThis.confirm(
+      `Tem certeza que deseja excluir o documento "${document.name}"?`,
+    );
+    if (!confirmed) return;
+
+    try {
+      setIsDeleting(true);
+      onDelete(document.id);
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast.error('Erro ao excluir documento');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleView = () => {
+    // TODO: Implement view functionality (open in modal or new tab)
+    console.log('View document:', document.id);
+  };
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) return Image;
     if (type === 'application/pdf') return FileText;
@@ -594,14 +714,44 @@ function DocumentCard({
 
           {/* Actions */}
           <div className='flex items-center gap-1 pt-2'>
-            <Button variant='outline' size='sm' className='flex-1'>
+            <Button
+              variant='outline'
+              size='sm'
+              className='flex-1'
+              onClick={handleView}
+            >
               <Eye className='w-3 h-3 mr-1' />
               Ver
             </Button>
-            <Button variant='outline' size='sm' className='flex-1'>
-              <Download className='w-3 h-3 mr-1' />
-              Baixar
+            <Button
+              variant='outline'
+              size='sm'
+              className='flex-1'
+              onClick={handleDownload}
+              disabled={isDownloading}
+            >
+              {isDownloading
+                ? (
+                  <div className='w-3 h-3 mr-1 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                )
+                : <Download className='w-3 h-3 mr-1' />}
+              {isDownloading ? 'Baixando...' : 'Baixar'}
             </Button>
+            {onDelete && (
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className='text-destructive hover:text-destructive'
+              >
+                {isDeleting
+                  ? (
+                    <div className='w-3 h-3 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                  )
+                  : <Trash2 className='w-3 h-3' />}
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

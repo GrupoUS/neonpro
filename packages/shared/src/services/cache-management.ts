@@ -1219,12 +1219,7 @@ export class HealthcareCachePatterns {
 // ============================================================================
 // EXPORTS
 // ============================================================================
-
-export {
-  CacheManagementService,
-  InMemoryCacheBackend,
-  HealthcareCachePatterns,
-  type CacheBackend
-};
+// Note: All classes are already exported above with their definitions
+// No need to re-export them here to avoid TS2484 conflicts
 
 export default CacheManagementService;
