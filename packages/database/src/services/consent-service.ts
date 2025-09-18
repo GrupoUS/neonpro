@@ -118,11 +118,10 @@ export class ConsentService extends BaseService implements RTCConsentManager {
    */
   async verifyConsent(
     userId: string,
-    dataType: MedicalDataClassification,
-    sessionId?: string
+    dataType: MedicalDataClassification
   ): Promise<boolean> {
     try {
-      // Get patient ID from user ID
+      // Get patient by user ID
       const { data: patient, error: patientError } = await this.supabase
         .from('patients')
         .select('id, clinic_id')
@@ -133,20 +132,31 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         return false;
       }
 
-      // Use RPC function for consent validation
-      const { data: isValid, error } = await this.supabase.rpc('validate_webrtc_consent', {
-        p_patient_id: patient.id,
-        p_session_id: sessionId || '',
-        p_data_types: [dataType],
-        p_clinic_id: patient.clinic_id
-      });
+      // Check for valid consent directly from the consent_records table
+      // Query for valid consents (either no expiry or future expiry)
+      const currentTime = new Date().toISOString();
+      
+      // Split the query into two parts to avoid .or() issues
+      let query = this.supabase
+        .from('consent_records')
+        .select('*')
+        .eq('patient_id', patient.id)
+        .eq('status', 'granted')
+        .contains('data_categories', [dataType]);
+      
+      // Add the expiry condition using or
+      query = query.or(`expires_at.is.null,expires_at.gt.${currentTime}`);
+      
+      const { data: consents, error } = await query
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       if (error) {
         console.error('Failed to verify consent:', error);
         return false;
       }
 
-      return !!isValid;
+      return consents && consents.length > 0;
     } catch (error) {
       console.error('ConsentService.verifyConsent error:', error);
       return false;

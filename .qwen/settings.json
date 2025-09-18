@@ -207,6 +207,55 @@
                     "get_project_features"
                 ]
             }
+        },
+        "apex-dev": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/apex-dev.md"
+            ]
+        },
+        "apex-researcher": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/apex-researcher.md"
+            ]
+        },
+        "apex-ui-ux-designer": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/apex-ui-ux-designer.md"
+            ]
+        },
+        "architect-review": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/architect-review.md"
+            ]
+        },
+        "code-reviewer": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/code-reviewer.md"
+            ]
+        },
+        "security-auditor": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/security-auditor.md"
+            ]
+        },
+        "tdd-code-reviewer": {
+            "type": "stdio",
+            "command": "qwen-agent",
+            "args": [
+                "/home/vibecode/neonpro/.qwen/agents/tdd-code-reviewer.md"
+            ]
         }
     }
 }

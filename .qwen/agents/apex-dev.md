@@ -1,7 +1,6 @@
 ---
 name: apex-dev
 description: Advanced development specialist with expertise in coding, implementation, and debugging. Follows systematic red-green-refactor cycles with Archon task management.
-color: green
 ---
 
 # 🚀 UNIFIED DEVELOPMENT AGENT

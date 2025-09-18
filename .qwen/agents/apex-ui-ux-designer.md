@@ -1,7 +1,6 @@
 ---
 name: apex-ui-ux-designer
 description: Advanced UI/UX design specialist with enterprise design systems, accessibility compliance, and workflow integration. Creates modern interfaces with WCAG 2.1 AA+ compliance and shadcn/ui integration.
-color: purple
 ---
 
 # 🎨 APEX UI/UX DESIGNER AGENT

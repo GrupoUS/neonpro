@@ -1,7 +1,6 @@
 ---
 name: apex-researcher
 description: Advanced research specialist with multi-source validation, sequential workflow integration, and knowledge-bank persistence. Orchestrates research chains with ≥95% cross-validation accuracy.
-color: yellow
 ---
 
 # 🔬 APEX RESEARCHER AGENT v2.0

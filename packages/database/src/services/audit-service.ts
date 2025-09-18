@@ -327,36 +327,50 @@ export class AuditService extends BaseService {
    * @param clinicId - Clinic ID for access control
    * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
    */
-  async getSessionAuditLogs(sessionId: string, clinicId?: string): Promise<RTCAuditLogEntry[]> {
+  async getSessionAuditLogs(sessionId: string): Promise<RTCAuditLogEntry[]> {
     try {
-      const { data: auditLogs, error } = await this.supabase
-        .from('webrtc_audit_logs')
-        .select('*')
+      const { data: logs, error } = await this.supabase
+        .from('audit_logs')
+        .select(`
+          id,
+          user_id,
+          action,
+          resource_type,
+          created_at,
+          ip_address,
+          user_agent,
+          session_id,
+          status,
+          risk_level
+        `)
         .eq('session_id', sessionId)
-        .order('timestamp', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Failed to get session audit logs:', error);
         return [];
       }
 
-      return auditLogs.map(log => ({
+      if (!logs) {
+        return [];
+      }
+
+      return logs.map((log: any) => ({
         id: log.id,
-        sessionId: log.session_id,
-        eventType: log.event_type as any,
-        timestamp: log.timestamp,
+        sessionId: log.session_id || sessionId,
         userId: log.user_id,
-        userRole: log.user_role as any,
-        dataClassification: log.data_classification as MedicalDataClassification,
-        description: log.description,
+        eventType: this.mapActionToEventType(log.action),
+        userRole: (log.user_role as 'doctor' | 'patient' | 'nurse' | 'admin' | 'system') || 'system',
+        dataClassification: (log.data_classification as any) || 'general',
+        description: log.description || `${log.action} performed on ${log.resource_type}`,
+        timestamp: log.created_at || new Date().toISOString(),
         ipAddress: log.ip_address,
         userAgent: log.user_agent,
-        clinicId: log.clinic_id,
-        metadata: log.metadata || {},
-        complianceCheck: log.compliance_check || {
-          isCompliant: true,
-          violations: [],
-          riskLevel: 'low' as 'low' | 'medium' | 'high'
+        clinicId: log.clinic_id || 'default',
+        complianceCheck: {
+          isCompliant: log.status === 'SUCCESS',
+          violations: log.status === 'FAILED' ? ['Audit log indicates failure'] : [],
+          riskLevel: (log.risk_level?.toLowerCase() as 'low' | 'medium' | 'high') || 'low'
         }
       }));
     } catch (error) {
@@ -560,6 +574,29 @@ export class AuditService extends BaseService {
       console.error('AuditService.searchAuditLogs error:', error);
       return [];
     }
+  }
+
+  /**
+   * Maps action strings to RTCAuditLogEntry event types
+   */
+  private mapActionToEventType(action: string): 'session-start' | 'session-end' | 'participant-join' | 'participant-leave' | 
+                                                'recording-start' | 'recording-stop' | 'data-access' | 'consent-given' | 
+                                                'consent-revoked' | 'error-occurred' {
+    const actionMapping: Record<string, any> = {
+      'CREATE': 'session-start',
+      'UPDATE': 'data-access',
+      'DELETE': 'session-end',
+      'READ': 'data-access',
+      'JOIN': 'participant-join',
+      'LEAVE': 'participant-leave',
+      'START_RECORDING': 'recording-start',
+      'STOP_RECORDING': 'recording-stop',
+      'CONSENT_GIVEN': 'consent-given',
+      'CONSENT_REVOKED': 'consent-revoked',
+      'ERROR': 'error-occurred'
+    };
+    
+    return actionMapping[action?.toUpperCase()] || 'data-access';
   }
 }
 

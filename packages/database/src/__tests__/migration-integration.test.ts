@@ -7,6 +7,7 @@ describe('Supabase Migration Integration', () => {
     beforeEach(() => {
       // Mock environment variables
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.SUPABASE_URL = 'https://test.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
       process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
     });
@@ -14,6 +15,7 @@ describe('Supabase Migration Integration', () => {
     afterEach(() => {
       // Clean up environment variables
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      delete process.env.SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     });
@@ -33,7 +35,7 @@ describe('Supabase Migration Integration', () => {
     });
 
     it('should throw error when missing environment variables', () => {
-      delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      delete process.env.SUPABASE_URL;
       
       expect(() => createClient()).toThrow('Missing Supabase environment variables');
     });

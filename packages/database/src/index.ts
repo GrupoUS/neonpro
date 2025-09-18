@@ -7,6 +7,10 @@
 export {
   checkDatabaseHealth,
   closeDatabaseConnections,
+  createClient,
+  createServiceClient,
+  createNodeSupabaseClient,
+  createServiceSupabaseClient,
   prisma,
   supabase,
   supabaseBrowser,
