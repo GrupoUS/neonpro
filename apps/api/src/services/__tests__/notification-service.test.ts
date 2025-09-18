@@ -15,16 +15,14 @@ describe('Real-time Notification Service (T042)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export NotificationService class', () => {
-    expect(() => {
-      const module = require('../notification-service');
-      expect(module.NotificationService).toBeDefined();
-    }).not.toThrow();
+  it('should export NotificationService class', async () => {
+    const module = await import('../notification-service');
+    expect(module.NotificationService).toBeDefined();
   });
 
   describe('Multi-channel Notification Delivery', () => {
     it('should send email notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -49,7 +47,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should send SMS notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -72,7 +70,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should send WhatsApp notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -98,7 +96,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should send push notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -124,7 +122,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Real-time Notification Streaming', () => {
     it('should start notification stream', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.startNotificationStream({
@@ -144,7 +142,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should stop notification stream', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.stopNotificationStream('stream-123');
@@ -156,7 +154,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should get real-time notification status', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.getNotificationStatus('notification-123');
@@ -169,7 +167,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should list active notification streams', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.listActiveStreams();
@@ -182,7 +180,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Brazilian Healthcare Context', () => {
     it('should send LGPD compliant notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -210,7 +208,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should send ANVISA compliant medical notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -238,7 +236,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should send CFM compliant professional notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -267,7 +265,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should validate Brazilian phone number format', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.validateRecipientContact({
@@ -288,7 +286,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Template Management', () => {
     it('should create notification template', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.createTemplate({
@@ -329,7 +327,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should render template with dynamic content', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.renderTemplate({
@@ -353,7 +351,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should update notification template', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.updateTemplate('custom_reminder', {
@@ -371,7 +369,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should list available templates', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.listTemplates({
@@ -390,7 +388,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Delivery Tracking and Status Monitoring', () => {
     it('should track notification delivery', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.trackDelivery('notification-123');
@@ -404,7 +402,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should retry failed notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.retryNotification('notification-123', {
@@ -422,7 +420,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should get delivery statistics', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.getDeliveryStatistics({
@@ -440,7 +438,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should update notification status', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.updateNotificationStatus('notification-123', {
@@ -467,7 +465,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Priority-based Queuing and Rate Limiting', () => {
     it('should queue high priority notification', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.queueNotification({
@@ -489,7 +487,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should apply rate limiting', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.checkRateLimit({
@@ -506,7 +504,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should process notification queue', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.processNotificationQueue({
@@ -523,7 +521,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should get queue status', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.getQueueStatus();
@@ -538,7 +536,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Integration with Existing Data Models', () => {
     it('should integrate with Patient model', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendPatientNotification({
@@ -557,7 +555,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should validate LGPD consent before sending', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.validateLGPDConsent({
@@ -575,7 +573,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should log notification to audit trail', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.logNotificationToAudit({
@@ -598,7 +596,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should sync with notification preferences', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.syncNotificationPreferences('patient-123');
@@ -613,7 +611,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Database Integration', () => {
     it('should handle database connection errors gracefully', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -629,7 +627,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should validate database schema', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.validateDatabaseSchema();
@@ -641,7 +639,7 @@ describe('Real-time Notification Service (T042)', () => {
     });
 
     it('should perform database maintenance', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.performDatabaseMaintenance({
@@ -658,7 +656,7 @@ describe('Real-time Notification Service (T042)', () => {
 
   describe('Error Handling and Validation', () => {
     it('should handle invalid notification parameters', async () => {
-      const { NotificationService } = require('../notification-service');
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const result = await service.sendNotification({
@@ -673,8 +671,8 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should validate service configuration', () => {
-      const { NotificationService } = require('../notification-service');
+    it('should validate service configuration', async () => {
+      const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
       const config = service.getServiceConfiguration();

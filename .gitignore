@@ -292,6 +292,9 @@ dist/
 **/dist/
 lib/
 **/lib/
+!apps/web/src/lib/
+apps/web/src/lib/**
+!apps/web/src/lib/sentry.ts
 
 # Production builds
 /build

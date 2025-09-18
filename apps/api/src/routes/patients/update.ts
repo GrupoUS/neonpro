@@ -13,7 +13,7 @@ import {
 } from '../../../packages/shared/src/validators/brazilian';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { AuditService } from '../../services/audit-service';
+import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { NotificationService } from '../../services/notification-service';
 import { PatientService } from '../../services/patient-service';

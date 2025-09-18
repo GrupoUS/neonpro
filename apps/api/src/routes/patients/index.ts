@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi';
 import bulkActions from './bulk';
 import createPatient from './create';
 import deletePatient from './delete';
@@ -9,7 +9,7 @@ import listPatients from './list';
 import searchPatients from './search';
 import updatePatient from './update';
 
-const patientsRouter = new Hono();
+const patientsRouter = new OpenAPIHono();
 // Documents upload endpoint placeholder added via documents-upload route above
 import documentsUpload from './documents-upload'; // POST /patients/:id/documents
 patientsRouter.route('/patients', documentsUpload);

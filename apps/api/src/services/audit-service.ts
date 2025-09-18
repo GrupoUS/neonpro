@@ -1,1034 +1,564 @@
 /**
- * Audit Trail Service (T041)
- * Comprehensive audit trail service with Supabase PostgreSQL database integration
- *
- * Features:
- * - Activity logging for all patient data access and modifications
- * - Security event monitoring and threat detection
- * - Compliance audit trails for LGPD, ANVISA, and CFM requirements
- * - Forensic analysis capabilities with detailed event reconstruction
- * - Real-time audit log streaming and alerting
- * - Data integrity verification and tamper detection
- * - Full Supabase PostgreSQL database integration
- * - Comprehensive error handling with Portuguese error messages
+ * Comprehensive Audit Service
+ * Integrates cryptographic audit logging with database storage and compliance reporting
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
+import { createServerClient } from '../clients/supabase.js';
+import { cryptographicAuditLogger, type AuditLogEntry } from '../utils/crypto-audit.js';
+import type { Database } from '../../../../packages/database/src/types/supabase';
 
-// Service response interface
-export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errors?: Array<{ field: string; message: string; code: string }>;
-  message?: string;
-}
-
-// Activity log interface
-export interface ActivityLog {
-  userId: string;
-  action: string;
-  resourceType: string;
-  resourceId: string;
-  details?: Record<string, any>;
+export interface AuditEventContext {
+  userId?: string;
+  clinicId?: string;
+  patientId?: string;
+  professionalId?: string;
+  sessionId?: string;
   ipAddress?: string;
   userAgent?: string;
-  sessionId?: string;
-  complianceContext?: string;
-  sensitivityLevel?: 'low' | 'medium' | 'high' | 'critical';
-  simulateDbError?: boolean;
+  requestId?: string;
+  emergencyAccess?: boolean;
+  justification?: string;
+  complianceFlags?: {
+    lgpd_compliant?: boolean;
+    rls_enforced?: boolean;
+    consent_validated?: boolean;
+    emergency_access?: boolean;
+    data_minimization?: boolean;
+    purpose_limitation?: boolean;
+  };
 }
 
-// Security event interface
-export interface SecurityEvent {
-  eventType: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+export interface AuditQuery {
+  startDate?: Date;
+  endDate?: Date;
+  eventTypes?: string[];
   userId?: string;
-  resourceType?: string;
-  resourceId?: string;
-  ipAddress?: string;
-  details?: Record<string, any>;
-  threatLevel?: 'low' | 'medium' | 'high' | 'critical';
-  requiresInvestigation?: boolean;
-}
-
-// Compliance audit trail interface
-export interface ComplianceAuditTrail {
-  complianceFramework: 'LGPD' | 'ANVISA' | 'CFM';
+  clinicId?: string;
   patientId?: string;
-  doctorId?: string;
-  startDate: Date;
-  endDate: Date;
-  includeDataProcessing?: boolean;
-  includeConsentHistory?: boolean;
-  includeMedicalDeviceUsage?: boolean;
-  includeHealthDataProcessing?: boolean;
-  includeMedicalRecords?: boolean;
-  includePrescriptions?: boolean;
+  emergencyOnly?: boolean;
+  complianceIssues?: boolean;
+  limit?: number;
+  offset?: number;
 }
 
-// Activity timeline interface
-export interface ActivityTimeline {
-  userId: string;
-  startDate: Date;
-  endDate: Date;
-  includeSystemEvents?: boolean;
-  includeDataAccess?: boolean;
-}
-
-// Data access pattern analysis interface
-export interface DataAccessPatternAnalysis {
-  userId: string;
-  analysisType: 'anomaly_detection' | 'behavior_analysis' | 'risk_assessment';
-  timeWindow: string;
-  includeStatistics?: boolean;
-}
-
-// Data breach investigation interface
-export interface DataBreachInvestigation {
-  incidentId: string;
-  suspectedStartTime: Date;
-  suspectedEndTime: Date;
-  affectedResources: string[];
-  investigationType: string;
-}
-
-// Audit stream interface
-export interface AuditStream {
-  streamId: string;
-  filters: {
-    severity?: string[];
-    eventTypes?: string[];
-    userId?: string;
+export interface ComplianceReport {
+  period: {
+    start: string;
+    end: string;
   };
-  destination: string;
-}
-
-// Audit alert configuration interface
-export interface AuditAlertConfig {
-  alertId: string;
-  name: string;
-  conditions: {
+  summary: {
+    totalEvents: number;
+    compliantEvents: number;
+    complianceRate: number;
+    emergencyAccess: number;
+    dataBreaches: number;
+    policyViolations: number;
+  };
+  breakdown: {
+    byEventType: Record<string, number>;
+    byUser: Record<string, number>;
+    byClinic: Record<string, number>;
+    byCompliance: Record<string, number>;
+  };
+  violations: Array<{
+    id: string;
     eventType: string;
-    severity: string;
-    threshold: number;
-    timeWindow: string;
-  };
-  actions: string[];
-  recipients: string[];
+    timestamp: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    description: string;
+    userId?: string;
+    clinicId?: string;
+  }>;
+  recommendations: string[];
 }
 
-/**
- * Audit Trail Service Class
- * Handles all audit trail operations with full Supabase PostgreSQL database integration
- */
-export class AuditService {
-  private supabase: SupabaseClient;
-  private activeStreams: Map<string, AuditStream> = new Map();
-  private alertConfigs: Map<string, AuditAlertConfig> = new Map();
-  private isInitialized = false;
+export class ComprehensiveAuditService {
+  private supabase;
 
   constructor() {
-    this.initialize();
+    this.supabase = createServerClient();
   }
 
   /**
-   * Initialize service with Supabase client
+   * Log a healthcare-specific audit event
    */
-  private initialize(): void {
-    // Initialize Supabase client
-    const supabaseUrl = process.env.SUPABASE_URL || 'https://mock-supabase-url.supabase.co';
-    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'mock-supabase-key';
-
-    this.supabase = createClient(supabaseUrl, supabaseKey);
-    this.isInitialized = true;
-  }
-
-  /**
-   * Log activity to Supabase database
-   */
-  async logActivity(params: ActivityLog): Promise<
-    ServiceResponse<{
-      auditId: string;
-      timestamp: Date;
-      persisted: boolean;
-      changeHash?: string;
-      complianceFlags?: string[];
-      sensitivityLevel?: string;
-    }>
-  > {
+  async logEvent(
+    eventType: string,
+    eventData: any,
+    context: AuditEventContext = {}
+  ): Promise<{ success: boolean; auditId?: string; error?: string }> {
     try {
-      // Validate input
-      const validation = this.validateActivityLog(params);
-      if (!validation.isValid) {
-        return {
-          success: false,
-          errors: validation.errors,
-        };
+      // Create cryptographically secure audit entry
+      const auditEntry = await cryptographicAuditLogger.createAuditEntry(
+        eventType,
+        eventData,
+        context
+      );
+
+      // Store in database
+      const { data, error } = await this.supabase
+        .from('audit_logs')
+        .insert({
+          id: auditEntry.id,
+          timestamp: auditEntry.timestamp,
+          event_type: auditEntry.eventType,
+          event_data: auditEntry.eventData,
+          user_id: auditEntry.userId,
+          clinic_id: auditEntry.clinicId,
+          patient_id: context.patientId,
+          professional_id: context.professionalId,
+          session_id: auditEntry.sessionId,
+          ip_address: auditEntry.ipAddress,
+          user_agent: auditEntry.userAgent,
+          request_id: context.requestId,
+          sequence_number: auditEntry.sequenceNumber,
+          previous_hash: auditEntry.previousHash,
+          data_hash: auditEntry.dataHash,
+          signature: auditEntry.signature,
+          compliance_flags: auditEntry.complianceFlags,
+          emergency_access: context.emergencyAccess || false,
+          justification: context.justification,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error storing audit log:', error);
+        return { success: false, error: 'Failed to store audit log' };
       }
 
-      // Simulate database error for testing
-      if (params.simulateDbError) {
-        return {
-          success: false,
-          error: 'Erro de conexão com banco de dados',
-        };
-      }
-
-      const auditId = `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const timestamp = new Date();
-      const changeHash = this.generateChangeHash(params);
-
-      // Mock database insert (in real implementation, this would use Supabase)
-      const _auditRecord = {
-        id: auditId,
-        user_id: params.userId,
-        action: params.action,
-        resource_type: params.resourceType,
-        resource_id: params.resourceId,
-        details: params.details || {},
-        ip_address: params.ipAddress,
-        user_agent: params.userAgent,
-        session_id: params.sessionId,
-        compliance_context: params.complianceContext,
-        sensitivity_level: params.sensitivityLevel || 'medium',
-        change_hash: changeHash,
-        timestamp: timestamp.toISOString(),
-        created_at: timestamp.toISOString(),
-      };
-
-      // In real implementation: await this.supabase.from('audit_logs').insert(auditRecord);
-
-      const complianceFlags = params.complianceContext ? [params.complianceContext] : [];
-
-      return {
-        success: true,
-        data: {
-          auditId,
-          timestamp,
-          persisted: true,
-          changeHash,
-          complianceFlags,
-          sensitivityLevel: params.sensitivityLevel,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
+      return { success: true, auditId: data.id };
+    } catch (error) {
+      console.error('Error in audit logging:', error);
+      return { success: false, error: 'Internal audit error' };
     }
   }
 
   /**
-   * Log security event to Supabase database
+   * Query audit logs with filters and pagination
    */
-  async logSecurityEvent(params: SecurityEvent): Promise<
-    ServiceResponse<{
-      securityEventId: string;
-      severity: string;
-      threatLevel?: string;
-      alertTriggered?: boolean;
-      investigationRequired?: boolean;
-      immediateAlert?: boolean;
-      anomalyDetected?: boolean;
-      requiresApproval?: boolean;
-    }>
-  > {
+  async queryAuditLogs(query: AuditQuery): Promise<{
+    success: boolean;
+    logs?: AuditLogEntry[];
+    totalCount?: number;
+    error?: string;
+  }> {
     try {
-      const securityEventId = `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const timestamp = new Date();
+      let supabaseQuery = this.supabase
+        .from('audit_logs')
+        .select('*', { count: 'exact' });
 
-      // Mock database insert for security events
-      const _securityRecord = {
-        id: securityEventId,
-        event_type: params.eventType,
-        severity: params.severity,
-        user_id: params.userId,
-        resource_type: params.resourceType,
-        resource_id: params.resourceId,
-        ip_address: params.ipAddress,
-        details: params.details || {},
-        threat_level: params.threatLevel,
-        requires_investigation: params.requiresInvestigation || false,
-        timestamp: timestamp.toISOString(),
-        created_at: timestamp.toISOString(),
-      };
+      // Apply filters
+      if (query.startDate) {
+        supabaseQuery = supabaseQuery.gte('timestamp', query.startDate.toISOString());
+      }
 
-      // In real implementation: await this.supabase.from('security_events').insert(securityRecord);
+      if (query.endDate) {
+        supabaseQuery = supabaseQuery.lte('timestamp', query.endDate.toISOString());
+      }
 
-      const alertTriggered = params.severity === 'high' || params.severity === 'critical';
-      const immediateAlert = params.severity === 'critical';
-      const investigationRequired = params.requiresInvestigation || params.severity === 'high';
-      const anomalyDetected = params.eventType.includes('anomaly')
-        || params.eventType.includes('suspicious');
-      const requiresApproval = params.eventType.includes('export') && params.severity === 'high';
+      if (query.eventTypes && query.eventTypes.length > 0) {
+        supabaseQuery = supabaseQuery.in('event_type', query.eventTypes);
+      }
+
+      if (query.userId) {
+        supabaseQuery = supabaseQuery.eq('user_id', query.userId);
+      }
+
+      if (query.clinicId) {
+        supabaseQuery = supabaseQuery.eq('clinic_id', query.clinicId);
+      }
+
+      if (query.patientId) {
+        supabaseQuery = supabaseQuery.eq('patient_id', query.patientId);
+      }
+
+      if (query.emergencyOnly) {
+        supabaseQuery = supabaseQuery.eq('emergency_access', true);
+      }
+
+      if (query.complianceIssues) {
+        supabaseQuery = supabaseQuery.or(
+          'compliance_flags->lgpd_compliant.eq.false,' +
+          'compliance_flags->rls_enforced.eq.false,' +
+          'compliance_flags->consent_validated.eq.false'
+        );
+      }
+
+      // Apply pagination
+      if (query.offset) {
+        supabaseQuery = supabaseQuery.range(
+          query.offset,
+          (query.offset + (query.limit || 100)) - 1
+        );
+      } else if (query.limit) {
+        supabaseQuery = supabaseQuery.limit(query.limit);
+      }
+
+      // Order by timestamp (newest first)
+      supabaseQuery = supabaseQuery.order('timestamp', { ascending: false });
+
+      const { data, error, count } = await supabaseQuery;
+
+      if (error) {
+        console.error('Error querying audit logs:', error);
+        return { success: false, error: 'Failed to query audit logs' };
+      }
+
+      // Convert database records to AuditLogEntry format
+      const auditEntries: AuditLogEntry[] = data.map(record => ({
+        id: record.id,
+        timestamp: record.timestamp,
+        eventType: record.event_type,
+        eventData: record.event_data,
+        userId: record.user_id,
+        clinicId: record.clinic_id,
+        ipAddress: record.ip_address,
+        userAgent: record.user_agent,
+        sessionId: record.session_id,
+        sequenceNumber: record.sequence_number,
+        previousHash: record.previous_hash,
+        dataHash: record.data_hash,
+        signature: record.signature,
+        complianceFlags: record.compliance_flags
+      }));
 
       return {
         success: true,
-        data: {
-          securityEventId,
-          severity: params.severity,
-          threatLevel: params.threatLevel,
-          alertTriggered,
-          investigationRequired,
-          immediateAlert,
-          anomalyDetected,
-          requiresApproval,
-        },
+        logs: auditEntries,
+        totalCount: count || 0
       };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
+    } catch (error) {
+      console.error('Error in queryAuditLogs:', error);
+      return { success: false, error: 'Internal query error' };
     }
   }
 
   /**
-   * Generate compliance audit trail from Supabase database
+   * Validate audit log integrity
    */
-  async generateComplianceAuditTrail(params: ComplianceAuditTrail): Promise<
-    ServiceResponse<{
-      framework: string;
-      auditEvents: any[];
-      complianceScore: number;
-      violations: any[];
-      medicalDeviceEvents?: any[];
-      healthDataEvents?: any[];
-      medicalRecordEvents?: any[];
-      prescriptionEvents?: any[];
-      professionalStandardsCompliance?: any;
-    }>
-  > {
+  async validateAuditIntegrity(
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<{
+    success: boolean;
+    validation?: any;
+    error?: string;
+  }> {
     try {
-      // Mock compliance audit trail generation
-      const auditEvents = [
-        {
-          id: 'event-1',
-          action: 'data_access',
-          timestamp: new Date(),
-          compliance_status: 'compliant',
-        },
-        {
-          id: 'event-2',
-          action: 'consent_update',
-          timestamp: new Date(),
-          compliance_status: 'compliant',
-        },
-      ];
+      const query: AuditQuery = {
+        startDate,
+        endDate,
+        limit: 10000 // Large enough for most validation scenarios
+      };
 
+      const result = await this.queryAuditLogs(query);
+      if (!result.success || !result.logs) {
+        return { success: false, error: result.error };
+      }
+
+      const validation = await cryptographicAuditLogger.validateAuditChain(result.logs);
+      const forensicReport = cryptographicAuditLogger.generateForensicReport(
+        result.logs,
+        validation
+      );
+
+      return {
+        success: true,
+        validation: {
+          ...validation,
+          forensicReport
+        }
+      };
+    } catch (error) {
+      console.error('Error validating audit integrity:', error);
+      return { success: false, error: 'Internal validation error' };
+    }
+  }
+
+  /**
+   * Generate comprehensive compliance report
+   */
+  async generateComplianceReport(
+    startDate: Date,
+    endDate: Date,
+    clinicId?: string
+  ): Promise<{ success: boolean; report?: ComplianceReport; error?: string }> {
+    try {
+      const query: AuditQuery = {
+        startDate,
+        endDate,
+        clinicId,
+        limit: 50000 // Large limit for comprehensive reporting
+      };
+
+      const result = await this.queryAuditLogs(query);
+      if (!result.success || !result.logs) {
+        return { success: false, error: result.error };
+      }
+
+      const logs = result.logs;
+      const totalEvents = logs.length;
+
+      // Calculate compliance metrics
+      const compliantEvents = logs.filter(log => 
+        log.complianceFlags.lgpd_compliant &&
+        log.complianceFlags.rls_enforced
+      ).length;
+
+      const emergencyAccess = logs.filter(log => 
+        log.complianceFlags.emergency_access
+      ).length;
+
+      // Identify violations
       const violations = [];
-      const complianceScore = 95.5;
+      const policyViolations = [];
 
-      const result: any = {
-        framework: params.complianceFramework,
-        auditEvents,
-        complianceScore,
-        violations,
-      };
+      for (const log of logs) {
+        if (!log.complianceFlags.lgpd_compliant) {
+          violations.push({
+            id: log.id,
+            eventType: log.eventType,
+            timestamp: log.timestamp,
+            severity: 'high' as const,
+            description: 'LGPD compliance violation detected',
+            userId: log.userId,
+            clinicId: log.clinicId
+          });
+        }
 
-      // Add framework-specific data
-      if (params.complianceFramework === 'ANVISA') {
-        result.medicalDeviceEvents = [
-          { device_id: 'device-1', usage_timestamp: new Date(), compliance_status: 'compliant' },
-        ];
-        result.healthDataEvents = [
-          {
-            data_type: 'health_record',
-            access_timestamp: new Date(),
-            compliance_status: 'compliant',
-          },
-        ];
+        if (!log.complianceFlags.rls_enforced) {
+          violations.push({
+            id: log.id,
+            eventType: log.eventType,
+            timestamp: log.timestamp,
+            severity: 'critical' as const,
+            description: 'RLS policy violation - unauthorized data access',
+            userId: log.userId,
+            clinicId: log.clinicId
+          });
+        }
+
+        if (log.complianceFlags.emergency_access && !log.eventData.justification) {
+          violations.push({
+            id: log.id,
+            eventType: log.eventType,
+            timestamp: log.timestamp,
+            severity: 'medium' as const,
+            description: 'Emergency access without proper justification',
+            userId: log.userId,
+            clinicId: log.clinicId
+          });
+        }
       }
 
-      if (params.complianceFramework === 'CFM') {
-        result.medicalRecordEvents = [
-          { record_id: 'record-1', access_timestamp: new Date(), doctor_id: params.doctorId },
-        ];
-        result.prescriptionEvents = [
-          { prescription_id: 'rx-1', created_timestamp: new Date(), doctor_id: params.doctorId },
-        ];
-        result.professionalStandardsCompliance = {
-          score: 98.2,
-          violations: [],
-          recommendations: ['Manter registros atualizados'],
+      // Generate breakdown statistics
+      const breakdown = {
+        byEventType: this.aggregateByField(logs, 'eventType'),
+        byUser: this.aggregateByField(logs, 'userId'),
+        byClinic: this.aggregateByField(logs, 'clinicId'),
+        byCompliance: {
+          lgpd_compliant: logs.filter(l => l.complianceFlags.lgpd_compliant).length,
+          rls_enforced: logs.filter(l => l.complianceFlags.rls_enforced).length,
+          consent_validated: logs.filter(l => l.complianceFlags.consent_validated).length,
+          emergency_access: emergencyAccess
+        }
+      };
+
+      // Generate recommendations
+      const recommendations = this.generateRecommendations(logs, violations);
+
+      const report: ComplianceReport = {
+        period: {
+          start: startDate.toISOString(),
+          end: endDate.toISOString()
+        },
+        summary: {
+          totalEvents,
+          compliantEvents,
+          complianceRate: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 0,
+          emergencyAccess,
+          dataBreaches: 0, // Would be calculated based on specific breach detection logic
+          policyViolations: violations.length
+        },
+        breakdown,
+        violations,
+        recommendations
+      };
+
+      return { success: true, report };
+    } catch (error) {
+      console.error('Error generating compliance report:', error);
+      return { success: false, error: 'Internal report generation error' };
+    }
+  }
+
+  /**
+   * Generate retention policy report
+   */
+  async generateRetentionReport(clinicId?: string): Promise<{
+    success: boolean;
+    report?: any;
+    error?: string;
+  }> {
+    try {
+      const query: AuditQuery = {
+        clinicId,
+        limit: 100000 // Large limit for retention analysis
+      };
+
+      const result = await this.queryAuditLogs(query);
+      if (!result.success || !result.logs) {
+        return { success: false, error: result.error };
+      }
+
+      const retentionReport = cryptographicAuditLogger.generateRetentionReport(result.logs);
+
+      return { success: true, report: retentionReport };
+    } catch (error) {
+      console.error('Error generating retention report:', error);
+      return { success: false, error: 'Internal retention report error' };
+    }
+  }
+
+  /**
+   * Purge expired audit logs according to retention policies
+   */
+  async purgeExpiredLogs(clinicId?: string, dryRun: boolean = true): Promise<{
+    success: boolean;
+    purgeReport?: any;
+    error?: string;
+  }> {
+    try {
+      const retentionResult = await this.generateRetentionReport(clinicId);
+      if (!retentionResult.success || !retentionResult.report) {
+        return { success: false, error: retentionResult.error };
+      }
+
+      const expiredEntries = retentionResult.report.expiredEntries;
+
+      if (dryRun) {
+        return {
+          success: true,
+          purgeReport: {
+            dryRun: true,
+            expiredCount: expiredEntries.length,
+            expiredEntries: expiredEntries.slice(0, 10), // Show first 10 as sample
+            categories: retentionResult.report.categories
+          }
         };
       }
 
-      return {
-        success: true,
-        data: result,
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
+      // Actual purging (with additional safety checks)
+      const expiredIds = expiredEntries.map((entry: any) => entry.id);
+      
+      if (expiredIds.length === 0) {
+        return {
+          success: true,
+          purgeReport: {
+            dryRun: false,
+            purgedCount: 0,
+            message: 'No expired entries to purge'
+          }
+        };
+      }
 
-  /**
-   * Validate audit trail completeness
-   */
-  async validateAuditTrailCompleteness(_params: {
-    patientId: string;
-    startDate: Date;
-    endDate: Date;
-    expectedEvents: string[];
-  }): Promise<
-    ServiceResponse<{
-      isComplete: boolean;
-      missingEvents: string[];
-      integrityScore: number;
-    }>
-  > {
-    try {
-      // Mock validation logic
-      const missingEvents: string[] = [];
-      const integrityScore = 0.95;
-      const isComplete = missingEvents.length === 0;
+      // Archive before deletion for compliance
+      const { error: archiveError } = await this.supabase
+        .from('audit_logs_archive')
+        .insert(
+          expiredEntries.map((entry: any) => ({
+            ...entry,
+            archived_at: new Date().toISOString(),
+            purge_reason: 'retention_policy'
+          }))
+        );
 
-      return {
-        success: true,
-        data: {
-          isComplete,
-          missingEvents,
-          integrityScore,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
+      if (archiveError) {
+        console.error('Error archiving expired logs:', archiveError);
+        return { success: false, error: 'Failed to archive expired logs' };
+      }
 
-  /**
-   * Reconstruct user activity timeline from database
-   */
-  async reconstructActivityTimeline(_params: ActivityTimeline): Promise<
-    ServiceResponse<{
-      timeline: any[];
-      totalEvents: number;
-      timelineHash: string;
-    }>
-  > {
-    try {
-      // Mock timeline reconstruction
-      const timeline = [
-        {
-          timestamp: new Date('2024-01-01T08:00:00Z'),
-          action: 'login',
-          details: { ip_address: '192.168.1.100' },
-        },
-        {
-          timestamp: new Date('2024-01-01T08:15:00Z'),
-          action: 'patient_data_access',
-          resource_id: 'patient-123',
-          details: { fields: ['name', 'cpf'] },
-        },
-      ];
+      // Delete expired entries
+      const { error: deleteError } = await this.supabase
+        .from('audit_logs')
+        .delete()
+        .in('id', expiredIds);
 
-      const timelineHash = this.generateTimelineHash(timeline);
+      if (deleteError) {
+        console.error('Error purging expired logs:', deleteError);
+        return { success: false, error: 'Failed to purge expired logs' };
+      }
 
       return {
         success: true,
-        data: {
-          timeline,
-          totalEvents: timeline.length,
-          timelineHash,
-        },
+        purgeReport: {
+          dryRun: false,
+          purgedCount: expiredIds.length,
+          archivedCount: expiredIds.length,
+          categories: retentionResult.report.categories
+        }
       };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
+    } catch (error) {
+      console.error('Error in purgeExpiredLogs:', error);
+      return { success: false, error: 'Internal purge error' };
     }
   }
 
-  /**
-   * Analyze data access patterns
-   */
-  async analyzeDataAccessPatterns(_params: DataAccessPatternAnalysis): Promise<
-    ServiceResponse<{
-      patterns: any;
-      anomalies: any[];
-      riskScore: number;
-      recommendations: string[];
-    }>
-  > {
-    try {
-      const patterns = {
-        averageAccessesPerDay: 25,
-        peakAccessHours: ['09:00-11:00', '14:00-16:00'],
-        mostAccessedResources: ['patient_records', 'medical_history'],
-      };
+  // Private helper methods
 
-      const anomalies = [
-        {
-          type: 'unusual_time_access',
-          timestamp: new Date('2024-01-01T02:30:00Z'),
-          risk_level: 'medium',
-        },
-      ];
-
-      const riskScore = 0.3; // 0-1 scale
-      const recommendations = [
-        'Implementar alertas para acessos fora do horário comercial',
-        'Revisar permissões de acesso a dados sensíveis',
-      ];
-
-      return {
-        success: true,
-        data: {
-          patterns,
-          anomalies,
-          riskScore,
-          recommendations,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Investigate data breach
-   */
-  async investigateDataBreach(params: DataBreachInvestigation): Promise<
-    ServiceResponse<{
-      investigationId: string;
-      affectedRecords: number;
-      suspiciousActivities: any[];
-      evidenceChain: any[];
-    }>
-  > {
-    try {
-      const investigationId = `inv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      const suspiciousActivities = [
-        {
-          timestamp: params.suspectedStartTime,
-          user_id: 'unknown',
-          action: 'bulk_data_access',
-          resource_count: 100,
-        },
-      ];
-
-      const evidenceChain = [
-        {
-          evidence_id: 'ev-1',
-          type: 'audit_log',
-          timestamp: params.suspectedStartTime,
-          hash: this.generateEvidenceHash('audit_log_data'),
-        },
-      ];
-
-      return {
-        success: true,
-        data: {
-          investigationId,
-          affectedRecords: params.affectedResources.length,
-          suspiciousActivities,
-          evidenceChain,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Generate forensic evidence report
-   */
-  async generateForensicReport(params: {
-    investigationId: string;
-    includeTimeline: boolean;
-    includeEvidence: boolean;
-    includeRecommendations: boolean;
-    reportFormat: string;
-  }): Promise<
-    ServiceResponse<{
-      reportId: string;
-      evidenceCount: number;
-      reportHash: string;
-      legalAdmissible: boolean;
-    }>
-  > {
-    try {
-      const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const evidenceCount = 15;
-      const reportHash = this.generateReportHash(params.investigationId);
-      const legalAdmissible = true;
-
-      return {
-        success: true,
-        data: {
-          reportId,
-          evidenceCount,
-          reportHash,
-          legalAdmissible,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Start real-time audit stream
-   */
-  async startAuditStream(params: AuditStream): Promise<
-    ServiceResponse<{
-      streamId: string;
-      isActive: boolean;
-      filterCount: number;
-    }>
-  > {
-    try {
-      this.activeStreams.set(params.streamId, params);
-
-      const filterCount = Object.keys(params.filters).length;
-
-      return {
-        success: true,
-        data: {
-          streamId: params.streamId,
-          isActive: true,
-          filterCount,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Stop audit stream
-   */
-  async stopAuditStream(streamId: string): Promise<
-    ServiceResponse<{
-      streamId: string;
-      isActive: boolean;
-      finalEventCount: number;
-    }>
-  > {
-    try {
-      this.activeStreams.delete(streamId);
-
-      return {
-        success: true,
-        data: {
-          streamId,
-          isActive: false,
-          finalEventCount: 150, // Mock final count
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Configure audit alerts
-   */
-  async configureAuditAlerts(params: AuditAlertConfig): Promise<
-    ServiceResponse<{
-      alertId: string;
-      isActive: boolean;
-      actions: string[];
-    }>
-  > {
-    try {
-      this.alertConfigs.set(params.alertId, params);
-
-      return {
-        success: true,
-        data: {
-          alertId: params.alertId,
-          isActive: true,
-          actions: params.actions,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * List active audit streams
-   */
-  async listActiveStreams(): Promise<
-    ServiceResponse<{
-      streams: AuditStream[];
-      totalActive: number;
-    }>
-  > {
-    try {
-      const streams = Array.from(this.activeStreams.values());
-
-      return {
-        success: true,
-        data: {
-          streams,
-          totalActive: streams.length,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Verify audit log integrity
-   */
-  async verifyAuditLogIntegrity(_params: {
-    startDate: Date;
-    endDate: Date;
-    includeHashChain: boolean;
-    verifySignatures: boolean;
-  }): Promise<
-    ServiceResponse<{
-      integrityScore: number;
-      tamperedRecords: any[];
-      hashChainValid: boolean;
-    }>
-  > {
-    try {
-      const integrityScore = 98.5; // 0-100 scale
-      const tamperedRecords: any[] = [];
-      const hashChainValid = true;
-
-      return {
-        success: true,
-        data: {
-          integrityScore,
-          tamperedRecords,
-          hashChainValid,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Detect tampered audit records
-   */
-  async detectTamperedRecords(_params: {
-    auditIds: string[];
-    verificationMethod: string;
-    includeDetails: boolean;
-  }): Promise<
-    ServiceResponse<{
-      tamperedRecords: any[];
-      integrityViolations: any[];
-      verificationTimestamp: Date;
-    }>
-  > {
-    try {
-      const tamperedRecords: any[] = [];
-      const integrityViolations: any[] = [];
-      const verificationTimestamp = new Date();
-
-      return {
-        success: true,
-        data: {
-          tamperedRecords,
-          integrityViolations,
-          verificationTimestamp,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Create audit log backup
-   */
-  async createAuditLogBackup(params: {
-    backupId: string;
-    startDate: Date;
-    endDate: Date;
-    compressionEnabled: boolean;
-    encryptionEnabled: boolean;
-  }): Promise<
-    ServiceResponse<{
-      backupId: string;
-      recordCount: number;
-      backupSize: string;
-      backupHash: string;
-    }>
-  > {
-    try {
-      const recordCount = 10000;
-      const backupSize = '250MB';
-      const backupHash = this.generateBackupHash(params.backupId);
-
-      return {
-        success: true,
-        data: {
-          backupId: params.backupId,
-          recordCount,
-          backupSize,
-          backupHash,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Restore audit logs from backup
-   */
-  async restoreAuditLogsFromBackup(params: {
-    backupId: string;
-    targetDate: Date;
-    verifyIntegrity: boolean;
-    overwriteExisting: boolean;
-  }): Promise<
-    ServiceResponse<{
-      restoredRecords: number;
-      integrityVerified: boolean;
-      restoreTimestamp: Date;
-    }>
-  > {
-    try {
-      const restoredRecords = 5000;
-      const integrityVerified = params.verifyIntegrity;
-      const restoreTimestamp = new Date();
-
-      return {
-        success: true,
-        data: {
-          restoredRecords,
-          integrityVerified,
-          restoreTimestamp,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Validate database schema
-   */
-  async validateDatabaseSchema(): Promise<
-    ServiceResponse<{
-      schemaValid: boolean;
-      tablesExist: Record<string, boolean>;
-      indexesOptimal: boolean;
-    }>
-  > {
-    try {
-      const tablesExist = {
-        audit_logs: true,
-        security_events: true,
-        compliance_trails: true,
-        forensic_evidence: true,
-      };
-
-      return {
-        success: true,
-        data: {
-          schemaValid: true,
-          tablesExist,
-          indexesOptimal: true,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Perform database maintenance
-   */
-  async performDatabaseMaintenance(_params: {
-    operation: string;
-    retentionDays: number;
-    dryRun: boolean;
-  }): Promise<
-    ServiceResponse<{
-      recordsToDelete: number;
-      spaceToReclaim: string;
-    }>
-  > {
-    try {
-      const recordsToDelete = 1000;
-      const spaceToReclaim = '50MB';
-
-      return {
-        success: true,
-        data: {
-          recordsToDelete,
-          spaceToReclaim,
-        },
-      };
-    } catch {
-      return {
-        success: false,
-        error: 'Erro interno do servidor',
-      };
-    }
-  }
-
-  /**
-   * Get service configuration
-   */
-  getServiceConfiguration(): {
-    databaseConnection: any;
-    retentionPolicies: any;
-    securitySettings: any;
-    complianceFrameworks: string[];
-  } {
-    return {
-      databaseConnection: {
-        provider: 'supabase',
-        status: 'connected',
-        url: process.env.SUPABASE_URL || 'mock-url',
-      },
-      retentionPolicies: {
-        audit_logs: '7 years', // CFM compliance
-        security_events: '5 years',
-        compliance_trails: '10 years',
-      },
-      securitySettings: {
-        encryption: 'AES-256',
-        hashAlgorithm: 'SHA-256',
-        integrityChecks: true,
-      },
-      complianceFrameworks: ['LGPD', 'ANVISA', 'CFM'],
-    };
-  }
-
-  /**
-   * Validate activity log parameters
-   */
-  private validateActivityLog(params: ActivityLog): {
-    isValid: boolean;
-    errors: Array<{ field: string; message: string; code: string }>;
-  } {
-    const errors: Array<{ field: string; message: string; code: string }> = [];
-
-    if (!params.userId || params.userId.trim() === '') {
-      errors.push({
-        field: 'userId',
-        message: 'ID do usuário é obrigatório',
-        code: 'REQUIRED',
-      });
+  private aggregateByField(logs: AuditLogEntry[], field: keyof AuditLogEntry): Record<string, number> {
+    const aggregation: Record<string, number> = {};
+    
+    for (const log of logs) {
+      const value = log[field];
+      const key = value ? String(value) : 'unknown';
+      aggregation[key] = (aggregation[key] || 0) + 1;
     }
 
-    if (!params.action || params.action.trim() === '') {
-      errors.push({
-        field: 'action',
-        message: 'Ação é obrigatória',
-        code: 'REQUIRED',
-      });
+    return aggregation;
+  }
+
+  private generateRecommendations(logs: AuditLogEntry[], violations: any[]): string[] {
+    const recommendations = [];
+
+    // Analyze violation patterns
+    const violationTypes = violations.reduce((acc, v) => {
+      acc[v.description] = (acc[v.description] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    if (violationTypes['LGPD compliance violation detected'] > 0) {
+      recommendations.push('Review and strengthen LGPD consent validation procedures');
     }
 
-    if (!params.resourceType || params.resourceType.trim() === '') {
-      errors.push({
-        field: 'resourceType',
-        message: 'Tipo de recurso é obrigatório',
-        code: 'REQUIRED',
-      });
+    if (violationTypes['RLS policy violation - unauthorized data access'] > 0) {
+      recommendations.push('Critical: Review and tighten Row Level Security policies immediately');
     }
 
-    if (!params.resourceId || params.resourceId.trim() === '') {
-      errors.push({
-        field: 'resourceId',
-        message: 'ID do recurso é obrigatório',
-        code: 'REQUIRED',
-      });
+    if (violationTypes['Emergency access without proper justification'] > 0) {
+      recommendations.push('Implement mandatory justification fields for all emergency access');
     }
 
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
-  }
+    // Analyze access patterns
+    const emergencyAccessRate = logs.filter(l => l.complianceFlags.emergency_access).length / logs.length;
+    if (emergencyAccessRate > 0.05) { // More than 5% emergency access
+      recommendations.push('High emergency access rate detected - review emergency procedures');
+    }
 
-  /**
-   * Generate change hash for audit integrity
-   */
-  private generateChangeHash(params: ActivityLog): string {
-    const data =
-      `${params.userId}:${params.action}:${params.resourceType}:${params.resourceId}:${Date.now()}`;
-    return crypto.createHash('sha256').update(data).digest('hex');
-  }
+    // General recommendations
+    if (logs.length === 0) {
+      recommendations.push('No audit activity detected - verify audit logging is functioning correctly');
+    }
 
-  /**
-   * Generate timeline hash for forensic integrity
-   */
-  private generateTimelineHash(timeline: any[]): string {
-    const data = JSON.stringify(timeline);
-    return crypto.createHash('sha256').update(data).digest('hex');
-  }
+    if (recommendations.length === 0) {
+      recommendations.push('Audit compliance appears satisfactory - continue monitoring');
+    }
 
-  /**
-   * Generate evidence hash for forensic integrity
-   */
-  private generateEvidenceHash(evidence: string): string {
-    return crypto.createHash('sha256').update(evidence).digest('hex');
-  }
-
-  /**
-   * Generate report hash for forensic integrity
-   */
-  private generateReportHash(investigationId: string): string {
-    const data = `${investigationId}:${Date.now()}`;
-    return crypto.createHash('sha256').update(data).digest('hex');
-  }
-
-  /**
-   * Generate backup hash for integrity verification
-   */
-  private generateBackupHash(backupId: string): string {
-    const data = `${backupId}:${Date.now()}`;
-    return crypto.createHash('sha256').update(data).digest('hex');
+    return recommendations;
   }
 }
+
+// Export singleton instance
+export const comprehensiveAuditService = new ComprehensiveAuditService();

@@ -1,14 +1,11 @@
 /**
- * Patient Service - Database operations for patient management
- * Implements healthcare-specific patterns with LGPD compliance
+ * Patient Service - Updated to use API endpoints instead of direct Supabase queries
+ * Ensures LGPD compliance, proper RLS enforcement, audit trails, and authentication context
  */
 
-import { supabase } from '@/integrations/supabase/client';
-// import type { Database } from '@/integrations/supabase/types';
+import { apiClient, type ApiResponse, type PaginatedResponse } from '@/utils/api-client';
 
-// // type PatientRow = Database['public']['Tables']['patients']['Row'];
-// type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-
+// Patient data types (maintaining existing interfaces)
 export interface Patient {
   id: string;
   fullName: string;
@@ -25,6 +22,30 @@ export interface CreatePatientData {
   phone?: string;
   birthDate?: string;
   cpf?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    complement?: string;
+  };
+  healthcareInfo?: {
+    allergies?: string[];
+    medications?: string[];
+    medicalHistory?: string[];
+    emergencyContact?: {
+      name: string;
+      phone: string;
+      relationship: string;
+    };
+  };
+  lgpdConsent: {
+    dataProcessing: boolean;
+    marketing?: boolean;
+    dataSharing?: boolean;
+    consentDate?: string;
+  };
+  notes?: string;
 }
 
 export interface PatientAppointmentHistory {
@@ -36,44 +57,85 @@ export interface PatientAppointmentHistory {
   notes?: string;
 }
 
+export interface PatientListResponse {
+  patients: Patient[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface PatientSearchFilters {
+  gender?: 'male' | 'female' | 'other';
+  status?: string | string[];
+  ageRange?: {
+    min?: number;
+    max?: number;
+  };
+  dateRange?: {
+    field?: 'createdAt' | 'updatedAt' | 'birthDate';
+    start?: string;
+    end?: string;
+  };
+  hasEmail?: boolean;
+  hasPhone?: boolean;
+  city?: string;
+  state?: string;
+  medicalConditions?: string[];
+}
+
+export interface PatientSearchCriteria {
+  query?: string;
+  searchType?: 'fulltext' | 'structured' | 'fuzzy' | 'advanced';
+  filters?: PatientSearchFilters;
+  fuzzyOptions?: {
+    threshold?: number;
+    fields?: string[];
+  };
+  pagination?: {
+    page?: number;
+    limit?: number;
+  };
+  sorting?: {
+    field?: 'name' | 'createdAt' | 'updatedAt' | 'birthDate';
+    order?: 'asc' | 'desc';
+  };
+  includeInactive?: boolean;
+}
+
+/**
+ * Patient Service class with API integration
+ */
 class PatientService {
+  private readonly baseEndpoint = '/api/v2/patients';
+
   /**
    * Search patients by name or phone
    */
   async searchPatients(clinicId: string, query: string, limit = 10): Promise<Patient[]> {
     try {
-      const { data, error } = await supabase
-        .from('patients')
-        .select(`
-          id,
-          full_name,
-          email,
-          phone_primary,
-          birth_date,
-          cpf,
-          created_at
-        `)
-        .eq('clinic_id', clinicId)
-        .or(`full_name.ilike.%${query}%,phone_primary.ilike.%${query}%`)
-        .limit(limit)
-        .order('full_name');
+      const searchCriteria: PatientSearchCriteria = {
+        query,
+        searchType: 'fulltext',
+        pagination: { page: 1, limit },
+        sorting: { field: 'name', order: 'asc' },
+      };
 
-      if (error) {
-        console.error('Error searching patients:', error);
-        throw new Error(`Failed to search patients: ${error.message}`);
+      const response = await apiClient.post<{
+        patients: Patient[];
+        pagination: any;
+        searchMetadata: any;
+      }>(`${this.baseEndpoint}/search`, searchCriteria);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to search patients');
       }
 
-      return (data || []).map(patient => ({
-        id: patient.id,
-        fullName: patient.full_name,
-        email: patient.email || undefined,
-        phone: patient.phone_primary || undefined,
-        birthDate: patient.birth_date || undefined,
-        cpf: patient.cpf || undefined,
-        createdAt: patient.created_at || '',
-      }));
+      return response.data?.patients || [];
     } catch (error) {
-      console.error('Error in searchPatients:', error);
+      console.error('Error searching patients:', error);
       throw error;
     }
   }
@@ -83,90 +145,65 @@ class PatientService {
    */
   async getPatient(patientId: string): Promise<Patient | null> {
     try {
-      const { data, error } = await supabase
-        .from('patients')
-        .select(`
-          id,
-          full_name,
-          email,
-          phone_primary,
-          birth_date,
-          cpf,
-          created_at
-        `)
-        .eq('id', patientId)
-        .single();
+      const response = await apiClient.get<Patient>(`${this.baseEndpoint}/${patientId}`);
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          return null; // Patient not found
+      if (!response.success) {
+        if (response.code === 'NOT_FOUND') {
+          return null;
         }
-        console.error('Error getting patient:', error);
-        throw new Error(`Failed to get patient: ${error.message}`);
+        throw new Error(response.error || 'Failed to get patient');
       }
 
-      return {
-        id: data.id,
-        fullName: data.full_name,
-        email: data.email || undefined,
-        phone: data.phone_primary || undefined,
-        birthDate: data.birth_date || undefined,
-        cpf: data.cpf || undefined,
-        createdAt: data.created_at || '',
-      };
+      return response.data || null;
     } catch (error) {
-      console.error('Error in getPatient:', error);
+      console.error('Error getting patient:', error);
+      
+      // Handle 404 errors gracefully
+      if (error.status === 404) {
+        return null;
+      }
+      
       throw error;
     }
   }
 
   /**
-   * Generate unique medical record number
+   * List patients with pagination and filtering
    */
-  private async generateMedicalRecordNumber(clinicId: string): Promise<string> {
+  async listPatients(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    gender?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  } = {}): Promise<PatientListResponse> {
     try {
-      // Get the clinic's prefix or use a default
-      const { data: clinic } = await supabase
-        .from('clinics')
-        .select('clinic_name')
-        .eq('id', clinicId)
-        .single();
-
-      const prefix = clinic?.clinic_name?.substring(0, 3).toUpperCase() || 'NP';
-      const timestamp = Date.now().toString().slice(-6);
-      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-
-      return `${prefix}${timestamp}${random}`;
-    } catch (error) {
-      console.error('Error generating medical record number:', error);
-      // Fallback to timestamp-based number
-      const timestamp = Date.now().toString().slice(-8);
-      return `NP${timestamp}`;
-    }
-  }
-
-  /**
-   * Parse full name into given names and family name
-   */
-  private parseFullName(fullName: string): { givenNames: string[]; familyName: string } {
-    const nameParts = fullName.trim().split(' ').filter(part => part.length > 0);
-
-    if (nameParts.length === 0) {
-      throw new Error('Nome completo é obrigatório');
-    }
-
-    if (nameParts.length === 1) {
-      return {
-        givenNames: [nameParts[0]],
-        familyName: nameParts[0], // Use same name as family name if only one name provided
+      const queryParams = {
+        page: params.page || 1,
+        limit: params.limit || 20,
+        ...(params.search && { search: params.search }),
+        ...(params.status && { status: params.status }),
+        ...(params.gender && { gender: params.gender }),
+        sortBy: params.sortBy || 'name',
+        sortOrder: params.sortOrder || 'asc',
       };
+
+      const response = await apiClient.get<PatientListResponse>(
+        this.baseEndpoint,
+        queryParams
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to list patients');
+      }
+
+      return response.data || { patients: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 0 } };
+    } catch (error) {
+      console.error('Error listing patients:', error);
+      throw error;
     }
-
-    // Last name is family name, rest are given names
-    const familyName = nameParts[nameParts.length - 1];
-    const givenNames = nameParts.slice(0, -1);
-
-    return { givenNames, familyName };
   }
 
   /**
@@ -174,68 +211,57 @@ class PatientService {
    */
   async createPatient(data: CreatePatientData, clinicId: string, userId: string): Promise<Patient> {
     try {
-      // Parse full name into required format
-      const { givenNames, familyName } = this.parseFullName(data.fullName);
+      const response = await apiClient.post<Patient>(this.baseEndpoint, data);
 
-      // Generate medical record number
-      const medicalRecordNumber = await this.generateMedicalRecordNumber(clinicId);
-
-      // Prepare patient data according to database schema
-      const patientData: any = {
-        clinic_id: clinicId,
-        medical_record_number: medicalRecordNumber,
-        given_names: givenNames,
-        family_name: familyName,
-        full_name: data.fullName.trim(),
-        email: data.email || null,
-        phone_primary: data.phone || null,
-        birth_date: data.birthDate || null,
-        cpf: data.cpf || null,
-        created_by: userId,
-        lgpd_consent_given: true, // Assume consent given during creation
-        data_consent_status: 'granted',
-        is_active: true,
-        patient_status: 'active',
-        registration_source: 'manual',
-      };
-
-      console.log('🔧 Creating patient with data:', patientData);
-
-      const { data: patient, error } = await supabase
-        .from('patients')
-        .insert(patientData)
-        .select(`
-          id,
-          full_name,
-          email,
-          phone_primary,
-          birth_date,
-          cpf,
-          created_at
-        `)
-        .single();
-
-      if (error) {
-        console.error('❌ Error creating patient:', error);
-        throw new Error(`Failed to create patient: ${error.message}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to create patient');
       }
 
-      console.log('✅ Patient created successfully:', patient);
+      if (!response.data) {
+        throw new Error('No patient data returned from API');
+      }
 
-      // Log audit trail
-      await this.logPatientAction('create', patient.id, userId, data);
-
-      return {
-        id: patient.id,
-        fullName: patient.full_name,
-        email: patient.email || undefined,
-        phone: patient.phone_primary || undefined,
-        birthDate: patient.birth_date || undefined,
-        cpf: patient.cpf || undefined,
-        createdAt: patient.created_at || '',
-      };
+      return response.data;
     } catch (error) {
-      console.error('Error in createPatient:', error);
+      console.error('Error creating patient:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update patient
+   */
+  async updatePatient(patientId: string, data: Partial<CreatePatientData>): Promise<Patient> {
+    try {
+      const response = await apiClient.put<Patient>(`${this.baseEndpoint}/${patientId}`, data);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update patient');
+      }
+
+      if (!response.data) {
+        throw new Error('No patient data returned from API');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete patient
+   */
+  async deletePatient(patientId: string): Promise<void> {
+    try {
+      const response = await apiClient.delete(`${this.baseEndpoint}/${patientId}`);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete patient');
+      }
+    } catch (error) {
+      console.error('Error deleting patient:', error);
       throw error;
     }
   }
@@ -248,67 +274,95 @@ class PatientService {
     limit = 10,
   ): Promise<PatientAppointmentHistory[]> {
     try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select(`
-          id,
-          start_time,
-          status,
-          notes,
-          service_types (
-            name
-          ),
-          professionals (
-            full_name
-          )
-        `)
-        .eq('patient_id', patientId)
-        .order('start_time', { ascending: false })
-        .limit(limit);
+      const response = await apiClient.get<PatientAppointmentHistory[]>(
+        `${this.baseEndpoint}/${patientId}/history`,
+        { limit }
+      );
 
-      if (error) {
-        console.error('Error getting patient appointment history:', error);
-        throw new Error(`Failed to get patient appointment history: ${error.message}`);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to get patient appointment history');
       }
 
-      return (data || []).map(appointment => ({
-        id: appointment.id,
-        date: appointment.start_time || new Date().toISOString(),
-        serviceName: appointment.service_types?.name || 'Serviço não especificado',
-        professionalName: appointment.professionals?.full_name || 'Profissional não especificado',
-        status: appointment.status || 'scheduled',
-        notes: appointment.notes || undefined,
-      }));
+      return response.data || [];
     } catch (error) {
-      console.error('Error in getPatientAppointmentHistory:', error);
+      console.error('Error getting patient appointment history:', error);
       throw error;
     }
   }
 
   /**
-   * Log patient actions for audit trail
+   * Advanced patient search with complex criteria
    */
-  private async logPatientAction(
-    action: string,
-    patientId: string,
-    userId: string,
-    metadata?: any,
-  ): Promise<void> {
+  async advancedSearch(criteria: PatientSearchCriteria): Promise<{
+    patients: Patient[];
+    pagination: any;
+    searchMetadata: any;
+  }> {
     try {
-      await supabase.from('audit_logs').insert({
-        // table_name removed: not part of current type
-        record_id: patientId,
-        action: action.toUpperCase(),
-        user_id: userId,
-        new_values: metadata || {},
-        phi_accessed: true, // Patient data is PHI
-        created_at: new Date().toISOString(),
-      } as any);
+      const response = await apiClient.post<{
+        patients: Patient[];
+        pagination: any;
+        searchMetadata: any;
+      }>(`${this.baseEndpoint}/search`, criteria);
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to perform advanced search');
+      }
+
+      return response.data || { patients: [], pagination: {}, searchMetadata: {} };
     } catch (error) {
-      console.error('Error logging patient action:', error);
-      // Don't throw error for audit logging failures
+      console.error('Error performing advanced search:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk operations on patients
+   */
+  async bulkAction(action: string, patientIds: string[], data?: any): Promise<any> {
+    try {
+      const response = await apiClient.post(`${this.baseEndpoint}/bulk-actions`, {
+        action,
+        patientIds,
+        data,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to perform bulk action');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error performing bulk action:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Export patients data
+   */
+  async exportPatients(format: 'csv' | 'excel' | 'pdf', filters?: any): Promise<Blob> {
+    try {
+      // Note: This would typically return a blob or file download URL
+      // Implementation depends on the actual API response format
+      const response = await apiClient.post(`${this.baseEndpoint}/export`, {
+        format,
+        filters,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to export patients');
+      }
+
+      // Return blob or handle download URL as appropriate
+      return new Blob([JSON.stringify(response.data)], { type: 'application/json' });
+    } catch (error) {
+      console.error('Error exporting patients:', error);
+      throw error;
     }
   }
 }
 
+// Export singleton instance
 export const patientService = new PatientService();
+export { PatientService };

@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 // Hook genérico para queries do Supabase
+import { patientService } from '@/services/patients.service';
+
 export function useSupabaseQuery<T = any>(
   queryKey: string[],
   queryFn: () => Promise<{ data: T | null; error: any }>,
@@ -65,21 +67,22 @@ export function useSupabaseRealTimeQuery<T = any>(
 
 // Hook para queries de pacientes
 export function usePatients(options = {}) {
-  return useSupabaseQuery(
-    ['patients'],
-    async () => {
-      const { data, error } = await supabase
-        .from('patients')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      return { data, error };
+  return useQuery({
+    queryKey: ['patients'],
+    queryFn: async () => {
+      const result = await patientService.listPatients({
+        page: 1,
+        limit: 100, // Get more patients by default
+        sortBy: 'name',
+        sortOrder: 'asc',
+      });
+      
+      return result.patients;
     },
-    {
-      staleTime: 5 * 60 * 1000,
-      ...options,
-    },
-  );
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    ...options,
+  });
 }
 
 // Hook para queries de agendamentos
@@ -249,8 +252,33 @@ export function useSupabaseMutation(
 
 // Hook específico para mutations de pacientes
 export function usePatientMutation(options = {}) {
-  return useSupabaseMutation('patients', {
-    invalidateQueries: [['patients'], ['stats']],
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: { action: 'create' | 'update' | 'delete'; patientData?: any; patientId?: string }) => {
+      switch (data.action) {
+        case 'create':
+          if (!data.patientData) throw new Error('Patient data required for creation');
+          return await patientService.createPatient(data.patientData, 'current-clinic-id', 'current-user-id');
+        
+        case 'update':
+          if (!data.patientId || !data.patientData) throw new Error('Patient ID and data required for update');
+          return await patientService.updatePatient(data.patientId, data.patientData);
+        
+        case 'delete':
+          if (!data.patientId) throw new Error('Patient ID required for deletion');
+          await patientService.deletePatient(data.patientId);
+          return { success: true };
+        
+        default:
+          throw new Error(`Unknown action: ${data.action}`);
+      }
+    },
+    onSuccess: () => {
+      // Invalidate and refetch patient queries
+      queryClient.invalidateQueries({ queryKey: ['patients'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+    },
     ...options,
   });
 }

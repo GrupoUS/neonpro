@@ -92,16 +92,16 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export delete patient route handler', () => {
-    expect(() => {
-      const module = require('../delete');
+  it('should export delete patient route handler', async () => {
+    expect(async () => {
+      const module = await import('../delete');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful Patient Deletion', () => {
     it('should perform soft delete by default (LGPD compliance)', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -131,7 +131,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -156,7 +156,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should send deletion confirmation notification', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -184,7 +184,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should include deletion confirmation headers', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -205,7 +205,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
   describe('LGPD Compliance and Data Deletion', () => {
     it('should validate LGPD deletion request', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -245,7 +245,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -279,7 +279,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -310,7 +310,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -332,7 +332,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
   describe('Audit Trail and Compliance Logging', () => {
     it('should log patient deletion activity', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -374,7 +374,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -399,7 +399,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should create deletion audit trail', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -431,7 +431,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         code: 'PATIENT_NOT_FOUND',
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -451,7 +451,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should handle authentication errors', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -476,7 +476,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         code: 'INSUFFICIENT_PERMISSIONS',
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -496,7 +496,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should handle invalid patient ID format', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -522,7 +522,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it('should handle service errors gracefully', async () => {
       mockPatientService.deletePatient.mockRejectedValue(new Error('Database connection failed'));
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -543,7 +543,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -561,7 +561,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should validate healthcare professional context for deletion', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -585,7 +585,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should handle ANVISA compliance for medical device data', async () => {
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -616,7 +616,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',
@@ -647,7 +647,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       });
 
-      const { default: deleteRoute } = require('../delete');
+      const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
         method: 'DELETE',

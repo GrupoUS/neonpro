@@ -3,9 +3,42 @@
  * Integrates with Sentry and includes automatic healthcare data redaction
  */
 
-import { Context, Next, HTTPException } from 'hono';
+import { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { captureHealthcareApiError } from '../lib/sentry';
-import { SENSITIVE_DATA_PATTERNS, SENSITIVE_FIELD_NAMES } from '@neonpro/shared/telemetry/types';
+
+// Sensitive data patterns for redaction
+const SENSITIVE_DATA_PATTERNS = [
+  // Brazilian documents
+  /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g,           // CPF
+  /\b\d{2}\.\d{3}\.\d{3}-\d{1}\b/g,           // RG
+  /\b\d{3}\.\d{2}\.\d{3}-\d{2}\b/g,           // CNPJ
+  
+  // Healthcare identifiers
+  /\b\d{15}\b/g,                               // SUS card
+  /\bCRM[A-Z]{2}\s?\d{4,6}\b/gi,              // CRM (medical license)
+  /\bCRO[A-Z]{2}\s?\d{4,6}\b/gi,              // CRO (dental license)
+  
+  // Contact information
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email
+  /\b\(?(\d{2})\)?\s?9?\d{4}-?\d{4}\b/g,      // Brazilian phone
+  
+  // Medical codes
+  /\b[A-Z]\d{2}\.?\d{1,2}\b/g,                // CID-10
+  /\b\d{8}\.\d{2}\.\d{2}\b/g,                 // TUSS procedures
+];
+
+// Field names that contain sensitive data
+const SENSITIVE_FIELD_NAMES = [
+  'cpf', 'rg', 'cnpj', 'email', 'phone', 'telefone', 'celular',
+  'endereco', 'address', 'cep', 'birthdate', 'nascimento',
+  'password', 'senha', 'token', 'secret', 'chave',
+  'medical_history', 'historico_medico', 'diagnosis', 'diagnostico',
+  'prescription', 'receita', 'treatment', 'tratamento',
+  'patient_name', 'nome_paciente', 'patient_data', 'dados_paciente',
+  'health_record', 'prontuario', 'sus_card', 'cartao_sus',
+  'crm', 'cro', 'professional_id', 'id_profissional',
+];
 
 // Error classification for healthcare operations
 export enum ErrorCategory {
@@ -293,19 +326,14 @@ export function errorTrackingMiddleware() {
       // Report to Sentry with healthcare data redaction
       try {
         await captureHealthcareApiError(err, {
-          request: {
-            method: context.method,
-            url: context.url,
-            headers: sanitizeErrorData(c.req.header()),
-          },
-          user: {
-            id: context.userId,
-            clinic_id: context.clinicId,
-          },
-          extra: sanitizeErrorData({
-            context,
-            requestId: context.requestId,
-          }),
+          route: c.req.path,
+          method: context.method,
+          status: statusCode,
+          requestId: context.requestId,
+          hasPatientData: context.isPatientDataRoute,
+          durationMs: undefined,
+          feature: undefined,
+          clinicId: context.clinicId,
         });
       } catch (sentryError) {
         console.error('Failed to report error to Sentry:', sentryError);
@@ -314,7 +342,7 @@ export function errorTrackingMiddleware() {
       // Create and return error response
       const errorResponse = createErrorResponse(err, context);
       
-      return c.json(errorResponse, statusCode);
+      return c.json(errorResponse, statusCode as any);
     }
   };
 }
@@ -323,7 +351,6 @@ export function errorTrackingMiddleware() {
 export function globalErrorHandler() {
   return (error: Error, c: Context) => {
     const context = extractErrorContext(c);
-    const statusCode = getErrorStatusCode(error);
     
     // Log the uncaught error
     console.error('Uncaught error in API:', error);
@@ -333,14 +360,14 @@ export function globalErrorHandler() {
     
     // Report to Sentry
     captureHealthcareApiError(error, {
-      request: {
-        method: context.method,
-        url: context.url,
-      },
-      extra: sanitizeErrorData({
-        context,
-        type: 'uncaught_error',
-      }),
+      route: c.req.path,
+      method: context.method,
+      status: 500,
+      requestId: context.requestId,
+      hasPatientData: context.isPatientDataRoute,
+      durationMs: undefined,
+      feature: undefined,
+      clinicId: context.clinicId,
     }).catch(sentryError => {
       console.error('Failed to report uncaught error to Sentry:', sentryError);
     });

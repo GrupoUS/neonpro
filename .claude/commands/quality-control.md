@@ -136,6 +136,46 @@ orchestration_setup:
   5. workflow_selection: "Choose orchestration pattern (standard/security-critical/microservices)"
 ```
 
+### @tools Orchestration Preflight (TDD-Orchestrated)
+
+```yaml
+preflight_tasks:
+  build_shared: "pnpm --filter @neonpro/tools-shared build"
+  build_orchestrator: "pnpm --filter @neonpro/tools-orchestration build"
+  rationale:
+    - "Ensures dist artifacts exist for @neonpro/tools-shared before orchestration"
+    - "Prevents ERR_MODULE_NOT_FOUND when executing @neonpro/tools-orchestration"
+    - "Automatically invoked by orchestration scripts, but run manually after clean installs"
+
+agent_assignment:
+  audit_consolidated:
+    primary: architect-review
+    support: [code-reviewer]
+  unified_testing_toolkit:
+    primary: test
+    support: [architect-review, code-reviewer, security-auditor]
+  backend_tools:
+    primary: code-reviewer
+    support: [architect-review, security-auditor, compliance-validator]
+  database_tools:
+    primary: security-auditor
+    support: [architect-review, compliance-validator]
+  frontend_tools:
+    primary: test
+    support: [code-reviewer, architect-review]
+  quality_tools:
+    primary: tdd-orchestrator
+    support: [test, code-reviewer]
+  orchestration_framework:
+    primary: tdd-orchestrator
+    support: [architect-review, security-auditor, test]
+
+notes:
+  - "Follow .claude/agents/code-review/tdd-orchestrator.md for phase-by-phase agent choreography"
+  - "Document any failing workflows (e.g., @neonpro/tools-backend-tests type-check) in Archon with remediation plan"
+  - "Re-run preflight tasks whenever pnpm store is pruned or packages are updated"
+```
+
 ### Mandatory MCP Integration & Tool Sequences
 
 ```yaml

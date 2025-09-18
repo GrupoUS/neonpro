@@ -136,12 +136,16 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
 // Helper functions for LGPD compliance
 async function getCurrentUserId(c: Context): Promise<string | null> {
   try {
-    // Get user ID from auth context
-    const authHeader = c.req.header('Authorization');
-    if (!authHeader) return null;
+    // Get user ID from auth context or JWT token
+    const userId = c.get('userId') || c.req.header('x-user-id');
+    if (userId) return userId;
 
-    // This would integrate with your auth system
-    // For now, return null to avoid breaking existing code
+    // Extract from Authorization header (JWT)
+    const authHeader = c.req.header('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+
+    // For now, we'll rely on the auth middleware to set the userId
+    // In a full implementation, you would decode and validate the JWT here
     return null;
   } catch {
     return null;
@@ -149,19 +153,89 @@ async function getCurrentUserId(c: Context): Promise<string | null> {
 }
 
 async function validateUserConsent(
-  _userId: string,
-  _purpose: string,
-  _dataCategories: string[],
-  _minimumLevel: 'basic' | 'explicit' | 'granular',
+  userId: string,
+  purpose: string,
+  dataCategories: string[],
+  minimumLevel: 'basic' | 'explicit' | 'granular',
 ): Promise<boolean> {
   try {
-    // This would check against your consent database
-    // For now, return true to avoid breaking existing functionality
-    // TODO: Implement proper consent validation against database
-    return true;
-  } catch {
+    // Import Supabase client for consent validation
+    const { createServerClient } = await import('../clients/supabase.js');
+    const supabase = createServerClient();
+
+    // Get the clinic context for multi-tenant validation
+    const clinicId = getCurrentClinicId();
+
+    // Query active consent records for the user
+    const { data: consentRecords, error } = await supabase
+      .from('consent_records')
+      .select(`
+        id,
+        status,
+        consent_type,
+        purpose,
+        data_categories,
+        processing_purposes,
+        legal_basis,
+        given_at,
+        expires_at,
+        withdrawn_at
+      `)
+      .eq('patient_id', userId)
+      .eq('clinic_id', clinicId)
+      .eq('status', 'active')
+      .eq('purpose', purpose)
+      .overlaps('data_categories', dataCategories);
+
+    if (error) {
+      console.error('Error validating consent:', error);
+      return false;
+    }
+
+    if (!consentRecords || consentRecords.length === 0) {
+      return false;
+    }
+
+    // Validate consent level and expiration
+    for (const consent of consentRecords) {
+      // Check if consent has expired
+      if (consent.expires_at && new Date(consent.expires_at) < new Date()) {
+        continue;
+      }
+
+      // Check if consent was withdrawn
+      if (consent.withdrawn_at) {
+        continue;
+      }
+
+      // Validate consent level meets minimum requirements
+      const consentLevelHierarchy = {
+        'basic': 1,
+        'explicit': 2,
+        'granular': 3
+      };
+
+      const currentLevel = consentLevelHierarchy[consent.consent_type as keyof typeof consentLevelHierarchy] || 1;
+      const requiredLevel = consentLevelHierarchy[minimumLevel];
+
+      if (currentLevel >= requiredLevel) {
+        // Valid consent found
+        return true;
+      }
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Error in consent validation:', error);
     return false;
   }
+}
+
+function getCurrentClinicId(): string {
+  // This should be extracted from the request context
+  // For now, we'll use a placeholder that needs to be implemented
+  // based on your auth system
+  return process.env.DEFAULT_CLINIC_ID || 'clinic-default';
 }
 
 function getClientIP(c: Context): string {
@@ -176,9 +250,44 @@ function generateRequestId(): string {
 }
 
 async function logAuditEvent(eventType: string, data: any): Promise<void> {
-  // TODO: Implement structured logging to audit database
-  // This should log to a secure audit trail that cannot be tampered with
-  console.log(`[AUDIT EVENT] ${eventType}`, data);
+  try {
+    // Import Supabase client for audit logging
+    const { createServerClient } = await import('../clients/supabase.js');
+    const supabase = createServerClient();
+
+    // Prepare audit log entry
+    const auditEntry = {
+      event_type: eventType,
+      event_data: data,
+      timestamp: new Date().toISOString(),
+      user_id: data.userId || null,
+      clinic_id: data.clinicId || getCurrentClinicId(),
+      ip_address: data.ipAddress || 'unknown',
+      user_agent: data.userAgent || 'unknown',
+      session_id: data.sessionId || null,
+      request_id: data.requestId || generateRequestId(),
+      compliance_flags: {
+        lgpd_compliant: true,
+        purpose: data.purpose || 'system_operation',
+        data_categories: data.dataCategories || []
+      }
+    };
+
+    // Insert into audit_logs table (this table should be created)
+    const { error } = await supabase
+      .from('audit_logs')
+      .insert(auditEntry);
+
+    if (error) {
+      console.error('Failed to log audit event to database:', error);
+      // Fallback to console logging if database fails
+      console.log(`[AUDIT EVENT FALLBACK] ${eventType}`, data);
+    }
+  } catch (error) {
+    console.error('Error in audit logging:', error);
+    // Fallback to console logging
+    console.log(`[AUDIT EVENT FALLBACK] ${eventType}`, data);
+  }
 }
 
 // Pre-configured middleware for common LGPD-compliant operations

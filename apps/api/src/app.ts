@@ -13,11 +13,15 @@ import patientsRouter from './routes/patients';
 import { errorTracker, initializeErrorTracking } from './lib/error-tracking';
 import { initializeLogger, logger } from './lib/logger';
 import { initializeSentry } from './lib/sentry';
+// import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
+import { errorTrackingMiddleware as healthcareErrorTrackingMiddleware, globalErrorHandler } from './middleware/error-tracking';
+import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
+import { rateLimitMiddleware } from './middleware/rate-limiting';
 
 // Extract middleware functions from security package
 // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
-// Initialize error tracking, logger, and Sentry
+// Initialize monitoring and telemetry
 Promise.all([
   initializeErrorTracking({
     enabled: true,
@@ -44,14 +48,16 @@ Promise.all([
     sanitizeContext: true,
   }),
   initializeSentry(),
+  // Initialize OpenTelemetry if available
+  // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
 ]).then(() => {
-  logger.info('Application monitoring initialized successfully');
+  logger.info('Application monitoring and telemetry initialized successfully');
 }).catch(error => {
   console.error('Failed to initialize monitoring:', error);
 });
 
-// Create Hono app
-const app = new Hono();
+// Create healthcare-compliant OpenAPI app
+const app = createHealthcareOpenAPIApp();
 
 // Apply security middleware stack
 // app.use('*', ...getSecurityMiddlewareStack());
@@ -74,6 +80,15 @@ app.use(
 
 // Global error handler with enhanced error tracking
 app.use('*', errorHandler);
+
+// Healthcare telemetry middleware for OpenTelemetry (temporarily disabled)
+// app.use('*', healthcareTelemetryMiddleware());
+
+// Healthcare-compliant error tracking middleware
+app.use('*', healthcareErrorTrackingMiddleware());
+
+// Healthcare-specific rate limiting
+app.use('*', rateLimitMiddleware());
 
 // Enhanced error handling middleware
 app.use('*', async (c, next) => {
@@ -377,41 +392,10 @@ app.notFound(c => {
   }, 404);
 });
 
+// Setup OpenAPI documentation
+setupHealthcareSwaggerUI(app);
+
 // Global error handler
-app.onError((err, c) => {
-  const requestId = c.get('requestId');
-
-  // Capture error with full context
-  const errorContext = errorTracker.extractContextFromHono(c);
-  errorTracker.captureException(err, errorContext, {
-    requestId,
-    unhandled: true,
-  });
-
-  // Log error
-  logger.error('Unhandled error occurred', {
-    requestId,
-    method: c.req.method,
-    endpoint: c.req.path,
-  }, { errorMessage: err.message, stack: err.stack });
-
-  // Return appropriate error response
-  if (process.env.NODE_ENV === 'production') {
-    return c.json({
-      error: 'Internal Server Error',
-      message: 'An unexpected error occurred',
-      requestId,
-      timestamp: new Date().toISOString(),
-    }, 500);
-  } else {
-    return c.json({
-      error: 'Internal Server Error',
-      message: err.message,
-      stack: err.stack,
-      requestId,
-      timestamp: new Date().toISOString(),
-    }, 500);
-  }
-});
+app.onError(globalErrorHandler());
 
 export default app;

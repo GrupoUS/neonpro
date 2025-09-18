@@ -7,8 +7,8 @@
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
-import { AIChatService } from '../../services/ai-chat-service.js';
-import { AuditService } from '../../services/audit-service.js';
+import { AIChatService } from '../../services/ai-chat-service';
+import { ComprehensiveAuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
 import { PatientService } from '../../services/patient-service.js';
 
@@ -102,7 +102,7 @@ app.post(
       // Validate LGPD data access for AI chat
       const currentServices = getServices();
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        userId: user.id,
+        userId: _user.id,
         dataType: 'ai_chat',
         purpose: 'healthcare_assistance',
         legalBasis: 'legitimate_interest',
@@ -122,7 +122,7 @@ app.post(
       if (requestData.patientId && requestData.context?.includePatientHistory) {
         const patientData = await currentServices.patientService.getPatientContext({
           patientId: requestData.patientId,
-          userId: user.id,
+          userId: _user.id,
           includeHistory: true,
         });
 
@@ -133,7 +133,7 @@ app.post(
 
       // Prepare AI chat request
       const _aiChatRequest = {
-        userId: user.id,
+        userId: _user.id,
         message: requestData.message,
         conversationId: requestData.conversationId,
         modelPreference: requestData.modelPreference,
@@ -146,15 +146,34 @@ app.post(
         },
       };
 
-      // Send message to AI service - use generateResponse method
-      const aiResponse = await currentServices.aiChatService.generateResponse({
-        provider: requestData.modelPreference || 'openai',
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: requestData.message }],
-        patientId: requestData.patientId,
-        temperature: 0.7,
-        maxTokens: 1000,
-      });
+      // Send message to AI service - choose method based on streaming flag
+      let aiResponse;
+      if (requestData.streaming) {
+        // Use streamMessage for streaming requests
+        aiResponse = await currentServices.aiChatService.streamMessage({
+          userId: _user.id,
+          message: requestData.message,
+          conversationId: requestData.conversationId,
+          modelPreference: requestData.modelPreference,
+          streaming: true,
+          context: {
+            ...requestData.context,
+            patientContext,
+            healthcareProfessional,
+            healthcareContext,
+          },
+        });
+      } else {
+        // Use generateResponse for regular requests
+        aiResponse = await currentServices.aiChatService.generateResponse({
+          provider: requestData.modelPreference || 'openai',
+          model: 'gpt-4o',
+          messages: [{ role: 'user', content: requestData.message }],
+          patientId: requestData.patientId,
+          temperature: 0.7,
+          maxTokens: 1000,
+        });
+      }
 
       if (!aiResponse.success) {
         return c.json({
@@ -171,20 +190,33 @@ app.post(
 
       // Log activity for audit trail
       const processingTime = Date.now() - startTime;
+      
+      // Handle different response structures for streaming vs regular
+      const auditDetails = requestData.streaming 
+        ? {
+            messageLength: requestData.message.length,
+            streamId: responseData.streamId,
+            healthcareContext: requestData.context?.healthcareContext || true,
+            streaming: true,
+          }
+        : {
+            messageLength: requestData.message.length,
+            model: responseData.model,
+            confidence: responseData.confidence,
+            tokens: responseData.tokensUsed,
+            processingTime: responseData.responseTime,
+            healthcareContext: requestData.context?.healthcareContext || true,
+            streaming: false,
+          };
+
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        userId: _user.id,
         action: 'ai_chat_message',
         resourceType: 'ai_conversation',
-        resourceId: 'new_conversation',
-        details: {
-          messageLength: requestData.message.length,
-          model: responseData.model,
-          confidence: responseData.confidence,
-          tokens: responseData.tokensUsed,
-          processingTime: responseData.responseTime,
-          healthcareContext: requestData.context?.healthcareContext || true,
-          streaming: requestData.streaming,
-        },
+        resourceId: requestData.streaming 
+          ? responseData.streamId 
+          : (requestData.conversationId || responseData.conversationId || 'new_conversation'),
+        details: auditDetails,
         ipAddress,
         userAgent,
         complianceContext: 'LGPD',
@@ -200,12 +232,25 @@ app.post(
         'X-Medical-AI-Logged': 'true',
       };
 
-      // Add AI-specific headers
-      responseHeaders['X-AI-Model'] = responseData.model;
-      responseHeaders['X-AI-Confidence'] = responseData.confidence.toString();
-      responseHeaders['X-AI-Tokens'] = responseData.tokensUsed.toString();
-      responseHeaders['X-AI-Processing-Time'] = `${responseData.responseTime}ms`;
-      responseHeaders['X-AI-Provider'] = responseData.provider;
+      // Add AI-specific headers for non-streaming responses
+      if (!requestData.streaming) {
+        responseHeaders['X-AI-Model'] = responseData.model;
+        responseHeaders['X-AI-Confidence'] = responseData.confidence.toString();
+        responseHeaders['X-AI-Tokens'] = responseData.tokensUsed.toString();
+        responseHeaders['X-AI-Processing-Time'] = `${responseData.responseTime}ms`;
+        responseHeaders['X-AI-Provider'] = responseData.provider;
+
+        // Add fallback headers if applicable
+        if (responseData.metadata?.fallbackUsed) {
+          responseHeaders['X-AI-Fallback-Used'] = 'true';
+          if (responseData.metadata.originalModel) {
+            responseHeaders['X-AI-Original-Model'] = responseData.metadata.originalModel;
+          }
+          if (responseData.metadata.fallbackReason) {
+            responseHeaders['X-AI-Fallback-Reason'] = responseData.metadata.fallbackReason;
+          }
+        }
+      }
 
       // Add streaming headers if applicable
       if (requestData.streaming) {
@@ -232,7 +277,7 @@ app.post(
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        userId: _user.id,
         action: 'ai_chat_error',
         resourceType: 'ai_conversation',
         resourceId: 'error',

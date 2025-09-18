@@ -23,7 +23,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
-    const { setServices } = require('../models');
+    const { setServices } = await import('../models');
     setServices({
       aiChatService: mockAIChatService,
       auditService: mockAuditService,
@@ -233,14 +233,14 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
   it('should export AI models route handler', () => {
     expect(() => {
-      const module = require('../models');
+      const module = await import('../models');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
   describe('Successful AI Models Listing', () => {
     it('should list all available AI models', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -263,7 +263,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should filter models by provider', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?provider=openai', {
@@ -286,7 +286,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should filter models by capability', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?capability=image_analysis', {
@@ -309,7 +309,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should filter models by status', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?status=available', {
@@ -332,7 +332,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should include detailed model information', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeDetails=true', {
@@ -355,7 +355,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should include model health information', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeHealth=true', {
@@ -377,7 +377,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should include usage metrics', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeMetrics=true', {
@@ -399,7 +399,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should include model performance headers', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -443,7 +443,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         },
       });
 
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?useCase=medical_image_analysis', {
@@ -463,7 +463,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should provide fallback model suggestions', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeFallbacks=true', {
@@ -488,7 +488,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -512,7 +512,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         error: 'Erro interno do serviço de modelos de IA',
       });
 
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -532,7 +532,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should handle invalid filter parameters', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?provider=invalid_provider', {
@@ -556,7 +556,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         new Error('Model service unavailable'),
       );
 
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -578,7 +578,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
   describe('Audit and Logging', () => {
     it('should log model access for audit trail', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       await modelsRoute.request(
         new Request('http://localhost/?includeMetrics=true', {
@@ -613,7 +613,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -631,7 +631,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should filter models for healthcare context', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?healthcareContext=true', {
@@ -655,7 +655,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
   describe('Performance and Caching', () => {
     it('should include performance headers', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
@@ -674,7 +674,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
 
     it('should handle model status monitoring', async () => {
-      const { default: modelsRoute } = require('../models');
+      const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?monitorHealth=true', {

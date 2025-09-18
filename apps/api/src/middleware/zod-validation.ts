@@ -5,7 +5,6 @@
 
 import { Context, Next } from 'hono';
 import { z, ZodError, ZodSchema } from 'zod';
-import { HealthcareSchemas } from '../lib/openapi-generator';
 import { createHealthcareError, ErrorCategory, ErrorSeverity } from './error-tracking';
 
 // Validation target types
@@ -428,9 +427,3 @@ export function validateMedicalRecord() {
 export function getValidatedData<T = any>(c: Context, target: ValidationTarget): T {
   return c.get(`validated_${target}`) as T;
 }
-
-export {
-  HealthcareValidationRules,
-  CommonHealthcareSchemas,
-  sanitizeHealthcareData,
-};

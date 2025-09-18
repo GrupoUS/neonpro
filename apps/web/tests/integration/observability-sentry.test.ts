@@ -1,27 +1,30 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockScope = {
-  setTag: vi.fn(),
-  setContext: vi.fn(),
-  setLevel: vi.fn(),
-  addEventProcessor: vi.fn(),
-};
+const { mockScope, mockTransaction, mockSentry } = vi.hoisted(() => {
+  const mockScope = {
+    setTag: vi.fn(),
+    setContext: vi.fn(),
+    setLevel: vi.fn(),
+    addEventProcessor: vi.fn(),
+  };
 
-const mockTransaction = {
-  setTag: vi.fn(),
-  setContext: vi.fn(),
-  finish: vi.fn(),
-};
+  const mockTransaction = {
+    setTag: vi.fn(),
+    setContext: vi.fn(),
+    finish: vi.fn(),
+  };
 
-const mockSentry = {
-  init: vi.fn(),
-  configureScope: vi.fn((cb: any) => cb(mockScope)),
-  withScope: vi.fn((cb: any) => cb(mockScope)),
-  captureException: vi.fn(),
-  captureMessage: vi.fn(),
-  startTransaction: vi.fn(() => mockTransaction),
-  reactRouterV6Instrumentation: vi.fn(() => vi.fn()),
-};
+  const mockSentry = {
+    init: vi.fn(),
+    configureScope: vi.fn((cb: any) => cb(mockScope)),
+    withScope: vi.fn((cb: any) => cb(mockScope)),
+    captureException: vi.fn(),
+    captureMessage: vi.fn(),
+    startTransaction: vi.fn(() => mockTransaction),
+  };
+
+  return { mockScope, mockTransaction, mockSentry };
+});
 
 vi.mock('@sentry/react', () => mockSentry);
 vi.mock('@sentry/tracing', () => ({
@@ -33,7 +36,7 @@ import {
   initializeHealthcareErrorTracking,
   trackHealthcareError,
   trackHealthcarePerformance,
-} from '../../src/lib/observability/sentry';
+} from '../../src/lib/sentry';
 
 describe('healthcare Sentry integration', () => {
   beforeEach(() => {
@@ -41,16 +44,18 @@ describe('healthcare Sentry integration', () => {
     process.env.SENTRY_DSN = 'https://examplePublicKey@sentry.io/123';
     process.env.NODE_ENV = 'test';
     process.env.VERCEL_GIT_COMMIT_SHA = 'test-sha';
+    process.env.VITE_ENABLE_SENTRY = 'true';
   });
 
   afterEach(() => {
     delete process.env.SENTRY_DSN;
     delete process.env.NODE_ENV;
     delete process.env.VERCEL_GIT_COMMIT_SHA;
+    delete process.env.VITE_ENABLE_SENTRY;
   });
 
   it('initializes Sentry with LGPD-compliant configuration', () => {
-    initializeHealthcareErrorTracking();
+    initializeHealthcareErrorTracking({ environment: 'test' });
 
     expect(mockSentry.init).toHaveBeenCalledTimes(1);
     const config = mockSentry.init.mock.calls[0][0];
@@ -66,12 +71,12 @@ describe('healthcare Sentry integration', () => {
     const error = new Error('Patient João reported downtime');
 
     trackHealthcareError(error, {
-      medical_context: 'consultation',
-      security_level: 'restricted',
-      patient_id: '123',
-      workflow_step: 'triage',
-      compliance_requirements: ['lgpd'],
-      user_role: 'doctor',
+      medicalContext: 'consultation',
+      securityLevel: 'restricted',
+      patientId: '123',
+      workflowStep: 'triage',
+      complianceRequirements: ['lgpd'],
+      userRole: 'doctor',
     });
 
     expect(mockSentry.withScope).toHaveBeenCalledTimes(1);
@@ -89,8 +94,8 @@ describe('healthcare Sentry integration', () => {
 
     await expect(
       trackHealthcarePerformance('ai-analysis', operation, {
-        medical_context: 'ai',
-        security_level: 'restricted',
+        medicalContext: 'ai',
+        securityLevel: 'restricted',
       })
     ).rejects.toThrow('Timeout contacting AI model');
 

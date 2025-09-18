@@ -2,9 +2,10 @@
  * POST /api/v2/patients endpoint (T044)
  * Create new patient with comprehensive validation
  * Integration with PatientService, AuditService, NotificationService
+ * OpenAPI documented with healthcare compliance
  */
 
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi';
 import { z } from 'zod';
 import {
   validateBrazilianPhone as validatePhone,
@@ -13,12 +14,13 @@ import {
 } from '@neonpro/shared/validators/brazilian';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { AuditService } from '../../services/audit-service';
+import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { NotificationService } from '../../services/notification-service';
 import { PatientService } from '../../services/patient-service';
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 
-const app = new Hono();
+const app = new OpenAPIHono();
 
 // Address validation schema
 const AddressSchema = z.object({
@@ -66,25 +68,80 @@ const CreatePatientSchema = z.object({
   notes: z.string().max(1000).optional(),
 });
 
-app.post('/', requireAuth, dataProtection.clientView, async c => {
+// Patient response schema
+const PatientResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  cpf: z.string().optional(),
+  birthDate: z.string().datetime().optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  address: AddressSchema.optional(),
+  healthcareInfo: HealthcareInfoSchema.optional(),
+  lgpdConsent: LGPDConsentSchema,
+  notes: z.string().optional(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+// OpenAPI route definition
+const createPatientRoute = createHealthcareRoute({
+  method: 'post',
+  path: '/',
+  tags: ['Patients'],
+  summary: 'Create new patient',
+  description: 'Create a new patient record with comprehensive validation and LGPD compliance',
+  dataClassification: 'medical',
+  auditRequired: true,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: CreatePatientSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Patient created successfully',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: PatientResponseSchema,
+            message: z.string(),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: {
+        'application/json': {
+          schema: HealthcareSchemas.ErrorResponse,
+        },
+      },
+    },
+    409: {
+      description: 'Patient already exists (duplicate CPF)',
+      content: {
+        'application/json': {
+          schema: HealthcareSchemas.ErrorResponse,
+        },
+      },
+    },
+  },
+});
+
+app.openapi(createPatientRoute, requireAuth, dataProtection.clientView, async c => {
   try {
     const userId = c.get('userId');
     const body = await c.req.json();
 
-    // Validate request body
-    const validationResult = CreatePatientSchema.safeParse(body);
-    if (!validationResult.success) {
-      return c.json({
-        success: false,
-        error: 'Dados de entrada inválidos',
-        errors: validationResult.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
-    }
-
-    const patientData = validationResult.data;
+    // Get validated data from OpenAPI request
+    const patientData = c.req.valid('json');
 
     // Get client IP and User-Agent for audit logging
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
@@ -143,13 +200,10 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     });
 
     // Log patient creation activity
-    const auditService = new AuditService();
-    await auditService.logActivity({
-      userId,
-      action: 'patient_create',
-      resourceType: 'patient',
-      resourceId: createdPatient.id,
-      details: {
+    const auditService = new ComprehensiveAuditService();
+    await auditService.logEvent(
+      'patient_create',
+      {
         patientName: createdPatient.name,
         dataCategories: [
           'personal_data',
@@ -159,11 +213,18 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
         consentGiven: true,
         healthcareProfessional,
       },
-      ipAddress,
-      userAgent,
-      complianceContext: 'LGPD',
-      sensitivityLevel: 'high',
-    }).catch(err => {
+      {
+        userId,
+        ipAddress,
+        userAgent,
+        patientId: createdPatient.id,
+        complianceFlags: {
+          lgpd_compliant: true,
+          rls_enforced: true,
+          consent_validated: true,
+        },
+      }
+    ).catch(err => {
       console.error('Audit logging failed:', err);
     });
 
