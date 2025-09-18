@@ -12,6 +12,26 @@ export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './
 // Security utilities and validation
 export { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
 
+// LGPD anonymization and data masking utilities
+export {
+  ANONYMIZATION_VERSION,
+  type AnonymizationMetadata,
+  anonymizePersonalData,
+  DEFAULT_MASKING_OPTIONS,
+  generatePrivacyReport,
+  isDataAnonymized,
+  type LGPDComplianceLevel,
+  maskAddress,
+  maskCNPJ,
+  maskCPF,
+  maskEmail,
+  type MaskingOptions,
+  maskName,
+  maskPatientData,
+  maskPhone,
+  type PatientData,
+} from './anonymization';
+
 // Security middleware for Hono framework
 export {
   authentication,
@@ -45,6 +65,15 @@ import {
   securityHeaders,
   securityLogging,
 } from './middleware';
+
+// Import anonymization utilities
+import {
+  ANONYMIZATION_VERSION,
+  anonymizePersonalData,
+  DEFAULT_MASKING_OPTIONS,
+  generatePrivacyReport,
+  maskPatientData,
+} from './anonymization';
 
 // Default export with all components
 export default {
@@ -102,6 +131,15 @@ export default {
     healthcareDataProtection,
     getSecurityMiddlewareStack,
     getProtectedRoutesMiddleware,
+  },
+
+  // LGPD anonymization utilities
+  anonymization: {
+    maskPatientData,
+    anonymizePersonalData,
+    generatePrivacyReport,
+    DEFAULT_MASKING_OPTIONS,
+    ANONYMIZATION_VERSION,
   },
 };
 

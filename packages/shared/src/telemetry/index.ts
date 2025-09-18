@@ -33,6 +33,7 @@ export interface HealthcareSpanAttributes {
   'healthcare.compliance_level'?: 'public' | 'internal' | 'sensitive';
   'healthcare.operation_type'?: 'read' | 'write' | 'delete' | 'export';
   'healthcare.data_classification'?: 'public' | 'personal' | 'medical' | 'financial';
+  'httpMethod'?: string;
 }
 
 // LGPD-compliant sampler that adjusts sampling based on data sensitivity
@@ -301,8 +302,6 @@ export class HealthcareTracer {
         ...context,
         'healthcare.operation_type': method.toLowerCase() as any,
         'healthcare.compliance_level': context['healthcare.compliance_level'] || 'internal',
-        'http.method': method,
-        'http.route': sanitizeRoute(endpoint),
       },
       operation
     );

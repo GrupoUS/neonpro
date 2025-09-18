@@ -71,7 +71,7 @@ const nextConfig = {
       config.plugins.push(
         new webpack.DefinePlugin({
           'process.env.HEALTHCARE_MONITORING': JSON.stringify('enabled'),
-        })
+        }),
       );
     }
 
@@ -85,7 +85,7 @@ const nextConfig = {
   images: {
     formats: ['image/webp'],
     minimumCacheTTL: 31536000, // 1 year cache for medical images
-    
+
     // Healthcare-compliant image domains
     domains: [
       'cdn.neonpro.com.br',

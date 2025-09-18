@@ -1,15 +1,19 @@
 /**
  * Healthcare Accessibility Audit Hook
- * 
+ *
  * React hook for real-time healthcare accessibility auditing
  * with Brazilian regulatory compliance validation
- * 
+ *
  * @package NeonPro Healthcare Accessibility
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { HealthcareAccessibilityAuditor, type HealthcareAccessibilityAuditResult, type HealthcareAuditContext } from '../utils/healthcare-accessibility-audit';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AccessibilityTestingOptions } from '../utils/accessibility-testing';
+import {
+  HealthcareAccessibilityAuditor,
+  type HealthcareAccessibilityAuditResult,
+  type HealthcareAuditContext,
+} from '../utils/healthcare-accessibility-audit';
 
 interface UseHealthcareAccessibilityAuditOptions extends AccessibilityTestingOptions {
   autoRun?: boolean;
@@ -33,7 +37,7 @@ interface HealthcareAccessibilityAuditState {
  */
 export function useHealthcareAccessibilityAudit(
   targetElement?: HTMLElement | null,
-  options: UseHealthcareAccessibilityAuditOptions = {}
+  options: UseHealthcareAccessibilityAuditOptions = {},
 ) {
   const {
     autoRun = true,
@@ -50,7 +54,7 @@ export function useHealthcareAccessibilityAudit(
     error: null,
     lastRun: null,
     auditCount: 0,
-    isMonitoring: enableRealtimeMonitoring
+    isMonitoring: enableRealtimeMonitoring,
   });
 
   const auditorRef = useRef<HealthcareAccessibilityAuditor | null>(null);
@@ -60,7 +64,7 @@ export function useHealthcareAccessibilityAudit(
   // Initialize auditor
   useEffect(() => {
     auditorRef.current = new HealthcareAccessibilityAuditor(initialContext);
-    
+
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -96,7 +100,7 @@ export function useHealthcareAccessibilityAudit(
     if (!auditorRef.current || !targetElement) {
       setState(prev => ({
         ...prev,
-        error: 'Auditor not initialized or target element not available'
+        error: 'Auditor not initialized or target element not available',
       }));
       return;
     }
@@ -110,14 +114,14 @@ export function useHealthcareAccessibilityAudit(
       }
 
       const result = await auditorRef.current.auditAccessibility(targetElement, axeOptions);
-      
+
       setState(prev => ({
         ...prev,
         result,
         isLoading: false,
         lastRun: new Date(),
         auditCount: prev.auditCount + 1,
-        error: null
+        error: null,
       }));
 
       return result;
@@ -126,7 +130,7 @@ export function useHealthcareAccessibilityAudit(
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error: errorMessage
+        error: errorMessage,
       }));
       throw error;
     }
@@ -180,10 +184,10 @@ export function useHealthcareAccessibilityAudit(
   // Get compliance status
   const getComplianceStatus = useCallback(() => {
     if (!state.result) return 'unknown';
-    
+
     const { complianceScore, accessibilityScore, healthcareSpecificScore } = state.result;
     const averageScore = (complianceScore + accessibilityScore + healthcareSpecificScore) / 3;
-    
+
     if (averageScore >= 95) return 'excellent';
     if (averageScore >= 85) return 'good';
     if (averageScore >= 70) return 'fair';
@@ -201,39 +205,42 @@ export function useHealthcareAccessibilityAudit(
   }, [state.result]);
 
   // Get recommendations by priority
-  const getRecommendationsByPriority = useCallback((priority: 'immediate' | 'high' | 'medium' | 'low') => {
-    return state.result?.recommendations.filter(rec => rec.priority === priority) || [];
-  }, [state.result]);
+  const getRecommendationsByPriority = useCallback(
+    (priority: 'immediate' | 'high' | 'medium' | 'low') => {
+      return state.result?.recommendations.filter(rec => rec.priority === priority) || [];
+    },
+    [state.result],
+  );
 
   // Check if specific healthcare standard is compliant
   const isStandardCompliant = useCallback((standardId: string) => {
     if (!state.result) return false;
-    
+
     const standardViolations = state.result.issues.filter(issue =>
       issue.complianceStandards.some(std => std.id === standardId)
     );
-    
+
     return standardViolations.length === 0;
   }, [state.result]);
 
   // Generate compliance report
   const generateComplianceReport = useCallback(() => {
     if (!state.result || !auditorRef.current) return null;
-    
+
     return auditorRef.current.generateComplianceReport(state.result);
   }, [state.result]);
 
   // Export audit data
   const exportAuditData = useCallback(() => {
     if (!state.result) return null;
-    
+
     return {
       timestamp: state.result.timestamp,
       context: state.result.context,
       scores: {
         overall: state.result.accessibilityScore,
         healthcare: state.result.healthcareSpecificScore,
-        compliance: state.result.complianceScore
+        compliance: state.result.complianceScore,
       },
       issues: state.result.issues,
       recommendations: state.result.recommendations,
@@ -241,17 +248,17 @@ export function useHealthcareAccessibilityAudit(
         totalIssues: state.result.issues.length,
         criticalIssues: state.result.criticalIssuesCount,
         emergencyIssues: state.result.emergencyIssuesCount,
-        complianceStatus: getComplianceStatus()
-      }
+        complianceStatus: getComplianceStatus(),
+      },
     };
   }, [state.result, getComplianceStatus]);
 
   // Simulate user with disability for testing
   const simulateDisabilityProfile = useCallback((
-    profile: 'visual' | 'auditory' | 'motor' | 'cognitive' | 'multiple'
+    profile: 'visual' | 'auditory' | 'motor' | 'cognitive' | 'multiple',
   ) => {
     const context: Partial<HealthcareAuditContext> = {
-      userDisabilityProfile: profile
+      userDisabilityProfile: profile,
     };
 
     // Adjust audit options based on disability profile
@@ -263,8 +270,8 @@ export function useHealthcareAccessibilityAudit(
         'color-contrast': profile === 'visual' ? { enabled: true } : { enabled: false },
         'audio-caption': profile === 'auditory' ? { enabled: true } : { enabled: false },
         'keyboard-navigation': profile === 'motor' ? { enabled: true } : { enabled: false },
-        'cognitive-complexity': profile === 'cognitive' ? { enabled: true } : { enabled: false }
-      }
+        'cognitive-complexity': profile === 'cognitive' ? { enabled: true } : { enabled: false },
+      },
     };
 
     updateContext(context);
@@ -276,7 +283,7 @@ export function useHealthcareAccessibilityAudit(
     const emergencyContext: Partial<HealthcareAuditContext> = {
       emergencyContext: true,
       patientJourney: 'emergency',
-      dataSensitivity: 'critical'
+      dataSensitivity: 'critical',
     };
 
     updateContext(emergencyContext);
@@ -291,7 +298,7 @@ export function useHealthcareAccessibilityAudit(
       error: null,
       lastRun: null,
       auditCount: 0,
-      isMonitoring: enableRealtimeMonitoring
+      isMonitoring: enableRealtimeMonitoring,
     });
   }, [enableRealtimeMonitoring]);
 
@@ -329,12 +336,12 @@ export function useHealthcareAccessibilityAudit(
     complianceStatus: getComplianceStatus(),
     criticalIssuesCount: getCriticalIssuesCount(),
     emergencyIssuesCount: getEmergencyIssuesCount(),
-    isCompliant: state.result ? 
-      state.result.accessibilityScore >= 90 && 
-      state.result.complianceScore >= 90 : 
-      false,
+    isCompliant: state.result
+      ? state.result.accessibilityScore >= 90
+        && state.result.complianceScore >= 90
+      : false,
     hasCriticalIssues: getCriticalIssuesCount() > 0,
-    hasEmergencyIssues: getEmergencyIssuesCount() > 0
+    hasEmergencyIssues: getEmergencyIssuesCount() > 0,
   };
 }
 
@@ -344,16 +351,16 @@ export function useHealthcareAccessibilityAudit(
 export function useHealthcareJourneyAudit(
   journey: HealthcareAuditContext['patientJourney'],
   targetElement?: HTMLElement | null,
-  options: Omit<UseHealthcareAccessibilityAuditOptions, 'context'> = {}
+  options: Omit<UseHealthcareAccessibilityAuditOptions, 'context'> = {},
 ) {
   const journeyContext: Partial<HealthcareAuditContext> = {
     patientJourney: journey,
-    dataSensitivity: getDataSensitivityForJourney(journey)
+    dataSensitivity: getDataSensitivityForJourney(journey),
   };
 
   return useHealthcareAccessibilityAudit(targetElement, {
     ...options,
-    context: journeyContext
+    context: journeyContext,
   });
 }
 
@@ -362,24 +369,27 @@ export function useHealthcareJourneyAudit(
  */
 export function useEmergencyAccessibilityAudit(
   targetElement?: HTMLElement | null,
-  options: Omit<UseHealthcareAccessibilityAuditOptions, 'context' | 'enableRealtimeMonitoring'> = {}
+  options: Omit<UseHealthcareAccessibilityAuditOptions, 'context' | 'enableRealtimeMonitoring'> =
+    {},
 ) {
   const emergencyContext: Partial<HealthcareAuditContext> = {
     emergencyContext: true,
     patientJourney: 'emergency',
-    dataSensitivity: 'critical'
+    dataSensitivity: 'critical',
   };
 
   return useHealthcareAccessibilityAudit(targetElement, {
     ...options,
     context: emergencyContext,
     enableRealtimeMonitoring: true,
-    reportingIntervalMs: 10000 // More frequent monitoring for emergencies
+    reportingIntervalMs: 10000, // More frequent monitoring for emergencies
   });
 }
 
 // Helper function to determine data sensitivity for journey type
-function getDataSensitivityForJourney(journey: HealthcareAuditContext['patientJourney']): HealthcareAuditContext['dataSensitivity'] {
+function getDataSensitivityForJourney(
+  journey: HealthcareAuditContext['patientJourney'],
+): HealthcareAuditContext['dataSensitivity'] {
   switch (journey) {
     case 'emergency':
       return 'critical';
@@ -393,7 +403,4 @@ function getDataSensitivityForJourney(journey: HealthcareAuditContext['patientJo
   }
 }
 
-export type {
-  UseHealthcareAccessibilityAuditOptions,
-  HealthcareAccessibilityAuditState
-};
+export type { HealthcareAccessibilityAuditState, UseHealthcareAccessibilityAuditOptions };

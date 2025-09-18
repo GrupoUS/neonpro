@@ -46,7 +46,6 @@ if ((import.meta as any).env?.DEV) {
 // Initialize Sentry monitoring disabled for now to unblock Vercel build
 // initializeSentry();
 
-
 async function bootstrap() {
   const rootEl = document.getElementById('root');
   if (!rootEl) throw new Error('#root element not found');

@@ -1,9 +1,21 @@
 {
-  "framework": "vite",
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "cd packages/types && pnpm run build && cd ../ui && pnpm run build && cd ../config && pnpm run build && cd ../utils && pnpm run build && cd ../../apps/web && pnpm run build",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "neonpro-web",
+  "regions": ["gru1"],
+  "installCommand": "bun install --no-frozen-lockfile",
+  "buildCommand": "bunx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "git": {
-    "deploymentEnabled": { "preview": true, "production": true }
-  }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
 }

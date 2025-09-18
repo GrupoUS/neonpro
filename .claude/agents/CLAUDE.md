@@ -1,10 +1,3 @@
----
-title: "NeonPro Agents Master Guide"
-description: "Guia definitivo para coordenação inteligente de agentes"
-version: "1.0.0"
-last_updated: "2025-09-18"
----
-
 # 🤖 NeonPro Agents Master Guide
 
 ## 🎯 Filosofia Central

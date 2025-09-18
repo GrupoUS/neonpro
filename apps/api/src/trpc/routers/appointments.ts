@@ -27,12 +27,7 @@ import {
   ListAppointmentsSchema,
   UpdateAppointmentSchema,
 } from '../schemas';
-import {
-  healthcareProcedure,
-  patientProcedure,
-  protectedProcedure,
-  router,
-} from '../trpc';
+import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE

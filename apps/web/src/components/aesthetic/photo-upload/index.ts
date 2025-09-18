@@ -1,7 +1,7 @@
 /**
  * Photo Upload + AI Analysis System (T110)
  * Complete solution for aesthetic photo uploads with AI-powered analysis
- * 
+ *
  * This package includes:
  * - PhotoUpload: Main component with drag&drop functionality
  * - TreatmentSuggestions: AI-powered treatment recommendations
@@ -10,18 +10,14 @@
  */
 
 // Main Components
-export { PhotoUpload } from './PhotoUpload';
-export { TreatmentSuggestions, TreatmentComparison } from './TreatmentSuggestions';
 export { LGPDConsentManager } from './LGPDConsentManager';
+export { PhotoUpload } from './PhotoUpload';
+export { TreatmentComparison, TreatmentSuggestions } from './TreatmentSuggestions';
 
 // Types
-export type {
-  AestheticPhoto,
-  AestheticAnalysis,
-  TreatmentSuggestion,
-} from './PhotoUpload';
+export type { AestheticAnalysis, AestheticPhoto, TreatmentSuggestion } from './PhotoUpload';
 
-export type { LGPDConsentData, ConsentHistory } from './LGPDConsentManager';
+export type { ConsentHistory, LGPDConsentData } from './LGPDConsentManager';
 
 // Services
 export {

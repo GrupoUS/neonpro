@@ -139,7 +139,8 @@ describe('AI Semantic Cache Functionality', () => {
     it('should add entry to semantic cache with healthcare compliance', async () => {
       const cacheEntry = {
         prompt: 'Diagnosis recommendations for pediatric asthma patient',
-        response: 'Based on pediatric asthma guidelines and current symptoms, recommend salbutamol inhaler as needed, inhaled corticosteroids for maintenance, and follow-up in 2 weeks. Monitor for adverse effects and educate on proper inhaler technique.',
+        response:
+          'Based on pediatric asthma guidelines and current symptoms, recommend salbutamol inhaler as needed, inhaled corticosteroids for maintenance, and follow-up in 2 weeks. Monitor for adverse effects and educate on proper inhaler technique.',
         metadata: {
           patientId: testPatientId,
           cost: 0.025,
@@ -187,7 +188,8 @@ describe('AI Semantic Cache Functionality', () => {
       // First add a cache entry
       const cacheEntry = {
         prompt: 'Patient with chest pain and shortness of breath',
-        response: 'Urgent cardiac evaluation recommended. Consider ECG, cardiac enzymes, and immediate medical attention due to potential acute coronary syndrome.',
+        response:
+          'Urgent cardiac evaluation recommended. Consider ECG, cardiac enzymes, and immediate medical attention due to potential acute coronary syndrome.',
         metadata: {
           patientId: testPatientId,
           cost: 0.035,
@@ -280,7 +282,8 @@ describe('AI Semantic Cache Functionality', () => {
       // Add entry for one patient
       const cacheEntry = {
         prompt: 'Diabetes management plan for adult patient',
-        response: 'Comprehensive diabetes management including lifestyle modifications, medication adherence, and regular monitoring.',
+        response:
+          'Comprehensive diabetes management including lifestyle modifications, medication adherence, and regular monitoring.',
         metadata: {
           patientId: testPatientId,
           cost: 0.02,
@@ -314,7 +317,7 @@ describe('AI Semantic Cache Functionality', () => {
 
       expect(res.ok).toBe(true);
       const data = await res.json();
-      
+
       // Should not find entry due to patient isolation
       expect(data.found).toBe(false);
     });
@@ -846,7 +849,7 @@ describe('AI Semantic Cache Functionality', () => {
 
       // Should require full healthcare compliance
       expect(res.status).toBe(400);
-      
+
       const data = await res.json();
       expect(data.error).toContain('compliance');
     });
@@ -876,7 +879,7 @@ describe('AI Semantic Cache Functionality', () => {
 
         expect(res.ok).toBe(true);
         const data = await res.json();
-        
+
         // Should not cross-contaminate specialties
         if (data.found) {
           expect(data.entry.metadata.category).toBe(entry.context.category);
@@ -940,12 +943,12 @@ describe('AI Semantic Cache Functionality', () => {
           api('/api/v1/ai/cache/stats', {
             method: 'GET',
             headers: testAuthHeaders,
-          })
+          }),
         );
       }
 
       const results = await Promise.allSettled(promises);
-      
+
       // All requests should succeed
       const successfulRequests = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
       expect(successfulRequests).toBe(concurrentRequests);
@@ -1085,7 +1088,7 @@ describe('AI Semantic Cache Functionality', () => {
       });
 
       expect(res.status).toBe(400);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.any(String),
@@ -1161,11 +1164,11 @@ describe('AI Semantic Cache Functionality', () => {
 
       expect(auditRes.ok).toBe(true);
       const auditData = await auditRes.json();
-      
+
       const cacheAudits = auditData.filter(
-        (audit: any) => audit.resource === 'ai_cache'
+        (audit: any) => audit.resource === 'ai_cache',
       );
-      
+
       expect(cacheAudits.length).toBeGreaterThan(0);
       const latestAudit = cacheAudits[0];
       expect(latestAudit.action).toBe('read');
@@ -1195,7 +1198,7 @@ describe('AI Semantic Cache Functionality', () => {
 
       expect(res.ok).toBe(true);
       const data = await res.json();
-      
+
       expect(data.healthcare_compliance.lgpdVerified).toBe(true);
       expect(data.healthcare_compliance.patientDataProtected).toBe(true);
     });

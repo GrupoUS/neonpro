@@ -29,7 +29,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheQuery),
       });
@@ -90,7 +90,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheEntry),
       });
@@ -134,7 +134,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcareQuery),
       });
@@ -164,7 +164,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/cache/stats', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -200,7 +200,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
           confirm_clear: true,
@@ -247,7 +247,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(providerConfig),
       });
@@ -276,7 +276,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/providers', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -330,7 +330,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(routingRequest),
       });
@@ -378,7 +378,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(costEntry),
       });
@@ -407,7 +407,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/costs/analytics', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
           period: '30d',
@@ -468,7 +468,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(budgetConfig),
       });
@@ -519,7 +519,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(optimizationRequest),
       });
@@ -563,7 +563,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(abTestConfig),
       });
@@ -592,7 +592,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/optimize/performance', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
           period: '7d',
@@ -648,7 +648,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(validationRequest),
       });
@@ -675,7 +675,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/compliance/audit-report', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
           period: '30d',
@@ -735,7 +735,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(consentConfig),
       });
@@ -776,13 +776,13 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidEntry),
       });
 
       expect(res.status).toBe(400);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.any(String),
@@ -796,7 +796,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
           provider: 'INVALID_PROVIDER',
@@ -805,7 +805,7 @@ describe('Contract: AI Optimization API', () => {
       });
 
       expect(res.status).toBe(503);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.any(String),
@@ -824,7 +824,7 @@ describe('Contract: AI Optimization API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
           provider: 'OPENAI',
@@ -840,7 +840,7 @@ describe('Contract: AI Optimization API', () => {
       });
 
       expect(res.status).toBe(403);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.stringContaining('budget'),
@@ -860,7 +860,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/health', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -895,7 +895,7 @@ describe('Contract: AI Optimization API', () => {
       const res = await api('/api/v1/ai/monitoring/real-time', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 

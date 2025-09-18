@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -62,18 +63,14 @@ vi.mock('web-vitals', () => ({
 }));
 
 // Mock components that will need to be implemented
-const MockPerformanceDashboard = () => (
-  <div data-testid='performance-dashboard'>Performance Dashboard</div>
-);
-const MockWebVitalsMonitor = () => (
-  <div data-testid='web-vitals-monitor'>Web Vitals Monitor</div>
-);
-const MockPerformanceAlerts = () => (
-  <div data-testid='performance-alerts'>Performance Alerts</div>
-);
-const MockHealthcareMetrics = () => (
-  <div data-testid='healthcare-metrics'>Healthcare Metrics</div>
-);
+const MockPerformanceDashboard = () =>
+  React.createElement('div', { 'data-testid': 'performance-dashboard' }, 'Performance Dashboard');
+const MockWebVitalsMonitor = () =>
+  React.createElement('div', { 'data-testid': 'web-vitals-monitor' }, 'Web Vitals Monitor');
+const MockPerformanceAlerts = () =>
+  React.createElement('div', { 'data-testid': 'performance-alerts' }, 'Performance Alerts');
+const MockHealthcareMetrics = () =>
+  React.createElement('div', { 'data-testid': 'healthcare-metrics' }, 'Healthcare Metrics');
 
 // Test query client
 const queryClient = new QueryClient({
@@ -89,7 +86,7 @@ describe('Integration: Performance Monitoring', () => {
   beforeEach(() => {
     user = userEvent.setup();
     vi.clearAllMocks();
-    
+
     // Reset performance mock values
     mockPerformance.now.mockReturnValue(Date.now());
     mockPerformance.getEntriesByType.mockReturnValue([]);
@@ -107,7 +104,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockWebVitalsMonitor />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       // Verify Web Vitals callbacks are registered
@@ -116,19 +113,19 @@ describe('Integration: Performance Monitoring', () => {
           expect.any(Function),
           expect.objectContaining({
             reportAllChanges: false,
-          })
+          }),
         );
         expect(mockOnLCP).toHaveBeenCalledWith(
           expect.any(Function),
           expect.objectContaining({
             reportAllChanges: false,
-          })
+          }),
         );
         expect(mockOnFID).toHaveBeenCalledWith(
           expect.any(Function),
           expect.objectContaining({
             reportAllChanges: false,
-          })
+          }),
         );
       });
 
@@ -140,7 +137,7 @@ describe('Integration: Performance Monitoring', () => {
             patient_safety_threshold: 0.1,
             emergency_workflow_threshold: 0.05,
           }),
-        })
+        }),
       );
 
       unmount();
@@ -148,9 +145,9 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should collect and report Core Web Vitals metrics', async () => {
       const mockVitalHandler = vi.fn();
-      
+
       // Setup Web Vitals monitoring
-      mockOnCLS.mockImplementation((handler) => {
+      mockOnCLS.mockImplementation(handler => {
         mockVitalHandler({
           id: 'cls-1',
           name: 'CLS',
@@ -161,7 +158,7 @@ describe('Integration: Performance Monitoring', () => {
         });
       });
 
-      mockOnLCP.mockImplementation((handler) => {
+      mockOnLCP.mockImplementation(handler => {
         mockVitalHandler({
           id: 'lcp-1',
           name: 'LCP',
@@ -177,21 +174,21 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockWebVitalsMonitor />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       // Verify metrics are collected and reported
       await waitFor(() => {
         expect(mockVitalHandler).toHaveBeenCalledTimes(2);
-        
+
         // Verify healthcare-specific validation
         const clsCall = mockVitalHandler.mock.calls.find(
-          (call) => call[0].name === 'CLS'
+          call => call[0].name === 'CLS',
         );
         expect(clsCall[0].value).toBeLessThanOrEqual(0.1); // Healthcare CLS threshold
-        
+
         const lcpCall = mockVitalHandler.mock.calls.find(
-          (call) => call[0].name === 'LCP'
+          call => call[0].name === 'LCP',
         );
         expect(lcpCall[0].value).toBeLessThanOrEqual(4000); // Healthcare LCP threshold
       });
@@ -201,9 +198,9 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should handle emergency workflow performance monitoring', async () => {
       const emergencyVitalHandler = vi.fn();
-      
+
       // Simulate emergency workflow scenario
-      mockOnTTFB.mockImplementation((handler) => {
+      mockOnTTFB.mockImplementation(handler => {
         emergencyVitalHandler({
           id: 'ttfb-emergency',
           name: 'TTFB',
@@ -219,16 +216,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockWebVitalsMonitor />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         expect(emergencyVitalHandler).toHaveBeenCalled();
-        
+
         // Verify emergency performance alerts
         const ttfbMetric = emergencyVitalHandler.mock.calls[0][0];
         expect(ttfbMetric.value).toBeGreaterThan(500); // Emergency threshold exceeded
-        
+
         // Verify emergency escalation is triggered
         expect(screen.queryByTestId('emergency-performance-alert')).toBeInTheDocument();
       });
@@ -240,9 +237,9 @@ describe('Integration: Performance Monitoring', () => {
   describe('Real User Monitoring (RUM) Integration', () => {
     it('should track user interactions with healthcare features', async () => {
       const interactionTracking = vi.fn();
-      
+
       // Mock PerformanceObserver for user interaction tracking
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         // Simulate user interaction entries
         setTimeout(() => {
           callback.observe([
@@ -262,7 +259,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 100);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -271,7 +268,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceDashboard />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       // Simulate user interactions
@@ -291,7 +288,7 @@ describe('Integration: Performance Monitoring', () => {
               patientDataAccess: true,
               lgpdCompliant: true,
             }),
-          })
+          }),
         );
       });
 
@@ -318,17 +315,17 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceDashboard />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       // Verify page load metrics collection
       await waitFor(() => {
         expect(mockPerformance.getEntriesByType).toHaveBeenCalledWith('navigation');
-        
+
         // Verify healthcare-specific load time validation
         const navigationEntry = mockPerformance.getEntriesByType('navigation')[0];
         expect(navigationEntry.duration).toBeLessThanOrEqual(5000); // Healthcare load threshold
-        
+
         // Verify patient data protection during load
         expect(screen.queryByTestId('load-time-privacy-check')).toBeInTheDocument();
       });
@@ -340,9 +337,9 @@ describe('Integration: Performance Monitoring', () => {
   describe('Healthcare Performance Validation', () => {
     it('should validate emergency response times', async () => {
       const emergencyResponseHandler = vi.fn();
-      
+
       // Simulate emergency performance monitoring
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -350,7 +347,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'emergency-patient-access',
               startTime: 0,
               duration: 1200, // Should be < 1000ms for emergency
-              detail: { 
+              detail: {
                 isEmergency: true,
                 patientId: 'emergency-patient-123',
                 workflow: 'critical_care',
@@ -358,7 +355,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -367,7 +364,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -380,7 +377,7 @@ describe('Integration: Performance Monitoring', () => {
             actual: 1200,
             severity: 'critical',
             patientSafetyImpact: true,
-          })
+          }),
         );
 
         // Verify emergency alert is triggered
@@ -393,7 +390,7 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should monitor patient data load performance', async () => {
       // Simulate patient data loading performance
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -401,7 +398,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'patient-record-load',
               startTime: 0,
               duration: 2800, // Large patient records
-              detail: { 
+              detail: {
                 recordSize: '2.5MB',
                 patientId: 'patient-456',
                 dataTypes: ['demographics', 'medical_history', 'medications', 'allergies'],
@@ -409,7 +406,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -418,16 +415,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify patient data load monitoring
         expect(screen.queryByTestId('patient-data-load-metrics')).toBeInTheDocument();
-        
+
         // Verify LGPD compliance during data loading
         expect(screen.queryByText(/LGPD compliant data processing/)).toBeInTheDocument();
-        
+
         // Verify data size optimization recommendations
         expect(screen.queryByText(/Consider data compression/)).toBeInTheDocument();
       });
@@ -437,7 +434,7 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should track telemedicine session performance', async () => {
       // Simulate telemedicine performance monitoring
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -445,7 +442,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'video-consultation-setup',
               startTime: 0,
               duration: 3200,
-              detail: { 
+              detail: {
                 sessionType: 'video_consultation',
                 networkQuality: 'good',
                 resolution: '720p',
@@ -457,14 +454,14 @@ describe('Integration: Performance Monitoring', () => {
               name: 'real-time-chat-latency',
               startTime: 3500,
               duration: 45,
-              detail: { 
+              detail: {
                 messageType: 'text',
                 deliverySuccess: true,
               },
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -473,16 +470,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify telemedicine performance tracking
         expect(screen.queryByTestId('telemedicine-performance')).toBeInTheDocument();
-        
+
         // Verify network quality monitoring
         expect(screen.queryByText(/Network quality: good/)).toBeInTheDocument();
-        
+
         // Verify video quality optimization
         expect(screen.queryByText(/Video resolution optimized/)).toBeInTheDocument();
       });
@@ -494,9 +491,9 @@ describe('Integration: Performance Monitoring', () => {
   describe('Performance Alerting System', () => {
     it('should trigger alerts for performance threshold violations', async () => {
       const alertHandler = vi.fn();
-      
+
       // Simulate performance threshold violations
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -504,7 +501,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'api-response-time',
               startTime: 0,
               duration: 5800, // Exceeds healthcare threshold
-              detail: { 
+              detail: {
                 endpoint: '/api/patients',
                 threshold: 3000,
                 severity: 'high',
@@ -513,7 +510,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -522,7 +519,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceAlerts />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -539,7 +536,7 @@ describe('Integration: Performance Monitoring', () => {
               workflowDisruption: true,
               potentialDataLoss: false,
             },
-          })
+          }),
         );
 
         // Verify alert display
@@ -552,9 +549,9 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should escalate critical performance issues automatically', async () => {
       const escalationHandler = vi.fn();
-      
+
       // Simulate critical performance issue
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -562,7 +559,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'emergency-system-response',
               startTime: 0,
               duration: 9500, // Critical for emergency systems
-              detail: { 
+              detail: {
                 system: 'emergency_triage',
                 availability: 'degraded',
                 patientSafetyRisk: true,
@@ -570,7 +567,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -579,7 +576,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceAlerts />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -593,7 +590,7 @@ describe('Integration: Performance Monitoring', () => {
             patientSafetyRisk: true,
             escalationLevel: 'critical',
             notifyRoles: ['system_administrator', 'healthcare_safety_officer'],
-          })
+          }),
         );
 
         // Verify critical alert display
@@ -627,16 +624,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify network quality monitoring
         expect(screen.queryByTestId('network-quality-monitor')).toBeInTheDocument();
-        
+
         // Verify telemedicine suitability assessment
         expect(screen.queryByText(/Network suitable for telemedicine/)).toBeInTheDocument();
-        
+
         // Verify adaptive quality recommendations
         expect(screen.queryByText(/Video quality optimized for 4G/)).toBeInTheDocument();
       });
@@ -664,16 +661,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify network degradation detection
         expect(screen.queryByTestId('network-degradation-alert')).toBeInTheDocument();
-        
+
         // Verify fallback mechanisms activation
         expect(screen.queryByText(/Low bandwidth mode activated/)).toBeInTheDocument();
-        
+
         // Verify patient communication preservation
         expect(screen.queryByText(/Emergency communication maintained/)).toBeInTheDocument();
       });
@@ -701,16 +698,17 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceDashboard />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify mobile optimization
         expect(screen.queryByTestId('mobile-optimization')).toBeInTheDocument();
-        
+
         // Verify resource management
-        expect(screen.queryByText(/Mobile device detected - optimizing resources/)).toBeInTheDocument();
-        
+        expect(screen.queryByText(/Mobile device detected - optimizing resources/))
+          .toBeInTheDocument();
+
         // Verify battery awareness
         expect(screen.queryByText(/Battery optimization active/)).toBeInTheDocument();
       });
@@ -737,16 +735,16 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceDashboard />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
         // Verify battery monitoring
         expect(screen.queryByTestId('battery-monitor')).toBeInTheDocument();
-        
+
         // Verify low battery adaptation
         expect(screen.queryByText(/Low battery mode activated/)).toBeInTheDocument();
-        
+
         // Verify critical features preservation
         expect(screen.queryByText(/Emergency features prioritized/)).toBeInTheDocument();
       });
@@ -758,9 +756,9 @@ describe('Integration: Performance Monitoring', () => {
   describe('Healthcare Compliance Integration', () => {
     it('should ensure LGPD compliance during performance monitoring', async () => {
       const complianceHandler = vi.fn();
-      
+
       // Simulate performance monitoring with LGPD considerations
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -768,7 +766,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'patient-data-access',
               startTime: 0,
               duration: 450,
-              detail: { 
+              detail: {
                 patientId: 'patient-789',
                 dataType: 'sensitive_health_data',
                 anonymized: true,
@@ -777,7 +775,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -786,7 +784,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockHealthcareMetrics />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -797,7 +795,7 @@ describe('Integration: Performance Monitoring', () => {
             patientDataAnonymized: true,
             retentionPolicy: '30_days',
             dataProcessingPurpose: 'performance_optimization',
-          })
+          }),
         );
 
         // Verify compliance indicators
@@ -810,9 +808,9 @@ describe('Integration: Performance Monitoring', () => {
 
     it('should maintain audit trail for performance metrics', async () => {
       const auditHandler = vi.fn();
-      
+
       // Simulate performance metric audit logging
-      mockPerformanceObserver.mockImplementation((callback) => {
+      mockPerformanceObserver.mockImplementation(callback => {
         setTimeout(() => {
           callback.observe([
             {
@@ -820,7 +818,7 @@ describe('Integration: Performance Monitoring', () => {
               name: 'system-performance-audit',
               startTime: 0,
               duration: 1200,
-              detail: { 
+              detail: {
                 auditId: 'audit-123',
                 metrics: ['response_time', 'throughput', 'error_rate'],
                 compliance: 'lgpd_hipaa_anvisa',
@@ -829,7 +827,7 @@ describe('Integration: Performance Monitoring', () => {
             },
           ] as PerformanceEntryList);
         }, 50);
-        
+
         return { observe: vi.fn(), disconnect: vi.fn() };
       });
 
@@ -838,7 +836,7 @@ describe('Integration: Performance Monitoring', () => {
           <BrowserRouter>
             <MockPerformanceDashboard />
           </BrowserRouter>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -849,7 +847,7 @@ describe('Integration: Performance Monitoring', () => {
             complianceStandards: expect.arrayContaining(['lgpd', 'anvisa']),
             dataRetention: 365,
             accessibility: 'healthcare_admin',
-          })
+          }),
         );
 
         // Verify audit indicators

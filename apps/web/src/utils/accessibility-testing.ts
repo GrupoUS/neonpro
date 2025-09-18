@@ -11,7 +11,11 @@
  */
 
 import { AxeResults, Result, Violation } from '@axe-core/react';
-import { WCAG_CONTRAST_RATIOS, calculateContrastRatio, meetsContrastRequirement } from './accessibility';
+import {
+  calculateContrastRatio,
+  meetsContrastRequirement,
+  WCAG_CONTRAST_RATIOS,
+} from './accessibility';
 
 export interface AccessibilityIssue {
   id: string;
@@ -66,7 +70,7 @@ const HEALTHCARE_ACCESSIBILITY_RULES: HealthcareAccessibilityRule[] = [
     name: 'Emergency Contact Accessibility',
     description: 'Emergency contact information must be accessible to screen readers',
     impact: 'critical',
-    check: (element) => {
+    check: element => {
       const emergencyContacts = element.querySelectorAll('[data-emergency-contact]');
       return Array.from(emergencyContacts).every(contact => {
         const hasAriaLabel = contact.hasAttribute('aria-label');
@@ -74,53 +78,53 @@ const HEALTHCARE_ACCESSIBILITY_RULES: HealthcareAccessibilityRule[] = [
         return hasAriaLabel || hasScreenReaderText;
       });
     },
-    help: 'Ensure emergency contacts have proper ARIA labels or screen reader text'
+    help: 'Ensure emergency contacts have proper ARIA labels or screen reader text',
   },
   {
     id: 'healthcare-medical-data',
     name: 'Medical Data Privacy',
     description: 'Medical data must have proper privacy indicators',
     impact: 'critical',
-    check: (element) => {
+    check: element => {
       const medicalData = element.querySelectorAll('[data-medical-data]');
       return Array.from(medicalData).every(data => {
-        const hasPrivacyIndicator = data.hasAttribute('aria-describedby') || 
-                                  data.hasAttribute('data-privacy-level');
+        const hasPrivacyIndicator = data.hasAttribute('aria-describedby')
+          || data.hasAttribute('data-privacy-level');
         return hasPrivacyIndicator;
       });
     },
-    help: 'Medical data must include privacy indicators and descriptions'
+    help: 'Medical data must include privacy indicators and descriptions',
   },
   {
     id: 'healthcare-form-validation',
     name: 'Healthcare Form Validation',
     description: 'Healthcare forms must have accessible error messages',
     impact: 'serious',
-    check: (element) => {
+    check: element => {
       const forms = element.querySelectorAll('form[data-healthcare-form]');
       return Array.from(forms).every(form => {
         const errorContainers = form.querySelectorAll('[role="alert"], [aria-live="assertive"]');
         return errorContainers.length > 0;
       });
     },
-    help: 'Healthcare forms must have accessible error message containers'
+    help: 'Healthcare forms must have accessible error message containers',
   },
   {
     id: 'healthcare-time-sensitive',
     name: 'Time-Sensitive Information',
     description: 'Time-sensitive medical information must have proper timing indicators',
     impact: 'serious',
-    check: (element) => {
+    check: element => {
       const timeSensitive = element.querySelectorAll('[data-time-sensitive]');
       return Array.from(timeSensitive).every(element => {
-        const hasTimingInfo = element.hasAttribute('aria-label') || 
-                             element.hasAttribute('data-deadline') ||
-                             element.querySelector('time') !== null;
+        const hasTimingInfo = element.hasAttribute('aria-label')
+          || element.hasAttribute('data-deadline')
+          || element.querySelector('time') !== null;
         return hasTimingInfo;
       });
     },
-    help: 'Time-sensitive information must include timing indicators'
-  }
+    help: 'Time-sensitive information must include timing indicators',
+  },
 ];
 
 /**
@@ -141,10 +145,10 @@ export function convertAxeResults(axeResults: AxeResults): AccessibilityIssue[] 
         html: node.html,
         target: node.target,
         failureSummary: node.failureSummary,
-        any: node.any
+        any: node.any,
       })),
       healthcareSpecific: isHealthcareSpecificViolation(violation),
-      lgpdRelevant: isLgpdRelevantViolation(violation)
+      lgpdRelevant: isLgpdRelevantViolation(violation),
     };
 
     violations.push(accessibilityIssue);
@@ -158,14 +162,23 @@ export function convertAxeResults(axeResults: AxeResults): AccessibilityIssue[] 
  */
 function isHealthcareSpecificViolation(violation: Result): boolean {
   const healthcareKeywords = [
-    'medical', 'health', 'patient', 'emergency', 'diagnosis', 'treatment',
-    'medication', 'prescription', 'appointment', 'clinical', 'healthcare'
+    'medical',
+    'health',
+    'patient',
+    'emergency',
+    'diagnosis',
+    'treatment',
+    'medication',
+    'prescription',
+    'appointment',
+    'clinical',
+    'healthcare',
   ];
 
   return healthcareKeywords.some(keyword =>
-    violation.description.toLowerCase().includes(keyword) ||
-    violation.help.toLowerCase().includes(keyword) ||
-    violation.tags.some(tag => tag.toLowerCase().includes(keyword))
+    violation.description.toLowerCase().includes(keyword)
+    || violation.help.toLowerCase().includes(keyword)
+    || violation.tags.some(tag => tag.toLowerCase().includes(keyword))
   );
 }
 
@@ -174,14 +187,20 @@ function isHealthcareSpecificViolation(violation: Result): boolean {
  */
 function isLgpdRelevantViolation(violation: Result): boolean {
   const lgpdKeywords = [
-    'privacy', 'personal data', 'consent', 'data protection', 'sensitive',
-    'personal information', 'data collection', 'data storage'
+    'privacy',
+    'personal data',
+    'consent',
+    'data protection',
+    'sensitive',
+    'personal information',
+    'data collection',
+    'data storage',
   ];
 
   return lgpdKeywords.some(keyword =>
-    violation.description.toLowerCase().includes(keyword) ||
-    violation.help.toLowerCase().includes(keyword) ||
-    violation.tags.some(tag => tag.toLowerCase().includes(keyword))
+    violation.description.toLowerCase().includes(keyword)
+    || violation.help.toLowerCase().includes(keyword)
+    || violation.tags.some(tag => tag.toLowerCase().includes(keyword))
   );
 }
 
@@ -193,16 +212,16 @@ export async function runAccessibilityTest(
   options: {
     includeHealthcareRules?: boolean;
     context?: string;
-  } = {}
+  } = {},
 ): Promise<AccessibilityTestResult> {
   const axe = (await import('@axe-core/react')).default;
-  
+
   const axeResults: AxeResults = await axe(element, {
     runOnly: {
       type: 'tag',
-      values: ['wcag21aa', 'wcag21aaa', 'best-practice']
+      values: ['wcag21aa', 'wcag21aaa', 'best-practice'],
     },
-    resultTypes: ['violations', 'passes', 'incomplete']
+    resultTypes: ['violations', 'passes', 'incomplete'],
   });
 
   const violations = convertAxeResults(axeResults);
@@ -222,8 +241,8 @@ export async function runAccessibilityTest(
     healthcareCompliance: {
       lgpd: !violations.some(v => v.lgpdRelevant),
       healthcareData: !violations.some(v => v.healthcareSpecific),
-      emergencyFeatures: validateEmergencyFeatures(element)
-    }
+      emergencyFeatures: validateEmergencyFeatures(element),
+    },
   };
 }
 
@@ -250,11 +269,11 @@ function runHealthcareRules(element: HTMLElement): AccessibilityIssue[] {
             id: rule.id,
             impact: rule.impact,
             message: rule.help,
-            data: {}
-          }]
+            data: {},
+          }],
         }],
         healthcareSpecific: true,
-        lgpdRelevant: rule.id.includes('lgpd') || rule.id.includes('privacy')
+        lgpdRelevant: rule.id.includes('lgpd') || rule.id.includes('privacy'),
       });
     }
   });
@@ -268,9 +287,9 @@ function runHealthcareRules(element: HTMLElement): AccessibilityIssue[] {
 function validateEmergencyFeatures(element: HTMLElement): boolean {
   const emergencyElements = element.querySelectorAll('[data-emergency], [role="alert"]');
   return Array.from(emergencyElements).every(el => {
-    return el.hasAttribute('aria-live') || 
-           el.hasAttribute('role') ||
-           el.querySelector('.sr-only') !== null;
+    return el.hasAttribute('aria-live')
+      || el.hasAttribute('role')
+      || el.querySelector('.sr-only') !== null;
   });
 }
 
@@ -303,27 +322,27 @@ export function validateHealthcareColorContrast(): ColorContrastResult {
     { selector: '[data-medical-alert]', name: 'medical alerts' },
     { selector: '[data-emergency-contact]', name: 'emergency contacts' },
     { selector: '[data-medication-info]', name: 'medication information' },
-    { selector: '[data-diagnosis]', name: 'diagnosis information' }
+    { selector: '[data-diagnosis]', name: 'diagnosis information' },
   ];
 
   healthcareElements.forEach(({ selector, name }) => {
     const elements = document.querySelectorAll(selector);
-    
+
     elements.forEach(element => {
       const computedStyle = window.getComputedStyle(element);
       const foreground = rgbToHex(computedStyle.color);
       const background = rgbToHex(computedStyle.backgroundColor);
-      
+
       if (foreground && background) {
         const ratio = calculateContrastRatio(foreground, background);
         const passes = meetsContrastRequirement(foreground, background, 'AA');
-        
+
         results.push({
           element: name,
           foreground,
           background,
           ratio,
-          passes
+          passes,
         });
 
         if (!passes) {
@@ -337,7 +356,7 @@ export function validateHealthcareColorContrast(): ColorContrastResult {
     passes: allPass,
     ratio: results.length > 0 ? Math.min(...results.map(r => r.ratio)) : 0,
     required: WCAG_CONTRAST_RATIOS.AA_NORMAL,
-    elements: results
+    elements: results,
   };
 }
 
@@ -349,10 +368,12 @@ function rgbToHex(rgb: string): string {
   if (!match) return rgb;
 
   const [, r, g, b] = match;
-  return `#${[r, g, b].map(x => {
-    const hex = parseInt(x).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  }).join('')}`;
+  return `#${
+    [r, g, b].map(x => {
+      const hex = parseInt(x).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('')
+  }`;
 }
 
 /**
@@ -379,20 +400,20 @@ URL: ${result.url}
 
   if (violations.length > 0) {
     report += '\n## Violations\n\n';
-    
+
     violations.forEach(violation => {
       report += `### ${violation.impact.toUpperCase()}: ${violation.id}\n`;
       report += `**Description:** ${violation.description}\n`;
       report += `**Help:** ${viation.help}\n`;
-      
+
       if (violation.healthcareSpecific) {
         report += `**Healthcare Specific:** Yes\n`;
       }
-      
+
       if (violation.lgpdRelevant) {
         report += `**LGPD Relevant:** Yes\n`;
       }
-      
+
       report += `**Help URL:** ${violation.helpUrl}\n\n`;
     });
   }
@@ -425,11 +446,13 @@ export function meetsWCAGRequirements(element: HTMLElement): {
   }
 
   // Check for proper form labels
-  if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
-    const hasLabel = element.hasAttribute('aria-label') || 
-                    element.hasAttribute('aria-labelledby') ||
-                    element.id && document.querySelector(`label[for="${element.id}"]`);
-    
+  if (
+    element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT'
+  ) {
+    const hasLabel = element.hasAttribute('aria-label')
+      || element.hasAttribute('aria-labelledby')
+      || element.id && document.querySelector(`label[for="${element.id}"]`);
+
     if (!hasLabel) {
       issues.push('Form element missing label');
     }
@@ -445,7 +468,7 @@ export function meetsWCAGRequirements(element: HTMLElement): {
 
   return {
     passes: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -454,5 +477,5 @@ export default {
   validateHealthcareColorContrast,
   generateAccessibilityReport,
   meetsWCAGRequirements,
-  convertAxeResults
+  convertAxeResults,
 };

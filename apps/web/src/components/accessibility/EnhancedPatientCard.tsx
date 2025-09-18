@@ -14,7 +14,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader } from '@neonpro/ui';
-import { Calendar, Phone, User, AlertTriangle, Shield, Heart } from 'lucide-react';
+import { AlertTriangle, Calendar, Heart, Phone, Shield, User } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import {
   useAccessibilityPreferences,
@@ -87,8 +87,11 @@ export function EnhancedPatientCard({
       'data-healthcare-category': healthcareDataCategory,
       'data-emergency': (patient.isEmergencyCase || patient.status === 'emergency').toString(),
       'data-audit-context': auditContext,
-      'data-privacy-level': patient.status === 'critical' ? 'high' : 
-                          showSensitiveData ? 'medium' : 'low',
+      'data-privacy-level': patient.status === 'critical'
+        ? 'high'
+        : showSensitiveData
+        ? 'medium'
+        : 'low',
     };
 
     return baseProps;
@@ -204,9 +207,13 @@ export function EnhancedPatientCard({
     const colors = {
       active: prefersHighContrast ? 'text-green-900 bg-green-100' : 'text-green-700 bg-green-50',
       inactive: prefersHighContrast ? 'text-gray-900 bg-gray-100' : 'text-gray-600 bg-gray-50',
-      pending: prefersHighContrast ? 'text-yellow-900 bg-yellow-100' : 'text-yellow-700 bg-yellow-50',
+      pending: prefersHighContrast
+        ? 'text-yellow-900 bg-yellow-100'
+        : 'text-yellow-700 bg-yellow-50',
       critical: prefersHighContrast ? 'text-red-900 bg-red-100' : 'text-red-700 bg-red-50',
-      emergency: prefersHighContrast ? 'text-red-900 bg-red-100 border-2 border-red-900' : 'text-red-700 bg-red-50 border border-red-200',
+      emergency: prefersHighContrast
+        ? 'text-red-900 bg-red-100 border-2 border-red-900'
+        : 'text-red-700 bg-red-50 border border-red-200',
     };
     return colors[status];
   };
@@ -251,16 +258,17 @@ export function EnhancedPatientCard({
             <div
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center
-                ${healthcareDataCategory === 'emergency' || healthcareDataCategory === 'critical'
+                ${
+                healthcareDataCategory === 'emergency' || healthcareDataCategory === 'critical'
                   ? (prefersHighContrast ? 'bg-red-900 text-white' : 'bg-red-500 text-white')
                   : (prefersHighContrast ? 'bg-gray-900 text-white' : 'bg-primary/10 text-primary')
-                }
+              }
               `}
               aria-hidden='true'
             >
               <CategoryIcon className='w-5 h-5' />
             </div>
-            
+
             <div>
               <h3
                 className={`font-semibold ${
@@ -309,7 +317,7 @@ export function EnhancedPatientCard({
               }`}
               title={`Consentimento LGPD: ${patient.lgpdConsent ? 'Concedido' : 'Não concedido'}`}
             />
-            
+
             {/* Healthcare Audit Indicator */}
             {enableHealthcareAudit && (
               <div
@@ -333,10 +341,11 @@ export function EnhancedPatientCard({
             <div
               className={`
                 p-3 rounded-md border
-                ${prefersHighContrast 
-                  ? 'bg-red-100 border-red-900 text-red-900' 
+                ${
+                prefersHighContrast
+                  ? 'bg-red-100 border-red-900 text-red-900'
                   : 'bg-red-50 border-red-200 text-red-700'
-                }
+              }
               `}
               role='alert'
               aria-live='assertive'
@@ -377,10 +386,11 @@ export function EnhancedPatientCard({
             <div
               className={`
                 p-2 rounded-md text-sm
-                ${prefersHighContrast 
-                  ? 'bg-yellow-100 border-yellow-900 text-yellow-900' 
+                ${
+                prefersHighContrast
+                  ? 'bg-yellow-100 border-yellow-900 text-yellow-900'
                   : 'bg-yellow-50 border border-yellow-200 text-yellow-700'
-                }
+              }
               `}
               role='status'
             >
@@ -453,7 +463,10 @@ export function EnhancedPatientCard({
           {showSensitiveData && patient.lastVitalSigns && (
             <div className='text-sm text-gray-600'>
               <span className='font-medium'>Sinais vitais:</span>
-              <div className='grid grid-cols-2 gap-1 text-xs' aria-label='Sinais vitais do paciente'>
+              <div
+                className='grid grid-cols-2 gap-1 text-xs'
+                aria-label='Sinais vitais do paciente'
+              >
                 {patient.lastVitalSigns.bloodPressure && (
                   <div>PA: {patient.lastVitalSigns.bloodPressure}</div>
                 )}
@@ -472,14 +485,15 @@ export function EnhancedPatientCard({
             id={`patient-${patient.id}-healthcare`}
             className='sr-only'
           >
-            Categoria de atendimento: {getHealthcareCategoryLabel(healthcareDataCategory)}.
-            Contexto da auditoria: {auditContext}.
+            Categoria de atendimento:{' '}
+            {getHealthcareCategoryLabel(healthcareDataCategory)}. Contexto da auditoria:{' '}
+            {auditContext}.
             {enableHealthcareAudit && 'Auditoria de acessibilidade em saúde habilitada.'}
           </div>
 
           {/* Accessibility Information for Screen Readers */}
           <div className='sr-only'>
-            {ACCESSIBILITY_LABELS_PT_BR.patientData}. 
+            {ACCESSIBILITY_LABELS_PT_BR.patientData}.
             {patient.requiresSpecialAttention && ' Requer atenção especial.'}
             {patient.isEmergencyCase && ' Caso de emergência.'}
             Pressione Enter ou Espaço para selecionar este paciente.

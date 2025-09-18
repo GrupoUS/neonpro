@@ -1,13 +1,13 @@
 /**
  * @fileoverview API Management Contract Tests
- * 
+ *
  * Comprehensive contract tests for API management endpoints including:
  * - OpenAPI generator endpoints validation
  * - Schema validation API tests
  * - API documentation endpoint tests
  * - Contract validation middleware tests
  * - Healthcare compliance API validation
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Platform Team
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
@@ -26,9 +26,9 @@ describe('Contract: API Management', () => {
     it('should generate OpenAPI 3.1 specification', async () => {
       const res = await api('/api/openapi.json', {
         method: 'GET',
-        headers: { 
+        headers: {
           accept: 'application/json',
-          'x-api-key': 'test-api-key'
+          'x-api-key': 'test-api-key',
         },
       });
 
@@ -36,7 +36,7 @@ describe('Contract: API Management', () => {
       expect(res.status).toBe(200);
 
       const data = await res.json();
-      
+
       // OpenAPI specification validation
       expect(data).toMatchObject({
         openapi: expect.stringMatching(/^3\.[01]$/),
@@ -45,20 +45,20 @@ describe('Contract: API Management', () => {
           version: expect.any(String),
           description: expect.any(String),
           contact: expect.objectContaining({
-            email: expect.any(String)
-          })
+            email: expect.any(String),
+          }),
         }),
         servers: expect.arrayContaining([
           expect.objectContaining({
             url: expect.any(String),
-            description: expect.any(String)
-          })
+            description: expect.any(String),
+          }),
         ]),
         paths: expect.any(Object),
         components: expect.objectContaining({
           schemas: expect.any(Object),
-          securitySchemes: expect.any(Object)
-        })
+          securitySchemes: expect.any(Object),
+        }),
       });
 
       // Healthcare-specific extensions
@@ -67,10 +67,10 @@ describe('Contract: API Management', () => {
           lgpd: 'compliant',
           anvisa: 'compliant',
           cfm: 'compliant',
-          hipaa: 'not_applicable'
+          hipaa: 'not_applicable',
         }),
         'x-data-classification': 'protected_health_information',
-        'x-audit-level': 'high'
+        'x-audit-level': 'high',
       });
     });
 
@@ -81,25 +81,25 @@ describe('Contract: API Management', () => {
       });
 
       const data = await res.json();
-      
+
       expect(data.components.securitySchemes).toMatchObject({
         BearerAuth: expect.objectContaining({
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: expect.stringContaining('healthcare')
+          description: expect.stringContaining('healthcare'),
         }),
         ApiKeyAuth: expect.objectContaining({
           type: 'apiKey',
           in: 'header',
           name: 'x-api-key',
-          description: expect.stringContaining('healthcare')
+          description: expect.stringContaining('healthcare'),
         }),
         ClinicAuth: expect.objectContaining({
           type: 'http',
           scheme: 'bearer',
-          description: expect.stringContaining('clinic')
-        })
+          description: expect.stringContaining('clinic'),
+        }),
       });
     });
 
@@ -119,18 +119,18 @@ describe('Contract: API Management', () => {
           properties: expect.objectContaining({
             cpf: expect.objectContaining({
               type: 'string',
-              pattern: expect.stringContaining('\\d{11}')
+              pattern: expect.stringContaining('\\d{11}'),
             }),
             rg: expect.objectContaining({
-              type: 'string'
+              type: 'string',
             }),
             health_plan: expect.objectContaining({
-              type: 'string'
+              type: 'string',
             }),
             emergency_contact: expect.objectContaining({
-              type: 'object'
-            })
-          })
+              type: 'object',
+            }),
+          }),
         });
       }
 
@@ -146,13 +146,13 @@ describe('Contract: API Management', () => {
                 'exam',
                 'procedure',
                 'follow_up',
-                'emergency'
-              ])
+                'emergency',
+              ]),
             }),
             specialty: expect.objectContaining({
-              type: 'string'
-            })
-          })
+              type: 'string',
+            }),
+          }),
         });
       }
     });
@@ -174,14 +174,14 @@ describe('Contract: API Management', () => {
           neighborhood: 'Jardins',
           city: 'São Paulo',
           state: 'SP',
-          zip_code: '01451000'
+          zip_code: '01451000',
         },
         health_plan: {
           operator: 'Unimed',
           plan_code: 'VIP123',
           coverage: 'full',
-          valid_until: '2025-12-31'
-        }
+          valid_until: '2025-12-31',
+        },
       };
 
       const res = await api('/api/schema/validate/patient', {
@@ -204,8 +204,8 @@ describe('Contract: API Management', () => {
         healthcare_compliance: {
           lgpd: true,
           anvisa: true,
-          data_classification: 'personal'
-        }
+          data_classification: 'personal',
+        },
       });
     });
 
@@ -214,7 +214,7 @@ describe('Contract: API Management', () => {
         name: 'Test Patient',
         email: 'test@example.com',
         cpf: '12345678900', // Invalid CPF
-        birth_date: '1990-01-01'
+        birth_date: '1990-01-01',
       };
 
       const res = await api('/api/schema/validate/patient', {
@@ -235,9 +235,9 @@ describe('Contract: API Management', () => {
           expect.objectContaining({
             field: 'cpf',
             message: expect.stringContaining('CPF'),
-            code: 'invalid_cpf'
-          })
-        )
+            code: 'invalid_cpf',
+          }),
+        ),
       });
     });
 
@@ -269,10 +269,10 @@ describe('Contract: API Management', () => {
             regulation: 'LGPD',
             article: expect.any(String),
             missing_fields: expect.arrayContaining(
-              expect.stringContaining('consent')
-            )
-          })
-        )
+              expect.stringContaining('consent'),
+            ),
+          }),
+        ),
       });
     });
   });
@@ -304,13 +304,13 @@ describe('Contract: API Management', () => {
           patient_registration: expect.any(Object),
           appointment_scheduling: expect.any(Object),
           medical_record_access: expect.any(Object),
-          lgpd_consent: expect.any(Object)
+          lgpd_consent: expect.any(Object),
         }),
         healthcare_compliance: {
           data_anonymization: 'enabled',
           audit_logging: 'enabled',
-          consent_required: true
-        }
+          consent_required: true,
+        },
       });
     });
 
@@ -329,7 +329,7 @@ describe('Contract: API Management', () => {
           total_endpoints: expect.any(Number),
           compliant_endpoints: expect.any(Number),
           lgpd_compliant: expect.any(Number),
-          anvisa_compliant: expect.any(Number)
+          anvisa_compliant: expect.any(Number),
         }),
         endpoints: expect.arrayContaining(
           expect.objectContaining({
@@ -338,10 +338,10 @@ describe('Contract: API Management', () => {
             compliance: expect.objectContaining({
               lgpd: expect.oneOf([true, false]),
               anvisa: expect.oneOf([true, false]),
-              data_classification: expect.any(String)
-            })
-          })
-        )
+              data_classification: expect.any(String),
+            }),
+          }),
+        ),
       });
     });
   });
@@ -358,8 +358,8 @@ describe('Contract: API Management', () => {
         lgpd_consent: {
           data_processing: true,
           marketing_comms: false,
-          consent_date: new Date().toISOString()
-        }
+          consent_date: new Date().toISOString(),
+        },
       };
 
       const res = await api('/api/v2/contracts/validate/patient', {
@@ -367,7 +367,7 @@ describe('Contract: API Management', () => {
         headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_contract_test',
-          'x-contract-version': '2.0'
+          'x-contract-version': '2.0',
         },
         body: JSON.stringify(patientCreationPayload),
       });
@@ -383,8 +383,8 @@ describe('Contract: API Management', () => {
         schema_compliance: {
           request: true,
           response: true,
-          healthcare_extensions: true
-        }
+          healthcare_extensions: true,
+        },
       });
     });
 
@@ -392,7 +392,7 @@ describe('Contract: API Management', () => {
       const invalidPayload = {
         // Missing required fields
         email: 'invalid-email',
-        cpf: '00000000000' // Invalid CPF
+        cpf: '00000000000', // Invalid CPF
       };
 
       const res = await api('/api/v2/contracts/validate/patient', {
@@ -415,9 +415,9 @@ describe('Contract: API Management', () => {
             field: expect.any(String),
             message: expect.any(String),
             severity: expect.stringMatching(/^(error|warning|info)$/),
-            suggested_fix: expect.any(String)
-          })
-        )
+            suggested_fix: expect.any(String),
+          }),
+        ),
       });
     });
 
@@ -432,7 +432,7 @@ describe('Contract: API Management', () => {
           operation: 'patient_data_access',
           user_role: 'physician',
           data_sensitivity: 'high',
-          consent_verified: true
+          consent_verified: true,
         }),
       });
 
@@ -446,14 +446,14 @@ describe('Contract: API Management', () => {
           lgpd: {
             lawful_basis: expect.any(String),
             data_minimization: true,
-            purpose_limitation: true
+            purpose_limitation: true,
           },
           anvisa: {
             medical_device_data: expect.any(Boolean),
-            clinical_trial_data: expect.any(Boolean)
-          }
+            clinical_trial_data: expect.any(Boolean),
+          },
         },
-        audit_required: expect.any(Boolean)
+        audit_required: expect.any(Boolean),
       });
     });
   });
@@ -476,18 +476,18 @@ describe('Contract: API Management', () => {
         validation_results: expect.objectContaining({
           data_encryption: expect.objectContaining({
             at_rest: expect.oneOf([true, false]),
-            in_transit: expect.oneOf([true, false])
+            in_transit: expect.oneOf([true, false]),
           }),
           consent_management: expect.objectContaining({
             explicit_consent: expect.oneOf([true, false]),
-            withdrawal_support: expect.oneOf([true, false])
+            withdrawal_support: expect.oneOf([true, false]),
           }),
           data_subject_rights: expect.objectContaining({
             access: expect.oneOf([true, false]),
             deletion: expect.oneOf([true, false]),
-            portability: expect.oneOf([true, false])
-          })
-        })
+            portability: expect.oneOf([true, false]),
+          }),
+        }),
       });
     });
 
@@ -508,12 +508,12 @@ describe('Contract: API Management', () => {
         medical_device_data: expect.objectContaining({
           traceability: expect.oneOf([true, false]),
           quality_control: expect.oneOf([true, false]),
-          adverse_event_reporting: expect.oneOf([true, false])
+          adverse_event_reporting: expect.oneOf([true, false]),
         }),
         clinical_trial_support: expect.objectContaining({
           protocol_management: expect.oneOf([true, false]),
-          safety_reporting: expect.oneOf([true, false])
-        })
+          safety_reporting: expect.oneOf([true, false]),
+        }),
       });
     });
 
@@ -529,8 +529,8 @@ describe('Contract: API Management', () => {
           regulations: ['LGPD', 'ANVISA'],
           time_period: {
             start: '2024-01-01',
-            end: '2024-12-31'
-          }
+            end: '2024-12-31',
+          },
         }),
       });
 
@@ -544,12 +544,12 @@ describe('Contract: API Management', () => {
         compliance_summary: expect.objectContaining({
           overall_score: expect.any(Number),
           critical_violations: expect.any(Number),
-          recommendations: expect.any(Array)
+          recommendations: expect.any(Array),
         }),
         regulatory_details: expect.objectContaining({
           LGPD: expect.any(Object),
-          ANVISA: expect.any(Object)
-        })
+          ANVISA: expect.any(Object),
+        }),
       });
     });
   });
@@ -561,16 +561,15 @@ describe('Contract: API Management', () => {
           method: 'GET',
           headers: {
             'x-api-key': 'test-key',
-            'x-client-id': 'test-client'
-          }
-        })
-      );
+            'x-client-id': 'test-client',
+          },
+        }));
 
       const responses = await Promise.all(requests);
       const rateLimitedResponse = responses.find(r => r.status === 429);
 
       expect(rateLimitedResponse).toBeDefined();
-      
+
       if (rateLimitedResponse) {
         expect(rateLimitedResponse.headers.get('X-RateLimit-Limit')).toBeTruthy();
         expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe('0');
@@ -582,7 +581,7 @@ describe('Contract: API Management', () => {
       const res = await api('/api/openapi.json', {
         method: 'GET',
         headers: {
-          'x-api-key': 'invalid-key'
+          'x-api-key': 'invalid-key',
         },
       });
 
@@ -591,7 +590,7 @@ describe('Contract: API Management', () => {
       const data = await res.json();
       expect(data).toMatchObject({
         error: 'authentication_failed',
-        message: expect.stringContaining('API key')
+        message: expect.stringContaining('API key'),
       });
     });
 
@@ -600,7 +599,7 @@ describe('Contract: API Management', () => {
         method: 'GET',
         headers: {
           'x-clinic-id': 'clinic_audit_test',
-          'x-user-id': 'admin_user'
+          'x-user-id': 'admin_user',
         },
       });
 
@@ -615,9 +614,9 @@ describe('Contract: API Management', () => {
           'contract_validation',
           'compliance_check',
           'api_key_management',
-          'rate_limit_violation'
+          'rate_limit_violation',
         ]),
-        retention_period_days: expect.any(Number)
+        retention_period_days: expect.any(Number),
       });
     });
   });

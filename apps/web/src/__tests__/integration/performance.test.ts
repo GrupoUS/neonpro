@@ -16,11 +16,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 // Mock performance APIs
 const mockPerformanceObserver = vi.fn();
 const mockWebVitals = {
-  getCLS: vi.fn(),
-  getFID: vi.fn(),
-  getFCP: vi.fn(),
-  getLCP: vi.fn(),
-  getTTFB: vi.fn(),
+  onCLS: vi.fn(),
+  onFID: vi.fn(),
+  onFCP: vi.fn(),
+  onLCP: vi.fn(),
+  onTTFB: vi.fn(),
+  onINP: vi.fn(),
 };
 
 // Mock bundle analyzer

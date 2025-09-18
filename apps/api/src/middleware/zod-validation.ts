@@ -26,36 +26,36 @@ export const HealthcareValidationRules = {
   cpf: v.pipe(
     v.string(),
     v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF deve estar no formato XXX.XXX.XXX-XX'),
-    v.check(validateCPF, 'CPF inválido')
+    v.check(validateCPF, 'CPF inválido'),
   ),
 
   rg: v.pipe(
     v.string(),
-    v.regex(/^\d{2}\.\d{3}\.\d{3}-\d{1}$/, 'RG deve estar no formato XX.XXX.XXX-X')
+    v.regex(/^\d{2}\.\d{3}\.\d{3}-\d{1}$/, 'RG deve estar no formato XX.XXX.XXX-X'),
   ),
 
   cnpj: v.pipe(
     v.string(),
     v.regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX'),
-    v.check(validateCNPJ, 'CNPJ inválido')
+    v.check(validateCNPJ, 'CNPJ inválido'),
   ),
 
   cep: v.pipe(
     v.string(),
-    v.regex(/^\d{5}-\d{3}$/, 'CEP deve estar no formato XXXXX-XXX')
+    v.regex(/^\d{5}-\d{3}$/, 'CEP deve estar no formato XXXXX-XXX'),
   ),
 
   // Medical professional licenses
   crm: v.pipe(
     v.string(),
     v.regex(/^CRM[A-Z]{2}\s?\d{4,6}$/, 'CRM deve estar no formato CRMXX XXXXXX'),
-    v.transform(val => val.replace(/\s+/g, ' ')) // Normalize spacing
+    v.transform(val => val.replace(/\s+/g, ' ')), // Normalize spacing
   ),
 
   cro: v.pipe(
     v.string(),
     v.regex(/^CRO[A-Z]{2}\s?\d{4,6}$/, 'CRO deve estar no formato CROXX XXXXXX'),
-    v.transform(val => val.replace(/\s+/g, ' '))
+    v.transform(val => val.replace(/\s+/g, ' ')),
   ),
 
   // Contact information with Brazilian format
@@ -63,77 +63,80 @@ export const HealthcareValidationRules = {
     v.string(),
     v.regex(
       /^\(\d{2}\)\s?9?\d{4}-?\d{4}$/,
-      'Telefone deve estar no formato (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX'
-    )
+      'Telefone deve estar no formato (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX',
+    ),
   ),
 
   email: v.pipe(
     v.string(),
     v.email('Email inválido'),
     v.maxLength(254, 'Email muito longo'),
-    v.transform(val => val.toLowerCase())
+    v.transform(val => val.toLowerCase()),
   ),
 
   // Medical data validation
-  bloodType: v.picklist(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], 'Tipo sanguíneo inválido'),
+  bloodType: v.picklist(
+    ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    'Tipo sanguíneo inválido',
+  ),
 
   // CID-10 diagnosis codes
   cidCode: v.pipe(
     v.string(),
-    v.regex(/^[A-Z]\d{2}\.?\d{0,2}$/, 'Código CID-10 inválido')
+    v.regex(/^[A-Z]\d{2}\.?\d{0,2}$/, 'Código CID-10 inválido'),
   ),
 
   // TUSS procedure codes
   tussCode: v.pipe(
     v.string(),
-    v.regex(/^\d{8}\.\d{2}\.\d{2}$/, 'Código TUSS deve estar no formato XXXXXXXX.XX.XX')
+    v.regex(/^\d{8}\.\d{2}\.\d{2}$/, 'Código TUSS deve estar no formato XXXXXXXX.XX.XX'),
   ),
 
   // Patient age validation
   patientAge: v.pipe(
     v.number(),
     v.minValue(0, 'Idade não pode ser negativa'),
-    v.maxValue(150, 'Idade inválida')
+    v.maxValue(150, 'Idade inválida'),
   ),
 
   // Date validation for Brazilian format
   brazilianDate: v.pipe(
     v.string(),
     v.regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato DD/MM/AAAA'),
-    v.check(validateBrazilianDate, 'Data inválida')
+    v.check(validateBrazilianDate, 'Data inválida'),
   ),
 
   // SUS card number validation
   susCard: v.pipe(
     v.string(),
     v.regex(/^\d{15}$/, 'Cartão SUS deve ter 15 dígitos'),
-    v.check(validateSUSCard, 'Cartão SUS inválido')
+    v.check(validateSUSCard, 'Cartão SUS inválido'),
   ),
 
   // Medical prescription validation
   dosage: v.pipe(
     v.string(),
     v.minLength(1, 'Dosagem é obrigatória'),
-    v.maxLength(200, 'Dosagem muito longa')
+    v.maxLength(200, 'Dosagem muito longa'),
   ),
 
   // Patient weight and height
   weight: v.pipe(
     v.number(),
     v.minValue(0.5, 'Peso mínimo: 0.5kg'),
-    v.maxValue(500, 'Peso máximo: 500kg')
+    v.maxValue(500, 'Peso máximo: 500kg'),
   ),
 
   height: v.pipe(
     v.number(),
     v.minValue(30, 'Altura mínima: 30cm'),
-    v.maxValue(250, 'Altura máxima: 250cm')
+    v.maxValue(250, 'Altura máxima: 250cm'),
   ),
 
   // Healthcare facility validation
   cnes: v.pipe(
     v.string(),
-    v.regex(/^\d{7}$/, 'CNES deve ter 7 dígitos')
+    v.regex(/^\d{7}$/, 'CNES deve ter 7 dígitos'),
   ),
 };
 
@@ -141,7 +144,11 @@ export const HealthcareValidationRules = {
 export const CommonHealthcareSchemas = {
   // Patient identification
   PatientIdentification: v.object({
-    name: v.pipe(v.string(), v.minLength(2, 'Nome deve ter pelo menos 2 caracteres'), v.maxLength(100)),
+    name: v.pipe(
+      v.string(),
+      v.minLength(2, 'Nome deve ter pelo menos 2 caracteres'),
+      v.maxLength(100),
+    ),
     cpf: HealthcareValidationRules.cpf,
     rg: v.optional(HealthcareValidationRules.rg),
     birthDate: HealthcareValidationRules.brazilianDate,
@@ -377,15 +384,17 @@ export function valibotValidation(config: ValidationConfig) {
             metadata: {
               target: config.target,
               dataClassification: config.dataClassification,
-              errors: v.flatten(error).nested ? Object.entries(v.flatten(error).nested).map(([field, issues]) => ({
-                field,
-                message: issues?.[0] || 'Validation error',
-                code: 'validation_error',
-              })) : [{
-                field: 'root',
-                message: v.flatten(error).root?.[0] || 'Validation error',
-                code: 'validation_error',
-              }],
+              errors: v.flatten(error).nested
+                ? Object.entries(v.flatten(error).nested).map(([field, issues]) => ({
+                  field,
+                  message: issues?.[0] || 'Validation error',
+                  code: 'validation_error',
+                }))
+                : [{
+                  field: 'root',
+                  message: v.flatten(error).root?.[0] || 'Validation error',
+                  code: 'validation_error',
+                }],
               // Sanitize input data for error logging
               invalidData: sanitizeHealthcareData(error),
             },
@@ -401,7 +410,10 @@ export function valibotValidation(config: ValidationConfig) {
 }
 
 // Convenience functions for common validation scenarios
-export function validateQuery(schema: v.BaseSchema<any, any, any>, options?: Partial<ValidationConfig>) {
+export function validateQuery(
+  schema: v.BaseSchema<any, any, any>,
+  options?: Partial<ValidationConfig>,
+) {
   return valibotValidation({
     schema,
     target: 'query',
@@ -409,7 +421,10 @@ export function validateQuery(schema: v.BaseSchema<any, any, any>, options?: Par
   });
 }
 
-export function validateParams(schema: v.BaseSchema<any, any, any>, options?: Partial<ValidationConfig>) {
+export function validateParams(
+  schema: v.BaseSchema<any, any, any>,
+  options?: Partial<ValidationConfig>,
+) {
   return valibotValidation({
     schema,
     target: 'params',
@@ -417,7 +432,10 @@ export function validateParams(schema: v.BaseSchema<any, any, any>, options?: Pa
   });
 }
 
-export function validateBody(schema: v.BaseSchema<any, any, any>, options?: Partial<ValidationConfig>) {
+export function validateBody(
+  schema: v.BaseSchema<any, any, any>,
+  options?: Partial<ValidationConfig>,
+) {
   return valibotValidation({
     schema,
     target: 'body',
@@ -427,7 +445,10 @@ export function validateBody(schema: v.BaseSchema<any, any, any>, options?: Part
   });
 }
 
-export function validateHeaders(schema: v.BaseSchema<any, any, any>, options?: Partial<ValidationConfig>) {
+export function validateHeaders(
+  schema: v.BaseSchema<any, any, any>,
+  options?: Partial<ValidationConfig>,
+) {
   return valibotValidation({
     schema,
     target: 'headers',

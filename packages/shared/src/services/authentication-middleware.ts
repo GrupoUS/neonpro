@@ -801,15 +801,16 @@ export class HealthcareAuthMiddleware {
     resourceType?: string,
     operation?: 'read' | 'write' | 'delete'
   ): MiddlewareHandler {
-    return async (c: Context, next: Next) => {
+    return async (c: Context, next: Next): Promise<void> => {
       const authSession = c.get('authSession') as AuthSession;
 
       if (!authSession) {
-        return c.json({
+        c.json({
           error: 'UNAUTHORIZED',
           message: 'Authentication required',
           timestamp: new Date().toISOString()
         }, 401);
+        return;
       }
 
       // Check specific permission
@@ -821,12 +822,13 @@ export class HealthcareAuthMiddleware {
 
         if (!hasPermission) {
           await this.logAuthorizationFailure(c, authSession, requiredPermission);
-          return c.json({
+          c.json({
             error: 'FORBIDDEN',
             message: 'Insufficient permissions',
             required: requiredPermission,
             timestamp: new Date().toISOString()
           }, 403);
+          return;
         }
       }
 
@@ -839,13 +841,14 @@ export class HealthcareAuthMiddleware {
 
         if (!hasAccessLevel) {
           await this.logAuthorizationFailure(c, authSession, `access_level_${requiredAccessLevel}`);
-          return c.json({
+          c.json({
             error: 'FORBIDDEN',
             message: 'Insufficient access level',
             required: requiredAccessLevel,
             current: authSession.userProfile.accessLevel,
             timestamp: new Date().toISOString()
           }, 403);
+          return;
         }
       }
 
@@ -859,11 +862,12 @@ export class HealthcareAuthMiddleware {
 
         if (!canAccess) {
           await this.logAuthorizationFailure(c, authSession, `${resourceType}:${operation}`);
-          return c.json({
+          c.json({
             error: 'FORBIDDEN',
             message: `Cannot ${operation} ${resourceType}`,
             timestamp: new Date().toISOString()
           }, 403);
+          return;
         }
       }
 
@@ -875,11 +879,12 @@ export class HealthcareAuthMiddleware {
       );
 
       if (requiresMfa && !authSession.sessionMetadata.mfaVerified) {
-        return c.json({
+        c.json({
           error: 'MFA_REQUIRED',
           message: 'Multi-factor authentication required',
           timestamp: new Date().toISOString()
         }, 403);
+        return;
       }
 
       // Log successful authorization
@@ -988,7 +993,7 @@ export class HealthcareAuthMiddleware {
         throw new Error('JWT_SECRET environment variable is required for token validation.');
       }
 
-      const decoded = await verify(token, secret, this.config.jwt.algorithm);
+      const decoded = await verify(token, secret, this.config.jwt.algorithm as any);
 
       // Validate token claims
       if (decoded.iss !== this.config.jwt.issuer) {

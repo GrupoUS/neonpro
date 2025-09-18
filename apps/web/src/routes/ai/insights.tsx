@@ -359,8 +359,6 @@ function AIInsightsPage() {
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <Button variant='ghost' size='sm' onClick={() => navigate({ to: '/dashboard' })}>
-
-
             <ArrowLeft className='h-4 w-4 mr-2' />
             Voltar
           </Button>

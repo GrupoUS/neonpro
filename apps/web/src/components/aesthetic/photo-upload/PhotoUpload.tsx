@@ -155,12 +155,14 @@ export function PhotoUpload({
     }
 
     // Check image dimensions (async validation)
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const img = new Image();
       img.onload = () => {
         const { width, height } = img;
-        const maxResolution = AESTHETIC_PHOTO_TYPES[file.type as keyof typeof AESTHETIC_PHOTO_TYPES]?.maxResolution || 4096;
-        
+        const maxResolution =
+          AESTHETIC_PHOTO_TYPES[file.type as keyof typeof AESTHETIC_PHOTO_TYPES]?.maxResolution
+          || 4096;
+
         if (width > maxResolution || height > maxResolution) {
           resolve(`Resolução muito alta. Máximo: ${maxResolution}x${maxResolution}px`);
         } else if (width < 512 || height < 512) {
@@ -182,7 +184,9 @@ export function PhotoUpload({
 
     // Generate unique file name with aesthetic prefix
     const fileExt = file.name.split('.').pop();
-    const fileName = `aesthetic/${patientId || 'temp'}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const fileName = `aesthetic/${patientId || 'temp'}/${Date.now()}-${
+      Math.random().toString(36).substring(2)
+    }.${fileExt}`;
 
     // Simulate upload for now (TODO: Implement actual Supabase storage upload)
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -503,15 +507,13 @@ export function PhotoUpload({
           {Array.from(uploadStates.entries()).map(([photoId, state]) => (
             <div key={photoId} className='flex items-center gap-3 p-3 border rounded-lg'>
               <div className='flex-shrink-0'>
-                {state.status === 'completed' ? (
-                  <IconCheck className='h-5 w-5 text-green-500' />
-                ) : state.status === 'analyzing' ? (
-                  <IconLoader2 className='h-5 w-5 text-blue-500 animate-spin' />
-                ) : state.status === 'error' ? (
-                  <IconAlertCircle className='h-5 w-5 text-red-500' />
-                ) : (
-                  <IconPhoto className='h-5 w-5 text-muted-foreground' />
-                )}
+                {state.status === 'completed'
+                  ? <IconCheck className='h-5 w-5 text-green-500' />
+                  : state.status === 'analyzing'
+                  ? <IconLoader2 className='h-5 w-5 text-blue-500 animate-spin' />
+                  : state.status === 'error'
+                  ? <IconAlertCircle className='h-5 w-5 text-red-500' />
+                  : <IconPhoto className='h-5 w-5 text-muted-foreground' />}
               </div>
 
               <div className='flex-1 min-w-0'>
@@ -554,9 +556,10 @@ export function PhotoUpload({
                     src={photo.url}
                     alt={photo.name}
                     className='w-full h-full object-cover'
-                    onClick={() => setSelectedPhoto(photo.id)}
+                    onClick={() =>
+                      setSelectedPhoto(photo.id)}
                   />
-                  
+
                   {/* Analysis Badge */}
                   {photo.analysis && (
                     <div className='absolute top-2 right-2'>
@@ -569,7 +572,8 @@ export function PhotoUpload({
 
                   {/* View Button */}
                   <button
-                    onClick={() => setSelectedPhoto(photo.id)}
+                    onClick={() =>
+                      setSelectedPhoto(photo.id)}
                     className='absolute bottom-2 right-2 bg-black/50 text-white p-1 rounded hover:bg-black/70 transition-colors'
                     aria-label={`Visualizar ${photo.name}`}
                   >
@@ -581,7 +585,8 @@ export function PhotoUpload({
                 <div className='p-3 space-y-2'>
                   <p className='text-sm font-medium truncate'>{photo.name}</p>
                   <p className='text-xs text-muted-foreground'>
-                    {(photo.size / 1024 / 1024).toFixed(1)}MB • {photo.uploadedAt.toLocaleDateString('pt-BR')}
+                    {(photo.size / 1024 / 1024).toFixed(1)}MB •{' '}
+                    {photo.uploadedAt.toLocaleDateString('pt-BR')}
                   </p>
 
                   {/* Analysis Summary */}
@@ -589,7 +594,9 @@ export function PhotoUpload({
                     <div className='space-y-1'>
                       <div className='flex items-center justify-between text-xs'>
                         <span>Confiência:</span>
-                        <span className='font-medium'>{Math.round(photo.analysis.confidence * 100)}%</span>
+                        <span className='font-medium'>
+                          {Math.round(photo.analysis.confidence * 100)}%
+                        </span>
                       </div>
                       <div className='flex items-center justify-between text-xs'>
                         <span>Gravidade:</span>

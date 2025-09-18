@@ -9,19 +9,16 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "security",
     "node",
     "import",
     "react-hooks"
   ],
   "extends": [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "plugin:security/recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:node/recommended",
     "plugin:import/recommended",
-    "plugin:import/typescript",
-    "./healthcare-rules.js"
+    "plugin:import/typescript"
   ],
   "rules": {
     "prettier/prettier": "error",

@@ -4,13 +4,6 @@
  */
 
 module.exports = {
-  plugins: [
-    '@typescript-eslint',
-    'security',
-    'node',
-    'import',
-    'react-hooks'
-  ],
   rules: {
     // Healthcare Data Security Rules
     'security/detect-object-injection': 'error',

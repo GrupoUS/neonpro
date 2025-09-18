@@ -9,17 +9,17 @@
  * - Component-level accessibility testing
  */
 
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { act } from 'react-dom/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import our enhanced components
-import { EnhancedPatientCard } from '../EnhancedPatientCard';
-import { EnhancedHealthcareForm } from '../EnhancedHealthcareForm';
-import { HealthcareAccessibilityAuditor } from '../../../utils/healthcare-accessibility-audit';
 import { AccessibilityValidator } from '../../../utils/accessibility-validation';
+import { HealthcareAccessibilityAuditor } from '../../../utils/healthcare-accessibility-audit';
+import { EnhancedHealthcareForm } from '../EnhancedHealthcareForm';
+import { EnhancedPatientCard } from '../EnhancedPatientCard';
 
 // Mock the accessibility testing utilities
 vi.mock('../../../utils/accessibility-testing', () => ({
@@ -28,9 +28,9 @@ vi.mock('../../../utils/accessibility-testing', () => ({
       violations: [],
       passes: [],
       incomplete: [],
-      timestamp: new Date().toISOString()
-    })
-  })
+      timestamp: new Date().toISOString(),
+    }),
+  }),
 }));
 
 // Mock axe-core for testing
@@ -40,9 +40,9 @@ vi.mock('@axe-core/react', () => ({
       violations: [],
       passes: [],
       incomplete: [],
-      timestamp: new Date().toISOString()
-    })
-  }))
+      timestamp: new Date().toISOString(),
+    }),
+  })),
 }));
 
 describe('Healthcare Accessibility Validation', () => {
@@ -71,7 +71,7 @@ describe('Healthcare Accessibility Validation', () => {
       treatmentType: 'Consulta Geral',
       medication: ['Paracetamol 500mg'],
       isEmergencyCase: false,
-      requiresSpecialAttention: false
+      requiresSpecialAttention: false,
     };
 
     it('should render with proper ARIA attributes', () => {
@@ -81,7 +81,7 @@ describe('Healthcare Accessibility Validation', () => {
           onClick={() => {}}
           showSensitiveData={true}
           enableHealthcareAudit={true}
-        />
+        />,
       );
 
       const card = container.querySelector('div[role="button"]');
@@ -97,7 +97,7 @@ describe('Healthcare Accessibility Validation', () => {
         ...mockPatient,
         status: 'emergency' as const,
         isEmergencyCase: true,
-        emergencyContact: '(11) 99999-9999'
+        emergencyContact: '(11) 99999-9999',
       };
 
       const { container } = render(
@@ -106,14 +106,14 @@ describe('Healthcare Accessibility Validation', () => {
           onClick={() => {}}
           showSensitiveData={true}
           showEmergencyInfo={true}
-          auditContext="emergency"
-        />
+          auditContext='emergency'
+        />,
       );
 
       const emergencyAlert = container.querySelector('[role="alert"]');
       expect(emergencyAlert).toBeInTheDocument();
       expect(emergencyAlert).toHaveTextContent('Paciente em situação de emergência');
-      
+
       const card = container.querySelector('div[role="button"]');
       expect(card).toHaveAttribute('data-emergency', 'true');
       expect(card).toHaveAttribute('data-healthcare-category', 'emergency');
@@ -125,7 +125,7 @@ describe('Healthcare Accessibility Validation', () => {
         <EnhancedPatientCard
           patient={mockPatient}
           onKeyboardSelect={mockOnSelect}
-        />
+        />,
       );
 
       const card = container.querySelector('div[role="button"]');
@@ -142,7 +142,7 @@ describe('Healthcare Accessibility Validation', () => {
           patient={mockPatient}
           onClick={() => {}}
           showSensitiveData={false}
-        />
+        />,
       );
 
       // Phone should not be visible when showSensitiveData is false
@@ -154,7 +154,7 @@ describe('Healthcare Accessibility Validation', () => {
           patient={mockPatient}
           onClick={() => {}}
           showSensitiveData={true}
-        />
+        />,
       );
 
       expect(container.queryByText('(11) 98765-4321')).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe('Healthcare Accessibility Validation', () => {
       const patientWithMeds = {
         ...mockPatient,
         medication: ['Paracetamol 500mg', 'Ibuprofeno 400mg'],
-        allergies: ['Penicilina']
+        allergies: ['Penicilina'],
       };
 
       const { container } = render(
@@ -172,13 +172,13 @@ describe('Healthcare Accessibility Validation', () => {
           patient={patientWithMeds}
           onClick={() => {}}
           showSensitiveData={true}
-        />
+        />,
       );
 
       expect(container.queryByText('Medicamentos:')).toBeInTheDocument();
       expect(container.queryByText('Paracetamol 500mg')).toBeInTheDocument();
       expect(container.queryByText('Ibuprofeno 400mg')).toBeInTheDocument();
-      
+
       const allergyAlert = container.querySelector('[role="status"]');
       expect(allergyAlert).toBeInTheDocument();
       expect(allergyAlert).toHaveTextContent('Alergias:');
@@ -194,7 +194,7 @@ describe('Healthcare Accessibility Validation', () => {
         required: true,
         placeholder: 'Digite seu nome completo',
         sensitivityLevel: 'medium' as const,
-        lgpdRelevant: true
+        lgpdRelevant: true,
       },
       {
         name: 'phone',
@@ -204,7 +204,7 @@ describe('Healthcare Accessibility Validation', () => {
         placeholder: '(11) 98765-4321',
         format: 'phone',
         sensitivityLevel: 'medium' as const,
-        lgpdRelevant: true
+        lgpdRelevant: true,
       },
       {
         name: 'bloodType',
@@ -219,15 +219,15 @@ describe('Healthcare Accessibility Validation', () => {
           { value: 'O+', label: 'O+' },
           { value: 'O-', label: 'O-' },
           { value: 'AB+', label: 'AB+' },
-          { value: 'AB-', label: 'AB-' }
+          { value: 'AB-', label: 'AB-' },
         ],
         medicalTerminology: {
           term: 'Tipo Sanguíneo',
           explanation: 'Classificação do sangue baseada na presença ou ausência de antígenos',
-          pronunciation: 'tí-po san-guí-ne-o'
+          pronunciation: 'tí-po san-guí-ne-o',
         },
         sensitivityLevel: 'high' as const,
-        anvisaRelevant: true
+        anvisaRelevant: true,
       },
       {
         name: 'allergies',
@@ -237,21 +237,21 @@ describe('Healthcare Accessibility Validation', () => {
         description: 'Informações sobre alergias são críticas para seu tratamento',
         sensitivityLevel: 'critical' as const,
         emergencyRelevant: true,
-        anvisaRelevant: true
-      }
+        anvisaRelevant: true,
+      },
     ];
 
     it('should render form with proper ARIA attributes', () => {
       const mockOnSubmit = vi.fn().mockResolvedValue({});
       const { container } = render(
         <EnhancedHealthcareForm
-          title="Formulário Médico"
-          description="Preencha suas informações médicas"
+          title='Formulário Médico'
+          description='Preencha suas informações médicas'
           fields={mockFields}
           onSubmit={mockOnSubmit}
           enableHealthcareAudit={true}
-          auditContext="registration"
-        />
+          auditContext='registration'
+        />,
       );
 
       const form = container.querySelector('form');
@@ -265,26 +265,28 @@ describe('Healthcare Accessibility Validation', () => {
       const mockOnSubmit = vi.fn().mockResolvedValue({});
       const { container } = render(
         <EnhancedHealthcareForm
-          title="Formulário Médico"
+          title='Formulário Médico'
           fields={mockFields}
           onSubmit={mockOnSubmit}
-        />
+        />,
       );
 
       const terminologyHelp = container.querySelector('[role="tooltip"]');
       expect(terminologyHelp).toBeInTheDocument();
       expect(terminologyHelp).toHaveTextContent('Tipo Sanguíneo');
-      expect(terminologyHelp).toHaveTextContent('Classificação do sangue baseada na presença ou ausência de antígenos');
+      expect(terminologyHelp).toHaveTextContent(
+        'Classificação do sangue baseada na presença ou ausência de antígenos',
+      );
     });
 
     it('should validate required fields', async () => {
       const mockOnSubmit = vi.fn().mockResolvedValue({});
       const { container } = render(
         <EnhancedHealthcareForm
-          title="Formulário Médico"
+          title='Formulário Médico'
           fields={mockFields}
           onSubmit={mockOnSubmit}
-        />
+        />,
       );
 
       const submitButton = screen.getByRole('button', { name: /Enviar/i });
@@ -301,10 +303,10 @@ describe('Healthcare Accessibility Validation', () => {
       const mockOnSubmit = vi.fn().mockResolvedValue({});
       const { container } = render(
         <EnhancedHealthcareForm
-          title="Formulário Médico"
+          title='Formulário Médico'
           fields={mockFields}
           onSubmit={mockOnSubmit}
-        />
+        />,
       );
 
       const phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
@@ -320,16 +322,16 @@ describe('Healthcare Accessibility Validation', () => {
       const mockOnSubmit = vi.fn().mockResolvedValue({});
       const { container } = render(
         <EnhancedHealthcareForm
-          title="Formulário Médico"
+          title='Formulário Médico'
           fields={mockFields}
           onSubmit={mockOnSubmit}
           emergencyMode={true}
-        />
+        />,
       );
 
       const form = container.querySelector('[data-healthcare-form]');
       expect(form).toHaveAttribute('data-emergency-mode', 'true');
-      
+
       const emergencyField = container.querySelector('[data-emergency-relevant="true"]');
       expect(emergencyField).toBeInTheDocument();
     });
@@ -360,7 +362,7 @@ describe('Healthcare Accessibility Validation', () => {
       const emergencyContext = {
         emergencyContext: true,
         patientJourney: 'emergency' as const,
-        dataSensitivity: 'critical' as const
+        dataSensitivity: 'critical' as const,
       };
 
       healthcareAuditor.setContext(emergencyContext);
@@ -377,11 +379,11 @@ describe('Healthcare Accessibility Validation', () => {
   describe('Accessibility Validator', () => {
     it('should generate comprehensive validation report', async () => {
       const mockElement = document.createElement('div');
-      
+
       const report = await validator.validateAccessibility(mockElement, {
         includeHealthcareAudit: true,
         validateWCAG: true,
-        context: 'registration'
+        context: 'registration',
       });
 
       expect(report).toBeDefined();
@@ -399,7 +401,7 @@ describe('Healthcare Accessibility Validation', () => {
     it('should validate component accessibility', async () => {
       const mockElement = document.createElement('div');
       mockElement.innerHTML = '<button>Test Button</button>';
-      
+
       const result = await validator.validateComponent('TestComponent', mockElement);
 
       expect(result).toBeDefined();
@@ -419,22 +421,22 @@ describe('Healthcare Accessibility Validation', () => {
           level: 'AA' as const,
           score: 95,
           passedCriteria: ['1.1.1', '1.2.1'],
-          failedCriteria: []
+          failedCriteria: [],
         },
         healthcareCompliance: {
           overallScore: 90,
           lgpdCompliant: true,
           anvisaCompliant: true,
           cfmCompliant: true,
-          emergencyAccessibility: true
+          emergencyAccessibility: true,
         },
         componentAnalysis: {
           totalComponents: 10,
           accessibleComponents: 9,
           componentsWithIssues: 1,
-          criticalIssues: 0
+          criticalIssues: 0,
         },
-        recommendations: []
+        recommendations: [],
       };
 
       const certificate = validator.generateComplianceCertificate(mockReport);
@@ -450,41 +452,45 @@ describe('Healthcare Accessibility Validation', () => {
 
   describe('WCAG 2.1 AA+ Criteria Validation', () => {
     it('should have comprehensive validation criteria', async () => {
-      const { WCAG_21_AA_VALIDATION_CRITERIA } = await import('../../../utils/accessibility-validation');
-      
+      const { WCAG_21_AA_VALIDATION_CRITERIA } = await import(
+        '../../../utils/accessibility-validation'
+      );
+
       expect(WCAG_21_AA_VALIDATION_CRITERIA).toBeDefined();
       expect(Array.isArray(WCAG_21_AA_VALIDATION_CRITERIA)).toBe(true);
       expect(WCAG_21_AA_VALIDATION_CRITERIA.length).toBeGreaterThan(0);
-      
+
       // Check that we have criteria for all WCAG categories
       const categories = ['perceivable', 'operable', 'understandable', 'robust'];
       categories.forEach(category => {
         const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-          criteria => criteria.category === category
+          criteria => criteria.category === category,
         );
         expect(criteriaInCategory.length).toBeGreaterThan(0);
       });
-      
+
       // Check healthcare relevance
       const healthcareRelevant = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-        criteria => criteria.healthcareRelevant
+        criteria => criteria.healthcareRelevant,
       );
       expect(healthcareRelevant.length).toBeGreaterThan(0);
     });
 
     it('should validate key healthcare accessibility requirements', async () => {
-      const { WCAG_21_AA_VALIDATION_CRITERIA } = await import('../../../utils/accessibility-validation');
-      
-      // Check for critical healthcare-related criteria
-      const healthcareCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(criteria => 
-        criteria.name.includes('Color') || 
-        criteria.name.includes('Keyboard') ||
-        criteria.name.includes('Focus') ||
-        criteria.name.includes('Error')
+      const { WCAG_21_AA_VALIDATION_CRITERIA } = await import(
+        '../../../utils/accessibility-validation'
       );
-      
+
+      // Check for critical healthcare-related criteria
+      const healthcareCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(criteria =>
+        criteria.name.includes('Color')
+        || criteria.name.includes('Keyboard')
+        || criteria.name.includes('Focus')
+        || criteria.name.includes('Error')
+      );
+
       expect(healthcareCriteria.length).toBeGreaterThan(0);
-      
+
       healthcareCriteria.forEach(criteria => {
         expect(criteria.healthcareRelevant).toBe(true);
         expect(criteria.wcagLevel).toMatch(/A|AA|AAA/);
@@ -497,10 +503,10 @@ describe('Healthcare Accessibility Validation', () => {
   describe('Accessibility Compliance Metrics', () => {
     it('should meet minimum accessibility standards', async () => {
       const mockElement = document.createElement('div');
-      
+
       const report = await validator.validateAccessibility(mockElement, {
         includeHealthcareAudit: true,
-        validateWCAG: true
+        validateWCAG: true,
       });
 
       // Validate minimum compliance standards
@@ -512,33 +518,36 @@ describe('Healthcare Accessibility Validation', () => {
 
     it('should track component accessibility metrics', async () => {
       const mockElement = document.createElement('div');
-      
+
       const report = await validator.validateAccessibility(mockElement, {
         includeHealthcareAudit: true,
-        validateWCAG: true
+        validateWCAG: true,
       });
 
       const { componentAnalysis } = report;
-      
+
       expect(componentAnalysis.totalComponents).toBeGreaterThan(0);
       expect(componentAnalysis.accessibleComponents).toBeGreaterThan(0);
-      expect(componentAnalysis.accessibleComponents).toBeLessThanOrEqual(componentAnalysis.totalComponents);
-      
+      expect(componentAnalysis.accessibleComponents).toBeLessThanOrEqual(
+        componentAnalysis.totalComponents,
+      );
+
       // At least 90% of components should be accessible
-      const accessibilityRatio = componentAnalysis.accessibleComponents / componentAnalysis.totalComponents;
+      const accessibilityRatio = componentAnalysis.accessibleComponents
+        / componentAnalysis.totalComponents;
       expect(accessibilityRatio).toBeGreaterThanOrEqual(0.9);
     });
 
     it('should provide actionable recommendations', async () => {
       const mockElement = document.createElement('div');
-      
+
       const report = await validator.validateAccessibility(mockElement, {
         includeHealthcareAudit: true,
-        validateWCAG: true
+        validateWCAG: true,
       });
 
       expect(report.recommendations.length).toBeGreaterThan(0);
-      
+
       report.recommendations.forEach(recommendation => {
         expect(recommendation.title).toBeDefined();
         expect(recommendation.description).toBeDefined();

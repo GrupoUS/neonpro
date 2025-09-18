@@ -21,14 +21,14 @@ import {
   CardTitle,
   Input,
   Label,
-  Textarea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
 } from '@neonpro/ui';
-import { AlertCircle, CheckCircle, Info, Shield, AlertTriangle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle, Info, Shield } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import {
   useAccessibilityPreferences,
@@ -135,7 +135,7 @@ export function EnhancedHealthcareForm({
     fields.forEach(field => {
       const fieldHook = fieldHooks[field.name];
       const fieldValue = formatFieldValue(field, fieldHook.value);
-      
+
       // Update field value with formatting
       if (fieldValue !== fieldHook.value) {
         fieldHook.setValue(fieldValue);
@@ -169,7 +169,10 @@ export function EnhancedHealthcareForm({
     setValidationWarnings(warnings);
 
     if (errors.length > 0) {
-      announceFormError('formulário de saúde', `${errors.length} erros encontrados: ${errors.join(', ')}`);
+      announceFormError(
+        'formulário de saúde',
+        `${errors.length} erros encontrados: ${errors.join(', ')}`,
+      );
       announceLive(
         `Formulário de saúde contém ${errors.length} erros. Corrija os campos destacados.`,
         'assertive',
@@ -233,7 +236,9 @@ export function EnhancedHealthcareForm({
       announceFormSuccess('Formulário de saúde enviado com sucesso');
       announceLive('Formulário de saúde enviado com sucesso!', 'polite');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar formulário de saúde';
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Erro ao enviar formulário de saúde';
       setSubmitError(errorMessage);
       announceFormError('envio', errorMessage);
       announceLive(`Erro ao enviar formulário de saúde: ${errorMessage}`, 'assertive');
@@ -261,10 +266,11 @@ export function EnhancedHealthcareForm({
       <div
         className={`
           mt-2 p-3 rounded-md border
-          ${prefersHighContrast 
-            ? 'bg-blue-100 border-blue-900 text-blue-900' 
+          ${
+          prefersHighContrast
+            ? 'bg-blue-100 border-blue-900 text-blue-900'
             : 'bg-blue-50 border border-blue-200 text-blue-700'
-          }
+        }
         `}
         role='tooltip'
         id={`${field.name}-terminology`}
@@ -292,7 +298,7 @@ export function EnhancedHealthcareForm({
     const { fieldProps, errorProps, descriptionProps } = fieldHook;
 
     const formattedValue = formatFieldValue(field, fieldHook.value);
-    
+
     const baseInputClasses = `
       w-full transition-colors duration-200
       ${
@@ -304,7 +310,9 @@ export function EnhancedHealthcareForm({
       fieldHook.error
         ? (prefersHighContrast ? 'border-red-900 bg-red-50' : 'border-red-500 bg-red-50')
         : validationWarnings[field.name]
-        ? (prefersHighContrast ? 'border-yellow-900 bg-yellow-50' : 'border-yellow-500 bg-yellow-50')
+        ? (prefersHighContrast
+          ? 'border-yellow-900 bg-yellow-50'
+          : 'border-yellow-500 bg-yellow-50')
         : ''
     }
       focus:ring-2 focus:ring-offset-2 outline-none
@@ -326,14 +334,16 @@ export function EnhancedHealthcareForm({
       ...fieldProps,
       ...healthcareAriaProps,
       value: formattedValue,
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+      ) => {
         fieldProps.onChange(e as any);
       },
     };
 
     return (
-      <div 
-        key={field.name} 
+      <div
+        key={field.name}
         className='space-y-2'
         data-healthcare-field={field.name}
         data-field-sensitivity={field.sensitivityLevel}
@@ -367,9 +377,7 @@ export function EnhancedHealthcareForm({
             {field.emergencyRelevant && (
               <AlertTriangle className='w-4 h-4 text-red-500' aria-hidden='true' />
             )}
-            {field.lgpdRelevant && (
-              <Shield className='w-4 h-4 text-blue-500' aria-hidden='true' />
-            )}
+            {field.lgpdRelevant && <Shield className='w-4 h-4 text-blue-500' aria-hidden='true' />}
           </div>
         </div>
 
@@ -395,9 +403,9 @@ export function EnhancedHealthcareForm({
           )
           : field.type === 'select'
           ? (
-            <Select 
-              value={fieldHook.value} 
-              onValueChange={(value) => fieldHook.setValue(value)}
+            <Select
+              value={fieldHook.value}
+              onValueChange={value => fieldHook.setValue(value)}
             >
               <SelectTrigger className={baseInputClasses}>
                 <SelectValue placeholder={field.placeholder || 'Selecione uma opção'} />
@@ -405,8 +413,8 @@ export function EnhancedHealthcareForm({
               <SelectContent>
                 <SelectItem value=''>Selecione uma opção</SelectItem>
                 {field.options?.map(option => (
-                  <SelectItem 
-                    key={option.value} 
+                  <SelectItem
+                    key={option.value}
                     value={option.value}
                     title={option.description}
                   >
@@ -471,10 +479,18 @@ export function EnhancedHealthcareForm({
         )}
       </div>
     );
-  }, [fieldHooks, prefersHighContrast, validationWarnings, enableHealthcareAudit, auditContext, formatFieldValue, renderMedicalTerminologyHelp]);
+  }, [
+    fieldHooks,
+    prefersHighContrast,
+    validationWarnings,
+    enableHealthcareAudit,
+    auditContext,
+    formatFieldValue,
+    renderMedicalTerminologyHelp,
+  ]);
 
   return (
-    <Card 
+    <Card
       className={`
         ${prefersHighContrast ? 'border-2 border-gray-900' : ''} 
         ${emergencyMode ? 'border-red-300 border-2' : ''}
@@ -597,10 +613,10 @@ export function EnhancedHealthcareForm({
         {/* Healthcare Audit Information */}
         {enableHealthcareAudit && (
           <div className='sr-only'>
-            Auditoria de acessibilidade em saúde habilitada para contexto: {auditContext}.
-            Formulário contém {fields.length} campos.
-            Campos críticos: {fields.filter(f => f.sensitivityLevel === 'critical').length}.
-            Campos relevantes para emergência: {fields.filter(f => f.emergencyRelevant).length}.
+            Auditoria de acessibilidade em saúde habilitada para contexto:{' '}
+            {auditContext}. Formulário contém {fields.length} campos. Campos críticos:{' '}
+            {fields.filter(f => f.sensitivityLevel === 'critical').length}. Campos relevantes para
+            emergência: {fields.filter(f => f.emergencyRelevant).length}.
           </div>
         )}
       </CardContent>

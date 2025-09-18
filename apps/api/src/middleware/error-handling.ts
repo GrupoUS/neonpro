@@ -467,7 +467,7 @@ export function createHealthcareError(
     code?: string;
     cause?: Error;
     metadata?: Record<string, any>;
-  } = {}
+  } = {},
 ): HTTPException {
   const error = new HTTPException(httpStatus, {
     message,
@@ -572,7 +572,7 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
           {
             code: 'VALIDATION_ERROR',
             metadata: { validationDetails: formattedError.details },
-          }
+          },
         );
 
         const { status, response } = await handler.handleError(healthcareError, context);

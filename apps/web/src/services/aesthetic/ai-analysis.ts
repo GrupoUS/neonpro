@@ -10,7 +10,10 @@
  * - LGPD-compliant data processing
  */
 
-import { AestheticAnalysis, TreatmentSuggestion } from '@/components/aesthetic/photo-upload/PhotoUpload';
+import {
+  AestheticAnalysis,
+  TreatmentSuggestion,
+} from '@/components/aesthetic/photo-upload/PhotoUpload';
 
 // OpenAI Vision API configuration
 interface OpenAIConfig {
@@ -22,7 +25,8 @@ interface OpenAIConfig {
 
 // Analysis prompts for different types of aesthetic concerns
 const ANALYSIS_PROMPTS = {
-  general: `Analyze this facial photo for aesthetic concerns and provide a detailed assessment including:
+  general:
+    `Analyze this facial photo for aesthetic concerns and provide a detailed assessment including:
 1. Skin type classification (oily, dry, combination, sensitive, normal)
 2. Primary aesthetic concerns (acne, wrinkles, pigmentation, texture, etc.)
 3. Severity assessment of each concern on a scale of 1-10
@@ -218,7 +222,10 @@ export class AestheticAIAnalysisService {
   /**
    * Analyze photo using OpenAI Vision API
    */
-  async analyzePhoto(imageUrl: string, analysisType: keyof typeof ANALYSIS_PROMPTS = 'general'): Promise<AestheticAnalysis> {
+  async analyzePhoto(
+    imageUrl: string,
+    analysisType: keyof typeof ANALYSIS_PROMPTS = 'general',
+  ): Promise<AestheticAnalysis> {
     try {
       // In development/testing, return mock analysis
       if (process.env.NODE_ENV === 'development' || !this.config.apiKey) {
@@ -228,7 +235,7 @@ export class AestheticAIAnalysisService {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.config.apiKey}`,
+          Authorization: `Bearer ${this.config.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -281,24 +288,27 @@ export class AestheticAIAnalysisService {
     // Analyze concerns and match with treatments
     analysis.concerns.forEach(concern => {
       const concernLower = concern.toLowerCase();
-      
+
       // Match treatments based on concerns
       if (concernLower.includes('acne') || analysis.conditions.acne) {
         const acneTreatments = TREATMENT_DATABASE.acne.filter(treatment => {
           const severityMatch = analysis.severity.acne >= 5 || treatment.priority === 'high';
-          const indicationsMatch = treatment.indications.some(ind => 
-            concernLower.includes(ind) || 
-            (analysis.severity.acne >= 5 && ind.includes('acne'))
+          const indicationsMatch = treatment.indications.some(ind =>
+            concernLower.includes(ind)
+            || (analysis.severity.acne >= 5 && ind.includes('acne'))
           );
           return severityMatch && indicationsMatch;
         });
         suggestions.push(...acneTreatments);
       }
 
-      if (concernLower.includes('melasma') || concernLower.includes('pigment') || analysis.conditions.melasma) {
+      if (
+        concernLower.includes('melasma') || concernLower.includes('pigment')
+        || analysis.conditions.melasma
+      ) {
         const pigmentTreatments = TREATMENT_DATABASE.pigmentation.filter(treatment => {
           const severityMatch = analysis.severity.pigmentation >= 4;
-          const indicationsMatch = treatment.indications.some(ind => 
+          const indicationsMatch = treatment.indications.some(ind =>
             concernLower.includes(ind) || ind.includes('pigment')
           );
           return severityMatch && indicationsMatch;
@@ -306,10 +316,13 @@ export class AestheticAIAnalysisService {
         suggestions.push(...pigmentTreatments);
       }
 
-      if (concernLower.includes('wrinkle') || concernLower.includes('rug') || analysis.conditions.wrinkles) {
+      if (
+        concernLower.includes('wrinkle') || concernLower.includes('rug')
+        || analysis.conditions.wrinkles
+      ) {
         const agingTreatments = TREATMENT_DATABASE.aging.filter(treatment => {
           const severityMatch = analysis.severity.wrinkles >= 3;
-          const indicationsMatch = treatment.indications.some(ind => 
+          const indicationsMatch = treatment.indications.some(ind =>
             concernLower.includes(ind) || ind.includes('wrinkle')
           );
           return severityMatch && indicationsMatch;
@@ -334,7 +347,7 @@ export class AestheticAIAnalysisService {
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
         if (priorityDiff !== 0) return priorityDiff;
-        
+
         // Then by confidence
         return b.confidence - a.confidence;
       })
@@ -356,8 +369,12 @@ export class AestheticAIAnalysisService {
         acne: Boolean(result.conditions?.acne),
         melasma: Boolean(result.conditions?.melasma),
         wrinkles: Boolean(result.conditions?.wrinkles),
-        sunDamage: validSunDamage.includes(result.conditions?.sunDamage) ? result.conditions.sunDamage : 'none',
-        texture: validTexture.includes(result.conditions?.texture) ? result.conditions.texture : 'smooth',
+        sunDamage: validSunDamage.includes(result.conditions?.sunDamage)
+          ? result.conditions.sunDamage
+          : 'none',
+        texture: validTexture.includes(result.conditions?.texture)
+          ? result.conditions.texture
+          : 'smooth',
       },
       severity: {
         overall: Math.max(1, Math.min(10, Number(result.severity?.overall) || 5)),
@@ -410,7 +427,7 @@ export class AestheticAIAnalysisService {
           recommendations: ['Antibiótico tópico', 'Limpeza profunda', 'Controle de oleosidade'],
           confidence: 0.92,
         };
-      
+
       case 'pigmentation':
         return {
           ...baseAnalysis,
@@ -420,7 +437,7 @@ export class AestheticAIAnalysisService {
           recommendations: ['Clareamento com vitamina C', 'Protetor solar', 'Ácido azelaico'],
           confidence: 0.85,
         };
-      
+
       case 'aging':
         return {
           ...baseAnalysis,
@@ -430,7 +447,7 @@ export class AestheticAIAnalysisService {
           recommendations: ['Toxina botulínica', 'Ácido hialurônico', 'Radiofrequência'],
           confidence: 0.89,
         };
-      
+
       default:
         return baseAnalysis;
     }
@@ -448,7 +465,7 @@ export class AestheticAIAnalysisService {
     };
   }> {
     const analyses = await Promise.all(
-      imageUrls.map(url => this.analyzePhoto(url))
+      imageUrls.map(url => this.analyzePhoto(url)),
     );
 
     // Aggregate results
@@ -459,11 +476,12 @@ export class AestheticAIAnalysisService {
     }, {} as Record<string, number>);
 
     const primaryConcerns = Object.entries(concernCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([concern]) => concern);
 
-    const averageSeverity = analyses.reduce((sum, a) => sum + a.severity.overall, 0) / analyses.length;
+    const averageSeverity = analyses.reduce((sum, a) => sum + a.severity.overall, 0)
+      / analyses.length;
 
     // Generate combined treatment suggestions
     const allSuggestions = analyses.flatMap(a => this.generateTreatmentSuggestions(a));

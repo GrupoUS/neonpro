@@ -60,7 +60,10 @@
   "include": [
     "src/**/*",
     "src/**/*.tsx",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*",
+    "tests/**/*.tsx",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,7 +1,7 @@
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import { defineConfig } from 'vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => {
   return {
@@ -22,12 +22,30 @@ export default defineConfig(({ mode }) => {
       alias: [
         { find: '@', replacement: path.resolve(__dirname, './src') },
         { find: '@neonpro/ui', replacement: path.resolve(__dirname, '../../packages/ui/src') },
-        { find: '@neonpro/shared', replacement: path.resolve(__dirname, '../../packages/shared/src') },
-        { find: '@neonpro/utils', replacement: path.resolve(__dirname, '../../packages/utils/src') },
-        { find: '@neonpro/types', replacement: path.resolve(__dirname, '../../packages/types/src') },
-        { find: '@sentry/react', replacement: path.resolve(__dirname, './src/shims/sentry-react.tsx') },
-        { find: '@sentry/tracing', replacement: path.resolve(__dirname, './src/shims/sentry-tracing.ts') },
-        { find: /^file-saver(\/.*)?$/, replacement: path.resolve(__dirname, './src/shims/file-saver') },
+        {
+          find: '@neonpro/shared',
+          replacement: path.resolve(__dirname, '../../packages/shared/src'),
+        },
+        {
+          find: '@neonpro/utils',
+          replacement: path.resolve(__dirname, '../../packages/utils/src'),
+        },
+        {
+          find: '@neonpro/types',
+          replacement: path.resolve(__dirname, '../../packages/types/src'),
+        },
+        {
+          find: '@sentry/react',
+          replacement: path.resolve(__dirname, './src/shims/sentry-react.tsx'),
+        },
+        {
+          find: '@sentry/tracing',
+          replacement: path.resolve(__dirname, './src/shims/sentry-tracing.ts'),
+        },
+        {
+          find: /^file-saver(\/.*)?$/,
+          replacement: path.resolve(__dirname, './src/shims/file-saver'),
+        },
       ],
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     },
@@ -59,11 +77,11 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom')) return 'vendor-react'
-              if (id.includes('@tanstack')) return 'vendor-tanstack'
-              if (id.includes('@supabase')) return 'vendor-database'
-              if (id.includes('@radix-ui') || id.includes('framer-motion')) return 'vendor-ui'
-              return 'vendor'
+              if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
+              if (id.includes('@tanstack')) return 'vendor-tanstack';
+              if (id.includes('@supabase')) return 'vendor-database';
+              if (id.includes('@radix-ui') || id.includes('framer-motion')) return 'vendor-ui';
+              return 'vendor';
             }
           },
         },
@@ -83,5 +101,5 @@ export default defineConfig(({ mode }) => {
       ],
       exclude: ['file-saver'],
     },
-  }
-})
+  };
+});

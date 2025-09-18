@@ -584,7 +584,7 @@ export const SecurityPolicyUtils = {
   }): boolean => {
     const { scope } = policy;
     
-    if (context.resourceType && !scope.appliesTo.includes(context.resourceType) && !scope.appliesTo.includes('all')) {
+    if (context.resourceType && !scope.appliesTo.includes(context.resourceType as 'web_app' | 'api' | 'mobile_app' | 'database' | 'infrastructure' | 'all') && !scope.appliesTo.includes('all')) {
       return false;
     }
     

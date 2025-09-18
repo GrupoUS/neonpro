@@ -1,7 +1,7 @@
 /**
  * PhotoUpload Component Tests (T110)
  * Comprehensive test suite for the photo upload system with AI analysis
- * 
+ *
  * Test Coverage:
  * - Component rendering and basic functionality
  * - Drag and drop functionality
@@ -13,13 +13,15 @@
  * - Integration with treatment suggestions
  */
 
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { PhotoUpload } from '../PhotoUpload';
 import { AestheticAIAnalysisService } from '@/services/aesthetic/ai-analysis';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { PhotoUpload } from '../PhotoUpload';
 
 // Mock the AI analysis service
 jest.mock('@/services/aesthetic/ai-analysis');
-const MockAestheticAIAnalysisService = AestheticAIAnalysisService as jest.MockedClass<typeof AestheticAIAnalysisService>;
+const MockAestheticAIAnalysisService = AestheticAIAnalysisService as jest.MockedClass<
+  typeof AestheticAIAnalysisService
+>;
 
 // Mock file upload utilities
 const createMockFile = (name: string, size: number, type: string): File => {
@@ -39,7 +41,7 @@ describe('PhotoUpload Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock the AI analysis service
     MockAestheticAIAnalysisService.prototype.analyzePhoto = jest.fn().mockResolvedValue({
       skinType: 'mista',
@@ -78,7 +80,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       expect(screen.getByText('Envie Fotos para Análise Estética')).toBeInTheDocument();
@@ -92,7 +94,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           disabled={true}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = screen.getByText('Envie Fotos para Análise Estética').closest('div');
@@ -106,7 +108,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           maxPhotos={3}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       expect(screen.getByText('Máximo 3 fotos')).toBeInTheDocument();
@@ -118,7 +120,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           maxFileSize={15}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       expect(screen.getByText('Tamanho máximo: 15MB')).toBeInTheDocument();
@@ -131,7 +133,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const invalidFile = createMockFile('test.txt', 1024, 'text/plain');
@@ -146,7 +148,8 @@ describe('PhotoUpload Component', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText('Formato não suportado. Use: JPEG, PNG ou WebP')).toBeInTheDocument();
+        expect(screen.getByText('Formato não suportado. Use: JPEG, PNG ou WebP'))
+          .toBeInTheDocument();
       });
     });
 
@@ -156,7 +159,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           maxFileSize={1}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const largeFile = createMockImageFile('large.jpg', 2 * 1024 * 1024); // 2MB
@@ -181,12 +184,12 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           maxPhotos={1}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       // Mock already uploaded photos
       const input = container.querySelector('input[type="file"]') as HTMLInputElement;
-      
+
       const files = [
         createMockImageFile('photo1.jpg'),
         createMockImageFile('photo2.jpg'),
@@ -210,7 +213,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       // Mock image loading with invalid dimensions
@@ -236,7 +239,8 @@ describe('PhotoUpload Component', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText('Resolução muito baixa. Mínimo: 512x512px para análise precisa')).toBeInTheDocument();
+        expect(screen.getByText('Resolução muito baixa. Mínimo: 512x512px para análise precisa'))
+          .toBeInTheDocument();
       });
     });
   });
@@ -247,7 +251,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
@@ -265,7 +269,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
@@ -288,7 +292,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
@@ -315,7 +319,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           disabled={true}
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
@@ -341,7 +345,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('progress-test.jpg');
@@ -366,7 +370,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('analysis-test.jpg');
@@ -394,7 +398,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('error-test.jpg');
@@ -418,7 +422,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('completed-test.jpg');
@@ -446,7 +450,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
           onAnalysisComplete={mockOnAnalysisComplete}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('ai-test.jpg');
@@ -463,21 +467,21 @@ describe('PhotoUpload Component', () => {
       await waitFor(() => {
         expect(MockAestheticAIAnalysisService.prototype.analyzePhoto).toHaveBeenCalledWith(
           expect.any(String),
-          'general'
+          'general',
         );
       });
     });
 
     it('should handle AI analysis failures', async () => {
       MockAestheticAIAnalysisService.prototype.analyzePhoto = jest.fn().mockRejectedValue(
-        new Error('AI analysis failed')
+        new Error('AI analysis failed'),
       );
 
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('ai-error-test.jpg');
@@ -503,7 +507,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
           showTreatmentSuggestions={true}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('analysis-result.jpg');
@@ -532,7 +536,7 @@ describe('PhotoUpload Component', () => {
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
           onPhotoRemoved={mockOnPhotoRemoved}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('remove-test.jpg');
@@ -563,7 +567,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('details-test.jpg');
@@ -596,7 +600,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
@@ -615,7 +619,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = screen.getByLabelText('Área de upload de fotos estéticas');
@@ -630,11 +634,11 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const uploadArea = container.querySelector('[role="button"]') as HTMLElement;
-      
+
       uploadArea.focus();
       expect(uploadArea).toHaveFocus();
     });
@@ -648,7 +652,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('network-error.jpg');
@@ -672,7 +676,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       // Mock image loading error
@@ -707,7 +711,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const input = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -733,7 +737,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const validFile = createMockImageFile('cleanup-test.jpg');
@@ -769,7 +773,7 @@ describe('PhotoUpload Component', () => {
         <PhotoUpload
           patientId='test-patient'
           onPhotosUploaded={mockOnPhotosUploaded}
-        />
+        />,
       );
 
       const input = container.querySelector('input[type="file"]') as HTMLInputElement;

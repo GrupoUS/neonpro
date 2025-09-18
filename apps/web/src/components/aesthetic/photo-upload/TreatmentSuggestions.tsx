@@ -78,11 +78,11 @@ export function TreatmentSuggestions({
       const newSelection = prev.includes(treatmentId)
         ? prev.filter(id => id !== treatmentId)
         : [...prev, treatmentId].slice(0, 3); // Limit to 3 treatments for comparison
-      
+
       onTreatmentCompare?.(
-        suggestions.filter(t => newSelection.includes(t.id))
+        suggestions.filter(t => newSelection.includes(t.id)),
       );
-      
+
       return newSelection;
     });
   };
@@ -104,11 +104,11 @@ export function TreatmentSuggestions({
   const formatDuration = (sessions: number, intervalWeeks: number) => {
     const totalWeeks = sessions * intervalWeeks;
     const months = Math.ceil(totalWeeks / 4);
-    
+
     if (months <= 1) {
       return `${sessions} sessões em ${totalWeeks} semanas`;
     }
-    
+
     return `${sessions} sessões em ~${months} meses`;
   };
 
@@ -161,13 +161,13 @@ export function TreatmentSuggestions({
               </Button>
             )}
           </div>
-          
+
           {selectedForComparison.length >= 2 && (
             <Button
               className='w-full'
               onClick={() => {
                 onTreatmentCompare?.(
-                  suggestions.filter(t => selectedForComparison.includes(t.id))
+                  suggestions.filter(t => selectedForComparison.includes(t.id)),
                 );
               }}
             >
@@ -179,12 +179,12 @@ export function TreatmentSuggestions({
 
       {/* Treatment Suggestions Grid */}
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {displayedSuggestions.map((suggestion) => (
+        {displayedSuggestions.map(suggestion => (
           <div
             key={suggestion.id}
             className={cn(
               'border rounded-lg overflow-hidden transition-all hover:shadow-md',
-              selectedForComparison.includes(suggestion.id) && 'ring-2 ring-primary'
+              selectedForComparison.includes(suggestion.id) && 'ring-2 ring-primary',
             )}
           >
             {/* Treatment Header */}
@@ -193,12 +193,16 @@ export function TreatmentSuggestions({
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
                     <span className='text-xs font-medium text-muted-foreground uppercase'>
-                      {TREATMENT_CATEGORY_LABELS[suggestion.category as keyof typeof TREATMENT_CATEGORY_LABELS] || suggestion.category}
+                      {TREATMENT_CATEGORY_LABELS[
+                        suggestion.category as keyof typeof TREATMENT_CATEGORY_LABELS
+                      ] || suggestion.category}
                     </span>
-                    <div className={cn(
-                      'text-xs px-2 py-1 rounded-full border',
-                      PRIORITY_COLORS[suggestion.priority]
-                    )}>
+                    <div
+                      className={cn(
+                        'text-xs px-2 py-1 rounded-full border',
+                        PRIORITY_COLORS[suggestion.priority],
+                      )}
+                    >
                       {PRIORITY_LABELS[suggestion.priority]}
                     </div>
                   </div>
@@ -206,7 +210,7 @@ export function TreatmentSuggestions({
                     {suggestion.name}
                   </h4>
                 </div>
-                
+
                 {showComparison && (
                   <button
                     onClick={() => handleTreatmentToggle(suggestion.id)}
@@ -214,15 +218,13 @@ export function TreatmentSuggestions({
                       'p-2 rounded border transition-colors',
                       selectedForComparison.includes(suggestion.id)
                         ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-background hover:bg-muted border-border'
+                        : 'bg-background hover:bg-muted border-border',
                     )}
                     aria-label={`Selecionar ${suggestion.name} para comparação`}
                   >
-                    {selectedForComparison.includes(suggestion.id) ? (
-                      <IconCheck className='h-4 w-4' />
-                    ) : (
-                      <IconScale className='h-4 w-4' />
-                    )}
+                    {selectedForComparison.includes(suggestion.id)
+                      ? <IconCheck className='h-4 w-4' />
+                      : <IconScale className='h-4 w-4' />}
                   </button>
                 )}
               </div>
@@ -230,7 +232,9 @@ export function TreatmentSuggestions({
               {/* Confidence Score */}
               <div className='flex items-center gap-2'>
                 <span className='text-sm text-muted-foreground'>Confiência:</span>
-                <span className={cn('text-sm font-medium', getConfidenceColor(suggestion.confidence))}>
+                <span
+                  className={cn('text-sm font-medium', getConfidenceColor(suggestion.confidence))}
+                >
                   {Math.round(suggestion.confidence * 100)}%
                 </span>
               </div>
@@ -266,16 +270,19 @@ export function TreatmentSuggestions({
               <Button
                 variant='ghost'
                 size='sm'
-                onClick={() => setExpandedTreatment(
-                  expandedTreatment === suggestion.id ? null : suggestion.id
-                )}
+                onClick={() =>
+                  setExpandedTreatment(
+                    expandedTreatment === suggestion.id ? null : suggestion.id,
+                  )}
                 className='w-full justify-between'
               >
                 {expandedTreatment === suggestion.id ? 'Menos Detalhes' : 'Mais Detalhes'}
-                <IconX className={cn(
-                  'h-4 w-4 transition-transform',
-                  expandedTreatment === suggestion.id && 'rotate-180'
-                )} />
+                <IconX
+                  className={cn(
+                    'h-4 w-4 transition-transform',
+                    expandedTreatment === suggestion.id && 'rotate-180',
+                  )}
+                />
               </Button>
             </div>
 
@@ -303,10 +310,18 @@ export function TreatmentSuggestions({
                   <div>
                     <h5 className='text-sm font-medium mb-1'>Investimento</h5>
                     <div className='text-sm text-muted-foreground space-y-1'>
-                      <p>Por sessão: {formatCurrency(
-                        Math.round((suggestion.price.min + suggestion.price.max) / 2 / suggestion.estimatedSessions)
-                      )}</p>
-                      <p>Total estimado: {formatCurrency(suggestion.price.min)} - {formatCurrency(suggestion.price.max)}</p>
+                      <p>
+                        Por sessão: {formatCurrency(
+                          Math.round(
+                            (suggestion.price.min + suggestion.price.max) / 2
+                              / suggestion.estimatedSessions,
+                          ),
+                        )}
+                      </p>
+                      <p>
+                        Total estimado: {formatCurrency(suggestion.price.min)} -{' '}
+                        {formatCurrency(suggestion.price.max)}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -364,7 +379,8 @@ export function TreatmentSuggestions({
       {/* Disclaimer */}
       <div className='text-xs text-muted-foreground text-center space-y-1'>
         <p>
-          💡 As recomendações são baseadas em análise de IA e devem ser confirmadas por um profissional
+          💡 As recomendações são baseadas em análise de IA e devem ser confirmadas por um
+          profissional
         </p>
         <p>
           Resultados podem variar dependendo das características individuais e adesão ao tratamento
@@ -397,7 +413,7 @@ export function TreatmentComparison({ treatments, onClose }: TreatmentComparison
           </div>
 
           <div className='grid gap-4 md:grid-cols-2'>
-            {treatments.map((treatment) => (
+            {treatments.map(treatment => (
               <div key={treatment.id} className='border rounded-lg p-4'>
                 <h4 className='font-semibold mb-2'>{treatment.name}</h4>
                 <div className='space-y-2 text-sm'>

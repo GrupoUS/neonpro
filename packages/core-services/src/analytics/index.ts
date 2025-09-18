@@ -19,6 +19,12 @@ export * from './adapters/ingestion-adapter';
 // Aggregation System
 export * from './aggregation';
 
+// Machine Learning Pipeline
+export * from './ml';
+
+// Advanced AI Analytics (T103)
+export * from './ai-analytics';
+
 // Re-export commonly used types for convenience
 export type {
   BaseMetric,

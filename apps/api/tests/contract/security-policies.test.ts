@@ -15,24 +15,24 @@ describe('Contract: Security Policies API', () => {
   describe('CSP Validation Endpoints', () => {
     it('should validate CSP configuration', async () => {
       const cspConfig = {
-        'default-src': ["'self'"],
-        'script-src': ["'self'", "'unsafe-inline'"],
-        'style-src': ["'self'", "'unsafe-inline'"],
-        'img-src': ["'self'", 'data:', 'https:'],
-        'connect-src': ["'self'", 'wss:', 'https:'],
-        'font-src': ["'self'", 'data:'],
-        'object-src': ["'none'"],
-        'base-uri': ["'self'"],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'none'"],
-        'report-uri': '/api/v1/security/csp-report'
+        'default-src': ['\'self\''],
+        'script-src': ['\'self\'', '\'unsafe-inline\''],
+        'style-src': ['\'self\'', '\'unsafe-inline\''],
+        'img-src': ['\'self\'', 'data:', 'https:'],
+        'connect-src': ['\'self\'', 'wss:', 'https:'],
+        'font-src': ['\'self\'', 'data:'],
+        'object-src': ['\'none\''],
+        'base-uri': ['\'self\''],
+        'form-action': ['\'self\''],
+        'frame-ancestors': ['\'none\''],
+        'report-uri': '/api/v1/security/csp-report',
       };
 
       const res = await api('/api/v1/security/csp/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cspConfig),
       });
@@ -57,7 +57,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/csp/healthcare-headers', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -95,7 +95,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(rateLimitConfig),
       });
@@ -124,7 +124,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/rate-limit/status', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -160,8 +160,8 @@ describe('Contract: Security Policies API', () => {
         data_classification: 'SENSITIVE_HEALTH',
         lgpd_compliance_categories: ['PERSONAL_DATA', 'HEALTH_DATA'],
         csp_configuration: {
-          'default-src': ["'self'"],
-          'script-src': ["'self'"],
+          'default-src': ['\'self\''],
+          'script-src': ['\'self\''],
         },
         rls_policies: ['patient_access_control', 'data_encryption'],
         audit_requirements: {
@@ -175,7 +175,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer admin-token',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(securityPolicy),
       });
@@ -204,7 +204,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/policies', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -244,7 +244,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
           policy_id: 'test-policy-id',
@@ -280,7 +280,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
           token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
@@ -313,7 +313,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
           user_id: 'test-user-id',
@@ -360,7 +360,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(lgpdValidation),
       });
@@ -393,7 +393,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/lgpd/report', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -441,7 +441,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(dsrRequest),
       });
@@ -492,7 +492,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(securityEvent),
       });
@@ -520,7 +520,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/audit/trail', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -560,13 +560,13 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidCsp),
       });
 
       expect(res.status).toBe(400);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.any(String),
@@ -579,12 +579,12 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/policies', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer invalid-token',
+          authorization: 'Bearer invalid-token',
         },
       });
 
       expect(res.status).toBe(401);
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: 'Unauthorized',
@@ -595,18 +595,18 @@ describe('Contract: Security Policies API', () => {
 
     it('should handle rate limit exceeded', async () => {
       // Simulate rate limit by making multiple rapid requests
-      const requests = Array(10).fill(null).map(() => 
+      const requests = Array(10).fill(null).map(() =>
         api('/api/v1/security/rate-limit/status', {
           method: 'GET',
           headers: {
-            'authorization': 'Bearer test-token',
+            authorization: 'Bearer test-token',
           },
         })
       );
 
       const responses = await Promise.all(requests);
       const rateLimitedResponse = responses.find(res => res.status === 429);
-      
+
       if (rateLimitedResponse) {
         const data = await rateLimitedResponse.json();
         expect(data).toMatchObject({
@@ -650,7 +650,7 @@ describe('Contract: Security Policies API', () => {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcarePolicy),
       });
@@ -680,7 +680,7 @@ describe('Contract: Security Policies API', () => {
       const res = await api('/api/v1/security/healthcare/audit-report', {
         method: 'GET',
         headers: {
-          'authorization': 'Bearer test-token',
+          authorization: 'Bearer test-token',
         },
       });
 

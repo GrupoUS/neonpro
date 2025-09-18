@@ -26,13 +26,13 @@ export interface AccessibilityTestOptions {
  */
 export async function testAccessibility(
   component: React.ReactElement,
-  options: AccessibilityTestOptions = {}
+  options: AccessibilityTestOptions = {},
 ): Promise<AccessibilityIssue[]> {
   const { axeOptions = {}, includeHealthcareRules = true, skipCertainRules = [] } = options;
-  
+
   // Render the component
   const { container } = render(component);
-  
+
   // Run axe-core testing
   const results = await axe(container, {
     rules: {
@@ -42,10 +42,10 @@ export async function testAccessibility(
       ...includeHealthcareRules && {
         'color-contrast': { enabled: true },
         'label-content-name-mismatch': { enabled: true },
-        'input-button-name': { enabled: true }
-      }
+        'input-button-name': { enabled: true },
+      },
     },
-    ...axeOptions
+    ...axeOptions,
   });
 
   // Convert axe results to AccessibilityIssue format
@@ -60,10 +60,10 @@ export async function testAccessibility(
       html: node.html,
       target: node.target,
       failureSummary: node.failureSummary,
-      any: node.any
+      any: node.any,
     })),
     healthcareSpecific: isHealthcareSpecificViolation(violation),
-    lgpdRelevant: isLgpdRelevantViolation(violation)
+    lgpdRelevant: isLgpdRelevantViolation(violation),
   }));
 
   return violations;
@@ -74,12 +74,12 @@ export async function testAccessibility(
  */
 export async function expectNoAccessibilityViolations(
   component: React.ReactElement,
-  options: AccessibilityTestOptions = {}
+  options: AccessibilityTestOptions = {},
 ): Promise<void> {
   const violations = await testAccessibility(component, options);
-  
+
   expect(violations).toHaveLength(0);
-  
+
   if (violations.length > 0) {
     console.error('Accessibility violations found:', violations);
   }
@@ -89,7 +89,7 @@ export async function expectNoAccessibilityViolations(
  * Test healthcare-specific accessibility requirements
  */
 export async function testHealthcareAccessibility(
-  component: React.ReactElement
+  component: React.ReactElement,
 ): Promise<{
   lgpdCompliance: boolean;
   emergencyFeatures: boolean;
@@ -97,7 +97,7 @@ export async function testHealthcareAccessibility(
   issues: AccessibilityIssue[];
 }> {
   const violations = await testAccessibility(component, {
-    includeHealthcareRules: true
+    includeHealthcareRules: true,
   });
 
   const lgpdViolations = violations.filter(v => v.lgpdRelevant);
@@ -108,7 +108,7 @@ export async function testHealthcareAccessibility(
     lgpdCompliance: lgpdViolations.length === 0,
     emergencyFeatures: emergencyViolations.length === 0,
     medicalData: healthcareViolations.length === 0,
-    issues: violations
+    issues: violations,
   };
 }
 
@@ -121,9 +121,9 @@ export function testKeyboardNavigation(component: React.ReactElement): {
   issues: string[];
 } {
   const { container } = render(component);
-  
+
   const focusableElements = container.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
   ) as NodeListOf<HTMLElement>;
 
   const tabOrder: string[] = [];
@@ -131,19 +131,26 @@ export function testKeyboardNavigation(component: React.ReactElement): {
 
   focusableElements.forEach((element, index) => {
     const tagName = element.tagName.toLowerCase();
-    const hasLabel = element.hasAttribute('aria-label') || 
-                    element.hasAttribute('aria-labelledby') ||
-                    (element.id && document.querySelector(`label[for="${element.id}"]`)) ||
-                    element.textContent?.trim();
+    const hasLabel = element.hasAttribute('aria-label')
+      || element.hasAttribute('aria-labelledby')
+      || (element.id && document.querySelector(`label[for="${element.id}"]`))
+      || element.textContent?.trim();
 
     tabOrder.push(`${tagName}[${index}]`);
 
     // Check for common keyboard navigation issues
-    if (!hasLabel && (tagName === 'button' || tagName === 'input' || tagName === 'select' || tagName === 'textarea')) {
+    if (
+      !hasLabel
+      && (tagName === 'button' || tagName === 'input' || tagName === 'select'
+        || tagName === 'textarea')
+    ) {
       issues.push(`Element ${index} (${tagName}) missing accessible label`);
     }
 
-    if (element.hasAttribute('tabindex') && element.getAttribute('tabindex') !== '0' && element.getAttribute('tabindex') !== '-1') {
+    if (
+      element.hasAttribute('tabindex') && element.getAttribute('tabindex') !== '0'
+      && element.getAttribute('tabindex') !== '-1'
+    ) {
       issues.push(`Element ${index} has invalid tabindex: ${element.getAttribute('tabindex')}`);
     }
   });
@@ -151,7 +158,7 @@ export function testKeyboardNavigation(component: React.ReactElement): {
   return {
     focusableElements: Array.from(focusableElements),
     tabOrder,
-    issues
+    issues,
   };
 }
 
@@ -168,32 +175,37 @@ export function testColorContrast(container: HTMLElement): {
     passes: boolean;
   }>;
 } {
-  const textElements = container.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6, button, input, label');
+  const textElements = container.querySelectorAll(
+    'p, span, h1, h2, h3, h4, h5, h6, button, input, label',
+  );
   const results: any[] = [];
 
   textElements.forEach(element => {
     const computedStyle = window.getComputedStyle(element);
     const foreground = computedStyle.color;
     const background = computedStyle.backgroundColor;
-    
-    if (foreground && background && foreground !== 'rgba(0, 0, 0, 0)' && background !== 'rgba(0, 0, 0, 0)') {
+
+    if (
+      foreground && background && foreground !== 'rgba(0, 0, 0, 0)'
+      && background !== 'rgba(0, 0, 0, 0)'
+    ) {
       // This is a simplified check - in real implementation, you'd use proper color contrast calculation
       const ratio = calculateContrastRatio(foreground, background);
       const passes = ratio >= 4.5; // WCAG AA standard
-      
+
       results.push({
         element: element.tagName.toLowerCase(),
         foreground,
         background,
         ratio,
-        passes
+        passes,
       });
     }
   });
 
   return {
     passes: results.every(r => r.passes),
-    elements: results
+    elements: results,
   };
 }
 
@@ -211,14 +223,23 @@ function calculateContrastRatio(foreground: string, background: string): number 
  */
 function isHealthcareSpecificViolation(violation: any): boolean {
   const healthcareKeywords = [
-    'medical', 'health', 'patient', 'emergency', 'diagnosis', 'treatment',
-    'medication', 'prescription', 'appointment', 'clinical', 'healthcare'
+    'medical',
+    'health',
+    'patient',
+    'emergency',
+    'diagnosis',
+    'treatment',
+    'medication',
+    'prescription',
+    'appointment',
+    'clinical',
+    'healthcare',
   ];
 
   return healthcareKeywords.some(keyword =>
-    violation.description?.toLowerCase()?.includes(keyword) ||
-    violation.help?.toLowerCase()?.includes(keyword) ||
-    violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
+    violation.description?.toLowerCase()?.includes(keyword)
+    || violation.help?.toLowerCase()?.includes(keyword)
+    || violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
   );
 }
 
@@ -227,14 +248,20 @@ function isHealthcareSpecificViolation(violation: any): boolean {
  */
 function isLgpdRelevantViolation(violation: any): boolean {
   const lgpdKeywords = [
-    'privacy', 'personal data', 'consent', 'data protection', 'sensitive',
-    'personal information', 'data collection', 'data storage'
+    'privacy',
+    'personal data',
+    'consent',
+    'data protection',
+    'sensitive',
+    'personal information',
+    'data collection',
+    'data storage',
   ];
 
   return lgpdKeywords.some(keyword =>
-    violation.description?.toLowerCase()?.includes(keyword) ||
-    violation.help?.toLowerCase()?.includes(keyword) ||
-    violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
+    violation.description?.toLowerCase()?.includes(keyword)
+    || violation.help?.toLowerCase()?.includes(keyword)
+    || violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
   );
 }
 
@@ -266,10 +293,10 @@ export function testFormAccessibility(container: HTMLElement): {
 
     // Check if all inputs have labels
     inputs.forEach(input => {
-      const hasLabel = input.hasAttribute('aria-label') ||
-                      input.hasAttribute('aria-labelledby') ||
-                      (input.id && form.querySelector(`label[for="${input.id}"]`));
-      
+      const hasLabel = input.hasAttribute('aria-label')
+        || input.hasAttribute('aria-labelledby')
+        || (input.id && form.querySelector(`label[for="${input.id}"]`));
+
       if (!hasLabel) {
         issues.push(`Input ${input.getAttribute('name') || input.id} missing label`);
       }
@@ -287,7 +314,7 @@ export function testFormAccessibility(container: HTMLElement): {
     hasRequiredFields,
     hasErrorMessages,
     hasLabels,
-    issues
+    issues,
   };
 }
 
@@ -329,7 +356,7 @@ export function testTableAccessibility(container: HTMLElement): {
     hasHeaders,
     hasCaption,
     hasScope,
-    issues
+    issues,
   };
 }
 
@@ -349,7 +376,7 @@ export function testImageAccessibility(container: HTMLElement): {
 
   images.forEach(img => {
     const alt = img.getAttribute('alt');
-    
+
     if (!alt) {
       hasAltText = false;
       issues.push(`Image missing alt text: ${img.src}`);
@@ -362,7 +389,7 @@ export function testImageAccessibility(container: HTMLElement): {
   return {
     hasAltText,
     hasDecorativeImages,
-    issues
+    issues,
   };
 }
 
@@ -394,7 +421,9 @@ export function testModalAccessibility(container: HTMLElement): {
     }
 
     // Check for close button
-    const closeButton = modal.querySelector('button[aria-label*="close"], button[aria-label*="fechar"]');
+    const closeButton = modal.querySelector(
+      'button[aria-label*="close"], button[aria-label*="fechar"]',
+    );
     if (!closeButton) {
       issues.push('Modal missing accessible close button');
     }
@@ -402,7 +431,7 @@ export function testModalAccessibility(container: HTMLElement): {
 
   return {
     modalsFound: modals.length,
-    issues
+    issues,
   };
 }
 
@@ -421,19 +450,19 @@ export async function testHealthcareScenarios(): Promise<{
     patientRegistration: [],
     appointmentBooking: [],
     medicalData: [],
-    emergencyContact: []
+    emergencyContact: [],
   };
 }
 
 export {
-  testAccessibility,
   expectNoAccessibilityViolations,
-  testHealthcareAccessibility,
-  testKeyboardNavigation,
+  testAccessibility,
   testColorContrast,
   testFormAccessibility,
-  testTableAccessibility,
+  testHealthcareAccessibility,
+  testHealthcareScenarios,
   testImageAccessibility,
+  testKeyboardNavigation,
   testModalAccessibility,
-  testHealthcareScenarios
+  testTableAccessibility,
 };

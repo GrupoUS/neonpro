@@ -10,8 +10,11 @@
  * - Automated compliance reporting
  */
 
-import { HealthcareAccessibilityAuditor, type HealthcareAccessibilityAuditResult } from './healthcare-accessibility-audit';
 import type { AccessibilityIssue } from './accessibility-testing';
+import {
+  HealthcareAccessibilityAuditor,
+  type HealthcareAccessibilityAuditResult,
+} from './healthcare-accessibility-audit';
 
 export interface ValidationCriteria {
   id: string;
@@ -76,8 +79,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
       'Images have alt text',
       'Icons have aria-labels',
       'Charts have accessible descriptions',
-      'Medical images have detailed descriptions'
-    ]
+      'Medical images have detailed descriptions',
+    ],
   },
   {
     id: '1.2.1',
@@ -90,8 +93,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Medical videos have transcripts',
       'Audio instructions have text alternatives',
-      'Educational content has captions'
-    ]
+      'Educational content has captions',
+    ],
   },
   {
     id: '1.3.1',
@@ -105,8 +108,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
       'Headings form logical outline',
       'Lists are properly marked up',
       'Tables have proper headers',
-      'Medical data has semantic structure'
-    ]
+      'Medical data has semantic structure',
+    ],
   },
   {
     id: '1.3.2',
@@ -119,8 +122,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Reading order is logical',
       'CSS doesn\'t disrupt meaning',
-      'Form fields are in logical order'
-    ]
+      'Form fields are in logical order',
+    ],
   },
   {
     id: '1.3.3',
@@ -133,8 +136,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Instructions use multiple cues',
       'Color is not the only indicator',
-      'Shape is not the only indicator'
-    ]
+      'Shape is not the only indicator',
+    ],
   },
   {
     id: '1.4.1',
@@ -147,8 +150,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Links have text or icons',
       'Status indicators use multiple cues',
-      'Error messages use text and color'
-    ]
+      'Error messages use text and color',
+    ],
   },
   {
     id: '1.4.3',
@@ -161,8 +164,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Normal text has 4.5:1 contrast',
       'Large text has 3:1 contrast',
-      'Medical data meets contrast requirements'
-    ]
+      'Medical data meets contrast requirements',
+    ],
   },
   {
     id: '1.4.4',
@@ -175,8 +178,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Layout accommodates 200% zoom',
       'No horizontal scrolling at 1280px width',
-      'Medical forms remain usable'
-    ]
+      'Medical forms remain usable',
+    ],
   },
   {
     id: '1.4.10',
@@ -189,8 +192,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Content works at 320px width',
       'No horizontal scrolling required',
-      'Medical data remains accessible'
-    ]
+      'Medical data remains accessible',
+    ],
   },
   {
     id: '1.4.11',
@@ -203,8 +206,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'UI components have 3:1 contrast',
       'Graphics have 3:1 contrast',
-      'Medical indicators are visible'
-    ]
+      'Medical indicators are visible',
+    ],
   },
   {
     id: '1.4.12',
@@ -217,10 +220,10 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Line height can be increased',
       'Letter spacing can be increased',
-      'Word spacing can be increased'
-    ]
+      'Word spacing can be increased',
+    ],
   },
-  
+
   // Operable
   {
     id: '2.1.1',
@@ -233,8 +236,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'All interactive elements keyboard accessible',
       'No keyboard traps',
-      'Medical forms fully keyboard navigable'
-    ]
+      'Medical forms fully keyboard navigable',
+    ],
   },
   {
     id: '2.1.2',
@@ -247,8 +250,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Focus can escape all components',
       'Modals can be closed with keyboard',
-      'Medical alerts can be dismissed'
-    ]
+      'Medical alerts can be dismissed',
+    ],
   },
   {
     id: '2.1.4',
@@ -261,8 +264,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Shortcuts can be disabled',
       'Shortcuts use non-printable keys',
-      'Medical shortcuts are documented'
-    ]
+      'Medical shortcuts are documented',
+    ],
   },
   {
     id: '2.2.1',
@@ -275,8 +278,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Time limits can be extended',
       'Sessions can be paused',
-      'Medical procedures allow extra time'
-    ]
+      'Medical procedures allow extra time',
+    ],
   },
   {
     id: '2.2.2',
@@ -289,8 +292,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Auto-updating content can be paused',
       'Animations can be stopped',
-      'Medical alerts can be dismissed'
-    ]
+      'Medical alerts can be dismissed',
+    ],
   },
   {
     id: '2.3.1',
@@ -302,8 +305,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     testMethod: 'automated',
     successCriteria: [
       'No content flashes more than 3 times/second',
-      'Medical alerts use non-flashing indicators'
-    ]
+      'Medical alerts use non-flashing indicators',
+    ],
   },
   {
     id: '2.4.1',
@@ -316,8 +319,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Skip links available',
       'Landmark regions present',
-      'Medical navigation has bypass options'
-    ]
+      'Medical navigation has bypass options',
+    ],
   },
   {
     id: '2.4.2',
@@ -330,8 +333,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Each page has unique title',
       'Titles describe page purpose',
-      'Medical page titles are descriptive'
-    ]
+      'Medical page titles are descriptive',
+    ],
   },
   {
     id: '2.4.3',
@@ -344,8 +347,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Focus follows visual order',
       'Form fields have logical tab order',
-      'Medical forms have correct focus order'
-    ]
+      'Medical forms have correct focus order',
+    ],
   },
   {
     id: '2.4.4',
@@ -358,8 +361,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Link text is descriptive',
       'Medical links are clearly labeled',
-      'No "click here" links'
-    ]
+      'No "click here" links',
+    ],
   },
   {
     id: '2.4.5',
@@ -372,8 +375,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Site navigation available',
       'Search functionality present',
-      'Medical content has multiple access points'
-    ]
+      'Medical content has multiple access points',
+    ],
   },
   {
     id: '2.4.6',
@@ -386,8 +389,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Headings describe content',
       'Form labels are descriptive',
-      'Medical headings are accurate'
-    ]
+      'Medical headings are accurate',
+    ],
   },
   {
     id: '2.4.7',
@@ -400,10 +403,10 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Focus indicators are visible',
       'Medical forms have clear focus',
-      'Focus indicators work with high contrast'
-    ]
+      'Focus indicators work with high contrast',
+    ],
   },
-  
+
   // Understandable
   {
     id: '3.1.1',
@@ -416,8 +419,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'HTML lang attribute present',
       'Medical content in correct language',
-      'Portuguese language properly set'
-    ]
+      'Portuguese language properly set',
+    ],
   },
   {
     id: '3.1.2',
@@ -429,8 +432,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     testMethod: 'manual',
     successCriteria: [
       'Language changes marked with lang attribute',
-      'Medical terminology marked correctly'
-    ]
+      'Medical terminology marked correctly',
+    ],
   },
   {
     id: '3.2.1',
@@ -442,8 +445,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     testMethod: 'manual',
     successCriteria: [
       'Focus doesn\'t trigger content changes',
-      'Medical forms don\'t auto-submit on focus'
-    ]
+      'Medical forms don\'t auto-submit on focus',
+    ],
   },
   {
     id: '3.2.2',
@@ -455,8 +458,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     testMethod: 'manual',
     successCriteria: [
       'Form fields don\'t trigger navigation',
-      'Medical data entry doesn\'t cause changes'
-    ]
+      'Medical data entry doesn\'t cause changes',
+    ],
   },
   {
     id: '3.2.3',
@@ -468,8 +471,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     testMethod: 'manual',
     successCriteria: [
       'Navigation consistent across pages',
-      'Medical navigation is predictable'
-    ]
+      'Medical navigation is predictable',
+    ],
   },
   {
     id: '3.2.4',
@@ -482,8 +485,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Consistent button labeling',
       'Consistent form field labels',
-      'Medical UI elements consistent'
-    ]
+      'Medical UI elements consistent',
+    ],
   },
   {
     id: '3.3.1',
@@ -496,8 +499,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Error messages are descriptive',
       'Errors associated with fields',
-      'Medical form errors are clear'
-    ]
+      'Medical form errors are clear',
+    ],
   },
   {
     id: '3.3.2',
@@ -510,8 +513,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Form fields have labels',
       'Instructions provided when needed',
-      'Medical fields have clear labels'
-    ]
+      'Medical fields have clear labels',
+    ],
   },
   {
     id: '3.3.3',
@@ -524,8 +527,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Error corrections suggested',
       'Format errors explained',
-      'Medical data errors have examples'
-    ]
+      'Medical data errors have examples',
+    ],
   },
   {
     id: '3.3.4',
@@ -538,10 +541,10 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Submissions can be reviewed',
       'Deletions can be undone',
-      'Medical data can be corrected'
-    ]
+      'Medical data can be corrected',
+    ],
   },
-  
+
   // Robust
   {
     id: '4.1.1',
@@ -554,8 +557,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Valid HTML markup',
       'Proper nesting of elements',
-      'Medical data properly structured'
-    ]
+      'Medical data properly structured',
+    ],
   },
   {
     id: '4.1.2',
@@ -568,8 +571,8 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Interactive elements have names',
       'Custom components have ARIA roles',
-      'Medical UI has proper semantics'
-    ]
+      'Medical UI has proper semantics',
+    ],
   },
   {
     id: '4.1.3',
@@ -582,9 +585,9 @@ export const WCAG_21_AA_VALIDATION_CRITERIA: ValidationCriteria[] = [
     successCriteria: [
       'Status updates use ARIA live regions',
       'Error messages are announced',
-      'Medical status updates accessible'
-    ]
-  }
+      'Medical status updates accessible',
+    ],
+  },
 ];
 
 export class AccessibilityValidator {
@@ -603,12 +606,12 @@ export class AccessibilityValidator {
       includeHealthcareAudit?: boolean;
       validateWCAG?: boolean;
       context?: 'registration' | 'appointment' | 'treatment' | 'follow-up' | 'emergency';
-    } = {}
+    } = {},
   ): Promise<ValidationReport> {
     const {
       includeHealthcareAudit = true,
       validateWCAG = true,
-      context = 'registration'
+      context = 'registration',
     } = options;
 
     const validationStart = Date.now();
@@ -628,7 +631,7 @@ export class AccessibilityValidator {
       healthcareAuditResult,
       wcagResults,
       includeHealthcareAudit,
-      validateWCAG
+      validateWCAG,
     );
 
     return report;
@@ -644,14 +647,14 @@ export class AccessibilityValidator {
   }> {
     // This would integrate with axe-core and additional custom validation
     // For now, we'll simulate the validation based on healthcare audit results
-    
+
     const passedCriteria: string[] = [];
     const failedCriteria: string[] = [];
 
     // Simulate validation - in real implementation, this would run actual tests
     const totalCriteria = WCAG_21_AA_VALIDATION_CRITERIA.length;
     const passedCount = Math.floor(totalCriteria * 0.95); // 95% compliance target
-    
+
     WCAG_21_AA_VALIDATION_CRITERIA.forEach((criteria, index) => {
       if (index < passedCount) {
         passedCriteria.push(criteria.id);
@@ -672,7 +675,7 @@ export class AccessibilityValidator {
     healthcareAuditResult: HealthcareAccessibilityAuditResult | null,
     wcagResults: { passedCriteria: string[]; failedCriteria: string[]; score: number } | null,
     includeHealthcareAudit: boolean,
-    includeWCAG: boolean
+    includeWCAG: boolean,
   ): ValidationReport {
     const timestamp = new Date().toISOString();
 
@@ -697,13 +700,13 @@ export class AccessibilityValidator {
       totalComponents: 12, // Based on our component count
       accessibleComponents: Math.floor(12 * (overallScore / 100)),
       componentsWithIssues: Math.ceil(12 * (1 - overallScore / 100)),
-      criticalIssues: healthcareAuditResult?.criticalIssuesCount || 0
+      criticalIssues: healthcareAuditResult?.criticalIssuesCount || 0,
     };
 
     // Generate recommendations
     const recommendations = this.generateValidationRecommendations(
       healthcareAuditResult?.issues || [],
-      wcagResults?.failedCriteria || []
+      wcagResults?.failedCriteria || [],
     );
 
     return {
@@ -713,18 +716,18 @@ export class AccessibilityValidator {
         level: wcagLevel,
         passedCriteria: wcagResults?.passedCriteria || [],
         failedCriteria: wcagResults?.failedCriteria || [],
-        score: wcagScore
+        score: wcagScore,
       },
       healthcareCompliance: {
         overallScore: healthcareScore,
         lgpdCompliant: healthcareScore >= 90,
         anvisaCompliant: healthcareScore >= 85,
         cfmCompliant: healthcareScore >= 85,
-        emergencyAccessibility: healthcareScore >= 95
+        emergencyAccessibility: healthcareScore >= 95,
       },
       componentAnalysis,
       recommendations,
-      validationStatus
+      validationStatus,
     };
   }
 
@@ -733,7 +736,7 @@ export class AccessibilityValidator {
    */
   private generateValidationRecommendations(
     healthcareIssues: any[],
-    failedWCAGCriteria: string[]
+    failedWCAGCriteria: string[],
   ): ValidationRecommendation[] {
     const recommendations: ValidationRecommendation[] = [];
 
@@ -742,7 +745,8 @@ export class AccessibilityValidator {
       recommendations.push({
         id: 'healthcare-issues',
         title: 'Resolve Healthcare Accessibility Issues',
-        description: `${healthcareIssues.length} healthcare-specific accessibility issues need resolution`,
+        description:
+          `${healthcareIssues.length} healthcare-specific accessibility issues need resolution`,
         priority: 'high',
         wcagCriteria: [],
         healthcareImpact: 'Critical for patient data accessibility and regulatory compliance',
@@ -750,13 +754,13 @@ export class AccessibilityValidator {
           'Review healthcare-specific ARIA attributes',
           'Enhance medical terminology accessibility',
           'Improve emergency information accessibility',
-          'Validate LGPD compliance measures'
+          'Validate LGPD compliance measures',
         ],
         testingMethods: [
           'Screen reader testing with medical content',
           'Keyboard navigation validation',
-          'Healthcare audit revalidation'
-        ]
+          'Healthcare audit revalidation',
+        ],
       });
     }
 
@@ -773,14 +777,14 @@ export class AccessibilityValidator {
           'Review failed WCAG criteria',
           'Implement accessibility improvements',
           'Test with assistive technologies',
-          'Validate compliance through testing'
+          'Validate compliance through testing',
         ],
         testingMethods: [
           'Automated accessibility testing',
           'Manual screen reader testing',
           'Keyboard navigation testing',
-          'Color contrast validation'
-        ]
+          'Color contrast validation',
+        ],
       });
     }
 
@@ -796,13 +800,13 @@ export class AccessibilityValidator {
         'Integrate accessibility testing in CI/CD pipeline',
         'Implement regular accessibility audits',
         'Train development team on healthcare accessibility',
-        'Establish accessibility monitoring dashboard'
+        'Establish accessibility monitoring dashboard',
       ],
       testingMethods: [
         'Automated regression testing',
         'Regular accessibility audits',
-        'User testing with diverse disabilities'
-      ]
+        'User testing with diverse disabilities',
+      ],
     });
 
     return recommendations;
@@ -813,7 +817,7 @@ export class AccessibilityValidator {
    */
   async validateComponent(
     componentName: string,
-    element: HTMLElement
+    element: HTMLElement,
   ): Promise<{
     component: string;
     score: number;
@@ -822,12 +826,12 @@ export class AccessibilityValidator {
   }> {
     // Component-specific validation would go here
     // For now, we'll simulate the validation
-    
+
     return {
       component: componentName,
       score: 95,
       issues: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
@@ -868,7 +872,9 @@ ${report.recommendations.slice(0, 3).map(rec => `- ${rec.title}`).join('\n')}
 - Brazilian regulatory compliance verification
 - Component-level accessibility assessment
 
-**Certificate Valid Until:** ${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')}
+**Certificate Valid Until:** ${
+      new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')
+    }
 
 ---
 This certificate validates that the healthcare application meets WCAG 2.1 AA+ accessibility standards and Brazilian healthcare regulatory requirements.
@@ -882,8 +888,4 @@ export function createAccessibilityValidator(): AccessibilityValidator {
 }
 
 // Export types and utilities
-export type {
-  ValidationCriteria,
-  ValidationReport,
-  ValidationRecommendation
-};
+export type { ValidationCriteria, ValidationRecommendation, ValidationReport };

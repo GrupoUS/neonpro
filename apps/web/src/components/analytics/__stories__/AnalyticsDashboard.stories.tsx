@@ -8,7 +8,8 @@ const meta: Meta<typeof AnalyticsDashboard> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Dashboard de analytics com métricas, insights de IA e visualizações de dados da clínica de estética.',
+        component:
+          'Dashboard de analytics com métricas, insights de IA e visualizações de dados da clínica de estética.',
       },
     },
   },
@@ -41,7 +42,8 @@ export const WithCustomClass: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Dashboard analytics com classe CSS customizada para demonstrar flexibilidade de styling.',
+        story:
+          'Dashboard analytics com classe CSS customizada para demonstrar flexibilidade de styling.',
       },
     },
   },
