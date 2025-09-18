@@ -202,7 +202,7 @@ class MemoryRateLimitStore {
    */
   getStats(): { totalKeys: number; totalAttempts: number } {
     let totalAttempts = 0;
-    for (const attempts of Array.from(this.attempts.values())) {
+    for (const attempts of this.attempts.values()) {
       totalAttempts += attempts.length;
     }
 
