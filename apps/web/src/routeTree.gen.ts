@@ -30,6 +30,7 @@ import { Route as FinancialSubscriptionRouteImport } from './routes/financial/su
 import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules'
 import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo'
 import { Route as DemosAestheticDemoRouteImport } from './routes/demos/aesthetic-demo'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
 import { Route as DashboardAiChatRouteImport } from './routes/dashboard/ai-chat'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -153,6 +154,11 @@ const DemosAestheticDemoRoute = DemosAestheticDemoRouteImport.update({
   path: '/demos/aesthetic-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/dashboard/analytics',
+  path: '/dashboard/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardAiChatRoute = DashboardAiChatRouteImport.update({
   id: '/dashboard/ai-chat',
   path: '/dashboard/ai-chat',
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
@@ -307,6 +315,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/dashboard/ai-chat'
+    | '/dashboard/analytics'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/dashboard/ai-chat'
+    | '/dashboard/analytics'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/dashboard/ai-chat'
+    | '/dashboard/analytics'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
@@ -454,6 +466,7 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
   DashboardAiChatRoute: typeof DashboardAiChatRoute
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DemosAestheticDemoRoute: typeof DemosAestheticDemoRoute
   DemosSignupDemoRoute: typeof DemosSignupDemoRoute
   FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute
@@ -624,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemosAestheticDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/dashboard/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/ai-chat': {
       id: '/dashboard/ai-chat'
       path: '/dashboard/ai-chat'
@@ -746,6 +766,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
   DashboardAiChatRoute: DashboardAiChatRoute,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DemosAestheticDemoRoute: DemosAestheticDemoRoute,
   DemosSignupDemoRoute: DemosSignupDemoRoute,
   FinancialPricingRulesRoute: FinancialPricingRulesRoute,

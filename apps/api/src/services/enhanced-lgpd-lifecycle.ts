@@ -468,7 +468,7 @@ export class EnhancedLGPDLifecycleService {
 
       for (const record of records) {
         try {
-          const anonymizedData = await this.anonymizeData(record, method);
+          await this.anonymizeData(record, method);
 
           // Update processing record
           record.lifecycleStage = DATA_LIFECYCLE_STAGES.ANONYMIZED;
@@ -786,7 +786,6 @@ export class EnhancedLGPDLifecycleService {
 
   private async addNoiseToData(record: DataProcessingRecord): Promise<any> {
     // Add statistical noise to numerical data
-    const noise = Math.random() * 0.1 - 0.05; // ±5% noise
     return {
       noisyData: true,
       noiseLevel: 0.05,

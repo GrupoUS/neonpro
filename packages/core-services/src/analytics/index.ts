@@ -16,6 +16,9 @@ export * from './types/ingestion';
 export * from './ingestion';
 export * from './adapters/ingestion-adapter';
 
+// Aggregation System
+export * from './aggregation';
+
 // Re-export commonly used types for convenience
 export type {
   BaseMetric,
@@ -58,6 +61,11 @@ export type {
   TransformationRule,
 } from './types/ingestion';
 
+export type {
+  ComputedKPIs,
+  KPIComputationOptions,
+} from './aggregation';
+
 // Main factory functions for easy metric creation
 export {
   createMockMetric,
@@ -88,6 +96,12 @@ export {
   DatabaseIngestionAdapter,
   APIIngestionAdapter,
 } from './adapters/ingestion-adapter';
+
+// KPI computation functions
+export {
+  computeKPIs,
+  createMockEvents,
+} from './aggregation';
 
 /**
  * Analytics Module Constants

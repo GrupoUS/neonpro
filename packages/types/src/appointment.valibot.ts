@@ -4,6 +4,7 @@
  */
 
 import * as v from 'valibot';
+import { BrazilianPhoneSchema } from './patient.valibot';
 
 // Appointment Status Types
 export const AppointmentStatus = v.picklist([
@@ -43,11 +44,7 @@ export const AppointmentPriority = v.picklist([
 
 export type AppointmentPriority = v.InferOutput<typeof AppointmentPriority>;
 
-// Brazilian Phone Schema
-export const BrazilianPhoneSchema = v.pipe(
-  v.string(),
-  v.regex(/^\+55\d{2}9?\d{8}$/, 'Invalid Brazilian phone number format')
-);
+
 
 // Brazilian CPF Schema  
 export const BrazilianCPFSchema = v.pipe(

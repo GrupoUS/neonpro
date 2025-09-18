@@ -187,7 +187,6 @@ async function selectOptimalProvider(
 async function callAIProvider(
   provider: AIProvider,
   prompt: string,
-  context?: any,
 ): Promise<{ response: string; tokensUsed: number; cost: number }> {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));

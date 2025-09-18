@@ -1,4 +1,4 @@
-import type { Database } from '@neonpro/database';
+import type { Database } from '../types/supabase';
 import type { 
   RTCAuditLogEntry, 
   MedicalDataClassification 

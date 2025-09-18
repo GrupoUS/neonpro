@@ -567,6 +567,12 @@ export const DEFAULT_AI_PROVIDERS: AIProviderConfig[] = [
     baseUrl: 'https://api.openai.com/v1',
     maxTokens: 8192,
     temperature: 0.7,
+    topP: 1,
+    frequencyPenalty: 0,
+    presencePenalty: 0,
+    timeoutMs: 30000,
+    retryAttempts: 3,
+    enabled: true,
     costPerToken: { input: 0.00003, output: 0.00006 },
     categories: ['diagnostic', 'treatment-recommendation', 'clinical-notes'],
     compliance: ['lgpd', 'anvisa'],
@@ -578,6 +584,12 @@ export const DEFAULT_AI_PROVIDERS: AIProviderConfig[] = [
     model: 'claude-3-sonnet-20240229',
     maxTokens: 4096,
     temperature: 0.7,
+    topP: 1,
+    frequencyPenalty: 0,
+    presencePenalty: 0,
+    timeoutMs: 30000,
+    retryAttempts: 3,
+    enabled: true,
     costPerToken: { input: 0.000015, output: 0.000075 },
     categories: ['patient-communication', 'medical-imaging', 'telemedicine'],
     compliance: ['lgpd', 'anvisa', 'hipaa'],
@@ -589,6 +601,12 @@ export const DEFAULT_AI_PROVIDERS: AIProviderConfig[] = [
     model: 'medical-assistant-v1',
     maxTokens: 2048,
     temperature: 0.5,
+    topP: 1,
+    frequencyPenalty: 0,
+    presencePenalty: 0,
+    timeoutMs: 30000,
+    retryAttempts: 3,
+    enabled: true,
     costPerToken: { input: 0.000001, output: 0.000001 },
     categories: ['administrative', 'research'],
     compliance: ['lgpd', 'anvisa'],
@@ -610,6 +628,7 @@ export const DEFAULT_CACHE_CONFIG: CacheConfig = {
     provider: 'openai',
     batchSize: 100,
     normalization: 'l2',
+    cacheStrategy: 'semantic-similarity',
     similarityThreshold: 0.85,
   },
   cleanupIntervalMs: 60 * 60 * 1000,
@@ -668,44 +687,4 @@ export const DEFAULT_AI_OPTIMIZATION_CONFIG: AIOptimizationConfig = {
 };
 
 // =============================================================================
-// Export All Types and Schemas
-// =============================================================================
-
-export {
-  AIProviderConfigSchema,
-  VectorEmbeddingConfigSchema,
-  SemanticCacheEntrySchema,
-  CacheStatsSchema,
-  CacheConfigSchema,
-  CostEntrySchema,
-  CostBudgetSchema,
-  CostAnalyticsSchema,
-  HealthcareAIContextSchema,
-  AIOutputValidationSchema,
-  AIPrivacyConfigSchema,
-  AIOptimizationConfigSchema,
-  AIOptimizationStatusSchema,
-};
-
-// Export utility types for external use
-export type {
-  AIProvider,
-  AIModelCategory,
-  CacheStrategy,
-  CostDimension,
-  ComplianceLevel,
-  AIProviderConfig,
-  VectorEmbeddingConfig,
-  SemanticCacheEntry,
-  CacheStats,
-  CacheConfig,
-  CostEntry,
-  CostBudget,
-  CostAnalytics,
-  HealthcareAIContext,
-  AIOutputValidation,
-  PrivacyTechnique,
-  AIPrivacyConfig,
-  AIOptimizationConfig,
-  AIOptimizationStatus,
-};
+// All types are already exported inline above - no duplicate exports needed

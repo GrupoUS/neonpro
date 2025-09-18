@@ -5,7 +5,7 @@ import {
 } from '@neonpro/shared/models/api-contract';
 import { Context, Next } from 'hono';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { ZodError, ZodSchema } from 'zod';
+import * as v from 'valibot';
 import { structuredLogger } from '../services/structured-logging';
 import {
   createHealthcareError,

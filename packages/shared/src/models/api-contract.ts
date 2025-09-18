@@ -130,7 +130,12 @@ export const APIContractSchema = z.object({
     iso13485Compliant: z.boolean().optional().describe('ISO 13485 compliance'),
     dataProcessingAgreement: z.string().url().optional().describe('DPA URL'),
     impactAssessment: z.string().optional().describe('Data protection impact assessment'),
-    securityMeasures: z.array(z.string()).describe('Implemented security measures')
+    securityMeasures: z.array(z.string()).describe('Implemented security measures'),
+    auditRequirements: z.object({
+      enabled: z.boolean().default(true),
+      retentionPeriodDays: z.number().default(365),
+      logSensitiveOperations: z.boolean().default(true)
+    }).optional().describe('Audit logging requirements')
   }).describe('Healthcare regulatory compliance information'),
   
   // Endpoints

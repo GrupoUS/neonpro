@@ -5,10 +5,8 @@
  * with comprehensive healthcare metrics, Brazilian compliance, and edge case handling.
  */
 
-import type { AnalyticsEvent, BaseMetric, MetricDataType, MetricFrequency, MetricAggregation } from '../types/base-metrics';
+import type { AnalyticsEvent } from '../types/base-metrics';
 import type { IngestionEvent } from '../types/ingestion';
-import type { ClinicalKPI } from '../types/clinical-kpis';
-import type { FinancialKPI } from '../types/financial-kpis';
 
 /**
  * Computed KPIs result structure
@@ -102,8 +100,8 @@ export interface KPIComputationOptions {
   
   /** Aggregation preferences */
   aggregation?: {
-    method: MetricAggregation;
-    frequency: MetricFrequency;
+    method: string;
+    frequency: string;
   };
   
   /** Validation options */

@@ -9,7 +9,6 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { NotificationService } from '../../services/notification-service';
 import { PatientService } from '../../services/patient-service';

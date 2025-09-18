@@ -86,7 +86,7 @@ export const DEFAULT_CONFIG: EventCollectorConfig = {
 export class EventCollector {
   private readonly config: EventCollectorConfig;
   private readonly queue: IngestionEvent[] = [];
-  private autoFlushTimer?: NodeJS.Timer;
+  private autoFlushTimer?: NodeJS.Timeout;
   private isProcessing = false;
   private totalCollected = 0;
   private totalProcessed = 0;

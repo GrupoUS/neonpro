@@ -5,207 +5,131 @@
  * with strict performance requirements (<100ms response times).
  */
 
-const { withSentryConfig } = require('@sentry/nextjs');
+import { withSentryConfig } from '@sentry/nextjs';
+import webpack from 'webpack';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable experimental features for edge runtime optimization
   experimental: {
-    // Enable edge runtime for API routes
-    runtime: 'edge',
-
     // Optimize bundle splitting for healthcare modules
     optimizePackageImports: [
       '@supabase/supabase-js',
       '@trpc/server',
       '@trpc/client',
       'zod',
-      'jose',
-      'crypto-js',
     ],
-
-    // Enable concurrent features for better performance
-    serverComponentsExternalPackages: [
-      'crypto-js',
-      'jose',
-      'node-forge',
-    ],
-
-    // Optimize for edge runtime
-    edgeRuntime: {
-      // Preload critical healthcare modules
-      preload: [
-        'crypto',
-        'buffer',
-        'util',
-      ],
-    },
   },
 
-  // Webpack optimization for healthcare edge runtime
+  // External packages for server components (moved from experimental)
+  serverExternalPackages: [
+    'crypto-js',
+    'jose',
+    'node-forge',
+  ],
+
+  // Webpack configuration for healthcare-specific optimizations
   webpack: (config, { dev, isServer, nextRuntime }) => {
-    // Edge runtime specific optimizations
+    // Healthcare data processing optimizations
     if (nextRuntime === 'edge') {
-      // Minimize bundle size for edge runtime
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Optimize crypto operations for LGPD compliance
+        'crypto-js': 'crypto-js/core',
+        // Optimize date handling for Brazilian timezone
+        'date-fns': 'date-fns/esm',
+      };
+
+      // Bundle splitting for healthcare modules
       config.optimization = {
         ...config.optimization,
-
-        // Enable module concatenation for smaller bundles
-        concatenateModules: true,
-
-        // Optimize chunk splitting for healthcare modules
         splitChunks: {
           chunks: 'all',
-          minSize: 0,
-          maxSize: 244000, // Keep under 250KB for edge runtime
           cacheGroups: {
-            // Healthcare core modules
             healthcare: {
-              test: /[\\/]src[\\/](middleware|services|utils)[\\/].*healthcare/,
+              test: /[\\/]node_modules[\\/](supabase|trpc|zod)[\\/]/,
               name: 'healthcare-core',
-              priority: 30,
-              chunks: 'all',
-              maxSize: 50000, // 50KB max per healthcare chunk
-            },
-
-            // Brazilian compliance modules
-            compliance: {
-              test: /[\\/]src[\\/].*[\\/](lgpd|cfm|anvisa)/,
-              name: 'brazil-compliance',
-              priority: 25,
-              chunks: 'all',
-              maxSize: 40000,
-            },
-
-            // Supabase optimized bundle
-            supabase: {
-              test: /[\\/]node_modules[\\/]@supabase/,
-              name: 'supabase-edge',
               priority: 20,
-              chunks: 'all',
-              maxSize: 60000,
             },
-
-            // tRPC optimized bundle
-            trpc: {
-              test: /[\\/]node_modules[\\/]@trpc/,
-              name: 'trpc-edge',
+            crypto: {
+              test: /[\\/]node_modules[\\/](crypto-js|jose|node-forge)[\\/]/,
+              name: 'crypto-bundle',
               priority: 15,
-              chunks: 'all',
-              maxSize: 30000,
             },
-
-            // Validation libraries
-            validation: {
-              test: /[\\/]node_modules[\\/](zod|yup|joi)/,
-              name: 'validation',
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
               priority: 10,
-              chunks: 'all',
-              maxSize: 25000,
             },
           },
         },
-
-        // Tree shaking for unused healthcare modules
-        usedExports: true,
-        sideEffects: false,
-      };
-
-      // Alias for smaller crypto implementations in edge runtime
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        crypto: 'crypto-browserify',
-        stream: 'stream-browserify',
-        buffer: 'buffer',
-      };
-
-      // Minimize polyfills for edge runtime
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-        os: false,
-        crypto: 'crypto-browserify',
-        stream: 'stream-browserify',
-        buffer: 'buffer',
       };
     }
 
-    // Bundle analyzer in development
-    if (dev && process.env.ANALYZE === 'true') {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+    // Performance monitoring for healthcare compliance
+    if (!dev && isServer) {
       config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'server',
-          analyzerPort: 8888,
-          openAnalyzer: true,
-        }),
+        new webpack.DefinePlugin({
+          'process.env.HEALTHCARE_MONITORING': JSON.stringify('enabled'),
+        })
       );
     }
 
     return config;
   },
 
-  // Output optimization for edge runtime
+  // Standalone output for Vercel deployment
   output: 'standalone',
 
-  // Optimize images for healthcare applications
+  // Image optimization for medical imaging
   images: {
-    // Minimize image processing for edge runtime
     formats: ['image/webp'],
     minimumCacheTTL: 31536000, // 1 year cache for medical images
-
-    // Optimize for Brazilian CDN
+    
+    // Healthcare-compliant image domains
     domains: [
       'cdn.neonpro.com.br',
       'assets.neonpro.com.br',
     ],
 
-    // Loader optimization for medical images
+    // Custom loader for LGPD-compliant image processing
     loader: 'custom',
     path: '/api/images/',
   },
 
-  // Compress for better edge performance
+  // Enable compression for faster healthcare data transfer
   compress: true,
 
-  // Headers for healthcare compliance and performance
+  // Security headers for healthcare compliance
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/api/:path*',
         headers: [
-          // Edge runtime optimization headers
           {
-            key: 'X-Edge-Optimized',
-            value: 'true',
+            key: 'X-Healthcare-API',
+            value: 'NeonPro-Edge-Runtime',
           },
           {
-            key: 'X-Bundle-Optimized',
-            value: 'healthcare-edge',
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
           },
-
-          // Performance optimization
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: 'X-Frame-Options',
+            value: 'DENY',
           },
-
-          // Preload critical healthcare resources
           {
-            key: 'Link',
-            value:
-              '</api/health/check>; rel=preload; as=fetch, </api/compliance/report>; rel=preload; as=fetch',
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },
     ];
   },
 
-  // Redirects for healthcare optimization
+  // Redirects for healthcare API versioning
   async redirects() {
     return [
-      // Optimize old API routes
       {
         source: '/api/v1/:path*',
         destination: '/api/:path*',
@@ -214,43 +138,39 @@ const nextConfig = {
     ];
   },
 
-  // Rewrites for edge runtime optimization
+  // Rewrites for healthcare data routing
   async rewrites() {
     return [
-      // Route health checks to optimized edge handlers
       {
         source: '/health',
-        destination: '/api/health/check',
+        destination: '/api/health',
       },
       {
-        source: '/compliance',
-        destination: '/api/compliance/report',
+        source: '/metrics',
+        destination: '/api/metrics',
       },
     ];
   },
 
-  // TypeScript configuration for edge runtime
+  // TypeScript configuration
   typescript: {
-    // Type checking optimizations
+    // Use custom tsconfig for healthcare features
     tsconfigPath: './tsconfig.json',
   },
 
-  // ESLint optimization
+  // ESLint configuration for healthcare code quality
   eslint: {
     dirs: ['src', 'pages', 'app'],
   },
 
-  // Environment variables for edge optimization
+  // Environment variables for healthcare compliance
   env: {
     EDGE_RUNTIME_OPTIMIZED: 'true',
     HEALTHCARE_BUNDLE_MODE: 'optimized',
     BRAZIL_COMPLIANCE_ENABLED: 'true',
   },
 
-  // Production optimizations
-  swcMinify: true,
-
-  // Remove console logs in production edge runtime
+  // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
       ? {
@@ -260,18 +180,16 @@ const nextConfig = {
   },
 };
 
-// Sentry configuration for edge runtime monitoring
+// Sentry configuration for healthcare monitoring
 const sentryWebpackPluginOptions = {
   silent: true,
   org: 'neonpro-healthcare',
   project: 'edge-runtime-api',
-
-  // Bundle size optimization for Sentry
   widenClientFileUpload: true,
   hideSourceMaps: true,
   disableLogger: true,
 };
 
-module.exports = process.env.NODE_ENV === 'production'
+export default process.env.NODE_ENV === 'production'
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;

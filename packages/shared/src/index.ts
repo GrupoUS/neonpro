@@ -137,6 +137,9 @@ export * from './api-client';
 // Hooks
 export * from './hooks/useRealtimeQuery';
 
+// Realtime
+export * from './realtime/realtime-manager';
+
 // Internationalization
 export * from './i18n/ai-chat';
 

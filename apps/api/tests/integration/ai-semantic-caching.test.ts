@@ -1190,7 +1190,7 @@ describe('AI Semantic Cache Functionality', () => {
       const res = await api('/api/v1/ai/cache/add', {
         method: 'POST',
         headers: testAuthHeaders,
-        body: JSON.stringify(lgdpdTestEntry),
+        body: JSON.stringify(lgpdTestEntry),
       });
 
       expect(res.ok).toBe(true);

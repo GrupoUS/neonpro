@@ -3,7 +3,7 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import { RealtimeManager, RealtimeSubscriptionOptions } from '@neonpro/core-services';
+import { RealtimeManager, RealtimeSubscriptionOptions } from '../realtime/realtime-manager';
 import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 
