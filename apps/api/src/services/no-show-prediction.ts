@@ -12,9 +12,9 @@
  * - LGPD compliance for patient data processing
  */
 
+import type { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { generateWithFailover, type Provider } from '../config/ai';
-import type { PrismaClient } from '@prisma/client';
 
 // No-Show Risk Levels
 export const NO_SHOW_RISK_LEVELS = {
@@ -34,25 +34,25 @@ export const BRAZILIAN_BEHAVIOR_FACTORS = {
   RURAL_ACCESS: 'rural_access', // Distance to healthcare
   SOCIOECONOMIC_STATUS: 'socioeconomic_status',
   EDUCATION_LEVEL: 'education_level',
-  
+
   // Healthcare System
   SUS_DEPENDENCY: 'sus_dependency', // Public healthcare reliance
   PRIVATE_INSURANCE: 'private_insurance',
   PAYMENT_CAPABILITY: 'payment_capability',
   PRIOR_AUTHORIZATION: 'prior_authorization',
-  
+
   // Cultural/Social
   FAMILY_SUPPORT: 'family_support',
   WORK_FLEXIBILITY: 'work_flexibility',
   DIGITAL_LITERACY: 'digital_literacy',
   HEALTH_LITERACY: 'health_literacy',
-  
+
   // Temporal/Seasonal
   CARNIVAL_SEASON: 'carnival_season',
   HOLIDAY_PERIODS: 'holiday_periods',
   SCHOOL_CALENDAR: 'school_calendar',
   WEATHER_CONDITIONS: 'weather_conditions',
-  
+
   // Healthcare Specific
   APPOINTMENT_TYPE: 'appointment_type',
   PROFESSIONAL_REPUTATION: 'professional_reputation',
@@ -60,7 +60,8 @@ export const BRAZILIAN_BEHAVIOR_FACTORS = {
   WAITING_TIME_HISTORY: 'waiting_time_history',
 } as const;
 
-export type BrazilianBehaviorFactor = typeof BRAZILIAN_BEHAVIOR_FACTORS[keyof typeof BRAZILIAN_BEHAVIOR_FACTORS];
+export type BrazilianBehaviorFactor =
+  typeof BRAZILIAN_BEHAVIOR_FACTORS[keyof typeof BRAZILIAN_BEHAVIOR_FACTORS];
 
 // Intervention Types
 export const INTERVENTION_TYPES = {
@@ -70,20 +71,20 @@ export const INTERVENTION_TYPES = {
   VOICE_CALL: 'voice_call',
   EMAIL_REMINDER: 'email_reminder',
   PUSH_NOTIFICATION: 'push_notification',
-  
+
   // Behavioral Interventions
   APPOINTMENT_CONFIRMATION: 'appointment_confirmation',
   FLEXIBLE_SCHEDULING: 'flexible_scheduling',
   TRANSPORTATION_ASSISTANCE: 'transportation_assistance',
   PAYMENT_PLAN: 'payment_plan',
   FAMILY_NOTIFICATION: 'family_notification',
-  
+
   // System Interventions
   AUTOMATIC_RESCHEDULING: 'automatic_rescheduling',
   WAITLIST_PLACEMENT: 'waitlist_placement',
   BACKUP_APPOINTMENT: 'backup_appointment',
   TELEMEDICINE_OPTION: 'telemedicine_option',
-  
+
   // Educational Interventions
   HEALTH_EDUCATION: 'health_education',
   APPOINTMENT_IMPORTANCE: 'appointment_importance',
@@ -188,9 +189,10 @@ export const NoShowPredictionSchema = z.object({
   createdAt: z.date(),
 });
 
-export type NoShowPrediction = z.infer<typeof NoShowPredictionSchema>;/**
+export type NoShowPrediction = z.infer<typeof NoShowPredictionSchema>; /**
  * No-Show Prediction Service Implementation
  */
+
 export class NoShowPredictionService {
   private prisma: PrismaClient;
   private behaviorProfiles: Map<string, PatientBehaviorProfile> = new Map();
@@ -280,7 +282,6 @@ export class NoShowPredictionService {
       await this.logPredictionAudit(prediction);
 
       return prediction;
-
     } catch (error) {
       throw new Error(`No-show prediction failed: ${error.message}`);
     }
@@ -296,40 +297,42 @@ export class NoShowPredictionService {
     const factors: Record<BrazilianBehaviorFactor, number> = {} as any;
 
     // Urban mobility analysis
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.URBAN_MOBILITY] = 
-      await this.analyzeUrbanMobility(profile, appointmentDetails);
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.URBAN_MOBILITY] = await this.analyzeUrbanMobility(
+      profile,
+      appointmentDetails,
+    );
 
     // SUS dependency impact
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.SUS_DEPENDENCY] = 
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.SUS_DEPENDENCY] =
       profile.demographicFactors.healthcareType === 'sus' ? 0.7 : 0.2;
 
     // Socioeconomic status impact
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.SOCIOECONOMIC_STATUS] = 
-      this.calculateSocioeconomicImpact(profile);
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.SOCIOECONOMIC_STATUS] = this.calculateSocioeconomicImpact(
+      profile,
+    );
 
     // Work flexibility
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY] = 
-      profile.riskFactors.workFlexibility;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY] = profile.riskFactors.workFlexibility;
 
     // Digital literacy
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY] = 
-      profile.riskFactors.digitalLiteracy;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY] = profile.riskFactors.digitalLiteracy;
 
     // Family support
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT] = 
-      profile.riskFactors.familySupport;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT] = profile.riskFactors.familySupport;
 
     // Weather conditions (seasonal analysis)
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.WEATHER_CONDITIONS] = 
-      await this.analyzeWeatherImpact(appointmentDetails.scheduledDate);
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.WEATHER_CONDITIONS] = await this.analyzeWeatherImpact(
+      appointmentDetails.scheduledDate,
+    );
 
     // Holiday/carnival season impact
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.CARNIVAL_SEASON] = 
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.CARNIVAL_SEASON] =
       this.isCarnavalSeason(appointmentDetails.scheduledDate) ? 0.8 : 0.1;
 
     // Appointment type impact
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE] = 
-      this.getAppointmentTypeRisk(appointmentDetails.appointmentType);
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE] = this.getAppointmentTypeRisk(
+      appointmentDetails.appointmentType,
+    );
 
     return factors;
   }
@@ -384,7 +387,6 @@ export class NoShowPredictionService {
         confidence: analysis.confidence,
         factors: this.identifyTopFactors(behaviorFactors, analysis),
       };
-
     } catch (error) {
       console.error('AI prediction failed, using fallback:', error);
       return this.generateFallbackPrediction(profile, behaviorFactors);
@@ -398,14 +400,16 @@ export class NoShowPredictionService {
     riskPrediction: any,
     profile: PatientBehaviorProfile,
     appointmentDetails: any,
-  ): Promise<Array<{
-    type: InterventionType;
-    priority: 'high' | 'medium' | 'low';
-    expectedImpact: number;
-    implementationCost: 'low' | 'medium' | 'high';
-    timeToImplement: number;
-    description: string;
-  }>> {
+  ): Promise<
+    Array<{
+      type: InterventionType;
+      priority: 'high' | 'medium' | 'low';
+      expectedImpact: number;
+      implementationCost: 'low' | 'medium' | 'high';
+      timeToImplement: number;
+      description: string;
+    }>
+  > {
     const interventions: any[] = [];
 
     // High-risk interventions
@@ -530,10 +534,10 @@ export class NoShowPredictionService {
           attendanceRate: 0.8,
           averageLeadTime: 7,
           seasonalPatterns: {
-            'spring': 0.85,
-            'summer': 0.75,
-            'autumn': 0.85,
-            'winter': 0.80,
+            spring: 0.85,
+            summer: 0.75,
+            autumn: 0.85,
+            winter: 0.80,
           },
         },
         demographicFactors: {
@@ -563,7 +567,6 @@ export class NoShowPredictionService {
 
       this.behaviorProfiles.set(patientId, profile);
       return profile;
-
     } catch (error) {
       throw new Error(`Failed to get behavior profile: ${error.message}`);
     }
@@ -581,7 +584,9 @@ export class NoShowPredictionService {
 Você é um especialista em análise de comportamento de pacientes no sistema de saúde brasileiro.
 
 CONTEXTO DO PACIENTE:
-- Taxa de comparecimento histórico: ${(profile.historicalAttendance.attendanceRate * 100).toFixed(1)}%
+- Taxa de comparecimento histórico: ${
+      (profile.historicalAttendance.attendanceRate * 100).toFixed(1)
+    }%
 - Região: ${profile.demographicFactors.region}
 - Tipo de saúde: ${profile.demographicFactors.healthcareType}
 - Canal preferido: ${profile.communicationPreferences.preferredChannel}
@@ -593,9 +598,11 @@ CONSULTA:
 - Duração estimada: ${appointmentDetails.estimatedDuration} minutos
 
 FATORES COMPORTAMENTAIS BRASILEIROS:
-${Object.entries(behaviorFactors).map(([factor, value]) => 
-  `- ${factor}: ${(value * 100).toFixed(1)}%`
-).join('\n')}
+${
+      Object.entries(behaviorFactors).map(([factor, value]) =>
+        `- ${factor}: ${(value * 100).toFixed(1)}%`
+      ).join('\n')
+    }
 
 TAREFA:
 Analise o risco de falta (no-show) deste paciente considerando:
@@ -631,14 +638,13 @@ Responda APENAS em formato JSON:
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       return {
         aiRiskScore: Math.max(0, Math.min(1, parsed.riskScore || 0.5)),
         confidence: Math.max(0, Math.min(1, parsed.confidence || 0.7)),
         primaryFactors: Array.isArray(parsed.primaryFactors) ? parsed.primaryFactors : [],
         reasoning: parsed.reasoning || 'Análise baseada em fatores comportamentais',
       };
-
     } catch (error) {
       console.error('Failed to parse AI response:', error);
       return {
@@ -695,9 +701,9 @@ Responda APENAS em formato JSON:
     const aiWeight = 0.25; // AI provides additional insights
 
     return (
-      historicalRisk * historicalWeight +
-      behavioralRisk * behavioralWeight +
-      aiRisk * aiWeight
+      historicalRisk * historicalWeight
+      + behavioralRisk * behavioralWeight
+      + aiRisk * aiWeight
     );
   }
 
@@ -721,10 +727,10 @@ Responda APENAS em formato JSON:
     accuracy: number;
   } {
     // Calculate completeness based on available data
-    const totalFields = Object.keys(profile.behaviorFactors).length + 
-                       Object.keys(profile.riskFactors).length + 5; // demographic fields
-    const completedFields = Object.values(profile.behaviorFactors).filter(v => v > 0).length +
-                           Object.values(profile.riskFactors).filter(v => v > 0).length + 5;
+    const totalFields = Object.keys(profile.behaviorFactors).length
+      + Object.keys(profile.riskFactors).length + 5; // demographic fields
+    const completedFields = Object.values(profile.behaviorFactors).filter(v => v > 0).length
+      + Object.values(profile.riskFactors).filter(v => v > 0).length + 5;
     const completeness = completedFields / totalFields;
 
     // Calculate recency based on last update
@@ -740,69 +746,73 @@ Responda APENAS em formato JSON:
       recency: Math.max(0, Math.min(1, recency)),
       accuracy: Math.max(0, Math.min(1, accuracy)),
     };
-  }  /**
+  } /**
    * Helper methods for Brazilian behavior analysis
    */
-  private async analyzeUrbanMobility(profile: PatientBehaviorProfile, appointmentDetails: any): Promise<number> {
+
+  private async analyzeUrbanMobility(
+    profile: PatientBehaviorProfile,
+    appointmentDetails: any,
+  ): Promise<number> {
     // Analyze urban mobility based on appointment time and location
     const hour = appointmentDetails.scheduledDate.getHours();
-    
+
     // Rush hours in Brazilian cities (7-9 AM, 5-7 PM)
     const isRushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
-    
+
     // Urban areas have higher mobility issues during rush hours
     if (profile.demographicFactors.urbanRural === 'urban' && isRushHour) {
       return 0.7; // High mobility risk
     }
-    
+
     return profile.demographicFactors.urbanRural === 'rural' ? 0.4 : 0.3;
   }
 
   private calculateSocioeconomicImpact(profile: PatientBehaviorProfile): number {
     let impact = 0.5; // Base impact
-    
+
     // Education level impact
     const educationImpact = {
-      'elementary': 0.3,
-      'high_school': 0.1,
-      'undergraduate': -0.1,
-      'graduate': -0.2,
+      elementary: 0.3,
+      high_school: 0.1,
+      undergraduate: -0.1,
+      graduate: -0.2,
     };
     impact += educationImpact[profile.demographicFactors.educationLevel] || 0;
-    
+
     // Employment status impact
     const employmentImpact = {
-      'unemployed': 0.2,
-      'student': 0.1,
-      'employed': -0.1,
-      'self_employed': 0.05,
-      'retired': 0.0,
+      unemployed: 0.2,
+      student: 0.1,
+      employed: -0.1,
+      self_employed: 0.05,
+      retired: 0.0,
     };
     impact += employmentImpact[profile.demographicFactors.employmentStatus] || 0;
-    
+
     // Healthcare type impact
     if (profile.demographicFactors.healthcareType === 'sus') {
       impact += 0.1; // SUS patients may have more constraints
     }
-    
+
     return Math.max(0, Math.min(1, impact));
   }
 
   private async analyzeWeatherImpact(scheduledDate: Date): Promise<number> {
     // Analyze weather impact based on season and region
     // In real implementation, this would integrate with weather APIs
-    
+
     const month = scheduledDate.getMonth();
-    
+
     // Brazilian rainy season impacts (varies by region)
     if (month >= 11 || month <= 2) { // Summer/rainy season
       return 0.3; // Higher risk due to rain and holidays
     }
-    
+
     if (month >= 5 && month <= 8) { // Winter/dry season
       return 0.1; // Lower weather impact
     }
-    
+
     return 0.2; // Moderate impact for other seasons
   }
 
@@ -810,7 +820,7 @@ Responda APENAS em formato JSON:
     // Carnival typically occurs in February/March
     const month = date.getMonth();
     const day = date.getDate();
-    
+
     // Approximate carnival period (varies each year)
     return (month === 1 && day > 15) || (month === 2 && day < 15);
   }
@@ -818,18 +828,18 @@ Responda APENAS em formato JSON:
   private getAppointmentTypeRisk(appointmentType: string): number {
     // Risk factors by appointment type based on Brazilian healthcare data
     const riskByType: Record<string, number> = {
-      'consultation': 0.2,
-      'follow_up': 0.15,
-      'procedure': 0.3,
-      'surgery': 0.1, // Lower risk due to importance
-      'emergency': 0.05,
-      'aesthetic': 0.4, // Higher risk for elective procedures
-      'routine_checkup': 0.35,
-      'vaccination': 0.25,
-      'lab_test': 0.3,
-      'imaging': 0.25,
+      consultation: 0.2,
+      follow_up: 0.15,
+      procedure: 0.3,
+      surgery: 0.1, // Lower risk due to importance
+      emergency: 0.05,
+      aesthetic: 0.4, // Higher risk for elective procedures
+      routine_checkup: 0.35,
+      vaccination: 0.25,
+      lab_test: 0.3,
+      imaging: 0.25,
     };
-    
+
     return riskByType[appointmentType.toLowerCase()] || 0.25;
   }
 
@@ -847,7 +857,7 @@ Responda APENAS em formato JSON:
   }> {
     // Sort factors by impact and select top 5
     const sortedFactors = Object.entries(behaviorFactors)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
 
     return sortedFactors.map(([factor, impact]) => ({
@@ -860,36 +870,36 @@ Responda APENAS em formato JSON:
 
   private getFactorExplanation(factor: BrazilianBehaviorFactor, impact: number): string {
     const explanations: Record<BrazilianBehaviorFactor, string> = {
-      [BRAZILIAN_BEHAVIOR_FACTORS.URBAN_MOBILITY]: 
-        impact > 0.5 ? 'Dificuldades de mobilidade urbana podem impactar comparecimento' 
-                     : 'Boa acessibilidade ao local da consulta',
-      [BRAZILIAN_BEHAVIOR_FACTORS.SUS_DEPENDENCY]: 
-        impact > 0.5 ? 'Dependência do SUS pode indicar maior complexidade de acesso'
-                     : 'Acesso facilitado através de plano de saúde',
-      [BRAZILIAN_BEHAVIOR_FACTORS.SOCIOECONOMIC_STATUS]: 
-        impact > 0.5 ? 'Fatores socioeconômicos podem influenciar comparecimento'
-                     : 'Condições socioeconômicas favorecem comparecimento',
-      [BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY]: 
-        impact > 0.5 ? 'Flexibilidade no trabalho facilita comparecimento'
-                     : 'Rigidez no trabalho pode dificultar comparecimento',
-      [BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT]: 
-        impact > 0.5 ? 'Apoio familiar forte favorece comparecimento'
-                     : 'Limitações no apoio familiar podem afetar comparecimento',
-      [BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY]: 
-        impact > 0.5 ? 'Boa fluência digital facilita comunicação e lembretes'
-                     : 'Limitações digitais podem afetar recebimento de lembretes',
-      [BRAZILIAN_BEHAVIOR_FACTORS.CARNIVAL_SEASON]: 
-        impact > 0.5 ? 'Período de Carnaval historicamente aumenta faltas'
-                     : 'Fora do período de festividades',
-      [BRAZILIAN_BEHAVIOR_FACTORS.WEATHER_CONDITIONS]: 
-        impact > 0.5 ? 'Condições climáticas adversas podem impactar comparecimento'
-                     : 'Condições climáticas favoráveis',
-      [BRAZILIAN_BEHAVIOR_FACTORS.PAYMENT_CAPABILITY]: 
-        impact > 0.5 ? 'Capacidade de pagamento adequada favorece comparecimento'
-                     : 'Limitações financeiras podem afetar comparecimento',
-      [BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE]: 
-        impact > 0.5 ? 'Tipo de consulta tem baixo risco de falta'
-                     : 'Tipo de consulta apresenta maior risco de falta',
+      [BRAZILIAN_BEHAVIOR_FACTORS.URBAN_MOBILITY]: impact > 0.5
+        ? 'Dificuldades de mobilidade urbana podem impactar comparecimento'
+        : 'Boa acessibilidade ao local da consulta',
+      [BRAZILIAN_BEHAVIOR_FACTORS.SUS_DEPENDENCY]: impact > 0.5
+        ? 'Dependência do SUS pode indicar maior complexidade de acesso'
+        : 'Acesso facilitado através de plano de saúde',
+      [BRAZILIAN_BEHAVIOR_FACTORS.SOCIOECONOMIC_STATUS]: impact > 0.5
+        ? 'Fatores socioeconômicos podem influenciar comparecimento'
+        : 'Condições socioeconômicas favorecem comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY]: impact > 0.5
+        ? 'Flexibilidade no trabalho facilita comparecimento'
+        : 'Rigidez no trabalho pode dificultar comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT]: impact > 0.5
+        ? 'Apoio familiar forte favorece comparecimento'
+        : 'Limitações no apoio familiar podem afetar comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY]: impact > 0.5
+        ? 'Boa fluência digital facilita comunicação e lembretes'
+        : 'Limitações digitais podem afetar recebimento de lembretes',
+      [BRAZILIAN_BEHAVIOR_FACTORS.CARNIVAL_SEASON]: impact > 0.5
+        ? 'Período de Carnaval historicamente aumenta faltas'
+        : 'Fora do período de festividades',
+      [BRAZILIAN_BEHAVIOR_FACTORS.WEATHER_CONDITIONS]: impact > 0.5
+        ? 'Condições climáticas adversas podem impactar comparecimento'
+        : 'Condições climáticas favoráveis',
+      [BRAZILIAN_BEHAVIOR_FACTORS.PAYMENT_CAPABILITY]: impact > 0.5
+        ? 'Capacidade de pagamento adequada favorece comparecimento'
+        : 'Limitações financeiras podem afetar comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE]: impact > 0.5
+        ? 'Tipo de consulta tem baixo risco de falta'
+        : 'Tipo de consulta apresenta maior risco de falta',
       // Add more explanations for other factors...
     };
 
@@ -910,9 +920,9 @@ Responda APENAS em formato JSON:
     // Use statistical model as fallback
     const historicalRisk = 1 - profile.historicalAttendance.attendanceRate;
     const behavioralRisk = this.applyBrazilianWeights(behaviorFactors);
-    
+
     const riskScore = (historicalRisk * 0.6) + (behavioralRisk * 0.4);
-    
+
     return {
       riskScore,
       confidence: 0.6, // Lower confidence for fallback
@@ -925,7 +935,7 @@ Responda APENAS em formato JSON:
    */
   private async updateModelMetrics(prediction: NoShowPrediction): Promise<void> {
     const modelKey = `${prediction.modelType}_${prediction.modelVersion}`;
-    
+
     if (!this.modelPerformanceMetrics.has(modelKey)) {
       this.modelPerformanceMetrics.set(modelKey, {
         totalPredictions: 0,
@@ -944,12 +954,12 @@ Responda APENAS em formato JSON:
 
     const metrics = this.modelPerformanceMetrics.get(modelKey)!;
     metrics.totalPredictions++;
-    metrics.averageProcessingTime = 
-      (metrics.averageProcessingTime * (metrics.totalPredictions - 1) + prediction.processingTime) / 
-      metrics.totalPredictions;
-    metrics.averageConfidence = 
-      (metrics.averageConfidence * (metrics.totalPredictions - 1) + prediction.confidenceScore) / 
-      metrics.totalPredictions;
+    metrics.averageProcessingTime =
+      (metrics.averageProcessingTime * (metrics.totalPredictions - 1) + prediction.processingTime)
+      / metrics.totalPredictions;
+    metrics.averageConfidence =
+      (metrics.averageConfidence * (metrics.totalPredictions - 1) + prediction.confidenceScore)
+      / metrics.totalPredictions;
     metrics.riskDistribution[prediction.riskLevel]++;
     metrics.lastUpdated = new Date();
 
@@ -997,16 +1007,16 @@ Responda APENAS em formato JSON:
     });
 
     const totalPredictions = models.reduce((sum, model) => sum + model.metrics.totalPredictions, 0);
-    const averageProcessingTime = models.length > 0 
+    const averageProcessingTime = models.length > 0
       ? models.reduce((sum, model) => sum + model.metrics.averageProcessingTime, 0) / models.length
       : 0;
 
     const recommendations: string[] = [];
-    
+
     if (averageProcessingTime > 5000) {
       recommendations.push('Consider model optimization to reduce processing time');
     }
-    
+
     if (totalPredictions < 100) {
       recommendations.push('Collect more data to improve model accuracy');
     }

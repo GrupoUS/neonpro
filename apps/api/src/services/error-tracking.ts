@@ -16,7 +16,7 @@
 
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
-import { errorTracker, captureException, captureMessage, addBreadcrumb } from '../lib/sentry.js';
+import { addBreadcrumb, captureException, captureMessage, errorTracker } from '../lib/sentry.js';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -511,9 +511,8 @@ export class ErrorTrackingService {
           errorId: error.id,
           severity: error.healthcareImpact.severity,
           patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
-        }
+        },
       );
-
     } catch (sentryError) {
       console.error('❌ Failed to send error to Sentry:', sentryError);
       // Continue with local storage even if Sentry fails
@@ -541,7 +540,7 @@ export class ErrorTrackingService {
         healthcareImpact: error.healthcareImpact,
         patientSafetyRisk: error.healthcareImpact.patientSafetyRisk,
         workflowDisruption: error.healthcareImpact.workflowDisruption,
-      }
+      },
     );
 
     // Traditional alerting channels

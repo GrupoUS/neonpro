@@ -1,3 +1,4 @@
+import { sdk as telemetrySDK } from '@neonpro/shared/telemetry';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -9,7 +10,6 @@ import { criticalComponents, useComponentPreloader } from './hooks/useLazyCompon
 import { initializeSentry } from './lib/sentry';
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';
-import { sdk as telemetrySDK } from '@neonpro/shared/telemetry';
 
 import './index.css';
 

@@ -1,7 +1,7 @@
 /**
  * React Hook for Enhanced Real-Time Telemedicine
  * Phase 3.4: T031 - Frontend integration for real-time subscriptions
- * 
+ *
  * Features:
  * - WebSocket session management
  * - Real-time encrypted messaging
@@ -11,10 +11,10 @@
  * - LGPD-compliant data handling
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { trpc } from '@/lib/trpc/client';
-import { useAuth } from './useAuth';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from './useAuth';
 
 // Types for real-time telemedicine
 export interface TelemedicineSession {
@@ -127,7 +127,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
     {
       enabled: !!session?.sessionId && isMonitoring,
       refetchInterval: 5000, // Monitor every 5 seconds
-      onSuccess: (data) => {
+      onSuccess: data => {
         const quality: ConnectionQuality = {
           latency: data.averageLatency,
           bandwidth: 0, // Would be measured separately
@@ -145,7 +145,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
           });
         }
       },
-    }
+    },
   );
 
   // Session info query
@@ -154,7 +154,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
     {
       enabled: !!session?.sessionId,
       refetchInterval: 10000, // Update every 10 seconds
-    }
+    },
   );
 
   // Health check query
@@ -178,14 +178,14 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
       specialtyCode?: string;
       emergencyLevel?: 'low' | 'medium' | 'high' | 'critical';
       recordingConsent?: boolean;
-    }
+    },
   ): Promise<TelemedicineSession | null> => {
     if (!user?.id) {
       throw new Error('User must be authenticated to create telemedicine sessions');
     }
 
     setIsConnecting(true);
-    
+
     try {
       const result = await createSessionMutation.mutateAsync({
         sessionId,
@@ -245,7 +245,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
     messageType: 'text' | 'file' | 'image' | 'system' | 'emergency' = 'text',
     priority: 'low' | 'normal' | 'high' | 'critical' = 'normal',
     requiresAcknowledgment = false,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<boolean> => {
     if (!session || !user?.id) {
       throw new Error('No active session or user authentication');
@@ -311,7 +311,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
       bandwidth: number;
       packetLoss: number;
       jitter: number;
-    }
+    },
   ): Promise<boolean> => {
     if (!session || !user?.id) {
       throw new Error('No active session or user authentication');
@@ -335,10 +335,12 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
           userRole: 'patient', // Would be determined by user role
           status,
           deviceInfo,
-          connectionQuality: connectionMetrics ? {
-            ...connectionMetrics,
-            quality: result.connectionQuality as any,
-          } : undefined,
+          connectionQuality: connectionMetrics
+            ? {
+              ...connectionMetrics,
+              quality: result.connectionQuality as any,
+            }
+            : undefined,
           lastSeen: result.updated,
         };
         return [...updated, newPresence];
@@ -361,7 +363,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
     alertType: 'medical_emergency' | 'technical_failure' | 'security_breach' | 'connectivity_loss',
     severity: 'low' | 'medium' | 'high' | 'critical',
     description: string,
-    requiredActions?: string[]
+    requiredActions?: string[],
   ): Promise<EmergencyAlert | null> => {
     if (!session) {
       throw new Error('No active session');
@@ -390,7 +392,8 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
       optionsRef.current.onEmergencyAlert?.(alert);
 
       toast.error('Alerta de emergência enviado', {
-        description: `Protocolos de emergência ativados. Tempo estimado de resposta: ${result.estimatedResponseTime}`,
+        description:
+          `Protocolos de emergência ativados. Tempo estimado de resposta: ${result.estimatedResponseTime}`,
       });
 
       return alert;
@@ -409,7 +412,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
    */
   const endSession = useCallback(async (
     reason: 'completed' | 'emergency_ended' | 'technical_issues' | 'cancelled' = 'completed',
-    summary?: string
+    summary?: string,
   ): Promise<boolean> => {
     if (!session) {
       return false;
@@ -477,7 +480,7 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
   useEffect(() => {
     if (session && isMonitoring && qualityQuery.data) {
       const quality = qualityQuery.data.connectionQuality;
-      
+
       // Alert on quality degradation
       if (quality === 'poor' && connectionQuality && connectionQuality.quality !== 'poor') {
         toast.warning('Qualidade da conexão degradada', {
@@ -496,23 +499,23 @@ export function useRealtimeTelemedicine(options: UseRealtimeTelemedicineOptions 
     isConnecting,
     isMonitoring,
     lastEmergencyAlert,
-    
+
     // Computed values
     isConnected: !!session && session.status === 'connected',
     sessionStats: getSessionStats(),
     healthStatus: healthCheckQuery.data,
-    
+
     // Actions
     createSession,
     sendMessage,
     updatePresence,
     sendEmergencyAlert,
     endSession,
-    
+
     // Utilities
-    isLoading: createSessionMutation.isPending || sendMessageMutation.isPending || 
-               updatePresenceMutation.isPending || endSessionMutation.isPending,
-    error: createSessionMutation.error || sendMessageMutation.error || 
-           updatePresenceMutation.error || endSessionMutation.error,
+    isLoading: createSessionMutation.isPending || sendMessageMutation.isPending
+      || updatePresenceMutation.isPending || endSessionMutation.isPending,
+    error: createSessionMutation.error || sendMessageMutation.error
+      || updatePresenceMutation.error || endSessionMutation.error,
   };
 }

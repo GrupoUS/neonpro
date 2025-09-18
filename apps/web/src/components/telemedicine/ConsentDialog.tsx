@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { AlertTriangle, Shield, Eye, FileText } from 'lucide-react';
 import type { MedicalDataClassification } from '@neonpro/types';
+import { AlertTriangle, Eye, FileText, Shield } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export interface ConsentDialogProps {
   isOpen: boolean;
@@ -43,9 +43,11 @@ export function ConsentDialog({
   dataTypes,
   purpose,
   doctorName,
-  clinicName
+  clinicName,
 }: ConsentDialogProps) {
-  const [selectedConsents, setSelectedConsents] = useState<Set<MedicalDataClassification>>(new Set());
+  const [selectedConsents, setSelectedConsents] = useState<Set<MedicalDataClassification>>(
+    new Set(),
+  );
   const [hasReadTerms, setHasReadTerms] = useState(false);
 
   // Define consent items with descriptions
@@ -53,31 +55,32 @@ export function ConsentDialog({
     {
       type: 'general-medical',
       label: 'Dados Médicos Gerais',
-      description: 'Informações médicas básicas necessárias para a consulta (sintomas, histórico médico geral)',
+      description:
+        'Informações médicas básicas necessárias para a consulta (sintomas, histórico médico geral)',
       required: true,
-      icon: FileText
+      icon: FileText,
     },
     {
       type: 'sensitive-medical',
       label: 'Dados Médicos Sensíveis',
       description: 'Informações médicas sensíveis (exames, diagnósticos, tratamentos específicos)',
       required: false,
-      icon: Shield
+      icon: Shield,
     },
     {
       type: 'psychiatric',
       label: 'Dados Psiquiátricos',
       description: 'Informações relacionadas à saúde mental e tratamentos psiquiátricos',
       required: false,
-      icon: Eye
+      icon: Eye,
     },
     {
       type: 'genetic',
       label: 'Dados Genéticos',
       description: 'Informações genéticas e hereditárias',
       required: false,
-      icon: AlertTriangle
-    }
+      icon: AlertTriangle,
+    },
   ].filter(item => dataTypes.includes(item.type));
 
   // Purpose descriptions
@@ -85,7 +88,7 @@ export function ConsentDialog({
     telemedicine: 'realização de consulta médica por telemedicina',
     medical_treatment: 'prestação de cuidados médicos e tratamento',
     ai_assistance: 'assistência por inteligência artificial para melhor atendimento',
-    communication: 'comunicação entre profissionais de saúde e paciente'
+    communication: 'comunicação entre profissionais de saúde e paciente',
   };
 
   useEffect(() => {
@@ -130,39 +133,51 @@ export function ConsentDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Shield className='h-5 w-5 text-blue-600' />
             Consentimento para Tratamento de Dados - LGPD
           </DialogTitle>
           <DialogDescription>
-            Conforme a Lei Geral de Proteção de Dados (LGPD), precisamos do seu consentimento 
-            para processar seus dados pessoais durante a {purposeDescriptions[purpose]}.
+            Conforme a Lei Geral de Proteção de Dados (LGPD), precisamos do seu consentimento para
+            processar seus dados pessoais durante a {purposeDescriptions[purpose]}.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Session Information */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">Informações da Sessão</h4>
-            <div className="text-sm text-blue-800 space-y-1">
-              <p><strong>ID da Sessão:</strong> {sessionId}</p>
-              {doctorName && <p><strong>Médico:</strong> {doctorName}</p>}
-              {clinicName && <p><strong>Clínica:</strong> {clinicName}</p>}
-              <p><strong>Finalidade:</strong> {purposeDescriptions[purpose]}</p>
+          <div className='bg-blue-50 p-4 rounded-lg'>
+            <h4 className='font-medium text-blue-900 mb-2'>Informações da Sessão</h4>
+            <div className='text-sm text-blue-800 space-y-1'>
+              <p>
+                <strong>ID da Sessão:</strong> {sessionId}
+              </p>
+              {doctorName && (
+                <p>
+                  <strong>Médico:</strong> {doctorName}
+                </p>
+              )}
+              {clinicName && (
+                <p>
+                  <strong>Clínica:</strong> {clinicName}
+                </p>
+              )}
+              <p>
+                <strong>Finalidade:</strong> {purposeDescriptions[purpose]}
+              </p>
             </div>
           </div>
 
           {/* Consent Items */}
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">
+          <div className='space-y-4'>
+            <h4 className='font-medium text-gray-900'>
               Tipos de Dados a Serem Processados
             </h4>
-            {consentItems.map((item) => {
+            {consentItems.map(item => {
               const Icon = item.icon;
               const isSelected = selectedConsents.has(item.type);
-              
+
               return (
                 <div
                   key={item.type}
@@ -170,31 +185,30 @@ export function ConsentDialog({
                     isSelected ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className='flex items-start gap-3'>
+                    <div className='flex items-center gap-2 min-w-0 flex-1'>
                       <Checkbox
                         id={item.type}
                         checked={isSelected}
-                        onCheckedChange={(checked) => 
-                          handleConsentChange(item.type, checked as boolean)
-                        }
+                        onCheckedChange={checked =>
+                          handleConsentChange(item.type, checked as boolean)}
                         disabled={item.required}
-                        className="mt-1"
+                        className='mt-1'
                       />
-                      <div className="min-w-0 flex-1">
+                      <div className='min-w-0 flex-1'>
                         <label
                           htmlFor={item.type}
-                          className="flex items-center gap-2 font-medium text-gray-900 cursor-pointer"
+                          className='flex items-center gap-2 font-medium text-gray-900 cursor-pointer'
                         >
-                          <Icon className="h-4 w-4 text-gray-600" />
+                          <Icon className='h-4 w-4 text-gray-600' />
                           {item.label}
                           {item.required && (
-                            <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
+                            <span className='text-xs bg-red-100 text-red-600 px-2 py-1 rounded'>
                               Obrigatório
                             </span>
                           )}
                         </label>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className='text-sm text-gray-600 mt-1'>
                           {item.description}
                         </p>
                       </div>
@@ -206,19 +220,19 @@ export function ConsentDialog({
           </div>
 
           {/* Terms and Conditions */}
-          <div className="border rounded-lg p-4">
-            <div className="flex items-start gap-3">
+          <div className='border rounded-lg p-4'>
+            <div className='flex items-start gap-3'>
               <Checkbox
-                id="terms"
+                id='terms'
                 checked={hasReadTerms}
                 onCheckedChange={setHasReadTerms}
-                className="mt-1"
+                className='mt-1'
               />
-              <div className="min-w-0 flex-1">
-                <label htmlFor="terms" className="text-sm font-medium text-gray-900 cursor-pointer">
+              <div className='min-w-0 flex-1'>
+                <label htmlFor='terms' className='text-sm font-medium text-gray-900 cursor-pointer'>
                   Li e concordo com os termos de tratamento de dados
                 </label>
-                <div className="text-xs text-gray-600 mt-2 space-y-1">
+                <div className='text-xs text-gray-600 mt-2 space-y-1'>
                   <p>• Seus dados serão utilizados exclusivamente para a finalidade descrita</p>
                   <p>• Você pode retirar o consentimento a qualquer momento</p>
                   <p>• Seus dados serão mantidos seguros e confidenciais</p>
@@ -229,28 +243,28 @@ export function ConsentDialog({
           </div>
 
           {/* LGPD Rights Information */}
-          <div className="bg-gray-50 p-4 rounded-lg text-xs text-gray-600">
-            <p className="font-medium mb-2">Seus Direitos pela LGPD:</p>
+          <div className='bg-gray-50 p-4 rounded-lg text-xs text-gray-600'>
+            <p className='font-medium mb-2'>Seus Direitos pela LGPD:</p>
             <p>
-              Você tem o direito de confirmar a existência de tratamento, acessar seus dados, 
-              corrigi-los, anonimizá-los, bloqueá-los ou eliminá-los, bem como a portabilidade 
-              dos dados e informação sobre o compartilhamento.
+              Você tem o direito de confirmar a existência de tratamento, acessar seus dados,
+              corrigi-los, anonimizá-los, bloqueá-los ou eliminá-los, bem como a portabilidade dos
+              dados e informação sobre o compartilhamento.
             </p>
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className='gap-2'>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={handleDenyConsent}
-            className="flex-1"
+            className='flex-1'
           >
             Não Concordo
           </Button>
           <Button
             onClick={handleGrantConsent}
             disabled={!canGrantConsent()}
-            className="flex-1"
+            className='flex-1'
           >
             Concordo e Autorizo
           </Button>

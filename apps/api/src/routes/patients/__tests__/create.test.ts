@@ -127,11 +127,11 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       };
 
       const response = await createRoute.request(mockRequest);
-      
+
       // Debug: Log raw response
       const responseText = await response.text();
       console.log('Raw response:', responseText);
-      
+
       // Parse as JSON
       const data = JSON.parse(responseText);
 

@@ -1,8 +1,6 @@
 // Healthcare Governance Service - CFM/ANVISA Compliance
 // Extends base governance with healthcare-specific metrics and policies
 
-import { Injectable } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseGovernanceService } from './supabase-governance.service';
 import { 
   HealthcareGovernanceService as IHealthcareGovernanceService,
@@ -24,9 +22,8 @@ import {
   HealthcareAlertFilters,
   ComplianceReportFilters
 } from '@neonpro/types';
-import { AuditTrailEntry, CreateAuditTrailEntry, ResourceType } from '@neonpro/types';
+import { AuditTrailEntry } from '@neonpro/types';
 
-@Injectable()
 export class HealthcareGovernanceService extends SupabaseGovernanceService implements IHealthcareGovernanceService {
   constructor(supabaseUrl: string, supabaseKey: string) {
     super(supabaseUrl, supabaseKey);
@@ -492,7 +489,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       };
 
       // Store the report
-      const { data, error } = await this.supabase
+      const { error } = await this.supabase
         .from('compliance_reports')
         .insert({
           id: report.id,
@@ -564,7 +561,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       const auditEntry = await this.createAuditEntry({
         action: entry.action,
         resource: entry.resource,
-        resourceType: entry.resourceType,
+        resourceType: entry.resourceType as any,
         resourceId: entry.resourceId,
         userId: entry.userId,
         clinicId: entry.clinicId,

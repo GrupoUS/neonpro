@@ -7,8 +7,8 @@
 
 import type { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { errorTracker } from '../lib/sentry.js';
 import { logger } from '../lib/logger';
+import { errorTracker } from '../lib/sentry.js';
 
 /**
  * Global error handler middleware

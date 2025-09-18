@@ -17,7 +17,6 @@ import type {
   RealtimeChannelState,
   RealtimeEventHandlers,
   RealtimeAdapterConfig,
-  RealtimeAdapterError,
 } from './event-adapter.js';
 import {
   createRealtimeEvent,

@@ -4,7 +4,7 @@
  */
 
 import { Context, Next } from 'hono';
-import { comprehensiveAuditService, type AuditEventContext } from '../services/audit-service.js';
+import { type AuditEventContext, comprehensiveAuditService } from '../services/audit-service.js';
 
 export interface AuditMiddlewareOptions {
   eventType?: string;
@@ -35,27 +35,27 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
     const requestId = generateRequestId();
-    
+
     try {
       // Build audit context
       const auditContext = await buildAuditContext(c, options, requestId);
-      
+
       // Validate emergency access if required
       if (options.emergencyAccess && options.requireJustification) {
-        const justification = c.req.header('x-emergency-justification') || 
-                             c.req.query('justification');
-        
+        const justification = c.req.header('x-emergency-justification')
+          || c.req.query('justification');
+
         if (!justification) {
           await logAuditEvent('EMERGENCY_ACCESS_DENIED', {
             reason: 'Missing justification',
             requestId,
             path: c.req.path,
-            method: c.req.method
+            method: c.req.method,
           }, auditContext);
 
           return c.json({
             error: 'Emergency access requires justification',
-            code: 'JUSTIFICATION_REQUIRED'
+            code: 'JUSTIFICATION_REQUIRED',
           }, 400);
         }
       }
@@ -69,7 +69,7 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
           method: c.req.method,
           path: c.req.path,
           requestId,
-          requestData: options.captureRequest ? await captureRequestData(c) : undefined
+          requestData: options.captureRequest ? await captureRequestData(c) : undefined,
         }, auditContext);
       }
 
@@ -86,7 +86,7 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
           threshold: options.performanceThreshold,
           path: c.req.path,
           method: c.req.method,
-          requestId
+          requestId,
         }, auditContext);
       }
 
@@ -97,12 +97,11 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
         responseTime,
         statusCode: c.res.status,
         requestId,
-        responseData: options.captureResponse ? await captureResponseData(c) : undefined
+        responseData: options.captureResponse ? await captureResponseData(c) : undefined,
       }, auditContext);
-
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       // Log error with full context
       await logAuditEvent('REQUEST_ERROR', {
         method: c.req.method,
@@ -110,7 +109,7 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         responseTime,
-        requestId
+        requestId,
       }, await buildAuditContext(c, options, requestId));
 
       throw error; // Re-throw to maintain error handling flow
@@ -133,7 +132,7 @@ export const healthcareAuditMiddleware = {
     captureHeaders: true,
     sensitiveData: true,
     complianceValidation: true,
-    performanceThreshold: 2000
+    performanceThreshold: 2000,
   }),
 
   /**
@@ -149,7 +148,7 @@ export const healthcareAuditMiddleware = {
     emergencyAccess: true,
     requireJustification: true,
     complianceValidation: true,
-    performanceThreshold: 3000
+    performanceThreshold: 3000,
   }),
 
   /**
@@ -163,7 +162,7 @@ export const healthcareAuditMiddleware = {
     captureHeaders: true,
     sensitiveData: false,
     complianceValidation: true,
-    performanceThreshold: 1000
+    performanceThreshold: 1000,
   }),
 
   /**
@@ -177,7 +176,7 @@ export const healthcareAuditMiddleware = {
     captureHeaders: false,
     sensitiveData: false,
     complianceValidation: true,
-    performanceThreshold: 1500
+    performanceThreshold: 1500,
   }),
 
   /**
@@ -191,7 +190,7 @@ export const healthcareAuditMiddleware = {
     captureHeaders: true,
     sensitiveData: true,
     complianceValidation: true,
-    performanceThreshold: 2000
+    performanceThreshold: 2000,
   }),
 
   /**
@@ -207,7 +206,7 @@ export const healthcareAuditMiddleware = {
     emergencyAccess: true,
     requireJustification: false,
     complianceValidation: true,
-    performanceThreshold: 5000
+    performanceThreshold: 5000,
   }),
 
   /**
@@ -221,7 +220,7 @@ export const healthcareAuditMiddleware = {
     captureHeaders: true,
     sensitiveData: true,
     complianceValidation: true,
-    performanceThreshold: 1000
+    performanceThreshold: 1000,
   }),
 
   /**
@@ -236,8 +235,8 @@ export const healthcareAuditMiddleware = {
     sensitiveData: true,
     requireJustification: true,
     complianceValidation: true,
-    performanceThreshold: 10000
-  })
+    performanceThreshold: 10000,
+  }),
 };
 
 /**
@@ -258,12 +257,12 @@ export function complianceMonitoringMiddleware() {
           path: c.req.path,
           method: c.req.method,
           userId: securityContext.rlsContext.userId,
-          clinicId: securityContext.rlsContext.clinicId
+          clinicId: securityContext.rlsContext.clinicId,
         }, auditContext);
 
         return c.json({
           error: 'Compliance violation detected',
-          code: 'COMPLIANCE_VIOLATION'
+          code: 'COMPLIANCE_VIOLATION',
         }, 403);
       }
 
@@ -274,7 +273,7 @@ export function complianceMonitoringMiddleware() {
           path: c.req.path,
           method: c.req.method,
           userId: securityContext.rlsContext.userId,
-          clinicId: securityContext.rlsContext.clinicId
+          clinicId: securityContext.rlsContext.clinicId,
         }, auditContext);
       }
 
@@ -287,16 +286,15 @@ export function complianceMonitoringMiddleware() {
           alertType: 'ERROR_RESPONSE',
           statusCode: responseStatus,
           path: c.req.path,
-          method: c.req.method
+          method: c.req.method,
         }, auditContext);
       }
-
     } catch (error) {
       // Log compliance monitoring errors
       await logAuditEvent('COMPLIANCE_MONITORING_ERROR', {
         error: error instanceof Error ? error.message : 'Unknown error',
         path: c.req.path,
-        method: c.req.method
+        method: c.req.method,
       }, c.get('auditContext'));
 
       throw error;
@@ -339,7 +337,7 @@ export function anomalyDetectionMiddleware() {
             userId,
             accessCount: accessCounts.get(userKey),
             timeWindow: '1_hour',
-            ipAddress
+            ipAddress,
           }, c.get('auditContext'));
         }
       }
@@ -365,7 +363,7 @@ export function anomalyDetectionMiddleware() {
             ipAddress,
             accessCount: accessCounts.get(ipKey),
             timeWindow: '1_hour',
-            userId
+            userId,
           }, c.get('auditContext'));
         }
       }
@@ -373,7 +371,7 @@ export function anomalyDetectionMiddleware() {
       await next();
     } catch (error) {
       await logAuditEvent('ANOMALY_DETECTION_ERROR', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       }, c.get('auditContext'));
 
       throw error;
@@ -386,7 +384,7 @@ export function anomalyDetectionMiddleware() {
 async function buildAuditContext(
   c: Context,
   options: AuditMiddlewareOptions,
-  requestId: string
+  requestId: string,
 ): Promise<AuditEventContext> {
   const securityContext = c.get('securityContext');
   const rlsContext = c.get('rlsContext');
@@ -408,28 +406,28 @@ async function buildAuditContext(
       consent_validated: securityContext?.consentValidated ?? false,
       emergency_access: options.emergencyAccess || securityContext?.emergencyAccess,
       data_minimization: !options.captureResponse || !options.sensitiveData,
-      purpose_limitation: true
-    }
+      purpose_limitation: true,
+    },
   };
 }
 
 async function captureRequestData(c: Context): Promise<any> {
   try {
     const contentType = c.req.header('content-type');
-    
+
     if (contentType?.includes('application/json')) {
       const body = await c.req.json();
       return sanitizeData(body);
     }
-    
+
     if (contentType?.includes('application/x-www-form-urlencoded')) {
       const formData = await c.req.formData();
       const formObject: Record<string, any> = {};
-      
+
       for (const [key, value] of formData.entries()) {
         formObject[key] = value;
       }
-      
+
       return sanitizeData(formObject);
     }
 
@@ -455,8 +453,18 @@ function sanitizeData(data: any): any {
   }
 
   const sensitiveFields = [
-    'password', 'token', 'secret', 'key', 'ssn', 'cpf', 'creditCard',
-    'bankAccount', 'pin', 'cvv', 'signature', 'privateKey'
+    'password',
+    'token',
+    'secret',
+    'key',
+    'ssn',
+    'cpf',
+    'creditCard',
+    'bankAccount',
+    'pin',
+    'cvv',
+    'signature',
+    'privateKey',
   ];
 
   const sanitized = { ...data };
@@ -480,7 +488,7 @@ function sanitizeData(data: any): any {
 async function logAuditEvent(
   eventType: string,
   eventData: any,
-  context?: AuditEventContext
+  context?: AuditEventContext,
 ): Promise<void> {
   try {
     await comprehensiveAuditService.logEvent(eventType, eventData, context);
@@ -495,11 +503,11 @@ function generateRequestId(): string {
 }
 
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For')?.split(',')[0]?.trim() ||
-         c.req.header('X-Real-IP') ||
-         c.req.header('CF-Connecting-IP') ||
-         'unknown';
+  return c.req.header('X-Forwarded-For')?.split(',')[0]?.trim()
+    || c.req.header('X-Real-IP')
+    || c.req.header('CF-Connecting-IP')
+    || 'unknown';
 }
 
 // Export types
-export type { AuditMiddlewareOptions, AuditContext };
+export type { AuditContext, AuditMiddlewareOptions };

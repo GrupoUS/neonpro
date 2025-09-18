@@ -1,0 +1,199 @@
+# Pre-commit hooks for NeonPro Healthcare Platform
+# LGPD, ANVISA, and CFM compliance validation
+
+repos:
+  # Code formatting and linting
+  - repo: local
+    hooks:
+      - id: dprint-format
+        name: Format code with dprint
+        entry: bunx dprint fmt
+        language: system
+        files: \.(ts|tsx|js|jsx|json|md|toml)$
+        pass_filenames: false
+
+      - id: eslint-healthcare
+        name: ESLint with healthcare compliance rules
+        entry: bunx eslint --fix --config .config/eslint/.eslintrc.json
+        language: system
+        files: \.(ts|tsx|js|jsx)$
+        exclude: ^(dist/|node_modules/|coverage/)
+
+      - id: typescript-check
+        name: TypeScript type checking
+        entry: bunx turbo type-check
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # Healthcare Data Security Validation
+  - repo: local
+    hooks:
+      - id: lgpd-data-validation
+        name: LGPD Personal Data Validation
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Check for potential LGPD violations in code
+            if grep -r -i -E "(cpf|rg|email|phone|patient.*data)" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=dist . | grep -v -E "(test|spec|mock)" | grep -E "(console\.log|localStorage|sessionStorage)"; then
+              echo "❌ LGPD Violation: Personal data detected in unsafe contexts"
+              echo "ℹ️  Use secure storage utilities from @neonpro/security"
+              exit 1
+            fi
+            echo "✅ LGPD compliance check passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+      - id: anvisa-protocol-validation
+        name: ANVISA Protocol Format Validation
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Validate ANVISA protocol number format in code
+            if grep -r -E "anvisa.*protocol.*[0-9]" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules . | grep -v -E "XXXX\.XXXXXX/YYYY-XX"; then
+              echo "❌ ANVISA Protocol Format Error: Use format XXXX.XXXXXX/YYYY-XX"
+              exit 1
+            fi
+            echo "✅ ANVISA protocol format validation passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+      - id: cfm-license-validation
+        name: CFM License Format Validation
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Validate CFM license format in code
+            if grep -r -E "cfm.*license.*[0-9]" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules . | grep -v -E "[0-9]{4,6}/[A-Z]{2}"; then
+              echo "❌ CFM License Format Error: Use format NNNNNN/UF"
+              exit 1
+            fi
+            echo "✅ CFM license format validation passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # Security scanning
+  - repo: local
+    hooks:
+      - id: healthcare-secrets-scan
+        name: Healthcare Secrets Detection
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Scan for hardcoded healthcare secrets
+            if grep -r -i -E "(jwt_secret|encryption_key|database_url|api_key)" --include="*.ts" --include="*.tsx" --include="*.js" --exclude-dir=node_modules --exclude-dir=dist . | grep -v -E "(\.env|process\.env|import.*env)" | grep -E "=.*['\"]"; then
+              echo "❌ Security Risk: Hardcoded secrets detected in healthcare code"
+              echo "ℹ️  Use environment variables for all sensitive data"
+              exit 1
+            fi
+            echo "✅ Healthcare secrets scan passed"
+        files: \.(ts|tsx|js|jsx)$
+        pass_filenames: false
+
+  # Healthcare-specific validations
+  - repo: local
+    hooks:
+      - id: patient-data-encryption
+        name: Patient Data Encryption Check
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Ensure patient data is encrypted before storage
+            if grep -r -E "patient.*\.(save|create|update)" --include="*.ts" --exclude-dir=node_modules . | grep -v -E "(encrypt|hash|anonymize)"; then
+              echo "❌ Patient Data Security: Patient data operations must include encryption"
+              echo "ℹ️  Use encryption utilities from @neonpro/security before database operations"
+              exit 1
+            fi
+            echo "✅ Patient data encryption check passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+      - id: audit-trail-validation
+        name: Healthcare Audit Trail Validation
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Ensure audit trails for healthcare operations
+            if grep -r -E "(patient|medical|consultation|prescription)" --include="*.ts" --exclude-dir=node_modules . | grep -E "\.(delete|update|create)" | grep -v -E "(audit|log|trail)"; then
+              echo "❌ Audit Trail Missing: Healthcare operations require audit logging"
+              echo "ℹ️  Add audit trail logging for all patient data modifications"
+              exit 1
+            fi
+            echo "✅ Healthcare audit trail validation passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # Test requirements
+  - repo: local
+    hooks:
+      - id: healthcare-test-coverage
+        name: Healthcare Test Coverage Check
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Ensure critical healthcare functions have tests
+            CRITICAL_DIRS=("lgpd" "patient" "medical" "telemedicine" "compliance")
+            for dir in "${CRITICAL_DIRS[@]}"; do
+              if find . -name "*.ts" -path "*/${dir}/*" -not -path "*/node_modules/*" -not -path "*/dist/*" | while read -r file; do
+                test_file="${file%.ts}.test.ts"
+                spec_file="${file%.ts}.spec.ts"
+                if [[ ! -f "$test_file" && ! -f "$spec_file" ]]; then
+                  echo "❌ Missing Test: Critical healthcare file $file has no test coverage"
+                  echo "ℹ️  Add test file: ${test_file} or ${spec_file}"
+                  exit 1
+                fi
+              done; then
+                :
+              else
+                exit 1
+              fi
+            done
+            echo "✅ Healthcare test coverage validation passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # Documentation requirements
+  - repo: local
+    hooks:
+      - id: healthcare-docs-validation
+        name: Healthcare Documentation Validation
+        entry: bash
+        language: system
+        args:
+          - -c
+          - |
+            # Ensure healthcare functions have proper documentation
+            if grep -r -E "export (function|class)" --include="*.ts" --exclude-dir=node_modules . | grep -E "(patient|medical|lgpd|compliance)" | while read -r line; do
+              file=$(echo "$line" | cut -d: -f1)
+              line_num=$(echo "$line" | cut -d: -f2)
+              # Check if there's JSDoc comment before the function
+              if ! sed -n "$((line_num-3)),$((line_num-1))p" "$file" | grep -q "^\s*\*"; then
+                echo "❌ Missing Documentation: Healthcare function in $file:$line_num needs JSDoc"
+                echo "ℹ️  Add JSDoc with @description, @param, @returns, and compliance notes"
+                exit 1
+              fi
+            done
+            echo "✅ Healthcare documentation validation passed"
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+# Global configuration
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [commit, push]
+
+# Performance optimization
+minimum_pre_commit_version: 3.0.0

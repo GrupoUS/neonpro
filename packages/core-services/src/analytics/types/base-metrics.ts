@@ -5,6 +5,34 @@
  * with compliance-aware design (LGPD/ANVISA/CFM) and extensible architecture.
  */
 
+import type { RiskLevel, ComplianceFramework } from '../../audit/types';
+
+/**
+ * Analytics event interface for tracking user interactions and system events
+ */
+export interface AnalyticsEvent {
+  /** Unique event identifier */
+  id: string;
+  
+  /** Event type/category */
+  type: string;
+  
+  /** Event timestamp */
+  timestamp: Date;
+  
+  /** User identifier (anonymized) */
+  userId?: string;
+  
+  /** Session identifier */
+  sessionId?: string;
+  
+  /** Event properties */
+  properties: Record<string, unknown>;
+  
+  /** Event context */
+  context?: Record<string, unknown>;
+}
+
 /**
  * Metric data types supported by the analytics system
  */
@@ -17,6 +45,14 @@ export type MetricDataType =
   | 'ratio' 
   | 'boolean';
 
+// Export aliases for backward compatibility
+export type MetricType = MetricDataType;
+
+/**
+ * Currency types supported by the system
+ */
+export type Currency = 'BRL' | 'USD' | 'EUR' | 'GBP';
+
 /**
  * Metric frequency for collection and reporting
  */
@@ -28,6 +64,9 @@ export type MetricFrequency =
   | 'monthly' 
   | 'quarterly' 
   | 'yearly';
+
+// Export alias for backward compatibility
+export type Frequency = MetricFrequency;
 
 /**
  * Metric aggregation methods
@@ -42,6 +81,9 @@ export type MetricAggregation =
   | 'percentile' 
   | 'last_value';
 
+// Export alias for backward compatibility
+export type AggregationType = MetricAggregation;
+
 /**
  * Metric status indicating data quality and reliability
  */
@@ -52,24 +94,8 @@ export type MetricStatus =
   | 'error' 
   | 'calculating';
 
-/**
- * Risk levels for metric values (healthcare context)
- */
-export type RiskLevel = 
-  | 'LOW' 
-  | 'MEDIUM' 
-  | 'HIGH' 
-  | 'CRITICAL';
-
-/**
- * Compliance frameworks applicable to healthcare metrics
- */
-export type ComplianceFramework = 
-  | 'LGPD' 
-  | 'ANVISA' 
-  | 'CFM' 
-  | 'HIPAA' 
-  | 'GENERAL';
+// Re-export types from audit module to avoid conflicts
+export type { RiskLevel, ComplianceFramework } from '../../audit/types';
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -367,4 +393,155 @@ function extractCohort(metadata?: Record<string, unknown>): string | undefined {
   }
   
   return undefined;
+}
+
+/**
+ * Create a mock metric for testing purposes
+ */
+export function createMockMetric(overrides?: Partial<BaseMetric>): BaseMetric {
+  const now = new Date();
+  
+  return {
+    id: 'mock_metric_' + Math.random().toString(36).substr(2, 9),
+    name: 'Mock Metric',
+    description: 'A mock metric for testing',
+    dataType: 'number',
+    value: Math.random() * 100,
+    unit: 'count',
+    targetValue: 100,
+    threshold: 80,
+    frequency: 'daily',
+    aggregation: 'average',
+    status: 'active',
+    riskLevel: 'LOW',
+    complianceFrameworks: ['LGPD'],
+    source: 'mock_system',
+    timestamp: now,
+    lastUpdated: now,
+    createdAt: now,
+    metadata: {},
+    ...overrides,
+  };
+}
+
+/**
+ * Create a mock analytics event for testing purposes
+ */
+export function createMockAnalyticsEvent(overrides?: Partial<AnalyticsEvent>): AnalyticsEvent {
+  return {
+    id: 'mock_event_' + Math.random().toString(36).substr(2, 9),
+    type: 'page_view',
+    timestamp: new Date(),
+    userId: 'mock_user_' + Math.random().toString(36).substr(2, 6),
+    sessionId: 'mock_session_' + Math.random().toString(36).substr(2, 6),
+    properties: {
+      page: '/dashboard',
+      action: 'view',
+    },
+    context: {
+      userAgent: 'Mock Browser',
+      ip: '127.0.0.1',
+    },
+    ...overrides,
+  };
+}
+
+/**
+ * Validate metric compliance based on healthcare frameworks
+ */
+export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  let qualityScore = 1.0;
+  
+  // Validate required fields
+  if (!metric.id) {
+    errors.push('Metric ID is required');
+    qualityScore -= 0.2;
+  }
+  
+  if (!metric.name) {
+    errors.push('Metric name is required');
+    qualityScore -= 0.2;
+  }
+  
+  if (metric.value === undefined || metric.value === null) {
+    errors.push('Metric value is required');
+    qualityScore -= 0.3;
+  }
+  
+  // Validate healthcare compliance
+  if (isHealthcareMetric(metric)) {
+    if (!metric.source.includes('healthcare')) {
+      warnings.push('Healthcare metrics should specify healthcare data source');
+      qualityScore -= 0.1;
+    }
+    
+    if (metric.complianceFrameworks.length === 0) {
+      errors.push('Healthcare metrics must specify compliance frameworks');
+      qualityScore -= 0.2;
+    }
+  }
+  
+  // Validate risk level alignment
+  if (metric.riskLevel === 'CRITICAL' && metric.status !== 'active') {
+    warnings.push('Critical risk metrics should typically be active');
+    qualityScore -= 0.1;
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    qualityScore: Math.max(0, qualityScore),
+    validatedAt: new Date(),
+  };
+}
+
+/**
+ * Aggregate multiple metrics using specified aggregation method
+ */
+export function aggregateMetrics(
+  metrics: BaseMetric[], 
+  aggregation: MetricAggregation = 'average'
+): number {
+  if (metrics.length === 0) return 0;
+  
+  const values = metrics.map(m => m.value);
+  
+  switch (aggregation) {
+    case 'sum':
+      return values.reduce((sum, val) => sum + val, 0);
+      
+    case 'average':
+      return values.reduce((sum, val) => sum + val, 0) / values.length;
+      
+    case 'count':
+      return values.length;
+      
+    case 'min':
+      return Math.min(...values);
+      
+    case 'max':
+      return Math.max(...values);
+      
+    case 'median':
+      const sorted = values.sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 === 0 
+        ? (sorted[mid - 1] + sorted[mid]) / 2 
+        : sorted[mid];
+        
+    case 'percentile':
+      // Default to 95th percentile
+      const sortedValues = values.sort((a, b) => a - b);
+      const index = Math.ceil(0.95 * sortedValues.length) - 1;
+      return sortedValues[index];
+      
+    case 'last_value':
+      return values[values.length - 1];
+      
+    default:
+      return values.reduce((sum, val) => sum + val, 0) / values.length;
+  }
 }

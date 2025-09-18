@@ -4,13 +4,9 @@
  * Integration with PatientService, AuditService, NotificationService
  */
 
+import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import {
-  validateBrazilianPhone as validatePhone,
-  validateCEP,
-  validateCPF,
-} from '@neonpro/shared';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { ComprehensiveAuditService } from '../../services/audit-service';

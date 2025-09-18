@@ -7,6 +7,7 @@ This implementation provides a comprehensive Prisma client integration specifica
 ## 🎯 Key Features
 
 ### 🔐 Healthcare Security & Compliance
+
 - **LGPD Compliance**: Complete Brazilian data protection law implementation
 - **Multi-Tenant RLS**: Clinic-based data isolation with professional access controls
 - **CFM Validation**: Brazilian healthcare professional license validation
@@ -14,12 +15,14 @@ This implementation provides a comprehensive Prisma client integration specifica
 - **Data Subject Rights**: Implementation of all LGPD Article 18 rights
 
 ### ⚡ Performance Optimization
+
 - **Query Caching**: Intelligent caching with healthcare-specific TTL
 - **Connection Pooling**: Optimized for healthcare workloads
 - **Batch Operations**: Efficient bulk data processing
 - **Performance Monitoring**: Real-time metrics and alerts
 
 ### 🧰 Healthcare-Specific Features
+
 - **Brazilian Validators**: CPF, RG, CFM, phone number validation
 - **Appointment Management**: Scheduling, conflict detection, no-show prediction
 - **Patient Data Protection**: Anonymization, sanitization, export/deletion
@@ -48,7 +51,7 @@ apps/api/src/
 ### 1. Basic Usage
 
 ```typescript
-import { getHealthcarePrismaClient, createPrismaWithContext } from './clients/prisma.js';
+import { createPrismaWithContext, getHealthcarePrismaClient } from './clients/prisma.js';
 
 // Get singleton client
 const prisma = getHealthcarePrismaClient();
@@ -71,14 +74,17 @@ const prismaWithContext = createPrismaWithContext(context);
 import { prismaRLSMiddleware } from './middleware/prisma-rls.js';
 
 // Apply RLS middleware
-app.use('*', prismaRLSMiddleware({
-  requireAuth: true,
-  requireClinicAccess: true,
-  validateCFM: true,
-}));
+app.use(
+  '*',
+  prismaRLSMiddleware({
+    requireAuth: true,
+    requireClinicAccess: true,
+    validateCFM: true,
+  }),
+);
 
 // Use in route handlers
-app.get('/patients', async (c) => {
+app.get('/patients', async c => {
   const { prisma } = getHealthcareContext(c);
   const patients = await prisma.findPatientsInClinic(c.get('clinicId'));
   return c.json(patients);
@@ -96,7 +102,7 @@ const validator = new LGPDComplianceValidator(prismaWithContext);
 const exportData = await prisma.exportPatientData(
   patientId,
   requestedBy,
-  'Patient data portability request'
+  'Patient data portability request',
 );
 
 // Delete patient data (LGPD Article 18.VI)
@@ -110,7 +116,7 @@ await prisma.deletePatientData(patientId, {
 await validator.exerciseDataSubjectRight(
   patientId,
   LGPDDataSubjectRights.ACCESS,
-  { requestedBy: userId, reason: 'Data access request' }
+  { requestedBy: userId, reason: 'Data access request' },
 );
 ```
 
@@ -143,13 +149,13 @@ const conflicts = await HealthcareAppointmentHelper.checkAppointmentConflicts(
   prisma,
   professionalId,
   startTime,
-  endTime
+  endTime,
 );
 
 // Calculate no-show risk
 const riskScore = await HealthcareAppointmentHelper.calculateNoShowRisk(
   prisma,
-  appointmentId
+  appointmentId,
 );
 ```
 
@@ -237,10 +243,10 @@ const healthMetrics = await prisma.getHealthMetrics();
 ### Healthcare-Specific Errors
 
 ```typescript
-import { 
+import {
   HealthcareComplianceError,
-  UnauthorizedHealthcareAccessError,
   LGPDComplianceError,
+  UnauthorizedHealthcareAccessError,
 } from './utils/healthcare-errors.js';
 
 try {
@@ -329,7 +335,7 @@ The system uses the existing Prisma schema with healthcare-specific enhancements
 
 **Implementation Status**: ✅ **COMPLETE** - Ready for production deployment
 
-**Created**: September 17, 2025  
-**Version**: 1.0.0  
-**Author**: AI IDE Agent  
+**Created**: September 17, 2025\
+**Version**: 1.0.0\
+**Author**: AI IDE Agent\
 **Architecture Review**: ✅ **APPROVED**

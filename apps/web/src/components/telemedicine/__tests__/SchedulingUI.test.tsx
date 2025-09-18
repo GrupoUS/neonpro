@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { SchedulingUI } from '../SchedulingUI';
 
@@ -17,8 +17,8 @@ vi.mock('date-fns', () => ({
     return '2024-01-15 14:30';
   }),
   addDays: vi.fn((date, days) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000)),
-  startOfWeek: vi.fn((date) => date),
-  endOfWeek: vi.fn((date) => date),
+  startOfWeek: vi.fn(date => date),
+  endOfWeek: vi.fn(date => date),
   isSameDay: vi.fn(() => false),
   isPast: vi.fn(() => false),
   isToday: vi.fn(() => false),
@@ -34,13 +34,17 @@ vi.mock('@/components/ui', () => ({
   CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   CardTitle: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-  Badge: ({ children, variant, ...props }: any) => <span data-variant={variant} {...props}>{children}</span>,
+  Badge: ({ children, variant, ...props }: any) => (
+    <span data-variant={variant} {...props}>{children}</span>
+  ),
   Input: ({ onChange, ...props }: any) => <input onChange={onChange} {...props} />,
   Select: ({ children, onValueChange, ...props }: any) => (
-    <select onChange={(e) => onValueChange?.(e.target.value)} {...props}>{children}</select>
+    <select onChange={e => onValueChange?.(e.target.value)} {...props}>{children}</select>
   ),
   SelectContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  SelectItem: ({ children, value, ...props }: any) => <option value={value} {...props}>{children}</option>,
+  SelectItem: ({ children, value, ...props }: any) => (
+    <option value={value} {...props}>{children}</option>
+  ),
   SelectTrigger: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   SelectValue: ({ placeholder, ...props }: any) => <span {...props}>{placeholder}</span>,
   Dialog: ({ children, open, ...props }: any) => open ? <div {...props}>{children}</div> : null,
@@ -82,7 +86,8 @@ describe('SchedulingUI', () => {
   test('displays filters section', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Filtros')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Buscar por paciente ou profissional...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Buscar por paciente ou profissional...'))
+      .toBeInTheDocument();
   });
 
   test('search functionality works', () => {
@@ -96,7 +101,7 @@ describe('SchedulingUI', () => {
     render(<SchedulingUI {...mockProps} />);
     const listButton = screen.getByText('Lista');
     fireEvent.click(listButton);
-    
+
     // After clicking list view, should show "Todas as Consultas"
     expect(screen.getByText('Todas as Consultas')).toBeInTheDocument();
   });

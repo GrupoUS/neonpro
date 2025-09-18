@@ -1,6 +1,6 @@
 /**
  * Rate Limiting Test Suite for Healthcare APIs
- * 
+ *
  * Tests rate limiting middleware with healthcare-specific scenarios:
  * - Emergency endpoint bypass
  * - LGPD compliance logging
@@ -8,29 +8,31 @@
  * - Sliding window accuracy
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Context } from 'hono';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  rateLimitMiddleware,
-  getRateLimitStats,
-  resetRateLimits,
-  HEALTHCARE_RATE_LIMITS,
   DEFAULT_RATE_LIMIT_CONFIG,
+  getRateLimitStats,
+  HEALTHCARE_RATE_LIMITS,
+  rateLimitMiddleware,
   type RateLimitRule,
+  resetRateLimits,
 } from '../rate-limiting';
 
 // Mock Hono Context
-function createMockContext(overrides: Partial<{
-  path: string;
-  method: string;
-  headers: Record<string, string>;
-  userId: string;
-  clinicId: string;
-  userRole: string;
-}>): Context {
+function createMockContext(
+  overrides: Partial<{
+    path: string;
+    method: string;
+    headers: Record<string, string>;
+    userId: string;
+    clinicId: string;
+    userRole: string;
+  }>,
+): Context {
   const headers = new Map(Object.entries(overrides.headers || {}));
   const variables = new Map();
-  
+
   if (overrides.userId) variables.set('userId', overrides.userId);
   if (overrides.clinicId) variables.set('clinicId', overrides.clinicId);
   if (overrides.userRole) variables.set('userRole', overrides.userRole);
@@ -76,9 +78,9 @@ describe('Rate Limiting Middleware', () => {
         endpoints: {},
       });
 
-      const context = createMockContext({ 
+      const context = createMockContext({
         path: '/api/v1/test',
-        headers: { 'x-forwarded-for': '192.168.1.100' }
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
       const next = vi.fn();
 
@@ -152,7 +154,7 @@ describe('Rate Limiting Middleware', () => {
 
     it('applies strict limits to authentication endpoints', async () => {
       const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
-      
+
       const authRule = HEALTHCARE_RATE_LIMITS['/api/v1/auth/'];
       expect(authRule.maxRequests).toBe(10); // Strict limit for auth
       expect(authRule.priority).toBe('administrative');
@@ -160,7 +162,7 @@ describe('Rate Limiting Middleware', () => {
 
     it('handles patient data access with audit logging', async () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       const middleware = rateLimitMiddleware({
         ...DEFAULT_RATE_LIMIT_CONFIG,
         auditLogging: true,
@@ -182,7 +184,7 @@ describe('Rate Limiting Middleware', () => {
           userId: 'doc123',
           clinicId: 'clinic456',
           allowed: true,
-        })
+        }),
       );
 
       consoleSpy.mockRestore();
@@ -199,13 +201,13 @@ describe('Rate Limiting Middleware', () => {
       const clinic1Context = createMockContext({
         path: '/api/v1/test',
         clinicId: 'clinic1',
-        headers: { 'x-forwarded-for': '192.168.1.100' }
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
 
       const clinic2Context = createMockContext({
         path: '/api/v1/test',
         clinicId: 'clinic2',
-        headers: { 'x-forwarded-for': '192.168.1.100' } // Same IP
+        headers: { 'x-forwarded-for': '192.168.1.100' }, // Same IP
       });
 
       const next = vi.fn();
@@ -232,13 +234,13 @@ describe('Rate Limiting Middleware', () => {
       const user1Context = createMockContext({
         path: '/api/v1/test',
         userId: 'user1',
-        headers: { 'x-forwarded-for': '192.168.1.100' }
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
 
       const user2Context = createMockContext({
         path: '/api/v1/test',
         userId: 'user2',
-        headers: { 'x-forwarded-for': '192.168.1.100' } // Same IP
+        headers: { 'x-forwarded-for': '192.168.1.100' }, // Same IP
       });
 
       const next = vi.fn();
@@ -265,7 +267,7 @@ describe('Rate Limiting Middleware', () => {
       });
 
       const context = createMockContext({
-        headers: { 'x-forwarded-for': '192.168.1.100' }
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
       const next = vi.fn();
 
@@ -285,7 +287,7 @@ describe('Rate Limiting Middleware', () => {
       });
 
       const context = createMockContext({
-        headers: { 'x-forwarded-for': '10.0.0.1' } // Not allowlisted
+        headers: { 'x-forwarded-for': '10.0.0.1' }, // Not allowlisted
       });
       const next = vi.fn();
 
@@ -337,10 +339,10 @@ describe('Rate Limiting Middleware', () => {
       // Make requests with delays
       await middleware(context, next);
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       await middleware(context, next);
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       await middleware(context, next);
       expect(next).toHaveBeenCalledTimes(3);
 
@@ -358,7 +360,8 @@ describe('Rate Limiting Middleware', () => {
             maxRequests: 1,
             windowMs: 60000,
             priority: 'emergency',
-            message: 'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
+            message:
+              'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
           },
         },
       });
@@ -412,11 +415,11 @@ describe('Rate Limiting Middleware', () => {
         endpoints: {},
       });
 
-      const context1 = createMockContext({ 
-        headers: { 'x-forwarded-for': '192.168.1.1' }
+      const context1 = createMockContext({
+        headers: { 'x-forwarded-for': '192.168.1.1' },
       });
-      const context2 = createMockContext({ 
-        headers: { 'x-forwarded-for': '192.168.1.2' }
+      const context2 = createMockContext({
+        headers: { 'x-forwarded-for': '192.168.1.2' },
       });
       const next = vi.fn();
 

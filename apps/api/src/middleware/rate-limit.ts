@@ -12,7 +12,7 @@ export function chatRateLimit() {
     default: { maxRequests: 10, windowMs: 5 * 60 * 1000 },
     endpoints: {},
   };
-  
+
   const config1h = {
     default: { maxRequests: 30, windowMs: 60 * 60 * 1000 },
     endpoints: {},

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { vi, describe, it, test, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { WaitingRoom } from '../WaitingRoom';
 
 // Mock the cn utility function
@@ -27,7 +27,7 @@ describe('WaitingRoom', () => {
       id: '1',
       name: 'Maria Silva',
       appointmentTime: new Date('2024-01-15T14:30:00'),
-      estimatedWaitTime: 15
+      estimatedWaitTime: 15,
     },
     queuedPatients: [
       {
@@ -39,8 +39,8 @@ describe('WaitingRoom', () => {
         priority: 'normal' as const,
         hasInsurance: true,
         isNewPatient: false,
-        consultationType: 'routine' as const
-      }
+        consultationType: 'routine' as const,
+      },
     ],
     professional: {
       id: 'prof1',
@@ -49,13 +49,13 @@ describe('WaitingRoom', () => {
       avatar: '/avatar.jpg',
       specialty: 'Cardiologia',
       totalConsultations: 150,
-      completedToday: 8
+      completedToday: 8,
     },
     isConnected: true,
     isMicEnabled: true,
     isCameraEnabled: true,
     queuePosition: 1,
-    totalWaitTime: 15
+    totalWaitTime: 15,
   };
 
   beforeEach(() => {

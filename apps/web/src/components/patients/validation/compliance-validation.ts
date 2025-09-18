@@ -1,14 +1,19 @@
 /**
  * LGPD Compliance and Accessibility Validation Suite
  * NeonPro Healthcare Platform - Mobile-First UI Components
- * 
+ *
  * This file contains validation functions and checklists to ensure
  * LGPD compliance and WCAG 2.1 AA+ accessibility standards
  */
 
 // LGPD Compliance Validation Interface
 export interface LGPDComplianceCheck {
-  category: 'data_collection' | 'consent_management' | 'data_processing' | 'rights_exercise' | 'security';
+  category:
+    | 'data_collection'
+    | 'consent_management'
+    | 'data_processing'
+    | 'rights_exercise'
+    | 'security';
   requirement: string;
   implementation: string;
   status: 'compliant' | 'partial' | 'non_compliant';
@@ -38,8 +43,8 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'ConsentManagementDialog.tsx implements granular consent collection',
       'Consent purposes clearly defined with descriptions',
       'Required vs optional consents properly distinguished',
-      'Brazilian Portuguese language for all consent forms'
-    ]
+      'Brazilian Portuguese language for all consent forms',
+    ],
   },
   {
     category: 'data_collection',
@@ -50,8 +55,8 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'LGPDRightsInfo component explains data subject rights',
       'Consent purposes include detailed descriptions',
       'Data processing activities clearly described',
-      'Contact information for data protection officer provided'
-    ]
+      'Contact information for data protection officer provided',
+    ],
   },
   {
     category: 'consent_management',
@@ -62,8 +67,8 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'Consent withdrawal buttons in ConsentManagementDialog',
       'Individual consent toggles for each purpose',
       'Immediate effect of consent withdrawal',
-      'Audit trail for consent changes'
-    ]
+      'Audit trail for consent changes',
+    ],
   },
   {
     category: 'rights_exercise',
@@ -75,8 +80,8 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'Data erasure requests (Art. 18º, VI)',
       'Data access confirmation (Art. 18º, I)',
       'Data correction mechanisms (Art. 18º, III)',
-      'Data portability features (Art. 18º, V)'
-    ]
+      'Data portability features (Art. 18º, V)',
+    ],
   },
   {
     category: 'data_processing',
@@ -87,8 +92,8 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'MobilePatientCard implements progressive disclosure',
       'Role-based data visibility in components',
       'Sensitive data masking by default',
-      'Context-aware data presentation'
-    ]
+      'Context-aware data presentation',
+    ],
   },
   {
     category: 'security',
@@ -99,9 +104,9 @@ export const lgpdComplianceValidation: LGPDComplianceCheck[] = [
       'PatientErrorBoundary sanitizes PII in error logs',
       'Secure data validation with Valibot schemas',
       'HTTPS enforcement in API communications',
-      'Input sanitization and validation'
-    ]
-  }
+      'Input sanitization and validation',
+    ],
+  },
 ];
 
 // Accessibility Compliance Validation Results
@@ -111,14 +116,15 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
     wcagCriterion: '1.1.1 Non-text Content',
     level: 'A',
     status: 'pass',
-    implementation: 'All images, icons, and interactive elements have appropriate alt text or aria-labels',
+    implementation:
+      'All images, icons, and interactive elements have appropriate alt text or aria-labels',
     testMethod: 'Code review and screen reader testing',
     evidence: [
       'Icons use aria-label attributes',
       'Form controls have associated labels',
       'Images include descriptive alt text',
-      'Decorative icons properly marked'
-    ]
+      'Decorative icons properly marked',
+    ],
   },
   {
     category: 'perceivable',
@@ -131,8 +137,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Proper heading hierarchy (h1-h6)',
       'Form labels associated with controls',
       'ARIA relationships defined',
-      'Semantic HTML elements used'
-    ]
+      'Semantic HTML elements used',
+    ],
   },
   {
     category: 'perceivable',
@@ -145,8 +151,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Text on background meets 4.5:1 ratio',
       'Interactive elements meet contrast requirements',
       'High contrast mode available',
-      'Color not sole means of conveying information'
-    ]
+      'Color not sole means of conveying information',
+    ],
   },
   {
     category: 'perceivable',
@@ -159,8 +165,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Responsive design accommodates text scaling',
       'Font size adjustments in AccessibilityProvider',
       'No horizontal scrolling at 200% zoom',
-      'Text remains readable at all zoom levels'
-    ]
+      'Text remains readable at all zoom levels',
+    ],
   },
   {
     category: 'operable',
@@ -173,8 +179,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Tab navigation through all interactive elements',
       'Enter and Space key activation',
       'Escape key closes dialogs',
-      'Arrow key navigation in lists'
-    ]
+      'Arrow key navigation in lists',
+    ],
   },
   {
     category: 'operable',
@@ -187,8 +193,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Focus can be moved away from all components',
       'Modal dialogs properly trap and restore focus',
       'No infinite focus loops',
-      'Focus restoration after dialog close'
-    ]
+      'Focus restoration after dialog close',
+    ],
   },
   {
     category: 'operable',
@@ -201,8 +207,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Skip to main content links',
       'ARIA landmarks for navigation',
       'Proper heading structure for navigation',
-      'Focus management in complex interfaces'
-    ]
+      'Focus management in complex interfaces',
+    ],
   },
   {
     category: 'operable',
@@ -215,8 +221,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Focus moves in logical sequence',
       'Tab order matches visual layout',
       'Focus visible on all interactive elements',
-      'Custom focus management in complex widgets'
-    ]
+      'Custom focus management in complex widgets',
+    ],
   },
   {
     category: 'operable',
@@ -229,8 +235,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Buttons minimum 44px height/width',
       'Touch targets properly spaced',
       'Mobile-optimized interface design',
-      'Touch target sizing in mobile-optimization.css'
-    ]
+      'Touch target sizing in mobile-optimization.css',
+    ],
   },
   {
     category: 'understandable',
@@ -243,8 +249,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'lang="pt-BR" attribute on html element',
       'Brazilian Portuguese content throughout',
       'Proper language declarations for content',
-      'Screen reader language support'
-    ]
+      'Screen reader language support',
+    ],
   },
   {
     category: 'understandable',
@@ -257,8 +263,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'No automatic form submission on focus',
       'No unexpected page navigation',
       'Focus changes are user-initiated',
-      'Predictable focus behavior'
-    ]
+      'Predictable focus behavior',
+    ],
   },
   {
     category: 'understandable',
@@ -271,8 +277,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Error messages in Portuguese',
       'Specific error descriptions',
       'Visual and programmatic error indication',
-      'Error prevention and correction guidance'
-    ]
+      'Error prevention and correction guidance',
+    ],
   },
   {
     category: 'robust',
@@ -285,8 +291,8 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'Valid HTML structure',
       'Proper nesting of elements',
       'Unique IDs where required',
-      'Well-formed markup'
-    ]
+      'Well-formed markup',
+    ],
   },
   {
     category: 'robust',
@@ -299,9 +305,9 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
       'ARIA roles appropriately assigned',
       'Form controls have accessible names',
       'State changes announced to screen readers',
-      'Custom components properly exposed to AT'
-    ]
-  }
+      'Custom components properly exposed to AT',
+    ],
+  },
 ];
 
 // Mobile Healthcare Specific Validations
@@ -310,26 +316,32 @@ export const mobileHealthcareValidation = [
     requirement: 'Touch Target Accessibility',
     status: 'compliant',
     implementation: 'All interactive elements minimum 44px with 8px spacing',
-    evidence: ['mobile-optimization.css defines touch-target class', 'Buttons implement proper sizing']
+    evidence: [
+      'mobile-optimization.css defines touch-target class',
+      'Buttons implement proper sizing',
+    ],
   },
   {
     requirement: 'Brazilian Healthcare Document Validation',
     status: 'compliant',
     implementation: 'CPF, CNS, RG validation with proper formatting',
-    evidence: ['brazilian-healthcare-schemas.ts implements validation', 'Real-time validation feedback']
+    evidence: [
+      'brazilian-healthcare-schemas.ts implements validation',
+      'Real-time validation feedback',
+    ],
   },
   {
     requirement: 'Portuguese Language Support',
     status: 'compliant',
     implementation: 'Complete Brazilian Portuguese localization',
-    evidence: ['All text content in Portuguese', 'Date formatting with ptBR locale']
+    evidence: ['All text content in Portuguese', 'Date formatting with ptBR locale'],
   },
   {
     requirement: 'Offline Capability',
     status: 'partial',
     implementation: 'Form data persistence and basic offline features',
-    evidence: ['Local storage for form data', 'Service worker registration needed']
-  }
+    evidence: ['Local storage for form data', 'Service worker registration needed'],
+  },
 ];
 
 // Performance Validation Results
@@ -339,29 +351,29 @@ export const performanceValidation = [
     target: '≤2.5s',
     status: 'optimized',
     implementation: 'Image optimization, lazy loading, critical CSS',
-    evidence: ['CSS containment rules', 'Lazy loading implementation', 'Optimized bundle size']
+    evidence: ['CSS containment rules', 'Lazy loading implementation', 'Optimized bundle size'],
   },
   {
     metric: 'Interaction to Next Paint (INP)',
     target: '≤200ms',
     status: 'optimized',
     implementation: 'Debounced inputs, optimized re-renders',
-    evidence: ['Debounced search inputs', 'Memoized components', 'Efficient state updates']
+    evidence: ['Debounced search inputs', 'Memoized components', 'Efficient state updates'],
   },
   {
     metric: 'Cumulative Layout Shift (CLS)',
     target: '≤0.1',
     status: 'optimized',
     implementation: 'Fixed element dimensions, proper loading states',
-    evidence: ['Skeleton loading states', 'Fixed image dimensions', 'Stable layout design']
+    evidence: ['Skeleton loading states', 'Fixed image dimensions', 'Stable layout design'],
   },
   {
     metric: 'Bundle Size',
     target: '<650kB',
     status: 'optimized',
     implementation: 'Tree shaking, code splitting, optimized imports',
-    evidence: ['Selective component imports', 'Lazy loading', 'Optimized dependencies']
-  }
+    evidence: ['Selective component imports', 'Lazy loading', 'Optimized dependencies'],
+  },
 ];
 
 // Compliance Summary
@@ -369,18 +381,21 @@ export const complianceSummary = {
   lgpd: {
     compliant: lgpdComplianceValidation.filter(check => check.status === 'compliant').length,
     total: lgpdComplianceValidation.length,
-    percentage: Math.round((lgpdComplianceValidation.filter(check => check.status === 'compliant').length / lgpdComplianceValidation.length) * 100)
+    percentage: Math.round(
+      (lgpdComplianceValidation.filter(check => check.status === 'compliant').length
+        / lgpdComplianceValidation.length) * 100,
+    ),
   },
   accessibility: {
     passing: accessibilityComplianceValidation.filter(check => check.status === 'pass').length,
     total: accessibilityComplianceValidation.length,
-    percentage: Math.round((accessibilityComplianceValidation.filter(check => check.status === 'pass').length / accessibilityComplianceValidation.length) * 100)
+    percentage: Math.round(
+      (accessibilityComplianceValidation.filter(check => check.status === 'pass').length
+        / accessibilityComplianceValidation.length) * 100,
+    ),
   },
   wcagLevel: 'AA+' as const,
-  lgpdCompliance: 'Full Compliance' as const
+  lgpdCompliance: 'Full Compliance' as const,
 };
 
-export {
-  type LGPDComplianceCheck,
-  type AccessibilityCheck
-};
+export { type AccessibilityCheck, type LGPDComplianceCheck };

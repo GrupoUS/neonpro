@@ -14,8 +14,11 @@ import { errorTracker, initializeErrorTracking } from './lib/error-tracking';
 import { initializeLogger, logger } from './lib/logger';
 import { initializeSentry } from './lib/sentry';
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
-import { errorTrackingMiddleware as healthcareErrorTrackingMiddleware, globalErrorHandler } from './middleware/error-tracking';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
+import {
+  errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
+  globalErrorHandler,
+} from './middleware/error-tracking';
 import { rateLimitMiddleware } from './middleware/rate-limiting';
 
 // Extract middleware functions from security package

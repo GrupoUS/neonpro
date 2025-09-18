@@ -5,8 +5,8 @@
 
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTRPCMsw } from 'msw-trpc';
-import type { AppRouter } from '../../src/trpc';
 import superjson from 'superjson';
+import type { AppRouter } from '../../src/trpc';
 
 // Create tRPC test client configuration
 export const createTestTRPCClient = () => {

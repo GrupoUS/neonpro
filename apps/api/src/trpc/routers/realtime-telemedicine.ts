@@ -1,7 +1,7 @@
 /**
  * Enhanced Real-Time Telemedicine tRPC Router
  * Phase 3.4: T031 - tRPC integration for real-time subscriptions
- * 
+ *
  * Features:
  * - WebSocket session management
  * - Encrypted message handling
@@ -10,14 +10,20 @@
  * - Emergency protocol integration
  */
 
-import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { router, protectedProcedure, patientProcedure, healthcareProcedure, telemedicineProcedure } from '../trpc';
-import EnhancedTelemedicineRealtime, { 
-  TelemedicineMessage, 
-  PresenceState, 
-  SessionUpdate 
+import { z } from 'zod';
+import EnhancedTelemedicineRealtime, {
+  PresenceState,
+  SessionUpdate,
+  TelemedicineMessage,
 } from '../../services/enhanced-realtime-telemedicine';
+import {
+  healthcareProcedure,
+  patientProcedure,
+  protectedProcedure,
+  router,
+  telemedicineProcedure,
+} from '../trpc';
 
 // Input validation schemas
 const CreateSessionSchema = z.object({
@@ -85,11 +91,11 @@ async function initializeRealtimeService() {
   if (!realtimeService) {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_ANON_KEY;
-    
+
     if (!supabaseUrl || !supabaseKey) {
       throw new Error('Supabase configuration not found');
     }
-    
+
     realtimeService = new EnhancedTelemedicineRealtime(supabaseUrl, supabaseKey);
     console.log('✅ Enhanced Telemedicine Realtime service initialized');
   }
@@ -105,7 +111,7 @@ export const realtimeTelemedicineRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         // Verify user has access to create sessions
         const userId = ctx.user?.id;
         if (!userId) {
@@ -126,7 +132,7 @@ export const realtimeTelemedicineRouter = router({
         // Create encrypted session
         const session = await service.createTelemedicineSession(
           input.sessionId,
-          input.participants
+          input.participants,
         );
 
         // Log session creation for LGPD compliance
@@ -172,7 +178,7 @@ export const realtimeTelemedicineRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         const userId = ctx.user?.id;
         if (!userId || userId !== input.senderId) {
           throw new TRPCError({
@@ -225,7 +231,7 @@ export const realtimeTelemedicineRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         const userId = ctx.user?.id;
         if (!userId || userId !== input.userId) {
           throw new TRPCError({
@@ -238,7 +244,7 @@ export const realtimeTelemedicineRouter = router({
         let quality: 'excellent' | 'good' | 'fair' | 'poor' = 'good';
         if (input.connectionQuality) {
           const { latency, packetLoss, jitter } = input.connectionQuality;
-          
+
           if (latency <= 50 && packetLoss <= 1 && jitter <= 20) {
             quality = 'excellent';
           } else if (latency <= 150 && packetLoss <= 3 && jitter <= 50) {
@@ -255,10 +261,12 @@ export const realtimeTelemedicineRouter = router({
           sessionId: input.sessionId,
           userRole: input.userRole,
           status: input.status,
-          connectionQuality: input.connectionQuality ? {
-            ...input.connectionQuality,
-            quality,
-          } : undefined,
+          connectionQuality: input.connectionQuality
+            ? {
+              ...input.connectionQuality,
+              quality,
+            }
+            : undefined,
           deviceInfo: input.deviceInfo,
           location: {
             timezone: 'America/Sao_Paulo',
@@ -299,7 +307,7 @@ export const realtimeTelemedicineRouter = router({
     .query(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         // Get session statistics
         const stats = service.getSessionStatistics(input.sessionId);
 
@@ -361,7 +369,7 @@ export const realtimeTelemedicineRouter = router({
     .query(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         // Get session statistics
         const stats = service.getSessionStatistics(input.sessionId);
 
@@ -403,10 +411,10 @@ export const realtimeTelemedicineRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         // Get final statistics before ending
         const finalStats = service.getSessionStatistics(input.sessionId);
-        
+
         // End the session
         await service.endTelemedicineSession(input.sessionId);
 
@@ -451,7 +459,7 @@ export const realtimeTelemedicineRouter = router({
       try {
         // Check if service is initialized and working
         const service = await initializeRealtimeService();
-        
+
         return {
           status: 'healthy',
           timestamp: new Date().toISOString(),
@@ -490,7 +498,12 @@ export const realtimeTelemedicineRouter = router({
   sendEmergencyAlert: telemedicineProcedure
     .input(z.object({
       sessionId: z.string().uuid(),
-      alertType: z.enum(['medical_emergency', 'technical_failure', 'security_breach', 'connectivity_loss']),
+      alertType: z.enum([
+        'medical_emergency',
+        'technical_failure',
+        'security_breach',
+        'connectivity_loss',
+      ]),
       severity: z.enum(['low', 'medium', 'high', 'critical']),
       description: z.string().max(500),
       requiredActions: z.array(z.string()).optional(),
@@ -498,7 +511,7 @@ export const realtimeTelemedicineRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
-        
+
         // This would trigger emergency protocols
         console.log(`🚨 EMERGENCY ALERT:`, {
           sessionId: input.sessionId,

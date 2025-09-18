@@ -38,19 +38,6 @@ import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
-import { Route as _testsValidationReportRouteImport } from './routes/__tests/validation-report'
-import { Route as _testsUniversalButtonTestRouteImport } from './routes/__tests/universal-button-test'
-import { Route as _testsTestAuthRouteImport } from './routes/__tests/test-auth'
-import { Route as _testsSubscriptionTestRouteImport } from './routes/__tests/subscription-test'
-import { Route as _testsShineTestRouteImport } from './routes/__tests/shine-test'
-import { Route as _testsShadcnTestRouteImport } from './routes/__tests/shadcn-test'
-import { Route as _testsHealthcareTestRouteImport } from './routes/__tests/healthcare-test'
-import { Route as _testsComprehensiveButtonTestRouteImport } from './routes/__tests/comprehensive-button-test'
-import { Route as _testsButtonTestRouteImport } from './routes/__tests/button-test'
-import { Route as _testsBentoGridTestRouteImport } from './routes/__tests/bento-grid-test'
-import { Route as _testsApiTestRouteImport } from './routes/__tests/api-test'
-import { Route as _testsAnimationValidationSuiteRouteImport } from './routes/__tests/animation-validation-suite'
-import { Route as _testsAdvancedAnimationsTestRouteImport } from './routes/__tests/advanced-animations-test'
 import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
 import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
 import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
@@ -204,75 +191,6 @@ const AdminGovernanceRoute = AdminGovernanceRouteImport.update({
   path: '/admin/governance',
   getParentRoute: () => rootRouteImport,
 } as any)
-const _testsValidationReportRoute = _testsValidationReportRouteImport.update({
-  id: '/__tests/validation-report',
-  path: '/validation-report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsUniversalButtonTestRoute =
-  _testsUniversalButtonTestRouteImport.update({
-    id: '/__tests/universal-button-test',
-    path: '/universal-button-test',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const _testsTestAuthRoute = _testsTestAuthRouteImport.update({
-  id: '/__tests/test-auth',
-  path: '/test-auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsSubscriptionTestRoute = _testsSubscriptionTestRouteImport.update({
-  id: '/__tests/subscription-test',
-  path: '/subscription-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsShineTestRoute = _testsShineTestRouteImport.update({
-  id: '/__tests/shine-test',
-  path: '/shine-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsShadcnTestRoute = _testsShadcnTestRouteImport.update({
-  id: '/__tests/shadcn-test',
-  path: '/shadcn-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsHealthcareTestRoute = _testsHealthcareTestRouteImport.update({
-  id: '/__tests/healthcare-test',
-  path: '/healthcare-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsComprehensiveButtonTestRoute =
-  _testsComprehensiveButtonTestRouteImport.update({
-    id: '/__tests/comprehensive-button-test',
-    path: '/comprehensive-button-test',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const _testsButtonTestRoute = _testsButtonTestRouteImport.update({
-  id: '/__tests/button-test',
-  path: '/button-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsBentoGridTestRoute = _testsBentoGridTestRouteImport.update({
-  id: '/__tests/bento-grid-test',
-  path: '/bento-grid-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsApiTestRoute = _testsApiTestRouteImport.update({
-  id: '/__tests/api-test',
-  path: '/api-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const _testsAnimationValidationSuiteRoute =
-  _testsAnimationValidationSuiteRouteImport.update({
-    id: '/__tests/animation-validation-suite',
-    path: '/animation-validation-suite',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const _testsAdvancedAnimationsTestRoute =
-  _testsAdvancedAnimationsTestRouteImport.update({
-    id: '/__tests/advanced-animations-test',
-    path: '/advanced-animations-test',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const PatientsPatientIdHistoryRoute =
   PatientsPatientIdHistoryRouteImport.update({
     id: '/history',
@@ -294,19 +212,6 @@ const PatientsPatientIdDocumentsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/advanced-animations-test': typeof _testsAdvancedAnimationsTestRoute
-  '/animation-validation-suite': typeof _testsAnimationValidationSuiteRoute
-  '/api-test': typeof _testsApiTestRoute
-  '/bento-grid-test': typeof _testsBentoGridTestRoute
-  '/button-test': typeof _testsButtonTestRoute
-  '/comprehensive-button-test': typeof _testsComprehensiveButtonTestRoute
-  '/healthcare-test': typeof _testsHealthcareTestRoute
-  '/shadcn-test': typeof _testsShadcnTestRoute
-  '/shine-test': typeof _testsShineTestRoute
-  '/subscription-test': typeof _testsSubscriptionTestRoute
-  '/test-auth': typeof _testsTestAuthRoute
-  '/universal-button-test': typeof _testsUniversalButtonTestRoute
-  '/validation-report': typeof _testsValidationReportRoute
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -341,19 +246,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/advanced-animations-test': typeof _testsAdvancedAnimationsTestRoute
-  '/animation-validation-suite': typeof _testsAnimationValidationSuiteRoute
-  '/api-test': typeof _testsApiTestRoute
-  '/bento-grid-test': typeof _testsBentoGridTestRoute
-  '/button-test': typeof _testsButtonTestRoute
-  '/comprehensive-button-test': typeof _testsComprehensiveButtonTestRoute
-  '/healthcare-test': typeof _testsHealthcareTestRoute
-  '/shadcn-test': typeof _testsShadcnTestRoute
-  '/shine-test': typeof _testsShineTestRoute
-  '/subscription-test': typeof _testsSubscriptionTestRoute
-  '/test-auth': typeof _testsTestAuthRoute
-  '/universal-button-test': typeof _testsUniversalButtonTestRoute
-  '/validation-report': typeof _testsValidationReportRoute
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -389,19 +281,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
-  '/__tests/advanced-animations-test': typeof _testsAdvancedAnimationsTestRoute
-  '/__tests/animation-validation-suite': typeof _testsAnimationValidationSuiteRoute
-  '/__tests/api-test': typeof _testsApiTestRoute
-  '/__tests/bento-grid-test': typeof _testsBentoGridTestRoute
-  '/__tests/button-test': typeof _testsButtonTestRoute
-  '/__tests/comprehensive-button-test': typeof _testsComprehensiveButtonTestRoute
-  '/__tests/healthcare-test': typeof _testsHealthcareTestRoute
-  '/__tests/shadcn-test': typeof _testsShadcnTestRoute
-  '/__tests/shine-test': typeof _testsShineTestRoute
-  '/__tests/subscription-test': typeof _testsSubscriptionTestRoute
-  '/__tests/test-auth': typeof _testsTestAuthRoute
-  '/__tests/universal-button-test': typeof _testsUniversalButtonTestRoute
-  '/__tests/validation-report': typeof _testsValidationReportRoute
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -438,19 +317,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/404'
-    | '/advanced-animations-test'
-    | '/animation-validation-suite'
-    | '/api-test'
-    | '/bento-grid-test'
-    | '/button-test'
-    | '/comprehensive-button-test'
-    | '/healthcare-test'
-    | '/shadcn-test'
-    | '/shine-test'
-    | '/subscription-test'
-    | '/test-auth'
-    | '/universal-button-test'
-    | '/validation-report'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -485,19 +351,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/404'
-    | '/advanced-animations-test'
-    | '/animation-validation-suite'
-    | '/api-test'
-    | '/bento-grid-test'
-    | '/button-test'
-    | '/comprehensive-button-test'
-    | '/healthcare-test'
-    | '/shadcn-test'
-    | '/shine-test'
-    | '/subscription-test'
-    | '/test-auth'
-    | '/universal-button-test'
-    | '/validation-report'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -532,19 +385,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/404'
-    | '/__tests/advanced-animations-test'
-    | '/__tests/animation-validation-suite'
-    | '/__tests/api-test'
-    | '/__tests/bento-grid-test'
-    | '/__tests/button-test'
-    | '/__tests/comprehensive-button-test'
-    | '/__tests/healthcare-test'
-    | '/__tests/shadcn-test'
-    | '/__tests/shine-test'
-    | '/__tests/subscription-test'
-    | '/__tests/test-auth'
-    | '/__tests/universal-button-test'
-    | '/__tests/validation-report'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -580,19 +420,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
-  _testsAdvancedAnimationsTestRoute: typeof _testsAdvancedAnimationsTestRoute
-  _testsAnimationValidationSuiteRoute: typeof _testsAnimationValidationSuiteRoute
-  _testsApiTestRoute: typeof _testsApiTestRoute
-  _testsBentoGridTestRoute: typeof _testsBentoGridTestRoute
-  _testsButtonTestRoute: typeof _testsButtonTestRoute
-  _testsComprehensiveButtonTestRoute: typeof _testsComprehensiveButtonTestRoute
-  _testsHealthcareTestRoute: typeof _testsHealthcareTestRoute
-  _testsShadcnTestRoute: typeof _testsShadcnTestRoute
-  _testsShineTestRoute: typeof _testsShineTestRoute
-  _testsSubscriptionTestRoute: typeof _testsSubscriptionTestRoute
-  _testsTestAuthRoute: typeof _testsTestAuthRoute
-  _testsUniversalButtonTestRoute: typeof _testsUniversalButtonTestRoute
-  _testsValidationReportRoute: typeof _testsValidationReportRoute
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -827,97 +654,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGovernanceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/__tests/validation-report': {
-      id: '/__tests/validation-report'
-      path: '/validation-report'
-      fullPath: '/validation-report'
-      preLoaderRoute: typeof _testsValidationReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/universal-button-test': {
-      id: '/__tests/universal-button-test'
-      path: '/universal-button-test'
-      fullPath: '/universal-button-test'
-      preLoaderRoute: typeof _testsUniversalButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/test-auth': {
-      id: '/__tests/test-auth'
-      path: '/test-auth'
-      fullPath: '/test-auth'
-      preLoaderRoute: typeof _testsTestAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/subscription-test': {
-      id: '/__tests/subscription-test'
-      path: '/subscription-test'
-      fullPath: '/subscription-test'
-      preLoaderRoute: typeof _testsSubscriptionTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/shine-test': {
-      id: '/__tests/shine-test'
-      path: '/shine-test'
-      fullPath: '/shine-test'
-      preLoaderRoute: typeof _testsShineTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/shadcn-test': {
-      id: '/__tests/shadcn-test'
-      path: '/shadcn-test'
-      fullPath: '/shadcn-test'
-      preLoaderRoute: typeof _testsShadcnTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/healthcare-test': {
-      id: '/__tests/healthcare-test'
-      path: '/healthcare-test'
-      fullPath: '/healthcare-test'
-      preLoaderRoute: typeof _testsHealthcareTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/comprehensive-button-test': {
-      id: '/__tests/comprehensive-button-test'
-      path: '/comprehensive-button-test'
-      fullPath: '/comprehensive-button-test'
-      preLoaderRoute: typeof _testsComprehensiveButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/button-test': {
-      id: '/__tests/button-test'
-      path: '/button-test'
-      fullPath: '/button-test'
-      preLoaderRoute: typeof _testsButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/bento-grid-test': {
-      id: '/__tests/bento-grid-test'
-      path: '/bento-grid-test'
-      fullPath: '/bento-grid-test'
-      preLoaderRoute: typeof _testsBentoGridTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/api-test': {
-      id: '/__tests/api-test'
-      path: '/api-test'
-      fullPath: '/api-test'
-      preLoaderRoute: typeof _testsApiTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/animation-validation-suite': {
-      id: '/__tests/animation-validation-suite'
-      path: '/animation-validation-suite'
-      fullPath: '/animation-validation-suite'
-      preLoaderRoute: typeof _testsAnimationValidationSuiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__tests/advanced-animations-test': {
-      id: '/__tests/advanced-animations-test'
-      path: '/advanced-animations-test'
-      fullPath: '/advanced-animations-test'
-      preLoaderRoute: typeof _testsAdvancedAnimationsTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/patients/$patientId/history': {
       id: '/patients/$patientId/history'
       path: '/history'
@@ -960,19 +696,6 @@ const PatientsPatientIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
-  _testsAdvancedAnimationsTestRoute: _testsAdvancedAnimationsTestRoute,
-  _testsAnimationValidationSuiteRoute: _testsAnimationValidationSuiteRoute,
-  _testsApiTestRoute: _testsApiTestRoute,
-  _testsBentoGridTestRoute: _testsBentoGridTestRoute,
-  _testsButtonTestRoute: _testsButtonTestRoute,
-  _testsComprehensiveButtonTestRoute: _testsComprehensiveButtonTestRoute,
-  _testsHealthcareTestRoute: _testsHealthcareTestRoute,
-  _testsShadcnTestRoute: _testsShadcnTestRoute,
-  _testsShineTestRoute: _testsShineTestRoute,
-  _testsSubscriptionTestRoute: _testsSubscriptionTestRoute,
-  _testsTestAuthRoute: _testsTestAuthRoute,
-  _testsUniversalButtonTestRoute: _testsUniversalButtonTestRoute,
-  _testsValidationReportRoute: _testsValidationReportRoute,
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,

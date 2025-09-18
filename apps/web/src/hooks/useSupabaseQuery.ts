@@ -76,7 +76,7 @@ export function usePatients(options = {}) {
         sortBy: 'name',
         sortOrder: 'asc',
       });
-      
+
       return result.patients;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -253,23 +253,31 @@ export function useSupabaseMutation(
 // Hook específico para mutations de pacientes
 export function usePatientMutation(options = {}) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async (data: { action: 'create' | 'update' | 'delete'; patientData?: any; patientId?: string }) => {
+    mutationFn: async (
+      data: { action: 'create' | 'update' | 'delete'; patientData?: any; patientId?: string },
+    ) => {
       switch (data.action) {
         case 'create':
           if (!data.patientData) throw new Error('Patient data required for creation');
-          return await patientService.createPatient(data.patientData, 'current-clinic-id', 'current-user-id');
-        
+          return await patientService.createPatient(
+            data.patientData,
+            'current-clinic-id',
+            'current-user-id',
+          );
+
         case 'update':
-          if (!data.patientId || !data.patientData) throw new Error('Patient ID and data required for update');
+          if (!data.patientId || !data.patientData) {
+            throw new Error('Patient ID and data required for update');
+          }
           return await patientService.updatePatient(data.patientId, data.patientData);
-        
+
         case 'delete':
           if (!data.patientId) throw new Error('Patient ID required for deletion');
           await patientService.deletePatient(data.patientId);
           return { success: true };
-        
+
         default:
           throw new Error(`Unknown action: ${data.action}`);
       }

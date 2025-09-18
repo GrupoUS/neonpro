@@ -4,10 +4,10 @@
  */
 
 export { createContext } from './context';
+export type { Context } from './context';
 export { appRouter } from './router';
 export type { AppRouter } from './router';
-export type { Context } from './context';
-export { router, publicProcedure, protectedProcedure, patientProcedure } from './trpc';
+export { patientProcedure, protectedProcedure, publicProcedure, router } from './trpc';
 
 // Export schemas for client-side validation
 export * from './schemas';

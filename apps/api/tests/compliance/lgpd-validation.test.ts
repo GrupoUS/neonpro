@@ -1,16 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createTRPCMsw } from 'msw-trpc';
+import crypto from 'crypto';
 import { http } from 'msw';
+import { createTRPCMsw } from 'msw-trpc';
 import { setupServer } from 'msw/node';
+import superjson from 'superjson';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AppRouter } from '../../src/trpc';
 import { createTestClient, generateTestCPF } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
-import type { AppRouter } from '../../src/trpc';
-import superjson from 'superjson';
-import crypto from 'crypto';
 
 /**
  * T045: LGPD Compliance Validation Testing
- * 
+ *
  * BRAZILIAN LGPD REQUIREMENTS FOR HEALTHCARE:
  * - Complete data lifecycle compliance (collection, processing, storage, deletion)
  * - Audit trail completeness for regulatory review
@@ -18,7 +18,7 @@ import crypto from 'crypto';
  * - Data anonymization effectiveness for research
  * - Cross-border data transfer restrictions
  * - Patient rights enforcement (access, rectification, portability, deletion)
- * 
+ *
  * TDD RED PHASE: These tests are designed to FAIL initially to drive implementation
  */
 
@@ -36,7 +36,7 @@ const mockLGPDSystem = {
     purpose: string;
     retention_period: string;
   }>,
-  
+
   consentRecords: [] as Array<{
     id: string;
     patient_id: string;
@@ -47,7 +47,7 @@ const mockLGPDSystem = {
     ip_address: string;
     legal_basis: string;
   }>,
-  
+
   anonymizationLog: [] as Array<{
     id: string;
     original_data_hash: string;
@@ -107,7 +107,6 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           ],
         });
       }),
-
       // Mock international data transfer validation
       http.post('https://adequacy.gov.br/api/transfer/validate', () => {
         return Response.json({
@@ -116,7 +115,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           required_safeguards: ['standard_contractual_clauses', 'bcr'],
           blocking_transfers: true,
         });
-      })
+      }),
     );
 
     server.listen();
@@ -183,9 +182,9 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       for (const action of processingActions) {
         // Verify consent before processing
         const consentGranted = mockLGPDSystem.consentRecords.find(
-          c => c.patient_id === patientId && !c.withdrawn_at
+          c => c.patient_id === patientId && !c.withdrawn_at,
         );
-        
+
         expect(consentGranted).toBeTruthy();
 
         mockLGPDSystem.auditTrail.push({
@@ -225,7 +224,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify audit trail completeness
       const patientAuditTrail = mockLGPDSystem.auditTrail.filter(
-        log => log.patient_id === patientId
+        log => log.patient_id === patientId,
       );
 
       expect(patientAuditTrail.length).toBeGreaterThan(0);
@@ -237,9 +236,16 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       const dataCollectionRequest = {
         patient_id: patientId,
         requested_data: [
-          'name', 'cpf', 'phone', 'email', 'birth_date', // Essential
-          'address', 'emergency_contact', // Necessary
-          'social_media', 'income', 'political_affiliation', // Excessive
+          'name',
+          'cpf',
+          'phone',
+          'email',
+          'birth_date', // Essential
+          'address',
+          'emergency_contact', // Necessary
+          'social_media',
+          'income',
+          'political_affiliation', // Excessive
         ],
         purpose: 'aesthetic_procedure_scheduling',
       };
@@ -259,10 +265,10 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       expect(dataMinimizationResult.allowed).toEqual(
-        expect.arrayContaining(essentialData)
+        expect.arrayContaining(essentialData),
       );
       expect(dataMinimizationResult.denied).toEqual(
-        expect.arrayContaining(excessiveData)
+        expect.arrayContaining(excessiveData),
       );
       expect(dataMinimizationResult.denied.length).toBeGreaterThan(0);
     });
@@ -318,7 +324,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Validate audit trail completeness
       const auditTrail = mockLGPDSystem.auditTrail.filter(
-        log => log.patient_id === patientId
+        log => log.patient_id === patientId,
       );
 
       // CRITICAL: All operations must be audited
@@ -337,7 +343,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       });
 
       // Verify audit trail is tamper-evident
-      const auditHashes = auditTrail.map(entry => 
+      const auditHashes = auditTrail.map(entry =>
         crypto.createHash('sha256').update(JSON.stringify(entry)).digest('hex')
       );
 
@@ -394,7 +400,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify cryptographic proof integrity
       const consentHistory = mockLGPDSystem.consentRecords.filter(
-        c => c.patient_id === patientId
+        c => c.patient_id === patientId,
       );
 
       expect(consentHistory.length).toBe(2);
@@ -441,7 +447,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify tamper detection
       expect(tamperedHash).not.toBe(integrityHashes[0].hash);
-      
+
       // Audit trail integrity should be protected
       const integrityCheck = {
         original_hash: integrityHashes[0].hash,
@@ -496,9 +502,9 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Update consent record with withdrawal
       const consentRecord = mockLGPDSystem.consentRecords.find(
-        c => c.patient_id === patientId && c.purpose === 'healthcare_services'
+        c => c.patient_id === patientId && c.purpose === 'healthcare_services',
       );
-      
+
       if (consentRecord) {
         consentRecord.withdrawn_at = withdrawalData.withdrawn_at;
       }
@@ -519,7 +525,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify withdrawal processing
       const withdrawnConsent = mockLGPDSystem.consentRecords.find(
-        c => c.patient_id === patientId && c.withdrawn_at
+        c => c.patient_id === patientId && c.withdrawn_at,
       );
 
       expect(withdrawnConsent).toBeTruthy();
@@ -527,7 +533,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify withdrawal is audited
       const withdrawalAudit = mockLGPDSystem.auditTrail.find(
-        log => log.action === 'consent_withdrawal' && log.patient_id === patientId
+        log => log.action === 'consent_withdrawal' && log.patient_id === patientId,
       );
 
       expect(withdrawalAudit).toBeTruthy();
@@ -538,7 +544,12 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       // Simulate active data processing
       const activeProcesses = [
         { id: 'proc_1', type: 'ai_analysis', status: 'running', patient_id: patientId },
-        { id: 'proc_2', type: 'marketing_communication', status: 'scheduled', patient_id: patientId },
+        {
+          id: 'proc_2',
+          type: 'marketing_communication',
+          status: 'scheduled',
+          patient_id: patientId,
+        },
         { id: 'proc_3', type: 'research_analytics', status: 'queued', patient_id: patientId },
       ];
 
@@ -642,7 +653,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify anonymization is logged
       const anonymizationRecord = mockLGPDSystem.anonymizationLog.find(
-        log => log.original_data_hash === anonymizationHash
+        log => log.original_data_hash === anonymizationHash,
       );
 
       expect(anonymizationRecord).toBeTruthy();
@@ -695,9 +706,9 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           recent_procedure: 'botox', // facial aesthetics
         },
         matching_records: anonymizedRecords.filter(record =>
-          record.age_range === '30-35' &&
-          record.location === 'SP_zona_sul' &&
-          record.procedure_category === 'facial_aesthetics'
+          record.age_range === '30-35'
+          && record.location === 'SP_zona_sul'
+          && record.procedure_category === 'facial_aesthetics'
         ),
       };
 
@@ -917,7 +928,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify transfer was blocked and logged
       const blockingAudit = mockLGPDSystem.auditTrail.find(
-        log => log.action === 'international_transfer_blocked'
+        log => log.action === 'international_transfer_blocked',
       );
 
       expect(blockingAudit).toBeTruthy();
@@ -933,13 +944,18 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Verify all data stays in Brazil
-      expect(dataLocalizationCheck.database_regions.every(region =>
-        region.includes('sa') || region.includes('br') || region.includes('gru') || region.includes('sao')
-      )).toBe(true);
+      expect(
+        dataLocalizationCheck.database_regions.every(region =>
+          region.includes('sa') || region.includes('br') || region.includes('gru')
+          || region.includes('sao')
+        ),
+      ).toBe(true);
 
-      expect(dataLocalizationCheck.backup_locations.every(location =>
-        location.includes('sa-east') || location.includes('brazil')
-      )).toBe(true);
+      expect(
+        dataLocalizationCheck.backup_locations.every(location =>
+          location.includes('sa-east') || location.includes('brazil')
+        ),
+      ).toBe(true);
 
       expect(dataLocalizationCheck.international_vendors.length).toBe(0);
     });

@@ -31,7 +31,7 @@
       "maxDuration": 10
     },
     "apps/api/src/app/api/**/*.ts": {
-      "runtime": "edge", 
+      "runtime": "edge",
       "regions": ["sao1", "gru1"],
       "memory": 256,
       "maxDuration": 15
@@ -46,7 +46,7 @@
           "value": "true"
         },
         {
-          "key": "X-CFM-Compliant", 
+          "key": "X-CFM-Compliant",
           "value": "true"
         },
         {

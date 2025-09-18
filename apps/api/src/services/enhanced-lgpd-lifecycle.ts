@@ -12,9 +12,9 @@
  * - Brazilian healthcare-specific compliance (CFM, ANVISA)
  */
 
-import { z } from 'zod';
-import * as crypto from 'crypto';
 import type { PrismaClient } from '@prisma/client';
+import * as crypto from 'crypto';
+import { z } from 'zod';
 
 // Data Lifecycle Stages
 export const DATA_LIFECYCLE_STAGES = {
@@ -39,7 +39,8 @@ export const RETENTION_POLICY_TYPES = {
   RESEARCH_DATA: 'research_data', // As per consent terms
 } as const;
 
-export type RetentionPolicyType = typeof RETENTION_POLICY_TYPES[keyof typeof RETENTION_POLICY_TYPES];
+export type RetentionPolicyType =
+  typeof RETENTION_POLICY_TYPES[keyof typeof RETENTION_POLICY_TYPES];
 
 // Anonymization Methods
 export const ANONYMIZATION_METHODS = {
@@ -183,9 +184,10 @@ export const RetentionPolicySchema = z.object({
   updatedAt: z.date(),
 });
 
-export type RetentionPolicy = z.infer<typeof RetentionPolicySchema>;/**
+export type RetentionPolicy = z.infer<typeof RetentionPolicySchema>; /**
  * Enhanced LGPD Data Lifecycle Management Service Implementation
  */
+
 export class EnhancedLGPDLifecycleService {
   private prisma: PrismaClient;
   private processingRecords: Map<string, DataProcessingRecord> = new Map();
@@ -293,12 +295,17 @@ export class EnhancedLGPDLifecycleService {
     const policy = this.getRetentionPolicy(dataCategory);
     const id = crypto.randomUUID();
     const processingDate = new Date();
-    const expirationDate = new Date(processingDate.getTime() + (policy.retentionPeriodDays * 24 * 60 * 60 * 1000));
+    const expirationDate = new Date(
+      processingDate.getTime() + (policy.retentionPeriodDays * 24 * 60 * 60 * 1000),
+    );
 
     // Generate cryptographic proof
     const dataToHash = `${id}|${patientId}|${dataCategory}|${processingDate.toISOString()}`;
     const cryptographicHash = crypto.createHash('sha256').update(dataToHash).digest('hex');
-    const integrityProof = crypto.createHmac('sha256', process.env.LGPD_INTEGRITY_SECRET || 'default-secret')
+    const integrityProof = crypto.createHmac(
+      'sha256',
+      process.env.LGPD_INTEGRITY_SECRET || 'default-secret',
+    )
       .update(dataToHash).digest('hex');
 
     const record: DataProcessingRecord = {
@@ -363,13 +370,17 @@ export class EnhancedLGPDLifecycleService {
     const retentionExceptions = categories
       .map(category => {
         const policy = this.getRetentionPolicy(category);
-        if (policy.legalBasis === LEGAL_BASIS.LEGAL_OBLIGATION || 
-            policy.legalBasis === LEGAL_BASIS.MEDICAL_CARE) {
+        if (
+          policy.legalBasis === LEGAL_BASIS.LEGAL_OBLIGATION
+          || policy.legalBasis === LEGAL_BASIS.MEDICAL_CARE
+        ) {
           return {
             dataCategory: category,
             legalBasis: policy.legalBasis,
             retentionJustification: `Legal obligation per ${policy.regulatoryReference}`,
-            estimatedDeletionDate: new Date(Date.now() + (policy.retentionPeriodDays * 24 * 60 * 60 * 1000)),
+            estimatedDeletionDate: new Date(
+              Date.now() + (policy.retentionPeriodDays * 24 * 60 * 60 * 1000),
+            ),
           };
         }
         return null;
@@ -389,7 +400,10 @@ export class EnhancedLGPDLifecycleService {
     // Generate legal validity proof
     const proofData = `${id}|${patientId}|${withdrawalDate.toISOString()}|${withdrawalMethod}`;
     const digitalSignature = crypto.createHash('sha256').update(proofData).digest('hex');
-    const timestampToken = crypto.createHmac('sha256', process.env.LGPD_TIMESTAMP_SECRET || 'default-secret')
+    const timestampToken = crypto.createHmac(
+      'sha256',
+      process.env.LGPD_TIMESTAMP_SECRET || 'default-secret',
+    )
       .update(proofData + Date.now()).digest('hex');
 
     const withdrawalRecord: ConsentWithdrawalRecord = {
@@ -431,9 +445,10 @@ export class EnhancedLGPDLifecycleService {
     });
 
     return withdrawalRecord;
-  }  /**
+  } /**
    * Execute data anonymization workflow
    */
+
   async executeAnonymization(
     patientId: string,
     dataCategory: DataCategory,
@@ -445,16 +460,16 @@ export class EnhancedLGPDLifecycleService {
     try {
       // Get all processing records for this patient and data category
       const records = Array.from(this.processingRecords.values())
-        .filter(record => 
-          record.patientId === patientId && 
-          record.dataCategory === dataCategory &&
-          record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
+        .filter(record =>
+          record.patientId === patientId
+          && record.dataCategory === dataCategory
+          && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
         );
 
       for (const record of records) {
         try {
           const anonymizedData = await this.anonymizeData(record, method);
-          
+
           // Update processing record
           record.lifecycleStage = DATA_LIFECYCLE_STAGES.ANONYMIZED;
           record.anonymizationMethod = method;
@@ -468,7 +483,6 @@ export class EnhancedLGPDLifecycleService {
 
           this.processingRecords.set(record.id, record);
           anonymizedRecords++;
-
         } catch (error) {
           errors.push(`Failed to anonymize record ${record.id}: ${error.message}`);
         }
@@ -488,7 +502,6 @@ export class EnhancedLGPDLifecycleService {
         anonymizedRecords,
         errors,
       };
-
     } catch (error) {
       errors.push(`Anonymization process failed: ${error.message}`);
       return {
@@ -525,7 +538,10 @@ export class EnhancedLGPDLifecycleService {
 
           // Check if record has expired
           if (record.expirationDate <= now) {
-            if (policy.anonymizationRequired && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED) {
+            if (
+              policy.anonymizationRequired
+              && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
+            ) {
               // Anonymize expired data
               const anonymizationResult = await this.executeAnonymization(
                 record.patientId,
@@ -538,17 +554,18 @@ export class EnhancedLGPDLifecycleService {
               } else {
                 results.errors.push(...anonymizationResult.errors);
               }
-
             } else if (policy.automaticDeletion) {
               // Delete expired data
               await this.deleteDataRecord(recordId);
               results.deletedRecords++;
             }
-
           } else if (policy.notificationBeforeDeletion) {
             // Check if notification should be sent
-            const notificationDate = new Date(record.expirationDate.getTime() - (policy.notificationDaysBefore! * 24 * 60 * 60 * 1000));
-            
+            const notificationDate = new Date(
+              record.expirationDate.getTime()
+                - (policy.notificationDaysBefore! * 24 * 60 * 60 * 1000),
+            );
+
             if (now >= notificationDate && !record.metadata?.notificationSent) {
               await this.sendRetentionNotification(record);
               record.metadata = { ...record.metadata, notificationSent: true };
@@ -556,12 +573,10 @@ export class EnhancedLGPDLifecycleService {
               results.notificationsSent++;
             }
           }
-
         } catch (error) {
           results.errors.push(`Failed to process record ${recordId}: ${error.message}`);
         }
       }
-
     } catch (error) {
       results.errors.push(`Retention enforcement failed: ${error.message}`);
     }
@@ -601,11 +616,11 @@ export class EnhancedLGPDLifecycleService {
 
     const now = new Date();
     const thirtyDaysFromNow = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
-    
-    const expiringRecords = records.filter(record => 
-      record.expirationDate <= thirtyDaysFromNow && 
-      record.lifecycleStage !== DATA_LIFECYCLE_STAGES.DELETION &&
-      record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
+
+    const expiringRecords = records.filter(record =>
+      record.expirationDate <= thirtyDaysFromNow
+      && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.DELETION
+      && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
     );
 
     // Calculate compliance score
@@ -641,10 +656,11 @@ export class EnhancedLGPDLifecycleService {
       });
     }
 
-    const pendingAnonymization = records.filter(record => 
-      record.lifecycleStage === DATA_LIFECYCLE_STAGES.STORAGE &&
-      this.getRetentionPolicy(record.dataCategory).anonymizationRequired
-    ).length;
+    const pendingAnonymization =
+      records.filter(record =>
+        record.lifecycleStage === DATA_LIFECYCLE_STAGES.STORAGE
+        && this.getRetentionPolicy(record.dataCategory).anonymizationRequired
+      ).length;
 
     if (pendingAnonymization > 0) {
       recommendations.push(`${pendingAnonymization} records are eligible for anonymization`);
@@ -692,7 +708,11 @@ export class EnhancedLGPDLifecycleService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-  }  private async anonymizeData(record: DataProcessingRecord, method: AnonymizationMethod): Promise<any> {
+  }
+  private async anonymizeData(
+    record: DataProcessingRecord,
+    method: AnonymizationMethod,
+  ): Promise<any> {
     switch (method) {
       case ANONYMIZATION_METHODS.PSEUDONYMIZATION:
         return this.pseudonymizeData(record);
@@ -714,7 +734,11 @@ export class EnhancedLGPDLifecycleService {
   private async pseudonymizeData(record: DataProcessingRecord): Promise<any> {
     // Generate pseudonym based on patient ID and data category
     const pseudonym = crypto.createHash('sha256')
-      .update(`${record.patientId}|${record.dataCategory}|${process.env.PSEUDONYM_SALT || 'default-salt'}`)
+      .update(
+        `${record.patientId}|${record.dataCategory}|${
+          process.env.PSEUDONYM_SALT || 'default-salt'
+        }`,
+      )
       .digest('hex').substring(0, 16);
 
     return {
@@ -770,7 +794,10 @@ export class EnhancedLGPDLifecycleService {
 
   private async encryptData(record: DataProcessingRecord): Promise<any> {
     // Encrypt data with anonymization key
-    const cipher = crypto.createCipher('aes-256-cbc', process.env.ANONYMIZATION_KEY || 'default-key');
+    const cipher = crypto.createCipher(
+      'aes-256-cbc',
+      process.env.ANONYMIZATION_KEY || 'default-key',
+    );
     let encrypted = cipher.update(JSON.stringify(record), 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
@@ -828,7 +855,9 @@ export class EnhancedLGPDLifecycleService {
 
   private async sendRetentionNotification(record: DataProcessingRecord): Promise<void> {
     // In real implementation, this would send notification to patient/staff
-    console.log(`Retention notification: Record ${record.id} will expire on ${record.expirationDate}`);
+    console.log(
+      `Retention notification: Record ${record.id} will expire on ${record.expirationDate}`,
+    );
 
     await this.logAuditEvent(record.patientId, 'retention_notification_sent', {
       recordId: record.id,
@@ -851,7 +880,11 @@ export class EnhancedLGPDLifecycleService {
     return crypto.createHash('sha256').update(data + 'blockchain_salt').digest('hex');
   }
 
-  private async logAuditEvent(patientId: string, action: string, details: Record<string, any>): Promise<void> {
+  private async logAuditEvent(
+    patientId: string,
+    action: string,
+    details: Record<string, any>,
+  ): Promise<void> {
     // In real implementation, this would log to audit database
     console.log(`Audit: ${action} for patient ${patientId}`, details);
   }

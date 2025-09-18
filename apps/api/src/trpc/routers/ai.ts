@@ -1,7 +1,7 @@
 /**
  * AI tRPC Router with Portuguese Healthcare Support
  * T026: Complete implementation with conversational AI, no-show prediction, and multi-provider routing
- * 
+ *
  * Features:
  * - Conversational AI with Portuguese medical terminology
  * - No-show prediction with Brazilian clinic behavioral patterns
@@ -11,10 +11,10 @@
  * - ANVISA compliance for AI-powered medical assistance
  */
 
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { router, protectedProcedure, patientProcedure, healthcareProcedure } from '../trpc';
-import { AuditAction, ResourceType, AuditStatus, RiskLevel } from '@prisma/client';
 import * as v from 'valibot';
+import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // AI PROVIDER CONFIGURATION
@@ -57,46 +57,46 @@ const AI_PROVIDERS: AIProvider[] = [
  */
 const MEDICAL_TERMINOLOGY_PT = {
   // Common symptoms
-  'fever': 'febre',
-  'headache': 'dor de cabeça',
-  'nausea': 'náusea',
-  'fatigue': 'fadiga',
-  'pain': 'dor',
-  'cough': 'tosse',
+  fever: 'febre',
+  headache: 'dor de cabeça',
+  nausea: 'náusea',
+  fatigue: 'fadiga',
+  pain: 'dor',
+  cough: 'tosse',
   'shortness of breath': 'falta de ar',
   'chest pain': 'dor no peito',
   'abdominal pain': 'dor abdominal',
-  'dizziness': 'tontura',
-  
+  dizziness: 'tontura',
+
   // Medical specialties
-  'cardiology': 'cardiologia',
-  'dermatology': 'dermatologia',
-  'neurology': 'neurologia',
-  'psychiatry': 'psiquiatria',
-  'pediatrics': 'pediatria',
-  'gynecology': 'ginecologia',
-  'orthopedics': 'ortopedia',
-  'ophthalmology': 'oftalmologia',
-  
+  cardiology: 'cardiologia',
+  dermatology: 'dermatologia',
+  neurology: 'neurologia',
+  psychiatry: 'psiquiatria',
+  pediatrics: 'pediatria',
+  gynecology: 'ginecologia',
+  orthopedics: 'ortopedia',
+  ophthalmology: 'oftalmologia',
+
   // Medical procedures
   'blood test': 'exame de sangue',
   'x-ray': 'raio-x',
-  'ultrasound': 'ultrassom',
-  'mri': 'ressonância magnética',
+  ultrasound: 'ultrassom',
+  mri: 'ressonância magnética',
   'ct scan': 'tomografia computadorizada',
-  'consultation': 'consulta',
-  'surgery': 'cirurgia',
-  'prescription': 'prescrição',
-  
+  consultation: 'consulta',
+  surgery: 'cirurgia',
+  prescription: 'prescrição',
+
   // Body parts
-  'heart': 'coração',
-  'brain': 'cérebro',
-  'liver': 'fígado',
-  'kidney': 'rim',
-  'lung': 'pulmão',
-  'stomach': 'estômago',
-  'skin': 'pele',
-  'bone': 'osso',
+  heart: 'coração',
+  brain: 'cérebro',
+  liver: 'fígado',
+  kidney: 'rim',
+  lung: 'pulmão',
+  stomach: 'estômago',
+  skin: 'pele',
+  bone: 'osso',
 };
 
 /**
@@ -114,7 +114,7 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
     
     Forneça predições precisas sobre probabilidade de não comparecimento (no-show) e recomendações preventivas.
   `,
-  
+
   medicalAssistant: `
     Você é um assistente médico virtual especializado no sistema de saúde brasileiro.
     Sempre responda em português brasileiro e considere:
@@ -127,7 +127,7 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
     IMPORTANTE: Este assistente NÃO substitui consulta médica presencial.
     Sempre recomende procurar um profissional de saúde qualificado.
   `,
-  
+
   healthcareInsights: `
     Você é um analista de dados de saúde especializado no contexto brasileiro.
     Gere insights considerando:
@@ -139,7 +139,7 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
     
     Forneça análises estatisticamente robustas e clinicamente relevantes.
   `,
-};// =====================================
+}; // =====================================
 // AI PROVIDER ROUTING & OPTIMIZATION
 // =====================================
 
@@ -150,7 +150,7 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
 async function selectOptimalProvider(
   requestType: 'conversation' | 'prediction' | 'analysis',
   complexity: 'low' | 'medium' | 'high',
-  maxCost?: number
+  maxCost?: number,
 ): Promise<AIProvider> {
   // Filter providers based on cost constraints
   let availableProviders = AI_PROVIDERS.filter(provider => {
@@ -167,15 +167,15 @@ async function selectOptimalProvider(
     case 'conversation':
       // Prefer OpenAI for conversations (better Portuguese support)
       return availableProviders.find(p => p.name === 'openai') || availableProviders[0];
-    
+
     case 'prediction':
       // Prefer lower cost for prediction tasks
       return availableProviders.sort((a, b) => a.costPerToken - b.costPerToken)[0];
-    
+
     case 'analysis':
       // Prefer higher quality for analysis
       return availableProviders.sort((a, b) => b.healthScore - a.healthScore)[0];
-    
+
     default:
       return availableProviders[0];
   }
@@ -187,28 +187,37 @@ async function selectOptimalProvider(
 async function callAIProvider(
   provider: AIProvider,
   prompt: string,
-  context?: any
+  context?: any,
 ): Promise<{ response: string; tokensUsed: number; cost: number }> {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
-  
+
   // Mock response based on provider
   const responses = {
     openai: {
-      conversation: "Olá! Como posso ajudá-lo com suas questões de saúde hoje? Lembre-se de que este assistente não substitui uma consulta médica presencial.",
-      prediction: "Com base nos dados analisados, a probabilidade de não comparecimento é de 23% (baixa). Recomendo enviar lembrete por WhatsApp 2 horas antes da consulta.",
-      analysis: "Análise dos dados de saúde indica aumento de 15% nas consultas de cardiologia no último trimestre, correlacionado com fatores sazonais.",
+      conversation:
+        'Olá! Como posso ajudá-lo com suas questões de saúde hoje? Lembre-se de que este assistente não substitui uma consulta médica presencial.',
+      prediction:
+        'Com base nos dados analisados, a probabilidade de não comparecimento é de 23% (baixa). Recomendo enviar lembrete por WhatsApp 2 horas antes da consulta.',
+      analysis:
+        'Análise dos dados de saúde indica aumento de 15% nas consultas de cardiologia no último trimestre, correlacionado com fatores sazonais.',
     },
     anthropic: {
-      conversation: "Sou seu assistente de saúde virtual. Posso ajudar com informações gerais, mas sempre consulte um médico para diagnósticos.",
-      prediction: "Análise comportamental indica risco baixo de falta (18%). Fatores positivos: histórico de pontualidade, confirmação prévia.",
-      analysis: "Insights de dados revelam padrões significativos na aderência ao tratamento, com variações regionais importantes.",
+      conversation:
+        'Sou seu assistente de saúde virtual. Posso ajudar com informações gerais, mas sempre consulte um médico para diagnósticos.',
+      prediction:
+        'Análise comportamental indica risco baixo de falta (18%). Fatores positivos: histórico de pontualidade, confirmação prévia.',
+      analysis:
+        'Insights de dados revelam padrões significativos na aderência ao tratamento, com variações regionais importantes.',
     },
   };
 
-  const responseType = prompt.includes('no-show') || prompt.includes('probabilidade') ? 'prediction' :
-                      prompt.includes('análise') || prompt.includes('insights') ? 'analysis' : 'conversation';
-  
+  const responseType = prompt.includes('no-show') || prompt.includes('probabilidade')
+    ? 'prediction'
+    : prompt.includes('análise') || prompt.includes('insights')
+    ? 'analysis'
+    : 'conversation';
+
   const response = responses[provider.name][responseType] || responses[provider.name].conversation;
   const tokensUsed = Math.floor(response.length / 4); // Rough token estimation
   const cost = tokensUsed * provider.costPerToken;
@@ -224,7 +233,7 @@ function anonymizePatientDataForAI(data: any): any {
   if (!data) return {};
 
   const anonymized = { ...data };
-  
+
   // Remove direct identifiers
   delete anonymized.fullName;
   delete anonymized.cpf;
@@ -235,7 +244,7 @@ function anonymizePatientDataForAI(data: any): any {
   delete anonymized.addressLine1;
   delete anonymized.addressLine2;
   delete anonymized.passportNumber;
-  
+
   // Generalize sensitive data
   if (anonymized.birthDate) {
     const birthYear = new Date(anonymized.birthDate).getFullYear();
@@ -243,12 +252,14 @@ function anonymizePatientDataForAI(data: any): any {
     anonymized.ageRange = Math.floor((currentYear - birthYear) / 10) * 10; // Age in decades
     delete anonymized.birthDate;
   }
-  
+
   if (anonymized.city) {
-    anonymized.regionType = anonymized.city.includes('São Paulo') || anonymized.city.includes('Rio') ? 'metropolitan' : 'other';
+    anonymized.regionType = anonymized.city.includes('São Paulo') || anonymized.city.includes('Rio')
+      ? 'metropolitan'
+      : 'other';
     delete anonymized.city;
   }
-  
+
   // Keep relevant behavioral/medical data
   const allowedFields = [
     'totalAppointments',
@@ -263,7 +274,7 @@ function anonymizePatientDataForAI(data: any): any {
     'regionType',
     'gender',
   ];
-  
+
   return Object.keys(anonymized).reduce((acc, key) => {
     if (allowedFields.includes(key)) {
       acc[key] = anonymized[key];
@@ -277,12 +288,12 @@ function anonymizePatientDataForAI(data: any): any {
  */
 function translateMedicalTerms(text: string): string {
   let translatedText = text;
-  
+
   Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english, portuguese]) => {
     const regex = new RegExp(`\\b${english}\\b`, 'gi');
     translatedText = translatedText.replace(regex, portuguese);
   });
-  
+
   return translatedText;
 }
 
@@ -309,16 +320,17 @@ export const aiRouter = router({
       try {
         // Select optimal AI provider
         const provider = await selectOptimalProvider('conversation', 'medium');
-        
+
         // Build prompt with healthcare context
-        const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
-        
+        const prompt =
+          `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
+
         // Call AI provider
         const result = await callAIProvider(provider, prompt, input.context);
-        
+
         // Translate medical terms to Portuguese if needed
         const translatedResponse = translateMedicalTerms(result.response);
-        
+
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
@@ -494,7 +506,9 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         patientAgeRange: v.optional(v.string()),
         treatmentType: v.optional(v.string()),
       })),
-      analysisType: v.optional(v.string([v.picklist(['trends', 'predictions', 'recommendations'])])),
+      analysisType: v.optional(
+        v.string([v.picklist(['trends', 'predictions', 'recommendations'])]),
+      ),
     }))
     .query(async ({ ctx, input }) => {
       try {
@@ -600,7 +614,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
 
       // Delegate to predictNoShow procedure
       const result = await aiRouter.createCaller(ctx).predictNoShow(transformedInput);
-      
+
       return {
         prediction: result.prediction,
         ai_analysis: result.aiAnalysis,
@@ -728,7 +742,7 @@ Forneça análise de risco e recomendações.`;
         const provider = await selectOptimalProvider(
           input.request_type as any,
           input.complexity as any,
-          input.max_cost
+          input.max_cost,
         );
 
         // If preferred provider is specified and available, use it
@@ -814,17 +828,17 @@ Forneça análise de risco e recomendações.`;
         const results = [];
         for (let i = 0; i < requests.length; i += maxConcurrent) {
           const batch = requests.slice(i, i + maxConcurrent);
-          
-          const batchPromises = batch.map(async (request) => {
+
+          const batchPromises = batch.map(async request => {
             try {
               const provider = await selectOptimalProvider(
                 request.type as any,
-                'medium'
+                'medium',
               );
 
               const result = await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
-                new Promise((_, reject) => 
+                new Promise((_, reject) =>
                   setTimeout(() => reject(new Error('Timeout')), timeoutMs)
                 ),
               ]) as any;
@@ -894,5 +908,4 @@ Forneça análise de risco e recomendações.`;
         });
       }
     }),
-
 });

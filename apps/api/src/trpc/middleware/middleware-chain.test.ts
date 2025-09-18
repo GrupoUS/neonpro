@@ -1,19 +1,19 @@
 /**
  * Enhanced Healthcare Middleware Chain Integration Test
- * 
+ *
  * Validates T021-T023 middleware implementations:
  * - LGPD Audit Middleware with Prisma Integration
  * - CFM Validation Middleware
  * - Prisma RLS Enforcement Middleware
- * 
+ *
  * Performance target: <200ms total middleware overhead
  * Compliance: LGPD, CFM, ANVISA, NGS2
  */
 
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { TRPCError } from '@trpc/server';
-import { lgpdAuditMiddleware } from './lgpd-audit';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { cfmValidationMiddleware } from './cfm-validation';
+import { lgpdAuditMiddleware } from './lgpd-audit';
 import { prismaRLSMiddleware } from './prisma-rls';
 
 // Mock Prisma client
@@ -37,7 +37,7 @@ const mockPrisma = {
 // Mock context for testing
 const createMockContext = (overrides = {}) => ({
   userId: 'user-123',
-  clinicId: 'clinic-456', 
+  clinicId: 'clinic-456',
   userRole: 'professional',
   professionalId: 'prof-789',
   prisma: mockPrisma,
@@ -69,8 +69,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
           allergies: ['penicillin'],
           phone: '(11) 99999-9999',
           email: 'joao@example.com',
-          medicalHistory: 'sensitive medical data'
-        }
+          medicalHistory: 'sensitive medical data',
+        },
       ]);
 
       mockPrisma.auditTrail.create.mockResolvedValue({});
@@ -81,7 +81,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'patients.list',
         type: 'query',
-        input: {}
+        input: {},
       });
 
       // Should apply data minimization - remove sensitive fields
@@ -101,7 +101,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
           action: 'VIEW',
           resource: 'patients.list',
           status: 'SUCCESS',
-        })
+        }),
       });
     });
 
@@ -117,12 +117,12 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'patients.create',
         type: 'mutation',
-        input: { bloodType: 'A+', allergies: ['latex'] }
+        input: { bloodType: 'A+', allergies: ['latex'] },
       });
 
       const auditCall = mockPrisma.auditTrail.create.mock.calls[0][0];
       const additionalInfo = JSON.parse(auditCall.data.additionalInfo);
-      
+
       expect(additionalInfo.cryptographicProof).toBeDefined();
       expect(additionalInfo.cryptographicProof.hash).toBeDefined();
       expect(additionalInfo.cryptographicProof.signature).toBeDefined();
@@ -143,7 +143,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         icpBrasilCertificate: null,
         cfmValidationStatus: 'pending',
         cfmLastValidated: new Date(Date.now() - 25 * 60 * 60 * 1000), // 25 hours ago
-        telemedicineAuthorized: true
+        telemedicineAuthorized: true,
       });
 
       mockPrisma.professional.update.mockResolvedValue({});
@@ -154,7 +154,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'appointments.create',
         type: 'mutation',
-        input: { patientId: 'patient-123' }
+        input: { patientId: 'patient-123' },
       });
 
       expect(mockPrisma.professional.findUnique).toHaveBeenCalledWith({
@@ -166,8 +166,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
           icpBrasilCertificate: true,
           cfmValidationStatus: true,
           cfmLastValidated: true,
-          telemedicineAuthorized: true
-        })
+          telemedicineAuthorized: true,
+        }),
       });
 
       expect(mockPrisma.professional.update).toHaveBeenCalledWith({
@@ -175,8 +175,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         data: expect.objectContaining({
           cfmValidationStatus: 'validated',
           cfmLastValidated: expect.any(Date),
-          telemedicineAuthorized: true
-        })
+          telemedicineAuthorized: true,
+        }),
       });
 
       expect(next).toHaveBeenCalled();
@@ -200,7 +200,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'appointments.create',
         type: 'mutation',
-        input: {}
+        input: {},
       })).rejects.toThrow(TRPCError);
 
       expect(next).not.toHaveBeenCalled();
@@ -217,7 +217,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         icpBrasilCertificate: null, // Missing certificate
         cfmValidationStatus: 'validated',
         cfmLastValidated: new Date(),
-        telemedicineAuthorized: true
+        telemedicineAuthorized: true,
       });
 
       const middleware = cfmValidationMiddleware;
@@ -227,7 +227,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'telemedicine.startSession',
         type: 'mutation',
-        input: {}
+        input: {},
       })).rejects.toThrow('ICP-Brasil digital certificate required for telemedicine operations');
 
       expect(next).not.toHaveBeenCalled();
@@ -245,11 +245,11 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         get(target, prop) {
           if (prop === 'patient') {
             return {
-              findMany: enhancedPrismaCall
+              findMany: enhancedPrismaCall,
             };
           }
           return target[prop];
-        }
+        },
       });
 
       const middleware = prismaRLSMiddleware;
@@ -258,7 +258,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'patients.list',
         type: 'query',
-        input: {}
+        input: {},
       });
 
       expect(next).toHaveBeenCalled();
@@ -278,16 +278,16 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'patients.list',
         type: 'query',
-        input: {}
+        input: {},
       })).rejects.toThrow('Clinic context required for data access');
 
       expect(next).not.toHaveBeenCalled();
     });
 
     it('should allow emergency access with proper audit', async () => {
-      const ctx = createMockContext({ 
+      const ctx = createMockContext({
         clinicId: null,
-        isEmergency: true 
+        isEmergency: true,
       });
       const next = vi.fn().mockResolvedValue([]);
 
@@ -299,7 +299,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         next,
         path: 'patients.emergency',
         type: 'query',
-        input: {}
+        input: {},
       });
 
       expect(next).toHaveBeenCalled();
@@ -311,7 +311,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
     it('should complete middleware chain within 200ms target', async () => {
       const ctx = createMockContext();
       let callCount = 0;
-      
+
       vi.spyOn(performance, 'now').mockImplementation(() => {
         callCount++;
         return callCount * 50; // Simulate 50ms per middleware
@@ -322,7 +322,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         crmState: 'SP',
         cfmValidationStatus: 'validated',
         cfmLastValidated: new Date(),
-        telemedicineAuthorized: true
+        telemedicineAuthorized: true,
       });
 
       mockPrisma.auditTrail.create.mockResolvedValue({});
@@ -333,27 +333,29 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       const chainedMiddleware = async () => {
         return prismaRLSMiddleware({
           ctx,
-          next: () => cfmValidationMiddleware({
-            ctx,
-            next: () => lgpdAuditMiddleware({
+          next: () =>
+            cfmValidationMiddleware({
               ctx,
-              next,
+              next: () =>
+                lgpdAuditMiddleware({
+                  ctx,
+                  next,
+                  path: 'appointments.create',
+                  type: 'mutation',
+                  input: {},
+                }),
               path: 'appointments.create',
               type: 'mutation',
-              input: {}
+              input: {},
             }),
-            path: 'appointments.create',
-            type: 'mutation',
-            input: {}
-          }),
           path: 'appointments.create',
           type: 'mutation',
-          input: {}
+          input: {},
         });
       };
 
       const result = await chainedMiddleware();
-      
+
       expect(result).toEqual({ success: true });
       // Performance validation is handled within each middleware
     });

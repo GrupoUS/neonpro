@@ -1,22 +1,31 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { 
-  Volume2, 
-  VolumeX, 
-  Type, 
-  Contrast, 
-  Eye, 
-  MousePointer, 
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Separator,
+  Slider,
+  Switch,
+} from '@neonpro/ui';
+import { cn } from '@neonpro/utils';
+import {
+  Contrast,
+  Eye,
   Keyboard,
-  Sun,
   Moon,
+  MousePointer,
+  RotateCcw,
+  Sun,
+  Type,
+  Volume2,
+  VolumeX,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
 } from 'lucide-react';
-import { Button, Card, CardContent, CardHeader, CardTitle, Switch, Slider, Separator } from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 // Accessibility preferences interface
 interface AccessibilityPreferences {
@@ -26,22 +35,22 @@ interface AccessibilityPreferences {
   fontSize: number; // 12-24px
   darkMode: boolean;
   reduceMotion: boolean;
-  
+
   // Motor
   stickyKeys: boolean;
   slowKeys: boolean;
   mouseKeys: boolean;
   clickDelay: number; // milliseconds
-  
+
   // Cognitive
   reducedAnimations: boolean;
   simplifiedUI: boolean;
   screenReader: boolean;
-  
+
   // Audio
   soundEffects: boolean;
   voiceAnnouncements: boolean;
-  
+
   // Touch/Mobile
   largerTouchTargets: boolean;
   hapticFeedback: boolean;
@@ -72,7 +81,7 @@ interface AccessibilityContextType {
   preferences: AccessibilityPreferences;
   updatePreference: <K extends keyof AccessibilityPreferences>(
     key: K,
-    value: AccessibilityPreferences[K]
+    value: AccessibilityPreferences[K],
   ) => void;
   resetPreferences: () => void;
   announceToScreenReader: (message: string) => void;
@@ -101,10 +110,10 @@ const ScreenReaderAnnouncer = () => {
 
   return (
     <div
-      aria-live="polite"
-      aria-atomic="true"
-      className="sr-only"
-      role="status"
+      aria-live='polite'
+      aria-atomic='true'
+      className='sr-only'
+      role='status'
     >
       {announcement}
     </div>
@@ -116,97 +125,103 @@ const AccessibilityPanel = () => {
   const context = useContext(AccessibilityContext);
   if (!context) return null;
 
-  const { preferences, updatePreference, resetPreferences, isAccessibilityPanelOpen, setAccessibilityPanelOpen } = context;
+  const {
+    preferences,
+    updatePreference,
+    resetPreferences,
+    isAccessibilityPanelOpen,
+    setAccessibilityPanelOpen,
+  } = context;
 
   if (!isAccessibilityPanelOpen) {
     return (
       <Button
         onClick={() => setAccessibilityPanelOpen(true)}
-        className="fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full shadow-lg"
-        size="sm"
-        aria-label="Abrir painel de acessibilidade"
-        title="Configurações de Acessibilidade"
+        className='fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full shadow-lg'
+        size='sm'
+        aria-label='Abrir painel de acessibilidade'
+        title='Configurações de Acessibilidade'
       >
-        <Eye className="h-5 w-5" />
+        <Eye className='h-5 w-5' />
       </Button>
     );
   }
 
   return (
-    <Card className="fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Acessibilidade</CardTitle>
+    <Card className='fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl'>
+      <CardHeader className='pb-3'>
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-lg'>Acessibilidade</CardTitle>
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => setAccessibilityPanelOpen(false)}
-            aria-label="Fechar painel de acessibilidade"
+            aria-label='Fechar painel de acessibilidade'
           >
             ×
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className='space-y-4'>
         {/* Visual Accessibility */}
         <div>
-          <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-            <Eye className="h-4 w-4" />
+          <h4 className='font-medium text-sm mb-3 flex items-center gap-2'>
+            <Eye className='h-4 w-4' />
             Visual
           </h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label htmlFor="high-contrast" className="text-sm">Alto contraste</label>
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='high-contrast' className='text-sm'>Alto contraste</label>
               <Switch
-                id="high-contrast"
+                id='high-contrast'
                 checked={preferences.highContrast}
-                onCheckedChange={(checked) => updatePreference('highContrast', checked)}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <label htmlFor="large-fonts" className="text-sm">Fonte grande</label>
-              <Switch
-                id="large-fonts"
-                checked={preferences.largeFonts}
-                onCheckedChange={(checked) => updatePreference('largeFonts', checked)}
+                onCheckedChange={checked => updatePreference('highContrast', checked)}
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="font-size" className="text-sm flex items-center gap-2">
-                <Type className="h-3 w-3" />
+            <div className='flex items-center justify-between'>
+              <label htmlFor='large-fonts' className='text-sm'>Fonte grande</label>
+              <Switch
+                id='large-fonts'
+                checked={preferences.largeFonts}
+                onCheckedChange={checked => updatePreference('largeFonts', checked)}
+              />
+            </div>
+
+            <div className='space-y-2'>
+              <label htmlFor='font-size' className='text-sm flex items-center gap-2'>
+                <Type className='h-3 w-3' />
                 Tamanho da fonte: {preferences.fontSize}px
               </label>
               <Slider
-                id="font-size"
+                id='font-size'
                 min={12}
                 max={24}
                 step={1}
                 value={[preferences.fontSize]}
-                onValueChange={(value) => updatePreference('fontSize', value[0])}
-                className="w-full"
+                onValueChange={value => updatePreference('fontSize', value[0])}
+                className='w-full'
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label htmlFor="dark-mode" className="text-sm flex items-center gap-2">
-                {preferences.darkMode ? <Moon className="h-3 w-3" /> : <Sun className="h-3 w-3" />}
+            <div className='flex items-center justify-between'>
+              <label htmlFor='dark-mode' className='text-sm flex items-center gap-2'>
+                {preferences.darkMode ? <Moon className='h-3 w-3' /> : <Sun className='h-3 w-3' />}
                 Modo escuro
               </label>
               <Switch
-                id="dark-mode"
+                id='dark-mode'
                 checked={preferences.darkMode}
-                onCheckedChange={(checked) => updatePreference('darkMode', checked)}
+                onCheckedChange={checked => updatePreference('darkMode', checked)}
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label htmlFor="reduce-motion" className="text-sm">Reduzir movimento</label>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='reduce-motion' className='text-sm'>Reduzir movimento</label>
               <Switch
-                id="reduce-motion"
+                id='reduce-motion'
                 checked={preferences.reduceMotion}
-                onCheckedChange={(checked) => updatePreference('reduceMotion', checked)}
+                onCheckedChange={checked => updatePreference('reduceMotion', checked)}
               />
             </div>
           </div>
@@ -216,41 +231,41 @@ const AccessibilityPanel = () => {
 
         {/* Motor Accessibility */}
         <div>
-          <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-            <MousePointer className="h-4 w-4" />
+          <h4 className='font-medium text-sm mb-3 flex items-center gap-2'>
+            <MousePointer className='h-4 w-4' />
             Motor
           </h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label htmlFor="larger-touch" className="text-sm">Alvos de toque maiores</label>
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='larger-touch' className='text-sm'>Alvos de toque maiores</label>
               <Switch
-                id="larger-touch"
+                id='larger-touch'
                 checked={preferences.largerTouchTargets}
-                onCheckedChange={(checked) => updatePreference('largerTouchTargets', checked)}
+                onCheckedChange={checked => updatePreference('largerTouchTargets', checked)}
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="click-delay" className="text-sm">
+            <div className='space-y-2'>
+              <label htmlFor='click-delay' className='text-sm'>
                 Atraso do clique: {preferences.clickDelay}ms
               </label>
               <Slider
-                id="click-delay"
+                id='click-delay'
                 min={0}
                 max={1000}
                 step={100}
                 value={[preferences.clickDelay]}
-                onValueChange={(value) => updatePreference('clickDelay', value[0])}
-                className="w-full"
+                onValueChange={value => updatePreference('clickDelay', value[0])}
+                className='w-full'
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label htmlFor="sticky-keys" className="text-sm">Teclas de aderência</label>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='sticky-keys' className='text-sm'>Teclas de aderência</label>
               <Switch
-                id="sticky-keys"
+                id='sticky-keys'
                 checked={preferences.stickyKeys}
-                onCheckedChange={(checked) => updatePreference('stickyKeys', checked)}
+                onCheckedChange={checked => updatePreference('stickyKeys', checked)}
               />
             </div>
           </div>
@@ -260,26 +275,26 @@ const AccessibilityPanel = () => {
 
         {/* Cognitive Accessibility */}
         <div>
-          <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-            <Keyboard className="h-4 w-4" />
+          <h4 className='font-medium text-sm mb-3 flex items-center gap-2'>
+            <Keyboard className='h-4 w-4' />
             Cognitivo
           </h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label htmlFor="simplified-ui" className="text-sm">Interface simplificada</label>
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='simplified-ui' className='text-sm'>Interface simplificada</label>
               <Switch
-                id="simplified-ui"
+                id='simplified-ui'
                 checked={preferences.simplifiedUI}
-                onCheckedChange={(checked) => updatePreference('simplifiedUI', checked)}
+                onCheckedChange={checked => updatePreference('simplifiedUI', checked)}
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label htmlFor="screen-reader" className="text-sm">Leitor de tela</label>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='screen-reader' className='text-sm'>Leitor de tela</label>
               <Switch
-                id="screen-reader"
+                id='screen-reader'
                 checked={preferences.screenReader}
-                onCheckedChange={(checked) => updatePreference('screenReader', checked)}
+                onCheckedChange={checked => updatePreference('screenReader', checked)}
               />
             </div>
           </div>
@@ -289,26 +304,26 @@ const AccessibilityPanel = () => {
 
         {/* Audio Accessibility */}
         <div>
-          <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-            <Volume2 className="h-4 w-4" />
+          <h4 className='font-medium text-sm mb-3 flex items-center gap-2'>
+            <Volume2 className='h-4 w-4' />
             Áudio
           </h4>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label htmlFor="sound-effects" className="text-sm">Efeitos sonoros</label>
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='sound-effects' className='text-sm'>Efeitos sonoros</label>
               <Switch
-                id="sound-effects"
+                id='sound-effects'
                 checked={preferences.soundEffects}
-                onCheckedChange={(checked) => updatePreference('soundEffects', checked)}
+                onCheckedChange={checked => updatePreference('soundEffects', checked)}
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label htmlFor="voice-announcements" className="text-sm">Anúncios por voz</label>
+            <div className='flex items-center justify-between'>
+              <label htmlFor='voice-announcements' className='text-sm'>Anúncios por voz</label>
               <Switch
-                id="voice-announcements"
+                id='voice-announcements'
                 checked={preferences.voiceAnnouncements}
-                onCheckedChange={(checked) => updatePreference('voiceAnnouncements', checked)}
+                onCheckedChange={checked => updatePreference('voiceAnnouncements', checked)}
               />
             </div>
           </div>
@@ -319,11 +334,11 @@ const AccessibilityPanel = () => {
         {/* Reset Button */}
         <Button
           onClick={resetPreferences}
-          variant="outline"
-          className="w-full"
-          size="sm"
+          variant='outline'
+          className='w-full'
+          size='sm'
         >
-          <RotateCcw className="mr-2 h-4 w-4" />
+          <RotateCcw className='mr-2 h-4 w-4' />
           Restaurar Padrões
         </Button>
       </CardContent>
@@ -361,25 +376,25 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
   // Apply accessibility preferences to DOM
   useEffect(() => {
     const root = document.documentElement;
-    
+
     // Font size
     root.style.setProperty('--accessibility-font-size', `${preferences.fontSize}px`);
-    
+
     // High contrast
     root.classList.toggle('accessibility-high-contrast', preferences.highContrast);
-    
+
     // Large fonts
     root.classList.toggle('accessibility-large-fonts', preferences.largeFonts);
-    
+
     // Dark mode
     root.classList.toggle('dark', preferences.darkMode);
-    
+
     // Reduce motion
     root.classList.toggle('accessibility-reduce-motion', preferences.reduceMotion);
-    
+
     // Larger touch targets
     root.classList.toggle('accessibility-large-touch', preferences.largerTouchTargets);
-    
+
     // Simplified UI
     root.classList.toggle('accessibility-simplified', preferences.simplifiedUI);
 
@@ -410,7 +425,7 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
 
   const updatePreference = <K extends keyof AccessibilityPreferences>(
     key: K,
-    value: AccessibilityPreferences[K]
+    value: AccessibilityPreferences[K],
   ) => {
     setPreferences(prev => ({ ...prev, [key]: value }));
   };
@@ -436,14 +451,16 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
 
   return (
     <AccessibilityContext.Provider value={contextValue}>
-      <div className={cn(
-        'accessibility-provider',
-        preferences.highContrast && 'accessibility-high-contrast',
-        preferences.largeFonts && 'accessibility-large-fonts',
-        preferences.largerTouchTargets && 'accessibility-large-touch',
-        preferences.simplifiedUI && 'accessibility-simplified',
-        preferences.reduceMotion && 'accessibility-reduce-motion'
-      )}>
+      <div
+        className={cn(
+          'accessibility-provider',
+          preferences.highContrast && 'accessibility-high-contrast',
+          preferences.largeFonts && 'accessibility-large-fonts',
+          preferences.largerTouchTargets && 'accessibility-large-touch',
+          preferences.simplifiedUI && 'accessibility-simplified',
+          preferences.reduceMotion && 'accessibility-reduce-motion',
+        )}
+      >
         {children}
         <ScreenReaderAnnouncer />
         <AccessibilityPanel />
@@ -463,14 +480,14 @@ export function useAccessibility() {
 
 // HOC for accessible components
 export function withAccessibility<P extends object>(
-  Component: React.ComponentType<P>
+  Component: React.ComponentType<P>,
 ) {
   const AccessibleComponent = (props: P) => {
     const { preferences, announceToScreenReader } = useAccessibility();
-    
+
     return (
-      <Component 
-        {...props} 
+      <Component
+        {...props}
         accessibilityPreferences={preferences}
         announceToScreenReader={announceToScreenReader}
       />
@@ -478,14 +495,14 @@ export function withAccessibility<P extends object>(
   };
 
   AccessibleComponent.displayName = `withAccessibility(${Component.displayName || Component.name})`;
-  
+
   return AccessibleComponent;
 }
 
 // Keyboard navigation hook
 export function useKeyboardNavigation() {
   const { preferences } = useAccessibility();
-  
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Add keyboard delay if enabled
@@ -531,7 +548,7 @@ export function useFocusManagement() {
 
   const trapFocus = (element: HTMLElement) => {
     const focusableElements = element.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;

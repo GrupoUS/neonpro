@@ -375,12 +375,16 @@ async function validateJWT(_token: string): Promise<any> {
  * LGPD consent validation placeholder
  * TODO: Implement actual LGPD consent validation
  */
-async function validateLGPDConsent(_userId: string, _patientId: string, _sessionId?: string): Promise<boolean> {
+async function validateLGPDConsent(
+  _userId: string,
+  _patientId: string,
+  _sessionId?: string,
+): Promise<boolean> {
   try {
     // Import ConsentService dynamically to avoid circular dependencies
     // Note: This import is currently failing - service needs to be implemented
     // const { ConsentService } = await import('@neonpro/database/services/consent-service');
-    
+
     // Placeholder implementation - always return true for now
     // TODO: Implement actual consent validation when service is available
     console.warn('LGPD consent validation not fully implemented - allowing access');

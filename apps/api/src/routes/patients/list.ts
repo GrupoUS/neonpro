@@ -7,13 +7,13 @@
 
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { z } from 'zod';
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
-import { patientAccessMiddleware, getHealthcareContext } from '../../middleware/prisma-rls';
+import { getHealthcareContext, patientAccessMiddleware } from '../../middleware/prisma-rls';
 import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { PatientService } from '../../services/patient-service';
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 
 const app = new OpenAPIHono();
 
@@ -48,7 +48,8 @@ const listPatientsRoute = createHealthcareRoute({
   path: '/',
   tags: ['Patients'],
   summary: 'List patients',
-  description: 'List patients with pagination, filtering, and search capabilities. Includes LGPD compliance and audit logging.',
+  description:
+    'List patients with pagination, filtering, and search capabilities. Includes LGPD compliance and audit logging.',
   dataClassification: 'medical',
   auditRequired: true,
   request: {
@@ -93,12 +94,13 @@ const listPatientsRoute = createHealthcareRoute({
   },
 });
 
-app.openapi(listPatientsRoute,
-  requireAuth, 
+app.openapi(
+  listPatientsRoute,
+  requireAuth,
   dataProtection.patientView,
-  patientAccessMiddleware({ 
+  patientAccessMiddleware({
     requiredPermissions: ['patient_read'],
-    logAccess: true 
+    logAccess: true,
   }),
   async c => {
     const startTime = Date.now();
@@ -134,7 +136,7 @@ app.openapi(listPatientsRoute,
           error: 'Acesso negado por política LGPD',
           code: 'LGPD_ACCESS_DENIED',
         }, 403);
-      }      // Create PatientService with healthcare context
+      } // Create PatientService with healthcare context
       const patientService = new PatientService(healthcareContext);
 
       // List patients using enhanced PatientService with real database
@@ -173,11 +175,11 @@ app.openapi(listPatientsRoute,
             userAgent,
             complianceContext: 'LGPD',
             sensitivityLevel: 'high',
-          }
+          },
         );
       } catch (auditError) {
         console.error('Enhanced audit logging failed:', auditError);
-        
+
         // Fallback to legacy audit service
         try {
           const auditService = new ComprehensiveAuditService();
@@ -200,23 +202,26 @@ app.openapi(listPatientsRoute,
                 rls_enforced: true,
                 consent_validated: true,
               },
-            }
+            },
           );
         } catch (legacyAuditError) {
           console.error('Legacy audit logging also failed:', legacyAuditError);
         }
       }
 
-      const responseTime = Date.now() - startTime;      // Set enhanced response headers
+      const responseTime = Date.now() - startTime; // Set enhanced response headers
       c.header('X-Data-Classification', 'sensitive');
       c.header('X-LGPD-Compliant', 'true');
       c.header('X-Audit-Logged', 'true');
       c.header('X-RLS-Enforced', 'true');
-      c.header('X-Healthcare-Context', JSON.stringify({
-        clinicId,
-        role: healthcareContext.role,
-        cfmValidated: healthcareContext.cfmValidated,
-      }));
+      c.header(
+        'X-Healthcare-Context',
+        JSON.stringify({
+          clinicId,
+          role: healthcareContext.role,
+          cfmValidated: healthcareContext.cfmValidated,
+        }),
+      );
       c.header('X-Total-Count', (result.data?.pagination.total || 0).toString());
       c.header('X-Page', (result.data?.pagination.page || 1).toString());
       c.header('X-Total-Pages', (result.data?.pagination.totalPages || 1).toString());
@@ -276,6 +281,7 @@ app.openapi(listPatientsRoute,
         details: process.env.NODE_ENV === 'development' ? error.message : undefined,
       }, 500);
     }
-  });
+  },
+);
 
 export default app;

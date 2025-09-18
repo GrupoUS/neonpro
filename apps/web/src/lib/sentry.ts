@@ -105,19 +105,23 @@ function readEnv(key: string): string | undefined {
 }
 
 function resolveEnvironment(): NodeEnvironment {
-  const modeFromMeta = typeof import.meta !== 'undefined' ? (import.meta.env?.MODE as string | undefined) : undefined;
-  const resolved =
-    readEnv('VITE_APP_ENV') ??
-    modeFromMeta ??
-    process.env.NODE_ENV ??
-    'development';
+  const modeFromMeta = typeof import.meta !== 'undefined'
+    ? (import.meta.env?.MODE as string | undefined)
+    : undefined;
+  const resolved = readEnv('VITE_APP_ENV')
+    ?? modeFromMeta
+    ?? process.env.NODE_ENV
+    ?? 'development';
 
   return resolved as NodeEnvironment;
 }
 
 function sanitizeString(value: unknown): unknown {
   if (typeof value !== 'string') return value;
-  return STRING_PATTERNS.reduce((current, [pattern, replacement]) => current.replace(pattern, replacement), value);
+  return STRING_PATTERNS.reduce(
+    (current, [pattern, replacement]) => current.replace(pattern, replacement),
+    value,
+  );
 }
 
 function sanitizeData<T>(data: T): T {
@@ -167,10 +171,12 @@ function buildIntegrations(extra: Integration[] = []): Integration[] {
 
 function getConfig(overrides: SentryOptionsOverrides = {}) {
   const environment = overrides.environment ?? resolveEnvironment();
-  const release = overrides.release ?? readEnv('VITE_APP_VERSION') ?? readEnv('COMMIT_SHA') ?? 'development';
+  const release = overrides.release ?? readEnv('VITE_APP_VERSION') ?? readEnv('COMMIT_SHA')
+    ?? 'development';
   const dsn = overrides.dsn ?? readEnv('VITE_SENTRY_DSN') ?? readEnv('SENTRY_DSN') ?? '';
   const tracesSampleRate = overrides.tracesSampleRate ?? (environment === 'production' ? 0.15 : 1);
-  const profilesSampleRate = overrides.profilesSampleRate ?? (environment === 'production' ? 0.1 : 1);
+  const profilesSampleRate = overrides.profilesSampleRate
+    ?? (environment === 'production' ? 0.1 : 1);
 
   return {
     dsn,
@@ -183,7 +189,9 @@ function getConfig(overrides: SentryOptionsOverrides = {}) {
   };
 }
 
-export function getHealthcareSentryConfig(overrides: SentryOptionsOverrides = {}): Sentry.BrowserOptions {
+export function getHealthcareSentryConfig(
+  overrides: SentryOptionsOverrides = {},
+): Sentry.BrowserOptions {
   const resolved = getConfig(overrides);
 
   return {
@@ -212,10 +220,9 @@ export function initializeHealthcareErrorTracking(overrides?: SentryOptionsOverr
   const config = getConfig(overrides);
   const browserConfig = getHealthcareSentryConfig(overrides);
 
-  const shouldRun =
-    config.environment === 'production' ||
-    config.environment === 'staging' ||
-    config.enableInDev;
+  const shouldRun = config.environment === 'production'
+    || config.environment === 'staging'
+    || config.enableInDev;
 
   if (!shouldRun) {
     console.info('[Sentry] Skipping initialization for environment', config.environment);
@@ -261,10 +268,16 @@ function categorizeError(error: Error, context?: HealthcareErrorContext): Health
   if (context?.medicalContext === 'emergency' || haystack.includes('patient')) {
     return HEALTHCARE_ERROR_CATEGORIES.PATIENT_DATA;
   }
-  if (haystack.includes('compliance') || haystack.includes('lgpd') || context?.complianceRequirements?.length) {
+  if (
+    haystack.includes('compliance') || haystack.includes('lgpd')
+    || context?.complianceRequirements?.length
+  ) {
     return HEALTHCARE_ERROR_CATEGORIES.COMPLIANCE_VIOLATION;
   }
-  if (haystack.includes('security') || haystack.includes('auth') || context?.securityLevel === 'restricted') {
+  if (
+    haystack.includes('security') || haystack.includes('auth')
+    || context?.securityLevel === 'restricted'
+  ) {
     return HEALTHCARE_ERROR_CATEGORIES.SECURITY_INCIDENT;
   }
   if (haystack.includes('timeout') || haystack.includes('slow')) {
@@ -290,15 +303,18 @@ export function trackHealthcareError(error: Error, context: HealthcareErrorConte
     if (context.medicalContext) scope.setTag('healthcare.medical.context', context.medicalContext);
     if (context.feature) scope.setTag('healthcare.feature', context.feature);
 
-    scope.setContext('healthcare', sanitizeData({
-      clinicId: context.clinicId ? '[CLINIC_ID]' : undefined,
-      patientId: context.patientId ? '[PATIENT_ID]' : undefined,
-      medicalContext: context.medicalContext,
-      workflowStep: context.workflowStep,
-      complianceRequirements: context.complianceRequirements,
-      userRole: context.userRole,
-      timestamp: new Date().toISOString(),
-    }));
+    scope.setContext(
+      'healthcare',
+      sanitizeData({
+        clinicId: context.clinicId ? '[CLINIC_ID]' : undefined,
+        patientId: context.patientId ? '[PATIENT_ID]' : undefined,
+        medicalContext: context.medicalContext,
+        workflowStep: context.workflowStep,
+        complianceRequirements: context.complianceRequirements,
+        userRole: context.userRole,
+        timestamp: new Date().toISOString(),
+      }),
+    );
 
     Sentry.captureException(error, {
       tags: {
@@ -332,11 +348,14 @@ export async function trackHealthcarePerformance<T>(
     try {
       const result = await operation();
       Sentry.withScope(scope => {
-        scope.setContext('performance', sanitizeData({
-          medicalContext: context.medicalContext,
-          workflowStep: context.workflowStep,
-          timestamp: new Date().toISOString(),
-        }));
+        scope.setContext(
+          'performance',
+          sanitizeData({
+            medicalContext: context.medicalContext,
+            workflowStep: context.workflowStep,
+            timestamp: new Date().toISOString(),
+          }),
+        );
         Sentry.captureMessage(`Healthcare operation '${operationName}' completed`, 'info');
       });
       return result;

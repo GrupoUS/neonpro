@@ -1,16 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createTRPCMsw } from 'msw-trpc';
+import crypto from 'crypto';
 import { http } from 'msw';
+import { createTRPCMsw } from 'msw-trpc';
 import { setupServer } from 'msw/node';
+import superjson from 'superjson';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AppRouter } from '../../src/trpc';
 import { createTestClient } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
-import type { AppRouter } from '../../src/trpc';
-import superjson from 'superjson';
-import crypto from 'crypto';
 
 /**
  * T046: CFM Telemedicine Compliance Testing
- * 
+ *
  * BRAZILIAN CFM TELEMEDICINE REQUIREMENTS (Resolução CFM nº 2.314/2022):
  * - Medical license validation accuracy (CRM verification)
  * - NGS2 security standards compliance (Level 2 information security)
@@ -19,7 +19,7 @@ import crypto from 'crypto';
  * - Medical ethics compliance in digital environments
  * - Patient-doctor relationship establishment requirements
  * - Digital prescription and medical certificate validity
- * 
+ *
  * TDD RED PHASE: These tests are designed to FAIL initially to drive implementation
  */
 
@@ -97,7 +97,7 @@ const mockICPBrasil = {
       usage: ['digital_signature', 'medical_prescriptions'],
     };
   },
-  
+
   verifyDigitalSignature: (data: string, signature: string) => {
     return {
       valid: signature.length === 64, // Simulate SHA-256 signature
@@ -142,7 +142,6 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         }
         return Response.json(doctor);
       }),
-
       // Mock CFM telemedicine certification API
       http.get('https://telemedicina.cfm.org.br/api/habilitacao/:crm', ({ params }) => {
         const doctor = mockCFMSystem.doctors.find(d => d.crm === params.crm);
@@ -154,7 +153,6 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
           restricoes: doctor?.status === 'SUSPENSO' ? ['SUSPENSO_CFM'] : [],
         });
       }),
-
       // Mock ICP-Brasil certificate validation
       http.post('https://validador.iti.gov.br/api/certificados/validar', () => {
         return Response.json({
@@ -165,7 +163,6 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
           revogado: false,
         });
       }),
-
       // Mock CFM ethics committee API
       http.post('https://etica.cfm.org.br/api/relatorio/telemedicina', () => {
         return Response.json({
@@ -175,7 +172,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
           recomendacoes: ['Manter registro detalhado de consultas'],
           data_avaliacao: new Date().toISOString(),
         });
-      })
+      }),
     );
 
     server.listen();
@@ -208,7 +205,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
 
       // Verify telemedicine enablement
       const telemedicineResponse = await fetch(
-        `https://telemedicina.cfm.org.br/api/habilitacao/${doctorCRM}`
+        `https://telemedicina.cfm.org.br/api/habilitacao/${doctorCRM}`,
       );
       const telemedicineData = await telemedicineResponse.json();
 
@@ -241,7 +238,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
 
       // Verify telemedicine restrictions
       const telemedicineResponse = await fetch(
-        `https://telemedicina.cfm.org.br/api/habilitacao/${suspendedCRM}`
+        `https://telemedicina.cfm.org.br/api/habilitacao/${suspendedCRM}`,
       );
       const telemedicineData = await telemedicineResponse.json();
 
@@ -291,14 +288,16 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
           procedure: request.procedure,
           authorized: hasRequiredSpecialty,
           doctor_specialties: doctorData.especialidades,
-          reason: hasRequiredSpecialty 
-            ? 'ESPECIALIDADE_ADEQUADA' 
+          reason: hasRequiredSpecialty
+            ? 'ESPECIALIDADE_ADEQUADA'
             : 'ESPECIALIDADE_INADEQUADA',
         };
       });
 
       // Should authorize appropriate procedures
-      const harmonizacaoAuth = authorizationResults.find(r => r.procedure === 'Harmonização Facial');
+      const harmonizacaoAuth = authorizationResults.find(r =>
+        r.procedure === 'Harmonização Facial'
+      );
       expect(harmonizacaoAuth?.authorized).toBe(true);
 
       const botoxAuth = authorizationResults.find(r => r.procedure === 'Botox Terapêutico');
@@ -318,25 +317,25 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         strong_password_policy: true,
         session_timeout: 30, // minutes
         failed_login_lockout: true,
-        
+
         // Authorization Controls
         role_based_access_control: true,
         principle_of_least_privilege: true,
         segregation_of_duties: true,
         privileged_access_monitoring: true,
-        
+
         // Data Protection
         encryption_at_rest: 'AES_256',
         encryption_in_transit: 'TLS_1_3',
         key_management: 'HSM_BASED',
         data_loss_prevention: true,
-        
+
         // Network Security
         network_segmentation: true,
         intrusion_detection: true,
         firewall_protection: true,
         vpn_for_remote_access: true,
-        
+
         // Monitoring and Logging
         security_event_logging: true,
         log_retention_period: '5_years',
@@ -350,11 +349,11 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       expect(ngs2Controls.encryption_in_transit).toBe('TLS_1_3');
       expect(ngs2Controls.role_based_access_control).toBe(true);
       expect(ngs2Controls.security_event_logging).toBe(true);
-      
+
       // Verify session security
       expect(ngs2Controls.session_timeout).toBeLessThanOrEqual(30);
       expect(ngs2Controls.failed_login_lockout).toBe(true);
-      
+
       // Verify data protection
       expect(ngs2Controls.key_management).toBe('HSM_BASED');
       expect(ngs2Controls.data_loss_prevention).toBe(true);
@@ -402,7 +401,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       });
 
       const auditEntry = mockCFMSystem.telemedicineAudit.find(
-        audit => audit.id === sessionEstablishment.session_id
+        audit => audit.id === sessionEstablishment.session_id,
       );
 
       expect(auditEntry?.compliance_score).toBe(100);
@@ -505,7 +504,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
             signature: digitalSignature,
             data_hash: prescriptionHash,
           }),
-        }
+        },
       );
 
       const validationResult = await certificateValidation.json();
@@ -530,7 +529,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       });
 
       const prescriptionAudit = mockCFMSystem.prescriptionAudit.find(
-        audit => audit.prescription_id === prescriptionData.prescription_id
+        audit => audit.prescription_id === prescriptionData.prescription_id,
       );
 
       expect(prescriptionAudit?.icp_brasil_valid).toBe(true);
@@ -618,7 +617,8 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       const controlledValidation = {
         doctor_authorized_controlled: true, // CRM allows controlled prescriptions
         patient_id_verified: true,
-        prescription_form_valid: controlledPrescription.special_requirements.yellow_prescription_form,
+        prescription_form_valid:
+          controlledPrescription.special_requirements.yellow_prescription_form,
         anvisa_compliance: controlledPrescription.special_requirements.anvisa_notification_sent,
         digital_signature_enhanced: true, // Stronger signature requirements
       };
@@ -657,7 +657,8 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
 
       // Verify CFM requirements for doctor-patient relationship
       const cfmCompliance = {
-        initial_consultation_presential: relationshipEstablishment.first_contact_type === 'presencial',
+        initial_consultation_presential:
+          relationshipEstablishment.first_contact_type === 'presencial',
         medical_record_exists: relationshipEstablishment.medical_record_created,
         patient_informed_consent: relationshipEstablishment.patient_consent_telemedicine,
         doctor_patient_bond_established: relationshipEstablishment.relationship_documented,
@@ -681,7 +682,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       });
 
       const relationshipAudit = mockCFMSystem.telemedicineAudit.find(
-        audit => audit.crm === doctorCRM && audit.patient_cpf === patientCPF
+        audit => audit.crm === doctorCRM && audit.patient_cpf === patientCPF,
       );
 
       expect(relationshipAudit?.relationship_established).toBe(true);
@@ -711,7 +712,8 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         crm_active: doctorData.status === 'ATIVO',
         telemedicine_authorized: doctorData.registro_telemedicina === 'HABILITADO',
         certificate_not_expired: new Date(doctorData.validade_certificado) > new Date(),
-        last_update_recent: new Date(doctorData.ultima_atualizacao) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days
+        last_update_recent:
+          new Date(doctorData.ultima_atualizacao) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days
       };
 
       expect(realTimeVerification.crm_active).toBe(true);
@@ -741,8 +743,16 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         initial_authentication: true,
         biometric_verification_intervals: [
           { timestamp: new Date().toISOString(), method: 'facial_recognition', success: true },
-          { timestamp: new Date(Date.now() + 300000).toISOString(), method: 'voice_recognition', success: true },
-          { timestamp: new Date(Date.now() + 600000).toISOString(), method: 'facial_recognition', success: true },
+          {
+            timestamp: new Date(Date.now() + 300000).toISOString(),
+            method: 'voice_recognition',
+            success: true,
+          },
+          {
+            timestamp: new Date(Date.now() + 600000).toISOString(),
+            method: 'facial_recognition',
+            success: true,
+          },
         ],
         certificate_status_checks: [
           { timestamp: new Date().toISOString(), status: 'VALID' },
@@ -753,10 +763,15 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
 
       // Verify continuous authentication
       const authContinuity = {
-        all_biometric_checks_passed: continuousAuth.biometric_verification_intervals.every(check => check.success),
-        all_certificate_checks_passed: continuousAuth.certificate_status_checks.every(check => check.status === 'VALID'),
+        all_biometric_checks_passed: continuousAuth.biometric_verification_intervals.every(check =>
+          check.success
+        ),
+        all_certificate_checks_passed: continuousAuth.certificate_status_checks.every(check =>
+          check.status === 'VALID'
+        ),
         session_not_hijacked: continuousAuth.session_integrity_maintained,
-        authentication_frequency_adequate: continuousAuth.biometric_verification_intervals.length >= 3,
+        authentication_frequency_adequate:
+          continuousAuth.biometric_verification_intervals.length >= 3,
       };
 
       expect(authContinuity.all_biometric_checks_passed).toBe(true);
@@ -840,7 +855,9 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
       expect(confidentialityMeasures.patient_data_segregation).toBe(true);
 
       // Verify organizational measures
-      const organizationalCompliance = Object.values(confidentialityMeasures.confidentiality_agreements)
+      const organizationalCompliance = Object.values(
+        confidentialityMeasures.confidentiality_agreements,
+      )
         .every(agreement => agreement === true);
 
       expect(organizationalCompliance).toBe(true);

@@ -1,15 +1,20 @@
 /**
  * Authentication Middleware Tests - TDD Implementation
  * ===================================================
- * 
+ *
  * Tests for authentication middleware with real database integration
  * following RED-GREEN-REFACTOR TDD approach
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Context, Next } from 'hono';
-import { requireAuth, requireHealthcareProfessional, requireLGPDConsent, requireAIAccess } from '../../middleware/auth';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAdminClient } from '../../clients/supabase';
+import {
+  requireAIAccess,
+  requireAuth,
+  requireHealthcareProfessional,
+  requireLGPDConsent,
+} from '../../middleware/auth';
 
 // Mock Supabase client
 vi.mock('../../clients/supabase', () => ({
@@ -29,7 +34,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock Supabase client
     mockSupabaseClient = {
       auth: {
@@ -167,12 +172,15 @@ describe('Authentication Middleware - Real Database Integration', () => {
       // Assert
       expect(result).toBeUndefined(); // Should call next()
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('healthcare_professionals');
-      expect(mockContext.set).toHaveBeenCalledWith('healthcareProfessional', expect.objectContaining({
-        id: userId,
-        crmNumber: 'CRM-SP-123456',
-        specialty: 'Dermatologia',
-        licenseStatus: 'active',
-      }));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'healthcareProfessional',
+        expect.objectContaining({
+          id: userId,
+          crmNumber: 'CRM-SP-123456',
+          specialty: 'Dermatologia',
+          licenseStatus: 'active',
+        }),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -277,18 +285,23 @@ describe('Authentication Middleware - Real Database Integration', () => {
       mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
 
       // Act
-      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], ['health_data']);
+      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], [
+        'health_data',
+      ]);
       const result = await middleware(mockContext, mockNext);
 
       // Assert
       expect(result).toBeUndefined(); // Should call next()
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('lgpd_consents');
-      expect(mockContext.set).toHaveBeenCalledWith('lgpdConsent', expect.objectContaining({
-        userId,
-        purposes: ['healthcare_service', 'ai_assistance', 'notifications'],
-        dataCategories: ['personal_data', 'health_data', 'contact_data'],
-        isActive: true,
-      }));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'lgpdConsent',
+        expect.objectContaining({
+          userId,
+          purposes: ['healthcare_service', 'ai_assistance', 'notifications'],
+          dataCategories: ['personal_data', 'health_data', 'contact_data'],
+          isActive: true,
+        }),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -323,7 +336,9 @@ describe('Authentication Middleware - Real Database Integration', () => {
       mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
 
       // Act
-      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], ['health_data']);
+      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], [
+        'health_data',
+      ]);
       const result = await middleware(mockContext, mockNext);
 
       // Assert

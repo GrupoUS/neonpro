@@ -157,12 +157,12 @@ class PatientService {
       return response.data || null;
     } catch (error) {
       console.error('Error getting patient:', error);
-      
+
       // Handle 404 errors gracefully
       if (error.status === 404) {
         return null;
       }
-      
+
       throw error;
     }
   }
@@ -192,14 +192,15 @@ class PatientService {
 
       const response = await apiClient.get<PatientListResponse>(
         this.baseEndpoint,
-        queryParams
+        queryParams,
       );
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to list patients');
       }
 
-      return response.data || { patients: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 0 } };
+      return response.data
+        || { patients: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 0 } };
     } catch (error) {
       console.error('Error listing patients:', error);
       throw error;
@@ -276,7 +277,7 @@ class PatientService {
     try {
       const response = await apiClient.get<PatientAppointmentHistory[]>(
         `${this.baseEndpoint}/${patientId}/history`,
-        { limit }
+        { limit },
       );
 
       if (!response.success) {

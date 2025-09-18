@@ -22,12 +22,12 @@ export const CreatePatientSchema = v.object({
   familyName: v.string([v.minLength(1, 'Family name is required')]),
   fullName: v.string([v.minLength(1, 'Full name is required')]),
   preferredName: v.optional(v.string()),
-  
+
   // Contact information
   phonePrimary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
   phoneSecondary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
   email: v.optional(v.string([v.email('Invalid email format')])),
-  
+
   // Address information
   addressLine1: v.optional(v.string()),
   addressLine2: v.optional(v.string()),
@@ -35,46 +35,48 @@ export const CreatePatientSchema = v.object({
   state: v.optional(v.string()),
   postalCode: v.optional(v.string()),
   country: v.optional(v.string([v.value('BR')])),
-  
+
   // Personal information
-  birthDate: v.optional(v.date()),  gender: v.optional(v.string()),
+  birthDate: v.optional(v.date()),
+  gender: v.optional(v.string()),
   maritalStatus: v.optional(v.string()),
-  
+
   // Brazilian documents
   cpf: v.optional(v.string([v.regex(CPF_REGEX, 'Invalid CPF format')])),
   rg: v.optional(v.string()),
   passportNumber: v.optional(v.string()),
-  
+
   // Healthcare information
   bloodType: v.optional(v.string()),
   allergies: v.optional(v.array(v.string())),
   chronicConditions: v.optional(v.array(v.string())),
   currentMedications: v.optional(v.array(v.string())),
-  
+
   // Insurance information
   insuranceProvider: v.optional(v.string()),
   insuranceNumber: v.optional(v.string()),
   insurancePlan: v.optional(v.string()),
-  
+
   // Emergency contact
   emergencyContactName: v.optional(v.string()),
   emergencyContactPhone: v.optional(v.string([v.regex(PHONE_REGEX)])),
   emergencyContactRelationship: v.optional(v.string()),
-  
+
   // LGPD Consent (required for patient creation)
   lgpdConsentGiven: v.boolean([v.literal(true, 'LGPD consent is required')]),
   lgpdConsentVersion: v.string([v.minLength(1)]),
   dataSharingConsent: v.optional(v.any()),
   marketingConsent: v.optional(v.boolean()),
   researchConsent: v.optional(v.boolean()),
-  
+
   // Communication preferences
   preferredContactMethod: v.optional(v.string()),
   communicationPreferences: v.optional(v.any()),
-});/**
+}); /**
  * Patient Update Schema
  * Allows partial updates while maintaining validation
  */
+
 export const UpdatePatientSchema = v.partial(CreatePatientSchema);
 
 /**
@@ -106,9 +108,10 @@ export const CreateAppointmentSchema = v.object({
   endTime: v.date(),
   notes: v.optional(v.string()),
   priority: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(5)])),
-});/**
+}); /**
  * Appointment Update Schema
  */
+
 export const UpdateAppointmentSchema = v.partial(CreateAppointmentSchema);
 
 /**

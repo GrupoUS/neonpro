@@ -1,6 +1,6 @@
 /**
  * Enhanced Appointment Hooks with Real-Time Updates and AI Integration
- * 
+ *
  * Features:
  * - tRPC integration with appointment backend
  * - Real-time updates via WebSocket subscriptions (T031 integration)
@@ -14,8 +14,8 @@
 
 import { trpc } from '@/lib/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import React from 'react';
+import { toast } from 'sonner';
 
 // Enhanced Appointment Query Keys for tRPC integration
 export const appointmentKeys = {
@@ -26,8 +26,10 @@ export const appointmentKeys = {
   detail: (id: string) => [...appointmentKeys.details(), id] as const,
   availability: (params?: any) => [...appointmentKeys.all, 'availability', params] as const,
   calendar: (params?: any) => [...appointmentKeys.all, 'calendar', params] as const,
-  reminders: (appointmentId: string) => [...appointmentKeys.all, 'reminders', appointmentId] as const,
-  noShowRisk: (appointmentId: string) => [...appointmentKeys.all, 'no-show-risk', appointmentId] as const,
+  reminders: (appointmentId: string) =>
+    [...appointmentKeys.all, 'reminders', appointmentId] as const,
+  noShowRisk: (appointmentId: string) =>
+    [...appointmentKeys.all, 'no-show-risk', appointmentId] as const,
 };
 
 /**
@@ -49,21 +51,23 @@ export function useAppointmentsList(options?: {
     patientId,
     professionalId,
     status,
-    includeNoShowRisk = true
+    includeNoShowRisk = true,
   } = options || {};
 
   return trpc.appointments.list.useQuery(
     {
       page,
       limit,
-      dateRange: dateRange ? {
-        start: dateRange.start.toISOString(),
-        end: dateRange.end.toISOString()
-      } : undefined,
+      dateRange: dateRange
+        ? {
+          start: dateRange.start.toISOString(),
+          end: dateRange.end.toISOString(),
+        }
+        : undefined,
       patientId,
       professionalId,
       status,
-      includeNoShowRisk
+      includeNoShowRisk,
     },
     {
       staleTime: 30 * 1000, // 30 seconds for appointment data
@@ -72,7 +76,7 @@ export function useAppointmentsList(options?: {
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
 
       // Performance optimization for mobile
-      select: (data) => {
+      select: data => {
         // Add computed fields for mobile optimization
         return {
           ...data,
@@ -80,28 +84,31 @@ export function useAppointmentsList(options?: {
             ...apt,
             isToday: new Date(apt.scheduledFor).toDateString() === new Date().toDateString(),
             timeUntil: new Date(apt.scheduledFor).getTime() - Date.now(),
-            riskLevel: apt.noShowRisk ? 
-              apt.noShowRisk > 0.7 ? 'high' :
-              apt.noShowRisk > 0.4 ? 'medium' : 'low'
-              : 'unknown'
-          }))
+            riskLevel: apt.noShowRisk
+              ? apt.noShowRisk > 0.7
+                ? 'high'
+                : apt.noShowRisk > 0.4
+                ? 'medium'
+                : 'low'
+              : 'unknown',
+          })),
         };
       },
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         console.log('[Healthcare Audit] Appointments list accessed', {
           timestamp: new Date().toISOString(),
           recordCount: data?.appointments?.length || 0,
           hasFilters: !!(dateRange || patientId || professionalId),
-          compliance: 'HEALTHCARE_DATA_ACCESS'
+          compliance: 'HEALTHCARE_DATA_ACCESS',
         });
       },
 
-      onError: (error) => {
+      onError: error => {
         console.error('[Appointments List Error]', error);
         toast.error('Erro ao carregar agendamentos. Tente novamente.');
-      }
-    }
+      },
+    },
   );
 }
 
@@ -113,17 +120,17 @@ export function useAppointment(appointmentId: string, options?: {
   includePatientData?: boolean;
   includeNoShowRisk?: boolean;
 }) {
-  const { 
-    enabled = true, 
+  const {
+    enabled = true,
     includePatientData = true,
-    includeNoShowRisk = true 
+    includeNoShowRisk = true,
   } = options || {};
 
   return trpc.appointments.get.useQuery(
-    { 
+    {
       id: appointmentId,
       includePatientData,
-      includeNoShowRisk
+      includeNoShowRisk,
     },
     {
       enabled: enabled && !!appointmentId,
@@ -131,23 +138,23 @@ export function useAppointment(appointmentId: string, options?: {
       gcTime: 5 * 60 * 1000, // 5 minutes cache time
       retry: 2,
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (data) {
           console.log('[Healthcare Audit] Appointment data accessed', {
             appointmentId: data.id,
             patientId: data.patientId,
             timestamp: new Date().toISOString(),
             hasPatientData: includePatientData,
-            compliance: 'HEALTHCARE_INDIVIDUAL_ACCESS'
+            compliance: 'HEALTHCARE_INDIVIDUAL_ACCESS',
           });
         }
       },
 
-      onError: (error) => {
+      onError: error => {
         console.error('[Appointment Get Error]', error);
         toast.error('Erro ao carregar dados do agendamento.');
-      }
-    }
+      },
+    },
   );
 }
 
@@ -158,7 +165,7 @@ export function useCreateAppointment() {
   const queryClient = useQueryClient();
 
   return trpc.appointments.create.useMutation({
-    onMutate: async (newAppointment) => {
+    onMutate: async newAppointment => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: appointmentKeys.lists() });
 
@@ -171,25 +178,25 @@ export function useCreateAppointment() {
         professionalId: newAppointment.professionalId,
         scheduledFor: newAppointment.scheduledFor,
         timestamp: new Date().toISOString(),
-        compliance: 'HEALTHCARE_APPOINTMENT_CREATION'
+        compliance: 'HEALTHCARE_APPOINTMENT_CREATION',
       });
 
       // Optimistically update to the new value
       queryClient.setQueryData(appointmentKeys.lists(), (old: any) => {
         if (!old) return old;
-        
+
         const optimisticAppointment = {
           id: `temp-${Date.now()}`, // Temporary ID
           ...newAppointment,
           status: 'scheduled',
           createdAt: new Date().toISOString(),
-          isOptimistic: true // Flag for UI
+          isOptimistic: true, // Flag for UI
         };
 
         return {
           ...old,
           appointments: [optimisticAppointment, ...(old.appointments || [])],
-          total: (old.total || 0) + 1
+          total: (old.total || 0) + 1,
         };
       });
 
@@ -199,7 +206,7 @@ export function useCreateAppointment() {
     onSuccess: (data, variables) => {
       // Update cache with real appointment data
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
-      
+
       // Invalidate and refetch appointment lists
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: appointmentKeys.availability() });
@@ -210,14 +217,16 @@ export function useCreateAppointment() {
         patientId: data.patientId,
         noShowRisk: data.noShowRisk,
         timestamp: new Date().toISOString(),
-        compliance: 'HEALTHCARE_APPOINTMENT_SCHEDULED'
+        compliance: 'HEALTHCARE_APPOINTMENT_SCHEDULED',
       });
 
       // Show appropriate message based on no-show risk
       if (data.noShowRisk && data.noShowRisk > 0.7) {
         toast.warning(
-          `Agendamento criado com sucesso! ⚠️ Alto risco de falta (${Math.round(data.noShowRisk * 100)}%). ` +
-          'Considere ações preventivas.'
+          `Agendamento criado com sucesso! ⚠️ Alto risco de falta (${
+            Math.round(data.noShowRisk * 100)
+          }%). `
+            + 'Considere ações preventivas.',
         );
       } else {
         toast.success('Agendamento criado com sucesso!');
@@ -231,7 +240,7 @@ export function useCreateAppointment() {
       }
 
       console.error('[Create Appointment Error]', error);
-      
+
       // Healthcare-specific error handling
       if (error.message.includes('conflict')) {
         toast.error('Conflito de horário detectado. Escolha outro horário.');
@@ -242,7 +251,7 @@ export function useCreateAppointment() {
       } else {
         toast.error('Erro ao criar agendamento. Tente novamente.');
       }
-    }
+    },
   });
 }
 
@@ -262,7 +271,7 @@ export function useAppointmentAvailability(params: {
       professionalId,
       date: date.toISOString(),
       duration,
-      serviceType
+      serviceType,
     },
     {
       enabled: !!(professionalId && date),
@@ -271,16 +280,16 @@ export function useAppointmentAvailability(params: {
       retry: 2,
       refetchInterval: 30 * 1000, // Refresh every 30 seconds
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         console.log('[Healthcare Audit] Availability checked', {
           professionalId,
           date: date.toISOString(),
           availableSlots: data?.availableSlots?.length || 0,
           timestamp: new Date().toISOString(),
-          compliance: 'HEALTHCARE_AVAILABILITY_CHECK'
+          compliance: 'HEALTHCARE_AVAILABILITY_CHECK',
         });
-      }
-    }
+      },
+    },
   );
 }
 
@@ -303,7 +312,7 @@ export function useUpdateAppointmentStatus() {
         appointmentId: id,
         newStatus: status,
         timestamp: new Date().toISOString(),
-        compliance: 'HEALTHCARE_STATUS_CHANGE'
+        compliance: 'HEALTHCARE_STATUS_CHANGE',
       });
 
       // Optimistically update
@@ -313,7 +322,7 @@ export function useUpdateAppointmentStatus() {
           ...old,
           status,
           notes: notes || old.notes,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
       });
 
@@ -323,7 +332,7 @@ export function useUpdateAppointmentStatus() {
     onSuccess: (data, variables) => {
       // Update cache with server response
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
-      
+
       // Invalidate lists to refresh updated data
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
@@ -333,10 +342,12 @@ export function useUpdateAppointmentStatus() {
         cancelled: 'Agendamento cancelado.',
         completed: 'Consulta finalizada com sucesso!',
         no_show: 'Falta registrada. Paciente será notificado.',
-        rescheduled: 'Agendamento reagendado.'
+        rescheduled: 'Agendamento reagendado.',
       };
 
-      toast.success(statusMessages[variables.status as keyof typeof statusMessages] || 'Status atualizado!');
+      toast.success(
+        statusMessages[variables.status as keyof typeof statusMessages] || 'Status atualizado!',
+      );
     },
 
     onError: (error, variables, context) => {
@@ -347,7 +358,7 @@ export function useUpdateAppointmentStatus() {
 
       console.error('[Update Appointment Status Error]', error);
       toast.error('Erro ao atualizar status. Tente novamente.');
-    }
+    },
   });
 }
 
@@ -363,24 +374,27 @@ export function useAppointmentNoShowRisk(appointmentId: string) {
       gcTime: 15 * 60 * 1000, // 15 minutes cache time
       retry: 1, // Limited retries for AI operations
 
-      select: (data) => ({
+      select: data => ({
         ...data,
-        riskLevel: data.riskScore > 0.7 ? 'high' : 
-                  data.riskScore > 0.4 ? 'medium' : 'low',
+        riskLevel: data.riskScore > 0.7
+          ? 'high'
+          : data.riskScore > 0.4
+          ? 'medium'
+          : 'low',
         riskPercentage: Math.round(data.riskScore * 100),
-        priorityInterventions: data.interventions?.slice(0, 3) || []
+        priorityInterventions: data.interventions?.slice(0, 3) || [],
       }),
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         console.log('[Healthcare Audit] No-show risk prediction accessed', {
           appointmentId,
           riskScore: data.riskScore,
           interventionsCount: data.interventions?.length || 0,
           timestamp: new Date().toISOString(),
-          compliance: 'HEALTHCARE_AI_PREDICTION'
+          compliance: 'HEALTHCARE_AI_PREDICTION',
         });
-      }
-    }
+      },
+    },
   );
 }
 
@@ -398,7 +412,7 @@ export function useSendAppointmentReminder() {
         channels,
         scheduledFor,
         timestamp: new Date().toISOString(),
-        compliance: 'HEALTHCARE_REMINDER_SENT'
+        compliance: 'HEALTHCARE_REMINDER_SENT',
       });
     },
 
@@ -409,7 +423,7 @@ export function useSendAppointmentReminder() {
         return {
           ...old,
           lastReminderSent: new Date().toISOString(),
-          reminderChannels: variables.channels
+          reminderChannels: variables.channels,
         };
       });
 
@@ -418,7 +432,7 @@ export function useSendAppointmentReminder() {
         sms: 'SMS',
         email: 'E-mail',
         push: 'Notificação',
-        phone: 'Telefone'
+        phone: 'Telefone',
       };
 
       const channelList = variables.channels
@@ -430,7 +444,7 @@ export function useSendAppointmentReminder() {
 
     onError: (error, variables) => {
       console.error('[Send Reminder Error]', error);
-      
+
       if (error.message.includes('consent')) {
         toast.error('Erro: Paciente não possui consentimento para comunicação.');
       } else if (error.message.includes('whatsapp')) {
@@ -438,7 +452,7 @@ export function useSendAppointmentReminder() {
       } else {
         toast.error('Erro ao enviar lembrete. Tente novamente.');
       }
-    }
+    },
   });
 }
 
@@ -461,7 +475,7 @@ export function useAppointmentRealTimeUpdates(options?: {
     const unsubscribe = trpc.realtimeTelemedicine.subscribeToAppointmentUpdates.subscribe(
       { appointmentId, professionalId, patientId },
       {
-        onData: (update) => {
+        onData: update => {
           // Update appointment cache with real-time data
           if (update.appointmentId) {
             queryClient.setQueryData(appointmentKeys.detail(update.appointmentId), (old: any) => {
@@ -470,7 +484,7 @@ export function useAppointmentRealTimeUpdates(options?: {
                 ...old,
                 ...update.data,
                 lastUpdate: new Date().toISOString(),
-                isRealTimeUpdate: true
+                isRealTimeUpdate: true,
               };
             });
 
@@ -483,7 +497,7 @@ export function useAppointmentRealTimeUpdates(options?: {
             appointmentId: update.appointmentId,
             updateType: update.type,
             timestamp: new Date().toISOString(),
-            compliance: 'HEALTHCARE_REALTIME_UPDATE'
+            compliance: 'HEALTHCARE_REALTIME_UPDATE',
           });
 
           // Show appropriate toast notifications
@@ -507,10 +521,10 @@ export function useAppointmentRealTimeUpdates(options?: {
               break;
           }
         },
-        onError: (error) => {
+        onError: error => {
           console.error('[Real-time Appointment Updates Error]', error);
-        }
-      }
+        },
+      },
     );
 
     return () => {
@@ -537,7 +551,7 @@ export function useAppointmentCalendar(params: {
       professionalId,
       date: date.toISOString(),
       view,
-      includeAvailability
+      includeAvailability,
     },
     {
       staleTime: 1 * 60 * 1000, // 1 minute for calendar data
@@ -545,16 +559,16 @@ export function useAppointmentCalendar(params: {
       retry: 2,
       refetchInterval: 2 * 60 * 1000, // Refresh every 2 minutes
 
-      select: (data) => ({
+      select: data => ({
         ...data,
         appointments: data.appointments?.map(apt => ({
           ...apt,
           isUpcoming: new Date(apt.scheduledFor) > new Date(),
           duration: apt.estimatedDuration || 30,
-          color: getAppointmentColor(apt.status, apt.noShowRisk)
-        })) || []
-      })
-    }
+          color: getAppointmentColor(apt.status, apt.noShowRisk),
+        })) || [],
+      }),
+    },
   );
 }
 
@@ -573,25 +587,28 @@ export function useAppointmentAnalytics(params: {
       professionalId,
       dateRange: {
         start: dateRange.start.toISOString(),
-        end: dateRange.end.toISOString()
+        end: dateRange.end.toISOString(),
       },
-      includeNoShowAnalysis
+      includeNoShowAnalysis,
     },
     {
       staleTime: 5 * 60 * 1000, // 5 minutes for analytics
       gcTime: 15 * 60 * 1000,
       retry: 1,
 
-      select: (data) => ({
+      select: data => ({
         ...data,
-        noShowRate: data.totalAppointments > 0 ? 
-          (data.noShows / data.totalAppointments) * 100 : 0,
-        completionRate: data.totalAppointments > 0 ? 
-          (data.completed / data.totalAppointments) * 100 : 0,
-        averageRisk: data.averageNoShowRisk ? 
-          Math.round(data.averageNoShowRisk * 100) : 0
-      })
-    }
+        noShowRate: data.totalAppointments > 0
+          ? (data.noShows / data.totalAppointments) * 100
+          : 0,
+        completionRate: data.totalAppointments > 0
+          ? (data.completed / data.totalAppointments) * 100
+          : 0,
+        averageRisk: data.averageNoShowRisk
+          ? Math.round(data.averageNoShowRisk * 100)
+          : 0,
+      }),
+    },
   );
 }
 
@@ -604,8 +621,8 @@ export function useAppointmentTemplates(professionalId: string) {
     {
       enabled: !!professionalId,
       staleTime: 10 * 60 * 1000, // 10 minutes for templates
-      gcTime: 30 * 60 * 1000
-    }
+      gcTime: 30 * 60 * 1000,
+    },
   );
 }
 
@@ -622,7 +639,7 @@ export function useAppointmentPerformanceMetrics() {
     averageLoadTime: 0,
     realTimeLatency: 0,
     errorRate: 0,
-    cacheHitRate: 0
+    cacheHitRate: 0,
   });
 
   React.useEffect(() => {
@@ -633,14 +650,15 @@ export function useAppointmentPerformanceMetrics() {
         .filter((m: any) => m.operationType.includes('appointment'));
 
       if (appointmentMetrics.length > 0) {
-        const avgTime = appointmentMetrics.reduce((sum: number, m: any) => sum + m.duration, 0) / appointmentMetrics.length;
+        const avgTime = appointmentMetrics.reduce((sum: number, m: any) => sum + m.duration, 0)
+          / appointmentMetrics.length;
         const errors = appointmentMetrics.filter((m: any) => !m.success).length;
 
         setMetrics({
           averageLoadTime: avgTime,
           realTimeLatency: avgTime, // Simplified for now
           errorRate: errors / appointmentMetrics.length,
-          cacheHitRate: 0.85 // Estimated cache hit rate
+          cacheHitRate: 0.85, // Estimated cache hit rate
         });
       }
     }
@@ -652,9 +670,9 @@ export function useAppointmentPerformanceMetrics() {
 // Helper functions for appointment utilities
 export const appointmentUtils = {
   formatTime: (date: string | Date) => {
-    return new Date(date).toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return new Date(date).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   },
 
@@ -662,7 +680,7 @@ export const appointmentUtils = {
     return new Date(date).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
   },
 
@@ -674,7 +692,7 @@ export const appointmentUtils = {
       completed: 'green',
       cancelled: 'red',
       no_show: 'red',
-      rescheduled: 'yellow'
+      rescheduled: 'yellow',
     };
     return colors[status as keyof typeof colors] || 'gray';
   },
@@ -695,7 +713,7 @@ export const appointmentUtils = {
     return interventions
       .sort((a, b) => b.priority - a.priority)
       .slice(0, 3);
-  }
+  },
 };
 
 // Helper function to get appointment color based on status and risk
@@ -709,7 +727,7 @@ function getAppointmentColor(status: string, noShowRisk?: number) {
 
 /**
  * Healthcare Compliance Summary:
- * 
+ *
  * This appointment hooks module implements comprehensive healthcare features:
  * - ✅ Real-time updates via WebSocket integration (T031)
  * - ✅ AI-powered no-show risk prediction and interventions
@@ -721,6 +739,6 @@ function getAppointmentColor(status: string, noShowRisk?: number) {
  * - ✅ Optimistic updates for improved UX
  * - ✅ Healthcare-specific error handling in Portuguese
  * - ✅ Calendar integration with visual status indicators
- * 
+ *
  * All operations are automatically logged for healthcare compliance.
  */

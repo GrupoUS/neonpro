@@ -67,7 +67,8 @@ describe('healthcare Sentry integration', () => {
     expect(typeof config.beforeBreadcrumb).toBe('function');
     expect(Array.isArray(config.integrations)).toBe(true);
     expect(mockScope.addEventProcessor).toHaveBeenCalled();
-  });  it('captures healthcare errors with sanitized context', () => {
+  });
+  it('captures healthcare errors with sanitized context', () => {
     const error = new Error('Patient João reported downtime');
 
     trackHealthcareError(error, {
@@ -81,10 +82,13 @@ describe('healthcare Sentry integration', () => {
 
     expect(mockSentry.withScope).toHaveBeenCalledTimes(1);
     expect(mockScope.setTag).toHaveBeenCalledWith('healthcare.error.category', expect.any(String));
-    expect(mockSentry.captureException).toHaveBeenCalledWith(error, expect.objectContaining({
-      tags: expect.any(Object),
-      extra: expect.any(Object),
-    }));
+    expect(mockSentry.captureException).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        tags: expect.any(Object),
+        extra: expect.any(Object),
+      }),
+    );
   });
 
   it('tracks healthcare performance operations, finishing the transaction even on errors', async () => {
@@ -96,7 +100,7 @@ describe('healthcare Sentry integration', () => {
       trackHealthcarePerformance('ai-analysis', operation, {
         medicalContext: 'ai',
         securityLevel: 'restricted',
-      })
+      }),
     ).rejects.toThrow('Timeout contacting AI model');
 
     expect(mockSentry.startTransaction).toHaveBeenCalledWith(expect.objectContaining({

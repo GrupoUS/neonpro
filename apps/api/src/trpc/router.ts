@@ -3,16 +3,16 @@
  * Combines all domain routers with healthcare compliance
  */
 
-import { router } from './trpc';
-import { patientsRouter } from './routers/patients';
-import { appointmentsRouter } from './routers/appointments';
 import { aiRouter } from './routers/ai';
+import { appointmentsRouter } from './routers/appointments';
 import { healthcareServicesRouter } from './routers/healthcare-services';
+import { patientsRouter } from './routers/patients';
 import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
+import { router } from './trpc';
 
 /**
  * App Router - Main tRPC router for the healthcare platform
- * 
+ *
  * Includes:
  * - Patients router with LGPD compliance
  * - Appointments router with CFM validation and no-show prediction

@@ -146,7 +146,7 @@ export const routeComponents = {
   patients: () =>
     createLazyComponent(
       () =>
-        import('@/routes/patients').then(m => ({
+        import('@/routes/patients/dashboard').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'patients-route',
@@ -172,7 +172,7 @@ export const routeComponents = {
   appointments: () =>
     createLazyComponent(
       () =>
-        import('@/routes/appointments').then(m => ({
+        import('@/routes/appointments/new').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'appointments-route',
@@ -190,7 +190,7 @@ export const routeComponents = {
   services: () =>
     createLazyComponent(
       () =>
-        import('@/routes/services').then(m => ({
+        import('@/routes/services/index').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'services-route',
@@ -198,7 +198,7 @@ export const routeComponents = {
   serviceCategories: () =>
     createLazyComponent(
       () =>
-        import('@/routes/service-categories').then(m => ({
+        import('@/routes/services/service-categories').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'service-categories-route',
@@ -208,7 +208,7 @@ export const routeComponents = {
   aiChat: () =>
     createLazyComponent(
       () =>
-        import('@/routes/ai-chat').then(m => ({
+        import('@/routes/ai/insights').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'ai-chat-route',
@@ -218,7 +218,7 @@ export const routeComponents = {
   governance: () =>
     createLazyComponent(
       () =>
-        import('@/routes/governance').then(m => ({
+        import('@/routes/admin/governance').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'governance-route',
@@ -226,7 +226,7 @@ export const routeComponents = {
   reports: () =>
     createLazyComponent(
       () =>
-        import('@/routes/reports').then(m => ({
+        import('@/routes/admin/reports').then(m => ({
           default: (m as any).Route?.component as ComponentType<any>,
         })),
       'reports-route',

@@ -3,8 +3,8 @@
  * Comprehensive consent tracking with database integration and compliance automation
  */
 
-import { createServerClient } from '../clients/supabase.js';
 import type { Database } from '../../../../packages/database/src/types/supabase';
+import { createServerClient } from '../clients/supabase.js';
 
 type ConsentRecord = Database['public']['Tables']['consent_records']['Row'];
 type ConsentInsert = Database['public']['Tables']['consent_records']['Insert'];
@@ -52,7 +52,9 @@ export class EnhancedLGPDConsentService {
   /**
    * Create a new consent record with comprehensive validation
    */
-  async createConsent(request: ConsentCreationRequest): Promise<{ success: boolean; consentId?: string; error?: string }> {
+  async createConsent(
+    request: ConsentCreationRequest,
+  ): Promise<{ success: boolean; consentId?: string; error?: string }> {
     try {
       // Validate required fields
       if (!request.patientId || !request.clinicId || !request.purpose) {
@@ -63,19 +65,22 @@ export class EnhancedLGPDConsentService {
       const existingConsent = await this.getActiveConsent(
         request.patientId,
         request.clinicId,
-        request.purpose
+        request.purpose,
       );
 
       if (existingConsent.isValid) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: 'Active consent already exists for this purpose',
-          consentId: existingConsent.consentRecord?.id
+          consentId: existingConsent.consentRecord?.id,
         };
       }
 
       // Calculate expiration date based on consent type and retention period
-      const expiresAt = this.calculateExpirationDate(request.consentType, request.retentionPeriodDays);
+      const expiresAt = this.calculateExpirationDate(
+        request.consentType,
+        request.retentionPeriodDays,
+      );
 
       // Prepare consent record
       const consentData: ConsentInsert = {
@@ -96,7 +101,7 @@ export class EnhancedLGPDConsentService {
         witnessed_by: request.witnessedBy || null,
         metadata: request.metadata || null,
         privacy_policy_version: await this.getCurrentPrivacyPolicyVersion(),
-        terms_version: await this.getCurrentTermsVersion()
+        terms_version: await this.getCurrentTermsVersion(),
       };
 
       // Insert consent record
@@ -118,7 +123,7 @@ export class EnhancedLGPDConsentService {
         clinicId: request.clinicId,
         purpose: request.purpose,
         consentType: request.consentType,
-        collectedBy: request.collectedBy
+        collectedBy: request.collectedBy,
       });
 
       return { success: true, consentId: data.id };
@@ -136,7 +141,7 @@ export class EnhancedLGPDConsentService {
     clinicId: string,
     purpose: string,
     dataCategories: string[],
-    minimumLevel: 'basic' | 'explicit' | 'granular' = 'basic'
+    minimumLevel: 'basic' | 'explicit' | 'granular' = 'basic',
   ): Promise<ConsentValidationResult> {
     try {
       const { data: consentRecords, error } = await this.supabase
@@ -162,11 +167,11 @@ export class EnhancedLGPDConsentService {
 
       // Check expiration
       if (mostRecentConsent.expires_at && new Date(mostRecentConsent.expires_at) < new Date()) {
-        return { 
-          isValid: false, 
+        return {
+          isValid: false,
           reason: 'Consent expired',
           renewalRequired: true,
-          expiresAt: new Date(mostRecentConsent.expires_at)
+          expiresAt: new Date(mostRecentConsent.expires_at),
         };
       }
 
@@ -176,21 +181,25 @@ export class EnhancedLGPDConsentService {
       }
 
       // Validate consent level
-      const levelHierarchy = { 'basic': 1, 'explicit': 2, 'granular': 3 };
-      const currentLevel = levelHierarchy[mostRecentConsent.consent_type as keyof typeof levelHierarchy] || 1;
+      const levelHierarchy = { basic: 1, explicit: 2, granular: 3 };
+      const currentLevel =
+        levelHierarchy[mostRecentConsent.consent_type as keyof typeof levelHierarchy] || 1;
       const requiredLevel = levelHierarchy[minimumLevel];
 
       if (currentLevel < requiredLevel) {
-        return { 
-          isValid: false, 
-          reason: `Insufficient consent level. Required: ${minimumLevel}, Current: ${mostRecentConsent.consent_type}` 
+        return {
+          isValid: false,
+          reason:
+            `Insufficient consent level. Required: ${minimumLevel}, Current: ${mostRecentConsent.consent_type}`,
         };
       }
 
       return {
         isValid: true,
         consentRecord: mostRecentConsent,
-        expiresAt: mostRecentConsent.expires_at ? new Date(mostRecentConsent.expires_at) : undefined
+        expiresAt: mostRecentConsent.expires_at
+          ? new Date(mostRecentConsent.expires_at)
+          : undefined,
       };
     } catch (error) {
       console.error('Error in validateConsent:', error);
@@ -204,7 +213,7 @@ export class EnhancedLGPDConsentService {
   async getActiveConsent(
     patientId: string,
     clinicId: string,
-    purpose: string
+    purpose: string,
   ): Promise<ConsentValidationResult> {
     try {
       const { data, error } = await this.supabase
@@ -230,18 +239,18 @@ export class EnhancedLGPDConsentService {
 
       // Check if expired
       if (data.expires_at && new Date(data.expires_at) < new Date()) {
-        return { 
-          isValid: false, 
+        return {
+          isValid: false,
           reason: 'Consent expired',
           renewalRequired: true,
-          expiresAt: new Date(data.expires_at)
+          expiresAt: new Date(data.expires_at),
         };
       }
 
       return {
         isValid: true,
         consentRecord: data,
-        expiresAt: data.expires_at ? new Date(data.expires_at) : undefined
+        expiresAt: data.expires_at ? new Date(data.expires_at) : undefined,
       };
     } catch (error) {
       console.error('Error in getActiveConsent:', error);
@@ -252,7 +261,9 @@ export class EnhancedLGPDConsentService {
   /**
    * Withdraw consent with proper audit trail
    */
-  async withdrawConsent(request: ConsentWithdrawalRequest): Promise<{ success: boolean; error?: string }> {
+  async withdrawConsent(
+    request: ConsentWithdrawalRequest,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const effectiveDate = request.effectiveDate || new Date();
 
@@ -262,7 +273,7 @@ export class EnhancedLGPDConsentService {
           status: 'withdrawn',
           withdrawn_at: effectiveDate.toISOString(),
           notes: request.reason,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', request.consentId)
         .select()
@@ -280,7 +291,7 @@ export class EnhancedLGPDConsentService {
         reason: request.reason,
         effectiveDate: effectiveDate.toISOString(),
         patientId: data.patient_id,
-        clinicId: data.clinic_id
+        clinicId: data.clinic_id,
       });
 
       return { success: true };
@@ -296,7 +307,7 @@ export class EnhancedLGPDConsentService {
   async getConsentHistory(
     patientId: string,
     clinicId: string,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<{ success: boolean; consents?: ConsentRecord[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -324,7 +335,7 @@ export class EnhancedLGPDConsentService {
    */
   async getConsentsRequiringRenewal(
     clinicId: string,
-    daysBeforeExpiration: number = 30
+    daysBeforeExpiration: number = 30,
   ): Promise<{ success: boolean; consents?: ConsentRecord[]; error?: string }> {
     try {
       const renewalDate = new Date();
@@ -354,7 +365,9 @@ export class EnhancedLGPDConsentService {
   /**
    * Generate consent receipt for patient records
    */
-  async generateConsentReceipt(consentId: string): Promise<{ success: boolean; receipt?: any; error?: string }> {
+  async generateConsentReceipt(
+    consentId: string,
+  ): Promise<{ success: boolean; receipt?: any; error?: string }> {
     try {
       const { data: consent, error } = await this.supabase
         .from('consent_records')
@@ -375,11 +388,11 @@ export class EnhancedLGPDConsentService {
         consentId: consent.id,
         patient: {
           name: consent.patients?.name,
-          email: consent.patients?.email
+          email: consent.patients?.email,
         },
         clinic: {
           name: consent.clinics?.name,
-          address: consent.clinics?.address
+          address: consent.clinics?.address,
         },
         consentDetails: {
           type: consent.consent_type,
@@ -389,14 +402,14 @@ export class EnhancedLGPDConsentService {
           legalBasis: consent.legal_basis,
           givenAt: consent.given_at,
           expiresAt: consent.expires_at,
-          collectionMethod: consent.collection_method
+          collectionMethod: consent.collection_method,
         },
         compliance: {
           privacyPolicyVersion: consent.privacy_policy_version,
           termsVersion: consent.terms_version,
-          lgpdCompliant: true
+          lgpdCompliant: true,
         },
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
 
       return { success: true, receipt };
@@ -412,9 +425,9 @@ export class EnhancedLGPDConsentService {
     if (!retentionPeriodDays) {
       // Default retention periods based on Brazilian healthcare regulations
       const defaultRetentions = {
-        'basic': 365 * 2,      // 2 years for basic data
-        'explicit': 365 * 5,   // 5 years for medical records
-        'granular': 365 * 20   // 20 years for aesthetic procedures
+        basic: 365 * 2, // 2 years for basic data
+        explicit: 365 * 5, // 5 years for medical records
+        granular: 365 * 20, // 20 years for aesthetic procedures
       };
       retentionPeriodDays = defaultRetentions[consentType as keyof typeof defaultRetentions] || 365;
     }
@@ -476,8 +489,8 @@ export class EnhancedLGPDConsentService {
         clinic_id: eventData.clinicId,
         compliance_flags: {
           lgpd_compliant: true,
-          event_category: 'consent_management'
-        }
+          event_category: 'consent_management',
+        },
       };
 
       // Insert into audit_logs table

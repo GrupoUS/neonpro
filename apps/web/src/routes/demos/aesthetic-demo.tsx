@@ -6,10 +6,10 @@ import type {
   DashboardMetrics,
   ProcedureRecommendation,
   RecentActivity,
-} from '../components/aesthetic';
-import { AestheticAssessmentForm } from '../components/aesthetic/AestheticAssessmentForm';
-import { ProcedureRecommendations } from '../components/aesthetic/ProcedureRecommendations';
-import { ProfessionalDashboard } from '../components/aesthetic/ProfessionalDashboard';
+} from '@/components/aesthetic';
+import { AestheticAssessmentForm } from '@/components/aesthetic/AestheticAssessmentForm';
+import { ProcedureRecommendations } from '@/components/aesthetic/ProcedureRecommendations';
+import { ProfessionalDashboard } from '@/components/aesthetic/ProfessionalDashboard';
 
 function AestheticDemo() {
   const [currentStep, setCurrentStep] = useState<'assessment' | 'recommendations' | 'dashboard'>(

@@ -1,7 +1,7 @@
 /**
  * Enhanced Patients tRPC Router with LGPD Compliance
  * T024: Complete implementation with audit logging, consent management, and data minimization
- * 
+ *
  * Features:
  * - LGPD-compliant patient management with cryptographic consent
  * - Automatic audit logging for all patient data access
@@ -10,28 +10,28 @@
  * - Brazilian healthcare compliance (CPF, CNS, CFM integration)
  */
 
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { router, protectedProcedure, patientProcedure, healthcareProcedure } from '../trpc';
-import { 
-  CreatePatientSchema, 
-  UpdatePatientSchema, 
-  GetPatientSchema, 
-  ListPatientsSchema,
-  CreateConsentSchema 
-} from '../schemas';
-import { 
-  CreatePatientValibot,
-  PatientSearchValibot,
-  PatientConsentWithdrawalValibot,
-  PatientExportValibot
-} from '../../../../../../packages/types/src/patient.valibot';
-import { 
-  CreateLGPDConsentValibot,
-  ConsentWithdrawalValibot,
-  ConsentVerificationValibot
-} from '../../../../../../packages/types/src/lgpd.valibot';
-import { AuditAction, ResourceType, AuditStatus, RiskLevel } from '@prisma/client';
 import * as v from 'valibot';
+import {
+  ConsentVerificationValibot,
+  ConsentWithdrawalValibot,
+  CreateLGPDConsentValibot,
+} from '../../../../../../packages/types/src/lgpd.valibot';
+import {
+  CreatePatientValibot,
+  PatientConsentWithdrawalValibot,
+  PatientExportValibot,
+  PatientSearchValibot,
+} from '../../../../../../packages/types/src/patient.valibot';
+import {
+  CreateConsentSchema,
+  CreatePatientSchema,
+  GetPatientSchema,
+  ListPatientsSchema,
+  UpdatePatientSchema,
+} from '../schemas';
+import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // LGPD COMPLIANCE UTILITIES
@@ -77,10 +77,11 @@ function minimizePatientData(patient: any, userRole: string, consentLevel: strin
   }
 
   return baseFields;
-}/**
+} /**
  * Cryptographic consent validation
  * Verifies consent integrity and validity
  */
+
 async function validateConsent(patientId: string, operation: string, prisma: any) {
   const consent = await prisma.lGPDConsent.findFirst({
     where: {
@@ -118,7 +119,7 @@ async function validateConsent(patientId: string, operation: string, prisma: any
 function generateCryptographicProof(operation: string, data: any) {
   const timestamp = new Date().toISOString();
   const dataHash = Buffer.from(JSON.stringify(data)).toString('base64');
-  
+
   return {
     timestamp,
     operation,
@@ -165,7 +166,8 @@ async function anonymizePatientData(patientId: string, prisma: any) {
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const patientsRouter = router({  /**
+export const patientsRouter = router({
+  /**
    * Create Patient with LGPD Compliance
    * Includes cryptographic consent management and audit logging
    */
@@ -185,7 +187,7 @@ export const patientsRouter = router({  /**
         const consentProof = generateCryptographicProof('patient_creation', input);
 
         // Create patient with LGPD compliance
-        const patient = await ctx.prisma.$transaction(async (prisma) => {
+        const patient = await ctx.prisma.$transaction(async prisma => {
           // Create patient record
           const newPatient = await prisma.patient.create({
             data: {
@@ -293,7 +295,7 @@ export const patientsRouter = router({  /**
           cause: error,
         });
       }
-    }),  /**
+    }), /**
    * Get Patient with LGPD Data Minimization
    * Returns only data authorized by consent and user role
    */
@@ -331,7 +333,7 @@ export const patientsRouter = router({  /**
         const minimizedData = minimizePatientData(
           patient,
           ctx.userRole || 'user',
-          consent.consentType || 'basic'
+          consent.consentType || 'basic',
         );
 
         // Create audit trail for data access
@@ -390,18 +392,18 @@ export const patientsRouter = router({  /**
 
         throw error;
       }
-    }),  /**
+    }), /**
    * List Patients with LGPD-compliant Search
    * Includes data minimization and consent filtering
    */
   list: protectedProcedure
     .input(ListPatientsSchema)
     .query(async ({ ctx, input }) => {
-      const { 
-        limit = 20, 
-        offset = 0, 
-        search, 
-        isActive = true 
+      const {
+        limit = 20,
+        offset = 0,
+        search,
+        isActive = true,
       } = input;
 
       try {
@@ -442,7 +444,7 @@ export const patientsRouter = router({  /**
           return minimizePatientData(
             patient,
             ctx.userRole || 'user',
-            consent?.consentType || 'basic'
+            consent?.consentType || 'basic',
           );
         });
 
@@ -489,7 +491,7 @@ export const patientsRouter = router({  /**
           cause: error,
         });
       }
-    }),  /**
+    }), /**
    * Update Patient with Consent Validation
    * Validates consent before allowing updates
    */
@@ -506,7 +508,7 @@ export const patientsRouter = router({  /**
         const updateProof = generateCryptographicProof('patient_update', updateData);
 
         const updatedPatient = await ctx.prisma.patient.update({
-          where: { 
+          where: {
             id,
             clinicId: ctx.clinicId,
           },
@@ -574,7 +576,7 @@ export const patientsRouter = router({  /**
           userId: ctx.userId,
         });
 
-        const result = await ctx.prisma.$transaction(async (prisma) => {
+        const result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {
@@ -665,5 +667,4 @@ export const patientsRouter = router({  /**
         },
       };
     }),
-
 });

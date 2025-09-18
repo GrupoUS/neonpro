@@ -1,6 +1,6 @@
 /**
  * Enhanced Patient Hooks with tRPC Integration and LGPD Compliance
- * 
+ *
  * Features:
  * - tRPC integration with healthcare backend
  * - LGPD compliance with audit logging
@@ -13,8 +13,8 @@
 
 import { trpc } from '@/lib/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import React from 'react';
+import { toast } from 'sonner';
 
 // Enhanced Patient Query Keys for tRPC integration
 export const patientKeys = {
@@ -40,7 +40,7 @@ export function usePatientsList(options?: {
     page = 0,
     limit = 20,
     search = '',
-    includeInactive = false
+    includeInactive = false,
   } = options || {};
 
   return trpc.patients.list.useQuery(
@@ -48,30 +48,30 @@ export function usePatientsList(options?: {
       page,
       limit,
       search,
-      includeInactive
+      includeInactive,
     },
     {
       staleTime: 30 * 1000, // 30 seconds for patient data freshness
       gcTime: 5 * 60 * 1000, // 5 minutes cache time
       retry: 3, // Retry for critical patient data
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-      
+
       // LGPD Compliance: Log patient data access
-      onSuccess: (data) => {
+      onSuccess: data => {
         console.log('[LGPD Audit] Patient list accessed', {
           timestamp: new Date().toISOString(),
           recordCount: data?.patients?.length || 0,
           hasSearch: !!search,
-          compliance: 'LGPD_DATA_ACCESS'
+          compliance: 'LGPD_DATA_ACCESS',
         });
       },
 
       // Healthcare error handling
-      onError: (error) => {
+      onError: error => {
         console.error('[Patient List Error]', error);
         toast.error('Erro ao carregar lista de pacientes. Tente novamente.');
-      }
-    }
+      },
+    },
   );
 }
 
@@ -92,22 +92,22 @@ export function usePatient(patientId: string, options?: {
       retry: 2,
 
       // LGPD Compliance: Log individual patient access
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (data) {
           console.log('[LGPD Audit] Patient data accessed', {
             patientId: data.id,
             timestamp: new Date().toISOString(),
             dataFields: Object.keys(data),
-            compliance: 'LGPD_INDIVIDUAL_ACCESS'
+            compliance: 'LGPD_INDIVIDUAL_ACCESS',
           });
         }
       },
 
-      onError: (error) => {
+      onError: error => {
         console.error('[Patient Get Error]', error);
         toast.error('Erro ao carregar dados do paciente.');
-      }
-    }
+      },
+    },
   );
 }
 
@@ -119,7 +119,7 @@ export function useCreatePatient() {
 
   return trpc.patients.create.useMutation({
     // Optimistic updates for better UX
-    onMutate: async (newPatient) => {
+    onMutate: async newPatient => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: patientKeys.lists() });
 
@@ -131,24 +131,24 @@ export function useCreatePatient() {
         timestamp: new Date().toISOString(),
         hasConsent: !!newPatient.consent,
         consentTypes: newPatient.consent ? Object.keys(newPatient.consent) : [],
-        compliance: 'LGPD_CONSENT_COLLECTION'
+        compliance: 'LGPD_CONSENT_COLLECTION',
       });
 
       // Optimistically update to the new value
       queryClient.setQueryData(patientKeys.lists(), (old: any) => {
         if (!old) return old;
-        
+
         const optimisticPatient = {
           id: `temp-${Date.now()}`, // Temporary ID
           ...newPatient,
           createdAt: new Date().toISOString(),
-          status: 'creating' // Indicate optimistic state
+          status: 'creating', // Indicate optimistic state
         };
 
         return {
           ...old,
           patients: [optimisticPatient, ...(old.patients || [])],
-          total: (old.total || 0) + 1
+          total: (old.total || 0) + 1,
         };
       });
 
@@ -158,7 +158,7 @@ export function useCreatePatient() {
     onSuccess: (data, variables) => {
       // Update cache with real patient data
       queryClient.setQueryData(patientKeys.detail(data.id), data);
-      
+
       // Invalidate and refetch patient lists
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
 
@@ -167,7 +167,7 @@ export function useCreatePatient() {
         patientId: data.id,
         timestamp: new Date().toISOString(),
         consentRecorded: true,
-        compliance: 'LGPD_DATA_PROCESSING'
+        compliance: 'LGPD_DATA_PROCESSING',
       });
 
       toast.success(`Paciente ${data.fullName} criado com sucesso!`);
@@ -180,7 +180,7 @@ export function useCreatePatient() {
       }
 
       console.error('[Create Patient Error]', error);
-      
+
       // Healthcare-specific error handling
       if (error.message.includes('CPF')) {
         toast.error('CPF já cadastrado ou inválido.');
@@ -191,7 +191,7 @@ export function useCreatePatient() {
       } else {
         toast.error('Erro ao criar paciente. Tente novamente.');
       }
-    }
+    },
   });
 }
 
@@ -214,7 +214,7 @@ export function useUpdatePatient() {
         patientId: id,
         timestamp: new Date().toISOString(),
         fieldsModified: Object.keys(data),
-        compliance: 'LGPD_DATA_MODIFICATION'
+        compliance: 'LGPD_DATA_MODIFICATION',
       });
 
       // Optimistically update
@@ -223,7 +223,7 @@ export function useUpdatePatient() {
         return {
           ...old,
           ...data,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
       });
 
@@ -233,7 +233,7 @@ export function useUpdatePatient() {
     onSuccess: (data, variables) => {
       // Update cache with server response
       queryClient.setQueryData(patientKeys.detail(data.id), data);
-      
+
       // Invalidate lists to refresh updated data
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
 
@@ -248,7 +248,7 @@ export function useUpdatePatient() {
 
       console.error('[Update Patient Error]', error);
       toast.error('Erro ao atualizar paciente. Tente novamente.');
-    }
+    },
   });
 }
 
@@ -265,13 +265,13 @@ export function useWithdrawPatientConsent() {
         patientId,
         consentTypes,
         timestamp: new Date().toISOString(),
-        compliance: 'LGPD_CONSENT_WITHDRAWAL'
+        compliance: 'LGPD_CONSENT_WITHDRAWAL',
       });
 
       // Show confirmation dialog
       const confirmed = window.confirm(
-        'Tem certeza que deseja retirar o consentimento? ' +
-        'Esta ação resultará na anonimização dos dados do paciente e não pode ser desfeita.'
+        'Tem certeza que deseja retirar o consentimento? '
+          + 'Esta ação resultará na anonimização dos dados do paciente e não pode ser desfeita.',
       );
 
       if (!confirmed) {
@@ -291,7 +291,7 @@ export function useWithdrawPatientConsent() {
         patientId: variables.patientId,
         timestamp: new Date().toISOString(),
         anonymizationComplete: true,
-        compliance: 'LGPD_RIGHT_TO_BE_FORGOTTEN'
+        compliance: 'LGPD_RIGHT_TO_BE_FORGOTTEN',
       });
 
       toast.success('Consentimento retirado e dados anonimizados com sucesso.');
@@ -305,7 +305,7 @@ export function useWithdrawPatientConsent() {
 
       console.error('[Withdraw Consent Error]', error);
       toast.error('Erro ao retirar consentimento. Tente novamente.');
-    }
+    },
   });
 }
 
@@ -320,16 +320,16 @@ export function usePatientConsentStatus(patientId: string) {
       staleTime: 5 * 60 * 1000, // 5 minutes for consent status
       gcTime: 10 * 60 * 1000,
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         // LGPD Compliance: Log consent status access
         console.log('[LGPD Audit] Consent status accessed', {
           patientId,
           timestamp: new Date().toISOString(),
           consentStatus: data?.status,
-          compliance: 'LGPD_CONSENT_TRACKING'
+          compliance: 'LGPD_CONSENT_TRACKING',
         });
-      }
-    }
+      },
+    },
   );
 }
 
@@ -354,25 +354,25 @@ export function usePatientSearch(query: string, options?: {
   return trpc.patients.list.useQuery(
     {
       search: debouncedQuery,
-      limit: 10 // Limit search results for performance
+      limit: 10, // Limit search results for performance
     },
     {
       enabled: debouncedQuery.length >= minLength,
       staleTime: 30 * 1000,
       gcTime: 2 * 60 * 1000,
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (debouncedQuery.length >= minLength) {
           // LGPD Compliance: Log patient search
           console.log('[LGPD Audit] Patient search performed', {
             searchQuery: debouncedQuery,
             resultCount: data?.patients?.length || 0,
             timestamp: new Date().toISOString(),
-            compliance: 'LGPD_DATA_ACCESS'
+            compliance: 'LGPD_DATA_ACCESS',
           });
         }
-      }
-    }
+      },
+    },
   );
 }
 
@@ -396,17 +396,18 @@ export function usePrefetchPatients() {
   }) => {
     queryClient.prefetchQuery({
       queryKey: patientKeys.list(options),
-      queryFn: () => trpc.patients.list.fetch({
-        page: options?.page || 0,
-        limit: options?.limit || 20
-      }),
+      queryFn: () =>
+        trpc.patients.list.fetch({
+          page: options?.page || 0,
+          limit: options?.limit || 20,
+        }),
       staleTime: 30 * 1000, // 30 seconds
     });
   }, [queryClient]);
 
   return {
     prefetchPatient,
-    prefetchPatientsList
+    prefetchPatientsList,
   };
 }
 
@@ -423,7 +424,7 @@ export function useBulkPatientOperations() {
         patientCount: patientIds.length,
         timestamp: new Date().toISOString(),
         updateTypes: Object.keys(consentUpdates),
-        compliance: 'LGPD_BULK_CONSENT_UPDATE'
+        compliance: 'LGPD_BULK_CONSENT_UPDATE',
       });
     },
 
@@ -437,14 +438,14 @@ export function useBulkPatientOperations() {
       toast.success(`Consentimento atualizado para ${variables.patientIds.length} pacientes.`);
     },
 
-    onError: (error) => {
+    onError: error => {
       console.error('[Bulk Consent Update Error]', error);
       toast.error('Erro na atualização em lote. Tente novamente.');
-    }
+    },
   });
 
   return {
-    bulkUpdateConsent
+    bulkUpdateConsent,
   };
 }
 
@@ -462,14 +463,14 @@ export function usePatientRealTimeUpdates(patientId?: string) {
     const unsubscribe = trpc.realtimeTelemedicine.subscribeToPatientUpdates.subscribe(
       { patientId },
       {
-        onData: (update) => {
+        onData: update => {
           // Update patient cache with real-time data
           queryClient.setQueryData(patientKeys.detail(patientId), (old: any) => {
             if (!old) return old;
             return {
               ...old,
               ...update,
-              lastUpdate: new Date().toISOString()
+              lastUpdate: new Date().toISOString(),
             };
           });
 
@@ -478,7 +479,7 @@ export function usePatientRealTimeUpdates(patientId?: string) {
             patientId,
             updateType: update.type,
             timestamp: new Date().toISOString(),
-            compliance: 'LGPD_REALTIME_UPDATE'
+            compliance: 'LGPD_REALTIME_UPDATE',
           });
 
           // Show toast for important updates
@@ -486,10 +487,10 @@ export function usePatientRealTimeUpdates(patientId?: string) {
             toast.info('Agendamento atualizado em tempo real.');
           }
         },
-        onError: (error) => {
+        onError: error => {
           console.error('[Real-time Patient Updates Error]', error);
-        }
-      }
+        },
+      },
     );
 
     return () => {
@@ -511,7 +512,7 @@ export function usePatientPerformanceMetrics() {
   }>({
     averageLoadTime: 0,
     slowOperations: 0,
-    errorRate: 0
+    errorRate: 0,
   });
 
   React.useEffect(() => {
@@ -522,14 +523,15 @@ export function usePatientPerformanceMetrics() {
         .filter((m: any) => m.operationType.includes('patient'));
 
       if (patientMetrics.length > 0) {
-        const avgTime = patientMetrics.reduce((sum: number, m: any) => sum + m.duration, 0) / patientMetrics.length;
+        const avgTime = patientMetrics.reduce((sum: number, m: any) => sum + m.duration, 0)
+          / patientMetrics.length;
         const slowOps = patientMetrics.filter((m: any) => m.duration > 2000).length;
         const errors = patientMetrics.filter((m: any) => !m.success).length;
 
         setMetrics({
           averageLoadTime: avgTime,
           slowOperations: slowOps,
-          errorRate: errors / patientMetrics.length
+          errorRate: errors / patientMetrics.length,
         });
       }
     }
@@ -543,7 +545,7 @@ export const patientUtils = {
   formatCPF: (cpf: string) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
-  
+
   formatPhone: (phone: string) => {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   },
@@ -556,17 +558,21 @@ export const patientUtils = {
 
   getConsentStatusColor: (status: string) => {
     switch (status) {
-      case 'granted': return 'green';
-      case 'partial': return 'yellow';
-      case 'withdrawn': return 'red';
-      default: return 'gray';
+      case 'granted':
+        return 'green';
+      case 'partial':
+        return 'yellow';
+      case 'withdrawn':
+        return 'red';
+      default:
+        return 'gray';
     }
-  }
+  },
 };
 
 /**
  * LGPD Compliance Summary:
- * 
+ *
  * This hook module implements comprehensive LGPD compliance:
  * - ✅ Audit logging for all patient data operations
  * - ✅ Consent management and withdrawal functionality
@@ -576,6 +582,6 @@ export const patientUtils = {
  * - ✅ Real-time updates with compliance logging
  * - ✅ Performance monitoring for mobile healthcare users
  * - ✅ Healthcare-specific error handling in Portuguese
- * 
+ *
  * All operations are automatically logged for LGPD audit compliance.
  */

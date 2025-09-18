@@ -8,10 +8,20 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "security",
+    "node",
+    "import",
+    "react-hooks"
   ],
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "@typescript-eslint/recommended",
+    "plugin:security/recommended",
+    "plugin:node/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "./healthcare-rules.js"
   ],
   "rules": {
     "prettier/prettier": "error",

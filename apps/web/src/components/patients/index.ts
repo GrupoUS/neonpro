@@ -1,9 +1,9 @@
 /**
  * NeonPro Mobile-First Healthcare UI Components
- * 
+ *
  * LGPD-compliant patient management interfaces for Brazilian aesthetic clinics
  * Built with shadcn/ui, React Hook Form, and Valibot validation
- * 
+ *
  * Features:
  * - Mobile-first responsive design (70%+ smartphone usage in Brazil)
  * - LGPD compliance with progressive data disclosure
@@ -15,52 +15,50 @@
  */
 
 // Core Patient Management Components
-export { default as MobilePatientList } from './MobilePatientList';
-export { default as MobilePatientCard } from './MobilePatientCard';
-export { default as HealthcareSearch } from './HealthcareSearch';
 export { default as ConsentManagementDialog } from './ConsentManagementDialog';
 export { default as EnhancedPatientRegistrationForm } from './EnhancedPatientRegistrationForm';
+export { default as HealthcareSearch } from './HealthcareSearch';
+export { default as MobilePatientCard } from './MobilePatientCard';
+export { default as MobilePatientList } from './MobilePatientList';
 
 // Error Handling & Safety
-export { 
+export {
   PatientErrorBoundary as default,
+  usePatientErrorHandler,
   withPatientErrorBoundary,
-  usePatientErrorHandler 
 } from './PatientErrorBoundary';
 
 // Accessibility & Compliance
 export {
   AccessibilityProvider,
   useAccessibility,
-  withAccessibility,
+  useFocusManagement,
   useKeyboardNavigation,
-  useFocusManagement
+  withAccessibility,
 } from './AccessibilityProvider';
 
 // Brazilian Healthcare Validation
 export {
-  // Validation schemas
-  BasicPatientSchema,
-  BrazilianAddressSchema,
-  PatientConsentSchema,
-  CompletePatientRegistrationSchema,
-  CpfSchema,
-  CnsSchema,
-  BrazilianPhoneSchema,
-  CepSchema,
-  BrazilianStateSchema,
-  
-  // Validation functions
-  validateCpf,
-  validateCns,
-  validateBrazilianPhone,
-  validatePatientData,
-  
   // TypeScript types
   type BasicPatient,
+  // Validation schemas
+  BasicPatientSchema,
   type BrazilianAddress,
-  type PatientConsent,
+  BrazilianAddressSchema,
+  BrazilianPhoneSchema,
+  BrazilianStateSchema,
+  CepSchema,
+  CnsSchema,
   type CompletePatientRegistration,
+  CompletePatientRegistrationSchema,
+  CpfSchema,
+  type PatientConsent,
+  PatientConsentSchema,
+  validateBrazilianPhone,
+  validateCns,
+  // Validation functions
+  validateCpf,
+  validatePatientData,
 } from './validation/brazilian-healthcare-schemas';
 
 // Component Props Types
@@ -124,12 +122,12 @@ export const formatters = {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
-  
+
   cns: (value: string) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
   },
-  
+
   phone: (value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length === 11) {
@@ -139,7 +137,7 @@ export const formatters = {
     }
     return value;
   },
-  
+
   cep: (value: string) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
@@ -148,16 +146,41 @@ export const formatters = {
 
 // Brazilian states list
 export const BRAZILIAN_STATES = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS',
-  'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC',
-  'SP', 'SE', 'TO'
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ] as const;
 
 // LGPD consent purposes for aesthetic clinics
 export const LGPD_CONSENT_PURPOSES = {
   data_processing: {
     title: 'Processamento de Dados Pessoais',
-    description: 'Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos',
+    description:
+      'Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos',
     required: true,
   },
   marketing: {
@@ -167,17 +190,20 @@ export const LGPD_CONSENT_PURPOSES = {
   },
   third_party_sharing: {
     title: 'Compartilhamento com Terceiros',
-    description: 'Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos',
+    description:
+      'Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos',
     required: false,
   },
   research: {
     title: 'Pesquisa e Desenvolvimento',
-    description: 'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos',
+    description:
+      'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos',
     required: false,
   },
   telehealth: {
     title: 'Telemedicina',
-    description: 'Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância',
+    description:
+      'Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância',
     required: false,
   },
 } as const;
@@ -214,9 +240,9 @@ export const NEONPRO_STANDARDS = {
 
 /**
  * Usage Examples:
- * 
+ *
  * ```tsx
- * import { 
+ * import {
  *   MobilePatientList,
  *   MobilePatientCard,
  *   ConsentManagementDialog,
@@ -227,7 +253,7 @@ export const NEONPRO_STANDARDS = {
  *   validateCpf,
  *   formatters
  * } from '@/components/patients';
- * 
+ *
  * // Wrap your app with providers
  * function App() {
  *   return (
@@ -238,11 +264,11 @@ export const NEONPRO_STANDARDS = {
  *     </AccessibilityProvider>
  *   );
  * }
- * 
+ *
  * // Use mobile-first patient list
  * function PatientManagement() {
  *   const [patients, setPatients] = useState<MobilePatientData[]>([]);
- * 
+ *
  *   return (
  *     <MobilePatientList
  *       patients={patients}
@@ -251,7 +277,7 @@ export const NEONPRO_STANDARDS = {
  *     />
  *   );
  * }
- * 
+ *
  * // Validate Brazilian documents
  * const isValidCpf = validateCpf('123.456.789-00');
  * const formattedPhone = formatters.phone('11999999999');

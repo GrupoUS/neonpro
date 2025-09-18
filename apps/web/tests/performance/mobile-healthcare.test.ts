@@ -1,32 +1,32 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * T043: Performance Testing for Mobile Healthcare Operations
- * 
+ *
  * BRAZILIAN HEALTHCARE MOBILE REQUIREMENTS:
  * - Page load times <2s on 3G networks (70%+ smartphone usage)
  * - API response times <500ms for patient operations
  * - PWA capabilities for offline appointment booking
  * - Bundle size optimization for mobile users
  * - Real-time features performance on mobile networks
- * 
+ *
  * TDD RED PHASE: These tests are designed to FAIL initially to drive implementation
  */
 
 // Mock Performance Observer for testing
 class MockPerformanceObserver {
   private callback: PerformanceObserverCallback;
-  
+
   constructor(callback: PerformanceObserverCallback) {
     this.callback = callback;
   }
-  
+
   observe() {}
   disconnect() {}
-  
+
   // Helper to trigger callback manually in tests
   triggerCallback(entries: PerformanceEntry[]) {
     this.callback({ getEntries: () => entries } as any, this);
@@ -82,16 +82,18 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       return undefined as any;
     });
 
-    vi.spyOn(performance, 'measure').mockImplementation((name: string, startMark?: string, endMark?: string) => {
-      const duration = Math.random() * 1000; // Simulate measurement
-      performanceEntries.push({
-        name,
-        entryType: 'measure',
-        startTime: performance.now() - duration,
-        duration,
-      } as PerformanceEntry);
-      return undefined as any;
-    });
+    vi.spyOn(performance, 'measure').mockImplementation(
+      (name: string, startMark?: string, endMark?: string) => {
+        const duration = Math.random() * 1000; // Simulate measurement
+        performanceEntries.push({
+          name,
+          entryType: 'measure',
+          startTime: performance.now() - duration,
+          duration,
+        } as PerformanceEntry);
+        return undefined as any;
+      },
+    );
 
     // Setup Performance Observer mock
     global.PerformanceObserver = MockPerformanceObserver as any;
@@ -106,35 +108,36 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
     it('should load patient dashboard under 2 seconds on 3G', async () => {
       // Simulate 3G network conditions
       const startTime = performance.now();
-      
+
       // Mock slow network response
       global.fetch = vi.fn().mockImplementation(() =>
         new Promise(resolve => {
           setTimeout(() => {
             resolve({
               ok: true,
-              json: () => Promise.resolve({
-                patients: [
-                  { id: '1', name: 'João Silva', phone: '+5511999887766' },
-                  { id: '2', name: 'Maria Santos', phone: '+5511888776655' },
-                ],
-              }),
+              json: () =>
+                Promise.resolve({
+                  patients: [
+                    { id: '1', name: 'João Silva', phone: '+5511999887766' },
+                    { id: '2', name: 'Maria Santos', phone: '+5511888776655' },
+                  ],
+                }),
             });
           }, 300); // Simulate 3G latency
         })
       );
 
       const PatientDashboard = () => (
-        <div data-testid="patient-dashboard">
+        <div data-testid='patient-dashboard'>
           <h1>Pacientes</h1>
-          <div data-testid="patient-list">Loading...</div>
+          <div data-testid='patient-list'>Loading...</div>
         </div>
       );
 
       render(
         <QueryClientProvider client={queryClient}>
           <PatientDashboard />
-        </QueryClientProvider>
+        </QueryClientProvider>,
       );
 
       await waitFor(() => {
@@ -142,7 +145,7 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       });
 
       const loadTime = performance.now() - startTime;
-      
+
       // CRITICAL: Page load must be under 2 seconds for Brazilian mobile users
       expect(loadTime).toBeLessThan(2000);
     });
@@ -159,10 +162,10 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
 
       for (const resource of criticalResources) {
         const startTime = performance.now();
-        
+
         // Simulate resource loading
         await new Promise(resolve => setTimeout(resolve, 100));
-        
+
         loadingTimes[resource] = performance.now() - startTime;
       }
 
@@ -181,24 +184,25 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       // Mock patient search API
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({
-          patients: [
-            {
-              id: '123',
-              name: 'João Silva',
-              phone: '+5511999887766',
-              cpf: '123.456.789-01',
-              last_visit: '2025-09-10',
-            },
-          ],
-          total: 1,
-          query_time_ms: 45,
-        }),
+        json: () =>
+          Promise.resolve({
+            patients: [
+              {
+                id: '123',
+                name: 'João Silva',
+                phone: '+5511999887766',
+                cpf: '123.456.789-01',
+                last_visit: '2025-09-10',
+              },
+            ],
+            total: 1,
+            query_time_ms: 45,
+          }),
       });
 
       const response = await fetch(`/api/patients/search?q=${searchQuery}`);
       const data = await response.json();
-      
+
       const responseTime = performance.now() - startTime;
 
       // CRITICAL: Patient search must be fast for clinical workflow
@@ -221,16 +225,17 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       // Mock appointment creation API
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({
-          appointment: {
-            id: 'apt_789',
-            ...appointmentData,
-            status: 'scheduled',
-            confirmation_sent: true,
-            whatsapp_reminder_scheduled: true,
-          },
-          processing_time_ms: 120,
-        }),
+        json: () =>
+          Promise.resolve({
+            appointment: {
+              id: 'apt_789',
+              ...appointmentData,
+              status: 'scheduled',
+              confirmation_sent: true,
+              whatsapp_reminder_scheduled: true,
+            },
+            processing_time_ms: 120,
+          }),
       });
 
       const response = await fetch('/api/appointments', {
@@ -265,7 +270,7 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       } as any;
 
       const registration = await navigator.serviceWorker.register('/sw.js');
-      
+
       expect(registration.active?.state).toBe('activated');
       expect(registration.scope).toContain('neonpro.com.br');
     });
@@ -283,9 +288,9 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
         addAll: vi.fn().mockResolvedValue(undefined),
         match: vi.fn().mockImplementation((url: string) => {
           return Promise.resolve(
-            criticalResources.includes(url) 
-              ? new Response('cached data') 
-              : undefined
+            criticalResources.includes(url)
+              ? new Response('cached data')
+              : undefined,
           );
         }),
       };
@@ -322,7 +327,7 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       const mockIndexedDB = {
         transaction: vi.fn().mockReturnValue({
           objectStore: vi.fn().mockReturnValue({
-            add: vi.fn().mockImplementation((data) => ({
+            add: vi.fn().mockImplementation(data => ({
               onsuccess: () => {},
               result: 'offline_' + Date.now(),
             })),
@@ -381,7 +386,7 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       // Verify lazy loading reduces initial bundle
       const totalLazySize = dynamicImports.reduce((sum, item) => sum + item.size, 0);
       expect(totalLazySize).toBeGreaterThan(100000); // Significant code split
-      
+
       // Verify lazy sections are not loaded initially
       dynamicImports.forEach(item => {
         expect(item.loaded).toBe(false);
@@ -402,10 +407,10 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       global.WebSocket = vi.fn().mockImplementation(() => mockWebSocket);
 
       const ws = new WebSocket('wss://realtime.neonpro.com.br/healthcare');
-      
+
       // Simulate connection latency measurement
       const connectionStart = performance.now();
-      
+
       // Mock connection established
       setTimeout(() => {
         const connectionTime = performance.now() - connectionStart;
@@ -426,10 +431,10 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
 
       for (const update of appointmentUpdates) {
         const startTime = performance.now();
-        
+
         // Mock real-time update processing
         await new Promise(resolve => setTimeout(resolve, 50));
-        
+
         const processingTime = performance.now() - startTime;
         processingTimes.push(processingTime);
       }
@@ -454,20 +459,20 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
 
       // Simulate network interruption
       simulateNetworkChange(false);
-      
+
       // Queue operations while offline
       const offlineOperation = {
         type: 'appointment_update',
         data: { id: 'apt_123', status: 'confirmed' },
         timestamp: Date.now(),
       };
-      
+
       networkQueue.push(offlineOperation);
       expect(networkQueue).toHaveLength(1);
 
       // Simulate network restoration
       simulateNetworkChange(true);
-      
+
       // Process queued operations
       const processedOperations = [...networkQueue];
       networkQueue.length = 0;

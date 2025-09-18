@@ -3,7 +3,7 @@
  * Implementation of k-anonymity, l-diversity, differential privacy, and other privacy techniques
  */
 
-import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
+import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 
 export interface AnonymizationConfig {
   k: number; // k-anonymity parameter
@@ -65,14 +65,14 @@ export class PrivacyAlgorithms {
     records: DataRecord[],
     quasiIdentifiers: string[],
     sensitiveAttributes: string[],
-    config: AnonymizationConfig
+    config: AnonymizationConfig,
   ): Promise<AnonymizedDataset> {
     try {
       const { k } = config;
-      
+
       // Group records by quasi-identifier combinations
       const groups = this.groupByQuasiIdentifiers(records, quasiIdentifiers);
-      
+
       const anonymizedRecords: DataRecord[] = [];
       const suppressedRecords: DataRecord[] = [];
       let generalizedFields: string[] = [];
@@ -82,7 +82,9 @@ export class PrivacyAlgorithms {
           // Group satisfies k-anonymity, generalize quasi-identifiers
           const generalizedGroup = this.generalizeGroup(group, quasiIdentifiers);
           anonymizedRecords.push(...generalizedGroup.records);
-          generalizedFields = [...new Set([...generalizedFields, ...generalizedGroup.generalizedFields])];
+          generalizedFields = [
+            ...new Set([...generalizedFields, ...generalizedGroup.generalizedFields]),
+          ];
         } else {
           // Group too small, suppress these records
           suppressedRecords.push(...group);
@@ -94,7 +96,7 @@ export class PrivacyAlgorithms {
         records,
         anonymizedRecords,
         quasiIdentifiers,
-        sensitiveAttributes
+        sensitiveAttributes,
       );
 
       return {
@@ -107,8 +109,8 @@ export class PrivacyAlgorithms {
           suppressedFields: [],
           kAnonymity: k,
           lDiversity: config.l || 0,
-          privacyMetrics
-        }
+          privacyMetrics,
+        },
       };
     } catch (error) {
       console.error('Error applying k-anonymity:', error);
@@ -122,11 +124,11 @@ export class PrivacyAlgorithms {
   async applyLDiversity(
     kAnonymousData: AnonymizedDataset,
     sensitiveAttributes: string[],
-    config: AnonymizationConfig
+    config: AnonymizationConfig,
   ): Promise<AnonymizedDataset> {
     try {
       const { l } = config;
-      
+
       const validRecords: DataRecord[] = [];
       const suppressedRecords: DataRecord[] = [];
 
@@ -135,7 +137,7 @@ export class PrivacyAlgorithms {
 
       for (const group of groups) {
         const diversityValid = this.checkLDiversity(group, sensitiveAttributes, l);
-        
+
         if (diversityValid) {
           validRecords.push(...group);
         } else {
@@ -154,7 +156,7 @@ export class PrivacyAlgorithms {
         kAnonymousData.records,
         validRecords,
         [],
-        sensitiveAttributes
+        sensitiveAttributes,
       );
 
       return {
@@ -164,8 +166,8 @@ export class PrivacyAlgorithms {
           anonymizedCount: validRecords.length,
           suppressedCount: kAnonymousData.metadata.suppressedCount + suppressedRecords.length,
           lDiversity: l,
-          privacyMetrics
-        }
+          privacyMetrics,
+        },
       };
     } catch (error) {
       console.error('Error applying l-diversity:', error);
@@ -180,7 +182,7 @@ export class PrivacyAlgorithms {
     value: number,
     epsilon: number,
     sensitivity: number = 1,
-    mechanism: 'laplace' | 'gaussian' = 'laplace'
+    mechanism: 'laplace' | 'gaussian' = 'laplace',
   ): number {
     try {
       if (mechanism === 'laplace') {
@@ -205,7 +207,7 @@ export class PrivacyAlgorithms {
     queryResult: number,
     queryType: 'count' | 'sum' | 'average' | 'max' | 'min',
     epsilon: number,
-    dataRange?: { min: number; max: number }
+    dataRange?: { min: number; max: number },
   ): Promise<number> {
     try {
       let sensitivity: number;
@@ -241,12 +243,12 @@ export class PrivacyAlgorithms {
   async createReversiblePseudonym(
     identifier: string,
     purpose: string,
-    expirationDays?: number
+    expirationDays?: number,
   ): Promise<PseudonymizationResult> {
     try {
       const salt = randomBytes(32).toString('hex');
       const purposeKey = this.derivePurposeKey(purpose, salt);
-      
+
       // Create HMAC-based pseudonym
       const pseudonym = createHash('sha256')
         .update(identifier + purposeKey + salt)
@@ -259,7 +261,7 @@ export class PrivacyAlgorithms {
         pseudonym,
         salt,
         algorithm: 'HMAC-SHA256',
-        reversible: true
+        reversible: true,
       };
     } catch (error) {
       console.error('Error creating reversible pseudonym:', error);
@@ -274,15 +276,17 @@ export class PrivacyAlgorithms {
     try {
       const salt = randomBytes(32).toString('hex');
       const purposeKey = this.derivePurposeKey(purpose, salt);
-      
+
       // Use one-way hash function
-      const pseudonym = pbkdf2Sync(identifier, purposeKey + salt, 100000, 32, 'sha512').toString('hex');
+      const pseudonym = pbkdf2Sync(identifier, purposeKey + salt, 100000, 32, 'sha512').toString(
+        'hex',
+      );
 
       return {
         pseudonym,
         salt,
         algorithm: 'PBKDF2-SHA512',
-        reversible: false
+        reversible: false,
       };
     } catch (error) {
       console.error('Error creating irreversible pseudonym:', error);
@@ -296,7 +300,7 @@ export class PrivacyAlgorithms {
   async reversePseudonym(
     pseudonym: string,
     purpose: string,
-    authorization: string
+    authorization: string,
   ): Promise<string | null> {
     try {
       // Validate authorization (implement proper authorization check)
@@ -306,7 +310,7 @@ export class PrivacyAlgorithms {
 
       // Retrieve original identifier from secure storage
       const originalIdentifier = await this.retrievePseudonymMapping(pseudonym, purpose);
-      
+
       if (originalIdentifier) {
         // Log reversal for audit
         console.log(`Pseudonym reversed: ${pseudonym} -> [REDACTED] for purpose: ${purpose}`);
@@ -325,7 +329,7 @@ export class PrivacyAlgorithms {
   anonymizeGeographicData(
     latitude: number,
     longitude: number,
-    precisionLevel: 'city' | 'region' | 'country' = 'city'
+    precisionLevel: 'city' | 'region' | 'country' = 'city',
   ): { latitude: number; longitude: number; precision: string } {
     try {
       let precision: number;
@@ -344,13 +348,15 @@ export class PrivacyAlgorithms {
           precision = 2;
       }
 
-      const anonymizedLat = Math.round(latitude * Math.pow(10, precision)) / Math.pow(10, precision);
-      const anonymizedLng = Math.round(longitude * Math.pow(10, precision)) / Math.pow(10, precision);
+      const anonymizedLat = Math.round(latitude * Math.pow(10, precision))
+        / Math.pow(10, precision);
+      const anonymizedLng = Math.round(longitude * Math.pow(10, precision))
+        / Math.pow(10, precision);
 
       return {
         latitude: anonymizedLat,
         longitude: anonymizedLng,
-        precision: precisionLevel
+        precision: precisionLevel,
       };
     } catch (error) {
       console.error('Error anonymizing geographic data:', error);
@@ -363,7 +369,7 @@ export class PrivacyAlgorithms {
    */
   anonymizeDate(
     date: Date,
-    granularity: 'year' | 'month' | 'week' | 'day' = 'month'
+    granularity: 'year' | 'month' | 'week' | 'day' = 'month',
   ): { date: Date; granularity: string } {
     try {
       let anonymizedDate: Date;
@@ -390,7 +396,7 @@ export class PrivacyAlgorithms {
 
       return {
         date: anonymizedDate,
-        granularity
+        granularity,
       };
     } catch (error) {
       console.error('Error anonymizing date:', error);
@@ -403,7 +409,7 @@ export class PrivacyAlgorithms {
    */
   anonymizeAge(
     age: number,
-    binSize: number = 5
+    binSize: number = 5,
   ): { ageRange: string; midpoint: number } {
     try {
       const lowerBound = Math.floor(age / binSize) * binSize;
@@ -412,7 +418,7 @@ export class PrivacyAlgorithms {
 
       return {
         ageRange: `${lowerBound}-${upperBound}`,
-        midpoint
+        midpoint,
       };
     } catch (error) {
       console.error('Error anonymizing age:', error);
@@ -426,7 +432,10 @@ export class PrivacyAlgorithms {
     return randomBytes(32).toString('hex');
   }
 
-  private groupByQuasiIdentifiers(records: DataRecord[], quasiIdentifiers: string[]): DataRecord[][] {
+  private groupByQuasiIdentifiers(
+    records: DataRecord[],
+    quasiIdentifiers: string[],
+  ): DataRecord[][] {
     const groups: Map<string, DataRecord[]> = new Map();
 
     for (const record of records) {
@@ -442,7 +451,7 @@ export class PrivacyAlgorithms {
 
   private generalizeGroup(
     group: DataRecord[],
-    quasiIdentifiers: string[]
+    quasiIdentifiers: string[],
   ): { records: DataRecord[]; generalizedFields: string[] } {
     const generalizedFields: string[] = [];
     const generalizedRecords = group.map(record => ({ ...record }));
@@ -450,7 +459,7 @@ export class PrivacyAlgorithms {
     for (const qi of quasiIdentifiers) {
       const values = group.map(r => r[qi]);
       const generalizedValue = this.generalizeValues(values, qi);
-      
+
       if (generalizedValue !== values[0]) {
         generalizedFields.push(qi);
       }
@@ -483,14 +492,17 @@ export class PrivacyAlgorithms {
     return '*';
   }
 
-  private groupByGeneralizedValues(records: DataRecord[], sensitiveAttributes: string[]): DataRecord[][] {
+  private groupByGeneralizedValues(
+    records: DataRecord[],
+    sensitiveAttributes: string[],
+  ): DataRecord[][] {
     const groups: Map<string, DataRecord[]> = new Map();
 
     for (const record of records) {
       // Group by all attributes except sensitive ones
       const nonSensitiveKeys = Object.keys(record).filter(k => !sensitiveAttributes.includes(k));
       const key = nonSensitiveKeys.map(k => record[k]).join('|');
-      
+
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -528,7 +540,7 @@ export class PrivacyAlgorithms {
     originalRecords: DataRecord[],
     anonymizedRecords: DataRecord[],
     quasiIdentifiers: string[],
-    sensitiveAttributes: string[]
+    sensitiveAttributes: string[],
   ): { informationLoss: number; dataUtility: number; privacyLevel: number } {
     // Simplified metrics calculation
     const informationLoss = 1 - (anonymizedRecords.length / originalRecords.length);
@@ -538,7 +550,7 @@ export class PrivacyAlgorithms {
     return {
       informationLoss: Math.round(informationLoss * 100) / 100,
       dataUtility: Math.round(dataUtility * 100) / 100,
-      privacyLevel: Math.round(privacyLevel * 100) / 100
+      privacyLevel: Math.round(privacyLevel * 100) / 100,
     };
   }
 
@@ -563,13 +575,16 @@ export class PrivacyAlgorithms {
     originalId: string,
     purpose: string,
     salt: string,
-    expirationDays?: number
+    expirationDays?: number,
   ): Promise<void> {
     // In production, store in secure key-value store with proper encryption
     console.log(`Storing pseudonym mapping: ${pseudonym} for purpose: ${purpose}`);
   }
 
-  private async retrievePseudonymMapping(pseudonym: string, purpose: string): Promise<string | null> {
+  private async retrievePseudonymMapping(
+    pseudonym: string,
+    purpose: string,
+  ): Promise<string | null> {
     // In production, retrieve from secure key-value store
     console.log(`Retrieving pseudonym mapping: ${pseudonym} for purpose: ${purpose}`);
     return null; // Placeholder

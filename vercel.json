@@ -6,6 +6,9 @@
   "framework": null,
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/api/aesthetic/(.*)", "dest": "/api/aesthetic/$1" },
+    { "src": "/api/whatsapp/(.*)", "dest": "/api/whatsapp/$1" },
+    { "src": "/api/edge/(.*)", "dest": "/api/edge/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "env": {
@@ -15,6 +18,17 @@
     "env": {
       "NODE_ENV": "production",
       "VITE_APP_ENV": "production"
+    }
+  },
+  "functions": {
+    "api/aesthetic/**/*.ts": {
+      "runtime": "edge"
+    },
+    "api/whatsapp/**/*.ts": {
+      "runtime": "edge"
+    },
+    "api/edge/**/*.ts": {
+      "runtime": "edge"
     }
   },
   "headers": [

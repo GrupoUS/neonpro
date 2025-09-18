@@ -1,24 +1,24 @@
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
+import { createHash } from 'crypto';
 import { componentTagger } from 'lovable-tagger';
 import path from 'path';
-import { createHash } from 'crypto';
 import { type ConfigEnv, defineConfig } from 'vite';
 import { generateHealthcareSecurityHeaders } from './src/lib/security/csp';
 
 // Subresource Integrity (SRI) Plugin for healthcare security
 function subresourceIntegrityPlugin() {
   const isProduction = process.env.NODE_ENV === 'production';
-  
+
   return {
     name: 'healthcare-sri',
     apply: 'build' as const,
     generateBundle(options: any, bundle: any) {
       if (!isProduction) return;
-      
+
       // Generate SRI hashes for all assets
       const sriHashes = new Map<string, string>();
-      
+
       Object.keys(bundle).forEach(fileName => {
         const chunk = bundle[fileName];
         if (chunk.type === 'chunk' || chunk.type === 'asset') {
@@ -30,7 +30,7 @@ function subresourceIntegrityPlugin() {
           }
         }
       });
-      
+
       // Store SRI hashes for runtime use
       this.emitFile({
         type: 'asset',
@@ -40,11 +40,13 @@ function subresourceIntegrityPlugin() {
     },
     transformIndexHtml(html: string) {
       if (!isProduction) return html;
-      
+
       // Add security headers as meta tags
       const securityHeaders = generateHealthcareSecurityHeaders();
-      const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${securityHeaders['Content-Security-Policy']}">`;
-      
+      const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${
+        securityHeaders['Content-Security-Policy']
+      }">`;
+
       // Add healthcare-specific meta tags
       const healthcareMeta = `
         <meta name="healthcare-app" content="NeonPro-Platform">
@@ -56,11 +58,11 @@ function subresourceIntegrityPlugin() {
         <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
         <meta name="robots" content="noindex, nofollow"> <!-- Healthcare data should not be indexed -->
       `;
-      
+
       // Inject security headers and healthcare meta tags
       return html.replace(
         '<head>',
-        `<head>${cspMeta}${healthcareMeta}`
+        `<head>${cspMeta}${healthcareMeta}`,
       );
     },
   };
@@ -74,7 +76,7 @@ function healthcareAssetValidation() {
     generateBundle(options: any, bundle: any) {
       const isProduction = process.env.NODE_ENV === 'production';
       if (!isProduction) return;
-      
+
       // Validate that no sensitive data is included in assets
       const sensitivePatterns = [
         /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, // CPF
@@ -84,15 +86,17 @@ function healthcareAssetValidation() {
         /\bapi[_-]?key\s*[:=]\s*['"]\w+['"]/gi, // API keys
         /\bsecret\s*[:=]\s*['"]\w+['"]/gi, // Secrets
       ];
-      
+
       Object.keys(bundle).forEach(fileName => {
         const chunk = bundle[fileName];
         const content = chunk.type === 'chunk' ? chunk.code : chunk.source;
-        
+
         if (typeof content === 'string') {
           sensitivePatterns.forEach(pattern => {
             if (pattern.test(content)) {
-              throw new Error(`[HEALTHCARE_SECURITY_ERROR] Potential sensitive data found in ${fileName}. Build failed to prevent accidental deployment of sensitive data.`);
+              throw new Error(
+                `[HEALTHCARE_SECURITY_ERROR] Potential sensitive data found in ${fileName}. Build failed to prevent accidental deployment of sensitive data.`,
+              );
               // Build is aborted to prevent accidental deployment of sensitive data
             }
           });
@@ -102,16 +106,79 @@ function healthcareAssetValidation() {
   };
 }
 
+// Performance budget enforcement for healthcare applications
+function performanceBudgetPlugin() {
+  return {
+    name: 'healthcare-performance-budget',
+    apply: 'build' as const,
+    generateBundle(options: any, bundle: any) {
+      const isProduction = process.env.NODE_ENV === 'production';
+      if (!isProduction) return;
+
+      // Performance budget thresholds (in KB)
+      const BUDGET_THRESHOLDS = {
+        vendor: 300, // React and other core vendors
+        router: 100, // TanStack Router
+        query: 80, // TanStack Query
+        supabase: 120, // Supabase client
+        ui: 150, // UI components
+        security: 100, // Security libraries
+        patients: 150, // Patient management module
+        appointments: 100, // Appointments module
+        services: 80, // Services module
+        auth: 100, // Authentication module
+        'ai-components': 200, // AI components (larger due to ML models)
+        monitoring: 80, // Monitoring and analytics
+      };
+
+      Object.keys(bundle).forEach(fileName => {
+        const chunk = bundle[fileName];
+        if (chunk.type === 'chunk' && chunk.fileName.includes('.js')) {
+          const chunkName = chunk.fileName.split('-')[0];
+          const sizeInKB = chunk.code.length / 1024;
+
+          if (BUDGET_THRESHOLDS[chunkName as keyof typeof BUDGET_THRESHOLDS]) {
+            const budget = BUDGET_THRESHOLDS[chunkName as keyof typeof BUDGET_THRESHOLDS];
+            if (sizeInKB > budget) {
+              console.warn(
+                `[PERFORMANCE_WARNING] ${chunkName} chunk (${
+                  sizeInKB.toFixed(1)
+                }KB) exceeds budget (${budget}KB). Consider optimization.`,
+              );
+            }
+          }
+        }
+      });
+    },
+  };
+}
+
+// Healthcare module lazy loading optimization
+function healthcareModuleOptimization() {
+  return {
+    name: 'healthcare-module-optimization',
+    configResolved(config: any) {
+      // Optimize prefetch behavior for healthcare modules
+      config.optimizeDeps.force = false;
+
+      // Set up module preload strategies
+      config.build.rollupOptions.output.preloadStrategy = 'preload';
+
+      // Optimize code splitting for healthcare modules
+      config.build.rollupOptions.output.experimentalOptimizeChunks = true;
+    },
+  };
+}
+
 // External resource integrity configuration
 const EXTERNAL_RESOURCES_SRI = {
   // Google Fonts (commonly used)
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap': 
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap':
     'sha384-rD+TRJXcOQhVTJPEYpNMXq8/wCfRvdwTI1u5n3UeGbVwWrLx2GdV5QDqhbRZNzHW',
-  
+
   // CDN resources (update hashes as needed)
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css':
     'sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc',
-  
   // Add more external resources as needed
 };
 
@@ -125,11 +192,16 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
       routeFileIgnorePrefix: '-',
       quoteStyle: 'single',
       autoCodeSplitting: true,
+      // Enable healthcare-specific route optimizations
+      routeFilePatterns: ['**/*route.{ts,tsx}', '**/*page.{ts,tsx}'],
+      addRouteExtensions: false,
     }),
     react(),
     mode === 'development' ? (componentTagger() as any) : undefined,
     subresourceIntegrityPlugin(),
     healthcareAssetValidation(),
+    performanceBudgetPlugin(),
+    healthcareModuleOptimization(),
   ].filter(Boolean) as any,
   css: {
     postcss: './postcss.config.js',
@@ -159,11 +231,13 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
     port: 8080,
     open: true,
     // Add security headers for development server
-    headers: mode === 'development' ? {
-      'X-Healthcare-App': 'NeonPro-Platform-Dev',
-      'X-Data-Classification': 'Development-Data',
-      'X-Content-Type-Options': 'nosniff',
-    } : undefined,
+    headers: mode === 'development'
+      ? {
+        'X-Healthcare-App': 'NeonPro-Platform-Dev',
+        'X-Data-Classification': 'Development-Data',
+        'X-Content-Type-Options': 'nosniff',
+      }
+      : undefined,
     proxy: {
       '/api': {
         target: 'http://localhost:3004',
@@ -187,20 +261,35 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     target: 'es2020',
+    // Healthcare-specific build optimization
+    cssCodeSplit: true,
+    cssTarget: 'es2020',
+    // Enable modern JavaScript features for healthcare apps
+    minify: mode === 'production' ? 'terser' : false,
     terserOptions: {
       compress: {
         drop_console: process.env.NODE_ENV === 'production',
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info'],
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        // Preserve healthcare-critical functions
+        passes: 3,
       },
       mangle: {
         safari10: true,
-        // Preserve specific function names for healthcare debugging
-        reserved: ['healthcareError', 'lgpdCompliance', 'auditLog'],
+        // Preserve healthcare debugging function names
+        reserved: [
+          'healthcareError',
+          'lgpdCompliance',
+          'auditLog',
+          'patientSafetyAlert',
+          'emergencyResponse',
+          'medicalRecordAccess',
+          'consentValidation',
+        ],
       },
       format: {
-        // Remove comments in production
-        comments: false,
+        // Preserve license comments and healthcare compliance annotations
+        comments: /@preserve|@license|@cc_on|^!|@healthcare|@lgpd|@emergency|@medical/,
       },
     },
     rollupOptions: {
@@ -209,90 +298,215 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
         '@opentelemetry/auto-instrumentations-node',
         '@opentelemetry/exporter-otlp-http',
         '@opentelemetry/exporter-otlp-grpc',
-        '@opentelemetry/sdk-node'
+        '@opentelemetry/sdk-node',
       ],
       output: {
+        // Advanced code splitting strategy for healthcare modules
         manualChunks: id => {
-          // Vendor chunks
+          // Vendor chunks with healthcare-specific categorization
           if (id.includes('node_modules')) {
+            // Core React libraries
             if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor';
+              return 'vendor-react';
             }
-            if (id.includes('@tanstack/react-router')) {
-              return 'router';
+
+            // Router and state management
+            if (id.includes('@tanstack/react-router') || id.includes('@tanstack/react-query')) {
+              return 'vendor-state';
             }
-            if (id.includes('@tanstack/react-query')) {
-              return 'query';
+
+            // Database and auth
+            if (id.includes('@supabase/supabase-js') || id.includes('@supabase/auth-js')) {
+              return 'vendor-database';
             }
-            if (id.includes('@supabase/supabase-js')) {
-              return 'supabase';
+
+            // UI libraries
+            if (id.includes('@radix-ui') || id.includes('framer-motion') || id.includes('motion')) {
+              return 'vendor-ui';
             }
-            if (id.includes('framer-motion') || id.includes('motion')) {
-              return 'animations';
+
+            // Forms and validation
+            if (
+              id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')
+              || id.includes('valibot')
+            ) {
+              return 'vendor-forms';
             }
-            if (id.includes('recharts')) {
-              return 'charts';
-            }
-            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
-              return 'forms';
-            }
+
+            // Icons and graphics
             if (id.includes('lucide-react') || id.includes('@tabler/icons-react')) {
-              return 'icons';
+              return 'vendor-icons';
             }
-            if (id.includes('@radix-ui')) {
-              return 'radix';
+
+            // Charts and data visualization
+            if (id.includes('recharts') || id.includes('d3') || id.includes('chart.js')) {
+              return 'vendor-charts';
             }
-            // Security and monitoring libraries
-            if (id.includes('@sentry') || id.includes('opentelemetry')) {
-              return 'monitoring';
+
+            // AI and ML libraries (larger chunks)
+            if (id.includes('@vercel/ai') || id.includes('openai') || id.includes('anthropic')) {
+              return 'vendor-ai';
             }
+
+            // Security and monitoring
+            if (id.includes('@sentry') || id.includes('opentelemetry') || id.includes('@sentry')) {
+              return 'vendor-security';
+            }
+
+            // Image processing
+            if (id.includes('sharp') || id.includes('image') || id.includes('canvas')) {
+              return 'vendor-images';
+            }
+
+            // Date and time utilities
+            if (id.includes('date-fns') || id.includes('dayjs') || id.includes('moment')) {
+              return 'vendor-datetime';
+            }
+
             // Other vendor libraries
             return 'vendor-misc';
           }
 
-          // UI package
-          if (id.includes('@neonpro/ui')) {
-            return 'ui';
+          // Application-specific chunks
+
+          // Healthcare-specific modules (lazy loaded)
+          if (id.includes('/routes/patients/')) {
+            if (id.includes('medical-records')) return 'patients-medical-records';
+            if (id.includes('consent-management')) return 'patients-consent';
+            if (id.includes('appointments')) return 'patients-appointments';
+            return 'patients-core';
           }
-          
+
+          if (id.includes('/routes/appointments/')) {
+            if (id.includes('scheduling')) return 'appointments-scheduling';
+            if (id.includes('calendar')) return 'appointments-calendar';
+            return 'appointments-core';
+          }
+
+          if (id.includes('/routes/services/')) {
+            if (id.includes('ai-analysis')) return 'services-ai-analysis';
+            if (id.includes('treatments')) return 'services-treatments';
+            return 'services-core';
+          }
+
+          if (id.includes('/routes/auth/')) {
+            if (id.includes('lgpd-consent')) return 'auth-lgpd';
+            if (id.includes('biometric')) return 'auth-biometric';
+            return 'auth-core';
+          }
+
+          if (id.includes('/routes/ai/')) {
+            if (id.includes('chat')) return 'ai-chat';
+            if (id.includes('analysis')) return 'ai-analysis';
+            return 'ai-core';
+          }
+
+          if (id.includes('/routes/dashboard/')) {
+            if (id.includes('analytics')) return 'dashboard-analytics';
+            if (id.includes('monitoring')) return 'dashboard-monitoring';
+            return 'dashboard-core';
+          }
+
+          if (id.includes('/routes/financial/')) {
+            if (id.includes('billing')) return 'financial-billing';
+            if (id.includes('insurance')) return 'financial-insurance';
+            return 'financial-core';
+          }
+
+          if (id.includes('/routes/admin/')) {
+            if (id.includes('audit')) return 'admin-audit';
+            if (id.includes('compliance')) return 'admin-compliance';
+            return 'admin-core';
+          }
+
+          // Component chunks
+          if (id.includes('/components/patients/')) {
+            if (id.includes('forms/')) return 'patients-form-components';
+            if (id.includes('cards/')) return 'patients-card-components';
+            return 'patients-components';
+          }
+
+          if (id.includes('/components/ui/')) {
+            if (id.includes('charts/') || id.includes('data/')) return 'ui-data-components';
+            if (id.includes('forms/')) return 'ui-form-components';
+            return 'ui-base-components';
+          }
+
+          if (id.includes('/components/ai/')) {
+            if (id.includes('analysis/')) return 'ai-analysis-components';
+            if (id.includes('chat/')) return 'ai-chat-components';
+            return 'ai-base-components';
+          }
+
           // Security and compliance packages
           if (id.includes('@neonpro/security') || id.includes('/security/')) {
-            return 'security';
+            return 'security-module';
           }
 
-          // Route-based chunks
-          if (id.includes('/routes/')) {
-            const routePath = id.split('/routes/')[1];
-            if (routePath.includes('patients')) return 'patients';
-            if (routePath.includes('appointments')) return 'appointments';
-            if (routePath.includes('services')) return 'services';
-            if (routePath.includes('auth')) return 'auth';
-            return 'routes-misc';
+          if (id.includes('@neonpro/ui')) {
+            return 'ui-package';
           }
 
-          // Component-based chunks
-          if (id.includes('/components/')) {
-            if (id.includes('ai/') || id.includes('chat/')) return 'ai-components';
-            if (id.includes('forms/')) return 'form-components';
-            if (id.includes('ui/')) return 'ui-components';
-            return 'components-misc';
+          // Shared utilities
+          if (id.includes('@neonpro/utils') || id.includes('/utils/')) {
+            if (id.includes('validation/')) return 'utils-validation';
+            if (id.includes('formatting/')) return 'utils-formatting';
+            return 'utils-core';
+          }
+
+          // Types and interfaces
+          if (id.includes('@neonpro/types') || id.includes('/types/')) {
+            return 'types-module';
           }
         },
-        chunkFileNames: (chunkInfo) => {
-          // Use content hash for better caching and security
-          return `assets/[name]-[hash].js`;
+
+        // Enhanced chunk naming with versioning and security
+        chunkFileNames: chunkInfo => {
+          // Use content hash with version prefix for better caching and security
+          const timestamp = new Date().toISOString().split('T')[0].replace(/-/g, '');
+          const chunkName = chunkInfo.name || 'chunk';
+          return `assets/${chunkName}-${timestamp}-[hash].js`;
         },
+
         assetFileNames: assetInfo => {
           const info = assetInfo.name?.split('.') || [];
           const ext = info[info.length - 1];
+          const timestamp = new Date().toISOString().split('T')[0].replace(/-/g, '');
+
+          // Healthcare-specific asset organization
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-            return `assets/images/[name]-[hash][extname]`;
+            return `assets/images/[name]-${timestamp}-[hash][extname]`;
           }
+
           if (/css/i.test(ext)) {
-            return `assets/css/[name]-[hash][extname]`;
+            return `assets/css/[name]-${timestamp}-[hash][extname]`;
           }
-          return `assets/[name]-[hash][extname]`;
+
+          if (/woff|woff2|ttf|eot/i.test(ext)) {
+            return `assets/fonts/[name]-${timestamp}-[hash][extname]`;
+          }
+
+          if (/mp4|webm|mov/i.test(ext)) {
+            return `assets/media/[name]-${timestamp}-[hash][extname]`;
+          }
+
+          return `assets/[name]-${timestamp}-[hash][extname]`;
         },
+
+        // Entry file naming with healthcare compliance
+        entryFileNames: `assets/entry-[name]-[hash].js`,
+
+        // Dynamic import optimization
+        dynamicImportFunctionOptions: {
+          // Healthcare module loading strategy
+          preferDynamicImports: true,
+          inlineDynamicImports: false,
+        },
+
+        // Module preload strategy for healthcare apps
+        experimentalMinChunkSize: 10000, // 10KB minimum chunk size
+        experimentalOptimizeChunks: true,
+        experimentalOptimizeModuleIds: true,
       },
     },
     reportCompressedSize: false,
@@ -307,9 +521,32 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
       '@tanstack/react-router',
       '@tanstack/react-query',
       '@supabase/supabase-js',
+      // Healthcare-critical dependencies
+      'valibot',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-toast',
+      'react-hook-form',
     ],
-    // Exclude packages that might contain sensitive data
-    exclude: mode === 'production' ? ['@neonpro/security'] : [],
+    // Exclude packages that might contain sensitive data or should be loaded on-demand
+    exclude: mode === 'production'
+      ? [
+        '@neonpro/security',
+        '@vercel/ai',
+        'openai',
+        'anthropic',
+        '@simplewebauthn/server',
+      ]
+      : [],
+    // Healthcare-specific optimization settings
+    force: false,
+    esbuildOptions: {
+      target: 'es2020',
+      // Optimize for healthcare application performance
+      define: {
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      },
+    },
   },
   esbuild: {
     jsx: 'automatic',

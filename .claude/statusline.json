@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "segments": [
+    {
+      "type": "model",
+      "style": {
+        "prefix": "🤖 ",
+        "suffix": "",
+        "foreground": "#00ff00",
+        "background": "#1e1e1e"
+      }
+    },
+    {
+      "type": "text",
+      "text": " | ",
+      "style": {
+        "foreground": "#666666"
+      }
+    },
+    {
+      "type": "working_directory",
+      "style": {
+        "prefix": "📁 ",
+        "suffix": "",
+        "foreground": "#ffcc00"
+      }
+    },
+    {
+      "type": "text",
+      "text": " | ",
+      "style": {
+        "foreground": "#666666"
+      }
+    },
+    {
+      "type": "git",
+      "style": {
+        "prefix": "🌿 ",
+        "suffix": "",
+        "foreground": "#ff6600"
+      }
+    }
+  ],
+  "style": {
+    "background": "#1e1e1e",
+    "foreground": "#ffffff",
+    "separator": {
+      "type": "text",
+      "text": " "
+    }
+  }
+}

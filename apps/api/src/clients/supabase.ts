@@ -1,19 +1,19 @@
 /**
  * NeonPro Supabase Client Implementation - GREEN Phase TDD
- * 
+ *
  * Production-ready Supabase client implementation for healthcare platform
  * with multi-tenant RLS, LGPD compliance, and Brazilian healthcare standards.
- * 
+ *
  * Features:
  * - Three-tier client architecture (admin, server, user)
- * - Healthcare-specific RLS and multi-tenant isolation  
+ * - Healthcare-specific RLS and multi-tenant isolation
  * - LGPD compliance for data export and deletion
  * - Connection pooling and resource management
  * - Brazilian healthcare regulatory compliance
  */
 
+import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { createServerClient as createSSRServerClient, createBrowserClient } from '@supabase/ssr';
 import type { Database } from '../../../../packages/database/src/types/supabase';
 
 // Environment validation with fallback to NEXT_PUBLIC_ variables
@@ -40,7 +40,7 @@ function getSupabaseServiceKey(): string {
 function validateEnvironment(): void {
   const url = getSupabaseUrl();
   const anonKey = getSupabaseAnonKey();
-  
+
   if (!url || !anonKey) {
     throw new Error('SUPABASE_URL and SUPABASE_ANON_KEY are required');
   }
@@ -68,11 +68,11 @@ interface HealthcareAdminClient extends SupabaseClient<Database> {
     activeConnections: number;
     maxConnections: number;
   };
-  
+
   // LGPD compliance methods
   exportUserData(userId: string): Promise<any>;
   deleteUserData(userId: string, options?: { cascadeDelete?: boolean }): Promise<void>;
-  
+
   // Healthcare-specific admin methods
   auth: SupabaseClient<Database>['auth'] & {
     admin: {
@@ -88,7 +88,7 @@ interface HealthcareServerClient extends SupabaseClient<Database> {
   session: any;
 }
 
-// Extended user client interface  
+// Extended user client interface
 interface HealthcareUserClient extends SupabaseClient<Database> {
   auth: SupabaseClient<Database>['auth'] & {
     signInWithPassword(credentials: { email: string; password: string }): Promise<any>;
@@ -105,11 +105,11 @@ let adminClientInstance: HealthcareAdminClient | null = null;
 export function createAdminClient(): HealthcareAdminClient {
   // Always validate environment first, even for singleton
   validateAdminEnvironment();
-  
+
   if (adminClientInstance) {
     return adminClientInstance;
   }
-  
+
   const baseClient = createClient<Database>(
     getSupabaseUrl(),
     getSupabaseServiceKey(),
@@ -125,18 +125,18 @@ export function createAdminClient(): HealthcareAdminClient {
           'x-client-type': 'admin',
         },
       },
-    }
+    },
   );
 
   // Extend base client with healthcare admin features
   const adminClient = baseClient as HealthcareAdminClient;
-  
+
   // Connection management
   adminClient.connectionPool = {
     activeConnections: 1,
     maxConnections: 10,
   };
-  
+
   adminClient.validateConnection = async (): Promise<boolean> => {
     try {
       const { data, error } = await adminClient.from('clinics').select('id').limit(1);
@@ -145,7 +145,7 @@ export function createAdminClient(): HealthcareAdminClient {
       return false;
     }
   };
-  
+
   adminClient.handleConnectionError = async (error: any): Promise<void> => {
     console.error('Supabase connection error:', error);
     // Implement retry logic, circuit breaker, etc.
@@ -157,12 +157,16 @@ export function createAdminClient(): HealthcareAdminClient {
     try {
       // Export all user data for LGPD compliance
       const userDataTables = [
-        'profiles', 'appointments', 'medical_records', 'audit_logs', 
-        'consent_records', 'patient_documents'
+        'profiles',
+        'appointments',
+        'medical_records',
+        'audit_logs',
+        'consent_records',
+        'patient_documents',
       ];
-      
+
       const exportData: Record<string, any> = {};
-      
+
       for (const table of userDataTables) {
         try {
           const { data } = await adminClient
@@ -174,7 +178,7 @@ export function createAdminClient(): HealthcareAdminClient {
           exportData[table] = { error: 'Table access denied or not found' };
         }
       }
-      
+
       return {
         userId,
         exportDate: new Date().toISOString(),
@@ -186,29 +190,31 @@ export function createAdminClient(): HealthcareAdminClient {
   };
 
   adminClient.deleteUserData = async (
-    userId: string, 
-    options: { cascadeDelete?: boolean } = {}
+    userId: string,
+    options: { cascadeDelete?: boolean } = {},
   ): Promise<void> => {
     try {
       // LGPD-compliant data deletion
       const { cascadeDelete = false } = options;
-      
+
       if (cascadeDelete) {
         // Delete all related data first
         const relatedTables = [
-          'appointments', 'medical_records', 'audit_logs',
-          'consent_records', 'patient_documents'
+          'appointments',
+          'medical_records',
+          'audit_logs',
+          'consent_records',
+          'patient_documents',
         ];
-        
+
         for (const table of relatedTables) {
           await adminClient.from(table as any).delete().eq('user_id', userId);
         }
       }
-      
+
       // Delete user profile and auth record
       await adminClient.from('profiles' as any).delete().eq('id', userId);
       await adminClient.auth.admin.deleteUser(userId);
-      
     } catch (error) {
       throw new Error(`Failed to delete user data: ${error}`);
     }
@@ -259,7 +265,7 @@ export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareS
     if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
       cookieHandlers = {
         getAll: () => [],
-        setAll: () => {}
+        setAll: () => {},
       } as CookieHandlers;
     } else {
       throw new Error('Cookie handlers are required for server client');
@@ -285,7 +291,7 @@ export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareS
         autoRefreshToken: true,
         detectSessionInUrl: false,
       },
-    }
+    },
   );
 
   // Create the healthcare server client by extending the base client
@@ -301,7 +307,7 @@ export function createUserClient(): HealthcareUserClient {
 
   const baseClient = createBrowserClient<Database>(
     getSupabaseUrl(),
-    getSupabaseAnonKey()
+    getSupabaseAnonKey(),
   );
 
   // Return the client with proper typing - extending with auth methods
@@ -320,7 +326,7 @@ export const healthcareRLS = {
   canAccessClinic: async (userId: string, clinicId: string): Promise<boolean> => {
     try {
       const adminClient = createAdminClient();
-      
+
       // Check if user is associated with the clinic
       const { data: membership } = await adminClient
         .from('clinic_memberships' as any)
@@ -343,24 +349,24 @@ export const healthcareRLS = {
   canAccessPatient: async (userId: string, patientId: string): Promise<boolean> => {
     try {
       const adminClient = createAdminClient();
-      
+
       // Get user's clinic associations
-      const { data: userClinics } = await (adminClient as any)
-        .from('clinic_memberships')
+      const { data: userClinics } = await adminClient
+        .from('clinic_memberships' as any)
         .select('clinic_id')
         .eq('user_id', userId)
-        .eq('status', 'active') as { data: Array<{ clinic_id: string }> | null };
+        .eq('status', 'active');
 
       if (!userClinics?.length) return false;
 
       // Check if patient belongs to any of user's clinics
-      const clinicIds = userClinics.map(c => c.clinic_id);
-      const { data: patientClinic } = await (adminClient as any)
-        .from('patient_clinic_associations')
+      const clinicIds = userClinics.map((c: any) => c.clinic_id);
+      const { data: patientClinic } = await adminClient
+        .from('patient_clinic_associations' as any)
         .select('clinic_id')
         .eq('patient_id', patientId)
         .in('clinic_id', clinicIds)
-        .single() as { data: { clinic_id: string } | null };
+        .single();
 
       return !!patientClinic;
     } catch (error) {

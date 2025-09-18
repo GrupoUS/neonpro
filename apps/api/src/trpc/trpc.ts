@@ -1,23 +1,23 @@
 /**
  * Enhanced tRPC Router Configuration
- * 
+ *
  * Implements comprehensive healthcare middleware chain with:
  * - T021: LGPD Audit Middleware with Prisma Integration
- * - T022: CFM Validation Middleware  
+ * - T022: CFM Validation Middleware
  * - T023: Prisma RLS Enforcement Middleware
- * 
+ *
  * Performance target: <200ms overhead per request
  * Compliance: LGPD, CFM Resolution 2,314/2022, ANVISA, NGS2
  */
 
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
-import { Context } from './context';
 import superjson from 'superjson';
-import { AuditAction, ResourceType, AuditStatus, RiskLevel } from '@prisma/client';
+import { Context } from './context';
 
 // Import enhanced middleware functions
-import { lgpdAuditMiddleware } from './middleware/lgpd-audit';
 import { cfmValidationMiddleware } from './middleware/cfm-validation';
+import { lgpdAuditMiddleware } from './middleware/lgpd-audit';
 import { prismaRLSMiddleware } from './middleware/prisma-rls';
 
 /**
@@ -30,10 +30,9 @@ const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof Error && error.cause.name === 'ZodError'
-            ? error.cause.message
-            : null,
+        zodError: error.cause instanceof Error && error.cause.name === 'ZodError'
+          ? error.cause.message
+          : null,
       },
     };
   },
@@ -50,7 +49,7 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
       message: 'Authentication required',
     });
   }
-  
+
   return next();
 });
 
@@ -62,7 +61,7 @@ const consentMiddleware = t.middleware(async ({ ctx, next, input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;
-    
+
     const consent = await ctx.prisma.consentRecord.findFirst({
       where: {
         patientId,
@@ -73,26 +72,26 @@ const consentMiddleware = t.middleware(async ({ ctx, next, input }) => {
         },
       },
     });
-    
+
     if (!consent) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Valid LGPD consent required for patient data operations',
       });
     }
-    
+
     // Add consent info to context for audit middleware
     ctx.consentValidated = true;
     ctx.consentRecord = consent;
   }
-  
+
   return next();
-});/**
+}); /**
  * Enhanced procedure definitions with comprehensive middleware chain
- * 
+ *
  * Middleware execution order (optimized for performance and compliance):
  * 1. Prisma RLS Enforcement (data isolation)
- * 2. Authentication (user validation)  
+ * 2. Authentication (user validation)
  * 3. LGPD Audit (compliance logging)
  * 4. CFM Validation (medical license validation for healthcare operations)
  * 5. Consent Validation (LGPD consent verification)
@@ -142,42 +141,42 @@ export const telemedicineProcedure = t.procedure
 
 /**
  * Middleware Performance Monitoring
- * 
+ *
  * Each middleware is designed to complete within performance targets:
  * - Prisma RLS: <50ms overhead
- * - Authentication: <10ms overhead  
+ * - Authentication: <10ms overhead
  * - LGPD Audit: <100ms overhead
  * - CFM Validation: <150ms overhead (includes caching)
  * - Consent Validation: <30ms overhead
- * 
+ *
  * Total target: <200ms for complete middleware chain
  */
 
 /**
  * Compliance Matrix
- * 
+ *
  * ✅ LGPD (Lei Geral de Proteção de Dados)
  *    - Automatic audit logging for all data operations
  *    - Cryptographic proof generation for consent operations
  *    - Data minimization enforcement
  *    - Consent validation for patient data access
- * 
+ *
  * ✅ CFM Resolution 2,314/2022 (Telemedicine)
  *    - Real-time medical license validation
  *    - ICP-Brasil certificate verification for telemedicine
  *    - Professional identity validation
  *    - Medical specialty authorization checking
- * 
+ *
  * ✅ ANVISA Requirements
  *    - Medical device software compliance
  *    - Healthcare data security standards
  *    - Audit trail completeness
- * 
+ *
  * ✅ NGS2 Security Standards
  *    - Level 2 security compliance
  *    - Cryptographic validation
  *    - Access control enforcement
- * 
+ *
  * ✅ Multi-tenant Data Isolation
  *    - Clinic-based data segregation
  *    - User context validation

@@ -18,18 +18,20 @@ export default defineConfig({
   root: './apps/web',
   publicDir: './public',
   css: {
-    postcss: './postcss.config.js',
+    postcss: './postcss.config.cjs',
   },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './apps/web/src'),
-      '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
-      '@neonpro/ui/lib/utils': path.resolve(__dirname, './packages/ui/src/utils'),
-      '@neonpro/ui/theme': path.resolve(__dirname, './packages/ui/src/theme'),
-      '@neonpro/shared': path.resolve(__dirname, './packages/shared/src'),
-      '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
-      '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
-    },
+    alias: [
+      { find: /^@\//, replacement: path.resolve(__dirname, './apps/web/src/') + '/' },
+      { find: /^@components\//, replacement: path.resolve(__dirname, './apps/web/src/components') + '/' },
+      { find: /^@hooks\//, replacement: path.resolve(__dirname, './apps/web/src/hooks') + '/' },
+      { find: '@neonpro/ui/lib/utils', replacement: path.resolve(__dirname, './packages/ui/src/utils') },
+      { find: '@neonpro/ui/theme', replacement: path.resolve(__dirname, './packages/ui/src/theme') },
+      { find: '@neonpro/ui', replacement: path.resolve(__dirname, './packages/ui/src') },
+      { find: '@neonpro/shared', replacement: path.resolve(__dirname, './packages/shared/src') },
+      { find: '@neonpro/utils', replacement: path.resolve(__dirname, './packages/utils/src') },
+      { find: '@neonpro/types', replacement: path.resolve(__dirname, './packages/types/src') },
+    ],
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   define: {

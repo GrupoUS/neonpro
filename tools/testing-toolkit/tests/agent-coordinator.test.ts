@@ -133,10 +133,18 @@ describe('AgentCoordinator', () => {
     });
 
     const randomSpy = mockRandomSequence([
-      0.6, 0.8, 0.9, // code-reviewer metrics
-      0.99, 0.04, 0.92, // security-auditor metrics (vulnerabilities should be 0)
-      0.3, 0.45, 0.55, // architect-review metrics
-      0.75, 0.65, 0.85, // tdd-orchestrator metrics
+      0.6,
+      0.8,
+      0.9, // code-reviewer metrics
+      0.99,
+      0.04,
+      0.92, // security-auditor metrics (vulnerabilities should be 0)
+      0.3,
+      0.45,
+      0.55, // architect-review metrics
+      0.75,
+      0.65,
+      0.85, // tdd-orchestrator metrics
     ]);
 
     const codeMetrics = await (coordinator as any).validateQualityGates('code-reviewer');
@@ -227,5 +235,4 @@ describe('AgentCoordinator', () => {
     const evaluateSuccess = (coordinator as any).evaluateSuccess.bind(coordinator);
     expect(evaluateSuccess('unknown-agent' as any, {})).toBe(true);
   });
-
 });

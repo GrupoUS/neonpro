@@ -16,7 +16,7 @@ describe('Contract: Observability API', () => {
     it('should return system health status', async () => {
       const res = await api('/health', {
         method: 'GET',
-        headers: { 'accept': 'application/json' },
+        headers: { accept: 'application/json' },
       });
 
       expect(res.ok).toBe(true);
@@ -38,7 +38,7 @@ describe('Contract: Observability API', () => {
       expect(data.security).toMatchObject({
         features: expect.arrayContaining([
           'encryption',
-          'input_validation', 
+          'input_validation',
           'rate_limiting',
           'healthcare_data_protection',
         ]),
@@ -86,7 +86,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/telemetry/events', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_123',
           'x-user-id': 'user_456',
@@ -118,7 +118,7 @@ describe('Contract: Observability API', () => {
       });
 
       expect(res.status).toBe(422); // Unprocessable Entity
-      
+
       const data = await res.json();
       expect(data).toMatchObject({
         error: 'validation_failed',
@@ -136,23 +136,22 @@ describe('Contract: Observability API', () => {
       };
 
       // Send multiple requests rapidly
-      const requests = Array.from({ length: 15 }, (_, i) => 
+      const requests = Array.from({ length: 15 }, (_, i) =>
         api('/v1/telemetry/events', {
           method: 'POST',
-          headers: { 
+          headers: {
             'content-type': 'application/json',
             'x-clinic-id': 'clinic_test',
             'x-user-id': 'user_test',
           },
           body: JSON.stringify({ ...event, sequence: i }),
-        })
-      );
+        }));
 
       const responses = await Promise.all(requests);
       const rateLimitedResponse = responses.find(r => r.status === 429);
-      
+
       expect(rateLimitedResponse).toBeDefined();
-      
+
       if (rateLimitedResponse) {
         expect(rateLimitedResponse.headers.get('X-RateLimit-Limit')).toBeTruthy();
         expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe('0');
@@ -180,7 +179,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/errors/report', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_456',
           'x-user-id': 'user_123',
@@ -215,7 +214,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/errors/report', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_123',
           'x-user-id': 'user_unauthorized',
@@ -245,7 +244,7 @@ describe('Contract: Observability API', () => {
         metrics: {
           fcp: 1200, // First Contentful Paint (ms)
           lcp: 2100, // Largest Contentful Paint (ms)
-          fid: 85,   // First Input Delay (ms)
+          fid: 85, // First Input Delay (ms)
           cls: 0.05, // Cumulative Layout Shift
           ttfb: 400, // Time to First Byte (ms)
         },
@@ -259,7 +258,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/performance/metrics', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_perf_test',
           'x-user-id': 'user_perf_test',
@@ -297,7 +296,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/performance/metrics', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_emergency',
           'x-user-id': 'doctor_emergency',
@@ -314,7 +313,7 @@ describe('Contract: Observability API', () => {
           type: 'performance_degradation',
           workflow: 'emergency_patient_access',
           recommendation: expect.any(String),
-        })
+        }),
       );
     });
   });
@@ -343,7 +342,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/audit/events', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_456',
           'x-user-id': 'doctor_123',
@@ -389,7 +388,7 @@ describe('Contract: Observability API', () => {
 
       const res = await api('/v1/audit/events', {
         method: 'POST',
-        headers: { 
+        headers: {
           'content-type': 'application/json',
           'x-clinic-id': 'clinic_test',
           'x-user-id': 'staff_unauthorized',

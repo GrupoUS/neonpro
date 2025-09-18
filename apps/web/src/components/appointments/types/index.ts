@@ -1,6 +1,6 @@
 /**
  * Appointment Component Types
- * 
+ *
  * TypeScript definitions for appointment scheduling components
  * with Brazilian healthcare compliance and tRPC integration
  */
@@ -126,7 +126,13 @@ export interface AppointmentListOptions {
   includeAnalytics?: boolean;
 }
 
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled';
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'completed'
+  | 'cancelled'
+  | 'no-show'
+  | 'rescheduled';
 export type AppointmentType = 'in-person' | 'telemedicine' | 'hybrid';
 export type RiskLevel = 'low' | 'medium' | 'high';
 export type ReminderChannelType = 'whatsapp' | 'sms' | 'email' | 'push';

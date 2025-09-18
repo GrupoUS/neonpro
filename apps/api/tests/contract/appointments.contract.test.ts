@@ -1,16 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createTRPCMsw } from 'msw-trpc';
-import { http } from 'msw';
-import { setupServer } from 'msw/node';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { http } from 'msw';
+import { createTRPCMsw } from 'msw-trpc';
+import { setupServer } from 'msw/node';
+import superjson from 'superjson';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import type { AppRouter } from '../../src/trpc';
 import { createTestClient, generateTestCPF } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
-import type { AppRouter } from '../../src/trpc';
-import superjson from 'superjson';
 
 /**
  * T006: Contract Test for Appointments Router - No-Show Prevention
- * 
+ *
  * CRITICAL FEATURES FOR BRAZILIAN HEALTHCARE:
  * - AI-powered no-show risk prediction with machine learning
  * - WhatsApp Business API integration for appointment reminders
@@ -18,7 +18,7 @@ import superjson from 'superjson';
  * - CFM doctor license validation for telemedicine compliance
  * - ANVISA telemedicine regulations compliance
  * - LGPD-compliant patient communication preferences
- * 
+ *
  * TDD RED PHASE: These tests are designed to FAIL initially to drive implementation
  */
 
@@ -54,14 +54,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               crm: '12345',
               uf: 'SP',
               situacao: 'ATIVO',
-              tipo_inscricao: 'PRIMÁRIA'
-            }
+              tipo_inscricao: 'PRIMÁRIA',
+            },
           ],
           telemedicine_authorized: true,
-          anvisa_compliance: true
+          anvisa_compliance: true,
         });
       }),
-
       // Mock WhatsApp Business API
       http.post('https://graph.facebook.com/v17.0/:phone_number_id/messages', () => {
         return Response.json({
@@ -69,10 +68,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           contacts: [{ input: '+5511999999999', wa_id: '5511999999999' }],
           messages: [{ id: 'wamid.appointment_reminder_123' }],
           success: true,
-          delivery_status: 'sent'
+          delivery_status: 'sent',
         });
       }),
-
       // Mock AI/ML No-Show Prediction Service
       http.post('https://api.openai.com/v1/chat/completions', () => {
         return Response.json({
@@ -84,28 +82,27 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 contributing_factors: [
                   'previous_no_show_history',
                   'appointment_time_preference',
-                  'weather_conditions'
+                  'weather_conditions',
                 ],
                 recommended_interventions: [
                   'send_whatsapp_reminder_24h',
                   'offer_rescheduling_options',
-                  'provide_telemedicine_alternative'
-                ]
-              })
-            }
-          }]
+                  'provide_telemedicine_alternative',
+                ],
+              }),
+            },
+          }],
         });
       }),
-
       // Mock Brazilian Weather API for no-show prediction
       http.get('https://api.openweathermap.org/data/2.5/weather', () => {
         return Response.json({
           weather: [{ main: 'Rain', description: 'heavy intensity rain' }],
           main: { temp: 18 },
           visibility: 5000,
-          impact_on_appointments: 'high_no_show_risk'
+          impact_on_appointments: 'high_no_show_risk',
         });
-      })
+      }),
     );
     server.listen();
 
@@ -139,7 +136,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         ai_processing: true,
         consent_date: new Date().toISOString(),
         ip_address: '127.0.0.1',
-      }
+      },
     });
     patientId = patientResult.data.id;
 
@@ -175,8 +172,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           'appointment_time',
           'weather_conditions',
           'previous_cancellations',
-          'communication_preferences'
-        ]
+          'communication_preferences',
+        ],
       };
 
       // This should FAIL because appointments router doesn't exist yet
@@ -205,8 +202,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             telemedicine_authorized: true,
             specialty_confirmed: true,
             anvisa_compliance_checked: true,
-          })
-        })
+          }),
+        }),
       });
     });
 
@@ -217,7 +214,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         scheduled_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
         type: 'telemedicine' as const,
         validate_cfm_license: true,
-        required_specialties: ['cardiologia']
+        required_specialties: ['cardiologia'],
       };
 
       // Should FAIL because CFM validation integration doesn't exist
@@ -247,7 +244,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           sms: false,
           email: true,
           phone_call: false,
-        }
+        },
       };
 
       // Should FAIL because smart reminder system doesn't exist
@@ -261,13 +258,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             template_type: expect.stringMatching(/^(standard|high_risk|weather_alert)$/),
             personalization_enabled: true,
             lgpd_consent_verified: true,
-          })
+          }),
         ]),
         adaptive_scheduling: expect.objectContaining({
           risk_level_adjustment: true,
           weather_sensitive: true,
           patient_preference_optimized: true,
-        })
+        }),
       });
     });
   });
@@ -310,7 +307,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             `appointment:${appointmentId}`,
             `patient:${patientId}`,
             `doctor:${doctorId}`,
-            'clinic:appointments'
+            'clinic:appointments',
           ]),
           recipients_notified: expect.any(Number),
           notification_timestamp: expect.any(String),
@@ -319,7 +316,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           event_type: 'appointment_status_updated',
           real_time_broadcast_logged: true,
           lgpd_compliance_verified: true,
-        })
+        }),
       });
     });
 
@@ -356,7 +353,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           whatsapp_patient: true,
           email_doctor: true,
           real_time_broadcast: true,
-        })
+        }),
       });
     });
   });
@@ -387,7 +384,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           consent_verified: true,
           data_minimization: true,
           purpose_limitation: 'appointment_reminder_only',
-        }
+        },
       };
 
       // Should FAIL because WhatsApp integration doesn't exist
@@ -417,7 +414,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           event_type: 'whatsapp_reminder_sent',
           message_content_hash: expect.any(String),
           delivery_attempted_at: expect.any(String),
-        })
+        }),
       });
     });
 
@@ -432,14 +429,17 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       // Mock WhatsApp API failure
       server.use(
         rest.post('https://graph.facebook.com/v17.0/:phone_number_id/messages', (req, res, ctx) => {
-          return res.once(ctx.status(400), ctx.json({
-            error: {
-              message: 'Invalid phone number format',
-              type: 'parameter_error',
-              code: 100
-            }
-          }));
-        })
+          return res.once(
+            ctx.status(400),
+            ctx.json({
+              error: {
+                message: 'Invalid phone number format',
+                type: 'parameter_error',
+                code: 100,
+              },
+            }),
+          );
+        }),
       );
 
       // Should FAIL because fallback system doesn't exist
@@ -462,7 +462,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         audit_trail: expect.objectContaining({
           delivery_attempts: expect.any(Array),
           fallback_methods_used: expect.any(Array),
-        })
+        }),
       });
     });
   });
@@ -505,9 +505,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               action: expect.any(String),
               expected_improvement: expect.any(Number),
               implementation_effort: expect.stringMatching(/^(low|medium|high)$/),
-            })
-          ])
-        })
+            }),
+          ]),
+        }),
       });
     });
 
@@ -521,7 +521,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because intervention system doesn't exist
-      const result = await trpcClient.appointments.generateInterventionStrategy.mutate(interventionRequest);
+      const result = await trpcClient.appointments.generateInterventionStrategy.mutate(
+        interventionRequest,
+      );
 
       expect(result).toMatchObject({
         intervention_strategy: expect.objectContaining({
@@ -538,7 +540,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               method: expect.any(String),
               personalization_factors: expect.any(Array),
               expected_effectiveness: expect.any(Number),
-            })
+            }),
           ]),
           behavioral_insights: expect.objectContaining({
             preferred_communication_time: expect.any(String),
@@ -549,8 +551,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             target_no_show_reduction: expect.any(Number),
             measurement_period: expect.any(String),
             kpi_tracking: expect.any(Array),
-          })
-        })
+          }),
+        }),
       });
     });
   });
@@ -573,7 +575,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           data_sharing_authorized: true,
           ministry_of_health_reporting: true,
           lgpd_public_interest_basis: true,
-        }
+        },
       };
 
       // Should FAIL because SUS integration doesn't exist
@@ -592,8 +594,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             sus_data_protection: true,
             ministry_reporting_configured: true,
             public_interest_basis_documented: true,
-          })
-        })
+          }),
+        }),
       });
     });
 
@@ -606,7 +608,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because ANVISA validation doesn't exist
-      const result = await trpcClient.appointments.validateANVISACompliance.query(telemedicineValidation);
+      const result = await trpcClient.appointments.validateANVISACompliance.query(
+        telemedicineValidation,
+      );
 
       expect(result).toMatchObject({
         compliance_status: expect.objectContaining({
@@ -628,7 +632,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           authentication_robust: true,
           audit_trail_complete: true,
           backup_systems_operational: true,
-        })
+        }),
       });
     });
   });

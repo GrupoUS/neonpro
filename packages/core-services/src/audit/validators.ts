@@ -8,8 +8,7 @@ import type {
   ComplianceStatus,
   ComplianceViolation,
   RiskLevel,
-  AuditAction,
-  ActorType
+  AuditAction
 } from './types';
 
 /**
@@ -74,7 +73,7 @@ export class LGPDValidator {
    * Assess risk level for LGPD compliance
    */
   static assessRisk(auditEvent: GenericAuditEvent): RiskLevel {
-    const { action, actor, resource } = auditEvent;
+    const { action, actor } = auditEvent;
 
     // Critical actions
     if (['DELETE', 'MODIFY'].includes(action)) return 'CRITICAL';

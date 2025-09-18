@@ -26,77 +26,80 @@ export const HealthcareValidationRules = {
   cpf: z.string()
     .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF deve estar no formato XXX.XXX.XXX-XX')
     .refine(validateCPF, 'CPF inválido'),
-  
+
   rg: z.string()
     .regex(/^\d{2}\.\d{3}\.\d{3}-\d{1}$/, 'RG deve estar no formato XX.XXX.XXX-X'),
-  
+
   cnpj: z.string()
     .regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX')
     .refine(validateCNPJ, 'CNPJ inválido'),
-  
+
   cep: z.string()
     .regex(/^\d{5}-\d{3}$/, 'CEP deve estar no formato XXXXX-XXX'),
-  
+
   // Medical professional licenses
   crm: z.string()
     .regex(/^CRM[A-Z]{2}\s?\d{4,6}$/, 'CRM deve estar no formato CRMXX XXXXXX')
     .transform(val => val.replace(/\s+/g, ' ')), // Normalize spacing
-  
+
   cro: z.string()
     .regex(/^CRO[A-Z]{2}\s?\d{4,6}$/, 'CRO deve estar no formato CROXX XXXXXX')
     .transform(val => val.replace(/\s+/g, ' ')),
-  
+
   // Contact information with Brazilian format
   phoneNumber: z.string()
-    .regex(/^\(\d{2}\)\s?9?\d{4}-?\d{4}$/, 'Telefone deve estar no formato (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX'),
-  
+    .regex(
+      /^\(\d{2}\)\s?9?\d{4}-?\d{4}$/,
+      'Telefone deve estar no formato (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX',
+    ),
+
   email: z.string()
     .email('Email inválido')
     .max(254, 'Email muito longo')
     .toLowerCase(),
-  
+
   // Medical data validation
   bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
     errorMap: () => ({ message: 'Tipo sanguíneo inválido' }),
   }),
-  
+
   // CID-10 diagnosis codes
   cidCode: z.string()
     .regex(/^[A-Z]\d{2}\.?\d{0,2}$/, 'Código CID-10 inválido'),
-  
+
   // TUSS procedure codes
   tussCode: z.string()
     .regex(/^\d{8}\.\d{2}\.\d{2}$/, 'Código TUSS deve estar no formato XXXXXXXX.XX.XX'),
-  
+
   // Patient age validation
   patientAge: z.number()
     .min(0, 'Idade não pode ser negativa')
     .max(150, 'Idade inválida'),
-  
+
   // Date validation for Brazilian format
   brazilianDate: z.string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato DD/MM/AAAA')
     .refine(validateBrazilianDate, 'Data inválida'),
-  
+
   // SUS card number validation
   susCard: z.string()
     .regex(/^\d{15}$/, 'Cartão SUS deve ter 15 dígitos')
     .refine(validateSUSCard, 'Cartão SUS inválido'),
-  
+
   // Medical prescription validation
   dosage: z.string()
     .min(1, 'Dosagem é obrigatória')
     .max(200, 'Dosagem muito longa'),
-  
+
   // Patient weight and height
   weight: z.number()
     .min(0.5, 'Peso mínimo: 0.5kg')
     .max(500, 'Peso máximo: 500kg'),
-  
+
   height: z.number()
     .min(30, 'Altura mínima: 30cm')
     .max(250, 'Altura máxima: 250cm'),
-  
+
   // Healthcare facility validation
   cnes: z.string()
     .regex(/^\d{7}$/, 'CNES deve ter 7 dígitos'),
@@ -112,7 +115,7 @@ export const CommonHealthcareSchemas = {
     birthDate: HealthcareValidationRules.brazilianDate,
     susCard: HealthcareValidationRules.susCard.optional(),
   }),
-  
+
   // Professional identification
   ProfessionalIdentification: z.object({
     name: z.string().min(2).max(100),
@@ -121,7 +124,7 @@ export const CommonHealthcareSchemas = {
     cro: HealthcareValidationRules.cro.optional(),
     specialty: z.string().min(2).max(100).optional(),
   }),
-  
+
   // Clinic information
   ClinicInformation: z.object({
     name: z.string().min(2).max(100),
@@ -137,7 +140,7 @@ export const CommonHealthcareSchemas = {
       cep: HealthcareValidationRules.cep,
     }),
   }),
-  
+
   // Medical appointment
   AppointmentData: z.object({
     patientId: z.string().uuid(),
@@ -147,7 +150,7 @@ export const CommonHealthcareSchemas = {
     type: z.enum(['consultation', 'followup', 'procedure', 'emergency']),
     notes: z.string().max(1000).optional(),
   }),
-  
+
   // Medical record entry
   MedicalRecordEntry: z.object({
     patientId: z.string().uuid(),
@@ -174,49 +177,49 @@ export const CommonHealthcareSchemas = {
 // CPF validation algorithm
 function validateCPF(cpf: string): boolean {
   const numbers = cpf.replace(/\D/g, '');
-  
+
   if (numbers.length !== 11) return false;
   if (/^(\d)\1{10}$/.test(numbers)) return false; // All same digits
-  
+
   // Validate check digits
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(numbers[i]) * (10 - i);
   }
   let digit1 = ((sum * 10) % 11) % 10;
-  
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(numbers[i]) * (11 - i);
   }
   let digit2 = ((sum * 10) % 11) % 10;
-  
+
   return parseInt(numbers[9]) === digit1 && parseInt(numbers[10]) === digit2;
 }
 
 // CNPJ validation algorithm
 function validateCNPJ(cnpj: string): boolean {
   const numbers = cnpj.replace(/\D/g, '');
-  
+
   if (numbers.length !== 14) return false;
   if (/^(\d)\1{13}$/.test(numbers)) return false; // All same digits
-  
+
   // Validate check digits
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  
+
   let sum = 0;
   for (let i = 0; i < 12; i++) {
     sum += parseInt(numbers[i]) * weights1[i];
   }
   let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
+
   sum = 0;
   for (let i = 0; i < 13; i++) {
     sum += parseInt(numbers[i]) * weights2[i];
   }
   let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
+
   return parseInt(numbers[12]) === digit1 && parseInt(numbers[13]) === digit2;
 }
 
@@ -224,45 +227,53 @@ function validateCNPJ(cnpj: string): boolean {
 function validateBrazilianDate(dateString: string): boolean {
   const [day, month, year] = dateString.split('/').map(Number);
   const date = new Date(year, month - 1, day);
-  
-  return date.getFullYear() === year &&
-         date.getMonth() === month - 1 &&
-         date.getDate() === day &&
-         year >= 1900 &&
-         year <= new Date().getFullYear() + 1;
+
+  return date.getFullYear() === year
+    && date.getMonth() === month - 1
+    && date.getDate() === day
+    && year >= 1900
+    && year <= new Date().getFullYear() + 1;
 }
 
 // SUS card validation (basic check digit validation)
 function validateSUSCard(susCard: string): boolean {
   const numbers = susCard.replace(/\D/g, '');
   if (numbers.length !== 15) return false;
-  
+
   // Basic validation - SUS cards have a more complex algorithm
   // This is a simplified version for demonstration
   const sum = numbers.split('').reduce((acc, digit, index) => {
     return acc + parseInt(digit) * (15 - index);
   }, 0);
-  
+
   return sum % 11 === 0;
 }
 
 // Sanitize healthcare data for logging
 function sanitizeHealthcareData(data: any): any {
   if (!data || typeof data !== 'object') return data;
-  
+
   const sensitiveFields = [
-    'cpf', 'rg', 'email', 'phone', 'susCard', 'birthDate',
-    'medicalHistory', 'diagnosis', 'prescription', 'treatment',
+    'cpf',
+    'rg',
+    'email',
+    'phone',
+    'susCard',
+    'birthDate',
+    'medicalHistory',
+    'diagnosis',
+    'prescription',
+    'treatment',
   ];
-  
+
   const sanitized = { ...data };
-  
+
   for (const field of sensitiveFields) {
     if (sanitized[field]) {
       sanitized[field] = '[REDACTED_HEALTHCARE_DATA]';
     }
   }
-  
+
   return sanitized;
 }
 
@@ -271,7 +282,7 @@ export function zodValidation(config: ValidationConfig) {
   return async (c: Context, next: Next) => {
     try {
       let dataToValidate: any;
-      
+
       // Extract data based on target
       switch (config.target) {
         case 'query':
@@ -289,22 +300,24 @@ export function zodValidation(config: ValidationConfig) {
         default:
           throw new Error(`Invalid validation target: ${config.target}`);
       }
-      
+
       // Skip validation if optional and no data present
       if (config.optional && (!dataToValidate || Object.keys(dataToValidate).length === 0)) {
         await next();
         return;
       }
-      
+
       // Validate data
       const validatedData = config.schema.parse(dataToValidate);
-      
+
       // Store validated data in context for later use
       c.set(`validated_${config.target}`, validatedData);
-      
+
       // Log audit trail for sensitive data validation
-      if (config.auditRequired && config.dataClassification && 
-          ['personal', 'medical', 'financial'].includes(config.dataClassification)) {
+      if (
+        config.auditRequired && config.dataClassification
+        && ['personal', 'medical', 'financial'].includes(config.dataClassification)
+      ) {
         const auditEvent = {
           type: 'data_validation',
           timestamp: new Date().toISOString(),
@@ -315,12 +328,11 @@ export function zodValidation(config: ValidationConfig) {
           requestId: c.req.header('x-request-id') || 'unknown',
           validatedFields: Object.keys(validatedData),
         };
-        
+
         console.log('[HEALTHCARE_VALIDATION_AUDIT]', JSON.stringify(auditEvent));
       }
-      
+
       await next();
-      
     } catch (error) {
       if (error instanceof ZodError) {
         // Create healthcare-specific validation error
@@ -341,12 +353,12 @@ export function zodValidation(config: ValidationConfig) {
               // Sanitize input data for error logging
               invalidData: sanitizeHealthcareData(error.errors),
             },
-          }
+          },
         );
-        
+
         throw validationError;
       }
-      
+
       throw error;
     }
   };

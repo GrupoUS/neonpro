@@ -31,18 +31,18 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <TooltipProvider>
-      {/* Single toast provider mounted via Sonner */}
-      <Sonner />
-      {/* Cache Manager for Supabase data */}
-      <CacheManager />
-      {/* 21st.dev Toolbar - only runs in development mode */}
-      {
-        /* <TwentyFirstToolbar
+        {/* Single toast provider mounted via Sonner */}
+        <Sonner />
+        {/* Cache Manager for Supabase data */}
+        <CacheManager />
+        {/* 21st.dev Toolbar - only runs in development mode */}
+        {
+          /* <TwentyFirstToolbar
         config={{
           plugins: [ReactPlugin],
         }}
       /> */
-      }
+        }
       </TooltipProvider>
     </trpc.Provider>
   </QueryClientProvider>

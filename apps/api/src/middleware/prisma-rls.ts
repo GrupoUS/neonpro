@@ -1,19 +1,19 @@
 /**
  * Enhanced Prisma RLS Middleware for Healthcare Platform
- * 
+ *
  * Integrates Prisma client with Row Level Security (RLS) for multi-tenant
  * healthcare data isolation. Provides context injection, access control,
  * and audit trail integration.
  */
 
 import { Context, Next } from 'hono';
-import { 
-  createPrismaWithContext, 
+import {
   createHealthcareContextFromRequest,
+  createPrismaWithContext,
+  HealthcareComplianceError,
   type HealthcareContext,
   type HealthcarePrismaClient,
-  HealthcareComplianceError,
-  UnauthorizedHealthcareAccessError 
+  UnauthorizedHealthcareAccessError,
 } from '../clients/prisma.js';
 import { healthcareRLS } from '../clients/supabase.js';
 
@@ -56,7 +56,8 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Extract authentication information
       const userId = c.get('userId') || c.req.header('x-user-id');
       const clinicId = c.get('clinicId') || c.req.header('x-clinic-id');
-      const userRole = c.get('userRole') || c.req.header('x-user-role') as HealthcareContext['role'];
+      const userRole = c.get('userRole')
+        || c.req.header('x-user-role') as HealthcareContext['role'];
       const permissions = c.get('permissions') || [];
       const cfmValidated = c.get('cfmValidated') || false;
 
@@ -89,7 +90,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Validate specific permissions
       if (requiredPermissions.length > 0) {
         const hasRequiredPermissions = requiredPermissions.every(
-          permission => permissions.includes(permission)
+          permission => permissions.includes(permission),
         );
 
         if (!hasRequiredPermissions) {
@@ -113,7 +114,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Validate clinic access using existing Supabase RLS
       if (requireClinicAccess && userId && clinicId) {
         const hasClinicAccess = await healthcareRLS.canAccessClinic(userId, clinicId);
-        
+
         if (!hasClinicAccess) {
           return c.json({
             error: 'Clinic access denied',
@@ -131,7 +132,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
         {
           permissions,
           cfmValidated,
-        }
+        },
       );
 
       // Create Prisma client with healthcare context
@@ -167,16 +168,16 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
               method: c.req.method,
               path: c.req.path,
               query: c.req.query(),
-              ipAddress: c.req.header('x-forwarded-for') || 
-                        c.req.header('x-real-ip') || 
-                        'unknown',
+              ipAddress: c.req.header('x-forwarded-for')
+                || c.req.header('x-real-ip')
+                || 'unknown',
               userAgent: c.req.header('user-agent') || 'unknown',
               referer: c.req.header('referer'),
               clinicId,
               userRole,
               permissions,
               timestamp: new Date().toISOString(),
-            }
+            },
           );
         } catch (auditError) {
           console.error('Audit logging failed:', auditError);
@@ -186,7 +187,6 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
 
       // Continue to next middleware/handler
       await next();
-
     } catch (error) {
       console.error('Prisma RLS middleware error:', error);
 
@@ -222,7 +222,9 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
 /**
  * Specialized middleware for patient data access
  */
-export function patientAccessMiddleware(options: Omit<PrismaRLSOptions, 'requireClinicAccess'> = {}) {
+export function patientAccessMiddleware(
+  options: Omit<PrismaRLSOptions, 'requireClinicAccess'> = {},
+) {
   return prismaRLSMiddleware({
     ...options,
     requireClinicAccess: true,
@@ -288,7 +290,4 @@ export function getHealthcareContext(c: Context): HealthcareRequestContext {
 }
 
 // Export types for use in other modules
-export type { 
-  PrismaRLSOptions, 
-  HealthcareRequestContext 
-};
+export type { HealthcareRequestContext, PrismaRLSOptions };

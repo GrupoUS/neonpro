@@ -22,26 +22,26 @@ vi.mock('./middleware/lgpd-middleware', () => ({
 // Mock OpenAPI Hono to use regular Hono in tests (avoid validation overhead)
 vi.mock('@hono/zod-openapi', async () => {
   const { Hono } = await import('hono');
-  
+
   // Return Hono directly but add openapi method
   const MockOpenAPIHono = function() {
     const app = new Hono();
-    
+
     // Add openapi method to the instance
     app.openapi = function(route: any, ...handlers: any[]) {
       const path = route.path || '/';
       const method = route.method?.toLowerCase() || 'get';
-      
+
       console.log(`Registering route: ${method.toUpperCase()} ${path}`);
       console.log(`Handler count: ${handlers.length}`);
-      
+
       // Call the appropriate HTTP method on this Hono instance
       return this[method](path, ...handlers);
     };
-    
+
     return app;
   };
-  
+
   return {
     OpenAPIHono: MockOpenAPIHono,
   };

@@ -1,6 +1,6 @@
 /**
  * Enhanced AI Chat Hooks with Portuguese Healthcare Support
- * 
+ *
  * Features:
  * - tRPC integration with AI backend routers
  * - Portuguese medical terminology support
@@ -15,8 +15,8 @@
 
 import { trpc } from '@/lib/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import React from 'react';
+import { toast } from 'sonner';
 
 // Enhanced AI Chat Query Keys for tRPC integration
 export const aiChatKeys = {
@@ -78,27 +78,27 @@ export function useAIChat(conversationId?: string) {
 
   // Get or create conversation
   const conversation = trpc.ai.chat.useQuery(
-    { 
+    {
       conversationId: conversationId || 'new',
       language: 'pt',
-      context: 'general'
+      context: 'general',
     },
     {
       enabled: true,
       staleTime: 30 * 1000, // 30 seconds for chat data
       gcTime: 5 * 60 * 1000, // 5 minutes cache
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         // LGPD Compliance: Log AI conversation access
         console.log('[LGPD Audit] AI conversation accessed', {
           conversationId: data.id,
           messageCount: data.messages.length,
           hasPatientContext: !!data.patientId,
           timestamp: new Date().toISOString(),
-          compliance: 'LGPD_AI_CONVERSATION_ACCESS'
+          compliance: 'LGPD_AI_CONVERSATION_ACCESS',
         });
-      }
-    }
+      },
+    },
   );
 
   // Send message with healthcare context
@@ -114,12 +114,12 @@ export function useAIChat(conversationId?: string) {
       console.log('[LGPD Audit] AI message sent', {
         conversationId: convId,
         messageLength: message.length,
-        hasPatientData: message.toLowerCase().includes('cpf') || 
-                       message.toLowerCase().includes('telefone') ||
-                       message.toLowerCase().includes('email'),
+        hasPatientData: message.toLowerCase().includes('cpf')
+          || message.toLowerCase().includes('telefone')
+          || message.toLowerCase().includes('email'),
         anonymizationRequired: true,
         timestamp: new Date().toISOString(),
-        compliance: 'LGPD_AI_DATA_PROCESSING'
+        compliance: 'LGPD_AI_DATA_PROCESSING',
       });
 
       // Optimistically add user message
@@ -130,8 +130,8 @@ export function useAIChat(conversationId?: string) {
         timestamp: new Date(),
         metadata: {
           language: 'pt',
-          anonymized: true
-        }
+          anonymized: true,
+        },
       };
 
       if (convId) {
@@ -141,7 +141,7 @@ export function useAIChat(conversationId?: string) {
             ...old,
             messages: [...old.messages, optimisticMessage],
             updatedAt: new Date(),
-            messageCount: old.messageCount + 1
+            messageCount: old.messageCount + 1,
           };
         });
       }
@@ -155,11 +155,12 @@ export function useAIChat(conversationId?: string) {
       if (convId) {
         queryClient.setQueryData(aiChatKeys.conversation(convId), (old: any) => {
           if (!old) return old;
-          
+
           // Replace optimistic message with real data
-          const updatedMessages = old.messages.map((msg: ChatMessage) => 
-            msg.id === context?.optimisticMessage.id ? 
-            { ...context.optimisticMessage, id: data.userMessageId } : msg
+          const updatedMessages = old.messages.map((msg: ChatMessage) =>
+            msg.id === context?.optimisticMessage.id
+              ? { ...context.optimisticMessage, id: data.userMessageId }
+              : msg
           );
 
           // Add AI response
@@ -176,12 +177,12 @@ export function useAIChat(conversationId?: string) {
                 cost: data.cost,
                 tokens: data.tokens,
                 confidence: data.confidence,
-                language: 'pt'
-              }
+                language: 'pt',
+              },
             }],
             totalCost: old.totalCost + data.cost,
             messageCount: old.messageCount + 1,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           };
         });
 
@@ -203,15 +204,15 @@ export function useAIChat(conversationId?: string) {
           if (!old) return old;
           return {
             ...old,
-            messages: old.messages.filter((msg: ChatMessage) => 
+            messages: old.messages.filter((msg: ChatMessage) =>
               msg.id !== context?.optimisticMessage.id
-            )
+            ),
           };
         });
       }
 
       console.error('[AI Chat Error]', error);
-      
+
       // Portuguese error messages
       if (error.message.includes('rate_limit')) {
         toast.error('Limite de uso atingido. Aguarde alguns minutos.');
@@ -222,7 +223,7 @@ export function useAIChat(conversationId?: string) {
       } else {
         toast.error('Erro na IA. Tentando provedor alternativo...');
       }
-    }
+    },
   });
 
   return {
@@ -230,7 +231,7 @@ export function useAIChat(conversationId?: string) {
     isLoading: conversation.isLoading,
     error: conversation.error,
     sendMessage: sendMessage.mutate,
-    isSending: sendMessage.isPending
+    isSending: sendMessage.isPending,
   };
 }
 
@@ -247,7 +248,7 @@ export function useAINoShowPrediction() {
         patientId,
         hasAppointmentData: !!appointmentData,
         timestamp: new Date().toISOString(),
-        compliance: 'LGPD_AI_PREDICTION_REQUEST'
+        compliance: 'LGPD_AI_PREDICTION_REQUEST',
       });
     },
 
@@ -266,26 +267,26 @@ export function useAINoShowPrediction() {
               interventions: data.interventions,
               reasoning: data.reasoning,
               timestamp: new Date(),
-              provider: data.provider
-            }
+              provider: data.provider,
+            },
           ];
-        }
+        },
       );
 
       // Show Portuguese risk assessment
       const riskMessages = {
         high: `⚠️ Alto risco de falta (${Math.round(data.riskScore * 100)}%)`,
         medium: `📋 Risco moderado de falta (${Math.round(data.riskScore * 100)}%)`,
-        low: `✅ Baixo risco de falta (${Math.round(data.riskScore * 100)}%)`
+        low: `✅ Baixo risco de falta (${Math.round(data.riskScore * 100)}%)`,
       };
 
       toast.info(riskMessages[data.riskLevel as keyof typeof riskMessages]);
     },
 
-    onError: (error) => {
+    onError: error => {
       console.error('[AI Prediction Error]', error);
       toast.error('Erro na predição de falta. Tente novamente.');
-    }
+    },
   });
 }
 
@@ -301,7 +302,7 @@ export function useAIHealthcareInsights() {
         hasPatientData: context === 'patient_analysis',
         dataAnonymized: true,
         timestamp: new Date().toISOString(),
-        compliance: 'LGPD_AI_INSIGHT_GENERATION'
+        compliance: 'LGPD_AI_INSIGHT_GENERATION',
       });
     },
 
@@ -313,17 +314,17 @@ export function useAIHealthcareInsights() {
         (old: any) => {
           const insights = old || [];
           return [data, ...insights.slice(0, 9)]; // Keep last 10 insights
-        }
+        },
       );
 
       // Show success with insight summary
       toast.success(`Insights gerados: ${data.recommendations.length} recomendações`);
     },
 
-    onError: (error) => {
+    onError: error => {
       console.error('[AI Insights Error]', error);
       toast.error('Erro ao gerar insights. Tente novamente.');
-    }
+    },
   });
 }
 
@@ -343,13 +344,13 @@ export function useAIProviderRouting() {
         operation,
         estimatedCost,
         failoverCount,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setCurrentProvider(data.selectedProvider);
-      
+
       // Reset failover count on success
       if (failoverCount > 0) {
         setFailoverCount(0);
@@ -357,7 +358,7 @@ export function useAIProviderRouting() {
       }
     },
 
-    onError: (error) => {
+    onError: error => {
       // Implement failover logic
       const nextProvider = currentProvider === 'openai' ? 'anthropic' : 'openai';
       setCurrentProvider(nextProvider);
@@ -368,14 +369,14 @@ export function useAIProviderRouting() {
       } else {
         toast.error('Todos os provedores de IA estão indisponíveis.');
       }
-    }
+    },
   });
 
   return {
     currentProvider,
     routeProvider: routeProvider.mutate,
     isRouting: routeProvider.isPending,
-    failoverCount
+    failoverCount,
   };
 }
 
@@ -386,30 +387,34 @@ export function useAIUsageMonitoring() {
   const usage = trpc.ai.getUsage.useQuery(
     {
       period: 'month',
-      includeBreakdown: true
+      includeBreakdown: true,
     },
     {
       staleTime: 2 * 60 * 1000, // 2 minutes for usage data
       gcTime: 10 * 60 * 1000,
       refetchInterval: 5 * 60 * 1000, // Update every 5 minutes
 
-      select: (data) => ({
+      select: data => ({
         ...data,
-        costPercentage: data.monthlyLimit > 0 ? 
-          (data.currentCost / data.monthlyLimit) * 100 : 0,
+        costPercentage: data.monthlyLimit > 0
+          ? (data.currentCost / data.monthlyLimit) * 100
+          : 0,
         isNearLimit: data.currentCost > (data.monthlyLimit * 0.8),
-        averageCostPerRequest: data.totalRequests > 0 ? 
-          data.currentCost / data.totalRequests : 0,
-        projectedMonthlyCost: data.currentCost * (30 / new Date().getDate())
-      })
-    }
+        averageCostPerRequest: data.totalRequests > 0
+          ? data.currentCost / data.totalRequests
+          : 0,
+        projectedMonthlyCost: data.currentCost * (30 / new Date().getDate()),
+      }),
+    },
   );
 
   // Show warnings for high usage
   React.useEffect(() => {
     if (usage.data?.isNearLimit) {
       toast.warning(
-        `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${usage.data.monthlyLimit.toFixed(2)}`
+        `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${
+          usage.data.monthlyLimit.toFixed(2)
+        }`,
       );
     }
   }, [usage.data?.isNearLimit, usage.data?.currentCost, usage.data?.monthlyLimit]);
@@ -425,30 +430,30 @@ export function useAIModelConfiguration() {
     {},
     {
       staleTime: 10 * 60 * 1000, // 10 minutes for model list
-      gcTime: 30 * 60 * 1000
-    }
+      gcTime: 30 * 60 * 1000,
+    },
   );
 
   const updateConfiguration = trpc.ai.updateModelConfiguration.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update models cache
       const queryClient = useQueryClient();
       queryClient.invalidateQueries({ queryKey: aiChatKeys.models() });
-      
+
       toast.success(`Configuração do modelo ${data.model} atualizada!`);
     },
 
-    onError: (error) => {
+    onError: error => {
       console.error('[AI Configuration Error]', error);
       toast.error('Erro ao atualizar configuração. Tente novamente.');
-    }
+    },
   });
 
   return {
     models: models.data,
     isLoading: models.isLoading,
     updateConfiguration: updateConfiguration.mutate,
-    isUpdating: updateConfiguration.isPending
+    isUpdating: updateConfiguration.isPending,
   };
 }
 
@@ -464,9 +469,9 @@ export function useAIVoiceChat() {
       setIsListening(true);
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setIsListening(false);
-      
+
       // Log voice interaction for healthcare compliance
       console.log('[Healthcare Audit] Voice input processed', {
         recognizedText: data.recognizedText,
@@ -474,17 +479,17 @@ export function useAIVoiceChat() {
         language: 'pt',
         medicalTermsDetected: data.medicalTermsDetected,
         timestamp: new Date().toISOString(),
-        compliance: 'HEALTHCARE_VOICE_INTERACTION'
+        compliance: 'HEALTHCARE_VOICE_INTERACTION',
       });
 
       toast.success('Voz processada com sucesso!');
     },
 
-    onError: (error) => {
+    onError: error => {
       setIsListening(false);
       console.error('[Voice Input Error]', error);
       toast.error('Erro no reconhecimento de voz. Tente novamente.');
-    }
+    },
   });
 
   const generateVoiceOutput = trpc.ai.generateVoiceOutput.useMutation({
@@ -492,9 +497,9 @@ export function useAIVoiceChat() {
       setIsSpeaking(true);
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setIsSpeaking(false);
-      
+
       // Play audio response
       if (data.audioUrl) {
         const audio = new Audio(data.audioUrl);
@@ -502,18 +507,18 @@ export function useAIVoiceChat() {
       }
     },
 
-    onError: (error) => {
+    onError: error => {
       setIsSpeaking(false);
       console.error('[Voice Output Error]', error);
       toast.error('Erro na síntese de voz. Tente novamente.');
-    }
+    },
   });
 
   return {
     isListening,
     isSpeaking,
     processVoiceInput: processVoiceInput.mutate,
-    generateVoiceOutput: generateVoiceOutput.mutate
+    generateVoiceOutput: generateVoiceOutput.mutate,
   };
 }
 
@@ -531,7 +536,7 @@ export function useAIStreamingChat(conversationId: string) {
     const unsubscribe = trpc.ai.streamResponse.subscribe(
       { conversationId },
       {
-        onData: (chunk) => {
+        onData: chunk => {
           if (chunk.type === 'start') {
             setIsStreaming(true);
             setStreamingMessage('');
@@ -539,23 +544,23 @@ export function useAIStreamingChat(conversationId: string) {
             setStreamingMessage(prev => prev + chunk.content);
           } else if (chunk.type === 'end') {
             setIsStreaming(false);
-            
+
             // Log streaming completion
             console.log('[Healthcare Audit] AI streaming response completed', {
               conversationId,
               responseLength: streamingMessage.length,
               timestamp: new Date().toISOString(),
-              compliance: 'HEALTHCARE_AI_STREAMING'
+              compliance: 'HEALTHCARE_AI_STREAMING',
             });
           }
         },
 
-        onError: (error) => {
+        onError: error => {
           setIsStreaming(false);
           console.error('[AI Streaming Error]', error);
           toast.error('Erro na resposta em tempo real.');
-        }
-      }
+        },
+      },
     );
 
     return () => {
@@ -567,7 +572,7 @@ export function useAIStreamingChat(conversationId: string) {
 
   return {
     streamingMessage,
-    isStreaming
+    isStreaming,
   };
 }
 
@@ -578,12 +583,12 @@ export function useAIConversationHistory() {
   const conversations = trpc.ai.getConversations.useQuery(
     {
       limit: 50,
-      includeMessages: false
+      includeMessages: false,
     },
     {
       staleTime: 1 * 60 * 1000, // 1 minute for conversation list
-      gcTime: 5 * 60 * 1000
-    }
+      gcTime: 5 * 60 * 1000,
+    },
   );
 
   const deleteConversation = trpc.ai.deleteConversation.useMutation({
@@ -599,23 +604,23 @@ export function useAIConversationHistory() {
       console.log('[LGPD Audit] AI conversation deleted', {
         conversationId: variables.conversationId,
         timestamp: new Date().toISOString(),
-        compliance: 'LGPD_DATA_DELETION'
+        compliance: 'LGPD_DATA_DELETION',
       });
 
       toast.success('Conversa excluída com sucesso.');
     },
 
-    onError: (error) => {
+    onError: error => {
       console.error('[Delete Conversation Error]', error);
       toast.error('Erro ao excluir conversa.');
-    }
+    },
   });
 
   return {
     conversations: conversations.data || [],
     isLoading: conversations.isLoading,
     deleteConversation: deleteConversation.mutate,
-    isDeleting: deleteConversation.isPending
+    isDeleting: deleteConversation.isPending,
   };
 }
 
@@ -637,21 +642,32 @@ export const aiChatUtils = {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-      minimumFractionDigits: 4
+      minimumFractionDigits: 4,
     }).format(cost);
   },
 
   // Detect medical terms in Portuguese
   detectMedicalTerms: (text: string): string[] => {
     const medicalTerms = [
-      'sintoma', 'diagnóstico', 'tratamento', 'medicamento', 'receita',
-      'consulta', 'exame', 'cirurgia', 'dor', 'febre', 'pressão',
-      'diabetes', 'hipertensão', 'alergia', 'vacina', 'internação'
+      'sintoma',
+      'diagnóstico',
+      'tratamento',
+      'medicamento',
+      'receita',
+      'consulta',
+      'exame',
+      'cirurgia',
+      'dor',
+      'febre',
+      'pressão',
+      'diabetes',
+      'hipertensão',
+      'alergia',
+      'vacina',
+      'internação',
     ];
-    
-    return medicalTerms.filter(term => 
-      text.toLowerCase().includes(term)
-    );
+
+    return medicalTerms.filter(term => text.toLowerCase().includes(term));
   },
 
   // Get risk level color
@@ -659,7 +675,7 @@ export const aiChatUtils = {
     const colors = {
       high: '#ef4444',
       medium: '#f59e0b',
-      low: '#22c55e'
+      low: '#22c55e',
     };
     return colors[level as keyof typeof colors] || '#6b7280';
   },
@@ -667,12 +683,12 @@ export const aiChatUtils = {
   // Format confidence percentage
   formatConfidence: (confidence: number): string => {
     return `${Math.round(confidence * 100)}%`;
-  }
+  },
 };
 
 /**
  * Healthcare AI Compliance Summary:
- * 
+ *
  * This AI chat hooks module implements comprehensive healthcare features:
  * - ✅ Portuguese medical terminology support and context
  * - ✅ Patient data anonymization before AI processing
@@ -684,6 +700,6 @@ export const aiChatUtils = {
  * - ✅ Healthcare-specific prompting and insights
  * - ✅ No-show prediction with Brazilian behavior patterns
  * - ✅ Performance monitoring and error handling
- * 
+ *
  * All AI operations are logged for healthcare compliance and LGPD requirements.
  */

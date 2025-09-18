@@ -1,5 +1,10 @@
 {
   "env": {
-      "ANTHROPIC_MODEL": "glm-4.5"
+    "ANTHROPIC_MODEL": "glm-4.5"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0 // Opcional: definir como 0 para permitir que a linha de status vá até a borda
   }
 }

@@ -1,14 +1,14 @@
+import { createClient } from '@supabase/supabase-js';
+import { http } from 'msw';
+import { setupServer } from 'msw/node';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import type { Database } from '../../src/types/database';
 import { createTestClient, generateTestCPF } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
-import { createClient } from '@supabase/supabase-js';
-import { setupServer } from 'msw/node';
-import { http } from 'msw';
-import type { Database } from '../../src/types/database';
 
 /**
  * T009: CFM Telemedicine Compliance Tests
- * 
+ *
  * CFM RESOLUTION 2,314/2022 COMPLIANCE FEATURES:
  * - Telemedicine session creation with NGS2 security standards
  * - ICP-Brasil certificate validation for medical professionals
@@ -17,7 +17,7 @@ import type { Database } from '../../src/types/database';
  * - Medical ethics compliance verification
  * - Digital prescription with electronic signature
  * - Patient consent for telemedicine with legal validity
- * 
+ *
  * TDD RED PHASE: These tests are designed to FAIL initially to drive implementation
  */
 
@@ -32,10 +32,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
   beforeEach(async () => {
     await setupTestDatabase();
     testClient = await createTestClient({ role: 'admin' });
-    
+
     supabase = createClient<Database>(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Setup MSW server for external service mocking
@@ -51,13 +51,12 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           inscricao_principal: 'SIM',
           registro_especialista: {
             dermatologia: 'RQE-12345',
-            medicina_estetica: 'RQE-67890'
+            medicina_estetica: 'RQE-67890',
           },
           situacao_etica: 'REGULAR',
-          ultima_atualizacao: '2024-01-15T10:00:00Z'
+          ultima_atualizacao: '2024-01-15T10:00:00Z',
         });
       }),
-
       // Mock ICP-Brasil certificate validation
       http.post('https://validador.iti.gov.br/api/validar-certificado', () => {
         return Response.json({
@@ -66,17 +65,16 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           titular: {
             nome: 'CARLOS ALBERTO MEDICINA',
             cpf: '123.456.789-01',
-            email: 'carlos.medicina@clinica.com.br'
+            email: 'carlos.medicina@clinica.com.br',
           },
           periodo_validade: {
             inicio: '2023-06-01T00:00:00Z',
-            fim: '2025-06-01T23:59:59Z'
+            fim: '2025-06-01T23:59:59Z',
           },
           status_revogacao: 'NAO_REVOGADO',
-          timestamp_validacao: new Date().toISOString()
+          timestamp_validacao: new Date().toISOString(),
         });
       }),
-
       // Mock NGS2 security validation service
       http.post('https://api.ngs2.gov.br/validacao-seguranca', () => {
         return Response.json({
@@ -85,10 +83,9 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           autenticacao: 'MULTI_FATOR_OBRIGATORIA',
           auditoria: 'TRILHA_COMPLETA_ATIVADA',
           compliance_score: 98,
-          certificacao: 'NGS2_CERTIFICADO_VALIDO'
+          certificacao: 'NGS2_CERTIFICADO_VALIDO',
         });
       }),
-
       // Mock video conferencing service (WebRTC signaling)
       http.post('https://api.telemedicina-segura.com.br/session/create', () => {
         return Response.json({
@@ -98,21 +95,21 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             {
               urls: 'turn:turn.telemedicina-segura.com.br:443',
               username: 'user123',
-              credential: 'pass123'
-            }
+              credential: 'pass123',
+            },
           ],
           security_config: {
             encryption: 'DTLS-SRTP',
             key_exchange: 'ECDHE',
-            authentication: 'certificate_based'
+            authentication: 'certificate_based',
           },
           compliance_features: {
             recording_consent: 'REQUIRED',
             audit_logging: 'ENABLED',
-            data_residency: 'BRAZIL_ONLY'
-          }
+            data_residency: 'BRAZIL_ONLY',
+          },
         });
-      })
+      }),
     );
 
     server.listen();
@@ -137,8 +134,8 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
         session_type: 'consultation',
         patient_location: {
           state: 'SP',
-          municipality: 'São Paulo'
-        }
+          municipality: 'São Paulo',
+        },
       };
 
       await expect(async () => {
@@ -146,15 +143,15 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(licenseValidation)
+          body: JSON.stringify(licenseValidation),
         });
-        
+
         if (!response.ok) {
           throw new Error(`License validation failed: ${response.status}`);
         }
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -176,15 +173,15 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           {
             procedure: 'toxina_botulinica_aplicacao',
             specialty_required: 'medicina_estetica',
-            rqe_required: true
+            rqe_required: true,
           },
           {
             procedure: 'preenchimento_facial',
             specialty_required: 'dermatologia',
-            additional_certifications: ['harmonizacao_facial']
-          }
+            additional_certifications: ['harmonizacao_facial'],
+          },
         ],
-        session_context: 'aesthetic_telemedicine'
+        session_context: 'aesthetic_telemedicine',
       };
 
       await expect(async () => {
@@ -192,11 +189,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(specialtyValidation)
+          body: JSON.stringify(specialtyValidation),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -211,22 +208,25 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
         certificate_data: {
           public_key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...',
           certificate_chain: ['cert1_base64', 'cert2_base64', 'root_cert_base64'],
-          signature_algorithm: 'SHA256withRSA'
+          signature_algorithm: 'SHA256withRSA',
         },
         validation_purpose: 'digital_prescription_signing',
-        timestamp_required: true
+        timestamp_required: true,
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/validate-certificate`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/validate-certificate`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(certificateValidation),
           },
-          body: JSON.stringify(certificateValidation)
-        });
-        
+        );
+
         return response.json();
       }).rejects.toThrow();
 
@@ -245,26 +245,29 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
         old_certificate: {
           serial_number: 'cert_old_123',
           expiry_date: '2024-03-15T23:59:59Z',
-          status: 'expiring_soon'
+          status: 'expiring_soon',
         },
         new_certificate: {
           serial_number: 'cert_new_456',
           activation_date: '2024-03-01T00:00:00Z',
-          validity_period: '3_years'
+          validity_period: '3_years',
         },
-        transition_period: '30_days_overlap'
+        transition_period: '30_days_overlap',
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/certificate-transition`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/certificate-transition`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(certificateTransition),
           },
-          body: JSON.stringify(certificateTransition)
-        });
-        
+        );
+
         return response.json();
       }).rejects.toThrow();
 
@@ -283,9 +286,9 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           'audit_trail_complete',
           'data_residency_brazil',
           'access_control_rbac',
-          'session_timeout_15min'
+          'session_timeout_15min',
         ],
-        compliance_frameworks: ['NGS2', 'CFM_2314_2022', 'LGPD']
+        compliance_frameworks: ['NGS2', 'CFM_2314_2022', 'LGPD'],
       };
 
       await expect(async () => {
@@ -293,11 +296,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(ngs2Compliance)
+          body: JSON.stringify(ngs2Compliance),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -320,13 +323,13 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           'authentication_token_validation',
           'access_pattern_analysis',
           'data_leak_prevention',
-          'unauthorized_access_detection'
+          'unauthorized_access_detection',
         ],
         alert_thresholds: {
           security_violation: 'immediate',
           suspicious_activity: '30_seconds',
-          compliance_drift: '5_minutes'
-        }
+          compliance_drift: '5_minutes',
+        },
       };
 
       await expect(async () => {
@@ -334,11 +337,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(sessionSecurityMonitoring)
+          body: JSON.stringify(sessionSecurityMonitoring),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -359,14 +362,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           informed_consent: 'required',
           session_recording: 'with_patient_consent',
           medical_records_access: 'restricted_necessary_only',
-          prescription_capability: 'digital_signature_required'
+          prescription_capability: 'digital_signature_required',
         },
         security_config: {
           encryption_level: 'military_grade',
           access_control: 'certificate_based',
           audit_logging: 'comprehensive',
-          data_residency: 'brazil_only'
-        }
+          data_residency: 'brazil_only',
+        },
       };
 
       await expect(async () => {
@@ -374,11 +377,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(sessionCreation)
+          body: JSON.stringify(sessionCreation),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -404,21 +407,21 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
               'emergency_procedures',
               'data_handling_policies',
               'recording_policies',
-              'prescription_delivery_methods'
-            ]
+              'prescription_delivery_methods',
+            ],
           },
           session_recording: {
             required: false,
             patient_choice: true,
             retention_period: '5_years_medical_records',
-            access_controls: 'doctor_patient_only'
+            access_controls: 'doctor_patient_only',
           },
           data_sharing: {
             within_clinic: 'authorized_professionals_only',
             external_specialists: 'explicit_consent_required',
-            research_purposes: 'separate_consent_required'
-          }
-        }
+            research_purposes: 'separate_consent_required',
+          },
+        },
       };
 
       await expect(async () => {
@@ -426,11 +429,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(patientConsentValidation)
+          body: JSON.stringify(patientConsentValidation),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -451,8 +454,8 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
               dosage: 'Aplicar conforme orientação médica',
               frequency: 'Sessão única',
               duration: 'Procedimento único',
-              medical_justification: 'Harmonização facial - sulco nasogeniano'
-            }
+              medical_justification: 'Harmonização facial - sulco nasogeniano',
+            },
           ],
           procedures: [
             {
@@ -460,28 +463,31 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
               anatomical_region: 'Sulco nasogeniano bilateral',
               technique: 'Microgotas + massagem',
               expected_sessions: 1,
-              follow_up_required: 'Retorno em 15 dias'
-            }
-          ]
+              follow_up_required: 'Retorno em 15 dias',
+            },
+          ],
         },
         digital_signature: {
           certificate_id: 'icp_brasil_cert_123',
           signature_algorithm: 'SHA256withRSA',
           timestamp_authority: 'ICP-Brasil_TSA',
-          signature_purpose: 'medical_prescription'
-        }
+          signature_purpose: 'medical_prescription',
+        },
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/digital-prescription`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/digital-prescription`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(digitalPrescription),
           },
-          body: JSON.stringify(digitalPrescription)
-        });
-        
+        );
+
         return response.json();
       }).rejects.toThrow();
 
@@ -502,27 +508,30 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           requester_type: 'pharmacy',
           requester_id: 'farmacia_cnpj_12345678',
           patient_cpf: generateTestCPF(),
-          verification_level: 'complete_chain'
+          verification_level: 'complete_chain',
         },
         anti_fraud_checks: [
           'digital_signature_verification',
           'doctor_license_validation',
           'prescription_uniqueness_check',
           'temporal_validity_verification',
-          'modification_detection'
-        ]
+          'modification_detection',
+        ],
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/validate-prescription`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/validate-prescription`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(prescriptionValidation),
           },
-          body: JSON.stringify(prescriptionValidation)
-        });
-        
+        );
+
         return response.json();
       }).rejects.toThrow();
 
@@ -536,7 +545,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
         scope: 'cfm_telemedicine_compliance',
         time_period: {
           start: '2024-01-01T00:00:00Z',
-          end: '2024-12-31T23:59:59Z'
+          end: '2024-12-31T23:59:59Z',
         },
         audit_categories: [
           'doctor_license_validations',
@@ -544,10 +553,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           'session_security_compliance',
           'digital_prescription_activity',
           'ngs2_security_adherence',
-          'data_residency_compliance'
+          'data_residency_compliance',
         ],
         reporting_format: 'cfm_regulatory_submission',
-        include_anonymized_statistics: true
+        include_anonymized_statistics: true,
       };
 
       await expect(async () => {
@@ -555,11 +564,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+            Authorization: `Bearer ${testClient.token}`,
           },
-          body: JSON.stringify(auditTrailGeneration)
+          body: JSON.stringify(auditTrailGeneration),
         });
-        
+
         return response.json();
       }).rejects.toThrow();
 
@@ -582,27 +591,30 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           'patient_consent_completeness_rate',
           'digital_signature_validation_rate',
           'ngs2_compliance_adherence',
-          'audit_trail_completeness'
+          'audit_trail_completeness',
         ],
         alert_thresholds: {
           compliance_score_minimum: 98,
           license_validation_failure_rate: 1,
           security_incident_tolerance: 0,
-          patient_consent_incompleteness: 2
+          patient_consent_incompleteness: 2,
         },
-        reporting_frequency: 'daily_summary_with_real_time_alerts'
+        reporting_frequency: 'daily_summary_with_real_time_alerts',
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/compliance-monitoring`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/compliance-monitoring`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(complianceMonitoring),
           },
-          body: JSON.stringify(complianceMonitoring)
-        });
-        
+        );
+
         return response.json();
       }).rejects.toThrow();
 

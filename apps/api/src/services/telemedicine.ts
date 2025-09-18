@@ -13,9 +13,9 @@
  * - Emergency escalation protocols
  */
 
-import { z } from 'zod';
-import * as crypto from 'crypto';
 import type { PrismaClient } from '@prisma/client';
+import * as crypto from 'crypto';
+import { z } from 'zod';
 
 // NGS2 Security Standards
 export const NGS2_SECURITY_LEVELS = {
@@ -48,7 +48,8 @@ export const TELEMEDICINE_SESSION_TYPES = {
   EMERGENCY_TELECONSULT: 'emergency_teleconsult', // Emergency consultation
 } as const;
 
-export type TelemedicineSessionType = typeof TELEMEDICINE_SESSION_TYPES[keyof typeof TELEMEDICINE_SESSION_TYPES];
+export type TelemedicineSessionType =
+  typeof TELEMEDICINE_SESSION_TYPES[keyof typeof TELEMEDICINE_SESSION_TYPES];
 
 // Session Status
 export const SESSION_STATUS = {
@@ -114,7 +115,7 @@ export const TelemedicineSessionSchema = z.object({
   actualStartTime: z.date().optional(),
   endTime: z.date().optional(),
   duration: z.number().optional(), // minutes
-  
+
   // Security and Compliance
   securityLevel: z.nativeEnum(NGS2_SECURITY_LEVELS),
   encryptionKey: z.string(),
@@ -126,7 +127,7 @@ export const TelemedicineSessionSchema = z.object({
     timestamp: z.date(),
     certificateFingerprint: z.string(),
   })),
-  
+
   // Communication Infrastructure
   communicationChannel: z.object({
     videoEnabled: z.boolean(),
@@ -136,7 +137,7 @@ export const TelemedicineSessionSchema = z.object({
     recordingEnabled: z.boolean(),
     recordingConsent: z.boolean(),
   }),
-  
+
   // Quality Metrics
   qualityMetrics: z.object({
     videoResolution: z.string(),
@@ -147,7 +148,7 @@ export const TelemedicineSessionSchema = z.object({
     bandwidthMbps: z.number(),
     qualityScore: z.number().min(0).max(100),
   }),
-  
+
   // Medical Content
   clinicalNotes: z.string().optional(),
   diagnosis: z.string().optional(),
@@ -163,7 +164,7 @@ export const TelemedicineSessionSchema = z.object({
     prescriptionId: z.string().optional(),
     issuedAt: z.date().optional(),
   }).optional(),
-  
+
   // Compliance and Audit
   cfmCompliance: z.object({
     professionalValidated: z.boolean(),
@@ -172,7 +173,7 @@ export const TelemedicineSessionSchema = z.object({
     recordKeepingCompliant: z.boolean(),
     complianceScore: z.number().min(0).max(100),
   }),
-  
+
   auditTrail: z.array(z.object({
     action: z.string(),
     timestamp: z.date(),
@@ -181,7 +182,7 @@ export const TelemedicineSessionSchema = z.object({
     ipAddress: z.string(),
     details: z.record(z.any()),
   })),
-  
+
   // Emergency Escalation
   emergencyEscalation: z.object({
     isActive: z.boolean(),
@@ -200,7 +201,7 @@ export const TelemedicineSessionSchema = z.object({
       estimatedArrival: z.number(), // minutes
     }).optional(),
   }),
-  
+
   metadata: z.record(z.any()).optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -237,9 +238,10 @@ export const NGS2AuthContextSchema = z.object({
   riskScore: z.number().min(0).max(100),
 });
 
-export type NGS2AuthContext = z.infer<typeof NGS2AuthContextSchema>;/**
+export type NGS2AuthContext = z.infer<typeof NGS2AuthContextSchema>; /**
  * Telemedicine Service Implementation
  */
+
 export class TelemedicineService {
   private prisma: PrismaClient;
   private activeSessions: Map<string, TelemedicineSession> = new Map();
@@ -291,7 +293,7 @@ export class TelemedicineService {
         encryptionKey,
         sessionToken,
         digitalSignatures: [],
-        
+
         communicationChannel: {
           videoEnabled: true,
           audioEnabled: true,
@@ -300,7 +302,7 @@ export class TelemedicineService {
           recordingEnabled: options.recordingConsent || false,
           recordingConsent: options.recordingConsent || false,
         },
-        
+
         qualityMetrics: {
           videoResolution: '0p', // Will be set during connection
           audioQuality: 0,
@@ -310,7 +312,7 @@ export class TelemedicineService {
           bandwidthMbps: 0,
           qualityScore: 0,
         },
-        
+
         cfmCompliance: {
           professionalValidated: true,
           patientConsentObtained: false, // Will be set during session start
@@ -318,7 +320,7 @@ export class TelemedicineService {
           recordKeepingCompliant: true,
           complianceScore: 85, // Initial score
         },
-        
+
         auditTrail: [
           {
             action: 'session_created',
@@ -333,13 +335,13 @@ export class TelemedicineService {
             },
           },
         ],
-        
+
         emergencyEscalation: {
           isActive: false,
           escalationLevel: 'none',
           emergencyContacts: [],
         },
-        
+
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -356,7 +358,6 @@ export class TelemedicineService {
       });
 
       return session;
-
     } catch (error) {
       throw new Error(`Failed to create telemedicine session: ${error.message}`);
     }
@@ -437,7 +438,6 @@ export class TelemedicineService {
         connectionDetails,
         qualityRequirements: QUALITY_THRESHOLDS,
       };
-
     } catch (error) {
       throw new Error(`Failed to start session: ${error.message}`);
     }
@@ -625,13 +625,13 @@ export class TelemedicineService {
         timestamp: new Date(),
         isValid: true,
       };
-
     } catch (error) {
       throw new Error(`Failed to create digital prescription: ${error.message}`);
     }
-  }  /**
+  } /**
    * Activate emergency escalation protocol
    */
+
   async activateEmergencyEscalation(
     sessionId: string,
     escalationLevel: 'urgent' | 'critical' | 'emergency',
@@ -740,7 +740,6 @@ export class TelemedicineService {
         emergencyContacts: notificationResults,
         nearestHospital,
       };
-
     } catch (error) {
       throw new Error(`Emergency escalation failed: ${error.message}`);
     }
@@ -781,7 +780,7 @@ export class TelemedicineService {
       }
 
       const endTime = new Date();
-      const duration = session.actualStartTime 
+      const duration = session.actualStartTime
         ? Math.round((endTime.getTime() - session.actualStartTime.getTime()) / (1000 * 60))
         : 0;
 
@@ -828,7 +827,6 @@ export class TelemedicineService {
         complianceReport,
         archivalDetails,
       };
-
     } catch (error) {
       throw new Error(`Failed to end session: ${error.message}`);
     }
@@ -839,7 +837,9 @@ export class TelemedicineService {
   /**
    * Validate CFM professional credentials
    */
-  private async validateCFMProfessional(professionalId: string): Promise<CFMProfessionalValidation> {
+  private async validateCFMProfessional(
+    professionalId: string,
+  ): Promise<CFMProfessionalValidation> {
     // Check cache first
     if (this.cfmCache.has(professionalId)) {
       const cached = this.cfmCache.get(professionalId)!;
@@ -879,7 +879,6 @@ export class TelemedicineService {
 
       this.cfmCache.set(professionalId, validation);
       return validation;
-
     } catch (error) {
       throw new Error(`CFM validation failed: ${error.message}`);
     }
@@ -901,7 +900,9 @@ export class TelemedicineService {
     );
 
     if (!hasRequiredMethods) {
-      throw new Error(`Insufficient authentication methods for security level ${authContext.securityLevel}`);
+      throw new Error(
+        `Insufficient authentication methods for security level ${authContext.securityLevel}`,
+      );
     }
 
     // Validate digital certificate if required
@@ -943,7 +944,11 @@ export class TelemedicineService {
   /**
    * Generate secure session token
    */
-  private generateSecureToken(sessionId: string, patientId: string, professionalId: string): string {
+  private generateSecureToken(
+    sessionId: string,
+    patientId: string,
+    professionalId: string,
+  ): string {
     const tokenData = `${sessionId}|${patientId}|${professionalId}|${Date.now()}`;
     return crypto.createHmac('sha256', process.env.SESSION_SECRET || 'default-secret')
       .update(tokenData).digest('hex');
@@ -956,7 +961,7 @@ export class TelemedicineService {
     const timestamp = Date.now();
     const token = crypto.createHmac('sha256', process.env.MEDIA_SECRET || 'default-secret')
       .update(`${sessionId}|${mediaType}|${timestamp}`).digest('hex');
-    
+
     return `wss://telemedicine.neonpro.com.br/${mediaType}/${sessionId}?token=${token}&t=${timestamp}`;
   }
 
@@ -984,7 +989,10 @@ export class TelemedicineService {
     score *= (resolutionScore[metrics.videoResolution] || 50) / 100;
 
     // Audio quality score
-    const audioScore = Math.min(100, (metrics.audioQuality / QUALITY_THRESHOLDS.AUDIO_QUALITY_MIN) * 100);
+    const audioScore = Math.min(
+      100,
+      (metrics.audioQuality / QUALITY_THRESHOLDS.AUDIO_QUALITY_MIN) * 100,
+    );
     score *= audioScore / 100;
 
     // Latency penalty
@@ -1003,13 +1011,17 @@ export class TelemedicineService {
     }
 
     // Bandwidth score
-    const bandwidthScore = Math.min(100, (metrics.bandwidth / QUALITY_THRESHOLDS.BANDWIDTH_MIN_MBPS) * 100);
+    const bandwidthScore = Math.min(
+      100,
+      (metrics.bandwidth / QUALITY_THRESHOLDS.BANDWIDTH_MIN_MBPS) * 100,
+    );
     score *= bandwidthScore / 100;
 
     return Math.max(0, Math.min(100, Math.round(score)));
-  }  /**
+  } /**
    * Generate digital signature with ICP-Brasil certificate
    */
+
   private generateDigitalSignature(
     data: string,
     privateKey: string,
@@ -1019,7 +1031,7 @@ export class TelemedicineService {
     // For now, generate a mock signature
     const signature = crypto.createHmac('sha256', privateKey)
       .update(data + certType).digest('hex');
-    
+
     return `ICP-BRASIL:${certType}:${signature}`;
   }
 
@@ -1060,12 +1072,14 @@ export class TelemedicineService {
     escalationLevel: string,
     reason: string,
     location?: any,
-  ): Promise<Array<{
-    name: string;
-    phone: string;
-    role: string;
-    notified: boolean;
-  }>> {
+  ): Promise<
+    Array<{
+      name: string;
+      phone: string;
+      role: string;
+      notified: boolean;
+    }>
+  > {
     // Mock implementation - would integrate with notification services
     return contacts.map(contact => ({
       ...contact,
@@ -1098,14 +1112,19 @@ export class TelemedicineService {
       issues.push('Patient consent not properly obtained');
     }
 
-    if (session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS && 
-        session.qualityMetrics.qualityScore < 80) {
+    if (
+      session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS
+      && session.qualityMetrics.qualityScore < 80
+    ) {
       cfmCompliant = false;
       issues.push('Quality standards not met for telediagnosis');
     }
 
     // LGPD compliance checks
-    if (session.communicationChannel.recordingEnabled && !session.communicationChannel.recordingConsent) {
+    if (
+      session.communicationChannel.recordingEnabled
+      && !session.communicationChannel.recordingConsent
+    ) {
       lgpdCompliant = false;
       issues.push('Recording without explicit consent violates LGPD');
     }
@@ -1143,7 +1162,7 @@ export class TelemedicineService {
     encryptionConfirmed: boolean;
   }> {
     const archiveId = `ARCH-${Date.now()}-${session.id.substring(0, 8)}`;
-    
+
     // Determine retention period based on session type and regulations
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
@@ -1177,7 +1196,10 @@ export class TelemedicineService {
   private encryptSessionData(session: TelemedicineSession): string {
     // In real implementation, use proper encryption
     const sessionData = JSON.stringify(session);
-    const cipher = crypto.createCipher('aes-256-cbc', process.env.ARCHIVE_ENCRYPTION_KEY || 'default-key');
+    const cipher = crypto.createCipher(
+      'aes-256-cbc',
+      process.env.ARCHIVE_ENCRYPTION_KEY || 'default-key',
+    );
     let encrypted = cipher.update(sessionData, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     return encrypted;
@@ -1206,7 +1228,7 @@ export class TelemedicineService {
     complianceIssues: number;
   }> {
     const activeSessions = Array.from(this.activeSessions.values());
-    
+
     const sessionsByType = activeSessions.reduce((acc, session) => {
       acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
       return acc;
@@ -1218,13 +1240,15 @@ export class TelemedicineService {
     }, {} as Record<SessionStatus, number>);
 
     const averageQualityScore = activeSessions.length > 0
-      ? activeSessions.reduce((sum, session) => sum + session.qualityMetrics.qualityScore, 0) / activeSessions.length
+      ? activeSessions.reduce((sum, session) => sum + session.qualityMetrics.qualityScore, 0)
+        / activeSessions.length
       : 0;
 
-    const complianceIssues = activeSessions.filter(session =>
-      session.cfmCompliance.complianceScore < 80 ||
-      session.qualityMetrics.qualityScore < 70
-    ).length;
+    const complianceIssues =
+      activeSessions.filter(session =>
+        session.cfmCompliance.complianceScore < 80
+        || session.qualityMetrics.qualityScore < 70
+      ).length;
 
     return {
       totalActiveSessions: activeSessions.length,

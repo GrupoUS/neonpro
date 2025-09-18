@@ -1,30 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
-  Shield,
-  Info,
   AlertTriangle,
   Check,
-  X,
-  Download,
-  Trash2,
   Clock,
-  User,
   Database,
-  Share,
-  Mail,
-  FileText,
+  Download,
   Eye,
+  FileText,
+  Info,
+  Mail,
   Settings,
+  Share,
+  Shield,
+  Trash2,
+  User,
+  X,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Alert,
+  AlertDescription,
+  Badge,
   Button,
   Card,
   CardContent,
@@ -48,13 +55,6 @@ import {
   Separator,
   Switch,
   Textarea,
-  Alert,
-  AlertDescription,
-  Badge,
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
 
@@ -115,7 +115,8 @@ interface ConsentManagementDialogProps {
 const CONSENT_PURPOSES = {
   data_processing: {
     title: 'Processamento de Dados Pessoais',
-    description: 'Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos',
+    description:
+      'Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos',
     icon: Database,
     required: true,
   },
@@ -127,19 +128,22 @@ const CONSENT_PURPOSES = {
   },
   third_party_sharing: {
     title: 'Compartilhamento com Terceiros',
-    description: 'Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos',
+    description:
+      'Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos',
     icon: Share,
     required: false,
   },
   research: {
     title: 'Pesquisa e Desenvolvimento',
-    description: 'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos',
+    description:
+      'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos',
     icon: FileText,
     required: false,
   },
   telehealth: {
     title: 'Telemedicina',
-    description: 'Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância',
+    description:
+      'Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância',
     icon: Settings,
     required: false,
   },
@@ -147,11 +151,11 @@ const CONSENT_PURPOSES = {
 
 // LGPD rights component
 const LGPDRightsInfo = () => (
-  <Alert className="mb-4">
-    <Info className="h-4 w-4" />
+  <Alert className='mb-4'>
+    <Info className='h-4 w-4' />
     <AlertDescription>
       <strong>Seus direitos sob a LGPD:</strong>
-      <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+      <ul className='list-disc list-inside mt-2 space-y-1 text-sm'>
         <li>Confirmação da existência de tratamento de dados</li>
         <li>Acesso aos dados pessoais</li>
         <li>Correção de dados incompletos, inexatos ou desatualizados</li>
@@ -166,17 +170,26 @@ const LGPDRightsInfo = () => (
 
 // Consent status indicator
 const ConsentStatusBadge = ({ granted, lastUpdated }: { granted: boolean; lastUpdated: Date }) => (
-  <div className="flex items-center gap-2">
-    <Badge variant={granted ? 'default' : 'secondary'} className={cn(
-      granted ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-    )}>
-      {granted ? (
-        <><Check className="h-3 w-3 mr-1" />Concedido</>
-      ) : (
-        <><X className="h-3 w-3 mr-1" />Negado</>
+  <div className='flex items-center gap-2'>
+    <Badge
+      variant={granted ? 'default' : 'secondary'}
+      className={cn(
+        granted ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800',
       )}
+    >
+      {granted
+        ? (
+          <>
+            <Check className='h-3 w-3 mr-1' />Concedido
+          </>
+        )
+        : (
+          <>
+            <X className='h-3 w-3 mr-1' />Negado
+          </>
+        )}
     </Badge>
-    <span className="text-xs text-muted-foreground">
+    <span className='text-xs text-muted-foreground'>
       {format(lastUpdated, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
     </span>
   </div>
@@ -242,7 +255,11 @@ export function ConsentManagementDialog({
   };
 
   const handleDataErasure = async () => {
-    if (window.confirm('Tem certeza que deseja solicitar a exclusão dos dados? Esta ação não pode ser desfeita.')) {
+    if (
+      window.confirm(
+        'Tem certeza que deseja solicitar a exclusão dos dados? Esta ação não pode ser desfeita.',
+      )
+    ) {
       setIsLoading(true);
       try {
         await onDataErasure(patientData.patientId);
@@ -254,15 +271,14 @@ export function ConsentManagementDialog({
     }
   };
 
-  const getConsentByType = (type: string) => 
-    patientData.consents.find(c => c.consentType === type);
+  const getConsentByType = (type: string) => patientData.consents.find(c => c.consentType === type);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className={cn('max-w-2xl max-h-[90vh] overflow-y-auto', className)}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Shield className='h-5 w-5 text-blue-600' />
             Gerenciamento de Consentimento LGPD
           </DialogTitle>
           <DialogDescription>
@@ -272,7 +288,7 @@ export function ConsentManagementDialog({
         </DialogHeader>
 
         {/* Tab navigation */}
-        <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+        <div className='flex space-x-1 bg-muted p-1 rounded-lg'>
           {[
             { id: 'consents', label: 'Consentimentos', icon: Check },
             { id: 'rights', label: 'Direitos', icon: Eye },
@@ -285,10 +301,10 @@ export function ConsentManagementDialog({
                 'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors',
                 activeTab === id
                   ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className='h-4 w-4' />
               {label}
             </button>
           ))}
@@ -296,55 +312,55 @@ export function ConsentManagementDialog({
 
         {/* Consents tab */}
         {activeTab === 'consents' && (
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <LGPDRightsInfo />
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleConsentSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(handleConsentSubmit)} className='space-y-4'>
                 {Object.entries(CONSENT_PURPOSES).map(([key, purpose]) => {
                   const consent = getConsentByType(key);
-                  
+
                   return (
                     <Card key={key}>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3">
-                            <purpose.icon className="h-5 w-5 mt-0.5 text-blue-600" />
+                      <CardHeader className='pb-3'>
+                        <div className='flex items-start justify-between'>
+                          <div className='flex items-start gap-3'>
+                            <purpose.icon className='h-5 w-5 mt-0.5 text-blue-600' />
                             <div>
-                              <CardTitle className="text-base flex items-center gap-2">
+                              <CardTitle className='text-base flex items-center gap-2'>
                                 {purpose.title}
                                 {purpose.required && (
-                                  <Badge variant="outline" className="text-xs">
+                                  <Badge variant='outline' className='text-xs'>
                                     Obrigatório
                                   </Badge>
                                 )}
                               </CardTitle>
-                              <CardDescription className="text-sm mt-1">
+                              <CardDescription className='text-sm mt-1'>
                                 {purpose.description}
                               </CardDescription>
                             </div>
                           </div>
-                          
+
                           {consent && (
-                            <ConsentStatusBadge 
-                              granted={consent.granted} 
-                              lastUpdated={consent.lastUpdated} 
+                            <ConsentStatusBadge
+                              granted={consent.granted}
+                              lastUpdated={consent.lastUpdated}
                             />
                           )}
                         </div>
                       </CardHeader>
-                      
+
                       <CardContent>
                         <FormField
                           control={form.control}
                           name={key.replace('_', '') as keyof ConsentFormData}
                           render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between space-y-0">
-                              <div className="space-y-0.5">
-                                <FormLabel className="text-sm font-medium">
+                            <FormItem className='flex flex-row items-center justify-between space-y-0'>
+                              <div className='space-y-0.5'>
+                                <FormLabel className='text-sm font-medium'>
                                   {field.value ? 'Consentimento concedido' : 'Consentimento negado'}
                                 </FormLabel>
-                                <FormDescription className="text-xs">
+                                <FormDescription className='text-xs'>
                                   {consent?.retentionPeriod && (
                                     <>Período de retenção: {consent.retentionPeriod}</>
                                   )}
@@ -362,11 +378,11 @@ export function ConsentManagementDialog({
                         />
 
                         {consent?.dataCategories && consent.dataCategories.length > 0 && (
-                          <div className="mt-3">
-                            <p className="text-xs font-medium mb-1">Categorias de dados:</p>
-                            <div className="flex flex-wrap gap-1">
+                          <div className='mt-3'>
+                            <p className='text-xs font-medium mb-1'>Categorias de dados:</p>
+                            <div className='flex flex-wrap gap-1'>
                               {consent.dataCategories.map((category, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
+                                <Badge key={index} variant='outline' className='text-xs'>
                                   {category}
                                 </Badge>
                               ))}
@@ -378,13 +394,13 @@ export function ConsentManagementDialog({
                   );
                 })}
 
-                <div className="flex gap-2 pt-4">
-                  <Button type="submit" disabled={isLoading} className="flex-1">
+                <div className='flex gap-2 pt-4'>
+                  <Button type='submit' disabled={isLoading} className='flex-1'>
                     {isLoading ? 'Salvando...' : 'Salvar Consentimentos'}
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type='button'
+                    variant='outline'
                     onClick={() => onOpenChange(false)}
                   >
                     Cancelar
@@ -397,21 +413,22 @@ export function ConsentManagementDialog({
 
         {/* Rights tab */}
         {activeTab === 'rights' && (
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <Alert>
-              <Info className="h-4 w-4" />
+              <Info className='h-4 w-4' />
               <AlertDescription>
                 <strong>Exercer Direitos do Titular dos Dados</strong>
                 <br />
-                Conforme a Lei Geral de Proteção de Dados (LGPD), você pode exercer os seguintes direitos:
+                Conforme a Lei Geral de Proteção de Dados (LGPD), você pode exercer os seguintes
+                direitos:
               </AlertDescription>
             </Alert>
 
-            <div className="grid gap-3">
+            <div className='grid gap-3'>
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Download className="h-4 w-4" />
+                <CardHeader className='pb-3'>
+                  <CardTitle className='text-base flex items-center gap-2'>
+                    <Download className='h-4 w-4' />
                     Portabilidade de Dados
                   </CardTitle>
                   <CardDescription>
@@ -419,52 +436,60 @@ export function ConsentManagementDialog({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button 
-                    onClick={handleDataExport} 
+                  <Button
+                    onClick={handleDataExport}
                     disabled={isLoading}
-                    className="w-full"
+                    className='w-full'
                   >
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className='mr-2 h-4 w-4' />
                     Solicitar Exportação de Dados
                   </Button>
                   {patientData.dataExportRequested && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Última solicitação: {format(patientData.dataExportRequested, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                    <p className='text-xs text-muted-foreground mt-2'>
+                      Última solicitação:{' '}
+                      {format(patientData.dataExportRequested, 'dd/MM/yyyy HH:mm', {
+                        locale: ptBR,
+                      })}
                     </p>
                   )}
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Trash2 className="h-4 w-4" />
+                <CardHeader className='pb-3'>
+                  <CardTitle className='text-base flex items-center gap-2'>
+                    <Trash2 className='h-4 w-4' />
                     Direito ao Esquecimento
                   </CardTitle>
                   <CardDescription>
-                    Solicitar a exclusão de dados pessoais quando não há base legal para processamento
+                    Solicitar a exclusão de dados pessoais quando não há base legal para
+                    processamento
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Alert className="mb-3">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription className="text-xs">
-                      <strong>Atenção:</strong> A exclusão de dados pode impactar o atendimento médico futuro. 
-                      Alguns dados podem ser mantidos por obrigação legal.
+                  <Alert className='mb-3'>
+                    <AlertTriangle className='h-4 w-4' />
+                    <AlertDescription className='text-xs'>
+                      <strong>Atenção:</strong>{' '}
+                      A exclusão de dados pode impactar o atendimento médico futuro. Alguns dados
+                      podem ser mantidos por obrigação legal.
                     </AlertDescription>
                   </Alert>
-                  <Button 
-                    onClick={handleDataErasure} 
+                  <Button
+                    onClick={handleDataErasure}
                     disabled={isLoading}
-                    variant="destructive"
-                    className="w-full"
+                    variant='destructive'
+                    className='w-full'
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <Trash2 className='mr-2 h-4 w-4' />
                     Solicitar Exclusão de Dados
                   </Button>
                   {patientData.dataErasureRequested && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Solicitação enviada: {format(patientData.dataErasureRequested, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                    <p className='text-xs text-muted-foreground mt-2'>
+                      Solicitação enviada:{' '}
+                      {format(patientData.dataErasureRequested, 'dd/MM/yyyy HH:mm', {
+                        locale: ptBR,
+                      })}
                     </p>
                   )}
                 </CardContent>
@@ -475,36 +500,39 @@ export function ConsentManagementDialog({
 
         {/* History tab */}
         {activeTab === 'history' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Histórico de Consentimentos</h3>
-              <Badge variant="outline">
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between'>
+              <h3 className='text-lg font-medium'>Histórico de Consentimentos</h3>
+              <Badge variant='outline'>
                 {patientData.consents.length} registros
               </Badge>
             </div>
 
-            <div className="space-y-3">
+            <div className='space-y-3'>
               {patientData.consents
-                .sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
-                .map((consent) => (
+                .sort((a, b) =>
+                  new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+                )
+                .map(consent => (
                   <Card key={consent.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
+                    <CardContent className='p-4'>
+                      <div className='flex items-start justify-between'>
                         <div>
-                          <h4 className="font-medium">
-                            {CONSENT_PURPOSES[consent.consentType as keyof typeof CONSENT_PURPOSES]?.title || consent.consentType}
+                          <h4 className='font-medium'>
+                            {CONSENT_PURPOSES[consent.consentType as keyof typeof CONSENT_PURPOSES]
+                              ?.title || consent.consentType}
                           </h4>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className='text-sm text-muted-foreground mt-1'>
                             {consent.purpose}
                           </p>
-                          <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                          <div className='flex items-center gap-4 mt-2 text-xs text-muted-foreground'>
                             <span>Base legal: {consent.legalBasis}</span>
                             <span>Retenção: {consent.retentionPeriod}</span>
                           </div>
                         </div>
-                        <ConsentStatusBadge 
-                          granted={consent.granted} 
-                          lastUpdated={consent.lastUpdated} 
+                        <ConsentStatusBadge
+                          granted={consent.granted}
+                          lastUpdated={consent.lastUpdated}
                         />
                       </div>
                     </CardContent>
