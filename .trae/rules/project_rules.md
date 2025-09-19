@@ -374,24 +374,24 @@ quality_stack:
 
 ### **Documentação Obrigatória**
 
-- **[Workflow Completo](../docs/AGENTS.md)** - Processo de desenvolvimento mandatório
-- **[Tech Stack](../docs/architecture/tech-stack.md)** - Decisões tecnológicas e rationale
-- **[Source Tree](../docs/architecture/source-tree.md)** - Organização do código
+- **[Workflow Completo](./docs/AGENTS.md)** - Processo de desenvolvimento mandatório
+- **[Tech Stack](./docs/architecture/tech-stack.md)** - Decisões tecnológicas e rationale
+- **[Source Tree](./docs/architecture/source-tree.md)** - Organização do código
 
 ### **Arquitetura & Padrões**
 
-- **[Coding Standards](../docs/rules/coding-standards.md)** - Padrões de código obrigatórios
-- **[Frontend Architecture](../docs/architecture/frontend-architecture.md)** - Estrutura de frontend
-- **[Database Schema](../docs/database-schema/AGENTS.md)** - Organização de dados
+- **[Coding Standards](./docs/rules/coding-standards.md)** - Padrões de código obrigatórios
+- **[Frontend Architecture](./docs/architecture/frontend-architecture.md)** - Estrutura de frontend
+- **[Database Schema](./docs/database-schema/AGENTS.md)** - Organização de dados
 
 ### **Agentes Individuais**
 
-- **[APEX Dev](../.claude/agents/apex-dev.md)** - Especialização full-stack
-- **[APEX Research](../.claude/agents/apex-researcher.md)** - Inteligência de pesquisa
-- **[APEX UI/UX](../.claude/agents/apex-ui-ux-designer.md)** - Design e acessibilidade
-- **[Code Review](../.claude/agents/code-review/code-reviewer.md)** - Qualidade de código
-- **[Security](../.claude/agents/code-review/security-auditor.md)** - Auditoria de segurança
-- **[Architecture](../.claude/agents/code-review/architect-review.md)** - Arquitetura de sistema
+- **[APEX Dev](./agents/apex-dev.md)** - Especialização full-stack
+- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa
+- **[APEX UI/UX](./agents/apex-ui-ux-designer.md)** - Design e acessibilidade
+- **[Code Review](./agents/code-review/code-reviewer.md)** - Qualidade de código
+- **[Security](./agents/code-review/security-auditor.md)** - Auditoria de segurança
+- **[Architecture](./agents/code-review/architect-review.md)** - Arquitetura de sistema
 
 ---
 

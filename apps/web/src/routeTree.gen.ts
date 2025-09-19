@@ -9,12 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TelemedicineRouteImport } from './routes/telemedicine'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TelemedicineIndexRouteImport } from './routes/telemedicine/index'
 import { Route as ServicesIndexRouteImport } from './routes/services/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as FinancialIndexRouteImport } from './routes/financial/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as TelemedicineWaitingRoomRouteImport } from './routes/telemedicine/waiting-room'
+import { Route as TelemedicineComplianceRouteImport } from './routes/telemedicine/compliance'
 import { Route as ServicesServiceTemplatesRouteImport } from './routes/services/service-templates'
 import { Route as ServicesServiceCategoriesRouteImport } from './routes/services/service-categories'
 import { Route as ServicesServiceAnalyticsRouteImport } from './routes/services/service-analytics'
@@ -42,10 +46,17 @@ import { Route as AiInsightsRouteImport } from './routes/ai/insights'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
+import { Route as TelemedicineSessionNewRouteImport } from './routes/telemedicine/session/new'
+import { Route as TelemedicineSessionSessionIdRouteImport } from './routes/telemedicine/session.$sessionId'
 import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
 import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
 import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
 
+const TelemedicineRoute = TelemedicineRouteImport.update({
+  id: '/telemedicine',
+  path: '/telemedicine',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
@@ -55,6 +66,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TelemedicineIndexRoute = TelemedicineIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TelemedicineRoute,
 } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
@@ -75,6 +91,16 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TelemedicineWaitingRoomRoute = TelemedicineWaitingRoomRouteImport.update({
+  id: '/waiting-room',
+  path: '/waiting-room',
+  getParentRoute: () => TelemedicineRoute,
+} as any)
+const TelemedicineComplianceRoute = TelemedicineComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => TelemedicineRoute,
 } as any)
 const ServicesServiceTemplatesRoute =
   ServicesServiceTemplatesRouteImport.update({
@@ -216,6 +242,17 @@ const AdminGovernanceRoute = AdminGovernanceRouteImport.update({
   path: '/admin/governance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TelemedicineSessionNewRoute = TelemedicineSessionNewRouteImport.update({
+  id: '/session/new',
+  path: '/session/new',
+  getParentRoute: () => TelemedicineRoute,
+} as any)
+const TelemedicineSessionSessionIdRoute =
+  TelemedicineSessionSessionIdRouteImport.update({
+    id: '/session/$sessionId',
+    path: '/session/$sessionId',
+    getParentRoute: () => TelemedicineRoute,
+  } as any)
 const PatientsPatientIdHistoryRoute =
   PatientsPatientIdHistoryRouteImport.update({
     id: '/history',
@@ -237,6 +274,7 @@ const PatientsPatientIdDocumentsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -264,13 +302,18 @@ export interface FileRoutesByFullPath {
   '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
   '/services/service-categories': typeof ServicesServiceCategoriesRoute
   '/services/service-templates': typeof ServicesServiceTemplatesRoute
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
   '/dashboard': typeof DashboardIndexRoute
   '/financial': typeof FinancialIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/telemedicine/': typeof TelemedicineIndexRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -302,18 +345,24 @@ export interface FileRoutesByTo {
   '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
   '/services/service-categories': typeof ServicesServiceCategoriesRoute
   '/services/service-templates': typeof ServicesServiceTemplatesRoute
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
   '/dashboard': typeof DashboardIndexRoute
   '/financial': typeof FinancialIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/telemedicine': typeof TelemedicineIndexRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -341,19 +390,25 @@ export interface FileRoutesById {
   '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
   '/services/service-categories': typeof ServicesServiceCategoriesRoute
   '/services/service-templates': typeof ServicesServiceTemplatesRoute
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/financial/': typeof FinancialIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/telemedicine/': typeof TelemedicineIndexRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/404'
+    | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -381,13 +436,18 @@ export interface FileRouteTypes {
     | '/services/service-analytics'
     | '/services/service-categories'
     | '/services/service-templates'
+    | '/telemedicine/compliance'
+    | '/telemedicine/waiting-room'
     | '/dashboard'
     | '/financial'
     | '/profile'
     | '/services'
+    | '/telemedicine/'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
+    | '/telemedicine/session/$sessionId'
+    | '/telemedicine/session/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -419,17 +479,23 @@ export interface FileRouteTypes {
     | '/services/service-analytics'
     | '/services/service-categories'
     | '/services/service-templates'
+    | '/telemedicine/compliance'
+    | '/telemedicine/waiting-room'
     | '/dashboard'
     | '/financial'
     | '/profile'
     | '/services'
+    | '/telemedicine'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
+    | '/telemedicine/session/$sessionId'
+    | '/telemedicine/session/new'
   id:
     | '__root__'
     | '/'
     | '/404'
+    | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -457,18 +523,24 @@ export interface FileRouteTypes {
     | '/services/service-analytics'
     | '/services/service-categories'
     | '/services/service-templates'
+    | '/telemedicine/compliance'
+    | '/telemedicine/waiting-room'
     | '/dashboard/'
     | '/financial/'
     | '/profile/'
     | '/services/'
+    | '/telemedicine/'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
+    | '/telemedicine/session/$sessionId'
+    | '/telemedicine/session/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  TelemedicineRoute: typeof TelemedicineRouteWithChildren
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -504,6 +576,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/telemedicine': {
+      id: '/telemedicine'
+      path: '/telemedicine'
+      fullPath: '/telemedicine'
+      preLoaderRoute: typeof TelemedicineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/404': {
       id: '/404'
       path: '/404'
@@ -517,6 +596,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/telemedicine/': {
+      id: '/telemedicine/'
+      path: '/'
+      fullPath: '/telemedicine/'
+      preLoaderRoute: typeof TelemedicineIndexRouteImport
+      parentRoute: typeof TelemedicineRoute
     }
     '/services/': {
       id: '/services/'
@@ -545,6 +631,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/telemedicine/waiting-room': {
+      id: '/telemedicine/waiting-room'
+      path: '/waiting-room'
+      fullPath: '/telemedicine/waiting-room'
+      preLoaderRoute: typeof TelemedicineWaitingRoomRouteImport
+      parentRoute: typeof TelemedicineRoute
+    }
+    '/telemedicine/compliance': {
+      id: '/telemedicine/compliance'
+      path: '/compliance'
+      fullPath: '/telemedicine/compliance'
+      preLoaderRoute: typeof TelemedicineComplianceRouteImport
+      parentRoute: typeof TelemedicineRoute
     }
     '/services/service-templates': {
       id: '/services/service-templates'
@@ -735,6 +835,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGovernanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/telemedicine/session/new': {
+      id: '/telemedicine/session/new'
+      path: '/session/new'
+      fullPath: '/telemedicine/session/new'
+      preLoaderRoute: typeof TelemedicineSessionNewRouteImport
+      parentRoute: typeof TelemedicineRoute
+    }
+    '/telemedicine/session/$sessionId': {
+      id: '/telemedicine/session/$sessionId'
+      path: '/session/$sessionId'
+      fullPath: '/telemedicine/session/$sessionId'
+      preLoaderRoute: typeof TelemedicineSessionSessionIdRouteImport
+      parentRoute: typeof TelemedicineRoute
+    }
     '/patients/$patientId/history': {
       id: '/patients/$patientId/history'
       path: '/history'
@@ -759,6 +873,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface TelemedicineRouteChildren {
+  TelemedicineComplianceRoute: typeof TelemedicineComplianceRoute
+  TelemedicineWaitingRoomRoute: typeof TelemedicineWaitingRoomRoute
+  TelemedicineIndexRoute: typeof TelemedicineIndexRoute
+  TelemedicineSessionSessionIdRoute: typeof TelemedicineSessionSessionIdRoute
+  TelemedicineSessionNewRoute: typeof TelemedicineSessionNewRoute
+}
+
+const TelemedicineRouteChildren: TelemedicineRouteChildren = {
+  TelemedicineComplianceRoute: TelemedicineComplianceRoute,
+  TelemedicineWaitingRoomRoute: TelemedicineWaitingRoomRoute,
+  TelemedicineIndexRoute: TelemedicineIndexRoute,
+  TelemedicineSessionSessionIdRoute: TelemedicineSessionSessionIdRoute,
+  TelemedicineSessionNewRoute: TelemedicineSessionNewRoute,
+}
+
+const TelemedicineRouteWithChildren = TelemedicineRoute._addFileChildren(
+  TelemedicineRouteChildren,
+)
+
 interface PatientsPatientIdRouteChildren {
   PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
   PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute
@@ -777,6 +911,7 @@ const PatientsPatientIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  TelemedicineRoute: TelemedicineRouteWithChildren,
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,

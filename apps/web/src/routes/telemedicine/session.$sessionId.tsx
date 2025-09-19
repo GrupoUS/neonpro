@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { createFileRoute, useNavigate } from '@tanstack/router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
 import { WaitingRoom } from '@/components/telemedicine/WaitingRoom';
 import { RealTimeChat } from '@/components/telemedicine/RealTimeChat';
