@@ -766,6 +766,7 @@ export class AIProviderRouter {
           await this.updateProviderHealth(provider, false, 0);
         }
       } catch (error) {
+        console.error(`Failed to evaluate provider ${provider.name} health:`, error);
         await this.updateProviderHealth(provider, false, 0);
       }
     }

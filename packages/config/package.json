@@ -8,22 +8,22 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
     },
     "./ai": {
-      "import": "./dist/ai.mjs",
-      "require": "./dist/ai.js",
-      "types": "./dist/ai.d.ts"
+      "import": "./dist/src/ai.js",
+      "require": "./dist/src/ai.js",
+      "types": "./dist/src/ai.d.ts"
     },
     "./plans": {
-      "import": "./dist/src/plans.mjs",
+      "import": "./dist/src/plans.js",
       "require": "./dist/src/plans.js",
       "types": "./dist/src/plans.d.ts"
     },
     "./quotas": {
-      "import": "./dist/src/quotas.mjs",
+      "import": "./dist/src/quotas.js",
       "require": "./dist/src/quotas.js",
       "types": "./dist/src/quotas.d.ts"
     }

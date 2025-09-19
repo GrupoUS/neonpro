@@ -26,7 +26,7 @@ import { z } from 'zod';
 import { HealthcareDataClassification, LGPDDataCategory, DataRetentionClass } from './healthcare-base';
 
 // AI Provider Types
-export enum AIProvider {
+export enum AIProviderOpt {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   GOOGLE = 'google',
@@ -102,7 +102,7 @@ export const AIPerformanceMetricsSchema = z.object({
 
 // AI Model Configuration Schema
 export const AIModelConfigSchema = z.object({
-  provider: z.nativeEnum(AIProvider),
+  provider: z.nativeEnum(AIProviderOpt),
   model_name: z.string().min(1).describe('AI model identifier'),
   category: z.nativeEnum(AIModelCategory),
   
@@ -268,10 +268,10 @@ export const AIOptimizationSchema = z.object({
 
 // Type exports
 export type AIOptimization = z.infer<typeof AIOptimizationSchema>;
-export type AIModelConfig = z.infer<typeof AIModelConfigSchema>;
-export type AIPerformanceMetrics = z.infer<typeof AIPerformanceMetricsSchema>;
-export type SemanticCacheEntry = z.infer<typeof SemanticCacheEntrySchema>;
-export type AIOptimizationConfig = z.infer<typeof AIOptimizationConfigSchema>;
+export type AIModelConfigOpt = z.infer<typeof AIModelConfigSchema>;
+export type AIPerformanceMetricsOpt = z.infer<typeof AIPerformanceMetricsSchema>;
+export type SemanticCacheEntryOpt = z.infer<typeof SemanticCacheEntrySchema>;
+export type AIOptimizationConfigOpt = z.infer<typeof AIOptimizationConfigSchema>;
 
 // Utility functions for healthcare AI optimization
 export class HealthcareAIOptimizationUtils {
@@ -291,7 +291,7 @@ export class HealthcareAIOptimizationUtils {
   /**
    * Validate healthcare compliance for AI configuration
    */
-  static validateHealthcareCompliance(config: AIOptimizationConfig): {
+  static validateHealthcareCompliance(config: AIOptimizationConfigOpt): {
     compliant: boolean;
     violations: string[];
     recommendations: string[];
@@ -346,10 +346,11 @@ export class HealthcareAIOptimizationUtils {
   static estimateRequestCost(
     input_tokens: number,
     estimated_output_tokens: number,
-    model_config: AIModelConfig
+    model_config: AIModelConfigOpt
   ): { estimated_cost: number; breakdown: Record<string, number> } {
-    const input_cost = (input_tokens / 1000) * model_config.cost_config.input_cost_per_1k_tokens;
-    const output_cost = (estimated_output_tokens / 1000) * model_config.cost_config.output_cost_per_1k_tokens;
+    const config = model_config as any;
+    const input_cost = (input_tokens / 1000) * config.cost_config.input_cost_per_1k_tokens;
+    const output_cost = (estimated_output_tokens / 1000) * config.cost_config.output_cost_per_1k_tokens;
     const total_cost = input_cost + output_cost;
     
     return {

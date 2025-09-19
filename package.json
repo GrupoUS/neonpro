@@ -16,7 +16,15 @@
   "overrides": {
     "esbuild": ">=0.25.0",
     "hono": ">=4.9.7",
-    "tmp": ">=0.2.4"
+    "tmp": ">=0.2.4",
+    "form-data": ">=2.5.4",
+    "d3-color": ">=3.1.0",
+    "ws": ">=8.17.1",
+    "cross-spawn": ">=6.0.6",
+    "tar-fs": ">=2.1.3",
+    "got": ">=11.8.5",
+    "tough-cookie": ">=4.1.3",
+    "cookie": ">=0.7.0"
   },
   "scripts": {
     "build": "bunx turbo build",

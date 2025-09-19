@@ -335,7 +335,7 @@ export function valibotValidation(config: ValidationConfig) {
           dataToValidate = c.req.param();
           break;
         case 'body':
-          dataToValidate = await c.req.json().catch(() => ({}));
+          dataToValidate = await c.req.json().catch((_error) => ({}));
           break;
         case 'headers':
           dataToValidate = c.req.header();

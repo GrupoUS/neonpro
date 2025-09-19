@@ -1,7 +1,22 @@
 /**
- * Updated Factory Function for Realtime Event Adapters (T102.5)
+ * Enhanced Realtime Services with Resilience Features
+ * Comprehensive real-time management for healthcare applications
  */
 
+// Legacy exports for backward compatibility
+export { RealtimeManager } from './realtime-manager';
+export type { RealtimeSubscriptionOptions } from './realtime-manager';
+
+// Enhanced resilience-focused exports
+export {
+  EnhancedRealtimeManager,
+  CacheInvalidationStrategy,
+  type EnhancedRealtimeOptions,
+  type RealtimeMetrics,
+  type ConnectionHealth
+} from './enhanced-realtime-manager';
+
+// Legacy adapter system
 import type { RealtimeEventAdapter, RealtimeAdapterConfig } from './event-adapter';
 import { SupabaseRealtimeAdapter } from './supabase-adapter';
 import { MockRealtimeAdapter } from './mock-adapter';

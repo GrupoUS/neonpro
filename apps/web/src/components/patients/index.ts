@@ -20,6 +20,7 @@ export { default as EnhancedPatientRegistrationForm } from './EnhancedPatientReg
 export { default as HealthcareSearch } from './HealthcareSearch';
 export { default as MobilePatientCard } from './MobilePatientCard';
 export { default as MobilePatientList } from './MobilePatientList';
+export { default as GlobalPatientSearch } from './GlobalPatientSearch';
 
 // Error Handling & Safety
 export {

@@ -445,6 +445,13 @@ export class HealthcareLogger {
       // This would be implemented based on your monitoring setup
 
       if (process.env.SENTRY_DSN) {
+        // Log the error for future monitoring implementation
+        console.warn('Monitoring integration not yet implemented for error:', {
+          code: error.code,
+          category: error.category,
+          severity: error.severity,
+          sanitized: error.toSanitizedJSON(),
+        });
         // Sentry integration would go here
         // Sentry.captureException(error, {
         //   tags: {

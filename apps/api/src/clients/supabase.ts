@@ -179,7 +179,11 @@ export function createAdminClient(): HealthcareAdminClient {
             .eq('user_id', userId);
           exportData[table] = data || [];
         } catch (error) {
-          exportData[table] = { error: 'Table access denied or not found' };
+          console.error(`Failed to export ${table} data for user ${userId}:`, error);
+          exportData[table] = { 
+            error: 'Table access denied or not found',
+            details: error instanceof Error ? error.message : String(error)
+          };
         }
       }
 
@@ -342,6 +346,7 @@ export const healthcareRLS = {
 
       return !!membership;
     } catch (error) {
+      console.error(`Failed to check user clinic membership for user ${userId}, clinic ${clinicId}:`, error);
       return false;
     }
   },
@@ -374,6 +379,7 @@ export const healthcareRLS = {
 
       return !!patientClinic;
     } catch (error) {
+      console.error(`Failed to check patient access for patient ${patientId}:`, error);
       return false;
     }
   },

@@ -117,8 +117,12 @@ export * from './env/ai';
 // export * from './auth/protected-route';
 
 
+// Models
+export * from './models/healthcare-base';
+export * from './models/ai-optimization';
+
 // Components
-export * from './components/healthcare-base';
+// export * from './components/healthcare-base';
 
 // API client
 export * from './api-client';

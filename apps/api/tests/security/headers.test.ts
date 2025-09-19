@@ -294,7 +294,7 @@ describe('Healthcare Security Headers', () => {
     it('should not expose sensitive information in error responses', async () => {
       // Test 404 response
       const res = await testApp['nonexistent-endpoint']?.$get?.()
-        || await fetch('/nonexistent-endpoint').catch(() => ({ status: 404 }));
+        || await fetch('/nonexistent-endpoint').catch((_error) => ({ status: 404 }));
 
       if (typeof res === 'object' && 'status' in res) {
         expect(res.status).toBe(404);

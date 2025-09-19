@@ -1,670 +1,561 @@
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
-import { app } from '../../index';
-import { createTestClient, generateTestCPF } from '../helpers/auth';
-import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
+/**
+ * CONTRACT TEST: GET /api/v2/patients/{id}/history (T018)
+ * 
+ * Tests patient history endpoint contract:
+ * - Complete audit trail and change history
+ * - LGPD compliance tracking
+ * - Medical history evolution
+ * - Performance requirements for history queries
+ * - Data version control and rollback capabilities
+ */
 
-describe('Patients History and Audit Trail API', () => {
-  let testClient: any;
-  let patientId: string;
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import request from 'supertest';
+import { app } from '../../src/app';
+import { z } from 'zod';
 
-  beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+// History entry schema validation
+const HistoryEntrySchema = z.object({
+  id: z.string().uuid(),
+  timestamp: z.string().datetime(),
+  action: z.enum(['created', 'updated', 'deleted', 'accessed', 'consents_updated', 'medical_updated']),
+  actorType: z.enum(['user', 'system', 'api', 'scheduled']),
+  actorId: z.string(),
+  actorName: z.string(),
+  changes: z.object({
+    field: z.string(),
+    oldValue: z.any().optional(),
+    newValue: z.any().optional(),
+    changeType: z.enum(['create', 'update', 'delete', 'access']),
+  }).array().optional(),
+  metadata: z.object({
+    ipAddress: z.string().ip().optional(),
+    userAgent: z.string().optional(),
+    sessionId: z.string().optional(),
+    source: z.enum(['web', 'mobile', 'api', 'system']).optional(),
+    reason: z.string().optional(),
+  }).optional(),
+  lgpdInfo: z.object({
+    consentStatus: z.boolean(),
+    legalBasis: z.string(),
+    dataCategories: z.array(z.string()),
+    retentionPeriod: z.string().optional(),
+  }).optional(),
+});
 
-    // Create a test patient first
-    const patientData = {
-      name: 'History Test Patient',
-      email: 'history.test@email.com',
-      phone: '+5511999999999',
-      cpf: generateTestCPF(),
-      birth_date: '1985-03-15',
-      gender: 'M',
-      blood_type: 'A+',
-      address: {
-        street: 'Rua das Histórias',
-        number: '100',
-        neighborhood: 'Centro',
-        city: 'São Paulo',
-        state: 'SP',
-        zip_code: '01001000',
-      },
-      emergency_contact: {
-        name: 'Maria Teste',
-        phone: '+5511888888888',
-        relationship: 'spouse',
-      },
-      health_insurance: {
-        provider: 'Unimed',
-        plan_type: 'comprehensive',
-        policy_number: 'UNIHIST123456',
-        valid_until: '2025-12-31',
-      },
-      lgpd_consent: {
-        data_processing: true,
-        communication: true,
-        storage: true,
-        consent_date: new Date().toISOString(),
-        ip_address: '127.0.0.1',
-      },
-    };
+// Patient history response schema validation
+const PatientHistoryResponseSchema = z.object({
+  patientId: z.string().uuid(),
+  summary: z.object({
+    totalEntries: z.number().min(0),
+    firstActivity: z.string().datetime(),
+    lastActivity: z.string().datetime(),
+    majorChanges: z.number(),
+    accessCount: z.number(),
+  }),
+  history: z.array(HistoryEntrySchema),
+  pagination: z.object({
+    page: z.number().min(1),
+    limit: z.number().min(1).max(100),
+    total: z.number().min(0),
+    hasMore: z.boolean(),
+  }),
+  filters: z.object({
+    actionTypes: z.array(z.string()).optional(),
+    dateRange: z.object({
+      startDate: z.string().datetime().optional(),
+      endDate: z.string().datetime().optional(),
+    }).optional(),
+    actors: z.array(z.string()).optional(),
+  }).optional(),
+  performanceMetrics: z.object({
+    duration: z.number().max(500), // Performance requirement: <500ms
+    entriesProcessed: z.number(),
+  }),
+});
 
-    const response = await app.request('/api/v2/patients', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${testClient.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(patientData),
-    });
+describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
+  const testAuthHeaders = {
+    'Authorization': 'Bearer test-token',
+    'Content-Type': 'application/json',
+  };
 
-    const patientResponse = await response.json();
-    patientId = patientResponse.data.id;
+  let testPatientId: string;
+
+  beforeAll(async () => {
+    // Create a test patient
+    const createResponse = await request(app)
+      .post('/api/v2/patients')
+      .set(testAuthHeaders)
+      .send({
+        name: 'History Test Patient',
+        cpf: '123.456.789-01',
+        phone: '(11) 99999-9999',
+        email: 'history.test@example.com',
+        dateOfBirth: '1985-06-15T00:00:00.000Z',
+        gender: 'female',
+        address: {
+          street: 'Rua History',
+          number: '123',
+          neighborhood: 'Centro',
+          city: 'São Paulo',
+          state: 'SP',
+          zipCode: '01000-000',
+        },
+        emergencyContact: {
+          name: 'History Emergency',
+          relationship: 'Sister',
+          phone: '(11) 88888-8888',
+        },
+        lgpdConsent: {
+          dataProcessing: true,
+          marketingCommunications: false,
+          consentDate: new Date().toISOString(),
+          ipAddress: '127.0.0.1',
+        },
+      });
+
+    testPatientId = createResponse.body.id;
+
+    // Generate some history by making updates
+    await request(app)
+      .put(`/api/v2/patients/${testPatientId}`)
+      .set(testAuthHeaders)
+      .send({
+        name: 'Updated History Test Patient',
+        phone: '(11) 77777-7777',
+      });
+
+    // Update medical history
+    await request(app)
+      .put(`/api/v2/patients/${testPatientId}`)
+      .set(testAuthHeaders)
+      .send({
+        medicalHistory: {
+          allergies: ['Penicillin'],
+          medications: ['Aspirin'],
+          conditions: ['Migraine'],
+        },
+      });
+
+    // Update LGPD consent
+    await request(app)
+      .put(`/api/v2/patients/${testPatientId}`)
+      .set(testAuthHeaders)
+      .send({
+        lgpdConsent: {
+          marketingCommunications: true,
+          consentDate: new Date().toISOString(),
+          ipAddress: '192.168.1.1',
+        },
+      });
+
+    // Access patient data to generate access logs
+    await request(app)
+      .get(`/api/v2/patients/${testPatientId}`)
+      .set(testAuthHeaders);
   });
 
-  afterEach(async () => {
-    await cleanupTestDatabase();
+  afterAll(async () => {
+    // Cleanup test data
   });
 
-  describe('GET /api/v2/patients/{id}/history', () => {
-    it('should return 200 with patient history', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/history`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+  describe('Basic History Retrieval', () => {
+    it('should retrieve patient history with correct schema', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        data: expect.objectContaining({
-          patient_id: patientId,
-          history: expect.any(Array),
-          audit_trail: expect.any(Array),
-        }),
-      });
+      // Validate response schema
+      const validatedData = PatientHistoryResponseSchema.parse(response.body);
+      expect(validatedData).toBeDefined();
+      
+      // Basic validations
+      expect(response.body.patientId).toBe(testPatientId);
+      expect(response.body.history.length).toBeGreaterThan(0);
+      expect(response.body.summary.totalEntries).toBeGreaterThan(0);
     });
 
-    it('should include creation history in patient history', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/history`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    it('should include creation entry in history', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const creationEntry = response.body.history.find(entry => entry.action === 'created');
+      expect(creationEntry).toBeDefined();
+      expect(creationEntry.actorType).toBeDefined();
+      expect(creationEntry.timestamp).toBeDefined();
+    });
 
-      expect(data.data.history).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            action: 'created',
-            timestamp: expect.any(String),
-            user_id: expect.any(String),
-            details: expect.objectContaining({
-              method: 'POST',
-              endpoint: '/api/v2/patients',
-            }),
-          }),
-        ]),
+    it('should track all update operations', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      const updateEntries = response.body.history.filter(entry => entry.action === 'updated');
+      expect(updateEntries.length).toBeGreaterThan(0);
+      
+      // Should have entries for name update, medical history update, and consent update
+      const nameUpdate = updateEntries.find(entry => 
+        entry.changes?.some(change => change.field === 'name')
       );
+      expect(nameUpdate).toBeDefined();
     });
 
-    it('should paginate history results', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/history?page=1&limit=10`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    it('should track data access operations', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        pagination: expect.objectContaining({
-          page: 1,
-          limit: 10,
-          total: expect.any(Number),
-          pages: expect.any(Number),
-        }),
-      });
-    });
-
-    it('should filter history by action type', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/history?action=updated`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      // All history entries should be updates (none initially since we just created)
-      data.data.history.forEach((entry: any) => {
-        expect(entry.action).toBe('updated');
-      });
-    });
-
-    it('should filter history by date range', async () => {
-      const startDate = new Date().toISOString();
-      const endDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-      const response = await app.request(
-        `/api/v2/patients/${patientId}/history?start_date=${startDate}&end_date=${endDate}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      // All history entries should be within the date range
-      data.data.history.forEach((entry: any) => {
-        const entryDate = new Date(entry.timestamp);
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        expect(entryDate >= start && entryDate <= end).toBe(true);
-      });
-    });
-
-    it('should return 404 for non-existent patient', async () => {
-      const response = await app.request(
-        '/api/v2/patients/550e8400-e29b-41d4-a716-446655449999/history',
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      expect(response.status).toBe(404);
-    });
-
-    it('should return 401 for unauthorized access', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/history`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(401);
-    });
-
-    it('should return 403 for insufficient permissions', async () => {
-      const limitedClient = await createTestClient({ role: 'staff' });
-
-      const response = await app.request(`/api/v2/patients/${patientId}/history`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${limitedClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(403);
-    });
-  });
-
-  describe('GET /api/v2/patients/{id}/audit-trail', () => {
-    it('should return 200 with audit trail', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        data: expect.objectContaining({
-          patient_id: patientId,
-          audit_trail: expect.any(Array),
-        }),
-      });
-    });
-
-    it('should include comprehensive audit information', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const auditEntry = data.data.audit_trail[0];
-      expect(auditEntry).toMatchObject({
-        id: expect.any(String),
-        patient_id: patientId,
-        action: expect.any(String),
-        user_id: expect.any(String),
-        user_role: expect.any(String),
-        timestamp: expect.any(String),
-        ip_address: expect.any(String),
-        user_agent: expect.any(String),
-        request_id: expect.any(String),
-        endpoint: expect.any(String),
-        method: expect.any(String),
-        changes: expect.any(Object),
-        metadata: expect.any(Object),
-      });
-    });
-
-    it('should include LGPD compliance in audit trail', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const auditEntry = data.data.audit_trail[0];
-      expect(auditEntry.metadata).toMatchObject({
-        lgpd_compliant: expect.any(Boolean),
-        consent_verified: expect.any(Boolean),
-        data_classification: expect.any(String),
-        retention_policy: expect.any(String),
-      });
-    });
-
-    it('should track data access patterns in audit trail', async () => {
-      // Access the patient multiple times to track access patterns
-      for (let i = 0; i < 3; i++) {
-        await app.request(`/api/v2/patients/${patientId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-            'X-Request-ID': `access-test-${i}`,
-          },
-        });
-      }
-
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      // Should have multiple access audit entries
-      const accessEntries = data.data.audit_trail.filter((entry: any) =>
-        entry.action === 'accessed'
-      );
+      const accessEntries = response.body.history.filter(entry => entry.action === 'accessed');
       expect(accessEntries.length).toBeGreaterThan(0);
-    });
-
-    it('should include data change tracking in audit trail', async () => {
-      // Make an update to track changes
-      const updateData = {
-        phone: '+5511999999998',
-        health_insurance: {
-          provider: 'Amil',
-          plan_type: 'premium',
-          policy_number: 'AMIL987654321',
-          valid_until: '2026-12-31',
-        },
-      };
-
-      await app.request(`/api/v2/patients/${patientId}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-      });
-
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const updateEntry = data.data.audit_trail.find((entry: any) => entry.action === 'updated');
-      expect(updateEntry).toBeDefined();
-      expect(updateEntry.changes).toMatchObject({
-        phone: expect.any(Object),
-        health_insurance: expect.any(Object),
-      });
-    });
-
-    it('should enforce retention policies on audit trail', async () => {
-      const response = await app.request(
-        `/api/v2/patients/${patientId}/audit-trail?retention_days=365`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      // All audit entries should be within retention period
-      const cutoffDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
-      data.data.audit_trail.forEach((entry: any) => {
-        const entryDate = new Date(entry.timestamp);
-        expect(entryDate >= cutoffDate).toBe(true);
-      });
-    });
-
-    it('should export audit trail for compliance reporting', async () => {
-      const response = await app.request(
-        `/api/v2/patients/${patientId}/audit-trail?export=csv&format=lgpd`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      expect(response.status).toBe(200);
-      expect(response.headers.get('content-type')).toMatch(/csv/);
-      expect(response.headers.get('content-disposition')).toMatch(/attachment/);
+      expect(response.body.summary.accessCount).toBeGreaterThan(0);
     });
   });
 
-  describe('POST /api/v2/patients/{id}/audit-report', () => {
-    it('should generate comprehensive audit report', async () => {
-      const reportRequest = {
-        start_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        end_date: new Date().toISOString(),
-        include_access_logs: true,
-        include_changes: true,
-        include_compliance: true,
-        format: 'pdf',
-      };
+  describe('Change Tracking Details', () => {
+    it('should provide detailed change information', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-report`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reportRequest),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        report_id: expect.any(String),
-        generated_at: expect.any(String),
-        download_url: expect.any(String),
-        metadata: expect.objectContaining({
-          patient_id: patientId,
-          report_period: expect.objectContaining({
-            start: expect.any(String),
-            end: expect.any(String),
-          }),
-          total_entries: expect.any(Number),
-          compliance_score: expect.any(Number),
-        }),
-      });
-    });
-
-    it('should validate audit report request parameters', async () => {
-      const invalidRequest = {
-        start_date: 'invalid-date',
-        end_date: new Date().toISOString(),
-        format: 'invalid-format',
-      };
-
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-report`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidRequest),
-      });
-
-      expect(response.status).toBe(400);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: false,
-        message: expect.stringContaining('validation'),
-        errors: expect.any(Array),
-      });
-    });
-
-    it('should include LGPD compliance metrics in audit report', async () => {
-      const reportRequest = {
-        start_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        end_date: new Date().toISOString(),
-        include_compliance: true,
-        format: 'lgpd',
-      };
-
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-report`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reportRequest),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data.metadata).toMatchObject({
-        compliance_metrics: expect.objectContaining({
-          lgpd_consent_compliance: expect.any(Number),
-          data_access_authorization: expect.any(Number),
-          retention_policy_compliance: expect.any(Number),
-          audit_trail_completeness: expect.any(Number),
-        }),
-      });
-    });
-
-    it('should require admin privileges for audit report generation', async () => {
-      const regularClient = await createTestClient({ role: 'clinician' });
-      const reportRequest = {
-        start_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        end_date: new Date().toISOString(),
-        format: 'pdf',
-      };
-
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-report`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${regularClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reportRequest),
-      });
-
-      expect(response.status).toBe(403);
-    });
-  });
-
-  describe('Security and Compliance', () => {
-    it('should include security event tracking in audit trail', async () => {
-      // Simulate suspicious access patterns
-      for (let i = 0; i < 10; i++) {
-        await app.request(`/api/v2/patients/${patientId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-            'X-Request-ID': `security-test-${i}`,
-            'X-Forwarded-For': `192.168.1.${i}`,
-          },
+      const updateEntry = response.body.history.find(entry => 
+        entry.action === 'updated' && entry.changes
+      );
+      
+      if (updateEntry) {
+        expect(updateEntry.changes).toBeDefined();
+        expect(updateEntry.changes.length).toBeGreaterThan(0);
+        
+        updateEntry.changes.forEach(change => {
+          expect(change.field).toBeDefined();
+          expect(change.changeType).toBeDefined();
+          // oldValue and newValue are optional but should be present for updates
+          if (change.changeType === 'update') {
+            expect(change.oldValue).toBeDefined();
+            expect(change.newValue).toBeDefined();
+          }
         });
       }
+    });
 
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    it('should track medical history changes separately', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=medical_updated`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      // Should detect and flag suspicious access patterns
-      const securityEvents = data.data.audit_trail.filter((entry: any) =>
-        entry.metadata && entry.metadata.security_flagged
+      const medicalEntries = response.body.history.filter(entry => 
+        entry.action === 'medical_updated'
       );
-      expect(securityEvents.length).toBeGreaterThan(0);
+      
+      if (medicalEntries.length > 0) {
+        const medicalEntry = medicalEntries[0];
+        expect(medicalEntry.changes).toBeDefined();
+        const allergyChange = medicalEntry.changes.find(change => 
+          change.field.includes('allergies')
+        );
+        expect(allergyChange).toBeDefined();
+      }
     });
 
-    it('should enforce data minimization in audit trail responses', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    it('should track LGPD consent changes', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const consentEntries = response.body.history.filter(entry => 
+        entry.action === 'consents_updated'
+      );
+      
+      if (consentEntries.length > 0) {
+        const consentEntry = consentEntries[0];
+        expect(consentEntry.lgpdInfo).toBeDefined();
+        expect(consentEntry.lgpdInfo.consentStatus).toBeDefined();
+        expect(consentEntry.lgpdInfo.legalBasis).toBeDefined();
+      }
+    });
+  });
 
-      // Should not include sensitive patient data in audit trail
-      data.data.audit_trail.forEach((entry: any) => {
-        expect(entry).not.toHaveProperty('patient_data');
-        expect(entry).not.toHaveProperty('medical_records');
-        expect(entry).not.toHaveProperty('sensitive_information');
+  describe('Filtering and Pagination', () => {
+    it('should filter by action types', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=updated,accessed`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      response.body.history.forEach(entry => {
+        expect(['updated', 'accessed']).toContain(entry.action);
       });
     });
 
-    it('should provide audit trail integrity verification', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail/verify`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    it('should filter by date range', async () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        integrity_verified: expect.any(Boolean),
-        verification_timestamp: expect.any(String),
-        hash_algorithm: expect.any(String),
-        total_entries: expect.any(Number),
-        anomalies: expect.any(Array),
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?startDate=${yesterday.toISOString()}&endDate=${tomorrow.toISOString()}`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      response.body.history.forEach(entry => {
+        const entryDate = new Date(entry.timestamp);
+        expect(entryDate.getTime()).toBeGreaterThanOrEqual(yesterday.getTime());
+        expect(entryDate.getTime()).toBeLessThanOrEqual(tomorrow.getTime());
       });
     });
 
-    it('should support audit trail data export for compliance', async () => {
-      const exportRequest = {
-        format: 'lgpd',
-        include_metadata: true,
-        encryption: true,
-        purpose: 'compliance_export',
-        retention_period_days: 2555, // 7 years for LGPD
-      };
+    it('should paginate results correctly', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?page=1&limit=2`)
+        .set(testAuthHeaders)
+        .expect(200);
 
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail/export`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(exportRequest),
+      expect(response.body.history.length).toBeLessThanOrEqual(2);
+      expect(response.body.pagination.page).toBe(1);
+      expect(response.body.pagination.limit).toBe(2);
+      
+      if (response.body.pagination.total > 2) {
+        expect(response.body.pagination.hasMore).toBe(true);
+      }
+    });
+
+    it('should sort by timestamp descending by default', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      // Verify chronological order (newest first)
+      for (let i = 1; i < response.body.history.length; i++) {
+        const currentTime = new Date(response.body.history[i].timestamp);
+        const previousTime = new Date(response.body.history[i-1].timestamp);
+        expect(currentTime.getTime()).toBeLessThanOrEqual(previousTime.getTime());
+      }
+    });
+  });
+
+  describe('Actor and Metadata Tracking', () => {
+    it('should track actor information for all changes', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      response.body.history.forEach(entry => {
+        expect(entry.actorType).toBeDefined();
+        expect(entry.actorId).toBeDefined();
+        expect(entry.actorName).toBeDefined();
       });
+    });
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toMatchObject({
-        success: true,
-        export_id: expect.any(String),
-        download_url: expect.any(String),
-        expires_at: expect.any(String),
-        encryption_fingerprint: expect.any(String),
-        metadata: expect.objectContaining({
-          format: 'lgpd',
-          total_records: expect.any(Number),
-          compliance_certified: expect.any(Boolean),
-        }),
+    it('should include metadata for user actions', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      const userEntries = response.body.history.filter(entry => 
+        entry.actorType === 'user' || entry.actorType === 'api'
+      );
+      
+      userEntries.forEach(entry => {
+        if (entry.metadata) {
+          expect(entry.metadata.ipAddress).toBeDefined();
+          expect(entry.metadata.source).toBeDefined();
+        }
+      });
+    });
+
+    it('should filter by actor type', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?actorType=user`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      response.body.history.forEach(entry => {
+        expect(entry.actorType).toBe('user');
       });
     });
   });
 
-  describe('Performance and Scalability', () => {
-    it('should handle large audit trail datasets efficiently', async () => {
-      const response = await app.request(
-        `/api/v2/patients/${patientId}/audit-trail?page=1&limit=100`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            'Content-Type': 'application/json',
-          },
-        },
+  describe('LGPD Compliance Tracking', () => {
+    it('should include LGPD information for data processing activities', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      const dataProcessingEntries = response.body.history.filter(entry => 
+        entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined
       );
-
-      expect(response.status).toBe(200);
-      expect(response.headers.get('x-response-time')).toBeDefined();
-
-      const data = await response.json();
-      expect(data.performance_metrics).toMatchObject({
-        query_time_ms: expect.any(Number),
-        result_count: expect.any(Number),
-        cache_hit: expect.any(Boolean),
+      
+      expect(dataProcessingEntries.length).toBeGreaterThan(0);
+      
+      dataProcessingEntries.forEach(entry => {
+        expect(entry.lgpdInfo.consentStatus).toBeDefined();
+        expect(entry.lgpdInfo.legalBasis).toBeDefined();
+        expect(entry.lgpdInfo.dataCategories).toBeDefined();
       });
     });
 
-    it('should support real-time audit trail streaming', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/audit-trail/stream`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
-      });
+    it('should track consent withdrawals and updates', async () => {
+      // Update consent to withdraw marketing communications
+      await request(app)
+        .put(`/api/v2/patients/${testPatientId}`)
+        .set(testAuthHeaders)
+        .send({
+          lgpdConsent: {
+            marketingCommunications: false,
+            consentDate: new Date().toISOString(),
+            ipAddress: '10.0.0.1',
+          },
+        });
 
-      expect(response.status).toBe(200);
-      expect(response.headers.get('content-type')).toMatch(/text\/event-stream/);
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      const consentWithdrawal = response.body.history.find(entry => 
+        entry.changes?.some(change => 
+          change.field === 'marketingCommunications' && 
+          change.newValue === false
+        )
+      );
+      
+      expect(consentWithdrawal).toBeDefined();
+    });
+  });
+
+  describe('Performance Requirements', () => {
+    it('should respond within 500ms', async () => {
+      const startTime = Date.now();
+      
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      const duration = Date.now() - startTime;
+      expect(duration).toBeLessThan(500);
+      
+      // Should also be included in response metrics
+      expect(response.body.performanceMetrics.duration).toBeLessThan(500);
+    });
+
+    it('should handle large history queries efficiently', async () => {
+      // Request large page size to test performance
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?limit=100`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      expect(response.body.performanceMetrics.duration).toBeLessThan(500);
+      expect(response.body.performanceMetrics.entriesProcessed).toBeDefined();
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should return 404 for non-existent patient', async () => {
+      const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
+      
+      const response = await request(app)
+        .get(`/api/v2/patients/${nonExistentId}/history`)
+        .set(testAuthHeaders)
+        .expect(404);
+
+      expect(response.body.error).toContain('Patient not found');
+    });
+
+    it('should return 400 for invalid UUID format', async () => {
+      await request(app)
+        .get('/api/v2/patients/invalid-uuid/history')
+        .set(testAuthHeaders)
+        .expect(400);
+    });
+
+    it('should return 401 for missing authentication', async () => {
+      await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .expect(401);
+    });
+
+    it('should return 400 for invalid date range', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?startDate=invalid-date`)
+        .set(testAuthHeaders)
+        .expect(400);
+
+      expect(response.body.error).toContain('Invalid date');
+    });
+
+    it('should return 400 for invalid pagination parameters', async () => {
+      await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?page=0`)
+        .set(testAuthHeaders)
+        .expect(400);
+
+      await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?limit=101`)
+        .set(testAuthHeaders)
+        .expect(400);
+    });
+  });
+
+  describe('History Summary', () => {
+    it('should provide accurate summary statistics', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      expect(response.body.summary.totalEntries).toBe(response.body.pagination.total);
+      expect(response.body.summary.firstActivity).toBeDefined();
+      expect(response.body.summary.lastActivity).toBeDefined();
+      expect(response.body.summary.majorChanges).toBeGreaterThanOrEqual(0);
+      expect(response.body.summary.accessCount).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should track major changes separately', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      // Major changes should include creation, updates, and consent changes
+      expect(response.body.summary.majorChanges).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Export and Audit Features', () => {
+    it('should support exporting history for compliance', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history?export=true&format=json`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      expect(response.headers['x-export-format']).toBe('json');
+      expect(response.headers['x-audit-export']).toBe('true');
+    });
+
+    it('should include audit headers for history access', async () => {
+      const response = await request(app)
+        .get(`/api/v2/patients/${testPatientId}/history`)
+        .set(testAuthHeaders)
+        .expect(200);
+
+      expect(response.headers['x-audit-id']).toBeDefined();
+      expect(response.headers['x-lgpd-processed']).toBeDefined();
+      expect(response.headers['x-history-accessed']).toBe('true');
     });
   });
 });

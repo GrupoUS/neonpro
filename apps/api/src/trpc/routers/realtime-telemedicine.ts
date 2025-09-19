@@ -14,12 +14,8 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import EnhancedTelemedicineRealtime, {
   PresenceState,
-  SessionUpdate,
-  TelemedicineMessage,
 } from '../../services/enhanced-realtime-telemedicine';
 import {
-  healthcareProcedure,
-  patientProcedure,
   protectedProcedure,
   router,
   telemedicineProcedure,

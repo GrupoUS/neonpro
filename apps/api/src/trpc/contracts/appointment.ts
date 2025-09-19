@@ -619,27 +619,27 @@ async function sendEmergencyNotification(appointment: any): Promise<void> {
   // Implementation for emergency notifications
 }
 
-async function scheduleAppointmentReminders(appointment: any): Promise<void> {
+async function scheduleAppointmentReminders(_appointment: any): Promise<void> {
   // Implementation for scheduling reminders
 }
 
-async function sendConfirmationNotification(appointment: any): Promise<void> {
+async function sendConfirmationNotification(_appointment: any): Promise<void> {
   // Implementation for confirmation notifications
 }
 
-async function sendCancellationNotification(appointment: any, reason: string): Promise<void> {
+async function sendCancellationNotification(_appointment: any, _reason: string): Promise<void> {
   // Implementation for cancellation notifications
 }
 
-async function scheduleFollowUpReminder(appointment: any): Promise<void> {
+async function scheduleFollowUpReminder(_appointment: any): Promise<void> {
   // Implementation for follow-up reminders
 }
 
-async function updateNoShowStatistics(patientId: string): Promise<void> {
+async function updateNoShowStatistics(_patientId: string): Promise<void> {
   // Implementation for no-show statistics tracking
 }
 
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAccess(_userId: string, _clinicId: string): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }

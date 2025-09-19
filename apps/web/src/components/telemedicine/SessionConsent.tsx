@@ -53,12 +53,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
-import {
-  useConsentAudit,
-  useConsentCompliance,
-  useLGPDCompliance,
-  useSessionConsent,
-} from '@/hooks/use-telemedicine';
+import { useSessionConsent } from '@/hooks/use-telemedicine';
+import { useLGPDConsent } from '@/hooks/useLGPDConsent';
 
 interface SessionConsentProps {
   sessionId: string;
@@ -140,22 +136,18 @@ export function SessionConsent({
     isUpdating,
   } = useSessionConsent(sessionId);
 
-  const {
-    complianceStatus,
-    checkCompliance,
-    generateComplianceReport,
-  } = useConsentCompliance(sessionId);
-
-  const {
-    auditTrail,
-    logConsentAction,
-    exportAuditTrail,
-  } = useConsentAudit(sessionId);
-
-  const {
-    lgpdStatus,
-    processLGPDRequest,
-  } = useLGPDCompliance(patientId);
+  // Session consent management
+  const sessionConsent = useSessionConsent(sessionId);
+  
+  // LGPD consent management
+  const lgpdConsent = useLGPDConsent({
+    userId: patientId,
+    patientId,
+    sessionId,
+    clinicId: '', // This would be passed as a prop
+    dataTypes: ['medical-history', 'diagnostic-data', 'personal-identifiers'],
+    purpose: 'telemedicine',
+  });
 
   // State
   const [consentData, setConsentData] = useState<ConsentData>({

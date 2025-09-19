@@ -29,8 +29,8 @@ When uncertain, consult only what is needed (minimal context load):
 
 - docs/AGENTS.md (docs orchestrator)
 - docs/architecture/AGENTS.md (architecture orchestrator)
-- docs/architecture/source-tree.md (@source-tree)
-- docs/architecture/tech-stack.md (@tech-stack)
+- docs/architecture/source-tree.md (source-tree)
+- docs/architecture/tech-stack.md (tech-stack)
 - docs/apis/AGENTS.md (API doc standards)
 - docs/database-schema/AGENTS.md (DB schema orchestrator)
 - docs/agents/apex-researcher.md (research methodology)
@@ -48,7 +48,7 @@ When uncertain, consult only what is needed (minimal context load):
 - KISS/YAGNI, simplicity gates, anti‑abstraction (avoid wrappers without need)
 - Test‑first: Contracts → Integration/E2E → Unit; RED before GREEN
 - Every feature as a library with CLI exposure where applicable
-- Follow monorepo structure and stack in @source-tree and @tech-stack
+- Follow monorepo structure and stack in source-tree and tech-stack
 - Compliance & security (LGPD/ANVISA/CFM) when healthcare data is involved
 - Coding standards in docs/rules/coding-standards.md
 

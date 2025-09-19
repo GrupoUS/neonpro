@@ -6,6 +6,35 @@ export * from './healthcare-governance.types';
 export * from './governance.types';
 export * from './enhanced-ai';
 
+// Export specific types from ai-enhanced to avoid conflicts
+export type {
+  Plan,
+  PlanData,
+  UsageCounter,
+  UsageCounterData,
+  UsageAggregation,
+  Recommendation,
+  RecommendationType,
+  RecommendationCategory,
+  RecommendationPriority,
+  RecommendationStatus,
+  ImplementationEffort,
+  DomainDescriptor,
+  DataSensitivityLevel,
+  PerformanceBenchmarks,
+  AIAnalyzeRequest,
+  AICrudRequest,
+  AIUsageRequest,
+  AIRecommendationsRequest,
+  AIAnalyzeResponse,
+  AICrudResponse,
+  AIUsageResponse,
+  AIRecommendationsResponse,
+  AIModelsResponse,
+  AIEnhancedError,
+  AIEnhancedErrorCode
+} from './ai-enhanced';
+
 // Valibot Validation Schemas for Brazilian Healthcare
 export * from './patient.valibot';
 export * from './lgpd.valibot';

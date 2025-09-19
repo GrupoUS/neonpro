@@ -85,7 +85,9 @@
       "mcp__archon__rag_search_knowledge_base",
       "mcp__archon__get_project_features",
       "mcp__archon__rag_search_code_examples",
-      "mcp__archon__find_documents"
+      "mcp__archon__find_documents",
+      "mcp__archon__rag_get_available_sources",
+      "mcp__supabase__get_project"
     ],
     "deny": [
       "Edit",

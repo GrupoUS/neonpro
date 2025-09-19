@@ -1,990 +1,501 @@
+import { type Context } from 'hono';
+import { createHealthcareError } from '../services/createHealthcareError.js';
+import { lgpdConsentService } from '../services/lgpd-consent-service.js';
+import { lgpdAuditService } from '../services/lgpd-audit-service.js';
+import { lgpdDataSubjectService } from '../services/lgpd-data-subject-service.js';
+import { ConsentPurpose, DataCategory, AuditAction } from '../types/lgpd.js';
+
 /**
  * LGPD Compliance Middleware
- * T030 - Implement LGPD compliance middleware for healthcare platform
- *
- * Implements Brazilian LGPD (Lei Geral de Proteção de Dados) compliance
- * for healthcare data processing with automated privacy protection
+ * Enforces LGPD compliance requirements for all API endpoints
+ * Implements consent validation, audit logging, and data subject rights
  */
-
-import { Context, Next } from 'hono';
-
-// ============================================================================
-// LGPD Data Categories & Classification
-// ============================================================================
-
-export enum LGPDDataCategory {
-  PERSONAL = 'personal', // CPF, nome, endereço
-  SENSITIVE = 'sensitive', // Dados de saúde, biométricos
-  MEDICAL = 'medical', // Prontuários, exames
-  FINANCIAL = 'financial', // Dados de pagamento
-  BIOMETRIC = 'biometric', // Impressões digitais, reconhecimento facial
-  BEHAVIORAL = 'behavioral', // Padrões de uso, preferências
-  ANONYMOUS = 'anonymous', // Dados anonimizados
-}
-
-export enum LGPDLegalBasis {
-  CONSENT = 'consent', // Consentimento (Art. 7, I)
-  CONTRACT = 'contract', // Execução de contrato (Art. 7, V)
-  LEGAL_OBLIGATION = 'legal_obligation', // Cumprimento de obrigação legal (Art. 7, II)
-  VITAL_INTERESTS = 'vital_interests', // Proteção da vida (Art. 7, IV)
-  PUBLIC_INTEREST = 'public_interest', // Execução de políticas públicas (Art. 7, III)
-  LEGITIMATE_INTERESTS = 'legitimate_interests', // Interesse legítimo (Art. 7, IX)
-}
-
-// ============================================================================
-// LGPD Context & Metadata
-// ============================================================================
-
-export interface LGPDContext {
-  // Data subject information
-  dataSubjectId?: string;
-  dataSubjectType: 'patient' | 'healthcare_professional' | 'employee' | 'visitor';
-
-  // Data processing details
-  processingPurpose: string[];
-  legalBasis: LGPDLegalBasis;
-  dataCategories: LGPDDataCategory[];
-
-  // Consent information
-  consentId?: string;
-  consentObtained: boolean;
-  consentDate?: string;
-  consentVersion?: string;
-
-  // Processing metadata
-  dataController: string;
-  dataProcessor?: string;
-  retentionPeriod: number; // Days
-
-  // Healthcare specific
-  healthcareContext?: {
-    clinicId?: string;
-    patientId?: string;
-    professionalId?: string;
-    medicalPurpose?: boolean;
-    emergencyAccess?: boolean;
-  };
-
-  // Audit information
-  auditRequired: boolean;
-  auditLevel: 'minimal' | 'standard' | 'detailed';
-}
-
-// ============================================================================
-// LGPD Request Enrichment
-// ============================================================================
-
-export interface LGPDEnrichedRequest {
-  lgpdContext: LGPDContext;
-  personalDataDetected: boolean;
-  sensitiveDataDetected: boolean;
-  medicalDataDetected: boolean;
-  consentRequired: boolean;
-  auditRequired: boolean;
-  dataMinimizationApplied: boolean;
-  anonymizationRequired: boolean;
-}
-
-// ============================================================================
-// LGPD Data Patterns & Detection
-// ============================================================================
-
-const PERSONAL_DATA_PATTERNS = {
-  // Brazilian CPF pattern (11 digits)
-  cpf: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g,
-
-  // Brazilian phone numbers
-  phone: /\b(?:\+55\s?)?\(?[1-9]{2}\)?\s?9?\d{4}-?\d{4}\b/g,
-
-  // Email addresses
-  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-
-  // Brazilian postal code (CEP)
-  cep: /\b\d{5}-?\d{3}\b/g,
-
-  // Brazilian RG (identity card)
-  rg: /\b\d{1,2}\.?\d{3}\.?\d{3}-?[0-9X]\b/g,
-
-  // Credit card numbers (basic pattern)
-  creditCard: /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
-};
-
-const MEDICAL_DATA_PATTERNS = {
-  // Medical record numbers
-  medicalRecord: /\b(?:prontuário|paciente|registro)[\s:]*\d+\b/gi,
-
-  // CID-10 codes
-  cid10: /\b[A-Z]\d{2}\.?\d?\b/g,
-
-  // Common medical terms indicating health data
-  medicalTerms:
-    /\b(?:diagnóstico|sintoma|tratamento|medicamento|alergia|cirurgia|exame|doença|patologia|CRM)\b/gi,
-
-  // Blood type
-  bloodType: /\b(?:A|B|AB|O)[+-]?\b/g,
-};
-
-// ============================================================================
-// LGPD Compliance Middleware Implementation
-// ============================================================================
-
-export interface LGPDMiddlewareConfig {
-  // Compliance enforcement
-  enforcement: {
-    blockNonCompliantRequests: boolean;
-    warnOnViolations: boolean;
-    auditAllRequests: boolean;
-    anonymizeLogging: boolean;
-  };
-
-  // Data detection
-  dataDetection: {
-    enablePersonalDataDetection: boolean;
-    enableMedicalDataDetection: boolean;
-    enableSensitiveDataDetection: boolean;
-    enableRealTimeScanning: boolean;
-  };
-
-  // Consent management
-  consentManagement: {
-    requireExplicitConsent: boolean;
-    validateConsentScope: boolean;
-    trackConsentWithdrawal: boolean;
-    consentGracePeriod: number; // Days
-  };
-
-  // Data minimization
-  dataMinimization: {
-    enableAutomaticMinimization: boolean;
-    removeUnnecessaryFields: boolean;
-    pseudonymizeIdentifiers: boolean;
-    limitDataCollection: boolean;
-  };
-
-  // Audit and logging
-  audit: {
-    logAllDataAccess: boolean;
-    logConsentDecisions: boolean;
-    logDataProcessingActivities: boolean;
-    retentionPeriod: number; // Days
-  };
-
-  // Healthcare specific
-  healthcare: {
-    enableEmergencyOverride: boolean;
-    emergencyAccessAudit: boolean;
-    medicalDataClassification: boolean;
-    patientDataIsolation: boolean;
-  };
-}
-
-export const defaultLGPDConfig: LGPDMiddlewareConfig = {
-  enforcement: {
-    blockNonCompliantRequests: true,
-    warnOnViolations: true,
-    auditAllRequests: true,
-    anonymizeLogging: true,
-  },
-  dataDetection: {
-    enablePersonalDataDetection: true,
-    enableMedicalDataDetection: true,
-    enableSensitiveDataDetection: true,
-    enableRealTimeScanning: true,
-  },
-  consentManagement: {
-    requireExplicitConsent: true,
-    validateConsentScope: true,
-    trackConsentWithdrawal: true,
-    consentGracePeriod: 30,
-  },
-  dataMinimization: {
-    enableAutomaticMinimization: true,
-    removeUnnecessaryFields: true,
-    pseudonymizeIdentifiers: true,
-    limitDataCollection: true,
-  },
-  audit: {
-    logAllDataAccess: true,
-    logConsentDecisions: true,
-    logDataProcessingActivities: true,
-    retentionPeriod: 1825, // 5 years for healthcare
-  },
-  healthcare: {
-    enableEmergencyOverride: true,
-    emergencyAccessAudit: true,
-    medicalDataClassification: true,
-    patientDataIsolation: true,
-  },
-};
-
-// ============================================================================
-// LGPD Data Detection Engine
-// ============================================================================
-
-export class LGPDDataDetector {
+export class LGPDComplianceMiddleware {
   /**
-   * Detect personal data in request payload
+   * Validates consent for data processing operations
+   * Implements LGPD Art. 7 (legal basis for processing)
    */
-  static detectPersonalData(data: any): {
-    detected: boolean;
-    categories: LGPDDataCategory[];
-    patterns: string[];
-    sensitiveFields: string[];
-  } {
-    const dataString = JSON.stringify(data);
-    const categories: LGPDDataCategory[] = [];
-    const patterns: string[] = [];
-    const sensitiveFields: string[] = [];
-
-    // Check for personal data patterns
-    Object.entries(PERSONAL_DATA_PATTERNS).forEach(([pattern, regex]) => {
-      if (regex.test(dataString)) {
-        categories.push(LGPDDataCategory.PERSONAL);
-        patterns.push(pattern);
-      }
-    });
-
-    // Check for medical data patterns
-    Object.entries(MEDICAL_DATA_PATTERNS).forEach(([pattern, regex]) => {
-      if (regex.test(dataString)) {
-        categories.push(LGPDDataCategory.MEDICAL);
-        categories.push(LGPDDataCategory.SENSITIVE);
-        patterns.push(pattern);
-      }
-    });
-
-    // Check for sensitive field names
-    const sensitiveFieldNames = [
-      'cpf',
-      'rg',
-      'password',
-      'email',
-      'phone',
-      'address',
-      'medical_record',
-      'diagnosis',
-      'treatment',
-      'medication',
-      'allergy',
-      'biometric',
-      'financial_data',
-      'credit_card',
-    ];
-
-    this.findSensitiveFields(data, sensitiveFieldNames, '', sensitiveFields);
-
-    return {
-      detected: categories.length > 0 || sensitiveFields.length > 0,
-      categories: [...new Set(categories)],
-      patterns,
-      sensitiveFields,
-    };
-  }
-
-  /**
-   * Recursively find sensitive fields in nested objects
-   */
-  private static findSensitiveFields(
-    obj: any,
-    sensitiveNames: string[],
-    path: string,
-    found: string[],
-  ): void {
-    if (typeof obj !== 'object' || obj === null) return;
-
-    Object.keys(obj).forEach(key => {
-      const fullPath = path ? `${path}.${key}` : key;
-
-      // Check if field name indicates sensitive data
-      if (sensitiveNames.some(name => key.toLowerCase().includes(name.toLowerCase()))) {
-        found.push(fullPath);
-      }
-
-      // Recurse into nested objects
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        this.findSensitiveFields(obj[key], sensitiveNames, fullPath, found);
-      }
-    });
-  }
-
-  /**
-   * Classify data sensitivity level
-   */
-  static classifyDataSensitivity(
-    categories: LGPDDataCategory[],
-  ): 'low' | 'medium' | 'high' | 'critical' {
-    if (
-      categories.includes(LGPDDataCategory.MEDICAL)
-      || categories.includes(LGPDDataCategory.BIOMETRIC)
-    ) {
-      return 'critical';
-    }
-
-    if (
-      categories.includes(LGPDDataCategory.SENSITIVE)
-      || categories.includes(LGPDDataCategory.FINANCIAL)
-    ) {
-      return 'high';
-    }
-
-    if (categories.includes(LGPDDataCategory.PERSONAL)) {
-      return 'medium';
-    }
-
-    return 'low';
-  }
-}
-
-// ============================================================================
-// LGPD Consent Manager
-// ============================================================================
-
-export class LGPDConsentManager {
-  /**
-   * Validate consent for data processing
-   */
-  static async validateConsent(
-    dataSubjectId: string,
-    processingPurpose: string[],
-    dataCategories: LGPDDataCategory[],
-  ): Promise<{
-    valid: boolean;
-    consentId?: string;
-    consentDate?: string;
-    scope: string[];
-    violations: string[];
-  }> {
-    // This would integrate with your consent management system
-    // For now, return a mock implementation
-    const violations: string[] = [];
-
-    // Check if consent is required for the data categories
-    const requiresConsent = dataCategories.some(category =>
-      [LGPDDataCategory.PERSONAL, LGPDDataCategory.SENSITIVE, LGPDDataCategory.MEDICAL].includes(
-        category,
-      )
-    );
-
-    if (requiresConsent) {
-      // Mock consent validation - replace with actual consent DB lookup
-      const consentRecord = await this.lookupConsent(dataSubjectId);
-
-      if (!consentRecord) {
-        violations.push('No consent found for data subject');
-        return { valid: false, scope: [], violations };
-      }
-
-      // Validate consent scope covers the processing purposes
-      const uncoveredPurposes = processingPurpose.filter(
-        purpose => !consentRecord.scope.includes(purpose),
-      );
-
-      if (uncoveredPurposes.length > 0) {
-        violations.push(`Consent does not cover purposes: ${uncoveredPurposes.join(', ')}`);
-      }
-
-      // Check consent is not withdrawn
-      if (consentRecord.withdrawn) {
-        violations.push('Consent has been withdrawn');
-      }
-
-      // Check consent is not expired
-      if (consentRecord.expiresAt && new Date() > new Date(consentRecord.expiresAt)) {
-        violations.push('Consent has expired');
-      }
-
-      return {
-        valid: violations.length === 0,
-        consentId: consentRecord.id,
-        consentDate: consentRecord.obtainedAt,
-        scope: consentRecord.scope,
-        violations,
-      };
-    }
-
-    return { valid: true, scope: [], violations: [] };
-  }
-
-  /**
-   * Mock consent lookup - replace with actual database implementation
-   */
-  private static async lookupConsent(dataSubjectId: string): Promise<
-    {
-      id: string;
-      scope: string[];
-      obtainedAt: string;
-      expiresAt?: string;
-      withdrawn: boolean;
-    } | null
-  > {
-    // Mock implementation - replace with actual database lookup
-    return {
-      id: `consent_${dataSubjectId}`,
-      scope: ['healthcare_treatment', 'appointment_management', 'communication'],
-      obtainedAt: new Date().toISOString(),
-      expiresAt: undefined,
-      withdrawn: false,
-    };
-  }
-}
-
-// ============================================================================
-// LGPD Data Minimizer
-// ============================================================================
-
-export class LGPDDataMinimizer {
-  /**
-   * Apply data minimization to request/response data
-   */
-  static minimizeData(
-    data: any,
-    purpose: string[],
-    sensitiveFields: string[],
-  ): {
-    minimizedData: any;
-    removedFields: string[];
-    pseudonymizedFields: string[];
-  } {
-    const minimizedData = JSON.parse(JSON.stringify(data));
-    const removedFields: string[] = [];
-    const pseudonymizedFields: string[] = [];
-
-    // Define fields necessary for each purpose
-    const purposeFieldMap: Record<string, string[]> = {
-      healthcare_treatment: [
-        'name',
-        'cpf',
-        'birth_date',
-        'medical_record',
-        'allergies',
-        'medications',
-      ],
-      appointment_management: ['name', 'phone', 'email', 'preferred_time'],
-      communication: ['name', 'email', 'phone', 'communication_preferences'],
-      billing: ['name', 'cpf', 'address', 'payment_method'],
-      emergency_contact: ['name', 'phone', 'emergency_contact_info'],
-    };
-
-    // Get all allowed fields for the given purposes
-    const allowedFields = new Set<string>();
-    purpose.forEach(p => {
-      purposeFieldMap[p]?.forEach(field => allowedFields.add(field));
-    });
-
-    // Remove unnecessary fields and pseudonymize sensitive data
-    this.processDataMinimization(
-      minimizedData,
-      '',
-      allowedFields,
-      sensitiveFields,
-      removedFields,
-      pseudonymizedFields,
-    );
-
-    return {
-      minimizedData,
-      removedFields,
-      pseudonymizedFields,
-    };
-  }
-
-  /**
-   * Recursively process data minimization
-   */
-  private static processDataMinimization(
-    obj: any,
-    path: string,
-    allowedFields: Set<string>,
-    sensitiveFields: string[],
-    removedFields: string[],
-    pseudonymizedFields: string[],
-  ): void {
-    if (typeof obj !== 'object' || obj === null) return;
-
-    Object.keys(obj).forEach(key => {
-      const fullPath = path ? `${path}.${key}` : key;
-
-      // Check if field should be removed (not in allowed fields)
-      if (!allowedFields.has(key) && !allowedFields.has(fullPath)) {
-        delete obj[key];
-        removedFields.push(fullPath);
-        return;
-      }
-
-      // Check if field should be pseudonymized
-      if (sensitiveFields.includes(fullPath)) {
-        if (typeof obj[key] === 'string') {
-          obj[key] = this.pseudonymize(obj[key]);
-          pseudonymizedFields.push(fullPath);
-        }
-      }
-
-      // Recurse into nested objects
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        this.processDataMinimization(
-          obj[key],
-          fullPath,
-          allowedFields,
-          sensitiveFields,
-          removedFields,
-          pseudonymizedFields,
-        );
-      }
-    });
-  }
-
-  /**
-   * Pseudonymize sensitive data
-   */
-  private static pseudonymize(value: string): string {
-    // Simple pseudonymization - in production, use proper crypto libraries
-    if (value.length <= 4) return '***';
-
-    const start = value.substring(0, 2);
-    const end = value.substring(value.length - 2);
-    const middle = '*'.repeat(Math.max(1, value.length - 4));
-
-    return `${start}${middle}${end}`;
-  }
-}
-
-// ============================================================================
-// LGPD Audit Logger
-// ============================================================================
-
-export class LGPDAuditLogger {
-  /**
-   * Log LGPD compliance event
-   */
-  static async logComplianceEvent(
-    eventType:
-      | 'data_access'
-      | 'consent_validation'
-      | 'data_processing'
-      | 'violation'
-      | 'emergency_access',
-    context: LGPDContext,
-    details: {
-      userId?: string;
-      sessionId?: string;
-      ipAddress?: string;
-      userAgent?: string;
-      endpoint?: string;
-      dataCategories?: LGPDDataCategory[];
-      action?: string;
-      result?: 'allowed' | 'blocked' | 'warning';
-      violations?: string[];
-      emergencyJustification?: string;
-    },
+  static async requireConsent(
+    c: Context,
+    purpose: typeof ConsentPurpose.Enum,
+    operation: string
   ): Promise<void> {
-    const auditEntry = {
-      id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      eventType,
-      context: {
-        ...context,
-        // Anonymize sensitive identifiers for audit logs
-        dataSubjectId: context.dataSubjectId ? this.hashId(context.dataSubjectId) : undefined,
-      },
-      details: {
-        ...details,
-        // Remove sensitive data from audit logs
-        userAgent: details.userAgent ? this.sanitizeUserAgent(details.userAgent) : undefined,
-      },
-      lgpdCompliance: {
-        auditRequired: true,
-        retentionPeriod: 1825, // 5 years
-        dataClassification: 'internal',
-        legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
-      },
-    };
-
-    // In production, this would write to your audit log system
-    console.log('[LGPD Audit]', JSON.stringify(auditEntry, null, 2));
-  }
-
-  /**
-   * Hash identifier for audit logs
-   */
-  private static hashId(id: string): string {
-    // Simple hash for demo - use proper crypto in production
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      const char = id.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+    const patientId = c.req.param('patientId') || c.get('patientId');
+    
+    if (!patientId) {
+      throw createHealthcareError(
+        'PATIENT_ID_REQUIRED',
+        'Patient ID is required for consent validation',
+        { operation, purpose }
+      );
     }
-    return `hashed_${Math.abs(hash).toString(16)}`;
-  }
-
-  /**
-   * Sanitize user agent for audit logs
-   */
-  private static sanitizeUserAgent(userAgent: string): string {
-    // Remove potentially identifying information
-    return userAgent
-      .replace(/\d+\.\d+\.\d+/g, 'x.x.x') // Version numbers
-      .replace(/\([^)]+\)/g, '(...)'); // Detailed OS/browser info
-  }
-}
-
-// ============================================================================
-// Main LGPD Compliance Middleware
-// ============================================================================
-
-export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> = {}) {
-  const mergedConfig = { ...defaultLGPDConfig, ...config };
-
-  return async (c: Context, next: Next) => {
-    const startTime = Date.now();
 
     try {
-      // Extract request information
-      const method = c.req.method;
-      const url = c.req.url;
-      const body = method !== 'GET' ? await c.req.json().catch(() => ({})) : {};
-      const query = Object.fromEntries(new URL(url).searchParams);
-      const headers = Object.fromEntries(c.req.headers.entries());
-
-      // Build LGPD context
-      const lgpdContext = await buildLGPDContext(c, body, query);
-
-      // Detect personal and sensitive data
-      const requestData = { ...body, ...query };
-      const dataDetection = LGPDDataDetector.detectPersonalData(requestData);
-
-      // Validate consent if required
-      const consentValidation = lgpdContext.dataSubjectId && dataDetection.detected
-        ? await LGPDConsentManager.validateConsent(
-          lgpdContext.dataSubjectId,
-          lgpdContext.processingPurpose,
-          dataDetection.categories,
-        )
-        : { valid: true, scope: [], violations: [] };
-
-      // Check for emergency access
-      const isEmergencyAccess = lgpdContext.healthcareContext?.emergencyAccess || false;
-      const emergencyOverrideAllowed = mergedConfig.healthcare.enableEmergencyOverride
-        && isEmergencyAccess;
-
-      // Apply data minimization
-      let minimizationResult = {
-        minimizedData: requestData,
-        removedFields: [],
-        pseudonymizedFields: [],
-      };
-      if (mergedConfig.dataMinimization.enableAutomaticMinimization && dataDetection.detected) {
-        minimizationResult = LGPDDataMinimizer.minimizeData(
-          requestData,
-          lgpdContext.processingPurpose,
-          dataDetection.sensitiveFields,
-        );
-      }
-
-      // Determine if request should be blocked
-      const shouldBlock = mergedConfig.enforcement.blockNonCompliantRequests
-        && !consentValidation.valid
-        && !emergencyOverrideAllowed
-        && dataDetection.detected;
-
-      // Create enriched request context
-      const lgpdEnrichedRequest: LGPDEnrichedRequest = {
-        lgpdContext,
-        personalDataDetected: dataDetection.categories.includes(LGPDDataCategory.PERSONAL),
-        sensitiveDataDetected: dataDetection.categories.includes(LGPDDataCategory.SENSITIVE),
-        medicalDataDetected: dataDetection.categories.includes(LGPDDataCategory.MEDICAL),
-        consentRequired: dataDetection.detected,
-        auditRequired: lgpdContext.auditRequired || dataDetection.detected,
-        dataMinimizationApplied: minimizationResult.removedFields.length > 0,
-        anonymizationRequired: dataDetection.categories.includes(LGPDDataCategory.MEDICAL),
-      };
-
-      // Add LGPD context to request
-      c.set('lgpdContext', lgpdEnrichedRequest);
-
-      // Log compliance event
-      if (mergedConfig.audit.logAllDataAccess || dataDetection.detected) {
-        await LGPDAuditLogger.logComplianceEvent(
-          dataDetection.detected ? 'data_access' : 'data_processing',
-          lgpdContext,
-          {
-            userId: headers['x-user-id'] || 'anonymous',
-            sessionId: headers['x-session-id'],
-            ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-            userAgent: headers['user-agent'],
-            endpoint: `${method} ${new URL(url).pathname}`,
-            dataCategories: dataDetection.categories,
-            action: method,
-            result: shouldBlock
-              ? 'blocked'
-              : (consentValidation.violations.length > 0 ? 'warning' : 'allowed'),
-            violations: consentValidation.violations,
-            emergencyJustification: isEmergencyAccess ? 'Emergency medical access' : undefined,
-          },
-        );
-      }
-
-      // Block request if non-compliant
-      if (shouldBlock) {
-        return c.json({
-          error: 'LGPD_COMPLIANCE_VIOLATION',
-          message: 'Request blocked due to LGPD compliance violations',
-          violations: consentValidation.violations,
-          dataSubjectRights: {
-            access: 'You can request access to your personal data',
-            rectification: 'You can request correction of your personal data',
-            deletion: 'You can request deletion of your personal data',
-            portability: 'You can request a copy of your personal data',
-            objection: 'You can object to the processing of your personal data',
-          },
-          contact: {
-            dpo: 'dpo@neonpro.com.br',
-            phone: '+55 11 9999-9999',
-            address: 'Data Protection Officer, NeonPro Healthcare Platform',
-          },
-        }, 403);
-      }
-
-      // Add compliance headers
-      c.header('X-LGPD-Compliant', 'true');
-      c.header('X-LGPD-Data-Detected', dataDetection.detected.toString());
-      c.header('X-LGPD-Consent-Required', lgpdEnrichedRequest.consentRequired.toString());
-      c.header('X-LGPD-Processing-Purpose', lgpdContext.processingPurpose.join(','));
-      c.header('X-LGPD-Legal-Basis', lgpdContext.legalBasis);
-
-      if (emergencyOverrideAllowed) {
-        c.header('X-LGPD-Emergency-Access', 'true');
-      }
-
-      // Proceed with request
-      await next();
-
-      // Log processing completion
-      const _processingTime = Date.now() - startTime;
-
-      if (lgpdEnrichedRequest.auditRequired) {
-        await LGPDAuditLogger.logComplianceEvent(
-          'data_processing',
-          lgpdContext,
-          {
-            userId: headers['x-user-id'] || 'anonymous',
-            sessionId: headers['x-session-id'],
-            endpoint: `${method} ${new URL(url).pathname}`,
-            action: 'processing_completed',
-            result: 'allowed',
-            violations: [],
-          },
-        );
-      }
+      await lgpdConsentService.validateConsent(patientId, purpose, operation);
     } catch (error) {
-      // Log compliance error
-      await LGPDAuditLogger.logComplianceEvent(
-        'violation',
-        {
-          dataSubjectType: 'unknown',
-          processingPurpose: ['error_handling'],
-          legalBasis: LGPDLegalBasis.LEGITIMATE_INTERESTS,
-          dataCategories: [],
-          consentObtained: false,
-          dataController: 'neonpro',
-          retentionPeriod: 30,
-          auditRequired: true,
-          auditLevel: 'detailed',
-        },
-        {
-          endpoint: c.req.url,
-          action: 'middleware_error',
-          result: 'blocked',
-          violations: [error instanceof Error ? error.message : 'Unknown error'],
-        },
-      );
+      // Create audit entry for consent violation
+      await lgpdAuditService.recordAudit({
+        patientId,
+        action: 'CONSENT_VIOLATION',
+        entityType: 'COMPLIANCE_CHECK',
+        entityId: `consent_check_${Date.now()}`,
+        dataCategory: 'PERSONAL',
+        severity: 'HIGH',
+        description: `Consent validation failed for ${operation}`,
+        metadata: {
+          purpose,
+          operation,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }
+      });
 
-      console.error('[LGPD Middleware Error]', error);
-
-      // Don't block request on middleware errors unless configured to do so
-      if (mergedConfig.enforcement.blockNonCompliantRequests) {
-        return c.json({
-          error: 'LGPD_MIDDLEWARE_ERROR',
-          message: 'LGPD compliance check failed',
-        }, 500);
-      }
-
-      await next();
+      throw error;
     }
-  };
-}
+  }
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
+  /**
+   * Creates comprehensive audit trail for all data operations
+   * Implements LGPD Art. 37 (record keeping requirement)
+   */
+  static async auditDataOperation(
+    c: Context,
+    options: {
+      action: typeof AuditAction.Enum;
+      entityType: string;
+      entityId: string;
+      dataCategory: typeof DataCategory.Enum;
+      description: string;
+      severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      metadata?: Record<string, any>;
+    }
+  ): Promise<void> {
+    const patientId = c.req.param('patientId') || c.get('patientId');
+    const user = c.get('user');
 
-/**
- * Build LGPD context from request
- */
-async function buildLGPDContext(c: Context, body: any, query: any): Promise<LGPDContext> {
-  const headers = Object.fromEntries(c.req.headers.entries());
-  const url = new URL(c.req.url);
-
-  // Extract healthcare context
-  const patientId = body.patientId || query.patientId || headers['x-patient-id'];
-  const clinicId = body.clinicId || query.clinicId || headers['x-clinic-id'];
-  const professionalId = headers['x-professional-id'] || headers['x-user-id'];
-
-  // Determine data subject type
-  let dataSubjectType: 'patient' | 'healthcare_professional' | 'employee' | 'visitor' = 'visitor';
-  if (patientId) dataSubjectType = 'patient';
-  else if (professionalId) dataSubjectType = 'healthcare_professional';
-
-  // Determine processing purpose based on endpoint
-  const processingPurpose = determineProcessingPurpose(url.pathname, c.req.method);
-
-  // Determine legal basis
-  const legalBasis = determineLegalBasis(processingPurpose, dataSubjectType);
-
-  // Determine data categories
-  const dataCategories = determineDataCategories(url.pathname, body, query);
-
-  return {
-    dataSubjectId: patientId || professionalId,
-    dataSubjectType,
-    processingPurpose,
-    legalBasis,
-    dataCategories,
-    consentObtained: false, // Will be validated separately
-    dataController: 'neonpro',
-    retentionPeriod: getRetentionPeriod(dataCategories),
-    healthcareContext: {
-      clinicId,
+    await lgpdAuditService.recordAudit({
+      userId: user?.id,
       patientId,
-      professionalId,
-      medicalPurpose: processingPurpose.includes('healthcare_treatment'),
-      emergencyAccess: headers['x-emergency-access'] === 'true',
-    },
-    auditRequired: true,
-    auditLevel: dataCategories.includes(LGPDDataCategory.MEDICAL) ? 'detailed' : 'standard',
-  };
-}
+      action: options.action,
+      entityType: options.entityType,
+      entityId: options.entityId,
+      dataCategory: options.dataCategory,
+      severity: options.severity || 'MEDIUM',
+      description: options.description,
+      ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+      userAgent: c.req.header('user-agent'),
+      sessionId: c.get('sessionId'),
+      metadata: {
+        ...options.metadata,
+        endpoint: c.req.path,
+        method: c.req.method,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
 
-/**
- * Determine processing purpose from endpoint
- */
-function determineProcessingPurpose(pathname: string, method: string): string[] {
-  const purposes: string[] = [];
-
-  if (pathname.includes('/patients')) {
-    purposes.push('healthcare_treatment');
-    if (method === 'POST' || method === 'PUT') {
-      purposes.push('medical_record_management');
+  /**
+   * Validates data minimization principles
+   * Implements LGPD Art. 6 (purpose limitation and data minimization)
+   */
+  static validateDataMinimization(
+    requestedFields: string[],
+    requiredFields: string[],
+    purpose: string
+  ): void {
+    const unnecessaryFields = requestedFields.filter(field => !requiredFields.includes(field));
+    
+    if (unnecessaryFields.length > 0) {
+      throw createHealthcareError(
+        'DATA_MINIMIZATION_VIOLATION',
+        `Requesting unnecessary data fields for ${purpose}`,
+        { 
+          requestedFields, 
+          requiredFields, 
+          unnecessaryFields,
+          purpose 
+        }
+      );
     }
   }
 
-  if (pathname.includes('/appointments')) {
-    purposes.push('appointment_management');
+  /**
+   * Enforces data retention policies
+   * Implements LGPD Art. 15 (storage limitation)
+   */
+  static async validateDataRetention(
+    c: Context,
+    dataType: string,
+    accessPurpose: string
+  ): Promise<void> {
+    const patientId = c.req.param('patientId');
+    
+    if (!patientId) return;
+
+    // In a real implementation, this would check data retention policies
+    // and block access to data that should have been deleted
+    const retentionValid = await this.checkDataRetentionValidity(patientId, dataType);
+    
+    if (!retentionValid.valid) {
+      throw createHealthcareError(
+        'RETENTION_POLICY_VIOLATION',
+        `Data retention period expired for ${dataType}`,
+        { 
+          patientId, 
+          dataType, 
+          accessPurpose,
+          expiryDate: retentionValid.expiryDate 
+        }
+      );
+    }
   }
 
-  if (pathname.includes('/billing') || pathname.includes('/payment')) {
-    purposes.push('billing');
+  /**
+   * Handles sensitive data processing requirements
+   * Implements LGPD Art. 11 (processing of sensitive personal data)
+   */
+  static async validateSensitiveDataProcessing(
+    c: Context,
+    sensitiveDataTypes: string[],
+    purpose: string
+  ): Promise<void> {
+    const patientId = c.req.param('patientId') || c.get('patientId');
+    
+    if (!patientId) return;
+
+    // Check for special consent requirements for sensitive data
+    const sensitiveCategories = ['HEALTH', 'GENETIC', 'BIOMETRIC'];
+    const hasSensitiveData = sensitiveDataTypes.some(type => 
+      sensitiveCategories.includes(type.toUpperCase())
+    );
+
+    if (hasSensitiveData) {
+      // Validate explicit consent for sensitive data processing
+      try {
+        await lgpdConsentService.validateConsent(
+          patientId, 
+          ConsentPurpose.Enum.TREATMENT, 
+          `SENSITIVE_DATA_${purpose}`
+        );
+
+        // Create audit entry for sensitive data access
+        await lgpdAuditService.recordAudit({
+          patientId,
+          action: 'SENSITIVE_DATA_ACCESS',
+          entityType: 'SENSITIVE_DATA_PROCESSING',
+          entityId: `sensitive_${Date.now()}`,
+          dataCategory: DataCategory.Enum.SENSITIVE,
+          severity: 'HIGH',
+          description: `Sensitive data processed for ${purpose}`,
+          metadata: {
+            sensitiveDataTypes,
+            purpose,
+            validationMethod: 'EXPLICIT_CONSENT'
+          }
+        });
+      } catch (error) {
+        console.error('Failed to validate sensitive data consent:', error);
+        throw createHealthcareError(
+          'SENSITIVE_DATA_CONSENT_REQUIRED',
+          'Explicit consent required for sensitive data processing',
+          { patientId, purpose, sensitiveDataTypes, originalError: error instanceof Error ? error.message : String(error) }
+        );
+      }
+    }
   }
 
-  if (pathname.includes('/communication') || pathname.includes('/notification')) {
-    purposes.push('communication');
+  /**
+   * Implements data subject rights interception
+   * Catches and routes data subject requests to appropriate handlers
+   */
+  static async handleDataSubjectRequest(
+    c: Context,
+    requestType: 'ACCESS' | 'DELETION' | 'CORRECTION' | 'PORTABILITY' | 'OBJECTION'
+  ): Promise<Response> {
+    const user = c.get('user');
+    const patientId = c.req.param('patientId') || user?.id;
+    const body = await c.req.json();
+
+    if (!patientId) {
+      throw createHealthcareError(
+        'PATIENT_ID_REQUIRED',
+        'Patient ID is required for data subject requests',
+        { requestType }
+      );
+    }
+
+    // Create the data subject request
+    const result = await lgpdDataSubjectService.createRequest(
+      patientId,
+      requestType,
+      body.description || `${requestType} request`,
+      {
+        priority: body.priority,
+        requestData: body.requestData
+      }
+    );
+
+    if (!result.success) {
+      throw createHealthcareError(
+        'REQUEST_CREATION_FAILED',
+        'Failed to create data subject request',
+        { errors: result.errors }
+      );
+    }
+
+    return c.json({
+      success: true,
+      requestId: result.requestId,
+      message: `${requestType} request created successfully`,
+      estimatedCompletion: result.estimatedCompletion
+    });
   }
 
-  if (pathname.includes('/emergency')) {
-    purposes.push('emergency_care');
+  /**
+   * Validates international data transfer compliance
+   * Implements LGPD Art. 33 (international transfer)
+   */
+  static validateInternationalTransfer(
+    destinationCountry: string,
+    dataCategories: string[]
+  ): void {
+    // List of countries with adequate data protection (simplified)
+    const adequateCountries = [
+      'BR', 'AR', 'UY', 'CL', 'CO', // South American countries
+      'US', 'CA', // North American countries with specific frameworks
+      'GB', 'FR', 'DE', 'ES', 'IT', // EU countries with GDPR
+      'CH', 'NO', 'IS' // Other European countries
+    ];
+
+    if (!adequateCountries.includes(destinationCountry.toUpperCase())) {
+      // Check for specific safeguards
+      const hasSafeguards = this.checkTransferSafeguards(destinationCountry, dataCategories);
+      
+      if (!hasSafeguards) {
+        throw createHealthcareError(
+          'INTERNATIONAL_TRANSFER_VIOLATION',
+          `International data transfer to ${destinationCountry} requires adequate safeguards`,
+          { 
+            destinationCountry, 
+            dataCategories,
+            requiredSafeguards: [
+              'Standard Contractual Clauses',
+              'Binding Corporate Rules',
+              'Adequacy Decision',
+              'Explicit Consent'
+            ]
+          }
+        );
+      }
+    }
   }
 
-  // Default purpose
-  if (purposes.length === 0) {
-    purposes.push('platform_operation');
+  /**
+   * Implements data breach detection and reporting
+   * Helps implement LGPD Art. 48 (security incident notification)
+   */
+  static async detectAndReportDataBreach(
+    c: Context,
+    incident: {
+      type: string;
+      severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      affectedRecords: number;
+      description: string;
+      affectedPatients: string[];
+    }
+  ): Promise<void> {
+    // Create data breach notification
+    const breachResult = await lgpdAuditService.recordDataBreach({
+      breachId: `breach_${Date.now()}`,
+      severity: incident.severity,
+      affectedRecords: incident.affectedRecords,
+      dataCategories: ['PERSONAL', 'HEALTH'], // Default categories
+      description: incident.description,
+      impactAssessment: this.assessBreachImpact(incident),
+      mitigationActions: this.generateMitigationActions(incident),
+      affectedPatients: incident.affectedPatients,
+      discoveryDate: new Date(),
+      status: 'DETECTED'
+    });
+
+    if (!breachResult.success) {
+      console.error('Failed to record data breach:', breachResult.errors);
+    }
+
+    // Trigger immediate security protocols
+    await this.triggerSecurityProtocols(incident);
   }
 
-  return purposes;
+  /**
+   * Creates LGPD compliance middleware for Hono routes
+   */
+  static middleware(options: {
+    requireConsent?: boolean;
+    consentPurpose?: typeof ConsentPurpose.Enum;
+    auditOperation?: boolean;
+    dataCategory?: typeof DataCategory.Enum;
+    validateMinimization?: boolean;
+    requiredFields?: string[];
+  } = {}) {
+    return async (c: Context, next: () => Promise<void>) => {
+      const startTime = Date.now();
+      
+      try {
+        // Validate consent if required
+        if (options.requireConsent && options.consentPurpose) {
+          await this.requireConsent(c, options.consentPurpose, c.req.path);
+        }
+
+        // Validate data minimization if required
+        if (options.validateMinimization && options.requiredFields) {
+          const requestedFields = c.req.query().fields?.split(',') || [];
+          this.validateDataMinimization(
+            requestedFields, 
+            options.requiredFields, 
+            c.req.path
+          );
+        }
+
+        // Validate data retention
+        if (options.dataCategory) {
+          await this.validateDataRetention(c, options.dataCategory, c.req.path);
+        }
+
+        // Proceed with the request
+        await next();
+
+        // Audit successful operation if requested
+        if (options.auditOperation) {
+          await this.auditDataOperation(c, {
+            action: AuditAction.Enum.DATA_ACCESS,
+            entityType: 'API_ENDPOINT',
+            entityId: `${c.req.method}_${c.req.path}`,
+            dataCategory: options.dataCategory || DataCategory.Enum.PERSONAL,
+            description: `Successful ${c.req.method} request to ${c.req.path}`,
+            severity: 'LOW',
+            metadata: {
+              responseTime: Date.now() - startTime,
+              statusCode: c.res.status
+            }
+          });
+        }
+      } catch (error) {
+        // Audit failed operation
+        await this.auditDataOperation(c, {
+          action: AuditAction.Enum.DATA_ACCESS,
+          entityType: 'API_ENDPOINT',
+          entityId: `${c.req.method}_${c.req.path}`,
+          dataCategory: options.dataCategory || DataCategory.Enum.PERSONAL,
+          severity: 'MEDIUM',
+          description: `Failed ${c.req.method} request to ${c.req.path}`,
+          metadata: {
+            responseTime: Date.now() - startTime,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          }
+        });
+
+        throw error;
+      }
+    };
+  }
+
+  /**
+   * Creates specialized middleware for healthcare data processing
+   */
+  static healthcareDataMiddleware(options: {
+    operation: string;
+    sensitiveDataTypes?: string[];
+  }) {
+    return async (c: Context, next: () => Promise<void>) => {
+      try {
+        // Validate sensitive data processing
+        if (options.sensitiveDataTypes && options.sensitiveDataTypes.length > 0) {
+          await this.validateSensitiveDataProcessing(
+            c,
+            options.sensitiveDataTypes,
+            options.operation
+          );
+        }
+
+        // Apply standard healthcare compliance checks
+        await this.middleware({
+          requireConsent: true,
+          consentPurpose: ConsentPurpose.Enum.TREATMENT,
+          auditOperation: true,
+          dataCategory: DataCategory.Enum.HEALTH,
+          validateMinimization: true,
+          requiredFields: ['id', 'patientId'] // Basic required fields
+        })(c, next);
+      } catch (error) {
+        throw error;
+      }
+    };
+  }
+
+  // Private helper methods
+  private static async checkDataRetentionValidity(
+    patientId: string,
+    dataType: string
+  ): Promise<{ valid: boolean; expiryDate?: Date }> {
+    // In a real implementation, this would check actual retention policies
+    // For now, assume data is valid
+    return { valid: true };
+  }
+
+  private static checkTransferSafeguards(
+    destinationCountry: string,
+    dataCategories: string[]
+  ): boolean {
+    // Check if appropriate safeguards are in place
+    // This would integrate with actual transfer validation logic
+    return false; // Default to requiring explicit safeguards
+  }
+
+  private static assessBreachImpact(incident: any): string {
+    const impactLevels = {
+      LOW: 'Minimal impact on data subjects',
+      MEDIUM: 'Moderate impact requiring monitoring',
+      HIGH: 'Significant impact requiring notification',
+      CRITICAL: 'Severe impact requiring immediate action'
+    };
+
+    return impactLevels[incident.severity] || 'Unknown impact';
+  }
+
+  private static generateMitigationActions(incident: any): string[] {
+    const actions = [
+      'Immediate containment of affected systems',
+      'Investigation of root cause',
+      'Notification of affected individuals',
+      'Review and enhancement of security measures',
+      'Documentation of lessons learned'
+    ];
+
+    if (incident.severity === 'CRITICAL') {
+      actions.unshift('Immediate shutdown of affected systems');
+      actions.push('Notification of regulatory authorities');
+    }
+
+    return actions;
+  }
+
+  private static async triggerSecurityProtocols(incident: any): Promise<void> {
+    // Trigger immediate security response
+    console.log(`Security protocols triggered for ${incident.type} incident`);
+    
+    // In a real implementation, this would:
+    // 1. Alert security team
+    // 2. Isolate affected systems
+    // 3. Begin forensic investigation
+    // 4. Initiate breach notification process
+  }
 }
 
-/**
- * Determine legal basis for processing
- */
-function determineLegalBasis(purposes: string[], _dataSubjectType: string): LGPDLegalBasis {
-  // Emergency care - vital interests
-  if (purposes.includes('emergency_care')) {
-    return LGPDLegalBasis.VITAL_INTERESTS;
-  }
+// Export middleware utilities
+export const requireLGPDConsent = (purpose: typeof ConsentPurpose.Enum) => 
+  LGPDComplianceMiddleware.middleware({ requireConsent: true, consentPurpose: purpose });
 
-  // Healthcare treatment - consent or vital interests
-  if (purposes.includes('healthcare_treatment')) {
-    return LGPDLegalBasis.CONSENT;
-  }
+export const auditLGPDOperation = (dataCategory: typeof DataCategory.Enum = DataCategory.Enum.PERSONAL) =>
+  LGPDComplianceMiddleware.middleware({ auditOperation: true, dataCategory });
 
-  // Legal obligations for healthcare compliance
-  if (purposes.includes('medical_record_management')) {
-    return LGPDLegalBasis.LEGAL_OBLIGATION;
-  }
-
-  // Contract execution for billing
-  if (purposes.includes('billing')) {
-    return LGPDLegalBasis.CONTRACT;
-  }
-
-  // Default to consent
-  return LGPDLegalBasis.CONSENT;
-}
-
-/**
- * Determine data categories from endpoint and data
- */
-function determineDataCategories(pathname: string, body: any, query: any): LGPDDataCategory[] {
-  const categories: LGPDDataCategory[] = [];
-
-  // Medical endpoints always involve medical data
-  if (pathname.includes('/patients') || pathname.includes('/medical')) {
-    categories.push(LGPDDataCategory.MEDICAL, LGPDDataCategory.SENSITIVE);
-  }
-
-  // Financial endpoints
-  if (pathname.includes('/billing') || pathname.includes('/payment')) {
-    categories.push(LGPDDataCategory.FINANCIAL);
-  }
-
-  // Check for personal data in request
-  const allData = { ...body, ...query };
-  if (allData.cpf || allData.email || allData.phone) {
-    categories.push(LGPDDataCategory.PERSONAL);
-  }
-
-  // Check for biometric data
-  if (allData.biometric || allData.fingerprint || allData.facial_recognition) {
-    categories.push(LGPDDataCategory.BIOMETRIC, LGPDDataCategory.SENSITIVE);
-  }
-
-  return [...new Set(categories)];
-}
-
-/**
- * Get retention period based on data categories
- */
-function getRetentionPeriod(categories: LGPDDataCategory[]): number {
-  // Medical data - 20 years (Brazilian healthcare requirement)
-  if (categories.includes(LGPDDataCategory.MEDICAL)) {
-    return 7300; // 20 years
-  }
-
-  // Financial data - 5 years
-  if (categories.includes(LGPDDataCategory.FINANCIAL)) {
-    return 1825; // 5 years
-  }
-
-  // Personal data - 2 years default
-  if (categories.includes(LGPDDataCategory.PERSONAL)) {
-    return 730; // 2 years
-  }
-
-  // Default retention
-  return 365; // 1 year
-}
-
-// ============================================================================
-// Export Middleware and Utilities
-// ============================================================================
-
-export { lgpdComplianceMiddleware as default };
+export const healthcareDataCompliance = (operation: string, sensitiveDataTypes: string[] = []) =>
+  LGPDComplianceMiddleware.healthcareDataMiddleware({ operation, sensitiveDataTypes });

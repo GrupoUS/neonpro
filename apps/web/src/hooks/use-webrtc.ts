@@ -10,12 +10,8 @@ import { toast } from 'sonner';
 // Import tRPC client for backend communication
 import { trpc } from '@/lib/trpc';
 
-// Import secure WebRTC configuration and security validation
+// Import secure WebRTC configuration
 import { SECURE_WEBRTC_CONFIG } from '../lib/webrtc/secure-config';
-import {
-  monitorConnectionSecurity,
-  validateConnectionSecurity,
-} from '../lib/webrtc/security-validator';
 
 /**
  * WebRTC Configuration following CFM guidelines with enhanced security

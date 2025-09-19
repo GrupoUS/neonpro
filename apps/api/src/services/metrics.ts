@@ -480,6 +480,7 @@ export class HealthcareMetricsService {
 
       return { success: true, alerts };
     } catch (error) {
+      console.error('Failed to aggregate alerts:', error);
       return { success: false, error: 'Internal alerts error' };
     }
   }

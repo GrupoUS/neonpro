@@ -325,7 +325,7 @@ export async function export_patient_data(
 
 // Utility functions
 import { createHash, randomBytes } from 'crypto';
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma.js';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 
 /**
  * LGPD-compliant cryptographic hash function for patient data anonymization

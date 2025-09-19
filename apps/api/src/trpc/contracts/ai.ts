@@ -13,14 +13,21 @@ import {
 } from '@neonpro/types/api/contracts';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
-import { auditLogger } from '@neonpro/security';
+import auditLogger from '@neonpro/security';
 import { 
   aiSecurityService,
   sanitizeForAI,
   validatePromptSecurity,
   validateAIOutputSafety,
   shouldRetainAIData
-} from '@/services/ai-security-service';
+} from '../services/ai-security-service';
+import { 
+  lgpdConsentService, 
+  lgpdAuditService,
+  lgpdDataSubjectService 
+} from '../services';
+import { LGPDComplianceMiddleware } from '../middleware/lgpd-compliance';
+import { ConsentPurpose, DataCategory } from '../types/lgpd';
 
 export const aiRouter = router({
   /**
@@ -74,6 +81,35 @@ export const aiRouter = router({
             'Patient not found or access denied',
             'PATIENT_NOT_FOUND',
           );
+        }
+      }
+
+      // LGPD Compliance: Validate consent for AI processing
+      if (input.lgpdCompliant) {
+        try {
+          await lgpdConsentService.validateConsent(
+            input.patientId || ctx.userId,
+            ConsentPurpose.AI_ANALYSIS,
+            'AI chat processing'
+          );
+        } catch (error) {
+          // Create audit entry for consent violation
+          await lgpdAuditService.recordAudit({
+            userId: ctx.userId,
+            patientId: input.patientId,
+            action: 'CONSENT_VIOLATION',
+            entityType: 'AI_PROCESSING',
+            entityId: `ai_chat_${Date.now()}`,
+            dataCategory: DataCategory.HEALTH,
+            severity: 'HIGH',
+            description: 'AI processing attempted without valid consent',
+            metadata: {
+              operation: 'AI_CHAT',
+              purpose: ConsentPurpose.AI_ANALYSIS,
+              error: error instanceof Error ? error.message : 'Unknown error'
+            }
+          });
+          throw error;
         }
       }
 
@@ -213,7 +249,7 @@ export const aiRouter = router({
           );
         }
 
-        // Store conversation message in audit trail
+        // Store conversation message in audit trail with LGPD compliance
         await ctx.prisma.auditTrail.create({
           data: {
             userId: ctx.userId,
@@ -231,8 +267,29 @@ export const aiRouter = router({
               content: sanitizedMessage,
               originalContent: input.message,
               model: input.model,
+              lgpdCompliant: input.lgpdCompliant,
+              patientId: input.patientId,
             }),
           },
+        });
+
+        // LGPD Compliance: Record AI data processing
+        await lgpdAuditService.recordAudit({
+          userId: ctx.userId,
+          patientId: input.patientId,
+          action: 'AI_DATA_PROCESSING',
+          entityType: 'AI_CHAT',
+          entityId: conversationId,
+          dataCategory: DataCategory.HEALTH,
+          severity: 'MEDIUM',
+          description: 'AI chat message processed with LGPD compliance',
+          metadata: {
+            messageLength: sanitizedMessage.length,
+            model: input.model,
+            lgpdCompliant: input.lgpdCompliant,
+            consentValidated: input.lgpdCompliant,
+            processingTime: Date.now()
+          }
         });
 
         // Store AI response in audit trail

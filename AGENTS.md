@@ -11,8 +11,8 @@ applyTo: "**/*"
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
-- **🔍 Always Read the @tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
+- **📚 Always Read the source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
+- **🔍 Always Read the tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
 
 ## Pre-Development Guidelines
 

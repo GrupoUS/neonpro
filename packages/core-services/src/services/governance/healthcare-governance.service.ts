@@ -66,7 +66,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       return this.mapHealthcareMetrics(data || []);
     } catch (error) {
       console.error('Error fetching healthcare metrics:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to fetch healthcare metrics: ${error.message}`);
+      }
+      throw new Error('Failed to fetch healthcare metrics: Unknown error');
     }
   }
 
@@ -121,7 +124,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       return this.mapHealthcareMetric(data);
     } catch (error) {
       console.error('Error creating healthcare metric:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to create healthcare metric: ${error.message}`);
+      }
+      throw new Error('Failed to create healthcare metric: Unknown error');
     }
   }
 
@@ -172,7 +178,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       return this.mapHealthcareMetric(data);
     } catch (error) {
       console.error('Error updating healthcare metric:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to update healthcare metric: ${error.message}`);
+      }
+      throw new Error('Failed to update healthcare metric: Unknown error');
     }
   }
 
@@ -207,7 +216,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       });
     } catch (error) {
       console.error('Error deleting healthcare metric:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to delete healthcare metric: ${error.message}`);
+      }
+      throw new Error('Failed to delete healthcare metric: Unknown error');
     }
   }
 
@@ -581,7 +593,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService imple
       return auditEntry;
     } catch (error) {
       console.error('Error creating healthcare audit entry:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to create healthcare audit entry: ${error.message}`);
+      }
+      throw new Error('Failed to create healthcare audit entry: Unknown error');
     }
   }
 
