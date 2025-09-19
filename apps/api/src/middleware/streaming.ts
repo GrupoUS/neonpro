@@ -45,7 +45,7 @@ export function createSSEStream() {
     },
   });
 
-  function write(data: unknown) {
+  function write(data: Record<string, any> | string | number | boolean | null) {
     if (!controllerRef) return;
     const payload = `data: ${JSON.stringify(data)}\n\n`;
     controllerRef.enqueue(encoder.encode(payload));

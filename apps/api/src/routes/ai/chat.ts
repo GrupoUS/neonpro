@@ -20,14 +20,33 @@ interface ServiceInterface {
   lgpdService: LGPDService;
 }
 
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: Date;
+  metadata?: Record<string, any>;
+}
+
+interface AIResponse {
+  response: string;
+  provider: string;
+  model: string;
+  responseTime: number;
+  tokensUsed?: number;
+  cost?: number;
+  confidence?: number;
+}
+
 interface ChatResponse {
   success: boolean;
   data: {
-    response?: unknown;
-    sessionId?: string;
-    model?: string;
-    [key: string]: unknown;
+    response: AIResponse;
+    conversationId: string;
+    messageId: string;
+    [key: string]: AIResponse | string | number | boolean | ChatMessage[];
   };
+  message?: string;
 }
 
 // Mock middleware for testing
