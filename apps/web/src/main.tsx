@@ -9,6 +9,7 @@ import { criticalComponents } from './hooks/useLazyComponent';
 // import { initializeSentry } from './lib/sentry'; // temporarily disabled to unblock deploy
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';
+import { generateNonce, getSecurityHeaders } from './lib/security/csp';
 
 import './index.css';
 
@@ -49,6 +50,21 @@ if ((import.meta as any).env?.DEV) {
 async function bootstrap() {
   const rootEl = document.getElementById('root');
   if (!rootEl) throw new Error('#root element not found');
+
+  // Initialize healthcare security headers with CSP
+  const nonce = generateNonce();
+  const securityHeaders = getSecurityHeaders(nonce);
+  
+  // Apply security headers to the document
+  Object.entries(securityHeaders).forEach(([name, value]) => {
+    const meta = document.createElement('meta');
+    meta.httpEquiv = name;
+    meta.content = value;
+    document.head.appendChild(meta);
+  });
+
+  // Store nonce for dynamic script loading
+  (window as any).__CSP_NONCE__ = nonce;
 
   // Initialize performance monitoring
   if ((import.meta as any).env?.DEV) {

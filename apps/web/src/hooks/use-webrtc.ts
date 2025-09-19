@@ -10,19 +10,14 @@ import { toast } from 'sonner';
 // Import tRPC client for backend communication
 import { trpc } from '@/lib/trpc';
 
+// Import secure WebRTC configuration and security validation
+import { SECURE_WEBRTC_CONFIG } from '../lib/webrtc/secure-config';
+import { validateConnectionSecurity, monitorConnectionSecurity } from '../lib/webrtc/security-validator';
+
 /**
- * WebRTC Configuration following CFM guidelines
+ * WebRTC Configuration following CFM guidelines with enhanced security
  */
-const WEBRTC_CONFIG: RTCConfiguration = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' }
-  ],
-  iceCandidatePoolSize: 10,
-  bundlePolicy: 'max-bundle',
-  rtcpMuxPolicy: 'require'
-};
+const WEBRTC_CONFIG: RTCConfiguration = SECURE_WEBRTC_CONFIG;
 
 /**
  * Media constraints for medical consultation quality

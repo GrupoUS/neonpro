@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '../client';
-import type { Database } from '../types/supabase';
+// import type { Database } from '../types/supabase';
 
 export interface CFMLicenseValidation {
   crmNumber: string;
@@ -83,7 +83,7 @@ export class CFMComplianceService {
 
       // If not in local database, we would integrate with CFM API
       // For now, we'll create a placeholder record and mark for external validation
-      const { data: newLicense, error: insertError } = await this.supabase
+      const { error: insertError } = await this.supabase
         .from('cfm_professional_licenses')
         .insert({
           crm_number: crmNumber,
@@ -391,7 +391,7 @@ export class CFMComplianceService {
   ): Promise<any> {
     try {
       // Get compliance metrics from materialized view
-      const { data: dashboardData, error: dashboardError } = await this.supabase
+      const { error: dashboardError } = await this.supabase
         .from('cfm_compliance_dashboard')
         .select('*')
         .eq('clinic_id', clinicId)

@@ -14,6 +14,6 @@ export {
 export { HealthcareAIOrchestrator } from './healthcare-ai-orchestrator';
 export { 
   type AIAnalyticsConfig,
-  type HealthcareInsight,
-  type ComplianceAudit
+  type HealthcareInsights,
+  type HealthcareComplianceAudit
 } from './types';

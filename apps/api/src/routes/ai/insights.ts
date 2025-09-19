@@ -21,8 +21,38 @@ interface ServiceInterface {
 }
 
 interface _CacheData {
-  data: unknown;
+  data: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[];
   timestamp: number;
+  ttl: number;
+}
+
+interface AIInsight {
+  id: string;
+  type: string;
+  content: string;
+  confidence: number;
+  timestamp: Date;
+}
+
+interface HealthSummary {
+  overallHealth: string;
+  keyMetrics: Record<string, number>;
+  trends: Array<{ metric: string; trend: 'up' | 'down' | 'stable' }>;
+}
+
+interface Recommendation {
+  id: string;
+  category: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  actionItems: string[];
+}
+
+interface RiskFactor {
+  factor: string;
+  level: 'low' | 'medium' | 'high';
+  description: string;
+  mitigation: string[];
 }
 
 interface QueryParams {
@@ -34,11 +64,13 @@ interface QueryParams {
 interface InsightsResponse {
   success: boolean;
   data: {
-    insights?: unknown;
-    healthSummary?: unknown;
-    metrics?: unknown;
-    [key: string]: unknown;
+    insights: AIInsight[];
+    healthSummary: HealthSummary;
+    recommendations: Recommendation[];
+    riskFactors: RiskFactor[];
+    [key: string]: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[] | string | number | boolean;
   };
+  message?: string;
 }
 
 // Mock middleware for testing

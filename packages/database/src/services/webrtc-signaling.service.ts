@@ -254,8 +254,7 @@ export class WebRTCSignalingServer {
     await this.cfmService.logComplianceEvent({
       sessionId,
       eventType: 'participant_joined',
-      userId,
-      participantType,
+      description: 'Participant joined session',
       metadata: {
         socketId: socket.id,
         deviceInfo,
@@ -345,7 +344,7 @@ export class WebRTCSignalingServer {
     }
 
     // Send signal to target participant
-    socket.to(targetParticipant.socketId).emit('webrtc-signal', {
+    (socket as any).to(targetParticipant.socketId).emit('webrtc-signal', {
       type,
       data,
       from: sender.userId,
@@ -397,15 +396,17 @@ export class WebRTCSignalingServer {
     const participant = room.participants.get(socket.id);
     if (!participant) return;
 
-    // Update session connection state in database
-    await this.webrtcService.updateConnectionState(
+    // Update quality metrics in database
+    await this.webrtcService.updateQualityMetrics(
       sessionId,
-      participant.userId,
       {
-        connectionState,
-        iceConnectionState,
-        quality,
-        timestamp: new Date(),
+        bandwidth: quality?.bandwidth || 0,
+        latency: quality?.rtt || 0,
+        jitter: quality?.jitter || 0,
+        packetLoss: quality?.packetsLost || 0,
+        videoQuality: 5, // Default good quality
+        audioQuality: 5, // Default good quality
+        connectionStability: connectionState === 'connected' ? 5 : 2,
       }
     );
 
@@ -423,7 +424,7 @@ export class WebRTCSignalingServer {
       await this.cfmService.logComplianceEvent({
         sessionId,
         eventType: 'connection_issue',
-        userId: participant.userId,
+        description: 'Connection issue detected',
         metadata: {
           connectionState,
           iceConnectionState,
@@ -448,15 +449,16 @@ export class WebRTCSignalingServer {
     room.participants.delete(socket.id);
 
     // Leave Socket.IO room
-    socket.leave(sessionId);
+    (socket as any).leave(sessionId);
 
     // Log compliance event
     await this.cfmService.logComplianceEvent({
       sessionId,
       eventType: 'participant_left',
-      userId: participant.userId,
-      participantType: participant.participantType,
+      description: `Participant ${participant.userId} left session`,
       metadata: {
+        userId: participant.userId,
+        participantType: participant.participantType,
         socketId: socket.id,
         duration: Date.now() - participant.joinedAt.getTime(),
         signaling: true,
@@ -464,7 +466,7 @@ export class WebRTCSignalingServer {
     });
 
     // Notify other participants
-    socket.to(sessionId).emit('participant-left', {
+    (this.io as any).to(sessionId).emit('participant-left', {
       userId: participant.userId,
       participantType: participant.participantType,
       timestamp: new Date().toISOString(),
@@ -509,10 +511,8 @@ export class WebRTCSignalingServer {
       metadata?: any;
     }
   ): Promise<void> {
-    const { sessionId, eventType, metadata } = event;
-
     // Get participant info
-    const room = this.sessionRooms.get(sessionId);
+    const room = this.sessionRooms.get(event.sessionId);
     if (!room) return;
 
     const participant = room.participants.get(socket.id);
@@ -520,12 +520,13 @@ export class WebRTCSignalingServer {
 
     // Log compliance event
     await this.cfmService.logComplianceEvent({
-      sessionId,
-      eventType,
-      userId: participant.userId,
-      participantType: participant.participantType,
+      sessionId: event.sessionId,
+      eventType: event.eventType as any,
+      description: `Client compliance event: ${event.eventType}`,
       metadata: {
-        ...metadata,
+        userId: participant.userId,
+        participantType: participant.participantType,
+        ...event.metadata,
         source: 'client',
         signaling: true,
       },
@@ -548,11 +549,11 @@ export class WebRTCSignalingServer {
       if (!sessionDetails) return false;
 
       // Check if user is authorized for this session
-      if (participantType === 'patient' && sessionDetails.patientId === userId) {
+      if (participantType === 'patient' && sessionDetails.session.patient_id === userId) {
         return true;
       }
 
-      if (participantType === 'physician' && sessionDetails.physicianId === userId) {
+      if (participantType === 'physician' && sessionDetails.session.physician_id === userId) {
         return true;
       }
 
@@ -610,7 +611,7 @@ export class WebRTCSignalingServer {
           this.cfmService.logComplianceEvent({
             sessionId,
             eventType: 'participant_timeout',
-            userId: participant.userId,
+            description: `Participant ${participant.userId} timed out due to inactivity`,
             metadata: {
               inactiveTime,
               signaling: true,
@@ -670,10 +671,14 @@ export class WebRTCSignalingServer {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Close all socket connections
-    this.io.close();
+    (this.io as any).close();
 
     // Close HTTP server
-    this.server.close();
+    await new Promise<void>((resolve) => {
+      this.server.close(() => {
+        resolve();
+      });
+    });
 
     console.log('WebRTC Signaling Server shut down complete');
   }

@@ -896,6 +896,99 @@ export class WhatsAppReminderService {
   }
 
   /**
+   * Send bulk reminders with enhanced error handling and metrics
+   * Alias for sendBatchReminders with additional logging and monitoring
+   */
+  async sendBulkReminders(reminders: AppointmentReminder[]): Promise<{
+    success: number;
+    failed: number;
+    results: any[];
+    totalProcessed: number;
+    processingTime: number;
+    averageProcessingTimePerReminder: number;
+  }> {
+    const startTime = Date.now();
+    
+    try {
+      // Validate input
+      if (!Array.isArray(reminders) || reminders.length === 0) {
+        throw new Error('Invalid reminders array provided');
+      }
+
+      // Log bulk operation start
+      console.log(`Starting bulk reminder processing for ${reminders.length} reminders`);
+
+      // Use existing batch processing logic
+      const batchResult = await this.sendBatchReminders(reminders);
+      
+      const processingTime = Date.now() - startTime;
+      const averageProcessingTimePerReminder = processingTime / reminders.length;
+
+      // Enhanced logging for monitoring
+      console.log(`Bulk reminder processing completed:`, {
+        totalProcessed: reminders.length,
+        successful: batchResult.success,
+        failed: batchResult.failed,
+        processingTime: `${processingTime}ms`,
+        averagePerReminder: `${averageProcessingTimePerReminder.toFixed(2)}ms`,
+      });
+
+      // Create audit log for bulk operation
+      try {
+        await this.supabase
+          .from('audit_logs')
+          .insert({
+            action: 'bulk_reminder_sent',
+            entity_type: 'appointment_reminders',
+            entity_id: `bulk_${Date.now()}`,
+            details: {
+              total_reminders: reminders.length,
+              successful: batchResult.success,
+              failed: batchResult.failed,
+              processing_time_ms: processingTime,
+              clinic_ids: [...new Set(reminders.map(r => r.clinicId))],
+            },
+            created_at: new Date().toISOString(),
+          });
+      } catch (auditError) {
+        console.warn('Failed to create audit log for bulk operation:', auditError);
+      }
+
+      return {
+        ...batchResult,
+        totalProcessed: reminders.length,
+        processingTime,
+        averageProcessingTimePerReminder,
+      };
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      
+      console.error('Bulk reminder processing failed:', error);
+      
+      // Log error for monitoring
+      try {
+        await this.supabase
+          .from('audit_logs')
+          .insert({
+            action: 'bulk_reminder_failed',
+            entity_type: 'appointment_reminders',
+            entity_id: `bulk_error_${Date.now()}`,
+            details: {
+              error_message: error instanceof Error ? error.message : 'Unknown error',
+              total_reminders: reminders?.length || 0,
+              processing_time_ms: processingTime,
+            },
+            created_at: new Date().toISOString(),
+          });
+      } catch (auditError) {
+        console.warn('Failed to create error audit log:', auditError);
+      }
+
+      throw error;
+    }
+  }
+
+  /**
    * Get delivery statistics for clinic
    */
   async getDeliveryStatistics(clinicId: string, days = 30): Promise<{

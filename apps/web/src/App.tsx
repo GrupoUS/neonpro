@@ -5,7 +5,7 @@ import { queryClient } from '@/lib/query-client';
 import { trpc, trpcClient } from '@/lib/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { Sonner } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 // import { TwentyFirstToolbar } from '@21st-extension/toolbar-react';
 // import { ReactPlugin } from '@21st-extension/react';
 
@@ -30,8 +30,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <TooltipProvider>
-        {/* Single toast provider mounted via Sonner */}
-        <Sonner />
+        {/* Unified toast provider */}
+        <Toaster />
         {/* Cache Manager for Supabase data */}
         <CacheManager />
         {/* 21st.dev Toolbar - only runs in development mode */}

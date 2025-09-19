@@ -13,6 +13,8 @@
  * - Healthcare-specific security headers
  */
 
+import crypto from 'crypto';
+
 import type { NextRequest, NextResponse } from 'next/server';
 
 // Brazilian healthcare compliance configuration
@@ -154,19 +156,24 @@ const HEALTHCARE_SECURITY_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Clinic-ID, X-Patient-ID',
   'Access-Control-Max-Age': '86400',
 
-  // Content Security Policy for medical applications
+  // Content Security Policy for medical applications (SECURE)
   'Content-Security-Policy': [
     'default-src \'self\'',
-    'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'', // Required for React
-    'style-src \'self\' \'unsafe-inline\'',
-    'img-src \'self\' data: blob:',
-    'font-src \'self\'',
-    'connect-src \'self\' wss: ws:',
-    'media-src \'self\' blob:',
+    'script-src \'self\' \'nonce-${nonce}\' https://js.stripe.com https://maps.googleapis.com', // Removed unsafe directives
+    'style-src \'self\' \'nonce-${nonce}\' https://fonts.googleapis.com', // Removed unsafe-inline
+    'img-src \'self\' data: blob: https://maps.gstatic.com',
+    'font-src \'self\' https://fonts.gstatic.com',
+    'connect-src \'self\' wss: ws: *.neonpro.com.br',
+    'media-src \'self\' blob: mediastream:',
+    'object-src \'none\'',
+    'embed-src \'none\'',
+    'frame-src \'self\' https://js.stripe.com',
     'frame-ancestors \'none\'',
     'base-uri \'self\'',
     'form-action \'self\'',
-  ].join('; '),
+    'worker-src \'self\' blob:',
+    'upgrade-insecure-requests',
+  ].join('; ').replace('${nonce}', crypto.randomBytes(16).toString('base64')),
 };
 
 // Edge runtime configuration middleware
