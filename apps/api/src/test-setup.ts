@@ -167,7 +167,7 @@ vi.mock('./lib/openapi-generator', async () => {
         ClinicAuth: {
           type: 'http',
           scheme: 'bearer',
-          description: expect.stringContaining('clinic') as unknown as string,
+          description: 'clinic-level authentication',
         },
       },
     },

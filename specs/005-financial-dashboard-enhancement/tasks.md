@@ -44,6 +44,8 @@
 ## Phase 3.1: Setup & Foundation (Days 1-2)
 
 ### Project Setup
+
+- [ ] **T000** Instale o Shadcn MCP registry usando npx shadcn init https://ui-experiment-03.vercel.app/r/experiment-03.json em `apps/web/` (se necessário procure informações em https://github.com/origin-space/ui-experiments/tree/main/apps/experiment-03)
 - [ ] **T001** Initialize Shadcn MCP registry from experiment-03.json in `apps/web/`
 - [ ] **T002** [P] Configure project dependencies: Recharts, TanStack Query, Zustand, date-fns
 - [ ] **T003** [P] Set up linting rules for financial components in `.eslintrc.json`
