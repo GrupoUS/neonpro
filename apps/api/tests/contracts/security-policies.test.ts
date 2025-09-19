@@ -41,11 +41,10 @@ import {
 import {
   createRateLimitRule,
   evaluateRateLimit,
-  getRateLimitMetrics,
-  RateLimitMetrics,
+  getRateLimitStatus,
+  RateLimitEvaluation,
   RateLimitRule,
-  RateLimitStrategy,
-} from '@/services/rate-limit-service';
+} from '../../src/services/rate-limit-service';
 
 import {
   generateSecurityHeaders,

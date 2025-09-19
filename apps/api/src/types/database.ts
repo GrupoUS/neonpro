@@ -58,7 +58,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       // Appointments table
       appointments: {
         Row: {
@@ -101,7 +101,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       // Doctors table
       doctors: {
         Row: {
@@ -138,7 +138,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       // Clinics table
       clinics: {
         Row: {
@@ -178,7 +178,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       // Consent records table
       consent_records: {
         Row: {
@@ -212,7 +212,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       // Audit logs table
       audit_logs: {
         Row: {
@@ -250,11 +250,11 @@ export interface Database {
         };
       };
     };
-    
+
     Views: {
       // Add view definitions as needed
     };
-    
+
     Functions: {
       // Add function definitions as needed
     };
@@ -266,9 +266,9 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 // Export convenience types
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];
-export type TableRow<T extends keyof Database['public']['Tables']> = 
+export type TableRow<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Row'];
-export type TableInsert<T extends keyof Database['public']['Tables']> = 
+export type TableInsert<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Insert'];
-export type TableUpdate<T extends keyof Database['public']['Tables']> = 
+export type TableUpdate<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Update'];

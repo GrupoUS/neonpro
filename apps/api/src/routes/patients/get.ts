@@ -198,6 +198,6 @@ const getHandler = async (c: any) => {
   }
 };
 
-app.get('/api/v2/patients/:id', requireAuth, dataProtection.patientView, getHandler);
+app.get('/:id', requireAuth, dataProtection.patientView, getHandler);
 
 export default app;

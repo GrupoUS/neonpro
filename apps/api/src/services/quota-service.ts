@@ -29,7 +29,7 @@ export interface QuotaUsage {
  */
 export async function checkQuota(
   identifier: string,
-  quotaConfig: QuotaConfig
+  quotaConfig: QuotaConfig,
 ): Promise<QuotaResult> {
   // Mock implementation for contract testing
   return {
@@ -46,7 +46,7 @@ export async function checkQuota(
 export async function applyQuota(
   identifier: string,
   quotaConfig: QuotaConfig,
-  amount: number = 1
+  amount: number = 1,
 ): Promise<QuotaResult> {
   // Mock implementation for contract testing
   return {
@@ -62,7 +62,7 @@ export async function applyQuota(
  */
 export async function getQuotaUsage(
   identifier: string,
-  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily'
+  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<QuotaUsage> {
   // Mock implementation for contract testing
   const limits = {
@@ -85,7 +85,7 @@ export async function getQuotaUsage(
  */
 export async function resetQuota(
   identifier: string,
-  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily'
+  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<void> {
   // Mock implementation for contract testing
   console.log(`Quota reset for ${identifier} (${period})`);
@@ -109,7 +109,7 @@ export async function getQuotaConfig(identifier: string): Promise<QuotaConfig> {
  */
 export async function updateQuotaConfig(
   identifier: string,
-  config: QuotaConfig
+  config: QuotaConfig,
 ): Promise<void> {
   // Mock implementation for contract testing
   console.log(`Quota config updated for ${identifier}:`, config);
