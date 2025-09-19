@@ -4,6 +4,7 @@
  */
 
 export { aiRouter } from './ai';
+export { agentRouter } from './agent';
 export { appointmentRouter } from './appointment';
 export { clinicRouter } from './clinic';
 export { patientRouter } from './patient';
@@ -12,6 +13,7 @@ export { professionalRouter } from './professional';
 // Main API router combining all contracts
 import { router } from '../trpc';
 import { aiRouter } from './ai';
+import { agentRouter } from './agent';
 import { appointmentRouter } from './appointment';
 import { clinicRouter } from './clinic';
 import { patientRouter } from './patient';
@@ -27,6 +29,7 @@ export const apiRouter = router({
   professional: professionalRouter,
   clinic: clinicRouter,
   ai: aiRouter,
+  agent: agentRouter,
 });
 
 // Export type definition for the API router

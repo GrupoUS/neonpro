@@ -114,6 +114,20 @@ CONSTITUTIONAL_PRINCIPLES:
 - **🌐 tavily** - Real-time info
 - **🎨 shadcn-ui** - UI components
 
+### **🤖 AI Agent Technologies**
+
+**NEW: AI Agent Integration Stack**
+- **CopilotKit**: Conversational AI UI and infrastructure
+- **AG-UI Protocol**: Real-time agent communication protocol
+- **ottomator-agents**: Backend agent logic with RAG capabilities
+- **Supabase Integration**: Secure database access with RLS enforcement
+
+**Key Integration Points**:
+- AI chat interface in React/Next.js frontend
+- Python-based agent backend with natural language processing
+- Real-time communication via AG-UI Protocol
+- Secure data access respecting Row Level Security
+
 ## Mandatory Development Steps
 
 ### 1. **Research & Decomposition** 🧠

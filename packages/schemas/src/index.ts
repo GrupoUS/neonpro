@@ -3,29 +3,20 @@
  * Centralized validation schemas for the NeonPro platform
  */
 
+import { z } from 'zod';
+
 // Patient schemas
 export * from './patient/base-patient.schema';
 export * from './patient/brazilian-patient.schema';
 
-// Re-export commonly used types and schemas
+// Re-export commonly used types and schemas from base-patient.schema
 export {
-  // Base patient types
   BasePatient,
   PatientAddress,
   PatientHealthInsurance,
   EmergencyContact,
   LGPDConsent,
   CompletePatient,
-  
-  // Brazilian-specific types
-  CPF,
-  CNPJ,
-  BrazilianPhone,
-  BrazilianCEP,
-  BrazilianPatientRegistration,
-  BrazilianPatientUpdate,
-  PatientSearch,
-  PatientExport,
 } from './patient/base-patient.schema';
 export {
   CPFSchema,
@@ -66,5 +57,3 @@ export const ResponseSchema = <T>(dataSchema: z.ZodType<T>) => z.object({
 // Export utility types
 export type Pagination = z.infer<typeof PaginationSchema>;
 export type ApiResponse<T> = z.infer<ReturnType<typeof ResponseSchema<T>>>;
-
-import { z } from 'zod';

@@ -537,10 +537,4 @@ export class PatientDataHelper {
   }
 }
 
-// Export all helper classes
-export {
-  BrazilianHealthcareValidator,
-  HealthcareAppointmentHelper,
-  LGPDComplianceHelper,
-  PatientDataHelper,
-};
+

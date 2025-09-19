@@ -20,11 +20,13 @@
     "build": "tsup"
   },
   "dependencies": {
+    "0x": "^5.5.0",
     "@neonpro/tools-shared": "workspace:*",
+    "autocannon": "^7.12.0",
     "c8": "^8.0.0",
     "clinic": "^12.0.0",
-    "autocannon": "^7.12.0",
-    "0x": "^5.5.0"
+    "d3-color": "^3.1.0",
+    "form-data": "^2.5.4"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

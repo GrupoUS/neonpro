@@ -45,6 +45,34 @@ export type {
   User,
 } from '@prisma/client';
 
+// Agent schemas and types
+export {
+  AgentSessionSchema,
+  AgentMessageSchema,
+  AgentKnowledgeBaseSchema,
+  AgentAnalyticsSchema,
+  ChatRequestSchema,
+  ChatResponseSchema,
+  SessionResponseSchema,
+  KnowledgeEntryResponseSchema,
+  KnowledgeSearchParamsSchema,
+  AgentErrorSchema,
+  type AgentSession,
+  type AgentMessage,
+  type AgentKnowledgeBase,
+  type AgentAnalytics,
+  type ChatRequest,
+  type ChatResponse,
+  type SessionResponse,
+  type KnowledgeEntryResponse,
+  type KnowledgeSearchParams,
+  type AgentError,
+  type AgentConfig,
+  type AgentContext,
+  type AgentType,
+  AgentErrorType,
+} from './schema/agent.js';
+
 // Healthcare-specific utilities
 
 /**

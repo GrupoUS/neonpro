@@ -75,6 +75,7 @@
   "author": "NeonPro Development Team",
   "license": "MIT",
   "dependencies": {
+    "cross-spawn": "^6.0.6",
     "dotenv": "^17.2.2",
     "lodash.debounce": "^4.0.8",
     "lovable-tagger": "^1.1.9",

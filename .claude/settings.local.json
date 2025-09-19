@@ -88,7 +88,8 @@
       "mcp__archon__find_documents",
       "mcp__archon__rag_get_available_sources",
       "mcp__supabase__get_project",
-      "mcp__supabase__get_anon_key"
+      "mcp__supabase__get_anon_key",
+      "mcp__desktop-commander__kill_process"
     ],
     "deny": [
       "Edit",

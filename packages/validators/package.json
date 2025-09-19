@@ -1,7 +1,7 @@
 {
-  "name": "@neonpro/schemas",
+  "name": "@neonpro/validators",
   "version": "1.0.0",
-  "description": "Shared validation schemas for NeonPro healthcare platform",
+  "description": "Brazilian document validation utilities for NeonPro healthcare platform",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -10,20 +10,16 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist"
   },
-  "dependencies": {
-    "zod": "^3.22.0",
-    "@neonpro/validators": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "tsup": "^8.0.0",
     "typescript": "^5.7.2"
   },
-  "peerDependencies": {
-    "zod": "^3.22.0"
-  },
   "keywords": [
-    "schemas",
-    "validation",
+    "validators",
+    "brazilian",
+    "cpf",
+    "cnpj",
     "healthcare",
     "neonpro"
   ],

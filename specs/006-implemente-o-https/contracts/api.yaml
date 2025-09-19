@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: NeonPro AI Agent API
+  description: API for AI agent database integration
+  version: 1.0.0
+
+servers:
+  - url: https://api.neonpro.com/v1
+    description: Production server
+
+paths:
+  /api/ai/data-agent:
+    post:
+      summary: Send query to AI data agent
+      description: Endpoint for processing natural language queries and returning structured responses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+                - sessionId
+              properties:
+                query:
+                  type: string
+                  description: Natural language query from user
+                  example: "Quais os próximos agendamentos?"
+                sessionId:
+                  type: string
+                  description: Unique session identifier for conversation context
+                  example: "sess_123456"
+                context:
+                  type: object
+                  description: Optional conversation context
+                  properties:
+                    userId:
+                      type: string
+                      example: "user_789"
+                    previousMessages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          role:
+                            type: string
+                            enum: [user, assistant]
+                          content:
+                            type: string
+                      maxItems: 10
+
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  response:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "resp_123"
+                      type:
+                        type: string
+                        enum: [text, list, table, chart, error]
+                        example: "list"
+                      content:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Próximos Agendamentos"
+                          text:
+                            type: string
+                            example: "Aqui estão seus próximos agendamentos:"
+                          data:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                datetime:
+                                  type: string
+                                  format: date-time
+                                clientName:
+                                  type: string
+                                status:
+                                  type: string
+                          columns:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                label:
+                                  type: string
+                                type:
+                                  type: string
+                  actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        label:
+                          type: string
+                        type:
+                          type: string
+                        action:
+                          type: string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/ai/sessions/{sessionId}:
+    get:
+      summary: Get conversation session
+      description: Retrieve conversation history and context for a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                  userId:
+                    type: string
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+                  createdAt:
+                    type: string
+                    format: date-time
+                  lastActivity:
+                    type: string
+                    format: date-time
+
+  /api/ai/sessions/{sessionId}/feedback:
+    post:
+      summary: Submit feedback for agent response
+      description: Provide feedback on agent responses to improve accuracy
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - messageId
+                - feedback
+              properties:
+                messageId:
+                  type: string
+                feedback:
+                  type: object
+                  properties:
+                    rating:
+                      type: integer
+                      minimum: 1
+                      maximum: 5
+                    comment:
+                      type: string
+                    helpful:
+                      type: boolean
+
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+security:
+  - BearerAuth: []
+
+securitySchemes:
+  BearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT

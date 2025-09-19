@@ -4,6 +4,7 @@
  */
 
 import { aiRouter } from './routers/ai';
+import { agentRouter } from './routers/agent';
 import { appointmentsRouter } from './routers/appointments';
 import { healthcareServicesRouter } from './routers/healthcare-services';
 import { patientsRouter } from './routers/patients';
@@ -42,6 +43,7 @@ export const appRouter = router({
   patients: patientsRouter,
   appointments: appointmentsRouter,
   ai: aiRouter,
+  agents: agentRouter,
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
