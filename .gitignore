@@ -469,6 +469,8 @@ node-compile-cache/
 # Local configuration overrides
 *local.config*
 *local.json
+# Exception: TypeScript typecheck config needed for CI
+!apps/web/tsconfig.typecheck.local.json
 *.local
 *user.config*
 *personal.config*
