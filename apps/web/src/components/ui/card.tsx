@@ -4,16 +4,31 @@ import * as React from 'react';
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'rounded-lg border bg-card text-card-foreground shadow-sm',
-      className,
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  // Enhanced accessibility for healthcare applications
+  const accessibilityProps = {
+    'aria-label': props['aria-label'] || props.title,
+    'aria-describedby': props['aria-describedby'],
+    'role': props.role || 'article',
+  };
+
+  // Remove undefined props to avoid HTML validation warnings
+  const cleanProps = Object.fromEntries(
+    Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+  );
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'rounded-lg border bg-card text-card-foreground shadow-sm',
+        className,
+      )}
+      {...cleanProps}
+      {...props}
+    />
+  );
+});
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<

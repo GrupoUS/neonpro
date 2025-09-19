@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '../client';
-import type { Database } from '../types/supabase';
+// import type { Database } from '../types/supabase';
 
 export interface PatientIdentityDocument {
   type: 'cpf' | 'rg' | 'cns' | 'passport' | 'driver_license';
@@ -340,7 +340,7 @@ export class PatientIdentityService {
   /**
    * Checks LGPD compliance for data processing
    */
-  private checkLGPDCompliance(patient: any, documents: PatientIdentityDocument[]): boolean {
+  private checkLGPDCompliance(patient: any, _documents: PatientIdentityDocument[]): boolean {
     // LGPD requires explicit consent for processing sensitive personal data
     return patient.lgpd_consent_given && patient.data_consent_status === 'given';
   }

@@ -67,12 +67,32 @@ const app = createHealthcareOpenAPIApp();
 app.use(
   '*',
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-      'https://neonpro.vercel.app',
-    ],
+    origin: (origin, callback) => {
+      // Allow same-origin requests (no origin header)
+      if (!origin) return callback(null, true);
+      
+      // Allowed origins based on environment
+      const allowedOrigins = process.env.NODE_ENV === 'production'
+        ? [
+            'https://neonpro.com.br',
+            'https://www.neonpro.com.br',
+            'https://neonpro.vercel.app',
+          ]
+        : [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'http://127.0.0.1:5173',
+            'https://neonpro.vercel.app',
+          ];
+      
+      // Check if origin is allowed
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`CORS: Blocked origin ${origin}`);
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],

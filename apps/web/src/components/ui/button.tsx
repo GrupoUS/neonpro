@@ -39,10 +39,24 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
+    
+    // Enhanced accessibility for healthcare applications
+    const accessibilityProps = {
+      'aria-label': props['aria-label'] || props.title,
+      'aria-describedby': props['aria-describedby'],
+      role: props.role || (variant === 'link' ? 'link' : 'button'),
+    };
+
+    // Remove undefined props to avoid HTML validation warnings
+    const cleanProps = Object.fromEntries(
+      Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+    );
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        {...cleanProps}
         {...props}
       />
     );

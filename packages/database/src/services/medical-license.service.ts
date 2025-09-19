@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '../client';
-import type { Database } from '../types/supabase';
+// import type { Database } from '../types/supabase';
 
 export interface CFMRegistration {
   cfmNumber: string;
@@ -582,7 +582,7 @@ export class MedicalLicenseService {
   async isAuthorizedForTelemedicine(
     cfmNumber: string,
     physicianState: string,
-    consultationState: string,
+    _consultationState: string,
     specialty?: string
   ): Promise<{
     authorized: boolean;

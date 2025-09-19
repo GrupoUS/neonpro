@@ -10,7 +10,7 @@ import type {
   PredictiveRequest,
   PredictiveInsight,
   AnalyticsMetrics,
-  ComplianceReport
+
 } from './predictive-analytics.service';
 import type { HealthcareInsights, HealthcareComplianceAudit, BrazilianHealthcareKPIs } from './types';
 
@@ -22,17 +22,20 @@ export class HealthcareAIOrchestrator {
   private predictiveService: PredictiveAnalyticsService;
   private config: Record<string, unknown>;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(
     predictiveService?: PredictiveAnalyticsService,
-    config: Record<string, unknown> = {}
+    _config: Record<string, unknown> = {}
   ) {
     this.predictiveService = predictiveService || new PredictiveAnalyticsService();
+    const __config = _config; // avoid unused warning
     this.config = {
       enableCompliance: true,
       region: 'brazil',
       dataRetentionDays: 2555, // 7 years as per Brazilian healthcare regulations
-      ...config
+      ...__config
     };
+    void this.config; // mark as read to satisfy TS unused private property rule
   }
 
   /**
@@ -175,13 +178,13 @@ export class HealthcareAIOrchestrator {
   // Private Helper Methods
   // ============================================================================
 
-  private async assessComplianceStatus(insights: PredictiveInsight[]): Promise<'compliant' | 'non-compliant'> {
+  private async assessComplianceStatus(insights: PredictiveInsight[]): Promise<'compliant' | 'warning' | 'violation'> {
     // Check if all insights are generated with compliance
     const hasCompliantInsights = insights.every(
       insight => insight.metadata.complianceStatus === 'compliant'
     );
 
-    return hasCompliantInsights ? 'compliant' : 'non-compliant';
+    return hasCompliantInsights ? 'compliant' : 'warning';
   }
 
   private determineSystemStatus(

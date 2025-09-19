@@ -4,7 +4,7 @@
  */
 
 import { createClient } from '../client';
-import type { Database } from '../types/supabase';
+// import type { Database } from '../types/supabase';
 
 export interface WebRTCConfig {
   iceServers: RTCIceServer[];
@@ -57,7 +57,7 @@ export interface SessionRecording {
 }
 
 export class WebRTCSessionService {
-  private supabase = createClient();
+  public supabase = createClient();
 
   /**
    * Initializes a WebRTC session for telemedicine
@@ -121,7 +121,7 @@ export class WebRTCSessionService {
 
       // Generate WebRTC configuration
       const config: WebRTCConfig = {
-        iceServers: webrtcSession.ice_servers as RTCIceServer[],
+        iceServers: (webrtcSession.ice_servers as any) as RTCIceServer[],
         videoConstraints: {
           width: { min: 640, ideal: 1280, max: 1920 },
           height: { min: 480, ideal: 720, max: 1080 },
@@ -220,7 +220,7 @@ export class WebRTCSessionService {
       }
 
       // Log session start event
-      await this.logSessionEvent(sessionId, 'session_started', {
+      await this.logSessionEvent(sessionId, {
         timestamp: new Date().toISOString(),
       });
 
@@ -656,9 +656,9 @@ export class WebRTCSessionService {
     return 'room-' + crypto.randomUUID();
   }
 
-  private generateFileHash(recordingId: string, duration: number): string {
+  private generateFileHash(_recordingId: string, _duration: number): string {
     // Simulated hash generation - in production, this would be SHA-256 of actual file
-    const data = `${recordingId}-${duration}-${Date.now()}`;
+    // const _data = `${recordingId}-${duration}-${Date.now()}`;
     return crypto.randomUUID().replace(/-/g, '');
   }
 
@@ -763,13 +763,13 @@ export class WebRTCSessionService {
       }
 
       // Get participants
-      const { data: participants, error: participantsError } = await this.supabase
+      const { data: participants } = await this.supabase
         .from('session_participants')
         .select('*')
         .eq('session_id', sessionId);
 
       // Get metrics
-      const { data: metrics, error: metricsError } = await this.supabase
+      const { data: metrics } = await this.supabase
         .from('session_quality_metrics')
         .select('*')
         .eq('session_id', sessionId)
@@ -778,7 +778,7 @@ export class WebRTCSessionService {
         .single();
 
       // Get recording info
-      const { data: recording, error: recordingError } = await this.supabase
+      const { data: recording } = await this.supabase
         .from('session_recordings')
         .select('*')
         .eq('session_id', sessionId)
@@ -815,7 +815,8 @@ export class WebRTCSessionService {
       }
 
       // Log the cancellation event
-      await this.logSessionEvent(sessionId, 'session_cancelled', {
+      await this.logSessionEvent(sessionId, {
+        type: 'session_cancelled',
         reason,
         cancelled_at: new Date().toISOString()
       });

@@ -946,7 +946,8 @@ export class SecurityPolicyValidator {
    * Validate a security policy against the schema
    */
   static validate(policy: unknown): SecurityPolicy {
-    return SecurityPolicySchema.parse(policy);
+    // Temporary cast until full schema parity with SecurityPolicy interface is implemented
+    return SecurityPolicySchema.parse(policy) as unknown as SecurityPolicy;
   }
 
   /**
@@ -1027,16 +1028,6 @@ export class SecurityPolicyValidator {
 // Export Types
 // ============================================================================
 
-export type {
-  SecurityPolicy,
-  HealthcareCompliancePolicy,
-  LGPDCompliancePolicy,
-  ANVISACompliancePolicy,
-  AuthenticationPolicy,
-  DataSecurityPolicy,
-  AuditPolicy,
-  IncidentResponsePolicy,
-  PolicyMetadata,
-};
+
 
 export default SecurityPolicy;

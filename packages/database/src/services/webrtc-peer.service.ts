@@ -16,6 +16,18 @@ interface PeerConnectionConfig {
   qualityMonitoring: boolean;
 }
 
+declare type MediaStreamConstraints = {
+  video?: boolean | MediaTrackConstraints;
+  audio?: boolean | MediaTrackConstraints;
+};
+
+declare type RTCConfiguration = {
+  iceServers?: RTCIceServer[];
+  iceCandidatePoolSize?: number;
+  bundlePolicy?: RTCBundlePolicy;
+  rtcpMuxPolicy?: RTCRtcpMuxPolicy;
+};
+
 interface ConnectionQuality {
   packetsLost: number;
   jitter: number;

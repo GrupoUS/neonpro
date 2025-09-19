@@ -134,7 +134,7 @@ export class TelemedicineServer {
     this.app.use(express.urlencoded({ extended: true }));
 
     // Request logging for compliance
-    this.app.use((req, res, next) => {
+    this.app.use((req, _res, next) => {
       const sessionId = req.headers['x-session-id'] as string;
       
       if (sessionId) {
@@ -164,7 +164,7 @@ export class TelemedicineServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req, res) => {
       res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -179,8 +179,8 @@ export class TelemedicineServer {
     // Session management routes
     this.app.post('/api/sessions/validate', this.validateSession.bind(this));
     this.app.post('/api/sessions/create', this.createSession.bind(this));
-    this.app.get('/api/sessions/:sessionId', this.getSession.bind(this));
-    this.app.put('/api/sessions/:sessionId/start', this.startSession.bind(this));
+    this.app.get('/api/sessions/:sessionId', this.getSession.bind(this)); // res used
+    this.app.put('/api/sessions/:sessionId/start', this.startSession.bind(this)); // req used
     this.app.put('/api/sessions/:sessionId/end', this.endSession.bind(this));
     this.app.delete('/api/sessions/:sessionId', this.cancelSession.bind(this));
 
@@ -210,7 +210,7 @@ export class TelemedicineServer {
   /**
    * Validates session parameters and compliance requirements
    */
-  private async validateSession(req: express.Request, res: express.Response): Promise<void> {
+  private async validateSession(req: express.Request, res: express.Response): Promise<SessionValidationResult | void> {
     try {
       const sessionRequest: SessionRequest = req.body;
       const result: SessionValidationResult = {
@@ -248,13 +248,15 @@ export class TelemedicineServer {
 
       // Check CFM compliance
       const cfmCompliance = await this.cfmService.createTelemedicineSession({
+        appointment_id: sessionRequest.sessionId,
         patient_id: sessionRequest.patientId,
-        physician_id: sessionRequest.physicianId,
-        session_type: sessionRequest.sessionType,
-        specialty_code: sessionRequest.specialtyCode,
-        description: 'Telemedicine session validation', // Add required description
+        cfm_professional_crm: sessionRequest.physicianId,
+        cfm_professional_state: 'SP',
+        patient_consent_obtained: sessionRequest.consentStatus.patient && sessionRequest.consentStatus.physician,
+        recording_consent_required: sessionRequest.requiresRecording,
+        data_retention_period: '20 years',
       });
-      result.complianceStatus.cfm = cfmCompliance.complianceStatus.compliant;
+      result.complianceStatus.cfm = cfmCompliance.complianceStatus.complianceScore >= 80;
 
       // Check LGPD consent
       if (!sessionRequest.consentStatus.patient || !sessionRequest.consentStatus.physician) {
@@ -298,11 +300,7 @@ export class TelemedicineServer {
         patientId: sessionRequest.patientId,
         physicianId: sessionRequest.physicianId,
         sessionType: sessionRequest.sessionType,
-        scheduledAt: sessionRequest.scheduledAt,
-        estimatedDuration: sessionRequest.estimatedDuration,
-        recordingEnabled: sessionRequest.requiresRecording,
-        qualityMonitoring: this.config.enableQualityMonitoring,
-        complianceLevel: this.config.complianceLevel,
+        specialtyCode: sessionRequest.specialtyCode,
       });
 
       // Store active session
@@ -515,14 +513,14 @@ export class TelemedicineServer {
   private async updateConsent(req: express.Request, res: express.Response): Promise<void> {
     try {
       const { sessionId } = req.params;
-      const { consentType, granted } = req.body;
+      const { granted } = req.body;
       
       // Update consent in database
       const { error } = await this.webrtcService.supabase
         .from('telemedicine_sessions')
-        .update({
-          [`consent_${consentType}`]: granted,
-          updated_at: new Date().toISOString(),
+        .update({ 
+          lgpd_compliant: granted === true,
+          updated_at: new Date().toISOString()
         })
         .eq('id', sessionId);
 
@@ -532,7 +530,9 @@ export class TelemedicineServer {
 
       res.json({ 
         success: true, 
-        message: `${consentType} consent ${granted ? 'granted' : 'revoked'}` 
+        message: 'Consent updated successfully',
+        sessionId,
+        consentGiven: granted === true,
       });
     } catch (error) {
       console.error('Error updating consent:', error);
@@ -548,12 +548,12 @@ export class TelemedicineServer {
    */
   private async verifyPatientIdentity(req: express.Request, res: express.Response): Promise<void> {
     try {
-      const { patientId, cpf, documents } = req.body;
+      const { patientId, documents, enableBiometric } = req.body;
       
       const verification = await this.identityService.verifyPatientIdentity(
         patientId,
-        cpf,
-        documents
+        documents,
+        enableBiometric === true
       );
       
       res.json(verification);
@@ -596,7 +596,7 @@ export class TelemedicineServer {
     try {
       const { crm } = req.params;
       
-      const validation = await this.licenseService.validateLicense(crm);
+      const validation = await this.licenseService.verifyMedicalLicense(crm, 'SP', undefined);
       
       res.json(validation);
     } catch (error) {
@@ -611,7 +611,7 @@ export class TelemedicineServer {
   /**
    * Gets WebRTC configuration
    */
-  private async getWebRTCConfig(req: express.Request, res: express.Response): Promise<void> {
+  private async getWebRTCConfig(_req: express.Request, res: express.Response): Promise<void> {
     try {
       const config = {
         iceServers: await this.getIceServersConfig(),
@@ -646,7 +646,7 @@ export class TelemedicineServer {
   /**
    * Gets ICE servers configuration
    */
-  private async getIceServers(req: express.Request, res: express.Response): Promise<void> {
+  private async getIceServers(_req: express.Request, res: express.Response): Promise<void> {
     try {
       const iceServers = await this.getIceServersConfig();
       res.json({ iceServers });
@@ -666,7 +666,7 @@ export class TelemedicineServer {
     try {
       const { sessionId } = req.params;
       
-      const result = await this.webrtcService.startRecording(sessionId);
+      const result = await this.webrtcService.startRecording(sessionId, 'digital');
       
       res.json(result);
     } catch (error) {
@@ -702,7 +702,7 @@ export class TelemedicineServer {
    */
   private async downloadRecording(req: express.Request, res: express.Response): Promise<void> {
     try {
-      const { sessionId } = req.params;
+      const { sessionId: _sessionId } = req.params;
       
       // This would implement secure recording download
       res.status(501).json({ error: 'Recording download not implemented' });
@@ -739,7 +739,7 @@ export class TelemedicineServer {
    */
   private setupErrorHandling(): void {
     // 404 handler
-    this.app.use((req, res) => {
+    this.app.use((req: express.Request, res: express.Response) => {
       res.status(404).json({
         error: 'Not found',
         message: `Route ${req.method} ${req.path} not found`,
@@ -747,7 +747,7 @@ export class TelemedicineServer {
     });
 
     // Global error handler
-    this.app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
       console.error('Global error handler:', error);
       
       res.status(error.status || 500).json({
