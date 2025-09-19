@@ -1,38 +1,48 @@
 import { vi } from 'vitest';
-import app from './app';
+
+// Store original fetch before mocking
+const originalFetch = globalThis.fetch;
 
 // Mock global fetch to handle relative URLs in tests
-const originalFetch = global.fetch;
-global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
   let url: string;
+  let fullUrl: string;
 
   if (typeof input === 'string') {
-    // Handle relative URLs by prepending base URL
-    if (input.startsWith('/')) {
-      url = `http://localhost:3000${input}`;
-    } else {
-      url = input;
-    }
+    url = input;
   } else if (input instanceof URL) {
     url = input.toString();
+  } else if (input instanceof Request) {
+    url = input.url;
   } else {
     // RequestInfo case
     url = input.url;
   }
 
-  console.log(`[TEST-SETUP] Fetch called with URL: ${url}`);
+  // Handle relative URLs by prepending base URL
+  if (url.startsWith('/')) {
+    fullUrl = `http://localhost:3000${url}`;
+  } else {
+    fullUrl = url;
+  }
+
+  console.log(`[TEST-SETUP] Fetch called with URL: ${url} -> ${fullUrl}`);
 
   // Use the app for local API calls
-  if (url.includes('localhost:3000')) {
-    console.log(`[TEST-SETUP] Routing to app for URL: ${url}`);
+  if (fullUrl.includes('localhost:3000')) {
+    console.log(`[TEST-SETUP] Routing to app for URL: ${fullUrl}`);
     try {
+      // Import app dynamically to avoid circular dependencies
+      const { default: app } = await import('./app');
+      
       // Create a proper request for Hono
-      const request = new Request(url, {
+      const request = new Request(fullUrl, {
         method: init?.method || 'GET',
         headers: init?.headers,
         body: init?.body,
       });
       
+      console.log(`[TEST-SETUP] Created request: ${request.method} ${request.url}`);
       const response = await app.request(request);
       console.log(`[TEST-SETUP] App response status: ${response.status}`);
       return response;
@@ -43,8 +53,8 @@ global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
   }
 
   // For external calls, use original fetch
-  console.log(`[TEST-SETUP] Using original fetch for external URL: ${url}`);
-  return originalFetch(input, init);
+  console.log(`[TEST-SETUP] Using original fetch for external URL: ${fullUrl}`);
+  return originalFetch(fullUrl, init);
 }) as any;
 
 // Mock auth middleware to bypass authentication in tests
