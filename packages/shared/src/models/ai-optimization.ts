@@ -4,6 +4,24 @@
  * LGPD/ANVISA/CFM compliance for AI operations with patient data
  */
 
+/**
+ * MIGRATION NOTICE (v2.0.0):
+ * This file underwent a major refactor, reducing from 690 lines to 367 lines.
+ * 
+ * BREAKING CHANGES:
+ * - Several types, enums, and schemas have been renamed, removed, or restructured.
+ * - The structure of AI model configuration and performance metrics has changed.
+ * - Some fields may have been renamed or moved to new schemas.
+ * - Validation logic now uses updated Zod schemas.
+ * 
+ * MIGRATION GUIDE:
+ * - Review all imports from this file and update type and schema names as needed.
+ * - Update any code that constructs or validates AI model configs to match the new schema structure.
+ * - Refer to the new enums and their values, as some may have changed.
+ * - If you relied on removed types or fields, consult the new schemas for alternatives.
+ * 
+ * For detailed migration steps, see the repository CHANGELOG or MIGRATION.md (if available).
+ */
 import { z } from 'zod';
 import { HealthcareDataClassification, LGPDDataCategory, DataRetentionClass } from './healthcare-base';
 
