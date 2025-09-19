@@ -29,7 +29,7 @@ const patientsSearchSchema = z.object({
 });
 
 // Route configuration with healthcare-specific patterns
-export const Route = createFileRoute('/patients')({
+export const Route = createFileRoute('/services/patients')({
   // Type-safe search parameter validation
   validateSearch: patientsSearchSchema,
 

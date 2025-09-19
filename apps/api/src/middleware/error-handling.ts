@@ -8,11 +8,12 @@
  * - Brazilian Portuguese error messages
  * - Integration with audit service (T041)
  * - Performance monitoring and alerting
+ * - Valibot validation error support
  */
 
 import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { z } from 'zod';
+import * as v from 'valibot';
 
 // Error severity levels
 export enum ErrorSeverity {
@@ -67,17 +68,17 @@ interface StructuredError {
 }
 
 // Error configuration
-const errorConfigSchema = z.object({
-  includeStack: z.boolean().default(false),
-  logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('error'),
-  enableAuditLogging: z.boolean().default(true),
-  enablePerformanceMonitoring: z.boolean().default(true),
-  sanitizePersonalData: z.boolean().default(true),
-  brazilianPortuguese: z.boolean().default(true),
-  healthcareCompliance: z.boolean().default(true),
+const errorConfigSchema = v.object({
+  includeStack: v.optional(v.boolean(), false),
+  logLevel: v.optional(v.picklist(['error', 'warn', 'info', 'debug']), 'error'),
+  enableAuditLogging: v.optional(v.boolean(), true),
+  enablePerformanceMonitoring: v.optional(v.boolean(), true),
+  sanitizePersonalData: v.optional(v.boolean(), true),
+  brazilianPortuguese: v.optional(v.boolean(), true),
+  healthcareCompliance: v.optional(v.boolean(), true),
 });
 
-export type ErrorConfig = z.infer<typeof errorConfigSchema>;
+export type ErrorConfig = v.InferOutput<typeof errorConfigSchema>;
 
 // Brazilian Portuguese error messages
 const errorMessages = {
@@ -133,7 +134,7 @@ class ErrorLogger {
   private config: ErrorConfig;
 
   constructor(config: Partial<ErrorConfig> = {}) {
-    this.config = errorConfigSchema.parse(config);
+    this.config = v.parse(errorConfigSchema, config);
   }
 
   // Log structured error
@@ -249,7 +250,7 @@ class ErrorHandler {
   private config: ErrorConfig;
 
   constructor(config: Partial<ErrorConfig> = {}) {
-    this.config = errorConfigSchema.parse(config);
+    this.config = v.parse(errorConfigSchema, config);
     this.logger = new ErrorLogger(config);
   }
 
@@ -354,8 +355,8 @@ class ErrorHandler {
       };
     }
 
-    // Validation errors
-    if (error.name === 'ZodError' || error.message.includes('validation')) {
+    // Valibot validation errors
+    if (v.isValiError(error) || error.message.includes('validation')) {
       return {
         category: ErrorCategory.VALIDATION,
         severity: ErrorSeverity.LOW,
@@ -456,6 +457,86 @@ class ErrorHandler {
   }
 }
 
+// Healthcare-specific error creation utility
+export function createHealthcareError(
+  message: string,
+  category: ErrorCategory,
+  severity: ErrorSeverity,
+  httpStatus: number = 500,
+  options: {
+    code?: string;
+    cause?: Error;
+    metadata?: Record<string, any>;
+  } = {},
+): HTTPException {
+  const error = new HTTPException(httpStatus, {
+    message,
+    cause: options.cause,
+  });
+
+  // Add healthcare-specific metadata
+  (error as any).category = category;
+  (error as any).severity = severity;
+  (error as any).code = options.code || 'HEALTHCARE_ERROR';
+  (error as any).metadata = options.metadata;
+  (error as any).healthcareContext = true;
+  (error as any).lgpdCompliant = !containsPersonalData(message);
+
+  return error;
+}
+
+// Check if message contains personal data
+function containsPersonalData(message: string): boolean {
+  const personalDataPatterns = [
+    /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/, // CPF pattern
+    /\b[\w.-]+@[\w.-]+\.\w+\b/, // Email pattern
+    /\b\(\d{2}\)\s?\d{4,5}-?\d{4}\b/, // Phone pattern
+    /\b\d{15}\b/, // SUS card pattern
+  ];
+
+  return personalDataPatterns.some(pattern => pattern.test(message));
+}
+
+// Valibot error formatter for healthcare context
+export function formatValibotError(error: v.ValiError<any>): {
+  message: string;
+  details: Array<{
+    field: string;
+    message: string;
+    code: string;
+  }>;
+} {
+  const flattened = v.flatten(error);
+  const details: Array<{ field: string; message: string; code: string }> = [];
+
+  // Handle root errors
+  if (flattened.root) {
+    details.push({
+      field: 'root',
+      message: flattened.root[0] || 'Validation error',
+      code: 'validation_error',
+    });
+  }
+
+  // Handle nested field errors
+  if (flattened.nested) {
+    Object.entries(flattened.nested).forEach(([field, issues]) => {
+      if (issues && issues.length > 0) {
+        details.push({
+          field,
+          message: issues[0] || 'Validation error',
+          code: 'field_validation_error',
+        });
+      }
+    });
+  }
+
+  return {
+    message: 'Dados de entrada inválidos',
+    details,
+  };
+}
+
 // Global error handler
 export const errorHandler = new ErrorHandler();
 
@@ -479,6 +560,27 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
         patientId: c.req.param('patientId') || c.req.param('id'),
         timestamp: new Date(),
       };
+
+      // Special handling for Valibot errors
+      if (v.isValiError(error)) {
+        const formattedError = formatValibotError(error);
+        const healthcareError = createHealthcareError(
+          formattedError.message,
+          ErrorCategory.VALIDATION,
+          ErrorSeverity.LOW,
+          400,
+          {
+            code: 'VALIDATION_ERROR',
+            metadata: { validationDetails: formattedError.details },
+          },
+        );
+
+        const { status, response } = await handler.handleError(healthcareError, context);
+        return c.json({
+          ...response,
+          validationErrors: formattedError.details,
+        }, status);
+      }
 
       const { status, response } = await handler.handleError(error as Error, context);
       return c.json(response, status);

@@ -1,5 +1,6 @@
 import { type DocumentProps as PDFDocumentProps, pdf } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
+// Use local shim to avoid CI resolution issues with file-saver on Vercel
+import { saveAs } from '@/shims/file-saver';
 
 /**
  * Narrow PDF Document props type.

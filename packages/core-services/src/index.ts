@@ -2,6 +2,61 @@ export * from './realtime/realtime-manager.js';
 export * from './services/AIService.js';
 export * from './services/governance/index.js';
 
+// Phase 4 Compliance & Audit Module
+export * from './audit/index.js';
+
+// Phase 4 Analytics Module - selective exports to avoid conflicts
+export type { 
+  BaseMetric,
+  AnalyticsEvent,
+  MetricType,
+  Currency,
+  Frequency,
+  AggregationType,
+  ClinicalKPI,
+  PatientSafetyKPI,
+  PatientOutcomeKPI,
+  InfectionControlKPI,
+  ClinicalCategory,
+  FinancialKPI,
+  RevenueCycleKPI,
+  InsuranceClaimsKPI,
+  CostManagementKPI,
+  ProfitabilityKPI,
+  FinancialCategory,
+  PaymentSource,
+  IngestionAdapter,
+  IngestionConfig,
+  IngestionResult,
+  IngestionEvent,
+  ValidationRule,
+  TransformationRule
+} from './analytics/index.js';
+
+export {
+  createMockMetric,
+  createMockAnalyticsEvent,
+  anonymizeMetric,
+  validateMetricCompliance,
+  aggregateMetrics,
+  createPatientSafetyKPI,
+  createPatientOutcomeKPI,
+  calculateClinicalRiskScore,
+  validateClinicalCompliance,
+  createRevenueCycleKPI,
+  createInsuranceClaimsKPI,
+  calculateFinancialHealthScore,
+  validateBrazilianFinancialCompliance,
+  calculatePayerMixDiversity,
+  BaseIngestionAdapter,
+  DatabaseIngestionAdapter,
+  APIIngestionAdapter,
+  ANALYTICS_CONSTANTS,
+  createAnalyticsConfig,
+  ANALYTICS_VERSION,
+  ANALYTICS_MODULE_INFO
+} from './analytics/index.js';
+
 // Phase 1 AI Chat models/services
 export * from './models/chat-session.js';
 export * from './models/chat-message.js';

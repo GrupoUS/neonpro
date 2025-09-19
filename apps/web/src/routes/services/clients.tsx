@@ -111,6 +111,6 @@ function ClientsPage() {
   );
 }
 
-export const Route = createFileRoute('/clients')({
+export const Route = createFileRoute('/services/clients')({
   component: ClientsPage,
 });

@@ -125,7 +125,13 @@ describe('Agent validation utilities', () => {
       consentGiven: true,
       dataProcessingPurpose: '',
       auditTrail: [
-        { timestamp: new Date(), action: 'read', userId: 'user', dataType: 'personal', purpose: 'care' },
+        {
+          timestamp: new Date(),
+          action: 'read',
+          userId: 'user',
+          dataType: 'personal',
+          purpose: 'care',
+        },
       ],
       incidentReports: [
         { id: 'incident-200', resolved: true, timestamp: new Date() },
@@ -151,33 +157,38 @@ describe('Agent validation utilities', () => {
     const recommendations = generateAgentRecommendations('code-reviewer', metrics, validation);
     expect(recommendations).toHaveLength(0);
   });
-
 });
-  it('suggests minor improvements when score is moderate', () => {
-    const validation = {
-      passed: false,
-      failures: ['performance: 78 below threshold'],
-      score: 80,
-    };
-    const recommendations = generateAgentRecommendations(
-      'code-reviewer',
-      { quality: 90, performance: 78, maintainability: 90 },
-      validation,
-    );
+it('suggests minor improvements when score is moderate', () => {
+  const validation = {
+    passed: false,
+    failures: ['performance: 78 below threshold'],
+    score: 80,
+  };
+  const recommendations = generateAgentRecommendations(
+    'code-reviewer',
+    { quality: 90, performance: 78, maintainability: 90 },
+    validation,
+  );
 
-    expect(recommendations).toContain('code-reviewer needs minor improvements (score: 80%)');
+  expect(recommendations).toContain('code-reviewer needs minor improvements (score: 80%)');
+});
+it('sets high risk when multiple non-critical violations occur', () => {
+  const result = validateHealthcareCompliance({
+    consentGiven: true,
+    dataProcessingPurpose: '',
+    auditTrail: [
+      {
+        timestamp: new Date(),
+        action: 'read',
+        userId: 'user',
+        dataType: 'personal',
+        purpose: 'care',
+      },
+    ],
+    incidentReports: [],
+    dataRetentionPolicy: '',
   });
-  it('sets high risk when multiple non-critical violations occur', () => {
-    const result = validateHealthcareCompliance({
-      consentGiven: true,
-      dataProcessingPurpose: '',
-      auditTrail: [
-        { timestamp: new Date(), action: 'read', userId: 'user', dataType: 'personal', purpose: 'care' },
-      ],
-      incidentReports: [],
-      dataRetentionPolicy: '',
-    });
 
-    expect(result.compliant).toBe(false);
-    expect(result.riskLevel).toBe('high');
-  });
+  expect(result.compliant).toBe(false);
+  expect(result.riskLevel).toBe('high');
+});

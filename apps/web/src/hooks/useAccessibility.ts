@@ -435,3 +435,9 @@ export function useAccessibleTable<T>(
 }
 
 // Hooks are already exported individually above
+
+// Export testing hooks
+export * from './useAccessibilityTesting';
+
+// Export healthcare accessibility audit hooks
+export * from './useHealthcareAccessibilityAudit';

@@ -1,6 +1,6 @@
 /**
  * Healthcare Performance Optimization Utilities
- * 
+ *
  * Advanced performance optimization features for healthcare platform including:
  * - Query optimization and caching strategies
  * - Connection pool management and monitoring
@@ -64,7 +64,7 @@ class InMemoryQueryCache implements QueryCache {
 
   async get(key: string): Promise<any | null> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       this.stats.misses++;
       return null;
@@ -115,7 +115,7 @@ export class HealthcareQueryOptimizer {
   constructor(
     prisma: HealthcarePrismaClient,
     config: Partial<QueryOptimizationConfig> = {},
-    cache?: QueryCache
+    cache?: QueryCache,
   ) {
     this.prisma = prisma;
     this.cache = cache || new InMemoryQueryCache();
@@ -166,7 +166,7 @@ export class HealthcareQueryOptimizer {
       sortBy?: string;
       sortOrder?: 'asc' | 'desc';
       filters?: Record<string, any>;
-    }
+    },
   ): Promise<{
     patients: any[];
     total: number;
@@ -175,11 +175,12 @@ export class HealthcareQueryOptimizer {
     fromCache: boolean;
   }> {
     const startTime = Date.now();
-    const { query, page = 1, limit = 20, sortBy = 'updatedAt', sortOrder = 'desc', filters } = searchParams;
+    const { query, page = 1, limit = 20, sortBy = 'updatedAt', sortOrder = 'desc', filters } =
+      searchParams;
 
     // Create cache key
     const cacheKey = `patients:${clinicId}:${JSON.stringify(searchParams)}`;
-    
+
     // Try cache first
     if (this.config.cacheEnabled) {
       const cached = await this.cache.get(cacheKey);
@@ -247,7 +248,6 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-
     } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
@@ -269,7 +269,7 @@ export class HealthcareQueryOptimizer {
       includeProfessionalDetails?: boolean;
       page?: number;
       limit?: number;
-    }
+    },
   ): Promise<{
     appointments: any[];
     total: number;
@@ -305,7 +305,7 @@ export class HealthcareQueryOptimizer {
       if (professionalId) whereClause.professionalId = professionalId;
       if (patientId) whereClause.patientId = patientId;
       if (status && status.length > 0) whereClause.status = { in: status };
-      
+
       if (startDate || endDate) {
         whereClause.startTime = {};
         if (startDate) whereClause.startTime.gte = startDate;
@@ -368,7 +368,6 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-
     } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
@@ -380,7 +379,7 @@ export class HealthcareQueryOptimizer {
    */
   async batchCreatePatients(
     clinicId: string,
-    patientsData: Array<Record<string, any>>
+    patientsData: Array<Record<string, any>>,
   ): Promise<{ created: number; errors: Array<{ index: number; error: string }> }> {
     const startTime = Date.now();
     const batchSize = Math.min(this.config.maxBatchSize, patientsData.length);
@@ -390,7 +389,7 @@ export class HealthcareQueryOptimizer {
       // Process in batches to avoid overwhelming the database
       for (let i = 0; i < patientsData.length; i += batchSize) {
         const batch = patientsData.slice(i, i + batchSize);
-        
+
         const batchResults = await Promise.allSettled(
           batch.map(async (patientData, batchIndex) => {
             const actualIndex = i + batchIndex;
@@ -409,11 +408,11 @@ export class HealthcareQueryOptimizer {
                 error: error instanceof Error ? error.message : 'Unknown error',
               };
             }
-          })
+          }),
         );
 
         // Process batch results
-        batchResults.forEach((result) => {
+        batchResults.forEach(result => {
           if (result.status === 'fulfilled') {
             if (result.value.success) {
               results.created++;
@@ -434,7 +433,6 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return results;
-
     } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
@@ -527,15 +525,21 @@ export class HealthcareQueryOptimizer {
         patients: {
           total: totalPatients,
           active: activePatients,
-          inactiveRate: totalPatients > 0 ? ((totalPatients - activePatients) / totalPatients) * 100 : 0,
+          inactiveRate: totalPatients > 0
+            ? ((totalPatients - activePatients) / totalPatients) * 100
+            : 0,
         },
         appointments: {
           today: todayAppointments,
           thisMonth: monthlyAppointments,
           completed: completedAppointments,
           cancelled: cancelledAppointments,
-          completionRate: monthlyAppointments > 0 ? (completedAppointments / monthlyAppointments) * 100 : 0,
-          cancellationRate: monthlyAppointments > 0 ? (cancelledAppointments / monthlyAppointments) * 100 : 0,
+          completionRate: monthlyAppointments > 0
+            ? (completedAppointments / monthlyAppointments) * 100
+            : 0,
+          cancellationRate: monthlyAppointments > 0
+            ? (cancelledAppointments / monthlyAppointments) * 100
+            : 0,
         },
         professionals: {
           active: activeProfessionals,
@@ -553,7 +557,6 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return { metrics, fromCache: false };
-
     } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
@@ -567,7 +570,7 @@ export class HealthcareQueryOptimizer {
     if (!this.config.enablePerformanceMonitoring) return;
 
     this.metrics.queryCount++;
-    
+
     if (!isFromCache) {
       this.metrics.totalQueryTime += duration;
       this.metrics.avgQueryTime = this.metrics.totalQueryTime / this.metrics.queryCount;
@@ -590,7 +593,9 @@ export class HealthcareQueryOptimizer {
     // Update cache hit rate
     const cacheStats = this.cache.getStats();
     const totalCacheRequests = cacheStats.hits + cacheStats.misses;
-    this.metrics.cacheHitRate = totalCacheRequests > 0 ? (cacheStats.hits / totalCacheRequests) * 100 : 0;
+    this.metrics.cacheHitRate = totalCacheRequests > 0
+      ? (cacheStats.hits / totalCacheRequests) * 100
+      : 0;
 
     // Update memory usage
     const memUsage = process.memoryUsage();
@@ -648,7 +653,7 @@ export class ConnectionPoolMonitor {
     this.monitoringInterval = setInterval(async () => {
       try {
         const metrics = await this.getConnectionMetrics();
-        
+
         // Log connection pool status
         console.info('Connection Pool Status:', metrics);
 
@@ -656,7 +661,6 @@ export class ConnectionPoolMonitor {
         if (metrics.utilization > 80) {
           console.warn('High connection pool utilization:', metrics.utilization + '%');
         }
-
       } catch (error) {
         console.error('Connection pool monitoring failed:', error);
       }
@@ -700,4 +704,9 @@ export class ConnectionPoolMonitor {
 }
 
 // Export performance optimization utilities
-export { InMemoryQueryCache, type QueryCache, type PerformanceMetrics, type QueryOptimizationConfig };
+export {
+  InMemoryQueryCache,
+  type PerformanceMetrics,
+  type QueryCache,
+  type QueryOptimizationConfig,
+};

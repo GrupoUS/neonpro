@@ -8,6 +8,8 @@ export default defineConfig({
     include: [
       'src/services/**/*.test.ts',
       'src/services/governance/**/__tests__/**/*.test.ts',
+      'src/realtime/**/*.test.ts',
+      'src/**/__tests__/**/*.test.ts',
     ],
     setupFiles: [],
     coverage: {

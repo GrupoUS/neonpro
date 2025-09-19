@@ -132,6 +132,6 @@ function ProfessionalServicesPage() {
   );
 }
 
-export const Route = createFileRoute('/professional-services')({
+export const Route = createFileRoute('/services/professional-services')({
   component: ProfessionalServicesPage,
 });

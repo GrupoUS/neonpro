@@ -53,8 +53,8 @@ function extractHealthcareContext(c: Context): HealthcareSpanAttributes {
     'healthcare.feature': extractFeatureFromUrl(url),
     'healthcare.patient_data_involved': isPatientDataInvolved,
     'healthcare.compliance_level': complianceLevel,
-    'healthcare.operation_type': operationType,
-    'healthcare.data_classification': isPatientDataInvolved ? 'medical' : 'internal',
+    'healthcare.operation_type': operationType as any,
+    'healthcare.data_classification': isPatientDataInvolved ? 'medical' : 'personal',
   };
 }
 

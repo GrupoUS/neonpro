@@ -1,20 +1,20 @@
-import { AnimatedModal } from '@components/ui/animated-modal';
-import { Badge } from '@components/ui/badge';
-import { Button } from '@components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
-import { EnhancedTable } from '@components/ui/enhanced-table';
-import { FocusCards } from '@components/ui/focus-cards';
-import { Input } from '@components/ui/input';
-import { Progress } from '@components/ui/progress';
-import { UniversalButton } from '@components/ui/universal-button';
-import { useToast } from '@hooks/use-toast';
+import { AnimatedModal } from '@/components/ui/animated-modal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedTable } from '@/components/ui/enhanced-table';
+import { FocusCards } from '@/components/ui/focus-cards';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { UniversalButton } from '@/components/ui/universal-button';
+import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
 
-export const Route = createFileRoute('/patients/dashboard/')({
+export const Route = createFileRoute('/patients/dashboard')({
   component: PatientDashboard,
 });
 
@@ -107,7 +107,7 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
   );
 }
 
-export function PatientDashboard() {
+function PatientDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

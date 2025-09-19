@@ -12,6 +12,7 @@
  */
 
 import { z } from 'zod';
+import { createAdminClient } from '../clients/supabase';
 
 // LGPD Compliance Levels
 export const LGPD_COMPLIANCE_LEVELS = {
@@ -162,6 +163,7 @@ export interface LGPDComplianceReport {
  */
 export class LGPDComplianceService {
   private issues: LGPDComplianceIssue[] = [];
+  private supabase = createAdminClient();
 
   /**
    * Perform comprehensive LGPD compliance validation
@@ -209,108 +211,132 @@ export class LGPDComplianceService {
    * Validate consent management compliance
    */
   private async validateConsentCompliance(patientId?: string) {
-    // Mock data - in real implementation, this would query the database
-    const mockConsents: LGPDConsentRecord[] = [
-      {
-        id: '1',
-        patientId: patientId || '1',
-        purpose: LGPD_PROCESSING_PURPOSES.MEDICAL_CARE,
-        consentGiven: true,
-        consentDate: new Date('2024-01-01'),
-        consentMethod: 'explicit',
-        dataCategories: ['personal_data', 'health_data'],
-        retentionPeriod: 1825, // 5 years
-        legalBasis: 'Art. 7º, I - consentimento',
-        processingLocation: 'Brasil',
-        thirdPartySharing: false,
-        automatedDecisionMaking: false,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01'),
-      },
-    ];
+    try {
+      // Query real consent data from database
+      let query = this.supabase
+        .from('lgpd_consents')
+        .select('*');
 
-    const totalConsents = mockConsents.length;
-    const validConsents =
-      mockConsents.filter(c => c.consentGiven && !c.consentWithdrawnDate).length;
-    const expiredConsents = mockConsents.filter(c => {
-      const expiryDate = new Date(
-        c.consentDate.getTime() + c.retentionPeriod * 24 * 60 * 60 * 1000,
-      );
-      return expiryDate < new Date();
-    }).length;
-    const withdrawnConsents = mockConsents.filter(c => c.consentWithdrawnDate).length;
+      if (patientId) {
+        query = query.eq('user_id', patientId);
+      }
 
-    const issues: LGPDComplianceIssue[] = [];
+      const { data: consents, error } = await query;
 
-    // Check for missing explicit consent
-    mockConsents.forEach(consent => {
-      if (
-        consent.consentMethod !== 'explicit'
-        && consent.purpose !== LGPD_PROCESSING_PURPOSES.EMERGENCY_CARE
-      ) {
+      if (error) {
+        console.error('Error querying consent data:', error);
+        throw new Error('Failed to query consent data');
+      }
+
+      const totalConsents = consents?.length || 0;
+      const validConsents = consents?.filter(c => c.is_active && !c.withdrawn_at).length || 0;
+      const expiredConsents = consents?.filter(c => {
+        if (!c.expires_at) return false;
+        return new Date(c.expires_at) < new Date();
+      }).length || 0;
+      const withdrawnConsents = consents?.filter(c => c.withdrawn_at).length || 0;
+
+      const issues: LGPDComplianceIssue[] = [];
+
+      // Check for missing explicit consent
+      consents?.forEach(consent => {
+        if (
+          consent.consent_method !== 'explicit'
+          && consent.purpose !== LGPD_PROCESSING_PURPOSES.EMERGENCY_CARE
+        ) {
+          issues.push({
+            id: `consent-${consent.id}`,
+            type: 'consent',
+            severity: 'high',
+            title: 'Consentimento não explícito',
+            description: `Consentimento para ${consent.purpose} não é explícito`,
+            recommendation: 'Obter consentimento explícito do titular dos dados',
+            affectedData: consent.data_categories,
+            legalReference: 'LGPD Art. 8º',
+            remediation: {
+              steps: [
+                'Implementar mecanismo de consentimento explícito',
+                'Solicitar novo consentimento do paciente',
+                'Documentar o processo de obtenção de consentimento',
+              ],
+              timeframe: '30 dias',
+              responsible: 'Equipe de Compliance',
+            },
+            detectedAt: new Date(),
+          });
+        }
+      });
+
+      // Check for expired consents
+      if (expiredConsents > 0) {
         issues.push({
-          id: `consent-${consent.id}`,
+          id: 'expired-consents',
           type: 'consent',
-          severity: 'high',
-          title: 'Consentimento não explícito',
-          description: `Consentimento para ${consent.purpose} não é explícito`,
-          recommendation: 'Obter consentimento explícito do titular dos dados',
-          affectedData: consent.dataCategories,
-          legalReference: 'LGPD Art. 8º',
+          severity: 'medium',
+          title: 'Consentimentos expirados',
+          description: `${expiredConsents} consentimentos estão expirados`,
+          recommendation: 'Renovar consentimentos expirados ou excluir dados',
+          affectedData: ['personal_data', 'health_data'],
+          legalReference: 'LGPD Art. 15º',
           remediation: {
             steps: [
-              'Implementar mecanismo de consentimento explícito',
-              'Solicitar novo consentimento do paciente',
-              'Documentar o processo de obtenção de consentimento',
+              'Identificar dados com consentimentos expirados',
+              'Solicitar renovação de consentimento',
+              'Excluir dados se consentimento não for renovado',
             ],
-            timeframe: '30 dias',
+            timeframe: '15 dias',
             responsible: 'Equipe de Compliance',
           },
           detectedAt: new Date(),
         });
       }
-    });
 
-    // Check for expired consents
-    if (expiredConsents > 0) {
-      issues.push({
-        id: 'expired-consents',
-        type: 'consent',
-        severity: 'medium',
-        title: 'Consentimentos expirados',
-        description: `${expiredConsents} consentimentos estão expirados`,
-        recommendation: 'Renovar consentimentos expirados ou excluir dados',
-        affectedData: ['personal_data', 'health_data'],
-        legalReference: 'LGPD Art. 15º',
-        remediation: {
-          steps: [
-            'Identificar dados com consentimentos expirados',
-            'Solicitar renovação de consentimento',
-            'Excluir dados se consentimento não for renovado',
-          ],
-          timeframe: '15 dias',
-          responsible: 'Equipe de Compliance',
-        },
-        detectedAt: new Date(),
-      });
+      this.issues.push(...issues);
+
+      const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+        ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
+        : issues.length > 0
+        ? LGPD_COMPLIANCE_LEVELS.PARTIAL
+        : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
+
+      return {
+        level,
+        totalConsents,
+        validConsents,
+        expiredConsents,
+        withdrawnConsents,
+        issues,
+      };
+    } catch (error) {
+      console.error('Error in validateConsentCompliance:', error);
+      return {
+        level: LGPD_COMPLIANCE_LEVELS.UNKNOWN,
+        totalConsents: 0,
+        validConsents: 0,
+        expiredConsents: 0,
+        withdrawnConsents: 0,
+        issues: [{
+          id: 'consent-validation-error',
+          type: 'consent',
+          severity: 'critical',
+          title: 'Erro na validação de consentimento',
+          description: 'Falha ao validar consentimentos LGPD',
+          recommendation: 'Verificar a configuração do banco de dados',
+          affectedData: ['consent_data'],
+          legalReference: 'LGPD Art. 7º',
+          remediation: {
+            steps: [
+              'Investigar causa do erro',
+              'Restabelecer conexão com banco de dados',
+              'Implementar monitoramento de saúde do sistema',
+            ],
+            timeframe: '24 horas',
+            responsible: 'Equipe Técnica',
+          },
+          detectedAt: new Date(),
+        }],
+      };
     }
-
-    this.issues.push(...issues);
-
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
-      ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
-      : issues.length > 0
-      ? LGPD_COMPLIANCE_LEVELS.PARTIAL
-      : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-
-    return {
-      level,
-      totalConsents,
-      validConsents,
-      expiredConsents,
-      withdrawnConsents,
-      issues,
-    };
   }
 
   /**

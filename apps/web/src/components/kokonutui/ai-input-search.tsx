@@ -10,12 +10,12 @@
  * @github: https://github.com/kokonut-labs/kokonutui
  */
 
+import { Textarea } from '@/components/ui/textarea';
+import { useAutoResizeTextarea } from '@/hooks/use-auto-resize-textarea';
+import { cn } from '@/lib/utils';
 import { Globe, Paperclip, Send } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
-import { Textarea } from 'src/components/ui/textarea';
-import { useAutoResizeTextarea } from 'src/hooks/use-auto-resize-textarea';
-import { cn } from 'src/lib/utils';
 
 export default function AI_Input_Search() {
   const [value, setValue] = useState('');

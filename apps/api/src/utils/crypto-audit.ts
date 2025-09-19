@@ -67,7 +67,7 @@ export class CryptographicAuditLogger {
       userAgent?: string;
       sessionId?: string;
       complianceFlags?: any;
-    } = {}
+    } = {},
   ): Promise<AuditLogEntry> {
     try {
       const timestamp = new Date().toISOString();
@@ -85,7 +85,7 @@ export class CryptographicAuditLogger {
         ipAddress: context.ipAddress,
         userAgent: context.userAgent,
         sessionId: context.sessionId,
-        sequenceNumber
+        sequenceNumber,
       };
 
       // Get the previous hash for chaining
@@ -106,13 +106,13 @@ export class CryptographicAuditLogger {
           lgpd_compliant: true,
           rls_enforced: true,
           consent_validated: false,
-          ...context.complianceFlags
-        }
+          ...context.complianceFlags,
+        },
       };
 
       // Update internal state
       this.lastHash = dataHash;
-      
+
       return auditEntry;
     } catch (error) {
       console.error('Error creating audit entry:', error);
@@ -137,9 +137,9 @@ export class CryptographicAuditLogger {
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
           sessionId: entry.sessionId,
-          sequenceNumber: entry.sequenceNumber
+          sequenceNumber: entry.sequenceNumber,
         },
-        entry.dataHash
+        entry.dataHash,
       );
 
       if (entry.signature !== expectedSignature) {
@@ -158,9 +158,9 @@ export class CryptographicAuditLogger {
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
           sessionId: entry.sessionId,
-          sequenceNumber: entry.sequenceNumber
+          sequenceNumber: entry.sequenceNumber,
         },
-        entry.previousHash
+        entry.previousHash,
       );
 
       if (entry.dataHash !== expectedDataHash) {
@@ -192,7 +192,7 @@ export class CryptographicAuditLogger {
       isValid: true,
       totalEntries: entries.length,
       validEntries: 0,
-      errors: []
+      errors: [],
     };
 
     if (entries.length === 0) {
@@ -215,7 +215,9 @@ export class CryptographicAuditLogger {
         if (result.brokenAt === undefined) {
           result.brokenAt = i;
         }
-        result.errors.push(`Invalid entry at sequence ${currentEntry.sequenceNumber}: ${currentEntry.id}`);
+        result.errors.push(
+          `Invalid entry at sequence ${currentEntry.sequenceNumber}: ${currentEntry.id}`,
+        );
       }
     }
 
@@ -227,7 +229,7 @@ export class CryptographicAuditLogger {
    */
   generateForensicReport(
     entries: AuditLogEntry[],
-    validation: AuditChainValidation
+    validation: AuditChainValidation,
   ): any {
     const report = {
       generatedAt: new Date().toISOString(),
@@ -238,7 +240,7 @@ export class CryptographicAuditLogger {
       firstBrokenEntry: validation.brokenAt,
       timeRange: {
         start: entries.length > 0 ? entries[0].timestamp : null,
-        end: entries.length > 0 ? entries[entries.length - 1].timestamp : null
+        end: entries.length > 0 ? entries[entries.length - 1].timestamp : null,
       },
       eventTypeDistribution: this.analyzeEventTypes(entries),
       complianceMetrics: this.analyzeCompliance(entries),
@@ -247,8 +249,8 @@ export class CryptographicAuditLogger {
       signature: this.signReport({
         totalEntries: validation.totalEntries,
         validEntries: validation.validEntries,
-        chainIntegrity: validation.isValid
-      })
+        chainIntegrity: validation.isValid,
+      }),
     };
 
     return report;
@@ -260,12 +262,12 @@ export class CryptographicAuditLogger {
   generateRetentionReport(entries: AuditLogEntry[]): any {
     const now = new Date();
     const retentionPeriods = {
-      emergency_access: 365 * 10,  // 10 years for emergency access
-      patient_data: 365 * 20,      // 20 years for patient data access
-      consent_changes: 365 * 7,    // 7 years for consent modifications
-      financial: 365 * 5,          // 5 years for financial operations
-      administrative: 365 * 3,     // 3 years for admin operations
-      system: 365 * 1              // 1 year for system operations
+      emergency_access: 365 * 10, // 10 years for emergency access
+      patient_data: 365 * 20, // 20 years for patient data access
+      consent_changes: 365 * 7, // 7 years for consent modifications
+      financial: 365 * 5, // 5 years for financial operations
+      administrative: 365 * 3, // 3 years for admin operations
+      system: 365 * 1, // 1 year for system operations
     };
 
     const retentionAnalysis = {
@@ -273,22 +275,23 @@ export class CryptographicAuditLogger {
       categories: {} as Record<string, any>,
       expiredEntries: [],
       retainedEntries: [],
-      complianceStatus: 'COMPLIANT'
+      complianceStatus: 'COMPLIANT',
     };
 
     for (const entry of entries) {
       const entryDate = new Date(entry.timestamp);
       const ageInDays = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+
       const category = this.categorizeAuditEvent(entry.eventType);
-      const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods] || retentionPeriods.system;
+      const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods]
+        || retentionPeriods.system;
 
       if (!retentionAnalysis.categories[category]) {
         retentionAnalysis.categories[category] = {
           total: 0,
           expired: 0,
           retained: 0,
-          retentionDays
+          retentionDays,
         };
       }
 
@@ -302,7 +305,7 @@ export class CryptographicAuditLogger {
           timestamp: entry.timestamp,
           ageInDays,
           category,
-          retentionDays
+          retentionDays,
         });
       } else {
         retentionAnalysis.categories[category].retained++;
@@ -353,13 +356,13 @@ export class CryptographicAuditLogger {
   private sanitizeEventData(eventData: any): any {
     // Remove sensitive information that shouldn't be logged
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'cpf'];
-    
+
     if (typeof eventData !== 'object' || eventData === null) {
       return eventData;
     }
 
     const sanitized = { ...eventData };
-    
+
     for (const field of sensitiveFields) {
       if (field in sanitized) {
         sanitized[field] = '[REDACTED]';
@@ -371,7 +374,7 @@ export class CryptographicAuditLogger {
 
   private analyzeEventTypes(entries: AuditLogEntry[]): Record<string, number> {
     const distribution: Record<string, number> = {};
-    
+
     for (const entry of entries) {
       distribution[entry.eventType] = (distribution[entry.eventType] || 0) + 1;
     }
@@ -385,7 +388,7 @@ export class CryptographicAuditLogger {
       rlsEnforced: 0,
       consentValidated: 0,
       emergencyAccess: 0,
-      total: entries.length
+      total: entries.length,
     };
 
     for (const entry of entries) {
@@ -399,8 +402,10 @@ export class CryptographicAuditLogger {
       ...metrics,
       lgpdComplianceRate: metrics.total > 0 ? (metrics.lgpdCompliant / metrics.total) * 100 : 0,
       rlsEnforcementRate: metrics.total > 0 ? (metrics.rlsEnforced / metrics.total) * 100 : 0,
-      consentValidationRate: metrics.total > 0 ? (metrics.consentValidated / metrics.total) * 100 : 0,
-      emergencyAccessRate: metrics.total > 0 ? (metrics.emergencyAccess / metrics.total) * 100 : 0
+      consentValidationRate: metrics.total > 0
+        ? (metrics.consentValidated / metrics.total) * 100
+        : 0,
+      emergencyAccessRate: metrics.total > 0 ? (metrics.emergencyAccess / metrics.total) * 100 : 0,
     };
   }
 
@@ -416,7 +421,7 @@ export class CryptographicAuditLogger {
       if (entry.userId) {
         userAccess[entry.userId] = (userAccess[entry.userId] || 0) + 1;
       }
-      
+
       if (entry.ipAddress) {
         ipAccess[entry.ipAddress] = (ipAccess[entry.ipAddress] || 0) + 1;
       }
@@ -425,33 +430,35 @@ export class CryptographicAuditLogger {
         emergencyAccess.push({
           timestamp: entry.timestamp,
           userId: entry.userId,
-          eventType: entry.eventType
+          eventType: entry.eventType,
         });
       }
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce((a, b) => a + b, 0) / Object.keys(userAccess).length;
+    const averageUserAccess = Object.values(userAccess).reduce((a, b) => a + b, 0)
+      / Object.keys(userAccess).length;
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
         anomalies.push({
           type: 'EXCESSIVE_USER_ACCESS',
           userId,
           accessCount: count,
-          averageAccess: averageUserAccess
+          averageAccess: averageUserAccess,
         });
       }
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce((a, b) => a + b, 0) / Object.keys(ipAccess).length;
+    const averageIpAccess = Object.values(ipAccess).reduce((a, b) => a + b, 0)
+      / Object.keys(ipAccess).length;
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {
         anomalies.push({
           type: 'EXCESSIVE_IP_ACCESS',
           ipAddress: ip,
           accessCount: count,
-          averageAccess: averageIpAccess
+          averageAccess: averageIpAccess,
         });
       }
     }
@@ -462,7 +469,7 @@ export class CryptographicAuditLogger {
         type: 'EXCESSIVE_EMERGENCY_ACCESS',
         emergencyAccessCount: emergencyAccess.length,
         totalAccess: entries.length,
-        rate: (emergencyAccess.length / entries.length) * 100
+        rate: (emergencyAccess.length / entries.length) * 100,
       });
     }
 
@@ -471,16 +478,16 @@ export class CryptographicAuditLogger {
 
   private categorizeAuditEvent(eventType: string): string {
     const categories: Record<string, string> = {
-      'EMERGENCY_ACCESS': 'emergency_access',
-      'PATIENT_DATA_ACCESS': 'patient_data',
-      'MEDICAL_RECORD_ACCESS': 'patient_data',
-      'CONSENT_CREATED': 'consent_changes',
-      'CONSENT_WITHDRAWN': 'consent_changes',
-      'BILLING_ACCESS': 'financial',
-      'PAYMENT_PROCESSED': 'financial',
-      'USER_LOGIN': 'administrative',
-      'USER_LOGOUT': 'administrative',
-      'SYSTEM_ERROR': 'system'
+      EMERGENCY_ACCESS: 'emergency_access',
+      PATIENT_DATA_ACCESS: 'patient_data',
+      MEDICAL_RECORD_ACCESS: 'patient_data',
+      CONSENT_CREATED: 'consent_changes',
+      CONSENT_WITHDRAWN: 'consent_changes',
+      BILLING_ACCESS: 'financial',
+      PAYMENT_PROCESSED: 'financial',
+      USER_LOGIN: 'administrative',
+      USER_LOGOUT: 'administrative',
+      SYSTEM_ERROR: 'system',
     };
 
     return categories[eventType] || 'system';

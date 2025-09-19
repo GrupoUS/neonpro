@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neon
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Camera, Mail, Phone, User } from 'lucide-react';
 
-export const Route = createFileRoute('/profile')({
+export const Route = createFileRoute('/profile/')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

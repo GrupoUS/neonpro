@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neon
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { CreditCard, DollarSign, Receipt, TrendingDown, TrendingUp } from 'lucide-react';
 
-export const Route = createFileRoute('/financial')({
+export const Route = createFileRoute('/financial/')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

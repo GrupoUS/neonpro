@@ -12,12 +12,7 @@
  * - Comprehensive error handling
  */
 
-import {
-  AIInsight,
-  AIInsightType,
-  AIProvider,
-  createAIInsight,
-} from '@neonpro/shared';
+import { AIInsight, AIInsightType, AIProvider, createAIInsight } from '@neonpro/shared';
 
 // Service response interface
 export interface ServiceResponse<T = any> {

@@ -4,7 +4,6 @@
  */
 
 import { createServerClient } from '../clients/supabase.js';
-import type { Database } from '../../../../packages/database/src/types/supabase';
 
 export interface RLSContext {
   userId: string;
@@ -50,25 +49,25 @@ export class AdvancedRLSPolicies {
    * Healthcare role hierarchy for access control
    */
   private static readonly ROLE_HIERARCHY = {
-    'admin': 100,           // Full access
-    'clinic_admin': 90,     // Clinic-wide access
-    'doctor': 80,           // Full patient access within clinic
-    'nurse': 70,            // Limited patient access within clinic
-    'assistant': 60,        // Basic patient access within clinic
-    'receptionist': 50,     // Scheduling and basic info only
-    'patient': 10,          // Own data only
-    'anonymous': 0          // No access
+    admin: 100, // Full access
+    clinic_admin: 90, // Clinic-wide access
+    doctor: 80, // Full patient access within clinic
+    nurse: 70, // Limited patient access within clinic
+    assistant: 60, // Basic patient access within clinic
+    receptionist: 50, // Scheduling and basic info only
+    patient: 10, // Own data only
+    anonymous: 0, // No access
   };
 
   /**
    * Sensitive data classification levels
    */
   private static readonly DATA_SENSITIVITY = {
-    'PUBLIC': 0,            // No restrictions
-    'INTERNAL': 25,         // Clinic staff only
-    'CONFIDENTIAL': 50,     // Medical staff only
-    'RESTRICTED': 75,       // Treating professionals only
-    'HIGHLY_RESTRICTED': 100 // Explicit consent + doctor only
+    PUBLIC: 0, // No restrictions
+    INTERNAL: 25, // Clinic staff only
+    CONFIDENTIAL: 50, // Medical staff only
+    RESTRICTED: 75, // Treating professionals only
+    HIGHLY_RESTRICTED: 100, // Explicit consent + doctor only
   };
 
   /**
@@ -82,11 +81,11 @@ export class AdvancedRLSPolicies {
       conditions: [
         'clinic_id = current_setting(\'app.current_clinic_id\')',
         'EXISTS (SELECT 1 FROM user_clinic_access WHERE user_id = auth.uid() AND clinic_id = patients.clinic_id)',
-        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN id = auth.uid() ELSE true END'
+        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN id = auth.uid() ELSE true END',
       ],
       roles: ['doctor', 'nurse', 'assistant', 'receptionist', 'patient'],
       consentRequired: true,
-      auditLevel: 'detailed'
+      auditLevel: 'detailed',
     },
     {
       tableName: 'patients',
@@ -94,10 +93,10 @@ export class AdvancedRLSPolicies {
       conditions: [
         'clinic_id = current_setting(\'app.current_clinic_id\')',
         'current_setting(\'app.user_role\') IN (\'doctor\', \'nurse\', \'admin\')',
-        'EXISTS (SELECT 1 FROM user_clinic_access WHERE user_id = auth.uid() AND clinic_id = patients.clinic_id)'
+        'EXISTS (SELECT 1 FROM user_clinic_access WHERE user_id = auth.uid() AND clinic_id = patients.clinic_id)',
       ],
       roles: ['doctor', 'nurse', 'admin'],
-      auditLevel: 'comprehensive'
+      auditLevel: 'comprehensive',
     },
 
     // Medical records - highest security
@@ -107,16 +106,16 @@ export class AdvancedRLSPolicies {
       conditions: [
         'EXISTS (SELECT 1 FROM patients p WHERE p.id = medical_records.patient_id AND p.clinic_id = current_setting(\'app.current_clinic_id\'))',
         'current_setting(\'app.user_role\') IN (\'doctor\', \'nurse\')',
-        'EXISTS (SELECT 1 FROM patient_professional_relationships ppr WHERE ppr.patient_id = medical_records.patient_id AND ppr.professional_id = current_setting(\'app.professional_id\'))'
+        'EXISTS (SELECT 1 FROM patient_professional_relationships ppr WHERE ppr.patient_id = medical_records.patient_id AND ppr.professional_id = current_setting(\'app.professional_id\'))',
       ],
       roles: ['doctor', 'nurse'],
       timeRestrictions: {
         startHour: 6,
         endHour: 22,
-        emergencyBypass: true
+        emergencyBypass: true,
       },
       consentRequired: true,
-      auditLevel: 'comprehensive'
+      auditLevel: 'comprehensive',
     },
 
     // Appointments - moderate security
@@ -125,10 +124,10 @@ export class AdvancedRLSPolicies {
       operation: 'SELECT',
       conditions: [
         'clinic_id = current_setting(\'app.current_clinic_id\')',
-        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END'
+        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END',
       ],
       roles: ['doctor', 'nurse', 'assistant', 'receptionist', 'patient'],
-      auditLevel: 'basic'
+      auditLevel: 'basic',
     },
 
     // Financial data - restricted access
@@ -138,10 +137,10 @@ export class AdvancedRLSPolicies {
       conditions: [
         'clinic_id = current_setting(\'app.current_clinic_id\')',
         'current_setting(\'app.user_role\') IN (\'admin\', \'clinic_admin\', \'doctor\')',
-        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END'
+        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END',
       ],
       roles: ['admin', 'clinic_admin', 'doctor', 'patient'],
-      auditLevel: 'comprehensive'
+      auditLevel: 'comprehensive',
     },
 
     // Consent records - special handling
@@ -150,11 +149,11 @@ export class AdvancedRLSPolicies {
       operation: 'SELECT',
       conditions: [
         'clinic_id = current_setting(\'app.current_clinic_id\')',
-        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END'
+        'CASE WHEN current_setting(\'app.user_role\') = \'patient\' THEN patient_id = auth.uid() ELSE true END',
       ],
       roles: ['doctor', 'nurse', 'admin', 'patient'],
-      auditLevel: 'comprehensive'
-    }
+      auditLevel: 'comprehensive',
+    },
   ];
 
   /**
@@ -164,19 +163,19 @@ export class AdvancedRLSPolicies {
     context: RLSContext,
     tableName: string,
     operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE',
-    recordId?: string
+    recordId?: string,
   ): Promise<PolicyEvaluationResult> {
     try {
       // Find applicable policies
       const policies = AdvancedRLSPolicies.HEALTHCARE_POLICIES.filter(
-        p => p.tableName === tableName && p.operation === operation
+        p => p.tableName === tableName && p.operation === operation,
       );
 
       if (policies.length === 0) {
         return {
           allowed: false,
           reason: 'No applicable RLS policy found',
-          auditRequired: true
+          auditRequired: true,
         };
       }
 
@@ -191,14 +190,14 @@ export class AdvancedRLSPolicies {
       return {
         allowed: false,
         reason: 'Access denied by RLS policies',
-        auditRequired: true
+        auditRequired: true,
       };
     } catch (error) {
       console.error('Error evaluating RLS policy:', error);
       return {
         allowed: false,
         reason: 'RLS policy evaluation error',
-        auditRequired: true
+        auditRequired: true,
       };
     }
   }
@@ -209,14 +208,14 @@ export class AdvancedRLSPolicies {
   private async evaluateSinglePolicy(
     context: RLSContext,
     policy: AccessPolicy,
-    recordId?: string
+    recordId?: string,
   ): Promise<PolicyEvaluationResult> {
     // Check role authorization
     if (!policy.roles.includes(context.userRole)) {
       return {
         allowed: false,
         reason: `Role '${context.userRole}' not authorized for this operation`,
-        auditRequired: policy.auditLevel !== 'basic'
+        auditRequired: policy.auditLevel !== 'basic',
       };
     }
 
@@ -231,13 +230,13 @@ export class AdvancedRLSPolicies {
             allowed: true,
             reason: 'Emergency access granted outside normal hours',
             auditRequired: true,
-            emergencyAccess: true
+            emergencyAccess: true,
           };
         }
         return {
           allowed: false,
           reason: `Access restricted to hours ${startHour}:00-${endHour}:00`,
-          auditRequired: true
+          auditRequired: true,
         };
       }
     }
@@ -247,14 +246,14 @@ export class AdvancedRLSPolicies {
       const hasConsent = await this.validatePatientConsent(
         context.userId,
         recordId,
-        policy.tableName
+        policy.tableName,
       );
 
       if (!hasConsent) {
         return {
           allowed: false,
           reason: 'Patient consent required for this operation',
-          auditRequired: true
+          auditRequired: true,
         };
       }
     }
@@ -263,14 +262,14 @@ export class AdvancedRLSPolicies {
     const conditionsValid = await this.evaluateDynamicConditions(
       context,
       policy.conditions,
-      recordId
+      recordId,
     );
 
     return {
       allowed: conditionsValid,
       reason: conditionsValid ? 'Access granted' : 'Dynamic conditions not met',
       conditions: policy.conditions,
-      auditRequired: policy.auditLevel !== 'basic'
+      auditRequired: policy.auditLevel !== 'basic',
     };
   }
 
@@ -280,7 +279,7 @@ export class AdvancedRLSPolicies {
   private async validatePatientConsent(
     userId: string,
     recordId: string,
-    tableName: string
+    tableName: string,
   ): Promise<boolean> {
     try {
       // Get patient ID based on table and record
@@ -319,12 +318,12 @@ export class AdvancedRLSPolicies {
   private async evaluateDynamicConditions(
     context: RLSContext,
     conditions: string[],
-    recordId?: string
+    recordId?: string,
   ): Promise<boolean> {
     try {
       // This would evaluate SQL-like conditions against the database
       // For now, we'll implement basic checks
-      
+
       for (const condition of conditions) {
         if (condition.includes('current_setting(\'app.current_clinic_id\')')) {
           // Validate clinic access
@@ -351,10 +350,12 @@ export class AdvancedRLSPolicies {
           // Validate professional-patient relationship
           if (context.professionalId && recordId) {
             const patientId = await this.getPatientIdFromRecord('medical_records', recordId);
-            if (patientId && !await this.validateProfessionalPatientRelationship(
-              context.professionalId,
-              patientId
-            )) {
+            if (
+              patientId && !await this.validateProfessionalPatientRelationship(
+                context.professionalId,
+                patientId,
+              )
+            ) {
               return false;
             }
           }
@@ -376,12 +377,12 @@ export class AdvancedRLSPolicies {
 
     for (const policy of AdvancedRLSPolicies.HEALTHCARE_POLICIES) {
       const policyName = `${policy.tableName}_${policy.operation.toLowerCase()}_policy`;
-      
+
       let sqlConditions = policy.conditions.join(' AND ');
-      
+
       // Add role check
       if (policy.roles.length > 0) {
-        const roleCheck = `current_setting('app.user_role') IN ('${policy.roles.join("','")}')`;
+        const roleCheck = `current_setting('app.user_role') IN ('${policy.roles.join('\',\'')}')`;
         sqlConditions = sqlConditions ? `(${sqlConditions}) AND (${roleCheck})` : roleCheck;
       }
 
@@ -411,7 +412,7 @@ USING (${sqlConditions});
         `SET app.current_clinic_id = '${context.clinicId}';`,
         `SET app.professional_id = '${context.professionalId || ''}';`,
         `SET app.emergency_access = '${context.emergencyAccess || false}';`,
-        `SET app.access_time = '${(context.accessTime || new Date()).toISOString()}';`
+        `SET app.access_time = '${(context.accessTime || new Date()).toISOString()}';`,
       ];
 
       for (const setting of settings) {
@@ -425,7 +426,10 @@ USING (${sqlConditions});
 
   // Helper methods
 
-  private async getPatientIdFromRecord(tableName: string, recordId: string): Promise<string | null> {
+  private async getPatientIdFromRecord(
+    tableName: string,
+    recordId: string,
+  ): Promise<string | null> {
     try {
       let query;
       switch (tableName) {
@@ -453,10 +457,10 @@ USING (${sqlConditions});
 
   private getConsentPurposeForTable(tableName: string): string {
     const purposeMap: Record<string, string> = {
-      'patients': 'visualizacao_dados_paciente',
-      'medical_records': 'tratamento_medico',
-      'appointments': 'agendamento_consultas',
-      'billing_records': 'faturamento_pagamento'
+      patients: 'visualizacao_dados_paciente',
+      medical_records: 'tratamento_medico',
+      appointments: 'agendamento_consultas',
+      billing_records: 'faturamento_pagamento',
     };
     return purposeMap[tableName] || 'operacao_geral';
   }
@@ -483,7 +487,7 @@ USING (${sqlConditions});
 
   private async validateProfessionalPatientRelationship(
     professionalId: string,
-    patientId: string
+    patientId: string,
   ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
@@ -505,4 +509,4 @@ USING (${sqlConditions});
 export const advancedRLSPolicies = new AdvancedRLSPolicies();
 
 // Export types
-export type { RLSContext, AccessPolicy, PolicyEvaluationResult };
+export type { AccessPolicy, PolicyEvaluationResult, RLSContext };

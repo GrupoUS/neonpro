@@ -4,6 +4,12 @@ export * from './ai-provider';
 export * from './webrtc';
 export * from './healthcare-governance.types';
 export * from './governance.types';
+
+// Valibot Validation Schemas for Brazilian Healthcare
+export * from './patient.valibot';
+export * from './lgpd.valibot';
+export * from './appointment.valibot';
+export * from './prescription.valibot';
 // Healthcare types
 export interface Patient {
   id: string;

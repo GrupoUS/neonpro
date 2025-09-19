@@ -8,7 +8,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // Healthcare Models - Matching actual database structure
@@ -48,7 +47,7 @@ model Clinic {
   @@map("clinics")
 }
 
-// Comprehensive Patient model matching database structure
+// Enhanced Patient model with Brazilian healthcare compliance and LGPD features
 model Patient {
   id                           String    @id @default(uuid())
   clinicId                     String    @map("clinic_id")
@@ -74,40 +73,69 @@ model Patient {
   isActive                     Boolean?  @default(true) @map("is_active")
   deceasedIndicator            Boolean?  @default(false) @map("deceased_indicator")
   deceasedDate                 DateTime? @map("deceased_date") @db.Date
-  dataConsentStatus            String?   @default("pending") @map("data_consent_status")
-  dataConsentDate              DateTime? @map("data_consent_date")
-  dataRetentionUntil           DateTime? @map("data_retention_until") @db.Date
-  dataSource                   String?   @default("manual") @map("data_source")
-  createdAt                    DateTime? @default(now()) @map("created_at")
-  updatedAt                    DateTime? @default(now()) @map("updated_at")
-  createdBy                    String?   @map("created_by")
-  updatedBy                    String?   @map("updated_by")
-  photoUrl                     String?   @map("photo_url")
-  cpf                          String?
-  rg                           String?
+
+  // Brazilian Identity Fields (Required for LGPD compliance)
+  cpf                          String?   @unique // Brazilian national identifier
+  rg                           String?   // Brazilian state identifier
+  rgIssuingOrgan               String?   @map("rg_issuing_organ") // RG issuing authority
+  cns                          String?   @unique // Cartão Nacional de Saúde (Brazilian health card)
   passportNumber               String?   @map("passport_number")
+  
+  // LGPD Compliance Fields
+  dataConsentStatus            String?   @default("pending") @map("data_consent_status") // pending, given, withdrawn, expired
+  dataConsentDate              DateTime? @map("data_consent_date")
+  dataConsentVersion           String?   @map("data_consent_version") // Version of consent terms
+  dataRetentionUntil           DateTime? @map("data_retention_until") @db.Date
+  dataAnonymizedAt             DateTime? @map("data_anonymized_at") // When data was anonymized
+  dataAnonymizationScheduled   DateTime? @map("data_anonymization_scheduled") @db.Date // Scheduled anonymization
+  dataProcessingPurpose        String[]  @map("data_processing_purpose") // Specific purposes for data processing
+  dataSource                   String?   @default("manual") @map("data_source")
+  sensitiveDataConsent         Json?     @map("sensitive_data_consent") // Granular consent for sensitive data
+  lgpdConsentGiven             Boolean   @default(false) @map("lgpd_consent_given")
+  lgpdConsentVersion           String?   @map("lgpd_consent_version")
+  lgpdWithdrawalHistory        Json[]    @map("lgpd_withdrawal_history") // History of consent withdrawals
+  dataSharingConsent           Json?     @map("data_sharing_consent")
+  marketingConsent             Boolean?  @default(false) @map("marketing_consent")
+  researchConsent              Boolean?  @default(false) @map("research_consent")
+  rightToForgetRequested       Boolean?  @default(false) @map("right_to_forget_requested")
+  rightToForgetRequestDate     DateTime? @map("right_to_forget_request_date")
+  dataPortabilityRequested     Boolean?  @default(false) @map("data_portability_requested")
+  
+  // Healthcare-specific fields
   preferredContactMethod       String?   @default("phone") @map("preferred_contact_method")
   bloodType                    String?   @map("blood_type")
   allergies                    String[]
   chronicConditions            String[]  @map("chronic_conditions")
   currentMedications           String[]  @map("current_medications")
+  
+  // Brazilian Health Insurance
   insuranceProvider            String?   @map("insurance_provider")
   insuranceNumber              String?   @map("insurance_number")
   insurancePlan                String?   @map("insurance_plan")
+  susCardNumber                String?   @map("sus_card_number") // Brazilian public health system card
+  planOperatoraAns             String?   @map("plan_operadora_ans") // ANS operator code
+  
+  // Emergency contact
   emergencyContactName         String?   @map("emergency_contact_name")
   emergencyContactPhone        String?   @map("emergency_contact_phone")
   emergencyContactRelationship String?   @map("emergency_contact_relationship")
-  lgpdConsentGiven             Boolean   @default(false) @map("lgpd_consent_given")
-  lgpdConsentVersion           String?   @map("lgpd_consent_version")
-  dataSharingConsent           Json?     @map("data_sharing_consent")
-  marketingConsent             Boolean?  @default(false) @map("marketing_consent")
-  researchConsent              Boolean?  @default(false) @map("research_consent")
-  noShowRiskScore              Int?      @default(0) @map("no_show_risk_score")
+  emergencyContactCpf          String?   @map("emergency_contact_cpf")
+  
+  // AI-driven no-show prediction
+  noShowRiskScore              Int?      @default(0) @map("no_show_risk_score") // 0-100 risk score
   lastNoShowDate               DateTime? @map("last_no_show_date")
   totalNoShows                 Int?      @default(0) @map("total_no_shows")
   totalAppointments            Int?      @default(0) @map("total_appointments")
+  noShowPredictionFeatures     Json?     @map("no_show_prediction_features") // ML features for prediction
+  behavioralPatterns           Json?     @map("behavioral_patterns") // Patient behavior analysis
+  
+  // Communication and preferences
   preferredAppointmentTime     String[]  @map("preferred_appointment_time")
   communicationPreferences     Json?     @map("communication_preferences")
+  languagePreference           String?   @default("pt-BR") @map("language_preference")
+  accessibilityNeeds           String[]  @map("accessibility_needs")
+  
+  // Administrative fields
   patientStatus                String?   @default("active") @map("patient_status")
   registrationSource           String?   @default("manual") @map("registration_source")
   lastVisitDate                DateTime? @map("last_visit_date")
@@ -115,45 +143,302 @@ model Patient {
   patientNotes                 String?   @map("patient_notes")
   nationality                  String?   @default("brasileira")
   primaryDoctorId              String?   @map("primary_doctor_id")
+  
+  // Audit and control fields
+  createdAt                    DateTime? @default(now()) @map("created_at")
+  updatedAt                    DateTime? @default(now()) @map("updated_at")
+  createdBy                    String?   @map("created_by")
+  updatedBy                    String?   @map("updated_by")
+  photoUrl                     String?   @map("photo_url")
 
-  appointments     Appointment[]
-  consentRecords   ConsentRecord[]
-  auditTrails      AuditTrail[]
+  // Relations
+  appointments          Appointment[]
+  consentRecords        ConsentRecord[]
+  lgpdConsentHistory    LGPDConsent[]
+  auditTrails           AuditTrail[]
+  telemedicineSessions  TelemedicineSession[]
 
+  // Database indexes for performance
+  @@index([clinicId, isActive])
+  @@index([cpf])
+  @@index([cns])
+  @@index([dataConsentStatus])
+  @@index([noShowRiskScore])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([lastVisitDate])
   @@map("patients")
 }
 
-// Comprehensive Appointment model matching database structure
+// Enhanced Appointment model with Brazilian healthcare compliance and AI-driven no-show prediction
 model Appointment {
   id                     String    @id @default(uuid())
   clinicId               String    @map("clinic_id")
   clinic                 Clinic    @relation(fields: [clinicId], references: [id])
   patientId              String    @map("patient_id")
   patient                Patient   @relation(fields: [patientId], references: [id])
-  professionalId         String      @map("professional_id")
+  professionalId         String    @map("professional_id")
   professional           Professional @relation(fields: [professionalId], references: [id])
-  serviceTypeId          String      @map("service_type_id")
+  serviceTypeId          String    @map("service_type_id")
   serviceType            ServiceType @relation("ServiceTypeAppointments", fields: [serviceTypeId], references: [id])
-  status                 String?     @default("scheduled")
+  
+  // Appointment scheduling
+  status                 String?   @default("scheduled") // scheduled, confirmed, in_progress, completed, cancelled, no_show
+  appointmentType        String?   @default("in_person") @map("appointment_type") // in_person, telemedicine, hybrid
   startTime              DateTime  @map("start_time")
   endTime                DateTime  @map("end_time")
-  notes                  String?
-  internalNotes          String?   @map("internal_notes")
+  timeZone               String?   @default("America/Sao_Paulo") @map("time_zone")
+  duration               Int?      @map("duration") // Duration in minutes
+  priority               Int?      @default(1) // 1=low, 2=medium, 3=high, 4=urgent
+  
+  // Brazilian healthcare compliance (TUSS codes and CFM)
+  tussCode               String?   @map("tuss_code") // Terminologia Unificada da Saúde Suplementar
+  tussProcedureName      String?   @map("tuss_procedure_name")
+  cfmSpecialtyCode       String?   @map("cfm_specialty_code") // CFM medical specialty code
+  cfmProfessionalCrm     String?   @map("cfm_professional_crm") // Professional CRM number
+  cfmValidationStatus    String?   @default("pending") @map("cfm_validation_status") // pending, validated, rejected
+  cfmValidatedAt         DateTime? @map("cfm_validated_at")
+  anvisaCompliant        Boolean?  @default(true) @map("anvisa_compliant")
+  anvisaProtocolNumber   String?   @map("anvisa_protocol_number")
+  
+  // AI-driven no-show prediction
+  noShowRiskScore        Int?      @default(0) @map("no_show_risk_score") // 0-100 AI-calculated risk
+  noShowPredictionModel  String?   @map("no_show_prediction_model") // Model version used
+  noShowRiskFactors      Json?     @map("no_show_risk_factors") // Contributing factors
+  noShowPredictedAt      DateTime? @map("no_show_predicted_at")
+  noShowActualOutcome    Boolean?  @map("no_show_actual_outcome") // For model training
+  noShowPreventionActions String[] @map("no_show_prevention_actions") // Actions taken to prevent no-show
+  
+  // Patient engagement and confirmation
+  patientConfirmed       Boolean?  @default(false) @map("patient_confirmed")
+  patientConfirmedAt     DateTime? @map("patient_confirmed_at")
   reminderSentAt         DateTime? @map("reminder_sent_at")
   confirmationSentAt     DateTime? @map("confirmation_sent_at")
   whatsappReminderSent   Boolean?  @default(false) @map("whatsapp_reminder_sent")
   smsReminderSent        Boolean?  @default(false) @map("sms_reminder_sent")
+  emailReminderSent      Boolean?  @default(false) @map("email_reminder_sent")
+  lastReminderSentAt     DateTime? @map("last_reminder_sent_at")
+  reminderCount          Int?      @default(0) @map("reminder_count")
+  
+  // Clinical information
+  chiefComplaint         String?   @map("chief_complaint") // Main reason for visit
+  clinicalProtocol       String?   @map("clinical_protocol") // Protocol being followed
+  priorAuthRequired      Boolean?  @default(false) @map("prior_auth_required")
+  priorAuthNumber        String?   @map("prior_auth_number")
+  priorAuthStatus        String?   @map("prior_auth_status")
+  
+  // Location and logistics
   roomId                 String?   @map("room_id")
-  priority               Int?      @default(1)
+  appointmentLocation    String?   @map("appointment_location") // Physical or virtual location
+  checkInTime            DateTime? @map("check_in_time")
+  checkOutTime           DateTime? @map("check_out_time")
+  waitingTime            Int?      @map("waiting_time") // Minutes patient waited
+  actualStartTime        DateTime? @map("actual_start_time")
+  actualEndTime          DateTime? @map("actual_end_time")
+  
+  // Real-time subscription support
+  subscriptionChannels   String[]  @map("subscription_channels") // Channels for real-time updates
+  lastUpdatedChannel     String?   @map("last_updated_channel")
+  realTimeUpdateEnabled  Boolean?  @default(true) @map("real_time_update_enabled")
+  
+  // Notes and documentation
+  notes                  String?   // Patient-visible notes
+  internalNotes          String?   @map("internal_notes") // Staff-only notes
+  clinicalNotes          String?   @map("clinical_notes") // Clinical documentation
+  followUpRequired       Boolean?  @default(false) @map("follow_up_required")
+  followUpDate           DateTime? @map("follow_up_date")
+  followUpInstructions   String?   @map("follow_up_instructions")
+  
+  // Financial and billing
+  estimatedCost          Decimal?  @map("estimated_cost") @db.Decimal(10, 2)
+  actualCost             Decimal?  @map("actual_cost") @db.Decimal(10, 2)
+  paymentStatus          String?   @default("pending") @map("payment_status")
+  insuranceCovered       Boolean?  @map("insurance_covered")
+  copayAmount            Decimal?  @map("copay_amount") @db.Decimal(10, 2)
+  
+  // Cancellation and rescheduling
+  rescheduleCount        Int?      @default(0) @map("reschedule_count")
+  lastRescheduledAt      DateTime? @map("last_rescheduled_at")
+  rescheduledBy          String?   @map("rescheduled_by")
+  reschedulingReason     String?   @map("rescheduling_reason")
+  cancelledAt            DateTime? @map("cancelled_at")
+  cancelledBy            String?   @map("cancelled_by")
+  cancellationReason     String?   @map("cancellation_reason")
+  cancellationFee        Decimal?  @map("cancellation_fee") @db.Decimal(10, 2)
+  
+  // Quality and satisfaction
+  patientSatisfactionScore Int?    @map("patient_satisfaction_score") // 1-5 rating
+  patientFeedback        String?   @map("patient_feedback")
+  serviceQualityScore    Int?      @map("service_quality_score")
+  
+  // Audit and control
   createdAt              DateTime? @default(now()) @map("created_at")
   updatedAt              DateTime? @default(now()) @map("updated_at")
   createdBy              String    @map("created_by")
   updatedBy              String?   @map("updated_by")
-  cancelledAt            DateTime? @map("cancelled_at")
-  cancelledBy            String?   @map("cancelled_by")
-  cancellationReason     String?   @map("cancellation_reason")
+  version                Int?      @default(1) // For optimistic locking
 
+  // Relations
+  telemedicineSession    TelemedicineSession?
+
+  // Indexes for performance optimization
+  @@index([clinicId, startTime])
+  @@index([patientId, startTime])
+  @@index([professionalId, startTime])
+  @@index([status, startTime])
+  @@index([noShowRiskScore])
+  @@index([tussCode])
+  @@index([cfmValidationStatus])
+  @@index([appointmentType])
+  @@index([priority, startTime])
+  @@index([createdAt])
+  @@index([updatedAt])
   @@map("appointments")
+}
+
+// TelemedicineSession model with CFM compliance and NGS2 security standards
+model TelemedicineSession {
+  id                        String    @id @default(uuid())
+  appointmentId             String    @unique @map("appointment_id")
+  appointment               Appointment @relation(fields: [appointmentId], references: [id])
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  
+  // CFM (Conselho Federal de Medicina) Compliance
+  cfmResolution2314Compliant Boolean  @default(true) @map("cfm_resolution_2314_compliant")
+  cfmProfessionalCrm         String   @map("cfm_professional_crm") // Professional CRM number
+  cfmProfessionalState       String   @map("cfm_professional_state") // CRM state
+  cfmSpecialtyCode           String?  @map("cfm_specialty_code")
+  cfmEthicsCompliance        Boolean  @default(true) @map("cfm_ethics_compliance")
+  cfmProtocolNumber          String?  @map("cfm_protocol_number")
+  cfmValidationStatus        String   @default("pending") @map("cfm_validation_status") // pending, validated, rejected
+  cfmValidatedAt             DateTime? @map("cfm_validated_at")
+  cfmValidatedBy             String?  @map("cfm_validated_by")
+  
+  // ICP-Brasil Digital Certificate Validation
+  icpBrasilCertRequired      Boolean  @default(true) @map("icp_brasil_cert_required")
+  icpBrasilCertPresent       Boolean  @default(false) @map("icp_brasil_cert_present")
+  icpBrasilCertSerialNumber  String?  @map("icp_brasil_cert_serial_number")
+  icpBrasilCertFingerprint   String?  @map("icp_brasil_cert_fingerprint")
+  icpBrasilCertValidFrom     DateTime? @map("icp_brasil_cert_valid_from")
+  icpBrasilCertValidTo       DateTime? @map("icp_brasil_cert_valid_to")
+  icpBrasilCertAuthority     String?  @map("icp_brasil_cert_authority")
+  icpBrasilCertValidated     Boolean  @default(false) @map("icp_brasil_cert_validated")
+  icpBrasilCertValidationChain Json?  @map("icp_brasil_cert_validation_chain")
+  
+  // NGS2 (Norma Geral de Segurança de Nível 2) Security Standards
+  ngs2SecurityLevel          String   @default("level_2") @map("ngs2_security_level") // level_1, level_2, level_3
+  ngs2EncryptionStandard     String   @default("AES_256") @map("ngs2_encryption_standard")
+  ngs2KeyManagement          Json     @map("ngs2_key_management") // Key management details
+  ngs2AccessControl          Json     @map("ngs2_access_control") // Access control matrix
+  ngs2AuditTrail             Json[]   @default([]) @map("ngs2_audit_trail") // Security audit events
+  ngs2ComplianceChecked      Boolean  @default(false) @map("ngs2_compliance_checked")
+  ngs2ComplianceScore        Int?     @map("ngs2_compliance_score") // 0-100 compliance score
+  ngs2LastSecurityAudit      DateTime? @map("ngs2_last_security_audit")
+  
+  // Session Management and Encryption
+  sessionToken               String   @unique @map("session_token")
+  sessionEncryptionKey       String   @map("session_encryption_key") // Encrypted session key
+  sessionStartTime           DateTime @map("session_start_time")
+  sessionEndTime             DateTime? @map("session_end_time")
+  sessionDuration            Int?     @map("session_duration") // Duration in seconds
+  sessionStatus              String   @default("scheduled") @map("session_status") // scheduled, active, completed, cancelled, failed
+  connectionQuality          String?  @map("connection_quality") // excellent, good, fair, poor
+  
+  // Video/Audio Technical Details
+  videoCodec                 String?  @map("video_codec")
+  audioCodec                 String?  @map("audio_codec")
+  bandwidth                  String?  @map("bandwidth")
+  resolution                 String?  @map("resolution")
+  frameRate                  Int?     @map("frame_rate")
+  latency                    Int?     @map("latency") // Milliseconds
+  packetLoss                 Float?   @map("packet_loss") // Percentage
+  
+  // Recording and Consent Management
+  recordingEnabled           Boolean  @default(false) @map("recording_enabled")
+  recordingConsent           Boolean  @default(false) @map("recording_consent")
+  recordingConsentGivenAt    DateTime? @map("recording_consent_given_at")
+  recordingConsentMethod     String?  @map("recording_consent_method") // verbal, digital, written
+  recordingFileHash          String?  @map("recording_file_hash") // SHA-256 hash of recording
+  recordingStorageLocation   String?  @map("recording_storage_location")
+  recordingRetentionUntil    DateTime? @map("recording_retention_until")
+  recordingEncrypted         Boolean  @default(true) @map("recording_encrypted")
+  recordingAccessLog         Json[]   @default([]) @map("recording_access_log")
+  
+  // LGPD and Data Protection
+  lgpdCompliant              Boolean  @default(true) @map("lgpd_compliant")
+  lgpdConsentId              String?  @map("lgpd_consent_id") // Reference to LGPDConsent record
+  dataProcessingPurpose      String[] @map("data_processing_purpose")
+  dataRetentionPeriod        String   @map("data_retention_period")
+  dataAnonymizationScheduled DateTime? @map("data_anonymization_scheduled")
+  sensitiveDataProcessed     Boolean  @default(true) @map("sensitive_data_processed")
+  crossBorderDataTransfer    Boolean  @default(false) @map("cross_border_data_transfer")
+  
+  // Platform and Device Information
+  patientPlatform            String?  @map("patient_platform") // web, mobile_ios, mobile_android, desktop
+  patientDeviceInfo          Json?    @map("patient_device_info")
+  patientIpAddress           String?  @map("patient_ip_address")
+  patientUserAgent           String?  @map("patient_user_agent")
+  professionalPlatform       String?  @map("professional_platform")
+  professionalDeviceInfo     Json?    @map("professional_device_info")
+  professionalIpAddress      String?  @map("professional_ip_address")
+  
+  // Clinical Documentation
+  clinicalNotes              String?  @map("clinical_notes")
+  diagnosisCode              String?  @map("diagnosis_code") // ICD-10 or similar
+  treatmentPlan              String?  @map("treatment_plan")
+  prescriptions              Json[]   @default([]) @map("prescriptions")
+  followUpRequired           Boolean  @default(false) @map("follow_up_required")
+  followUpInstructions       String?  @map("follow_up_instructions")
+  
+  // Quality Metrics
+  patientSatisfaction        Int?     @map("patient_satisfaction") // 1-5 rating
+  technicalQualityScore      Int?     @map("technical_quality_score") // 1-5 rating
+  clinicalQualityScore       Int?     @map("clinical_quality_score") // 1-5 rating
+  overallSessionRating       Int?     @map("overall_session_rating") // 1-5 rating
+  
+  // Billing and Insurance
+  insurancePreAuthorization  String?  @map("insurance_pre_authorization")
+  billingCode                String?  @map("billing_code")
+  sessionCost                Decimal? @map("session_cost") @db.Decimal(10, 2)
+  insuranceCoverage          Decimal? @map("insurance_coverage") @db.Decimal(10, 2)
+  patientResponsibility      Decimal? @map("patient_responsibility") @db.Decimal(10, 2)
+  
+  // Error Handling and Troubleshooting
+  technicalIssues            Json[]   @default([]) @map("technical_issues")
+  connectionFailures         Int      @default(0) @map("connection_failures")
+  lastErrorMessage           String?  @map("last_error_message")
+  troubleshootingLog         Json[]   @default([]) @map("troubleshooting_log")
+  
+  // Compliance and Audit
+  regulatoryFrameworks       String[] @map("regulatory_frameworks") // CFM, ANVISA, LGPD, etc.
+  complianceValidatedAt      DateTime? @map("compliance_validated_at")
+  complianceValidatedBy      String?  @map("compliance_validated_by")
+  auditEvents                Json[]   @default([]) @map("audit_events")
+  securityIncidents          Json[]   @default([]) @map("security_incidents")
+  
+  // Metadata
+  sessionMetadata            Json?    @map("session_metadata")
+  internalNotes              String?  @map("internal_notes")
+  tags                       String[] @default([])
+  
+  createdAt                  DateTime @default(now()) @map("created_at")
+  updatedAt                  DateTime @updatedAt @map("updated_at")
+  createdBy                  String?  @map("created_by")
+  updatedBy                  String?  @map("updated_by")
+
+  // Indexes for performance and compliance
+  @@index([patientId, sessionStartTime])
+  @@index([cfmProfessionalCrm])
+  @@index([cfmValidationStatus])
+  @@index([icpBrasilCertValidated])
+  @@index([ngs2ComplianceScore])
+  @@index([sessionStatus, sessionStartTime])
+  @@index([lgpdCompliant])
+  @@index([recordingEnabled])
+  @@index([createdAt])
+  @@map("telemedicine_sessions")
 }
 
 // Professional model matching database structure
@@ -210,11 +495,117 @@ model ConsentRecord {
   @@map("consent_records")
 }
 
+// Enhanced LGPD Consent model with cryptographic proof and legal framework
+model LGPDConsent {
+  id                       String    @id @default(uuid())
+  patientId                String    @map("patient_id")
+  patient                  Patient   @relation(fields: [patientId], references: [id])
+  clinicId                 String    @map("clinic_id")
+  
+  // Legal framework fields
+  legalBasis               String    @map("legal_basis") // Art. 7º, 11º LGPD: consent, contract, legitimate_interest, etc.
+  processingPurpose        String    @map("processing_purpose") // Specific purpose for data processing
+  dataCategories           String[]  @map("data_categories") // Types of data being processed
+  dataSubjects             String[]  @map("data_subjects") // Who the data relates to
+  retentionPeriod          String    @map("retention_period") // How long data will be kept
+  retentionJustification   String?   @map("retention_justification") // Legal justification for retention
+  
+  // Consent lifecycle management
+  consentType              String    @map("consent_type") // explicit, implicit, withdrawn, revoked
+  consentStatus            String    @default("pending") @map("consent_status") // pending, active, withdrawn, expired, revoked
+  consentVersion           String    @map("consent_version") // Version of consent terms
+  consentText              String    @map("consent_text") // Full text of consent given
+  consentLanguage          String    @default("pt-BR") @map("consent_language")
+  
+  // Timestamps for lifecycle
+  requestedAt              DateTime  @default(now()) @map("requested_at")
+  givenAt                  DateTime? @map("given_at")
+  withdrawnAt              DateTime? @map("withdrawn_at")
+  expiredAt                DateTime? @map("expired_at")
+  revokedAt                DateTime? @map("revoked_at")
+  lastConfirmedAt          DateTime? @map("last_confirmed_at")
+  scheduledExpiryAt        DateTime? @map("scheduled_expiry_at")
+  
+  // Cryptographic proof and validation
+  consentHash              String    @map("consent_hash") // SHA-256 hash of consent + patient data
+  digitalSignature         String?   @map("digital_signature") // Digital signature if available
+  timestampToken           String?   @map("timestamp_token") // Cryptographic timestamp
+  blockchainTxHash         String?   @map("blockchain_tx_hash") // Optional blockchain proof
+  integrityChecksum        String    @map("integrity_checksum") // Checksum for data integrity
+  cryptographicProof       Json      @map("cryptographic_proof") // Additional crypto proofs
+  
+  // Collection context
+  collectionMethod         String    @map("collection_method") // web_form, mobile_app, in_person, phone, etc.
+  collectionLocation       String?   @map("collection_location") // Physical or digital location
+  collectorUserId          String?   @map("collector_user_id") // Who collected the consent
+  collectorRole            String?   @map("collector_role") // Role of consent collector
+  
+  // Technical context
+  ipAddress                String?   @map("ip_address")
+  userAgent                String?   @map("user_agent")
+  sessionId                String?   @map("session_id")
+  deviceFingerprint        String?   @map("device_fingerprint")
+  geolocation              Json?     @map("geolocation") // Lat/lng if available
+  
+  // Legal compliance tracking
+  gdprCompliant            Boolean   @default(true) @map("gdpr_compliant")
+  lgpdCompliant            Boolean   @default(true) @map("lgpd_compliant")
+  ccpaCompliant            Boolean   @default(false) @map("ccpa_compliant")
+  hipaaCompliant           Boolean   @default(true) @map("hipaa_compliant")
+  regulatoryFrameworks     String[]  @map("regulatory_frameworks") // Applicable legal frameworks
+  
+  // Withdrawal and revocation
+  withdrawalReason         String?   @map("withdrawal_reason")
+  withdrawalMethod         String?   @map("withdrawal_method") // email, phone, in_person, etc.
+  withdrawalConfirmed      Boolean   @default(false) @map("withdrawal_confirmed")
+  withdrawalProcessedAt    DateTime? @map("withdrawal_processed_at")
+  
+  // Data subject rights tracking
+  dataPortabilityGranted   Boolean   @default(false) @map("data_portability_granted")
+  dataErasureRequested     Boolean   @default(false) @map("data_erasure_requested")
+  dataRectificationRequested Boolean @default(false) @map("data_rectification_requested")
+  dataProcessingRestricted Boolean   @default(false) @map("data_processing_restricted")
+  
+  // Audit and evidence
+  evidenceDocuments        Json[]    @default([]) @map("evidence_documents") // Supporting evidence
+  auditLog                 Json[]    @default([]) @map("audit_log") // Changes and actions
+  legalReviewStatus        String?   @default("pending") @map("legal_review_status") // pending, approved, rejected
+  legalReviewedBy          String?   @map("legal_reviewed_by")
+  legalReviewedAt          DateTime? @map("legal_reviewed_at")
+  legalNotes               String?   @map("legal_notes")
+  
+  // Metadata and versioning
+  parentConsentId          String?   @map("parent_consent_id") // If this is an update/revision
+  childConsentIds          String[]  @map("child_consent_ids") // Subsequent revisions
+  migrationSource          String?   @map("migration_source") // If migrated from old system
+  internalNotes            String?   @map("internal_notes")
+  tags                     String[]  @default([]) // For categorization
+  
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String?   @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  // Indexes for performance and compliance queries
+  @@index([patientId, consentStatus])
+  @@index([clinicId, consentStatus])
+  @@index([legalBasis, consentStatus])
+  @@index([consentHash])
+  @@index([givenAt])
+  @@index([withdrawnAt])
+  @@index([expiredAt])
+  @@index([scheduledExpiryAt])
+  @@index([createdAt])
+  @@unique([consentHash]) // Ensure hash uniqueness for integrity
+  @@map("lgpd_consents")
+}
+
 // Governance Models
 
 enum AuditAction {
   VIEW
   CREATE
+  READ
   UPDATE
   DELETE
   EXPORT
@@ -224,6 +615,15 @@ enum AuditAction {
 
 enum ResourceType {
   PATIENT_RECORD
+  PATIENT_DATA
+  PATIENT_CONSENT
+  APPOINTMENT
+  COMMUNICATION
+  AI_PREDICTION
+  AI_MODEL_PERFORMANCE
+  TELEMEDICINE_SESSION
+  PRESCRIPTION
+  COMPLIANCE_REPORT
   REPORT
   SYSTEM_CONFIG
   USER_ACCOUNT
@@ -232,6 +632,8 @@ enum ResourceType {
 enum AuditStatus {
   SUCCESS
   FAILED
+  FAILURE
+  PARTIAL_SUCCESS
   BLOCKED
 }
 

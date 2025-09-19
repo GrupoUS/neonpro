@@ -1,9 +1,0 @@
-{
-  "framework": "vite",
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm -w turbo run build --filter=@neonpro/web",
-  "outputDirectory": "dist",
-  "git": {
-    "deploymentEnabled": { "preview": true, "production": true }
-  }
-}

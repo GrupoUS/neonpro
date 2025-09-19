@@ -50,16 +50,12 @@ const mockOtel = {
 
 // Mock Web Vitals
 const mockWebVitals = {
-  getCLS: vi.fn(),
-  getFID: vi.fn(),
-  getFCP: vi.fn(),
-  getLCP: vi.fn(),
-  getTTFB: vi.fn(),
   onCLS: vi.fn(),
   onFID: vi.fn(),
   onFCP: vi.fn(),
   onLCP: vi.fn(),
   onTTFB: vi.fn(),
+  onINP: vi.fn(),
 };
 
 describe('Observability Contracts', () => {

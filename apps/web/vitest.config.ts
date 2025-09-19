@@ -1,8 +1,10 @@
+import react from '@vitejs/plugin-react';
 import path from 'path';
 import type { InlineConfig } from 'vitest';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -42,6 +44,9 @@ export default defineConfig({
         // Also include curated integration duplicates
         'tests/integration/chat-streaming.test.ts',
         'tests/integration/chat-errors.test.ts',
+        // Integration tests for T013, T014, T015
+        'tests/integration/performance-monitoring.test.ts',
+        'tests/integration/accessibility.test.ts',
         // New UI tests
         'tests/ui/**/*.test.tsx',
         // Telemedicine tests (T102.2 implementation)

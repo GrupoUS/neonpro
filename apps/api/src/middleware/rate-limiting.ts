@@ -3,7 +3,7 @@ import { HTTPException } from 'hono/http-exception';
 
 /**
  * Rate limiting infrastructure for healthcare APIs
- * 
+ *
  * Implements sliding window rate limiting with:
  * - Per-endpoint configuration
  * - Clinic IP allowlisting
@@ -80,9 +80,10 @@ export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
     windowMs: 60 * 1000, // 1 minute
     priority: 'emergency',
     skipRoles: ['emergency_responder', 'physician_on_call'],
-    message: 'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
+    message:
+      'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
   },
-  
+
   // Patient data access - moderate limits with audit logging
   '/api/v1/patients/': {
     maxRequests: 300,
@@ -90,7 +91,7 @@ export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
     priority: 'routine',
     message: 'Patient data access rate limit exceeded. This is logged for LGPD compliance.',
   },
-  
+
   // Authentication endpoints - stricter limits to prevent brute force
   '/api/v1/auth/': {
     maxRequests: 10,
@@ -98,15 +99,16 @@ export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
     priority: 'administrative',
     message: 'Authentication rate limit exceeded. Account may be temporarily locked for security.',
   },
-  
+
   // File upload endpoints - very strict limits for resource protection
   '/api/v1/files/upload': {
     maxRequests: 20,
     windowMs: 60 * 1000, // 1 minute
     priority: 'administrative',
-    message: 'File upload rate limit exceeded. Large files should be uploaded during off-peak hours.',
+    message:
+      'File upload rate limit exceeded. Large files should be uploaded during off-peak hours.',
   },
-  
+
   // AI inference endpoints - moderate limits to manage compute costs
   '/api/v1/ai/': {
     maxRequests: 100,
@@ -114,7 +116,7 @@ export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
     priority: 'routine',
     message: 'AI service rate limit exceeded. Consider batching requests for efficiency.',
   },
-  
+
   // Reports and analytics - lower limits for resource-intensive operations
   '/api/v1/reports/': {
     maxRequests: 30,
@@ -156,13 +158,13 @@ class MemoryRateLimitStore {
   getAttempts(key: string, windowMs: number): RateLimitAttempt[] {
     const now = Date.now();
     const windowStart = now - windowMs;
-    
+
     const allAttempts = this.attempts.get(key) || [];
     const validAttempts = allAttempts.filter(attempt => attempt.timestamp >= windowStart);
-    
+
     // Update stored attempts to only keep valid ones
     this.attempts.set(key, validAttempts);
-    
+
     return validAttempts;
   }
 
@@ -173,7 +175,7 @@ class MemoryRateLimitStore {
     const existing = this.attempts.get(key) || [];
     existing.push(attempt);
     this.attempts.set(key, existing);
-    
+
     // Cleanup old attempts periodically
     this.cleanup();
   }
@@ -184,8 +186,8 @@ class MemoryRateLimitStore {
   private cleanup(): void {
     const now = Date.now();
     const cutoff = now - this.maxStorageTime;
-    
-    for (const [key, attempts] of this.attempts.entries()) {
+
+    for (const [key, attempts] of Array.from(this.attempts.entries())) {
       const validAttempts = attempts.filter(attempt => attempt.timestamp >= cutoff);
       if (validAttempts.length === 0) {
         this.attempts.delete(key);
@@ -203,7 +205,7 @@ class MemoryRateLimitStore {
     for (const attempts of this.attempts.values()) {
       totalAttempts += attempts.length;
     }
-    
+
     return {
       totalKeys: this.attempts.size,
       totalAttempts,
@@ -223,12 +225,12 @@ function getClientIP(c: Context): string {
   if (xForwardedFor) {
     return xForwardedFor.split(',')[0].trim();
   }
-  
+
   const xRealIP = c.req.header('x-real-ip');
   if (xRealIP) {
     return xRealIP;
   }
-  
+
   // Fallback to connection IP (may not be available in all environments)
   return c.req.header('cf-connecting-ip') || '0.0.0.0';
 }
@@ -255,13 +257,13 @@ function generateRateLimitKey(c: Context, _rule: RateLimitRule): string {
   const ip = getClientIP(c);
   const path = c.req.path;
   const method = c.req.method;
-  
+
   // Include user ID for authenticated requests
   const userId = c.get('userId') || 'anonymous';
-  
+
   // Include clinic ID for multi-tenant isolation
   const clinicId = c.get('clinicId') || 'default';
-  
+
   return `${ip}:${method}:${path}:${userId}:${clinicId}`;
 }
 
@@ -272,11 +274,11 @@ function checkRateLimit(c: Context, rule: RateLimitRule): RateLimitStatus {
   const key = generateRateLimitKey(c, rule);
   const now = Date.now();
   const windowStart = now - rule.windowMs;
-  
+
   // Get current attempts in window
   const attempts = rateLimitStore.getAttempts(key, rule.windowMs);
   const currentRequests = attempts.length;
-  
+
   return {
     currentRequests,
     maxRequests: rule.maxRequests,
@@ -294,7 +296,7 @@ function checkRateLimit(c: Context, rule: RateLimitRule): RateLimitStatus {
 function recordAttempt(c: Context, rule: RateLimitRule, status: RateLimitStatus): void {
   const key = generateRateLimitKey(c, rule);
   const ip = getClientIP(c);
-  
+
   const attempt: RateLimitAttempt = {
     timestamp: Date.now(),
     ip,
@@ -303,9 +305,9 @@ function recordAttempt(c: Context, rule: RateLimitRule, status: RateLimitStatus)
     endpoint: c.req.path,
     method: c.req.method,
   };
-  
+
   rateLimitStore.recordAttempt(key, attempt);
-  
+
   // Log for LGPD compliance if audit logging is enabled
   if (DEFAULT_RATE_LIMIT_CONFIG.auditLogging) {
     console.log('RATE_LIMIT_AUDIT', {
@@ -332,7 +334,7 @@ function getRateLimitRule(endpoint: string, config: RateLimitConfig): RateLimitR
   const matchingEndpoint = Object.keys(config.endpoints)
     .sort((a, b) => b.length - a.length) // Longest match first
     .find(pattern => endpoint.startsWith(pattern));
-  
+
   return matchingEndpoint ? config.endpoints[matchingEndpoint] : config.default;
 }
 
@@ -343,33 +345,33 @@ export function rateLimitMiddleware(config: RateLimitConfig = DEFAULT_RATE_LIMIT
   return async (c: Context, next: Next) => {
     const ip = getClientIP(c);
     const endpoint = c.req.path;
-    
+
     // Skip rate limiting for allowlisted IPs
     if (isIPAllowlisted(ip, config.allowlistedIPs)) {
       return next();
     }
-    
+
     // Get applicable rate limit rule
     const rule = getRateLimitRule(endpoint, config);
-    
+
     // Skip rate limiting for privileged roles
     const userRole = c.get('userRole');
     if (rule.skipRoles && userRole && rule.skipRoles.includes(userRole)) {
       return next();
     }
-    
+
     // Check rate limit status
     const status = checkRateLimit(c, rule);
-    
+
     // Record attempt for audit logging
     recordAttempt(c, rule, status);
-    
+
     // Set rate limit headers
     c.header('X-RateLimit-Limit', rule.maxRequests.toString());
     c.header('X-RateLimit-Remaining', status.remainingRequests.toString());
     c.header('X-RateLimit-Reset', new Date(Date.now() + status.resetTime).toISOString());
     c.header('X-RateLimit-Window', rule.windowMs.toString());
-    
+
     // Check if request is allowed
     if (!status.allowed) {
       // Enhanced error response for healthcare context
@@ -384,7 +386,7 @@ export function rateLimitMiddleware(config: RateLimitConfig = DEFAULT_RATE_LIMIT
           endpoint: endpoint,
         },
         // Healthcare-specific guidance
-        guidance: rule.priority === 'emergency' 
+        guidance: rule.priority === 'emergency'
           ? 'If this is a medical emergency, contact emergency services immediately'
           : 'Consider reducing request frequency or contact system administrator',
         // Compliance information
@@ -393,17 +395,17 @@ export function rateLimitMiddleware(config: RateLimitConfig = DEFAULT_RATE_LIMIT
           standard: 'LGPD-Article-33-Security-Measures',
         },
       };
-      
+
       throw new HTTPException(429, {
         message: JSON.stringify(errorResponse),
         cause: 'Rate limit exceeded',
       });
     }
-    
+
     // Add rate limit context to request
     c.set('rateLimitStatus', status);
     c.set('rateLimitRule', rule);
-    
+
     return next();
   };
 }

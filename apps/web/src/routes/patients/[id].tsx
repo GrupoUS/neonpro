@@ -1,11 +1,12 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// Fallback to shared UI Avatar not available; using simple initials circle inline below
+// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -25,6 +26,10 @@ import {
   User,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+export const Route = createFileRoute('/patients/id')({
+  component: PatientDetailPage,
+});
 
 // Types
 interface Patient {
@@ -102,7 +107,7 @@ interface AIInsight {
   createdAt: string;
 }
 
-export function PatientDetailPage() {
+function PatientDetailPage() {
   const { id } = useParams({ from: '/patients/$id' });
   const navigate = useNavigate();
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -300,11 +305,11 @@ export function PatientDetailPage() {
             <ArrowLeft className='h-4 w-4 mr-2' />
             Voltar
           </Button>
-          <Avatar className='h-12 w-12'>
-            <AvatarFallback>
+          <div className='h-12 w-12 rounded-full bg-muted flex items-center justify-center'>
+            <span className='font-medium'>
               {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-            </AvatarFallback>
-          </Avatar>
+            </span>
+          </div>
           <div>
             <h1 className='text-2xl font-bold'>{patient.name}</h1>
             <p className='text-sm text-muted-foreground'>

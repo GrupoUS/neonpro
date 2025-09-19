@@ -348,6 +348,6 @@ function AppointmentsPage() {
   );
 }
 
-export const Route = createFileRoute('/appointments')({
+export const Route = createFileRoute('/services/appointments')({
   component: AppointmentsPage,
 });

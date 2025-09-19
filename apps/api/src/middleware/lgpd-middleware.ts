@@ -210,12 +210,13 @@ async function validateUserConsent(
 
       // Validate consent level meets minimum requirements
       const consentLevelHierarchy = {
-        'basic': 1,
-        'explicit': 2,
-        'granular': 3
+        basic: 1,
+        explicit: 2,
+        granular: 3,
       };
 
-      const currentLevel = consentLevelHierarchy[consent.consent_type as keyof typeof consentLevelHierarchy] || 1;
+      const currentLevel =
+        consentLevelHierarchy[consent.consent_type as keyof typeof consentLevelHierarchy] || 1;
       const requiredLevel = consentLevelHierarchy[minimumLevel];
 
       if (currentLevel >= requiredLevel) {
@@ -269,8 +270,8 @@ async function logAuditEvent(eventType: string, data: any): Promise<void> {
       compliance_flags: {
         lgpd_compliant: true,
         purpose: data.purpose || 'system_operation',
-        data_categories: data.dataCategories || []
-      }
+        data_categories: data.dataCategories || [],
+      },
     };
 
     // Insert into audit_logs table (this table should be created)

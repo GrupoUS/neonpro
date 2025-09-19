@@ -9,7 +9,8 @@
     "dev": "tsc --watch",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "eslint src/**/*.ts",
+    "lint": "oxlint \"src/**/*.ts\"",
+    "lint:fix": "oxlint --fix \"src/**/*.ts\"",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

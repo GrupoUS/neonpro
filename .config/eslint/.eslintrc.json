@@ -8,10 +8,17 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "node",
+    "import",
+    "react-hooks"
   ],
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:node/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "rules": {
     "prettier/prettier": "error",

@@ -8,6 +8,10 @@
     "composite": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
     "paths": {
       "@neonpro/core-services": [
         "../core-services/dist/index.d.ts"

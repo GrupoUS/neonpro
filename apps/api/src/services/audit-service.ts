@@ -3,9 +3,9 @@
  * Integrates cryptographic audit logging with database storage and compliance reporting
  */
 
-import { createServerClient } from '../clients/supabase.js';
-import { cryptographicAuditLogger, type AuditLogEntry } from '../utils/crypto-audit.js';
 import type { Database } from '../../../../packages/database/src/types/supabase';
+import { createServerClient } from '../clients/supabase.js';
+import { type AuditLogEntry, cryptographicAuditLogger } from '../utils/crypto-audit.js';
 
 export interface AuditEventContext {
   userId?: string;
@@ -85,14 +85,14 @@ export class ComprehensiveAuditService {
   async logEvent(
     eventType: string,
     eventData: any,
-    context: AuditEventContext = {}
+    context: AuditEventContext = {},
   ): Promise<{ success: boolean; auditId?: string; error?: string }> {
     try {
       // Create cryptographically secure audit entry
       const auditEntry = await cryptographicAuditLogger.createAuditEntry(
         eventType,
         eventData,
-        context
+        context,
       );
 
       // Store in database
@@ -118,7 +118,7 @@ export class ComprehensiveAuditService {
           compliance_flags: auditEntry.complianceFlags,
           emergency_access: context.emergencyAccess || false,
           justification: context.justification,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -135,21 +135,20 @@ export class ComprehensiveAuditService {
     }
   }
 
-
   /**
    * Backward-compatible activity logger expected by routes/tests
    * Maps to logEvent with conventional eventType and context fields
    */
   async logActivity(params: {
-    userId: string
-    action: string
-    resourceType?: string
-    resourceId?: string
-    details?: any
-    ipAddress?: string
-    userAgent?: string
-    complianceContext?: string
-    sensitivityLevel?: 'low' | 'medium' | 'high' | 'critical'
+    userId: string;
+    action: string;
+    resourceType?: string;
+    resourceId?: string;
+    details?: any;
+    ipAddress?: string;
+    userAgent?: string;
+    complianceContext?: string;
+    sensitivityLevel?: 'low' | 'medium' | 'high' | 'critical';
   }): Promise<{ success: boolean; data?: any; error?: string }> {
     const {
       userId,
@@ -249,9 +248,9 @@ export class ComprehensiveAuditService {
 
       if (query.complianceIssues) {
         supabaseQuery = supabaseQuery.or(
-          'compliance_flags->lgpd_compliant.eq.false,' +
-          'compliance_flags->rls_enforced.eq.false,' +
-          'compliance_flags->consent_validated.eq.false'
+          'compliance_flags->lgpd_compliant.eq.false,'
+            + 'compliance_flags->rls_enforced.eq.false,'
+            + 'compliance_flags->consent_validated.eq.false',
         );
       }
 
@@ -259,7 +258,7 @@ export class ComprehensiveAuditService {
       if (query.offset) {
         supabaseQuery = supabaseQuery.range(
           query.offset,
-          (query.offset + (query.limit || 100)) - 1
+          (query.offset + (query.limit || 100)) - 1,
         );
       } else if (query.limit) {
         supabaseQuery = supabaseQuery.limit(query.limit);
@@ -290,13 +289,13 @@ export class ComprehensiveAuditService {
         previousHash: record.previous_hash,
         dataHash: record.data_hash,
         signature: record.signature,
-        complianceFlags: record.compliance_flags
+        complianceFlags: record.compliance_flags,
       }));
 
       return {
         success: true,
         logs: auditEntries,
-        totalCount: count || 0
+        totalCount: count || 0,
       };
     } catch (error) {
       console.error('Error in queryAuditLogs:', error);
@@ -309,7 +308,7 @@ export class ComprehensiveAuditService {
    */
   async validateAuditIntegrity(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<{
     success: boolean;
     validation?: any;
@@ -319,7 +318,7 @@ export class ComprehensiveAuditService {
       const query: AuditQuery = {
         startDate,
         endDate,
-        limit: 10000 // Large enough for most validation scenarios
+        limit: 10000, // Large enough for most validation scenarios
       };
 
       const result = await this.queryAuditLogs(query);
@@ -330,15 +329,15 @@ export class ComprehensiveAuditService {
       const validation = await cryptographicAuditLogger.validateAuditChain(result.logs);
       const forensicReport = cryptographicAuditLogger.generateForensicReport(
         result.logs,
-        validation
+        validation,
       );
 
       return {
         success: true,
         validation: {
           ...validation,
-          forensicReport
-        }
+          forensicReport,
+        },
       };
     } catch (error) {
       console.error('Error validating audit integrity:', error);
@@ -346,20 +345,19 @@ export class ComprehensiveAuditService {
     }
   }
 
-
   /**
    * Security event logging (lightweight adapter for tests)
    */
   async logSecurityEvent(params: {
-    eventType: string
-    severity: 'low' | 'medium' | 'high' | 'critical'
-    userId?: string
-    ipAddress?: string
-    resourceType?: string
-    resourceId?: string
-    details?: any
-    threatLevel?: 'low' | 'medium' | 'high' | 'critical'
-    requiresInvestigation?: boolean
+    eventType: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    userId?: string;
+    ipAddress?: string;
+    resourceType?: string;
+    resourceId?: string;
+    details?: any;
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
+    requiresInvestigation?: boolean;
   }): Promise<{ success: boolean; data?: any; error?: string }> {
     const {
       eventType,
@@ -417,14 +415,14 @@ export class ComprehensiveAuditService {
   async generateComplianceReport(
     startDate: Date,
     endDate: Date,
-    clinicId?: string
+    clinicId?: string,
   ): Promise<{ success: boolean; report?: ComplianceReport; error?: string }> {
     try {
       const query: AuditQuery = {
         startDate,
         endDate,
         clinicId,
-        limit: 50000 // Large limit for comprehensive reporting
+        limit: 50000, // Large limit for comprehensive reporting
       };
 
       const result = await this.queryAuditLogs(query);
@@ -436,14 +434,12 @@ export class ComprehensiveAuditService {
       const totalEvents = logs.length;
 
       // Calculate compliance metrics
-      const compliantEvents = logs.filter(log => 
-        log.complianceFlags.lgpd_compliant &&
-        log.complianceFlags.rls_enforced
+      const compliantEvents = logs.filter(log =>
+        log.complianceFlags.lgpd_compliant
+        && log.complianceFlags.rls_enforced
       ).length;
 
-      const emergencyAccess = logs.filter(log => 
-        log.complianceFlags.emergency_access
-      ).length;
+      const emergencyAccess = logs.filter(log => log.complianceFlags.emergency_access).length;
 
       // Identify violations
       const violations = [];
@@ -458,7 +454,7 @@ export class ComprehensiveAuditService {
             severity: 'high' as const,
             description: 'LGPD compliance violation detected',
             userId: log.userId,
-            clinicId: log.clinicId
+            clinicId: log.clinicId,
           });
         }
 
@@ -470,7 +466,7 @@ export class ComprehensiveAuditService {
             severity: 'critical' as const,
             description: 'RLS policy violation - unauthorized data access',
             userId: log.userId,
-            clinicId: log.clinicId
+            clinicId: log.clinicId,
           });
         }
 
@@ -482,7 +478,7 @@ export class ComprehensiveAuditService {
             severity: 'medium' as const,
             description: 'Emergency access without proper justification',
             userId: log.userId,
-            clinicId: log.clinicId
+            clinicId: log.clinicId,
           });
         }
       }
@@ -496,8 +492,8 @@ export class ComprehensiveAuditService {
           lgpd_compliant: logs.filter(l => l.complianceFlags.lgpd_compliant).length,
           rls_enforced: logs.filter(l => l.complianceFlags.rls_enforced).length,
           consent_validated: logs.filter(l => l.complianceFlags.consent_validated).length,
-          emergency_access: emergencyAccess
-        }
+          emergency_access: emergencyAccess,
+        },
       };
 
       // Generate recommendations
@@ -506,7 +502,7 @@ export class ComprehensiveAuditService {
       const report: ComplianceReport = {
         period: {
           start: startDate.toISOString(),
-          end: endDate.toISOString()
+          end: endDate.toISOString(),
         },
         summary: {
           totalEvents,
@@ -514,11 +510,11 @@ export class ComprehensiveAuditService {
           complianceRate: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 0,
           emergencyAccess,
           dataBreaches: 0, // Would be calculated based on specific breach detection logic
-          policyViolations: violations.length
+          policyViolations: violations.length,
         },
         breakdown,
         violations,
-        recommendations
+        recommendations,
       };
 
       return { success: true, report };
@@ -539,7 +535,7 @@ export class ComprehensiveAuditService {
     try {
       const query: AuditQuery = {
         clinicId,
-        limit: 100000 // Large limit for retention analysis
+        limit: 100000, // Large limit for retention analysis
       };
 
       const result = await this.queryAuditLogs(query);
@@ -579,22 +575,22 @@ export class ComprehensiveAuditService {
             dryRun: true,
             expiredCount: expiredEntries.length,
             expiredEntries: expiredEntries.slice(0, 10), // Show first 10 as sample
-            categories: retentionResult.report.categories
-          }
+            categories: retentionResult.report.categories,
+          },
         };
       }
 
       // Actual purging (with additional safety checks)
       const expiredIds = expiredEntries.map((entry: any) => entry.id);
-      
+
       if (expiredIds.length === 0) {
         return {
           success: true,
           purgeReport: {
             dryRun: false,
             purgedCount: 0,
-            message: 'No expired entries to purge'
-          }
+            message: 'No expired entries to purge',
+          },
         };
       }
 
@@ -605,8 +601,8 @@ export class ComprehensiveAuditService {
           expiredEntries.map((entry: any) => ({
             ...entry,
             archived_at: new Date().toISOString(),
-            purge_reason: 'retention_policy'
-          }))
+            purge_reason: 'retention_policy',
+          })),
         );
 
       if (archiveError) {
@@ -631,8 +627,8 @@ export class ComprehensiveAuditService {
           dryRun: false,
           purgedCount: expiredIds.length,
           archivedCount: expiredIds.length,
-          categories: retentionResult.report.categories
-        }
+          categories: retentionResult.report.categories,
+        },
       };
     } catch (error) {
       console.error('Error in purgeExpiredLogs:', error);
@@ -642,9 +638,12 @@ export class ComprehensiveAuditService {
 
   // Private helper methods
 
-  private aggregateByField(logs: AuditLogEntry[], field: keyof AuditLogEntry): Record<string, number> {
+  private aggregateByField(
+    logs: AuditLogEntry[],
+    field: keyof AuditLogEntry,
+  ): Record<string, number> {
     const aggregation: Record<string, number> = {};
-    
+
     for (const log of logs) {
       const value = log[field];
       const key = value ? String(value) : 'unknown';
@@ -676,14 +675,17 @@ export class ComprehensiveAuditService {
     }
 
     // Analyze access patterns
-    const emergencyAccessRate = logs.filter(l => l.complianceFlags.emergency_access).length / logs.length;
+    const emergencyAccessRate = logs.filter(l => l.complianceFlags.emergency_access).length
+      / logs.length;
     if (emergencyAccessRate > 0.05) { // More than 5% emergency access
       recommendations.push('High emergency access rate detected - review emergency procedures');
     }
 
     // General recommendations
     if (logs.length === 0) {
-      recommendations.push('No audit activity detected - verify audit logging is functioning correctly');
+      recommendations.push(
+        'No audit activity detected - verify audit logging is functioning correctly',
+      );
     }
 
     if (recommendations.length === 0) {

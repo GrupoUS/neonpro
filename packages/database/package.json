@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "prisma generate && tsc -p tsconfig.json",
+    "build": "prisma generate && tsc -b",
     "dev": "tsc -w -p tsconfig.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",

@@ -1,4 +1,4 @@
-import type { Database } from '@neonpro/database';
+import type { Database } from '../types/supabase';
 import type { 
   RTCAuditLogEntry, 
   MedicalDataClassification 
@@ -7,11 +7,11 @@ import { createClient } from '@supabase/supabase-js';
 import { BaseService } from './base.service';
 
 // Types for audit logging
+import type { ComplianceEventType } from '../types/events';
+
 export interface AuditLogRequest {
   sessionId: string;
-  eventType: 'session-start' | 'session-end' | 'participant-join' | 'participant-leave' | 
-             'recording-start' | 'recording-stop' | 'data-access' | 'consent-given' | 
-             'consent-revoked' | 'error-occurred';
+  eventType: ComplianceEventType;
   userId: string;
   userRole: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   dataClassification: MedicalDataClassification;

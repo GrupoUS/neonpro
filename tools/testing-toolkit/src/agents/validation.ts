@@ -102,7 +102,10 @@ export function validateHealthcareCompliance(data: any): {
     violations.push('Missing or incomplete audit trail (LGPD/ANVISA violation)');
   }
 
-  if (!data.incidentReports || !Array.isArray(data.incidentReports) || data.incidentReports.length === 0) {
+  if (
+    !data.incidentReports || !Array.isArray(data.incidentReports)
+    || data.incidentReports.length === 0
+  ) {
     violations.push('Missing incident response records (LGPD/ANVISA violation)');
   }
 

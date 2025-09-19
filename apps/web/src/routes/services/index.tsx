@@ -172,6 +172,6 @@ function ServicesPage() {
   );
 }
 
-export const Route = createFileRoute('/services')({
+export const Route = createFileRoute('/services/')({
   component: ServicesPage,
 });

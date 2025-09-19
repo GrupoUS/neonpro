@@ -1,15 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
 import type {
   ComplianceAlert,
   ContraindicationAlert,
   DashboardMetrics,
   ProcedureRecommendation,
   RecentActivity,
-} from '../components/aesthetic';
-import { AestheticAssessmentForm } from '../components/aesthetic/AestheticAssessmentForm';
-import { ProcedureRecommendations } from '../components/aesthetic/ProcedureRecommendations';
-import { ProfessionalDashboard } from '../components/aesthetic/ProfessionalDashboard';
+} from '@/components/aesthetic';
+import { AestheticAssessmentForm } from '@/components/aesthetic/AestheticAssessmentForm';
+import { ProcedureRecommendations } from '@/components/aesthetic/ProcedureRecommendations';
+import { ProfessionalDashboard } from '@/components/aesthetic/ProfessionalDashboard';
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
 
 function AestheticDemo() {
   const [currentStep, setCurrentStep] = useState<'assessment' | 'recommendations' | 'dashboard'>(
@@ -302,6 +302,6 @@ function AestheticDemo() {
   );
 }
 
-export const Route = createFileRoute('/aesthetic-demo')({
+export const Route = createFileRoute('/demos/aesthetic-demo')({
   component: AestheticDemo,
 });

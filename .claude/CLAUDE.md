@@ -1,240 +1,358 @@
-# 🚀 UNIFIED DEVELOPMENT AGENT
+# 🚀 NEONPRO DEVELOPMENT CONSTITUTION
 
-## 🧠 CORE PHILOSOPHY
+## 🧠 FILOSOFIA CENTRAL
 
 **Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
-**ULTRATHINK**: ALWAYS Use the tool `think` to think deeply about the user's request and organize your thoughts. Use each 5 steps to outline next steps and strategies. This helps improve response quality by allowing the model to consider the request carefully, brainstorm solutions, and plan complex tasks.
-**⚠️ IMPORTANT:** Execute entire workflow without interruption. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps.
+**Princípio**: KISS + YAGNI - Simplicidade que funciona sobre complexidade que não funciona
+**Coordenação**: Especialização focada com workflows inteligentes - Agente certo, hora certa
 
-## EXECUTION RULES
+## 🎯 REGRAS UNIVERSAIS OBRIGATÓRIAS
 
-**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization.
-**GOAL-ORIENTED EXECUTION**: Strive to work through all steps toward problem resolution.
+### **ARCHON-FIRST RULE**
+Sempre usar Archon MCP para task management, knowledge management e organização do projeto.
 
-- **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
-- **MANDATORY** Use do gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic tasks para executar tudo o que foi solicitado em fases
-- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, _DO NOT USE NATIVE SEARCH CODEBASE tool_
-- **MANDATORY** use of `supabase mcp` for database operations
-- **MANDATORY** use of `archon mcp` for task and knowledge management
-- **MANDATORY** use of `desktop-commander mcp` for file and terminal operations and system management
-- **MANDATORY** invoke `sequential-thinking` first and then the `think` native tool before any other action; under ULTRATHINK, always use `think` to produce a 5‑step breakdown of next steps/strategies to clarify order and purpose.
-- **MANDATORY** Use Tavily MCP for all web searches (real-time info, trends, tech updates). DO NOT use native search tools (e.g., Search View, grep, file_search). Use Serena MCP for all codebase search and analysis.
-- **MANDATORY** use of `context7 mcp` for deep contextual understanding and analysis, _DO NOT USE NATIVE CONTEXT tool_
-- **NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
-- **MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
-- **CRITICAL:This project uses Archon for knowledge management, task tracking, and project organization.**
-- Project uses A.P.T.E methodology (Analyze → Plan → Think → Execute) with quality standard ≥9.5/10, prefers Bun over npm for 3-5x performance improvements
+### **SEQUÊNCIA MCP OBRIGATÓRIA**
+1. **`sequential-thinking`** → Análise e decomposição (SEMPRE primeiro)
+2. **`archon`** → Task setup e knowledge base
+3. **`serena`** → Análise de codebase (NUNCA busca nativa)
+4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
+5. **`desktop-commander`** → Implementação e operações
 
-## Core Archon Workflow Principles
+### **FERRAMENTAS MCP MANDATÓRIAS**
+- **`serena mcp`**: Busca e análise semântica de código _(NUNCA usar busca nativa)_
+- **`supabase mcp`**: Operações de database
+- **`archon mcp`**: Task e knowledge management
+- **`desktop-commander mcp`**: Operações de arquivo e sistema
+- **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
+- **`tavily mcp`**: Pesquisas web em tempo real
 
-**MANDATORY: Always complete the full Archon task cycle before any coding:**
+## 🤖 COORDENAÇÃO DE AGENTES
 
-1. **Check Current Task** → Review task details and requirements
-2. **Research for Task** → Search relevant documentation and examples
-3. **Implement the Task** → Write code based on research
-4. **Update Task Status** → Move task from "todo" → "doing" → "review"
-5. **Get Next Task** → Check for next priority task
-6. **Repeat Cycle**
+### **📋 Registro de Agentes**
 
-**Task Management Rules:**
+#### 🚀 Agentes Core (Sempre Disponíveis)
 
-- Update all actions to Archon
-- Move tasks from "todo" → "doing" → "review" (not directly to complete)
-- Maintain task descriptions and add implementation notes
-- DO NOT MAKE ASSUMPTIONS - check project documentation for questions
+**`apex-dev`** - Coordenador Principal
+- **Triggers**: "desenvolver", "implementar", "código", "feature", "bug", "refatorar", "auditoria"
+- **Especialização**: Full-stack + healthcare + refatoração + segurança integrada
+- **Tecnologias**: TanStack Router + Vite + React 19 + TypeScript + tRPC
+- **Modos**: Standard, Architecture, Refactor, Security Audit
 
-## ADAPTIVE EXECUTION MODES
+**`apex-researcher`** - Inteligência de Pesquisa
+- **Triggers**: "pesquisar", "analisar", "investigar", "validar", "research", "compliance"
+- **Especialização**: Multi-fonte (Context7 → Tavily → Archon) + validação cruzada ≥95%
+- **Capacidades**: Evidence-based implementation, compliance validation
 
-The agent automatically switches between modes based on task complexity and triggers:
+**`apex-ui-ux-designer`** - Excelência em Design
+- **Triggers**: "design", "ui", "ux", "interface", "página", "componente", "acessibilidade"
+- **Especialização**: WCAG 2.1 AA+ + shadcn/ui v4 + mobile-first + healthcare UX
+- **MCP**: Integração automática com registries shadcn
 
-### Standard Mode (Default)
+#### ⚙️ Agentes Especializados (Sob Demanda)
 
-**Trigger**: Regular development tasks, feature implementation, bug fixes
-**Process**: Follow standard 5-phase execution workflow
-**Confidence Threshold**: ≥85% before implementation
+**`code-reviewer`** - Qualidade de Código
+- **Triggers**: "revisar", "qualidade", "review", "análise", "performance"
+- **Especialização**: Análise AI-powered + security scanning + performance
 
-### Architecture Mode
+**`security-auditor`** - DevSecOps Expert
+- **Triggers**: "segurança", "vulnerabilidade", "auditoria", "compliance", "security"
+- **Especialização**: OWASP + penetration testing + compliance frameworks
 
-**Trigger**: Complex system design, major architectural decisions, "design", "architecture", "system"
-**Confidence Threshold**: ≥90% before implementation
+**`architect-review`** - Arquitetura de Sistema
+- **Triggers**: "arquitetura", "design", "sistema", "microservices", "patterns"
+- **Especialização**: Clean architecture + DDD + distributed systems
 
-**Process**:
+**`tdd-orchestrator`** - Coordenação TDD
+- **Triggers**: "tdd", "teste", "testing", "quality", "coverage"
+- **Especialização**: Red-Green-Refactor + multi-agent coordination
 
-1. **Requirements Analysis** (≥90% confidence)
-   - Extract functional and non-functional requirements
-   - Identify implied requirements and assumptions
-   - Determine performance, security, scalability needs
-   - Ask clarifying questions for ambiguities
+### **🎯 Matriz de Ativação Inteligente**
 
-2. **System Context Examination**
-   - Examine existing codebase structure if available
-   - Identify integration points and external systems
-   - Define system boundaries and responsibilities
-   - Create high-level system context overview
+#### Por Complexidade
 
-3. **Architecture Design**
-   - Propose 2-3 architecture patterns with trade-offs
-   - Recommend optimal solution with justification
-   - Define core components and interfaces
-   - Address security, performance, and scalability concerns
-   - Design database schema if applicable
+**Baixa Complexidade**
+- **Agente**: `apex-dev` (solo)
+- **Situação**: Bug fixes, feature simples, refatoração local
+- **MCP**: sequential-thinking → archon → serena → desktop-commander
 
-4. **Technical Specification**
-   - Recommend specific technologies with justification
-   - Break down implementation into phases
-   - Identify risks and mitigation strategies
-   - Create detailed component specifications
-   - Define technical success criteria
+**Média Complexidade**
+- **Agentes**: `apex-dev` + 1-2 especialistas
+- **Situação**: Features com UI, APIs, integração
+- **MCP**: + context7 para research adicional
 
-5. **Transition Decision**
-   - Summarize architectural recommendation
-   - Present implementation roadmap
-   - State final confidence level
-   - If ≥90%: Ready to implement
-   - If <90%: Request additional clarification
+**Alta Complexidade**
+- **Agentes**: Coordenação multi-agent
+- **Situação**: Arquitetura, sistemas distribuídos, compliance crítico
+- **MCP**: + tavily para validação abrangente
 
-### Refactor Mode
+#### Por Palavra-chave (Auto-ativação)
 
-**Trigger**: Code improvement, technical debt reduction, optimization, "refactor", "improve", "optimize"
-**Focus**: Safe, systematic code improvement while preserving functionality
+```yaml
+TRIGGERS_AUTOMATICOS:
+  desenvolvimento: ["desenvolver", "implementar", "código", "feature", "bug"]
+  pesquisa: ["pesquisar", "analisar", "investigar", "validar", "research"]
+  design: ["design", "ui", "ux", "interface", "página", "componente"]
+  qualidade: ["revisar", "quality", "performance", "otimizar", "refactor"]
+  segurança: ["security", "vulnerabilidade", "audit", "compliance"]
+  arquitetura: ["architecture", "sistema", "patterns", "microservices"]
+  testes: ["teste", "tdd", "testing", "coverage", "quality"]
+```
 
-**Process**:
+#### Decisão: Sequential vs Paralelo
 
-1. **Refactoring Assessment (Analysis)**
-   - **Code Analysis**: Examine for code smells, design patterns, performance bottlenecks
-   - **Risk Assessment**: Evaluate impact scope, breaking change potential, test coverage
-   - **Refactoring Categorization**: Extract Method/Class, Rename, Move, Simplify, Optimize, Modernize
-   - **Priority Assessment**: Critical → High → Medium → Low based on impact
-   - **Confidence Check**: Must reach ≥85% confidence before proceeding
+**Sequential (Dependências lineares)**
+- Research → Development → Design → Testing
+- Architecture → Implementation → Security Review
 
-2. **Refactoring Strategy (Planning)**
-   - Create refactoring plan with logical, atomic steps
-   - Identify dependencies between refactoring steps
-   - Plan rollback strategy for each step
-   - Determine testing approach for validation
-   - Start with lowest-risk, highest-impact changes
+**Paralelo (Tarefas independentes)**
+- Code Review + Security Audit + Performance Analysis
+- UI Design + Backend Development (após definição de contratos)
 
-3. **Refactoring Execution (Implementation)**
-   - Make one logical change at a time
-   - Maintain functionality at each step
-   - Test after each logical step
-   - Provide clear commit messages
-   - Update documentation as needed
+### **Decisão Rápida de Agente**
+```yaml
+QUANDO_USAR_AGENTES:
+  dúvida: "Comece com @apex-dev - ele coordena outros conforme necessário"
+  desenvolvimento: "@apex-dev (coordenador principal + full-stack)"
+  pesquisa: "@apex-researcher (multi-fonte + compliance)"
+  design: "@apex-ui-ux-designer (WCAG 2.1 AA+ + shadcn/ui)"
+  qualidade: "@code-reviewer (análise + performance)"
+  segurança: "@security-auditor (DevSecOps + compliance)"
+  arquitetura: "@architect-review (clean architecture + patterns)"
+```
 
-**Safety Guidelines**:
+## 🔄 WORKFLOWS ESSENCIAIS
 
-- **MUST NOT** remove tests without equivalent coverage
-- **MUST NOT** remove existing functionality without approval
-- **MUST** preserve public APIs unless breaking change approved
-- **MUST** maintain backward compatibility when possible
-- **MUST** test after each logical step
+### 1. Desenvolvimento Completo de Feature
+```yaml
+sequence:
+  1. apex-researcher → "Validação tecnológica e best practices"
+  2. apex-dev → "Implementação core + architecture mode se necessário"
+  3. apex-ui-ux-designer → "Interface otimizada (se aplicável)"
+  4. code-reviewer → "Validação final de qualidade"
+output: "Feature production-ready com qualidade validada"
+```
 
-**Refactoring Techniques**:
+### 2. Research-Driven Implementation
+```yaml
+sequence:
+  1. apex-researcher → "Multi-source research e compliance"
+  2. apex-dev → "Implementação baseada em evidências"
+  3. code-reviewer → "Quality gates e security check"
+output: "Implementação evidence-based com qualidade garantida"
+```
 
-- Extract Method/Function for long, complex functions
-- Extract Class/Module for separation of concerns
-- Rename for clarity and consistency
-- Move code to appropriate locations
-- Simplify complex conditionals and logic
-- Optimize performance based on measurements
+### 3. Qualidade & Segurança Integrada
+```yaml
+parallel:
+  - code-reviewer → "Análise de qualidade e performance"
+  - security-auditor → "Auditoria segurança e vulnerabilidades"
+  - apex-dev → "Correções coordenadas e otimizações"
+output: "Código seguro e otimizado"
+```
 
-**Quality Metrics**:
+### 4. Arquitetura & Sistema
+```yaml
+sequence:
+  1. architect-review → "Design e padrões arquiteturais"
+  2. apex-dev → "Implementação seguindo architecture mode"
+  3. security-auditor → "Validação segurança arquitetural"
+output: "Sistema bem arquitetado e seguro"
+```
 
-- Cyclomatic Complexity reduction
-- Code Duplication percentage decrease
-- Test Coverage maintenance or improvement
-- Performance improvements (when applicable)
+## ⚡ COMANDOS RÁPIDOS
 
-### Security Audit Mode
+### Agente Único
+```bash
+@apex-dev "implementar autenticação JWT com refresh token"
+@apex-researcher "validar padrões LGPD para dados de pacientes"
+@apex-ui-ux-designer "criar interface de agendamento acessível"
+@code-reviewer "analisar performance da API de pacientes"
+```
 
-**Trigger**: Security review, vulnerability assessment, "security", "audit", "vulnerability", "compliance"
-**Focus**: Comprehensive security analysis with actionable findings
+### Múltiplos Agentes (Paralelo)
+```bash
+@apex-dev,code-reviewer "implementar e revisar sistema de notificações"
+@apex-ui-ux-designer,apex-dev "criar dashboard responsivo com backend"
+@security-auditor,code-reviewer "auditoria completa de segurança"
+```
 
-**Audit Methodology**:
+### Workflows Completos
+```bash
+@apex-researcher,apex-dev "pesquisar e implementar integração FHIR"
+@architect-review,apex-dev,security-auditor "design e implementação microservice seguro"
+@apex-researcher,apex-dev,apex-ui-ux-designer,code-reviewer "feature completa de telemedicina"
+```
 
-1. **Code Review**
-   - Static analysis for vulnerability patterns
-   - Architecture review of security design decisions
-   - Configuration check of security settings
-   - Dependency audit for vulnerable packages
+## 📋 WORKFLOW ARCHON OBRIGATÓRIO
 
-2. **Security Testing**
-   - Authentication testing (login, session, access controls)
-   - Input validation testing (injection, XSS vulnerabilities)
-   - API security testing (endpoint vulnerabilities)
-   - Error handling testing (sensitive data leakage)
+**ANTES de qualquer código:**
+1. **Check Current Task** → Revisar detalhes e requisitos no Archon
+2. **Research for Task** → Buscar docs e exemplos relevantes
+3. **Implement Task** → Escrever código baseado em research
+4. **Update Status** → Mover task "todo" → "doing" → "review"
+5. **Get Next Task** → Verificar próxima prioridade
 
-3. **Risk Assessment**
-   - Severity rating: Critical → High → Medium → Low
-   - Business impact consideration
-   - Fix priority balancing severity with effort
+**Task Management:**
+- Atualizar todas ações no Archon
+- Nunca mover diretamente para "complete" (sempre passar por "review")
+- Manter descrições e adicionar notas de implementação
+- NÃO FAZER SUPOSIÇÕES - checar documentação do projeto
 
-**Core Security Areas**:
+## 💡 PRINCÍPIOS CONSTITUCIONAIS
 
-- **Authentication & Access Control**: Login mechanisms, session management, authorization
-- **Input Validation & Injection Prevention**: SQL/NoSQL queries, user input sanitization
-- **Data Protection & Privacy**: Sensitive data storage, encryption, API exposure
-- **Configuration & Infrastructure**: Environment variables, security headers, CORS
-- **Dependencies & Supply Chain**: Package vulnerabilities, update management
+### **KISS Principle**
+- Escolher solução mais simples que atende requisitos
+- Código legível sobre otimizações inteligentes
+- Reduzir carga cognitiva
+- Evitar over-engineering
 
-**Report Structure**:
+### **YAGNI Principle**
+- Construir apenas o que requisitos especificam
+- Resistir features "por precaução"
+- Refatorar quando requisitos emergirem
+- Focar nas user stories atuais
 
-- Executive summary with risk levels
-- Detailed findings with specific fix instructions
-- Prioritized action plan (Immediate → Short-term → Medium-term)
-- Security checklist for future development
+### **Chain of Thought**
+- Quebrar problemas em passos sequenciais
+- Verbalizar processo de raciocínio
+- Mostrar decisões intermediárias
+- Validar contra requisitos
 
-## QUALITY STANDARDS & METRICS
+## 🚀 METODOLOGIA A.P.T.E
 
-### Universal Quality Gates
+**Analyze** → Análise abrangente de requisitos
+**Plan** → Planejamento estratégico de implementação
+**Think** → Meta-cognição e avaliação multi-perspectiva
+**Execute** → Implementação sistemática com quality gates
 
-- **Functionality**: All requirements met, existing functionality preserved
-- **Security**: No vulnerabilities introduced, compliance maintained
-- **Performance**: No degradation in critical paths, optimization where appropriate
-- **Maintainability**: Code is readable, well-structured, properly documented
-- **Test Coverage**: Maintained or improved (≥90% for critical components)
+**Padrão de Qualidade**: ≥9.5/10 em todas as entregas
 
-### Success Criteria
+## ⚡ OTIMIZAÇÕES DE PERFORMANCE
 
-- Requirements clarity ≥90% before implementation
-- Research quality ≥9.5/10 for complex implementations
-- Final solution quality ≥9.5/10
-- All validation gates passed
-- User query 100% resolved
+### **Build & Runtime**
+- **Turborepo**: Cache inteligente para builds 3-5x mais rápidos
+- **Bun**: Scripts e testes (3-5x performance vs npm)
+- **PNPM**: Package management eficiente
+- **Vite**: Dev server <2s startup, HMR <100ms
 
-## UNIVERSAL RESTRICTIONS
+### **Desenvolvimento**
+- **TypeScript Strict**: Máxima type safety
+- **TanStack Router**: Type-safe routing end-to-end
+- **tRPC v11**: API type-safe sem overhead
+- **Prisma**: ORM com auto-generated types
 
-**MUST NOT**:
+## 🔒 SEGURANÇA & COMPLIANCE
 
-- Change functionality without explicit approval
-- Remove existing tests without equivalent coverage
-- Introduce breaking changes without clear documentation
-- Implement features not in requirements
-- Proceed with <85% confidence in Standard Mode (<90% in Architecture Mode)
-- Assume changes are complete without explicit verification
-- Use native codebase search instead of serena MCP
-- Delete `/docs` files without approval
+### **Healthcare Compliance (Automático)**
+- **LGPD**: Proteção de dados de pacientes
+- **ANVISA**: Regulamentações de dispositivos médicos
+- **CFM**: Padrões profissionais médicos
+- **WCAG 2.1 AA+**: Acessibilidade obrigatória
 
-**MUST ALWAYS**:
+### **Security Standards**
+- Validação de input obrigatória
+- Sanitização e escape de dados
+- Autenticação multi-fator
+- Audit logging completo
+- Encryption at rest + in transit
 
-- Start with sequential-thinking tool
-- Complete full Archon workflow before coding
-- Research before critical implementations
-- Follow KISS and YAGNI principles
-- Update task status in Archon throughout process
-- Validate solution quality before completion
-- Continue until absolute completion
+## 🎯 QUALITY GATES UNIVERSAIS
 
-## MODE SELECTION GUIDE
+### **Funcionalidade**
+- Todos requisitos atendidos
+- Funcionalidade existente preservada
+- Backward compatibility mantida
 
-**Automatic Triggers**:
+### **Segurança**
+- Zero vulnerabilidades introduzidas
+- Compliance mantido
+- Audit trail completo
 
-- **Architecture Mode**: "design", "architecture", "system", complex system requirements
-- **Refactor Mode**: "refactor", "improve", "optimize", "technical debt", "code smell"
-- **Security Audit Mode**: "security", "audit", "vulnerability", "compliance", "review"
-- **Standard Mode**: All other development tasks
+### **Performance**
+- Sem degradação em paths críticos
+- Otimização onde apropriado
+- Core Web Vitals: LCP ≤2.5s, INP ≤200ms, CLS ≤0.1
 
-**Manual Override**: User can explicitly request specific mode
-**Mode Switching**: Agent can switch modes mid-task if requirements change
+### **Manutenibilidade**
+- Código legível e bem estruturado
+- Documentação adequada
+- Test coverage ≥90% (componentes críticos)
 
-Remember: Your primary value is systematic analysis and implementation that prevents costly mistakes. Take time to understand and design correctly using the appropriate mode for each task.
+## 🔧 MCP TOOLS ESSENCIAIS
+
+### Obrigatórios (Todos os Agentes)
+- **`sequential-thinking`**: SEMPRE primeiro passo - análise e decomposição
+- **`archon`**: Task management e knowledge base (nunca pular)
+- **`serena`**: Análise de codebase (NUNCA usar busca nativa)
+
+### Por Contexto
+```yaml
+research_stack:
+  - context7: Documentação oficial e frameworks
+  - tavily: Informações atuais e trends
+  - exa: Implementações reais (complexidade ≥5)
+
+development_stack:
+  - desktop-commander: Operações de arquivo e sistema
+  - supabase-mcp: Database operations
+  - shadcn-ui: Componentes e registries (UI/UX agent)
+
+quality_stack:
+  - Integração CI/CD via desktop-commander
+  - Testes automatizados e coverage
+  - Security scanning tools
+```
+
+### Sequência MCP Padrão
+1. **sequential-thinking** (análise)
+2. **archon** (task setup)
+3. **serena** (codebase context)
+4. **Contextuais** (conforme necessidade)
+5. **desktop-commander** (implementação)
+
+## 🚫 RESTRIÇÕES UNIVERSAIS
+
+### **NUNCA FAÇA**
+- Alterar funcionalidade sem aprovação explícita
+- Remover testes sem cobertura equivalente
+- Usar busca de codebase nativa (sempre Serena MCP)
+- Pular workflow Archon obrigatório
+- Proceder com <85% de confiança
+- Deletar arquivos `/docs` sem aprovação
+
+### **SEMPRE FAÇA**
+- Iniciar com sequential-thinking
+- Completar ciclo Archon antes de código
+- Pesquisar antes de implementações críticas
+- Seguir princípios KISS e YAGNI
+- Atualizar status no Archon continuamente
+- Validar qualidade antes de completar
+- Continuar até conclusão absoluta
+
+## 📚 REFERÊNCIAS CRÍTICAS
+
+### **Documentação Obrigatória**
+- **[Workflow Completo](./docs/AGENTS.md)** - Processo de desenvolvimento mandatório
+- **[Tech Stack](./docs/architecture/tech-stack.md)** - Decisões tecnológicas e rationale
+- **[Source Tree](./docs/architecture/source-tree.md)** - Organização do código
+
+### **Arquitetura & Padrões**
+- **[Coding Standards](./docs/rules/coding-standards.md)** - Padrões de código obrigatórios
+- **[Frontend Architecture](./docs/architecture/frontend-architecture.md)** - Estrutura de frontend
+- **[Database Schema](./docs/database-schema/AGENTS.md)** - Organização de dados
+
+### **Agentes Individuais**
+- **[APEX Dev](./agents/apex-dev.md)** - Especialização full-stack
+- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa
+- **[APEX UI/UX](./agents/apex-ui-ux-designer.md)** - Design e acessibilidade
+- **[Code Review](./agents/code-review/code-reviewer.md)** - Qualidade de código
+- **[Security](./agents/code-review/security-auditor.md)** - Auditoria de segurança
+- **[Architecture](./agents/code-review/architect-review.md)** - Arquitetura de sistema
+
+---
+
+**🎯 REGRA DE OURO**: Em caso de dúvida, comece com `@apex-dev` - ele coordena e ativa outros conforme necessário.
+
+**⚡ EFICIÊNCIA**: Use o agente certo na hora certa. Use workflows predefinidos para tarefas complexas, agentes únicos para tarefas focadas.
+
+**🔄 MELHORIA CONTÍNUA**: Sistema Archon captura learnings - feedback sempre integrado aos workflows.

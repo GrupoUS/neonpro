@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import app from './app.js';
+import app from './app';
 
 // This is the Node entrypoint for the API. In serverless/Vercel, we use files under vercel/.
 const port = Number(process.env.PORT || 3005);

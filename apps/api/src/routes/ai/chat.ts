@@ -190,31 +190,31 @@ app.post(
 
       // Log activity for audit trail
       const processingTime = Date.now() - startTime;
-      
+
       // Handle different response structures for streaming vs regular
-      const auditDetails = requestData.streaming 
+      const auditDetails = requestData.streaming
         ? {
-            messageLength: requestData.message.length,
-            streamId: responseData.streamId,
-            healthcareContext: requestData.context?.healthcareContext || true,
-            streaming: true,
-          }
+          messageLength: requestData.message.length,
+          streamId: responseData.streamId,
+          healthcareContext: requestData.context?.healthcareContext || true,
+          streaming: true,
+        }
         : {
-            messageLength: requestData.message.length,
-            model: responseData.model,
-            confidence: responseData.confidence,
-            tokens: responseData.tokensUsed,
-            processingTime: responseData.responseTime,
-            healthcareContext: requestData.context?.healthcareContext || true,
-            streaming: false,
-          };
+          messageLength: requestData.message.length,
+          model: responseData.model,
+          confidence: responseData.confidence,
+          tokens: responseData.tokensUsed,
+          processingTime: responseData.responseTime,
+          healthcareContext: requestData.context?.healthcareContext || true,
+          streaming: false,
+        };
 
       await currentServices.auditService.logActivity({
         userId: _user.id,
         action: 'ai_chat_message',
         resourceType: 'ai_conversation',
-        resourceId: requestData.streaming 
-          ? responseData.streamId 
+        resourceId: requestData.streaming
+          ? responseData.streamId
           : (requestData.conversationId || responseData.conversationId || 'new_conversation'),
         details: auditDetails,
         ipAddress,

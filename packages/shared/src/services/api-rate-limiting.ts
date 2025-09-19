@@ -273,7 +273,7 @@ export type RateLimitConfig = z.infer<typeof RateLimitConfigSchema>;
 /**
  * Abstract base class for rate limiting algorithms
  */
-abstract class RateLimitAlgorithm {
+abstract class RateLimitAlgorithmBase {
   protected config: RateLimitTier;
   protected storage: Map<string, any> = new Map();
 
@@ -289,7 +289,7 @@ abstract class RateLimitAlgorithm {
 /**
  * Sliding window rate limiting algorithm
  */
-class SlidingWindowAlgorithm extends RateLimitAlgorithm {
+class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
   async checkLimit(key: string, context: RateLimitContext): Promise<RateLimitResult> {
     const now = Date.now();
     const windowMs = 60 * 1000; // 1 minute window
@@ -346,7 +346,7 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithm {
 /**
  * Token bucket rate limiting algorithm
  */
-class TokenBucketAlgorithm extends RateLimitAlgorithm {
+class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
   async checkLimit(key: string, context: RateLimitContext): Promise<RateLimitResult> {
     const now = Date.now();
     const capacity = this.config.burstSize;
@@ -412,7 +412,7 @@ class TokenBucketAlgorithm extends RateLimitAlgorithm {
  */
 export class APIRateLimitingService {
   private config: RateLimitConfig;
-  private algorithms: Map<string, RateLimitAlgorithm> = new Map();
+  private algorithms: Map<string, RateLimitAlgorithmBase> = new Map();
   private metrics: Map<string, any> = new Map();
   private isInitialized = false;
 
@@ -453,7 +453,7 @@ export class APIRateLimitingService {
     for (const tier of this.config.tiers) {
       const algorithmType = this.config.defaultAlgorithm;
       
-      let algorithm: RateLimitAlgorithm;
+      let algorithm: RateLimitAlgorithmBase;
       switch (algorithmType) {
         case 'sliding_window':
           algorithm = new SlidingWindowAlgorithm(tier);
@@ -633,7 +633,7 @@ export class APIRateLimitingService {
         allowed: true,
         reason: 'Rate limiting service error - defaulting to allow',
         tier: 'error',
-        algorithm: 'none',
+        algorithm: 'sliding_window',
         currentUsage: 0,
         limitValue: 0,
         remainingRequests: 0,

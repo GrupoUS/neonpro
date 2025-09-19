@@ -14,19 +14,15 @@
  */
 
 import { createDataSubjectRequest } from '@neonpro/shared';
-import {
-  anonymizePatientData,
-  createPatientWithDefaults,
-  Patient,
-} from '@neonpro/shared';
+import { anonymizePatientData, createPatientWithDefaults, Patient } from '@neonpro/shared';
 import { validatePatientData } from '@neonpro/shared';
-import { 
-  getHealthcarePrismaClient, 
+import {
   createPrismaWithContext,
+  getHealthcarePrismaClient,
+  HealthcareComplianceError,
   type HealthcareContext,
   type HealthcarePrismaClient,
-  HealthcareComplianceError,
-  UnauthorizedHealthcareAccessError
+  UnauthorizedHealthcareAccessError,
 } from '../clients/prisma.js';
 
 // Service response interface
@@ -102,7 +98,7 @@ export interface PatientSummary {
     marketing: boolean;
     lastUpdated: Date;
   };
-}// Access tracking interface
+} // Access tracking interface
 export interface AccessInfo {
   userId: string;
   action: string;
@@ -167,7 +163,7 @@ export class PatientService {
         throw new HealthcareComplianceError(
           'Invalid healthcare context for patient creation',
           'CONTEXT_VALIDATION_FAILED',
-          'LGPD'
+          'LGPD',
         );
       }
 
@@ -176,7 +172,7 @@ export class PatientService {
         throw new HealthcareComplianceError(
           'Clinic context required for patient creation',
           'CLINIC_CONTEXT_REQUIRED',
-          'CFM'
+          'CFM',
         );
       }
 
@@ -239,8 +235,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error creating patient:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 
@@ -249,9 +248,10 @@ export class PatientService {
         error: 'Erro interno do servidor',
       };
     }
-  }  /**
+  } /**
    * Get patient by ID with RLS validation
    */
+
   async getPatientById(patientId: string): Promise<ServiceResponse<Patient>> {
     try {
       // Validate healthcare context
@@ -259,12 +259,12 @@ export class PatientService {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient access',
           'patient',
-          patientId
+          patientId,
         );
       }
 
       const clinicId = this.prismaClient.currentContext?.clinicId;
-      
+
       const patientRecord = await this.prismaClient.patient.findFirst({
         where: {
           id: patientId,
@@ -300,8 +300,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error getting patient by ID:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 
@@ -317,13 +320,14 @@ export class PatientService {
    */
   async listPatients(options: SearchOptions): Promise<ServiceResponse<PatientListResponse>> {
     try {
-      const { userId, page, limit, search, filters = {}, sortBy = 'fullName', sortOrder = 'asc' } = options;
+      const { userId, page, limit, search, filters = {}, sortBy = 'fullName', sortOrder = 'asc' } =
+        options;
 
       // Validate healthcare context
       if (!await this.prismaClient.validateContext()) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient listing',
-          'patient_list'
+          'patient_list',
         );
       }
 
@@ -332,7 +336,7 @@ export class PatientService {
         throw new HealthcareComplianceError(
           'Clinic context required for patient listing',
           'CLINIC_CONTEXT_REQUIRED',
-          'CFM'
+          'CFM',
         );
       }
 
@@ -439,8 +443,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error listing patients:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 
@@ -449,9 +456,10 @@ export class PatientService {
         error: 'Erro interno do servidor',
       };
     }
-  }  /**
+  } /**
    * Convert Prisma patient record to Patient interface
    */
+
   private convertPrismaToPatient(record: any): Patient {
     return {
       id: record.id,
@@ -500,9 +508,10 @@ export class PatientService {
         medicalNotes: record.patientNotes,
       },
     };
-  }  /**
+  } /**
    * Search patients by name or other criteria - Updated for real database
    */
+
   async searchPatients(
     query: string,
     options?: SearchOptions,
@@ -520,7 +529,7 @@ export class PatientService {
       };
 
       const result = await this.listPatients(searchOptions);
-      
+
       if (!result.success) {
         return {
           success: false,
@@ -550,12 +559,12 @@ export class PatientService {
       if (!await this.prismaClient.validateContext()) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for CPF search',
-          'patient_cpf'
+          'patient_cpf',
         );
       }
 
       const clinicId = this.prismaClient.currentContext?.clinicId;
-      
+
       const patientRecord = await this.prismaClient.patient.findFirst({
         where: {
           cpf,
@@ -579,8 +588,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error finding patient by CPF:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 
@@ -589,9 +601,10 @@ export class PatientService {
         error: 'Erro interno do servidor',
       };
     }
-  }  /**
+  } /**
    * Update patient information - Updated for real database
    */
+
   async updatePatient(
     patientId: string,
     updateData: Partial<Patient>,
@@ -602,12 +615,12 @@ export class PatientService {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient update',
           'patient',
-          patientId
+          patientId,
         );
       }
 
       const clinicId = this.prismaClient.currentContext?.clinicId;
-      
+
       // Check if patient exists and belongs to clinic
       const existingPatient = await this.prismaClient.patient.findFirst({
         where: {
@@ -672,8 +685,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error updating patient:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 
@@ -682,9 +698,10 @@ export class PatientService {
         error: 'Erro interno do servidor',
       };
     }
-  }  /**
+  } /**
    * Soft delete patient (LGPD compliance) - Updated for real database
    */
+
   async deletePatient(patientId: string): Promise<ServiceResponse> {
     try {
       // Validate healthcare context
@@ -692,12 +709,12 @@ export class PatientService {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient deletion',
           'patient',
-          patientId
+          patientId,
         );
       }
 
       const clinicId = this.prismaClient.currentContext?.clinicId;
-      
+
       const patient = await this.prismaClient.patient.findFirst({
         where: {
           id: patientId,
@@ -730,8 +747,11 @@ export class PatientService {
       };
     } catch (error) {
       console.error('Error deleting patient:', error);
-      
-      if (error instanceof HealthcareComplianceError || error instanceof UnauthorizedHealthcareAccessError) {
+
+      if (
+        error instanceof HealthcareComplianceError
+        || error instanceof UnauthorizedHealthcareAccessError
+      ) {
         throw error;
       }
 

@@ -1,27 +1,27 @@
-import { AnimatedModal } from '@components/ui/animated-modal';
-import { Badge } from '@components/ui/badge';
-import { Button } from '@components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
-import { Checkbox } from '@components/ui/checkbox';
-import { Input } from '@components/ui/input';
-import { Label } from '@components/ui/label';
+import { AnimatedModal } from '@/components/ui/animated-modal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@components/ui/select';
-import { Textarea } from '@components/ui/textarea';
-import { UniversalButton } from '@components/ui/universal-button';
-import { useToast } from '@hooks/use-toast';
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { UniversalButton } from '@/components/ui/universal-button';
+import { useToast } from '@/hooks/use-toast';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useState } from 'react';
 
-export const Route = createFileRoute('/patients/register/')({
+export const Route = createFileRoute('/patients/register')({
   component: PatientRegister,
 });
 
@@ -119,7 +119,7 @@ const insuranceProviders = [
   'Outra',
 ];
 
-export function PatientRegister() {
+function PatientRegister() {
   const [formData, setFormData] = useState<PatientFormData>({
     name: '',
     email: '',

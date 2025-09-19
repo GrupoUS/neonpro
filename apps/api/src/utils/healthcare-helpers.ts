@@ -1,6 +1,6 @@
 /**
  * Healthcare-Specific Helper Functions with LGPD Compliance
- * 
+ *
  * Provides utility functions for common healthcare operations including:
  * - Patient data validation and sanitization
  * - LGPD compliance utilities (consent, data export, deletion)
@@ -19,7 +19,7 @@ export class BrazilianHealthcareValidator {
    */
   static validateCPF(cpf: string): boolean {
     if (!cpf) return false;
-    
+
     // Remove non-numeric characters
     const cleanCPF = cpf.replace(/[^\d]/g, '');
 
@@ -54,9 +54,9 @@ export class BrazilianHealthcareValidator {
    */
   static validateBrazilianPhone(phone: string): boolean {
     if (!phone) return false;
-    
+
     const cleanPhone = phone.replace(/[^\d]/g, '');
-    
+
     // Mobile: 11 digits (2 digit area code + 9 + 8 digits)
     // Landline: 10 digits (2 digit area code + 8 digits)
     return cleanPhone.length === 10 || cleanPhone.length === 11;
@@ -67,9 +67,9 @@ export class BrazilianHealthcareValidator {
    */
   static validateCFM(cfmNumber: string, state?: string): boolean {
     if (!cfmNumber) return false;
-    
+
     const cleanCFM = cfmNumber.replace(/[^\d]/g, '');
-    
+
     // CFM numbers are typically 4-6 digits
     if (cleanCFM.length < 4 || cleanCFM.length > 6) {
       return false;
@@ -84,9 +84,9 @@ export class BrazilianHealthcareValidator {
    */
   static validateRG(rg: string): boolean {
     if (!rg) return false;
-    
+
     const cleanRG = rg.replace(/[^\dXx]/g, '');
-    
+
     // RG format varies by state, but generally 7-9 characters
     return cleanRG.length >= 7 && cleanRG.length <= 9;
   }
@@ -113,7 +113,7 @@ export class LGPDComplianceHelper {
     // Remove email patterns
     sanitized = sanitized.replace(
       /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-      '[EMAIL_REMOVED]'
+      '[EMAIL_REMOVED]',
     );
 
     // Remove RG patterns
@@ -132,7 +132,7 @@ export class LGPDComplianceHelper {
     prisma: HealthcarePrismaClient,
     patientId: string,
     purpose: string,
-    dataCategories: string[]
+    dataCategories: string[],
   ): Promise<{
     isValid: boolean;
     consentRecord?: any;
@@ -158,7 +158,7 @@ export class LGPDComplianceHelper {
       // Check if all required data categories are covered
       const consentedCategories = consentRecords.flatMap(record => record.dataCategories);
       const missingCategories = dataCategories.filter(
-        category => !consentedCategories.includes(category)
+        category => !consentedCategories.includes(category),
       );
 
       const isValid = missingCategories.length === 0;
@@ -190,7 +190,7 @@ export class LGPDComplianceHelper {
       ipAddress?: string;
       userAgent?: string;
       expiresAt?: Date;
-    }
+    },
   ): Promise<any> {
     try {
       const consentRecord = await prisma.consentRecord.create({
@@ -224,7 +224,7 @@ export class LGPDComplianceHelper {
           consentType: consentData.consentType,
           purpose: consentData.purpose,
           dataCategories: consentData.dataCategories,
-        }
+        },
       );
 
       return consentRecord;
@@ -240,7 +240,7 @@ export class LGPDComplianceHelper {
   static async withdrawConsent(
     prisma: HealthcarePrismaClient,
     consentId: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     try {
       await prisma.consentRecord.update({
@@ -274,7 +274,7 @@ export class HealthcareAppointmentHelper {
    */
   static async calculateNoShowRisk(
     prisma: HealthcarePrismaClient,
-    appointmentId: string
+    appointmentId: string,
   ): Promise<number> {
     try {
       const appointment = await prisma.appointment.findUnique({
@@ -285,8 +285,8 @@ export class HealthcareAppointmentHelper {
               appointments: {
                 where: {
                   status: 'no_show',
-                  createdAt: { 
-                    gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000) 
+                  createdAt: {
+                    gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000),
                   },
                 },
               },
@@ -316,8 +316,8 @@ export class HealthcareAppointmentHelper {
       }
 
       // Short notice appointments (+15 points)
-      const hoursUntilAppointment = 
-        (new Date(appointment.startTime).getTime() - Date.now()) / (1000 * 60 * 60);
+      const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now())
+        / (1000 * 60 * 60);
       if (hoursUntilAppointment < 24) {
         riskScore += 15;
       }
@@ -345,7 +345,7 @@ export class HealthcareAppointmentHelper {
     professionalId: string,
     startTime: Date,
     endTime: Date,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<any[]> {
     try {
       const conflicts = await prisma.appointment.findMany({
@@ -404,7 +404,7 @@ export class HealthcareAppointmentHelper {
     prisma: HealthcarePrismaClient,
     professionalId: string,
     date: Date,
-    serviceDurationMinutes: number
+    serviceDurationMinutes: number,
   ): Promise<Array<{ startTime: Date; endTime: Date }>> {
     try {
       const professional = await prisma.professional.findUnique({
@@ -422,7 +422,7 @@ export class HealthcareAppointmentHelper {
       // Get existing appointments for the date
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
@@ -444,10 +444,10 @@ export class HealthcareAppointmentHelper {
 
       // Calculate available slots (simplified logic)
       const availableSlots: Array<{ startTime: Date; endTime: Date }> = [];
-      
+
       // This would contain more complex logic for calculating available slots
       // based on professional schedule, breaks, and existing appointments
-      
+
       return availableSlots;
     } catch (error) {
       console.error('Available time slots calculation failed:', error);
@@ -477,7 +477,7 @@ export class PatientDataHelper {
     const missingFields = requiredFields.filter(field => !patientData[field]);
 
     const warnings: string[] = [];
-    
+
     // Check for Brazilian-specific requirements
     if (!patientData.cpf && !patientData.passportNumber) {
       warnings.push('Either CPF or passport number should be provided');
@@ -501,7 +501,7 @@ export class PatientDataHelper {
     const prefix = clinicId.substring(0, 4).toUpperCase();
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    
+
     return `${prefix}${timestamp}${random}`;
   }
 
@@ -540,7 +540,7 @@ export class PatientDataHelper {
 // Export all helper classes
 export {
   BrazilianHealthcareValidator,
-  LGPDComplianceHelper,
   HealthcareAppointmentHelper,
+  LGPDComplianceHelper,
   PatientDataHelper,
 };

@@ -14,7 +14,7 @@ import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Crown, ExternalLink, RefreshCw } from 'lucide-react';
 
-export const Route = createFileRoute('/subscription')({
+export const Route = createFileRoute('/financial/subscription')({
   component: SubscriptionPage,
 });
 

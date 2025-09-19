@@ -1,6 +1,6 @@
 ---
 title: "NeonPro Source Tree Organization"
-last_updated: 2025-09-17
+last_updated: 2025-09-18
 form: reference
 tags: [codebase, organization, monorepo, navigation]
 related:
@@ -20,14 +20,38 @@ NeonPro uses a **Turborepo-based monorepo** with 2 applications and 7 shared pac
 ```
 neonpro/
 ├── 📁 apps/                              # Application Layer (2 apps)
-│   ├── 📁 api/                           # Backend API (Hono.dev + Supabase Functions)
+│   ├── 📁 api/                           # Backend API (tRPC v11 + Prisma + Supabase)
 │   │   ├── 📄 package.json               # API dependencies & scripts
 │   │   ├── 📄 tsconfig.json              # TypeScript configuration
 │   │   └── 📁 src/                       # API source code
+│   │       ├── 📁 trpc/                  # tRPC infrastructure
+│   │       │   ├── 📄 context.ts         # tRPC context with Prisma + Supabase
+│   │       │   ├── 📄 trpc.ts            # Core tRPC setup with middleware
+│   │       │   ├── 📄 schemas.ts         # Valibot validation schemas
+│   │       │   ├── 📄 router.ts          # Main AppRouter composition
+│   │       │   ├── 📄 index.ts           # Clean exports for client integration
+│   │       │   ├── 📁 routers/           # Domain-specific tRPC routers
+│   │       │   │   ├── 📄 patients.ts    # LGPD-compliant patient operations
+│   │       │   │   ├── 📄 appointments.ts # CFM validation + no-show prediction
+│   │       │   │   └── 📄 ai.ts          # Portuguese healthcare AI support
+│   │       │   └── 📁 middleware/        # Healthcare compliance middleware
+│   │       │       ├── 📄 lgpd-audit.ts  # LGPD audit logging
+│   │       │       ├── 📄 cfm-validation.ts # CFM license validation
+│   │       │       └── 📄 prisma-rls.ts  # Row Level Security enforcement
+│   │       ├── 📁 services/              # Healthcare business logic services
+│   │       │   ├── 📄 lgpd-compliance.ts # Data lifecycle management
+│   │       │   ├── 📄 no-show-prediction.ts # AI-powered predictions
+│   │       │   └── 📄 telemedicine.ts    # CFM-compliant telemedicine
 │   │       ├── 📁 types/                 # API-specific types
-│   │       └── 📁 __tests__/             # API test suites
-│   │           ├── 📁 auth/              # Authentication tests
-│   │           └── 📁 routes/            # Route handler tests
+│   │       └── 📁 tests/                 # API test suites
+│   │           ├── 📁 contract/          # tRPC contract tests
+│   │           │   ├── 📄 patients.contract.test.ts
+│   │           │   ├── 📄 appointments.contract.test.ts
+│   │           │   └── 📄 ai.contract.test.ts
+│   │           └── 📁 integration/       # Healthcare compliance tests
+│   │               ├── 📄 lgpd-compliance.test.ts
+│   │               ├── 📄 cfm-telemedicine.test.ts
+│   │               └── 📄 anvisa-compliance.test.ts
 │   │
 │   └── 📁 web/                           # Frontend Application (TanStack Router + Vite)
 │       ├── 📄 package.json               # Web dependencies & scripts
@@ -76,9 +100,18 @@ neonpro/
 │
 ├── 📁 packages/                          # Shared Package Layer (7 packages)
 │   ├── 📁 types/                         # @neonpro/types - TypeScript definitions
-│   ├── 📁 database/                      # @neonpro/database - Supabase schemas
+│   │   └── 📁 src/                       # Type definitions
+│   │       ├── 📄 patient.valibot.ts     # Brazilian patient validation (CPF, CNS)
+│   │       ├── 📄 lgpd.valibot.ts        # LGPD consent schemas
+│   │       ├── 📄 appointment.valibot.ts # Appointment + TUSS validation
+│   │       └── 📄 index.ts               # Unified type exports
+│   ├── 📁 database/                      # @neonpro/database - Prisma + Supabase
+│   │   ├── 📄 package.json               # Database package config
+│   │   ├── 📁 prisma/                    # Prisma ORM configuration
+│   │   │   ├── 📄 schema.prisma          # Healthcare data models (Patient, LGPD, etc)
+│   │   │   └── 📁 migrations/            # Database migration scripts
 │   │   ├── 📁 src/                       # Database utilities
-│   │   │   └── 📁 types/                 # Generated database types
+│   │   │   └── 📁 types/                 # Generated Prisma types
 │   │   └── 📁 scripts/                   # Database scripts
 │   │       └── 📁 healthcare/            # Healthcare-specific scripts
 │   ├── 📁 shared/                        # @neonpro/shared - Common utilities

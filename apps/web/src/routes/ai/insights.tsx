@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -73,7 +73,7 @@ interface PredictionTrend {
   impact: number;
 }
 
-export function AIInsightsPage() {
+function AIInsightsPage() {
   const navigate = useNavigate();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [models, setModels] = useState<AIModel[]>([]);
@@ -733,3 +733,7 @@ export function AIInsightsPage() {
     </div>
   );
 }
+
+export const Route = createFileRoute('/ai/insights')({
+  component: AIInsightsPage,
+});

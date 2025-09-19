@@ -1,6 +1,6 @@
 /**
  * Healthcare-Specific Error Handling and Logging
- * 
+ *
  * Comprehensive error handling system for healthcare operations including:
  * - Healthcare-specific error types and codes
  * - LGPD compliance error handling
@@ -117,20 +117,22 @@ export class HealthcareError extends Error {
    */
   toSanitizedJSON(): Record<string, any> {
     const sanitized = this.toJSON();
-    
+
     // Remove PII from error details
     delete sanitized.userId;
     delete sanitized.patientId;
     delete sanitized.ipAddress;
     delete sanitized.userAgent;
-    
+
     // Sanitize details object
     if (sanitized.details) {
       Object.keys(sanitized.details).forEach(key => {
-        if (key.toLowerCase().includes('email') || 
-            key.toLowerCase().includes('phone') ||
-            key.toLowerCase().includes('cpf') ||
-            key.toLowerCase().includes('address')) {
+        if (
+          key.toLowerCase().includes('email')
+          || key.toLowerCase().includes('phone')
+          || key.toLowerCase().includes('cpf')
+          || key.toLowerCase().includes('address')
+        ) {
           sanitized.details[key] = '[SANITIZED]';
         }
       });
@@ -142,7 +144,11 @@ export class HealthcareError extends Error {
 
 // Authentication errors
 export class HealthcareAuthenticationError extends HealthcareError {
-  constructor(message: string, details?: Record<string, any>, context?: Partial<HealthcareErrorDetails>) {
+  constructor(
+    message: string,
+    details?: Record<string, any>,
+    context?: Partial<HealthcareErrorDetails>,
+  ) {
     super({
       code: 'HEALTHCARE_AUTH_ERROR',
       category: HealthcareErrorCategory.AUTHENTICATION,
@@ -158,7 +164,12 @@ export class HealthcareAuthenticationError extends HealthcareError {
 
 // Authorization errors
 export class HealthcareAuthorizationError extends HealthcareError {
-  constructor(message: string, resourceType?: string, resourceId?: string, context?: Partial<HealthcareErrorDetails>) {
+  constructor(
+    message: string,
+    resourceType?: string,
+    resourceId?: string,
+    context?: Partial<HealthcareErrorDetails>,
+  ) {
     super({
       code: 'HEALTHCARE_AUTHZ_ERROR',
       category: HealthcareErrorCategory.AUTHORIZATION,
@@ -179,10 +190,10 @@ export class LGPDComplianceError extends HealthcareError {
   public readonly dataCategory?: string;
 
   constructor(
-    message: string, 
-    lgpdArticle?: string, 
-    dataCategory?: string, 
-    context?: Partial<HealthcareErrorDetails>
+    message: string,
+    lgpdArticle?: string,
+    dataCategory?: string,
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'LGPD_COMPLIANCE_ERROR',
@@ -208,7 +219,7 @@ export class BrazilianRegulatoryError extends HealthcareError {
     message: string,
     regulatoryBody: 'ANVISA' | 'CFM' | 'CFF' | 'CREF',
     regulation?: string,
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: `${regulatoryBody}_COMPLIANCE_ERROR`,
@@ -231,10 +242,12 @@ export class PatientDataValidationError extends HealthcareError {
 
   constructor(
     validationErrors: Array<{ field: string; message: string; value?: any }>,
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
-    const message = `Patient data validation failed: ${validationErrors.map(e => e.field).join(', ')}`;
-    
+    const message = `Patient data validation failed: ${
+      validationErrors.map(e => e.field).join(', ')
+    }`;
+
     super({
       code: 'PATIENT_DATA_VALIDATION_ERROR',
       category: HealthcareErrorCategory.VALIDATION,
@@ -256,7 +269,7 @@ export class AppointmentSchedulingError extends HealthcareError {
   constructor(
     message: string,
     conflictType?: 'time_conflict' | 'resource_unavailable' | 'policy_violation',
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'APPOINTMENT_SCHEDULING_ERROR',
@@ -297,7 +310,7 @@ export class ExternalHealthcareServiceError extends HealthcareError {
     message: string,
     serviceName: string,
     serviceResponse?: any,
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'EXTERNAL_HEALTHCARE_SERVICE_ERROR',
@@ -354,7 +367,7 @@ export class HealthcareLogger {
             errorDetails: error.details,
             stackTrace: this.sanitizeStackTrace(error.stack),
             requestId: error.requestId,
-          }
+          },
         );
       }
 
@@ -365,7 +378,6 @@ export class HealthcareLogger {
       if (error.severity === HealthcareErrorSeverity.CRITICAL) {
         await this.sendCriticalAlert(error);
       }
-
     } catch (loggingError) {
       console.error('Failed to log healthcare error:', loggingError);
     }
@@ -383,7 +395,7 @@ export class HealthcareLogger {
       clinicId?: string;
       details?: Record<string, any>;
       duration?: number;
-    }
+    },
   ): Promise<void> {
     try {
       console.info('Healthcare Operation Success:', {
@@ -404,7 +416,7 @@ export class HealthcareLogger {
             operation,
             duration: context.duration,
             details: context.details,
-          }
+          },
         );
       }
     } catch (loggingError) {
@@ -417,7 +429,7 @@ export class HealthcareLogger {
    */
   private sanitizeStackTrace(stackTrace?: string): string {
     if (!stackTrace) return '';
-    
+
     return stackTrace
       .replace(/\/home\/[^/]+/g, '/home/[USER]')
       .replace(/\/Users\/[^/]+/g, '/Users/[USER]')
@@ -431,7 +443,7 @@ export class HealthcareLogger {
     try {
       // Integration with Sentry, DataDog, or other monitoring services
       // This would be implemented based on your monitoring setup
-      
+
       if (process.env.SENTRY_DSN) {
         // Sentry integration would go here
         // Sentry.captureException(error, {
@@ -443,7 +455,6 @@ export class HealthcareLogger {
         //   extra: error.toSanitizedJSON(),
         // });
       }
-
     } catch (monitoringError) {
       console.error('Failed to send to monitoring:', monitoringError);
     }
@@ -456,7 +467,7 @@ export class HealthcareLogger {
     try {
       // Implementation for critical alerts
       // This could integrate with email services, Slack, PagerDuty, etc.
-      
+
       const alertMessage = `
 CRITICAL HEALTHCARE ERROR
 ========================
@@ -470,7 +481,6 @@ Time: ${error.timestamp.toISOString()}
       console.error('CRITICAL ALERT:', alertMessage);
 
       // Email/Slack notification would be implemented here
-      
     } catch (alertError) {
       console.error('Failed to send critical alert:', alertError);
     }
@@ -488,7 +498,10 @@ export class HealthcareErrorHandler {
   /**
    * Handles and logs healthcare errors
    */
-  async handleError(error: unknown, context?: Partial<HealthcareErrorDetails>): Promise<HealthcareError> {
+  async handleError(
+    error: unknown,
+    context?: Partial<HealthcareErrorDetails>,
+  ): Promise<HealthcareError> {
     let healthcareError: HealthcareError;
 
     if (error instanceof HealthcareError) {
@@ -563,7 +576,4 @@ export class HealthcareErrorHandler {
 export const healthcareErrorHandler = new HealthcareErrorHandler();
 
 // Export all error types and utilities
-export {
-  HealthcareLogger,
-  type HealthcareErrorDetails,
-};
+export { type HealthcareErrorDetails, HealthcareLogger };

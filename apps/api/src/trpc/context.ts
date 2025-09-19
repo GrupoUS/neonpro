@@ -3,10 +3,10 @@
  * Enhanced context with Prisma + Supabase integration for healthcare compliance
  */
 
-import { inferAsyncReturnType } from '@trpc/server';
-import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 import { PrismaClient } from '@prisma/client';
 import { createClient } from '@supabase/supabase-js';
+import { inferAsyncReturnType } from '@trpc/server';
+import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 
 // Initialize Prisma client for database operations
 const prisma = new PrismaClient({
@@ -16,7 +16,7 @@ const prisma = new PrismaClient({
 // Initialize Supabase client for real-time features
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_ANON_KEY || ''
+  process.env.SUPABASE_ANON_KEY || '',
 );
 
 /**
@@ -25,11 +25,11 @@ const supabase = createClient(
  */
 export const createContext = (opts: CreateHTTPContextOptions) => {
   const { req, res } = opts;
-  
+
   // Extract user information from request headers or JWT
   const userId = req.headers['x-user-id'] as string;
   const clinicId = req.headers['x-clinic-id'] as string;
-  
+
   // Collect audit metadata for LGPD compliance
   const auditMeta = {
     ipAddress: req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown',

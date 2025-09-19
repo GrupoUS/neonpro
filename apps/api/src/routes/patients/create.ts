@@ -6,19 +6,15 @@
  */
 
 import { OpenAPIHono } from '@hono/zod-openapi';
+import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
 import { z } from 'zod';
-import {
-  validateBrazilianPhone as validatePhone,
-  validateCEP,
-  validateCPF,
-} from '@neonpro/shared';
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { ComprehensiveAuditService } from '../../services/audit-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { NotificationService } from '../../services/notification-service';
 import { PatientService } from '../../services/patient-service';
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 
 const app = new OpenAPIHono();
 
@@ -138,7 +134,8 @@ const createPatientRoute = createHealthcareRoute({
 app.openapi(createPatientRoute, requireAuth, dataProtection.clientView, async c => {
   try {
     const userId = c.get('userId');
-    const body = await c.req.json();
+    // TODO: Implement patient creation logic
+    // const body = await c.req.json();
 
     // Get validated data from OpenAPI request
     const patientData = c.req.valid('json');
@@ -223,7 +220,7 @@ app.openapi(createPatientRoute, requireAuth, dataProtection.clientView, async c 
           rls_enforced: true,
           consent_validated: true,
         },
-      }
+      },
     ).catch(err => {
       console.error('Audit logging failed:', err);
     });

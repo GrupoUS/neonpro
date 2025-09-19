@@ -1,6 +1,6 @@
 /**
  * Healthcare Prisma Client Integration Tests
- * 
+ *
  * Comprehensive test suite for healthcare-specific Prisma client features including:
  * - Multi-tenant RLS context validation
  * - LGPD compliance operations (data export, deletion, consent management)
@@ -10,19 +10,19 @@
  * - Audit trail integration
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
-import { 
-  getHealthcarePrismaClient,
-  createPrismaWithContext,
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import {
   createHealthcareContextFromRequest,
-  type HealthcareContext,
+  createPrismaWithContext,
+  getHealthcarePrismaClient,
   HealthcareComplianceError,
+  type HealthcareContext,
   UnauthorizedHealthcareAccessError,
 } from '../../clients/prisma.js';
-import { 
+import {
   BrazilianHealthcareValidator,
-  LGPDComplianceHelper,
   HealthcareAppointmentHelper,
+  LGPDComplianceHelper,
   PatientDataHelper,
 } from '../../utils/healthcare-helpers.js';
 import { HealthcareQueryOptimizer } from '../../utils/healthcare-performance.js';
@@ -68,7 +68,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
   beforeAll(async () => {
     // Initialize Prisma client
     prismaClient = getHealthcarePrismaClient();
-    
+
     // Ensure database connection is healthy
     const isHealthy = await prismaClient.validateConnection();
     expect(isHealthy).toBe(true);
@@ -90,7 +90,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
     // Create context-aware Prisma client for each test
     prismaWithContext = createPrismaWithContext(mockHealthcareContext);
     queryOptimizer = new HealthcareQueryOptimizer(prismaWithContext);
-    
+
     // Set up test data
     await setupTestData();
   });
@@ -106,7 +106,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
         testUserId,
         testClinicId,
         'professional',
-        { cfmValidated: true, permissions: ['patient_read'] }
+        { cfmValidated: true, permissions: ['patient_read'] },
       );
 
       expect(context.userId).toBe(testUserId);
@@ -125,9 +125,9 @@ describe('Healthcare Prisma Client Integration Tests', () => {
       const invalidContext = createHealthcareContextFromRequest(
         'invalid-user',
         'invalid-clinic',
-        'professional'
+        'professional',
       );
-      
+
       const invalidPrisma = createPrismaWithContext(invalidContext);
       const isValid = await invalidPrisma.validateContext();
       expect(isValid).toBe(false);
@@ -139,7 +139,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
       const exportData = await prismaWithContext.exportPatientData(
         testPatientId,
         testUserId,
-        'Patient request for data portability'
+        'Patient request for data portability',
       );
 
       expect(exportData).toBeDefined();
@@ -158,7 +158,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
           cascadeDelete: true,
           retainAuditTrail: true,
           reason: 'LGPD right to erasure request',
-        })
+        }),
       ).resolves.not.toThrow();
 
       // Verify patient data is deleted
@@ -182,14 +182,14 @@ describe('Healthcare Prisma Client Integration Tests', () => {
           collectionMethod: 'digital_form',
           ipAddress: '192.168.1.1',
           userAgent: 'Test Browser',
-        }
+        },
       );
 
       const consentCheck = await LGPDComplianceHelper.checkConsentValidity(
         prismaWithContext,
         testPatientId,
         'medical_care',
-        ['personal_data', 'medical_data']
+        ['personal_data', 'medical_data'],
       );
 
       expect(consentCheck.isValid).toBe(true);
@@ -198,7 +198,8 @@ describe('Healthcare Prisma Client Integration Tests', () => {
     });
 
     test('should sanitize patient data for AI processing', () => {
-      const sensitiveText = 'Patient João Santos, CPF 123.456.789-01, phone (11) 99999-9999, email joao@email.com';
+      const sensitiveText =
+        'Patient João Santos, CPF 123.456.789-01, phone (11) 99999-9999, email joao@email.com';
       const sanitized = LGPDComplianceHelper.sanitizeForAI(sensitiveText);
 
       expect(sanitized).not.toContain('123.456.789-01');
@@ -233,7 +234,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
     test('should validate patient data completeness', () => {
       const validation = PatientDataHelper.validatePatientDataCompleteness(mockPatientData);
-      
+
       expect(validation.isComplete).toBe(true);
       expect(validation.missingFields).toHaveLength(0);
     });
@@ -241,7 +242,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
     test('should generate unique medical record numbers', () => {
       const mrn1 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
       const mrn2 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
-      
+
       expect(mrn1).toBeDefined();
       expect(mrn2).toBeDefined();
       expect(mrn1).not.toBe(mrn2);
@@ -268,7 +269,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
         testProfessionalId,
         {
           status: 'scheduled',
-        }
+        },
       );
 
       expect(Array.isArray(appointments)).toBe(true);
@@ -283,7 +284,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
           operation: 'patient_view',
           ipAddress: '192.168.1.1',
           userAgent: 'Test Client',
-        }
+        },
       );
 
       // Verify audit log was created
@@ -323,7 +324,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
     test('should get optimized dashboard metrics', async () => {
       const result = await queryOptimizer.getDashboardMetricsOptimized(testClinicId);
-      
+
       expect(result.metrics).toBeDefined();
       expect(result.metrics.patients).toBeDefined();
       expect(result.metrics.appointments).toBeDefined();
@@ -333,7 +334,7 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
     test('should track performance metrics', () => {
       const metrics = queryOptimizer.getPerformanceMetrics();
-      
+
       expect(metrics).toBeDefined();
       expect(metrics.queryCount).toBeGreaterThanOrEqual(0);
       expect(metrics.cacheHitRate).toBeGreaterThanOrEqual(0);
@@ -345,10 +346,10 @@ describe('Healthcare Prisma Client Integration Tests', () => {
     test('should calculate no-show risk score', async () => {
       // This would need a test appointment
       const appointmentId = 'test-appointment-123';
-      
+
       const riskScore = await HealthcareAppointmentHelper.calculateNoShowRisk(
         prismaWithContext,
-        appointmentId
+        appointmentId,
       );
 
       expect(typeof riskScore).toBe('number');
@@ -359,12 +360,12 @@ describe('Healthcare Prisma Client Integration Tests', () => {
     test('should check appointment conflicts', async () => {
       const startTime = new Date();
       const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour later
-      
+
       const conflicts = await HealthcareAppointmentHelper.checkAppointmentConflicts(
         prismaWithContext,
         testProfessionalId,
         startTime,
-        endTime
+        endTime,
       );
 
       expect(Array.isArray(conflicts)).toBe(true);
@@ -378,11 +379,11 @@ describe('Healthcare Prisma Client Integration Tests', () => {
         testUserId,
         testClinicId,
         'professional',
-        { cfmValidated: false }
+        { cfmValidated: false },
       );
-      
+
       const invalidPrisma = createPrismaWithContext(invalidContext);
-      
+
       await expect(invalidPrisma.validateContext()).resolves.toBe(false);
     });
 
@@ -390,13 +391,13 @@ describe('Healthcare Prisma Client Integration Tests', () => {
       const unauthorizedContext = createHealthcareContextFromRequest(
         'unauthorized-user',
         testClinicId,
-        'professional'
+        'professional',
       );
-      
+
       const unauthorizedPrisma = createPrismaWithContext(unauthorizedContext);
-      
+
       await expect(
-        unauthorizedPrisma.findPatientsInClinic(testClinicId)
+        unauthorizedPrisma.findPatientsInClinic(testClinicId),
       ).rejects.toThrow(UnauthorizedHealthcareAccessError);
     });
   });
@@ -404,13 +405,13 @@ describe('Healthcare Prisma Client Integration Tests', () => {
   describe('Data Anonymization', () => {
     test('should anonymize patient data for research', () => {
       const anonymized = PatientDataHelper.anonymizePatientData(mockPatientData);
-      
+
       expect(anonymized.givenNames).toEqual(['[ANONYMIZED]']);
       expect(anonymized.familyName).toBe('[ANONYMIZED]');
       expect(anonymized.email).toBeNull();
       expect(anonymized.cpf).toBeNull();
       expect(anonymized.phonePrimary).toBeNull();
-      
+
       // Medical data should be preserved
       expect(anonymized.birthDate).toBe(mockPatientData.birthDate);
       expect(anonymized.gender).toBe(mockPatientData.gender);
@@ -468,7 +469,6 @@ describe('Healthcare Prisma Client Integration Tests', () => {
           ...mockPatientData,
         },
       });
-
     } catch (error) {
       console.warn('Test data setup failed:', error);
     }
@@ -504,7 +504,6 @@ describe('Healthcare Prisma Client Integration Tests', () => {
       await prismaClient.user.deleteMany({
         where: { id: testUserId },
       });
-
     } catch (error) {
       console.warn('Test data cleanup failed:', error);
     }

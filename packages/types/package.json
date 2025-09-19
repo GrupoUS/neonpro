@@ -13,18 +13,18 @@
       "require": "./dist/index.js"
     },
     "./governance.types": {
-      "types": "./governance.types.ts",
-      "import": "./governance.types.ts",
-      "require": "./governance.types.ts"
+      "types": "./dist/governance.types.d.ts",
+      "import": "./dist/governance.types.js",
+      "require": "./dist/governance.types.js"
     },
     "./healthcare-governance.types": {
-      "types": "./healthcare-governance.types.ts",
-      "import": "./healthcare-governance.types.ts",
-      "require": "./healthcare-governance.types.ts"
+      "types": "./dist/healthcare-governance.types.d.ts",
+      "import": "./dist/healthcare-governance.types.js",
+      "require": "./dist/healthcare-governance.types.js"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b",
     "dev": "tsc -w -p tsconfig.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
@@ -34,7 +34,8 @@
     "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

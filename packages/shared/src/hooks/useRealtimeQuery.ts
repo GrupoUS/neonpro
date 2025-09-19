@@ -3,7 +3,7 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import { RealtimeManager, RealtimeSubscriptionOptions } from '@neonpro/core-services';
+import { RealtimeManager, RealtimeSubscriptionOptions } from '../realtime/realtime-manager';
 import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -46,7 +46,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
 
   // Memoized subscription setup
   const setupSubscription = useCallback(() => {
-    if (!realtimeManager.current || !options.enabled) return;
+    if (!realtimeManager.current || !options.enabled) return undefined;
 
     const subscription = realtimeManager.current.subscribeToTable(
       options.tableName,

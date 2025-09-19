@@ -31,6 +31,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "downlevelIteration": true,
     "baseUrl": ".",
     "types": [
       "node",
@@ -78,6 +79,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "**/dist/**/*",
     "**/*.js",
     "**/*.test.ts",
     "**/*.test.tsx",
