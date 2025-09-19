@@ -406,7 +406,7 @@ export class HealthcareAccessibilityAuditor {
           description: rule.description,
           severity: rule.severity,
           passed: false,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
           category: categoryId,
         });
       }
@@ -633,7 +633,7 @@ export class HealthcareAccessibilityAuditor {
           rule: rule.id,
           element: 'document',
           success: false,
-          message: `Failed to apply fix for ${rule.name}: ${error.message}`,
+          message: `Failed to apply fix for ${rule.name}: ${error instanceof Error ? error.message : String(error)}`,
         });
         failed++;
       }

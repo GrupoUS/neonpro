@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { addDays, setHours, setMinutes, getDay } from "date-fns";
 import { useCalendarContext } from "@/components/event-calendar/calendar-context";
 
@@ -591,9 +591,30 @@ const sampleEvents: CalendarEvent[] = [
   },
 ];
 
-export default function Component() {
-  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
+interface BigCalendarProps {
+  events?: CalendarEvent[];
+  onEventUpdate?: (event: CalendarEvent) => void;
+  onEventDelete?: (eventId: string) => void;
+  onEventCreate?: (event: CalendarEvent) => void;
+  className?: string;
+  initialView?: "day" | "week" | "month" | "agenda";
+}
+
+export default function Component({ 
+  events: propEvents = sampleEvents,
+  onEventUpdate,
+  onEventDelete,
+  onEventCreate,
+  className,
+  initialView = "week"
+}: BigCalendarProps) {
+  const [events, setEvents] = useState<CalendarEvent[]>(propEvents);
   const { isColorVisible } = useCalendarContext();
+
+  // Update internal state when prop events change
+  useEffect(() => {
+    setEvents(propEvents);
+  }, [propEvents]);
 
   // Filter events based on visible colors
   const visibleEvents = useMemo(() => {
@@ -602,6 +623,7 @@ export default function Component() {
 
   const handleEventAdd = (event: CalendarEvent) => {
     setEvents([...events, event]);
+    onEventCreate?.(event);
   };
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
@@ -610,10 +632,12 @@ export default function Component() {
         event.id === updatedEvent.id ? updatedEvent : event,
       ),
     );
+    onEventUpdate?.(updatedEvent);
   };
 
   const handleEventDelete = (eventId: string) => {
     setEvents(events.filter((event) => event.id !== eventId));
+    onEventDelete?.(eventId);
   };
 
   return (
@@ -622,7 +646,8 @@ export default function Component() {
       onEventAdd={handleEventAdd}
       onEventUpdate={handleEventUpdate}
       onEventDelete={handleEventDelete}
-      initialView="week"
+      initialView={initialView}
+      className={className}
     />
   );
 }

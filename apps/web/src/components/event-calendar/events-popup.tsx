@@ -118,6 +118,15 @@ export function EventsPopup({
                 key={event.id}
                 className="cursor-pointer"
                 onClick={() => handleEventClick(event)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleEventClick(event);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`View event: ${event.title}`}
               >
                 <EventItem
                   event={event}

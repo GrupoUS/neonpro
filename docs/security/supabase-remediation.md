@@ -34,10 +34,34 @@ Migration file: `supabase/migrations/20250919T2035_search_path_fk_indexes.sql`
 - Replace per-row auth.* calls with `(SELECT auth.*)` subqueries to avoid initplans per row.
 - Add USING/WITH CHECK minimizing data (LGPD).
 
+## Validation Results (Post-Migration Review)
+
+**Security Advisor Results (Latest):**
+- ❌ **STILL OPEN**: Functions with mutable search_path (multiple functions including check_emergency_access_expiration, set_lgpd_clinic_context, validate_patient_consent)
+- ❌ **NEW CRITICAL**: SECURITY DEFINER views found (ml_model_performance, drift_detection_summary, ab_test_summary)
+- ⚠️ **WARN**: Leaked password protection disabled
+- ⚠️ **WARN**: Outdated Postgres version with security patches available
+
+**Performance Advisor Results (Latest):**
+- ❌ **PARTIAL IMPROVEMENT**: Dozens of unindexed foreign keys across many tables (some addressed by migration, others remain)
+- ⚠️ **WARN**: Multiple permissive RLS policies on various tables and actions (requires consolidation)
+
+**Migration Status:**
+- Migration `20250919T2035_search_path_fk_indexes.sql` created but validation shows search_path issues persist
+- FK indexes partially addressed based on advisor scan
+- Additional SECURITY DEFINER views identified that require immediate attention
+
+**Resolution Status:**
+- ✅ **RESOLVED**: Some FK indexing gaps addressed by migration
+- ❌ **REMAINING**: Function search_path vulnerabilities persist
+- ❌ **NEW**: SECURITY DEFINER views need immediate conversion to SECURITY INVOKER
+- ❌ **REMAINING**: RLS policy consolidation still required
+
 ## Rollback Considerations
 - search_path changes are reversible via RESET or setting to `public` only.
 - Indexes are IF NOT EXISTS; dropping requires `DROP INDEX CONCURRENTLY` in off-peak windows.
 
 ## Notes
-- No SECURITY DEFINER changes needed now (confirmed not set on flagged views/functions).
+- **CRITICAL**: SECURITY DEFINER views (ml_model_performance, drift_detection_summary, ab_test_summary) identified and require immediate conversion to SECURITY INVOKER
+- Function search_path hardening requires verification of effective application
 - Keep policies changes in a separate migration to allow staged rollout.

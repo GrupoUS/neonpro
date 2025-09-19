@@ -337,6 +337,14 @@ export function WeekView({
                   zIndex: positionedEvent.zIndex,
                 }}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
+                tabIndex={0}
+                role="button"
               >
                 <div className="h-full w-full">
                   <DraggableEvent

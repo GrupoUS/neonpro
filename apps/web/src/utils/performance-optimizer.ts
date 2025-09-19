@@ -155,6 +155,10 @@ export class PerformanceOptimizer {
         observe: () => {},
         unobserve: () => {},
         disconnect: () => {},
+        root: null,
+        rootMargin: '0px',
+        thresholds: [0],
+        takeRecords: () => [],
       } as IntersectionObserver;
     }
 
@@ -266,7 +270,7 @@ export class PerformanceOptimizer {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
 
     return {
-      loadTime: navigation?.loadEventEnd - navigation?.navigationStart || 0,
+      loadTime: navigation?.loadEventEnd - navigation?.fetchStart || 0,
       firstContentfulPaint: this.metrics.get('first-contentful-paint') || 0,
       largestContentfulPaint: this.metrics.get('largest-contentful-paint') || 0,
       cumulativeLayoutShift: this.metrics.get('cumulative-layout-shift') || 0,
@@ -382,7 +386,8 @@ export class PerformanceOptimizer {
     try {
       const observer = new PerformanceObserver(list => {
         list.getEntries().forEach(entry => {
-          this.metrics.set('first-input-delay', entry.processingStart - entry.startTime);
+          const processingStart = (entry as any).processingStart || entry.startTime;
+          this.metrics.set('first-input-delay', processingStart - entry.startTime);
         });
       });
       observer.observe({ entryTypes: ['first-input'] });
@@ -469,5 +474,4 @@ export function throttle<T extends (...args: any[]) => any>(
 // Export singleton instance
 export const performanceOptimizer = PerformanceOptimizer.getInstance();
 
-// Export performance targets
-export { PERFORMANCE_TARGETS };
+// PERFORMANCE_TARGETS already exported above

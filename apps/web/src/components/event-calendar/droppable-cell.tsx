@@ -44,12 +44,20 @@ export function DroppableCell({
     <div
       ref={setNodeRef}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       className={cn(
         "data-dragging:bg-accent flex h-full flex-col px-0.5 py-1 sm:px-1",
         className,
       )}
       title={formattedTime ? `${formattedTime}` : undefined}
       data-dragging={isOver && activeEvent ? true : undefined}
+      tabIndex={0}
+      role="button"
     >
       {children}
     </div>

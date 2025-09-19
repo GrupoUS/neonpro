@@ -6,29 +6,6 @@
 **Princípio**: KISS + YAGNI - Simplicidade que funciona sobre complexidade que não funciona
 **Coordenação**: Especialização focada com workflows inteligentes - Agente certo, hora certa
 
-## 🎯 REGRAS UNIVERSAIS OBRIGATÓRIAS
-
-### **ARCHON-FIRST RULE**
-
-Sempre usar Archon MCP para task management, knowledge management e organização do projeto.
-
-### **SEQUÊNCIA MCP OBRIGATÓRIA**
-
-1. **`sequential-thinking`** → Análise e decomposição (SEMPRE primeiro)
-2. **`archon`** → Task setup e knowledge base
-3. **`serena`** → Análise de codebase (NUNCA busca nativa)
-4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
-5. **`desktop-commander`** → Implementação e operações
-
-### **FERRAMENTAS MCP MANDATÓRIAS**
-
-- **`serena mcp`**: Busca e análise semântica de código _(NUNCA usar busca nativa)_
-- **`supabase mcp`**: Operações de database
-- **`archon mcp`**: Task e knowledge management
-- **`desktop-commander mcp`**: Operações de arquivo e sistema
-- **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
-- **`tavily mcp`**: Pesquisas web em tempo real
-
 ## 🤖 COORDENAÇÃO DE AGENTES
 
 ### **📋 Registro de Agentes**
@@ -313,41 +290,6 @@ output: "Sistema bem arquitetado e seguro"
 - Código legível e bem estruturado
 - Documentação adequada
 - Test coverage ≥90% (componentes críticos)
-
-## 🔧 MCP TOOLS ESSENCIAIS
-
-### Obrigatórios (Todos os Agentes)
-
-- **`sequential-thinking`**: SEMPRE primeiro passo - análise e decomposição
-- **`archon`**: Task management e knowledge base (nunca pular)
-- **`serena`**: Análise de codebase (NUNCA usar busca nativa)
-
-### Por Contexto
-
-```yaml
-research_stack:
-  - context7: Documentação oficial e frameworks
-  - tavily: Informações atuais e trends
-  - exa: Implementações reais (complexidade ≥5)
-
-development_stack:
-  - desktop-commander: Operações de arquivo e sistema
-  - supabase-mcp: Database operations
-  - shadcn-ui: Componentes e registries (UI/UX agent)
-
-quality_stack:
-  - Integração CI/CD via desktop-commander
-  - Testes automatizados e coverage
-  - Security scanning tools
-```
-
-### Sequência MCP Padrão
-
-1. **sequential-thinking** (análise)
-2. **archon** (task setup)
-3. **serena** (codebase context)
-4. **Contextuais** (conforme necessidade)
-5. **desktop-commander** (implementação)
 
 ## 🚫 RESTRIÇÕES UNIVERSAIS
 

@@ -78,3 +78,6 @@ export * from './models/plan.js';
 export * from './models/recommendation.js';
 export * from './models/user-plan.js';
 export * from './usage/repository.js';
+
+// Enhanced AI Abuse Window Tracker (T018)
+export * from './usage/abuseWindow.js';

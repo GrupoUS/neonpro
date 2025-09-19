@@ -1,6 +1,5 @@
 export {
   HealthcareTelemetryManager,
-  HealthcareTelemetryConfig,
   HealthcareSpanAttributes,
   HealthcareOperations,
   createHealthcareTelemetryManager,
@@ -8,6 +7,10 @@ export {
   getGlobalTelemetryManager,
   shutdownGlobalTelemetry,
   TELEMETRY_CONFIGS,
+} from './opentelemetry-config';
+
+export type {
+  HealthcareTelemetryConfig,
 } from './opentelemetry-config';
 
 // Re-export specific OpenTelemetry utilities for convenience
