@@ -4,27 +4,27 @@
  * Performance optimized for large-scale testing
  */
 
-import { expect, test, describe, beforeEach, afterEach, vi } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { cleanup, render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Real component imports
-import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
-import { EmergencyEscalation } from '@/components/telemedicine/EmergencyEscalation';
-import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
 import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
 import { EnhancedHealthcareForm } from '@/components/accessibility/EnhancedHealthcareForm';
-import { WaitingRoom } from '@/components/telemedicine/WaitingRoom';
-import { SessionConsent } from '@/components/telemedicine/SessionConsent';
+import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
 import { ConsentDialog } from '@/components/telemedicine/ConsentDialog';
+import { EmergencyEscalation } from '@/components/telemedicine/EmergencyEscalation';
+import { SessionConsent } from '@/components/telemedicine/SessionConsent';
+import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
+import { WaitingRoom } from '@/components/telemedicine/WaitingRoom';
 
 // Import healthcare configuration
-import { 
-  healthcareAxeConfig, 
+import {
+  healthcareAxeConfig,
   healthcareTestContexts,
-  runOptimizedAccessibilityTest 
+  runOptimizedAccessibilityTest,
 } from './axe-integration.test';
 
 expect.extend(toHaveNoViolations);
@@ -38,22 +38,22 @@ const createMockSessionData = () => ({
     cpf: '123.456.789-00',
     birthDate: '1985-03-15',
     email: 'joao.silva@email.com',
-    phone: '(11) 99999-8888'
+    phone: '(11) 99999-8888',
   },
   physician: {
     id: 'physician-1',
     name: 'Dr. Maria Santos',
     crm: '12345-SP',
-    specialty: 'Cardiologia'
+    specialty: 'Cardiologia',
   },
   emergency: {
     protocol: '2024.001234/SP-12',
     location: {
       latitude: -23.5505,
       longitude: -46.6333,
-      address: 'Av. Paulista, 1000, São Paulo - SP'
-    }
-  }
+      address: 'Av. Paulista, 1000, São Paulo - SP',
+    },
+  },
 });
 
 describe('Real Component Accessibility Tests', () => {
@@ -61,12 +61,12 @@ describe('Real Component Accessibility Tests', () => {
 
   beforeEach(() => {
     mockSessionData = createMockSessionData();
-    
+
     // Configure test environment
     process.env.NODE_ENV = 'test';
     process.env.HEALTHCARE_MODE = 'true';
     process.env.ACCESSIBILITY_LEVEL = 'WCAG2AA';
-    
+
     // Mock hooks with realistic data
     vi.mock('@/hooks/use-telemedicine', () => ({
       useTelemedicineSession: () => ({
@@ -75,8 +75,8 @@ describe('Real Component Accessibility Tests', () => {
           patient: mockSessionData.patient,
           physician: mockSessionData.physician,
           status: 'active',
-          startedAt: new Date().toISOString()
-        }
+          startedAt: new Date().toISOString(),
+        },
       }),
       useVideoCall: () => ({
         isConnected: true,
@@ -84,7 +84,7 @@ describe('Real Component Accessibility Tests', () => {
         isAudioEnabled: true,
         toggleVideo: vi.fn(),
         toggleAudio: vi.fn(),
-        endCall: vi.fn()
+        endCall: vi.fn(),
       }),
       useRealTimeChat: () => ({
         messages: [
@@ -92,33 +92,33 @@ describe('Real Component Accessibility Tests', () => {
             id: '1',
             content: 'Olá, como está se sentindo?',
             sender: 'physician',
-            timestamp: new Date().toISOString()
-          }
+            timestamp: new Date().toISOString(),
+          },
         ],
         sendMessage: vi.fn(),
-        isConnected: true
+        isConnected: true,
       }),
       useSessionRecording: () => ({
         isRecording: false,
         hasConsent: true,
         toggleRecording: vi.fn(),
-        downloadRecording: vi.fn()
+        downloadRecording: vi.fn(),
       }),
       useSessionConsent: () => ({
         hasConsent: true,
         consentData: {
           recording: true,
           dataSharing: true,
-          emergency: true
+          emergency: true,
         },
         giveConsent: vi.fn(),
-        updateConsent: vi.fn()
+        updateConsent: vi.fn(),
       }),
       useEmergencyEscalation: () => ({
         isEmergency: false,
         escalateEmergency: vi.fn(),
-        emergencyData: mockSessionData.emergency
-      })
+        emergencyData: mockSessionData.emergency,
+      }),
     }));
 
     vi.mock('@/hooks/use-webrtc', () => ({
@@ -126,16 +126,16 @@ describe('Real Component Accessibility Tests', () => {
         localStream: null,
         remoteStream: null,
         connectionState: 'connected',
-        networkQuality: 'excellent'
-      })
+        networkQuality: 'excellent',
+      }),
     }));
 
     vi.mock('@/hooks/usePatients', () => ({
       useCreatePatient: () => ({
         mutate: vi.fn(),
         isLoading: false,
-        error: null
-      })
+        error: null,
+      }),
     }));
   });
 
@@ -147,98 +147,98 @@ describe('Real Component Accessibility Tests', () => {
   describe('Telemedicine Interface Components', () => {
     test('VideoConsultation component meets WCAG 2.1 AA+ standards for real-time medical consultations', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <VideoConsultation 
+        <VideoConsultation
           sessionId={mockSessionData.sessionId}
           onSessionEnd={() => {}}
         />,
         'VideoConsultation',
-        'TELEMEDICINE'
+        'TELEMEDICINE',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Specific telemedicine accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'aria-live-region' || 
-        v.id === 'button-name' ||
-        v.id === 'keyboard'
+      expect(results.violations.filter(v =>
+        v.id === 'aria-live-region'
+        || v.id === 'button-name'
+        || v.id === 'keyboard'
       )).toHaveLength(0);
     });
 
     test('EmergencyEscalation component meets critical accessibility standards for emergency situations', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <EmergencyEscalation 
+        <EmergencyEscalation
           sessionId={mockSessionData.sessionId}
           onEscalate={() => {}}
         />,
         'EmergencyEscalation',
-        'EMERGENCY_INTERFACE'
+        'EMERGENCY_INTERFACE',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Critical emergency accessibility requirements
-      expect(results.violations.filter(v => 
-        v.impact === 'critical' || 
-        v.impact === 'serious'
+      expect(results.violations.filter(v =>
+        v.impact === 'critical'
+        || v.impact === 'serious'
       )).toHaveLength(0);
     });
 
     test('WaitingRoom component provides accessible waiting experience', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <WaitingRoom 
+        <WaitingRoom
           sessionId={mockSessionData.sessionId}
           estimatedWaitTime={300}
           position={3}
         />,
         'WaitingRoom',
-        'PATIENT_PORTAL'
+        'PATIENT_PORTAL',
       );
-      
+
       expect(results).toHaveNoViolations();
     });
 
     test('SessionConsent component ensures accessible consent management', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <SessionConsent 
+        <SessionConsent
           onConsentChange={() => {}}
           initialConsent={{
             recording: false,
             dataSharing: false,
-            emergency: true
+            emergency: true,
           }}
         />,
         'SessionConsent',
-        'PATIENT_PORTAL'
+        'PATIENT_PORTAL',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // LGPD consent accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'label' || 
-        v.id === 'form-field-multiple-labels'
+      expect(results.violations.filter(v =>
+        v.id === 'label'
+        || v.id === 'form-field-multiple-labels'
       )).toHaveLength(0);
     });
 
     test('ConsentDialog component meets accessibility standards for modal interactions', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <ConsentDialog 
+        <ConsentDialog
           isOpen={true}
           onClose={() => {}}
           onConfirm={() => {}}
-          consentType="recording"
+          consentType='recording'
         />,
         'ConsentDialog',
-        'PATIENT_PORTAL'
+        'PATIENT_PORTAL',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Modal accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'focus-order-semantics' || 
-        v.id === 'aria-modal'
+      expect(results.violations.filter(v =>
+        v.id === 'focus-order-semantics'
+        || v.id === 'aria-modal'
       )).toHaveLength(0);
     });
   });
@@ -246,54 +246,54 @@ describe('Real Component Accessibility Tests', () => {
   describe('Patient Management Components', () => {
     test('PatientRegistrationWizard meets healthcare form accessibility standards', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <PatientRegistrationWizard 
+        <PatientRegistrationWizard
           onComplete={() => {}}
           onCancel={() => {}}
         />,
         'PatientRegistrationWizard',
-        'MEDICAL_PROFESSIONAL'
+        'MEDICAL_PROFESSIONAL',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Healthcare form accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'label' || 
-        v.id === 'required-attr' ||
-        v.id === 'aria-describedby'
+      expect(results.violations.filter(v =>
+        v.id === 'label'
+        || v.id === 'required-attr'
+        || v.id === 'aria-describedby'
       )).toHaveLength(0);
     });
 
     test('AccessiblePatientCard provides inclusive patient information display', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <AccessiblePatientCard 
+        <AccessiblePatientCard
           patient={mockSessionData.patient}
           showSensitiveData={false}
           onEdit={() => {}}
         />,
         'AccessiblePatientCard',
-        'MEDICAL_PROFESSIONAL'
+        'MEDICAL_PROFESSIONAL',
       );
-      
+
       expect(results).toHaveNoViolations();
     });
 
     test('EnhancedHealthcareForm meets advanced form accessibility requirements', async () => {
       const results = await runOptimizedAccessibilityTest(
-        <EnhancedHealthcareForm 
+        <EnhancedHealthcareForm
           onSubmit={() => {}}
           patientId={mockSessionData.patient.id}
         />,
         'EnhancedHealthcareForm',
-        'MEDICAL_PROFESSIONAL'
+        'MEDICAL_PROFESSIONAL',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Advanced form accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'aria-valid-attr-value' || 
-        v.id === 'aria-required-children'
+      expect(results.violations.filter(v =>
+        v.id === 'aria-valid-attr-value'
+        || v.id === 'aria-required-children'
       )).toHaveLength(0);
     });
   });
@@ -304,37 +304,37 @@ describe('Real Component Accessibility Tests', () => {
       vi.mocked(vi.fn()).mockImplementation(() => ({
         isLoading: true,
         data: null,
-        error: null
+        error: null,
       }));
 
       const LoadingComponent = () => (
-        <div role="status" aria-live="polite" aria-busy="true">
+        <div role='status' aria-live='polite' aria-busy='true'>
           <p>Carregando consulta médica...</p>
-          <div aria-hidden="true">Loading animation</div>
+          <div aria-hidden='true'>Loading animation</div>
         </div>
       );
 
       const results = await runOptimizedAccessibilityTest(
         <LoadingComponent />,
         'LoadingState',
-        'PATIENT_PORTAL'
+        'PATIENT_PORTAL',
       );
-      
+
       expect(results).toHaveNoViolations();
     });
 
     test('components handle error states accessibly', async () => {
       const ErrorComponent = () => (
-        <div role="alert" aria-live="assertive">
+        <div role='alert' aria-live='assertive'>
           <h2>Erro na Consulta</h2>
           <p>Não foi possível conectar com o médico. Tente novamente.</p>
-          <button 
-            type="button"
-            aria-describedby="retry-help"
+          <button
+            type='button'
+            aria-describedby='retry-help'
           >
             Tentar Novamente
           </button>
-          <div id="retry-help">
+          <div id='retry-help'>
             Clique para tentar conectar novamente com o médico
           </div>
         </div>
@@ -343,9 +343,9 @@ describe('Real Component Accessibility Tests', () => {
       const results = await runOptimizedAccessibilityTest(
         <ErrorComponent />,
         'ErrorState',
-        'TELEMEDICINE'
+        'TELEMEDICINE',
       );
-      
+
       expect(results).toHaveNoViolations();
     });
   });
@@ -356,30 +356,30 @@ describe('Real Component Accessibility Tests', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
-        value: 375
+        value: 375,
       });
-      
+
       Object.defineProperty(window, 'innerHeight', {
         writable: true,
         configurable: true,
-        value: 667
+        value: 667,
       });
 
       const results = await runOptimizedAccessibilityTest(
-        <VideoConsultation 
+        <VideoConsultation
           sessionId={mockSessionData.sessionId}
           onSessionEnd={() => {}}
         />,
         'VideoConsultation_Mobile',
-        'TELEMEDICINE'
+        'TELEMEDICINE',
       );
-      
+
       expect(results).toHaveNoViolations();
-      
+
       // Mobile-specific accessibility requirements
-      expect(results.violations.filter(v => 
-        v.id === 'touch-target-size' || 
-        v.id === 'mobile-viewport'
+      expect(results.violations.filter(v =>
+        v.id === 'touch-target-size'
+        || v.id === 'mobile-viewport'
       )).toHaveLength(0);
     });
   });

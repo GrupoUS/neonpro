@@ -72,14 +72,14 @@ const lgpdPerformanceRequirements = {
   maxDataTransferSize: 500 * 1024, // 500KB per data transfer
   maxConcurrentTransfers: 5,
   maxResponseTime: 5000, // 5 seconds max response time
-  
+
   // Processing efficiency for PII data
   piiProcessingBudget: {
     maxProcessingTime: 2000, // 2 seconds max processing time
     maxMemoryUsage: 50 * 1024 * 1024, // 50MB max memory usage
     maxCPUUsage: 30, // 30% max CPU usage
   },
-  
+
   // Audit trail performance
   auditTrailBudget: {
     maxProcessingTime: 1000, // 1 second max for audit logging
@@ -100,7 +100,7 @@ const performanceMonitoring = {
       bundleSize: 1000000, // 1MB
     },
   },
-  
+
   // Healthcare-specific metrics
   healthcareMetrics: {
     emergencyLoadTime: 1000, // 1 second for emergency features
@@ -108,7 +108,7 @@ const performanceMonitoring = {
     mobileLoadTime: 3000, // 3 seconds for mobile
     accessibilityLoadTime: 2500, // 2.5 seconds for accessibility
   },
-  
+
   // LGPD compliance metrics
   lgpdMetrics: {
     dataTransferRate: 1000, // 1MB/s minimum transfer rate
@@ -125,18 +125,18 @@ const bundleAnalysisConfig = {
   generateStatsFile: true,
   statsFilename: 'bundle-stats.json',
   defaultSizes: 'gzip',
-  
+
   // Healthcare-specific analysis
   healthcareAnalysis: {
     enabled: true,
     checkPerformanceBudgets: true,
     checkLGPDCompliance: true,
     checkAccessibilityCompliance: true,
-    
+
     // Performance budget checks
     budgets: performanceBudgets,
     featureBudgets: featureBudgets,
-    
+
     // Compliance checks
     compliance: {
       lgpd: lgpdPerformanceRequirements,
@@ -150,7 +150,7 @@ const bundleAnalysisConfig = {
       },
     },
   },
-  
+
   // Report configuration
   reports: {
     generateReport: true,
@@ -159,13 +159,13 @@ const bundleAnalysisConfig = {
     includeComplianceMetrics: true,
     includePerformanceRecommendations: true,
   },
-  
+
   // Alerting configuration
   alerts: {
     enabled: true,
     channels: ['console', 'file'],
     alertFile: 'bundle-analysis-alerts.log',
-    
+
     // Budget violation alerts
     budgetViolations: {
       critical: {
@@ -179,7 +179,7 @@ const bundleAnalysisConfig = {
         action: 'warn', // Warn on budget warnings
       },
     },
-    
+
     // Compliance violation alerts
     complianceViolations: {
       lgpd: {
@@ -224,7 +224,7 @@ const optimizationRecommendations = {
       },
     ],
   },
-  
+
   // Lazy loading recommendations
   lazyLoading: {
     enabled: true,
@@ -246,7 +246,7 @@ const optimizationRecommendations = {
       },
     ],
   },
-  
+
   // Compression recommendations
   compression: {
     enabled: true,
@@ -268,7 +268,7 @@ const optimizationRecommendations = {
       },
     ],
   },
-  
+
   // Caching recommendations
   caching: {
     enabled: true,
@@ -305,12 +305,12 @@ class HealthcarePerformanceBudgetPlugin {
     compiler.hooks.emit.tapAsync('HealthcarePerformanceBudgetPlugin', (compilation, callback) => {
       const violations = [];
       const warnings = [];
-      
+
       // Check performance budgets
       Object.keys(compilation.assets).forEach(assetName => {
         const asset = compilation.assets[assetName];
         const size = asset.size();
-        
+
         // Check against budgets
         Object.entries(this.options.healthcareAnalysis.budgets).forEach(([budgetName, budget]) => {
           if (size > budget.maxSize) {
@@ -321,7 +321,8 @@ class HealthcarePerformanceBudgetPlugin {
               asset: assetName,
               size: size,
               maxSize: budget.maxSize,
-              message: `Asset ${assetName} (${size} bytes) exceeds ${budgetName} budget (${budget.maxSize} bytes)`,
+              message:
+                `Asset ${assetName} (${size} bytes) exceeds ${budgetName} budget (${budget.maxSize} bytes)`,
             });
           } else if (size > budget.warningSize) {
             warnings.push({
@@ -331,11 +332,12 @@ class HealthcarePerformanceBudgetPlugin {
               asset: assetName,
               size: size,
               warningSize: budget.warningSize,
-              message: `Asset ${assetName} (${size} bytes) approaches ${budgetName} budget warning (${budget.warningSize} bytes)`,
+              message:
+                `Asset ${assetName} (${size} bytes) approaches ${budgetName} budget warning (${budget.warningSize} bytes)`,
             });
           }
         });
-        
+
         // Check LGPD compliance
         if (assetName.includes('patient') || assetName.includes('healthcare')) {
           if (size > this.options.healthcareAnalysis.compliance.lgpd.maxDataTransferSize) {
@@ -345,12 +347,13 @@ class HealthcarePerformanceBudgetPlugin {
               asset: assetName,
               size: size,
               maxSize: this.options.healthcareAnalysis.compliance.lgpd.maxDataTransferSize,
-              message: `Patient data asset ${assetName} (${size} bytes) exceeds LGPD compliance limit`,
+              message:
+                `Patient data asset ${assetName} (${size} bytes) exceeds LGPD compliance limit`,
             });
           }
         }
       });
-      
+
       // Log violations and warnings
       if (violations.length > 0) {
         const message = violations.map(v => v.message).join('\n');
@@ -360,12 +363,12 @@ class HealthcarePerformanceBudgetPlugin {
           compilation.warnings.push(new Error(message));
         }
       }
-      
+
       if (warnings.length > 0) {
         const message = warnings.map(w => w.message).join('\n');
         compilation.warnings.push(new Error(message));
       }
-      
+
       // Generate compliance report
       const report = {
         timestamp: new Date().toISOString(),
@@ -375,12 +378,12 @@ class HealthcarePerformanceBudgetPlugin {
         compliance: this.options.healthcareAnalysis.compliance,
         recommendations: optimizationRecommendations,
       };
-      
+
       compilation.assets['healthcare-performance-report.json'] = {
         source: JSON.stringify(report, null, 2),
         size: Buffer.byteLength(JSON.stringify(report, null, 2)),
       };
-      
+
       callback();
     });
   }
@@ -389,7 +392,7 @@ class HealthcarePerformanceBudgetPlugin {
 // Webpack Configuration for Bundle Analysis
 const webpackConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  
+
   // Performance budget configuration
   performance: {
     hints: process.env.NODE_ENV === 'production' ? 'warning' : false,
@@ -397,12 +400,12 @@ const webpackConfig = {
     maxAssetSize: 200 * 1024, // 200KB
     assetFilter: function(assetFilename) {
       // Exclude certain assets from performance checks
-      return !assetFilename.endsWith('.map') && 
-             !assetFilename.endsWith('.txt') && 
-             !assetFilename.endsWith('.json');
+      return !assetFilename.endsWith('.map')
+        && !assetFilename.endsWith('.txt')
+        && !assetFilename.endsWith('.json');
     },
   },
-  
+
   // Bundle analyzer plugin
   plugins: [
     new BundleAnalyzerPlugin({
@@ -413,10 +416,10 @@ const webpackConfig = {
       statsFilename: bundleAnalysisConfig.statsFilename,
       defaultSizes: bundleAnalysisConfig.defaultSizes,
     }),
-    
+
     new HealthcarePerformanceBudgetPlugin(bundleAnalysisConfig),
   ],
-  
+
   // Optimization settings
   optimization: {
     splitChunks: {

@@ -1,29 +1,29 @@
 /**
  * T015: UI Component Contract Tests
- * 
+ *
  * Comprehensive contract tests for React components, healthcare interfaces,
  * and user interactions. Validates component props, healthcare-specific UI
  * elements, form components, navigation, modals, charts, and medical workflows.
- * 
+ *
  * @created 2025-09-19
  * @author Archon
  * @module UIComponentContractTests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { renderHook, act } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { z } from 'zod';
 import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { z } from 'zod';
 
 // Mock React components for testing
 const MockButton = ({ children, onClick, disabled, variant = 'primary', ...props }: any) => (
-  <button 
-    onClick={onClick} 
-    disabled={disabled} 
+  <button
+    onClick={onClick}
+    disabled={disabled}
     className={`btn btn-${variant}`}
-    data-testid="mock-button"
+    data-testid='mock-button'
     {...props}
   >
     {children}
@@ -31,7 +31,7 @@ const MockButton = ({ children, onClick, disabled, variant = 'primary', ...props
 );
 
 const MockForm = ({ children, onSubmit, ...props }: any) => (
-  <form onSubmit={onSubmit} data-testid="mock-form" {...props}>
+  <form onSubmit={onSubmit} data-testid='mock-form' {...props}>
     {children}
   </form>
 );
@@ -43,7 +43,7 @@ const MockInput = ({ type = 'text', value, onChange, placeholder, required, ...p
     onChange={onChange}
     placeholder={placeholder}
     required={required}
-    data-testid="mock-input"
+    data-testid='mock-input'
     {...props}
   />
 );
@@ -51,9 +51,9 @@ const MockInput = ({ type = 'text', value, onChange, placeholder, required, ...p
 const MockModal = ({ isOpen, onClose, children, ...props }: any) => {
   if (!isOpen) return null;
   return (
-    <div data-testid="mock-modal" className="modal" {...props}>
-      <div className="modal-content">
-        <button onClick={onClose} data-testid="modal-close">×</button>
+    <div data-testid='mock-modal' className='modal' {...props}>
+      <div className='modal-content'>
+        <button onClick={onClose} data-testid='modal-close'>×</button>
         {children}
       </div>
     </div>
@@ -61,41 +61,53 @@ const MockModal = ({ isOpen, onClose, children, ...props }: any) => {
 };
 
 const MockChart = ({ data, type = 'bar', ...props }: any) => (
-  <div data-testid="mock-chart" className={`chart chart-${type}`} {...props}>
+  <div data-testid='mock-chart' className={`chart chart-${type}`} {...props}>
     Chart: {JSON.stringify(data)}
   </div>
 );
 
 // Healthcare-specific mock components
 const MockPatientCard = ({ patient, onEdit, onView, ...props }: any) => (
-  <div data-testid="patient-card" className="patient-card" {...props}>
+  <div data-testid='patient-card' className='patient-card' {...props}>
     <h3>{patient?.name || 'Patient Name'}</h3>
     <p>CPF: {patient?.cpf || '***.***.***-**'}</p>
-    <button onClick={() => onView?.(patient)} data-testid="view-patient">View</button>
-    <button onClick={() => onEdit?.(patient)} data-testid="edit-patient">Edit</button>
+    <button
+      onClick={() =>
+        onView?.(patient)}
+      data-testid='view-patient'
+    >
+      View
+    </button>
+    <button
+      onClick={() =>
+        onEdit?.(patient)}
+      data-testid='edit-patient'
+    >
+      Edit
+    </button>
   </div>
 );
 
 const MockAppointmentForm = ({ appointment, onSubmit, onCancel, ...props }: any) => (
-  <form onSubmit={onSubmit} data-testid="appointment-form" {...props}>
-    <input 
-      name="patientId" 
-      defaultValue={appointment?.patientId} 
-      data-testid="appointment-patient-id"
+  <form onSubmit={onSubmit} data-testid='appointment-form' {...props}>
+    <input
+      name='patientId'
+      defaultValue={appointment?.patientId}
+      data-testid='appointment-patient-id'
     />
-    <input 
-      type="datetime-local" 
-      name="datetime" 
+    <input
+      type='datetime-local'
+      name='datetime'
       defaultValue={appointment?.datetime}
-      data-testid="appointment-datetime"
+      data-testid='appointment-datetime'
     />
-    <select name="type" defaultValue={appointment?.type} data-testid="appointment-type">
-      <option value="consultation">Consultation</option>
-      <option value="procedure">Procedure</option>
-      <option value="follow-up">Follow-up</option>
+    <select name='type' defaultValue={appointment?.type} data-testid='appointment-type'>
+      <option value='consultation'>Consultation</option>
+      <option value='procedure'>Procedure</option>
+      <option value='follow-up'>Follow-up</option>
     </select>
-    <button type="submit" data-testid="appointment-submit">Save</button>
-    <button type="button" onClick={onCancel} data-testid="appointment-cancel">Cancel</button>
+    <button type='submit' data-testid='appointment-submit'>Save</button>
+    <button type='button' onClick={onCancel} data-testid='appointment-cancel'>Cancel</button>
   </form>
 );
 
@@ -118,7 +130,18 @@ const FormPropsSchema = z.object({
 });
 
 const InputPropsSchema = z.object({
-  type: z.enum(['text', 'email', 'password', 'number', 'tel', 'url', 'search', 'date', 'datetime-local', 'time']).optional(),
+  type: z.enum([
+    'text',
+    'email',
+    'password',
+    'number',
+    'tel',
+    'url',
+    'search',
+    'date',
+    'datetime-local',
+    'time',
+  ]).optional(),
   value: z.union([z.string(), z.number()]).optional(),
   onChange: z.function().optional(),
   placeholder: z.string().optional(),
@@ -223,13 +246,13 @@ describe('UI Component Contract Tests', () => {
       it('should render button with correct props', () => {
         const handleClick = vi.fn();
         render(
-          <MockButton 
-            onClick={handleClick} 
-            variant="primary" 
+          <MockButton
+            onClick={handleClick}
+            variant='primary'
             disabled={false}
           >
             Test Button
-          </MockButton>
+          </MockButton>,
         );
 
         const button = screen.getByTestId('mock-button');
@@ -247,7 +270,7 @@ describe('UI Component Contract Tests', () => {
         render(
           <MockButton onClick={handleClick} disabled={true}>
             Disabled Button
-          </MockButton>
+          </MockButton>,
         );
 
         const button = screen.getByTestId('mock-button');
@@ -272,12 +295,12 @@ describe('UI Component Contract Tests', () => {
       });
 
       it('should handle form submission correctly', () => {
-        const handleSubmit = vi.fn((e) => e.preventDefault());
+        const handleSubmit = vi.fn(e => e.preventDefault());
         render(
           <MockForm onSubmit={handleSubmit}>
-            <input name="test" defaultValue="value" />
-            <button type="submit">Submit</button>
-          </MockForm>
+            <input name='test' defaultValue='value' />
+            <button type='submit'>Submit</button>
+          </MockForm>,
         );
 
         const form = screen.getByTestId('mock-form');
@@ -305,11 +328,11 @@ describe('UI Component Contract Tests', () => {
         const user = userEvent.setup();
         const handleChange = vi.fn();
         render(
-          <MockInput 
-            type="text" 
-            onChange={handleChange} 
-            placeholder="Enter text"
-          />
+          <MockInput
+            type='text'
+            onChange={handleChange}
+            placeholder='Enter text'
+          />,
         );
 
         const input = screen.getByTestId('mock-input');
@@ -319,13 +342,13 @@ describe('UI Component Contract Tests', () => {
 
       it('should handle different input types', () => {
         const { rerender } = render(
-          <MockInput type="email" data-testid="email-input" />
+          <MockInput type='email' data-testid='email-input' />,
         );
-        
+
         let input = screen.getByTestId('email-input');
         expect(input).toHaveAttribute('type', 'email');
 
-        rerender(<MockInput type="password" data-testid="password-input" />);
+        rerender(<MockInput type='password' data-testid='password-input' />);
         input = screen.getByTestId('password-input');
         expect(input).toHaveAttribute('type', 'password');
       });
@@ -351,7 +374,7 @@ describe('UI Component Contract Tests', () => {
         render(
           <MockModal isOpen={true} onClose={handleClose}>
             Modal Content
-          </MockModal>
+          </MockModal>,
         );
 
         const modal = screen.getByTestId('mock-modal');
@@ -364,7 +387,7 @@ describe('UI Component Contract Tests', () => {
         render(
           <MockModal isOpen={false} onClose={handleClose}>
             Modal Content
-          </MockModal>
+          </MockModal>,
         );
 
         expect(screen.queryByTestId('mock-modal')).not.toBeInTheDocument();
@@ -375,7 +398,7 @@ describe('UI Component Contract Tests', () => {
         render(
           <MockModal isOpen={true} onClose={handleClose}>
             Modal Content
-          </MockModal>
+          </MockModal>,
         );
 
         const closeButton = screen.getByTestId('modal-close');
@@ -402,7 +425,7 @@ describe('UI Component Contract Tests', () => {
       it('should render chart with correct data', () => {
         const chartData = [{ name: 'Test', value: 100 }];
         render(
-          <MockChart data={chartData} type="bar" />
+          <MockChart data={chartData} type='bar' />,
         );
 
         const chart = screen.getByTestId('mock-chart');
@@ -446,13 +469,13 @@ describe('UI Component Contract Tests', () => {
       it('should render patient information correctly', () => {
         const handleEdit = vi.fn();
         const handleView = vi.fn();
-        
+
         render(
-          <MockPatientCard 
+          <MockPatientCard
             patient={mockPatient}
             onEdit={handleEdit}
             onView={handleView}
-          />
+          />,
         );
 
         expect(screen.getByText('João Silva')).toBeInTheDocument();
@@ -462,13 +485,13 @@ describe('UI Component Contract Tests', () => {
       it('should handle patient actions correctly', () => {
         const handleEdit = vi.fn();
         const handleView = vi.fn();
-        
+
         render(
-          <MockPatientCard 
+          <MockPatientCard
             patient={mockPatient}
             onEdit={handleEdit}
             onView={handleView}
-          />
+          />,
         );
 
         fireEvent.click(screen.getByTestId('view-patient'));
@@ -515,13 +538,13 @@ describe('UI Component Contract Tests', () => {
       it('should render appointment form with correct fields', () => {
         const handleSubmit = vi.fn();
         const handleCancel = vi.fn();
-        
+
         render(
-          <MockAppointmentForm 
+          <MockAppointmentForm
             appointment={mockAppointment}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-          />
+          />,
         );
 
         expect(screen.getByTestId('appointment-patient-id')).toHaveValue(mockAppointment.patientId);
@@ -530,15 +553,15 @@ describe('UI Component Contract Tests', () => {
       });
 
       it('should handle form submission and cancellation', () => {
-        const handleSubmit = vi.fn((e) => e.preventDefault());
+        const handleSubmit = vi.fn(e => e.preventDefault());
         const handleCancel = vi.fn();
-        
+
         render(
-          <MockAppointmentForm 
+          <MockAppointmentForm
             appointment={mockAppointment}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-          />
+          />,
         );
 
         fireEvent.submit(screen.getByTestId('appointment-form'));
@@ -562,7 +585,7 @@ describe('UI Component Contract Tests', () => {
 
   describe('Navigation Component Contracts', () => {
     const MockNavigation = ({ items, activeItem, onItemClick, ...props }: any) => (
-      <nav data-testid="mock-navigation" {...props}>
+      <nav data-testid='mock-navigation' {...props}>
         {items?.map((item: any) => (
           <button
             key={item.id}
@@ -610,13 +633,13 @@ describe('UI Component Contract Tests', () => {
         { id: 'patients', label: 'Patients' },
       ];
       const handleItemClick = vi.fn();
-      
+
       render(
-        <MockNavigation 
+        <MockNavigation
           items={navItems}
-          activeItem="home"
+          activeItem='home'
           onItemClick={handleItemClick}
-        />
+        />,
       );
 
       expect(screen.getByTestId('nav-item-home')).toBeInTheDocument();
@@ -627,12 +650,12 @@ describe('UI Component Contract Tests', () => {
     it('should handle navigation item clicks', () => {
       const navItems = [{ id: 'home', label: 'Home' }];
       const handleItemClick = vi.fn();
-      
+
       render(
-        <MockNavigation 
+        <MockNavigation
           items={navItems}
           onItemClick={handleItemClick}
-        />
+        />,
       );
 
       fireEvent.click(screen.getByTestId('nav-item-home'));
@@ -642,13 +665,13 @@ describe('UI Component Contract Tests', () => {
 
   describe('Medical Workflow Component Contracts', () => {
     const MockTreatmentPlan = ({ treatments, onTreatmentUpdate, readOnly, ...props }: any) => (
-      <div data-testid="treatment-plan" {...props}>
+      <div data-testid='treatment-plan' {...props}>
         {treatments?.map((treatment: any, index: number) => (
           <div key={index} data-testid={`treatment-${index}`}>
             <h4>{treatment.name}</h4>
             <p>Status: {treatment.status}</p>
             {!readOnly && (
-              <button 
+              <button
                 onClick={() => onTreatmentUpdate?.(index, { ...treatment, status: 'completed' })}
                 data-testid={`complete-treatment-${index}`}
               >
@@ -700,13 +723,13 @@ describe('UI Component Contract Tests', () => {
         { name: 'Dermal Filler', status: 'in-progress' as const },
       ];
       const handleUpdate = vi.fn();
-      
+
       render(
-        <MockTreatmentPlan 
+        <MockTreatmentPlan
           treatments={treatments}
           onTreatmentUpdate={handleUpdate}
           readOnly={false}
-        />
+        />,
       );
 
       expect(screen.getByText('Botox Application')).toBeInTheDocument();
@@ -718,13 +741,13 @@ describe('UI Component Contract Tests', () => {
     it('should handle treatment updates', () => {
       const treatments = [{ name: 'Botox Application', status: 'planned' as const }];
       const handleUpdate = vi.fn();
-      
+
       render(
-        <MockTreatmentPlan 
+        <MockTreatmentPlan
           treatments={treatments}
           onTreatmentUpdate={handleUpdate}
           readOnly={false}
-        />
+        />,
       );
 
       fireEvent.click(screen.getByTestId('complete-treatment-0'));
@@ -736,12 +759,12 @@ describe('UI Component Contract Tests', () => {
 
     it('should handle read-only mode', () => {
       const treatments = [{ name: 'Botox Application', status: 'planned' as const }];
-      
+
       render(
-        <MockTreatmentPlan 
+        <MockTreatmentPlan
           treatments={treatments}
           readOnly={true}
-        />
+        />,
       );
 
       expect(screen.queryByTestId('complete-treatment-0')).not.toBeInTheDocument();
@@ -752,14 +775,14 @@ describe('UI Component Contract Tests', () => {
     it('should have proper ARIA attributes on interactive elements', () => {
       render(
         <div>
-          <button aria-label="Save patient data" data-testid="save-button">
+          <button aria-label='Save patient data' data-testid='save-button'>
             Save
           </button>
-          <input aria-label="Patient name" data-testid="name-input" />
-          <div role="alert" aria-live="polite" data-testid="error-message">
+          <input aria-label='Patient name' data-testid='name-input' />
+          <div role='alert' aria-live='polite' data-testid='error-message'>
             Error message
           </div>
-        </div>
+        </div>,
       );
 
       const saveButton = screen.getByTestId('save-button');
@@ -776,10 +799,10 @@ describe('UI Component Contract Tests', () => {
       const user = userEvent.setup();
       render(
         <div>
-          <button data-testid="button-1">Button 1</button>
-          <button data-testid="button-2">Button 2</button>
-          <input data-testid="input-1" />
-        </div>
+          <button data-testid='button-1'>Button 1</button>
+          <button data-testid='button-2'>Button 2</button>
+          <input data-testid='input-1' />
+        </div>,
       );
 
       const button1 = screen.getByTestId('button-1');
@@ -801,7 +824,7 @@ describe('UI Component Contract Tests', () => {
     it('should handle component render errors gracefully', () => {
       const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
         const [hasError, setHasError] = React.useState(false);
-        
+
         React.useEffect(() => {
           const errorHandler = () => setHasError(true);
           window.addEventListener('error', errorHandler);
@@ -809,7 +832,7 @@ describe('UI Component Contract Tests', () => {
         }, []);
 
         if (hasError) {
-          return <div data-testid="error-fallback">Something went wrong</div>;
+          return <div data-testid='error-fallback'>Something went wrong</div>;
         }
 
         return <>{children}</>;
@@ -822,7 +845,7 @@ describe('UI Component Contract Tests', () => {
       render(
         <ErrorBoundary>
           <BrokenComponent />
-        </ErrorBoundary>
+        </ErrorBoundary>,
       );
 
       // Note: In a real scenario, you would use React Error Boundaries
@@ -844,13 +867,11 @@ describe('UI Component Contract Tests', () => {
   describe('Performance Contract Tests', () => {
     it('should render components within performance thresholds', async () => {
       const startTime = performance.now();
-      
+
       render(
         <div>
-          {Array.from({ length: 100 }, (_, i) => (
-            <MockButton key={i}>Button {i}</MockButton>
-          ))}
-        </div>
+          {Array.from({ length: 100 }, (_, i) => <MockButton key={i}>Button {i}</MockButton>)}
+        </div>,
       );
 
       const endTime = performance.now();
@@ -867,8 +888,8 @@ describe('UI Component Contract Tests', () => {
       }));
 
       const startTime = performance.now();
-      
-      render(<MockChart data={largeDataset} type="line" />);
+
+      render(<MockChart data={largeDataset} type='line' />);
 
       const endTime = performance.now();
       const renderTime = endTime - startTime;
@@ -898,7 +919,7 @@ describe('UI Component Contract Tests', () => {
 
     it('should adapt to different screen sizes', () => {
       const ResponsiveComponent = ({ isMobile = false }: { isMobile?: boolean }) => (
-        <div data-testid="responsive-component" className={isMobile ? 'mobile' : 'desktop'}>
+        <div data-testid='responsive-component' className={isMobile ? 'mobile' : 'desktop'}>
           {isMobile ? 'Mobile View' : 'Desktop View'}
         </div>
       );

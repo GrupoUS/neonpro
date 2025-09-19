@@ -5,14 +5,7 @@
  * with Brazilian healthcare compliance and formatting
  */
 
-import {
-  differenceInMinutes,
-  format,
-  isPast,
-  isToday,
-  isTomorrow,
-  parseISO,
-} from 'date-fns';
+import { differenceInMinutes, format, isPast, isToday, isTomorrow, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { Appointment, RiskLevel, TimeSlot } from '../types';
 

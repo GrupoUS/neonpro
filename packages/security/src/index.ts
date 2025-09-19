@@ -52,6 +52,11 @@ import { EncryptionManager, encryptionManager, KeyManager, keyManager } from './
 
 import { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
 
+// Named facade for common usage
+export function maskSensitiveData(data: string, maskChar: string = '*') {
+  return SecurityUtils.maskSensitiveData(data, maskChar);
+}
+
 import {
   authentication,
   authorization,

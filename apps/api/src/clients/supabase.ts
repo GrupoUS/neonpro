@@ -15,7 +15,10 @@
 import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../../../packages/database/src/types/supabase';
-import { createTelemetryEnabledSupabaseClient, TelemetryEnabledSupabaseClient } from '../lib/supabase-telemetry';
+import {
+  createTelemetryEnabledSupabaseClient,
+  TelemetryEnabledSupabaseClient,
+} from '../lib/supabase-telemetry';
 
 // Environment validation with fallback to NEXT_PUBLIC_ variables
 function getSupabaseUrl(): string {

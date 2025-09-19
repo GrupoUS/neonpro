@@ -3,7 +3,7 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
-import { type HealthcareAIContext, ComplianceLevel } from '@neonpro/shared';
+import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared';
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -126,9 +126,9 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     }
 
     // Extract user prompt for semantic caching
-    const userPrompt = text?.trim() || 
-      (Array.isArray(messages) && messages.length > 0 
-        ? messages[messages.length - 1]?.content 
+    const userPrompt = text?.trim()
+      || (Array.isArray(messages) && messages.length > 0
+        ? messages[messages.length - 1]?.content
         : '');
 
     // Create healthcare AI context for semantic caching
@@ -170,7 +170,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
           // Simulate streaming by chunking the cached response
           const chunks = cachedResponse.split(' ');
           let index = 0;
-          
+
           const sendChunk = () => {
             if (index < chunks.length) {
               const chunk = index === chunks.length - 1 ? chunks[index] : chunks[index] + ' ';
@@ -181,7 +181,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
               controller.close();
             }
           };
-          
+
           sendChunk();
         },
       });
@@ -239,7 +239,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
     const encoder = new TextEncoder();
     let fullResponse = ''; // Collect full response for caching
-    
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -247,7 +247,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
             fullResponse += chunk; // Accumulate response for caching
             controller.enqueue(encoder.encode(chunk));
           }
-          
+
           // Cache the complete response for future similar queries
           if (userPrompt && fullResponse && semanticCache.isEnabled()) {
             try {
@@ -263,7 +263,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
                 complianceLevel: ComplianceLevel.RESTRICTED,
                 integrityHash: '',
               });
-              
+
               console.log('Cached AI response for future queries:', {
                 sessionId,
                 promptLength: userPrompt.length,
@@ -273,7 +273,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
               console.warn('Failed to cache AI response:', cacheError);
             }
           }
-          
+
           controller.close();
         } catch (error) {
           console.error('Streaming error:', error);

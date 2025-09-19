@@ -3,8 +3,8 @@
  * Integrates with Hono.js for automatic tracing and monitoring
  */
 
-import { Context, Next } from 'hono';
-import { HealthcareSpanAttributes, getGlobalTelemetryManager, HealthcareOperations } from './index';
+import type { Context, Next } from 'hono';
+import { getGlobalTelemetryManager, HealthcareOperations } from './index';
 import { DataClassification, ComplianceLevel, HealthcareOperationType } from './types';
 
 // Extract healthcare context from request

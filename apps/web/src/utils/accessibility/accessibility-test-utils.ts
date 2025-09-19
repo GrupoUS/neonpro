@@ -1,6 +1,6 @@
 /**
  * Healthcare Accessibility Test Utilities
- * 
+ *
  * Comprehensive test utilities for accessibility testing in healthcare applications
  * with automated testing, validation patterns, and healthcare-specific checks.
  */
@@ -14,32 +14,32 @@ export const HEALTHCARE_TEST_SCENARIOS = [
     name: 'Patient Dashboard',
     description: 'Critical patient information display',
     selectors: ['[data-testid="patient-dashboard"]', '.patient-dashboard'],
-    requiredRules: ['color-contrast', 'name-role-value', 'label']
+    requiredRules: ['color-contrast', 'name-role-value', 'label'],
   },
   {
     name: 'Medical Forms',
     description: 'Patient data entry forms',
     selectors: ['form[data-medical="true"]', '.medical-form'],
-    requiredRules: ['form-field-multiple-labels', 'label-title-only']
+    requiredRules: ['form-field-multiple-labels', 'label-title-only'],
   },
   {
     name: 'Appointment Scheduling',
     description: 'Scheduling interface for healthcare professionals',
     selectors: ['[data-testid="appointment-scheduler"]', '.appointment-scheduler'],
-    requiredRules: ['button-name', 'link-name', 'aria-input-field-name']
+    requiredRules: ['button-name', 'link-name', 'aria-input-field-name'],
   },
   {
     name: 'Medical Records',
     description: 'Patient medical records viewer',
     selectors: ['[data-testid="medical-records"]', '.medical-records'],
-    requiredRules: ['landmark-one-main', 'page-has-heading-one']
+    requiredRules: ['landmark-one-main', 'page-has-heading-one'],
   },
   {
     name: 'Prescription Management',
     description: 'Prescription and medication management',
     selectors: ['[data-testid="prescription-manager"]', '.prescription-manager'],
-    requiredRules: ['duplicate-id', 'aria-command-name']
-  }
+    requiredRules: ['duplicate-id', 'aria-command-name'],
+  },
 ];
 
 // WCAG 2.1 AA+ requirements for healthcare
@@ -50,12 +50,12 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     critical: true,
     test: (element: Element) => {
       if (element.tagName === 'IMG') {
-        return element.hasAttribute('alt') || 
-               element.hasAttribute('aria-label') ||
-               element.getAttribute('role') === 'presentation';
+        return element.hasAttribute('alt')
+          || element.hasAttribute('aria-label')
+          || element.getAttribute('role') === 'presentation';
       }
       return true;
-    }
+    },
   },
   '1.3.1': {
     title: 'Info and Relationships',
@@ -66,18 +66,18 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
       return Array.from(forms).every(form => {
         const inputs = form.querySelectorAll('input, select, textarea');
         return Array.from(inputs).every(input => {
-          return input.hasAttribute('id') && 
-                 input.hasAttribute('name') &&
-                 document.querySelector(`label[for="${input.id}"]`) !== null;
+          return input.hasAttribute('id')
+            && input.hasAttribute('name')
+            && document.querySelector(`label[for="${input.id}"]`) !== null;
         });
       });
-    }
+    },
   },
   '1.4.3': {
     title: 'Contrast (Minimum)',
     description: 'Text contrast ratio at least 4.5:1',
     critical: true,
-    test: () => true // Handled by axe-core
+    test: () => true, // Handled by axe-core
   },
   '2.4.6': {
     title: 'Headings and Labels',
@@ -86,13 +86,10 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     test: (element: Element) => {
       const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
       const labels = element.querySelectorAll('label');
-      
-      return Array.from(headings).every(heading => 
-        heading.textContent?.trim().length > 0
-      ) && Array.from(labels).every(label => 
-        label.textContent?.trim().length > 0
-      );
-    }
+
+      return Array.from(headings).every(heading => heading.textContent?.trim().length > 0)
+        && Array.from(labels).every(label => label.textContent?.trim().length > 0);
+    },
   },
   '3.3.2': {
     title: 'Labels or Instructions',
@@ -102,11 +99,11 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
       const inputs = element.querySelectorAll('input, select, textarea');
       return Array.from(inputs).every(input => {
         const label = document.querySelector(`label[for="${input.id}"]`);
-        return label !== null || 
-               input.hasAttribute('aria-label') ||
-               input.hasAttribute('title');
+        return label !== null
+          || input.hasAttribute('aria-label')
+          || input.hasAttribute('title');
       });
-    }
+    },
   },
   '4.1.2': {
     title: 'Name, Role, Value',
@@ -115,12 +112,12 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     test: (element: Element) => {
       const interactive = element.querySelectorAll('button, input, select, textarea, a');
       return Array.from(interactive).every(el => {
-        return el.hasAttribute('aria-label') ||
-               el.hasAttribute('aria-labelledby') ||
-               el.textContent?.trim().length > 0;
+        return el.hasAttribute('aria-label')
+          || el.hasAttribute('aria-labelledby')
+          || el.textContent?.trim().length > 0;
       });
-    }
-  }
+    },
+  },
 };
 
 /**
@@ -157,7 +154,7 @@ export class HealthcareAccessibilityTester {
     for (const scenario of this.scenarios) {
       const result = await this.testScenario(scenario);
       results.push(result);
-      
+
       if (result.passed) {
         totalPassed++;
       } else {
@@ -173,7 +170,7 @@ export class HealthcareAccessibilityTester {
       total: this.scenarios.length,
       scenarios: results,
       overallScore,
-      healthcareCompliance: await this.validateHealthcareCompliance()
+      healthcareCompliance: await this.validateHealthcareCompliance(),
     };
   }
 
@@ -188,7 +185,7 @@ export class HealthcareAccessibilityTester {
   }> {
     try {
       const elements = this.findScenarioElements(scenario);
-      
+
       if (elements.length === 0) {
         return {
           name: scenario.name,
@@ -196,9 +193,9 @@ export class HealthcareAccessibilityTester {
           violations: [{
             rule: 'ELEMENT_NOT_FOUND',
             description: `No elements found for scenario: ${scenario.name}`,
-            impact: 'critical'
+            impact: 'critical',
           }],
-          score: 0
+          score: 0,
         };
       }
 
@@ -216,7 +213,7 @@ export class HealthcareAccessibilityTester {
             violations.push({
               rule: wcagId,
               description: requirement.description,
-              impact: requirement.critical ? 'critical' : 'moderate'
+              impact: requirement.critical ? 'critical' : 'moderate',
             });
           }
         }
@@ -225,7 +222,7 @@ export class HealthcareAccessibilityTester {
         try {
           const axeResults = await axe.run(element);
           const report = generateAccessibilityReport(axeResults);
-          
+
           if (report.summary.total > 0) {
             violations.push(...report.violations);
           }
@@ -235,12 +232,12 @@ export class HealthcareAccessibilityTester {
       }
 
       const score = Math.round((passedChecks / totalChecks) * 100);
-      
+
       return {
         name: scenario.name,
         passed: violations.length === 0,
         violations,
-        score
+        score,
       };
     } catch (error) {
       console.error(`Scenario test failed for ${scenario.name}:`, error);
@@ -250,9 +247,9 @@ export class HealthcareAccessibilityTester {
         violations: [{
           rule: 'TEST_ERROR',
           description: `Test execution failed: ${error}`,
-          impact: 'critical'
+          impact: 'critical',
         }],
-        score: 0
+        score: 0,
       };
     }
   }
@@ -262,12 +259,12 @@ export class HealthcareAccessibilityTester {
    */
   private findScenarioElements(scenario: typeof HEALTHCARE_TEST_SCENARIOS[0]): Element[] {
     const elements: Element[] = [];
-    
+
     for (const selector of scenario.selectors) {
       const found = document.querySelectorAll(selector);
       found.forEach(el => elements.push(el));
     }
-    
+
     return elements;
   }
 
@@ -283,7 +280,7 @@ export class HealthcareAccessibilityTester {
     return {
       lgpd: await this.validateLGPDCompliance(),
       anvisa: await this.validateANVISACompliance(),
-      cfm: await this.validateCFMCompliance()
+      cfm: await this.validateCFMCompliance(),
     };
   }
 
@@ -295,15 +292,17 @@ export class HealthcareAccessibilityTester {
     const lgpdSelectors = [
       '[data-lgpd="consent"]',
       '[data-privacy="notice"]',
-      '[data-sensitive="medical"]'
+      '[data-sensitive="medical"]',
     ];
 
     for (const selector of lgpdSelectors) {
       const elements = document.querySelectorAll(selector);
-      
+
       for (const element of Array.from(elements)) {
-        if (!element.hasAttribute('aria-label') && 
-            !element.hasAttribute('aria-labelledby')) {
+        if (
+          !element.hasAttribute('aria-label')
+          && !element.hasAttribute('aria-labelledby')
+        ) {
           return false;
         }
       }
@@ -318,10 +317,12 @@ export class HealthcareAccessibilityTester {
   private async validateANVISACompliance(): Promise<boolean> {
     // Check for ANVISA-specific requirements
     const anvisaElements = document.querySelectorAll('[data-anvisa="medical-device"]');
-    
+
     for (const element of Array.from(anvisaElements)) {
-      if (!element.hasAttribute('role') && 
-          !element.hasAttribute('aria-label')) {
+      if (
+        !element.hasAttribute('role')
+        && !element.hasAttribute('aria-label')
+      ) {
         return false;
       }
     }
@@ -335,10 +336,12 @@ export class HealthcareAccessibilityTester {
   private async validateCFMCompliance(): Promise<boolean> {
     // Check for CFM-specific requirements
     const cfmElements = document.querySelectorAll('[data-cfm="professional"]');
-    
+
     for (const element of Array.from(cfmElements)) {
-      if (!element.hasAttribute('aria-label') && 
-          !element.hasAttribute('aria-describedby')) {
+      if (
+        !element.hasAttribute('aria-label')
+        && !element.hasAttribute('aria-describedby')
+      ) {
         return false;
       }
     }
@@ -370,7 +373,7 @@ export class HealthcareAccessibilityTester {
       recommendations.push('🚨 Critical: Overall accessibility score below 80%');
       criticalIssues.push({
         type: 'LOW_SCORE',
-        description: 'Accessibility score requires immediate improvement'
+        description: 'Accessibility score requires immediate improvement',
       });
     }
 
@@ -378,12 +381,14 @@ export class HealthcareAccessibilityTester {
       recommendations.push('🔒 LGPD compliance issues detected - review sensitive data handling');
       criticalIssues.push({
         type: 'LGPD_COMPLIANCE',
-        description: 'LGPD accessibility requirements not met'
+        description: 'LGPD accessibility requirements not met',
       });
     }
 
     if (!testResults.healthcareCompliance.anvisa) {
-      recommendations.push('⚕️ ANVISA compliance issues detected - review medical device interfaces');
+      recommendations.push(
+        '⚕️ ANVISA compliance issues detected - review medical device interfaces',
+      );
     }
 
     if (!testResults.healthcareCompliance.cfm) {
@@ -393,15 +398,15 @@ export class HealthcareAccessibilityTester {
     return {
       summary: {
         overallScore: testResults.overallScore,
-        accessibilityCompliance: testResults.overallScore >= 90 ? 
-          'Excellent WCAG 2.1 AA+ Compliance' :
-          testResults.overallScore >= 80 ?
-          'Good WCAG 2.1 AA+ Compliance' :
-          'Needs Improvement',
-        healthcareCompliance: testResults.healthcareCompliance
+        accessibilityCompliance: testResults.overallScore >= 90
+          ? 'Excellent WCAG 2.1 AA+ Compliance'
+          : testResults.overallScore >= 80
+          ? 'Good WCAG 2.1 AA+ Compliance'
+          : 'Needs Improvement',
+        healthcareCompliance: testResults.healthcareCompliance,
       },
       recommendations,
-      criticalIssues
+      criticalIssues,
     };
   }
 }
@@ -415,34 +420,34 @@ export const healthcareAccessibilityTester = new HealthcareAccessibilityTester()
  * Utility function for quick accessibility checks
  */
 export async function quickAccessibilityCheck(
-  selector?: string
+  selector?: string,
 ): Promise<{
   passed: boolean;
   violations: any[];
   score: number;
 }> {
   const context = selector ? document.querySelector(selector) : document;
-  
+
   if (!context) {
     return {
       passed: false,
       violations: [{
         rule: 'ELEMENT_NOT_FOUND',
         description: `No element found for selector: ${selector}`,
-        impact: 'critical'
+        impact: 'critical',
       }],
-      score: 0
+      score: 0,
     };
   }
 
   try {
     const results = await axe.run(context);
     const report = generateAccessibilityReport(results);
-    
+
     return {
       passed: report.summary.total === 0,
       violations: report.violations,
-      score: Math.max(0, 100 - (report.summary.total * 10))
+      score: Math.max(0, 100 - (report.summary.total * 10)),
     };
   } catch (error) {
     console.error('Quick accessibility check failed:', error);
@@ -451,9 +456,9 @@ export async function quickAccessibilityCheck(
       violations: [{
         rule: 'TEST_ERROR',
         description: `Accessibility test failed: ${error}`,
-        impact: 'critical'
+        impact: 'critical',
       }],
-      score: 0
+      score: 0,
     };
   }
 }

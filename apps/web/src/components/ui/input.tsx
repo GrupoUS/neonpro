@@ -11,12 +11,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       'aria-label': props['aria-label'] || props.placeholder,
       'aria-describedby': props['aria-describedby'],
       'aria-required': props.required ? 'true' : undefined,
-      'aria-invalid': props['aria-invalid'] || (props.required && !props.value ? 'true' : undefined),
+      'aria-invalid': props['aria-invalid']
+        || (props.required && !props.value ? 'true' : undefined),
     };
 
     // Remove undefined props to avoid HTML validation warnings
     const cleanProps = Object.fromEntries(
-      Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+      Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined),
     );
 
     return (

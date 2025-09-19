@@ -3,17 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.js",
-  "module": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "types": "./src/index.d.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./ai": {
-      "import": "./src/ai.js",
-      "types": "./src/ai.d.ts"
+      "import": "./dist/ai.mjs",
+      "require": "./dist/ai.js",
+      "types": "./dist/ai.d.ts"
+    },
+    "./plans": {
+      "import": "./dist/src/plans.mjs",
+      "require": "./dist/src/plans.js",
+      "types": "./dist/src/plans.d.ts"
+    },
+    "./quotas": {
+      "import": "./dist/src/quotas.mjs",
+      "require": "./dist/src/quotas.js",
+      "types": "./dist/src/quotas.d.ts"
     }
   },
   "scripts": {

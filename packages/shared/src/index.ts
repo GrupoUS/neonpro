@@ -134,3 +134,6 @@ export * from './i18n/ai-chat';
 
 // WebRTC infrastructure
 export * from './webrtc';
+
+// Telemetry and observability
+export * from './telemetry';

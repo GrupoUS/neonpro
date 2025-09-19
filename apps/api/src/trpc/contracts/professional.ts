@@ -3,16 +3,16 @@
  * Healthcare professional management with license validation and scheduling
  */
 
-import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
 import {
   CreateProfessionalRequestSchema,
-  UpdateProfessionalRequestSchema,
-  ProfessionalResponseSchema,
-  ProfessionalsListResponseSchema,
   HealthcareTRPCError,
   PaginationSchema,
+  ProfessionalResponseSchema,
+  ProfessionalsListResponseSchema,
+  UpdateProfessionalRequestSchema,
 } from '@neonpro/types/api/contracts';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
 
 export const professionalRouter = router({
   /**
@@ -37,7 +37,7 @@ export const professionalRouter = router({
           'NOT_FOUND',
           'Clinic not found',
           'CLINIC_NOT_FOUND',
-          { clinicId: input.clinicId }
+          { clinicId: input.clinicId },
         );
       }
 
@@ -53,7 +53,7 @@ export const professionalRouter = router({
           {
             licenseType: input.licenseType,
             licenseNumber: input.licenseNumber,
-          }
+          },
         );
       }
 
@@ -74,14 +74,14 @@ export const professionalRouter = router({
           {
             existingProfessionalId: existingProfessional.id,
             licenseNumber: input.licenseNumber,
-          }
+          },
         );
       }
 
       // Validate license with regulatory authority (CFM, CRO, etc.)
       const licenseValidation = await validateLicenseWithAuthority(
         input.licenseType,
-        input.licenseNumber
+        input.licenseNumber,
       );
 
       if (!licenseValidation.isValid) {
@@ -93,7 +93,7 @@ export const professionalRouter = router({
             licenseType: input.licenseType,
             licenseNumber: input.licenseNumber,
             validationErrors: licenseValidation.errors,
-          }
+          },
         );
       }
 
@@ -208,7 +208,7 @@ export const professionalRouter = router({
           'NOT_FOUND',
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
-          { professionalId: input.id }
+          { professionalId: input.id },
         );
       }
 
@@ -221,7 +221,7 @@ export const professionalRouter = router({
         performanceMetrics = await calculateProfessionalMetrics(
           input.id,
           new Date(input.metricsDateRange.from),
-          new Date(input.metricsDateRange.to)
+          new Date(input.metricsDateRange.to),
         );
       }
 
@@ -256,7 +256,9 @@ export const professionalRouter = router({
         startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
         endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
       }).optional(),
-      sortBy: z.enum(['fullName', 'specialization', 'createdAt', 'licenseValidatedAt']).default('fullName'),
+      sortBy: z.enum(['fullName', 'specialization', 'createdAt', 'licenseValidatedAt']).default(
+        'fullName',
+      ),
       sortOrder: z.enum(['asc', 'desc']).default('asc'),
     }))
     .output(ProfessionalsListResponseSchema)
@@ -309,7 +311,9 @@ export const professionalRouter = router({
           where: {
             professionalId: { in: professionalIds },
             scheduledDate: {
-              gte: new Date(availableDate.toDateString() + ' ' + input.availabilityTimeSlot.startTime),
+              gte: new Date(
+                availableDate.toDateString() + ' ' + input.availabilityTimeSlot.startTime,
+              ),
               lt: new Date(availableDate.toDateString() + ' ' + input.availabilityTimeSlot.endTime),
             },
             status: { in: ['scheduled', 'confirmed', 'in_progress'] },
@@ -321,7 +325,7 @@ export const professionalRouter = router({
         professionalIds = professionalIds.filter(id => !busyProfessionalIds.has(id));
       }
 
-      const finalWhere = professionalIds 
+      const finalWhere = professionalIds
         ? { ...where, id: { in: professionalIds } }
         : where;
 
@@ -394,7 +398,7 @@ export const professionalRouter = router({
           'NOT_FOUND',
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
-          { professionalId: input.id }
+          { professionalId: input.id },
         );
       }
 
@@ -402,9 +406,9 @@ export const professionalRouter = router({
       await validateClinicAccess(ctx.user.id, currentProfessional.clinicId);
 
       // Check if license information is being updated
-      const licenseChanged = 
-        (input.licenseNumber && input.licenseNumber !== currentProfessional.licenseNumber) ||
-        (input.licenseType && input.licenseType !== currentProfessional.licenseType);
+      const licenseChanged =
+        (input.licenseNumber && input.licenseNumber !== currentProfessional.licenseNumber)
+        || (input.licenseType && input.licenseType !== currentProfessional.licenseType);
 
       let licenseValidation = null;
       if (licenseChanged) {
@@ -420,7 +424,7 @@ export const professionalRouter = router({
             {
               licenseType: newLicenseType,
               licenseNumber: newLicenseNumber,
-            }
+            },
           );
         }
 
@@ -442,14 +446,14 @@ export const professionalRouter = router({
             {
               existingProfessionalId: existingProfessional.id,
               licenseNumber: newLicenseNumber,
-            }
+            },
           );
         }
 
         // Re-validate license with authority
         licenseValidation = await validateLicenseWithAuthority(
           newLicenseType,
-          newLicenseNumber
+          newLicenseNumber,
         );
 
         if (!licenseValidation.isValid) {
@@ -461,7 +465,7 @@ export const professionalRouter = router({
               licenseType: newLicenseType,
               licenseNumber: newLicenseNumber,
               validationErrors: licenseValidation.errors,
-            }
+            },
           );
         }
       }
@@ -580,7 +584,7 @@ export const professionalRouter = router({
           'NOT_FOUND',
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
-          { professionalId: input.professionalId }
+          { professionalId: input.professionalId },
         );
       }
 
@@ -611,7 +615,7 @@ export const professionalRouter = router({
         professional.workingHours,
         existingAppointments,
         input.slotDuration,
-        input.includeBookedSlots
+        input.includeBookedSlots,
       );
 
       return {
@@ -662,7 +666,7 @@ export const professionalRouter = router({
           'NOT_FOUND',
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
-          { professionalId: input.id }
+          { professionalId: input.id },
         );
       }
 
@@ -703,7 +707,7 @@ export const professionalRouter = router({
             throw new HealthcareTRPCError(
               'BAD_REQUEST',
               'Reassign target professional ID is required',
-              'REASSIGN_TARGET_REQUIRED'
+              'REASSIGN_TARGET_REQUIRED',
             );
           }
 
@@ -783,7 +787,7 @@ function isValidLicenseFormat(licenseType: string, licenseNumber: string): boole
 
 async function validateLicenseWithAuthority(
   licenseType: string,
-  licenseNumber: string
+  licenseNumber: string,
 ): Promise<{ isValid: boolean; source: string; errors?: string[] }> {
   // Placeholder for actual license validation with regulatory authorities
   // This would integrate with CFM, CRO, CRF APIs, etc.
@@ -796,7 +800,7 @@ async function validateLicenseWithAuthority(
 async function calculateProfessionalMetrics(
   professionalId: string,
   dateFrom: Date,
-  dateTo: Date
+  dateTo: Date,
 ): Promise<any> {
   // Placeholder for performance metrics calculation
   return {
@@ -814,7 +818,7 @@ function calculateAvailableSlots(
   workingHours: any[],
   existingAppointments: any[],
   slotDuration: number,
-  includeBookedSlots: boolean
+  includeBookedSlots: boolean,
 ): any[] {
   // Placeholder for slot calculation algorithm
   return [];

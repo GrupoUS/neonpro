@@ -1,11 +1,11 @@
 /**
  * Brazilian Healthcare Compliance Validation System
- * 
+ *
  * Comprehensive validation system for Brazilian healthcare regulations including:
  * - LGPD (Lei Geral de Proteção de Dados)
  * - ANVISA (Agência Nacional de Vigilância Sanitária)
  * - CFM (Conselho Federal de Medicina)
- * 
+ *
  * Provides automated validation, audit trails, and compliance reporting.
  */
 
@@ -27,15 +27,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Implement technical and organizational measures to protect personal data',
         critical: true,
         validation: (context: Element) => {
-          const sensitiveData = context.querySelectorAll('[data-sensitive="personal"], [data-lgpd="true"]');
+          const sensitiveData = context.querySelectorAll(
+            '[data-sensitive="personal"], [data-lgpd="true"]',
+          );
           return Array.from(sensitiveData).every(element => {
             return (
-              element.hasAttribute('aria-label') ||
-              element.hasAttribute('aria-labelledby') ||
-              element.getAttribute('role') === 'alert'
+              element.hasAttribute('aria-label')
+              || element.hasAttribute('aria-labelledby')
+              || element.getAttribute('role') === 'alert'
             );
           });
-        }
+        },
       },
       CONSENT_MANAGEMENT: {
         id: 'lgpd-consent',
@@ -43,15 +45,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Ensure clear and accessible consent management interfaces',
         critical: true,
         validation: (context: Element) => {
-          const consentElements = context.querySelectorAll('[data-consent="true"], .consent-management');
+          const consentElements = context.querySelectorAll(
+            '[data-consent="true"], .consent-management',
+          );
           return Array.from(consentElements).every(element => {
             return (
-              element.hasAttribute('role') &&
-              (element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby')) &&
-              element.querySelector('button[aria-label*="consent"]') !== null
+              element.hasAttribute('role')
+              && (element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby'))
+              && element.querySelector('button[aria-label*="consent"]') !== null
             );
           });
-        }
+        },
       },
       DATA_SUBJECT_RIGHTS: {
         id: 'lgpd-rights',
@@ -62,11 +66,11 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
           const rightsElements = context.querySelectorAll('[data-rights="true"], .data-rights');
           return Array.from(rightsElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.getAttribute('role') === 'region'
+              element.hasAttribute('aria-label')
+              && element.getAttribute('role') === 'region'
             );
           });
-        }
+        },
       },
       INCIDENT_REPORTING: {
         id: 'lgpd-incidents',
@@ -74,16 +78,18 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Accessible incident reporting mechanisms',
         critical: false,
         validation: (context: Element) => {
-          const incidentElements = context.querySelectorAll('[data-incident="true"], .incident-reporting');
+          const incidentElements = context.querySelectorAll(
+            '[data-incident="true"], .incident-reporting',
+          );
           return Array.from(incidentElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.querySelector('button[aria-label*="report"]') !== null
+              element.hasAttribute('aria-label')
+              && element.querySelector('button[aria-label*="report"]') !== null
             );
           });
-        }
-      }
-    }
+        },
+      },
+    },
   },
   ANVISA: {
     id: 'anvisa',
@@ -96,15 +102,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Medical device software accessibility requirements',
         critical: true,
         validation: (context: Element) => {
-          const medicalDeviceElements = context.querySelectorAll('[data-medical-device="true"], [data-anvisa="device"]');
+          const medicalDeviceElements = context.querySelectorAll(
+            '[data-medical-device="true"], [data-anvisa="device"]',
+          );
           return Array.from(medicalDeviceElements).every(element => {
             return (
-              element.hasAttribute('role') &&
-              (element.hasAttribute('aria-label') || element.hasAttribute('aria-describedby')) &&
-              element.getAttribute('aria-live') === 'polite'
+              element.hasAttribute('role')
+              && (element.hasAttribute('aria-label') || element.hasAttribute('aria-describedby'))
+              && element.getAttribute('aria-live') === 'polite'
             );
           });
-        }
+        },
       },
       RISK_MANAGEMENT: {
         id: 'anvisa-risk',
@@ -115,11 +123,11 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
           const riskElements = context.querySelectorAll('[data-risk="true"], .risk-management');
           return Array.from(riskElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.getAttribute('role') === 'alert'
+              element.hasAttribute('aria-label')
+              && element.getAttribute('role') === 'alert'
             );
           });
-        }
+        },
       },
       CLINICAL_EVALUATION: {
         id: 'anvisa-clinical',
@@ -127,15 +135,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Clinical evaluation interface accessibility',
         critical: true,
         validation: (context: Element) => {
-          const clinicalElements = context.querySelectorAll('[data-clinical="true"], .clinical-evaluation');
+          const clinicalElements = context.querySelectorAll(
+            '[data-clinical="true"], .clinical-evaluation',
+          );
           return Array.from(clinicalElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.hasAttribute('aria-describedby') &&
-              element.querySelector('input[aria-required="true"]') !== null
+              element.hasAttribute('aria-label')
+              && element.hasAttribute('aria-describedby')
+              && element.querySelector('input[aria-required="true"]') !== null
             );
           });
-        }
+        },
       },
       LABELING_REQUIREMENTS: {
         id: 'anvisa-labeling',
@@ -143,17 +153,19 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Medical product labeling accessibility',
         critical: true,
         validation: (context: Element) => {
-          const labelingElements = context.querySelectorAll('[data-labeling="true"], .product-labeling');
+          const labelingElements = context.querySelectorAll(
+            '[data-labeling="true"], .product-labeling',
+          );
           return Array.from(labelingElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.querySelector('.product-name[aria-label]') !== null &&
-              element.querySelector('.product-description[aria-describedby]') !== null
+              element.hasAttribute('aria-label')
+              && element.querySelector('.product-name[aria-label]') !== null
+              && element.querySelector('.product-description[aria-describedby]') !== null
             );
           });
-        }
-      }
-    }
+        },
+      },
+    },
   },
   CFM: {
     id: 'cfm',
@@ -166,15 +178,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Healthcare professional authentication accessibility',
         critical: true,
         validation: (context: Element) => {
-          const authElements = context.querySelectorAll('[data-auth="professional"], [data-cfm="auth"]');
+          const authElements = context.querySelectorAll(
+            '[data-auth="professional"], [data-cfm="auth"]',
+          );
           return Array.from(authElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.hasAttribute('aria-describedby') &&
-              element.querySelector('input[type="password"][aria-required="true"]') !== null
+              element.hasAttribute('aria-label')
+              && element.hasAttribute('aria-describedby')
+              && element.querySelector('input[type="password"][aria-required="true"]') !== null
             );
           });
-        }
+        },
       },
       PATIENT_CONFIDENTIALITY: {
         id: 'cfm-confidentiality',
@@ -182,15 +196,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Patient confidentiality protection accessibility',
         critical: true,
         validation: (context: Element) => {
-          const confidentialityElements = context.querySelectorAll('[data-confidential="true"], [data-cfm="confidential"]');
+          const confidentialityElements = context.querySelectorAll(
+            '[data-confidential="true"], [data-cfm="confidential"]',
+          );
           return Array.from(confidentialityElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.getAttribute('role') === 'region' &&
-              element.querySelector('.confidential-notice[aria-live="polite"]') !== null
+              element.hasAttribute('aria-label')
+              && element.getAttribute('role') === 'region'
+              && element.querySelector('.confidential-notice[aria-live="polite"]') !== null
             );
           });
-        }
+        },
       },
       MEDICAL_RECORDS: {
         id: 'cfm-records',
@@ -198,15 +214,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Medical records management accessibility',
         critical: true,
         validation: (context: Element) => {
-          const recordElements = context.querySelectorAll('[data-records="medical"], [data-cfm="records"]');
+          const recordElements = context.querySelectorAll(
+            '[data-records="medical"], [data-cfm="records"]',
+          );
           return Array.from(recordElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.hasAttribute('aria-describedby') &&
-              element.querySelector('.record-header[aria-level="2"]') !== null
+              element.hasAttribute('aria-label')
+              && element.hasAttribute('aria-describedby')
+              && element.querySelector('.record-header[aria-level="2"]') !== null
             );
           });
-        }
+        },
       },
       TELEMEDICINE_STANDARDS: {
         id: 'cfm-telemedicine',
@@ -214,15 +232,17 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Telemedicine service accessibility standards',
         critical: true,
         validation: (context: Element) => {
-          const telemedicineElements = context.querySelectorAll('[data-telemedicine="true"], [data-cfm="telemedicine"]');
+          const telemedicineElements = context.querySelectorAll(
+            '[data-telemedicine="true"], [data-cfm="telemedicine"]',
+          );
           return Array.from(telemedicineElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.getAttribute('aria-live') === 'polite' &&
-              element.querySelector('video[aria-label]') !== null
+              element.hasAttribute('aria-label')
+              && element.getAttribute('aria-live') === 'polite'
+              && element.querySelector('video[aria-label]') !== null
             );
           });
-        }
+        },
       },
       INFORMED_CONSENT: {
         id: 'cfm-consent',
@@ -230,18 +250,20 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         description: 'Informed consent process accessibility',
         critical: true,
         validation: (context: Element) => {
-          const consentElements = context.querySelectorAll('[data-consent="informed"], [data-cfm="consent"]');
+          const consentElements = context.querySelectorAll(
+            '[data-consent="informed"], [data-cfm="consent"]',
+          );
           return Array.from(consentElements).every(element => {
             return (
-              element.hasAttribute('aria-label') &&
-              element.hasAttribute('aria-describedby') &&
-              element.querySelector('button[aria-label*="consent"]') !== null
+              element.hasAttribute('aria-label')
+              && element.hasAttribute('aria-describedby')
+              && element.querySelector('button[aria-label*="consent"]') !== null
             );
           });
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 };
 
 /**
@@ -255,7 +277,7 @@ export class BrazilianHealthcareComplianceValidator {
    * Perform comprehensive compliance validation
    */
   async validateCompliance(
-    context?: Element | string
+    context?: Element | string,
   ): Promise<{
     overallScore: number;
     standards: {
@@ -309,15 +331,18 @@ export class BrazilianHealthcareComplianceValidator {
       fix: string;
     }>;
   }> {
-    const auditContext = typeof context === 'string' ? 
-      document.querySelector(context) : context || document;
+    const auditContext = typeof context === 'string'
+      ? document.querySelector(context)
+      : context || document;
 
     if (!auditContext) {
       throw new Error('Compliance validation context not found');
     }
 
     // Ensure we have an Element for standard validation
-    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
+    const elementContext = auditContext instanceof Document
+      ? auditContext.documentElement
+      : auditContext;
 
     const results = {
       overallScore: 0,
@@ -328,7 +353,7 @@ export class BrazilianHealthcareComplianceValidator {
       },
       auditTrail: [],
       recommendations: [],
-      criticalIssues: []
+      criticalIssues: [],
     };
 
     // Validate each standard
@@ -341,12 +366,14 @@ export class BrazilianHealthcareComplianceValidator {
 
     // Calculate overall score
     const totalRequirements = Object.values(results.standards).reduce(
-      (sum, std) => sum + std.requirements.length, 0
+      (sum, std) => sum + std.requirements.length,
+      0,
     );
     const passedRequirements = Object.values(results.standards).reduce(
-      (sum, std) => sum + std.requirements.filter(req => req.passed).length, 0
+      (sum, std) => sum + std.requirements.filter(req => req.passed).length,
+      0,
     );
-    
+
     results.overallScore = Math.round((passedRequirements / totalRequirements) * 100);
 
     // Generate recommendations
@@ -361,7 +388,7 @@ export class BrazilianHealthcareComplianceValidator {
   private async validateStandard(
     standardId: string,
     standard: any,
-    context: Element
+    context: Element,
   ): Promise<{
     score: number;
     requirements: Array<{
@@ -397,13 +424,13 @@ export class BrazilianHealthcareComplianceValidator {
         const req = requirement as any; // Type assertion to handle unknown type
         const passed = req.validation(context);
         const violations = passed ? [] : this.generateRequirementViolations(req);
-        
+
         requirements.push({
           id: req.id,
           name: req.name,
           passed,
           critical: req.critical,
-          violations
+          violations,
         });
 
         if (passed) {
@@ -414,7 +441,7 @@ export class BrazilianHealthcareComplianceValidator {
             requirement: req.name,
             description: req.description,
             severity: 'critical' as const,
-            fix: this.generateRequirementFix(req)
+            fix: this.generateRequirementFix(req),
           });
         }
 
@@ -423,19 +450,21 @@ export class BrazilianHealthcareComplianceValidator {
           standard: standard.name,
           requirement: req.name,
           result: passed ? 'pass' as const : 'fail' as const,
-          details: passed ? 'Requirement validated successfully' : `Validation failed: ${req.description}`
+          details: passed
+            ? 'Requirement validated successfully'
+            : `Validation failed: ${req.description}`,
         });
       } catch (error: unknown) {
         const req = requirement as any;
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Validation failed for ${req.id}:`, error);
-        
+
         requirements.push({
           id: req.id,
           name: req.name,
           passed: false,
           critical: req.critical,
-          violations: [`Validation error: ${errorMessage}`]
+          violations: [`Validation error: ${errorMessage}`],
         });
 
         if (req.critical) {
@@ -444,7 +473,7 @@ export class BrazilianHealthcareComplianceValidator {
             requirement: req.name,
             description: req.description,
             severity: 'critical' as const,
-            fix: `Fix validation error: ${errorMessage}`
+            fix: `Fix validation error: ${errorMessage}`,
           });
         }
       }
@@ -457,7 +486,7 @@ export class BrazilianHealthcareComplianceValidator {
       requirements,
       compliance: score >= 90,
       auditTrail,
-      criticalIssues
+      criticalIssues,
     };
   }
 
@@ -502,10 +531,11 @@ export class BrazilianHealthcareComplianceValidator {
       'anvisa-medical-device': 'Add ARIA attributes and live regions to medical device interfaces',
       'cfm-auth': 'Enhance authentication form accessibility with proper labeling',
       'cfm-confidentiality': 'Add accessibility controls for confidential information display',
-      'cfm-telemedicine': 'Implement accessible telemedicine interface with proper ARIA support'
+      'cfm-telemedicine': 'Implement accessible telemedicine interface with proper ARIA support',
     };
 
-    return fixes[requirement.id as keyof typeof fixes] || 'Review and implement accessibility requirements';
+    return fixes[requirement.id as keyof typeof fixes]
+      || 'Review and implement accessibility requirements';
   }
 
   /**
@@ -519,7 +549,7 @@ export class BrazilianHealthcareComplianceValidator {
       recommendations.push(
         '🚨 CRITICAL: Overall healthcare compliance score below 80%',
         'Immediate attention required for healthcare regulatory compliance',
-        'Schedule comprehensive compliance review with legal team'
+        'Schedule comprehensive compliance review with legal team',
       );
     }
 
@@ -528,7 +558,7 @@ export class BrazilianHealthcareComplianceValidator {
       recommendations.push(
         '🔒 LGPD compliance issues detected',
         'Review data protection measures and consent management',
-        'Implement proper accessibility for data subject rights interfaces'
+        'Implement proper accessibility for data subject rights interfaces',
       );
     }
 
@@ -536,7 +566,7 @@ export class BrazilianHealthcareComplianceValidator {
       recommendations.push(
         '⚕️ ANVISA compliance issues detected',
         'Review medical device software accessibility requirements',
-        'Implement proper risk management controls accessibility'
+        'Implement proper risk management controls accessibility',
       );
     }
 
@@ -544,7 +574,7 @@ export class BrazilianHealthcareComplianceValidator {
       recommendations.push(
         '👨‍⚕️ CFM compliance issues detected',
         'Review professional authentication and authorization interfaces',
-        'Enhance medical records and telemedicine accessibility'
+        'Enhance medical records and telemedicine accessibility',
       );
     }
 
@@ -553,7 +583,7 @@ export class BrazilianHealthcareComplianceValidator {
       recommendations.push(
         '📋 Critical compliance issues require immediate attention',
         'Prioritize fixes based on severity and regulatory impact',
-        'Document all compliance fixes and maintain audit trail'
+        'Document all compliance fixes and maintain audit trail',
       );
     }
 
@@ -580,7 +610,7 @@ export class BrazilianHealthcareComplianceValidator {
     nextSteps: string[];
   } {
     const overallCompliance = Object.values(validationResults.standards).every(
-      (std: any) => std.compliance
+      (std: any) => std.compliance,
     );
 
     return {
@@ -591,13 +621,13 @@ export class BrazilianHealthcareComplianceValidator {
           lgpd: validationResults.standards.lgpd.compliance,
           anvisa: validationResults.standards.anvisa.compliance,
           cfm: validationResults.standards.cfm.compliance,
-          overall: overallCompliance
-        }
+          overall: overallCompliance,
+        },
       },
       detailedResults: validationResults.standards,
       auditTrail: validationResults.auditTrail,
       recommendations: validationResults.recommendations,
-      nextSteps: this.generateNextSteps(validationResults)
+      nextSteps: this.generateNextSteps(validationResults),
     };
   }
 
@@ -637,7 +667,7 @@ export class BrazilianHealthcareComplianceValidator {
     return {
       standards: this.complianceStandards,
       lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
+      version: '1.0.0',
     };
   }
 }
@@ -651,7 +681,7 @@ export const brazilianHealthcareComplianceValidator = new BrazilianHealthcareCom
  * Quick compliance check utility
  */
 export async function quickBrazilianComplianceCheck(
-  selector?: string
+  selector?: string,
 ): Promise<{
   passed: boolean;
   score: number;
@@ -663,7 +693,7 @@ export async function quickBrazilianComplianceCheck(
   issues: string[];
 }> {
   const context = selector ? document.querySelector(selector) : document;
-  
+
   if (!context) {
     return {
       passed: false,
@@ -671,27 +701,27 @@ export async function quickBrazilianComplianceCheck(
       standards: {
         lgpd: false,
         anvisa: false,
-        cfm: false
+        cfm: false,
       },
-      issues: ['Context not found for compliance check']
+      issues: ['Context not found for compliance check'],
     };
   }
 
   try {
     const validator = new BrazilianHealthcareComplianceValidator();
     const results = await validator.validateCompliance(context as Element);
-    
+
     return {
       passed: results.overallScore >= 90,
       score: results.overallScore,
       standards: {
         lgpd: results.standards.lgpd.compliance,
         anvisa: results.standards.anvisa.compliance,
-        cfm: results.standards.cfm.compliance
+        cfm: results.standards.cfm.compliance,
       },
-      issues: results.criticalIssues.map((issue: any) => 
+      issues: results.criticalIssues.map((issue: any) =>
         `${issue.standard}: ${issue.requirement} - ${issue.description}`
-      )
+      ),
     };
   } catch (error) {
     console.error('Quick compliance check failed:', error);
@@ -701,13 +731,15 @@ export async function quickBrazilianComplianceCheck(
       standards: {
         lgpd: false,
         anvisa: false,
-        cfm: false
+        cfm: false,
       },
-      issues: [`Compliance check failed: ${error}`]
+      issues: [`Compliance check failed: ${error}`],
     };
   }
 }
 
 // Export types
-export type BrazilianComplianceResults = ReturnType<typeof brazilianHealthcareComplianceValidator.validateCompliance>;
+export type BrazilianComplianceResults = ReturnType<
+  typeof brazilianHealthcareComplianceValidator.validateCompliance
+>;
 export type HealthcareStandard = keyof typeof BRAZILIAN_HEALTHCARE_COMPLIANCE;

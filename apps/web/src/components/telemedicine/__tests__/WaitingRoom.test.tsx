@@ -113,7 +113,7 @@ describe('WaitingRoom', () => {
   });
 
   test('handles missing props gracefully', () => {
-    render(<WaitingRoom appointmentId="test-appointment" patientId="test-patient" />);
+    render(<WaitingRoom appointmentId='test-appointment' patientId='test-patient' />);
     // Should render loading state even with minimal props
     expect(screen.getByText('Conectando à sala de espera...')).toBeInTheDocument();
   });
@@ -141,7 +141,12 @@ describe('WaitingRoom', () => {
   test('component structure is correct for loading state', () => {
     render(<WaitingRoom {...mockProps} />);
     const container = screen.getByText('Conectando à sala de espera...').closest('div');
-    expect(container?.parentElement).toHaveClass('flex', 'items-center', 'justify-center', 'h-screen');
+    expect(container?.parentElement).toHaveClass(
+      'flex',
+      'items-center',
+      'justify-center',
+      'h-screen',
+    );
   });
 
   test('loading text is in Portuguese', () => {

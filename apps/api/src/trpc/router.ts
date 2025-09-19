@@ -45,7 +45,7 @@ export const appRouter = router({
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
-  
+
   // T016: Comprehensive API contracts with tRPC v11
   // New healthcare-compliant API contracts with enhanced features
   api: apiRouter,

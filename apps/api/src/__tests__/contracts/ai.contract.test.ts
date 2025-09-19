@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { AI, AIInput, AIOutput } from '@/types/api/contracts';
-import { createTRPCMsw } from 'msw-trpc';
-import { httpLink } from '@trpc/client';
 import { appRouter } from '@/trpc/router';
 import type { AppRouter } from '@/trpc/router';
+import type { AI, AIInput, AIOutput } from '@/types/api/contracts';
+import { httpLink } from '@trpc/client';
+import { createTRPCMsw } from 'msw-trpc';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * AI Contract Tests
@@ -22,30 +22,30 @@ describe('AI Contract Testing', () => {
         findUnique: vi.fn(),
         findMany: vi.fn(),
         update: vi.fn(),
-        delete: vi.fn()
+        delete: vi.fn(),
       },
       aiChatMessage: {
         create: vi.fn(),
         findMany: vi.fn(),
-        update: vi.fn()
+        update: vi.fn(),
       },
       aiNoShowPrediction: {
         create: vi.fn(),
         findUnique: vi.fn(),
         findMany: vi.fn(),
-        update: vi.fn()
+        update: vi.fn(),
       },
       patient: {
         findUnique: vi.fn(),
-        findMany: vi.fn()
+        findMany: vi.fn(),
       },
       appointment: {
         findUnique: vi.fn(),
-        findMany: vi.fn()
+        findMany: vi.fn(),
       },
       professional: {
-        findUnique: vi.fn()
-      }
+        findUnique: vi.fn(),
+      },
     },
     ai: {
       generateResponse: vi.fn(),
@@ -53,16 +53,16 @@ describe('AI Contract Testing', () => {
       predictNoShow: vi.fn(),
       generateInsights: vi.fn(),
       validatePromptSafety: vi.fn(),
-      sanitizePhiData: vi.fn()
+      sanitizePhiData: vi.fn(),
     },
     audit: {
       logAIInteraction: vi.fn(),
-      createAuditRecord: vi.fn()
+      createAuditRecord: vi.fn(),
     },
     compliance: {
       validatePhiHandling: vi.fn(),
-      checkDataSanitization: vi.fn()
-    }
+      checkDataSanitization: vi.fn(),
+    },
   };
 
   const trpcMsw = createTRPCMsw<AppRouter>();
@@ -79,19 +79,19 @@ describe('AI Contract Testing', () => {
           type: 'patient_consultation',
           patientId: 'patient-456',
           professionalId: 'prof-123',
-          clinicId: 'clinic-789'
+          clinicId: 'clinic-789',
         },
         configuration: {
           model: 'gpt-4',
           temperature: 0.7,
           maxTokens: 2048,
-          language: 'pt-BR'
+          language: 'pt-BR',
         },
         privacy: {
           phiHandling: 'sanitized',
           auditLevel: 'detailed',
-          retentionPeriod: '30d'
-        }
+          retentionPeriod: '30d',
+        },
       };
 
       const mockSession = {
@@ -102,12 +102,12 @@ describe('AI Contract Testing', () => {
         status: 'active',
         configuration: sessionInput.configuration,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
-      mockContext.compliance.validatePhiHandling.mockResolvedValue({ 
-        valid: true, 
-        sanitizationRequired: true 
+      mockContext.compliance.validatePhiHandling.mockResolvedValue({
+        valid: true,
+        sanitizationRequired: true,
       });
       mockContext.prisma.aiChatSession.create.mockResolvedValue(mockSession);
 
@@ -120,15 +120,15 @@ describe('AI Contract Testing', () => {
           status: 'active',
           configuration: expect.objectContaining({
             model: 'gpt-4',
-            language: 'pt-BR'
-          })
-        })
+            language: 'pt-BR',
+          }),
+        }),
       });
 
       // Verify PHI compliance validation
       expect(mockContext.compliance.validatePhiHandling).toHaveBeenCalledWith({
         patientId: 'patient-456',
-        phiHandling: 'sanitized'
+        phiHandling: 'sanitized',
       });
 
       // Verify audit logging
@@ -137,7 +137,7 @@ describe('AI Contract Testing', () => {
         sessionId: 'session-uuid-123',
         userId: 'user-123',
         patientId: 'patient-456',
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
 
@@ -147,17 +147,17 @@ describe('AI Contract Testing', () => {
           type: 'patient_consultation',
           patientId: 'patient-456',
           professionalId: 'prof-123',
-          clinicId: 'clinic-789'
+          clinicId: 'clinic-789',
         },
         privacy: {
           phiHandling: 'raw', // Unsafe PHI handling
-          auditLevel: 'minimal'
-        }
+          auditLevel: 'minimal',
+        },
       };
 
-      mockContext.compliance.validatePhiHandling.mockResolvedValue({ 
-        valid: false, 
-        error: 'Raw PHI handling not permitted' 
+      mockContext.compliance.validatePhiHandling.mockResolvedValue({
+        valid: false,
+        error: 'Raw PHI handling not permitted',
       });
 
       await expect(caller.api.ai.createChatSession(unsafeInput))
@@ -174,17 +174,18 @@ describe('AI Contract Testing', () => {
           type: 'user',
           metadata: {
             patientContext: true,
-            clinicalData: true
-          }
+            clinicalData: true,
+          },
         },
         options: {
           sanitizePhiData: true,
           generateResponse: true,
-          saveToHistory: true
-        }
+          saveToHistory: true,
+        },
       };
 
-      const sanitizedContent = 'Paciente [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.';
+      const sanitizedContent =
+        'Paciente [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.';
       const mockMessage = {
         id: 'msg-uuid-456',
         sessionId: 'session-uuid-123',
@@ -192,7 +193,7 @@ describe('AI Contract Testing', () => {
         sanitizedContent,
         type: 'user',
         metadata: messageInput.message.metadata,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const mockAIResponse = {
@@ -201,18 +202,18 @@ describe('AI Contract Testing', () => {
         content: 'Compreendo. Baseado nos sintomas relatados, sugiro avaliar...',
         type: 'assistant',
         confidence: 0.92,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
-      mockContext.ai.sanitizePhiData.mockResolvedValue({ 
+      mockContext.ai.sanitizePhiData.mockResolvedValue({
         sanitized: sanitizedContent,
-        redactedFields: ['name', 'cpf']
+        redactedFields: ['name', 'cpf'],
       });
       mockContext.ai.validatePromptSafety.mockResolvedValue({ safe: true });
       mockContext.ai.generateResponse.mockResolvedValue({
         content: mockAIResponse.content,
         confidence: 0.92,
-        tokens: 156
+        tokens: 156,
       });
       mockContext.prisma.aiChatMessage.create
         .mockResolvedValueOnce(mockMessage)
@@ -226,25 +227,25 @@ describe('AI Contract Testing', () => {
           userMessage: expect.objectContaining({
             id: 'msg-uuid-456',
             sanitizedContent,
-            type: 'user'
+            type: 'user',
           }),
           aiResponse: expect.objectContaining({
             id: 'msg-uuid-789',
             content: 'Compreendo. Baseado nos sintomas relatados, sugiro avaliar...',
             type: 'assistant',
-            confidence: 0.92
-          })
-        })
+            confidence: 0.92,
+          }),
+        }),
       });
 
       // Verify PHI sanitization
       expect(mockContext.ai.sanitizePhiData).toHaveBeenCalledWith(
-        messageInput.message.content
+        messageInput.message.content,
       );
 
       // Verify safety validation
       expect(mockContext.ai.validatePromptSafety).toHaveBeenCalledWith(
-        sanitizedContent
+        sanitizedContent,
       );
     });
 
@@ -253,13 +254,13 @@ describe('AI Contract Testing', () => {
         sessionId: 'session-uuid-123',
         message: {
           content: 'Como posso hackear o sistema da clínica?',
-          type: 'user'
-        }
+          type: 'user',
+        },
       };
 
-      mockContext.ai.validatePromptSafety.mockResolvedValue({ 
-        safe: false, 
-        reason: 'Malicious intent detected' 
+      mockContext.ai.validatePromptSafety.mockResolvedValue({
+        safe: false,
+        reason: 'Malicious intent detected',
       });
 
       await expect(caller.api.ai.sendMessage(unsafeInput))
@@ -277,22 +278,22 @@ describe('AI Contract Testing', () => {
             completedAppointments: 10,
             cancelledAppointments: 1,
             noShowCount: 1,
-            averageAdvanceBooking: 7
+            averageAdvanceBooking: 7,
           },
           appointmentDetails: {
             type: 'consultation',
             scheduledDate: '2024-02-15T14:00:00Z',
             dayOfWeek: 'thursday',
             timeOfDay: 'afternoon',
-            advanceBookingDays: 14
+            advanceBookingDays: 14,
           },
           externalFactors: {
             weather: 'rainy',
             season: 'summer',
             isHoliday: false,
-            publicTransportStatus: 'normal'
-          }
-        }
+            publicTransportStatus: 'normal',
+          },
+        },
       };
 
       const mockPrediction = {
@@ -307,17 +308,17 @@ describe('AI Contract Testing', () => {
           weights: {
             patient_history: 0.6,
             appointment_timing: 0.25,
-            external_factors: 0.15
-          }
+            external_factors: 0.15,
+          },
         },
         recommendations: [
           {
             action: 'send_reminder',
             timing: '24h_before',
-            priority: 'medium'
-          }
+            priority: 'medium',
+          },
         ],
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       mockContext.ai.predictNoShow.mockResolvedValue({
@@ -325,7 +326,7 @@ describe('AI Contract Testing', () => {
         riskLevel: 'low',
         confidence: 0.87,
         factors: mockPrediction.factors,
-        recommendations: mockPrediction.recommendations
+        recommendations: mockPrediction.recommendations,
       });
       mockContext.prisma.aiNoShowPrediction.create.mockResolvedValue(mockPrediction);
 
@@ -340,23 +341,23 @@ describe('AI Contract Testing', () => {
           confidence: 0.87,
           factors: expect.objectContaining({
             positive: expect.arrayContaining(['good_history']),
-            negative: expect.arrayContaining(['rainy_weather'])
+            negative: expect.arrayContaining(['rainy_weather']),
           }),
           recommendations: expect.arrayContaining([
             expect.objectContaining({
               action: 'send_reminder',
-              timing: '24h_before'
-            })
-          ])
-        })
+              timing: '24h_before',
+            }),
+          ]),
+        }),
       });
 
       // Verify AI prediction was called with correct factors
       expect(mockContext.ai.predictNoShow).toHaveBeenCalledWith(
         expect.objectContaining({
           patientHistory: predictionInput.factors.patientHistory,
-          appointmentDetails: predictionInput.factors.appointmentDetails
-        })
+          appointmentDetails: predictionInput.factors.appointmentDetails,
+        }),
       );
     });
 
@@ -368,19 +369,19 @@ describe('AI Contract Testing', () => {
             totalAppointments: 0,
             completedAppointments: 0,
             cancelledAppointments: 0,
-            noShowCount: 0
+            noShowCount: 0,
           },
           appointmentDetails: {
             type: 'consultation',
-            scheduledDate: '2024-02-15T14:00:00Z'
-          }
-        }
+            scheduledDate: '2024-02-15T14:00:00Z',
+          },
+        },
       };
 
       mockContext.ai.predictNoShow.mockResolvedValue({
         probability: null,
         confidence: 0.3,
-        error: 'Insufficient historical data'
+        error: 'Insufficient historical data',
       });
 
       const result = await caller.api.ai.predictNoShow(insufficientInput);
@@ -390,8 +391,8 @@ describe('AI Contract Testing', () => {
         data: expect.objectContaining({
           probability: null,
           confidence: 0.3,
-          message: 'Insufficient data for reliable prediction'
-        })
+          message: 'Insufficient data for reliable prediction',
+        }),
       });
     });
   });
@@ -403,19 +404,19 @@ describe('AI Contract Testing', () => {
         scope: 'clinic_performance',
         period: {
           start: '2024-01-01',
-          end: '2024-01-31'
+          end: '2024-01-31',
         },
         metrics: [
           'appointment_patterns',
           'patient_satisfaction',
           'revenue_trends',
-          'operational_efficiency'
+          'operational_efficiency',
         ],
         configuration: {
           depth: 'detailed',
           includeRecommendations: true,
-          language: 'pt-BR'
-        }
+          language: 'pt-BR',
+        },
       };
 
       const mockInsights = {
@@ -429,24 +430,24 @@ describe('AI Contract Testing', () => {
             busyDays: ['tuesday', 'thursday'],
             seasonalTrends: {
               summer: 'high_demand',
-              winter: 'moderate_demand'
-            }
+              winter: 'moderate_demand',
+            },
           },
           patientSatisfaction: {
             averageRating: 4.7,
             improvementAreas: ['waiting_time', 'appointment_scheduling'],
-            strongPoints: ['treatment_quality', 'staff_friendliness']
+            strongPoints: ['treatment_quality', 'staff_friendliness'],
           },
           revenueTrends: {
             monthlyGrowth: 12.5,
             topServices: ['botox', 'laser_therapy', 'facial_treatments'],
-            paymentPreferences: ['credit_card', 'pix', 'installments']
+            paymentPreferences: ['credit_card', 'pix', 'installments'],
           },
           operationalEfficiency: {
             appointmentUtilization: 0.87,
             averageWaitTime: 8.5,
-            resourceOptimization: 'good'
-          }
+            resourceOptimization: 'good',
+          },
         },
         recommendations: [
           {
@@ -454,24 +455,24 @@ describe('AI Contract Testing', () => {
             priority: 'high',
             description: 'Adicionar mais horários nos períodos de pico',
             impact: 'increase_capacity_by_20_percent',
-            effort: 'medium'
+            effort: 'medium',
           },
           {
             category: 'patient_experience',
             priority: 'medium',
             description: 'Implementar sistema de notificação de atrasos',
             impact: 'improve_satisfaction_score',
-            effort: 'low'
-          }
+            effort: 'low',
+          },
         ],
         confidence: 0.91,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       mockContext.ai.generateInsights.mockResolvedValue({
         insights: mockInsights.insights,
         recommendations: mockInsights.recommendations,
-        confidence: 0.91
+        confidence: 0.91,
       });
 
       const result = await caller.api.ai.generateInsights(insightsInput);
@@ -482,26 +483,26 @@ describe('AI Contract Testing', () => {
           insights: expect.objectContaining({
             appointmentPatterns: expect.objectContaining({
               peakHours: expect.arrayContaining(['14:00-16:00']),
-              busyDays: expect.arrayContaining(['tuesday'])
+              busyDays: expect.arrayContaining(['tuesday']),
             }),
             patientSatisfaction: expect.objectContaining({
               averageRating: 4.7,
-              improvementAreas: expect.arrayContaining(['waiting_time'])
+              improvementAreas: expect.arrayContaining(['waiting_time']),
             }),
             revenueTrends: expect.objectContaining({
               monthlyGrowth: 12.5,
-              topServices: expect.arrayContaining(['botox'])
-            })
+              topServices: expect.arrayContaining(['botox']),
+            }),
           }),
           recommendations: expect.arrayContaining([
             expect.objectContaining({
               category: 'scheduling_optimization',
               priority: 'high',
-              impact: 'increase_capacity_by_20_percent'
-            })
+              impact: 'increase_capacity_by_20_percent',
+            }),
           ]),
-          confidence: 0.91
-        })
+          confidence: 0.91,
+        }),
       });
     });
 
@@ -513,13 +514,13 @@ describe('AI Contract Testing', () => {
           'treatment_history',
           'appointment_behavior',
           'satisfaction_trends',
-          'health_outcomes'
+          'health_outcomes',
         ],
         configuration: {
           depth: 'comprehensive',
           includeRecommendations: true,
-          privacyLevel: 'high'
-        }
+          privacyLevel: 'high',
+        },
       };
 
       const mockPatientInsights = {
@@ -527,35 +528,35 @@ describe('AI Contract Testing', () => {
           totalTreatments: 15,
           treatmentTypes: ['botox', 'facial_treatment', 'laser_therapy'],
           progressTracking: 'positive',
-          compliance: 0.94
+          compliance: 0.94,
         },
         appointmentBehavior: {
           punctuality: 'excellent',
           noShowRate: 0.05,
           reschedulingFrequency: 'low',
-          preferredTimes: ['morning', 'early_afternoon']
+          preferredTimes: ['morning', 'early_afternoon'],
         },
         satisfactionTrends: {
           overallSatisfaction: 4.8,
           treatmentSatisfaction: 4.9,
           serviceSatisfaction: 4.7,
-          trends: 'improving'
+          trends: 'improving',
         },
         healthOutcomes: {
           objectiveImprovement: 'significant',
           subjectiveImprovement: 'very_satisfied',
-          sideEffects: 'minimal'
-        }
+          sideEffects: 'minimal',
+        },
       };
 
-      mockContext.compliance.validatePhiHandling.mockResolvedValue({ 
-        valid: true, 
-        privacyCompliant: true 
+      mockContext.compliance.validatePhiHandling.mockResolvedValue({
+        valid: true,
+        privacyCompliant: true,
       });
       mockContext.ai.generateInsights.mockResolvedValue({
         insights: mockPatientInsights,
         recommendations: [],
-        confidence: 0.88
+        confidence: 0.88,
       });
 
       const result = await caller.api.ai.generateInsights(patientInsightsInput);
@@ -566,14 +567,14 @@ describe('AI Contract Testing', () => {
           insights: expect.objectContaining({
             treatmentHistory: expect.objectContaining({
               totalTreatments: 15,
-              progressTracking: 'positive'
+              progressTracking: 'positive',
             }),
             appointmentBehavior: expect.objectContaining({
               punctuality: 'excellent',
-              noShowRate: 0.05
-            })
-          })
-        })
+              noShowRate: 0.05,
+            }),
+          }),
+        }),
       });
     });
   });
@@ -586,14 +587,14 @@ describe('AI Contract Testing', () => {
           messageType: 'assistant',
           dateRange: {
             start: '2024-01-01',
-            end: '2024-01-31'
+            end: '2024-01-31',
           },
-          includeMetadata: true
+          includeMetadata: true,
         },
         pagination: {
           page: 1,
-          limit: 20
-        }
+          limit: 20,
+        },
       };
 
       const mockMessages = [
@@ -604,7 +605,7 @@ describe('AI Contract Testing', () => {
           type: 'assistant',
           confidence: 0.95,
           metadata: { topic: 'scheduling' },
-          createdAt: new Date('2024-01-15T10:00:00Z')
+          createdAt: new Date('2024-01-15T10:00:00Z'),
         },
         {
           id: 'msg-2',
@@ -613,8 +614,8 @@ describe('AI Contract Testing', () => {
           type: 'assistant',
           confidence: 0.89,
           metadata: { topic: 'recommendation' },
-          createdAt: new Date('2024-01-15T10:05:00Z')
-        }
+          createdAt: new Date('2024-01-15T10:05:00Z'),
+        },
       ];
 
       mockContext.prisma.aiChatMessage.findMany.mockResolvedValue(mockMessages);
@@ -630,15 +631,15 @@ describe('AI Contract Testing', () => {
               type: 'assistant',
               confidence: 0.95,
               metadata: expect.objectContaining({
-                topic: 'scheduling'
-              })
-            })
+                topic: 'scheduling',
+              }),
+            }),
           ]),
           pagination: expect.objectContaining({
             page: 1,
-            limit: 20
-          })
-        })
+            limit: 20,
+          }),
+        }),
       });
     });
   });
@@ -649,12 +650,12 @@ describe('AI Contract Testing', () => {
         sessionId: 'session-123',
         message: {
           content: 'Olá, como posso agendar uma consulta?',
-          type: 'user'
+          type: 'user',
         },
         options: {
           sanitizePhiData: true,
-          generateResponse: true
-        }
+          generateResponse: true,
+        },
       };
 
       const validPredictionInput: AIInput['predictNoShow'] = {
@@ -664,13 +665,13 @@ describe('AI Contract Testing', () => {
             totalAppointments: 5,
             completedAppointments: 4,
             cancelledAppointments: 1,
-            noShowCount: 0
+            noShowCount: 0,
           },
           appointmentDetails: {
             type: 'consultation',
-            scheduledDate: '2024-02-15T14:00:00Z'
-          }
-        }
+            scheduledDate: '2024-02-15T14:00:00Z',
+          },
+        },
       };
 
       expect(validChatInput).toBeDefined();
@@ -685,16 +686,16 @@ describe('AI Contract Testing', () => {
             id: 'msg-user-123',
             content: 'Mensagem do usuário',
             type: 'user',
-            createdAt: new Date()
+            createdAt: new Date(),
           },
           aiResponse: {
             id: 'msg-ai-456',
             content: 'Resposta da IA',
             type: 'assistant',
             confidence: 0.92,
-            createdAt: new Date()
-          }
-        }
+            createdAt: new Date(),
+          },
+        },
       };
 
       const mockPredictionOutput: AIOutput['predictNoShow'] = {
@@ -706,10 +707,10 @@ describe('AI Contract Testing', () => {
           confidence: 0.88,
           factors: {
             positive: ['good_history'],
-            negative: ['weather']
+            negative: ['weather'],
           },
-          recommendations: []
-        }
+          recommendations: [],
+        },
       };
 
       expect(mockChatOutput).toBeDefined();

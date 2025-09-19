@@ -153,7 +153,7 @@ export type LGPDCompliance = z.infer<typeof LGPDComplianceSchema>;
 export const LogEntrySchema = z.object({
   // Core fields
   id: z.string().describe('Unique log entry identifier'),
-  timestamp: z.string().datetime().describe('ISO 8601 timestamp'),
+  timestamp: z.number().describe('Unix epoch (ms) timestamp'),
   level: LogLevelSchema.describe('Log severity level'),
   message: z.string().max(1000).describe('Human-readable log message'),
   
@@ -194,6 +194,8 @@ export const StructuredLoggingConfigSchema = z.object({
   enabled: z.boolean().default(true).describe('Enable structured logging'),
   level: LogLevelSchema.default('info').describe('Minimum log level to process'),
   service: z.string().describe('Service name for all log entries'),
+  environment: z.enum(['development', 'staging', 'production']).default('development').describe('Deployment environment'),
+  version: z.string().optional().describe('Application version'),
   
   // Output configuration
   outputs: z.object({
@@ -572,7 +574,7 @@ export class StructuredLogger {
     error?: any
   ): LogEntry {
     const id = `log_${nanoid(12)}`;
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     
     // Build technical context
     const technicalContext: TechnicalContext = {
@@ -860,11 +862,30 @@ export class StructuredLogger {
    */
   private async sendPatientSafetyAlert(
     message: string,
-    _data?: Record<string, unknown>,
-    _context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
+    data?: Record<string, unknown>,
+    context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
   ): Promise<void> {
-    console.log('🚨🏥 [StructuredLogger] PATIENT SAFETY ALERT:', message);
-    // TODO: Implement actual alert system
+    // Create LogEntry with alert level for proper PII redaction
+    const alertEntry: LogEntry = {
+      timestamp: Date.now(),
+      level: 'alert',
+      message: `🚨🏥 PATIENT SAFETY ALERT: ${message}`,
+      data,
+      healthcareContext: context?.healthcare || {},
+      technicalContext: {
+        requestId: this.generateRequestId(),
+        service: this.config.service,
+        environment: this.config.environment,
+        version: this.config.version,
+        ...context?.technical
+      }
+    };
+
+    // Apply PII redaction and output safely
+    const redactedEntry = this.redactPII(alertEntry);
+    this.outputToConsole(redactedEntry);
+    
+    // TODO: Implement actual alert system integration
   }
 
   /**
@@ -872,11 +893,30 @@ export class StructuredLogger {
    */
   private async sendEmergencyAlert(
     message: string,
-    _data?: Record<string, unknown>,
-    _context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
+    data?: Record<string, unknown>,
+    context?: { healthcare?: HealthcareContext; technical?: Partial<TechnicalContext>; }
   ): Promise<void> {
-    console.log('🆘🏥 [StructuredLogger] EMERGENCY ALERT:', message);
-    // TODO: Implement actual emergency alert system
+    // Create LogEntry with emergency level for proper PII redaction
+    const alertEntry: LogEntry = {
+      timestamp: Date.now(),
+      level: 'emergency',
+      message: `🆘🏥 EMERGENCY ALERT: ${message}`,
+      data,
+      healthcareContext: context?.healthcare || {},
+      technicalContext: {
+        requestId: this.generateRequestId(),
+        service: this.config.service,
+        environment: this.config.environment,
+        version: this.config.version,
+        ...context?.technical
+      }
+    };
+
+    // Apply PII redaction and output safely
+    const redactedEntry = this.redactPII(alertEntry);
+    this.outputToConsole(redactedEntry);
+    
+    // TODO: Implement actual emergency alert system integration
   }
 
   // ============================================================================

@@ -4,6 +4,7 @@ export * from './ai-provider';
 export * from './webrtc';
 export * from './healthcare-governance.types';
 export * from './governance.types';
+export * from './enhanced-ai';
 
 // Valibot Validation Schemas for Brazilian Healthcare
 export * from './patient.valibot';

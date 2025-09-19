@@ -1,5 +1,34 @@
 import { vi } from 'vitest';
 
+// Mock global fetch to handle relative URLs in tests
+const originalFetch = global.fetch;
+global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+  let url: string;
+
+  if (typeof input === 'string') {
+    // Handle relative URLs by prepending base URL
+    if (input.startsWith('/')) {
+      url = `http://local.test${input}`;
+    } else {
+      url = input;
+    }
+  } else if (input instanceof URL) {
+    url = input.toString();
+  } else {
+    // RequestInfo case
+    url = input.url;
+  }
+
+  // Import and use the app for API calls
+  if (url.includes('local.test')) {
+    const { default: app } = await import('./app');
+    return app.request(new URL(url), init);
+  }
+
+  // For external calls, use original fetch
+  return originalFetch(url, init);
+}) as any;
+
 // Mock auth middleware to bypass authentication in tests
 vi.mock('./middleware/authn', () => ({
   requireAuth: vi.fn(async (c: any, next: any) => {

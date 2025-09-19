@@ -19,13 +19,12 @@ Given the context provided as an argument, do this:
 
 3. Generate tasks following the template:
    - Use `.specify/templates/tasks-template.md` as the base
-   - Ensure constitution compliance in all tasks
    - Replace example tasks with actual tasks based on:
-     * **Setup tasks**: Project init, dependencies, linting, healthcare compliance setup
-     * **Test tasks [P]**: Healthcare contract tests, LGPD compliance tests, AI feature tests
-     * **Core tasks**: Patient data models, AI services, mobile-first components
-     * **Integration tasks**: Supabase RLS, real-time subscriptions, WhatsApp API
-     * **Polish tasks [P]**: Performance optimization (<500ms), audit logging, CFM validation
+     * **Setup tasks**: Project init, dependencies, linting
+     * **Test tasks [P]**: One per contract, one per integration scenario
+     * **Core tasks**: One per entity, service, CLI command, endpoint
+     * **Integration tasks**: DB connections, middleware, logging
+     * **Polish tasks [P]**: Unit tests, performance, docs
 
 4. Task generation rules:
    - Each contract file → contract test task marked [P]

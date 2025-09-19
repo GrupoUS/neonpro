@@ -516,8 +516,6 @@ export interface RTCConsentManager {
   deleteUserData(userId: string, sessionId?: string): Promise<void>;
 }
 
-// ============================================================================
-// Export Types
-// ============================================================================
-// Note: All types are already exported above with their definitions
-// No need to re-export them here to avoid TS2484 conflicts
+// Re-exports removed to avoid duplicate export conflicts with package barrel.
+// Consumers should import from 'packages/types/src/webrtc' directly or via the package index barrel.
+// NOTE: Removed re-exports referenced unknown names (RecordingOptions, MediaConstraints, etc.) which are not defined in this file.

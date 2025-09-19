@@ -141,7 +141,17 @@ describe('Observability API Contract Tests', () => {
     contract = {
       performance: {
         enabled: true,
-        supportedMetrics: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB', 'navigation_timing', 'resource_timing', 'custom_metric'],
+        supportedMetrics: [
+          'CLS',
+          'FCP',
+          'FID',
+          'INP',
+          'LCP',
+          'TTFB',
+          'navigation_timing',
+          'resource_timing',
+          'custom_metric',
+        ],
         maxMetricsPerRequest: 50,
         piiRedaction: true,
         lgpdCompliance: true,
@@ -171,7 +181,7 @@ describe('Observability API Contract Tests', () => {
   describe('Performance Telemetry Contract', () => {
     it('MUST accept performance telemetry submissions', async () => {
       const telemetryData = generateValidPerformanceTelemetry();
-      
+
       // Simulate API call
       const response = await mockApiCall('/telemetry/performance', {
         method: 'POST',
@@ -230,7 +240,17 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST support all required performance metrics', () => {
       contract.performance.supportedMetrics.forEach(metric => {
-        expect(['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB', 'navigation_timing', 'resource_timing', 'custom_metric']).toContain(metric);
+        expect([
+          'CLS',
+          'FCP',
+          'FID',
+          'INP',
+          'LCP',
+          'TTFB',
+          'navigation_timing',
+          'resource_timing',
+          'custom_metric',
+        ]).toContain(metric);
       });
     });
 
@@ -303,7 +323,7 @@ describe('Observability API Contract Tests', () => {
     it('MUST validate error severity levels', () => {
       const validSeverities = ['low', 'medium', 'high', 'critical'];
       const testData = generateValidErrorTelemetry();
-      
+
       validSeverities.forEach(severity => {
         testData.error.severity = severity as any;
         // Should not throw validation error
@@ -437,7 +457,7 @@ describe('Observability API Contract Tests', () => {
         body: generateValidPerformanceTelemetry(),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-jwt-token',
+          Authorization: 'Bearer valid-jwt-token',
         },
       });
 
@@ -446,7 +466,7 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST enforce rate limiting', async () => {
       // Simulate rapid requests to trigger rate limiting
-      const requests = Array(100).fill(null).map(() => 
+      const requests = Array(100).fill(null).map(() =>
         mockApiCall('/telemetry/performance', {
           method: 'POST',
           body: generateValidPerformanceTelemetry(),
@@ -459,7 +479,7 @@ describe('Observability API Contract Tests', () => {
 
       const responses = await Promise.all(requests);
       const rateLimitedResponses = responses.filter(r => r.status === 429);
-      
+
       expect(rateLimitedResponses.length).toBeGreaterThan(0);
     });
 
@@ -540,10 +560,10 @@ describe('Observability API Contract Tests', () => {
     it('MUST implement LGPD data retention policies', () => {
       // Performance data: 90 days retention
       expect(contract.performance.lgpdCompliance).toBe(true);
-      
+
       // Error data: 1 year retention for critical errors
       expect(contract.errorTracking.piiRedaction).toBe(true);
-      
+
       // Audit trails: 7 years retention
       expect(contract.security.lgpdConsent).toBe(true);
     });
@@ -581,10 +601,10 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST support anonymization of user identifiers', () => {
       const telemetryData = generateValidPerformanceTelemetry();
-      
+
       // Validate session ID format
       expect(telemetryData.sessionId).toMatch(/^sess_[a-zA-Z0-9]{8,}$/);
-      
+
       // Validate user ID format (if provided)
       if (telemetryData.userId) {
         expect(telemetryData.userId).toMatch(/^usr_(anon_)?[a-zA-Z0-9]{8,}$/);
@@ -616,7 +636,7 @@ describe('Observability API Contract Tests', () => {
       );
 
       const responses = await Promise.allSettled(requests);
-      const successfulResponses = responses.filter(r => 
+      const successfulResponses = responses.filter(r =>
         r.status === 'fulfilled' && r.value.status === 200
       );
 
@@ -630,10 +650,10 @@ describe('Observability API Contract Tests', () => {
 
       // Validate performance telemetry format
       expect(() => validatePerformanceTelemetry(performanceData)).not.toThrow();
-      
+
       // Validate error telemetry format
       expect(() => validateErrorTelemetry(errorData)).not.toThrow();
-      
+
       // Validate tracing data format
       expect(() => validateTracingData(traceData)).not.toThrow();
     });
@@ -644,7 +664,7 @@ describe('Observability API Contract Tests', () => {
 async function mockApiCall(endpoint: string, options: any) {
   // This would be replaced with actual fetch calls to the API
   // For contract testing, we validate the interface and requirements
-  
+
   if (options.method === 'GET' && endpoint === '/health') {
     return {
       status: 200,
@@ -660,7 +680,9 @@ async function mockApiCall(endpoint: string, options: any) {
     };
   }
 
-  if (options.method === 'POST' && !options.headers['X-API-Key'] && !options.headers['Authorization']) {
+  if (
+    options.method === 'POST' && !options.headers['X-API-Key'] && !options.headers['Authorization']
+  ) {
     return {
       status: 401,
       body: { error: 'UNAUTHORIZED', message: 'API key required' },

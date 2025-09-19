@@ -4,20 +4,20 @@
  * Performance optimized with intelligent batching and caching
  */
 
-import { expect, test, describe, beforeAll, afterAll } from 'vitest';
-import { axe, toHaveNoViolations } from 'jest-axe';
-import React from 'react';
-import { performance } from 'perf_hooks';
 import fs from 'fs/promises';
-import path from 'path';
 import { glob } from 'glob';
+import path from 'path';
+import { performance } from 'perf_hooks';
+import React from 'react';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 
 // Import configuration and utilities
-import { 
-  healthcareAxeConfig, 
+import {
+  globalAccessibilityReport,
+  healthcareAxeConfig,
   healthcareTestContexts,
   runOptimizedAccessibilityTest,
-  globalAccessibilityReport 
 } from './axe-integration.test';
 
 expect.extend(toHaveNoViolations);
@@ -71,9 +71,9 @@ class AccessibilityTestRunner {
       batchingMetrics: {
         totalBatches: 0,
         averageBatchDuration: 0,
-        memoryOptimization: 0
+        memoryOptimization: 0,
       },
-      componentCategories: {}
+      componentCategories: {},
     };
   }
 
@@ -87,12 +87,12 @@ class AccessibilityTestRunner {
       '!src/components/**/*.test.tsx',
       '!src/components/**/*.stories.tsx',
       '!src/**/__tests__/**',
-      '!src/**/*.d.ts'
+      '!src/**/*.d.ts',
     ];
 
     const files = await glob(componentPaths, {
       cwd: process.cwd(),
-      absolute: true
+      absolute: true,
     });
 
     const components: ComponentDiscovery[] = [];
@@ -100,10 +100,12 @@ class AccessibilityTestRunner {
     for (const filePath of files) {
       try {
         const content = await fs.readFile(filePath, 'utf-8');
-        
+
         // Skip files without React components
-        if (!content.includes('export') || 
-            (!content.includes('React') && !content.includes('jsx'))) {
+        if (
+          !content.includes('export')
+          || (!content.includes('React') && !content.includes('jsx'))
+        ) {
           continue;
         }
 
@@ -118,17 +120,20 @@ class AccessibilityTestRunner {
 
     this.components = components;
     this.report.discoveredComponents = components.length;
-    
+
     return components;
   }
 
   /**
    * Analyze individual component for metadata
    */
-  private async analyzeComponent(filePath: string, content: string): Promise<ComponentDiscovery | null> {
+  private async analyzeComponent(
+    filePath: string,
+    content: string,
+  ): Promise<ComponentDiscovery | null> {
     const fileName = path.basename(filePath, '.tsx');
     const relativePath = path.relative(process.cwd(), filePath);
-    
+
     // Determine component category
     let category: ComponentDiscovery['category'] = 'common';
     if (relativePath.includes('/telemedicine/')) category = 'telemedicine';
@@ -180,7 +185,7 @@ class AccessibilityTestRunner {
       complexity,
       category,
       hasTests,
-      priority
+      priority,
     };
   }
 
@@ -192,10 +197,10 @@ class AccessibilityTestRunner {
     const sortedComponents = [...this.components].sort((a, b) => {
       const priorityWeight = { critical: 4, high: 3, medium: 2, low: 1 };
       const complexityWeight = { complex: 3, medium: 2, simple: 1 };
-      
+
       const aScore = priorityWeight[a.priority] + complexityWeight[a.complexity];
       const bScore = priorityWeight[b.priority] + complexityWeight[b.complexity];
-      
+
       return bScore - aScore;
     });
 
@@ -205,19 +210,20 @@ class AccessibilityTestRunner {
 
     for (const component of sortedComponents) {
       const estimatedMemory = this.estimateComponentMemoryUsage(component);
-      
-      if (currentBatch.length >= this.maxBatchSize || 
-          currentBatchMemory + estimatedMemory > this.maxMemoryPerBatch) {
-        
+
+      if (
+        currentBatch.length >= this.maxBatchSize
+        || currentBatchMemory + estimatedMemory > this.maxMemoryPerBatch
+      ) {
         if (currentBatch.length > 0) {
           batches.push({
             batchId: `batch-${batches.length + 1}`,
             components: [...currentBatch],
             estimatedDuration: this.estimateBatchDuration(currentBatch),
-            maxMemoryUsage: currentBatchMemory
+            maxMemoryUsage: currentBatchMemory,
           });
         }
-        
+
         currentBatch = [component];
         currentBatchMemory = estimatedMemory;
       } else {
@@ -232,13 +238,13 @@ class AccessibilityTestRunner {
         batchId: `batch-${batches.length + 1}`,
         components: [...currentBatch],
         estimatedDuration: this.estimateBatchDuration(currentBatch),
-        maxMemoryUsage: currentBatchMemory
+        maxMemoryUsage: currentBatchMemory,
       });
     }
 
     this.testBatches = batches;
     this.report.batchingMetrics.totalBatches = batches.length;
-    
+
     return batches;
   }
 
@@ -248,18 +254,18 @@ class AccessibilityTestRunner {
   private estimateComponentMemoryUsage(component: ComponentDiscovery): number {
     const baseMemory = 5 * 1024 * 1024; // 5MB base
     const complexityMultiplier = { simple: 1, medium: 2, complex: 4 };
-    const categoryMultiplier = { 
-      telemedicine: 3, 
-      patient: 2, 
+    const categoryMultiplier = {
+      telemedicine: 3,
+      patient: 2,
       accessibility: 2,
-      admin: 1.5, 
-      ui: 1, 
-      common: 1 
+      admin: 1.5,
+      ui: 1,
+      common: 1,
     };
-    
-    return baseMemory * 
-           complexityMultiplier[component.complexity] * 
-           categoryMultiplier[component.category];
+
+    return baseMemory
+      * complexityMultiplier[component.complexity]
+      * categoryMultiplier[component.category];
   }
 
   /**
@@ -268,7 +274,7 @@ class AccessibilityTestRunner {
   private estimateBatchDuration(components: ComponentDiscovery[]): number {
     const baseTime = 2000; // 2 seconds per component
     const complexityMultiplier = { simple: 1, medium: 1.5, complex: 3 };
-    
+
     return components.reduce((total, component) => {
       return total + (baseTime * complexityMultiplier[component.complexity]);
     }, 0);
@@ -279,21 +285,21 @@ class AccessibilityTestRunner {
    */
   async runAutomatedTests(): Promise<AutomatedTestReport> {
     const startTime = performance.now();
-    
+
     for (const batch of this.testBatches) {
       await this.runBatch(batch);
     }
 
     const endTime = performance.now();
-    this.report.batchingMetrics.averageBatchDuration = 
-      (endTime - startTime) / this.testBatches.length;
+    this.report.batchingMetrics.averageBatchDuration = (endTime - startTime)
+      / this.testBatches.length;
 
     // Calculate compliance rates by category
     this.calculateCategoryMetrics();
-    
+
     // Generate final report
     await this.generateReport();
-    
+
     return this.report;
   }
 
@@ -301,8 +307,10 @@ class AccessibilityTestRunner {
    * Run accessibility tests for a batch of components
    */
   private async runBatch(batch: TestBatch): Promise<void> {
-    console.log(`Running accessibility tests for ${batch.batchId} (${batch.components.length} components)`);
-    
+    console.log(
+      `Running accessibility tests for ${batch.batchId} (${batch.components.length} components)`,
+    );
+
     for (const component of batch.components) {
       try {
         await this.testComponent(component);
@@ -327,7 +335,7 @@ class AccessibilityTestRunner {
       // Dynamic import to avoid loading all components at once
       const module = await import(path.join(process.cwd(), component.path));
       const Component = module.default || module[component.name];
-      
+
       if (!Component) {
         throw new Error(`No default export found for ${component.name}`);
       }
@@ -348,17 +356,16 @@ class AccessibilityTestRunner {
 
       // Create mock props based on component analysis
       const mockProps = this.generateMockProps(component);
-      
+
       // Run accessibility test
       const results = await runOptimizedAccessibilityTest(
         React.createElement(Component, mockProps),
         component.name,
-        context
+        context,
       );
 
       // Store results
       this.updateComponentCategory(component.category, results);
-      
     } catch (error) {
       throw new Error(`Failed to test ${component.name}: ${error}`);
     }
@@ -369,7 +376,7 @@ class AccessibilityTestRunner {
    */
   private generateMockProps(component: ComponentDiscovery): any {
     const mockProps: any = {};
-    
+
     // Common props based on component category
     switch (component.category) {
       case 'telemedicine':
@@ -397,14 +404,14 @@ class AccessibilityTestRunner {
       this.report.componentCategories[category] = {
         count: 0,
         violations: 0,
-        complianceRate: 0
+        complianceRate: 0,
       };
     }
 
     const categoryData = this.report.componentCategories[category];
     categoryData.count++;
     categoryData.violations += results.violations?.length || 0;
-    categoryData.complianceRate = 
+    categoryData.complianceRate =
       ((categoryData.count - categoryData.violations) / categoryData.count) * 100;
   }
 
@@ -413,13 +420,16 @@ class AccessibilityTestRunner {
    */
   private calculateCategoryMetrics(): void {
     for (const [category, data] of Object.entries(this.report.componentCategories)) {
-      data.complianceRate = data.count > 0 ? 
-        ((data.count - data.violations) / data.count) * 100 : 0;
+      data.complianceRate = data.count > 0
+        ? ((data.count - data.violations) / data.count) * 100
+        : 0;
     }
 
     // Calculate overall compliance rate
-    this.report.complianceRate = this.report.totalComponents > 0 ?
-      ((this.report.totalComponents - this.report.totalViolations) / this.report.totalComponents) * 100 : 0;
+    this.report.complianceRate = this.report.totalComponents > 0
+      ? ((this.report.totalComponents - this.report.totalViolations) / this.report.totalComponents)
+        * 100
+      : 0;
   }
 
   /**
@@ -427,14 +437,13 @@ class AccessibilityTestRunner {
    */
   private async generateReport(): Promise<void> {
     const reportPath = path.join(process.cwd(), 'accessibility-report.json');
-    
+
     try {
       await fs.writeFile(reportPath, JSON.stringify(this.report, null, 2));
       console.log(`📊 Accessibility report generated: ${reportPath}`);
-      
+
       // Also generate human-readable summary
       await this.generateHumanReadableReport();
-      
     } catch (error) {
       console.error('Failed to generate accessibility report:', error);
     }
@@ -445,7 +454,7 @@ class AccessibilityTestRunner {
    */
   private async generateHumanReadableReport(): Promise<void> {
     const summaryPath = path.join(process.cwd(), 'accessibility-summary.md');
-    
+
     const summary = `
 # 🏥 Healthcare Platform Accessibility Report
 
@@ -466,7 +475,9 @@ class AccessibilityTestRunner {
 - **WCAG 2A:** ${this.report.wcagCompliance.wcag2a ? '✅ Compliant' : '❌ Non-compliant'}
 - **WCAG 2AA:** ${this.report.wcagCompliance.wcag2aa ? '✅ Compliant' : '❌ Non-compliant'}
 - **WCAG 2.1 AA:** ${this.report.wcagCompliance.wcag21aa ? '✅ Compliant' : '❌ Non-compliant'}
-- **Best Practices:** ${this.report.wcagCompliance.bestPractice ? '✅ Compliant' : '❌ Non-compliant'}
+- **Best Practices:** ${
+      this.report.wcagCompliance.bestPractice ? '✅ Compliant' : '❌ Non-compliant'
+    }
 
 ## 🏥 Healthcare Compliance
 
@@ -482,22 +493,27 @@ class AccessibilityTestRunner {
 
 ## 🏷️ Component Categories
 
-${Object.entries(this.report.componentCategories).map(([category, data]) => `
+${
+      Object.entries(this.report.componentCategories).map(([category, data]) => `
 ### ${category.charAt(0).toUpperCase() + category.slice(1)}
 - **Components:** ${data.count}
 - **Violations:** ${data.violations}
 - **Compliance Rate:** ${data.complianceRate.toFixed(2)}%
-`).join('')}
+`).join('')
+    }
 
 ## 🚨 Critical Violations
 
-${this.report.criticalViolations.length > 0 ? 
-  this.report.criticalViolations.map(v => `
+${
+      this.report.criticalViolations.length > 0
+        ? this.report.criticalViolations.map(v => `
 ### ${v.id}
 - **Impact:** ${v.impact}
 - **Description:** ${v.description}
 - **Help:** ${v.help}
-`).join('') : 'No critical violations found ✅'}
+`).join('')
+        : 'No critical violations found ✅'
+    }
 
 ---
 
@@ -524,29 +540,29 @@ describe('Automated Accessibility Test Runner', () => {
 
   test('discovers all UI components in the project', async () => {
     const components = await testRunner.discoverComponents();
-    
+
     expect(components.length).toBeGreaterThan(0);
     expect(components.every(c => c.name && c.path && c.category)).toBe(true);
-    
+
     console.log(`📦 Discovered ${components.length} components`);
   });
 
   test('creates optimized test batches for performance', async () => {
     const batches = testRunner.createTestBatches();
-    
+
     expect(batches.length).toBeGreaterThan(0);
     expect(batches.every(b => b.components.length <= 10)).toBe(true); // Max batch size
-    
+
     console.log(`🔄 Created ${batches.length} optimized test batches`);
   });
 
   test('runs automated accessibility tests on all components', async () => {
     const report = await testRunner.runAutomatedTests();
-    
+
     expect(report.discoveredComponents).toBeGreaterThan(0);
     expect(report.testedComponents).toBeGreaterThan(0);
     expect(report.complianceRate).toBeGreaterThanOrEqual(0);
-    
+
     console.log(`🎯 Compliance Rate: ${report.complianceRate.toFixed(2)}%`);
   }, 300000); // 5 minute timeout for full test suite
 
@@ -555,4 +571,4 @@ describe('Automated Accessibility Test Runner', () => {
   });
 });
 
-export { AccessibilityTestRunner, ComponentDiscovery, TestBatch, AutomatedTestReport };
+export { AccessibilityTestRunner, AutomatedTestReport, ComponentDiscovery, TestBatch };

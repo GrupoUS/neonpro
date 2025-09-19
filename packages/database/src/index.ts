@@ -46,6 +46,13 @@ export type {
 } from '@prisma/client';
 
 // Healthcare-specific utilities
+
+/**
+ * Validates a Brazilian CPF (Cadastro de Pessoas Físicas) number
+ * 
+ * @param cpf - The CPF string to validate
+ * @returns True if the CPF is valid, false otherwise
+ */
 export const validateCPF = (cpf: string): boolean => {
   cpf = cpf.replace(/[^\d]/g, '');
 
@@ -72,6 +79,12 @@ export const validateCPF = (cpf: string): boolean => {
   return true;
 };
 
+/**
+ * Sanitizes text for AI processing by removing personally identifiable information
+ * 
+ * @param text - The input text to sanitize
+ * @returns Text with PII removed and replaced with placeholders
+ */
 export const sanitizeForAI = (text: string): string => {
   if (!text) return text;
 
@@ -93,6 +106,12 @@ export const sanitizeForAI = (text: string): string => {
   return sanitized;
 };
 
+/**
+ * Calculates the risk of a patient not showing up for an appointment
+ * 
+ * @param appointmentId - The ID of the appointment to analyze
+ * @returns Risk score from 0-100 indicating likelihood of no-show
+ */
 export const calculateNoShowRisk = async (appointmentId: string): Promise<number> => {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
@@ -149,6 +168,12 @@ export const calculateNoShowRisk = async (appointmentId: string): Promise<number
 };
 
 // Database health monitoring
+
+/**
+ * Retrieves database health and usage metrics
+ * 
+ * @returns Object containing counts of patients, appointments, professionals, and clinics
+ */
 export const getDatabaseMetrics = async () => {
   try {
     const [
@@ -176,6 +201,12 @@ export const getDatabaseMetrics = async () => {
 };
 
 // Connection pool monitoring
+
+/**
+ * Gets the current status of database connection pools
+ * 
+ * @returns Object containing connection pool status information
+ */
 export const getConnectionPoolStatus = () => {
   // This would be implemented based on your specific Prisma setup
   return {

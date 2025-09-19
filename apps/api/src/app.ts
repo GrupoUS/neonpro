@@ -9,19 +9,17 @@ import patientsRouter from './routes/patients';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { 
-  initializeErrorTracking, 
-  shutdownErrorTracking,
-  getErrorTrackingHealth 
-} from './services/error-tracking-init';
-import { 
-  errorTracker,
-  createHealthcareError 
-} from './services/error-tracking-bridge';
 import { initializeLogger, logger } from './lib/logger';
 import { initializeSentry, sentryMiddleware } from './lib/sentry';
+import { createHealthcareError, errorTracker } from './services/error-tracking-bridge';
+import {
+  getErrorTrackingHealth,
+  initializeErrorTracking,
+  shutdownErrorTracking,
+} from './services/error-tracking-init';
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
+import { cspViolationHandler, healthcareCSPMiddleware } from './lib/security/csp';
 import {
   errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
   globalErrorHandler,
@@ -115,6 +113,9 @@ app.use('*', healthcareErrorTrackingMiddleware());
 
 // Healthcare-specific rate limiting
 app.use('*', rateLimitMiddleware());
+
+// Healthcare-compliant Content Security Policy (T006)
+app.use('*', healthcareCSPMiddleware());
 
 // Enhanced error handling middleware
 app.use('*', async (c, next) => {
@@ -397,6 +398,9 @@ if (process.env.NODE_ENV !== 'production') {
     }
   });
 }
+
+// CSP violation reporting endpoint (T006)
+app.post('/api/security/csp-violations', cspViolationHandler());
 
 // 404 handler with logging
 app.notFound(c => {

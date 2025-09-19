@@ -8,403 +8,395 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as TelemedicineRouteImport } from './routes/telemedicine'
-import { Route as R404RouteImport } from './routes/404'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as TelemedicineIndexRouteImport } from './routes/telemedicine/index'
-import { Route as ServicesIndexRouteImport } from './routes/services/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as FinancialIndexRouteImport } from './routes/financial/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as TelemedicineWaitingRoomRouteImport } from './routes/telemedicine/waiting-room'
-import { Route as TelemedicineComplianceRouteImport } from './routes/telemedicine/compliance'
-import { Route as ServicesServiceTemplatesRouteImport } from './routes/services/service-templates'
-import { Route as ServicesServiceCategoriesRouteImport } from './routes/services/service-categories'
-import { Route as ServicesServiceAnalyticsRouteImport } from './routes/services/service-analytics'
-import { Route as ServicesProfessionalServicesRouteImport } from './routes/services/professional-services'
-import { Route as ServicesPatientsRouteImport } from './routes/services/patients'
-import { Route as ServicesClientsRouteImport } from './routes/services/clients'
-import { Route as ServicesAppointmentsRouteImport } from './routes/services/appointments'
-import { Route as PatientsRegisterRouteImport } from './routes/patients/register'
-import { Route as PatientsIdRouteImport } from './routes/patients/[id]'
-import { Route as PatientsDashboardRouteImport } from './routes/patients/dashboard'
-import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
-import { Route as FinancialSubscriptionRouteImport } from './routes/financial/subscription'
-import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules'
-import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo'
-import { Route as DemosAestheticDemoRouteImport } from './routes/demos/aesthetic-demo'
-import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
-import { Route as DashboardAiChatRouteImport } from './routes/dashboard/ai-chat'
-import { Route as DashboardAdvancedAnalyticsRouteImport } from './routes/dashboard/advanced-analytics'
-import { Route as AuthSignupRouteImport } from './routes/auth/signup'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
-import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
-import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
-import { Route as AiInsightsRouteImport } from './routes/ai/insights'
-import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
-import { Route as AdminReportsRouteImport } from './routes/admin/reports'
-import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
-import { Route as TelemedicineSessionNewRouteImport } from './routes/telemedicine/session/new'
-import { Route as TelemedicineSessionSessionIdRouteImport } from './routes/telemedicine/session.$sessionId'
-import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
-import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
-import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
+import { Route as R404RouteImport } from './routes/404';
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as AdminGovernanceRouteImport } from './routes/admin/governance';
+import { Route as AdminReportsRouteImport } from './routes/admin/reports';
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings';
+import { Route as AiInsightsRouteImport } from './routes/ai/insights';
+import { Route as AppointmentsNewRouteImport } from './routes/appointments/new';
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback';
+import { Route as AuthConfirmRouteImport } from './routes/auth/confirm';
+import { Route as AuthLoginRouteImport } from './routes/auth/login';
+import { Route as AuthSignupRouteImport } from './routes/auth/signup';
+import { Route as DashboardAdvancedAnalyticsRouteImport } from './routes/dashboard/advanced-analytics';
+import { Route as DashboardAiChatRouteImport } from './routes/dashboard/ai-chat';
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics';
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index';
+import { Route as DemosAestheticDemoRouteImport } from './routes/demos/aesthetic-demo';
+import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo';
+import { Route as FinancialIndexRouteImport } from './routes/financial/index';
+import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules';
+import { Route as FinancialSubscriptionRouteImport } from './routes/financial/subscription';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId';
+import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents';
+import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit';
+import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history';
+import { Route as PatientsIdRouteImport } from './routes/patients/[id]';
+import { Route as PatientsDashboardRouteImport } from './routes/patients/dashboard';
+import { Route as PatientsRegisterRouteImport } from './routes/patients/register';
+import { Route as ProfileIndexRouteImport } from './routes/profile/index';
+import { Route as ServicesAppointmentsRouteImport } from './routes/services/appointments';
+import { Route as ServicesClientsRouteImport } from './routes/services/clients';
+import { Route as ServicesIndexRouteImport } from './routes/services/index';
+import { Route as ServicesPatientsRouteImport } from './routes/services/patients';
+import { Route as ServicesProfessionalServicesRouteImport } from './routes/services/professional-services';
+import { Route as ServicesServiceAnalyticsRouteImport } from './routes/services/service-analytics';
+import { Route as ServicesServiceCategoriesRouteImport } from './routes/services/service-categories';
+import { Route as ServicesServiceTemplatesRouteImport } from './routes/services/service-templates';
+import { Route as TelemedicineRouteImport } from './routes/telemedicine';
+import { Route as TelemedicineComplianceRouteImport } from './routes/telemedicine/compliance';
+import { Route as TelemedicineIndexRouteImport } from './routes/telemedicine/index';
+import { Route as TelemedicineSessionSessionIdRouteImport } from './routes/telemedicine/session.$sessionId';
+import { Route as TelemedicineSessionNewRouteImport } from './routes/telemedicine/session/new';
+import { Route as TelemedicineWaitingRoomRouteImport } from './routes/telemedicine/waiting-room';
 
 const TelemedicineRoute = TelemedicineRouteImport.update({
   id: '/telemedicine',
   path: '/telemedicine',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TelemedicineIndexRoute = TelemedicineIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TelemedicineRoute,
-} as any)
+} as any);
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
   path: '/services/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const FinancialIndexRoute = FinancialIndexRouteImport.update({
   id: '/financial/',
   path: '/financial/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TelemedicineWaitingRoomRoute = TelemedicineWaitingRoomRouteImport.update({
   id: '/waiting-room',
   path: '/waiting-room',
   getParentRoute: () => TelemedicineRoute,
-} as any)
+} as any);
 const TelemedicineComplianceRoute = TelemedicineComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
   getParentRoute: () => TelemedicineRoute,
-} as any)
-const ServicesServiceTemplatesRoute =
-  ServicesServiceTemplatesRouteImport.update({
-    id: '/services/service-templates',
-    path: '/services/service-templates',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ServicesServiceCategoriesRoute =
-  ServicesServiceCategoriesRouteImport.update({
-    id: '/services/service-categories',
-    path: '/services/service-categories',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ServicesServiceAnalyticsRoute =
-  ServicesServiceAnalyticsRouteImport.update({
-    id: '/services/service-analytics',
-    path: '/services/service-analytics',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ServicesProfessionalServicesRoute =
-  ServicesProfessionalServicesRouteImport.update({
-    id: '/services/professional-services',
-    path: '/services/professional-services',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+} as any);
+const ServicesServiceTemplatesRoute = ServicesServiceTemplatesRouteImport.update({
+  id: '/services/service-templates',
+  path: '/services/service-templates',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ServicesServiceCategoriesRoute = ServicesServiceCategoriesRouteImport.update({
+  id: '/services/service-categories',
+  path: '/services/service-categories',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ServicesServiceAnalyticsRoute = ServicesServiceAnalyticsRouteImport.update({
+  id: '/services/service-analytics',
+  path: '/services/service-analytics',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ServicesProfessionalServicesRoute = ServicesProfessionalServicesRouteImport.update({
+  id: '/services/professional-services',
+  path: '/services/professional-services',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ServicesPatientsRoute = ServicesPatientsRouteImport.update({
   id: '/services/patients',
   path: '/services/patients',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServicesClientsRoute = ServicesClientsRouteImport.update({
   id: '/services/clients',
   path: '/services/clients',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ServicesAppointmentsRoute = ServicesAppointmentsRouteImport.update({
   id: '/services/appointments',
   path: '/services/appointments',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsRegisterRoute = PatientsRegisterRouteImport.update({
   id: '/patients/register',
   path: '/patients/register',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsIdRoute = PatientsIdRouteImport.update({
   id: '/patients/id',
   path: '/patients/id',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsDashboardRoute = PatientsDashboardRouteImport.update({
   id: '/patients/dashboard',
   path: '/patients/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const FinancialSubscriptionRoute = FinancialSubscriptionRouteImport.update({
   id: '/financial/subscription',
   path: '/financial/subscription',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const FinancialPricingRulesRoute = FinancialPricingRulesRouteImport.update({
   id: '/financial/pricing-rules',
   path: '/financial/pricing-rules',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DemosSignupDemoRoute = DemosSignupDemoRouteImport.update({
   id: '/demos/signup-demo',
   path: '/demos/signup-demo',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DemosAestheticDemoRoute = DemosAestheticDemoRouteImport.update({
   id: '/demos/aesthetic-demo',
   path: '/demos/aesthetic-demo',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
   id: '/dashboard/analytics',
   path: '/dashboard/analytics',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardAiChatRoute = DashboardAiChatRouteImport.update({
   id: '/dashboard/ai-chat',
   path: '/dashboard/ai-chat',
   getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardAdvancedAnalyticsRoute =
-  DashboardAdvancedAnalyticsRouteImport.update({
-    id: '/dashboard/advanced-analytics',
-    path: '/dashboard/advanced-analytics',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+} as any);
+const DashboardAdvancedAnalyticsRoute = DashboardAdvancedAnalyticsRouteImport.update({
+  id: '/dashboard/advanced-analytics',
+  path: '/dashboard/advanced-analytics',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/auth/signup',
   path: '/auth/signup',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
   path: '/auth/confirm',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AppointmentsNewRoute = AppointmentsNewRouteImport.update({
   id: '/appointments/new',
   path: '/appointments/new',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AiInsightsRoute = AiInsightsRouteImport.update({
   id: '/ai/insights',
   path: '/ai/insights',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminReportsRoute = AdminReportsRouteImport.update({
   id: '/admin/reports',
   path: '/admin/reports',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminGovernanceRoute = AdminGovernanceRouteImport.update({
   id: '/admin/governance',
   path: '/admin/governance',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TelemedicineSessionNewRoute = TelemedicineSessionNewRouteImport.update({
   id: '/session/new',
   path: '/session/new',
   getParentRoute: () => TelemedicineRoute,
-} as any)
-const TelemedicineSessionSessionIdRoute =
-  TelemedicineSessionSessionIdRouteImport.update({
-    id: '/session/$sessionId',
-    path: '/session/$sessionId',
-    getParentRoute: () => TelemedicineRoute,
-  } as any)
-const PatientsPatientIdHistoryRoute =
-  PatientsPatientIdHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => PatientsPatientIdRoute,
-  } as any)
+} as any);
+const TelemedicineSessionSessionIdRoute = TelemedicineSessionSessionIdRouteImport.update({
+  id: '/session/$sessionId',
+  path: '/session/$sessionId',
+  getParentRoute: () => TelemedicineRoute,
+} as any);
+const PatientsPatientIdHistoryRoute = PatientsPatientIdHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => PatientsPatientIdRoute,
+} as any);
 const PatientsPatientIdEditRoute = PatientsPatientIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
   getParentRoute: () => PatientsPatientIdRoute,
-} as any)
-const PatientsPatientIdDocumentsRoute =
-  PatientsPatientIdDocumentsRouteImport.update({
-    id: '/documents',
-    path: '/documents',
-    getParentRoute: () => PatientsPatientIdRoute,
-  } as any)
+} as any);
+const PatientsPatientIdDocumentsRoute = PatientsPatientIdDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => PatientsPatientIdRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/telemedicine': typeof TelemedicineRouteWithChildren
-  '/admin/governance': typeof AdminGovernanceRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/ai/insights': typeof AiInsightsRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
-  '/dashboard/ai-chat': typeof DashboardAiChatRoute
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
-  '/demos/signup-demo': typeof DemosSignupDemoRoute
-  '/financial/pricing-rules': typeof FinancialPricingRulesRoute
-  '/financial/subscription': typeof FinancialSubscriptionRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/dashboard': typeof PatientsDashboardRoute
-  '/patients/id': typeof PatientsIdRoute
-  '/patients/register': typeof PatientsRegisterRoute
-  '/services/appointments': typeof ServicesAppointmentsRoute
-  '/services/clients': typeof ServicesClientsRoute
-  '/services/patients': typeof ServicesPatientsRoute
-  '/services/professional-services': typeof ServicesProfessionalServicesRoute
-  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
-  '/services/service-categories': typeof ServicesServiceCategoriesRoute
-  '/services/service-templates': typeof ServicesServiceTemplatesRoute
-  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
-  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/financial': typeof FinancialIndexRoute
-  '/profile': typeof ProfileIndexRoute
-  '/services': typeof ServicesIndexRoute
-  '/telemedicine/': typeof TelemedicineIndexRoute
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
-  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
-  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/telemedicine': typeof TelemedicineRouteWithChildren;
+  '/admin/governance': typeof AdminGovernanceRoute;
+  '/admin/reports': typeof AdminReportsRoute;
+  '/admin/settings': typeof AdminSettingsRoute;
+  '/ai/insights': typeof AiInsightsRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/signup': typeof AuthSignupRoute;
+  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute;
+  '/dashboard/ai-chat': typeof DashboardAiChatRoute;
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute;
+  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute;
+  '/demos/signup-demo': typeof DemosSignupDemoRoute;
+  '/financial/pricing-rules': typeof FinancialPricingRulesRoute;
+  '/financial/subscription': typeof FinancialSubscriptionRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/dashboard': typeof PatientsDashboardRoute;
+  '/patients/id': typeof PatientsIdRoute;
+  '/patients/register': typeof PatientsRegisterRoute;
+  '/services/appointments': typeof ServicesAppointmentsRoute;
+  '/services/clients': typeof ServicesClientsRoute;
+  '/services/patients': typeof ServicesPatientsRoute;
+  '/services/professional-services': typeof ServicesProfessionalServicesRoute;
+  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute;
+  '/services/service-categories': typeof ServicesServiceCategoriesRoute;
+  '/services/service-templates': typeof ServicesServiceTemplatesRoute;
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute;
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute;
+  '/dashboard': typeof DashboardIndexRoute;
+  '/financial': typeof FinancialIndexRoute;
+  '/profile': typeof ProfileIndexRoute;
+  '/services': typeof ServicesIndexRoute;
+  '/telemedicine/': typeof TelemedicineIndexRoute;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute;
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/admin/governance': typeof AdminGovernanceRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/ai/insights': typeof AiInsightsRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
-  '/dashboard/ai-chat': typeof DashboardAiChatRoute
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
-  '/demos/signup-demo': typeof DemosSignupDemoRoute
-  '/financial/pricing-rules': typeof FinancialPricingRulesRoute
-  '/financial/subscription': typeof FinancialSubscriptionRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/dashboard': typeof PatientsDashboardRoute
-  '/patients/id': typeof PatientsIdRoute
-  '/patients/register': typeof PatientsRegisterRoute
-  '/services/appointments': typeof ServicesAppointmentsRoute
-  '/services/clients': typeof ServicesClientsRoute
-  '/services/patients': typeof ServicesPatientsRoute
-  '/services/professional-services': typeof ServicesProfessionalServicesRoute
-  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
-  '/services/service-categories': typeof ServicesServiceCategoriesRoute
-  '/services/service-templates': typeof ServicesServiceTemplatesRoute
-  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
-  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/financial': typeof FinancialIndexRoute
-  '/profile': typeof ProfileIndexRoute
-  '/services': typeof ServicesIndexRoute
-  '/telemedicine': typeof TelemedicineIndexRoute
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
-  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
-  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/admin/governance': typeof AdminGovernanceRoute;
+  '/admin/reports': typeof AdminReportsRoute;
+  '/admin/settings': typeof AdminSettingsRoute;
+  '/ai/insights': typeof AiInsightsRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/signup': typeof AuthSignupRoute;
+  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute;
+  '/dashboard/ai-chat': typeof DashboardAiChatRoute;
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute;
+  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute;
+  '/demos/signup-demo': typeof DemosSignupDemoRoute;
+  '/financial/pricing-rules': typeof FinancialPricingRulesRoute;
+  '/financial/subscription': typeof FinancialSubscriptionRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/dashboard': typeof PatientsDashboardRoute;
+  '/patients/id': typeof PatientsIdRoute;
+  '/patients/register': typeof PatientsRegisterRoute;
+  '/services/appointments': typeof ServicesAppointmentsRoute;
+  '/services/clients': typeof ServicesClientsRoute;
+  '/services/patients': typeof ServicesPatientsRoute;
+  '/services/professional-services': typeof ServicesProfessionalServicesRoute;
+  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute;
+  '/services/service-categories': typeof ServicesServiceCategoriesRoute;
+  '/services/service-templates': typeof ServicesServiceTemplatesRoute;
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute;
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute;
+  '/dashboard': typeof DashboardIndexRoute;
+  '/financial': typeof FinancialIndexRoute;
+  '/profile': typeof ProfileIndexRoute;
+  '/services': typeof ServicesIndexRoute;
+  '/telemedicine': typeof TelemedicineIndexRoute;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute;
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/404': typeof R404Route
-  '/telemedicine': typeof TelemedicineRouteWithChildren
-  '/admin/governance': typeof AdminGovernanceRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/ai/insights': typeof AiInsightsRoute
-  '/appointments/new': typeof AppointmentsNewRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/auth/confirm': typeof AuthConfirmRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
-  '/dashboard/ai-chat': typeof DashboardAiChatRoute
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
-  '/demos/signup-demo': typeof DemosSignupDemoRoute
-  '/financial/pricing-rules': typeof FinancialPricingRulesRoute
-  '/financial/subscription': typeof FinancialSubscriptionRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
-  '/patients/dashboard': typeof PatientsDashboardRoute
-  '/patients/id': typeof PatientsIdRoute
-  '/patients/register': typeof PatientsRegisterRoute
-  '/services/appointments': typeof ServicesAppointmentsRoute
-  '/services/clients': typeof ServicesClientsRoute
-  '/services/patients': typeof ServicesPatientsRoute
-  '/services/professional-services': typeof ServicesProfessionalServicesRoute
-  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute
-  '/services/service-categories': typeof ServicesServiceCategoriesRoute
-  '/services/service-templates': typeof ServicesServiceTemplatesRoute
-  '/telemedicine/compliance': typeof TelemedicineComplianceRoute
-  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/financial/': typeof FinancialIndexRoute
-  '/profile/': typeof ProfileIndexRoute
-  '/services/': typeof ServicesIndexRoute
-  '/telemedicine/': typeof TelemedicineIndexRoute
-  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
-  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
-  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
-  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute
-  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/404': typeof R404Route;
+  '/telemedicine': typeof TelemedicineRouteWithChildren;
+  '/admin/governance': typeof AdminGovernanceRoute;
+  '/admin/reports': typeof AdminReportsRoute;
+  '/admin/settings': typeof AdminSettingsRoute;
+  '/ai/insights': typeof AiInsightsRoute;
+  '/appointments/new': typeof AppointmentsNewRoute;
+  '/auth/callback': typeof AuthCallbackRoute;
+  '/auth/confirm': typeof AuthConfirmRoute;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/signup': typeof AuthSignupRoute;
+  '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute;
+  '/dashboard/ai-chat': typeof DashboardAiChatRoute;
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute;
+  '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute;
+  '/demos/signup-demo': typeof DemosSignupDemoRoute;
+  '/financial/pricing-rules': typeof FinancialPricingRulesRoute;
+  '/financial/subscription': typeof FinancialSubscriptionRoute;
+  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren;
+  '/patients/dashboard': typeof PatientsDashboardRoute;
+  '/patients/id': typeof PatientsIdRoute;
+  '/patients/register': typeof PatientsRegisterRoute;
+  '/services/appointments': typeof ServicesAppointmentsRoute;
+  '/services/clients': typeof ServicesClientsRoute;
+  '/services/patients': typeof ServicesPatientsRoute;
+  '/services/professional-services': typeof ServicesProfessionalServicesRoute;
+  '/services/service-analytics': typeof ServicesServiceAnalyticsRoute;
+  '/services/service-categories': typeof ServicesServiceCategoriesRoute;
+  '/services/service-templates': typeof ServicesServiceTemplatesRoute;
+  '/telemedicine/compliance': typeof TelemedicineComplianceRoute;
+  '/telemedicine/waiting-room': typeof TelemedicineWaitingRoomRoute;
+  '/dashboard/': typeof DashboardIndexRoute;
+  '/financial/': typeof FinancialIndexRoute;
+  '/profile/': typeof ProfileIndexRoute;
+  '/services/': typeof ServicesIndexRoute;
+  '/telemedicine/': typeof TelemedicineIndexRoute;
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute;
+  '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute;
+  '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute;
+  '/telemedicine/session/$sessionId': typeof TelemedicineSessionSessionIdRoute;
+  '/telemedicine/session/new': typeof TelemedicineSessionNewRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/404'
@@ -447,8 +439,8 @@ export interface FileRouteTypes {
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
     | '/telemedicine/session/$sessionId'
-    | '/telemedicine/session/new'
-  fileRoutesByTo: FileRoutesByTo
+    | '/telemedicine/session/new';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/404'
@@ -490,7 +482,7 @@ export interface FileRouteTypes {
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
     | '/telemedicine/session/$sessionId'
-    | '/telemedicine/session/new'
+    | '/telemedicine/session/new';
   id:
     | '__root__'
     | '/'
@@ -534,351 +526,351 @@ export interface FileRouteTypes {
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
     | '/telemedicine/session/$sessionId'
-    | '/telemedicine/session/new'
-  fileRoutesById: FileRoutesById
+    | '/telemedicine/session/new';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  R404Route: typeof R404Route
-  TelemedicineRoute: typeof TelemedicineRouteWithChildren
-  AdminGovernanceRoute: typeof AdminGovernanceRoute
-  AdminReportsRoute: typeof AdminReportsRoute
-  AdminSettingsRoute: typeof AdminSettingsRoute
-  AiInsightsRoute: typeof AiInsightsRoute
-  AppointmentsNewRoute: typeof AppointmentsNewRoute
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthConfirmRoute: typeof AuthConfirmRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthSignupRoute: typeof AuthSignupRoute
-  DashboardAdvancedAnalyticsRoute: typeof DashboardAdvancedAnalyticsRoute
-  DashboardAiChatRoute: typeof DashboardAiChatRoute
-  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
-  DemosAestheticDemoRoute: typeof DemosAestheticDemoRoute
-  DemosSignupDemoRoute: typeof DemosSignupDemoRoute
-  FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute
-  FinancialSubscriptionRoute: typeof FinancialSubscriptionRoute
-  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
-  PatientsDashboardRoute: typeof PatientsDashboardRoute
-  PatientsIdRoute: typeof PatientsIdRoute
-  PatientsRegisterRoute: typeof PatientsRegisterRoute
-  ServicesAppointmentsRoute: typeof ServicesAppointmentsRoute
-  ServicesClientsRoute: typeof ServicesClientsRoute
-  ServicesPatientsRoute: typeof ServicesPatientsRoute
-  ServicesProfessionalServicesRoute: typeof ServicesProfessionalServicesRoute
-  ServicesServiceAnalyticsRoute: typeof ServicesServiceAnalyticsRoute
-  ServicesServiceCategoriesRoute: typeof ServicesServiceCategoriesRoute
-  ServicesServiceTemplatesRoute: typeof ServicesServiceTemplatesRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
-  FinancialIndexRoute: typeof FinancialIndexRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
-  ServicesIndexRoute: typeof ServicesIndexRoute
+  IndexRoute: typeof IndexRoute;
+  R404Route: typeof R404Route;
+  TelemedicineRoute: typeof TelemedicineRouteWithChildren;
+  AdminGovernanceRoute: typeof AdminGovernanceRoute;
+  AdminReportsRoute: typeof AdminReportsRoute;
+  AdminSettingsRoute: typeof AdminSettingsRoute;
+  AiInsightsRoute: typeof AiInsightsRoute;
+  AppointmentsNewRoute: typeof AppointmentsNewRoute;
+  AuthCallbackRoute: typeof AuthCallbackRoute;
+  AuthConfirmRoute: typeof AuthConfirmRoute;
+  AuthLoginRoute: typeof AuthLoginRoute;
+  AuthSignupRoute: typeof AuthSignupRoute;
+  DashboardAdvancedAnalyticsRoute: typeof DashboardAdvancedAnalyticsRoute;
+  DashboardAiChatRoute: typeof DashboardAiChatRoute;
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute;
+  DemosAestheticDemoRoute: typeof DemosAestheticDemoRoute;
+  DemosSignupDemoRoute: typeof DemosSignupDemoRoute;
+  FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute;
+  FinancialSubscriptionRoute: typeof FinancialSubscriptionRoute;
+  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren;
+  PatientsDashboardRoute: typeof PatientsDashboardRoute;
+  PatientsIdRoute: typeof PatientsIdRoute;
+  PatientsRegisterRoute: typeof PatientsRegisterRoute;
+  ServicesAppointmentsRoute: typeof ServicesAppointmentsRoute;
+  ServicesClientsRoute: typeof ServicesClientsRoute;
+  ServicesPatientsRoute: typeof ServicesPatientsRoute;
+  ServicesProfessionalServicesRoute: typeof ServicesProfessionalServicesRoute;
+  ServicesServiceAnalyticsRoute: typeof ServicesServiceAnalyticsRoute;
+  ServicesServiceCategoriesRoute: typeof ServicesServiceCategoriesRoute;
+  ServicesServiceTemplatesRoute: typeof ServicesServiceTemplatesRoute;
+  DashboardIndexRoute: typeof DashboardIndexRoute;
+  FinancialIndexRoute: typeof FinancialIndexRoute;
+  ProfileIndexRoute: typeof ProfileIndexRoute;
+  ServicesIndexRoute: typeof ServicesIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/telemedicine': {
-      id: '/telemedicine'
-      path: '/telemedicine'
-      fullPath: '/telemedicine'
-      preLoaderRoute: typeof TelemedicineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/telemedicine';
+      path: '/telemedicine';
+      fullPath: '/telemedicine';
+      preLoaderRoute: typeof TelemedicineRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/404': {
-      id: '/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof R404RouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/404';
+      path: '/404';
+      fullPath: '/404';
+      preLoaderRoute: typeof R404RouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/telemedicine/': {
-      id: '/telemedicine/'
-      path: '/'
-      fullPath: '/telemedicine/'
-      preLoaderRoute: typeof TelemedicineIndexRouteImport
-      parentRoute: typeof TelemedicineRoute
-    }
+      id: '/telemedicine/';
+      path: '/';
+      fullPath: '/telemedicine/';
+      preLoaderRoute: typeof TelemedicineIndexRouteImport;
+      parentRoute: typeof TelemedicineRoute;
+    };
     '/services/': {
-      id: '/services/'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/';
+      path: '/services';
+      fullPath: '/services';
+      preLoaderRoute: typeof ServicesIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/profile/': {
-      id: '/profile/'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/profile/';
+      path: '/profile';
+      fullPath: '/profile';
+      preLoaderRoute: typeof ProfileIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/financial/': {
-      id: '/financial/'
-      path: '/financial'
-      fullPath: '/financial'
-      preLoaderRoute: typeof FinancialIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/financial/';
+      path: '/financial';
+      fullPath: '/financial';
+      preLoaderRoute: typeof FinancialIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard/': {
-      id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard/';
+      path: '/dashboard';
+      fullPath: '/dashboard';
+      preLoaderRoute: typeof DashboardIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/telemedicine/waiting-room': {
-      id: '/telemedicine/waiting-room'
-      path: '/waiting-room'
-      fullPath: '/telemedicine/waiting-room'
-      preLoaderRoute: typeof TelemedicineWaitingRoomRouteImport
-      parentRoute: typeof TelemedicineRoute
-    }
+      id: '/telemedicine/waiting-room';
+      path: '/waiting-room';
+      fullPath: '/telemedicine/waiting-room';
+      preLoaderRoute: typeof TelemedicineWaitingRoomRouteImport;
+      parentRoute: typeof TelemedicineRoute;
+    };
     '/telemedicine/compliance': {
-      id: '/telemedicine/compliance'
-      path: '/compliance'
-      fullPath: '/telemedicine/compliance'
-      preLoaderRoute: typeof TelemedicineComplianceRouteImport
-      parentRoute: typeof TelemedicineRoute
-    }
+      id: '/telemedicine/compliance';
+      path: '/compliance';
+      fullPath: '/telemedicine/compliance';
+      preLoaderRoute: typeof TelemedicineComplianceRouteImport;
+      parentRoute: typeof TelemedicineRoute;
+    };
     '/services/service-templates': {
-      id: '/services/service-templates'
-      path: '/services/service-templates'
-      fullPath: '/services/service-templates'
-      preLoaderRoute: typeof ServicesServiceTemplatesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/service-templates';
+      path: '/services/service-templates';
+      fullPath: '/services/service-templates';
+      preLoaderRoute: typeof ServicesServiceTemplatesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/service-categories': {
-      id: '/services/service-categories'
-      path: '/services/service-categories'
-      fullPath: '/services/service-categories'
-      preLoaderRoute: typeof ServicesServiceCategoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/service-categories';
+      path: '/services/service-categories';
+      fullPath: '/services/service-categories';
+      preLoaderRoute: typeof ServicesServiceCategoriesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/service-analytics': {
-      id: '/services/service-analytics'
-      path: '/services/service-analytics'
-      fullPath: '/services/service-analytics'
-      preLoaderRoute: typeof ServicesServiceAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/service-analytics';
+      path: '/services/service-analytics';
+      fullPath: '/services/service-analytics';
+      preLoaderRoute: typeof ServicesServiceAnalyticsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/professional-services': {
-      id: '/services/professional-services'
-      path: '/services/professional-services'
-      fullPath: '/services/professional-services'
-      preLoaderRoute: typeof ServicesProfessionalServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/professional-services';
+      path: '/services/professional-services';
+      fullPath: '/services/professional-services';
+      preLoaderRoute: typeof ServicesProfessionalServicesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/patients': {
-      id: '/services/patients'
-      path: '/services/patients'
-      fullPath: '/services/patients'
-      preLoaderRoute: typeof ServicesPatientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/patients';
+      path: '/services/patients';
+      fullPath: '/services/patients';
+      preLoaderRoute: typeof ServicesPatientsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/clients': {
-      id: '/services/clients'
-      path: '/services/clients'
-      fullPath: '/services/clients'
-      preLoaderRoute: typeof ServicesClientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/clients';
+      path: '/services/clients';
+      fullPath: '/services/clients';
+      preLoaderRoute: typeof ServicesClientsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/services/appointments': {
-      id: '/services/appointments'
-      path: '/services/appointments'
-      fullPath: '/services/appointments'
-      preLoaderRoute: typeof ServicesAppointmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/services/appointments';
+      path: '/services/appointments';
+      fullPath: '/services/appointments';
+      preLoaderRoute: typeof ServicesAppointmentsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients/register': {
-      id: '/patients/register'
-      path: '/patients/register'
-      fullPath: '/patients/register'
-      preLoaderRoute: typeof PatientsRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/patients/register';
+      path: '/patients/register';
+      fullPath: '/patients/register';
+      preLoaderRoute: typeof PatientsRegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients/id': {
-      id: '/patients/id'
-      path: '/patients/id'
-      fullPath: '/patients/id'
-      preLoaderRoute: typeof PatientsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/patients/id';
+      path: '/patients/id';
+      fullPath: '/patients/id';
+      preLoaderRoute: typeof PatientsIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients/dashboard': {
-      id: '/patients/dashboard'
-      path: '/patients/dashboard'
-      fullPath: '/patients/dashboard'
-      preLoaderRoute: typeof PatientsDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/patients/dashboard';
+      path: '/patients/dashboard';
+      fullPath: '/patients/dashboard';
+      preLoaderRoute: typeof PatientsDashboardRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/patients/$patientId': {
-      id: '/patients/$patientId'
-      path: '/patients/$patientId'
-      fullPath: '/patients/$patientId'
-      preLoaderRoute: typeof PatientsPatientIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/patients/$patientId';
+      path: '/patients/$patientId';
+      fullPath: '/patients/$patientId';
+      preLoaderRoute: typeof PatientsPatientIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/financial/subscription': {
-      id: '/financial/subscription'
-      path: '/financial/subscription'
-      fullPath: '/financial/subscription'
-      preLoaderRoute: typeof FinancialSubscriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/financial/subscription';
+      path: '/financial/subscription';
+      fullPath: '/financial/subscription';
+      preLoaderRoute: typeof FinancialSubscriptionRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/financial/pricing-rules': {
-      id: '/financial/pricing-rules'
-      path: '/financial/pricing-rules'
-      fullPath: '/financial/pricing-rules'
-      preLoaderRoute: typeof FinancialPricingRulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/financial/pricing-rules';
+      path: '/financial/pricing-rules';
+      fullPath: '/financial/pricing-rules';
+      preLoaderRoute: typeof FinancialPricingRulesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/demos/signup-demo': {
-      id: '/demos/signup-demo'
-      path: '/demos/signup-demo'
-      fullPath: '/demos/signup-demo'
-      preLoaderRoute: typeof DemosSignupDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/demos/signup-demo';
+      path: '/demos/signup-demo';
+      fullPath: '/demos/signup-demo';
+      preLoaderRoute: typeof DemosSignupDemoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/demos/aesthetic-demo': {
-      id: '/demos/aesthetic-demo'
-      path: '/demos/aesthetic-demo'
-      fullPath: '/demos/aesthetic-demo'
-      preLoaderRoute: typeof DemosAestheticDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/demos/aesthetic-demo';
+      path: '/demos/aesthetic-demo';
+      fullPath: '/demos/aesthetic-demo';
+      preLoaderRoute: typeof DemosAestheticDemoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard/analytics': {
-      id: '/dashboard/analytics'
-      path: '/dashboard/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof DashboardAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard/analytics';
+      path: '/dashboard/analytics';
+      fullPath: '/dashboard/analytics';
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard/ai-chat': {
-      id: '/dashboard/ai-chat'
-      path: '/dashboard/ai-chat'
-      fullPath: '/dashboard/ai-chat'
-      preLoaderRoute: typeof DashboardAiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard/ai-chat';
+      path: '/dashboard/ai-chat';
+      fullPath: '/dashboard/ai-chat';
+      preLoaderRoute: typeof DashboardAiChatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard/advanced-analytics': {
-      id: '/dashboard/advanced-analytics'
-      path: '/dashboard/advanced-analytics'
-      fullPath: '/dashboard/advanced-analytics'
-      preLoaderRoute: typeof DashboardAdvancedAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard/advanced-analytics';
+      path: '/dashboard/advanced-analytics';
+      fullPath: '/dashboard/advanced-analytics';
+      preLoaderRoute: typeof DashboardAdvancedAnalyticsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/auth/signup': {
-      id: '/auth/signup'
-      path: '/auth/signup'
-      fullPath: '/auth/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/signup';
+      path: '/auth/signup';
+      fullPath: '/auth/signup';
+      preLoaderRoute: typeof AuthSignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/login';
+      path: '/auth/login';
+      fullPath: '/auth/login';
+      preLoaderRoute: typeof AuthLoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/auth/confirm': {
-      id: '/auth/confirm'
-      path: '/auth/confirm'
-      fullPath: '/auth/confirm'
-      preLoaderRoute: typeof AuthConfirmRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/confirm';
+      path: '/auth/confirm';
+      fullPath: '/auth/confirm';
+      preLoaderRoute: typeof AuthConfirmRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/auth/callback';
+      path: '/auth/callback';
+      fullPath: '/auth/callback';
+      preLoaderRoute: typeof AuthCallbackRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/appointments/new': {
-      id: '/appointments/new'
-      path: '/appointments/new'
-      fullPath: '/appointments/new'
-      preLoaderRoute: typeof AppointmentsNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/appointments/new';
+      path: '/appointments/new';
+      fullPath: '/appointments/new';
+      preLoaderRoute: typeof AppointmentsNewRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/ai/insights': {
-      id: '/ai/insights'
-      path: '/ai/insights'
-      fullPath: '/ai/insights'
-      preLoaderRoute: typeof AiInsightsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/ai/insights';
+      path: '/ai/insights';
+      fullPath: '/ai/insights';
+      preLoaderRoute: typeof AiInsightsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/admin/settings': {
-      id: '/admin/settings'
-      path: '/admin/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/admin/settings';
+      path: '/admin/settings';
+      fullPath: '/admin/settings';
+      preLoaderRoute: typeof AdminSettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/admin/reports': {
-      id: '/admin/reports'
-      path: '/admin/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AdminReportsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/admin/reports';
+      path: '/admin/reports';
+      fullPath: '/admin/reports';
+      preLoaderRoute: typeof AdminReportsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/admin/governance': {
-      id: '/admin/governance'
-      path: '/admin/governance'
-      fullPath: '/admin/governance'
-      preLoaderRoute: typeof AdminGovernanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/admin/governance';
+      path: '/admin/governance';
+      fullPath: '/admin/governance';
+      preLoaderRoute: typeof AdminGovernanceRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/telemedicine/session/new': {
-      id: '/telemedicine/session/new'
-      path: '/session/new'
-      fullPath: '/telemedicine/session/new'
-      preLoaderRoute: typeof TelemedicineSessionNewRouteImport
-      parentRoute: typeof TelemedicineRoute
-    }
+      id: '/telemedicine/session/new';
+      path: '/session/new';
+      fullPath: '/telemedicine/session/new';
+      preLoaderRoute: typeof TelemedicineSessionNewRouteImport;
+      parentRoute: typeof TelemedicineRoute;
+    };
     '/telemedicine/session/$sessionId': {
-      id: '/telemedicine/session/$sessionId'
-      path: '/session/$sessionId'
-      fullPath: '/telemedicine/session/$sessionId'
-      preLoaderRoute: typeof TelemedicineSessionSessionIdRouteImport
-      parentRoute: typeof TelemedicineRoute
-    }
+      id: '/telemedicine/session/$sessionId';
+      path: '/session/$sessionId';
+      fullPath: '/telemedicine/session/$sessionId';
+      preLoaderRoute: typeof TelemedicineSessionSessionIdRouteImport;
+      parentRoute: typeof TelemedicineRoute;
+    };
     '/patients/$patientId/history': {
-      id: '/patients/$patientId/history'
-      path: '/history'
-      fullPath: '/patients/$patientId/history'
-      preLoaderRoute: typeof PatientsPatientIdHistoryRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/history';
+      path: '/history';
+      fullPath: '/patients/$patientId/history';
+      preLoaderRoute: typeof PatientsPatientIdHistoryRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
     '/patients/$patientId/edit': {
-      id: '/patients/$patientId/edit'
-      path: '/edit'
-      fullPath: '/patients/$patientId/edit'
-      preLoaderRoute: typeof PatientsPatientIdEditRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/edit';
+      path: '/edit';
+      fullPath: '/patients/$patientId/edit';
+      preLoaderRoute: typeof PatientsPatientIdEditRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
     '/patients/$patientId/documents': {
-      id: '/patients/$patientId/documents'
-      path: '/documents'
-      fullPath: '/patients/$patientId/documents'
-      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
-    }
+      id: '/patients/$patientId/documents';
+      path: '/documents';
+      fullPath: '/patients/$patientId/documents';
+      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport;
+      parentRoute: typeof PatientsPatientIdRoute;
+    };
   }
 }
 
 interface TelemedicineRouteChildren {
-  TelemedicineComplianceRoute: typeof TelemedicineComplianceRoute
-  TelemedicineWaitingRoomRoute: typeof TelemedicineWaitingRoomRoute
-  TelemedicineIndexRoute: typeof TelemedicineIndexRoute
-  TelemedicineSessionSessionIdRoute: typeof TelemedicineSessionSessionIdRoute
-  TelemedicineSessionNewRoute: typeof TelemedicineSessionNewRoute
+  TelemedicineComplianceRoute: typeof TelemedicineComplianceRoute;
+  TelemedicineWaitingRoomRoute: typeof TelemedicineWaitingRoomRoute;
+  TelemedicineIndexRoute: typeof TelemedicineIndexRoute;
+  TelemedicineSessionSessionIdRoute: typeof TelemedicineSessionSessionIdRoute;
+  TelemedicineSessionNewRoute: typeof TelemedicineSessionNewRoute;
 }
 
 const TelemedicineRouteChildren: TelemedicineRouteChildren = {
@@ -887,26 +879,27 @@ const TelemedicineRouteChildren: TelemedicineRouteChildren = {
   TelemedicineIndexRoute: TelemedicineIndexRoute,
   TelemedicineSessionSessionIdRoute: TelemedicineSessionSessionIdRoute,
   TelemedicineSessionNewRoute: TelemedicineSessionNewRoute,
-}
+};
 
 const TelemedicineRouteWithChildren = TelemedicineRoute._addFileChildren(
   TelemedicineRouteChildren,
-)
+);
 
 interface PatientsPatientIdRouteChildren {
-  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
-  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute
-  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute
+  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute;
+  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute;
+  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute;
 }
 
 const PatientsPatientIdRouteChildren: PatientsPatientIdRouteChildren = {
   PatientsPatientIdDocumentsRoute: PatientsPatientIdDocumentsRoute,
   PatientsPatientIdEditRoute: PatientsPatientIdEditRoute,
   PatientsPatientIdHistoryRoute: PatientsPatientIdHistoryRoute,
-}
+};
 
-const PatientsPatientIdRouteWithChildren =
-  PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
+const PatientsPatientIdRouteWithChildren = PatientsPatientIdRoute._addFileChildren(
+  PatientsPatientIdRouteChildren,
+);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -943,7 +936,7 @@ const rootRouteChildren: RootRouteChildren = {
   FinancialIndexRoute: FinancialIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

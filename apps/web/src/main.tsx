@@ -7,10 +7,12 @@ import { ThemeProvider } from './components/theme-provider';
 import { ConsentProvider } from './contexts/ConsentContext';
 import { criticalComponents } from './hooks/useLazyComponent';
 // import { initializeSentry } from './lib/sentry'; // temporarily disabled to unblock deploy
+import { CSPProvider } from './components/security/CSPProvider';
+import { generateNonce, getSecurityHeaders } from './lib/security/csp';
+import { clientCSPManager } from './lib/security/csp-client';
+import { healthcareSRIConfig, initializeHealthcareSRI } from './lib/security/sri';
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';
-import { generateNonce, getSecurityHeaders } from './lib/security/csp';
-import { initializeHealthcareSRI, healthcareSRIConfig } from './lib/security/sri';
 
 import './index.css';
 
@@ -48,6 +50,9 @@ if ((import.meta as any).env?.DEV) {
 // Initialize Sentry monitoring disabled for now to unblock Vercel build
 // initializeSentry();
 
+// Initialize client-side CSP management for healthcare compliance
+clientCSPManager;
+
 // Healthcare SRI-enabled resource loading utility
 function loadResourceWithSRI(
   url: string,
@@ -57,11 +62,11 @@ function loadResourceWithSRI(
     async?: boolean;
     defer?: boolean;
     crossorigin?: 'anonymous' | 'use-credentials';
-  } = {}
+  } = {},
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const element = document.createElement(type);
-    
+
     if (type === 'script') {
       element.src = url;
       element.async = options.async ?? true;
@@ -70,17 +75,17 @@ function loadResourceWithSRI(
       element.rel = 'stylesheet';
       element.href = url;
     }
-    
+
     element.crossOrigin = options.crossorigin ?? 'anonymous';
-    
+
     // Add SRI if provided for healthcare resources
     if (integrity) {
       element.integrity = integrity;
     }
-    
+
     element.onload = () => resolve();
     element.onerror = () => reject(new Error(`Failed to load ${type}: ${url}`));
-    
+
     document.head.appendChild(element);
   });
 }
@@ -92,7 +97,7 @@ async function bootstrap() {
   // Initialize healthcare security headers with CSP
   const nonce = generateNonce();
   const securityHeaders = getSecurityHeaders(nonce);
-  
+
   // Apply security headers to the document
   Object.entries(securityHeaders).forEach(([name, value]) => {
     const meta = document.createElement('meta');
@@ -107,10 +112,10 @@ async function bootstrap() {
   // Initialize SRI for healthcare-critical resources
   if (process.env.NODE_ENV === 'production') {
     console.log('[NeonPro] Initializing Subresource Integrity for healthcare compliance...');
-    
+
     // Initialize healthcare SRI for security compliance
     const sriValidator = initializeHealthcareSRI();
-    
+
     // Log SRI initialization for compliance audit
     console.log('[NeonPro] Healthcare SRI initialized:', {
       algorithm: healthcareSRIConfig.algorithm,
@@ -120,10 +125,10 @@ async function bootstrap() {
 
     // Store SRI manager globally for dynamic resource loading
     (window as any).__HEALTHCARE_SRI_MANAGER__ = sriValidator;
-    
+
     // Set up SRI violation monitoring
     if (typeof window !== 'undefined') {
-      window.addEventListener('error', (event) => {
+      window.addEventListener('error', event => {
         if (event.target && (event.target as HTMLScriptElement | HTMLLinkElement).src) {
           const element = event.target as HTMLScriptElement | HTMLLinkElement;
           console.warn('[NeonPro] SRI Violation Detected:', {
@@ -175,7 +180,9 @@ async function bootstrap() {
           <ThemeProvider attribute='class' defaultTheme='system'>
             <ErrorBoundary>
               <ConsentProvider>
-                <RouterProvider router={router} />
+                <CSPProvider config={{ enableLogging: process.env.NODE_ENV !== 'production' }}>
+                  <RouterProvider router={router} />
+                </CSPProvider>
               </ConsentProvider>
             </ErrorBoundary>
           </ThemeProvider>

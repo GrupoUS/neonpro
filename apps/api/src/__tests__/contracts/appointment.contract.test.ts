@@ -3,12 +3,12 @@
  * Validates tRPC appointment endpoints against defined contracts
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createCallerFactory } from '@trpc/server';
 import type { inferProcedureInput, inferProcedureOutput } from '@trpc/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { appointmentRouter } from '../../trpc/contracts/appointment';
 import { appRouter } from '../../trpc/router';
 import { createMockContext } from '../helpers/trpc-context';
-import { appointmentRouter } from '../../trpc/contracts/appointment';
 
 // Type inference for contract validation
 type AppointmentInput = {
@@ -39,7 +39,7 @@ describe('Appointment API Contract Tests', () => {
   beforeEach(() => {
     mockContext = createMockContext();
     caller = createCaller(mockContext);
-    
+
     // Mock audit logging
     vi.spyOn(mockContext.audit, 'logAppointmentAction').mockResolvedValue(undefined);
     vi.spyOn(mockContext.scheduling, 'checkAvailability').mockResolvedValue(true);
@@ -64,8 +64,8 @@ describe('Appointment API Contract Tests', () => {
         contactPreferences: {
           reminder: true,
           reminderMethods: ['whatsapp', 'email'],
-          reminderTiming: [24, 2] // 24h and 2h before
-        }
+          reminderTiming: [24, 2], // 24h and 2h before
+        },
       };
 
       // Mock successful creation
@@ -74,7 +74,7 @@ describe('Appointment API Contract Tests', () => {
         ...validInput,
         status: 'scheduled',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
 
       const result = await caller.api.appointment.create(validInput);
@@ -86,15 +86,15 @@ describe('Appointment API Contract Tests', () => {
           patientId: 'patient-123',
           professionalId: 'prof-456',
           status: 'scheduled',
-          scheduledFor: expect.any(String)
-        })
+          scheduledFor: expect.any(String),
+        }),
       });
 
       // Verify conflict detection was called
       expect(mockContext.scheduling.detectConflicts).toHaveBeenCalledWith({
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
-        duration: 60
+        duration: 60,
       });
 
       // Verify audit logging
@@ -103,7 +103,7 @@ describe('Appointment API Contract Tests', () => {
         appointmentId: 'appointment-123',
         patientId: 'patient-123',
         userId: mockContext.user.id,
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
 
@@ -114,7 +114,7 @@ describe('Appointment API Contract Tests', () => {
         serviceId: 'service-789',
         scheduledFor: '2024-02-15T14:00:00.000Z',
         duration: 60,
-        type: 'consultation'
+        type: 'consultation',
       };
 
       // Mock conflict detection
@@ -123,8 +123,8 @@ describe('Appointment API Contract Tests', () => {
           id: 'existing-appointment',
           scheduledFor: '2024-02-15T14:30:00.000Z',
           duration: 60,
-          conflict: 'overlap'
-        }
+          conflict: 'overlap',
+        },
       ]);
 
       await expect(caller.api.appointment.create(conflictingInput))
@@ -138,7 +138,7 @@ describe('Appointment API Contract Tests', () => {
         serviceId: 'service-789',
         scheduledFor: '2023-01-01T14:00:00.000Z', // Past date
         duration: 60,
-        type: 'consultation'
+        type: 'consultation',
       };
 
       await expect(caller.api.appointment.create(pastDateInput))
@@ -152,7 +152,7 @@ describe('Appointment API Contract Tests', () => {
         serviceId: 'service-789',
         scheduledFor: '2024-02-15T22:00:00.000Z', // After hours
         duration: 60,
-        type: 'consultation'
+        type: 'consultation',
       };
 
       await expect(caller.api.appointment.create(afterHoursInput))
@@ -174,7 +174,7 @@ describe('Appointment API Contract Tests', () => {
         type: 'consultation',
         notes: 'Initial consultation',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(mockAppointment);
@@ -187,8 +187,8 @@ describe('Appointment API Contract Tests', () => {
         data: expect.objectContaining({
           id: appointmentId,
           patientId: 'patient-123',
-          status: 'scheduled'
-        })
+          status: 'scheduled',
+        }),
       });
 
       // Verify audit logging
@@ -196,7 +196,7 @@ describe('Appointment API Contract Tests', () => {
         action: 'read',
         appointmentId,
         userId: mockContext.user.id,
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
 
@@ -205,7 +205,7 @@ describe('Appointment API Contract Tests', () => {
       mockContext.prisma.appointment.findUnique.mockResolvedValue(null);
 
       const input: AppointmentInput['getById'] = { id: appointmentId };
-      
+
       await expect(caller.api.appointment.getById(input))
         .rejects.toThrow('Appointment not found');
     });
@@ -218,7 +218,7 @@ describe('Appointment API Contract Tests', () => {
         id: appointmentId,
         scheduledFor: '2024-02-16T15:00:00.000Z',
         notes: 'Updated consultation notes',
-        status: 'confirmed'
+        status: 'confirmed',
       };
 
       const existingAppointment = {
@@ -227,7 +227,7 @@ describe('Appointment API Contract Tests', () => {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
         status: 'scheduled',
-        duration: 60
+        duration: 60,
       };
 
       const updatedAppointment = {
@@ -235,7 +235,7 @@ describe('Appointment API Contract Tests', () => {
         scheduledFor: '2024-02-16T15:00:00.000Z',
         notes: 'Updated consultation notes',
         status: 'confirmed',
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(existingAppointment);
@@ -248,8 +248,8 @@ describe('Appointment API Contract Tests', () => {
         data: expect.objectContaining({
           id: appointmentId,
           scheduledFor: '2024-02-16T15:00:00.000Z',
-          status: 'confirmed'
-        })
+          status: 'confirmed',
+        }),
       });
 
       // Verify audit logging
@@ -258,7 +258,7 @@ describe('Appointment API Contract Tests', () => {
         appointmentId,
         userId: mockContext.user.id,
         timestamp: expect.any(Date),
-        changes: expect.any(Object)
+        changes: expect.any(Object),
       });
     });
 
@@ -266,13 +266,13 @@ describe('Appointment API Contract Tests', () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
-        notes: 'Trying to update completed appointment'
+        notes: 'Trying to update completed appointment',
       };
 
       const completedAppointment = {
         id: appointmentId,
         status: 'completed',
-        patientId: 'patient-123'
+        patientId: 'patient-123',
       };
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(completedAppointment);
@@ -280,21 +280,22 @@ describe('Appointment API Contract Tests', () => {
       await expect(caller.api.appointment.update(updateInput))
         .rejects.toThrow('Cannot update completed appointment');
     });
-  });  describe('Appointment Cancellation Contract', () => {
+  });
+  describe('Appointment Cancellation Contract', () => {
     it('should validate appointment cancellation', async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
         reason: 'Patient requested cancellation',
         cancelledBy: 'patient',
-        refund: true
+        refund: true,
       };
 
       const existingAppointment = {
         id: appointmentId,
         patientId: 'patient-123',
         status: 'scheduled',
-        scheduledFor: '2024-02-15T14:00:00.000Z'
+        scheduledFor: '2024-02-15T14:00:00.000Z',
       };
 
       const cancelledAppointment = {
@@ -302,7 +303,7 @@ describe('Appointment API Contract Tests', () => {
         status: 'cancelled',
         cancelledAt: new Date(),
         cancellationReason: 'Patient requested cancellation',
-        cancelledBy: 'patient'
+        cancelledBy: 'patient',
       };
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(existingAppointment);
@@ -315,8 +316,8 @@ describe('Appointment API Contract Tests', () => {
         data: expect.objectContaining({
           id: appointmentId,
           status: 'cancelled',
-          cancellationReason: 'Patient requested cancellation'
-        })
+          cancellationReason: 'Patient requested cancellation',
+        }),
       });
 
       // Verify audit logging
@@ -325,7 +326,7 @@ describe('Appointment API Contract Tests', () => {
         appointmentId,
         userId: mockContext.user.id,
         timestamp: expect.any(Date),
-        reason: 'Patient requested cancellation'
+        reason: 'Patient requested cancellation',
       });
     });
 
@@ -333,13 +334,13 @@ describe('Appointment API Contract Tests', () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
-        reason: 'Late cancellation'
+        reason: 'Late cancellation',
       };
 
       const soonAppointment = {
         id: appointmentId,
         scheduledFor: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-        status: 'scheduled'
+        status: 'scheduled',
       };
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(soonAppointment);
@@ -354,7 +355,7 @@ describe('Appointment API Contract Tests', () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
-        serviceId: 'service-789'
+        serviceId: 'service-789',
       };
 
       const mockAvailability = {
@@ -363,13 +364,13 @@ describe('Appointment API Contract Tests', () => {
         availableSlots: [
           { startTime: '09:00', endTime: '10:00', available: true },
           { startTime: '10:00', endTime: '11:00', available: true },
-          { startTime: '14:00', endTime: '15:00', available: false }
+          { startTime: '14:00', endTime: '15:00', available: false },
         ],
         businessHours: {
           start: '09:00',
           end: '18:00',
-          lunchBreak: { start: '12:00', end: '13:00' }
-        }
+          lunchBreak: { start: '12:00', end: '13:00' },
+        },
       };
 
       mockContext.scheduling.getAvailability.mockResolvedValue(mockAvailability);
@@ -384,10 +385,10 @@ describe('Appointment API Contract Tests', () => {
           availableSlots: expect.arrayContaining([
             expect.objectContaining({
               startTime: expect.any(String),
-              available: expect.any(Boolean)
-            })
-          ])
-        })
+              available: expect.any(Boolean),
+            }),
+          ]),
+        }),
       });
     });
 
@@ -395,14 +396,14 @@ describe('Appointment API Contract Tests', () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
-        serviceId: 'service-789'
+        serviceId: 'service-789',
       };
 
       const noAvailability = {
         date: '2024-02-15',
         professionalId: 'prof-456',
         availableSlots: [],
-        businessHours: null
+        businessHours: null,
       };
 
       mockContext.scheduling.getAvailability.mockResolvedValue(noAvailability);
@@ -412,8 +413,8 @@ describe('Appointment API Contract Tests', () => {
       expect(result).toMatchObject({
         success: true,
         data: expect.objectContaining({
-          availableSlots: []
-        })
+          availableSlots: [],
+        }),
       });
     });
   });
@@ -424,7 +425,7 @@ describe('Appointment API Contract Tests', () => {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
         duration: 60,
-        excludeAppointmentId: 'appointment-existing'
+        excludeAppointmentId: 'appointment-existing',
       };
 
       const mockConflicts = [
@@ -433,8 +434,8 @@ describe('Appointment API Contract Tests', () => {
           scheduledFor: '2024-02-15T14:30:00.000Z',
           duration: 60,
           conflict: 'overlap',
-          overlapMinutes: 30
-        }
+          overlapMinutes: 30,
+        },
       ];
 
       mockContext.scheduling.detectConflicts.mockResolvedValue(mockConflicts);
@@ -449,10 +450,10 @@ describe('Appointment API Contract Tests', () => {
             expect.objectContaining({
               id: 'conflict-appointment',
               conflict: 'overlap',
-              overlapMinutes: 30
-            })
-          ])
-        })
+              overlapMinutes: 30,
+            }),
+          ]),
+        }),
       });
     });
 
@@ -460,7 +461,7 @@ describe('Appointment API Contract Tests', () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T16:00:00.000Z',
-        duration: 60
+        duration: 60,
       };
 
       mockContext.scheduling.detectConflicts.mockResolvedValue([]);
@@ -471,8 +472,8 @@ describe('Appointment API Contract Tests', () => {
         success: true,
         data: expect.objectContaining({
           hasConflicts: false,
-          conflicts: []
-        })
+          conflicts: [],
+        }),
       });
     });
   });
@@ -487,11 +488,11 @@ describe('Appointment API Contract Tests', () => {
           status: ['scheduled', 'confirmed'],
           dateRange: {
             start: '2024-02-01',
-            end: '2024-02-29'
-          }
+            end: '2024-02-29',
+          },
         },
         orderBy: 'scheduledFor',
-        orderDirection: 'asc'
+        orderDirection: 'asc',
       };
 
       const mockAppointments = [
@@ -500,15 +501,15 @@ describe('Appointment API Contract Tests', () => {
           patientId: 'patient-123',
           status: 'scheduled',
           scheduledFor: '2024-02-15T14:00:00.000Z',
-          duration: 60
+          duration: 60,
         },
         {
           id: 'appointment-2',
           patientId: 'patient-123',
           status: 'confirmed',
           scheduledFor: '2024-02-20T10:00:00.000Z',
-          duration: 90
-        }
+          duration: 90,
+        },
       ];
 
       mockContext.prisma.appointment.findMany.mockResolvedValue(mockAppointments);
@@ -523,20 +524,20 @@ describe('Appointment API Contract Tests', () => {
             expect.objectContaining({
               id: 'appointment-1',
               patientId: 'patient-123',
-              status: 'scheduled'
-            })
+              status: 'scheduled',
+            }),
           ]),
           pagination: {
             page: 1,
             limit: 10,
             total: 15,
-            totalPages: 2
+            totalPages: 2,
           },
           filters: expect.objectContaining({
             patientId: 'patient-123',
-            status: ['scheduled', 'confirmed']
-          })
-        }
+            status: ['scheduled', 'confirmed'],
+          }),
+        },
       });
     });
   });
@@ -549,7 +550,7 @@ describe('Appointment API Contract Tests', () => {
         serviceId: 'service-789',
         scheduledFor: '2024-02-15T14:00:00.000Z',
         duration: 60,
-        type: 'consultation'
+        type: 'consultation',
       };
 
       expect(validInput).toBeDefined();
@@ -568,8 +569,8 @@ describe('Appointment API Contract Tests', () => {
           status: 'scheduled',
           type: 'consultation',
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       };
 
       expect(mockOutput).toBeDefined();

@@ -87,7 +87,13 @@ global.simulateAuditLogCreation = async (_logData: Record<string, unknown>) => {
 global.simulateEmergencyScenario = async (scenarioType: string, options: Record<string, unknown>) => {
   // Simulate emergency access scenarios
   await new Promise(resolve => setTimeout(resolve, Math.random() * 8));
-  console.log(`Emergency scenario: ${scenarioType}`, options);
+  
+  // Use secure logging for LGPD compliance - mask sensitive data
+  const { maskSensitiveData } = await import('@neonpro/security');
+  const maskedOptions = maskSensitiveData(JSON.stringify(options));
+  
+  // Log emergency scenario without exposing sensitive data
+  console.log(`[EMERGENCY SIMULATION] Scenario type: ${scenarioType}, Data: ${maskedOptions}`);
 };
 
 global.simulateHealthcareOperation = async (operationType: string, _options: Record<string, unknown>) => {

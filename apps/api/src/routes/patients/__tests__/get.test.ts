@@ -21,6 +21,19 @@ const mockLGPDService = {
   maskSensitiveData: vi.fn(),
 };
 
+// Wire route service imports to our mocks
+vi.mock('../../../services/patient-service', () => ({
+  PatientService: vi.fn().mockImplementation(() => mockPatientService),
+}));
+
+vi.mock('../../../services/audit-service', () => ({
+  ComprehensiveAuditService: vi.fn().mockImplementation(() => mockAuditService),
+}));
+
+vi.mock('../../../services/lgpd-service', () => ({
+  LGPDService: vi.fn().mockImplementation(() => mockLGPDService),
+}));
+
 describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
   beforeEach(() => {
     vi.clearAllMocks();

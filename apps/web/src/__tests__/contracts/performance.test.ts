@@ -147,7 +147,9 @@ describe('Performance Contracts', () => {
 
       // Test: Medical chart performance metrics
       expect(chartPerformanceMetrics.chart_types.patient_vitals.max_render_time).toBe(500);
-      expect(chartPerformanceMetrics.data_volume_thresholds.small_dataset.max_render_time).toBe(300);
+      expect(chartPerformanceMetrics.data_volume_thresholds.small_dataset.max_render_time).toBe(
+        300,
+      );
       expect(chartPerformanceMetrics.data_volume_thresholds.large_dataset.max_records).toBe(10000);
     });
   });
@@ -242,8 +244,8 @@ describe('Performance Contracts', () => {
 
       const dependencySizeLimits = {
         'chart.js': 50000, // 50 kB limit
-        'antd': 150000, // 150 kB limit
-        'react': 40000, // 40 kB limit
+        antd: 150000, // 150 kB limit
+        react: 40000, // 40 kB limit
         '@ai-sdk/react': 30000, // 30 kB limit
       };
 

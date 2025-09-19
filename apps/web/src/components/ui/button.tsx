@@ -39,7 +39,7 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    
+
     // Enhanced accessibility for healthcare applications
     const accessibilityProps = {
       'aria-label': props['aria-label'] || props.title,
@@ -49,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Remove undefined props to avoid HTML validation warnings
     const cleanProps = Object.fromEntries(
-      Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+      Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined),
     );
 
     return (

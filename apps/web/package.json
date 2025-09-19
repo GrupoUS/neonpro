@@ -167,6 +167,7 @@
     "terser": "^5.44.0",
     "ts-node": "^10.9.2",
     "vite-bundle-analyzer": "^1.2.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0"
   }
 }

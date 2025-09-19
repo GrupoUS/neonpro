@@ -1,6 +1,6 @@
 import type { Context, Next } from 'hono';
-import { badRequest, forbidden, notFound, serverError, unauthorized } from '../utils/responses';
 import { errorTracker } from '../services/error-tracking-bridge';
+import { badRequest, forbidden, notFound, serverError, unauthorized } from '../utils/responses';
 
 export async function errorHandler(c: Context, next: Next): Promise<Response | void> {
   try {
@@ -19,14 +19,14 @@ export async function errorHandler(c: Context, next: Next): Promise<Response | v
     const eventId = errorTracker.captureException(err, context, {
       errorCode: code,
       errorMessage: message,
-      details: err?.details
+      details: err?.details,
     });
 
     // Add breadcrumb for error handling
     errorTracker.addBreadcrumb(
-      'Error handled in middleware', 
+      'Error handled in middleware',
       'error',
-      { code, eventId, endpoint: c.req.path, method: c.req.method }
+      { code, eventId, endpoint: c.req.path, method: c.req.method },
     );
 
     // Map common error types
@@ -46,7 +46,7 @@ export async function errorHandler(c: Context, next: Next): Promise<Response | v
     // Default - include eventId for tracking
     return serverError(c, message, {
       eventId,
-      ...(process.env.NODE_ENV === 'production' ? {} : { error: err })
+      ...(process.env.NODE_ENV === 'production' ? {} : { error: err }),
     });
   }
 }

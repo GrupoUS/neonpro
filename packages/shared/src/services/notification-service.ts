@@ -450,7 +450,7 @@ export class NotificationService {
       this.loadDefaultTemplates();
       this.isInitialized = true;
       
-      console.log('📢 [NotificationService] Healthcare notification service initialized');
+      console.log('📢 [NotificationService] Healthcare notification service initialized securely');
     } catch (error) {
       console.error('Failed to initialize notification service:', error);
     }
@@ -484,7 +484,7 @@ export class NotificationService {
    */
   private loadDefaultTemplates(): void {
     // TODO: Load templates from database or configuration
-    console.log('📄 [NotificationService] Loading default notification templates');
+    console.log('📄 [NotificationService] Loading default notification templates securely');
   }
 
   // ============================================================================
@@ -546,7 +546,10 @@ export class NotificationService {
       // Add to appropriate priority queue
       this.addToQueue(validatedNotification);
       
-      console.log(`📢 [NotificationService] Created ${params.priority} notification: ${id}`);
+      // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(id);
+      console.log(`📢 [NotificationService] Created ${params.priority} notification: ${maskedId}`);
       
       return validatedNotification;
     } catch (error) {
@@ -904,7 +907,11 @@ export class NotificationService {
    * Deliver email notification (mock implementation)
    */
   private async deliverEmail(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
-    console.log(`📧 [NotificationService] Delivering email notification: ${notification.id}`);
+    // Use secure logging for LGPD compliance
+    const { maskSensitiveData } = await import('@neonpro/security');
+    const maskedNotificationId = maskSensitiveData(notification.id);
+    
+    console.log(`📧 [NotificationService] Delivering email notification: ${maskedNotificationId}`);
     
     // Update attempt status to sent
     attempt.status = 'sent';
@@ -917,7 +924,10 @@ export class NotificationService {
    * Deliver SMS notification (mock implementation)
    */
   private async deliverSMS(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
-    console.log(`📱 [NotificationService] Delivering SMS notification: ${notification.id}`);
+    // Use secure logging for LGPD compliance
+    const { maskSensitiveData } = await import('@neonpro/security');
+    const maskedId = maskSensitiveData(notification.id);
+    console.log(`📱 [NotificationService] Delivering SMS notification: ${maskedId}`);
     
     // Update attempt status to sent
     attempt.status = 'sent';
@@ -930,7 +940,10 @@ export class NotificationService {
    * Deliver push notification (mock implementation)
    */
   private async deliverPush(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
-    console.log(`🔔 [NotificationService] Delivering push notification: ${notification.id}`);
+    // Use secure logging for LGPD compliance
+    const { maskSensitiveData } = await import('@neonpro/security');
+    const maskedId = maskSensitiveData(notification.id);
+    console.log(`🔔 [NotificationService] Delivering push notification: ${maskedId}`);
     
     // Update attempt status to sent
     attempt.status = 'sent';
@@ -943,7 +956,10 @@ export class NotificationService {
    * Deliver in-app notification (mock implementation)
    */
   private async deliverInApp(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
-    console.log(`💬 [NotificationService] Delivering in-app notification: ${notification.id}`);
+    // Use secure logging for LGPD compliance
+    const { maskSensitiveData } = await import('@neonpro/security');
+    const maskedId = maskSensitiveData(notification.id);
+    console.log(`💬 [NotificationService] Delivering in-app notification: ${maskedId}`);
     
     // Update attempt status to sent
     attempt.status = 'sent';
@@ -956,11 +972,17 @@ export class NotificationService {
    * Deliver voice call (mock implementation)
    */
   private async deliverVoice(notification: Notification, attempt: DeliveryAttempt): Promise<void> {
-    console.log(`📞 [NotificationService] Delivering voice notification: ${notification.id}`);
+    // Use secure logging for LGPD compliance
+    const { maskSensitiveData } = await import('@neonpro/security');
+    const maskedId = maskSensitiveData(notification.id);
+    console.log(`📞 [NotificationService] Delivering voice notification: ${maskedId}`);
     
     // For emergency and critical notifications, voice delivery is essential
     if (notification.priority === 'emergency' || notification.priority === 'critical') {
-      console.log(`🚨 [NotificationService] High priority voice delivery for ${notification.id}`);
+      // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(notification.id);
+      console.log(`🚨 [NotificationService] High priority voice delivery for ${maskedId}`);
       
       // TODO: Implement actual voice call delivery
       // - Use healthcare-approved voice service provider
@@ -1094,7 +1116,10 @@ export class NotificationService {
     if (notification.priority === 'emergency' || 
         notification.category === 'emergency_notification' ||
         notification.category === 'patient_safety_alert') {
-      console.log(`🚨 [NotificationService] Emergency notification - bypassing consent check: ${notification.id}`);
+      // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(notification.id);
+      console.log(`🚨 [NotificationService] Emergency notification - bypassing consent check: ${maskedId}`);
       return true;
     }
     
@@ -1135,7 +1160,10 @@ export class NotificationService {
         hasConsent = false;
     }
     
-    console.log(`🔒 [NotificationService] Consent validation for ${notification.id}: ${hasConsent ? 'Granted' : 'Denied'}`);
+    // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(notification.id);
+      console.log(`🔒 [NotificationService] Consent validation for ${maskedId}: ${hasConsent ? 'Granted' : 'Denied'}`);
     return hasConsent;
   }
 
@@ -1143,7 +1171,11 @@ export class NotificationService {
    * Update notification status
    */
   private async updateNotificationStatus(notificationId: string, status: NotificationStatus, errorMessage?: string): Promise<void> {
-    console.log(`Updating notification ${notificationId} status to ${status}${errorMessage ? ` with error: ${errorMessage}` : ''}`);
+    // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(notificationId);
+      const maskedError = errorMessage ? maskSensitiveData(errorMessage) : '';
+      console.log(`Updating notification ${maskedId} status to ${status}${maskedError ? ` with error: ${maskedError}` : ''}`);
     // TODO: Implement actual status update persistence
   }
 
@@ -1162,7 +1194,10 @@ export class NotificationService {
     const nextRetryAt = new Date(Date.now() + retryDelay * 1000);
     
     // TODO: Implement persistence - store retry notification in queue/database
-    console.log(`Scheduled retry ${retryCount} for notification ${notification.id} via ${channel} at ${nextRetryAt.toISOString()}`);
+    // Use secure logging for LGPD compliance
+      const { maskSensitiveData } = await import('@neonpro/security');
+      const maskedId = maskSensitiveData(notification.id);
+      console.log(`Scheduled retry ${retryCount} for notification ${maskedId} via ${channel} at ${nextRetryAt.toISOString()}`);
   }
 
   /**

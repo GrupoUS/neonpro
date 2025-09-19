@@ -41,7 +41,7 @@ function SelectTrigger({
 
   // Remove undefined props to avoid HTML validation warnings
   const cleanProps = Object.fromEntries(
-    Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+    Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined),
   );
 
   return (
@@ -57,7 +57,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className='size-4 opacity-50' aria-hidden="true" />
+        <ChevronDownIcon className='size-4 opacity-50' aria-hidden='true' />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );

@@ -6,12 +6,12 @@ import {
 import { Context, Next } from 'hono';
 import { OpenAPIV3_1 } from 'openapi-types';
 import * as v from 'valibot';
-import { structuredLogger } from '../services/structured-logging';
 import {
   createHealthcareError,
   ErrorCategory as HealthcareErrorCategory,
   ErrorSeverity as HealthcareErrorSeverity,
 } from '../services/error-tracking-bridge';
+import { structuredLogger } from '../services/structured-logging';
 
 /**
  * Configuration for contract validation middleware
@@ -56,6 +56,9 @@ export interface HealthcareValidationRule {
   /** Rule category */
   category: HealthcareErrorCategory;
 }
+
+// import { OpenAPIV3_1 } from 'openapi-types';
+import { OpenAPIV3_1 } from '../../types/openapi';
 
 /**
  * Validation context for healthcare rules

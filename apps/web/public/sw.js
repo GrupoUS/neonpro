@@ -31,14 +31,14 @@ const CACHE_CONFIG = {
   static: {
     name: STATIC_CACHE,
     ttl: 30 * 24 * 60 * 60 * 1000, // 30 days
-    strategy: 'CacheFirst'
+    strategy: 'CacheFirst',
   },
 
   // Healthcare API - network first with fallback
   healthcare: {
     name: HEALTHCARE_CACHE,
     ttl: 4 * 60 * 60 * 1000, // 4 hours (healthcare data freshness)
-    strategy: 'NetworkFirst'
+    strategy: 'NetworkFirst',
   },
 
   // Emergency data - always available offline
@@ -46,15 +46,15 @@ const CACHE_CONFIG = {
     name: EMERGENCY_CACHE,
     ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
     strategy: 'CacheFirst',
-    priority: 'high'
+    priority: 'high',
   },
 
   // API responses - short-term cache
   api: {
     name: API_CACHE,
     ttl: 60 * 60 * 1000, // 1 hour
-    strategy: 'NetworkFirst'
-  }
+    strategy: 'NetworkFirst',
+  },
 };
 
 // API endpoints to cache
@@ -71,7 +71,7 @@ const EMERGENCY_ENDPOINTS = [
   '/api/patients/allergies',
   '/api/patients/medical-alerts',
   '/api/emergency/contacts',
-  '/api/emergency/protocols'
+  '/api/emergency/protocols',
 ];
 
 // Healthcare URLs to prioritize for offline access
@@ -79,7 +79,7 @@ const HEALTHCARE_URLS = [
   '/patients',
   '/appointments',
   '/emergency',
-  '/offline'
+  '/offline',
 ];
 
 // Cache strategies
@@ -106,18 +106,21 @@ self.addEventListener('install', event => {
       // Create emergency cache for critical healthcare data
       caches.open(EMERGENCY_CACHE).then(cache => {
         console.log('[SW] Initializing emergency cache');
-        return cache.put('/emergency/offline-status', new Response(JSON.stringify({
-          status: 'offline_ready',
-          timestamp: Date.now(),
-          healthcare_mode: true
-        })));
-      })
+        return cache.put(
+          '/emergency/offline-status',
+          new Response(JSON.stringify({
+            status: 'offline_ready',
+            timestamp: Date.now(),
+            healthcare_mode: true,
+          })),
+        );
+      }),
     ]).then(() => {
       console.log('[SW] Installation complete - Healthcare mode enabled');
       return self.skipWaiting();
     }).catch(error => {
       console.error('[SW] Failed to install service worker:', error);
-    })
+    }),
   );
 });
 
@@ -146,7 +149,7 @@ self.addEventListener('activate', event => {
       }),
 
       // Claim all clients immediately
-      self.clients.claim()
+      self.clients.claim(),
     ]).then(() => {
       console.log('[SW] Activation complete - Taking control of all clients');
 
@@ -156,11 +159,11 @@ self.addEventListener('activate', event => {
           client.postMessage({
             type: 'SW_ACTIVATED',
             version: CACHE_VERSION,
-            healthcare_mode: true
+            healthcare_mode: true,
           });
         });
       });
-    })
+    }),
   );
 });
 
@@ -210,7 +213,6 @@ async function handleHealthcareRequest(request) {
 
     // Default: try network, fallback to cache
     return await handlePageRequest(request);
-
   } catch (error) {
     console.error('[SW] Error handling request:', error);
     return await handleOfflineFallback(request);
@@ -269,7 +271,6 @@ async function handleEmergencyRequest(request) {
     }
 
     return networkResponse;
-
   } catch (error) {
     console.log('[SW] Emergency network failed, using cache:', request.url);
 
@@ -301,7 +302,6 @@ async function handleHealthcareAPI(request) {
     }
 
     return networkResponse;
-
   } catch (error) {
     console.log('[SW] Healthcare API network failed, checking cache:', request.url);
 
@@ -328,14 +328,17 @@ async function handleOfflineFallback(request) {
 
   // API calls: return offline JSON response
   if (url.pathname.startsWith('/api/')) {
-    return new Response(JSON.stringify({
-      error: 'offline',
-      message: 'Application is offline. Please try again when connection is restored.',
-      timestamp: Date.now()
-    }), {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'offline',
+        message: 'Application is offline. Please try again when connection is restored.',
+        timestamp: Date.now(),
+      }),
+      {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 
   // Default: generic offline response
@@ -420,7 +423,7 @@ function isImageRequest(pathname) {
 }
 
 // Background Sync for healthcare form submissions
-self.addEventListener('sync', (event) => {
+self.addEventListener('sync', event => {
   console.log('[SW] Background sync triggered:', event.tag);
 
   if (event.tag === 'healthcare-form-sync') {
@@ -442,7 +445,7 @@ async function syncHealthcareForms() {
         const response = await fetch(form.url, {
           method: 'POST',
           headers: form.headers,
-          body: form.data
+          body: form.data,
         });
 
         if (response.ok) {
@@ -455,7 +458,7 @@ async function syncHealthcareForms() {
               client.postMessage({
                 type: 'FORM_SYNCED',
                 formId: form.id,
-                success: true
+                success: true,
               });
             });
           });
@@ -538,15 +541,13 @@ async function cacheUrls(urls) {
 // Healthcare-specific utility functions
 
 function isEmergencyEndpoint(pathname) {
-  return EMERGENCY_ENDPOINTS.some(endpoint =>
-    pathname.includes(endpoint.replace(':id', ''))
-  );
+  return EMERGENCY_ENDPOINTS.some(endpoint => pathname.includes(endpoint.replace(':id', '')));
 }
 
 function isHealthcareAPI(pathname) {
-  return pathname.startsWith('/api/patients') ||
-         pathname.startsWith('/api/appointments') ||
-         pathname.startsWith('/api/healthcare');
+  return pathname.startsWith('/api/patients')
+    || pathname.startsWith('/api/appointments')
+    || pathname.startsWith('/api/healthcare');
 }
 
 function isAPICall(pathname) {
@@ -560,12 +561,10 @@ function isCacheableHealthcareData(request) {
   const sensitiveEndpoints = [
     '/api/patients/sensitive',
     '/api/patients/financial',
-    '/api/auth'
+    '/api/auth',
   ];
 
-  return !sensitiveEndpoints.some(endpoint =>
-    url.pathname.includes(endpoint)
-  );
+  return !sensitiveEndpoints.some(endpoint => url.pathname.includes(endpoint));
 }
 
 function isExpired(response, ttl) {
