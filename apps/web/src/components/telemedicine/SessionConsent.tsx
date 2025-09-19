@@ -138,7 +138,7 @@ export function SessionConsent({
 
   // Session consent management
   const sessionConsent = useSessionConsent(sessionId);
-  
+
   // LGPD consent management
   const lgpdConsent = useLGPDConsent({
     userId: patientId,

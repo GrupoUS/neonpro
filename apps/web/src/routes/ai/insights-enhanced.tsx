@@ -17,63 +17,63 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format, subDays, isToday, isThisWeek, isThisMonth } from 'date-fns';
+import { format, isThisMonth, isThisWeek, isToday, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   Activity,
+  Activity as ActivityIcon,
+  AlertCircle,
   AlertTriangle,
   ArrowLeft,
+  BarChart3,
   Brain,
   Calendar,
   CheckCircle,
-  Clock,
-  Download,
-  Filter,
-  Heart,
-  RefreshCw,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  Zap,
-  BarChart3,
-  PieChart,
-  LineChart,
-  ScatterChart,
-  Thermometer,
-  Pulse,
-  FileText,
-  Settings,
-  Shield,
-  Database,
-  Cpu,
-  Network,
-  Server,
-  HardDrive,
-  Monitor,
-  Smartphone,
-  Tablet,
-  UserCheck,
-  Stethoscope,
-  Pill,
-  Syringe,
-  Activity as ActivityIcon,
-  TrendingUp as TrendingUpIcon,
-  AlertCircle,
   CheckCircle as CheckCircleIcon,
-  XCircle,
-  Clock as ClockIcon,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
   ChevronDown,
   ChevronRight,
-  MoreHorizontal,
+  Clock,
+  Clock as ClockIcon,
+  Cpu,
+  Database,
+  Download,
   Eye,
   EyeOff,
+  FileText,
+  Filter,
+  Globe,
+  HardDrive,
+  Heart,
+  LineChart,
+  Mail,
+  MapPin,
+  Monitor,
+  MoreHorizontal,
+  Network,
+  Phone,
+  PieChart,
+  Pill,
+  Pulse,
+  RefreshCw,
+  ScatterChart,
+  Server,
+  Settings,
+  Shield,
+  Smartphone,
+  Stethoscope,
+  Syringe,
+  Tablet,
+  Target,
+  Thermometer,
+  TrendingDown,
+  TrendingUp,
+  TrendingUp as TrendingUpIcon,
+  UserCheck,
+  Users,
+  XCircle,
+  Zap,
 } from 'lucide-react';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/ai/insights-enhanced')({
   component: AIInsightsPage,
@@ -82,7 +82,13 @@ export const Route = createFileRoute('/ai/insights-enhanced')({
 // Enhanced Types for comprehensive AI analytics
 interface AIInsight {
   id: string;
-  type: 'health_risk' | 'treatment_optimization' | 'prevention' | 'compliance' | 'operational' | 'population_health';
+  type:
+    | 'health_risk'
+    | 'treatment_optimization'
+    | 'prevention'
+    | 'compliance'
+    | 'operational'
+    | 'population_health';
   title: string;
   description: string;
   confidence: number;
@@ -114,7 +120,13 @@ interface AIInsight {
 interface AIModel {
   id: string;
   name: string;
-  type: 'prediction' | 'classification' | 'clustering' | 'nlp' | 'anomaly_detection' | 'time_series';
+  type:
+    | 'prediction'
+    | 'classification'
+    | 'clustering'
+    | 'nlp'
+    | 'anomaly_detection'
+    | 'time_series';
   status: 'active' | 'training' | 'maintenance' | 'error' | 'updating';
   accuracy: number;
   precision: number;
@@ -223,7 +235,8 @@ const generateMockInsights = (): AIInsight[] => [
     id: '1',
     type: 'health_risk',
     title: 'Risco Elevado de Não Comparecimento',
-    description: 'Análise preditiva identifica 45 pacientes com alto risco (>80%) de não comparecimento a consultas esta semana',
+    description:
+      'Análise preditiva identifica 45 pacientes com alto risco (>80%) de não comparecimento a consultas esta semana',
     confidence: 92,
     priority: 'high',
     category: 'Predição',
@@ -255,7 +268,8 @@ const generateMockInsights = (): AIInsight[] => [
     id: '2',
     type: 'treatment_optimization',
     title: 'Otimização de Protocolo para Hipertensão',
-    description: 'Análise sugere ajuste de dosagem para 120 pacientes com hipertensão não controlada',
+    description:
+      'Análise sugere ajuste de dosagem para 120 pacientes com hipertensão não controlada',
     confidence: 87,
     priority: 'medium',
     category: 'Tratamento',
@@ -287,7 +301,8 @@ const generateMockInsights = (): AIInsight[] => [
     id: '3',
     type: 'population_health',
     title: 'Tendência de Aumento de Diabetes Tipo 2',
-    description: 'Análise populacional mostra aumento de 15% em casos de diabetes tipo 2 em jovens adultos',
+    description:
+      'Análise populacional mostra aumento de 15% em casos de diabetes tipo 2 em jovens adultos',
     confidence: 94,
     priority: 'high',
     category: 'Saúde Populacional',
@@ -482,15 +497,49 @@ const generateMockNoShowAnalysis = (): NoShowAnalysis => ({
   trend: 'decreasing',
   predictionAccuracy: 0.92,
   factors: [
-    { name: 'Distância da clínica', impact: 0.85, description: 'Pacientes que moram >15km têm 2.3x mais risco' },
-    { name: 'Horário da consulta', impact: 0.78, description: 'Consultas antes das 8h têm 45% menos não comparecimento' },
-    { name: 'Histórico prévio', impact: 0.92, description: 'Pacientes com histórico têm 3.1x mais risco' },
-    { name: 'Dias desde último contato', impact: 0.67, description: '>30 dias sem contato aumenta risco em 85%' },
+    {
+      name: 'Distância da clínica',
+      impact: 0.85,
+      description: 'Pacientes que moram >15km têm 2.3x mais risco',
+    },
+    {
+      name: 'Horário da consulta',
+      impact: 0.78,
+      description: 'Consultas antes das 8h têm 45% menos não comparecimento',
+    },
+    {
+      name: 'Histórico prévio',
+      impact: 0.92,
+      description: 'Pacientes com histórico têm 3.1x mais risco',
+    },
+    {
+      name: 'Dias desde último contato',
+      impact: 0.67,
+      description: '>30 dias sem contato aumenta risco em 85%',
+    },
   ],
   highRiskPatients: [
-    { id: '1', name: 'João Silva', riskScore: 0.92, lastAppointment: '2023-12-01', nextAppointment: '2024-02-01' },
-    { id: '2', name: 'Maria Santos', riskScore: 0.88, lastAppointment: '2023-11-15', nextAppointment: '2024-02-02' },
-    { id: '3', name: 'Carlos Oliveira', riskScore: 0.85, lastAppointment: '2023-12-10', nextAppointment: '2024-02-03' },
+    {
+      id: '1',
+      name: 'João Silva',
+      riskScore: 0.92,
+      lastAppointment: '2023-12-01',
+      nextAppointment: '2024-02-01',
+    },
+    {
+      id: '2',
+      name: 'Maria Santos',
+      riskScore: 0.88,
+      lastAppointment: '2023-11-15',
+      nextAppointment: '2024-02-02',
+    },
+    {
+      id: '3',
+      name: 'Carlos Oliveira',
+      riskScore: 0.85,
+      lastAppointment: '2023-12-10',
+      nextAppointment: '2024-02-03',
+    },
   ],
   recommendations: [
     'Implementar sistema de lembretes personalizados',
@@ -534,43 +583,65 @@ const generateMockTreatmentEffectiveness = (): TreatmentEffectiveness[] => [
 // Utility functions
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'active': return 'text-green-600 bg-green-50 border-green-200';
-    case 'training': return 'text-blue-600 bg-blue-50 border-blue-200';
-    case 'maintenance': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    case 'error': return 'text-red-600 bg-red-50 border-red-200';
-    case 'updating': return 'text-purple-600 bg-purple-50 border-purple-200';
-    default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    case 'active':
+      return 'text-green-600 bg-green-50 border-green-200';
+    case 'training':
+      return 'text-blue-600 bg-blue-50 border-blue-200';
+    case 'maintenance':
+      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    case 'error':
+      return 'text-red-600 bg-red-50 border-red-200';
+    case 'updating':
+      return 'text-purple-600 bg-purple-50 border-purple-200';
+    default:
+      return 'text-gray-600 bg-gray-50 border-gray-200';
   }
 };
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case 'active': return CheckCircle;
-    case 'training': return Brain;
-    case 'maintenance': return Settings;
-    case 'error': return XCircle;
-    case 'updating': return RefreshCw;
-    default: return Clock;
+    case 'active':
+      return CheckCircle;
+    case 'training':
+      return Brain;
+    case 'maintenance':
+      return Settings;
+    case 'error':
+      return XCircle;
+    case 'updating':
+      return RefreshCw;
+    default:
+      return Clock;
   }
 };
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
-    case 'critical': return 'text-red-600 bg-red-50 border-red-200';
-    case 'high': return 'text-orange-600 bg-orange-50 border-orange-200';
-    case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    case 'low': return 'text-green-600 bg-green-50 border-green-200';
-    default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    case 'critical':
+      return 'text-red-600 bg-red-50 border-red-200';
+    case 'high':
+      return 'text-orange-600 bg-orange-50 border-orange-200';
+    case 'medium':
+      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    case 'low':
+      return 'text-green-600 bg-green-50 border-green-200';
+    default:
+      return 'text-gray-600 bg-gray-50 border-gray-200';
   }
 };
 
 const getPriorityLabel = (priority: string) => {
   switch (priority) {
-    case 'critical': return 'Crítico';
-    case 'high': return 'Alto';
-    case 'medium': return 'Médio';
-    case 'low': return 'Baixo';
-    default: return priority;
+    case 'critical':
+      return 'Crítico';
+    case 'high':
+      return 'Alto';
+    case 'medium':
+      return 'Médio';
+    case 'low':
+      return 'Baixo';
+    default:
+      return priority;
   }
 };
 
@@ -593,7 +664,9 @@ function AIInsightsPage() {
   const [trends, setTrends] = useState<PredictionTrend[]>([]);
   const [populationMetrics, setPopulationMetrics] = useState<PopulationHealthMetrics | null>(null);
   const [noShowAnalysis, setNoShowAnalysis] = useState<NoShowAnalysis | null>(null);
-  const [treatmentEffectiveness, setTreatmentEffectiveness] = useState<TreatmentEffectiveness[]>([]);
+  const [treatmentEffectiveness, setTreatmentEffectiveness] = useState<TreatmentEffectiveness[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -606,17 +679,17 @@ function AIInsightsPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         setInsights(generateMockInsights());
         setModels(generateMockModels());
         setTrends(generateMockTrends());
         setPopulationMetrics(generateMockPopulationMetrics());
         setNoShowAnalysis(generateMockNoShowAnalysis());
         setTreatmentEffectiveness(generateMockTreatmentEffectiveness());
-        
+
         setLoading(false);
       } catch (err) {
         setError('Erro ao carregar dados de IA');
@@ -642,7 +715,9 @@ function AIInsightsPage() {
       totalInsights: insights.length,
       criticalInsights: insights.filter(i => i.priority === 'critical').length,
       highRiskPatients: noShowAnalysis?.highRiskPatients.length || 0,
-      modelAccuracy: models.length > 0 ? models.reduce((sum, model) => sum + model.accuracy, 0) / models.length : 0,
+      modelAccuracy: models.length > 0
+        ? models.reduce((sum, model) => sum + model.accuracy, 0) / models.length
+        : 0,
       potentialSavings: insights.reduce((sum, insight) => sum + (insight.potentialSavings || 0), 0),
     };
   }, [insights, models, noShowAnalysis]);
@@ -687,14 +762,12 @@ function AIInsightsPage() {
               <Skeleton className='h-4 w-32' />
             </div>
           </div>
-          
+
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className='h-32' />
-            ))}
+            {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className='h-32' />)}
           </div>
-          
+
           {/* Content skeleton */}
           <div className='grid gap-6 grid-cols-1 lg:grid-cols-3'>
             <div className='lg:col-span-2'>
@@ -754,7 +827,7 @@ function AIInsightsPage() {
             >
               <ArrowLeft className='h-4 w-4' />
             </Button>
-            
+
             <div>
               <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-gray-900'>
                 Insights de Inteligência Artificial
@@ -764,7 +837,7 @@ function AIInsightsPage() {
               </p>
             </div>
           </div>
-          
+
           <div className='flex flex-wrap gap-3'>
             <Button
               variant='outline'
@@ -775,7 +848,7 @@ function AIInsightsPage() {
               <RefreshCw className='h-4 w-4 mr-2' />
               Atualizar
             </Button>
-            
+
             <Button
               variant='primary'
               onClick={handleExportReport}
@@ -790,8 +863,8 @@ function AIInsightsPage() {
       </header>
 
       {/* Key Metrics */}
-      <section aria-labelledby="metrics-heading" className='space-y-4'>
-        <h2 id="metrics-heading" className='sr-only'>Métricas principais de IA</h2>
+      <section aria-labelledby='metrics-heading' className='space-y-4'>
+        <h2 id='metrics-heading' className='sr-only'>Métricas principais de IA</h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
           <Card className='transition-all hover:shadow-lg'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
@@ -888,7 +961,7 @@ function AIInsightsPage() {
               <Filter className='h-4 w-4 text-muted-foreground' />
               <span className='text-sm font-medium'>Filtros:</span>
             </div>
-            
+
             <div className='grid gap-2 grid-cols-1 sm:grid-cols-3 flex-1'>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className='h-10'>
@@ -902,7 +975,7 @@ function AIInsightsPage() {
                   <SelectItem value='Operacional'>Operacional</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={selectedPriority} onValueChange={setSelectedPriority}>
                 <SelectTrigger className='h-10'>
                   <SelectValue placeholder='Prioridade' />
@@ -915,7 +988,7 @@ function AIInsightsPage() {
                   <SelectItem value='low'>Baixo</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className='h-10'>
                   <SelectValue placeholder='Período' />
@@ -952,8 +1025,11 @@ function AIInsightsPage() {
         {/* Insights Tab */}
         <TabsContent value='insights' className='space-y-6'>
           <div className='grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
-            {filteredInsights.map((insight) => (
-              <Card key={insight.id} className='transition-all hover:shadow-lg border-l-4 border-l-purple-500'>
+            {filteredInsights.map(insight => (
+              <Card
+                key={insight.id}
+                className='transition-all hover:shadow-lg border-l-4 border-l-purple-500'
+              >
                 <CardHeader className='pb-3'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-sm font-medium leading-tight'>
@@ -972,7 +1048,7 @@ function AIInsightsPage() {
                   <p className='text-sm text-gray-700 leading-relaxed'>
                     {insight.description}
                   </p>
-                  
+
                   {insight.potentialSavings && (
                     <div className='bg-green-50 border border-green-200 rounded p-2'>
                       <div className='text-xs font-medium text-green-800'>
@@ -980,7 +1056,7 @@ function AIInsightsPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className='space-y-2'>
                     <div className='text-xs font-medium text-gray-900'>Recomendações:</div>
                     <ul className='text-xs text-gray-600 space-y-1'>
@@ -997,7 +1073,7 @@ function AIInsightsPage() {
                       )}
                     </ul>
                   </div>
-                  
+
                   {insight.actionable && (
                     <Button
                       variant='outline'
@@ -1012,7 +1088,7 @@ function AIInsightsPage() {
               </Card>
             ))}
           </div>
-          
+
           {filteredInsights.length === 0 && (
             <Card>
               <CardContent className='text-center py-12'>
@@ -1021,10 +1097,13 @@ function AIInsightsPage() {
                 <p className='text-muted-foreground mb-4'>
                   Tente ajustar os filtros para ver mais insights.
                 </p>
-                <Button variant='outline' onClick={() => {
-                  setSelectedCategory('all');
-                  setSelectedPriority('all');
-                }}>
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    setSelectedPriority('all');
+                  }}
+                >
                   Limpar Filtros
                 </Button>
               </CardContent>
@@ -1048,8 +1127,14 @@ function AIInsightsPage() {
                   <div className='space-y-3'>
                     {Object.entries(populationMetrics.riskDistribution).map(([level, count]) => {
                       const percentage = (count / populationMetrics.totalPatients) * 100;
-                      const color = level === 'critical' ? 'red' : level === 'high' ? 'orange' : level === 'medium' ? 'yellow' : 'green';
-                      
+                      const color = level === 'critical'
+                        ? 'red'
+                        : level === 'high'
+                        ? 'orange'
+                        : level === 'medium'
+                        ? 'yellow'
+                        : 'green';
+
                       return (
                         <div key={level} className='space-y-2'>
                           <div className='flex justify-between text-sm'>
@@ -1076,30 +1161,34 @@ function AIInsightsPage() {
                   <div>
                     <div className='text-sm font-medium mb-2'>Grupos Etários</div>
                     <div className='space-y-2'>
-                      {Object.entries(populationMetrics.demographics.ageGroups).map(([group, count]) => {
-                        const percentage = (count / populationMetrics.totalPatients) * 100;
-                        return (
-                          <div key={group} className='flex justify-between text-sm'>
-                            <span>{group}</span>
-                            <span>{count} ({percentage.toFixed(1)}%)</span>
-                          </div>
-                        );
-                      })}
+                      {Object.entries(populationMetrics.demographics.ageGroups).map(
+                        ([group, count]) => {
+                          const percentage = (count / populationMetrics.totalPatients) * 100;
+                          return (
+                            <div key={group} className='flex justify-between text-sm'>
+                              <span>{group}</span>
+                              <span>{count} ({percentage.toFixed(1)}%)</span>
+                            </div>
+                          );
+                        },
+                      )}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className='text-sm font-medium mb-2'>Gênero</div>
                     <div className='space-y-2'>
-                      {Object.entries(populationMetrics.demographics.gender).map(([gender, count]) => {
-                        const percentage = (count / populationMetrics.totalPatients) * 100;
-                        return (
-                          <div key={gender} className='flex justify-between text-sm'>
-                            <span className='capitalize'>{gender}</span>
-                            <span>{count} ({percentage.toFixed(1)}%)</span>
-                          </div>
-                        );
-                      })}
+                      {Object.entries(populationMetrics.demographics.gender).map(
+                        ([gender, count]) => {
+                          const percentage = (count / populationMetrics.totalPatients) * 100;
+                          return (
+                            <div key={gender} className='flex justify-between text-sm'>
+                              <span className='capitalize'>{gender}</span>
+                              <span>{count} ({percentage.toFixed(1)}%)</span>
+                            </div>
+                          );
+                        },
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -1128,7 +1217,7 @@ function AIInsightsPage() {
                       <div className='text-xs text-muted-foreground'>Satisfação</div>
                     </div>
                   </div>
-                  
+
                   <div className='space-y-2'>
                     <div className='flex justify-between text-sm'>
                       <span>Taxa de complicações:</span>
@@ -1179,9 +1268,9 @@ function AIInsightsPage() {
         {/* AI Models Tab */}
         <TabsContent value='models' className='space-y-6'>
           <div className='grid gap-6 grid-cols-1 lg:grid-cols-2'>
-            {models.map((model) => {
+            {models.map(model => {
               const StatusIcon = getStatusIcon(model.status);
-              
+
               return (
                 <Card key={model.id} className='transition-all hover:shadow-lg'>
                   <CardHeader>
@@ -1192,10 +1281,15 @@ function AIInsightsPage() {
                       <div className='flex items-center gap-2'>
                         <StatusIcon className='h-4 w-4' />
                         <Badge className={getStatusColor(model.status)}>
-                          {model.status === 'active' ? 'Ativo' :
-                           model.status === 'training' ? 'Treinando' :
-                           model.status === 'maintenance' ? 'Manutenção' :
-                           model.status === 'error' ? 'Erro' : 'Atualizando'}
+                          {model.status === 'active'
+                            ? 'Ativo'
+                            : model.status === 'training'
+                            ? 'Treinando'
+                            : model.status === 'maintenance'
+                            ? 'Manutenção'
+                            : model.status === 'error'
+                            ? 'Erro'
+                            : 'Atualizando'}
                         </Badge>
                       </div>
                     </div>
@@ -1216,7 +1310,7 @@ function AIInsightsPage() {
                         <div className='text-xs text-muted-foreground'>Predições</div>
                       </div>
                     </div>
-                    
+
                     <div className='space-y-2'>
                       <div className='text-xs font-medium text-gray-900'>Performance:</div>
                       <div className='grid gap-1 grid-cols-3 text-xs'>
@@ -1225,15 +1319,17 @@ function AIInsightsPage() {
                         <div>F1-Score: {formatPercentage(model.f1Score)}</div>
                       </div>
                     </div>
-                    
+
                     <div className='text-xs text-muted-foreground'>
-                      Último treinamento: {format(new Date(model.lastTrained), 'dd/MM/yyyy', { locale: ptBR })}
+                      Último treinamento:{' '}
+                      {format(new Date(model.lastTrained), 'dd/MM/yyyy', { locale: ptBR })}
                     </div>
-                    
+
                     <div className='bg-gray-50 border border-gray-200 rounded p-2'>
                       <div className='text-xs font-medium text-gray-700 mb-1'>Uso Diário:</div>
                       <div className='text-xs text-gray-600'>
-                        {model.usage.dailyPredictions} predições • {model.usage.averageResponseTime}ms tempo médio
+                        {model.usage.dailyPredictions} predições •{' '}
+                        {model.usage.averageResponseTime}ms tempo médio
                       </div>
                     </div>
                   </CardContent>
@@ -1270,7 +1366,7 @@ function AIInsightsPage() {
                       <div className='text-xs text-muted-foreground'>Precisão da Previsão</div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className='text-sm font-medium mb-2'>Fatores de Risco:</div>
                     <div className='space-y-2'>
@@ -1300,11 +1396,17 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent className='space-y-3'>
                   {noShowAnalysis.highRiskPatients.map((patient, index) => (
-                    <div key={index} className='flex items-center justify-between p-2 border rounded'>
+                    <div
+                      key={index}
+                      className='flex items-center justify-between p-2 border rounded'
+                    >
                       <div>
                         <div className='text-sm font-medium'>{patient.name}</div>
                         <div className='text-xs text-muted-foreground'>
-                          Última consulta: {format(new Date(patient.lastAppointment), 'dd/MM/yyyy', { locale: ptBR })}
+                          Última consulta:{' '}
+                          {format(new Date(patient.lastAppointment), 'dd/MM/yyyy', {
+                            locale: ptBR,
+                          })}
                         </div>
                       </div>
                       <div className='text-right'>
@@ -1386,7 +1488,7 @@ function AIInsightsPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className='flex items-center gap-2'>
               <Badge variant='outline' className='text-xs'>
                 {models.filter(m => m.status === 'active').length} modelos ativos

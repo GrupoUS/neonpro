@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/patients/search (T016)
- * 
+ *
  * Tests advanced patient search endpoint contract:
  * - Complex search queries and filters
  * - Performance requirements (<300ms for search)
@@ -9,10 +9,10 @@
  * - Search analytics and optimization
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Search request schema validation
 const SearchPatientsRequestSchema = z.object({
@@ -85,7 +85,7 @@ const SearchPatientsResponseSchema = z.object({
 
 describe('POST /api/v2/patients/search - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -182,7 +182,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       // Validate response schema
       const validatedData = SearchPatientsResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Should find Maria Silva Santos
       expect(response.body.results.length).toBeGreaterThan(0);
       expect(response.body.results[0].name).toContain('Maria');
@@ -417,7 +417,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
       // Check that results are sorted by relevance (descending)
       for (let i = 1; i < response.body.results.length; i++) {
-        expect(response.body.results[i-1].relevanceScore)
+        expect(response.body.results[i - 1].relevanceScore)
           .toBeGreaterThanOrEqual(response.body.results[i].relevanceScore);
       }
     });
@@ -463,7 +463,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should respond within 300ms for simple searches', async () => {
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .post('/api/v2/patients/search')
         .set(testAuthHeaders)
@@ -472,7 +472,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(300);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(300);
       expect(response.body.searchMetadata.searchTime).toBeLessThan(300);
@@ -494,7 +494,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       };
 
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .post('/api/v2/patients/search')
         .set(testAuthHeaders)
@@ -520,10 +520,10 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
   describe('Brazilian Data Search Patterns', () => {
     it('should search CPF with different formatting', async () => {
       const searchVariations = [
-        '12345678901',      // No formatting
-        '123.456.789-01',   // Full formatting
-        '123456789-01',     // Partial formatting
-        '123.456.789',      // Without check digits
+        '12345678901', // No formatting
+        '123.456.789-01', // Full formatting
+        '123456789-01', // Partial formatting
+        '123.456.789', // Without check digits
       ];
 
       for (const cpfVariation of searchVariations) {
@@ -541,10 +541,10 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should search phone with different formatting', async () => {
       const phoneVariations = [
-        '11999999999',      // No formatting
-        '(11) 99999-9999',  // Full formatting
-        '11 99999-9999',    // Space instead of parentheses
-        '11 9 9999-9999',   // With 9th digit separated
+        '11999999999', // No formatting
+        '(11) 99999-9999', // Full formatting
+        '11 99999-9999', // Space instead of parentheses
+        '11 9 9999-9999', // With 9th digit separated
       ];
 
       for (const phoneVariation of phoneVariations) {

@@ -1,9 +1,9 @@
 import { type Context } from 'hono';
 import { createHealthcareError } from '../services/createHealthcareError.js';
-import { lgpdConsentService } from '../services/lgpd-consent-service.js';
 import { lgpdAuditService } from '../services/lgpd-audit-service.js';
+import { lgpdConsentService } from '../services/lgpd-consent-service.js';
 import { lgpdDataSubjectService } from '../services/lgpd-data-subject-service.js';
-import { ConsentPurpose, DataCategory, AuditAction } from '../types/lgpd.js';
+import { AuditAction, ConsentPurpose, DataCategory } from '../types/lgpd.js';
 
 /**
  * LGPD Compliance Middleware
@@ -18,15 +18,15 @@ export class LGPDComplianceMiddleware {
   static async requireConsent(
     c: Context,
     purpose: typeof ConsentPurpose.Enum,
-    operation: string
+    operation: string,
   ): Promise<void> {
     const patientId = c.req.param('patientId') || c.get('patientId');
-    
+
     if (!patientId) {
       throw createHealthcareError(
         'PATIENT_ID_REQUIRED',
         'Patient ID is required for consent validation',
-        { operation, purpose }
+        { operation, purpose },
       );
     }
 
@@ -45,8 +45,8 @@ export class LGPDComplianceMiddleware {
         metadata: {
           purpose,
           operation,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
       });
 
       throw error;
@@ -67,7 +67,7 @@ export class LGPDComplianceMiddleware {
       description: string;
       severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
       metadata?: Record<string, any>;
-    }
+    },
   ): Promise<void> {
     const patientId = c.req.param('patientId') || c.get('patientId');
     const user = c.get('user');
@@ -88,8 +88,8 @@ export class LGPDComplianceMiddleware {
         ...options.metadata,
         endpoint: c.req.path,
         method: c.req.method,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
   }
 
@@ -100,20 +100,20 @@ export class LGPDComplianceMiddleware {
   static validateDataMinimization(
     requestedFields: string[],
     requiredFields: string[],
-    purpose: string
+    purpose: string,
   ): void {
     const unnecessaryFields = requestedFields.filter(field => !requiredFields.includes(field));
-    
+
     if (unnecessaryFields.length > 0) {
       throw createHealthcareError(
         'DATA_MINIMIZATION_VIOLATION',
         `Requesting unnecessary data fields for ${purpose}`,
-        { 
-          requestedFields, 
-          requiredFields, 
+        {
+          requestedFields,
+          requiredFields,
           unnecessaryFields,
-          purpose 
-        }
+          purpose,
+        },
       );
     }
   }
@@ -125,26 +125,26 @@ export class LGPDComplianceMiddleware {
   static async validateDataRetention(
     c: Context,
     dataType: string,
-    accessPurpose: string
+    accessPurpose: string,
   ): Promise<void> {
     const patientId = c.req.param('patientId');
-    
+
     if (!patientId) return;
 
     // In a real implementation, this would check data retention policies
     // and block access to data that should have been deleted
     const retentionValid = await this.checkDataRetentionValidity(patientId, dataType);
-    
+
     if (!retentionValid.valid) {
       throw createHealthcareError(
         'RETENTION_POLICY_VIOLATION',
         `Data retention period expired for ${dataType}`,
-        { 
-          patientId, 
-          dataType, 
+        {
+          patientId,
+          dataType,
           accessPurpose,
-          expiryDate: retentionValid.expiryDate 
-        }
+          expiryDate: retentionValid.expiryDate,
+        },
       );
     }
   }
@@ -156,15 +156,15 @@ export class LGPDComplianceMiddleware {
   static async validateSensitiveDataProcessing(
     c: Context,
     sensitiveDataTypes: string[],
-    purpose: string
+    purpose: string,
   ): Promise<void> {
     const patientId = c.req.param('patientId') || c.get('patientId');
-    
+
     if (!patientId) return;
 
     // Check for special consent requirements for sensitive data
     const sensitiveCategories = ['HEALTH', 'GENETIC', 'BIOMETRIC'];
-    const hasSensitiveData = sensitiveDataTypes.some(type => 
+    const hasSensitiveData = sensitiveDataTypes.some(type =>
       sensitiveCategories.includes(type.toUpperCase())
     );
 
@@ -172,9 +172,9 @@ export class LGPDComplianceMiddleware {
       // Validate explicit consent for sensitive data processing
       try {
         await lgpdConsentService.validateConsent(
-          patientId, 
-          ConsentPurpose.Enum.TREATMENT, 
-          `SENSITIVE_DATA_${purpose}`
+          patientId,
+          ConsentPurpose.Enum.TREATMENT,
+          `SENSITIVE_DATA_${purpose}`,
         );
 
         // Create audit entry for sensitive data access
@@ -189,15 +189,20 @@ export class LGPDComplianceMiddleware {
           metadata: {
             sensitiveDataTypes,
             purpose,
-            validationMethod: 'EXPLICIT_CONSENT'
-          }
+            validationMethod: 'EXPLICIT_CONSENT',
+          },
         });
       } catch (error) {
         console.error('Failed to validate sensitive data consent:', error);
         throw createHealthcareError(
           'SENSITIVE_DATA_CONSENT_REQUIRED',
           'Explicit consent required for sensitive data processing',
-          { patientId, purpose, sensitiveDataTypes, originalError: error instanceof Error ? error.message : String(error) }
+          {
+            patientId,
+            purpose,
+            sensitiveDataTypes,
+            originalError: error instanceof Error ? error.message : String(error),
+          },
         );
       }
     }
@@ -209,7 +214,7 @@ export class LGPDComplianceMiddleware {
    */
   static async handleDataSubjectRequest(
     c: Context,
-    requestType: 'ACCESS' | 'DELETION' | 'CORRECTION' | 'PORTABILITY' | 'OBJECTION'
+    requestType: 'ACCESS' | 'DELETION' | 'CORRECTION' | 'PORTABILITY' | 'OBJECTION',
   ): Promise<Response> {
     const user = c.get('user');
     const patientId = c.req.param('patientId') || user?.id;
@@ -219,7 +224,7 @@ export class LGPDComplianceMiddleware {
       throw createHealthcareError(
         'PATIENT_ID_REQUIRED',
         'Patient ID is required for data subject requests',
-        { requestType }
+        { requestType },
       );
     }
 
@@ -230,15 +235,15 @@ export class LGPDComplianceMiddleware {
       body.description || `${requestType} request`,
       {
         priority: body.priority,
-        requestData: body.requestData
-      }
+        requestData: body.requestData,
+      },
     );
 
     if (!result.success) {
       throw createHealthcareError(
         'REQUEST_CREATION_FAILED',
         'Failed to create data subject request',
-        { errors: result.errors }
+        { errors: result.errors },
       );
     }
 
@@ -246,7 +251,7 @@ export class LGPDComplianceMiddleware {
       success: true,
       requestId: result.requestId,
       message: `${requestType} request created successfully`,
-      estimatedCompletion: result.estimatedCompletion
+      estimatedCompletion: result.estimatedCompletion,
     });
   }
 
@@ -256,34 +261,45 @@ export class LGPDComplianceMiddleware {
    */
   static validateInternationalTransfer(
     destinationCountry: string,
-    dataCategories: string[]
+    dataCategories: string[],
   ): void {
     // List of countries with adequate data protection (simplified)
     const adequateCountries = [
-      'BR', 'AR', 'UY', 'CL', 'CO', // South American countries
-      'US', 'CA', // North American countries with specific frameworks
-      'GB', 'FR', 'DE', 'ES', 'IT', // EU countries with GDPR
-      'CH', 'NO', 'IS' // Other European countries
+      'BR',
+      'AR',
+      'UY',
+      'CL',
+      'CO', // South American countries
+      'US',
+      'CA', // North American countries with specific frameworks
+      'GB',
+      'FR',
+      'DE',
+      'ES',
+      'IT', // EU countries with GDPR
+      'CH',
+      'NO',
+      'IS', // Other European countries
     ];
 
     if (!adequateCountries.includes(destinationCountry.toUpperCase())) {
       // Check for specific safeguards
       const hasSafeguards = this.checkTransferSafeguards(destinationCountry, dataCategories);
-      
+
       if (!hasSafeguards) {
         throw createHealthcareError(
           'INTERNATIONAL_TRANSFER_VIOLATION',
           `International data transfer to ${destinationCountry} requires adequate safeguards`,
-          { 
-            destinationCountry, 
+          {
+            destinationCountry,
             dataCategories,
             requiredSafeguards: [
               'Standard Contractual Clauses',
               'Binding Corporate Rules',
               'Adequacy Decision',
-              'Explicit Consent'
-            ]
-          }
+              'Explicit Consent',
+            ],
+          },
         );
       }
     }
@@ -301,7 +317,7 @@ export class LGPDComplianceMiddleware {
       affectedRecords: number;
       description: string;
       affectedPatients: string[];
-    }
+    },
   ): Promise<void> {
     // Create data breach notification
     const breachResult = await lgpdAuditService.recordDataBreach({
@@ -314,7 +330,7 @@ export class LGPDComplianceMiddleware {
       mitigationActions: this.generateMitigationActions(incident),
       affectedPatients: incident.affectedPatients,
       discoveryDate: new Date(),
-      status: 'DETECTED'
+      status: 'DETECTED',
     });
 
     if (!breachResult.success) {
@@ -338,7 +354,7 @@ export class LGPDComplianceMiddleware {
   } = {}) {
     return async (c: Context, next: () => Promise<void>) => {
       const startTime = Date.now();
-      
+
       try {
         // Validate consent if required
         if (options.requireConsent && options.consentPurpose) {
@@ -349,9 +365,9 @@ export class LGPDComplianceMiddleware {
         if (options.validateMinimization && options.requiredFields) {
           const requestedFields = c.req.query().fields?.split(',') || [];
           this.validateDataMinimization(
-            requestedFields, 
-            options.requiredFields, 
-            c.req.path
+            requestedFields,
+            options.requiredFields,
+            c.req.path,
           );
         }
 
@@ -374,8 +390,8 @@ export class LGPDComplianceMiddleware {
             severity: 'LOW',
             metadata: {
               responseTime: Date.now() - startTime,
-              statusCode: c.res.status
-            }
+              statusCode: c.res.status,
+            },
           });
         }
       } catch (error) {
@@ -389,8 +405,8 @@ export class LGPDComplianceMiddleware {
           description: `Failed ${c.req.method} request to ${c.req.path}`,
           metadata: {
             responseTime: Date.now() - startTime,
-            error: error instanceof Error ? error.message : 'Unknown error'
-          }
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         });
 
         throw error;
@@ -412,7 +428,7 @@ export class LGPDComplianceMiddleware {
           await this.validateSensitiveDataProcessing(
             c,
             options.sensitiveDataTypes,
-            options.operation
+            options.operation,
           );
         }
 
@@ -423,7 +439,7 @@ export class LGPDComplianceMiddleware {
           auditOperation: true,
           dataCategory: DataCategory.Enum.HEALTH,
           validateMinimization: true,
-          requiredFields: ['id', 'patientId'] // Basic required fields
+          requiredFields: ['id', 'patientId'], // Basic required fields
         })(c, next);
       } catch (error) {
         throw error;
@@ -434,7 +450,7 @@ export class LGPDComplianceMiddleware {
   // Private helper methods
   private static async checkDataRetentionValidity(
     patientId: string,
-    dataType: string
+    dataType: string,
   ): Promise<{ valid: boolean; expiryDate?: Date }> {
     // In a real implementation, this would check actual retention policies
     // For now, assume data is valid
@@ -443,7 +459,7 @@ export class LGPDComplianceMiddleware {
 
   private static checkTransferSafeguards(
     destinationCountry: string,
-    dataCategories: string[]
+    dataCategories: string[],
   ): boolean {
     // Check if appropriate safeguards are in place
     // This would integrate with actual transfer validation logic
@@ -455,7 +471,7 @@ export class LGPDComplianceMiddleware {
       LOW: 'Minimal impact on data subjects',
       MEDIUM: 'Moderate impact requiring monitoring',
       HIGH: 'Significant impact requiring notification',
-      CRITICAL: 'Severe impact requiring immediate action'
+      CRITICAL: 'Severe impact requiring immediate action',
     };
 
     return impactLevels[incident.severity] || 'Unknown impact';
@@ -467,7 +483,7 @@ export class LGPDComplianceMiddleware {
       'Investigation of root cause',
       'Notification of affected individuals',
       'Review and enhancement of security measures',
-      'Documentation of lessons learned'
+      'Documentation of lessons learned',
     ];
 
     if (incident.severity === 'CRITICAL') {
@@ -481,7 +497,7 @@ export class LGPDComplianceMiddleware {
   private static async triggerSecurityProtocols(incident: any): Promise<void> {
     // Trigger immediate security response
     console.log(`Security protocols triggered for ${incident.type} incident`);
-    
+
     // In a real implementation, this would:
     // 1. Alert security team
     // 2. Isolate affected systems
@@ -491,11 +507,12 @@ export class LGPDComplianceMiddleware {
 }
 
 // Export middleware utilities
-export const requireLGPDConsent = (purpose: typeof ConsentPurpose.Enum) => 
+export const requireLGPDConsent = (purpose: typeof ConsentPurpose.Enum) =>
   LGPDComplianceMiddleware.middleware({ requireConsent: true, consentPurpose: purpose });
 
-export const auditLGPDOperation = (dataCategory: typeof DataCategory.Enum = DataCategory.Enum.PERSONAL) =>
-  LGPDComplianceMiddleware.middleware({ auditOperation: true, dataCategory });
+export const auditLGPDOperation = (
+  dataCategory: typeof DataCategory.Enum = DataCategory.Enum.PERSONAL,
+) => LGPDComplianceMiddleware.middleware({ auditOperation: true, dataCategory });
 
 export const healthcareDataCompliance = (operation: string, sensitiveDataTypes: string[] = []) =>
   LGPDComplianceMiddleware.healthcareDataMiddleware({ operation, sensitiveDataTypes });

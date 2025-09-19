@@ -1,12 +1,12 @@
 /**
  * WCAG 2.1 AA+ Accessibility Compliance Component (T080)
- * 
+ *
  * Provides accessibility utilities and features for healthcare applications
  * with Brazilian healthcare context (LGPD, ANVISA, CFM compliance)
  */
 
-import React, { useEffect, useRef } from 'react';
 import { useLocation } from '@tanstack/react-router';
+import React, { useEffect, useRef } from 'react';
 
 interface WCAGProps {
   children: React.ReactNode;
@@ -54,35 +54,46 @@ export function WCAGCompliance({ children }: WCAGProps) {
       {/* Skip to main content link */}
       <a
         ref={skipLinkRef}
-        href="#main-content"
+        href='#main-content'
         onClick={handleSkipLinkClick}
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50"
+        className='sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50'
       >
         Pular para o conteúdo principal
       </a>
 
       {/* High contrast mode toggle */}
       <button
-        aria-label="Alternar modo alto contraste"
-        className="fixed top-4 right-4 z-50 p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity"
+        aria-label='Alternar modo alto contraste'
+        className='fixed top-4 right-4 z-50 p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity'
         onClick={() => {
           document.documentElement.classList.toggle('high-contrast');
-          localStorage.setItem('high-contrast', 
-            document.documentElement.classList.contains('high-contrast') ? 'true' : 'false'
+          localStorage.setItem(
+            'high-contrast',
+            document.documentElement.classList.contains('high-contrast') ? 'true' : 'false',
           );
         }}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
+          />
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
+          />
         </svg>
       </button>
 
       {/* Font size controls */}
-      <div className="fixed bottom-4 right-4 z-50 flex gap-2">
+      <div className='fixed bottom-4 right-4 z-50 flex gap-2'>
         <button
-          aria-label="Diminuir fonte"
-          className="p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity"
+          aria-label='Diminuir fonte'
+          className='p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity'
           onClick={() => {
             const root = document.documentElement;
             const currentSize = parseInt(getComputedStyle(root).fontSize);
@@ -92,8 +103,8 @@ export function WCAGCompliance({ children }: WCAGProps) {
           A-
         </button>
         <button
-          aria-label="Aumentar fonte"
-          className="p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity"
+          aria-label='Aumentar fonte'
+          className='p-2 bg-gray-800 text-white rounded-full opacity-75 hover:opacity-100 transition-opacity'
           onClick={() => {
             const root = document.documentElement;
             const currentSize = parseInt(getComputedStyle(root).fontSize);
@@ -107,11 +118,11 @@ export function WCAGCompliance({ children }: WCAGProps) {
       {children}
 
       {/* Screen reader announcements */}
-      <div 
-        aria-live="polite" 
-        aria-atomic="true"
-        className="sr-only"
-        id="sr-announcements"
+      <div
+        aria-live='polite'
+        aria-atomic='true'
+        className='sr-only'
+        id='sr-announcements'
       />
     </>
   );
@@ -190,7 +201,7 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement>) {
     if (!container) return;
 
     const focusableElements = container.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
@@ -235,7 +246,7 @@ export function announceToScreenReader(message: string) {
 export function checkColorContrast(
   foreground: string,
   background: string,
-  minimumRatio = 4.5
+  minimumRatio = 4.5,
 ): boolean {
   // Simplified contrast check - in production, use a proper library
   // This is a placeholder implementation

@@ -7,9 +7,12 @@
 import { z } from 'zod';
 import { createAdminClient } from '../clients/supabase';
 import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance';
-import EnhancedLGPDConsentService, { ConsentStatus, WithdrawalMethod } from './enhanced-lgpd-consent';
 import DataMaskingService, { MaskingContext, MaskingResult } from './data-masking-service';
 import DataRetentionService from './data-retention-service';
+import EnhancedLGPDConsentService, {
+  ConsentStatus,
+  WithdrawalMethod,
+} from './enhanced-lgpd-consent';
 
 // ============================================================================
 // Privacy Control Types
@@ -123,19 +126,19 @@ export class PatientPrivacyControlsService {
     try {
       // Get consent statistics
       const consentStats = await this.consentService.getConsentStatistics(patientId);
-      
+
       // Get data access request statistics
       const accessStats = await this.getDataAccessStatistics(patientId);
-      
+
       // Get data subject request statistics
       const subjectStats = await this.getDataSubjectRequestStatistics(patientId);
-      
+
       // Calculate privacy score
       const privacyScore = this.calculatePrivacyScore(consentStats, accessStats, subjectStats);
-      
+
       // Determine risk level
       const riskLevel = this.assessPrivacyRisk(consentStats, accessStats, subjectStats);
-      
+
       // Generate quick actions
       const quickActions = this.generateQuickActions(consentStats, accessStats, patientId);
 
@@ -162,17 +165,19 @@ export class PatientPrivacyControlsService {
   /**
    * Get patient's active consents with detailed information
    */
-  async getPatientConsents(patientId: string): Promise<Array<{
-    consent: any;
-    canWithdraw: boolean;
-    canModify: boolean;
-    expiryDate?: Date;
-    dataCategories: LGPDDataCategory[];
-    lastAccessed?: Date;
-  }>> {
+  async getPatientConsents(patientId: string): Promise<
+    Array<{
+      consent: any;
+      canWithdraw: boolean;
+      canModify: boolean;
+      expiryDate?: Date;
+      dataCategories: LGPDDataCategory[];
+      lastAccessed?: Date;
+    }>
+  > {
     try {
       const consents = await this.consentService.getPatientActiveConsents(patientId);
-      
+
       return consents.map(consent => ({
         consent,
         canWithdraw: consent.status === ConsentStatus.ACTIVE,
@@ -201,7 +206,7 @@ export class PatientPrivacyControlsService {
       format: 'json' | 'csv' | 'pdf';
       includeAuditLogs: boolean;
       includeConsentHistory: boolean;
-    }
+    },
   ): Promise<DataAccessRequest> {
     try {
       // Validate request
@@ -213,7 +218,7 @@ export class PatientPrivacyControlsService {
       const hasConsent = await this.consentService.isProcessingConsented(
         patientId,
         request.dataCategories,
-        ['data_access']
+        ['data_access'],
       );
 
       if (!hasConsent.consented) {
@@ -274,7 +279,7 @@ export class PatientPrivacyControlsService {
   }> {
     try {
       const startTime = Date.now();
-      
+
       // Get request details
       const { data: request, error: fetchError } = await this.supabase
         .from('data_access_requests')
@@ -305,14 +310,14 @@ export class PatientPrivacyControlsService {
           {
             includeAuditLogs: request.includeAuditLogs,
             includeConsentHistory: request.includeConsentHistory,
-          }
+          },
         );
 
         // Format and export data
         const exportResult = await this.exportPatientData(
           patientData,
           request.format,
-          request.patientId
+          request.patientId,
         );
 
         // Update request with results
@@ -348,7 +353,6 @@ export class PatientPrivacyControlsService {
           estimatedSize: exportResult.size,
           processingTime,
         };
-
       } catch (error) {
         // Mark request as failed
         await this.supabase
@@ -360,7 +364,7 @@ export class PatientPrivacyControlsService {
           .eq('id', requestId);
 
         console.error('Error processing data access request:', error);
-        
+
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Processing failed',
@@ -386,7 +390,7 @@ export class PatientPrivacyControlsService {
       affectedDataCategories: LGPDDataCategory[];
       priority?: DataSubjectRequest['priority'];
       supportingDocuments?: string[];
-    }
+    },
   ): Promise<DataSubjectRequest> {
     try {
       // Validate request
@@ -447,7 +451,7 @@ export class PatientPrivacyControlsService {
       value: any;
       enabled: boolean;
     }>,
-    modifiedVia: PrivacyPreference['modifiedVia'] = 'web'
+    modifiedVia: PrivacyPreference['modifiedVia'] = 'web',
   ): Promise<PrivacyPreference[]> {
     try {
       const updatedPreferences: PrivacyPreference[] = [];
@@ -532,14 +536,16 @@ export class PatientPrivacyControlsService {
       endDate?: Date;
       actionTypes?: string[];
       limit?: number;
-    }
-  ): Promise<Array<{
-    timestamp: Date;
-    action: string;
-    details: any;
-    ipAddress?: string;
-    userAgent?: string;
-  }>> {
+    },
+  ): Promise<
+    Array<{
+      timestamp: Date;
+      action: string;
+      details: any;
+      ipAddress?: string;
+      userAgent?: string;
+    }>
+  > {
     try {
       let query = this.supabase
         .from('privacy_audit_trail')
@@ -591,7 +597,7 @@ export class PatientPrivacyControlsService {
     options: {
       includeAuditLogs: boolean;
       includeConsentHistory: boolean;
-    }
+    },
   ): Promise<any> {
     const collectedData: any = {
       patientId,
@@ -644,7 +650,12 @@ export class PatientPrivacyControlsService {
 
     if (accessType === DataAccessType.SUMMARY) {
       // Apply masking for summary access
-      const maskingContext = this.createMaskingContext(patientId, 'patient', ['data_access'], 'list');
+      const maskingContext = this.createMaskingContext(
+        patientId,
+        'patient',
+        ['data_access'],
+        'list',
+      );
       const result = await this.maskingService.maskData(personalData, maskingContext);
       return result.maskedData;
     }
@@ -698,7 +709,12 @@ export class PatientPrivacyControlsService {
 
     if (accessType === DataAccessType.SUMMARY) {
       // Apply masking for summary access
-      const maskingContext = this.createMaskingContext(patientId, 'patient', ['data_access'], 'list');
+      const maskingContext = this.createMaskingContext(
+        patientId,
+        'patient',
+        ['data_access'],
+        'list',
+      );
       const result = await this.maskingService.maskData(financialData, maskingContext);
       return result.maskedData;
     }
@@ -712,7 +728,7 @@ export class PatientPrivacyControlsService {
   private async exportPatientData(
     data: any,
     format: 'json' | 'csv' | 'pdf',
-    patientId: string
+    patientId: string,
   ): Promise<{ downloadUrl: string; size: number }> {
     // Mock implementation - would integrate with actual export service
     const filename = `patient_data_${patientId}_${Date.now()}.${format}`;
@@ -736,7 +752,7 @@ export class PatientPrivacyControlsService {
     patientId: string,
     userRole: string,
     purpose: string[],
-    viewContext: MaskingContext['viewContext']
+    viewContext: MaskingContext['viewContext'],
   ): MaskingContext {
     return {
       userId: patientId,
@@ -757,7 +773,7 @@ export class PatientPrivacyControlsService {
   private calculatePrivacyScore(
     consentStats: any,
     accessStats: any,
-    subjectStats: any
+    subjectStats: any,
   ): number {
     let score = 100;
 
@@ -781,10 +797,10 @@ export class PatientPrivacyControlsService {
   private assessPrivacyRisk(
     consentStats: any,
     accessStats: any,
-    subjectStats: any
+    subjectStats: any,
   ): 'low' | 'medium' | 'high' {
     const score = this.calculatePrivacyScore(consentStats, accessStats, subjectStats);
-    
+
     if (score >= 80) return 'low';
     if (score >= 60) return 'medium';
     return 'high';
@@ -895,7 +911,7 @@ export class PatientPrivacyControlsService {
    */
   private estimateCompletionDate(
     requestType: DataSubjectRequest['requestType'],
-    priority: DataSubjectRequest['priority']
+    priority: DataSubjectRequest['priority'],
   ): Date {
     const baseDays = {
       access: 1,
@@ -932,7 +948,7 @@ export class PatientPrivacyControlsService {
   private async logPrivacyActivity(
     action: string,
     patientId: string,
-    details: any
+    details: any,
   ): Promise<void> {
     try {
       const auditEntry = {

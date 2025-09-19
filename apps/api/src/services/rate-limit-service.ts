@@ -31,7 +31,7 @@ export const RateLimitRuleSchema = z.object({
   requestPropertyName: z.string().default('rateLimit'),
   passOnStoreError: z.boolean().default(true),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export type RateLimitRule = z.infer<typeof RateLimitRuleSchema>;
@@ -53,7 +53,7 @@ export interface RateLimitEvaluation {
  */
 export function createRateLimitRule(data: Partial<RateLimitRule>): RateLimitRule {
   const now = new Date().toISOString();
-  
+
   const ruleData = {
     id: crypto.randomUUID(),
     name: data.name || 'Default Rule',
@@ -78,7 +78,7 @@ export function createRateLimitRule(data: Partial<RateLimitRule>): RateLimitRule
     passOnStoreError: data.passOnStoreError ?? true,
     createdAt: data.createdAt || now,
     updatedAt: data.updatedAt || now,
-    ...data
+    ...data,
   };
 
   return RateLimitRuleSchema.parse(ruleData);
@@ -90,35 +90,35 @@ export function createRateLimitRule(data: Partial<RateLimitRule>): RateLimitRule
 export function evaluateRateLimit(
   clientId: string,
   rule: RateLimitRule,
-  currentTime: Date = new Date()
+  currentTime: Date = new Date(),
 ): RateLimitEvaluation {
   // In a real implementation, this would check against a store (Redis, memory, etc.)
   // For now, we'll simulate rate limiting logic
-  
+
   const windowStart = new Date(currentTime.getTime() - rule.windowMs);
-  
+
   // Simulate current usage (in real implementation, this would come from store)
   const currentUsage = Math.floor(Math.random() * rule.maxRequests);
-  
+
   const remaining = Math.max(0, rule.maxRequests - currentUsage - 1);
   const allowed = currentUsage < rule.maxRequests;
-  
+
   const resetTime = new Date(
-    Math.ceil(currentTime.getTime() / rule.windowMs) * rule.windowMs
+    Math.ceil(currentTime.getTime() / rule.windowMs) * rule.windowMs,
   );
-  
+
   const result: RateLimitEvaluation = {
     allowed,
     limit: rule.maxRequests,
     remaining,
     reset: resetTime,
-    totalHits: currentUsage + 1
+    totalHits: currentUsage + 1,
   };
-  
+
   if (!allowed) {
     result.retryAfter = Math.ceil((resetTime.getTime() - currentTime.getTime()) / 1000);
   }
-  
+
   return result;
 }
 
@@ -127,7 +127,7 @@ export function evaluateRateLimit(
  */
 export function getRateLimitStatus(
   clientId: string,
-  rule: RateLimitRule
+  rule: RateLimitRule,
 ): RateLimitEvaluation {
   return evaluateRateLimit(clientId, rule);
 }
@@ -147,23 +147,23 @@ export const HealthcareRateLimitPresets = {
   patientData: {
     windowMs: 60000, // 1 minute
     maxRequests: 30, // Conservative for patient data access
-    message: 'Too many patient data requests. Please wait before trying again.'
+    message: 'Too many patient data requests. Please wait before trying again.',
   },
   aiAnalysis: {
-    windowMs: 60000, // 1 minute  
+    windowMs: 60000, // 1 minute
     maxRequests: 10, // AI analysis is resource intensive
-    message: 'Too many AI analysis requests. Please wait before submitting another analysis.'
+    message: 'Too many AI analysis requests. Please wait before submitting another analysis.',
   },
   publicAPI: {
     windowMs: 60000, // 1 minute
     maxRequests: 100, // Standard public API rate
-    message: 'Rate limit exceeded. Please try again later.'
+    message: 'Rate limit exceeded. Please try again later.',
   },
   sensitiveOperations: {
     windowMs: 300000, // 5 minutes
     maxRequests: 5, // Very conservative for sensitive operations
-    message: 'Rate limit for sensitive operations exceeded. Please wait before trying again.'
-  }
+    message: 'Rate limit for sensitive operations exceeded. Please wait before trying again.',
+  },
 } as const;
 
 /**
@@ -174,18 +174,18 @@ export const defaultHealthcareRules = [
     name: 'Patient Data Access',
     endpoint: '/api/v2/patients/*',
     method: 'GET',
-    ...HealthcareRateLimitPresets.patientData
+    ...HealthcareRateLimitPresets.patientData,
   }),
   createRateLimitRule({
     name: 'AI Analysis',
     endpoint: '/api/v*/ai/*',
     method: 'POST',
-    ...HealthcareRateLimitPresets.aiAnalysis
+    ...HealthcareRateLimitPresets.aiAnalysis,
   }),
   createRateLimitRule({
     name: 'Public API',
     endpoint: '/api/*',
     method: 'GET',
-    ...HealthcareRateLimitPresets.publicAPI
-  })
+    ...HealthcareRateLimitPresets.publicAPI,
+  }),
 ];

@@ -1,38 +1,38 @@
 /**
  * PERFORMANCE TARGETS INTEGRATION TEST (T030)
- * 
+ *
  * Constitutional TDD Implementation - RED PHASE
  * Tests performance requirements across healthcare workflows
- * 
+ *
  * @compliance Core Web Vitals, Healthcare UX Performance Standards
  * @test-id T030
  * @performance-targets Mobile <500ms, Search <300ms, LCP <2.5s, INP <200ms, CLS <0.1
  * @healthcare-critical Emergency scenarios, Real-time features, Patient safety
  */
 
-import { test, expect, devices } from '@playwright/test';
-import type { Page, BrowserContext } from '@playwright/test';
+import { devices, expect, test } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 
 // Constitutional Performance Thresholds
 const PERFORMANCE_THRESHOLDS = {
   // Constitutional Requirements
   mobileResponseTime: 500, // <500ms mobile response requirement
   searchResponseTime: 300, // <300ms search requirement
-  
+
   // Core Web Vitals Thresholds (Google Standards)
   lcp: 2500, // Largest Contentful Paint <2.5s
-  inp: 200,  // Interaction to Next Paint <200ms
-  cls: 0.1,  // Cumulative Layout Shift <0.1
+  inp: 200, // Interaction to Next Paint <200ms
+  cls: 0.1, // Cumulative Layout Shift <0.1
   fcp: 1800, // First Contentful Paint <1.8s
-  
+
   // Healthcare-Specific Performance
   emergencyDataLoad: 1000, // Emergency data <1s
-  realtimeLatency: 100,    // Real-time features <100ms
+  realtimeLatency: 100, // Real-time features <100ms
   prescriptionValidation: 200, // Prescription validation <200ms
-  patientDataEncryption: 300,  // Data encryption overhead <300ms
-  
+  patientDataEncryption: 300, // Data encryption overhead <300ms
+
   // Network Performance
-  slowConnection: 3000,    // Slow 3G maximum acceptable time
+  slowConnection: 3000, // Slow 3G maximum acceptable time
   offlineToOnlineSync: 2000, // Sync after reconnection <2s
 };
 
@@ -41,7 +41,9 @@ const generatePerformanceTestData = () => ({
   largePatientDataset: Array.from({ length: 100 }, (_, i) => ({
     id: `perf-patient-${i}`,
     name: `Patient ${i}`,
-    cpf: `${String(i).padStart(3, '0')}.${String(i).padStart(3, '0')}.${String(i).padStart(3, '0')}-${String(i % 100).padStart(2, '0')}`,
+    cpf: `${String(i).padStart(3, '0')}.${String(i).padStart(3, '0')}.${
+      String(i).padStart(3, '0')
+    }-${String(i % 100).padStart(2, '0')}`,
     phone: `(11) ${String(90000 + i).substr(0, 5)}-${String(1000 + i).substr(0, 4)}`,
     lastConsultation: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
     consultationCount: Math.floor(Math.random() * 50),
@@ -70,18 +72,21 @@ describe('Performance Targets Tests (T030)', () => {
 
   test.beforeEach(async ({ page }) => {
     testData = generatePerformanceTestData();
-    
+
     // Setup authenticated session with performance monitoring
     await page.goto('/');
     await page.evaluate(() => {
-      sessionStorage.setItem('supabase.auth.token', JSON.stringify({
-        access_token: 'mock-performance-token',
-        user: {
-          id: 'performance-test-user',
-          email: 'performance.test@professional.com',
-          role: 'healthcare_professional',
-        },
-      }));
+      sessionStorage.setItem(
+        'supabase.auth.token',
+        JSON.stringify({
+          access_token: 'mock-performance-token',
+          user: {
+            id: 'performance-test-user',
+            email: 'performance.test@professional.com',
+            role: 'healthcare_professional',
+          },
+        }),
+      );
     });
 
     // Enable performance monitoring
@@ -96,7 +101,7 @@ describe('Performance Targets Tests (T030)', () => {
       // Override performance API to capture metrics
       const originalMark = performance.mark;
       const originalMeasure = performance.measure;
-      
+
       performance.mark = function(name) {
         window.performanceMetrics.marks[name] = performance.now();
         return originalMark.call(this, name);
@@ -144,7 +149,7 @@ describe('Performance Targets Tests (T030)', () => {
       const page = await context.newPage();
 
       // Mock large patient dataset
-      await page.route('/api/v2/patients*', (route) => {
+      await page.route('/api/v2/patients*', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -178,7 +183,7 @@ describe('Performance Targets Tests (T030)', () => {
       await page.mouse.wheel(0, 1000);
       await page.waitForTimeout(100);
       const scrollTime = Date.now() - scrollStart;
-      
+
       expect(scrollTime).toBeLessThan(200); // Smooth scrolling
 
       await context.close();
@@ -218,7 +223,7 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock search API with realistic delay
-      await page.route('/api/v2/patients/search*', async (route) => {
+      await page.route('/api/v2/patients/search*', async route => {
         await new Promise(resolve => setTimeout(resolve, 150)); // Simulate processing
         route.fulfill({
           status: 200,
@@ -254,13 +259,13 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock medication search with performance simulation
-      await page.route('/api/v2/medications/search*', async (route) => {
+      await page.route('/api/v2/medications/search*', async route => {
         const url = new URL(route.request().url());
         const query = url.searchParams.get('q');
-        
+
         // Simulate fast database lookup
         await new Promise(resolve => setTimeout(resolve, 80));
-        
+
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -276,7 +281,7 @@ describe('Performance Targets Tests (T030)', () => {
       });
 
       const medicationSearch = page.locator('[data-testid="medication-search"]');
-      
+
       // Test autocomplete performance
       const autocompleteStart = Date.now();
       await medicationSearch.fill('Los');
@@ -297,7 +302,7 @@ describe('Performance Targets Tests (T030)', () => {
       await medicationSearch.fill('Losarta');
       await page.waitForTimeout(100);
       await medicationSearch.fill('Losartan');
-      
+
       // Should not make excessive API calls (debouncing)
       const apiCalls = await page.evaluate(() => window.apiCallCount || 0);
       expect(apiCalls).toBeLessThanOrEqual(2); // Should be debounced
@@ -308,12 +313,12 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock complex search with multiple criteria
-      await page.route('/api/v2/patients/search/advanced*', async (route) => {
+      await page.route('/api/v2/patients/search/advanced*', async route => {
         const requestData = JSON.parse(route.request().postData() || '{}');
-        
+
         // Simulate complex database query processing
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         // Return filtered results based on criteria
         const filteredResults = testData.largePatientDataset.filter(patient => {
           if (requestData.ageRange && requestData.gender && requestData.consultationDateRange) {
@@ -360,8 +365,8 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Measure LCP using Navigation Timing API
       const lcpTime = await page.evaluate(async () => {
-        return new Promise((resolve) => {
-          new PerformanceObserver((entryList) => {
+        return new Promise(resolve => {
+          new PerformanceObserver(entryList => {
             const entries = entryList.getEntries();
             const lastEntry = entries[entries.length - 1];
             resolve(lastEntry.startTime);
@@ -386,10 +391,10 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Test click interaction performance
       const inpMeasurement = await page.evaluate(async () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           let maxInp = 0;
-          
-          new PerformanceObserver((entryList) => {
+
+          new PerformanceObserver(entryList => {
             for (const entry of entryList.getEntries()) {
               if (entry.name === 'event' && entry.processingStart && entry.processingEnd) {
                 const inp = entry.processingEnd - entry.processingStart;
@@ -419,10 +424,10 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Measure CLS
       const clsScore = await page.evaluate(async () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           let clsValue = 0;
-          
-          new PerformanceObserver((entryList) => {
+
+          new PerformanceObserver(entryList => {
             for (const entry of entryList.getEntries()) {
               if (!entry.hadRecentInput) {
                 clsValue += entry.value;
@@ -441,7 +446,7 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
       const finalClsScore = await page.evaluate(() => {
         let totalCLS = 0;
-        const observer = new PerformanceObserver((entryList) => {
+        const observer = new PerformanceObserver(entryList => {
           for (const entry of entryList.getEntries()) {
             if (!entry.hadRecentInput) {
               totalCLS += entry.value;
@@ -462,10 +467,10 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock emergency patient data lookup
-      await page.route('/api/v2/emergency/patient*', async (route) => {
+      await page.route('/api/v2/emergency/patient*', async route => {
         // Simulate fast emergency database access
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -507,12 +512,12 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock prescription validation API
-      await page.route('/api/v2/prescriptions/validate*', async (route) => {
+      await page.route('/api/v2/prescriptions/validate*', async route => {
         const prescriptionData = JSON.parse(route.request().postData() || '{}');
-        
+
         // Simulate validation processing
         await new Promise(resolve => setTimeout(resolve, 150));
-        
+
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -553,12 +558,12 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock patient creation with encryption overhead
-      await page.route('/api/v2/patients*', async (route) => {
+      await page.route('/api/v2/patients*', async route => {
         const patientData = JSON.parse(route.request().postData() || '{}');
-        
+
         // Simulate encryption processing time
         await new Promise(resolve => setTimeout(resolve, 250));
-        
+
         route.fulfill({
           status: 201,
           contentType: 'application/json',
@@ -583,7 +588,7 @@ describe('Performance Targets Tests (T030)', () => {
       await page.fill('[data-testid="patient-cpf"]', '987.654.321-00');
       await page.fill('[data-testid="patient-phone"]', '(21) 99887-6655');
       await page.fill('[data-testid="patient-email"]', 'maria.santos@email.com');
-      
+
       // Accept LGPD consent
       await page.check('[data-testid="consent-data-processing"]');
 
@@ -614,11 +619,13 @@ describe('Performance Targets Tests (T030)', () => {
             setTimeout(() => {
               const received = performance.now();
               this.latencies.push(received - sent);
-              window.dispatchEvent(new CustomEvent('mock-notification', {
-                detail: { message: JSON.parse(message), latency: received - sent }
-              }));
+              window.dispatchEvent(
+                new CustomEvent('mock-notification', {
+                  detail: { message: JSON.parse(message), latency: received - sent },
+                }),
+              );
             }, 50); // Simulate network latency
-          }
+          },
         };
       });
 
@@ -636,7 +643,7 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Trigger real-time notifications
       for (let i = 0; i < 5; i++) {
-        await page.evaluate((index) => {
+        await page.evaluate(index => {
           window.mockWebSocket.send(JSON.stringify({
             type: 'appointment_reminder',
             patientName: `Patient ${index}`,
@@ -666,19 +673,21 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Setup concurrent update simulation
       const concurrentUpdateStart = Date.now();
-      
+
       // Simulate multiple concurrent appointment updates
       const updatePromises = Array.from({ length: 10 }, async (_, i) => {
-        return page.evaluate((index) => {
+        return page.evaluate(index => {
           return new Promise(resolve => {
             const start = performance.now();
-            window.dispatchEvent(new CustomEvent('appointment-update', {
-              detail: {
-                id: `appointment-${index}`,
-                status: 'confirmed',
-                timestamp: new Date().toISOString(),
-              }
-            }));
+            window.dispatchEvent(
+              new CustomEvent('appointment-update', {
+                detail: {
+                  id: `appointment-${index}`,
+                  status: 'confirmed',
+                  timestamp: new Date().toISOString(),
+                },
+              }),
+            );
             const end = performance.now();
             resolve(end - start);
           });
@@ -690,7 +699,7 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Concurrent updates should not block the UI
       expect(totalConcurrentTime).toBeLessThan(500);
-      
+
       // Individual updates should be fast
       for (const updateTime of updateTimes) {
         expect(updateTime).toBeLessThan(PERFORMANCE_THRESHOLDS.realtimeLatency);
@@ -708,7 +717,7 @@ describe('Performance Targets Tests (T030)', () => {
       const page = await context.newPage();
 
       // Simulate slow connection by adding delays to requests
-      await page.route('**/*', async (route) => {
+      await page.route('**/*', async route => {
         // Add network delay simulation
         await new Promise(resolve => setTimeout(resolve, 100));
         route.continue();
@@ -724,10 +733,10 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Progressive loading should be visible
       await expect(page.locator('[data-testid="loading-skeleton"]')).toBeVisible();
-      
+
       // Critical content should load first
       await expect(page.locator('[data-testid="urgent-notifications"]')).toBeVisible();
-      
+
       await context.close();
     });
 
@@ -737,14 +746,14 @@ describe('Performance Targets Tests (T030)', () => {
 
       // Queue some actions while offline
       await context.setOffline(true);
-      
+
       const offlineActions = [
         { type: 'CREATE_PATIENT', data: { name: 'Offline Patient 1' } },
         { type: 'UPDATE_APPOINTMENT', data: { id: 'apt-1', status: 'confirmed' } },
         { type: 'CREATE_PRESCRIPTION', data: { patientId: 'patient-1' } },
       ];
 
-      await page.evaluate((actions) => {
+      await page.evaluate(actions => {
         localStorage.setItem('neonpro_pending_actions', JSON.stringify(actions));
       }, offlineActions);
 
@@ -780,7 +789,7 @@ describe('Performance Targets Tests (T030)', () => {
       await page.waitForLoadState('networkidle');
 
       // Mock performance metrics API
-      await page.route('/api/v2/admin/performance/metrics*', async (route) => {
+      await page.route('/api/v2/admin/performance/metrics*', async route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -817,14 +826,14 @@ describe('Performance Targets Tests (T030)', () => {
       // Verify metrics meet thresholds
       const lcpMetric = await page.locator('[data-testid="lcp-metric"]').textContent();
       const inpMetric = await page.locator('[data-testid="inp-metric"]').textContent();
-      
+
       expect(lcpMetric).toContain('2100'); // Should show actual metric
       expect(inpMetric).toContain('150');
 
       // Check performance alerts
       const performanceAlerts = page.locator('[data-testid="performance-alert"]');
       const alertCount = await performanceAlerts.count();
-      
+
       // Should have alerts for any metrics exceeding thresholds
       if (alertCount > 0) {
         await expect(performanceAlerts.first()).toBeVisible();
@@ -850,7 +859,7 @@ describe('Performance Targets Tests (T030)', () => {
       for (const [metric, threshold] of Object.entries(budgets)) {
         const budgetElement = page.locator(`[data-testid="budget-${metric}"]`);
         await expect(budgetElement).toBeVisible();
-        
+
         const budgetValue = await budgetElement.textContent();
         expect(budgetValue).toContain(threshold.toString());
       }
@@ -885,7 +894,11 @@ class PerformanceTestUtils {
     return Date.now() - startTime;
   }
 
-  static async measureSearchResponse(page: Page, searchSelector: string, query: string): Promise<number> {
+  static async measureSearchResponse(
+    page: Page,
+    searchSelector: string,
+    query: string,
+  ): Promise<number> {
     const startTime = Date.now();
     await page.fill(searchSelector, query);
     await page.press(searchSelector, 'Enter');
@@ -895,9 +908,11 @@ class PerformanceTestUtils {
 
   static validateThreshold(actualTime: number, threshold: number, operation: string): void {
     if (actualTime > threshold) {
-      throw new Error(`Performance threshold exceeded for ${operation}: ${actualTime}ms > ${threshold}ms`);
+      throw new Error(
+        `Performance threshold exceeded for ${operation}: ${actualTime}ms > ${threshold}ms`,
+      );
     }
   }
 }
 
-export { PerformanceTestUtils, PERFORMANCE_THRESHOLDS };
+export { PERFORMANCE_THRESHOLDS, PerformanceTestUtils };

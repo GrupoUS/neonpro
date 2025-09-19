@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/patients (T012)
- * 
+ *
  * Tests patient creation endpoint contract:
  * - Request/response schema validation
  * - Brazilian data validation (CPF, phone, CEP)
@@ -9,10 +9,10 @@
  * - Performance requirements (<500ms)
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Request schema validation
 const CreatePatientRequestSchema = z.object({
@@ -86,7 +86,7 @@ const CreatePatientResponseSchema = z.object({
 
 describe('POST /api/v2/patients - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -139,7 +139,7 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       // Validate response schema
       const validatedData = CreatePatientResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Validate specific fields
       expect(response.body.name).toBe(validPatientData.name);
       expect(response.body.cpf).toBe(validPatientData.cpf);
@@ -290,7 +290,9 @@ describe('POST /api/v2/patients - Contract Tests', () => {
         .send(validPatientData)
         .expect(201);
 
-      expect(response.body.lgpdConsent.consentId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+      expect(response.body.lgpdConsent.consentId).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
     });
   });
 
@@ -350,7 +352,7 @@ describe('POST /api/v2/patients - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should create patient within 500ms', async () => {
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .post('/api/v2/patients')
         .set(testAuthHeaders)
@@ -363,7 +365,7 @@ describe('POST /api/v2/patients - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });

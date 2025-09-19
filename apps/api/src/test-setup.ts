@@ -250,8 +250,7 @@ vi.mock('./lib/openapi-generator', async () => {
       new Response(
         '<!doctype html><html><head><meta charset="utf-8"><title>NeonPro API Docs</title></head><body><h1>NeonPro API Documentation</h1></body></html>',
         { headers: { 'content-type': 'text/html' } },
-      ),
-    );
+      ));
 
     // Provide healthcare-specific examples
     app.get('/api/docs/examples', (c: any) =>
@@ -267,8 +266,7 @@ vi.mock('./lib/openapi-generator', async () => {
           audit_logging: 'enabled',
           consent_required: true,
         },
-      }),
-    );
+      }));
 
     // Provide compliance summary endpoint
     app.get('/api/docs/compliance', (c: any) =>
@@ -290,8 +288,7 @@ vi.mock('./lib/openapi-generator', async () => {
             },
           },
         ],
-      }),
-    );
+      }));
 
     return app;
   });

@@ -1,55 +1,55 @@
 'use client';
 
+import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
+import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
-import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
-import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
 import { useToast } from '@/hooks/use-toast';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
-import { format, isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
+import { format, isThisMonth, isThisWeek, isToday, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
+  Activity,
+  AlertCircle,
   AlertTriangle,
   ArrowLeft,
   Brain,
   Calendar,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
   Download,
   Edit,
+  Eye,
+  EyeOff,
   FileText,
+  Filter,
   Heart,
   Mail,
   MapPin,
+  MessageCircle,
+  MoreVertical,
   Phone,
+  Pill,
+  Printer,
   Share2,
+  Shield,
+  Stethoscope,
   TrendingUp,
   User,
-  Shield,
-  Clock,
-  Activity,
-  Stethoscope,
-  Pill,
-  AlertCircle,
-  CheckCircle,
   UserPlus,
   Video,
-  MessageCircle,
-  Printer,
-  MoreVertical,
-  Filter,
-  ChevronDown,
-  ChevronRight,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/patients/id')({
   component: PatientDetailPage,
@@ -313,7 +313,8 @@ const generateMockAIInsights = (patientId: string): AIInsight[] => [
     id: '1',
     type: 'treatment_recommendation',
     title: 'Otimização de medicação',
-    description: 'Baseado nos padrões de resposta, sugere-se ajuste na dosagem de Losartana para melhor controle pressórico',
+    description:
+      'Baseado nos padrões de resposta, sugere-se ajuste na dosagem de Losartana para melhor controle pressórico',
     confidence: 0.85,
     priority: 'medium',
     actionable: true,
@@ -325,7 +326,8 @@ const generateMockAIInsights = (patientId: string): AIInsight[] => [
     id: '2',
     type: 'lifestyle_suggestion',
     title: 'Recomendação de atividade física',
-    description: 'Paciente se beneficiaria de caminhadas diárias de 30 minutos para melhorar controle cardiovascular',
+    description:
+      'Paciente se beneficiaria de caminhadas diárias de 30 minutos para melhorar controle cardiovascular',
     confidence: 0.92,
     priority: 'medium',
     actionable: true,
@@ -349,11 +351,11 @@ const getAge = (birthDate: string): number => {
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
     age--;
   }
-  
+
   return age;
 };
 
@@ -371,19 +373,27 @@ const getRiskLabel = (riskScore: number) => {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'active': return 'text-green-600 bg-green-50 border-green-200';
-    case 'inactive': return 'text-gray-600 bg-gray-50 border-gray-200';
-    case 'pending': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    case 'active':
+      return 'text-green-600 bg-green-50 border-green-200';
+    case 'inactive':
+      return 'text-gray-600 bg-gray-50 border-gray-200';
+    case 'pending':
+      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    default:
+      return 'text-gray-600 bg-gray-50 border-gray-200';
   }
 };
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case 'active': return 'Ativo';
-    case 'inactive': return 'Inativo';
-    case 'pending': return 'Pendente';
-    default: return status;
+    case 'active':
+      return 'Ativo';
+    case 'inactive':
+      return 'Inativo';
+    case 'pending':
+      return 'Pendente';
+    default:
+      return status;
   }
 };
 
@@ -391,7 +401,7 @@ function PatientDetailPage() {
   const { patientId } = useParams({ from: '/patients/$patientId' });
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [patient, setPatient] = useState<Patient | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
@@ -403,7 +413,7 @@ function PatientDetailPage() {
   // Initialize mock data
   useEffect(() => {
     setLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       if (patientId) {
@@ -450,7 +460,7 @@ function PatientDetailPage() {
               <Skeleton className='h-4 w-32' />
             </div>
           </div>
-          
+
           {/* Content skeleton */}
           <div className='grid gap-6 grid-cols-1 lg:grid-cols-3'>
             <div className='lg:col-span-1 space-y-4'>
@@ -514,7 +524,7 @@ function PatientDetailPage() {
             >
               <ArrowLeft className='h-4 w-4' />
             </Button>
-            
+
             <div>
               <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-gray-900'>
                 {patient.name}
@@ -524,7 +534,7 @@ function PatientDetailPage() {
               </p>
             </div>
           </div>
-          
+
           {/* Status and Risk */}
           <div className='flex flex-wrap items-center gap-2'>
             <Badge className={getStatusColor(patient.status)}>
@@ -547,7 +557,7 @@ function PatientDetailPage() {
             <Edit className='h-4 w-4 mr-2' />
             Editar
           </UniversalButton>
-          
+
           <UniversalButton
             variant='primary'
             onClick={handleScheduleAppointment}
@@ -557,7 +567,7 @@ function PatientDetailPage() {
             <Calendar className='h-4 w-4 mr-2' />
             Agendar Consulta
           </UniversalButton>
-          
+
           <UniversalButton
             variant='outline'
             onClick={handleExportData}
@@ -567,7 +577,7 @@ function PatientDetailPage() {
             <Download className='h-4 w-4 mr-2' />
             Exportar Dados
           </UniversalButton>
-          
+
           <Button
             variant='outline'
             size='sm'
@@ -575,7 +585,9 @@ function PatientDetailPage() {
             className='h-11 sm:h-10 text-base sm:text-sm font-medium'
             aria-label={showSensitiveData ? 'Ocultar dados sensíveis' : 'Mostrar dados sensíveis'}
           >
-            {showSensitiveData ? <EyeOff className='h-4 w-4 mr-2' /> : <Eye className='h-4 w-4 mr-2' />}
+            {showSensitiveData
+              ? <EyeOff className='h-4 w-4 mr-2' />
+              : <Eye className='h-4 w-4 mr-2' />}
             {showSensitiveData ? 'Ocultar Dados' : 'Mostrar Dados'}
           </Button>
         </div>
@@ -602,7 +614,11 @@ function PatientDetailPage() {
                 <div className='flex justify-between text-sm'>
                   <span className='text-muted-foreground'>Gênero:</span>
                   <span className='font-medium'>
-                    {patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Feminino' : 'Outro'}
+                    {patient.gender === 'M'
+                      ? 'Masculino'
+                      : patient.gender === 'F'
+                      ? 'Feminino'
+                      : 'Outro'}
                   </span>
                 </div>
                 <div className='flex justify-between text-sm'>
@@ -661,7 +677,8 @@ function PatientDetailPage() {
                       {patient.address.complement && ` - ${patient.address.complement}`}
                     </div>
                     <div className='text-sm text-muted-foreground'>
-                      {patient.address.neighborhood}, {patient.address.city} - {patient.address.state}
+                      {patient.address.neighborhood}, {patient.address.city} -{' '}
+                      {patient.address.state}
                     </div>
                     <div className='text-sm text-muted-foreground font-mono'>
                       {patient.address.zipCode}
@@ -725,13 +742,17 @@ function PatientDetailPage() {
                 <div className='flex justify-between text-sm'>
                   <span className='text-muted-foreground'>Cartão:</span>
                   <span className='font-medium font-mono'>
-                    {showSensitiveData ? maskCardNumber(patient.healthInsurance.cardNumber) : '**** **** **** ****'}
+                    {showSensitiveData
+                      ? maskCardNumber(patient.healthInsurance.cardNumber)
+                      : '**** **** **** ****'}
                   </span>
                 </div>
                 <div className='flex justify-between text-sm'>
                   <span className='text-muted-foreground'>Validade:</span>
                   <span className='font-medium'>
-                    {format(new Date(patient.healthInsurance.validity), 'dd/MM/yyyy', { locale: ptBR })}
+                    {format(new Date(patient.healthInsurance.validity), 'dd/MM/yyyy', {
+                      locale: ptBR,
+                    })}
                   </span>
                 </div>
               </div>
@@ -779,7 +800,7 @@ function PatientDetailPage() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className='font-medium text-sm mb-2'>Alergias</h4>
                       <div className='space-y-1'>
@@ -796,7 +817,10 @@ function PatientDetailPage() {
                     <h4 className='font-medium text-sm mb-2'>Medicações Atuais</h4>
                     <div className='space-y-2'>
                       {patient.medications.map((medication, index) => (
-                        <div key={index} className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'>
+                        <div
+                          key={index}
+                          className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'
+                        >
                           <div>
                             <span className='font-medium'>{medication.name}</span>
                             <span className='text-muted-foreground ml-2'>
@@ -825,7 +849,9 @@ function PatientDetailPage() {
                       <div className='space-y-2'>
                         <div className='text-sm text-muted-foreground'>Data e Hora</div>
                         <div className='font-medium'>
-                          {format(new Date(patient.nextAppointment.date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                          {format(new Date(patient.nextAppointment.date), 'dd/MM/yyyy HH:mm', {
+                            locale: ptBR,
+                          })}
                         </div>
                       </div>
                       <div className='space-y-2'>
@@ -837,7 +863,7 @@ function PatientDetailPage() {
                         <div className='font-medium'>{patient.nextAppointment.doctor}</div>
                       </div>
                     </div>
-                    
+
                     <div className='flex gap-2'>
                       <Button variant='outline' size='sm'>
                         <Video className='h-4 w-4 mr-2' />
@@ -865,16 +891,22 @@ function PatientDetailPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className='space-y-4'>
-                    {aiInsights.slice(0, 2).map((insight) => (
+                    {aiInsights.slice(0, 2).map(insight => (
                       <div key={insight.id} className='p-3 border rounded-lg'>
                         <div className='flex items-center justify-between mb-2'>
                           <h4 className='font-medium text-sm'>{insight.title}</h4>
-                          <Badge variant={
-                            insight.priority === 'high' ? 'destructive' :
-                            insight.priority === 'medium' ? 'warning' : 'default'
-                          }>
-                            {insight.priority === 'high' ? 'Alto' :
-                             insight.priority === 'medium' ? 'Médio' : 'Baixo'}
+                          <Badge
+                            variant={insight.priority === 'high'
+                              ? 'destructive'
+                              : insight.priority === 'medium'
+                              ? 'warning'
+                              : 'default'}
+                          >
+                            {insight.priority === 'high'
+                              ? 'Alto'
+                              : insight.priority === 'medium'
+                              ? 'Médio'
+                              : 'Baixo'}
                           </Badge>
                         </div>
                         <p className='text-sm text-muted-foreground mb-2'>
@@ -921,82 +953,101 @@ function PatientDetailPage() {
                   </div>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  {appointments.length === 0 ? (
-                    <div className='text-center py-8'>
-                      <Calendar className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-                      <h3 className='text-lg font-medium mb-2'>Nenhuma consulta agendada</h3>
-                      <p className='text-muted-foreground mb-4'>
-                        Agende a primeira consulta para este paciente.
-                      </p>
-                      <Button onClick={handleScheduleAppointment}>
-                        Agendar Consulta
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className='space-y-3'>
-                      {appointments.map((appointment) => (
-                        <div key={appointment.id} className='p-4 border rounded-lg'>
-                          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-                            <div className='space-y-1'>
-                              <div className='flex items-center gap-2'>
-                                <h4 className='font-medium'>{appointment.type}</h4>
-                                <Badge variant={
-                                  appointment.status === 'completed' ? 'default' :
-                                  appointment.status === 'scheduled' ? 'secondary' :
-                                  appointment.status === 'no-show' ? 'destructive' :
-                                  appointment.status === 'cancelled' ? 'outline' : 'default'
-                                }>
-                                  {appointment.status === 'completed' ? 'Concluída' :
-                                   appointment.status === 'scheduled' ? 'Agendada' :
-                                   appointment.status === 'no-show' ? 'Não compareceu' :
-                                   appointment.status === 'cancelled' ? 'Cancelada' : 'Em andamento'}
-                                </Badge>
+                  {appointments.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <Calendar className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>Nenhuma consulta agendada</h3>
+                        <p className='text-muted-foreground mb-4'>
+                          Agende a primeira consulta para este paciente.
+                        </p>
+                        <Button onClick={handleScheduleAppointment}>
+                          Agendar Consulta
+                        </Button>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-3'>
+                        {appointments.map(appointment => (
+                          <div key={appointment.id} className='p-4 border rounded-lg'>
+                            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                              <div className='space-y-1'>
+                                <div className='flex items-center gap-2'>
+                                  <h4 className='font-medium'>{appointment.type}</h4>
+                                  <Badge
+                                    variant={appointment.status === 'completed'
+                                      ? 'default'
+                                      : appointment.status === 'scheduled'
+                                      ? 'secondary'
+                                      : appointment.status === 'no-show'
+                                      ? 'destructive'
+                                      : appointment.status === 'cancelled'
+                                      ? 'outline'
+                                      : 'default'}
+                                  >
+                                    {appointment.status === 'completed'
+                                      ? 'Concluída'
+                                      : appointment.status === 'scheduled'
+                                      ? 'Agendada'
+                                      : appointment.status === 'no-show'
+                                      ? 'Não compareceu'
+                                      : appointment.status === 'cancelled'
+                                      ? 'Cancelada'
+                                      : 'Em andamento'}
+                                  </Badge>
+                                </div>
+                                <div className='text-sm text-muted-foreground'>
+                                  {format(new Date(appointment.date), 'dd/MM/yyyy HH:mm', {
+                                    locale: ptBR,
+                                  })} • {appointment.duration} min
+                                </div>
+                                <div className='text-sm'>
+                                  <span className='text-muted-foreground'>Médico:</span>{' '}
+                                  {appointment.doctor} • {appointment.specialty}
+                                </div>
                               </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {format(new Date(appointment.date), 'dd/MM/yyyy HH:mm', { locale: ptBR })} • {appointment.duration} min
-                              </div>
-                              <div className='text-sm'>
-                                <span className='text-muted-foreground'>Médico:</span> {appointment.doctor} • {appointment.specialty}
+
+                              <div className='flex gap-2'>
+                                {appointment.status === 'scheduled' && (
+                                  <>
+                                    <Button variant='outline' size='sm'>
+                                      <Video className='h-4 w-4 mr-1' />
+                                      Teleconsulta
+                                    </Button>
+                                    <Button variant='outline' size='sm'>
+                                      <MessageCircle className='h-4 w-4 mr-1' />
+                                      Mensagem
+                                    </Button>
+                                  </>
+                                )}
+                                <Button variant='outline' size='sm'>
+                                  <MoreVertical className='h-4 w-4' />
+                                </Button>
                               </div>
                             </div>
-                            
-                            <div className='flex gap-2'>
-                              {appointment.status === 'scheduled' && (
-                                <>
-                                  <Button variant='outline' size='sm'>
-                                    <Video className='h-4 w-4 mr-1' />
-                                    Teleconsulta
-                                  </Button>
-                                  <Button variant='outline' size='sm'>
-                                    <MessageCircle className='h-4 w-4 mr-1' />
-                                    Mensagem
-                                  </Button>
-                                </>
-                              )}
-                              <Button variant='outline' size='sm'>
-                                <MoreVertical className='h-4 w-4' />
-                              </Button>
-                            </div>
+
+                            {appointment.aiPrediction && (
+                              <div className='mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm'>
+                                <div className='flex items-center gap-2'>
+                                  <Brain className='h-4 w-4 text-yellow-600' />
+                                  <span className='font-medium'>
+                                    Previsão de não comparecimento:
+                                  </span>
+                                  <span className='text-yellow-700'>
+                                    {(appointment.aiPrediction.noShowRisk * 100).toFixed(0)}% de
+                                    risco
+                                  </span>
+                                </div>
+                                <div className='text-xs text-yellow-600 mt-1'>
+                                  Confiança:{' '}
+                                  {(appointment.aiPrediction.confidence * 100).toFixed(0)}%
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          
-                          {appointment.aiPrediction && (
-                            <div className='mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm'>
-                              <div className='flex items-center gap-2'>
-                                <Brain className='h-4 w-4 text-yellow-600' />
-                                <span className='font-medium'>Previsão de não comparecimento:</span>
-                                <span className='text-yellow-700'>
-                                  {(appointment.aiPrediction.noShowRisk * 100).toFixed(0)}% de risco
-                                </span>
-                              </div>
-                              <div className='text-xs text-yellow-600 mt-1'>
-                                Confiança: {(appointment.aiPrediction.confidence * 100).toFixed(0)}%
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1009,92 +1060,106 @@ function PatientDetailPage() {
                   <CardDescription>Registros de consultas, exames e procedimentos</CardDescription>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  {medicalRecords.length === 0 ? (
-                    <div className='text-center py-8'>
-                      <FileText className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-                      <h3 className='text-lg font-medium mb-2'>Nenhum registro médico</h3>
-                      <p className='text-muted-foreground'>
-                        Nenhum registro médico encontrado para este paciente.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className='space-y-4'>
-                      {medicalRecords.map((record) => (
-                        <div key={record.id} className='p-4 border rounded-lg'>
-                          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3'>
-                            <div>
-                              <div className='flex items-center gap-2'>
-                                <h4 className='font-medium'>{record.type}</h4>
-                                <Badge variant='outline'>
-                                  {format(new Date(record.date), 'dd/MM/yyyy', { locale: ptBR })}
-                                </Badge>
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {record.doctor} • {record.specialty}
-                              </div>
-                            </div>
-                            <Button variant='outline' size='sm'>
-                              <Printer className='h-4 w-4 mr-2' />
-                              Imprimir
-                            </Button>
-                          </div>
-                          
-                          <div className='space-y-3'>
-                            <div>
-                              <div className='text-sm font-medium mb-1'>Diagnóstico</div>
-                              <div className='text-sm text-muted-foreground'>{record.diagnosis}</div>
-                            </div>
-                            
-                            {record.prescription.length > 0 && (
+                  {medicalRecords.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <FileText className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>Nenhum registro médico</h3>
+                        <p className='text-muted-foreground'>
+                          Nenhum registro médico encontrado para este paciente.
+                        </p>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-4'>
+                        {medicalRecords.map(record => (
+                          <div key={record.id} className='p-4 border rounded-lg'>
+                            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3'>
                               <div>
-                                <div className='text-sm font-medium mb-1'>Prescrição</div>
-                                <div className='space-y-1'>
-                                  {record.prescription.map((presc, index) => (
-                                    <div key={index} className='text-sm text-muted-foreground'>
-                                      • {presc.medication} {presc.dosage} - {presc.duration}
-                                    </div>
-                                  ))}
+                                <div className='flex items-center gap-2'>
+                                  <h4 className='font-medium'>{record.type}</h4>
+                                  <Badge variant='outline'>
+                                    {format(new Date(record.date), 'dd/MM/yyyy', { locale: ptBR })}
+                                  </Badge>
+                                </div>
+                                <div className='text-sm text-muted-foreground'>
+                                  {record.doctor} • {record.specialty}
                                 </div>
                               </div>
-                            )}
-                            
-                            {record.vitalSigns && (
+                              <Button variant='outline' size='sm'>
+                                <Printer className='h-4 w-4 mr-2' />
+                                Imprimir
+                              </Button>
+                            </div>
+
+                            <div className='space-y-3'>
                               <div>
-                                <div className='text-sm font-medium mb-1'>Sinais Vitais</div>
-                                <div className='grid gap-2 grid-cols-2 sm:grid-cols-4 text-sm'>
-                                  <div>
-                                    <span className='text-muted-foreground'>PA:</span>
-                                    <span className='ml-1 font-medium'>{record.vitalSigns.bloodPressure}</span>
+                                <div className='text-sm font-medium mb-1'>Diagnóstico</div>
+                                <div className='text-sm text-muted-foreground'>
+                                  {record.diagnosis}
+                                </div>
+                              </div>
+
+                              {record.prescription.length > 0 && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>Prescrição</div>
+                                  <div className='space-y-1'>
+                                    {record.prescription.map((presc, index) => (
+                                      <div key={index} className='text-sm text-muted-foreground'>
+                                        • {presc.medication} {presc.dosage} - {presc.duration}
+                                      </div>
+                                    ))}
                                   </div>
-                                  <div>
-                                    <span className='text-muted-foreground'>FC:</span>
-                                    <span className='ml-1 font-medium'>{record.vitalSigns.heartRate} bpm</span>
-                                  </div>
-                                  <div>
-                                    <span className='text-muted-foreground'>Temp:</span>
-                                    <span className='ml-1 font-medium'>{record.vitalSigns.temperature}°C</span>
-                                  </div>
-                                  {record.vitalSigns.weight && (
+                                </div>
+                              )}
+
+                              {record.vitalSigns && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>Sinais Vitais</div>
+                                  <div className='grid gap-2 grid-cols-2 sm:grid-cols-4 text-sm'>
                                     <div>
-                                      <span className='text-muted-foreground'>Peso:</span>
-                                      <span className='ml-1 font-medium'>{record.vitalSigns.weight} kg</span>
+                                      <span className='text-muted-foreground'>PA:</span>
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.bloodPressure}
+                                      </span>
                                     </div>
-                                  )}
+                                    <div>
+                                      <span className='text-muted-foreground'>FC:</span>
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.heartRate} bpm
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className='text-muted-foreground'>Temp:</span>
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.temperature}°C
+                                      </span>
+                                    </div>
+                                    {record.vitalSigns.weight && (
+                                      <div>
+                                        <span className='text-muted-foreground'>Peso:</span>
+                                        <span className='ml-1 font-medium'>
+                                          {record.vitalSigns.weight} kg
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                            
-                            {record.notes && (
-                              <div>
-                                <div className='text-sm font-medium mb-1'>Observações</div>
-                                <div className='text-sm text-muted-foreground'>{record.notes}</div>
-                              </div>
-                            )}
+                              )}
+
+                              {record.notes && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>Observações</div>
+                                  <div className='text-sm text-muted-foreground'>
+                                    {record.notes}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1112,60 +1177,74 @@ function PatientDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  {aiInsights.length === 0 ? (
-                    <div className='text-center py-8'>
-                      <Brain className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-                      <h3 className='text-lg font-medium mb-2'>Nenhum insight disponível</h3>
-                      <p className='text-muted-foreground'>
-                        Os insights de IA serão gerados conforme mais dados forem coletados.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className='space-y-4'>
-                      {aiInsights.map((insight) => (
-                        <div key={insight.id} className='p-4 border rounded-lg'>
-                          <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3'>
-                            <div className='flex-1'>
-                              <div className='flex items-center gap-2 mb-2'>
-                                <h4 className='font-medium'>{insight.title}</h4>
-                                <Badge variant={
-                                  insight.priority === 'critical' ? 'destructive' :
-                                  insight.priority === 'high' ? 'destructive' :
-                                  insight.priority === 'medium' ? 'warning' : 'default'
-                                }>
-                                  {insight.priority === 'critical' ? 'Crítico' :
-                                   insight.priority === 'high' ? 'Alto' :
-                                   insight.priority === 'medium' ? 'Médio' : 'Baixo'}
-                                </Badge>
-                                <Badge variant='outline'>
-                                  {insight.category === 'health' ? 'Saúde' :
-                                   insight.category === 'treatment' ? 'Tratamento' :
-                                   insight.category === 'prevention' ? 'Prevenção' : 'Administrativo'}
-                                </Badge>
+                  {aiInsights.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <Brain className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>Nenhum insight disponível</h3>
+                        <p className='text-muted-foreground'>
+                          Os insights de IA serão gerados conforme mais dados forem coletados.
+                        </p>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-4'>
+                        {aiInsights.map(insight => (
+                          <div key={insight.id} className='p-4 border rounded-lg'>
+                            <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3'>
+                              <div className='flex-1'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                  <h4 className='font-medium'>{insight.title}</h4>
+                                  <Badge
+                                    variant={insight.priority === 'critical'
+                                      ? 'destructive'
+                                      : insight.priority === 'high'
+                                      ? 'destructive'
+                                      : insight.priority === 'medium'
+                                      ? 'warning'
+                                      : 'default'}
+                                  >
+                                    {insight.priority === 'critical'
+                                      ? 'Crítico'
+                                      : insight.priority === 'high'
+                                      ? 'Alto'
+                                      : insight.priority === 'medium'
+                                      ? 'Médio'
+                                      : 'Baixo'}
+                                  </Badge>
+                                  <Badge variant='outline'>
+                                    {insight.category === 'health'
+                                      ? 'Saúde'
+                                      : insight.category === 'treatment'
+                                      ? 'Tratamento'
+                                      : insight.category === 'prevention'
+                                      ? 'Prevenção'
+                                      : 'Administrativo'}
+                                  </Badge>
+                                </div>
+                                <p className='text-sm text-muted-foreground mb-2'>
+                                  {insight.description}
+                                </p>
+                                <div className='text-xs text-muted-foreground'>
+                                  Confiança: {(insight.confidence * 100).toFixed(0)}% •
+                                  {format(insight.timestamp, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                                </div>
                               </div>
-                              <p className='text-sm text-muted-foreground mb-2'>
-                                {insight.description}
-                              </p>
-                              <div className='text-xs text-muted-foreground'>
-                                Confiança: {(insight.confidence * 100).toFixed(0)}% • 
-                                {format(insight.timestamp, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                              </div>
+
+                              {insight.actionable && (
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() => handleAIInsightAction(insight)}
+                                >
+                                  {insight.actionLabel}
+                                </Button>
+                              )}
                             </div>
-                            
-                            {insight.actionable && (
-                              <Button
-                                variant='outline'
-                                size='sm'
-                                onClick={() => handleAIInsightAction(insight)}
-                              >
-                                {insight.actionLabel}
-                              </Button>
-                            )}
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1189,7 +1268,7 @@ function PatientDetailPage() {
                   </p>
                 </div>
               </div>
-              
+
               <div className='flex items-center gap-2'>
                 <Badge variant='outline' className='text-xs'>
                   Consentimento: {patient.lgpdConsent.dataProcessing ? 'Sim' : 'Não'}

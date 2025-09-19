@@ -153,7 +153,7 @@ export class PatientDocumentService {
           sizeBytes: size,
           checksum: checksum_sha256,
         },
-      }).catch((_error) => {/* swallow audit errors */});
+      }).catch(_error => {/* swallow audit errors */});
     }
 
     return { success: true, data: dto };

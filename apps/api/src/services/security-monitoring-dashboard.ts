@@ -131,7 +131,7 @@ export class SecurityMonitoringDashboardService {
     endDate: Date,
   ): Promise<SecurityMetrics> {
     const cacheKey = `metrics_${clinicId || 'all'}_${startDate.getTime()}`;
-    
+
     // Check cache first
     const cached = this.metricsCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval) {
@@ -159,8 +159,10 @@ export class SecurityMonitoringDashboardService {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
         deniedRequests: data?.filter(log => !log.access_granted).length || 0,
-        securityScore: data?.reduce((acc, log) => acc + log.security_score, 0) / (data?.length || 1) || 0,
-        threatLevel: data?.reduce((acc, log) => acc + log.threat_level, 0) / (data?.length || 1) || 0,
+        securityScore: data?.reduce((acc, log) => acc + log.security_score, 0) / (data?.length || 1)
+          || 0,
+        threatLevel: data?.reduce((acc, log) => acc + log.threat_level, 0) / (data?.length || 1)
+          || 0,
         alerts: data?.filter(log => log.threat_level > 50).map(log => ({
           type: 'THREAT_DETECTED' as const,
           severity: log.threat_level > 75 ? 'HIGH' : 'MEDIUM' as const,
@@ -228,7 +230,7 @@ export class SecurityMonitoringDashboardService {
       const { data } = await query;
 
       const alerts = data || [];
-      
+
       return {
         critical: alerts.filter(alert => alert.severity === 'CRITICAL'),
         high: alerts.filter(alert => alert.severity === 'HIGH'),
@@ -269,10 +271,11 @@ export class SecurityMonitoringDashboardService {
 
       // Analyze by role
       const byRole: Record<string, { requests: number; denied: number; score: number }> = {};
-      
+
       // Analyze by endpoint
-      const byEndpoint: Record<string, { requests: number; denied: number; avgThreat: number }> = {};
-      
+      const byEndpoint: Record<string, { requests: number; denied: number; avgThreat: number }> =
+        {};
+
       // Analyze by time
       const byTime: Array<{ hour: number; requests: number; threats: number }> = Array(24)
         .fill(0)
@@ -338,12 +341,13 @@ export class SecurityMonitoringDashboardService {
   }> {
     try {
       // Check various compliance aspects
-      const [auditRetention, encryptionStatus, accessControlStatus, incidentStatus] = await Promise.all([
-        this.checkAuditLogRetention(),
-        this.checkDataEncryption(),
-        this.checkAccessControls(),
-        this.checkIncidentResponse(),
-      ]);
+      const [auditRetention, encryptionStatus, accessControlStatus, incidentStatus] = await Promise
+        .all([
+          this.checkAuditLogRetention(),
+          this.checkDataEncryption(),
+          this.checkAccessControls(),
+          this.checkIncidentResponse(),
+        ]);
 
       return {
         lgpdCompliant: auditRetention && encryptionStatus && accessControlStatus,
@@ -466,7 +470,8 @@ export class SecurityMonitoringDashboardService {
       report.summary.totalRequests = logs.length;
       report.summary.deniedRequests = logs.filter(log => !log.access_granted).length;
       report.summary.securityIncidents = logs.filter(log => log.threat_level > 70).length;
-      report.summary.avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0) / logs.length;
+      report.summary.avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0)
+        / logs.length;
       report.summary.maxThreatLevel = Math.max(...logs.map(log => log.threat_level));
 
       // Analyze threats
@@ -508,7 +513,7 @@ export class SecurityMonitoringDashboardService {
    */
   private cleanupMetricsCache(): void {
     const cutoff = Date.now() - (5 * 60 * 1000); // 5 minutes ago
-    
+
     for (const [key, metrics] of this.metricsCache.entries()) {
       if (metrics.timestamp.getTime() < cutoff) {
         this.metricsCache.delete(key);
@@ -530,11 +535,11 @@ export class SecurityMonitoringDashboardService {
           schema: 'public',
           table: 'security_alerts',
         },
-        (payload) => {
+        payload => {
           console.log('🚨 Real-time security alert:', payload);
           // Trigger real-time notifications
           this.handleRealTimeAlert(payload.new);
-        }
+        },
       )
       .subscribe();
   }
@@ -546,7 +551,7 @@ export class SecurityMonitoringDashboardService {
     try {
       // Send to notification system
       await this.sendSecurityNotification(alert);
-      
+
       // Update dashboard metrics cache
       this.invalidateMetricsCache(alert.clinic_id);
     } catch (error) {
@@ -567,7 +572,7 @@ export class SecurityMonitoringDashboardService {
    */
   private invalidateMetricsCache(clinicId?: string): void {
     const prefix = `metrics_${clinicId || 'all'}_`;
-    
+
     for (const key of this.metricsCache.keys()) {
       if (key.startsWith(prefix)) {
         this.metricsCache.delete(key);
@@ -579,7 +584,7 @@ export class SecurityMonitoringDashboardService {
 
   private getTopThreatTypes(logs: any[]): string[] {
     const threatTypes: Record<string, number> = {};
-    
+
     logs.forEach(log => {
       if (log.threat_level > 50) {
         const type = log.reason || 'Unknown threat';
@@ -588,7 +593,7 @@ export class SecurityMonitoringDashboardService {
     });
 
     return Object.entries(threatTypes)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([type]) => type);
   }
@@ -600,7 +605,7 @@ export class SecurityMonitoringDashboardService {
         .from('rls_security_audit_logs')
         .select('*', { count: 'exact', head: true })
         .gte('timestamp', thirtyDaysAgo.toISOString());
-      
+
       return count !== null;
     } catch {
       return false;
@@ -615,7 +620,7 @@ export class SecurityMonitoringDashboardService {
         .select('value')
         .eq('key', 'data_encryption_enabled')
         .single();
-      
+
       return data?.value === 'true';
     } catch {
       return false;
@@ -629,7 +634,7 @@ export class SecurityMonitoringDashboardService {
         .from('rls_policies')
         .select('active')
         .limit(1);
-      
+
       return data?.length > 0;
     } catch {
       return false;
@@ -644,7 +649,7 @@ export class SecurityMonitoringDashboardService {
         .select('active')
         .eq('active', true)
         .limit(1);
-      
+
       return data?.length > 0;
     } catch {
       return false;
@@ -658,7 +663,7 @@ export class SecurityMonitoringDashboardService {
     description: string;
   }> {
     const threatTypes: Record<string, { count: number; maxThreat: number }> = {};
-    
+
     logs.forEach(log => {
       if (log.threat_level > 30) {
         const type = log.reason || 'Unknown';
@@ -734,7 +739,9 @@ export class SecurityMonitoringDashboardService {
     }
 
     if (highThreatLogs.length > 0) {
-      recommendations.push('Implement additional security controls for high-threat access patterns');
+      recommendations.push(
+        'Implement additional security controls for high-threat access patterns',
+      );
     }
 
     // Check for unusual access times
@@ -795,7 +802,7 @@ export class SecurityMonitoringDashboardService {
   }> {
     const { clinicId, days = 7 } = options;
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-    
+
     try {
       let query = this.supabase
         .from('rls_security_audit_logs')
@@ -810,8 +817,9 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       // Group by date
-      const dateGroups: Record<string, { count: number; totalThreat: number; totalScore: number }> = {};
-      
+      const dateGroups: Record<string, { count: number; totalThreat: number; totalScore: number }> =
+        {};
+
       logs.forEach(log => {
         const date = new Date(log.timestamp).toISOString().split('T')[0];
         if (!dateGroups[date]) {
@@ -851,7 +859,7 @@ export class SecurityMonitoringDashboardService {
   }): Promise<any[]> {
     const { clinicId, limit = 10, hours = 24 } = options;
     const startDate = new Date(Date.now() - hours * 60 * 60 * 1000);
-    
+
     try {
       let query = this.supabase
         .from('rls_security_audit_logs')
@@ -877,4 +885,4 @@ export class SecurityMonitoringDashboardService {
 export const securityMonitoringDashboardService = new SecurityMonitoringDashboardService();
 
 // Export types
-export type { SecurityMetrics, SecurityDashboard, SecurityReport };
+export type { SecurityDashboard, SecurityMetrics, SecurityReport };

@@ -58,13 +58,13 @@ export class PerformanceOptimizer {
 
     // Monitor paint metrics
     this.observePaintMetrics();
-    
+
     // Monitor layout shift
     this.observeLayoutShift();
-    
+
     // Monitor first input delay
     this.observeFirstInputDelay();
-    
+
     // Monitor largest contentful paint
     this.observeLargestContentfulPaint();
 
@@ -77,14 +77,18 @@ export class PerformanceOptimizer {
   measureComponentLoad(componentName: string, startTime: number): number {
     const endTime = performance.now();
     const loadTime = endTime - startTime;
-    
+
     this.metrics.set(`component_${componentName}`, loadTime);
-    
+
     // Log warning if load time exceeds mobile target
     if (loadTime > PERFORMANCE_TARGETS.MOBILE_LOAD_TIME) {
-      console.warn(`⚡ Component ${componentName} load time: ${loadTime.toFixed(2)}ms (target: ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms)`);
+      console.warn(
+        `⚡ Component ${componentName} load time: ${
+          loadTime.toFixed(2)
+        }ms (target: ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms)`,
+      );
     }
-    
+
     return loadTime;
   }
 
@@ -93,7 +97,7 @@ export class PerformanceOptimizer {
    */
   optimizeSearch<T>(
     searchFn: (query: string) => Promise<T>,
-    debounceMs: number = 150
+    debounceMs: number = 150,
   ): (query: string) => Promise<T> {
     let timeoutId: NodeJS.Timeout;
     const cache = new Map<string, { data: T; timestamp: number }>();
@@ -123,9 +127,13 @@ export class PerformanceOptimizer {
 
             // Monitor search performance
             this.metrics.set('search_response_time', responseTime);
-            
+
             if (responseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME) {
-              console.warn(`🔍 Search response time: ${responseTime.toFixed(2)}ms (target: ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms)`);
+              console.warn(
+                `🔍 Search response time: ${
+                  responseTime.toFixed(2)
+                }ms (target: ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms)`,
+              );
             }
 
             resolve(result);
@@ -150,11 +158,11 @@ export class PerformanceOptimizer {
       } as IntersectionObserver;
     }
 
-    return new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+    return new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           const element = entry.target as HTMLElement;
-          
+
           // Load image
           if (element.tagName === 'IMG') {
             const img = element as HTMLImageElement;
@@ -165,13 +173,15 @@ export class PerformanceOptimizer {
               element.classList.remove('lazy');
             }
           }
-          
+
           // Load component
           const lazyComponent = element.dataset.lazyComponent;
           if (lazyComponent) {
-            element.dispatchEvent(new CustomEvent('lazy-load', {
-              detail: { component: lazyComponent }
-            }));
+            element.dispatchEvent(
+              new CustomEvent('lazy-load', {
+                detail: { component: lazyComponent },
+              }),
+            );
           }
         }
       });
@@ -193,24 +203,24 @@ export class PerformanceOptimizer {
       quality?: number;
       format?: 'webp' | 'jpeg' | 'png';
       lazy?: boolean;
-    } = {}
+    } = {},
   ): string {
     const { width, height, quality = 80, format = 'webp', lazy = true } = options;
-    
+
     // Use responsive image service or CDN optimization
     let optimizedSrc = src;
-    
+
     // Add responsive parameters
     const params = new URLSearchParams();
     if (width) params.set('w', width.toString());
     if (height) params.set('h', height.toString());
     params.set('q', quality.toString());
     params.set('f', format);
-    
+
     if (params.toString()) {
       optimizedSrc += (src.includes('?') ? '&' : '?') + params.toString();
     }
-    
+
     return optimizedSrc;
   }
 
@@ -254,7 +264,7 @@ export class PerformanceOptimizer {
     }
 
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    
+
     return {
       loadTime: navigation?.loadEventEnd - navigation?.navigationStart || 0,
       firstContentfulPaint: this.metrics.get('first-contentful-paint') || 0,
@@ -282,15 +292,22 @@ export class PerformanceOptimizer {
     // Check mobile load time
     if (metrics.loadTime > PERFORMANCE_TARGETS.MOBILE_LOAD_TIME) {
       recommendations.push(
-        `Reduce mobile load time from ${metrics.loadTime.toFixed(2)}ms to under ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms`
+        `Reduce mobile load time from ${
+          metrics.loadTime.toFixed(2)
+        }ms to under ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms`,
       );
       score -= 20;
     }
 
     // Check search response time
-    if (metrics.searchResponseTime && metrics.searchResponseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME) {
+    if (
+      metrics.searchResponseTime
+      && metrics.searchResponseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME
+    ) {
       recommendations.push(
-        `Optimize search response time from ${metrics.searchResponseTime.toFixed(2)}ms to under ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms`
+        `Optimize search response time from ${
+          metrics.searchResponseTime.toFixed(2)
+        }ms to under ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms`,
       );
       score -= 15;
     }
@@ -298,7 +315,9 @@ export class PerformanceOptimizer {
     // Check AI response time
     if (metrics.aiResponseTime && metrics.aiResponseTime > PERFORMANCE_TARGETS.AI_INSIGHTS_TIME) {
       recommendations.push(
-        `Optimize AI insights response time from ${metrics.aiResponseTime.toFixed(2)}ms to under ${PERFORMANCE_TARGETS.AI_INSIGHTS_TIME}ms`
+        `Optimize AI insights response time from ${
+          metrics.aiResponseTime.toFixed(2)
+        }ms to under ${PERFORMANCE_TARGETS.AI_INSIGHTS_TIME}ms`,
       );
       score -= 15;
     }
@@ -329,8 +348,8 @@ export class PerformanceOptimizer {
   // Private methods for observers
   private observePaintMetrics(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+      const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
           this.metrics.set(entry.name, entry.startTime);
         });
       });
@@ -343,7 +362,7 @@ export class PerformanceOptimizer {
 
   private observeLayoutShift(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         let clsValue = 0;
         list.getEntries().forEach((entry: any) => {
           if (!entry.hadRecentInput) {
@@ -361,8 +380,8 @@ export class PerformanceOptimizer {
 
   private observeFirstInputDelay(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+      const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
           this.metrics.set('first-input-delay', entry.processingStart - entry.startTime);
         });
       });
@@ -375,7 +394,7 @@ export class PerformanceOptimizer {
 
   private observeLargestContentfulPaint(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.metrics.set('largest-contentful-paint', lastEntry.startTime);
@@ -407,10 +426,10 @@ export function cn(...inputs: ClassValue[]): string {
  */
 export function createResponsiveBreakpoints() {
   return {
-    mobile: '320px',  // Minimum Brazilian smartphone
-    tablet: '768px',  // Brazilian tablet average
+    mobile: '320px', // Minimum Brazilian smartphone
+    tablet: '768px', // Brazilian tablet average
     desktop: '1024px', // Brazilian desktop average
-    wide: '1440px',   // Wide screen support
+    wide: '1440px', // Wide screen support
   };
 }
 
@@ -419,10 +438,10 @@ export function createResponsiveBreakpoints() {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  delay: number = 150
+  delay: number = 150,
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
@@ -434,10 +453,10 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  delay: number = 100
+  delay: number = 100,
 ): (...args: Parameters<T>) => void {
   let lastCall = 0;
-  
+
   return (...args: Parameters<T>) => {
     const now = Date.now();
     if (now - lastCall >= delay) {

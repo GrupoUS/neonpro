@@ -1,25 +1,25 @@
 'use client';
 
 import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
 import {
-  UserPlus,
-  Shield,
-  FileText,
+  AlertTriangle,
+  ArrowLeft,
   CheckCircle,
   Clock,
-  Save,
-  ArrowLeft,
-  Zap,
+  FileText,
   Heart,
+  Save,
+  Shield,
+  UserPlus,
   Users,
-  AlertTriangle,
+  Zap,
 } from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/patients/register')({
   component: PatientRegister,
@@ -50,7 +50,7 @@ function PatientRegister() {
   const handlePatientCreated = (patient: any) => {
     setRecentlyCreated(patient.id);
     setIsWizardOpen(false);
-    
+
     toast({
       title: 'Paciente cadastrado com sucesso!',
       description: `O paciente ${patient.name} foi cadastrado no sistema conforme LGPD.`,
@@ -84,7 +84,7 @@ function PatientRegister() {
       draftSaved: true,
       lastSaved: new Date(),
     }));
-    
+
     toast({
       title: 'Rascunho salvo',
       description: 'As informações foram salvas como rascunho.',
@@ -159,7 +159,7 @@ function PatientRegister() {
               Cadastre novos pacientes com todas as informações necessárias para tratamento
             </p>
           </div>
-          
+
           <Button
             variant='outline'
             onClick={handleBackToDashboard}
@@ -193,33 +193,31 @@ function PatientRegister() {
                 { id: 3, title: 'Documentos', icon: FileText },
                 { id: 4, title: 'Informações Médicas', icon: Heart },
                 { id: 5, title: 'Consentimento LGPD', icon: Shield },
-              ].map((step) => {
+              ].map(step => {
                 const isCompleted = registrationProgress.completedSteps.includes(step.id);
                 const isCurrent = registrationProgress.currentStep === step.id;
                 const isError = registrationProgress.validationErrors.length > 0 && isCurrent;
-                
+
                 return (
                   <div key={step.id} className='text-center'>
                     <div
                       className={cn(
                         'w-12 h-12 mx-auto rounded-full flex items-center justify-center text-sm font-medium transition-all',
-                        isCompleted 
-                          ? 'bg-green-100 text-green-700 border-2 border-green-300' 
+                        isCompleted
+                          ? 'bg-green-100 text-green-700 border-2 border-green-300'
                           : isCurrent
-                            ? isError
-                              ? 'bg-red-100 text-red-700 border-2 border-red-300'
-                              : 'bg-blue-100 text-blue-700 border-2 border-blue-300'
-                            : 'bg-gray-100 text-gray-500 border-2 border-gray-300'
+                          ? isError
+                            ? 'bg-red-100 text-red-700 border-2 border-red-300'
+                            : 'bg-blue-100 text-blue-700 border-2 border-blue-300'
+                          : 'bg-gray-100 text-gray-500 border-2 border-gray-300',
                       )}
                       aria-label={`${step.title} - ${
                         isCompleted ? 'Concluído' : isCurrent ? 'Em andamento' : 'Pendente'
                       }`}
                     >
-                      {isCompleted ? (
-                        <CheckCircle className='h-6 w-6' />
-                      ) : (
-                        <step.icon className='h-6 w-6' />
-                      )}
+                      {isCompleted
+                        ? <CheckCircle className='h-6 w-6' />
+                        : <step.icon className='h-6 w-6' />}
                     </div>
                     <div className='mt-2'>
                       <div className='text-xs sm:text-sm font-medium text-gray-900'>
@@ -242,7 +240,7 @@ function PatientRegister() {
                   Passo atual: {registrationProgress.currentStep}/5
                 </span>
               </div>
-              
+
               {registrationProgress.draftSaved && registrationProgress.lastSaved && (
                 <div className='flex items-center gap-2'>
                   <Save className='h-4 w-4 text-green-600' />
@@ -251,7 +249,7 @@ function PatientRegister() {
                   </span>
                 </div>
               )}
-              
+
               {registrationProgress.validationErrors.length > 0 && (
                 <div className='flex items-center gap-2'>
                   <AlertTriangle className='h-4 w-4 text-red-600' />
@@ -266,83 +264,86 @@ function PatientRegister() {
       )}
 
       {/* Main Content */}
-      {recentlyCreated ? (
-        /* Success State */
-        <Card>
-          <CardHeader className='text-center'>
-            <div className='w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4'>
-              <CheckCircle className='h-8 w-8 text-green-600' />
-            </div>
-            <CardTitle className='text-xl sm:text-2xl text-green-900'>
-              Paciente Cadastrado com Sucesso!
-            </CardTitle>
-            <CardDescription className='text-base'>
-              O paciente foi cadastrado no sistema e já está disponível para agendamento de consultas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='space-y-6'>
-            {/* Compliance Information */}
-            <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
-              <div className='flex items-center gap-2 mb-2'>
-                <Shield className='h-5 w-5 text-green-600' />
-                <span className='font-medium text-green-900'>
-                  Conformidade LGPD Verificada
-                </span>
+      {recentlyCreated
+        ? (
+          /* Success State */
+          <Card>
+            <CardHeader className='text-center'>
+              <div className='w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4'>
+                <CheckCircle className='h-8 w-8 text-green-600' />
               </div>
-              <ul className='text-sm text-green-800 space-y-1'>
-                <li>• Consentimento de processamento de dados obtido</li>
-                <li>• Informações criptografadas e armazenadas com segurança</li>
-                <li>• Audit trail registrado conforme resolução CFM 2.314/2022</li>
-                <li>• Direitos do paciente garantidos e documentados</li>
-              </ul>
-            </div>
+              <CardTitle className='text-xl sm:text-2xl text-green-900'>
+                Paciente Cadastrado com Sucesso!
+              </CardTitle>
+              <CardDescription className='text-base'>
+                O paciente foi cadastrado no sistema e já está disponível para agendamento de
+                consultas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-6'>
+              {/* Compliance Information */}
+              <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <Shield className='h-5 w-5 text-green-600' />
+                  <span className='font-medium text-green-900'>
+                    Conformidade LGPD Verificada
+                  </span>
+                </div>
+                <ul className='text-sm text-green-800 space-y-1'>
+                  <li>• Consentimento de processamento de dados obtido</li>
+                  <li>• Informações criptografadas e armazenadas com segurança</li>
+                  <li>• Audit trail registrado conforme resolução CFM 2.314/2022</li>
+                  <li>• Direitos do paciente garantidos e documentados</li>
+                </ul>
+              </div>
 
-            {/* Action Buttons */}
-            <div className='flex flex-col sm:flex-row gap-3'>
-              <Button
-                variant='default'
-                onClick={handleViewPatient}
-                className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
-                aria-label='Visualizar detalhes do paciente recém-cadastrado'
-              >
-                <Users className='h-4 w-4 mr-2' />
-                Visualizar Paciente
-              </Button>
-              
-              <Button
-                variant='outline'
-                onClick={handleRegisterAnother}
-                className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
-                aria-label='Cadastrar outro paciente'
-              >
-                <UserPlus className='h-4 w-4 mr-2' />
-                Cadastrar Outro
-              </Button>
-              
-              <Button
-                variant='outline'
-                onClick={handleBackToDashboard}
-                className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
-                aria-label='Voltar para o dashboard'
-              >
-                <ArrowLeft className='h-4 w-4 mr-2' />
-                Voltar ao Dashboard
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        /* Registration Wizard */
-        <PatientRegistrationWizard
-          open={isWizardOpen}
-          onOpenChange={setIsWizardOpen}
-          clinicId={clinicId}
-          onPatientCreated={handlePatientCreated}
-          onStepChange={handleStepChange}
-          onDraftSave={handleDraftSave}
-          onValidationError={handleValidationError}
-        />
-      )}
+              {/* Action Buttons */}
+              <div className='flex flex-col sm:flex-row gap-3'>
+                <Button
+                  variant='default'
+                  onClick={handleViewPatient}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Visualizar detalhes do paciente recém-cadastrado'
+                >
+                  <Users className='h-4 w-4 mr-2' />
+                  Visualizar Paciente
+                </Button>
+
+                <Button
+                  variant='outline'
+                  onClick={handleRegisterAnother}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Cadastrar outro paciente'
+                >
+                  <UserPlus className='h-4 w-4 mr-2' />
+                  Cadastrar Outro
+                </Button>
+
+                <Button
+                  variant='outline'
+                  onClick={handleBackToDashboard}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Voltar para o dashboard'
+                >
+                  <ArrowLeft className='h-4 w-4 mr-2' />
+                  Voltar ao Dashboard
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )
+        : (
+          /* Registration Wizard */
+          <PatientRegistrationWizard
+            open={isWizardOpen}
+            onOpenChange={setIsWizardOpen}
+            clinicId={clinicId}
+            onPatientCreated={handlePatientCreated}
+            onStepChange={handleStepChange}
+            onDraftSave={handleDraftSave}
+            onValidationError={handleValidationError}
+          />
+        )}
 
       {/* LGPD Information Footer */}
       <footer className='mt-8 sm:mt-12'>
@@ -360,7 +361,7 @@ function PatientRegister() {
                   </p>
                 </div>
               </div>
-              
+
               <div className='flex items-center gap-2'>
                 <Badge variant='outline' className='text-xs'>
                   Criptografia AES-256

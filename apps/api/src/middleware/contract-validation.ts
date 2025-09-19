@@ -1,7 +1,4 @@
-import {
-  APIContract,
-  HealthcareValidationError,
-} from '@neonpro/shared/models/api-contract';
+import { APIContract, HealthcareValidationError } from '@neonpro/shared/models/api-contract';
 import { Context, Next } from 'hono';
 import type { OpenAPIV3_1 } from '../../types/openapi';
 // Removed unused import: import * as v from 'valibot';

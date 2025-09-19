@@ -128,7 +128,7 @@ export class BulkOperationsService {
       // 4. Validate batch size
       if (request.entityIds.length > config.maxBatchSize) {
         throw new Error(
-          `Batch size ${request.entityIds.length} exceeds maximum ${config.maxBatchSize} for ${request.operationType}`
+          `Batch size ${request.entityIds.length} exceeds maximum ${config.maxBatchSize} for ${request.operationType}`,
         );
       }
 
@@ -160,11 +160,10 @@ export class BulkOperationsService {
 
       result.processingTimeMs = Date.now() - startTime;
       return result;
-
     } catch (error: any) {
       // Log error
       await this.logOperationError(request, error, auditTrailId);
-      
+
       throw new Error(`Bulk operation failed: ${error.message}`);
     }
   }
@@ -174,7 +173,7 @@ export class BulkOperationsService {
    */
   async undoBulkOperation(undoToken: string, requesterUserId: string): Promise<boolean> {
     const undoInfo = this.undoOperations.get(undoToken);
-    
+
     if (!undoInfo) {
       throw new Error('Undo token not found or expired');
     }
@@ -190,7 +189,10 @@ export class BulkOperationsService {
 
     try {
       // Execute reverse operation based on original type
-      const reverseRequest = this.createReverseOperation(undoInfo.originalRequest, undoInfo.originalData);
+      const reverseRequest = this.createReverseOperation(
+        undoInfo.originalRequest,
+        undoInfo.originalData,
+      );
       await this.executeBulkOperation(reverseRequest);
 
       // Remove undo information
@@ -198,7 +200,7 @@ export class BulkOperationsService {
 
       // Log undo operation
       console.info(`Bulk operation undone: ${undoToken} by user ${requesterUserId}`);
-      
+
       return true;
     } catch (error: any) {
       console.error(`Failed to undo bulk operation ${undoToken}:`, error);
@@ -235,7 +237,7 @@ export class BulkOperationsService {
     }
 
     // Validate entity IDs format (basic UUID check)
-    const invalidIds = request.entityIds.filter(id => 
+    const invalidIds = request.entityIds.filter(id =>
       !id || typeof id !== 'string' || id.length < 10
     );
     if (invalidIds.length > 0) {
@@ -255,14 +257,14 @@ export class BulkOperationsService {
 
     // Get or initialize rate limit tracking
     const timestamps = this.rateLimitMap.get(key) || [];
-    
+
     // Remove timestamps older than 1 minute
     const recentTimestamps = timestamps.filter(timestamp => now - timestamp < oneMinute);
-    
+
     // Check if rate limit exceeded
     if (recentTimestamps.length >= config.rateLimitPerMinute) {
       throw new Error(
-        `Rate limit exceeded: ${recentTimestamps.length}/${config.rateLimitPerMinute} operations per minute for ${operationType}`
+        `Rate limit exceeded: ${recentTimestamps.length}/${config.rateLimitPerMinute} operations per minute for ${operationType}`,
       );
     }
 
@@ -274,16 +276,16 @@ export class BulkOperationsService {
   private async executeWithRetry(
     request: BulkOperationRequest,
     auditTrailId: string,
-    maxRetries: number = 3
+    maxRetries: number = 3,
   ): Promise<BulkOperationResult> {
     let lastError: Error | null = null;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await this.executeBulkOperationCore(request, auditTrailId);
       } catch (error: any) {
         lastError = error;
-        
+
         // Don't retry validation errors or auth errors
         if (error.message.includes('validation') || error.message.includes('unauthorized')) {
           throw error;
@@ -293,7 +295,9 @@ export class BulkOperationsService {
         if (attempt < maxRetries) {
           const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
           await new Promise(resolve => setTimeout(resolve, delay));
-          console.warn(`Bulk operation attempt ${attempt} failed, retrying in ${delay}ms: ${error.message}`);
+          console.warn(
+            `Bulk operation attempt ${attempt} failed, retrying in ${delay}ms: ${error.message}`,
+          );
         }
       }
     }
@@ -303,7 +307,7 @@ export class BulkOperationsService {
 
   private async executeBulkOperationCore(
     request: BulkOperationRequest,
-    auditTrailId: string
+    auditTrailId: string,
   ): Promise<BulkOperationResult> {
     const result: BulkOperationResult = {
       success: false,
@@ -320,7 +324,7 @@ export class BulkOperationsService {
 
     for (let i = 0; i < request.entityIds.length; i += batchSize) {
       const batch = request.entityIds.slice(i, i + batchSize);
-      
+
       for (const entityId of batch) {
         try {
           // Store original data for undo functionality
@@ -329,7 +333,7 @@ export class BulkOperationsService {
 
           // Execute the operation
           await this.executeEntityOperation(request, entityId);
-          
+
           result.processed++;
         } catch (error: any) {
           result.failed++;
@@ -338,7 +342,7 @@ export class BulkOperationsService {
             error: error.message,
             code: error.code || 'UNKNOWN_ERROR',
           });
-          
+
           console.error(`Failed to process entity ${entityId}:`, error);
         }
       }
@@ -349,7 +353,9 @@ export class BulkOperationsService {
     // Store original data for undo if any entities were processed
     if (result.processed > 0) {
       // In a real implementation, this would be stored in the database
-      console.info(`Bulk operation processed ${result.processed} entities, ${result.failed} failed`);
+      console.info(
+        `Bulk operation processed ${result.processed} entities, ${result.failed} failed`,
+      );
     }
 
     return result;
@@ -360,7 +366,10 @@ export class BulkOperationsService {
     return { id: entityId, type: entityType, status: 'active' };
   }
 
-  private async executeEntityOperation(request: BulkOperationRequest, entityId: string): Promise<void> {
+  private async executeEntityOperation(
+    request: BulkOperationRequest,
+    entityId: string,
+  ): Promise<void> {
     // Mock implementation - in real application, execute actual operation
     switch (request.operationType) {
       case 'activate':
@@ -387,14 +396,17 @@ export class BulkOperationsService {
 
     // Simulate processing time and potential failures
     await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
-    
+
     // Simulate random failures for testing
     if (Math.random() < 0.05) { // 5% failure rate
       throw new Error('Simulated processing error');
     }
   }
 
-  private createReverseOperation(originalRequest: BulkOperationRequest, originalData: Record<string, any>): BulkOperationRequest {
+  private createReverseOperation(
+    originalRequest: BulkOperationRequest,
+    originalData: Record<string, any>,
+  ): BulkOperationRequest {
     const reverseOperations: Record<string, string> = {
       activate: 'deactivate',
       deactivate: 'activate',
@@ -413,7 +425,7 @@ export class BulkOperationsService {
   private async storeUndoInformation(
     undoToken: string,
     originalRequest: BulkOperationRequest,
-    undoWindowMs: number
+    undoWindowMs: number,
   ): Promise<void> {
     const undoInfo = {
       undoToken,
@@ -425,14 +437,17 @@ export class BulkOperationsService {
     };
 
     this.undoOperations.set(undoToken, undoInfo);
-    
+
     // Clean up expired undo operations
     setTimeout(() => {
       this.undoOperations.delete(undoToken);
     }, undoWindowMs);
   }
 
-  private async logOperationStart(request: BulkOperationRequest, auditTrailId: string): Promise<void> {
+  private async logOperationStart(
+    request: BulkOperationRequest,
+    auditTrailId: string,
+  ): Promise<void> {
     console.info(`Bulk operation started: ${auditTrailId}`, {
       operation: request.operationType,
       entityType: request.entityType,
@@ -445,7 +460,7 @@ export class BulkOperationsService {
   private async logOperationCompletion(
     request: BulkOperationRequest,
     result: BulkOperationResult,
-    auditTrailId: string
+    auditTrailId: string,
   ): Promise<void> {
     console.info(`Bulk operation completed: ${auditTrailId}`, {
       success: result.success,
@@ -458,7 +473,7 @@ export class BulkOperationsService {
   private async logOperationError(
     request: BulkOperationRequest,
     error: Error,
-    auditTrailId: string
+    auditTrailId: string,
   ): Promise<void> {
     console.error(`Bulk operation failed: ${auditTrailId}`, {
       operation: request.operationType,

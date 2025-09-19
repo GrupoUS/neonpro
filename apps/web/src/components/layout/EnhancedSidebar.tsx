@@ -17,6 +17,9 @@
 
 'use client';
 
+import { useDebounce } from '@/hooks/useDebounce';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useCompliantLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
 import {
   IconBell,
@@ -35,19 +38,9 @@ import {
 } from '@tabler/icons-react';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { BreadcrumbNavigation, useBreadcrumbs } from './BreadcrumbNavigation';
-import { useCompliantLocalStorage } from '@/hooks/useLocalStorage';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { useDebounce } from '@/hooks/useDebounce';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { BreadcrumbNavigation, useBreadcrumbs } from './BreadcrumbNavigation';
 
 // Types
 interface SidebarSection {
@@ -142,7 +135,7 @@ export const EnhancedSidebarProvider = ({
       customHotkeys: {},
       ...defaultPreferences,
     },
-    { retentionDays: 365, isSensitiveData: false }
+    { retentionDays: 365, isSensitiveData: false },
   );
 
   const updateUserPreferences = useCallback((prefs: Partial<UserPreferences>) => {
@@ -185,14 +178,14 @@ export const EnhancedSidebarProvider = ({
 
 // Keyboard shortcuts configuration
 const KEYBOARD_SHORTCUTS = {
-  'toggleSidebar': { key: 'b', ctrl: true, description: 'Alternar sidebar' },
-  'focusSearch': { key: 'k', ctrl: true, description: 'Focar busca' },
-  'keyboardHelp': { key: '?', description: 'Ajuda de atalhos' },
-  'goToDashboard': { key: 'd', ctrl: true, description: 'Ir para Dashboard' },
-  'goToPatients': { key: 'p', ctrl: true, description: 'Ir para Pacientes' },
-  'goToAppointments': { key: 'a', ctrl: true, description: 'Ir para Agenda' },
-  'goToServices': { key: 's', ctrl: true, description: 'Ir para Serviços' },
-  'toggleDarkMode': { key: 'm', ctrl: true, shift: true, description: 'Alternar modo escuro' },
+  toggleSidebar: { key: 'b', ctrl: true, description: 'Alternar sidebar' },
+  focusSearch: { key: 'k', ctrl: true, description: 'Focar busca' },
+  keyboardHelp: { key: '?', description: 'Ajuda de atalhos' },
+  goToDashboard: { key: 'd', ctrl: true, description: 'Ir para Dashboard' },
+  goToPatients: { key: 'p', ctrl: true, description: 'Ir para Pacientes' },
+  goToAppointments: { key: 'a', ctrl: true, description: 'Ir para Agenda' },
+  goToServices: { key: 's', ctrl: true, description: 'Ir para Serviços' },
+  toggleDarkMode: { key: 'm', ctrl: true, shift: true, description: 'Alternar modo escuro' },
 };
 
 // Main Enhanced Sidebar Component
@@ -235,20 +228,20 @@ export function EnhancedSidebar({
     {
       id: 'main',
       label: 'Principal',
-      icon: <IconHome className="h-5 w-5" />,
+      icon: <IconHome className='h-5 w-5' />,
       expanded: true,
       items: [
         {
           label: 'Dashboard',
           href: '/dashboard',
-          icon: <IconHome className="h-4 w-4" />,
+          icon: <IconHome className='h-4 w-4' />,
           hotkey: 'Ctrl+D',
           description: 'Visão geral da clínica',
         },
         {
           label: 'Busca Global',
           href: '/search',
-          icon: <IconSearch className="h-4 w-4" />,
+          icon: <IconSearch className='h-4 w-4' />,
           hotkey: 'Ctrl+K',
           description: 'Buscar pacientes e agendamentos',
         },
@@ -257,27 +250,27 @@ export function EnhancedSidebar({
     {
       id: 'clinical',
       label: 'Clínica',
-      icon: <IconUser className="h-5 w-5" />,
+      icon: <IconUser className='h-5 w-5' />,
       expanded: true,
       items: [
         {
           label: 'Pacientes',
           href: '/patients',
-          icon: <IconUser className="h-4 w-4" />,
+          icon: <IconUser className='h-4 w-4' />,
           hotkey: 'Ctrl+P',
           description: 'Gerenciar pacientes',
         },
         {
           label: 'Agenda',
           href: '/appointments',
-          icon: <IconBell className="h-4 w-4" />,
+          icon: <IconBell className='h-4 w-4' />,
           hotkey: 'Ctrl+A',
           description: 'Agendamentos e calendário',
         },
         {
           label: 'Serviços',
           href: '/services',
-          icon: <IconSettings className="h-4 w-4" />,
+          icon: <IconSettings className='h-4 w-4' />,
           hotkey: 'Ctrl+S',
           description: 'Serviços e procedimentos',
         },
@@ -286,25 +279,25 @@ export function EnhancedSidebar({
     {
       id: 'admin',
       label: 'Administrativo',
-      icon: <IconSettings className="h-5 w-5" />,
+      icon: <IconSettings className='h-5 w-5' />,
       expanded: false,
       items: [
         {
           label: 'Financeiro',
           href: '/financial',
-          icon: <IconMoon className="h-4 w-4" />,
+          icon: <IconMoon className='h-4 w-4' />,
           description: 'Financeiro e faturamento',
         },
         {
           label: 'Documentos',
           href: '/documents',
-          icon: <IconSun className="h-4 w-4" />,
+          icon: <IconSun className='h-4 w-4' />,
           description: 'Documentos e arquivos',
         },
         {
           label: 'Relatórios',
           href: '/reports',
-          icon: <IconBell className="h-4 w-4" />,
+          icon: <IconBell className='h-4 w-4' />,
           description: 'Relatórios e análises',
         },
       ],
@@ -321,8 +314,8 @@ export function EnhancedSidebar({
       .map(section => ({
         ...section,
         items: section.items.filter(item =>
-          item.label.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-          item.description?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+          item.label.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+          || item.description?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
         ),
       }))
       .filter(section => section.items.length > 0);
@@ -338,10 +331,10 @@ export function EnhancedSidebar({
       const altKey = config.alt || false;
 
       return (
-        event.key.toLowerCase() === config.key.toLowerCase() &&
-        event.ctrlKey === ctrlKey &&
-        event.shiftKey === shiftKey &&
-        event.altKey === altKey
+        event.key.toLowerCase() === config.key.toLowerCase()
+        && event.ctrlKey === ctrlKey
+        && event.shiftKey === shiftKey
+        && event.altKey === altKey
       );
     });
 
@@ -354,7 +347,9 @@ export function EnhancedSidebar({
           setOpen(prev => !prev);
           break;
         case 'focusSearch':
-          const searchInput = document.querySelector('input[placeholder*="Buscar"]') as HTMLInputElement;
+          const searchInput = document.querySelector(
+            'input[placeholder*="Buscar"]',
+          ) as HTMLInputElement;
           searchInput?.focus();
           break;
         case 'keyboardHelp':
@@ -414,72 +409,72 @@ export function EnhancedSidebar({
           className={cn(
             'h-full bg-background border-r transition-all duration-300 ease-in-out',
             userPreferences.collapsed ? 'w-16' : 'w-64',
-            'flex flex-col'
+            'flex flex-col',
           )}
-          role="navigation"
-          aria-label="Navegação principal"
+          role='navigation'
+          aria-label='Navegação principal'
         >
           {/* Header */}
-          <div className="p-4 border-b">
-            <div className="flex items-center justify-between">
-              {!userPreferences.collapsed && (
-                <h1 className="text-lg font-semibold">NeonPro</h1>
-              )}
+          <div className='p-4 border-b'>
+            <div className='flex items-center justify-between'>
+              {!userPreferences.collapsed && <h1 className='text-lg font-semibold'>NeonPro</h1>}
               <button
                 onClick={() => updateUserPreferences({ collapsed: !userPreferences.collapsed })}
-                className="p-2 hover:bg-accent rounded-md transition-colors"
+                className='p-2 hover:bg-accent rounded-md transition-colors'
                 aria-label={userPreferences.collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
               >
-                <IconChevronRight className={cn(
-                  'h-4 w-4 transition-transform',
-                  !userPreferences.collapsed && 'rotate-180'
-                )} />
+                <IconChevronRight
+                  className={cn(
+                    'h-4 w-4 transition-transform',
+                    !userPreferences.collapsed && 'rotate-180',
+                  )}
+                />
               </button>
             </div>
           </div>
 
           {/* Search */}
           {showSearch && !userPreferences.collapsed && (
-            <div className="p-4">
-              <div className="relative">
-                <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className='p-4'>
+              <div className='relative'>
+                <IconSearch className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
                 <input
-                  type="text"
-                  placeholder="Buscar..."
+                  type='text'
+                  placeholder='Buscar...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  aria-label="Buscar no menu"
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-ring'
+                  aria-label='Buscar no menu'
                 />
               </div>
             </div>
           )}
 
           {/* Navigation Sections */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-            {filteredSections.map((section) => (
-              <div key={section.id} className="space-y-1">
+          <nav className='flex-1 overflow-y-auto p-4 space-y-2'>
+            {filteredSections.map(section => (
+              <div key={section.id} className='space-y-1'>
                 <button
                   onClick={() => toggleSection(section.id)}
                   className={cn(
                     'w-full flex items-center justify-between p-2 text-left rounded-md transition-colors',
                     'hover:bg-accent hover:text-accent-foreground',
-                    'focus:outline-none focus:ring-2 focus:ring-ring'
+                    'focus:outline-none focus:ring-2 focus:ring-ring',
                   )}
                   aria-expanded={expandedSections.has(section.id)}
                   aria-controls={`section-${section.id}`}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     {section.icon}
                     {!userPreferences.collapsed && (
-                      <span className="text-sm font-medium">{section.label}</span>
+                      <span className='text-sm font-medium'>{section.label}</span>
                     )}
                   </div>
                   {!userPreferences.collapsed && (
                     <IconChevronDown
                       className={cn(
                         'h-4 w-4 transition-transform',
-                        expandedSections.has(section.id) && 'rotate-180'
+                        expandedSections.has(section.id) && 'rotate-180',
                       )}
                     />
                   )}
@@ -488,11 +483,11 @@ export function EnhancedSidebar({
                 {expandedSections.has(section.id) && !userPreferences.collapsed && (
                   <div
                     id={`section-${section.id}`}
-                    className="ml-4 space-y-1"
-                    role="group"
+                    className='ml-4 space-y-1'
+                    role='group'
                     aria-label={`${section.label} menu items`}
                   >
-                    {section.items.map((item) => (
+                    {section.items.map(item => (
                       <Link
                         key={item.href}
                         to={item.href}
@@ -501,30 +496,30 @@ export function EnhancedSidebar({
                           'hover:bg-accent hover:text-accent-foreground',
                           'focus:outline-none focus:ring-2 focus:ring-ring',
                           location.pathname === item.href && 'bg-accent text-accent-foreground',
-                          item.disabled && 'opacity-50 cursor-not-allowed'
+                          item.disabled && 'opacity-50 cursor-not-allowed',
                         )}
                         onClick={() => {
                           if (!item.disabled) {
                             setFocusedItem(item.href);
                           }
                         }}
-                        onKeyDown={(e) => handleKeyDown(e, item.href)}
+                        onKeyDown={e => handleKeyDown(e, item.href)}
                         aria-current={location.pathname === item.href ? 'page' : undefined}
                         aria-disabled={item.disabled}
                         tabIndex={0}
                       >
                         {item.icon}
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
+                        <div className='flex-1'>
+                          <div className='flex items-center justify-between'>
                             <span>{item.label}</span>
                             {item.badge && (
-                              <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
+                              <span className='text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full'>
                                 {item.badge}
                               </span>
                             )}
                           </div>
                           {item.hotkey && (
-                            <span className="text-xs text-muted-foreground">{item.hotkey}</span>
+                            <span className='text-xs text-muted-foreground'>{item.hotkey}</span>
                           )}
                         </div>
                       </Link>
@@ -536,14 +531,14 @@ export function EnhancedSidebar({
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t space-y-2">
+          <div className='p-4 border-t space-y-2'>
             {showKeyboardHelp && (
               <button
                 onClick={() => setKeyboardHelpVisible(true)}
-                className="w-full flex items-center gap-2 p-2 text-sm rounded-md hover:bg-accent transition-colors"
-                aria-label="Mostrar ajuda de atalhos"
+                className='w-full flex items-center gap-2 p-2 text-sm rounded-md hover:bg-accent transition-colors'
+                aria-label='Mostrar ajuda de atalhos'
               >
-                <IconKeyboard className="h-4 w-4" />
+                <IconKeyboard className='h-4 w-4' />
                 {!userPreferences.collapsed && <span>Atalhos</span>}
               </button>
             )}
@@ -551,19 +546,19 @@ export function EnhancedSidebar({
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
+        <div className='flex-1 flex flex-col'>
           {/* Breadcrumbs */}
           {showBreadcrumbs && (
-            <div className="border-b bg-background">
-              <div className="container mx-auto px-4 py-2">
+            <div className='border-b bg-background'>
+              <div className='container mx-auto px-4 py-2'>
                 <BreadcrumbNavigation />
               </div>
             </div>
           )}
 
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto">
-            <div className="container mx-auto p-4 md:p-6">
+          <main className='flex-1 overflow-y-auto'>
+            <div className='container mx-auto p-4 md:p-6'>
               {children}
             </div>
           </main>
@@ -583,31 +578,31 @@ export function EnhancedSidebar({
 // Keyboard Help Modal Component
 function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-background border rounded-lg shadow-lg max-w-md w-full max-h-[80vh] overflow-hidden"
+        className='bg-background border rounded-lg shadow-lg max-w-md w-full max-h-[80vh] overflow-hidden'
       >
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Atalhos de Teclado</h2>
+        <div className='p-6 border-b'>
+          <div className='flex items-center justify-between'>
+            <h2 className='text-lg font-semibold'>Atalhos de Teclado</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-accent rounded-md transition-colors"
-              aria-label="Fechar ajuda"
+              className='p-2 hover:bg-accent rounded-md transition-colors'
+              aria-label='Fechar ajuda'
             >
-              <IconX className="h-4 w-4" />
+              <IconX className='h-4 w-4' />
             </button>
           </div>
         </div>
 
-        <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+        <div className='p-6 space-y-4 max-h-[60vh] overflow-y-auto'>
           {Object.entries(KEYBOARD_SHORTCUTS).map(([key, config]) => (
-            <div key={key} className="flex items-center justify-between py-2">
-              <span className="text-sm text-muted-foreground">{config.description}</span>
-              <kbd className="px-2 py-1 text-xs bg-muted border rounded">
+            <div key={key} className='flex items-center justify-between py-2'>
+              <span className='text-sm text-muted-foreground'>{config.description}</span>
+              <kbd className='px-2 py-1 text-xs bg-muted border rounded'>
                 {[
                   config.ctrl && 'Ctrl',
                   config.shift && 'Shift',

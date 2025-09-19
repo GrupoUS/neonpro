@@ -359,14 +359,14 @@ function AIInsightsPage() {
       <header className='mb-6 space-y-4 sm:space-y-0'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div className='flex items-start sm:items-center gap-4'>
-            <Button 
-              variant='ghost' 
-              size='sm' 
+            <Button
+              variant='ghost'
+              size='sm'
               onClick={() => navigate({ to: '/dashboard' })}
               className='h-10 px-3 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Voltar para dashboard principal'
             >
-              <ArrowLeft className='h-4 w-4 mr-2' aria-hidden="true" />
+              <ArrowLeft className='h-4 w-4 mr-2' aria-hidden='true' />
               Voltar
             </Button>
             <div className='min-w-0 flex-1'>
@@ -378,26 +378,26 @@ function AIInsightsPage() {
               </p>
             </div>
           </div>
-          
+
           {/* Action buttons - Mobile-optimized */}
           <div className='flex flex-col sm:flex-row gap-2 w-full sm:w-auto'>
-            <Button 
-              variant='outline' 
+            <Button
+              variant='outline'
               size='sm'
               className='h-10 px-4 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto'
               aria-label='Exportar relatório de insights'
             >
-              <Download className='h-4 w-4 mr-2' aria-hidden="true" />
+              <Download className='h-4 w-4 mr-2' aria-hidden='true' />
               Exportar Relatório
             </Button>
-            <Button 
-              variant='outline' 
-              size='sm' 
+            <Button
+              variant='outline'
+              size='sm'
               onClick={refreshInsights}
               className='h-10 px-4 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto'
               aria-label='Atualizar insights de inteligência artificial'
             >
-              <RefreshCw className='h-4 w-4 mr-2' aria-hidden="true" />
+              <RefreshCw className='h-4 w-4 mr-2' aria-hidden='true' />
               Atualizar
             </Button>
           </div>
@@ -405,8 +405,8 @@ function AIInsightsPage() {
       </header>
 
       {/* Key Metrics - Enhanced accessibility and mobile-first */}
-      <section aria-labelledby="metrics-heading" className='mb-6'>
-        <h2 id="metrics-heading" className='sr-only'>Métricas principais dos insights de IA</h2>
+      <section aria-labelledby='metrics-heading' className='mb-6'>
+        <h2 id='metrics-heading' className='sr-only'>Métricas principais dos insights de IA</h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
           <Card className='transition-shadow hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
             <CardContent className='p-4 sm:p-6'>
@@ -417,7 +417,10 @@ function AIInsightsPage() {
                     {calculateImpactScore()}%
                   </p>
                 </div>
-                <TrendingUp className='h-8 w-8 sm:h-10 sm:w-10 text-green-500 flex-shrink-0' aria-hidden="true" />
+                <TrendingUp
+                  className='h-8 w-8 sm:h-10 sm:w-10 text-green-500 flex-shrink-0'
+                  aria-hidden='true'
+                />
               </div>
               <p className='text-xs sm:text-sm text-gray-500 mt-2 flex items-center gap-1'>
                 <span className='text-green-600 font-medium' aria-label='aumento de'>+2.3%</span>
@@ -430,12 +433,17 @@ function AIInsightsPage() {
             <CardContent className='p-4 sm:p-6'>
               <div className='flex items-center justify-between'>
                 <div className='min-w-0 flex-1'>
-                  <p className='text-sm sm:text-base font-medium text-gray-600'>Pacientes Impactados</p>
+                  <p className='text-sm sm:text-base font-medium text-gray-600'>
+                    Pacientes Impactados
+                  </p>
                   <p className='text-2xl sm:text-3xl font-bold text-gray-900 mt-1'>
                     {calculateTotalPatientsImpacted().toLocaleString()}
                   </p>
                 </div>
-                <Users className='h-8 w-8 sm:h-10 sm:w-10 text-blue-500 flex-shrink-0' aria-hidden="true" />
+                <Users
+                  className='h-8 w-8 sm:h-10 sm:w-10 text-blue-500 flex-shrink-0'
+                  aria-hidden='true'
+                />
               </div>
               <p className='text-xs sm:text-sm text-gray-500 mt-2'>
                 Nos últimos 7 dias
@@ -452,7 +460,10 @@ function AIInsightsPage() {
                     {getAverageAccuracy()}%
                   </p>
                 </div>
-                <Brain className='h-8 w-8 sm:h-10 sm:w-10 text-purple-500 flex-shrink-0' aria-hidden="true" />
+                <Brain
+                  className='h-8 w-8 sm:h-10 sm:w-10 text-purple-500 flex-shrink-0'
+                  aria-hidden='true'
+                />
               </div>
               <p className='text-xs sm:text-sm text-gray-500 mt-2'>
                 Todos os modelos ativos
@@ -466,10 +477,14 @@ function AIInsightsPage() {
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm sm:text-base font-medium text-gray-600'>Alertas Ativos</p>
                   <p className='text-2xl sm:text-3xl font-bold text-gray-900 mt-1'>
-                    {insights.filter(i => i.priority === 'critical' || i.priority === 'high').length}
+                    {insights.filter(i => i.priority === 'critical' || i.priority === 'high')
+                      .length}
                   </p>
                 </div>
-                <AlertTriangle className='h-8 w-8 sm:h-10 sm:w-10 text-red-500 flex-shrink-0' aria-hidden="true" />
+                <AlertTriangle
+                  className='h-8 w-8 sm:h-10 sm:w-10 text-red-500 flex-shrink-0'
+                  aria-hidden='true'
+                />
               </div>
               <p className='text-xs sm:text-sm text-gray-500 mt-2'>
                 Requerem atenção imediata
@@ -480,23 +495,26 @@ function AIInsightsPage() {
       </section>
 
       {/* Filters - Mobile-first responsive */}
-      <section aria-labelledby="filters-heading" className='mb-6'>
-        <h2 id="filters-heading" className='sr-only'>Filtros para insights de IA</h2>
+      <section aria-labelledby='filters-heading' className='mb-6'>
+        <h2 id='filters-heading' className='sr-only'>Filtros para insights de IA</h2>
         <div className='bg-gray-50 p-4 rounded-lg space-y-4 sm:space-y-0'>
           <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
             <div className='flex items-center gap-2 text-gray-700'>
-              <Filter className='h-4 w-4 flex-shrink-0' aria-hidden="true" />
+              <Filter className='h-4 w-4 flex-shrink-0' aria-hidden='true' />
               <span className='text-sm font-medium'>Filtros:</span>
             </div>
-            
+
             <div className='flex flex-col sm:flex-row gap-3 flex-1 sm:flex-none'>
               <div className='space-y-1'>
-                <label htmlFor="category-filter" className='text-xs font-medium text-gray-600 block sm:sr-only'>
+                <label
+                  htmlFor='category-filter'
+                  className='text-xs font-medium text-gray-600 block sm:sr-only'
+                >
                   Categoria
                 </label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger 
-                    id="category-filter"
+                  <SelectTrigger
+                    id='category-filter'
                     className='w-full sm:w-48 h-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                   >
                     <SelectValue placeholder='Categoria' />
@@ -513,12 +531,15 @@ function AIInsightsPage() {
               </div>
 
               <div className='space-y-1'>
-                <label htmlFor="priority-filter" className='text-xs font-medium text-gray-600 block sm:sr-only'>
+                <label
+                  htmlFor='priority-filter'
+                  className='text-xs font-medium text-gray-600 block sm:sr-only'
+                >
                   Prioridade
                 </label>
                 <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-                  <SelectTrigger 
-                    id="priority-filter"
+                  <SelectTrigger
+                    id='priority-filter'
                     className='w-full sm:w-40 h-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                   >
                     <SelectValue placeholder='Prioridade' />
@@ -534,12 +555,15 @@ function AIInsightsPage() {
               </div>
 
               <div className='space-y-1'>
-                <label htmlFor="time-filter" className='text-xs font-medium text-gray-600 block sm:sr-only'>
+                <label
+                  htmlFor='time-filter'
+                  className='text-xs font-medium text-gray-600 block sm:sr-only'
+                >
                   Período
                 </label>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                  <SelectTrigger 
-                    id="time-filter"
+                  <SelectTrigger
+                    id='time-filter'
                     className='w-full sm:w-32 h-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                   >
                     <SelectValue placeholder='Período' />
@@ -553,13 +577,14 @@ function AIInsightsPage() {
                 </Select>
               </div>
             </div>
-            
+
             {/* Results count for screen readers */}
-            <div className='sr-only' aria-live="polite">
-              {filteredInsights.length > 0 
-                ? `${filteredInsights.length} insight${filteredInsights.length !== 1 ? 's' : ''} encontrado${filteredInsights.length !== 1 ? 's' : ''}`
-                : 'Nenhum insight encontrado com os filtros aplicados'
-              }
+            <div className='sr-only' aria-live='polite'>
+              {filteredInsights.length > 0
+                ? `${filteredInsights.length} insight${
+                  filteredInsights.length !== 1 ? 's' : ''
+                } encontrado${filteredInsights.length !== 1 ? 's' : ''}`
+                : 'Nenhum insight encontrado com os filtros aplicados'}
             </div>
           </div>
         </div>
@@ -567,22 +592,22 @@ function AIInsightsPage() {
 
       {/* Main Content - Mobile-responsive tabs */}
       <main>
-        <Tabs defaultValue='insights' className='space-y-4' orientation="horizontal">
+        <Tabs defaultValue='insights' className='space-y-4' orientation='horizontal'>
           <div className='overflow-x-auto'>
             <TabsList className='grid w-full min-w-max grid-cols-3 h-auto p-1 bg-gray-100'>
-              <TabsTrigger 
+              <TabsTrigger
                 value='insights'
                 className='text-sm px-4 py-3 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Insights
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='models'
                 className='text-sm px-4 py-3 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Modelos
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='analytics'
                 className='text-sm px-4 py-3 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
@@ -591,236 +616,238 @@ function AIInsightsPage() {
             </TabsList>
           </div>
 
-        <TabsContent value='insights' className='space-y-4'>
-          {filteredInsights.length > 0
-            ? (
-              <div className='grid gap-4'>
-                {filteredInsights.map(insight => {
-                  const TypeIcon = getTypeIcon(insight.type);
-                  const PriorityBadge = getPriorityBadge(insight.priority);
-                  const PriorityIcon = PriorityBadge.icon;
+          <TabsContent value='insights' className='space-y-4'>
+            {filteredInsights.length > 0
+              ? (
+                <div className='grid gap-4'>
+                  {filteredInsights.map(insight => {
+                    const TypeIcon = getTypeIcon(insight.type);
+                    const PriorityBadge = getPriorityBadge(insight.priority);
+                    const PriorityIcon = PriorityBadge.icon;
 
-                  return (
-                    <Card key={insight.id} className='hover:shadow-md transition-shadow'>
-                      <CardHeader>
-                        <div className='flex items-start justify-between'>
-                          <div className='flex items-center gap-3'>
-                            <TypeIcon className='h-5 w-5 text-muted-foreground' />
-                            <div>
-                              <CardTitle className='text-lg'>{insight.title}</CardTitle>
-                              <p className='text-sm text-muted-foreground'>{insight.category}</p>
-                            </div>
-                          </div>
-                          <div className='flex items-center gap-2'>
-                            <Badge variant='outline'>{insight.confidence}% confiança</Badge>
-                            <Badge
-                              variant={PriorityBadge.variant}
-                              className='flex items-center gap-1'
-                            >
-                              <PriorityIcon className='h-3 w-3' />
-                              {PriorityBadge.label}
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className='space-y-4'>
-                        <div>
-                          <p className='text-sm mb-2'>{insight.description}</p>
-                          <div className='flex items-center gap-4 text-sm text-muted-foreground'>
-                            <span>Impacto: {insight.impact}</span>
-                            {insight.patientCount && <span>Pacientes: {insight.patientCount}</span>}
-                            <span>•</span>
-                            <span>
-                              {format(new Date(insight.createdAt), 'dd/MM/yyyy HH:mm', {
-                                locale: ptBR,
-                              })}
-                            </span>
-                            {insight.expiresAt && (
-                              <>
-                                <span>•</span>
-                                <span>
-                                  Expira: {format(new Date(insight.expiresAt), 'dd/MM/yyyy', {
-                                    locale: ptBR,
-                                  })}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Data Visualization */}
-                        <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
-                          {insight.data.labels.map((label, index) => (
-                            <div key={index} className='text-center'>
-                              <div className='text-xs text-muted-foreground'>{label}</div>
-                              <div className='text-sm font-medium'>
-                                {insight.data.values[index]}
+                    return (
+                      <Card key={insight.id} className='hover:shadow-md transition-shadow'>
+                        <CardHeader>
+                          <div className='flex items-start justify-between'>
+                            <div className='flex items-center gap-3'>
+                              <TypeIcon className='h-5 w-5 text-muted-foreground' />
+                              <div>
+                                <CardTitle className='text-lg'>{insight.title}</CardTitle>
+                                <p className='text-sm text-muted-foreground'>{insight.category}</p>
                               </div>
                             </div>
-                          ))}
-                        </div>
+                            <div className='flex items-center gap-2'>
+                              <Badge variant='outline'>{insight.confidence}% confiança</Badge>
+                              <Badge
+                                variant={PriorityBadge.variant}
+                                className='flex items-center gap-1'
+                              >
+                                <PriorityIcon className='h-3 w-3' />
+                                {PriorityBadge.label}
+                              </Badge>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className='space-y-4'>
+                          <div>
+                            <p className='text-sm mb-2'>{insight.description}</p>
+                            <div className='flex items-center gap-4 text-sm text-muted-foreground'>
+                              <span>Impacto: {insight.impact}</span>
+                              {insight.patientCount && (
+                                <span>Pacientes: {insight.patientCount}</span>
+                              )}
+                              <span>•</span>
+                              <span>
+                                {format(new Date(insight.createdAt), 'dd/MM/yyyy HH:mm', {
+                                  locale: ptBR,
+                                })}
+                              </span>
+                              {insight.expiresAt && (
+                                <>
+                                  <span>•</span>
+                                  <span>
+                                    Expira: {format(new Date(insight.expiresAt), 'dd/MM/yyyy', {
+                                      locale: ptBR,
+                                    })}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
 
-                        {/* Recommendations */}
-                        <div>
-                          <h4 className='text-sm font-medium mb-2'>Recomendações:</h4>
-                          <ul className='text-sm space-y-1'>
-                            {insight.recommendations.map((recommendation, index) => (
-                              <li key={index} className='flex items-start gap-2'>
-                                <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
-                                <span>{recommendation}</span>
-                              </li>
+                          {/* Data Visualization */}
+                          <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
+                            {insight.data.labels.map((label, index) => (
+                              <div key={index} className='text-center'>
+                                <div className='text-xs text-muted-foreground'>{label}</div>
+                                <div className='text-sm font-medium'>
+                                  {insight.data.values[index]}
+                                </div>
+                              </div>
                             ))}
-                          </ul>
-                        </div>
+                          </div>
 
-                        {/* Actions */}
-                        <div className='flex items-center gap-2 pt-2'>
-                          <Button size='sm' variant='outline'>
-                            Ver Detalhes
-                          </Button>
-                          <Button size='sm' variant='outline'>
-                            Implementar
-                          </Button>
-                          <Button size='sm' variant='outline'>
-                            <Share2 className='h-3 w-3 mr-1' />
-                            Compartilhar
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )
-            : (
-              <Card>
-                <CardContent className='text-center py-8'>
-                  <Brain className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-                  <p className='text-muted-foreground'>
-                    Nenhum insight encontrado com os filtros selecionados
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-        </TabsContent>
+                          {/* Recommendations */}
+                          <div>
+                            <h4 className='text-sm font-medium mb-2'>Recomendações:</h4>
+                            <ul className='text-sm space-y-1'>
+                              {insight.recommendations.map((recommendation, index) => (
+                                <li key={index} className='flex items-start gap-2'>
+                                  <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
+                                  <span>{recommendation}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
 
-        <TabsContent value='models' className='space-y-4'>
-          <div className='grid gap-4'>
-            {models.map(model => {
-              const StatusBadge = getModelStatusBadge(model.status);
-
-              return (
-                <Card key={model.id}>
-                  <CardHeader>
-                    <div className='flex items-start justify-between'>
-                      <div>
-                        <CardTitle>{model.name}</CardTitle>
-                        <p className='text-sm text-muted-foreground'>{model.description}</p>
-                      </div>
-                      <Badge variant={StatusBadge.variant} className='flex items-center gap-1'>
-                        <div className={`w-2 h-2 rounded-full ${StatusBadge.color}`} />
-                        {StatusBadge.label}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                      <div>
-                        <p className='text-sm font-medium'>Acurácia</p>
-                        <p className='text-lg font-bold'>{model.accuracy}%</p>
-                      </div>
-                      <div>
-                        <p className='text-sm font-medium'>Predições</p>
-                        <p className='text-lg font-bold'>
-                          {model.predictionsCount.toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className='text-sm font-medium'>Tipo</p>
-                        <p className='text-sm text-muted-foreground'>{model.type}</p>
-                      </div>
-                      <div>
-                        <p className='text-sm font-medium'>Último Treino</p>
-                        <p className='text-sm text-muted-foreground'>
-                          {format(new Date(model.lastTrained), 'dd/MM/yyyy', { locale: ptBR })}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Accuracy Progress */}
-                    <div className='mt-4'>
-                      <div className='flex items-center justify-between mb-1'>
-                        <span className='text-sm'>Performance</span>
-                        <span className='text-sm font-medium'>{model.accuracy}%</span>
-                      </div>
-                      <Progress value={model.accuracy} className='h-2' />
-                    </div>
+                          {/* Actions */}
+                          <div className='flex items-center gap-2 pt-2'>
+                            <Button size='sm' variant='outline'>
+                              Ver Detalhes
+                            </Button>
+                            <Button size='sm' variant='outline'>
+                              Implementar
+                            </Button>
+                            <Button size='sm' variant='outline'>
+                              <Share2 className='h-3 w-3 mr-1' />
+                              Compartilhar
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )
+              : (
+                <Card>
+                  <CardContent className='text-center py-8'>
+                    <Brain className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                    <p className='text-muted-foreground'>
+                      Nenhum insight encontrado com os filtros selecionados
+                    </p>
                   </CardContent>
                 </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
+              )}
+          </TabsContent>
 
-        <TabsContent value='analytics' className='space-y-4'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Tendência de Acurácia</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-2'>
-                  {trends.map((trend, index) => (
-                    <div key={index} className='flex items-center justify-between'>
-                      <span className='text-sm'>
-                        {format(new Date(trend.date), 'dd/MM', { locale: ptBR })}
-                      </span>
-                      <div className='flex items-center gap-2'>
-                        <Progress value={trend.accuracy} className='w-20 h-2' />
-                        <span className='text-sm font-medium'>{trend.accuracy}%</span>
+          <TabsContent value='models' className='space-y-4'>
+            <div className='grid gap-4'>
+              {models.map(model => {
+                const StatusBadge = getModelStatusBadge(model.status);
+
+                return (
+                  <Card key={model.id}>
+                    <CardHeader>
+                      <div className='flex items-start justify-between'>
+                        <div>
+                          <CardTitle>{model.name}</CardTitle>
+                          <p className='text-sm text-muted-foreground'>{model.description}</p>
+                        </div>
+                        <Badge variant={StatusBadge.variant} className='flex items-center gap-1'>
+                          <div className={`w-2 h-2 rounded-full ${StatusBadge.color}`} />
+                          {StatusBadge.label}
+                        </Badge>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                        <div>
+                          <p className='text-sm font-medium'>Acurácia</p>
+                          <p className='text-lg font-bold'>{model.accuracy}%</p>
+                        </div>
+                        <div>
+                          <p className='text-sm font-medium'>Predições</p>
+                          <p className='text-lg font-bold'>
+                            {model.predictionsCount.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className='text-sm font-medium'>Tipo</p>
+                          <p className='text-sm text-muted-foreground'>{model.type}</p>
+                        </div>
+                        <div>
+                          <p className='text-sm font-medium'>Último Treino</p>
+                          <p className='text-sm text-muted-foreground'>
+                            {format(new Date(model.lastTrained), 'dd/MM/yyyy', { locale: ptBR })}
+                          </p>
+                        </div>
+                      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Estatísticas de Impacto</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm'>Total de Predições (7 dias)</span>
-                    <span className='text-lg font-bold'>
-                      {trends.reduce((sum, trend) => sum + trend.predictions, 0).toLocaleString()}
-                    </span>
+                      {/* Accuracy Progress */}
+                      <div className='mt-4'>
+                        <div className='flex items-center justify-between mb-1'>
+                          <span className='text-sm'>Performance</span>
+                          <span className='text-sm font-medium'>{model.accuracy}%</span>
+                        </div>
+                        <Progress value={model.accuracy} className='h-2' />
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value='analytics' className='space-y-4'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tendência de Acurácia</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-2'>
+                    {trends.map((trend, index) => (
+                      <div key={index} className='flex items-center justify-between'>
+                        <span className='text-sm'>
+                          {format(new Date(trend.date), 'dd/MM', { locale: ptBR })}
+                        </span>
+                        <div className='flex items-center gap-2'>
+                          <Progress value={trend.accuracy} className='w-20 h-2' />
+                          <span className='text-sm font-medium'>{trend.accuracy}%</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm'>Impacto Médio Diário</span>
-                    <span className='text-lg font-bold'>
-                      {Math.round(
-                        trends.reduce((sum, trend) => sum + trend.impact, 0) / trends.length,
-                      )}%
-                    </span>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Estatísticas de Impacto</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-sm'>Total de Predições (7 dias)</span>
+                      <span className='text-lg font-bold'>
+                        {trends.reduce((sum, trend) => sum + trend.predictions, 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-sm'>Impacto Médio Diário</span>
+                      <span className='text-lg font-bold'>
+                        {Math.round(
+                          trends.reduce((sum, trend) => sum + trend.impact, 0) / trends.length,
+                        )}%
+                      </span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-sm'>Melhor Dia</span>
+                      <span className='text-lg font-bold text-green-600'>
+                        {trends.length > 0
+                          ? format(new Date(trends[trends.length - 1].date), 'dd/MM', {
+                            locale: ptBR,
+                          })
+                          : '-'}
+                      </span>
+                    </div>
                   </div>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm'>Melhor Dia</span>
-                    <span className='text-lg font-bold text-green-600'>
-                      {trends.length > 0
-                        ? format(new Date(trends[trends.length - 1].date), 'dd/MM', {
-                          locale: ptBR,
-                        })
-                        : '-'}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

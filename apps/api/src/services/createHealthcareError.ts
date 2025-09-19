@@ -3,8 +3,8 @@
  * This module provides the missing createHealthcareError export
  */
 
-import { HealthcareErrorType } from './error-tracking';
 import { ErrorSeverity } from '../types/error-severity';
+import { HealthcareErrorType } from './error-tracking';
 
 // Define ErrorCategory enum to match the expected export
 export enum ErrorCategory {

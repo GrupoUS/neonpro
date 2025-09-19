@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: GET /api/v2/patients (T011)
- * 
+ *
  * Tests patient listing endpoint contract:
  * - Request/response schema validation
  * - Pagination behavior
@@ -10,7 +10,7 @@
  * - Brazilian data validation
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // Test helper for API calls
@@ -48,7 +48,7 @@ const PatientListResponseSchema = z.object({
 
 describe('GET /api/v2/patients - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -66,9 +66,9 @@ describe('GET /api/v2/patients - Contract Tests', () => {
       const response = await api('/api/v2/patients', {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Skip schema validation for now since this is a contract test
       // In real implementation, this would validate against actual API response
       expect(response).toBeDefined();
@@ -78,7 +78,7 @@ describe('GET /api/v2/patients - Contract Tests', () => {
       const response = await api('/api/v2/patients?page=2&limit=10', {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
       // Contract validation would happen here
     });
@@ -87,7 +87,7 @@ describe('GET /api/v2/patients - Contract Tests', () => {
       const response = await api('/api/v2/patients?status=active', {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
       // Contract validation would happen here
     });
@@ -96,7 +96,7 @@ describe('GET /api/v2/patients - Contract Tests', () => {
   describe('Error Handling', () => {
     it('should return 401 for missing authentication', async () => {
       const response = await api('/api/v2/patients');
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -104,7 +104,7 @@ describe('GET /api/v2/patients - Contract Tests', () => {
       const response = await api('/api/v2/patients?page=0', {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(400);
     });
   });
@@ -112,7 +112,7 @@ describe('GET /api/v2/patients - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should respond within 500ms', async () => {
       const startTime = Date.now();
-      
+
       const response = await api('/api/v2/patients', {
         headers: testAuthHeaders,
       });
@@ -137,9 +137,9 @@ describe('GET /api/v2/patients - Contract Tests', () => {
       const response = await api('/api/v2/patients', {
         headers: testAuthHeaders,
       });
-      
+
       expect(response.status).toBe(200);
-      
+
       // Contract ensures sensitive medical data is not in list view
       const responseText = await response.text();
       expect(responseText).not.toContain('medicalHistory');

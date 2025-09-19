@@ -1,4 +1,5 @@
 /**
+ /**
  * Accessibility Testing Integration Tests
  *
  * Healthcare platform accessibility testing with WCAG 2.1 AA+ compliance

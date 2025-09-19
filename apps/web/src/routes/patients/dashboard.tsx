@@ -1,5 +1,7 @@
 'use client';
 
+import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
+import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,36 +11,34 @@ import { FocusCards } from '@/components/ui/focus-cards';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { UniversalButton } from '@/components/ui/universal-button';
-import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
-import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
 import { useToast } from '@/hooks/use-toast';
-import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 import { usePatientStats } from '@/hooks/usePatientStats';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
+import { cn } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format, subDays, isToday, isThisWeek } from 'date-fns';
+import { format, isThisWeek, isToday, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   Activity,
+  AlertCircle,
   AlertTriangle,
+  Bell,
   Calendar,
   Clock,
+  Eye,
+  FileText,
   Heart,
-  Phone,
   Mail,
   MapPin,
+  Phone,
+  RefreshCw,
   Shield,
   TrendingUp,
-  Users,
-  Bell,
-  Zap,
-  Eye,
-  RefreshCw,
   UserPlus,
-  FileText,
-  AlertCircle,
+  Users,
+  Zap,
 } from 'lucide-react';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/patients/dashboard')({
   component: PatientDashboard,
@@ -99,7 +99,9 @@ interface RealTimeUpdate {
   patientId?: string;
 }
 
-function PatientCard({ patient, onClick }: { patient: Patient; onClick: (patientId: string) => void }) {
+function PatientCard(
+  { patient, onClick }: { patient: Patient; onClick: (patientId: string) => void },
+) {
   const getRiskColor = (riskScore: number) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
@@ -322,9 +324,9 @@ function PatientDashboard() {
 
   const stats = mockStats;
   const patients = mockPatients.filter(patient =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.phone.includes(searchTerm)
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    || patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+    || patient.phone.includes(searchTerm)
   );
 
   // Enhanced stats cards with healthcare metrics
@@ -412,21 +414,31 @@ function PatientDashboard() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'destructive';
-      case 'high': return 'destructive';
-      case 'medium': return 'warning';
-      case 'low': return 'default';
-      default: return 'default';
+      case 'critical':
+        return 'destructive';
+      case 'high':
+        return 'destructive';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'default';
+      default:
+        return 'default';
     }
   };
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'Crítico';
-      case 'high': return 'Alto';
-      case 'medium': return 'Médio';
-      case 'low': return 'Baixo';
-      default: return 'Normal';
+      case 'critical':
+        return 'Crítico';
+      case 'high':
+        return 'Alto';
+      case 'medium':
+        return 'Médio';
+      case 'low':
+        return 'Baixo';
+      default:
+        return 'Normal';
     }
   };
 
@@ -540,7 +552,7 @@ function PatientDashboard() {
               Gerencie pacientes, consultas e acompanhamento em tempo real
             </p>
           </div>
-          
+
           {/* Mobile-optimized button layout */}
           <div className='flex flex-col sm:flex-row gap-3 w-full sm:w-auto'>
             <UniversalButton
@@ -574,7 +586,10 @@ function PatientDashboard() {
           </div>
           <div className='space-y-1'>
             {realTimeUpdates.slice(0, 2).map((update, index) => (
-              <div key={index} className='text-xs sm:text-sm text-green-700 flex items-center gap-1'>
+              <div
+                key={index}
+                className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
+              >
                 <span className='w-2 h-2 bg-green-500 rounded-full'></span>
                 {update.message}
                 <span className='text-green-600'>
@@ -587,11 +602,14 @@ function PatientDashboard() {
       )}
 
       {/* Enhanced Stats Cards - Mobile-optimized grid */}
-      <section aria-labelledby="stats-heading" className='space-y-4'>
-        <h2 id="stats-heading" className='sr-only'>Estatísticas do dashboard</h2>
+      <section aria-labelledby='stats-heading' className='space-y-4'>
+        <h2 id='stats-heading' className='sr-only'>Estatísticas do dashboard</h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
           {statsCards.map((stat, index) => (
-            <Card key={stat.title} className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
+            <Card
+              key={stat.title}
+              className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'
+            >
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm sm:text-base font-medium text-gray-900 flex items-center gap-2'>
                   <stat.icon className={`h-4 w-4 ${stat.color}`} />
@@ -605,13 +623,15 @@ function PatientDashboard() {
                 <p className='text-xs sm:text-sm text-muted-foreground'>
                   <span
                     className={`inline-flex items-center font-medium ${
-                      stat.changeType === 'increase' 
-                        ? 'text-green-600' 
+                      stat.changeType === 'increase'
+                        ? 'text-green-600'
                         : 'text-red-600'
                     }`}
-                    aria-label={`${stat.changeType === 'increase' ? 'Aumento' : 'Diminuição'} de ${stat.change}`}
+                    aria-label={`${
+                      stat.changeType === 'increase' ? 'Aumento' : 'Diminuição'
+                    } de ${stat.change}`}
                   >
-                    <span aria-hidden="true">
+                    <span aria-hidden='true'>
                       {stat.changeType === 'increase' ? '↑' : '↓'}
                     </span>
                     <span className='ml-1'>{stat.change}</span>
@@ -625,10 +645,13 @@ function PatientDashboard() {
       </section>
 
       {/* AI Insights Section */}
-      <section aria-labelledby="ai-insights-heading">
+      <section aria-labelledby='ai-insights-heading'>
         <Card>
           <CardHeader>
-            <CardTitle id="ai-insights-heading" className='text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2'>
+            <CardTitle
+              id='ai-insights-heading'
+              className='text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2'
+            >
               <Zap className='h-5 w-5 text-purple-600' />
               Insights de Inteligência Artificial
             </CardTitle>
@@ -638,16 +661,25 @@ function PatientDashboard() {
           </CardHeader>
           <CardContent className='space-y-4'>
             <div className='grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
-              {aiInsights.map((insight) => (
-                <Card key={insight.id} className='transition-all hover:shadow-md border-l-4 border-l-purple-500'>
+              {aiInsights.map(insight => (
+                <Card
+                  key={insight.id}
+                  className='transition-all hover:shadow-md border-l-4 border-l-purple-500'
+                >
                   <CardHeader className='pb-3'>
                     <div className='flex items-center justify-between'>
                       <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                        <AlertCircle className={`h-4 w-4 ${
-                          insight.priority === 'critical' ? 'text-red-600' :
-                          insight.priority === 'high' ? 'text-orange-600' :
-                          insight.priority === 'medium' ? 'text-yellow-600' : 'text-blue-600'
-                        }`} />
+                        <AlertCircle
+                          className={`h-4 w-4 ${
+                            insight.priority === 'critical'
+                              ? 'text-red-600'
+                              : insight.priority === 'high'
+                              ? 'text-orange-600'
+                              : insight.priority === 'medium'
+                              ? 'text-yellow-600'
+                              : 'text-blue-600'
+                          }`}
+                        />
                         {insight.title}
                       </CardTitle>
                       <Badge variant={getPriorityColor(insight.priority)}>
@@ -680,19 +712,22 @@ function PatientDashboard() {
       </section>
 
       {/* Patient Management Section */}
-      <section aria-labelledby="patients-heading">
+      <section aria-labelledby='patients-heading'>
         <Card>
           <CardHeader>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
               <div>
-                <CardTitle id="patients-heading" className='text-lg sm:text-xl font-semibold text-gray-900'>
+                <CardTitle
+                  id='patients-heading'
+                  className='text-lg sm:text-xl font-semibold text-gray-900'
+                >
                   Pacientes
                 </CardTitle>
                 <CardDescription className='text-sm sm:text-base'>
                   Busque e gerencie todos os pacientes cadastrados no sistema
                 </CardDescription>
               </div>
-              
+
               {/* View mode toggle */}
               <div className='flex items-center gap-2'>
                 <Button
@@ -718,56 +753,59 @@ function PatientDashboard() {
             {/* Mobile-optimized search */}
             <div className='flex flex-col sm:flex-row sm:items-center gap-3'>
               <div className='relative flex-1 sm:max-w-sm'>
-                <label htmlFor="patient-search" className='sr-only'>
+                <label htmlFor='patient-search' className='sr-only'>
                   Buscar pacientes por nome, email ou CPF
                 </label>
                 <Input
-                  id="patient-search"
-                  type="search"
+                  id='patient-search'
+                  type='search'
                   placeholder='Buscar por nome, email ou CPF...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className='w-full h-11 sm:h-10 text-base sm:text-sm pl-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  aria-describedby="search-help"
+                  aria-describedby='search-help'
                 />
-                <div id="search-help" className='sr-only'>
+                <div id='search-help' className='sr-only'>
                   Digite pelo menos 2 caracteres para buscar pacientes
                 </div>
               </div>
-              
+
               {/* Results count for screen readers */}
-              <div className='sr-only' aria-live="polite">
-                {patients.length > 0 
-                  ? `${patients.length} paciente${patients.length !== 1 ? 's' : ''} encontrado${patients.length !== 1 ? 's' : ''}`
-                  : 'Nenhum paciente encontrado'
-                }
+              <div className='sr-only' aria-live='polite'>
+                {patients.length > 0
+                  ? `${patients.length} paciente${patients.length !== 1 ? 's' : ''} encontrado${
+                    patients.length !== 1 ? 's' : ''
+                  }`
+                  : 'Nenhum paciente encontrado'}
               </div>
             </div>
 
             {/* Conditional rendering based on view mode */}
-            {viewMode === 'cards' ? (
-              <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                {patients.map((patient) => (
-                  <PatientCard
-                    key={patient.id}
-                    patient={patient}
-                    onClick={handlePatientClick}
+            {viewMode === 'cards'
+              ? (
+                <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                  {patients.map(patient => (
+                    <PatientCard
+                      key={patient.id}
+                      patient={patient}
+                      onClick={handlePatientClick}
+                    />
+                  ))}
+                </div>
+              )
+              : (
+                <div className='overflow-x-auto'>
+                  <EnhancedTable
+                    columns={tableColumns}
+                    data={patients}
+                    searchable={false}
+                    pagination={true}
+                    itemsPerPage={10}
+                    className='min-w-full'
+                    aria-label='Lista de pacientes'
                   />
-                ))}
-              </div>
-            ) : (
-              <div className='overflow-x-auto'>
-                <EnhancedTable
-                  columns={tableColumns}
-                  data={patients}
-                  searchable={false}
-                  pagination={true}
-                  itemsPerPage={10}
-                  className="min-w-full"
-                  aria-label="Lista de pacientes"
-                />
-              </div>
-            )}
+                </div>
+              )}
 
             {patients.length === 0 && (
               <div className='text-center py-8'>
@@ -791,8 +829,8 @@ function PatientDashboard() {
       </section>
 
       {/* Quick Actions - Mobile-first accessibility */}
-      <section aria-labelledby="quick-actions-heading">
-        <h2 id="quick-actions-heading" className='sr-only'>Ações rápidas</h2>
+      <section aria-labelledby='quick-actions-heading'>
+        <h2 id='quick-actions-heading' className='sr-only'>Ações rápidas</h2>
         <FocusCards
           cards={[
             {
@@ -824,7 +862,7 @@ function PatientDashboard() {
               ariaLabel: 'Ir para página de relatórios e análises',
             },
           ]}
-          className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          className='grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
         />
       </section>
 

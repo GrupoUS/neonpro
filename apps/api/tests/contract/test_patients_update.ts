@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: PUT /api/v2/patients/{id} (T014)
- * 
+ *
  * Tests patient update endpoint contract:
  * - Request/response schema validation
  * - Partial and full updates
@@ -10,10 +10,10 @@
  * - Performance requirements (<500ms)
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Request schema for updates (all fields optional except ID)
 const UpdatePatientRequestSchema = z.object({
@@ -105,7 +105,7 @@ const UpdatePatientResponseSchema = z.object({
 
 describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -169,7 +169,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
       // Validate response schema
       const validatedData = UpdatePatientResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Validate specific updates
       expect(response.body.name).toBe('Updated Patient Name');
       expect(response.body.id).toBe(testPatientId);
@@ -309,7 +309,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
       expect(response.body.lgpdConsent.marketingCommunications).toBe(false);
       expect(response.body.lgpdConsent.thirdPartySharing).toBe(true);
       expect(response.body.lgpdConsent.lastUpdated).toBeDefined();
-      
+
       // Data processing consent should remain unchanged
       expect(response.body.lgpdConsent.dataProcessing).toBe(true);
     });
@@ -414,7 +414,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
 
     it('should return 404 for non-existent patient', async () => {
       const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
-      
+
       const response = await request(app)
         .put(`/api/v2/patients/${nonExistentId}`)
         .set(testAuthHeaders)
@@ -456,7 +456,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
 
     it('should reject updates with stale lastModified', async () => {
       const staleDate = '2023-01-01T00:00:00.000Z';
-      
+
       const updateData = {
         name: 'Stale Update',
         lastModified: staleDate,
@@ -475,7 +475,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should update patient within 500ms', async () => {
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .put(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -484,7 +484,7 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });

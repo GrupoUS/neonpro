@@ -405,24 +405,24 @@ function PatientRegister() {
     if (field.type === 'select') {
       return (
         <div key={field.name} className='space-y-2'>
-          <Label 
+          <Label
             htmlFor={fieldId}
             className='text-sm sm:text-base font-medium text-gray-900'
           >
-            {field.label} 
+            {field.label}
             {field.required && (
               <span className='text-red-500 ml-1' aria-label='campo obrigatório'>*</span>
             )}
           </Label>
-          <Select 
-            value={value as string} 
+          <Select
+            value={value as string}
             onValueChange={v => handleInputChange(field.name, v)}
           >
-            <SelectTrigger 
+            <SelectTrigger
               id={fieldId}
               className={`h-11 sm:h-10 text-base sm:text-sm ${
-                error 
-                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                error
+                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
                   : 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
               }`}
               aria-invalid={error ? 'true' : 'false'}
@@ -432,10 +432,10 @@ function PatientRegister() {
             </SelectTrigger>
             <SelectContent>
               {field.options?.map((option: any) => (
-                <SelectItem 
-                  key={option.value} 
+                <SelectItem
+                  key={option.value}
                   value={option.value}
-                  className="text-base sm:text-sm py-2 sm:py-1"
+                  className='text-base sm:text-sm py-2 sm:py-1'
                 >
                   {option.label}
                 </SelectItem>
@@ -443,12 +443,12 @@ function PatientRegister() {
             </SelectContent>
           </Select>
           {error && (
-            <p 
-              id={errorId} 
+            <p
+              id={errorId}
               className='text-sm text-red-600 flex items-center gap-1'
-              role="alert"
+              role='alert'
             >
-              <span aria-hidden="true">⚠</span>
+              <span aria-hidden='true'>⚠</span>
               {error}
             </p>
           )}
@@ -458,11 +458,11 @@ function PatientRegister() {
 
     return (
       <div key={field.name} className='space-y-2'>
-        <Label 
+        <Label
           htmlFor={fieldId}
           className='text-sm sm:text-base font-medium text-gray-900'
         >
-          {field.label} 
+          {field.label}
           {field.required && (
             <span className='text-red-500 ml-1' aria-label='campo obrigatório'>*</span>
           )}
@@ -479,8 +479,8 @@ function PatientRegister() {
             handleInputChange(field.name, formattedValue);
           }}
           className={`h-11 sm:h-10 text-base sm:text-sm ${
-            error 
-              ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+            error
+              ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
               : 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
           }`}
           placeholder={field.placeholder || `Digite ${field.label.toLowerCase()}`}
@@ -489,12 +489,12 @@ function PatientRegister() {
           autoComplete={getAutoComplete(field.name)}
         />
         {error && (
-          <p 
-            id={errorId} 
+          <p
+            id={errorId}
             className='text-sm text-red-600 flex items-center gap-1'
-            role="alert"
+            role='alert'
           >
-            <span aria-hidden="true">⚠</span>
+            <span aria-hidden='true'>⚠</span>
             {error}
           </p>
         )}
@@ -584,13 +584,14 @@ function PatientRegister() {
             </CardTitle>
             <CardDescription className='text-sm sm:text-base text-gray-600'>
               De acordo com a Lei Geral de Proteção de Dados, necessitamos do seu consentimento para
-              processar os dados do paciente. Você pode retirar seu consentimento a qualquer momento.
+              processar os dados do paciente. Você pode retirar seu consentimento a qualquer
+              momento.
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4 pt-2'>
             <fieldset className='space-y-4'>
               <legend className='sr-only'>Consentimentos LGPD obrigatórios e opcionais</legend>
-              
+
               <div className='flex items-start space-x-3 p-3 rounded-lg border border-blue-200 bg-blue-50'>
                 <Checkbox
                   id='lgpd_data_processing'
@@ -598,7 +599,7 @@ function PatientRegister() {
                   onCheckedChange={checked =>
                     handleInputChange('lgpd_data_processing', checked as boolean)}
                   className='mt-1 h-5 w-5 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                  aria-required="true"
+                  aria-required='true'
                   aria-describedby='lgpd_data_processing_desc lgpd_data_processing_error'
                 />
                 <div className='grid gap-2 leading-none'>
@@ -606,19 +607,19 @@ function PatientRegister() {
                     htmlFor='lgpd_data_processing'
                     className='text-sm sm:text-base font-medium leading-none cursor-pointer text-gray-900 flex items-center gap-2'
                   >
-                    Processamento de Dados 
+                    Processamento de Dados
                     <span className='text-red-500' aria-label='consentimento obrigatório'>*</span>
                   </Label>
                   <p id='lgpd_data_processing_desc' className='text-sm text-gray-600'>
                     Autorizo o processamento de meus dados para fins médicos e administrativos
                   </p>
                   {errors.lgpd_data_processing && (
-                    <p 
-                      id='lgpd_data_processing_error' 
+                    <p
+                      id='lgpd_data_processing_error'
                       className='text-sm text-red-600 flex items-center gap-1'
-                      role="alert"
+                      role='alert'
                     >
-                      <span aria-hidden="true">⚠</span>
+                      <span aria-hidden='true'>⚠</span>
                       {errors.lgpd_data_processing}
                     </p>
                   )}

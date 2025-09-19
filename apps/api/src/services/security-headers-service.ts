@@ -49,7 +49,7 @@ export interface SecurityHeaderConfig {
   crossOriginEmbedderPolicy: 'require-corp' | 'credentialless' | 'unsafe-none';
   crossOriginOpenerPolicy: 'same-origin' | 'same-origin-allow-popups' | 'unsafe-none';
   crossOriginResourcePolicy: 'same-origin' | 'same-site' | 'cross-origin';
-};
+}
 
 export interface HealthcareSecurityContext {
   isHealthcareEndpoint: boolean;
@@ -81,17 +81,17 @@ const HEALTHCARE_SECURITY_CONFIGS: Record<string, SecurityHeaderConfig> = {
     csp: {
       enabled: true,
       reportOnly: false,
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts for legacy compatibility
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
-      fontSrc: ["'self'", 'https:'],
-      connectSrc: ["'self'", 'wss:', 'https:'],
-      mediaSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      childSrc: ["'self'"],
-      formAction: ["'self'"],
-      frameAncestors: ["'none'"],
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\''], // Allow inline scripts for legacy compatibility
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
+      fontSrc: ['\'self\'', 'https:'],
+      connectSrc: ['\'self\'', 'wss:', 'https:'],
+      mediaSrc: ['\'self\''],
+      objectSrc: ['\'none\''],
+      childSrc: ['\'self\''],
+      formAction: ['\'self\''],
+      frameAncestors: ['\'none\''],
       sandbox: 'allow-scripts allow-same-origin allow-forms',
       reportUri: '/api/security/csp-reports',
     },
@@ -116,17 +116,17 @@ const HEALTHCARE_SECURITY_CONFIGS: Record<string, SecurityHeaderConfig> = {
     csp: {
       enabled: true,
       reportOnly: false,
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
-      fontSrc: ["'self'", 'https:'],
-      connectSrc: ["'self'", 'wss:', 'https:'],
-      mediaSrc: ["'self'", 'https:'],
-      objectSrc: ["'none'"],
-      childSrc: ["'self'"],
-      formAction: ["'self'"],
-      frameAncestors: ["'self'"],
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
+      fontSrc: ['\'self\'', 'https:'],
+      connectSrc: ['\'self\'', 'wss:', 'https:'],
+      mediaSrc: ['\'self\'', 'https:'],
+      objectSrc: ['\'none\''],
+      childSrc: ['\'self\''],
+      formAction: ['\'self\''],
+      frameAncestors: ['\'self\''],
       reportUri: '/api/security/csp-reports',
     },
     hsts: {
@@ -150,17 +150,17 @@ const HEALTHCARE_SECURITY_CONFIGS: Record<string, SecurityHeaderConfig> = {
     csp: {
       enabled: true,
       reportOnly: false,
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:'],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
-      imgSrc: ["'self'", 'data:', 'https:', 'http:'],
-      fontSrc: ["'self'", 'https:'],
-      connectSrc: ["'self'", 'wss:', 'https:', 'http:'],
-      mediaSrc: ["'self'", 'https:', 'http:'],
-      objectSrc: ["'self'"],
-      childSrc: ["'self'"],
-      formAction: ["'self'"],
-      frameAncestors: ["'self'"],
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https:'],
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https:'],
+      imgSrc: ['\'self\'', 'data:', 'https:', 'http:'],
+      fontSrc: ['\'self\'', 'https:'],
+      connectSrc: ['\'self\'', 'wss:', 'https:', 'http:'],
+      mediaSrc: ['\'self\'', 'https:', 'http:'],
+      objectSrc: ['\'self\''],
+      childSrc: ['\'self\''],
+      formAction: ['\'self\''],
+      frameAncestors: ['\'self\''],
       reportUri: '/api/security/csp-reports',
     },
     hsts: {
@@ -405,15 +405,15 @@ export class SecurityHeadersService {
    */
   private buildHSTS(hsts: SecurityHeaderConfig['hsts']): string {
     let value = `max-age=${hsts.maxAge}`;
-    
+
     if (hsts.includeSubDomains) {
       value += '; includeSubDomains';
     }
-    
+
     if (hsts.preload) {
       value += '; preload';
     }
-    
+
     return value;
   }
 
@@ -423,7 +423,7 @@ export class SecurityHeadersService {
   private calculateSecurityScore(
     appliedHeaders: string[],
     missingHeaders: string[],
-    context: HealthcareSecurityContext
+    context: HealthcareSecurityContext,
   ): number {
     let score = 100;
 
@@ -489,7 +489,7 @@ export class SecurityHeadersService {
       'violated-directive': string;
       'original-policy': string;
       'document-uri': string;
-      'referrer': string;
+      referrer: string;
     };
   }, request: {
     headers: Record<string, string>;
@@ -497,7 +497,7 @@ export class SecurityHeadersService {
   }): Promise<void> {
     try {
       const cspReport = report['csp-report'];
-      
+
       const violation = {
         id: crypto.randomUUID(),
         timestamp: new Date(),
@@ -544,8 +544,8 @@ export class SecurityHeadersService {
     ];
 
     return (
-      highRiskDirectives.includes(violation.violatedDirective) ||
-      highRiskBlockedUris.some(uri => violation.blockedUri.startsWith(uri))
+      highRiskDirectives.includes(violation.violatedDirective)
+      || highRiskBlockedUris.some(uri => violation.blockedUri.startsWith(uri))
     );
   }
 
@@ -579,7 +579,7 @@ export class SecurityHeadersService {
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     const violationsLast24h = this.cspReports.filter(
-      v => v.timestamp >= yesterday
+      v => v.timestamp >= yesterday,
     ).length;
 
     // Count violated directives
@@ -642,7 +642,7 @@ export class SecurityHeadersService {
         });
       }
 
-      if (config.csp.scriptSrc && config.csp.scriptSrc.includes("'unsafe-inline'")) {
+      if (config.csp.scriptSrc && config.csp.scriptSrc.includes('\'unsafe-inline\'')) {
         validationErrors.push({
           type: 'warning',
           message: 'CSP script-src contains \'unsafe-inline\' which reduces security',
@@ -767,7 +767,10 @@ export class SecurityHeadersService {
   /**
    * Assess sensitivity level of endpoint
    */
-  private assessSensitivityLevel(url: string, method: string): 'low' | 'medium' | 'high' | 'critical' {
+  private assessSensitivityLevel(
+    url: string,
+    method: string,
+  ): 'low' | 'medium' | 'high' | 'critical' {
     if (url.includes('/medical-records') || url.includes('/diagnoses')) {
       return 'critical';
     }

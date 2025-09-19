@@ -1,12 +1,12 @@
 /**
  * AI Security Service for Healthcare Applications
- * 
+ *
  * Provides comprehensive security measures for AI provider interactions,
  * ensuring LGPD compliance, data protection, and medical safety.
  */
 
-import { z } from 'zod';
 import { auditLogger } from '@neonpro/security';
+import { z } from 'zod';
 
 // Security validation schemas
 const SensitiveDataSchema = z.object({
@@ -152,14 +152,14 @@ export function validateMedicalTerminology(term: string): boolean {
     'doença pulmonar obstrutiva crônica',
     'artrite reumatoide',
     'lúpus eritematoso sistêmico',
-    
+
     // Vital signs
     'pressão arterial',
     'frequência cardíaca',
     'saturação de oxigênio',
     'temperatura corporal',
     'frequência respiratória',
-    
+
     // Medical procedures
     'eletrocardiograma',
     'radiografia de tórax',
@@ -170,9 +170,9 @@ export function validateMedicalTerminology(term: string): boolean {
   ];
 
   const normalizedTerm = term.toLowerCase().trim();
-  return validTerms.some(validTerm => 
-    validTerm.toLowerCase().includes(normalizedTerm) ||
-    normalizedTerm.includes(validTerm.toLowerCase())
+  return validTerms.some(validTerm =>
+    validTerm.toLowerCase().includes(normalizedTerm)
+    || normalizedTerm.includes(validTerm.toLowerCase())
   );
 }
 
@@ -214,9 +214,7 @@ export function validateAIOutputSafety(response: string): boolean {
   }
 
   // Check for required medical disclaimers
-  const hasDisclaimer = missingDisclaimerPatterns.some(pattern => 
-    pattern.test(response)
-  );
+  const hasDisclaimer = missingDisclaimerPatterns.some(pattern => pattern.test(response));
 
   if (!hasDisclaimer && response.length > 100) {
     auditLogger.logSecurityEvent({
@@ -250,14 +248,10 @@ export class AIRateLimiter {
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
-    const recentRequests = userRequests.filter(time => 
-      now - time < 60 * 60 * 1000
-    );
+    const recentRequests = userRequests.filter(time => now - time < 60 * 60 * 1000);
 
     // Check minute limit
-    const minuteRequests = recentRequests.filter(time => 
-      now - time < 60 * 1000
-    );
+    const minuteRequests = recentRequests.filter(time => now - time < 60 * 1000);
 
     if (minuteRequests.length >= RATE_LIMITS.requestsPerMinute) {
       auditLogger.logSecurityEvent({
@@ -292,10 +286,8 @@ export class AIRateLimiter {
   private cleanupOldRequests(): void {
     const now = Date.now();
     for (const [key, requests] of this.requests.entries()) {
-      const recentRequests = requests.filter(time => 
-        now - time < 60 * 60 * 1000
-      );
-      
+      const recentRequests = requests.filter(time => now - time < 60 * 60 * 1000);
+
       if (recentRequests.length === 0) {
         this.requests.delete(key);
       } else {
@@ -364,17 +356,17 @@ export function logAIInteraction(interaction: {
  */
 export function shouldRetainAIData(createdAt: number, dataCategory: string): boolean {
   const daysOld = (Date.now() - createdAt) / (24 * 60 * 60 * 1000);
-  
+
   // Different retention periods for different data types
   const retentionPolicies = {
-    'AI_CONVERSATION': 365, // 1 year
-    'AI_DIAGNOSIS': 1825, // 5 years (medical data)
-    'AI_ANALYTICS': 90, // 3 months
-    'AUDIT_LOG': 2555, // 7 years
+    AI_CONVERSATION: 365, // 1 year
+    AI_DIAGNOSIS: 1825, // 5 years (medical data)
+    AI_ANALYTICS: 90, // 3 months
+    AUDIT_LOG: 2555, // 7 years
   };
 
   const retentionDays = retentionPolicies[dataCategory as keyof typeof retentionPolicies] || 365;
-  
+
   if (daysOld > retentionDays) {
     auditLogger.logSecurityEvent({
       event: 'ai_data_retention_expired',
@@ -395,7 +387,7 @@ function anonymizeName(name: string): string {
   if (parts.length === 1) {
     return parts[0][0] + '***';
   }
-  
+
   return parts[0][0] + '*** ' + parts[parts.length - 1][0] + '***';
 }
 
@@ -414,7 +406,8 @@ export const aiSecurityService = {
   validatePromptSecurity,
   validateMedicalTerminology,
   validateAIOutputSafety,
-  canMakeRequest: (userId: string, clinicId: string) => aiRateLimiter.canMakeRequest(userId, clinicId),
+  canMakeRequest: (userId: string, clinicId: string) =>
+    aiRateLimiter.canMakeRequest(userId, clinicId),
   validateApiKeyRotation,
   logAIInteraction,
   shouldRetainAIData,

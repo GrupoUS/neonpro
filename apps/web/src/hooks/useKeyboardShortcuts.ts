@@ -48,11 +48,11 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts, deps: any[] =
   const isInInputField = (target: EventTarget) => {
     const element = target as HTMLElement;
     return (
-      element.tagName === 'INPUT' ||
-      element.tagName === 'TEXTAREA' ||
-      element.tagName === 'SELECT' ||
-      element.isContentEditable ||
-      element.closest('[contenteditable="true"]')
+      element.tagName === 'INPUT'
+      || element.tagName === 'TEXTAREA'
+      || element.tagName === 'SELECT'
+      || element.isContentEditable
+      || element.closest('[contenteditable="true"]')
     );
   };
 
@@ -70,7 +70,7 @@ export function useAdvancedKeyboardShortcuts(
     preventDefault?: boolean;
     stopPropagation?: boolean;
   } = {},
-  deps: any[] = []
+  deps: any[] = [],
 ) {
   const { ignoreInputs = true, preventDefault = true, stopPropagation = false } = options;
   const shortcutsRef = useRef(shortcuts);
@@ -123,11 +123,11 @@ export function useAdvancedKeyboardShortcuts(
 function isInInputField(target: EventTarget) {
   const element = target as HTMLElement;
   return (
-    element.tagName === 'INPUT' ||
-    element.tagName === 'TEXTAREA' ||
-    element.tagName === 'SELECT' ||
-    element.isContentEditable ||
-    element.closest('[contenteditable="true"]')
+    element.tagName === 'INPUT'
+    || element.tagName === 'TEXTAREA'
+    || element.tagName === 'SELECT'
+    || element.isContentEditable
+    || element.closest('[contenteditable="true"]')
   );
 }
 

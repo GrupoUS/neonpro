@@ -253,7 +253,7 @@ export class DataRetentionService {
     dataSource: string,
     dataIdentifier: string,
     patientId?: string,
-    customRetentionDate?: Date
+    customRetentionDate?: Date,
   ): Promise<CleanupJob> {
     try {
       const policy = this.policies.find(p => p.id === policyId);
@@ -267,7 +267,7 @@ export class DataRetentionService {
 
       // Calculate scheduled date
       const scheduledDate = customRetentionDate || this.calculateRetentionDate(policy);
-      
+
       const cleanupJob: CleanupJob = {
         id: crypto.randomUUID(),
         policyId,
@@ -351,16 +351,17 @@ export class DataRetentionService {
       try {
         // Execute cleanup action
         const result = await this.executeCleanupAction(job, policy, execution);
-        
+
         execution.recordsAffected = result.affectedCount;
         execution.recordsProcessed = result.processedCount;
         execution.status = result.hasErrors ? 'partial' : 'completed';
-        
+
         // Calculate performance metrics
         const executionTime = Date.now() - execution.startTime.getTime();
         execution.endTime = new Date();
-        execution.performance.recordsPerSecond = execution.recordsProcessed / (executionTime / 1000);
-        
+        execution.performance.recordsPerSecond = execution.recordsProcessed
+          / (executionTime / 1000);
+
         // Update job status
         await this.updateJobStatus(jobId, 'completed', {
           executionDate: execution.endTime,
@@ -373,10 +374,9 @@ export class DataRetentionService {
 
         // Send completion notification
         await this.sendCompletionNotification(job, execution, policy);
-
       } catch (error) {
         console.error('Error executing cleanup job:', error);
-        
+
         execution.status = 'failed';
         execution.endTime = new Date();
         execution.errors.push({
@@ -391,7 +391,7 @@ export class DataRetentionService {
         });
 
         await this.storeExecutionRecord(execution);
-        
+
         // Send error notification
         await this.sendErrorNotification(job, execution, policy);
       }
@@ -412,7 +412,7 @@ export class DataRetentionService {
   private async executeCleanupAction(
     job: CleanupJob,
     policy: RetentionPolicy,
-    execution: CleanupExecution
+    execution: CleanupExecution,
   ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
     switch (job.action) {
       case RetentionAction.DELETE:
@@ -433,18 +433,18 @@ export class DataRetentionService {
    */
   private async executeDeletion(
     job: CleanupJob,
-    execution: CleanupExecution
+    execution: CleanupExecution,
   ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
     try {
       // This would integrate with your data deletion service
       console.log(`Executing deletion for job ${job.id} on ${job.dataSource}`);
-      
+
       // Simulate deletion process
       const affectedCount = await this.simulateDataDeletion(job.dataSource, job.dataIdentifier);
-      
+
       execution.auditLog.action = RetentionAction.DELETE;
       execution.auditLog.reason += ' - Data permanently deleted per LGPD requirements';
-      
+
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
@@ -466,17 +466,20 @@ export class DataRetentionService {
    */
   private async executeAnonymization(
     job: CleanupJob,
-    execution: CleanupExecution
+    execution: CleanupExecution,
   ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
     try {
       console.log(`Executing anonymization for job ${job.id} on ${job.dataSource}`);
-      
+
       // Simulate anonymization process
-      const affectedCount = await this.simulateDataAnonymization(job.dataSource, job.dataIdentifier);
-      
+      const affectedCount = await this.simulateDataAnonymization(
+        job.dataSource,
+        job.dataIdentifier,
+      );
+
       execution.auditLog.action = RetentionAction.ANONYMIZE;
       execution.auditLog.reason += ' - Data anonymized per LGPD requirements';
-      
+
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
@@ -498,17 +501,17 @@ export class DataRetentionService {
    */
   private async executeArchival(
     job: CleanupJob,
-    execution: CleanupExecution
+    execution: CleanupExecution,
   ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
     try {
       console.log(`Executing archival for job ${job.id} on ${job.dataSource}`);
-      
+
       // Simulate archival process
       const affectedCount = await this.simulateDataArchival(job.dataSource, job.dataIdentifier);
-      
+
       execution.auditLog.action = RetentionAction.ARCHIVE;
       execution.auditLog.reason += ' - Data archived for long-term storage';
-      
+
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
@@ -530,17 +533,17 @@ export class DataRetentionService {
    */
   private async executeFlagging(
     job: CleanupJob,
-    execution: CleanupExecution
+    execution: CleanupExecution,
   ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
     try {
       console.log(`Executing flagging for job ${job.id} on ${job.dataSource}`);
-      
+
       // Simulate flagging process
       const affectedCount = await this.simulateDataFlagging(job.dataSource, job.dataIdentifier);
-      
+
       execution.auditLog.action = RetentionAction.FLAG_FOR_REVIEW;
       execution.auditLog.reason += ' - Data flagged for manual review';
-      
+
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
@@ -587,7 +590,10 @@ export class DataRetentionService {
   /**
    * Simulate data anonymization
    */
-  private async simulateDataAnonymization(dataSource: string, dataIdentifier: string): Promise<number> {
+  private async simulateDataAnonymization(
+    dataSource: string,
+    dataIdentifier: string,
+  ): Promise<number> {
     // In production, this would execute UPDATE operations to anonymize data
     console.log(`Anonymizing data from ${dataSource} with identifier ${dataIdentifier}`);
     return Math.floor(Math.random() * 980) + 20; // Simulate 20-1000 records anonymized
@@ -634,7 +640,7 @@ export class DataRetentionService {
   private async updateJobStatus(
     jobId: string,
     status: CleanupJob['status'],
-    updates?: Partial<CleanupJob>
+    updates?: Partial<CleanupJob>,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('data_retention_jobs')
@@ -671,8 +677,9 @@ export class DataRetentionService {
   private async sendCleanupNotification(job: CleanupJob, policy: RetentionPolicy): Promise<void> {
     if (!policy.notificationConfig) return;
 
-    const message = `Scheduled cleanup job ${job.id} for ${job.dataSource} will execute on ${job.scheduledDate.toISOString()}`;
-    
+    const message =
+      `Scheduled cleanup job ${job.id} for ${job.dataSource} will execute on ${job.scheduledDate.toISOString()}`;
+
     // In production, this would integrate with your notification service
     console.log('[Cleanup Notification]', message);
   }
@@ -683,10 +690,11 @@ export class DataRetentionService {
   private async sendCompletionNotification(
     job: CleanupJob,
     execution: CleanupExecution,
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<void> {
-    const message = `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`;
-    
+    const message =
+      `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`;
+
     console.log('[Completion Notification]', message);
   }
 
@@ -696,10 +704,12 @@ export class DataRetentionService {
   private async sendErrorNotification(
     job: CleanupJob,
     execution: CleanupExecution,
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<void> {
-    const message = `Cleanup job ${job.id} failed. Error: ${execution.errors[0]?.error || 'Unknown error'}`;
-    
+    const message = `Cleanup job ${job.id} failed. Error: ${
+      execution.errors[0]?.error || 'Unknown error'
+    }`;
+
     console.log('[Error Notification]', message);
   }
 
@@ -734,13 +744,13 @@ export class DataRetentionService {
       // Execute jobs in parallel (with reasonable concurrency limit)
       const concurrencyLimit = 5;
       const chunks = [];
-      
+
       for (let i = 0; i < scheduledJobs!.length; i += concurrencyLimit) {
         chunks.push(scheduledJobs!.slice(i, i + concurrencyLimit));
       }
 
       for (const chunk of chunks) {
-        const promises = chunk.map(async (job) => {
+        const promises = chunk.map(async job => {
           try {
             const execution = await this.executeCleanupJob(job.id);
             results.jobsProcessed++;
@@ -804,12 +814,14 @@ export class DataRetentionService {
         .select('recordsProcessed')
         .gte('startTime', yesterday.toISOString());
 
-      const totalRecordsProcessed24h = executions?.reduce((sum, exec) => sum + exec.recordsProcessed, 0) || 0;
+      const totalRecordsProcessed24h = executions?.reduce((sum, exec) =>
+        sum + exec.recordsProcessed, 0) || 0;
 
       // Calculate policies by category
       const policiesByCategory = {} as Record<LGPDDataCategory, number>;
       this.policies.forEach(policy => {
-        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0) + 1;
+        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0)
+          + 1;
       });
 
       return {

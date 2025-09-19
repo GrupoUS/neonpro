@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: GET /api/v2/patients/{id} (T013)
- * 
+ *
  * Tests individual patient retrieval endpoint contract:
  * - Request/response schema validation
  * - Patient existence validation
@@ -9,10 +9,10 @@
  * - Detailed patient data structure
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Response schema validation for detailed patient view
 const GetPatientResponseSchema = z.object({
@@ -66,7 +66,7 @@ const GetPatientResponseSchema = z.object({
 
 describe('GET /api/v2/patients/{id} - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -121,7 +121,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
       // Validate response schema
       const validatedData = GetPatientResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Validate specific fields
       expect(response.body.id).toBe(testPatientId);
       expect(response.body.name).toBe('Test Patient for Retrieval');
@@ -217,7 +217,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should respond within 500ms', async () => {
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -225,7 +225,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });
@@ -244,7 +244,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
   describe('Error Handling', () => {
     it('should return 404 for non-existent patient', async () => {
       const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
-      
+
       const response = await request(app)
         .get(`/api/v2/patients/${nonExistentId}`)
         .set(testAuthHeaders)
@@ -256,7 +256,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
 
     it('should return 400 for invalid UUID format', async () => {
       const invalidId = 'invalid-uuid';
-      
+
       const response = await request(app)
         .get(`/api/v2/patients/${invalidId}`)
         .set(testAuthHeaders)
@@ -273,7 +273,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
 
     it('should return 403 for insufficient permissions', async () => {
       const restrictedHeaders = {
-        'Authorization': 'Bearer restricted-token',
+        Authorization: 'Bearer restricted-token',
         'Content-Type': 'application/json',
       };
 

@@ -17,42 +17,43 @@
 
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
-import { EnhancedSidebar } from './EnhancedSidebar';
-import { Toaster } from '@/components/ui/sonner';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { Toaster } from '@/components/ui/sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useCompliantLocalStorage } from '@/hooks/useLocalStorage';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 import { supabase } from '@/integrations/supabase/client';
 import { queryClient } from '@/lib/query-client';
+import React, { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
-import { useCompliantLocalStorage } from '@/hooks/useLocalStorage';
+import { EnhancedSidebar } from './EnhancedSidebar';
 
 // Loading component
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+  <div className='flex items-center justify-center min-h-screen'>
+    <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary'></div>
   </div>
 );
 
 // Error fallback component
 const ErrorFallback = ({ error, resetError }: { error: Error; resetError: () => void }) => (
-  <div className="flex flex-col items-center justify-center min-h-screen p-4">
-    <div className="text-center max-w-md">
-      <h1 className="text-2xl font-bold text-destructive mb-4">Ops! Algo deu errado</h1>
-      <p className="text-muted-foreground mb-6">
-        Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para resolver o problema.
+  <div className='flex flex-col items-center justify-center min-h-screen p-4'>
+    <div className='text-center max-w-md'>
+      <h1 className='text-2xl font-bold text-destructive mb-4'>Ops! Algo deu errado</h1>
+      <p className='text-muted-foreground mb-6'>
+        Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para resolver o
+        problema.
       </p>
-      <div className="space-y-2">
+      <div className='space-y-2'>
         <button
           onClick={resetError}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors'
         >
           Tentar novamente
         </button>
         <button
           onClick={() => window.location.href = '/'}
-          className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors ml-2"
+          className='px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors ml-2'
         >
           Voltar ao início
         </button>
@@ -63,19 +64,21 @@ const ErrorFallback = ({ error, resetError }: { error: Error; resetError: () => 
 
 // Real-time connection status indicator
 const ConnectionStatus = () => {
-  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connected' | 'disconnected' | 'connecting'
+  >('connecting');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   useEffect(() => {
     // Monitor Supabase connection
     const channel = supabase.channel('connection-status');
-    
+
     channel
-      .on('system', { event: 'connection' }, (status) => {
+      .on('system', { event: 'connection' }, status => {
         setConnectionStatus(status === 'SUBSCRIBED' ? 'connected' : 'connecting');
         setLastUpdate(new Date());
       })
-      .subscribe((status) => {
+      .subscribe(status => {
         if (status === 'SUBSCRIBED') {
           setConnectionStatus('connected');
         } else if (status === 'CHANNEL_ERROR') {
@@ -101,13 +104,16 @@ const ConnectionStatus = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-4 z-50">
-      <div className="flex items-center gap-2 bg-background border rounded-lg px-3 py-2 shadow-lg">
-        <div className={`w-2 h-2 rounded-full ${statusColors[connectionStatus]} ${
-          connectionStatus === 'connected' ? 'animate-pulse' : ''
-        }`}></div>
-        <span className="text-xs font-medium">{statusText[connectionStatus]}</span>
-        <span className="text-xs text-muted-foreground">
+    <div className='fixed bottom-4 left-4 z-50'>
+      <div className='flex items-center gap-2 bg-background border rounded-lg px-3 py-2 shadow-lg'>
+        <div
+          className={`w-2 h-2 rounded-full ${statusColors[connectionStatus]} ${
+            connectionStatus === 'connected' ? 'animate-pulse' : ''
+          }`}
+        >
+        </div>
+        <span className='text-xs font-medium'>{statusText[connectionStatus]}</span>
+        <span className='text-xs text-muted-foreground'>
           {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
@@ -124,9 +130,9 @@ const PerformanceMetrics = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50">
-      <div className="bg-background border rounded-lg p-3 shadow-lg text-xs font-mono">
-        <div className="space-y-1">
+    <div className='fixed top-4 right-4 z-50'>
+      <div className='bg-background border rounded-lg p-3 shadow-lg text-xs font-mono'>
+        <div className='space-y-1'>
           <div>FPS: {metrics.fps}</div>
           <div>Memory: {metrics.memoryUsage}MB</div>
           <div>Load Time: {metrics.pageLoadTime}ms</div>
@@ -154,9 +160,9 @@ const useHealthcareRealtimeSubscriptions = () => {
           table: 'patients',
           filter: `clinic_id=eq.${user.id}`,
         },
-        (payload) => {
+        payload => {
           console.log('Patient healthcare update:', payload);
-          
+
           // Invalidate relevant queries
           queryClient.invalidateQueries({ queryKey: ['patients'] });
           queryClient.invalidateQueries({ queryKey: ['patient-stats'] });
@@ -167,13 +173,13 @@ const useHealthcareRealtimeSubscriptions = () => {
           } else if (payload.eventType === 'UPDATE') {
             const oldData = payload.old as any;
             const newData = payload.new as any;
-            
+
             // Check for critical healthcare data changes
             if (oldData.health_status !== newData.health_status) {
               toast.warning(`Status de saúde do paciente atualizado: ${newData.health_status}`);
             }
           }
-        }
+        },
       )
       .subscribe();
 
@@ -188,16 +194,16 @@ const useHealthcareRealtimeSubscriptions = () => {
           table: 'appointments',
           filter: `clinic_id=eq.${user.id}`,
         },
-        (payload) => {
+        payload => {
           console.log('Appointment healthcare update:', payload);
-          
+
           queryClient.invalidateQueries({ queryKey: ['appointments'] });
           queryClient.invalidateQueries({ queryKey: ['appointment-stats'] });
 
           if (payload.eventType === 'UPDATE') {
             const newData = payload.new as any;
             const oldData = payload.old as any;
-            
+
             // Healthcare-critical appointment changes
             if (oldData.status !== newData.status) {
               switch (newData.status) {
@@ -216,7 +222,7 @@ const useHealthcareRealtimeSubscriptions = () => {
               }
             }
           }
-        }
+        },
       )
       .subscribe();
 
@@ -231,17 +237,17 @@ const useHealthcareRealtimeSubscriptions = () => {
           table: 'medical_records',
           filter: `clinic_id=eq.${user.id}`,
         },
-        (payload) => {
+        payload => {
           console.log('Medical records update:', payload);
-          
+
           // Sensitive data - invalidate with compliance
           queryClient.invalidateQueries({ queryKey: ['medical-records'] });
-          
+
           // Audit logging for sensitive data access
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
             console.log('Medical record accessed - LGPD compliance audit trail');
           }
-        }
+        },
       )
       .subscribe();
 
@@ -314,7 +320,7 @@ const useSessionMonitoring = () => {
   const [sessionActivity, setSessionActivity] = useCompliantLocalStorage(
     'user-session-activity',
     { lastActivity: new Date().toISOString(), sessionDuration: 0 },
-    { retentionDays: 30, isSensitiveData: true }
+    { retentionDays: 30, isSensitiveData: true },
   );
 
   useEffect(() => {
@@ -390,15 +396,22 @@ export function EnhancedAppShell({
   }
 
   return (
-    <ErrorBoundary fallback={<ErrorFallback error={new Error('Application error')} resetError={() => window.location.reload()} />}>
+    <ErrorBoundary
+      fallback={
+        <ErrorFallback
+          error={new Error('Application error')}
+          resetError={() => window.location.reload()}
+        />
+      }
+    >
       <EnhancedSidebar sections={customSidebarSections}>
         <Suspense fallback={<LoadingFallback />}>
-          <div className="min-h-screen bg-background">
+          <div className='min-h-screen bg-background'>
             {children}
-            
+
             {/* Global UI elements */}
             <Toaster />
-            
+
             {showConnectionStatus && <ConnectionStatus />}
             {showPerformanceMetrics && <PerformanceMetrics />}
           </div>
@@ -409,7 +422,7 @@ export function EnhancedAppShell({
 }
 
 // Export individual components for flexibility
-export { ConnectionStatus, PerformanceMetrics, LoadingFallback, ErrorFallback };
+export { ConnectionStatus, ErrorFallback, LoadingFallback, PerformanceMetrics };
 
 // Hook for accessing enhanced app shell features
 export function useEnhancedAppShell() {

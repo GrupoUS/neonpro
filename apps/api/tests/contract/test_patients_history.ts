@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: GET /api/v2/patients/{id}/history (T018)
- * 
+ *
  * Tests patient history endpoint contract:
  * - Complete audit trail and change history
  * - LGPD compliance tracking
@@ -9,16 +9,23 @@
  * - Data version control and rollback capabilities
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // History entry schema validation
 const HistoryEntrySchema = z.object({
   id: z.string().uuid(),
   timestamp: z.string().datetime(),
-  action: z.enum(['created', 'updated', 'deleted', 'accessed', 'consents_updated', 'medical_updated']),
+  action: z.enum([
+    'created',
+    'updated',
+    'deleted',
+    'accessed',
+    'consents_updated',
+    'medical_updated',
+  ]),
   actorType: z.enum(['user', 'system', 'api', 'scheduled']),
   actorId: z.string(),
   actorName: z.string(),
@@ -76,7 +83,7 @@ const PatientHistoryResponseSchema = z.object({
 
 describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -170,7 +177,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
       // Validate response schema
       const validatedData = PatientHistoryResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Basic validations
       expect(response.body.patientId).toBe(testPatientId);
       expect(response.body.history.length).toBeGreaterThan(0);
@@ -197,9 +204,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
 
       const updateEntries = response.body.history.filter(entry => entry.action === 'updated');
       expect(updateEntries.length).toBeGreaterThan(0);
-      
+
       // Should have entries for name update, medical history update, and consent update
-      const nameUpdate = updateEntries.find(entry => 
+      const nameUpdate = updateEntries.find(entry =>
         entry.changes?.some(change => change.field === 'name')
       );
       expect(nameUpdate).toBeDefined();
@@ -224,14 +231,14 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const updateEntry = response.body.history.find(entry => 
+      const updateEntry = response.body.history.find(entry =>
         entry.action === 'updated' && entry.changes
       );
-      
+
       if (updateEntry) {
         expect(updateEntry.changes).toBeDefined();
         expect(updateEntry.changes.length).toBeGreaterThan(0);
-        
+
         updateEntry.changes.forEach(change => {
           expect(change.field).toBeDefined();
           expect(change.changeType).toBeDefined();
@@ -250,14 +257,14 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const medicalEntries = response.body.history.filter(entry => 
+      const medicalEntries = response.body.history.filter(entry =>
         entry.action === 'medical_updated'
       );
-      
+
       if (medicalEntries.length > 0) {
         const medicalEntry = medicalEntries[0];
         expect(medicalEntry.changes).toBeDefined();
-        const allergyChange = medicalEntry.changes.find(change => 
+        const allergyChange = medicalEntry.changes.find(change =>
           change.field.includes('allergies')
         );
         expect(allergyChange).toBeDefined();
@@ -270,10 +277,10 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const consentEntries = response.body.history.filter(entry => 
+      const consentEntries = response.body.history.filter(entry =>
         entry.action === 'consents_updated'
       );
-      
+
       if (consentEntries.length > 0) {
         const consentEntry = consentEntries[0];
         expect(consentEntry.lgpdInfo).toBeDefined();
@@ -302,7 +309,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
 
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?startDate=${yesterday.toISOString()}&endDate=${tomorrow.toISOString()}`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?startDate=${yesterday.toISOString()}&endDate=${tomorrow.toISOString()}`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 
@@ -322,7 +331,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
       expect(response.body.history.length).toBeLessThanOrEqual(2);
       expect(response.body.pagination.page).toBe(1);
       expect(response.body.pagination.limit).toBe(2);
-      
+
       if (response.body.pagination.total > 2) {
         expect(response.body.pagination.hasMore).toBe(true);
       }
@@ -337,7 +346,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
       // Verify chronological order (newest first)
       for (let i = 1; i < response.body.history.length; i++) {
         const currentTime = new Date(response.body.history[i].timestamp);
-        const previousTime = new Date(response.body.history[i-1].timestamp);
+        const previousTime = new Date(response.body.history[i - 1].timestamp);
         expect(currentTime.getTime()).toBeLessThanOrEqual(previousTime.getTime());
       }
     });
@@ -363,10 +372,10 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const userEntries = response.body.history.filter(entry => 
+      const userEntries = response.body.history.filter(entry =>
         entry.actorType === 'user' || entry.actorType === 'api'
       );
-      
+
       userEntries.forEach(entry => {
         if (entry.metadata) {
           expect(entry.metadata.ipAddress).toBeDefined();
@@ -394,12 +403,12 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const dataProcessingEntries = response.body.history.filter(entry => 
+      const dataProcessingEntries = response.body.history.filter(entry =>
         entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined
       );
-      
+
       expect(dataProcessingEntries.length).toBeGreaterThan(0);
-      
+
       dataProcessingEntries.forEach(entry => {
         expect(entry.lgpdInfo.consentStatus).toBeDefined();
         expect(entry.lgpdInfo.legalBasis).toBeDefined();
@@ -425,13 +434,13 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const consentWithdrawal = response.body.history.find(entry => 
-        entry.changes?.some(change => 
-          change.field === 'marketingCommunications' && 
-          change.newValue === false
+      const consentWithdrawal = response.body.history.find(entry =>
+        entry.changes?.some(change =>
+          change.field === 'marketingCommunications'
+          && change.newValue === false
         )
       );
-      
+
       expect(consentWithdrawal).toBeDefined();
     });
   });
@@ -439,7 +448,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
   describe('Performance Requirements', () => {
     it('should respond within 500ms', async () => {
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}/history`)
         .set(testAuthHeaders)
@@ -447,7 +456,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });
@@ -467,7 +476,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
   describe('Error Handling', () => {
     it('should return 404 for non-existent patient', async () => {
       const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
-      
+
       const response = await request(app)
         .get(`/api/v2/patients/${nonExistentId}/history`)
         .set(testAuthHeaders)

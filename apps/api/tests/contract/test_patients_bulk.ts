@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: POST /api/v2/patients/bulk-actions (T017)
- * 
+ *
  * Tests bulk operations endpoint contract:
  * - Bulk updates, deletes, and status changes
  * - Transaction handling and rollback
@@ -9,10 +9,10 @@
  * - Error handling and partial failures
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Bulk action request schema validation
 const BulkActionRequestSchema = z.object({
@@ -76,7 +76,7 @@ const BulkActionResponseSchema = z.object({
 
 describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -181,13 +181,13 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       // Validate response schema
       const validatedData = BulkActionResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Validate bulk operation results
       expect(response.body.action).toBe('updateStatus');
       expect(response.body.summary.totalRequested).toBe(3);
       expect(response.body.summary.successful).toBe(3);
       expect(response.body.summary.failed).toBe(0);
-      
+
       // Verify individual results
       response.body.results.forEach(result => {
         expect(result.status).toBe('success');
@@ -222,7 +222,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       expect(response.body.summary.totalRequested).toBe(3);
       expect(response.body.summary.successful).toBe(2);
       expect(response.body.summary.failed).toBe(1);
-      
+
       // Check that the failed result contains error details
       const failedResult = response.body.results.find(r => r.status === 'error');
       expect(failedResult).toBeDefined();
@@ -253,7 +253,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
         .expect(200);
 
       expect(response.body.summary.successful).toBe(2);
-      
+
       response.body.results.forEach(result => {
         expect(result.status).toBe('success');
         expect(result.data.emergencyContact.name).toBe('Updated Emergency Contact');
@@ -282,7 +282,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
         .expect(200);
 
       expect(response.body.summary.successful).toBe(3);
-      
+
       response.body.results.forEach(result => {
         expect(result.status).toBe('success');
         expect(result.data.lgpdConsent.marketingCommunications).toBe(true);
@@ -323,7 +323,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       // Should require higher authorization for hard deletion
       const restrictedHeaders = {
-        'Authorization': 'Bearer limited-token',
+        Authorization: 'Bearer limited-token',
         'Content-Type': 'application/json',
       };
 
@@ -407,7 +407,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       };
 
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
@@ -415,7 +415,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
         .expect(200);
 
       const duration = Date.now() - startTime;
-      
+
       expect(response.body.summary.totalRequested).toBe(testPatientIds.length);
       expect(response.body.performanceMetrics.batchesProcessed).toBeGreaterThan(1);
       expect(response.body.performanceMetrics.averageTimePerPatient).toBeLessThan(100); // <100ms per patient
@@ -448,7 +448,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should return 400 for too many patient IDs', async () => {
-      const tooManyIds = Array(101).fill().map((_, i) => 
+      const tooManyIds = Array(101).fill().map((_, i) =>
         `123e4567-e89b-12d3-a456-42661417400${i.toString().padStart(1, '0')}`
       );
 

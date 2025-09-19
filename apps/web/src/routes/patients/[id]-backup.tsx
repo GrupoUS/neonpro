@@ -302,14 +302,14 @@ function PatientDetailPage() {
       <header className='mb-6 space-y-4 sm:space-y-0'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div className='flex items-start sm:items-center gap-4'>
-            <Button 
-              variant='ghost' 
-              size='sm' 
+            <Button
+              variant='ghost'
+              size='sm'
               onClick={() => navigate({ to: '/patients' })}
               className='h-10 px-3 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Voltar para lista de pacientes'
             >
-              <ArrowLeft className='h-4 w-4 mr-2' aria-hidden="true" />
+              <ArrowLeft className='h-4 w-4 mr-2' aria-hidden='true' />
               Voltar
             </Button>
             <div className='flex items-center gap-3 sm:gap-4'>
@@ -329,33 +329,33 @@ function PatientDetailPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Action buttons - Mobile-optimized */}
           <div className='flex flex-wrap sm:flex-nowrap items-center gap-2'>
-            <Button 
-              variant='outline' 
+            <Button
+              variant='outline'
               size='sm'
               className='h-9 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Exportar dados do paciente'
             >
-              <Download className='h-4 w-4 mr-2' aria-hidden="true" />
+              <Download className='h-4 w-4 mr-2' aria-hidden='true' />
               Exportar
             </Button>
-            <Button 
-              variant='outline' 
+            <Button
+              variant='outline'
               size='sm'
               className='h-9 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Compartilhar perfil do paciente'
             >
-              <Share2 className='h-4 w-4 mr-2' aria-hidden="true" />
+              <Share2 className='h-4 w-4 mr-2' aria-hidden='true' />
               Compartilhar
             </Button>
-            <Button 
+            <Button
               size='sm'
               className='h-9 px-3 text-sm bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Editar informações do paciente'
             >
-              <Edit className='h-4 w-4 mr-2' aria-hidden="true" />
+              <Edit className='h-4 w-4 mr-2' aria-hidden='true' />
               Editar
             </Button>
           </div>
@@ -363,17 +363,17 @@ function PatientDetailPage() {
       </header>
 
       {/* Quick Info Cards - Enhanced accessibility */}
-      <section aria-labelledby="patient-info-heading" className='mb-6'>
-        <h2 id="patient-info-heading" className='sr-only'>Informações de contato do paciente</h2>
+      <section aria-labelledby='patient-info-heading' className='mb-6'>
+        <h2 id='patient-info-heading' className='sr-only'>Informações de contato do paciente</h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
           <Card className='transition-shadow hover:shadow-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
             <CardContent className='p-4'>
               <div className='flex items-center gap-3'>
-                <Phone className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden="true" />
+                <Phone className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden='true' />
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm font-medium text-gray-900'>Telefone</p>
                   <p className='text-sm text-gray-600 truncate' title={patient.phone}>
-                    <a 
+                    <a
                       href={`tel:${patient.phone}`}
                       className='hover:text-blue-600 focus:text-blue-600 focus:outline-none focus:underline'
                       aria-label={`Ligar para ${patient.phone}`}
@@ -389,11 +389,11 @@ function PatientDetailPage() {
           <Card className='transition-shadow hover:shadow-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
             <CardContent className='p-4'>
               <div className='flex items-center gap-3'>
-                <Mail className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden="true" />
+                <Mail className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden='true' />
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm font-medium text-gray-900'>Email</p>
                   <p className='text-sm text-gray-600 truncate' title={patient.email}>
-                    <a 
+                    <a
                       href={`mailto:${patient.email}`}
                       className='hover:text-blue-600 focus:text-blue-600 focus:outline-none focus:underline'
                       aria-label={`Enviar email para ${patient.email}`}
@@ -409,7 +409,7 @@ function PatientDetailPage() {
           <Card className='transition-shadow hover:shadow-md'>
             <CardContent className='p-4'>
               <div className='flex items-center gap-3'>
-                <Calendar className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden="true" />
+                <Calendar className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden='true' />
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm font-medium text-gray-900'>Data de Nascimento</p>
                   <p className='text-sm text-gray-600'>
@@ -425,10 +425,13 @@ function PatientDetailPage() {
           <Card className='transition-shadow hover:shadow-md'>
             <CardContent className='p-4'>
               <div className='flex items-center gap-3'>
-                <MapPin className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden="true" />
+                <MapPin className='h-5 w-5 text-blue-600 flex-shrink-0' aria-hidden='true' />
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm font-medium text-gray-900'>Localização</p>
-                  <p className='text-sm text-gray-600 truncate' title={`${patient.city} - ${patient.state}`}>
+                  <p
+                    className='text-sm text-gray-600 truncate'
+                    title={`${patient.city} - ${patient.state}`}
+                  >
                     {patient.city} - {patient.state}
                   </p>
                 </div>
@@ -440,34 +443,34 @@ function PatientDetailPage() {
 
       {/* Main Content Tabs - Mobile-responsive */}
       <main>
-        <Tabs defaultValue='overview' className='space-y-4' orientation="horizontal">
+        <Tabs defaultValue='overview' className='space-y-4' orientation='horizontal'>
           <div className='overflow-x-auto'>
             <TabsList className='grid w-full min-w-max grid-cols-5 h-auto p-1 bg-gray-100'>
-              <TabsTrigger 
+              <TabsTrigger
                 value='overview'
                 className='text-sm px-3 py-2 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Visão Geral
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='medical'
                 className='text-sm px-3 py-2 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Histórico Médico
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='appointments'
                 className='text-sm px-3 py-2 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Consultas
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='insights'
                 className='text-sm px-3 py-2 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
                 Insights IA
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value='compliance'
                 className='text-sm px-3 py-2 whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               >
@@ -476,353 +479,353 @@ function PatientDetailPage() {
             </TabsList>
           </div>
 
-        <TabsContent value='overview' className='space-y-6'>
-          {/* Health Overview */}
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          <TabsContent value='overview' className='space-y-6'>
+            {/* Health Overview */}
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+              <Card>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <Heart className='h-5 w-5' />
+                    Informações de Saúde
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                  <div>
+                    <h4 className='font-medium mb-2'>Alergias</h4>
+                    <div className='flex flex-wrap gap-2'>
+                      {patient.allergies.map((allergy, index) => (
+                        <Badge key={index} variant='destructive'>{allergy}</Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className='font-medium mb-2'>Medicamentos em Uso</h4>
+                    <div className='flex flex-wrap gap-2'>
+                      {patient.medications.map((medication, index) => (
+                        <Badge key={index} variant='outline'>{medication}</Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className='font-medium mb-2'>Condições Crônicas</h4>
+                    <div className='flex flex-wrap gap-2'>
+                      {patient.chronicConditions.map((condition, index) => (
+                        <Badge key={index} variant='secondary'>{condition}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <User className='h-5 w-5' />
+                    Contato de Emergência
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-3'>
+                    <div>
+                      <p className='font-medium'>{patient.emergencyContact.name}</p>
+                      <p className='text-sm text-muted-foreground'>
+                        {patient.emergencyContact.relationship}
+                      </p>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Phone className='h-4 w-4 text-muted-foreground' />
+                      <p className='text-sm'>{patient.emergencyContact.phone}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Health Insurance */}
             <Card>
               <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Heart className='h-5 w-5' />
-                  Informações de Saúde
-                </CardTitle>
+                <CardTitle>Plano de Saúde</CardTitle>
               </CardHeader>
-              <CardContent className='space-y-4'>
-                <div>
-                  <h4 className='font-medium mb-2'>Alergias</h4>
-                  <div className='flex flex-wrap gap-2'>
-                    {patient.allergies.map((allergy, index) => (
-                      <Badge key={index} variant='destructive'>{allergy}</Badge>
-                    ))}
+              <CardContent>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                  <div>
+                    <p className='text-sm font-medium'>Operadora</p>
+                    <p className='text-sm text-muted-foreground'>
+                      {patient.healthInsurance.provider}
+                    </p>
                   </div>
-                </div>
-
-                <div>
-                  <h4 className='font-medium mb-2'>Medicamentos em Uso</h4>
-                  <div className='flex flex-wrap gap-2'>
-                    {patient.medications.map((medication, index) => (
-                      <Badge key={index} variant='outline'>{medication}</Badge>
-                    ))}
+                  <div>
+                    <p className='text-sm font-medium'>Plano</p>
+                    <p className='text-sm text-muted-foreground'>{patient.healthInsurance.plan}</p>
                   </div>
-                </div>
-
-                <div>
-                  <h4 className='font-medium mb-2'>Condições Crônicas</h4>
-                  <div className='flex flex-wrap gap-2'>
-                    {patient.chronicConditions.map((condition, index) => (
-                      <Badge key={index} variant='secondary'>{condition}</Badge>
-                    ))}
+                  <div>
+                    <p className='text-sm font-medium'>Carteirinha</p>
+                    <p className='text-sm text-muted-foreground'>
+                      •••• {patient.healthInsurance.cardNumber.slice(-4)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-sm font-medium'>Validade</p>
+                    <p className='text-sm text-muted-foreground'>
+                      {patient.healthInsurance.validity}
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
+            {/* Address */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Endereço</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-2'>
+                  <p>
+                    {patient.address.street}, {patient.address.number}
+                    {patient.address.complement && ` - ${patient.address.complement}`}
+                  </p>
+                  <p>
+                    {patient.address.neighborhood} - {patient.address.city}/{patient.address.state}
+                  </p>
+                  <p>CEP: {patient.address.zipCode}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value='medical' className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Prontuário Médico</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {medicalRecords.length > 0
+                  ? (
+                    <div className='space-y-4'>
+                      {medicalRecords.map(record => (
+                        <div key={record.id} className='border rounded-lg p-4'>
+                          <div className='flex justify-between items-start mb-2'>
+                            <div>
+                              <h4 className='font-medium'>{record.type}</h4>
+                              <p className='text-sm text-muted-foreground'>
+                                {format(new Date(record.date), 'dd/MM/yyyy', { locale: ptBR })}{' '}
+                                • Dr(a). {record.doctor}
+                              </p>
+                            </div>
+                            <Badge variant='outline'>{record.type}</Badge>
+                          </div>
+                          <div className='space-y-2'>
+                            <div>
+                              <p className='text-sm font-medium'>Diagnóstico:</p>
+                              <p className='text-sm'>{record.diagnosis}</p>
+                            </div>
+                            {record.prescription.length > 0 && (
+                              <div>
+                                <p className='text-sm font-medium'>Prescrição:</p>
+                                <ul className='text-sm list-disc list-inside'>
+                                  {record.prescription.map((med, index) => (
+                                    <li key={index}>{med}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            <div>
+                              <p className='text-sm font-medium'>Observações:</p>
+                              <p className='text-sm'>{record.notes}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                  : (
+                    <p className='text-center text-muted-foreground py-8'>
+                      Nenhum registro médico encontrado
+                    </p>
+                  )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value='appointments' className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Consultas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {appointments.length > 0
+                  ? (
+                    <div className='space-y-4'>
+                      {appointments.map(appointment => (
+                        <div key={appointment.id} className='border rounded-lg p-4'>
+                          <div className='flex justify-between items-start mb-2'>
+                            <div>
+                              <h4 className='font-medium'>{appointment.type}</h4>
+                              <p className='text-sm text-muted-foreground'>
+                                {format(new Date(appointment.date), 'dd/MM/yyyy', { locale: ptBR })}
+                                {' '}
+                                • {appointment.time}
+                              </p>
+                              <p className='text-sm text-muted-foreground'>
+                                Dr(a). {appointment.doctor} • {appointment.specialty}
+                              </p>
+                            </div>
+                            <Badge {...getStatusBadge(appointment.status)}>
+                              {getStatusBadge(appointment.status).label}
+                            </Badge>
+                          </div>
+
+                          {appointment.aiPrediction && (
+                            <div className='mt-3 p-3 bg-blue-50 rounded-lg'>
+                              <div className='flex items-center gap-2 mb-2'>
+                                <Brain className='h-4 w-4 text-blue-600' />
+                                <span className='text-sm font-medium text-blue-800'>
+                                  Previsão de Comparecimento:{' '}
+                                  {appointment.aiPrediction.noShowRisk}% risco de não comparecimento
+                                </span>
+                              </div>
+                              <div className='text-xs text-blue-700'>
+                                Confiança: {appointment.aiPrediction.confidence}% • Fatores:{' '}
+                                {appointment.aiPrediction.factors.join(', ')}
+                              </div>
+                            </div>
+                          )}
+
+                          {appointment.notes && (
+                            <div className='mt-3 p-3 bg-gray-50 rounded-lg'>
+                              <p className='text-sm font-medium'>Observações:</p>
+                              <p className='text-sm'>{appointment.notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                  : (
+                    <p className='text-center text-muted-foreground py-8'>
+                      Nenhuma consulta encontrada
+                    </p>
+                  )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value='insights' className='space-y-6'>
             <Card>
               <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
-                  <User className='h-5 w-5' />
-                  Contato de Emergência
+                  <TrendingUp className='h-5 w-5' />
+                  Insights e Recomendações da IA
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='space-y-3'>
-                  <div>
-                    <p className='font-medium'>{patient.emergencyContact.name}</p>
-                    <p className='text-sm text-muted-foreground'>
-                      {patient.emergencyContact.relationship}
+                {aiInsights.length > 0
+                  ? (
+                    <div className='space-y-4'>
+                      {aiInsights.map(insight => (
+                        <div key={insight.id} className='border rounded-lg p-4'>
+                          <div className='flex justify-between items-start mb-2'>
+                            <div>
+                              <h4 className='font-medium'>{insight.title}</h4>
+                              <p className='text-sm text-muted-foreground'>
+                                {format(new Date(insight.createdAt), 'dd/MM/yyyy HH:mm', {
+                                  locale: ptBR,
+                                })}
+                              </p>
+                            </div>
+                            <div className='flex gap-2'>
+                              <Badge {...getPriorityBadge(insight.priority)}>
+                                {getPriorityBadge(insight.priority).label}
+                              </Badge>
+                              <Badge variant='outline'>{insight.confidence}% confiança</Badge>
+                            </div>
+                          </div>
+
+                          <p className='text-sm mb-3'>{insight.description}</p>
+
+                          <div>
+                            <p className='text-sm font-medium mb-2'>Recomendações:</p>
+                            <ul className='text-sm list-disc list-inside space-y-1'>
+                              {insight.recommendations.map((recommendation, index) => (
+                                <li key={index}>{recommendation}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                  : (
+                    <p className='text-center text-muted-foreground py-8'>
+                      Nenhum insight disponível no momento
                     </p>
+                  )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value='compliance' className='space-y-6'>
+            <Card>
+              <CardHeader>
+                <CardTitle>LGPD - Proteção de Dados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-6'>
+                  <div>
+                    <h4 className='font-medium mb-3'>Consentimentos Ativos</h4>
+                    <div className='space-y-2'>
+                      <div className='flex items-center justify-between p-3 bg-green-50 rounded-lg'>
+                        <div>
+                          <p className='font-medium text-green-800'>Tratamento de Dados de Saúde</p>
+                          <p className='text-sm text-green-700'>
+                            Consentimento para processamento de informações médicas
+                          </p>
+                        </div>
+                        <Badge variant='outline'>Ativo</Badge>
+                      </div>
+                      <div className='flex items-center justify-between p-3 bg-green-50 rounded-lg'>
+                        <div>
+                          <p className='font-medium text-green-800'>
+                            Compartilhamento com Profissionais
+                          </p>
+                          <p className='text-sm text-green-700'>
+                            Autorização para compartilhamento com equipe médica
+                          </p>
+                        </div>
+                        <Badge variant='outline'>Ativo</Badge>
+                      </div>
+                    </div>
                   </div>
-                  <div className='flex items-center gap-2'>
-                    <Phone className='h-4 w-4 text-muted-foreground' />
-                    <p className='text-sm'>{patient.emergencyContact.phone}</p>
+
+                  <div>
+                    <h4 className='font-medium mb-3'>Solicitações LGPD</h4>
+                    <div className='space-y-2'>
+                      <div className='p-3 bg-gray-50 rounded-lg'>
+                        <p className='font-medium'>Nenhuma solicitação registrada</p>
+                        <p className='text-sm text-muted-foreground'>
+                          O paciente não realizou solicitações LGPD
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className='font-medium mb-3'>Audit Trail</h4>
+                    <div className='text-sm text-muted-foreground'>
+                      <p>• Último acesso: {getLastSync()}</p>
+                      <p>• Total de acessos: 127</p>
+                      <p>• Dados criptografados em repouso e trânsito</p>
+                      <p>• Backup automático diário às 02:00</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Health Insurance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Plano de Saúde</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-                <div>
-                  <p className='text-sm font-medium'>Operadora</p>
-                  <p className='text-sm text-muted-foreground'>
-                    {patient.healthInsurance.provider}
-                  </p>
-                </div>
-                <div>
-                  <p className='text-sm font-medium'>Plano</p>
-                  <p className='text-sm text-muted-foreground'>{patient.healthInsurance.plan}</p>
-                </div>
-                <div>
-                  <p className='text-sm font-medium'>Carteirinha</p>
-                  <p className='text-sm text-muted-foreground'>
-                    •••• {patient.healthInsurance.cardNumber.slice(-4)}
-                  </p>
-                </div>
-                <div>
-                  <p className='text-sm font-medium'>Validade</p>
-                  <p className='text-sm text-muted-foreground'>
-                    {patient.healthInsurance.validity}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Address */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Endereço</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-2'>
-                <p>
-                  {patient.address.street}, {patient.address.number}
-                  {patient.address.complement && ` - ${patient.address.complement}`}
-                </p>
-                <p>
-                  {patient.address.neighborhood} - {patient.address.city}/{patient.address.state}
-                </p>
-                <p>CEP: {patient.address.zipCode}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value='medical' className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Prontuário Médico</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {medicalRecords.length > 0
-                ? (
-                  <div className='space-y-4'>
-                    {medicalRecords.map(record => (
-                      <div key={record.id} className='border rounded-lg p-4'>
-                        <div className='flex justify-between items-start mb-2'>
-                          <div>
-                            <h4 className='font-medium'>{record.type}</h4>
-                            <p className='text-sm text-muted-foreground'>
-                              {format(new Date(record.date), 'dd/MM/yyyy', { locale: ptBR })}{' '}
-                              • Dr(a). {record.doctor}
-                            </p>
-                          </div>
-                          <Badge variant='outline'>{record.type}</Badge>
-                        </div>
-                        <div className='space-y-2'>
-                          <div>
-                            <p className='text-sm font-medium'>Diagnóstico:</p>
-                            <p className='text-sm'>{record.diagnosis}</p>
-                          </div>
-                          {record.prescription.length > 0 && (
-                            <div>
-                              <p className='text-sm font-medium'>Prescrição:</p>
-                              <ul className='text-sm list-disc list-inside'>
-                                {record.prescription.map((med, index) => (
-                                  <li key={index}>{med}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          <div>
-                            <p className='text-sm font-medium'>Observações:</p>
-                            <p className='text-sm'>{record.notes}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-                : (
-                  <p className='text-center text-muted-foreground py-8'>
-                    Nenhum registro médico encontrado
-                  </p>
-                )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value='appointments' className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Consultas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {appointments.length > 0
-                ? (
-                  <div className='space-y-4'>
-                    {appointments.map(appointment => (
-                      <div key={appointment.id} className='border rounded-lg p-4'>
-                        <div className='flex justify-between items-start mb-2'>
-                          <div>
-                            <h4 className='font-medium'>{appointment.type}</h4>
-                            <p className='text-sm text-muted-foreground'>
-                              {format(new Date(appointment.date), 'dd/MM/yyyy', { locale: ptBR })} •
-                              {' '}
-                              {appointment.time}
-                            </p>
-                            <p className='text-sm text-muted-foreground'>
-                              Dr(a). {appointment.doctor} • {appointment.specialty}
-                            </p>
-                          </div>
-                          <Badge {...getStatusBadge(appointment.status)}>
-                            {getStatusBadge(appointment.status).label}
-                          </Badge>
-                        </div>
-
-                        {appointment.aiPrediction && (
-                          <div className='mt-3 p-3 bg-blue-50 rounded-lg'>
-                            <div className='flex items-center gap-2 mb-2'>
-                              <Brain className='h-4 w-4 text-blue-600' />
-                              <span className='text-sm font-medium text-blue-800'>
-                                Previsão de Comparecimento:{' '}
-                                {appointment.aiPrediction.noShowRisk}% risco de não comparecimento
-                              </span>
-                            </div>
-                            <div className='text-xs text-blue-700'>
-                              Confiança: {appointment.aiPrediction.confidence}% • Fatores:{' '}
-                              {appointment.aiPrediction.factors.join(', ')}
-                            </div>
-                          </div>
-                        )}
-
-                        {appointment.notes && (
-                          <div className='mt-3 p-3 bg-gray-50 rounded-lg'>
-                            <p className='text-sm font-medium'>Observações:</p>
-                            <p className='text-sm'>{appointment.notes}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )
-                : (
-                  <p className='text-center text-muted-foreground py-8'>
-                    Nenhuma consulta encontrada
-                  </p>
-                )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value='insights' className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <TrendingUp className='h-5 w-5' />
-                Insights e Recomendações da IA
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {aiInsights.length > 0
-                ? (
-                  <div className='space-y-4'>
-                    {aiInsights.map(insight => (
-                      <div key={insight.id} className='border rounded-lg p-4'>
-                        <div className='flex justify-between items-start mb-2'>
-                          <div>
-                            <h4 className='font-medium'>{insight.title}</h4>
-                            <p className='text-sm text-muted-foreground'>
-                              {format(new Date(insight.createdAt), 'dd/MM/yyyy HH:mm', {
-                                locale: ptBR,
-                              })}
-                            </p>
-                          </div>
-                          <div className='flex gap-2'>
-                            <Badge {...getPriorityBadge(insight.priority)}>
-                              {getPriorityBadge(insight.priority).label}
-                            </Badge>
-                            <Badge variant='outline'>{insight.confidence}% confiança</Badge>
-                          </div>
-                        </div>
-
-                        <p className='text-sm mb-3'>{insight.description}</p>
-
-                        <div>
-                          <p className='text-sm font-medium mb-2'>Recomendações:</p>
-                          <ul className='text-sm list-disc list-inside space-y-1'>
-                            {insight.recommendations.map((recommendation, index) => (
-                              <li key={index}>{recommendation}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-                : (
-                  <p className='text-center text-muted-foreground py-8'>
-                    Nenhum insight disponível no momento
-                  </p>
-                )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value='compliance' className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle>LGPD - Proteção de Dados</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-6'>
-                <div>
-                  <h4 className='font-medium mb-3'>Consentimentos Ativos</h4>
-                  <div className='space-y-2'>
-                    <div className='flex items-center justify-between p-3 bg-green-50 rounded-lg'>
-                      <div>
-                        <p className='font-medium text-green-800'>Tratamento de Dados de Saúde</p>
-                        <p className='text-sm text-green-700'>
-                          Consentimento para processamento de informações médicas
-                        </p>
-                      </div>
-                      <Badge variant='outline'>Ativo</Badge>
-                    </div>
-                    <div className='flex items-center justify-between p-3 bg-green-50 rounded-lg'>
-                      <div>
-                        <p className='font-medium text-green-800'>
-                          Compartilhamento com Profissionais
-                        </p>
-                        <p className='text-sm text-green-700'>
-                          Autorização para compartilhamento com equipe médica
-                        </p>
-                      </div>
-                      <Badge variant='outline'>Ativo</Badge>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className='font-medium mb-3'>Solicitações LGPD</h4>
-                  <div className='space-y-2'>
-                    <div className='p-3 bg-gray-50 rounded-lg'>
-                      <p className='font-medium'>Nenhuma solicitação registrada</p>
-                      <p className='text-sm text-muted-foreground'>
-                        O paciente não realizou solicitações LGPD
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className='font-medium mb-3'>Audit Trail</h4>
-                  <div className='text-sm text-muted-foreground'>
-                    <p>• Último acesso: {getLastSync()}</p>
-                    <p>• Total de acessos: 127</p>
-                    <p>• Dados criptografados em repouso e trânsito</p>
-                    <p>• Backup automático diário às 02:00</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

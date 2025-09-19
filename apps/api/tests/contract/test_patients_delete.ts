@@ -1,6 +1,6 @@
 /**
  * CONTRACT TEST: DELETE /api/v2/patients/{id} (T015)
- * 
+ *
  * Tests patient deletion endpoint contract:
  * - LGPD compliance (soft delete vs hard delete)
  * - Data retention policies
@@ -10,10 +10,10 @@
  * - Authorization checks
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { app } from '../../src/app';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Response schema for deletion confirmation
 const DeletePatientResponseSchema = z.object({
@@ -34,7 +34,7 @@ const DeletePatientResponseSchema = z.object({
 
 describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
   const testAuthHeaders = {
-    'Authorization': 'Bearer test-token',
+    Authorization: 'Bearer test-token',
     'Content-Type': 'application/json',
   };
 
@@ -144,7 +144,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
       // Validate response schema
       const validatedData = DeletePatientResponseSchema.parse(response.body);
       expect(validatedData).toBeDefined();
-      
+
       // Validate soft deletion
       expect(response.body.id).toBe(testPatientId);
       expect(response.body.deletionType).toBe('soft');
@@ -288,7 +288,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
 
       // Try hard deletion with insufficient permissions
       const insufficientHeaders = {
-        'Authorization': 'Bearer limited-token',
+        Authorization: 'Bearer limited-token',
         'Content-Type': 'application/json',
       };
 
@@ -331,7 +331,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
   describe('Error Handling', () => {
     it('should return 404 for non-existent patient', async () => {
       const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
-      
+
       const response = await request(app)
         .delete(`/api/v2/patients/${nonExistentId}`)
         .set(testAuthHeaders)
@@ -434,7 +434,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
 
       const perfPatientId = perfPatientResponse.body.id;
       const startTime = Date.now();
-      
+
       const response = await request(app)
         .delete(`/api/v2/patients/${perfPatientId}`)
         .set(testAuthHeaders)
@@ -442,7 +442,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);
-      
+
       // Should also be included in response metrics
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });
