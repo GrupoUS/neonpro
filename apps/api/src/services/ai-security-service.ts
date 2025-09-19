@@ -24,10 +24,17 @@ const MedicalTermSchema = z.object({
 });
 
 // Rate limiting configuration
+function getEnvInt(varName: string, defaultValue: number): number {
+  const value = process.env[varName];
+  if (!value) return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
 const RATE_LIMITS = {
-  requestsPerMinute: 100,
-  requestsPerHour: 1000,
-  burstLimit: 50,
+  requestsPerMinute: getEnvInt('AI_RATE_LIMIT_REQUESTS_PER_MINUTE', 100),
+  requestsPerHour: getEnvInt('AI_RATE_LIMIT_REQUESTS_PER_HOUR', 1000),
+  burstLimit: getEnvInt('AI_RATE_LIMIT_BURST_LIMIT', 50),
 } as const;
 
 // API key rotation configuration
