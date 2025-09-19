@@ -168,6 +168,8 @@ export class OrchestrationMonitoring {
     // For now, return empty durations - this would need to be tracked during execution
     return {
       'apex-dev': 0,
+      'test': 0,
+      'compliance-validator': 0,
       'code-reviewer': 0,
       'architect-review': 0,
       'security-auditor': 0

@@ -12,6 +12,9 @@ export * from './ui/beams-background';
 export { Toaster } from './ui/toaster';
 // Do not re-export './ui/sidebar' here to avoid duplicate Sidebar symbols
 
+// AI Chat Components
+export * from './ai';
+
 // export * from './healthcare'; // removed: folder no longer exists
 
 // Common aliases (optional convenience re-exports)

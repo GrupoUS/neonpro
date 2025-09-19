@@ -9,6 +9,44 @@
  * @healthcare-platform NeonPro
  */
 
+// Mock the missing hooks for testing
+vi.mock('@/hooks/use-long-tasks', () => ({
+  useLongTasks: () => ({ longTasks: [], monitorLongTasks: vi.fn() }),
+}));
+
+vi.mock('@/hooks/use-network-information', () => ({
+  useNetworkInformation: () => ({ 
+    online: true, 
+    effectiveType: '4g',
+    downlink: 10,
+    rtt: 100,
+    saveData: false 
+  }),
+}));
+
+vi.mock('@/hooks/use-performance-monitoring', () => ({
+  usePerformanceMonitoring: () => ({ 
+    metrics: {}, 
+    startMonitoring: vi.fn(),
+    stopMonitoring: vi.fn() 
+  }),
+}));
+
+vi.mock('@/hooks/use-resource-timing', () => ({
+  useResourceTiming: () => ({ 
+    resources: [], 
+    monitorResources: vi.fn() 
+  }),
+}));
+
+vi.mock('@/hooks/use-web-vitals', () => ({
+  useWebVitals: () => ({ 
+    vitals: {}, 
+    measureVitals: vi.fn() 
+  }),
+}));
+
+// Import the mocked hooks
 import { useLongTasks } from '@/hooks/use-long-tasks';
 import { useNetworkInformation } from '@/hooks/use-network-information';
 import { usePerformanceMonitoring } from '@/hooks/use-performance-monitoring';

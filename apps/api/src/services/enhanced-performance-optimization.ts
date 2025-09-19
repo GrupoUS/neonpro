@@ -4,7 +4,7 @@
  */
 
 import { HealthcareQueryOptimizer, type PerformanceMetrics } from '../utils/healthcare-performance.js';
-import { type HealthcarePrismaClient } from '../clients/prisma.js';
+import { type HealthcarePrismaClient } from '../clients/prisma';
 import { createHash } from 'crypto';
 
 export interface PaginationParams {

@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Validate database schema compatibility
+ * Checks if all required tables exist and have the correct structure
  */
 export async function validateSchema(): Promise<boolean> {
   try {
@@ -12,26 +13,47 @@ export async function validateSchema(): Promise<boolean> {
     // Run a simple query to check if the database is accessible
     await prisma.$queryRaw`SELECT 1`;
     
-    // Check if all required tables exist
-    const requiredTables = ['clinics', 'patients', 'appointments', 'professionals'];
+    // Check if all required tables exist with proper structure
+    const requiredTables = [
+      { name: 'clinics', requiredColumns: ['id', 'name', 'created_at'] },
+      { name: 'patients', requiredColumns: ['id', 'clinic_id', 'name', 'cpf', 'created_at'] },
+      { name: 'appointments', requiredColumns: ['id', 'patient_id', 'professional_id', 'start_time', 'end_time'] },
+      { name: 'professionals', requiredColumns: ['id', 'clinic_id', 'name', 'crm', 'specialty'] }
+    ];
     
-    for (const table of requiredTables) {
+    for (const tableSpec of requiredTables) {
       try {
-        // For PostgreSQL/Supabase, we can check if tables exist
-        const result = await prisma.$queryRaw`
+        // Check if table exists
+        const existsResult = await prisma.$queryRaw`
           SELECT EXISTS (
             SELECT FROM information_schema.tables 
             WHERE table_schema = 'public' 
-            AND table_name = ${table}
+            AND table_name = ${tableSpec.name}
           )
         ` as any[];
         
-        if (!result[0]?.exists) {
-          console.error(`Required table ${table} does not exist`);
+        if (!existsResult[0]?.exists) {
+          console.error(`Required table ${tableSpec.name} does not exist`);
+          return false;
+        }
+        
+        // Check if required columns exist
+        const columnsResult = await prisma.$queryRaw`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_schema = 'public' 
+          AND table_name = ${tableSpec.name}
+        ` as { column_name: string }[];
+        
+        const existingColumns = columnsResult.map(col => col.column_name);
+        const missingColumns = tableSpec.requiredColumns.filter(col => !existingColumns.includes(col));
+        
+        if (missingColumns.length > 0) {
+          console.error(`Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`);
           return false;
         }
       } catch (error) {
-        console.error(`Error checking table ${table}:`, error);
+        console.error(`Error checking table ${tableSpec.name}:`, error);
         return false;
       }
     }
@@ -48,14 +70,29 @@ export async function validateSchema(): Promise<boolean> {
  * Check if all required tables exist
  */
 export async function checkTablesExist(client: SupabaseClient): Promise<boolean> {
-  const requiredTables = ['clinics', 'patients', 'appointments', 'professionals'];
+  const requiredTables = [
+    { name: 'clinics', requiredColumns: ['id', 'name', 'created_at'] },
+    { name: 'patients', requiredColumns: ['id', 'clinic_id', 'name', 'cpf', 'created_at'] },
+    { name: 'appointments', requiredColumns: ['id', 'patient_id', 'professional_id', 'start_time', 'end_time'] },
+    { name: 'professionals', requiredColumns: ['id', 'clinic_id', 'name', 'crm', 'specialty'] }
+  ];
   
   try {
-    for (const table of requiredTables) {
-      const { error } = await client.from(table).select('id').limit(1);
+    for (const tableSpec of requiredTables) {
+      const { data, error } = await client.from(tableSpec.name).select(tableSpec.requiredColumns.join(',')).limit(1);
       if (error) {
-        console.error(`Table ${table} validation failed:`, error);
+        console.error(`Table ${tableSpec.name} validation failed:`, error);
         return false;
+      }
+      
+      // Verify that all required columns are present in the response
+      if (data && data.length > 0) {
+        const row = data[0];
+        const missingColumns = tableSpec.requiredColumns.filter(col => !(col in row));
+        if (missingColumns.length > 0) {
+          console.error(`Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`);
+          return false;
+        }
       }
     }
     return true;

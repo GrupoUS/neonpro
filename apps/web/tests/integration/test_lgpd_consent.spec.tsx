@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { LGPDConsentDialog } from '../../../src/components/patients/LGPDConsentDialog';
 import { createTestPatient } from '../../../src/testing/test-utils';
 

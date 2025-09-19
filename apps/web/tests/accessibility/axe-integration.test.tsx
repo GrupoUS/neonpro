@@ -29,7 +29,11 @@ import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
 import { performance } from 'perf_hooks';
 
 // Extend Jest matchers
-expect.extend(toHaveNoViolations);
+try {
+  expect.extend(toHaveNoViolations);
+} catch (error) {
+  console.warn('Accessibility matcher already extended:', error);
+}
 
 // Performance optimization for large-scale testing
 interface PerformanceMetrics {

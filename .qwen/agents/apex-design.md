@@ -1,5 +1,5 @@
 ---
-name: file-copier
+name: apex-design
 description: Use this agent when you need to copy or duplicate the apex-ui-ux-designer.md file from the specified path to create a new agent configuration based on it.
 color: Purple
 ---

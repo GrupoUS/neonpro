@@ -477,6 +477,122 @@ export class ConsentService extends BaseService implements RTCConsentManager {
       return [];
     }
   }
+  
+  /**
+   * Validate LGPD consent before processing patient data
+   * @param patientId - Patient ID
+   * @param purpose - Purpose for data processing
+   * @returns Promise<boolean> - True if consent is valid
+   */
+  override async validateLGPDConsent(
+    patientId: string,
+    purpose: 'medical_treatment' | 'ai_assistance' | 'communication' | 'marketing'
+  ): Promise<boolean> {
+    try {
+      // Check if there's a consent record for this specific purpose
+      const { data: purposeConsents } = await this.supabase
+        .from('consent_records')
+        .select('*')
+        .eq('patient_id', patientId)
+        .eq('purpose', purpose)
+        .eq('status', 'granted')
+        .order('created_at', { ascending: false })
+        .limit(1);
+        
+      return purposeConsents !== null && purposeConsents.length > 0;
+    } catch (error) {
+      console.error('ConsentService.validateLGPDConsent error:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Get all active consents for a patient
+   * @param userId - Patient user ID
+   * @returns Promise<ConsentRecord[]> - Active consent records
+   */
+  async getActiveConsents(userId: string): Promise<ConsentRecord[]> {
+    try {
+      const { data: patient } = await this.supabase
+        .from('patients')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+      if (!patient) return [];
+
+      const { data: consents, error } = await this.supabase
+        .from('consent_records')
+        .select('*')
+        .eq('patient_id', patient.id)
+        .eq('status', 'granted')
+        .lte('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) return [];
+
+      return consents.map(consent => ({
+        id: consent.id,
+        patientId: consent.patient_id,
+        clinicId: consent.clinic_id,
+        consentType: consent.consent_type,
+        purpose: consent.purpose,
+        legalBasis: consent.legal_basis,
+        status: consent.status as 'pending' | 'granted' | 'withdrawn' | 'expired',
+        givenAt: consent.given_at ? new Date(consent.given_at) : undefined,
+        withdrawnAt: consent.withdrawn_at ? new Date(consent.withdrawn_at) : undefined,
+        expiresAt: consent.expires_at ? new Date(consent.expires_at) : undefined,
+        collectionMethod: consent.collection_method,
+        ipAddress: consent.ip_address as string | undefined,
+        userAgent: consent.user_agent as string | undefined,
+        evidence: consent.evidence,
+        dataCategories: consent.data_categories || [],
+        createdAt: consent.created_at ? new Date(consent.created_at) : undefined,
+        updatedAt: consent.updated_at ? new Date(consent.updated_at) : undefined,
+      }));
+    } catch (error) {
+      console.error('ConsentService.getActiveConsents error:', error);
+      return [];
+    }
+  }
+  
+  /**
+   * Renew expired consent
+   * @param userId - Patient user ID
+   * @param consentId - Consent record ID to renew
+   * @param newExpiryDate - New expiry date
+   */
+  async renewConsent(userId: string, consentId: string, newExpiryDate: Date): Promise<boolean> {
+    try {
+      const { data: patient } = await this.supabase
+        .from('patients')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+      if (!patient) return false;
+
+      const { error } = await this.supabase
+        .from('consent_records')
+        .update({
+          status: 'granted',
+          expires_at: newExpiryDate.toISOString(),
+          updated_at: new Date().toISOString(),
+          metadata: {
+            renewed_at: new Date().toISOString(),
+            renewal_reason: 'User renewed consent'
+          }
+        })
+        .eq('id', consentId)
+        .eq('patient_id', patient.id)
+        .eq('status', 'expired');
+
+      return !error;
+    } catch (error) {
+      console.error('ConsentService.renewConsent error:', error);
+      return false;
+    }
+  }
 }
 
 export default ConsentService;

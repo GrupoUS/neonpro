@@ -1,5 +1,5 @@
 import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
-import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';

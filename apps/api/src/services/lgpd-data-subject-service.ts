@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma.js';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 import { type LGPDOperationResult, type ExportOptions } from '../types/lgpd.js';
 import { lgpdAuditService } from './lgpd-audit-service.js';
 import { lgpdConsentService } from './lgpd-consent-service.js';

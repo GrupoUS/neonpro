@@ -41,3 +41,6 @@ export * from './metrics';
 
 // Security & Audit
 export * from './audit-service';
+export * from './lgpd-audit-service';
+export * from './lgpd-consent-service';
+export * from './lgpd-data-subject-service';

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TelemedicineRouteImport } from './routes/telemedicine'
+import { Route as AiChatDemoRouteImport } from './routes/ai-chat-demo'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TelemedicineIndexRouteImport } from './routes/telemedicine/index'
@@ -59,6 +60,11 @@ import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patient
 const TelemedicineRoute = TelemedicineRouteImport.update({
   id: '/telemedicine',
   path: '/telemedicine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiChatDemoRoute = AiChatDemoRouteImport.update({
+  id: '/ai-chat-demo',
+  path: '/ai-chat-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -298,6 +304,7 @@ const PatientsPatientIdDocumentsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
@@ -539,6 +550,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
@@ -588,6 +600,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  AiChatDemoRoute: typeof AiChatDemoRoute
   TelemedicineRoute: typeof TelemedicineRouteWithChildren
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/telemedicine'
       fullPath: '/telemedicine'
       preLoaderRoute: typeof TelemedicineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-chat-demo': {
+      id: '/ai-chat-demo'
+      path: '/ai-chat-demo'
+      fullPath: '/ai-chat-demo'
+      preLoaderRoute: typeof AiChatDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -991,6 +1011,7 @@ const PatientsPatientIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  AiChatDemoRoute: AiChatDemoRoute,
   TelemedicineRoute: TelemedicineRouteWithChildren,
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,

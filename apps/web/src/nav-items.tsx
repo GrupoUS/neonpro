@@ -1,4 +1,4 @@
-import { Crown, HomeIcon, MessageSquare } from 'lucide-react';
+import { Brain, Crown, HomeIcon, MessageSquare } from 'lucide-react';
 import Index from './pages/Index';
 
 /**
@@ -15,6 +15,11 @@ export const navItems = [
     title: 'AI Chat',
     to: '/ai-chat',
     icon: <MessageSquare className='h-4 w-4' />,
+  },
+  {
+    title: 'AI Demo',
+    to: '/ai-chat-demo',
+    icon: <Brain className='h-4 w-4' />,
   },
   {
     title: 'Assinatura',

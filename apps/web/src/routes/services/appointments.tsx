@@ -1,5 +1,6 @@
 import { AppointmentBooking } from '@/components/appointment-booking';
 import { type CalendarEvent, EventCalendar, type EventColor } from '@/components/event-calendar';
+import { Experiment06CalendarIntegration } from '@/components/calendar/experiment-06-integration';
 import {
   useAppointmentRealtime,
   useAppointments,
@@ -14,7 +15,7 @@ import { Card, CardContent } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute, Link } from '@tanstack/react-router'; // useNavigate removed
 import { isAfter, isSameDay } from 'date-fns';
-import { CalendarCheck, CalendarClock, CheckCircle2, XCircle } from 'lucide-react';
+import { CalendarCheck, CalendarClock, CheckCircle2, XCircle, Eye, EyeOff } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 // Helper function to map color strings to EventColor types
@@ -39,6 +40,7 @@ function mapColorToEventColor(color: string): EventColor {
 
 function AppointmentsPage() {
   const [showNewAppointment, setShowNewAppointment] = useState(false); // removed unused navigate
+  const [useNewCalendarUI, setUseNewCalendarUI] = useState(false); // Toggle for new calendar UI
   const { /* user, */ profile, hasPermission, loading: authLoading } = useAuth();
   const toast = useToast();
 
@@ -308,23 +310,60 @@ function AppointmentsPage() {
               (appointments?.length ?? 0) === 0
                 ? <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
                 : (
-                  <div className='h-[calc(100vh-280px)] min-h-[520px] max-h-[82vh]'>
-                    <EventCalendar
-                      className='rounded-md'
-                      events={(appointments || []).map<CalendarEvent>(apt => ({
-                        id: apt.id,
-                        title: apt.title,
-                        start: apt.start,
-                        end: apt.end,
-                        color: mapColorToEventColor(apt.color),
-                        description: apt.description,
-                      }))}
-                      onEventUpdate={handleEventUpdate}
-                      onEventDelete={handleEventDelete}
-                      onNewConsultation={() => setShowNewAppointment(true)}
-                      hideHeader
-                    />
-                  </div>
+                  <>
+                    {/* Calendar UI Toggle */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant={useNewCalendarUI ? "outline" : "default"}
+                          size="sm"
+                          onClick={() => setUseNewCalendarUI(false)}
+                        >
+                          <EyeOff className="w-4 h-4 mr-2" />
+                          Calendário Clássico
+                        </Button>
+                        <Button
+                          variant={useNewCalendarUI ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setUseNewCalendarUI(true)}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Novo Calendário
+                        </Button>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {useNewCalendarUI ? "Interface experimental com drag-and-drop" : "Interface otimizada"}
+                      </div>
+                    </div>
+
+                    <div className='h-[calc(100vh-340px)] min-h-[520px] max-h-[82vh]'>
+                      {useNewCalendarUI ? (
+                        <Experiment06CalendarIntegration
+                          appointments={appointments || []}
+                          onEventUpdate={handleEventUpdate}
+                          onEventDelete={handleEventDelete}
+                          onNewConsultation={() => setShowNewAppointment(true)}
+                          className="h-full"
+                        />
+                      ) : (
+                        <EventCalendar
+                          className='rounded-md h-full'
+                          events={(appointments || []).map<CalendarEvent>(apt => ({
+                            id: apt.id,
+                            title: apt.title,
+                            start: apt.start,
+                            end: apt.end,
+                            color: mapColorToEventColor(apt.color),
+                            description: apt.description,
+                          }))}
+                          onEventUpdate={handleEventUpdate}
+                          onEventDelete={handleEventDelete}
+                          onNewConsultation={() => setShowNewAppointment(true)}
+                          hideHeader
+                        />
+                      )}
+                    </div>
+                  </>
                 )
             )}
         </CardContent>

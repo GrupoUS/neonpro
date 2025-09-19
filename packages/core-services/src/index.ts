@@ -71,3 +71,10 @@ export * from './services/google-provider.js';
 export * from './services/ai-provider-factory.js';
 export * from './services/consent-validation.js';
 export * from './services/chat-service.js';
+
+// Enhanced AI Usage Counter models/services (T017)
+export * from './models/usage-counter.js';
+export * from './models/plan.js';
+export * from './models/recommendation.js';
+export * from './models/user-plan.js';
+export * from './usage/repository.js';

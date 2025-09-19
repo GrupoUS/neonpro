@@ -141,7 +141,7 @@ describe('Missing Module Imports - TDD RED Phase', () => {
         try {
           require(module);
           // Didn't fail
-        } catch (_error) {
+        } catch (error) {
           failures++;
         }
       });

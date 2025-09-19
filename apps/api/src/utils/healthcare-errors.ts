@@ -10,7 +10,7 @@
  * - Error monitoring and alerting integration
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma.js';
+import { type HealthcarePrismaClient } from '../clients/prisma';
 
 // Healthcare error severity levels
 export enum HealthcareErrorSeverity {
@@ -581,6 +581,60 @@ export class HealthcareErrorHandler {
 
 // Export singleton instance
 export const healthcareErrorHandler = new HealthcareErrorHandler();
+
+/**
+ * tRPC-specific healthcare error class
+ * Extends HealthcareError with tRPC-compatible properties
+ */
+export class HealthcareTRPCError extends HealthcareError {
+  constructor(
+    code: string,
+    message: string,
+    category: HealthcareErrorCategory = HealthcareErrorCategory.SYSTEM,
+    severity: HealthcareErrorSeverity = HealthcareErrorSeverity.MEDIUM,
+    context?: Partial<HealthcareErrorDetails>
+  ) {
+    super({
+      code,
+      message,
+      category,
+      severity,
+      timestamp: new Date(),
+      ...context,
+    });
+  }
+
+  /**
+   * Convert to tRPC error format
+   */
+  toTRPCError(): {
+    code: string;
+    message: string;
+    data: {
+      category: string;
+      severity: string;
+      timestamp: string;
+      requestId?: string;
+      userId?: string;
+      clinicId?: string;
+      patientId?: string;
+    };
+  } {
+    return {
+      code: this.code,
+      message: this.message,
+      data: {
+        category: this.category,
+        severity: this.severity,
+        timestamp: this.timestamp.toISOString(),
+        requestId: this.requestId,
+        userId: this.userId,
+        clinicId: this.clinicId,
+        patientId: this.patientId,
+      },
+    };
+  }
+}
 
 // Export all error types and utilities
 export { type HealthcareErrorDetails, HealthcareLogger };

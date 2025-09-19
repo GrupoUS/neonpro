@@ -6,6 +6,7 @@ import { billing } from './routes/billing';
 import chatRouter from './routes/chat';
 import { medicalRecords } from './routes/medical-records';
 import patientsRouter from './routes/patients';
+import v1Router from './routes/v1';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
@@ -209,6 +210,9 @@ app.route('/api/v2', patientsRouter);
 
 // Mount AI routes under /api/v2/ai
 app.route('/api/v2/ai', aiRouter);
+
+// Mount V1 API routes under /api/v1
+app.route('/api/v1', v1Router);
 
 // Basic health endpoints with enhanced monitoring
 app.get('/health', c => {

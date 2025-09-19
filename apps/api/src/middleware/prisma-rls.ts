@@ -14,7 +14,7 @@ import {
   type HealthcareContext,
   type HealthcarePrismaClient,
   UnauthorizedHealthcareAccessError,
-} from '../clients/prisma.js';
+} from '../clients/prisma';
 import { healthcareRLS } from '../clients/supabase.js';
 
 // Middleware configuration options
